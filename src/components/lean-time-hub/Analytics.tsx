@@ -2,13 +2,19 @@
 
 import React, { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from '@/components/ui/chart';
 import { PieChart, Pie, Cell, Tooltip } from 'recharts';
 import type { Log } from './types';
 
 interface AnalyticsProps {
   logs: Log[];
 }
+
+const chartConfig = {
+  VA: { label: 'VA', color: 'hsl(120 50% 39%)' },
+  NNVA: { label: 'NNVA', color: 'hsl(40 100% 60%)' },
+  NVA: { label: 'NVA', color: 'hsl(0 63% 49%)' },
+} satisfies ChartConfig;
 
 const Analytics: React.FC<AnalyticsProps> = ({ logs }) => {
   const analyticsData = useMemo(() => {
@@ -20,9 +26,9 @@ const Analytics: React.FC<AnalyticsProps> = ({ logs }) => {
     const totalTime = totals.VA + totals.NNVA + totals.NVA;
     
     const chartData = [
-      { name: 'Value Added (VA)', value: totals.VA, fill: 'hsl(var(--va-chart))' },
-      { name: 'Necessary Non-Value Added (NNVA)', value: totals.NNVA, fill: 'hsl(var(--nnva-chart))' },
-      { name: 'Non-Value Added (NVA)', value: totals.NVA, fill: 'hsl(var(--destructive-chart))' },
+      { name: 'Value Added (VA)', value: totals.VA, fill: 'var(--color-VA)' },
+      { name: 'Necessary Non-Value Added (NNVA)', value: totals.NNVA, fill: 'var(--color-NNVA)' },
+      { name: 'Non-Value Added (NVA)', value: totals.NVA, fill: 'var(--color-NVA)' },
     ].filter(d => d.value > 0);
 
     return {
@@ -33,12 +39,6 @@ const Analytics: React.FC<AnalyticsProps> = ({ logs }) => {
       totals,
     };
   }, [logs]);
-
-  const chartConfig = {
-    VA: { label: 'VA', color: 'hsl(120 50% 40%)' },
-    NNVA: { label: 'NNVA', color: 'hsl(38 100% 60%)' },
-    NVA: { label: 'NVA', color: 'hsl(0 62% 49%)' },
-  };
 
   return (
     <Card className="shadow-md">
@@ -101,19 +101,6 @@ const Analytics: React.FC<AnalyticsProps> = ({ logs }) => {
                 <span className="font-bold text-destructive">{analyticsData.nvaPercent.toFixed(1)}%</span>
             </div>
         </div>
-
-        <style jsx global>{`
-            :root {
-                --va-chart: 120 50% 40%;
-                --nnva-chart: 38 100% 60%;
-                --destructive-chart: 0 62% 49%;
-            }
-            .dark {
-                --va-chart: 120 50% 50%;
-                --nnva-chart: 38 100% 70%;
-                --destructive-chart: 0 63% 40%;
-            }
-        `}</style>
 
       </CardContent>
     </Card>

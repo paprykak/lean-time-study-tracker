@@ -53,12 +53,12 @@ export default {
           foreground: 'hsl(var(--destructive-foreground))',
         },
         va: {
-          DEFAULT: "hsl(120 50% 40%)",
+          DEFAULT: "hsl(120 50% 39%)",
           foreground: "hsl(0 0% 100%)",
         },
         nnva: {
-          DEFAULT: "hsl(38 100% 60%)",
-          foreground: "hsl(38 50% 10%)",
+          DEFAULT: "hsl(40 100% 60%)",
+          foreground: "hsl(40 50% 10%)",
         },
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',

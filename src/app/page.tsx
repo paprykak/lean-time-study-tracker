@@ -9,6 +9,7 @@ import DataTable from '@/components/lean-time-hub/DataTable';
 import Analytics from '@/components/lean-time-hub/Analytics';
 import { Card, CardContent } from '@/components/ui/card';
 import ExportButton from '@/components/lean-time-hub/ExportButton';
+import Footer from '@/components/lean-time-hub/Footer';
 
 export default function Home() {
   const [time, setTime] = useState(0);
@@ -57,9 +58,9 @@ export default function Home() {
   
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="flex flex-col min-h-screen bg-background text-foreground">
       <Header />
-      <main className="container mx-auto p-4 sm:p-6 lg:p-8">
+      <main className="container mx-auto p-4 sm:p-6 lg:p-8 flex-grow">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
           <div className="lg:col-span-3 flex flex-col gap-8">
             <Card className="shadow-md">
@@ -96,6 +97,7 @@ export default function Home() {
           </aside>
         </div>
       </main>
+      <Footer />
     </div>
   );
 }
