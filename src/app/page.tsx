@@ -42,6 +42,14 @@ export default function Home() {
     setLogs(prevLogs => prevLogs.filter(log => log.id !== id));
   }, []);
 
+  const handleUpdate = useCallback((id: number, description: string) => {
+    setLogs(prevLogs =>
+      prevLogs.map(log =>
+        log.id === id ? { ...log, description } : log
+      )
+    );
+  }, []);
+
   const handleClearAll = useCallback(() => {
     setLogs([]);
     handleReset();
@@ -74,7 +82,7 @@ export default function Home() {
               disabled={time === 0 && !isRunning}
             />
 
-            <DataTable logs={logs} onDelete={handleDelete} onClearAll={handleClearAll} />
+            <DataTable logs={logs} onDelete={handleDelete} onClearAll={handleClearAll} onUpdate={handleUpdate} />
 
              {logs.length > 0 && (
               <div className="flex justify-end">

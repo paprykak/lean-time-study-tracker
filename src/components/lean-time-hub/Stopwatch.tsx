@@ -6,7 +6,7 @@ import { Pause, Play, RotateCcw } from 'lucide-react';
 
 type StopwatchProps = {
   time: number;
-  setTime: (time: number) => void;
+  setTime: React.Dispatch<React.SetStateAction<number>>;
   isRunning: boolean;
   onStart: () => void;
   onPause: () => void;
@@ -16,7 +16,7 @@ type StopwatchProps = {
 const formatTime = (time: number) => {
   const minutes = Math.floor(time / 60000);
   const seconds = Math.floor((time % 60000) / 1000);
-  const milliseconds = time % 1000;
+  const milliseconds = Math.floor(time % 1000);
 
   return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}:${String(
     milliseconds
@@ -31,26 +31,23 @@ const Stopwatch: React.FC<StopwatchProps> = ({
   onPause,
   onReset,
 }) => {
-  const lastTimeRef = useRef<number>(0);
+  const rafRef = useRef(0);
+  const lastTimeRef = useRef(0);
 
   useEffect(() => {
-    let animationFrameId: number;
-
     if (isRunning) {
       lastTimeRef.current = performance.now();
-      const tick = (now: number) => {
+      rafRef.current = requestAnimationFrame(function tick(now) {
         const delta = now - lastTimeRef.current;
         lastTimeRef.current = now;
-        setTime(time + delta);
-        animationFrameId = requestAnimationFrame(tick);
-      };
-      animationFrameId = requestAnimationFrame(tick);
+        setTime(prevTime => prevTime + delta);
+        rafRef.current = requestAnimationFrame(tick);
+      });
     }
-
     return () => {
-      cancelAnimationFrame(animationFrameId);
+      cancelAnimationFrame(rafRef.current);
     };
-  }, [isRunning, time, setTime]);
+  }, [isRunning, setTime]);
 
   return (
     <div className="flex flex-col items-center justify-center gap-6">

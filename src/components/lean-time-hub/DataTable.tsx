@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Trash2 } from 'lucide-react';
+import { Trash2, Edit, Save, X } from 'lucide-react';
 import type { Log, Category } from './types';
 import {
   AlertDialog,
@@ -23,12 +23,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
+} from "@/components/ui/alert-dialog";
+import { Input } from '@/components/ui/input';
 
 interface DataTableProps {
   logs: Log[];
   onDelete: (id: number) => void;
   onClearAll: () => void;
+  onUpdate: (id: number, description: string) => void;
 }
 
 const getBadgeVariant = (category: Category) => {
@@ -44,7 +46,27 @@ const getBadgeVariant = (category: Category) => {
   }
 };
 
-const DataTable: React.FC<DataTableProps> = ({ logs, onDelete, onClearAll }) => {
+const DataTable: React.FC<DataTableProps> = ({ logs, onDelete, onClearAll, onUpdate }) => {
+  const [editingId, setEditingId] = React.useState<number | null>(null);
+  const [editingText, setEditingText] = React.useState('');
+
+  const handleEditClick = (log: Log) => {
+    setEditingId(log.id);
+    setEditingText(log.description);
+  };
+
+  const handleCancelClick = () => {
+    setEditingId(null);
+    setEditingText('');
+  };
+
+  const handleSaveClick = () => {
+    if (editingId !== null) {
+      onUpdate(editingId, editingText);
+      handleCancelClick();
+    }
+  };
+
   if (logs.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center text-center p-10 bg-card rounded-lg border border-dashed">
@@ -86,30 +108,62 @@ const DataTable: React.FC<DataTableProps> = ({ logs, onDelete, onClearAll }) => 
               <TableHead>Category</TableHead>
               <TableHead className="text-right">Duration (s)</TableHead>
               <TableHead>Description</TableHead>
-              <TableHead className="w-[50px] text-right">Actions</TableHead>
+              <TableHead className="w-auto text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {logs.map(log => (
-              <TableRow key={log.id}>
-                <TableCell className="font-medium">{String(log.id).padStart(3, '0')}</TableCell>
-                <TableCell>
-                  <Badge className={getBadgeVariant(log.category)}>{log.category}</Badge>
-                </TableCell>
-                <TableCell className="text-right font-mono">
-                  {(log.duration / 1000).toFixed(2)}
-                </TableCell>
-                <TableCell className="max-w-[200px] truncate text-muted-foreground">
-                  {log.description || '-'}
-                </TableCell>
-                <TableCell className="text-right">
-                  <Button variant="ghost" size="icon" onClick={() => onDelete(log.id)}>
-                    <Trash2 className="h-4 w-4 text-muted-foreground" />
-                    <span className="sr-only">Delete log</span>
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
+            {logs.map(log => {
+              const isEditing = editingId === log.id;
+              return (
+                <TableRow key={log.id}>
+                  <TableCell className="font-medium">{String(log.id).padStart(3, '0')}</TableCell>
+                  <TableCell>
+                    <Badge className={getBadgeVariant(log.category)}>{log.category}</Badge>
+                  </TableCell>
+                  <TableCell className="text-right font-mono">
+                    {(log.duration / 1000).toFixed(2)}
+                  </TableCell>
+                  <TableCell className="max-w-[200px]">
+                    {isEditing ? (
+                      <Input 
+                        value={editingText}
+                        onChange={e => setEditingText(e.target.value)}
+                        onKeyDown={e => {
+                          if (e.key === 'Enter') handleSaveClick();
+                          if (e.key === 'Escape') handleCancelClick();
+                        }}
+                        autoFocus
+                      />
+                    ) : (
+                      <span className="text-muted-foreground truncate">{log.description || '-'}</span>
+                    )}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    {isEditing ? (
+                      <div className="flex items-center justify-end gap-2">
+                        <Button variant="ghost" size="icon" onClick={handleSaveClick}>
+                          <Save className="h-4 w-4 text-primary" />
+                        </Button>
+                        <Button variant="ghost" size="icon" onClick={handleCancelClick}>
+                          <X className="h-4 w-4 text-muted-foreground" />
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-end gap-2">
+                        <Button variant="ghost" size="icon" onClick={() => handleEditClick(log)}>
+                          <Edit className="h-4 w-4 text-muted-foreground" />
+                          <span className="sr-only">Edit log</span>
+                        </Button>
+                        <Button variant="ghost" size="icon" onClick={() => onDelete(log.id)}>
+                          <Trash2 className="h-4 w-4 text-muted-foreground" />
+                          <span className="sr-only">Delete log</span>
+                        </Button>
+                      </div>
+                    )}
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </div>
