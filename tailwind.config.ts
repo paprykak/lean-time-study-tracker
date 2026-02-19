@@ -8,6 +8,13 @@ export default {
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
+    container: {
+      center: true,
+      padding: "2rem",
+      screens: {
+        "2xl": "1400px",
+      },
+    },
     extend: {
       fontFamily: {
         body: ['Inter', 'sans-serif'],
@@ -44,6 +51,14 @@ export default {
         destructive: {
           DEFAULT: 'hsl(var(--destructive))',
           foreground: 'hsl(var(--destructive-foreground))',
+        },
+        va: {
+          DEFAULT: "hsl(120 50% 40%)",
+          foreground: "hsl(0 0% 100%)",
+        },
+        nnva: {
+          DEFAULT: "hsl(38 100% 60%)",
+          foreground: "hsl(38 50% 10%)",
         },
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
