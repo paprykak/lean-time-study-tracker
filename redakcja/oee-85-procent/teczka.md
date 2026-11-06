@@ -20,14 +20,14 @@ Powód wyboru 1: teza sporna i sprawdzalna w źródłach, największa wartość 
 1. Teza: 2. Nowość: 3. Dlaczego teraz i co czytelnik zrobi w tym tygodniu: 4. Autorytet: 5. Dowody za i przeciw:
 
 ## 3. Plan tekstu (pisanie.md, część 1)
-- Obietnica (co czytelnik będzie wiedział albo umiał po lekturze):
-- Trzy rzeczy do zabrania: wgląd / narzędzie / kryterium decyzji:
-- Zdanie do zapamiętania (do 15 słów):
-- Czego czytelnik nie wie (pojęcia i kroki do wyjaśnienia):
-- Otwarcie (rodzaj i szkic):
-- Sztafeta pytań (pytanie → sekcja, która na nie odpowiada):
-- Zakończenie (klamra z otwarciem albo pierwszy krok):
-- Test przekazania (zdanie, z którym czytelnik prześle tekst koledze):
+- Obietnica: po lekturze kierownik wie, skąd się wzięło 85% i dlaczego to nie norma, spisze kartę definicji OEE dla swojej maszyny i przestanie porównywać wynik z liczbą z internetu albo z innym zakładem liczącym inaczej.
+- Trzy rzeczy do zabrania: **wgląd** — 85% to cel z książki o TPM, a wynik OEE zależy od definicji (czas planowany, cykl idealny) tak samo jak od maszyny; **narzędzie** — karta definicji OEE (decyzje do spisania przed pierwszym pomiarem) i rachunek strat w minutach; **kryterium decyzji** — porównuj tę samą maszynę w czasie przy stałej definicji, a między zakładami tylko przy identycznej definicji.
+- Zdanie do zapamiętania: „OEE mówi, ile tracisz, a nie jak wypadasz na tle świata.”
+- Czego czytelnik nie wie: kto i kiedy podał 85% i jako co; że składowe 90/95/99 to cele; że cykl idealny i czas planowany to decyzje, nie fakty; że istnieje norma ISO 22400-2 z definicją; co mówią badania o zmierzonym OEE.
+- Otwarcie (paradoks, ilustracja na danych fikcyjnych): trzy osoby liczą OEE tej samej zmiany i dostają 56%, 68% i 91% — każda poprawnie (dane z `dane/wynik.json`).
+- Sztafeta pytań: skąd 85%? → ile mają zakłady naprawdę? → dlaczego wyniki tak się różnią (definicje)? → czy OEE w ogóle ma sens? (tak: trend i straty w minutach) → co zrobić w poniedziałek (karta definicji) → kiedy porównanie z innymi ma sens (granice).
+- Zakończenie: klamra z trzema arkuszami: wybierz jedną definicję, zapisz ją i licz tak samo co tydzień; pierwszy krok: karta definicji dla jednej maszyny.
+- Test przekazania: „Zanim powiesz zarządowi, że mamy 60% i do światowej klasy brakuje 25 punktów, przeczytaj to.”
 
 ## 4. Źródła
 | Nr | Opis | Rodzaj | Siła (A–D) | Adres | Dostęp | Co wspiera | Ograniczenia (próba, plan, kontekst) |
