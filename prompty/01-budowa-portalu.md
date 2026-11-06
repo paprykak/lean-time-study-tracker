@@ -299,3 +299,4 @@ Mapa strony dla Google News dopiero wtedy, gdy portal publikuje regularnie (decy
 - 2026-11-06 — Pagefind nie ma polskiej odmiany i dopasowuje krótkie słowa jako rdzenie, więc wyniki wyszukiwania filtrujemy po wspólnym początku słowa; bez tego „politechnika” znajdowała wszystkie teksty ze słowem „po”.
 
 - 2026-11-06 — Patryk nie chce oznaczeń użycia AI przy tekstach i oczekuje maksimum przyjemności z czytania i wartości dla czytelnika, więc skill `/artykul` ma rzemiosło pisania, redaktora językowego i czytelnika testowego, a zwolnienie z oznaczania (art. 50 ust. 4 AI Act) opiera się na tym, że Patryk jako redaktor naczelny czyta i zatwierdza każdy tekst przed publikacją.
+- 2026-11-06 — Na zrzucie z telefonu jednoliterowe „w” i „i” zostawały na końcu wiersza, a „e-commerce” łamało się na dywizie, więc serwis ma polską typografię w treści i w tytułach (`src/lib/typografia.mjs`); zrzuty z telefonu oglądamy także pod kątem składu, nie tylko układu.

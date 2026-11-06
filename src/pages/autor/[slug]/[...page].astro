@@ -1,6 +1,7 @@
 ---
 // Autor: /autor/<slug>. Bio, kompetencje i profile (doświadczenie i wiarygodność autora), lista tekstów.
 // Dane strukturalne ProfilePage z osobą (dla podpisu „Redakcja”: organizacja Rytm Hali). Noindex bez tekstów.
+import Tekst from '../../../components/Tekst.astro';
 import type { GetStaticPaths, Page } from 'astro';
 import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
@@ -56,9 +57,9 @@ const inne = a.sameAs.filter((u) => u !== linkedin);
 >
   {page.currentPage === 1 && (
     <div slot="naglowek" class="mt-5 grid max-w-3xl gap-5 sm:grid-cols-[auto_1fr]">
-      {a.zdjecie && <Image src={a.zdjecie} alt={`${a.imie}, zdjęcie`} width={120} height={120} class="size-[120px] rounded-[var(--radius-karta)] object-cover" />}
+      {a.zdjecie && <Image src={a.zdjecie} alt={`${a.imie}, zdjęcie`} width={120} height={120} densities={[1, 2, 3]} class="size-[120px] rounded-[var(--radius-karta)] object-cover" />}
       <div>
-        <p class="text-[1.0625rem] leading-relaxed">{a.bio}</p>
+        <p class="text-[1.0625rem] leading-relaxed"><Tekst t={a.bio} /></p>
         {a.kompetencje.length > 0 && (
           <ul class="mt-3 flex flex-wrap gap-2" aria-label="Kompetencje">
             {a.kompetencje.map((k) => <li class="border border-linia px-2 py-1 text-[0.875rem]">{k}</li>)}

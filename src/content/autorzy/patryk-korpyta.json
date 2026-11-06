@@ -1,8 +1,21 @@
 {
   "imie": "Patryk Korpyta",
   "rola": "Założyciel i redaktor naczelny",
-  "bio": "Założyciel i redaktor naczelny Rytmu Hali. Pisze o produkcji, magazynach, lean i danych w operacjach. [Projekt opisu do uzupełnienia przez Patryka w panelu: doświadczenie i kompetencje.]",
-  "kompetencje": [],
+  "bio": "Od 2017 roku pracuje w logistyce, produkcji i e-commerce. W Amazonie szkolił instruktorów i trenerów stanowiskowych i brał udział w uruchomieniu centrum logistycznego w Szczecinie. W IKEA Industry rozwijał system produkcyjny fabryki, w Gusti Leder kierował polskim oddziałem e-commerce z 50-osobowym zespołem, a w Faraone Poland prowadził transformację operacyjną firmy produkcyjnej. Ukończył MBA Leadership & Business Excellence i studia podyplomowe Lean Six Sigma.",
+  "kompetencje": [
+    "Lean i kaizen",
+    "VSM",
+    "SMED",
+    "TPM",
+    "5S",
+    "Standaryzacja pracy (TWI)",
+    "Matryca kompetencji",
+    "Magazyn i logistyka e-commerce",
+    "Wdrożenia ERP",
+    "Zarządzanie zmianą",
+    "Dane i AI w operacjach"
+  ],
+  "zdjecie": "/src/assets/autorzy/patryk-korpyta.jpg",
   "sameAs": ["https://www.linkedin.com/in/patrykkorpyta"],
   "email": "redakcja@rytmhali.pl"
 }

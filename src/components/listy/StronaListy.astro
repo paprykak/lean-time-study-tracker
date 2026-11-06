@@ -10,6 +10,7 @@ import Newsletter from '../Newsletter.astro';
 import KartaGlowna from '../karty/KartaGlowna.astro';
 import KartaBoczna from '../karty/KartaBoczna.astro';
 import KartaSiatka from '../karty/KartaSiatka.astro';
+import Tekst from '../Tekst.astro';
 import type { ArtykulKarta } from '../../lib/typy';
 
 interface Props {
@@ -43,8 +44,8 @@ const [wiodacy, ...reszta] = artykuly;
     <Okruszki class="mt-4" pozycje={okruszki} />
     <header class="mt-4 border-b-2 border-grafit pb-6">
       <p class="kategoria">{rodzaj}</p>
-      <h1 class="tytul-xl mt-2">{tytul}{biezaca > 1 && <span class="text-tekst-drugi">, strona {biezaca}</span>}</h1>
-      {wstep && biezaca === 1 && <p class="lead mt-3 max-w-3xl">{wstep}</p>}
+      <h1 class="tytul-xl mt-2"><Tekst t={tytul} />{biezaca > 1 && <span class="text-tekst-drugi">, strona {biezaca}</span>}</h1>
+      {wstep && biezaca === 1 && <p class="lead mt-3 max-w-3xl"><Tekst t={wstep} /></p>}
       <slot name="naglowek" />
     </header>
 

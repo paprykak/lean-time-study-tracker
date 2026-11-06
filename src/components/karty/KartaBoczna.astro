@@ -2,6 +2,7 @@
 // Karta boczna: miniatura po lewej, tytuł po prawej. Kolumna obok karty głównej i listy „Więcej”.
 import Zdjecie from '../Zdjecie.astro';
 import Etykieta from './Etykieta.astro';
+import Tekst from '../Tekst.astro';
 import type { ArtykulKarta } from '../../lib/typy';
 import { czasCzytaniaTekst, dataDluga, datetime } from '../../lib/daty';
 
@@ -18,7 +19,7 @@ const Tytul = poziom;
   <div>
     <Etykieta artykul={artykul} />
     <Tytul class="tytul-s mt-1">
-      <a href={artykul.adres} class="karta-link karta-tytul">{artykul.tytul}</a>
+      <a href={artykul.adres} class="karta-link karta-tytul"><Tekst t={artykul.tytul} /></a>
     </Tytul>
     <p class="meta mt-1">{artykul.czasCzytania ? czasCzytaniaTekst(artykul.czasCzytania) : <time datetime={datetime(artykul.data)}>{dataDluga(artykul.data)}</time>}</p>
   </div>

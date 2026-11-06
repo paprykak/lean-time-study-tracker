@@ -86,3 +86,28 @@ describe('rysunki', () => {
     expect(await html('![Wykres](./x.png)')).not.toContain('<figure');
   });
 });
+
+describe('typografia w treści', () => {
+  it('twarde spacje, krótkie człony z dywizem i przypisy działają razem', async () => {
+    const wynik = await html('Zespół w Szczecinie skrócił czas o 12 500 min [1], a e-commerce rośnie.');
+    expect(wynik).toContain('w Szczecinie');
+    expect(wynik).toContain('12 500 min');
+    expect(wynik).toContain('<sup class="przypis">[<a href="#zrodlo-1" aria-label="Źródło 1">1</a>]</sup>');
+    expect(wynik).toContain('a <span class="nierozdzielnie">e-commerce</span>');
+  });
+
+  it('jednoliterowe słowo przed linkiem wiąże się z linkiem; kod bez zmian', async () => {
+    const wynik = await html('Szkolenie i [standard pracy](/temat/standard-pracy) oraz `a b` i\n\n```\nw kodzie\n```');
+    expect(wynik).toContain('i <a href="/temat/standard-pracy">');
+    expect(wynik).toContain('<code>a b</code>');
+    expect(wynik).toContain('w kodzie');
+  });
+});
+
+describe('typografia a kotwice śródtytułów', () => {
+  it('śródtytuł zachowuje kotwicę ze zwykłymi spacjami („fakty-i-źródła”)', async () => {
+    const wynik = await html('## Fakty i źródła\n\nTekst w akapicie.');
+    expect(wynik).toContain('<h2 id="fakty-i-źródła">Fakty i źródła</h2>');
+    expect(wynik).toContain('w akapicie');
+  });
+});

@@ -1,4 +1,5 @@
 ---
+import Tekst from '../Tekst.astro';
 // Pytania i odpowiedzi pod artykułem (details: działa bez JavaScriptu, klawiaturą i czytnikiem ekranu)
 // oraz dane strukturalne FAQPage z tymi samymi pytaniami, które widać na stronie.
 interface Props {
@@ -18,8 +19,8 @@ const jsonLd = {
   <div class="faq-lista">
     {pytania.map((p) => (
       <details>
-        <summary>{p.pytanie}</summary>
-        <p>{p.odpowiedz}</p>
+        <summary><Tekst t={p.pytanie} /></summary>
+        <p><Tekst t={p.odpowiedz} /></p>
       </details>
     ))}
   </div>

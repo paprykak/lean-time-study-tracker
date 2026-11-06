@@ -14,6 +14,7 @@ import { odmiana, widoczny } from '../../lib/redakcja';
 import { artykuly, karta } from '../../lib/tresci';
 import { ADRES, PODGLAD, TESTOWE, WSZYSTKIE_TRESCI } from '../../lib/srodowisko.mjs';
 import { dataDluga, datetime } from '../../lib/daty';
+import Tekst from '../../components/Tekst.astro';
 
 export async function getStaticPaths() {
   const materialy = await getCollection('materialy', ({ data }) => widoczny(data, WSZYSTKIE_TRESCI));
@@ -53,8 +54,8 @@ const jsonLd = [
       <article class="min-w-0 lg:col-span-8" data-pagefind-body>
         <span hidden data-pagefind-ignore data-pagefind-meta="rodzaj">Do pobrania</span>
         <p class="kategoria" data-pagefind-ignore><a href={dz.adres} class="najazd:underline">{dz.nazwa}</a> <span class="text-tekst-drugi">· Do pobrania</span></p>
-        <h1 class="tytul-xl mt-2">{m.tytul}</h1>
-        <p class="lead mt-3">{m.opis}</p>
+        <h1 class="tytul-xl mt-2"><Tekst t={m.tytul} /></h1>
+        <p class="lead mt-3"><Tekst t={m.opis} /></p>
         <p class="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3 border-y border-linia py-4" data-pagefind-ignore>
           <a href={m.plik} download class="przycisk przycisk-glowny no-underline" data-umami-event="Pobranie" data-umami-event-material={material.id}><Ikona nazwa="pobierz" rozmiar={18} />Pobierz bezpłatnie</a>
           <span class="meta">{opisFormatu} · aktualizacja <time datetime={datetime(m.zaktualizowano ?? m.opublikowano)}>{dataDluga(m.zaktualizowano ?? m.opublikowano)}</time></span>

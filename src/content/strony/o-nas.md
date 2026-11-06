@@ -13,7 +13,7 @@ Artykuły, nie wiadomości: poradniki, analizy, raporty na danych publicznych, w
 
 ## Redakcja
 
-Redaktorem naczelnym jest Patryk Korpyta. Odpowiada za dobór tematów, zasady redakcyjne i każdą publikację. [DO UZUPEŁNIENIA: krótko o doświadczeniu w operacjach, bez nazw obecnego pracodawcy.]
+Redaktorem naczelnym jest Patryk Korpyta. Od 2017 roku pracuje w operacjach: w Amazonie szkolił instruktorów i trenerów stanowiskowych, w IKEA Industry rozwijał system produkcyjny fabryki, w Gusti Leder kierował polskim oddziałem e-commerce, a w Faraone Poland prowadził transformację operacyjną firmy produkcyjnej. Odpowiada za dobór tematów, zasady redakcyjne i każdą publikację. Więcej na [stronie autora](/autor/patryk-korpyta).
 
 Teksty podpisane „Redakcja Rytmu Hali” przygotowuje redakcja według [zasad redakcyjnych](/zasady-redakcyjne). Każdy z nich przed publikacją czyta i zatwierdza redaktor naczelny.
 

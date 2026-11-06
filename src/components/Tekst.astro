@@ -1,0 +1,11 @@
+---
+// Tekst widoczny na stronie z polską typografią (src/lib/typografia.mjs): jednoliterowe słowa, liczby z jednostkami
+// i skróty nie zostają na końcu wiersza, a krótkie człony z dywizem („e-commerce”) się nie łamią. Tekst jest kodowany.
+import { typografiaHtml } from '../lib/typografia.mjs';
+
+interface Props {
+  t: string;
+}
+const { t } = Astro.props;
+---
+<Fragment set:html={typografiaHtml(t)} />

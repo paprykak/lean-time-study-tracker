@@ -3,6 +3,7 @@
 import Zdjecie from '../Zdjecie.astro';
 import Etykieta from './Etykieta.astro';
 import Meta from './Meta.astro';
+import Tekst from '../Tekst.astro';
 import type { ArtykulKarta } from '../../lib/typy';
 
 interface Props {
@@ -23,9 +24,9 @@ const Tytul = poziom;
   <div class="mt-3">
     <Etykieta artykul={artykul} />
     <Tytul class="tytul-m mt-1">
-      <a href={artykul.adres} class="karta-link karta-tytul">{artykul.tytul}</a>
+      <a href={artykul.adres} class="karta-link karta-tytul"><Tekst t={artykul.tytul} /></a>
     </Tytul>
-    {zLeadem && artykul.lead && <p class="mt-2 text-[0.9375rem] leading-relaxed">{artykul.lead}</p>}
+    {zLeadem && artykul.lead && <p class="mt-2 text-[0.9375rem] leading-relaxed"><Tekst t={artykul.lead} /></p>}
     <Meta data={artykul.data} bezDaty autor={artykul.autor} czasCzytania={artykul.czasCzytania} class="mt-2" />
   </div>
 </article>

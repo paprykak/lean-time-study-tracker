@@ -1,6 +1,7 @@
 ---
 // Poprawki pod artykułem (polityka korekt): błąd rzeczowy albo zmiana wniosku z datą. Ślad po błędzie zostaje.
 import { dataDluga, datetime } from '../../lib/daty';
+import Tekst from '../Tekst.astro';
 interface Props {
   poprawki: { data: Date; opis: string }[];
 }
@@ -12,7 +13,7 @@ const posortowane = [...poprawki].sort((a, b) => b.data.valueOf() - a.data.value
     <h2 id="poprawki" class="poprawki-tytul">Poprawki</h2>
     <ul>
       {posortowane.map((p) => (
-        <li><time datetime={datetime(p.data)} class="font-semibold text-tekst">{dataDluga(p.data)}</time>: {p.opis}</li>
+        <li><time datetime={datetime(p.data)} class="font-semibold text-tekst">{dataDluga(p.data)}</time>: <Tekst t={p.opis} /></li>
       ))}
     </ul>
     <p class="mt-2 text-[0.875rem]"><a href="/polityka-korekt" class="font-semibold text-akcent-tekst underline underline-offset-2">Jak poprawiamy błędy</a></p>

@@ -145,6 +145,11 @@
 }
 
 @layer components {
+  /* Krótki człon z dywizem („e-commerce”, „50-osobowy”) nie łamie się na dywizie (src/lib/typografia.mjs). */
+  .nierozdzielnie {
+    white-space: nowrap;
+  }
+
   .kontener {
     @apply mx-auto w-full px-4 sm:px-6 lg:px-8;
     /* 1240 px treści + rynny po bokach */

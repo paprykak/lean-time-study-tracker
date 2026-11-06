@@ -1,6 +1,7 @@
 ---
 // „Najczęściej czytane”: lista numerowana 1–5. Dane z Umami albo ustawione ręcznie (F3).
 import NaglowekSekcji from './NaglowekSekcji.astro';
+import Tekst from './Tekst.astro';
 interface Props {
   artykuly: { tytul: string; adres: string }[];
   tytul?: string;
@@ -16,7 +17,7 @@ const id = 'najczesciej-czytane';
       {artykuly.slice(0, 5).map((a, i) => (
         <li class="karta grid grid-cols-[2.25rem_1fr] items-start gap-2 border-b border-linia py-3 last:border-b-0">
           <span class="font-display text-[1.75rem] leading-none font-bold text-akcent tabular-nums" aria-hidden="true">{i + 1}</span>
-          <a href={a.adres} class="karta-link karta-tytul font-display text-[1rem] leading-snug font-bold text-tekst">{a.tytul}</a>
+          <a href={a.adres} class="karta-link karta-tytul font-display text-[1rem] leading-snug font-bold text-tekst"><Tekst t={a.tytul} /></a>
         </li>
       ))}
     </ol>

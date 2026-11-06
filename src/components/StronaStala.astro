@@ -6,6 +6,7 @@ import Uklad from '../layouts/Uklad.astro';
 import Okruszki from './Okruszki.astro';
 import { dataDluga, datetime } from '../lib/daty';
 import { ADRES } from '../lib/srodowisko.mjs';
+import Tekst from './Tekst.astro';
 
 interface Props {
   slug: string;
@@ -30,7 +31,7 @@ const jsonLd = [{ '@type': 'WebPage', '@id': `${ADRES}/${slug}#strona`, name: d.
             <strong>Projekt tekstu</strong> do akceptacji redaktora naczelnego. Nie jest jeszcze obowiązujący; miejsca w nawiasach kwadratowych czekają na uzupełnienie.
           </p>
         )}
-        <h1 class="tytul-xl mt-2">{d.tytul}</h1>
+        <h1 class="tytul-xl mt-2"><Tekst t={d.tytul} /></h1>
         <p class="meta mt-3">Aktualizacja: <time datetime={datetime(d.zaktualizowano)}>{dataDluga(d.zaktualizowano)}</time></p>
         <div class="tresc mt-8"><Content /></div>
         <slot />
