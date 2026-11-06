@@ -13,7 +13,7 @@ const PARY: [tekst: string, tlo: string, prog: number, gdzie: string][] = [
   ['tekst-tresc', 'tlo', 4.5, 'treść artykułu'],
   ['tekst-tresc', 'tlo-szare', 4.5, 'treść w szarych ramkach'],
   ['tekst-drugi', 'tlo', 4.5, 'metadane, podpisy zdjęć'],
-  ['tekst-drugi', 'tlo-szare', 4.5, 'metadane w pasku „Na zmianie”'],
+  ['tekst-drugi', 'tlo-szare', 4.5, 'tekst drugorzędny na szarym tle (pasek tematów, ramki)'],
   ['akcent-tekst', 'tlo', 4.5, 'kategoria, linki'],
   ['akcent-tekst', 'tlo-szare', 4.5, 'kategoria w szarych ramkach'],
   ['akcent-ciemny', 'tlo', 4.5, 'linki po najechaniu'],

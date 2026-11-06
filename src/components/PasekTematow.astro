@@ -3,11 +3,12 @@
 // eksperckich. Zastąpił pasek „Na zmianie” z godzinami (Rytm Hali publikuje artykuły, nie wiadomości).
 // Na telefonie przewija się w bok kciukiem. Tematy ustawia redakcja w panelu (ustawienia serwisu).
 import ustawienia from '../data/ustawienia.json';
+import { temat } from '../lib/dane';
 interface Props {
   aktywny?: string;
 }
 const { aktywny } = Astro.props;
-const tematy = ustawienia.tematyWyroznione;
+const tematy = ustawienia.tematyWyroznione.map(temat);
 ---
 {tematy.length > 0 && (
   <nav class="pasek-tematow border-b border-linia bg-tlo-szare" aria-label="Tematy">
@@ -18,7 +19,7 @@ const tematy = ustawienia.tematyWyroznione;
       <ul class="pasek-tematow-lista">
         {tematy.map((t) => (
           <li>
-            <a href={`/temat/${t.slug}`} aria-current={aktywny === t.slug ? 'page' : undefined} class="pasek-tematow-link">{t.nazwa}</a>
+            <a href={t.adres} aria-current={aktywny === t.slug ? 'page' : undefined} class="pasek-tematow-link">{t.nazwa}</a>
           </li>
         ))}
       </ul>

@@ -45,3 +45,16 @@ describe('tryb budowania', () => {
     expect(trybBudowania({ GITHUB_REF_NAME: 'f1-system-wizualny' })).toBe('produkcja');
   });
 });
+
+describe('panel /admin', () => {
+  it('ma własną CSP: skrypt tylko z unpkg.com, połączenia tylko z GitHubem, bez eval', async () => {
+    const { CSP_PANELU } = await import('./naglowki.mjs');
+    const dyrektywa = (nazwa: string) => CSP_PANELU.split('; ').find((d) => d.startsWith(`${nazwa} `));
+    expect(dyrektywa('default-src')).toBe("default-src 'none'");
+    expect(dyrektywa('script-src')).toBe("script-src 'self' https://unpkg.com 'wasm-unsafe-eval'");
+    expect(CSP_PANELU).not.toMatch(/'unsafe-eval'|script-src[^;]*'unsafe-inline'/);
+    expect(dyrektywa('connect-src')).toContain('https://api.github.com');
+    expect(dyrektywa('frame-ancestors')).toBe("frame-ancestors 'none'");
+    expect(plikNaglowkow({ podglad: false })).toContain(`  Content-Security-Policy: ${CSP_PANELU}`);
+  });
+});

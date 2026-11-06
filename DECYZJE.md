@@ -33,7 +33,7 @@ Każda decyzja z datą i uzasadnieniem. Decyzje „Patryk” czekają na jego s�
 - **Stack jak w patrykkorpyta.pl:** Astro 7.4, Tailwind 4 (tokeny w `@theme`), TypeScript strict, Vitest, Playwright, axe, Lighthouse CI. Przeniesione i dostosowane: `seo-check`, układ `<head>`, udostępnianie bez skryptów, okruszki, konfiguracje testów.
 - **CSP w dwóch warstwach:** `<meta>` z Astro (`security.csp`) z hashem każdego skryptu i stylu (bez `unsafe-inline` i `unsafe-eval`) oraz nagłówek z dyrektywami, których nie wolno dać w `<meta>` (`frame-ancestors`). Konsekwencja: bez atrybutów `style=""` (kontrola SEO to sprawdza).
 - **Tryb budowania:** gałąź `main` w Cloudflare oraz build lokalny i w GitHub Actions = produkcja; każda inna gałąź w Cloudflare = podgląd z `noindex` w `<meta>` i `X-Robots-Tag` (`src/lib/srodowisko.mjs`). Nagłówki generowane przy buildzie (`dist/_headers`).
-- **Cloudflare:** na razie Worker tylko z plikami statycznymi (`wrangler.jsonc`); kod workera (formularze, 410, logowanie do panelu) dochodzi w F2, F6 i F8. Produkcja tylko pod `rytmhali.pl` (`workers_dev: false`), podglądy wersji włączone.
+- **Cloudflare:** Worker z plikami statycznymi (`wrangler.jsonc`); kod workera tylko dla `/api/*` (od F2 logowanie do panelu, w F6 formularze, w F8 410). Produkcja tylko pod `rytmhali.pl` (`workers_dev: false`), podglądy wersji włączone.
 - **Lighthouse:** wszystkie strony ≥ 95 w wydajności, dostępności i dobrych praktykach oraz LCP < 2 s, CLS < 0,02, TBT < 200 ms. **SEO ≥ 95 tylko na stronach indeksowanych:** na 404 i `/styleguide` Lighthouse z definicji obniża SEO za noindex i status 404, a te strony mają być nieindeksowane. Odstępstwo od literalnego brzmienia poprzeczki dla strony 404 jest celowe.
 - **Markdown bez podświetlania składni** (`markdown.syntaxHighlight: false`): Shiki wstawia style w atrybutach, które blokuje CSP. Gdy kod w artykułach będzie potrzebny: Prism z klasami CSS.
 - **Budżet rozmiaru na każdej stronie** (nie tylko artykule): JS ≤ 30 KB, CSS ≤ 40 KB, fonty z preload ≤ 60 KB (gzip).
@@ -42,11 +42,11 @@ Każda decyzja z datą i uzasadnieniem. Decyzje „Patryk” czekają na jego s�
 - **Node:** `engines` ≥ 22.23.4 (wymóg Astro 7); `.nvmrc` = 24 jak na komputerze Patryka i w CI.
 
 ### Zdjęcia (2026-11-06)
-- **Dozwolone licencje: CC0, CC BY, Unsplash, Pexels** (Patryk: „jak darmowe, to dopuszczam”), zawsze z podpisem „Fot.” i wpisem w `marka/zdjecia/rejestr.json`. Przy CC BY podpis zaznacza zmiany („kadr”) i linkuje źródło (test rejestru to sprawdza). CC BY-SA odrzucone (obowiązek udostępniania na tej samej licencji nie pasuje do serwisu z treściami partnerów).
+- **Dozwolone licencje: CC0, CC BY, Unsplash, Pexels** (Patryk: „jak darmowe, to dopuszczam”), zawsze z podpisem „Fot.” i wpisem w rejestrze licencji (do F2 `marka/zdjecia/rejestr.json`, od F2 kolekcja `src/content/zdjecia/`). Przy CC BY podpis zaznacza zmiany („kadr”) i linkuje źródło (test rejestru to sprawdza). CC BY-SA odrzucone (obowiązek udostępniania na tej samej licencji nie pasuje do serwisu z treściami partnerów).
 - **Wybór redakcji: 10 zdjęć** (8 z Wikimedia Commons, 2 z rawpixel przez Openverse), po jednym zestawie na każdy dział. Odrzucone mimo poprawnej licencji: rozpoznawalne marki (Opel, Dyson, Toyota), anonimowi autorzy przy zdjęciach wyglądających na firmowe (ryzyko cudzego zdjęcia z przypisaną licencją), zdjęcia reklamowe producentów z twarzami. Lista z uzasadnieniem: `marka/zdjecia/kandydaci.md`.
 - **Rawpixel bez konta daje 1024 px:** te dwa zdjęcia tylko w kartach siatki i bocznych, nie w karcie głównej (zapisane w uwagach rejestru).
 - **Unsplash i Pexels: tylko przez ich API** (wyszukiwarki blokują automaty, nie obchodzimy zabezpieczeń). Klucz API to konto Patryka; do tego czasu źródła: Wikimedia Commons i Openverse.
-- **Pliki zdjęć w repozytorium** (`src/assets/zdjecia/`, JPEG do 2000 px, bez metadanych EXIF), przetwarzane przez `astro:assets` do AVIF i WebP w kilku szerokościach. Strona buduje się także bez części plików (pole zastępcze tylko na `/styleguide`).
+- **Pliki zdjęć w repozytorium** (`src/assets/zdjecia/`, JPEG do 2000 px, bez metadanych EXIF), przetwarzane przez `astro:assets` do AVIF i WebP w kilku szerokościach. ~~Strona buduje się także bez części plików~~ (zmienione w F2: wpis rejestru bez pliku zatrzymuje build).
 
 ### Podgląd szablonów (2026-11-06, na prośbę Patryka przed F3)
 - **Strona główna:** billboard (telefon 320 × 100) pod nagłówkiem; czołówka 8/12 (karta główna) + 4/12 (trzy karty boczne); „Najnowsze” w czterech kolumnach; dwa działy z kartą wiodącą i listą z datami obok kolumny bocznej („Najczęściej czytane” i prostokąt 300 × 250 przyklejony przy przewijaniu); pas newslettera; trzy gęste kolumny pozostałych działów. H1 strony głównej niewidoczny (nazwa medium dla czytników ekranu i wyszukiwarek).
@@ -63,3 +63,32 @@ Każda decyzja z datą i uzasadnieniem. Decyzje „Patryk” czekają na jego s�
   - na kartach **autor i czas czytania**; data publikacji i aktualizacji na stronie artykułu (teksty mają żyć latami, więc data nie jest najważniejszą informacją na liście);
   - listy w sekcjach działów bez nazwy działu (jest w nagłówku sekcji), z formatem.
 - W kolejnych fazach z tego kursu wynika też: dłuższe formy, autorzy z opisem kompetencji (E-E-A-T), strony tematów jako huby wiedzy, aktualizacje zamiast nowych wersji tekstu, mapa strony Google News dopiero przy regularnej publikacji wiadomości (na razie nieplanowana).
+
+## 2026-11-06 — F2: model treści i panel redakcyjny
+
+### Model treści
+- **Kolekcje Astro (`src/content.config.ts`, loader `glob`)**: artykuły i materiały w Markdownie, rejestr zdjęć, autorzy, działy, tematy, partnerzy i kampanie w JSON. Relacje przez nazwę pliku (`reference()`), więc zmiana nazwy działu czy tytułu zdjęcia nie psuje powiązań. Stałe wspólne dla schematów, panelu i testów w `src/lib/model.ts`.
+- **Adres artykułu `/<nazwa pliku>`** z listą zarezerwowanych nazw (trasy serwisu); test i build odrzucają kolizję. Panel tworzy nazwę z tytułu (ASCII, bez polskich znaków, do 70 znaków) i pozwala ją poprawić tylko przy tworzeniu: późniejsza zmiana adresu wymaga przekierowania, więc robi ją programista.
+- **Rejestr zdjęć przeniesiony do kolekcji `src/content/zdjecia/`** (był `marka/zdjecia/rejestr.json`): panel edytuje go jak każdą treść, a schemat pilnuje pól licencji (podpis „Fot. ”, licencja z listy, alt ≥ 20 znaków, zgoda). Plik zapisany ścieżką od katalogu projektu (`/src/assets/zdjecia/…`): Sveltia nie przyjmuje względnego `public_folder`, a Astro rozwiązuje taką ścieżkę w `image()` (sprawdzone buildem: optymalizacja działa, brak pliku zatrzymuje build).
+- **Szkice i wpisy testowe**: pola `szkic` i `testowy`. Produkcja (`main`) ich nie buduje; podgląd gałęzi buduje wszystko z `noindex`. Mapa strony pomija szkice, wpisy testowe i `noindex`, a `lastmod` bierze z daty aktualizacji albo publikacji.
+- **Dane strukturalne `Article`, nie `NewsArticle`** (magazyn, nie serwis wiadomości): autor jako `Person` ze stroną autora i profilami, wydawca `NewsMediaOrganization`, dział, format, tematy, liczba słów, czas czytania, `sponsor` przy materiale partnera. Autor „Redakcja” (pole `typ`) to organizacja, nie osoba.
+- **Okładka udostępnień 1200×630 przy buildzie** (`/okladki/<slug>.jpg`: satori + resvg + sharp, bez przeglądarki): zdjęcie z rejestru, przyciemnienie, logo, dział i format, tytuł dobrany rozmiarem do długości, pas dachu.
+- **Powiązania w obie strony**: „Czytaj także” bierze kolejno wskazane ręcznie, wskazujące ten tekst, ze wspólnymi tematami, z tego samego działu; „Więcej z działu” bez powtórzeń.
+- **Materiał partnera bez reklam** w treści i w kolumnie bocznej (czytelnik nie dostaje reklamy konkurenta w tekście sponsorowanym, partner płaci za uwagę), oznaczenie „Materiał partnera” albo „Reklama” zawsze widoczne, linki zewnętrzne `rel="sponsored noopener"`.
+
+### Markdown
+- **Silnik Sätteri (Astro 7)** z wtyczkami serwisu (`src/lib/markdown.mjs`): tabela w przewijanym kontenerze, miejsce reklamy po 3. akapicie najwyższego poziomu (akapit kończący się dwukropkiem zapowiada listę, więc reklama idzie po następnym; krótki tekst nie kończy się reklamą), `rel` linków zewnętrznych. Treść dzieli w tym miejscu `TrescArtykulu.astro` już po renderowaniu, więc zdjęcia i kotwice przetwarza Astro.
+- **Bez obrazów wstawianych w treść w panelu** (przycisk obrazu wyłączony): każde zdjęcie ma przejść przez rejestr licencji. Rysunki w treści z rejestru i podpisem dojdą w F3.
+
+### Panel redakcji (Sveltia CMS)
+- **Sveltia CMS 0.256.1 z unpkg.com, przypięty i z sumą SRI**: przeglądarka nie uruchomi podmienionego pliku. Wersja z 31 października (tydzień „w obiegu”), nie najnowsza z tego dnia. Aktualizacja świadoma: wersja w `package.json` i `index.html`, test podaje nową sumę i sprawdza konfigurację ze schematem nowej wersji. Wersja npm bez CDN odrzucona: Sveltia jej nie wspiera i odcina automatyczne poprawki bezpieczeństwa.
+- **Własna CSP dla `/admin/*`** według dokumentacji Sveltia (skrypt tylko z unpkg.com, połączenia tylko z GitHubem i unpkg.com, fonty panelu z jsDelivr). `'wasm-unsafe-eval'` tylko dla WebAssembly (konwersja zdjęć w Safari i zdjęć HEIC z telefonu), bez `eval()`. Panel nie dotyczy czytelników: zero skryptów zewnętrznych na stronach serwisu zostaje.
+- **Przepływ redakcyjny (`editorial_workflow`)**: każdy wpis to gałąź i pull request (szkic → do sprawdzenia → gotowe), podgląd gałęzi w Cloudflare z `noindex`, publikacja = scalenie z `main`. „Zapisz i opublikuj” zostawione na drobne poprawki.
+- **Role na przyszłość przez uprawnienia GitHuba**: autor dostaje rolę Write (zapisuje szkice i wysyła do przeglądu), a ochrona gałęzi `main` z wymaganym przeglądem sprawia, że publikuje redaktor (Maintain/Admin). Osobne ustawienia ról w panelu nie są potrzebne: GitHub odmówi scalenia osobie bez uprawnień, a panel pokaże błąd.
+- **Logowanie**: na start „Zaloguj się za pomocą tokenu dostępu” (token Patryka zostaje w jego przeglądarce, nikt inny go nie widzi). Docelowo „Zaloguj się przez GitHub” przez własny worker `/api/auth` (port protokołu Sveltia CMS Authenticator, licencja MIT) zamiast osobnej usługi: jedna domena, jedno wdrożenie. Zaostrzenia: token tylko do okna z tej samej domeny, ciasteczko `__Host-` z losowym stanem (CSRF), CSP z hashem skryptu, `no-store`, zakresy z listy dozwolonych.
+- **Zdjęcia w panelu**: konwersja do WebP do 2400 px, bez metadanych, nazwy plików bez polskich znaków; wyłączone biblioteki zdjęć stockowych panelu (omijałyby rejestr licencji); limit 15 MB.
+- **Zgodność panelu z modelem pilnuje test** (`src/lib/panel.test.ts`): konfiguracja zgodna ze schematem Sveltia, pola i wymagalność zgodne ze schematami Astro w obie strony, te same listy wyboru i długości, relacje do istniejących kolekcji, plik ustawień pokryty w całości. Test E2E uruchamia panel z prawdziwą konfiguracją i robi próbę zapisu wpisu w testowym repozytorium Sveltia.
+
+### Przed publicznym startem
+- Do bramki startu (F8) teksty czekają w gałęziach przepływu redakcyjnego (podgląd z `noindex`) albo mają `szkic: true`; na `main` trafia tylko to, co ma być publiczne.
+

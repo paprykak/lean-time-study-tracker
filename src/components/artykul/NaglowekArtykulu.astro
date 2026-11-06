@@ -1,6 +1,7 @@
 ---
 // Nagłówek artykułu w hierarchii redakcyjnej: kategoria i format, tytuł (H1), lead, metadane z udostępnianiem,
-// zdjęcie główne 16:9 z podpisem „Fot.”. Materiał partnera ma widoczne oznaczenie nad tytułem i pod metadanymi.
+// zdjęcie główne 16:9 z podpisem „Fot.”. Materiał partnera ma widoczne oznaczenie nad tytułem i pod metadanymi
+// („Materiał partnera” albo „Reklama”, zasady Google o treściach sponsorowanych).
 import Zdjecie from '../Zdjecie.astro';
 import Udostepnij from '../Udostepnij.astro';
 import type { Odnosnik, Zdjecie as TypZdjecia } from '../../lib/typy';
@@ -13,18 +14,20 @@ interface Props {
   format?: string;
   data: Date;
   aktualizacja?: Date;
-  autor: Odnosnik;
+  autorzy: Odnosnik[];
   czasCzytania: number;
   adresKanoniczny: string;
   zdjecie?: TypZdjecia;
+  /** Nazwa partnera (materiał sponsorowany). */
   partner?: string;
+  oznaczenie?: string;
 }
-const { tytul, lead, kategoria, format, data, aktualizacja, autor, czasCzytania, adresKanoniczny, zdjecie, partner } = Astro.props;
+const { tytul, lead, kategoria, format, data, aktualizacja, autorzy, czasCzytania, adresKanoniczny, zdjecie, partner, oznaczenie = 'Materiał partnera' } = Astro.props;
 ---
 <header class="naglowek-artykulu">
   <p class="flex flex-wrap items-center gap-x-2">
     {partner ? (
-      <span class="etykieta-partnera">Materiał partnera</span>
+      <span class="etykieta-partnera">{oznaczenie}</span>
     ) : (
       <a href={kategoria.adres} class="kategoria najazd:underline">{kategoria.nazwa}</a>
     )}
@@ -34,7 +37,11 @@ const { tytul, lead, kategoria, format, data, aktualizacja, autor, czasCzytania,
   <p class="lead mt-4">{lead}</p>
   <div class="mt-5 flex flex-wrap items-center justify-between gap-3 border-y border-linia py-2">
     <p class="meta flex flex-wrap items-center gap-x-2">
-      <a href={autor.adres} class="font-semibold text-tekst najazd:underline">{autor.nazwa}</a>
+      <span>
+        {autorzy.map((a, i) => (
+          <>{i > 0 && (i === autorzy.length - 1 ? ' i ' : ', ')}<a href={a.adres} class="font-semibold text-tekst najazd:underline">{a.nazwa}</a></>
+        ))}
+      </span>
       <span aria-hidden="true">·</span>
       <time datetime={datetime(data)}>{dataDluga(data)}</time>
       {aktualizacja && <><span aria-hidden="true">·</span><span>aktualizacja <time datetime={datetime(aktualizacja)}>{dataDluga(aktualizacja)}</time></span></>}

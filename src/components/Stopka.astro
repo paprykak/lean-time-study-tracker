@@ -2,6 +2,7 @@
 // Stopka serwisu: logo w wersji ciemnej, działy, strony zaufania, współpraca, dane wydawcy (stopka redakcyjna w F7).
 import Logo from './Logo.astro';
 import ustawienia from '../data/ustawienia.json';
+import { DZIALY } from '../lib/dane';
 
 interface Props {
   wariant?: 'pelna' | 'minimalna';
@@ -9,7 +10,7 @@ interface Props {
 const { wariant = 'pelna' } = Astro.props;
 const rok = new Date().getFullYear();
 const kolumny = [
-  { tytul: 'Działy', linki: ustawienia.dzialy.map((d) => ({ nazwa: d.nazwa, adres: `/dzial/${d.slug}` })) },
+  { tytul: 'Działy', linki: DZIALY.map((d) => ({ nazwa: d.nazwa, adres: d.adres })) },
   { tytul: 'Redakcja', linki: ustawienia.stopka.serwis },
   { tytul: 'Współpraca', linki: ustawienia.stopka.wspolpraca },
 ];

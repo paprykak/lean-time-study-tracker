@@ -2,11 +2,11 @@
 // i nie trafiają do kolekcji treści. Tytuły mają realną długość, żeby sprawdzić zawijanie i rytm siatki.
 import type { ArtykulKarta } from '../lib/typy';
 import { zdjecie } from '../lib/zdjecia';
-import ustawienia from './ustawienia.json';
+import { dzial as daneDzialu } from '../lib/dane';
 
 const dzial = (slug: string) => {
-  const d = ustawienia.dzialy.find((x) => x.slug === slug)!;
-  return { nazwa: d.nazwa, adres: `/dzial/${d.slug}` };
+  const d = daneDzialu(slug);
+  return { nazwa: d.nazwa, adres: d.adres };
 };
 const czas = (iso: string) => new Date(iso);
 

@@ -8,6 +8,26 @@
 
 export const CSP_NAGLOWEK = ["base-uri 'self'", "form-action 'self'", "frame-ancestors 'none'", "object-src 'none'", 'upgrade-insecure-requests'].join('; ');
 
+// Panel /admin (Sveltia CMS z unpkg.com, API GitHuba): własna polityka według dokumentacji Sveltia
+// (https://sveltiacms.app/en/docs/security). Przeglądarka egzekwuje ją razem z ogólną (obie muszą przepuścić zasób).
+// 'wasm-unsafe-eval' pozwala tylko na WebAssembly (konwersja zdjęć do WebP w Safari i zdjęć HEIC z telefonu),
+// nie na eval(). 'unsafe-inline' tylko w style-src: panel ustawia style elementów skryptem.
+export const CSP_PANELU = [
+  "default-src 'none'",
+  "script-src 'self' https://unpkg.com 'wasm-unsafe-eval'",
+  "style-src 'self' 'unsafe-inline'",
+  "font-src 'self' https://cdn.jsdelivr.net",
+  "img-src 'self' blob: data: https://*.githubusercontent.com",
+  "media-src 'self' blob:",
+  "frame-src blob:",
+  "connect-src 'self' blob: data: https://unpkg.com https://api.github.com https://www.githubstatus.com",
+  "manifest-src 'self' blob:",
+  "worker-src 'self' blob:",
+  "base-uri 'self'",
+  "form-action 'self'",
+  "frame-ancestors 'none'",
+].join('; ');
+
 export const NAGLOWKI_BEZPIECZENSTWA = {
   'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
   'Content-Security-Policy': CSP_NAGLOWEK,
@@ -35,7 +55,7 @@ export function plikNaglowkow({ podglad }) {
       blok('/marka/*', { 'Cache-Control': 'public, max-age=604800' }),
       blok('/styleguide', { 'X-Robots-Tag': 'noindex, nofollow', 'Cache-Control': 'no-cache' }),
       blok('/podglad/*', { 'X-Robots-Tag': 'noindex, nofollow', 'Cache-Control': 'no-cache' }),
-      blok('/admin/*', { 'X-Robots-Tag': 'noindex, nofollow', 'Cache-Control': 'no-cache' }),
+      blok('/admin/*', { 'X-Robots-Tag': 'noindex, nofollow', 'Cache-Control': 'no-cache', 'Content-Security-Policy': CSP_PANELU }),
     ].join('\n\n') + '\n'
   );
 }

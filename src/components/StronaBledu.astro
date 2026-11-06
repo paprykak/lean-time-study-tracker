@@ -1,7 +1,7 @@
 ---
 // Treść strony błędu: 404 (nie ma takiej strony) i 410 (artykuł usunięty na stałe). Szablon dla /404 i workera (410).
 import Ikona from './Ikona.astro';
-import ustawienia from '../data/ustawienia.json';
+import { DZIALY } from '../lib/dane';
 interface Props {
   kod: 404 | 410;
   /** Poziom tytułu: h1 na stronie błędu, niżej przy podglądzie na /styleguide. */
@@ -28,8 +28,8 @@ const tresc = {
     </form>
     <Podtytul class="mt-10 font-sans text-kategoria font-bold tracking-[0.08em] text-tekst-drugi uppercase">Działy</Podtytul>
     <ul class="mt-2 flex flex-wrap gap-2">
-      {ustawienia.dzialy.map((d) => (
-        <li><a href={`/dzial/${d.slug}`} class="przycisk przycisk-obrys">{d.nazwa}</a></li>
+      {DZIALY.map((d) => (
+        <li><a href={d.adres} class="przycisk przycisk-obrys">{d.nazwa}</a></li>
       ))}
     </ul>
     <p class="mt-8"><a href="/" class="link inline-flex min-h-11 items-center gap-1.5">Strona główna<Ikona nazwa="strzalka" rozmiar={18} /></a></p>

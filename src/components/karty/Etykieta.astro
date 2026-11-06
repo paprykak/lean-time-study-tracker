@@ -13,7 +13,7 @@ const dzial = !bezDzialu && artykul.kategoria;
 // Skład w linii (nie flex): link działu jest wtedy „w tekście” i spełnia wyjątek WCAG 2.5.8 dla rozmiaru celu.
 ---
 {artykul.partner ? (
-  <p class="karta-nad"><span class="etykieta-partner">Materiał partnera</span></p>
+  <p class="karta-nad"><span class="etykieta-partner">{artykul.oznaczenie ?? 'Materiał partnera'}</span></p>
 ) : dzial || artykul.format ? (
   <p class="karta-nad leading-4">
     {dzial && <a href={dzial.adres} class:list={['kategoria najazd:underline', { 'kategoria-na-ciemnym': naCiemnym }]}>{dzial.nazwa}</a>}

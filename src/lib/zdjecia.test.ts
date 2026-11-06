@@ -1,28 +1,34 @@
 import { describe, expect, it } from 'vitest';
-import { readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { LICENCJE } from './model';
 
-// Każde zdjęcie w serwisie ma wpis w rejestrze licencji, a wpis ma komplet pól (sekcja 6 promptu, decyzja z 2026-11-06).
-const rejestr = JSON.parse(readFileSync(new URL('../../marka/zdjecia/rejestr.json', import.meta.url), 'utf8'));
+// Każde zdjęcie w serwisie ma wpis w rejestrze licencji (kolekcja src/content/zdjecia), a wpis ma komplet pól.
+// Schemat kolekcji sprawdza to samo przy buildzie; ten test daje czytelny komunikat od razu w `vitest`.
+const KATALOG = new URL('../content/zdjecia/', import.meta.url);
+const wpisy = readdirSync(KATALOG)
+  .filter((f) => f.endsWith('.json'))
+  .map((f) => ({ slug: f.replace(/\.json$/, ''), ...JSON.parse(readFileSync(new URL(f, KATALOG), 'utf8')) }));
 const pliki = readdirSync(new URL('../assets/zdjecia/', import.meta.url)).filter((f) => !f.startsWith('.'));
-const LICENCJE = /^(CC0 1\.0|CC BY [234]\.0|Unsplash|Pexels)$/;
 
 describe('rejestr zdjęć', () => {
   it('każdy plik w src/assets/zdjecia ma wpis w rejestrze', () => {
-    const slugi = new Set(rejestr.zdjecia.map((z: { slug: string }) => z.slug));
-    expect(pliki.filter((f) => !slugi.has(f.replace(/\.jpg$/, '')))).toEqual([]);
-    for (const f of pliki) expect(f).toMatch(/^[a-z0-9-]+\.jpg$/);
+    const wRejestrze = new Set(wpisy.map((w) => w.plik.split('/').at(-1)));
+    expect(pliki.filter((f) => !wRejestrze.has(f))).toEqual([]);
   });
 
-  for (const z of rejestr.zdjecia) {
-    it(`${z.slug}: komplet pól, dozwolona licencja, podpis „Fot.”`, () => {
-      for (const pole of ['slug', 'dzial', 'zrodlo', 'pobierz', 'autor', 'licencja', 'licencjaUrl', 'fot', 'alt', 'zgoda']) expect(z[pole], pole).toBeTruthy();
-      expect(z.licencja).toMatch(LICENCJE);
+  for (const z of wpisy) {
+    it(`${z.slug}: komplet pól, dozwolona licencja, podpis „Fot.”, plik na miejscu`, () => {
+      for (const pole of ['plik', 'autor', 'licencja', 'fot', 'alt', 'zgoda']) expect(z[pole], pole).toBeTruthy();
+      expect(z.slug).toMatch(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
+      expect(LICENCJE).toContain(z.licencja);
       expect(z.fot).toMatch(/^Fot\. /);
       // CC BY wymaga zaznaczenia zmian; kadrujemy każde zdjęcie do 16:9, 16:10 i 1:1.
       if (z.licencja.startsWith('CC BY')) expect(z.fot).toContain('(kadr)');
-      expect(z.alt.length).toBeGreaterThan(20);
-      expect(z.zrodlo).toMatch(/^https:\/\//);
-      expect(z.pobierz).toMatch(/^https:\/\//);
+      if (!['Własne redakcji', 'Partner (zgoda)'].includes(z.licencja)) expect(z.zrodlo).toMatch(/^https:\/\//);
+      expect(z.alt.length).toBeGreaterThanOrEqual(20);
+      // Ścieżka od katalogu projektu, tak jak zapisuje ją panel (media_folder w public/admin/config.yml).
+      expect(z.plik).toMatch(/^\/src\/assets\/zdjecia\/[a-z0-9-]+\.(jpe?g|png|webp|avif)$/);
+      expect(existsSync(new URL(`../..${z.plik}`, import.meta.url)), `brak pliku ${z.plik}`).toBe(true);
     });
   }
 });

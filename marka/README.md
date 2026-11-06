@@ -49,5 +49,9 @@ Tokeny: `src/styles/global.css` (blok `@theme`). Grafit `#1d2530`, `#11161d`, po
 (mały tekst w odcieniu `#c2410c`, żeby mieć kontrast 4,5:1 na białym). Fonty: Noto Sans i Noto Sans Display,
 podzbiór z polskimi znakami (`npm run fonty`).
 
-## Zdjęcia (`zdjecia/rejestr.json`)
-Tylko prawdziwe zdjęcia, CC0 albo CC BY, każde za zgodą Patryka, z wpisem w rejestrze przed publikacją.
+## Zdjęcia (rejestr licencji: `src/content/zdjecia/`)
+Tylko prawdziwe zdjęcia z wpisem w rejestrze przed użyciem: jeden plik JSON na zdjęcie (źródło, autor, licencja, adres licencji,
+podpis „Fot.”, opis alt, zgoda). Dozwolone: CC0, CC BY, licencja Unsplash i Pexels, własne redakcji, partnera za zgodą
+(decyzja Patryka z 2026-11-06); bez CC BY-SA, marek i logo, zdjęć od pracodawców Patryka. Edycja w panelu
+(„Zdjęcia (rejestr licencji)”), pliki w `src/assets/zdjecia/`. Zdjęcia z Wikimedia Commons i Openverse pobiera
+`npm run zdjecia` (pole „pobierz” i kadr we wpisie). Wybór i uzasadnienie pierwszych 10 zdjęć: `zdjecia/kandydaci.md`.

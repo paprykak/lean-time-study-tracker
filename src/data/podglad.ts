@@ -2,11 +2,11 @@
 // Tytuły w formie poradników, bez twierdzeń o prawdziwych firmach i zdarzeniach. Nie trafiają do kolekcji treści.
 import type { ArtykulKarta } from '../lib/typy';
 import { zdjecie } from '../lib/zdjecia';
-import ustawienia from './ustawienia.json';
+import { dzial as daneDzialu } from '../lib/dane';
 
 const dzial = (slug: string) => {
-  const d = ustawienia.dzialy.find((x) => x.slug === slug)!;
-  return { nazwa: d.nazwa, adres: `/dzial/${d.slug}` };
+  const d = daneDzialu(slug);
+  return { nazwa: d.nazwa, adres: d.adres };
 };
 const czas = (iso: string) => new Date(iso);
 const R = 'Redakcja Rytmu Hali';

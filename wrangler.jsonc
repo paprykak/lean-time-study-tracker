@@ -1,9 +1,11 @@
 // Cloudflare Workers + Assets: statyczny portal z dist/ (build: npm run check:szybki, Workers Builds z GitHuba).
-// Kod workera (punkty API formularzy, 410 dla usuniętych adresów, logowanie do panelu) dochodzi w F2, F6 i F8;
-// do tego czasu Worker serwuje wyłącznie pliki statyczne.
+// Kod workera (worker/index.js) obsługuje tylko /api/*: logowanie do panelu (F2), dalej zapis na newsletter (F6)
+// i 410 dla usuniętych adresów (F8). Wszystko inne Cloudflare serwuje z dist/ bez uruchamiania workera.
+// Sekrety logowania (GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET) ustawia Patryk: npx wrangler secret put <NAZWA>.
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "rytm-hali",
+  "main": "worker/index.js",
   "compatibility_date": "2026-11-01",
   // Produkcja tylko pod rytmhali.pl (bez kopii pod *.workers.dev). Domena musi być w Cloudflare przed pierwszym wdrożeniem main.
   "workers_dev": false,
@@ -13,6 +15,8 @@
   "preview_urls": true,
   "assets": {
     "directory": "./dist",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*"],
     "not_found_handling": "404-page",
     "html_handling": "auto-trailing-slash"
   }

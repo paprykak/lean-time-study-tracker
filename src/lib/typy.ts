@@ -32,6 +32,8 @@ export interface ArtykulKarta {
   autor?: string;
   czasCzytania?: number;
   zdjecie?: Zdjecie;
-  /** Materiał partnera: nazwa partnera (oznaczenie „Materiał partnera” zamiast kategorii). */
+  /** Materiał partnera: identyfikator partnera; karta pokazuje oznaczenie zamiast kategorii. */
   partner?: string;
+  /** Oznaczenie treści sponsorowanej: „Materiał partnera” (domyślnie) albo „Reklama”. */
+  oznaczenie?: string;
 }

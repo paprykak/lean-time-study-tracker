@@ -1,0 +1,20 @@
+{
+  "plik": "/src/assets/zdjecia/stanowisko-scada.jpg",
+  "alt": "Stanowisko operatora z monitorami systemu SCADA i dużym ekranem ze schematem instalacji na ścianie",
+  "fot": "Fot. Rsparks3 / Wikimedia Commons, CC0",
+  "autor": "Rsparks3",
+  "licencja": "CC0 1.0",
+  "licencjaUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "zrodlo": "https://commons.wikimedia.org/wiki/File:SCADA_system_at_a_central_chilled_water_plant.jpg",
+  "pobierz": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/SCADA_system_at_a_central_chilled_water_plant.jpg/1920px-SCADA_system_at_a_central_chilled_water_plant.jpg",
+  "dzial": "dane-i-ai",
+  "kadr": {
+    "lewo": 0,
+    "gora": 0,
+    "szerokosc": 0.8,
+    "wysokosc": 1
+  },
+  "pozycja": "left",
+  "uwagi": "kadr usuwa logo uczelni z prawej części ściany; oryginał 2048 × 1536 px",
+  "zgoda": "2026-11-06: Patryk powierzył wybór zdjęć (wiadomość w sesji)"
+}

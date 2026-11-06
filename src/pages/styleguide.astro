@@ -47,7 +47,7 @@ import k320 from '../assets/przyklady/kreacja-320x100.svg?url';
 const t = tokenyKolorow();
 const KOLORY: { token: string; uzycie: string; tlo?: string }[] = [
   { token: 'tlo', uzycie: 'Tło stron' },
-  { token: 'tlo-szare', uzycie: 'Pasek „Na zmianie”, ramki, pola zastępcze' },
+  { token: 'tlo-szare', uzycie: 'Pasek tematów, ramki, pola zastępcze' },
   { token: 'grafit', uzycie: 'Menu działów, przyciski grafitowe, linie nagłówków sekcji' },
   { token: 'grafit-ciemny', uzycie: 'Pasek górny, stopka' },
   { token: 'tekst', uzycie: 'Tytuły' },
@@ -104,7 +104,7 @@ const zdjeciaSerwisu = dostepne();
       Treści są przykładowe i fikcyjne. Nagłówek wyżej pokazuje aktywny dział „Produkcja”.
     </p>
     <div class="mt-5 border-l-4 border-akcent bg-tlo-szare px-4 py-3 text-[0.9375rem]">
-      <p><strong class="text-tekst">Zdjęcia:</strong> prawdziwe, z rejestrem licencji (<code>marka/zdjecia/rejestr.json</code>), lista źródeł na dole strony. Zdjęcie, którego pliku jeszcze nie pobrano, pokazuje pole zastępcze; na produkcji pole zastępcze blokuje kontrola SEO.</p>
+      <p><strong class="text-tekst">Zdjęcia:</strong> prawdziwe, z rejestrem licencji (<code>src/content/zdjecia/</code>, w panelu „Zdjęcia”), lista źródeł na dole strony. Zdjęcie, którego pliku jeszcze nie pobrano, pokazuje pole zastępcze; na produkcji pole zastępcze blokuje kontrola SEO.</p>
       <p class="mt-1"><strong class="text-tekst">Logo:</strong> koncepcja C po szlifie (uzasadnienie w <code>marka/README.md</code>); oryginalne pliki Patryka podmienią je bez zmian w szablonach.</p>
     </div>
     <nav aria-label="Spis treści" class="mt-6">
@@ -420,7 +420,7 @@ const zdjeciaSerwisu = dostepne();
     {/* ŹRÓDŁA ZDJĘĆ */}
     <section aria-labelledby="zrodla-zdjec">
       <NaglowekSekcji tytul="Zdjęcia: źródła i licencje" id="zrodla-zdjec" />
-      <p class="mt-3 max-w-3xl text-[0.9375rem]">Wszystkie zdjęcia na tej stronie, z rejestru <code>marka/zdjecia/rejestr.json</code>. Na stronach artykułów podpis „Fot.” stoi pod każdym zdjęciem.</p>
+      <p class="mt-3 max-w-3xl text-[0.9375rem]">Wszystkie zdjęcia na tej stronie, z rejestru licencji <code>src/content/zdjecia/</code>. Na stronach artykułów podpis „Fot.” stoi pod każdym zdjęciem.</p>
       <ul class="mt-4 grid gap-x-8 gap-y-2 text-[0.875rem] md:grid-cols-2">
         {zdjeciaSerwisu.map((z) => (
           <li class="border-b border-linia py-2">

@@ -3,14 +3,17 @@
 Niezależne medium o operacjach: produkcja, magazyn i logistyka, lean i ciągłe doskonalenie, dane i AI, ludzie i szkolenia.
 Adres docelowy: **rytmhali.pl**. Redaktor naczelny: Patryk Korpyta.
 
-Statyczny portal w Astro 7 i Tailwind 4, hostowany na Cloudflare Workers (Assets). Panel redakcyjny (Sveltia CMS),
-wyszukiwarka (Pagefind) i newsletter dochodzą w kolejnych fazach, opisanych w `prompty/01-budowa-portalu.md`.
+Statyczny portal w Astro 7 i Tailwind 4, hostowany na Cloudflare Workers (Assets). Treści w repozytorium (`src/content/`),
+edytowane w panelu redakcyjnym Sveltia CMS pod `/admin` (przepływ redakcyjny: szkic, przegląd, publikacja).
+Wyszukiwarka (Pagefind) i newsletter dochodzą w kolejnych fazach, opisanych w `prompty/01-budowa-portalu.md`.
 
 ## Start
 ```bash
 source ~/.nvm/nvm.sh   # na komputerze z nvm (wersja z .nvmrc)
 npm ci
 npm run dev            # http://localhost:4321, strona wzorów: /styleguide
+                       # panel na lokalnych plikach: http://localhost:4321/admin/index.html
+                       # → „Pracuj z lokalnym repozytorium” (Chrome albo Edge)
 npm run check          # pełna kontrola jakości (lokalnie bez WebKita: BEZ_WEBKIT=1 npm run check)
 ```
 

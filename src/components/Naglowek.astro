@@ -4,6 +4,7 @@
 import Logo from './Logo.astro';
 import Ikona from './Ikona.astro';
 import ustawienia from '../data/ustawienia.json';
+import { DZIALY } from '../lib/dane';
 
 interface Props {
   /** slug aktywnego działu albo adres aktywnej pozycji menu */
@@ -13,7 +14,7 @@ interface Props {
 }
 const { aktywny, zapytanie = '' } = Astro.props;
 const pozycje = [
-  ...ustawienia.dzialy.map((d) => ({ nazwa: d.nazwaMenu, adres: `/dzial/${d.slug}`, klucz: d.slug })),
+  ...DZIALY.map((d) => ({ nazwa: d.nazwaMenu, adres: d.adres, klucz: d.slug })),
   ...ustawienia.menuDodatkowe.map((m) => ({ nazwa: m.nazwa, adres: m.adres, klucz: m.adres })),
 ];
 ---

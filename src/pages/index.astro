@@ -4,6 +4,7 @@
 import Uklad from '../layouts/Uklad.astro';
 import Newsletter from '../components/Newsletter.astro';
 import ustawienia from '../data/ustawienia.json';
+import { DZIALY } from '../lib/dane';
 ---
 <Uklad tytul="Rytm Hali: niezależne medium o operacjach" opis={ustawienia.opis} naglowek="minimalny">
   <div class="kontener grid gap-10 py-10 md:py-16 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-16">
@@ -16,7 +17,7 @@ import ustawienia from '../data/ustawienia.json';
       </p>
       <h2 class="mt-10 font-sans text-kategoria font-bold tracking-[0.08em] text-tekst-drugi uppercase">Działy</h2>
       <ul class="mt-2 max-w-xl border-t-2 border-grafit">
-        {ustawienia.dzialy.map((d) => (
+        {DZIALY.map((d) => (
           <li class="border-b border-linia py-3 font-display text-[1.125rem] font-bold text-tekst">{d.nazwa}</li>
         ))}
       </ul>

@@ -5,33 +5,6 @@
   "adres": "https://rytmhali.pl",
   "emailRedakcji": "redakcja@rytmhali.pl",
   "redaktorNaczelny": "Patryk Korpyta",
-  "dzialy": [
-    {
-      "slug": "produkcja",
-      "nazwa": "Produkcja",
-      "nazwaMenu": "Produkcja"
-    },
-    {
-      "slug": "magazyn-i-logistyka",
-      "nazwa": "Magazyn i logistyka",
-      "nazwaMenu": "Magazyn i logistyka"
-    },
-    {
-      "slug": "lean-i-ciagle-doskonalenie",
-      "nazwa": "Lean i ciągłe doskonalenie",
-      "nazwaMenu": "Lean"
-    },
-    {
-      "slug": "dane-i-ai",
-      "nazwa": "Dane i AI",
-      "nazwaMenu": "Dane i AI"
-    },
-    {
-      "slug": "ludzie-i-szkolenia",
-      "nazwa": "Ludzie i szkolenia",
-      "nazwaMenu": "Ludzie i szkolenia"
-    }
-  ],
   "menuDodatkowe": [
     {
       "nazwa": "Do pobrania",
@@ -39,34 +12,13 @@
     }
   ],
   "tematyWyroznione": [
-    {
-      "nazwa": "SMED i przezbrojenia",
-      "slug": "smed"
-    },
-    {
-      "nazwa": "OEE",
-      "slug": "oee"
-    },
-    {
-      "nazwa": "Kompletacja",
-      "slug": "kompletacja"
-    },
-    {
-      "nazwa": "Gemba",
-      "slug": "gemba"
-    },
-    {
-      "nazwa": "Standard pracy",
-      "slug": "standard-pracy"
-    },
-    {
-      "nazwa": "Matryca kompetencji",
-      "slug": "matryca-kompetencji"
-    },
-    {
-      "nazwa": "AI w planowaniu",
-      "slug": "ai-w-planowaniu"
-    }
+    "smed",
+    "oee",
+    "kompletacja",
+    "gemba",
+    "standard-pracy",
+    "matryca-kompetencji",
+    "ai-w-planowaniu"
   ],
   "pasekGorny": [
     {

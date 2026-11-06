@@ -1,8 +1,9 @@
-// Pobiera zdjęcia z rejestru licencji (marka/zdjecia/rejestr.json), kadruje i zapisuje jako JPEG do src/assets/zdjecia/.
+// Pobiera zdjęcia z rejestru licencji (kolekcja src/content/zdjecia/*.json, pole „pobierz”), kadruje i zapisuje jako JPEG
+// do src/assets/zdjecia/ (nazwa pliku z pola „plik”). Zdjęcia wgrane w panelu nie mają pola „pobierz” i są pomijane.
 // Pobiera tylko brakujące pliki. Zgodnie z zasadami Wikimedia (https://w.wiki/4wJS): identyfikujący User-Agent,
 // jedno połączenie naraz, standardowe rozmiary miniatur, przy 429 czeka tyle, ile mówi nagłówek Retry-After.
 // Użycie: npm run zdjecia   (--wymus pobiera wszystko ponownie; --tylko=<fragment adresu> np. --tylko=rawpixel)
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
@@ -16,7 +17,11 @@ const wymus = process.argv.includes('--wymus');
 const tylko = process.argv.find((a) => a.startsWith('--tylko='))?.slice('--tylko='.length);
 const czekaj = (ms) => new Promise((r) => setTimeout(r, ms));
 
-const { zdjecia } = JSON.parse(readFileSync(join(ROOT, 'marka/zdjecia/rejestr.json'), 'utf8'));
+const KATALOG = join(ROOT, 'src/content/zdjecia');
+const zdjecia = readdirSync(KATALOG)
+  .filter((f) => f.endsWith('.json'))
+  .map((f) => ({ slug: f.replace(/\.json$/, ''), ...JSON.parse(readFileSync(join(KATALOG, f), 'utf8')) }))
+  .filter((z) => z.pobierz);
 mkdirSync(CEL, { recursive: true });
 
 async function pobierz(url) {
@@ -36,7 +41,7 @@ async function pobierz(url) {
 let pobrane = 0;
 const bledy = [];
 for (const z of zdjecia) {
-  const plik = join(CEL, `${z.slug}.jpg`);
+  const plik = join(CEL, z.plik.split('/').at(-1));
   if ((existsSync(plik) && !wymus) || (tylko && !z.pobierz.includes(tylko))) continue;
   console.log(`${z.slug}: ${z.pobierz}`);
   try {
@@ -64,6 +69,6 @@ for (const z of zdjecia) {
 }
 console.log(`\nPobrano ${pobrane}, błędów ${bledy.length}, w rejestrze ${zdjecia.length}.`);
 if (bledy.length) {
-  console.log('Brakujące zdjęcia: strona buduje się bez nich (pole zastępcze tylko na /styleguide). Uruchom ponownie później.');
+  console.log('Brakujące zdjęcia zatrzymają build (schemat rejestru wymaga pliku). Uruchom ponownie później albo wgraj plik w panelu.');
   process.exit(1);
 }
