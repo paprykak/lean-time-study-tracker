@@ -47,10 +47,10 @@ Kolejność jak w artykule (przypis [n]). Adres w artykule to DOI albo strona; d
 | 8 | bokrantz | Bokrantz i in. (2016), JMTM 27(8) | Badanie recenzowane | C | https://publications.lib.chalmers.se/records/fulltext/245676/local_245676.pdf (CC BY) | 51,5% za Ylipää i in. (>90 firm, 2006–2012); ankiety 80/2001 i 71/2014; <50% i <25%; „virtually all OEE definitions” | ankieta deklaratywna |
 | 9 | ljungberg | Ljungberg (1998), IJOPM 18(5) | Badanie recenzowane | C | streszczenie (Crossref); Emerald 403, nie obchodzono | ok. 20 przypadków, OEE ok. 55%, dominują straty wydajności | stare dane, tylko streszczenie |
 | 10 | agh | Murdzek, Richert, Hubicki (2021), rozdz. monografii AGH | Książka | C | https://winntbg.bg.agh.edu.pl/skrypty4/0587/nowoczesne_metody_119.pdf | jedna maszyna, tydzień: 46–83%, średnio 68%; jeden cykl normatywny zaniża wynik | jedna maszyna |
-| 11 | vorne-lp | Vorne, leanproduction.com/oee, „OEE Benchmarks” | Raport firmy | D | https://www.leanproduction.com/oee/ | „For many companies, it is a suitable long-term goal.” (kontrargument) | dostawca |
-| 12 | deron | de Ron, Rooda (2006), IJPR 44(23) | Badanie recenzowane | C | https://hal.science/hal-00512884/document (rękopis złożony do recenzji) | tabele 1–2: 168 h, OEE 0,474 vs 0,592 przy tych samych RE i QE; „not a performance measure to compare stand alone machines” | przykład liczbowy, wersja rękopisu |
-| 13 | schiraldi | Schiraldi, Varisco (2020), C&IE 145 | Badanie recenzowane | C | streszczenie | dwie wersje OEE w ISO 22400 rozbieżne ze sobą i z Nakajimą | tylko streszczenie |
-| 14 | iso | ISO 22400-2:2014, karta w katalogu | Przepis lub norma | A (dla statusu) | https://committee.iso.org/standard/54497.html | status 90.92 „to be revised”, ISO/DIS 22400-2 w toku | treści normy nie czytano (płatna) |
+| 11 | schiraldi | Schiraldi, Varisco (2020), C&IE 145 | Badanie recenzowane | C | streszczenie | dwie wersje OEE w ISO 22400 rozbieżne ze sobą i z Nakajimą | tylko streszczenie |
+| 12 | iso | ISO 22400-2:2014, karta w katalogu | Przepis lub norma | A (dla statusu) | https://committee.iso.org/standard/54497.html | status 90.92 „to be revised”, ISO/DIS 22400-2 w toku | treści normy nie czytano (płatna) |
+| 13 | vorne-lp | Vorne, leanproduction.com/oee, „OEE Benchmarks” | Raport firmy | D | https://www.leanproduction.com/oee/ | „For many companies, it is a suitable long-term goal.” (kontrargument) | dostawca |
+| 14 | deron | de Ron, Rooda (2006), IJPR 44(23) | Badanie recenzowane | C | https://hal.science/hal-00512884/document (rękopis złożony do recenzji) | tabele 1–2: 168 h, OEE 0,474 vs 0,592 przy tych samych RE i QE; „not a performance measure to compare stand alone machines” | przykład liczbowy, wersja rękopisu |
 
 Nieużyte, przeczytane: Muchiri i Pintelon (2008), Ingemansson (2004), Evocon (D), TeepTrak, Symestic, Wikipedia PL/EN (szczegóły w zrodla-agent-badania.md i zrodla-agent-kontekst.md). Książka Nakajimy *Introduction to TPM* (1988): legalnej wersji online brak; jedyna kopia na archive.org to wrzutka użytkownika w kolekcji „opensource” (prawdopodobnie bez praw), nie korzystano.
 
@@ -75,12 +75,12 @@ Nieużyte, przeczytane: Muchiri i Pintelon (2008), Ingemansson (2004), Evocon (D
 | ankiety 80 (2001) i 71 (2014) firm; wymiana narzędzi i przezbrojenie <50%, przerwy <25%; obecne w niemal wszystkich definicjach OEE | [8] | s. 1063 i 1066 | |
 | AGH: jeden cykl normatywny dla wszystkich wyrobów znacząco zaniża wynik | [10] | „Analizowane przedsiębiorstwo nie określa normatywnego czasu cyklu dla wszystkich wyrobów … błędem zaniżającym znacząco wartość wskaźnika” | |
 | linia półautomatyczna, cykl 26→22 s, OEE 86→79%, 118→130 szt./h | [3] | s. 9 pliku | |
-| ISO 22400-2 (2014): dwie definicje rozbieżne ze sobą i z Nakajimą | [13] | streszczenie | |
-| norma czeka na nowe wydanie | [14] | „International Standard to be revised [90.92]”; „Expected to be replaced by ISO/DIS 22400-2” | |
+| ISO 22400-2 (2014): dwie definicje rozbieżne ze sobą i z Nakajimą | [11] | streszczenie | |
+| norma czeka na nowe wydanie | [12] | „International Standard to be revised [90.92]”; „Expected to be replaced by ISO/DIS 22400-2” | |
 | Jonsson i Lesshammar 1999: różne definicje utrudniają porównania; pomiary 30–80% | [4] | s. 62–63 | |
 | linia 86% przed zmianą; nagrodzone zakłady >85% | [3], [1] | jw. | |
-| Vorne: 85% odpowiedni cel długoterminowy dla wielu firm | [11] | „For many companies, it is a suitable long-term goal.” | |
-| de Ron i Rooda: 168 h, OEE 47 vs 59%, te same RE i QE; nie do porównywania pojedynczych maszyn | [12] | tabele 1–2 (s. 4–5 rękopisu), s. 7: „OEE is not a performance measure to compare stand alone machines or workstations” | |
+| Vorne: 85% odpowiedni cel długoterminowy dla wielu firm | [13] | „For many companies, it is a suitable long-term goal.” | |
+| de Ron i Rooda: 168 h, OEE 47 vs 59%, te same RE i QE; nie do porównywania pojedynczych maszyn | [14] | tabele 1–2 (s. 4–5 rękopisu), s. 7: „OEE is not a performance measure to compare stand alone machines or workstations” | |
 | Ljungberg: dominują straty wydajności | [9] | streszczenie: „it is quite clear that performance losses are the dominating ones” | |
 | Ylipää: największy wpływ straty sprawności operacyjnej, potem dostępności | [7] | streszczenie: „operational efficiency losses are found to have the largest impact on OEE followed by availability losses” | |
 | przykład fikcyjny: 56,1 / 68,2 / 91,0%; składowe; minuty 100/90/7,5/252,5 | — | dane/oee-warianty.mjs, wynik.json (rachunek redakcji) | |
