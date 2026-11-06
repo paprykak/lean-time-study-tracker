@@ -172,7 +172,7 @@ const artykuly = defineCollection({
       faq: z.array(z.object({ pytanie: z.string().max(160), odpowiedz: z.string().max(800) })).default([]),
       /** Data ostatniej pełnej weryfikacji faktów (każde twierdzenie sprawdzone w źródle). */
       sprawdzono: z.coerce.date().optional(),
-      /** „Jak powstał ten tekst”: metoda, źródła, użycie AI, konflikty interesów (widoczne pod artykułem). */
+      /** „Jak powstał ten tekst”: metoda, najważniejsze źródła, analiza własna, konflikt interesów (widoczne pod artykułem). */
       metoda: z.string().max(700).optional(),
       /** Jawne poprawki błędów rzeczowych i zmian wniosków (polityka korekt), widoczne pod tekstem. */
       poprawki: z.array(z.object({ data: z.coerce.date(), opis: z.string().min(10).max(400) })).default([]),

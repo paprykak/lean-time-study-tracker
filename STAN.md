@@ -3,10 +3,10 @@
 Pamięć robocza projektu. Czyta ją i aktualizuje każda sesja na początku i na końcu pracy.
 
 ## Teraz
-- **Faza:** F0–F3 gotowe (F1 zaakceptowana przez Patryka 2026-11-06, z kursem: artykuły w stylu HBR, nie wiadomości); skill `/artykul` gotowy. Teraz F4: SEO i widoczność w AI (w tym ostateczne teksty stron zaufania do akceptacji).
+- **Faza:** F0–F3 gotowe (F1 zaakceptowana przez Patryka 2026-11-06, z kursem: artykuły w stylu HBR, nie wiadomości); skill `/artykul` gotowy (2026-11-06 po uwagach Patryka: bez oznaczeń AI, rzemiosło pisania, redaktor językowy i czytelnik testowy, kontrola redakcyjna przed publikacją). Teraz F4: SEO i widoczność w AI (w tym ostateczne teksty stron zaufania do akceptacji).
 - **Gałąź robocza:** `ccr-a1f628ee-snc89w` (sesja w chmurze). `main` bez zmian: nadal stara aplikacja Lean Time Study Tracker, do pierwszego „wdrażaj”.
 - **Do obejrzenia:** zrzuty F3 w `raporty/F3/` (strona główna, artykuł, dział, wyszukiwarka; treści testowe), zrzuty F2 w `raporty/F2/` (artykuł z kolekcji treści, panel redakcji), podgląd strony głównej i artykułu (`raporty/podglad/`), strona wzorów `/styleguide` (lokalnie `npm run dev` → http://localhost:4321/styleguide), panel na lokalnych plikach: http://localhost:4321/admin/index.html.
-- **Ostatnia sesja:** 2026-11-06, F2: kolekcje treści, strona artykułu `/<slug>` z kolekcji, okładki 1200×630, mapa strony z `lastmod`, panel Sveltia CMS (przepływ redakcyjny), worker z logowaniem do panelu, testy panelu. Wcześniej tego dnia: repozytorium wyczyszczone i zaadaptowane, fundament Astro 7, fonty, tokeny, logo (odtworzenie koncepcji C), 20 komponentów, `/styleguide`, „Wkrótce” (szkic), 404, testy. `npm run check` zielone lokalnie i w GitHub Actions (tam także iPhone/WebKit: 60 testów E2E na 3 urządzeniach, 52 zaliczone, 8 celowo pominiętych, np. test klawiatury na telefonie).
+- **Ostatnia sesja:** 2026-11-06: F3 (szablony, wyszukiwarka, start w dwóch krokach) i skill `/artykul` po uwagach Patryka (DECYZJE.md). Wcześniej F2: kolekcje treści, strona artykułu `/<slug>` z kolekcji, okładki 1200×630, mapa strony z `lastmod`, panel Sveltia CMS (przepływ redakcyjny), worker z logowaniem do panelu, testy panelu. Wcześniej tego dnia: repozytorium wyczyszczone i zaadaptowane, fundament Astro 7, fonty, tokeny, logo (odtworzenie koncepcji C), 20 komponentów, `/styleguide`, „Wkrótce” (szkic), 404, testy. `npm run check` zielone lokalnie i w GitHub Actions (tam także iPhone/WebKit: 60 testów E2E na 3 urządzeniach, 52 zaliczone, 8 celowo pominiętych, np. test klawiatury na telefonie).
 
 ## Wyniki F1 (sekcja 3 promptu)
 | Obszar | Wynik |
@@ -39,7 +39,8 @@ Od góry według pilności. Każdy punkt to jedna czynność.
 - [x] ~~Akceptacja wyglądu F1~~ (2026-11-06).
 - [x] ~~Zgoda na zdjęcia~~ (2026-11-06: dopuszczone CC0, CC BY, Unsplash, Pexels; wybór powierzony redakcji, 10 zdjęć w rejestrze).
 - [x] ~~Logo po szlifie~~ (2026-11-06: Patryk zaakceptował wersję z podtytułem wersalikami).
-- [ ] **Decyzja: podpis tekstów pisanych z pomocą AI.** Propozycja: domyślnie „Redakcja Rytmu Hali”, Twoje nazwisko tylko pod tekstami, które sam napisałeś albo przeredagowałeś i przyjmujesz jako swoje; użycie AI opisane w ramce „Jak powstał ten tekst”. Odpowiedz „tak” albo podaj inną zasadę.
+- [x] ~~Oznaczenia AI~~ (2026-11-06: bez oznaczeń przy tekstach; warunek: każdy tekst czytasz w całości przed publikacją, to kontrola redakcyjna z AI Act, DECYZJE.md).
+- [ ] **Decyzja: podpis tekstów.** Propozycja: domyślnie „Redakcja Rytmu Hali”, Twoje nazwisko pod tekstami, które napisałeś albo przeredagowałeś i przyjmujesz jako swoje. Odpowiedz „tak” albo podaj inną zasadę.
 - [ ] **Pierwszy tekst skillem `/artykul`:** podaj temat albo napisz „wybierz sam” (dostaniesz 3 propozycje z tezą i luką w wynikach wyszukiwania).
 - [ ] **Przeczytaj projekty stron stałych** na podglądzie (lokalnie: `RH_PODGLAD=1 npm run build && npx astro preview`, adresy `/o-nas`, `/zasady-redakcyjne`, `/polityka-korekt`, `/oznaczanie-reklam`, `/jak-uzywamy-ai`, `/kontakt`, `/reklama`, `/newsletter`): uwagi albo „zatwierdzam”. Miejsca w nawiasach kwadratowych to decyzje i dane do uzupełnienia (wydawca, termin odpowiedzi na zgłoszenie błędu, częstotliwość newslettera, cennik). Ostateczne teksty w F4, polityka prywatności w F7.
 - [ ] **Bio w panelu (po pierwszym logowaniu):** Autorzy → Patryk Korpyta: bio z doświadczeniem w operacjach, kompetencje, kwadratowe zdjęcie. Obecne bio to projekt.

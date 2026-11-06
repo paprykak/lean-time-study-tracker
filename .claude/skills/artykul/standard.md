@@ -2,7 +2,7 @@
 
 Punkt odniesienia to najlepsze magazyny zarządzania: Harvard Business Review, MIT Sloan Management Review, McKinsey Quarterly. HBR ocenia teksty według pięciu cech: ekspertyza, dowody, oryginalność, użyteczność i dobre pisanie dla mądrego, sceptycznego i zajętego czytelnika ([wytyczne HBR](https://hbr.org/guidelines-for-authors)). Bierzemy to w całości (jedna sporna teza, diagnoza przyczyny, rama, dowody, decyzja dla szefa) i dokładamy to, czego tam brakuje.
 
-## Osiem przewag nad HBR
+## Dziewięć przewag nad HBR
 1. **Przypis przy każdej liczbie i każdym wniosku z badania**, klikalny, do źródła pierwotnego, z rodzajem źródła i datą dostępu. HBR odsyła do badań opisem albo linkiem w tekście; czytelnik nie wie, które zdanie opiera się na czym.
 2. **Nazwana siła dowodów** (A–D z [dowody.md](dowody.md)) i język pewności proporcjonalny do niej. Korelacja nie udaje przyczyny.
 3. **Przeciwdowody i granice w każdym tekście**: co najmniej jedno źródło, które tezę ogranicza, i sekcja „Kiedy to nie działa”.
@@ -10,7 +10,8 @@ Punkt odniesienia to najlepsze magazyny zarządzania: Harvard Business Review, M
 5. **Polski kontekst:** dane GUS i Eurostatu dla Polski, polskie prawo, kwoty w złotych, skala firm 20–250 osób, realia hali w Polsce.
 6. **Analiza własna na danych publicznych**, odtwarzalna: dane i skrypt w teczce, wykres z tytułem-wnioskiem.
 7. **Działanie na ten tydzień:** krok, rachunek albo wzór do pobrania, który czytelnik wykorzysta bez kupowania czegokolwiek.
-8. **Przejrzystość i niezależność:** HBR prosi autorów o ujawnienie powiązań finansowych i użycia AI swojej redakcji, a większość jego autorów to, według jego wytycznych, wykładowcy szkół biznesu albo konsultanci. My ujawniamy metodę, użycie AI i konflikty interesów czytelnikowi i nie promujemy usług autora.
+8. **Niezależność jawna dla czytelnika:** HBR prosi autorów o ujawnienie powiązań finansowych swojej redakcji, a większość jego autorów to, według jego wytycznych, wykładowcy szkół biznesu albo konsultanci. My metodę i konflikty interesów opisujemy czytelnikowi pod tekstem i nie promujemy usług autora.
+9. **Tekst, który chce się czytać, sprawdzony przed publikacją:** HBR wymaga dobrego pisania; my je mierzymy. Rzemiosło z [pisanie.md](pisanie.md), redaktor językowy i czytelnik testowy, którzy nie znają intencji autora, i próg przyjemności oraz wartości w karcie jakości.
 
 ## Pięć pytań redaktora (przed pierwszym akapitem)
 Pytania, które [wytyczne HBR](https://hbr.org/guidelines-for-authors) każą zawrzeć w propozycji tekstu (sprawdzone 2026-11-06), dostosowane do naszego czytelnika; odpowiedzi w teczce:
@@ -23,7 +24,7 @@ Pytania, które [wytyczne HBR](https://hbr.org/guidelines-for-authors) każą za
 Przykład. Temat „SMED” to nie teza. Teza: „Połowę czasu przezbrojenia da się odzyskać bez inwestycji, ale tylko tam, gdzie przezbrojenie jest wąskim gardłem; w innych miejscach skrócenie przezbrojenia nie zwiększa produkcji ani o sztukę”.
 
 ## Anatomia według formatu
-Wspólne dla wszystkich: tytuł do 70 znaków (teza albo obietnica wglądu, nie etykieta), lead 2–3 zdania (napięcie i teza; to fragment cytowany przez wyszukiwarki i asystentów AI), śródtytuły-wnioski, FAQ 3–5 prawdziwych pytań czytelnika, źródła, pole `metoda`.
+Wspólne dla wszystkich: tytuł do 70 znaków (teza albo obietnica wglądu, nie etykieta), lead 2–3 zdania (napięcie i teza; to fragment cytowany przez wyszukiwarki i asystentów AI), otwarcie i akapit sedna do 200 słów, śródtytuły-wnioski, zakończenie, które domyka otwarcie albo daje pierwszy krok ([pisanie.md](pisanie.md)), FAQ 3–5 prawdziwych pytań czytelnika, źródła, pole `metoda`.
 
 | Format | Długość (słowa) | Budowa |
 |---|---|---|
@@ -38,7 +39,8 @@ Wspólne dla wszystkich: tytuł do 70 znaków (teza albo obietnica wglądu, nie 
 Przypadek prowadzący: jeden, rozbudowany, do którego tekst wraca. Kolejność: materiał Patryka (tylko jego), publicznie opisany przypadek ze źródłem, przykład na danych fikcyjnych oznaczony przy pierwszym użyciu.
 
 ## Pole `metoda` (ramka „Jak powstał ten tekst”, do 700 znaków)
-Wzór: „Tekst opiera się na {liczba} źródłach, w tym {najmocniejsze, np. dwóch metaanalizach i danych GUS za 2025 r.}. {Analizę własną policzyliśmy na danych …; dane i kod są w archiwum redakcji.} Przy wyszukiwaniu źródeł i redakcji korzystaliśmy z narzędzi AI; każdy fakt sprawdziliśmy w źródle, a tekst zatwierdził redaktor naczelny. {Konflikt interesów: brak / opis.}”
+Wzór: „Tekst opiera się na {liczba} źródłach, w tym {najmocniejsze, np. dwóch metaanalizach i danych GUS za 2025 r.}. {Analizę własną policzyliśmy na danych …; dane i kod są w archiwum redakcji.} {Rozmawialiśmy z … (tylko prawdziwa rozmowa).} {Konflikt interesów: brak / opis.}”
+Bez wzmianki o narzędziach, których redakcja używa (decyzja Patryka z 2026-11-06; SKILL.md, zasada 6).
 Liczby źródeł według rodzaju i datę weryfikacji ramka dopisuje sama (z pól `zrodla[].rodzaj` i `sprawdzono`).
 
 ## Karta jakości
@@ -47,9 +49,11 @@ Liczby źródeł według rodzaju i datę weryfikacji ramka dopisuje sama (z pól
 - [ ] Kontrola automatyczna bez błędów (`redakcja:kontrola`, `redakcja:zrodla`, testy).
 - [ ] Licencja zdjęcia potwierdzona na stronie źródła, data w teczce.
 - [ ] Zero danych pracodawców Patryka, zmyślonych cytatów i cudzego doświadczenia w pierwszej osobie.
-- [ ] `metoda` opisuje użycie AI i konflikt interesów (albo jego brak).
+- [ ] `metoda` opisuje najważniejsze źródła i konflikt interesów (albo jego brak), bez wzmianki o narzędziach.
+- [ ] Czytelnik testowy: przyjemność i wartość co najmniej 8/10, punkt porzucenia usunięty, a to, co zabiera, pokrywa się z trzema rzeczami z planu tekstu.
+- [ ] Redaktor językowy: każda poprawka przyjęta albo odrzucona z powodem w teczce; zdania z faktami po poprawkach sprawdzone ponownie.
 
-**Ocena** (0 = brak, 1 = częściowo, 2 = w pełni). Próg: co najmniej 20 z 24 punktów i żadnego zera.
+**Ocena** (0 = brak, 1 = częściowo, 2 = w pełni). Próg: co najmniej 28 z 32 punktów, żadnego zera, a kryteria 1, 3, 7, 13 i 15 na 2.
 | # | Kryterium | 2 punkty, gdy… |
 |---|---|---|
 | 1 | Teza | sporna, w jednym zdaniu, w leadzie |
@@ -64,3 +68,7 @@ Liczby źródeł według rodzaju i datę weryfikacji ramka dopisuje sama (z pól
 | 10 | Czytelność | FOG-PL do 12, średnio do 18 słów w zdaniu, śródtytuły-wnioski |
 | 11 | Zdjęcie | autentyczne, trafne do tezy, kadry 16:9 i 1:1 działają, alt opisuje treść |
 | 12 | Test dyrektora | sceptyczny dyrektor po 3 minutach pomyśli „tego nie wiedziałem” albo „to zmienia moją decyzję” |
+| 13 | Otwarcie | pierwsze trzy zdania wciągają (scena, przypadek, paradoks, liczba albo pytanie czytelnika), akapit sedna do 200 słów, bez definicji i zapowiedzi |
+| 14 | Łuk | sztafeta pytań: każda sekcja odpowiada na pytanie poprzedniej; przypadek wraca; zakończenie domyka otwarcie albo daje pierwszy krok |
+| 15 | Zdania | rytm zróżnicowany, czasowniki zamiast rzeczowników, strona czynna, terminy stałe; każda uwaga kontroli stylu poprawiona albo uzasadniona w teczce |
+| 16 | Gęstość wartości | test usunięcia nie znajduje akapitu do wycięcia; jest narzędzie i kryterium decyzji; zdanie z testu przekazania jest w teczce |

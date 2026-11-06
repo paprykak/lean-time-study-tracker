@@ -17,7 +17,7 @@ Te zasady obowiązują w każdym tekście redakcyjnym Rytmu Hali. Gdy je łamiem
 
 ## Weryfikacja przed publikacją
 
-Przed publikacją każde twierdzenie sprawdzamy w źródle, a rachunki przeliczamy. Datę ostatniej pełnej weryfikacji podajemy w ramce „Jak powstał ten tekst”.
+Przed publikacją każde twierdzenie sprawdzamy w źródle, a rachunki przeliczamy. Potem cały tekst czyta redaktor naczelny i decyduje, czy go opublikować, zmienić czy odrzucić. Datę ostatniej pełnej weryfikacji podajemy w ramce „Jak powstał ten tekst”.
 
 ## Niezależność
 

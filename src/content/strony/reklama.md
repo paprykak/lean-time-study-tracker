@@ -23,4 +23,4 @@ Nie sprzedajemy tekstów redakcyjnych, wzmianek w nich ani linków bez oznaczeni
 
 [DO UZUPEŁNIENIA: cennik albo „na zapytanie”, minimalny czas kampanii, termin dostarczenia kreacji.]
 
-Kontakt: [redakcja@rytmhali.pl](mailto:redakcja@rytmhali.pl), w temacie „Reklama”.
+Kontakt: [redakcja@rytmhali.pl](mailto:redakcja@rytmhali.pl), temat wiadomości: „Reklama”.

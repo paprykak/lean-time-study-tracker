@@ -15,7 +15,7 @@ Artykuły, nie wiadomości: poradniki, analizy, raporty na danych publicznych, w
 
 Redaktorem naczelnym jest Patryk Korpyta. Odpowiada za dobór tematów, zasady redakcyjne i każdą publikację. [DO UZUPEŁNIENIA: krótko o doświadczeniu w operacjach, bez nazw obecnego pracodawcy.]
 
-Teksty podpisane „Redakcja Rytmu Hali” przygotowuje redakcja według [zasad redakcyjnych](/zasady-redakcyjne), także z pomocą narzędzi AI, co opisujemy na stronie [Jak używamy AI](/jak-uzywamy-ai).
+Teksty podpisane „Redakcja Rytmu Hali” przygotowuje redakcja według [zasad redakcyjnych](/zasady-redakcyjne). Każdy z nich przed publikacją czyta i zatwierdza redaktor naczelny.
 
 ## Niezależność i finansowanie
 

@@ -229,7 +229,7 @@ collections:
         widget: text
         maxlength: 700
         required: false
-        hint: 'Metoda, rodzaj źródeł, użycie AI i ewentualny konflikt interesów. Widoczne pod artykułem.'
+        hint: 'Metoda, najważniejsze źródła, analiza własna i ewentualny konflikt interesów. Widoczne pod artykułem.'
       - name: poprawki
         label: Poprawki
         label_singular: poprawka
