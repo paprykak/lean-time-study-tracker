@@ -63,6 +63,13 @@
       "przedStarymCyklem": 0.8522222222222222,
       "przedNowymCyklem": 0.7211111111111111,
       "poNowymCyklem": 0.7944444444444444
+    },
+    "zarzad": {
+      "marzaZl": 8,
+      "zmianNaDzien": 2,
+      "dniWRoku": 250,
+      "zlNaZmiane": 1440,
+      "zlNaRok": 720000
     }
   }
 }

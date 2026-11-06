@@ -63,7 +63,11 @@ const andersson = {
   przedNowymCyklem: (118 * 22) / 3600, // ok. 0,72
   poNowymCyklem: (130 * 22) / 3600, // ok. 0,79 (autorzy: 79%)
 };
-const pomocnicze = { sztukiUtraconeNaTempie, trzyRazy90, z60do85, andersson };
+// Przykład dla zarządu (dane fikcyjne): marża 8 zł na sztuce, dwie zmiany, 250 dni pracy w roku.
+const zarzad = { marzaZl: 8, zmianNaDzien: 2, dniWRoku: 250 };
+zarzad.zlNaZmiane = sztukiUtraconeNaTempie * zarzad.marzaZl;
+zarzad.zlNaRok = zarzad.zlNaZmiane * zarzad.zmianNaDzien * zarzad.dniWRoku;
+const pomocnicze = { sztukiUtraconeNaTempie, trzyRazy90, z60do85, andersson, zarzad };
 console.log('Wariant 1 w minutach:', drzewo);
 console.log('Rachunki pomocnicze:', pomocnicze);
 writeFileSync(new URL('./wynik.json', import.meta.url), JSON.stringify({ zmiana, cykl, warianty, minutyWariantu1: drzewo, pomocnicze }, null, 2));
