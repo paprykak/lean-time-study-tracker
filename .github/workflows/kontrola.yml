@@ -2,6 +2,10 @@
 # astro check, testy jednostkowe, build, kontrola SEO, budżet rozmiaru, E2E na komputerze, Androidzie i iPhonie
 # (WebKit), dostępność (axe) i Lighthouse. Wdrożenie robi Cloudflare Workers Builds z poleceniem `npm run check:szybki`,
 # więc błąd testów szybkich blokuje produkcję także przy zmianach z panelu CMS.
+#
+# Zadanie działa w oficjalnym obrazie Playwrighta w tej samej wersji co @playwright/test (package.json): przeglądarki
+# i biblioteki systemowe są w obrazie, więc nie ma instalacji przez apt (2026-11-06 lustro Ubuntu zawiesiło CI na 25 min).
+# Przy aktualizacji @playwright/test zmień tag obrazu na tę samą wersję.
 name: Kontrola jakości
 
 on:
@@ -18,7 +22,10 @@ permissions:
 jobs:
   kontrola:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-noble
+      options: --ipc=host
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -26,7 +33,6 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
-      - run: npx playwright install --with-deps chromium webkit
       - run: npm run check
       - if: failure()
         uses: actions/upload-artifact@v4
