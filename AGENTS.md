@@ -1,7 +1,7 @@
 # Rytm Hali: zasady pracy w repozytorium
 
 Portal **Rytm Hali** (rytmhali.pl): niezależne medium o operacjach. Właściciel i redaktor naczelny: Patryk Korpyta. Rozmowy po polsku.
-Pełne zadanie i fazy: `prompty/01-budowa-portalu.md`. Stan prac: `STAN.md`. Decyzje: `DECYZJE.md`.
+Pełne zadanie i fazy: `prompty/01-budowa-portalu.md`. Stan prac: `STAN.md`. Decyzje: `DECYZJE.md`. Lista kontrolna startu: `START.md`.
 
 ## Zasady nieprzekraczalne
 
@@ -31,6 +31,7 @@ Pełne zadanie i fazy: `prompty/01-budowa-portalu.md`. Stan prac: `STAN.md`. Dec
 | `npm run logo` | komplet plików logo (SVG, favicony, awatar, okładka); warianty: `node marka/logo/porownaj.mjs <plik.png>` |
 | `npm run zdjecia` | pobiera brakujące zdjęcia z rejestru licencji, kadruje i zapisuje do `src/assets/zdjecia/` |
 | panel lokalnie | `npm run dev` → http://localhost:4321/admin/index.html → „Pracuj z lokalnym repozytorium” (Chrome/Edge, zapis prosto do plików) |
+| `npm run test:produkcja` | test żywej strony po każdym wdrożeniu: nagłówki, indeksowanie, robots, każdy adres z mapy strony, klucz IndexNow, 404, formularze; `--adres <podgląd> --podglad` dla gałęzi, `--domeny` dla przekierowań. Lokalnie na buildzie: `npx wrangler dev` i `--adres http://127.0.0.1:8787` |
 | `npm run indexnow -- <ścieżki>` | zgłasza adresy do IndexNow (Bing i inne) **tylko po wdrożeniu produkcji**; `--mapa` zgłasza całą mapę strony z `dist/`, `--proba` tylko wypisuje zgłoszenie |
 | `npm run raport-kampanii -- <id>` | raport kampanii dla partnera z API Umami (wyświetlenia, kliknięcia, CTR według miejsc; na ekran, nie do repozytorium). Wymaga `UMAMI_API_KEY` i `UMAMI_WEBSITE_ID` w środowisku Patryka |
 | `npx wrangler dev` | worker z `/api/*` i plikami z `dist/` lokalnie (sekrety testowe: `--var NAZWA:wartość`, nigdy prawdziwe) |

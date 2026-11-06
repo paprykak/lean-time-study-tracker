@@ -91,7 +91,7 @@ Od góry według pilności. Każdy punkt to jedna czynność.
 
 ## Następne kroki
 0. Skill `/artykul` gotowy (2026-11-06): pierwszy tekst po wyborze tematu; po nim lekcje w skillu.
-1. F8: infrastruktura i start (po domenie, kontach i słowie „wdrażaj”): Cloudflare, sekrety, Email Routing, Brevo, Umami, IndexNow, Search Console; `START = true` dopiero na bramce startu (12 tekstów w 4 działach i zatwierdzone strony zaufania).
+1. F8: lista kontrolna w `START.md`; test żywej strony `npm run test:produkcja` gotowy (sprawdzony na buildzie w workerd). Infrastruktura i start po domenie, kontach i słowie „wdrażaj”: Cloudflare, sekrety, Email Routing, Brevo, Umami, IndexNow, Search Console; `START = true` dopiero na bramce startu (12 tekstów w 4 działach i zatwierdzone strony zaufania).
 1b. Po koncie Brevo i Email Routing: wiązanie `send_email` POCZTA i zmienne `BREVO_LISTA`, `BREVO_SZABLON_DOI` w `wrangler.jsonc`, próbny zapis i wiadomość z formularza na podglądzie.
 1a. Po wdrożeniu produkcji: `npm run indexnow -- --mapa`, a potem Search Console i Bing Webmaster Tools (konta Patryka, weryfikacja domeny w Cloudflare).
 2. Zdjęcia w treści artykułu z rejestru (rysunki z podpisem „Fot.”): dziś w treści są wykresy SVG; zdjęcia z rejestru w środku tekstu dojdą przy pierwszym tekście, który ich potrzebuje.
