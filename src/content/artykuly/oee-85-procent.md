@@ -1,5 +1,5 @@
 ---
-tytul: "Ta sama zmiana ma 56 albo 91% OEE, zależnie od tego, kto liczy"
+tytul: "Ta sama zmiana może mieć 56 albo 91% OEE, zależnie od tego, kto liczy"
 tytulSeo: "OEE 85% to cel, nie średnia. Jak liczyć i porównywać OEE"
 opisSeo: "Skąd się wzięło 85% OEE, ile wynosi OEE w zbadanych zakładach i jak spisać definicję, żeby wynik nie zależał od tego, kto go liczy."
 lead: "Ta sama zmiana może mieć 56, 68 albo 91% OEE, zależnie od tego, co liczący uzna za czas planowany i cykl idealny (przykład na danych fikcyjnych). Liczba 85%, z którą porównuje się wyniki, to w literaturze TPM cel, a nie średnia. Bez spisanej definicji OEE nie nadaje się do porównań."
@@ -17,7 +17,7 @@ zrodla:
     adres: "https://www.oee.com/world-class-oee/"
     rodzaj: "Raport firmy"
     dostep: 2026-11-06
-  - opis: "Shirose K. (1989), Equipment Effectiveness, Chronic Losses, and Other TPM Improvement Concepts, rozdz. 2 w: S. Nakajima (red.), TPM Development Program: Implementing Total Productive Maintenance, Productivity Press (wyd. jap. JIPM 1982), s. 12 i 28–38."
+  - opis: "Shirose K. (1989), Equipment Effectiveness, Chronic Losses, and Other TPM Improvement Concepts, rozdz. 2 w: S. Nakajima (red.), TPM Development Program: Implementing Total Productive Maintenance, Productivity Press (wyd. jap. JIPM 1982), s. 28–38 (lista strat także w rozdz. 1, s. 12)."
     adres: "https://archive.org/details/tpmdevelopmentpr0000unse_t2q8"
     rodzaj: "Książka"
     dostep: 2026-11-06
@@ -25,17 +25,17 @@ zrodla:
     adres: "https://lup.lub.lu.se/record/2224801"
     rodzaj: "Inne"
     dostep: 2026-11-06
-  - opis: "ITwiz (2017, aktualizacja 2020), Wskaźniki efektywności produkcji: standaryzacja analityki dla firm produkcyjnych (artykuł w serwisie o IT w biznesie)."
+  - opis: "Jonsson P., Lesshammar M. (1999), Evaluation and improvement of manufacturing performance measurement systems – the role of OEE, International Journal of Operations & Production Management, 19(1), 55–78, s. 62–63."
+    adres: "https://doi.org/10.1108/01443579910244223"
+    rodzaj: "Badanie recenzowane"
+    dostep: 2026-11-06
+  - opis: "DSR (2017, aktualizacja 2020), Wskaźniki efektywności produkcji: standaryzacja analityki dla firm produkcyjnych, ITwiz, materiał sponsorowany (Advertorial) firmy DSR, dostawcy systemów IT dla produkcji."
     adres: "https://itwiz.pl/wskazniki-efektywnosci-produkcji-standaryzacja-analityki-dla-firm-produkcyjnych/"
-    rodzaj: "Inne"
+    rodzaj: "Raport firmy"
     dostep: 2026-11-06
   - opis: "Murdzek M., Richert M., Hubicki R. (2021), Wskaźnik efektywności OEE w systemie produkcji gniazdowej, w: M. Dudek (red.), Nowoczesne metody i narzędzia w inżynierii produkcji i zarządzaniu, AGH, Kraków, s. 119–127."
     adres: "https://winntbg.bg.agh.edu.pl/skrypty4/0587/nowoczesne_metody_119.pdf"
     rodzaj: "Książka"
-    dostep: 2026-11-06
-  - opis: "Jonsson P., Lesshammar M. (1999), Evaluation and improvement of manufacturing performance measurement systems – the role of OEE, International Journal of Operations & Production Management, 19(1), 55–78, s. 62–63."
-    adres: "https://doi.org/10.1108/01443579910244223"
-    rodzaj: "Badanie recenzowane"
     dostep: 2026-11-06
   - opis: "Vorne Industries, OEE FAQ (częste pytania), m.in. „I’ve heard that world-class OEE is 85%. Is this my target?”, oee.com."
     adres: "https://www.oee.com/faq/"
@@ -87,7 +87,7 @@ zrodla:
     dostep: 2026-11-06
 faq:
   - pytanie: "Co to jest OEE?"
-    odpowiedz: "OEE (Overall Equipment Effectiveness, całkowita efektywność wyposażenia) mówi, przez jaką część czasu planowanego maszyna robiła dobre sztuki w idealnym tempie. Składa się z dostępności (czy maszyna pracowała), wydajności (czy szła w pełnym tempie) i jakości (czy sztuki były dobre za pierwszym razem)."
+    odpowiedz: "OEE (Overall Equipment Effectiveness, całkowita efektywność urządzeń) mówi, przez jaką część czasu planowanego maszyna robiła dobre sztuki w idealnym tempie. Składa się z dostępności (czy maszyna pracowała), wydajności (czy szła w pełnym tempie) i jakości (czy sztuki były dobre za pierwszym razem)."
   - pytanie: "Jak liczyć OEE?"
     odpowiedz: "Pomnóż dostępność, wydajność i jakość. Ten sam wynik daje jeden ułamek: liczba dobrych sztuk razy cykl idealny, podzielona przez czas planowany. Zanim zaczniesz, spisz, co wliczasz do czasu planowanego i jaki cykl przyjmujesz za idealny, bo od tych dwóch decyzji w dużym stopniu zależy wynik."
   - pytanie: "Ile powinno wynosić OEE?"
@@ -96,7 +96,7 @@ faq:
     odpowiedz: "W klasycznym ujęciu TPM przezbrojenie i regulacja to jedna z sześciu dużych strat. Jeśli chcesz skracać przezbrojenia, licz je jako stratę dostępności, bo wyłączone z czasu planowanego znikną z wyniku."
   - pytanie: "Czy można porównywać OEE dwóch zakładów?"
     odpowiedz: "Tylko wtedy, gdy oba liczą według tej samej definicji: ten sam czas planowany, ten sam rodzaj cyklu idealnego, te same zasady liczenia dobrych sztuk i to samo źródło danych. Bez tego różnica wyników może pochodzić z arkuszy, a nie z maszyn."
-metoda: "Tekst opiera się na badaniach z opisaną metodą, które mierzą OEE w wielu zakładach (wszystkie szwedzkie, dwa znamy ze streszczeń), i na danych JIPM z Japonii z książki o wdrażaniu TPM (bez opisu próby). Korzystamy też z analizy definicji OEE w normie ISO 22400-2 (znamy ją ze streszczenia) i z dwóch polskich studiów przypadku. Materiały dostawców systemów OEE oznaczamy w tekście. Książki Nakajimy z 1984 r. nie sprawdziliśmy w oryginale, więc jego założenia podajemy za autorami, którzy ją cytują. Przykład z trzema arkuszami jest fikcyjny; rachunki są w archiwum redakcji. Konflikt interesów: redaktor naczelny prowadzi doradztwo w operacjach, także przy OEE; tekst nie odsyła do jego usług."
+metoda: "Tekst opiera się na badaniach z opisaną metodą, które mierzą OEE w wielu zakładach (głównie szwedzkie, dwa znamy ze streszczeń), i na danych JIPM z Japonii z książki o wdrażaniu TPM (bez opisu próby). Korzystamy też z analizy definicji OEE w normie ISO 22400-2 (znamy ją ze streszczenia) i z dwóch polskich studiów przypadku. Materiały dostawców systemów OEE i IT oznaczamy w tekście. Książki Nakajimy z 1984 r. nie sprawdziliśmy w oryginale, więc jego założenia podajemy za autorami, którzy ją cytują. Przykład z trzema arkuszami jest fikcyjny; rachunki są w archiwum redakcji. Konflikt interesów: redaktor naczelny prowadzi doradztwo w operacjach, także przy OEE; tekst nie odsyła do jego usług."
 szkic: true
 ---
 ## W skrócie
@@ -117,31 +117,31 @@ Oto ta zmiana. Trwała osiem godzin, w tym pół godziny przerwy i pół godziny
 
 Pierwszy arkusz liczy przezbrojenia i konserwację jako stratę i bierze cykl producenta. Dostępność wynosi w nim 77,8%, wydajność 74,3%, jakość 97,1%, a OEE 56%. Drugi arkusz wyłącza przezbrojenia i konserwację z czasu planowanego, bo przecież były w planie, więc dostępność rośnie do 94,6%, a OEE do 68%. Trzeci robi to samo, ale bierze normę czasu z ERP. Wydajność skacze do 99%, a OEE do 91%, powyżej „światowej klasy”.
 
-Tylko pierwszy arkusz liczy jak klasyczne TPM, w którym przezbrojenie i regulacja to jedna z sześciu dużych strat [2]. Drugi mierzy maszynę w czasie, który zostaje po przezbrojeniach. Trzeci sprawdza raczej, czy maszyna nadąża za planem, niż ile traci.
+Najbliżej klasycznego TPM jest pierwszy arkusz, bo przezbrojenie i regulacja to w TPM jedna z sześciu dużych strat [2]. Planową konserwację TPM wyłącza jednak z czasu planowanego [4], więc arkusz liczony dokładnie według TPM dałby 60%. Drugi arkusz mierzy maszynę w czasie, który zostaje po przezbrojeniach. Trzeci sprawdza raczej, czy maszyna nadąża za planem, niż ile traci.
 
-Ma to znaczenie, bo wynik zestawia się z 85%, żeby oszacować, ile zakład mógłby zyskać [4]. Liczbę 85% jako wzorzec podaje nawet rozdział książki wydanej przez AGH: „światowym standardem jest wskaźnik OEE na poziomie 85%” [5]. Jeśli nie wiesz, jak policzono wynik, takie porównanie mówi niewiele. Sens ma dopiero porównanie tej samej maszyny liczonej według jednej, spisanej definicji. Pod koniec tekstu znajdziesz kartę takiej definicji i gotową odpowiedź dla zarządu.
+Ma to znaczenie, bo z liczby 85% wylicza się, ile zakład mógłby zyskać. W materiale sponsorowanym firmy DSR, dostawcy systemów IT dla produkcji, czytamy, że przejście z 60 do 85% OEE daje 42% więcej produkcji [5]. Liczbę 85% jako wzorzec podaje też rozdział książki wydanej przez AGH: „światowym standardem jest wskaźnik OEE na poziomie 85%”, a za pożądany uznaje wynik około 60% [6]. Jeśli nie wiesz, jak policzono wynik, takie porównanie mówi niewiele. Sens ma dopiero porównanie tej samej maszyny liczonej według jednej, spisanej definicji. Pod koniec tekstu znajdziesz kartę takiej definicji i gotową odpowiedź dla zarządu.
 
 ## 85% to cel, który wyznaczyli twórcy TPM
 
 Liczba 85% pochodzi z japońskiego ruchu TPM. Najstarsze źródło, do którego dotarliśmy, to książka o wdrażaniu TPM pod redakcją Seiichiego Nakajimy. Wydał ją w 1982 r. JIPM, japoński instytut utrzymania ruchu, a po angielsku ukazała się w 1989 r. Kunio Shirose pisze w niej, że w firmach badanych przez JIPM efektywność urządzeń wynosiła średnio od 40 do 60%. Działania TPM mogą ją według niego podnieść nawet do 85–95% [2].
 
-Same 85% to iloczyn trzech celów przypisywanych Nakajimie: dostępności ponad 90%, wydajności ponad 95% i jakości ponad 99%. Jonsson i Lesshammar piszą, że Nakajima uważał taki wynik za dobry punkt odniesienia dla możliwości typowego zakładu [6]. Vorne, producent systemów do pomiaru OEE, opisuje te liczby jako minimum, do którego według Nakajimy firmy powinny dążyć [1].
+Same 85% to iloczyn trzech celów przypisywanych Nakajimie: dostępności ponad 90%, wydajności ponad 95% i jakości ponad 99%. Jonsson i Lesshammar piszą, że Nakajima uważał taki wynik za dobry punkt odniesienia dla możliwości typowego zakładu [4]. Vorne, producent systemów do pomiaru OEE, opisuje te liczby jako minimum, do którego według Nakajimy firmy powinny dążyć [1].
 
 Vorne dodaje, że według Nakajimy wszystkie zakłady nagrodzone w Japonii za wdrożenie TPM (Distinguished Plant Prize) miały OEE powyżej 85%. Zastrzega też, że te liczby dotyczą produkcji dyskretnej, czyli liczonej w sztukach, i mają korzenie w japońskiej motoryzacji lat 70. [1]. W częstych pytaniach na swojej stronie ta sama firma nazywa 85% wygodnym, przekonującym i zupełnie sztucznym punktem odniesienia [7].
 
 ## Zmierzone średnie są dalekie od 85%
 
-Badań OEE w wielu zakładach z opisaną metodą jest mało, a najlepsze, jakie znaleźliśmy, pochodzą ze Szwecji. W największym z nich, obejmującym 884 maszyny w 23 firmach w latach 2013–2014, średnie OEE wyniosło 65%, a mediana 70% [8]. W danych z 98 szwedzkich firm z lat 2006–2012 średnia wyniosła 51,5% [9] [10], a w około 20 przypadkach opisanych w 1998 r. około 55% [11].
+Badań OEE w wielu zakładach z opisaną metodą jest mało, a najlepsze, jakie znaleźliśmy, pochodzą ze Szwecji. W badaniu z największą liczbą maszyn, obejmującym 884 maszyny w 23 firmach w latach 2013–2014, średnie OEE wyniosło 65%, a mediana 70% [8]. W danych z 98 szwedzkich firm z lat 2006–2012 średnia wyniosła 51,5% [9] [10], a w około 20 przypadkach opisanych w 1998 r. około 55% [11].
 
-Najciekawsze jest to, czego te liczby nie pokazują. W największym badaniu 702 z 884 maszyn miały wpisaną wydajność 100%, a 796 jakość 100%. To wartość domyślna systemu, a autorzy uważają za mało prawdopodobne, by tyle maszyn naprawdę pracowało bez tych strat. Pytają nawet, czy firmy mierzą OEE, czy tylko dostępność [8]. Prawdziwe średnie mogą więc być jeszcze niższe.
+Najciekawsze jest to, czego te liczby nie pokazują. W badaniu z największą liczbą maszyn 702 z 884 miały wpisaną wydajność 100%, a 796 jakość 100%. To wartość domyślna systemu, a autorzy uważają za mało prawdopodobne, by tyle maszyn naprawdę pracowało bez tych strat. Pytają nawet, czy firmy mierzą OEE, czy tylko dostępność [8]. Prawdziwe średnie mogą więc być jeszcze niższe.
 
-Tych liczb nie uśredniaj i nie traktuj jak nowej normy, bo badania różnią się metodą, latami i próbą. To dane szwedzkie, sprzed ponad dekady. W Polsce znaleźliśmy jedynie studia pojedynczych maszyn: w jednym dzienne OEE wahało się w ciągu tygodnia od 46 do 83% [5], w drugim średnia z 31 dni wyniosła 78,9% [12]. Polskiej średniej z tego nie wyliczysz.
+Tych liczb nie uśredniaj i nie traktuj jak nowej normy, bo badania różnią się metodą, latami i próbą. To dane głównie szwedzkie i sprzed ponad dekady. W Polsce znaleźliśmy jedynie studia pojedynczych maszyn: w jednym dzienne OEE wahało się w ciągu tygodnia od 46 do 83% [6], w drugim średnia z 31 dni wyniosła 78,9% [12]. Polskiej średniej z tego nie wyliczysz.
 
 ## Wynik zależy od definicji tak samo jak od maszyny
 
 Pierwsza decyzja dotyczy czasu planowanego. Czy przezbrojenie, planowana konserwacja i przerwa mają obniżać wynik? W dwóch szwedzkich ankietach, z 2001 i 2014 r., mniej niż połowa respondentów podała, że ich firma rejestruje przezbrojenie jako zakłócenie produkcji. Tymczasem według autorów niemal każda definicja OEE od początku liczy je jako stratę [10]. Andersson i Bellgran piszą, że wzór OEE jest w zasadzie jeden, ale różnie interpretuje się, co jest czasem planowanym, a co nieplanowanym, i jaki cykl uznać za idealny [3].
 
-Druga decyzja to cykl idealny. Do wyboru jest cykl producenta, najkrótszy zmierzony albo norma czasu z karty technologicznej czy ERP. Im wolniejszy cykl przyjmiesz, tym wyższa wydajność i całe OEE. Wynik zniekształca też jedna norma dla wszystkich wyrobów. W studium z AGH zakład nie określał normy czasu dla każdego wyrobu, więc autorzy przyjęli dla wyrobów o różnej trudności jedno średnie tempo: 2000 sztuk na godzinę. Sami piszą, że to uproszczenie znacząco zaniża wydajność, a wynik kolejnego tygodnia może się wyraźnie zmienić, gdy maszyna będzie robić inne wyroby [5].
+Druga decyzja to cykl idealny. Do wyboru jest cykl producenta, najkrótszy zmierzony albo norma czasu z karty technologicznej czy ERP. Im wolniejszy cykl przyjmiesz, tym wyższa wydajność i całe OEE. Wynik zniekształca też jedna norma dla wszystkich wyrobów. W studium z AGH zakład nie określał normy czasu dla każdego wyrobu, więc autorzy przyjęli dla wyrobów o różnej trudności jedno średnie tempo: 2000 sztuk na godzinę. Sami piszą, że to uproszczenie znacząco zaniża wydajność, a wynik kolejnego tygodnia może się wyraźnie zmienić, gdy maszyna będzie robić inne wyroby [6].
 
 OEE potrafi nawet spaść, gdy linia robi więcej. Andersson i Bellgran opisali półautomatyczną linię montażową, na której usprawnienie skróciło cykl idealny z 26 do 22 sekund. Dotychczasowe przestoje zostały, więc OEE spadło z 86 do 79%, a linia zaczęła robić 130 zamiast 118 sztuk na godzinę [3]. Kto patrzy tylko na OEE, uzna usprawnienie za pogorszenie. Gdyby zakład przeliczył historię nowym cyklem, te same 118 sztuk na godzinę dałyby około 72% (rachunek redakcji: 118 × 22 s / 3600 s), a wykres pokazałby wzrost do 79%.
 
@@ -149,7 +149,7 @@ Norma ISO też nie rozstrzyga sprawy. Według analizy Schiraldiego i Varisco ISO
 
 ## Wysokie OEE się zdarza, tylko nie wiadomo, jak często
 
-Nagrodzone japońskie zakłady to zwycięzcy konkursu, a nie przekrój firm z TPM, i znamy je tylko z relacji dostawcy [1]. Linia Anderssona i Bellgran miała 86% przy cyklu idealnym, który okazał się za wolny [3]. Badań z opisaną próbą, które mówiłyby, ile zakładów przekracza 85%, nie znaleźliśmy. Dostawca oprogramowania Evocon podaje, że robi to około 6% firm. Dane pochodzą z ponad 3,5 tys. maszyn w ponad 50 krajach z lat 2023–2024, ale firma nie opisuje definicji OEE [15].
+Nagrodzone japońskie zakłady to zwycięzcy konkursu, a nie przekrój firm z TPM, a ich wyniki OEE znamy tylko z relacji dostawcy [1]. Linia Anderssona i Bellgran miała 86% przy dawnym cyklu idealnym 26 sekund, który zakład skrócił nowym urządzeniem [3]. Badań z opisaną próbą, które mówiłyby, ile zakładów przekracza 85%, nie znaleźliśmy. Dostawca oprogramowania Evocon podaje, że robi to około 6% firm. Dane pochodzą z ponad 3,5 tys. maszyn w ponad 50 krajach z lat 2023–2024, ale firma nie opisuje definicji OEE [15].
 
 Czy 85% nadaje się więc na cel? Tak, bo tak pomyśleli tę liczbę twórcy TPM [2], ale pod dwoma warunkami. Cel ma dotyczyć tej samej maszyny, liczonej stale według jednej definicji, a droga do niego ma prowadzić przez konkretne straty. Bez tych warunków 85% staje się normą, którą łatwiej spełnić w arkuszu niż na hali.
 
@@ -187,7 +187,7 @@ Spisz na jednej kartce, jak liczysz, osobno dla każdej maszyny albo linii, tak�
 1. **Czas planowany.** Od długości zmiany po odjęciu przerw czy od całej doby? Czas bez zleceń wyłącz z czasu planowanego i pokazuj osobno, w godzinach. Inaczej tydzień z mniejszą liczbą zamówień obniży OEE, choć maszyna pracowała tak samo [16].
 2. **Przezbrojenia.** Strata dostępności czy czas wyłączony z planu? Jeśli chcesz je skracać, zostaw je w stratach: tylko wtedy są widoczne w wyniku i dają bodziec do usprawnień [10].
 3. **Konserwacja planowana, sprzątanie, odprawy.** Ta sama decyzja co przy przezbrojeniach, osobno dla każdego zdarzenia. Na start zostaw w stratach wszystko, co chcesz skracać.
-4. **Cykl idealny.** Osobno dla każdego wyrobu. W TPM punktem odniesienia jest prędkość konstrukcyjna maszyny, a celem dojście do niej i jej przekroczenie [2]. Na start weź więc cykl producenta, a jeśli maszyna pracuje szybciej, najkrótszy cykl zmierzony na kilkunastu kolejnych sztukach. Norma czasu z ERP, jeśli zawiera naddatki, zawyży wynik tak jak w arkuszu 3.
+4. **Cykl idealny.** Osobno dla każdego wyrobu. W TPM punktem odniesienia jest prędkość konstrukcyjna maszyny, a celem dojście do niej i jej przekroczenie [2]. Na start weź więc cykl producenta, a jeśli maszyna pracuje szybciej, najkrótszy cykl zmierzony na kilkunastu kolejnych sztukach. Wolniejszy cykl ze względów jakościowych zapisz na karcie z powodem. Norma czasu z ERP, jeśli zawiera naddatki, zawyży wynik tak jak w arkuszu 3.
 5. **Dobra sztuka.** Czy sztuka po przeróbce liczy się jako dobra? W TPM przeróbka to strata jakości, tak jak brak [2], więc za dobre licz tylko sztuki dobre za pierwszym razem.
 6. **Krótkie zatrzymania.** Od ilu minut zatrzymanie liczysz jako przestój, a krótsze tylko jako spadek wydajności? Vorne radzi powiązać ten próg z zasadą wpisywania przyczyn: na przykład każde zatrzymanie dłuższe niż dwie minuty dostaje przyczynę i liczy się jako przestój [17].
 7. **Źródło danych.** Licznik i czujnik maszyny czy ręczny zapis operatora? Przy ręcznym zapisie krótkie zatrzymania i część przestojów łatwo pominąć [18]. Zaznacz to na karcie i nie porównuj takiego wyniku z danymi z czujników.
@@ -210,8 +210,8 @@ Wystarczą trzy zdania. Pierwsze: 85% to cel, który twórcy TPM wyznaczyli zak�
 
 W naszym przykładzie (dane fikcyjne) trzecie zdanie brzmiałoby tak. Wolniejsze tempo i krótkie zatrzymania zabierają 90 minut na zmianę, czyli 180 sztuk. Przy marży 8 zł na sztuce to 1440 zł na zmianę, a przy dwóch zmianach przez 250 dni w roku 720 tys. zł rocznie. Ta kwota jest prawdziwa tylko wtedy, gdy maszyna jest wąskim gardłem i są zamówienia na te sztuki.
 
-Ten sam warunek dotyczy rachunku z jednego z polskich artykułów o wskaźnikach produkcji: przejście z 60 do 85% OEE daje 42% więcej produkcji [4]. Arytmetycznie to prawda, ale tylko na wąskim gardle, przy zamówieniach na dodatkowe sztuki i przy obu wynikach policzonych według tej samej karty. Sprawdź te warunki, zanim odłożysz zakup maszyny albo obiecasz zarządowi więcej sztuk. Gdy centrala grupy albo audytor klienta stawia ci cel 85%, najpierw poproś o ich kartę definicji.
+Ten sam warunek dotyczy rachunku z materiału DSR, według którego przejście z 60 do 85% OEE daje 42% więcej produkcji. Autor sam zastrzega, że chodzi o maszynę krytyczną, na której wyroby jest popyt [5]. Dodaj trzeci warunek: oba wyniki trzeba policzyć według tej samej karty. Sprawdź te warunki, zanim odłożysz zakup maszyny albo obiecasz zarządowi więcej sztuk. Gdy centrala grupy albo audytor klienta stawia ci cel 85%, najpierw poproś o ich kartę definicji.
 
-Gdy przejdziesz na arkusz, który pokazuje straty, wynik spadnie, czasem o kilkanaście punktów. Uprzedź o tym zarząd i przez kwartał pokazuj na jednym wykresie obie linie, według starej i nowej karty.
+Gdy przejdziesz na arkusz, który pokazuje straty, wynik spadnie, czasem o kilkanaście, a nawet kilkadziesiąt punktów. Uprzedź o tym zarząd i przez kwartał pokazuj na jednym wykresie obie linie, według starej i nowej karty.
 
-Wróćmy do trzech arkuszy z początku. Żaden nie był błędny w rachunku, ale tylko pierwszy pokazuje przezbrojenia i wolne tempo jako straty. Naprawdę błędny byłby dopiero czwarty: taki, w którym co miesiąc liczy się trochę inaczej. OEE pokaże ci, gdzie maszyna traci minuty. Jak wypadasz na tle świata, z niego nie wyczytasz.
+Wróćmy do trzech arkuszy z początku. Żaden nie był błędny w rachunku, ale tylko pierwszy pokazuje jako straty zarówno przezbrojenia, jak i wolne tempo. Naprawdę błędny byłby dopiero czwarty: taki, w którym co miesiąc liczy się trochę inaczej. OEE pokaże ci, gdzie maszyna traci minuty. Jak wypadasz na tle świata, z niego nie wyczytasz.

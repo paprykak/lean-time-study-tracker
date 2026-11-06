@@ -70,6 +70,14 @@
       "dniWRoku": 250,
       "zlNaZmiane": 1440,
       "zlNaRok": 720000
+    },
+    "tpm": {
+      "czasPlanowany": 420,
+      "czasPracy": 350,
+      "dostepnosc": 0.8333333333333334,
+      "wydajnosc": 0.7428571428571429,
+      "jakosc": 0.9711538461538461,
+      "oee": 0.6011904761904762
     }
   }
 }

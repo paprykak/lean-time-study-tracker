@@ -67,7 +67,10 @@ const andersson = {
 const zarzad = { marzaZl: 8, zmianNaDzien: 2, dniWRoku: 250 };
 zarzad.zlNaZmiane = sztukiUtraconeNaTempie * zarzad.marzaZl;
 zarzad.zlNaRok = zarzad.zlNaZmiane * zarzad.zmianNaDzien * zarzad.dniWRoku;
-const pomocnicze = { sztukiUtraconeNaTempie, trzyRazy90, z60do85, andersson, zarzad };
+// Ujęcie TPM (Nakajima według Jonssona i Lesshammara, s. 62): planowana konserwacja poza czasem planowanym,
+// przezbrojenia w stratach, cykl producenta.
+const tpm = oee({ planowaneWylaczone: zmiana.konserwacjaPlanowanaMin, cyklIdealnyS: cykl.nominalnyS });
+const pomocnicze = { sztukiUtraconeNaTempie, trzyRazy90, z60do85, andersson, zarzad, tpm };
 console.log('Wariant 1 w minutach:', drzewo);
 console.log('Rachunki pomocnicze:', pomocnicze);
 writeFileSync(new URL('./wynik.json', import.meta.url), JSON.stringify({ zmiana, cykl, warianty, minutyWariantu1: drzewo, pomocnicze }, null, 2));
