@@ -28,6 +28,9 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
   },
+  // Bez podświetlania składni: Shiki wstawia style w atrybutach, które blokuje CSP z hashami. Kod w artykułach
+  // to rzadkość (DECYZJE.md); gdy będzie potrzebny, Prism z klasami CSS.
+  markdown: { syntaxHighlight: false },
   // CSP w <meta> z hashami każdego skryptu i stylu (bez 'unsafe-inline'). Reszta dyrektyw: src/lib/naglowki.mjs.
   security: {
     csp: {

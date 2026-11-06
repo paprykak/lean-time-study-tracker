@@ -6,7 +6,7 @@ Pamięć robocza projektu. Czyta ją i aktualizuje każda sesja na początku i n
 - **Faza:** F0 gotowa. F1 gotowa i **czeka na akceptację wyglądu** (bramka). Bez akceptacji nie zaczynamy szablonów (F3); F2 (model treści i panel) może ruszyć zaraz po akceptacji.
 - **Gałąź robocza:** `ccr-a1f628ee-snc89w` (sesja w chmurze). `main` bez zmian: nadal stara aplikacja Lean Time Study Tracker, do pierwszego „wdrażaj”.
 - **Do obejrzenia:** strona wzorów `/styleguide` (lokalnie `npm run dev` → http://localhost:4321/styleguide) i zrzuty w `raporty/F1/`.
-- **Ostatnia sesja:** 2026-11-06. Repozytorium wyczyszczone i zaadaptowane, fundament Astro 7, fonty, tokeny, logo (odtworzenie koncepcji C), 20 komponentów, `/styleguide`, „Wkrótce” (szkic), 404, testy. `npm run check` zielone (bez iPhone'a, który sprawdza GitHub Actions).
+- **Ostatnia sesja:** 2026-11-06. Repozytorium wyczyszczone i zaadaptowane, fundament Astro 7, fonty, tokeny, logo (odtworzenie koncepcji C), 20 komponentów, `/styleguide`, „Wkrótce” (szkic), 404, testy. `npm run check` zielone lokalnie i w GitHub Actions (tam także iPhone/WebKit: 60 testów E2E na 3 urządzeniach, 52 zaliczone, 8 celowo pominiętych, np. test klawiatury na telefonie).
 
 ## Wyniki F1 (sekcja 3 promptu)
 | Obszar | Wynik |
