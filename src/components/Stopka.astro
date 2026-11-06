@@ -17,8 +17,8 @@ const kolumny = [
 <footer class="mt-16 bg-grafit-ciemny text-tekst-na-ciemnym-drugi">
   <div class="kontener py-10 md:py-12">
     {wariant === 'pelna' ? (
-      <div class="grid gap-10 md:grid-cols-[minmax(0,4fr)_repeat(3,minmax(0,3fr))]">
-        <div>
+      <div class="grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-[minmax(0,4fr)_repeat(3,minmax(0,3fr))]">
+        <div class="col-span-2 md:col-span-1">
           <a href="/" aria-label={`${ustawienia.nazwa}, strona główna`} class="inline-block"><Logo motyw="ciemne" class="h-14 w-auto" /></a>
           <p class="mt-4 max-w-xs text-[0.9375rem] leading-relaxed">{ustawienia.opis}</p>
         </div>
