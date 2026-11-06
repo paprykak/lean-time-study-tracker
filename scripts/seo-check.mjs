@@ -8,16 +8,16 @@ import { ADRES, PODGLAD } from '../src/lib/srodowisko.mjs';
 
 const DIST = new URL('../dist/', import.meta.url).pathname;
 // Strony, które celowo nie trafiają do wyszukiwarek.
-const NOINDEX_OK = new Set(['/404', '/styleguide']);
+const NOINDEX_OK = new Set(['/404', '/styleguide', '/podglad/strona-glowna', '/podglad/artykul']);
 // Pole zastępcze zamiast zdjęcia wolno pokazać tylko na stronie wzorów (zasady wyglądu: bez szarych prostokątów na produkcji).
 const POLE_ZASTEPCZE_OK = new Set(['/styleguide']);
 // Trasy z planu faz F2–F7, których jeszcze nie ma: link do nich to ostrzeżenie, nie błąd. Usuń wpis, gdy trasa powstanie.
 const PLANOWANE = [
   /^\/dzial\//, /^\/temat\//, /^\/autor\//, /^\/szukaj$/, /^\/newsletter$/, /^\/reklama$/, /^\/o-nas$/, /^\/kontakt$/,
   /^\/zasady-redakcyjne$/, /^\/polityka-korekt$/, /^\/oznaczanie-reklam$/, /^\/jak-uzywamy-ai$/, /^\/polityka-prywatnosci$/,
-  /^\/do-pobrania$/, /^\/rss\.xml$/,
+  /^\/do-pobrania$/, /^\/do-pobrania\//, /^\/rss\.xml$/,
 ];
-// Adresy fikcyjnych artykułów ze strony wzorów (src/data/przyklady.ts).
+// Adresy fikcyjnych artykułów ze strony wzorów i podglądów szablonów (src/data/przyklady.ts, src/data/podglad.ts).
 const PRZYKLADOWE = /^\/przyklad-/;
 const POMIN_KATALOGI = new Set(['_astro', 'admin']);
 
@@ -106,7 +106,7 @@ for (const plik of strony) {
   // Linki wewnętrzne prowadzą do istniejących stron
   for (const [, href] of html.matchAll(/<a\b[^>]*\shref="(\/[^"#]*)(?:#[^"]*)?"/g)) {
     if (href.startsWith('//') || istnieje(href)) continue;
-    if (adres === '/styleguide' && PRZYKLADOWE.test(href)) continue;
+    if ((adres === '/styleguide' || adres.startsWith('/podglad/')) && PRZYKLADOWE.test(href)) continue;
     if (PLANOWANE.some((w) => w.test(href.split('?')[0]))) planowane.set(href, (planowane.get(href) ?? 0) + 1);
     else bledy.push(`${gdzie} link do nieistniejącej strony ${href}`);
   }

@@ -1,0 +1,197 @@
+---
+// Podgląd szablonu artykułu (F3) z komponentów F1 i treści przykładowej. Noindex, poza mapą strony.
+// Elementy z promptu (F3): spis treści, śródtytuły z kotwicami, tabela przewijana na telefonie, rysunek z podpisem,
+// ramka materiału do pobrania, slot reklamowy po 3. akapicie tylko na komputerze, FAQ, źródła, tematy, powiązane.
+import Uklad from '../../layouts/Uklad.astro';
+import Okruszki from '../../components/Okruszki.astro';
+import SlotReklamowy from '../../components/SlotReklamowy.astro';
+import NaglowekSekcji from '../../components/NaglowekSekcji.astro';
+import NajczesciejCzytane from '../../components/NajczesciejCzytane.astro';
+import Newsletter from '../../components/Newsletter.astro';
+import RamkaAutora from '../../components/RamkaAutora.astro';
+import Udostepnij from '../../components/Udostepnij.astro';
+import Zdjecie from '../../components/Zdjecie.astro';
+import KartaSiatka from '../../components/karty/KartaSiatka.astro';
+import PodgladInfo from '../../components/PodgladInfo.astro';
+import NaglowekArtykulu from '../../components/artykul/NaglowekArtykulu.astro';
+import SpisTresci from '../../components/artykul/SpisTresci.astro';
+import RamkaDoPobrania from '../../components/artykul/RamkaDoPobrania.astro';
+import Faq from '../../components/artykul/Faq.astro';
+import Zrodla from '../../components/artykul/Zrodla.astro';
+import Tematy from '../../components/artykul/Tematy.astro';
+import { GLOWNY, NAJCZESCIEJ_PODGLAD, SEKCJA_PRODUKCJA, NAJNOWSZE } from '../../data/podglad';
+import { zdjecie } from '../../lib/zdjecia';
+import ustawienia from '../../data/ustawienia.json';
+
+const adresKanoniczny = `${ustawienia.adres}/przyklad-smed`;
+const zdjecieGlowne = zdjecie('robot-spawalniczy', 'Zrobotyzowane stanowisko spawalnicze: przezbrojenie zaczyna się długo przed zatrzymaniem robota.');
+const rysunek = zdjecie('linia-montazu-elektroniki', 'Standard przy stanowisku: instrukcja z kluczowymi punktami wisi tam, gdzie pracuje operator.');
+const SPIS = [
+  { id: 'dlaczego', tytul: 'Dlaczego przezbrojenie trwa tak długo' },
+  { id: 'krok-1', tytul: 'Krok 1: nagraj i rozpisz przezbrojenie' },
+  { id: 'krok-2', tytul: 'Krok 2: oddziel czynności wewnętrzne od zewnętrznych' },
+  { id: 'krok-3', tytul: 'Krok 3: przenieś pracę przed zatrzymanie' },
+  { id: 'krok-4', tytul: 'Krok 4: skróć to, co zostało' },
+  { id: 'pytania', tytul: 'Pytania i odpowiedzi' },
+];
+const powiazane = [SEKCJA_PRODUKCJA.wiodacy, NAJNOWSZE[3], NAJNOWSZE[0]];
+---
+<Uklad tytul="Podgląd: artykuł | Rytm Hali" opis="Podgląd szablonu artykułu Rytmu Hali z treścią przykładową (strona wewnętrzna)." noindex typ="article" aktywny="produkcja">
+  <div class="kontener">
+    <PodgladInfo szablon="artykułu" />
+    <Okruszki class="mt-2" pozycje={[{ nazwa: 'Produkcja', adres: '/dzial/produkcja' }, { nazwa: GLOWNY.tytul }]} />
+
+    <div class="mt-2 grid gap-10 lg:grid-cols-12 lg:gap-6">
+      <article class="min-w-0 lg:col-span-8">
+        <NaglowekArtykulu
+          tytul={GLOWNY.tytul}
+          lead={GLOWNY.lead!}
+          kategoria={GLOWNY.kategoria!}
+          format="Poradnik"
+          data={GLOWNY.data}
+          aktualizacja={new Date('2026-11-06T10:00:00Z')}
+          autor={{ nazwa: 'Patryk Korpyta', adres: '/autor/patryk-korpyta' }}
+          czasCzytania={9}
+          adresKanoniczny={adresKanoniczny}
+          zdjecie={zdjecieGlowne}
+        />
+
+        <div class="tresc mt-8">
+          <SpisTresci pozycje={SPIS} />
+
+          <p>
+            Przezbrojenie to czas od ostatniej dobrej sztuki poprzedniego wyrobu do pierwszej dobrej sztuki następnego. Na hali zwykle
+            mówi się o nim jak o koszcie stałym: tyle trwa, bo tak trzeba. Tymczasem duża część tego czasu to czynności, które wcale nie
+            wymagają zatrzymanej maszyny.
+          </p>
+          <p>
+            Metoda SMED (Single-Minute Exchange of Die), opisana przez Shigeo Shingo, porządkuje przezbrojenie w czterech krokach. Nie
+            wymaga nowych maszyn ani systemu informatycznego. Wymaga nagrania, kartki i dwóch godzin zespołu, który przezbrojenie wykonuje.
+          </p>
+          <p>
+            Ten tekst prowadzi przez wszystkie kroki na przykładzie jednego stanowiska. Na końcu znajdziesz kartę obserwacji do wydruku
+            i odpowiedzi na pytania, które padają najczęściej.
+          </p>
+
+          <SlotReklamowy komputer="baner" miejsce="artykul-tresc" class="slot-w-tresci" />
+
+          <h2 id="dlaczego">Dlaczego przezbrojenie trwa tak długo</h2>
+          <p>
+            Bo większość pracy dzieje się wtedy, gdy maszyna już stoi: szukanie narzędzi, czekanie na wózek z materiałem, dokręcanie
+            śrub, których jest więcej niż potrzeba, i regulacje metodą prób. Każda z tych czynności z osobna wygląda niewinnie.
+          </p>
+          <ul>
+            <li>narzędzia i przyrządy nie leżą tam, gdzie są potrzebne;</li>
+            <li>materiał na kolejne zlecenie przyjeżdża dopiero po zatrzymaniu;</li>
+            <li>ustawienia nie są zapisane, więc każda zmiana zaczyna od nowa.</li>
+          </ul>
+
+          <h2 id="krok-1">Krok 1: nagraj i rozpisz przezbrojenie</h2>
+          <p>
+            Nagraj całe przezbrojenie telefonem, od ostatniej dobrej sztuki do pierwszej dobrej. Potem z zespołem rozpisz każdą czynność
+            z czasem trwania. Pierwsze nagranie zwykle zaskakuje wszystkich, także osoby, które przezbrajają od lat.
+          </p>
+          <blockquote><p>Nie oceniamy ludzi, tylko przebieg. Nagranie jest dla zespołu, nie dla kierownictwa.</p></blockquote>
+
+          <RamkaDoPobrania
+            tytul="Karta obserwacji przezbrojenia"
+            opis="Jedna strona A4: czynności, czasy, podział na wewnętrzne i zewnętrzne, pomysły na usprawnienie."
+            format="PDF, 1 strona, 120 KB (przykład)"
+            adres="/do-pobrania/karta-obserwacji-przezbrojenia"
+            slug="karta-obserwacji-przezbrojenia"
+          />
+
+          <h2 id="krok-2">Krok 2: oddziel czynności wewnętrzne od zewnętrznych</h2>
+          <p>
+            Wewnętrzne wymagają zatrzymanej maszyny (wymiana formy), zewnętrzne można wykonać w trakcie pracy (przygotowanie formy
+            i narzędzi). Przykładowy podział z jednego nagrania:
+          </p>
+          <div class="tabela">
+            <table>
+              <caption class="sr-only">Przykładowy podział czynności przezbrojenia (dane fikcyjne)</caption>
+              <thead>
+                <tr><th scope="col">Czynność</th><th scope="col">Czas (min)</th><th scope="col">Rodzaj</th><th scope="col">Pomysł</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Szukanie kluczy i przyrządów</td><td>6</td><td>wewnętrzna</td><td>wózek przezbrojeniowy przygotowany wcześniej</td></tr>
+                <tr><td>Dowiezienie materiału</td><td>9</td><td>wewnętrzna</td><td>materiał przy maszynie przed zatrzymaniem</td></tr>
+                <tr><td>Wymiana formy</td><td>14</td><td>wewnętrzna</td><td>szybkozłącza, stała wysokość mocowania</td></tr>
+                <tr><td>Regulacje i próby</td><td>18</td><td>wewnętrzna</td><td>zapisane ustawienia dla każdego wyrobu</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h2 id="krok-3">Krok 3: przenieś pracę przed zatrzymanie</h2>
+          <p>
+            Wszystko, co da się przygotować wcześniej, przygotuj wcześniej: narzędzia na wózku, materiał przy maszynie, forma nagrzana.
+            To zwykle największa i najtańsza część zysku.
+          </p>
+          <figure>
+            <Zdjecie zdjecie={rysunek} proporcja="16-9" szerokosc={704} sizes="(min-width: 1024px) 704px, 100vw" />
+            <figcaption>
+              {rysunek?.podpis} {rysunek && <a href={rysunek.zrodlo} rel="noopener" target="_blank">{rysunek.fot}</a>}
+            </figcaption>
+          </figure>
+
+          <h2 id="krok-4">Krok 4: skróć to, co zostało</h2>
+          <p>
+            Dopiero teraz warto myśleć o technice: szybkozłącza zamiast śrub, ograniczniki zamiast regulacji, praca dwóch osób
+            równolegle. Na koniec zapisz nowy przebieg jako standard i nagraj przezbrojenie ponownie.
+          </p>
+
+          <Faq
+            id="pytania"
+            pytania={[
+              { pytanie: 'Od którego stanowiska zacząć?', odpowiedz: 'Od tego, które przezbraja się najczęściej albo jest wąskim gardłem. Tam każda zaoszczędzona minuta ma największą wartość.' },
+              { pytanie: 'Czy potrzebny jest zewnętrzny konsultant?', odpowiedz: 'Nie. Wystarczy osoba, która poprowadzi warsztat i zadba o nagranie oraz zapisanie standardu. Najwięcej pomysłów i tak mają operatorzy.' },
+              { pytanie: 'Jak często powtarzać analizę?', odpowiedz: 'Po każdej większej zmianie wyrobu albo maszyny i co kilka miesięcy, żeby sprawdzić, czy standard nadal obowiązuje.' },
+            ]}
+          />
+
+          <Zrodla
+            zrodla={[
+              { opis: 'Shingo S., A Revolution in Manufacturing: The SMED System, Productivity Press, 1985.' },
+              { opis: 'Dane w tabeli: przykład fikcyjny, przygotowany do podglądu szablonu.' },
+            ]}
+          />
+        </div>
+
+        <div class="mt-10 space-y-8">
+          <Tematy tematy={[{ nazwa: 'SMED', adres: '/temat/smed' }, { nazwa: 'Przezbrojenia', adres: '/temat/przezbrojenia' }, { nazwa: 'OEE', adres: '/temat/oee' }]} />
+          <Udostepnij adres={adresKanoniczny} tytul={GLOWNY.tytul} wariant="dol" />
+          <RamkaAutora
+            imie="Patryk Korpyta"
+            rola="Redaktor naczelny"
+            bio="Założyciel i redaktor naczelny Rytmu Hali. Pisze o produkcji, magazynach, lean i danych w operacjach."
+            adres="/autor/patryk-korpyta"
+            email="redakcja@rytmhali.pl"
+          />
+        </div>
+      </article>
+
+      <aside class="space-y-10 lg:col-span-4" aria-label="Kolumna boczna">
+        <div class="hidden lg:block">
+          <SlotReklamowy komputer="polstrona" miejsce="artykul-bok" />
+        </div>
+        <NajczesciejCzytane artykuly={NAJCZESCIEJ_PODGLAD} />
+        <div class="lg:sticky lg:top-6">
+          <Newsletter id="artykul-newsletter" miejsce="artykul-bok" />
+        </div>
+      </aside>
+    </div>
+
+    <section aria-labelledby="wiecej-z-dzialu" class="mt-14">
+      <NaglowekSekcji tytul="Więcej z działu Produkcja" id="wiecej-z-dzialu" link={{ nazwa: 'Wszystkie', adres: '/dzial/produkcja' }} />
+      <div class="mt-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {powiazane.map((x) => <KartaSiatka artykul={x} zLeadem szerokosc={400} />)}
+      </div>
+    </section>
+  </div>
+</Uklad>
+
+<style>
+  /* Slot w treści: tylko na komputerze (komponent ukrywa go na telefonie), z odstępem jak akapit. */
+  .tresc :global(.slot-w-tresci) {
+    margin-block: 2rem;
+  }
+</style>

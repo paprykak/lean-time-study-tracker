@@ -1,0 +1,66 @@
+---
+// Pytania i odpowiedzi pod artykułem (details: działa bez JavaScriptu, klawiaturą i czytnikiem ekranu)
+// oraz dane strukturalne FAQPage z tymi samymi pytaniami, które widać na stronie.
+interface Props {
+  id: string;
+  tytul?: string;
+  pytania: { pytanie: string; odpowiedz: string }[];
+}
+const { id, tytul = 'Pytania i odpowiedzi', pytania } = Astro.props;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: pytania.map((p) => ({ '@type': 'Question', name: p.pytanie, acceptedAnswer: { '@type': 'Answer', text: p.odpowiedz } })),
+};
+---
+<section aria-labelledby={id} class="faq">
+  <h2 id={id}>{tytul}</h2>
+  <div class="faq-lista">
+    {pytania.map((p) => (
+      <details>
+        <summary>{p.pytanie}</summary>
+        <p>{p.odpowiedz}</p>
+      </details>
+    ))}
+  </div>
+</section>
+<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+<style>
+  .faq-lista {
+    margin-top: 1rem;
+    border-top: 2px solid var(--color-grafit);
+  }
+  .faq details {
+    border-bottom: 1px solid var(--color-linia);
+  }
+  .faq summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 3.25rem;
+    padding: 0.75rem 0;
+    cursor: pointer;
+    list-style: none;
+    font-weight: 700;
+    color: var(--color-tekst);
+  }
+  .faq summary::-webkit-details-marker {
+    display: none;
+  }
+  .faq summary::after {
+    content: "+";
+    flex-shrink: 0;
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    line-height: 1;
+    color: var(--color-akcent-tekst);
+  }
+  .faq details[open] summary::after {
+    content: "−";
+  }
+  .faq details p {
+    margin: 0 0 1rem;
+  }
+</style>

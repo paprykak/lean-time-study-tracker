@@ -7,7 +7,7 @@ const { chromium } = require('@playwright/test');
 const PORT = 4323;
 const adres = (a) => `http://127.0.0.1:${PORT}${a}`;
 const INDEKSOWANE = ['/'];
-const WEWNETRZNE = ['/styleguide', '/404'];
+const WEWNETRZNE = ['/styleguide', '/podglad/strona-glowna', '/podglad/artykul', '/404'];
 
 const kategorie = {
   'categories:performance': ['error', { minScore: 0.95 }],
@@ -35,7 +35,7 @@ module.exports = {
     assert: {
       assertMatrix: [
         { matchingUrlPattern: `^${adres('/')}$`, assertions: { ...kategorie, ...metryki, 'categories:seo': ['error', { minScore: 0.95 }] } },
-        { matchingUrlPattern: `/(styleguide|404)$`, assertions: { ...kategorie, ...metryki } },
+        { matchingUrlPattern: `/(styleguide|404|podglad/.+)$`, assertions: { ...kategorie, ...metryki } },
       ],
     },
     upload: { target: 'filesystem', outputDir: '.lighthouseci/raporty' },

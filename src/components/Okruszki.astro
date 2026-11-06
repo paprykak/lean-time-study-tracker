@@ -21,7 +21,8 @@ const jsonLd = {
 <nav aria-label="Ścieżka nawigacji" class:list={['text-[0.8125rem] text-tekst-drugi', klasa]}>
   <ol class="flex flex-wrap items-center gap-x-2">
     {wszystkie.map((p, i) => (
-      <li class="flex items-center gap-2">
+      // Bieżąca strona (ostatni element) na telefonie jest ukryta: długi tytuł artykułu łamałby ścieżkę.
+      <li class:list={['flex items-center gap-2', { 'max-sm:hidden': i === wszystkie.length - 1 && i > 0 }]}>
         {i > 0 && <span aria-hidden="true" class="text-[#8a939e]">/</span>}
         {p.adres && i < wszystkie.length - 1 ? (
           <a href={p.adres} class="inline-flex min-h-11 items-center font-medium text-tekst najazd:underline">{p.nazwa}</a>

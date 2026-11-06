@@ -34,6 +34,7 @@ export function plikNaglowkow({ podglad }) {
       blok('/obrazy/*', { 'Cache-Control': 'public, max-age=604800' }),
       blok('/marka/*', { 'Cache-Control': 'public, max-age=604800' }),
       blok('/styleguide', { 'X-Robots-Tag': 'noindex, nofollow', 'Cache-Control': 'no-cache' }),
+      blok('/podglad/*', { 'X-Robots-Tag': 'noindex, nofollow', 'Cache-Control': 'no-cache' }),
       blok('/admin/*', { 'X-Robots-Tag': 'noindex, nofollow', 'Cache-Control': 'no-cache' }),
     ].join('\n\n') + '\n'
   );

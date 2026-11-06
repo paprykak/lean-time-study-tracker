@@ -31,6 +31,7 @@ describe('nagłówki HTTP', () => {
     const plik = plikNaglowkow({ podglad: false });
     expect(plik).toMatch(/\/styleguide\n {2}X-Robots-Tag: noindex/);
     expect(plik).toMatch(/\/admin\/\*\n {2}X-Robots-Tag: noindex/);
+    expect(plik).toMatch(/\/podglad\/\*\n {2}X-Robots-Tag: noindex/);
   });
 });
 

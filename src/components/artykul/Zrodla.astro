@@ -1,0 +1,23 @@
+---
+// Źródła artykułu: numerowana lista, linki zewnętrzne otwierane bezpiecznie.
+interface Props {
+  zrodla: { opis: string; adres?: string }[];
+}
+const { zrodla } = Astro.props;
+---
+<section aria-labelledby="zrodla" class="zrodla">
+  <h2 id="zrodla">Źródła</h2>
+  <ol>
+    {zrodla.map((z) => <li>{z.adres ? <a href={z.adres} rel="noopener" target="_blank">{z.opis}</a> : z.opis}</li>)}
+  </ol>
+</section>
+
+<style>
+  .zrodla ol {
+    margin-top: 0.75rem;
+    list-style: decimal;
+    padding-left: 1.5rem;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+  }
+</style>

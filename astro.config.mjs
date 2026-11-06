@@ -7,7 +7,7 @@ import { ADRES, PODGLAD } from './src/lib/srodowisko.mjs';
 import { plikNaglowkow } from './src/lib/naglowki.mjs';
 
 // Strony, które nigdy nie trafiają do mapy strony (mają noindex albo nie są treścią).
-const POZA_MAPA = /\/(404|410|styleguide|admin)(\/|$)/;
+const POZA_MAPA = /\/(404|410|styleguide|admin|podglad)(\/|$)/;
 
 /** Zapisuje dist/_headers (nagłówki bezpieczeństwa i pamięci podręcznej) zależnie od trybu budowania. */
 const naglowki = () => ({

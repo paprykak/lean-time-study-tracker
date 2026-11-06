@@ -42,7 +42,7 @@ test('strona główna: kanoniczny adres, okładka udostępnień i dane struktura
 });
 
 test('strony wewnętrzne mają noindex i nie mają adresu kanonicznego', async ({ page }) => {
-  for (const adres of ['/styleguide', '/404']) {
+  for (const adres of ['/styleguide', '/podglad/strona-glowna', '/podglad/artykul', '/404']) {
     await page.goto(adres);
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
     await expect(page.locator('link[rel="canonical"]')).toHaveCount(0);

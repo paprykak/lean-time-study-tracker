@@ -1,0 +1,13 @@
+---
+// Tematy artykułu (linki do stron tematów: linkowanie wewnętrzne „Na ten temat”).
+interface Props {
+  tematy: { nazwa: string; adres: string }[];
+}
+const { tematy } = Astro.props;
+---
+<nav aria-label="Tematy" class="flex flex-wrap items-center gap-2">
+  <span class="kategoria mr-1 text-tekst-drugi">Tematy</span>
+  {tematy.map((t) => (
+    <a href={t.adres} class="inline-flex min-h-11 items-center border border-linia px-3 text-[0.875rem] font-semibold text-tekst najazd:border-grafit">{t.nazwa}</a>
+  ))}
+</nav>

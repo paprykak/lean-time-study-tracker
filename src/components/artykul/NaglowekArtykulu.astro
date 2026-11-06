@@ -1,0 +1,70 @@
+---
+// Nagłówek artykułu w hierarchii redakcyjnej: kategoria i format, tytuł (H1), lead, metadane z udostępnianiem,
+// zdjęcie główne 16:9 z podpisem „Fot.”. Materiał partnera ma widoczne oznaczenie nad tytułem i pod metadanymi.
+import Zdjecie from '../Zdjecie.astro';
+import Udostepnij from '../Udostepnij.astro';
+import type { Odnosnik, Zdjecie as TypZdjecia } from '../../lib/typy';
+import { czasCzytaniaTekst, dataDluga, datetime } from '../../lib/daty';
+
+interface Props {
+  tytul: string;
+  lead: string;
+  kategoria: Odnosnik;
+  format?: string;
+  data: Date;
+  aktualizacja?: Date;
+  autor: Odnosnik;
+  czasCzytania: number;
+  adresKanoniczny: string;
+  zdjecie?: TypZdjecia;
+  partner?: string;
+}
+const { tytul, lead, kategoria, format, data, aktualizacja, autor, czasCzytania, adresKanoniczny, zdjecie, partner } = Astro.props;
+---
+<header class="naglowek-artykulu">
+  <p class="flex flex-wrap items-center gap-x-2">
+    {partner ? (
+      <span class="etykieta-partnera">Materiał partnera</span>
+    ) : (
+      <a href={kategoria.adres} class="kategoria najazd:underline">{kategoria.nazwa}</a>
+    )}
+    {format && <><span class="kategoria text-tekst-drugi" aria-hidden="true">·</span><span class="kategoria text-tekst-drugi">{format}</span></>}
+  </p>
+  <h1 class="mt-3 font-display text-[1.875rem] leading-[1.15] font-bold tracking-[-0.01em] text-tekst sm:text-[2.5rem] lg:text-[2.875rem]">{tytul}</h1>
+  <p class="lead mt-4">{lead}</p>
+  <div class="mt-5 flex flex-wrap items-center justify-between gap-3 border-y border-linia py-2">
+    <p class="meta flex flex-wrap items-center gap-x-2">
+      <a href={autor.adres} class="font-semibold text-tekst najazd:underline">{autor.nazwa}</a>
+      <span aria-hidden="true">·</span>
+      <time datetime={datetime(data)}>{dataDluga(data)}</time>
+      {aktualizacja && <><span aria-hidden="true">·</span><span>aktualizacja <time datetime={datetime(aktualizacja)}>{dataDluga(aktualizacja)}</time></span></>}
+      <span aria-hidden="true">·</span>
+      <span>{czasCzytaniaTekst(czasCzytania)}</span>
+    </p>
+    <Udostepnij adres={adresKanoniczny} tytul={tytul} wariant="gora" />
+  </div>
+  {partner && <p class="meta mt-2">Materiał przygotowany przez partnera: {partner}. Redakcja nie odpowiada za jego treść.</p>}
+  {zdjecie && (
+    <figure class="mt-6">
+      <Zdjecie zdjecie={zdjecie} proporcja="16-9" szerokosc={820} sizes="(min-width: 1280px) 820px, (min-width: 1024px) 66vw, 100vw" priorytet />
+      <figcaption class="meta mt-2">
+        {zdjecie.podpis && <span class="text-tekst-tresc">{zdjecie.podpis} </span>}
+        {zdjecie.zrodlo ? <a href={zdjecie.zrodlo} rel="noopener" target="_blank" class="underline underline-offset-2 najazd:text-tekst">{zdjecie.fot}</a> : zdjecie.fot}
+      </figcaption>
+    </figure>
+  )}
+</header>
+
+<style>
+  .etykieta-partnera {
+    display: inline-block;
+    padding: 0.125rem 0.375rem;
+    border: 1px solid var(--color-grafit);
+    color: var(--color-tekst);
+    font-size: var(--text-kategoria);
+    line-height: var(--text-kategoria--line-height);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+</style>

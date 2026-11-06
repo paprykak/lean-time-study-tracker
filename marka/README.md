@@ -4,7 +4,7 @@
 Koncepcja C: plakietka z dachem szedowym, litery RH, napis „RYTM HALI”, podtytuł „Produkcja · Magazyn · Dane”.
 Tekst zamieniony na krzywe z fontów Noto (SIL OFL 1.1).
 
-**Stan:** pliki w `logo/svg/` to odtworzenie koncepcji C z opisu w prompcie (sesja w chmurze nie miała dostępu
+**Stan:** zaakceptowane przez Patryka 2026-11-06. Pliki w `logo/svg/` to odtworzenie koncepcji C z opisu w prompcie (sesja w chmurze nie miała dostępu
 do oryginałów z `/home/patryk/Pulpit/rytm-hali/marka/logo/`), po szlifie z 2026-11-06 na prośbę Patryka.
 Geometria i wszystkie wymiary: `logo/geometria.mjs` (`PARAMETRY`). Porównanie wariantów w realnych rozmiarach:
 `node marka/logo/porownaj.mjs porownanie.png`. Po dodaniu oryginałów: podmień pliki w `logo/svg/` (te same nazwy)
