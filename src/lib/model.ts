@@ -17,7 +17,8 @@ export const MIEJSCA_REKLAM = ['glowna-gora', 'glowna-bok', 'artykul-tresc', 'ar
 /** Adresy artykułów są płaskie (/<slug>), więc slug nie może zająć adresu żadnej trasy serwisu. */
 export const ZAREZERWOWANE = [
   'dzial', 'temat', 'autor', 'do-pobrania', 'pobierz', 'szukaj', 'newsletter', 'reklama', 'o-nas', 'kontakt',
-  'zasady-redakcyjne', 'polityka-korekt', 'oznaczanie-reklam', 'jak-uzywamy-ai', 'polityka-prywatnosci',
+  'zasady-redakcyjne', 'polityka-korekt', 'oznaczanie-reklam', 'jak-uzywamy-ai', 'polityka-prywatnosci', 'regulamin-newslettera',
+  'stopka-redakcyjna', 'llms',
   'styleguide', 'podglad', 'admin', 'api', 'okladki', 'marka', 'fonty', 'obrazy', 'rss', '404', '410', 'index',
 ] as const;
 

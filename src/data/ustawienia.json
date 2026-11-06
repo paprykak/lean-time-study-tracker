@@ -86,8 +86,16 @@
     ],
     "prawne": [
       {
+        "nazwa": "Stopka redakcyjna",
+        "adres": "/stopka-redakcyjna"
+      },
+      {
         "nazwa": "Polityka prywatności",
         "adres": "/polityka-prywatnosci"
+      },
+      {
+        "nazwa": "Regulamin newslettera",
+        "adres": "/regulamin-newslettera"
       }
     ]
   },

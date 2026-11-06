@@ -48,7 +48,8 @@ Pełne zadanie i fazy: `prompty/01-budowa-portalu.md`. Stan prac: `STAN.md`. Dec
 | `public/admin/` | panel redakcji Sveltia CMS (`config.yml`; wersja skryptu przypięta z sumą SRI w `index.html` i `package.json`) |
 | `worker/` | Worker Cloudflare dla `/api/*`: logowanie do panelu przez GitHub, zapis na newsletter (Brevo, podwójne potwierdzenie) i formularz kontaktowy (Email Routing) w `formularze.js`; dalej 410 |
 | `src/lib/markdown.mjs` | wtyczki Markdowna (silnik Sätteri w Astro 7): przypisy `[n]` do źródeł, rysunki z podpisem, tabele, miejsce reklamy po 3. akapicie, rel linków |
-| `src/content/strony/` | strony stałe (O nas, zasady, korekty, reklamy, AI, kontakt, polityka prywatności, reklama, newsletter); `projekt: true` = projekt do akceptacji Patryka |
+| `src/content/strony/` | strony stałe (O nas, zasady, korekty, reklamy, AI, kontakt, polityka prywatności, regulamin newslettera, stopka redakcyjna, reklama, newsletter); `projekt: true` = projekt do akceptacji Patryka |
+| `prawne/` | lista pytań do prawnika przed startem (F7) |
 | `src/content/testowe/` | fikcyjne artykuły i materiał do testów szablonów (tylko podgląd i build testowy; panel ich nie widzi) |
 | `src/data/ustawienia.json` | nazwa, menu, pasek tematów, stopka, teksty newslettera (edycja w panelu: „Ustawienia serwisu”) |
 | `scripts/` | kontrola SEO, budżet, fonty, zrzuty |

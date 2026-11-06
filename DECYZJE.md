@@ -118,6 +118,12 @@ Patryk: bez oznaczeń, że tekst powstał z użyciem AI, a teksty mają być nap
 - **Karta jakości:** bramki przyjemności i wartości (czytelnik testowy co najmniej 8/10 w obu) i redaktora językowego; cztery nowe kryteria (otwarcie, łuk, zdania, gęstość wartości); próg 28 z 32, bez zera, a teza, dowody, użyteczność, otwarcie i zdania na 2.
 - **Kontrola tekstu w CI rozszerzona:** wniosek z badań bez przypisu to błąd; uwagi o stylu urzędowym, kalkach z angielskiego, słowach nadużywanych, konstrukcjach typowych dla tekstów generowanych („nie tylko…, ale”, „to nie X, to Y”, pytanie z natychmiastową odpowiedzią, trzy zdania od tego samego słowa), śródtytułach-etykietach, nadmiarze list, pogrubień, półpauz i strony biernej oraz o monotonnym rytmie. Progi rytmu skalibrowane na felietonach Boya-Żeleńskiego (Wolne Lektury, domena publiczna): w 16 fragmentach zróżnicowanie długości zdań 0,57–0,96, więc próg 0,45 nie łapie dobrej prozy, tylko tekst jednostajny.
 
+## 2026-11-06 — F7: prawo i zaufanie
+
+- **Polityka prywatności z inwentarza kodu**: każdy przepływ danych opisany tak, jak działa (podwójne potwierdzenie w Brevo, poczta przez Email Routing, IP tylko przez minutę do limitu prób, brak plików cookie u czytelników poza logowaniem redakcji). Fakty o dostawcach sprawdzone 2026-11-06 (Cloudflare: EU-U.S. Data Privacy Framework i standardowe klauzule umowne według jego strony o RODO; Brevo SAS z siedzibą w Paryżu, hosting deklarowany w UE przy zastrzeżeniu transferów w jego polityce; Umami bez plików cookie i bez zapisu IP według jego materiałów). Ocena prawna i okresy przechowywania oznaczone dla prawnika, bez porad.
+- **Regulamin newslettera i stopka redakcyjna** jako projekty; regulamin dostępny przed startem, bo linkuje go zgoda na stronie „Wkrótce”.
+- **Pytania do prawnika w repozytorium** (`prawne/`), bez spraw pracowniczych Patryka (repozytorium jest publiczne; sprawy umowy o pracę zostają w rozmowie i w STAN.md jako jedna linia).
+
 ## 2026-11-06 — F6: newsletter i formularze
 
 - **Rekomendacja: Brevo** (wybór i konto należą do Patryka). Brevo ma w API osobny zapis z podwójnym potwierdzeniem (`POST /v3/contacts/doubleOptinConfirmation`: lista, szablon potwierdzenia, strona powrotu; sprawdzone w dokumentacji Brevo 2026-11-06), więc potwierdzenie gwarantuje kod. W MailerLite przy zapisie przez API potwierdzenie zależy od ustawienia konta, którego dokumentacja API nie opisuje. Obie firmy są z UE. Worker ma jednego dostawcę w jednej funkcji, więc zmiana to kilkanaście linii.
