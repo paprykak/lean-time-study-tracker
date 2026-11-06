@@ -25,6 +25,6 @@ Redaktor naczelny prowadzi też działalność doradczą w obszarze operacji. W 
 
 ## Wydawca
 
-[DO UZUPEŁNIENIA: wydawca, forma działalności, adres i dane rejestrowe — po decyzji o formie prawnej (F7).]
+[DO UZUPEŁNIENIA: wydawca, forma działalności, adres i dane rejestrowe, po decyzji o formie prawnej.]
 
 Kontakt z redakcją: [redakcja@rytmhali.pl](mailto:redakcja@rytmhali.pl). Błąd w tekście? Zobacz [politykę korekt](/polityka-korekt).

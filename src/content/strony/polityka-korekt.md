@@ -20,4 +20,4 @@ Napisz na [redakcja@rytmhali.pl](mailto:redakcja@rytmhali.pl): adres tekstu, co 
 
 ## Sprostowania
 
-Prawo do sprostowania wynika z Prawa prasowego. [DO UZUPEŁNIENIA po ocenie prawnika (F7): tryb i terminy publikacji sprostowań.]
+Prawo do sprostowania wynika z Prawa prasowego. [DO UZUPEŁNIENIA po ocenie prawnika (pytanie 3 w liście dla prawnika): tryb i terminy publikacji sprostowań.]

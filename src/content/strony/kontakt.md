@@ -16,4 +16,4 @@ Napisz na [redakcja@rytmhali.pl](mailto:redakcja@rytmhali.pl) albo przez formula
 
 ## Dane wydawcy
 
-[DO UZUPEŁNIENIA: wydawca, adres i dane rejestrowe (F7).]
+[DO UZUPEŁNIENIA: wydawca, adres i dane rejestrowe, po wyborze formy działalności.]
