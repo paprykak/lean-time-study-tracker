@@ -119,3 +119,27 @@ test('robots.txt wskazuje mapę strony i zamyka panel', async ({ request }) => {
   expect(tekst).toContain('Sitemap: https://rytmhali.pl/sitemap-index.xml');
   expect(tekst).toContain('Disallow: /admin/');
 });
+
+test('formularze wysyłają się do workera bez skryptów: kontakt i newsletter, z pułapką ukrytą przed ludźmi i czytnikami', async ({ page }) => {
+  await page.goto('/kontakt');
+  const kontakt = page.locator('form[action="/api/kontakt"]');
+  await expect(kontakt).toHaveAttribute('method', 'post');
+  for (const [nazwa, wymagane] of [['imie', false], ['email', true], ['temat', true], ['wiadomosc', true], ['zgoda', true]] as const) {
+    const pole = kontakt.locator(`[name="${nazwa}"]`);
+    await expect(pole, nazwa).toHaveCount(1);
+    expect(await pole.evaluate((e) => (e as HTMLInputElement).required), nazwa).toBe(wymagane);
+    // Każde pole ma etykietę (dostępność).
+    await expect(page.locator(`label[for="${await pole.getAttribute('id')}"]`), nazwa).toHaveCount(1);
+  }
+  await expect(kontakt.locator('[name="zgoda"]')).not.toBeChecked();
+  await expect(kontakt.locator('[name="strona"]')).not.toBeInViewport();
+  await expect(kontakt.locator('.kontakt-pulapka')).toHaveAttribute('aria-hidden', 'true');
+  expect(await kontakt.locator('[name="temat"] option').allTextContents()).toEqual(['Błąd w tekście', 'Temat albo materiał do tekstu', 'Reklama i współpraca', 'Inne']);
+
+  await page.goto('/newsletter');
+  const zapis = page.locator('form[action="/api/newsletter"]').first();
+  await expect(zapis).toHaveAttribute('method', 'post');
+  await expect(zapis.locator('[name="zgoda"]')).not.toBeChecked();
+  await expect(zapis.locator('[name="strona"]')).not.toBeInViewport();
+  await expect(zapis.locator('button[type="submit"]')).toHaveAttribute('data-umami-event', 'Newsletter: zapis');
+});

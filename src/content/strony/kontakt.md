@@ -5,7 +5,7 @@ zaktualizowano: 2026-11-06
 projekt: true
 ---
 
-Najprościej napisać na [redakcja@rytmhali.pl](mailto:redakcja@rytmhali.pl). Czytamy każdą wiadomość.
+Napisz na [redakcja@rytmhali.pl](mailto:redakcja@rytmhali.pl) albo przez formularz poniżej. Czytamy każdą wiadomość.
 
 ## W jakich sprawach
 
@@ -16,4 +16,4 @@ Najprościej napisać na [redakcja@rytmhali.pl](mailto:redakcja@rytmhali.pl). Cz
 
 ## Dane wydawcy
 
-[DO UZUPEŁNIENIA: wydawca, adres i dane rejestrowe (F7).] Formularz kontaktowy dojdzie wraz z obsługą formularzy (F6).
+[DO UZUPEŁNIENIA: wydawca, adres i dane rejestrowe (F7).]

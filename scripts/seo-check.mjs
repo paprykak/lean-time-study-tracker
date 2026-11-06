@@ -10,7 +10,7 @@ import { PLIK_KLUCZA } from '../src/lib/indexnow.mjs';
 
 const DIST = new URL('../dist/', import.meta.url).pathname;
 // Strony, które celowo nie trafiają do wyszukiwarek: techniczne, wyniki wyszukiwania, strony wzorów.
-const NOINDEX_OK = new Set(['/404', '/410', '/styleguide', '/szukaj', '/newsletter/potwierdz', '/newsletter/potwierdzono', '/newsletter/wypisano']);
+const NOINDEX_OK = new Set(['/404', '/410', '/styleguide', '/szukaj', '/newsletter/potwierdz', '/newsletter/potwierdzono', '/newsletter/wypisano', '/newsletter/blad', '/kontakt/wyslano', '/kontakt/blad']);
 // Noindex z danych: listy poniżej progu artykułów (src/lib/mapa.mjs, PROGI) i artykuły z polem noindex.
 const NOINDEX_Z_DANYCH = /^\/(dzial|temat|autor)\//;
 // Pole zastępcze zamiast zdjęcia wolno pokazać tylko na stronie wzorów (zasady wyglądu: bez szarych prostokątów na produkcji).

@@ -22,7 +22,7 @@ const WERSJA_WTYCZEK = createHash('sha256')
   .slice(0, 12);
 
 // Strony, które nigdy nie trafiają do mapy strony (mają noindex albo nie są treścią).
-const POZA_MAPA = /\/(404|410|styleguide|admin|szukaj)(\/|$)|\/newsletter\/./;
+const POZA_MAPA = /\/(404|410|styleguide|admin|szukaj)(\/|$)|\/(newsletter|kontakt)\/./;
 // Artykuły (/<slug>): szkice, wpisy testowe i noindex poza mapą; lastmod z dat w treści (src/lib/mapa.mjs).
 // Strony list (dział, temat, autor) w mapie od progu liczby artykułów, z datą najnowszego tekstu.
 const katalog = (/** @type {string} */ k) => fileURLToPath(new URL(k, import.meta.url));

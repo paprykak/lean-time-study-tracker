@@ -1,0 +1,17 @@
+---
+// Strona techniczna formularza kontaktowego: worker (F6) przekierowuje tu, gdy wiadomość nie przeszła kontroli
+// albo nie dało się jej wysłać. Noindex.
+import Uklad from '../../layouts/Uklad.astro';
+import ustawienia from '../../data/ustawienia.json';
+---
+<Uklad tytul="Nie udało się wysłać | Rytm Hali" opis="Wiadomość do redakcji nie została wysłana. Sprawdź adres e-mail, treść i zgodę albo napisz bezpośrednio na adres redakcji." noindex>
+  <section class="kontener py-12 md:py-20">
+    <div class="max-w-2xl">
+      <p class="kategoria">Kontakt</p>
+      <h1 class="tytul-xl mt-3">Nie udało się wysłać wiadomości</h1>
+      <p class="lead mt-4">Sprawdź, czy adres e-mail jest pełny, wiadomość ma co najmniej 10 znaków, a zgoda jest zaznaczona. Potem spróbuj jeszcze raz.</p>
+      <p class="mt-4">Po kilku próbach z rzędu formularz chwilowo się blokuje. Zawsze możesz napisać bezpośrednio na <a href={`mailto:${ustawienia.emailRedakcji}`} class="link">{ustawienia.emailRedakcji}</a>.</p>
+      <p class="mt-8"><a href="/kontakt" class="link inline-flex min-h-11 items-center">Wróć do formularza</a></p>
+    </div>
+  </section>
+</Uklad>

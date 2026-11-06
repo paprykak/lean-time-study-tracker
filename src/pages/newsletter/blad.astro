@@ -1,0 +1,21 @@
+---
+// Strona techniczna newslettera: worker (F6) przekierowuje tu, gdy zapis się nie udał (zły adres, brak zgody,
+// zbyt wiele prób albo chwilowy kłopot dostawcy). Noindex.
+import Uklad from '../../layouts/Uklad.astro';
+import ustawienia from '../../data/ustawienia.json';
+import { PORTAL } from '../../lib/srodowisko.mjs';
+---
+<Uklad tytul="Nie udało się zapisać | Rytm Hali" opis="Zapis na Raport zmianowy nie powiódł się. Sprawdź adres e-mail i zgodę, a potem spróbuj jeszcze raz za kilka minut." noindex>
+  <section class="kontener py-12 md:py-20">
+    <div class="max-w-2xl">
+      <p class="kategoria">Raport zmianowy</p>
+      <h1 class="tytul-xl mt-3">Nie udało się zapisać</h1>
+      <p class="lead mt-4">Sprawdź, czy adres e-mail jest pełny (np. jan.kowalski@firma.pl) i czy zaznaczyłeś zgodę, a potem spróbuj jeszcze raz.</p>
+      <p class="mt-4">Jeśli to nie pomaga, odczekaj kilka minut: po kilku próbach z rzędu formularz chwilowo się blokuje. Możesz też napisać na <a href={`mailto:${ustawienia.emailRedakcji}`} class="link">{ustawienia.emailRedakcji}</a>, a zapiszemy Cię ręcznie.</p>
+      <p class="mt-8 flex flex-wrap gap-x-6 gap-y-2">
+        <a href={PORTAL ? '/newsletter' : '/'} class="link inline-flex min-h-11 items-center">Spróbuj jeszcze raz</a>
+        {PORTAL && <a href="/" class="link inline-flex min-h-11 items-center">Strona główna</a>}
+      </p>
+    </div>
+  </section>
+</Uklad>

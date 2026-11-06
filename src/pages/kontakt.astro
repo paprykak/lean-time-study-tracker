@@ -1,5 +1,8 @@
 ---
-// Strona stała: tekst w src/content/strony/kontakt.md (edycja w panelu: „Strony stałe”).
+// Strona stała: tekst w src/content/strony/kontakt.md (edycja w panelu: „Strony stałe”) i formularz kontaktowy (F6).
 import StronaStala from '../components/StronaStala.astro';
+import FormularzKontaktu from '../components/FormularzKontaktu.astro';
 ---
-<StronaStala slug="kontakt" aktywny="/kontakt" />
+<StronaStala slug="kontakt" aktywny="/kontakt">
+  <FormularzKontaktu />
+</StronaStala>

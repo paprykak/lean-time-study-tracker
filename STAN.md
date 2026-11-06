@@ -3,7 +3,7 @@
 Pamięć robocza projektu. Czyta ją i aktualizuje każda sesja na początku i na końcu pracy.
 
 ## Teraz
-- **Faza:** F0–F5 gotowe (F1 zaakceptowana przez Patryka 2026-11-06, z kursem: artykuły w stylu HBR, nie wiadomości); skill `/artykul` gotowy (po uwagach Patryka: bez oznaczeń AI, rzemiosło pisania, redaktor językowy i czytelnik testowy, kontrola redakcyjna przed publikacją). Teraz F6: newsletter i formularze.
+- **Faza:** F0–F6 gotowe (F6 bez kont: zapis i kontakt działają po założeniu Brevo i Email Routing) (F1 zaakceptowana przez Patryka 2026-11-06, z kursem: artykuły w stylu HBR, nie wiadomości); skill `/artykul` gotowy (po uwagach Patryka: bez oznaczeń AI, rzemiosło pisania, redaktor językowy i czytelnik testowy, kontrola redakcyjna przed publikacją). Teraz F7: prawo i zaufanie.
 - **Gałąź robocza:** `ccr-a1f628ee-snc89w` (sesja w chmurze). `main` bez zmian: nadal stara aplikacja Lean Time Study Tracker, do pierwszego „wdrażaj”.
 - **Do obejrzenia:** zrzuty F3 w `raporty/F3/` (strona główna, artykuł, dział, wyszukiwarka; treści testowe), zrzuty F2 w `raporty/F2/` (artykuł z kolekcji treści, panel redakcji), podgląd strony głównej i artykułu (`raporty/podglad/`), strona wzorów `/styleguide` (lokalnie `npm run dev` → http://localhost:4321/styleguide), panel na lokalnych plikach: http://localhost:4321/admin/index.html.
 - **Ostatnia sesja:** 2026-11-06: F3 (szablony, wyszukiwarka, start w dwóch krokach) i skill `/artykul` po uwagach Patryka (DECYZJE.md). Wcześniej F2: kolekcje treści, strona artykułu `/<slug>` z kolekcji, okładki 1200×630, mapa strony z `lastmod`, panel Sveltia CMS (przepływ redakcyjny), worker z logowaniem do panelu, testy panelu. Wcześniej tego dnia: repozytorium wyczyszczone i zaadaptowane, fundament Astro 7, fonty, tokeny, logo (odtworzenie koncepcji C), 20 komponentów, `/styleguide`, „Wkrótce” (szkic), 404, testy. `npm run check` zielone lokalnie i w GitHub Actions (tam także iPhone/WebKit: 60 testów E2E na 3 urządzeniach, 52 zaliczone, 8 celowo pominiętych, np. test klawiatury na telefonie).
@@ -48,10 +48,13 @@ Od góry według pilności. Każdy punkt to jedna czynność.
 - [ ] **Opcjonalnie, więcej zdjęć:** klucz API Unsplash (darmowy, https://unsplash.com/oauth/applications → New Application). Bez klucza nie da się legalnie szukać w Unsplash automatycznie; klucz dodajesz sam w ustawieniach środowiska, nie w czacie.
 - [ ] **Repozytorium:** to repozytorium jest **publiczne** i nazywa się `lean-time-study-tracker`. Prompt zakłada prywatne. GitHub → Settings → General: zmień nazwę na `rytm-hali` i na dole „Change repository visibility” → Private. https://github.com/paprykak/lean-time-study-tracker/settings
 - [ ] **Domeny:** kup `rytmhali.pl` i `rytmhali.com` i dodaj je do Cloudflare (Add a domain). Bez tego nie da się wdrożyć produkcji.
+- [ ] **Newsletter, konto Brevo** (rekomendacja; firma i dane w UE, API ma osobny zapis z podwójnym potwierdzeniem; jeśli wolisz MailerLite, napisz): https://www.brevo.com → załóż konto → Kontakty → Listy: lista „Raport zmianowy” (zapisz jej numer) → Szablony: szablon potwierdzenia zapisu z linkiem `{{ params.DOIurl }}` (zapisz numer) → SMTP i API → Klucze API: utwórz klucz i wpisz go sam: `npx wrangler secret put BREVO_API_KEY`. Mnie podaj tylko numer listy i szablonu (to nie sekrety). W Brevo ustaw stronę wypisu na `https://rytmhali.pl/newsletter/wypisano`.
+- [ ] **Poczta domeny** (po dodaniu domeny do Cloudflare): Brevo → Nadawcy, domeny → dodaj `rytmhali.pl` i wpisz w Cloudflare DNS rekordy, które poda (DKIM, DMARC, kod weryfikacji). Jeden rekord SPF na domenę: gdy Brevo albo Email Routing poprosi o SPF, dopisz jego `include:` do istniejącego rekordu, nie dodawaj drugiego.
+- [ ] **Adres redakcja@rytmhali.pl:** Cloudflare → domena → Email → Email Routing → włącz → Adresy docelowe: dodaj swoją skrzynkę i potwierdź → reguła `redakcja@rytmhali.pl` → Twoja skrzynka. Potem w ustawieniach Workera: zmienna `ADRES_REDAKCJI` = Twoja skrzynka (formularz kontaktowy wysyła na nią przez Email Routing; adres nie trafia do repozytorium). Instrukcja: https://developers.cloudflare.com/email-routing/get-started/
 - [ ] **Cloudflare, projekt Workers z repozytorium:** Workers & Pages → Create → Import a repository → to repozytorium. Build command: `npm run check:szybki`, deploy command: `npx wrangler deploy`, gałęzie inne niż `main`: włącz „Builds for non-production branches”. Potem Zero Trust → Access: zabezpiecz „Preview URLs” Workera (polityka: Twój e-mail). Instrukcja: https://developers.cloudflare.com/workers/ci-cd/builds/
 - [ ] **Panel, pierwsze logowanie (gdy strona będzie na Cloudflare):** utwórz token https://github.com/settings/personal-access-tokens/new → Repository access: tylko to repozytorium → Permissions: Contents i Pull requests: Read and write → ważność 90 dni. Na rytmhali.pl/admin kliknij „Zaloguj się za pomocą tokenu dostępu” i wklej. Token zostaje w Twojej przeglądarce; nie wklejaj go w czacie.
 - [ ] **Logowanie przez GitHub (wygodniejsze, po tokenie):** https://github.com/settings/applications/new → nazwa „Rytm Hali: panel”, Homepage `https://rytmhali.pl`, Authorization callback URL `https://rytmhali.pl/api/auth/callback` → Register. Potem w katalogu projektu: `npx wrangler secret put GITHUB_CLIENT_ID` (Client ID) i `npx wrangler secret put GITHUB_CLIENT_SECRET` (Generate a new client secret). Wartości wpisujesz tylko Ty.
-- [ ] **Umami:** dodaj witrynę `rytmhali.pl` w https://cloud.umami.is i podaj identyfikator witryny (to nie jest sekret). Włączymy statystyki po decyzji przy F3.
+- [ ] **Umami** (wybrany w prompcie): dodaj witrynę `rytmhali.pl` w https://cloud.umami.is (region UE) i podaj identyfikator witryny (to nie jest sekret). Do raportów dla partnerów: klucz API (Ustawienia → Klucze API) tylko w swoim środowisku.
 - [ ] **Przed publicznym startem:** umowa o pracę (zakaz konkurencji, zgoda na działalność dodatkową); przed pierwszą reklamą: forma działalności i rozmowa z prawnikiem (lista pytań w F7). Pytanie do prawnika: czy Rytm Hali jako regularnie wydawany portal wymaga rejestracji tytułu prasowego w sądzie okręgowym (Prawo prasowe, art. 20) i co to zmienia (autoryzacja, sprostowania, redaktor naczelny).
 - [ ] **Opcjonalnie: klucz OpenAlex** (darmowy, https://help.openalex.org/api/authentication/): lepsze wyszukiwanie badań w skillu `/artykul`. Klucz dodajesz sam w ustawieniach środowiska, nie w czacie.
 
@@ -72,9 +75,18 @@ Od góry według pilności. Każdy punkt to jedna czynność.
 | Raport dla partnera | `npm run raport-kampanii -- <id>`: wyświetlenia, kliknięcia i CTR według miejsc z API Umami; sprawdzony na atrapie API |
 | Materiał partnera | oznaczenie w nagłówku i na kartach, `sponsor` w danych, linki `sponsored`, bez reklamy w treści (test E2E na fikcyjnym materiale) |
 
+## Wyniki F6
+| Obszar | Wynik |
+|---|---|
+| Zapis na newsletter | formularz bez skryptów → worker `/api/newsletter` → Brevo z podwójnym potwierdzeniem (lista, szablon, powrót na `/newsletter/potwierdzono`); strony: sprawdź skrzynkę, potwierdzono, wypisano, błąd |
+| Kontakt | formularz na `/kontakt` → worker `/api/kontakt` → e-mail do redakcji przez Email Routing (odpowiedź trafia do nadawcy); strony: wysłano, błąd |
+| Ochrona | pole-pułapka, limit 5 prób na minutę z jednego IP (Rate Limiting), tylko z tej domeny (Origin), kontrola pól i adresu e-mail w workerze, temat z zamkniętej listy (bez wstrzyknięcia nagłówków), bez adresów e-mail w logach |
+| Sprawdzone | 20 testów workera (atrapy Brevo i poczty), worker w `wrangler dev` (pułapka, brak konfiguracji, obca domena, GET), E2E formularzy i axe na `/kontakt` |
+
 ## Następne kroki
 0. Skill `/artykul` gotowy (2026-11-06): pierwszy tekst po wyborze tematu; po nim lekcje w skillu.
-1. F6: newsletter i formularze (zależne od wyboru dostawcy newslettera i jego klucza).
+1. F7: prawo i zaufanie (projekty polityki prywatności, regulaminu newslettera i stopki redakcyjnej; lista pytań do prawnika).
+1b. Po koncie Brevo i Email Routing: wiązanie `send_email` POCZTA i zmienne `BREVO_LISTA`, `BREVO_SZABLON_DOI` w `wrangler.jsonc`, próbny zapis i wiadomość z formularza na podglądzie.
 1a. Po wdrożeniu produkcji: `npm run indexnow -- --mapa`, a potem Search Console i Bing Webmaster Tools (konta Patryka, weryfikacja domeny w Cloudflare).
 2. Zdjęcia w treści artykułu z rejestru (rysunki z podpisem „Fot.”): dziś w treści są wykresy SVG; zdjęcia z rejestru w środku tekstu dojdą przy pierwszym tekście, który ich potrzebuje.
 3. LCP strony głównej: sprawdzone w Lighthouse na buildzie testowym (wynik w raporcie F3).

@@ -1,6 +1,7 @@
 ---
-// Zapis na newsletter „Raport zmianowy”: zwykły formularz bez skryptu dostawcy. Punkt API (/api/newsletter)
-// w workerze, podwójne potwierdzenie i ochrona przed spamem dochodzą w F6; pole-pułapka jest już w formularzu.
+// Zapis na newsletter „Raport zmianowy”: zwykły formularz bez skryptu dostawcy. Worker (/api/newsletter,
+// worker/formularze.js) zapisuje przez API Brevo z podwójnym potwierdzeniem; ochrona: pole-pułapka, limit prób na IP,
+// tylko z tej domeny. Wynik: przekierowanie na /newsletter/potwierdz albo /newsletter/blad.
 // Zgoda na otrzymywanie newslettera: osobne, niezaznaczone pole wyboru (treść do akceptacji Patryka, F7).
 import Ikona from './Ikona.astro';
 import ustawienia from '../data/ustawienia.json';
@@ -47,7 +48,7 @@ const ids = { email: `${id}-email`, zgoda: `${id}-zgoda`, blad: `${id}-blad`, ty
             value={stan === 'blad' ? 'kierownik@zaklad' : undefined}
           />
         </div>
-        <button type="submit" class="przycisk przycisk-glowny newsletter-przycisk">Zapisz się</button>
+        <button type="submit" class="przycisk przycisk-glowny newsletter-przycisk" data-umami-event="Newsletter: zapis" data-umami-event-miejsce={miejsce}>Zapisz się</button>
       </div>
       {stan === 'blad' && (
         <p id={ids.blad} class="mt-2 flex items-start gap-1.5 text-[0.875rem] font-semibold text-blad" role="alert">

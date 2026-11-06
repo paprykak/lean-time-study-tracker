@@ -1,0 +1,68 @@
+---
+// Formularz kontaktowy redakcji (F6): zwykły formularz bez skryptów, wysyłany do workera (/api/kontakt), który przesyła
+// wiadomość na skrzynkę redakcji przez Cloudflare Email Routing. Ochrona: pole-pułapka, limit prób na IP, tylko z tej
+// domeny (worker/formularze.js). Treść zgody do akceptacji Patryka razem z polityką prywatności (F7).
+import { TEMATY_KONTAKTU } from '../lib/formularze.mjs';
+---
+<section class="kontakt-formularz mt-10" aria-labelledby="formularz-tytul">
+  <h2 id="formularz-tytul" class="font-display text-[1.375rem] leading-tight font-bold text-tekst">Napisz do redakcji</h2>
+  <p class="mt-2 text-[0.9375rem] leading-relaxed">Odpowiemy na adres e-mail, który podasz. Pola z gwiazdką są wymagane.</p>
+  <form action="/api/kontakt" method="post" class="mt-5 grid gap-4">
+    <div>
+      <label for="kontakt-imie" class="mb-1 block text-[0.875rem] font-semibold text-tekst">Imię i nazwisko</label>
+      <input id="kontakt-imie" name="imie" type="text" autocomplete="name" maxlength="100" class="pole" />
+    </div>
+    <div>
+      <label for="kontakt-email" class="mb-1 block text-[0.875rem] font-semibold text-tekst">Adres e-mail *</label>
+      <input id="kontakt-email" name="email" type="email" required autocomplete="email" inputmode="email" maxlength="254" class="pole" />
+    </div>
+    <div>
+      <label for="kontakt-temat" class="mb-1 block text-[0.875rem] font-semibold text-tekst">Temat *</label>
+      <select id="kontakt-temat" name="temat" required class="pole">
+        {TEMATY_KONTAKTU.map((t) => <option value={t}>{t}</option>)}
+      </select>
+    </div>
+    <div>
+      <label for="kontakt-wiadomosc" class="mb-1 block text-[0.875rem] font-semibold text-tekst">Wiadomość *</label>
+      <textarea id="kontakt-wiadomosc" name="wiadomosc" required minlength="10" maxlength="5000" rows="7" class="pole py-2" aria-describedby="kontakt-wiadomosc-opis"></textarea>
+      <p id="kontakt-wiadomosc-opis" class="meta mt-1">Przy błędzie w tekście podaj adres artykułu i źródło, które go pokazuje.</p>
+    </div>
+    <div class="flex items-start gap-2">
+      <input id="kontakt-zgoda" name="zgoda" type="checkbox" value="tak" required class="kontakt-zgoda" />
+      <label for="kontakt-zgoda" class="text-[0.8125rem] leading-snug">
+        Zgadzam się, żeby redakcja Rytmu Hali użyła danych z formularza do odpowiedzi na moją wiadomość. Szczegóły w <a href="/polityka-prywatnosci" class="link font-medium">polityce prywatności</a>. *
+      </label>
+    </div>
+    {/* Pole-pułapka: niewidoczne dla ludzi, boty je wypełniają. */}
+    <div class="kontakt-pulapka" aria-hidden="true">
+      <label for="kontakt-strona">Strona internetowa</label>
+      <input id="kontakt-strona" name="strona" type="text" tabindex="-1" autocomplete="off" />
+    </div>
+    <p><button type="submit" class="przycisk przycisk-glowny" data-umami-event="Kontakt: wysłanie">Wyślij wiadomość</button></p>
+  </form>
+</section>
+
+<style>
+  .kontakt-formularz {
+    border-top: 3px solid var(--color-grafit);
+    padding-top: 1.5rem;
+  }
+  textarea.pole {
+    min-height: 10rem;
+    resize: vertical;
+  }
+  .kontakt-zgoda {
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-top: -0.125rem;
+    flex-shrink: 0;
+    accent-color: var(--color-akcent-tekst);
+  }
+  .kontakt-pulapka {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+</style>
