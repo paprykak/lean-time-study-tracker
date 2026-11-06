@@ -61,7 +61,8 @@
     "z60do85": 1.4166666666666667,
     "andersson": {
       "przedStarymCyklem": 0.8522222222222222,
-      "przedNowymCyklem": 0.7211111111111111,
+      "przedNowymCyklem": 0.7276923076923076,
+      "przedNowymCyklemZeSztuk": 0.7211111111111111,
       "poNowymCyklem": 0.7944444444444444
     },
     "zarzad": {

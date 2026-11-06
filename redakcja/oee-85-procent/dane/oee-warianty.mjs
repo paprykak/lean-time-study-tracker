@@ -60,7 +60,8 @@ const z60do85 = 0.85 / 0.6; // ile więcej sztuk przy tym samym czasie i tej sam
 // przy cyklu 22 s (OEE 79%). Ile wyszłoby OEE sprzed zmiany, gdyby liczyć je nowym cyklem 22 s?
 const andersson = {
   przedStarymCyklem: (118 * 26) / 3600, // ok. 0,85 (autorzy: 86%)
-  przedNowymCyklem: (118 * 22) / 3600, // ok. 0,72
+  przedNowymCyklem: (0.86 * 22) / 26, // ok. 0,73: OEE autorów (86%) przeliczone nowym cyklem; tak liczy tekst
+  przedNowymCyklemZeSztuk: (118 * 22) / 3600, // ok. 0,72: to samo z liczby sztuk (różnica z zaokrągleń w źródle)
   poNowymCyklem: (130 * 22) / 3600, // ok. 0,79 (autorzy: 79%)
 };
 // Przykład dla zarządu (dane fikcyjne): marża 8 zł na sztuce, dwie zmiany, 250 dni pracy w roku.
