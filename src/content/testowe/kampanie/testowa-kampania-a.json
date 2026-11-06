@@ -1,0 +1,11 @@
+{
+  "nazwa": "Kampania testowa A (fikcyjna)",
+  "partner": "testowy-partner",
+  "link": "https://example.com/oferta-a",
+  "od": "2026-01-01T00:00:00+01:00",
+  "do": "2099-12-31T00:00:00+01:00",
+  "miejsca": ["glowna-gora", "glowna-bok", "artykul-tresc", "artykul-bok", "dzial-gora"],
+  "kreacje": { "billboard": "/src/assets/testowe/kampanie/testowa-a-billboard.png", "baner": "/src/assets/testowe/kampanie/testowa-a-baner.png", "prostokat": "/src/assets/testowe/kampanie/testowa-a-prostokat.png", "polstrona": "/src/assets/testowe/kampanie/testowa-a-polstrona.png", "mobilny": "/src/assets/testowe/kampanie/testowa-a-mobilny.png", "mobilnyProstokat": "/src/assets/testowe/kampanie/testowa-a-mobilny-prostokat.png" },
+  "altKreacji": "Kreacja testowa A fikcyjnego reklamodawcy",
+  "aktywna": true
+}

@@ -27,7 +27,8 @@
     "check:szybki": "astro check && vitest run && astro build && node scripts/seo-check.mjs && node scripts/budzet.mjs",
     "check:start": "astro build && node scripts/seo-check.mjs && node scripts/budzet.mjs",
     "check": "RH_TESTOWE=1 npm run check:szybki && playwright test && lhci autorun && npm run check:start",
-    "indexnow": "node scripts/indexnow.mjs"
+    "indexnow": "node scripts/indexnow.mjs",
+    "raport-kampanii": "node scripts/raport-kampanii.mjs"
   },
   "dependencies": {
     "@astrojs/markdown-satteri": "^0.4.7",

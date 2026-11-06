@@ -32,6 +32,7 @@ Pełne zadanie i fazy: `prompty/01-budowa-portalu.md`. Stan prac: `STAN.md`. Dec
 | `npm run zdjecia` | pobiera brakujące zdjęcia z rejestru licencji, kadruje i zapisuje do `src/assets/zdjecia/` |
 | panel lokalnie | `npm run dev` → http://localhost:4321/admin/index.html → „Pracuj z lokalnym repozytorium” (Chrome/Edge, zapis prosto do plików) |
 | `npm run indexnow -- <ścieżki>` | zgłasza adresy do IndexNow (Bing i inne) **tylko po wdrożeniu produkcji**; `--mapa` zgłasza całą mapę strony z `dist/`, `--proba` tylko wypisuje zgłoszenie |
+| `npm run raport-kampanii -- <id>` | raport kampanii dla partnera z API Umami (wyświetlenia, kliknięcia, CTR według miejsc; na ekran, nie do repozytorium). Wymaga `UMAMI_API_KEY` i `UMAMI_WEBSITE_ID` w środowisku Patryka |
 | `npx wrangler dev` | worker z `/api/*` i plikami z `dist/` lokalnie (sekrety testowe: `--var NAZWA:wartość`, nigdy prawdziwe) |
 
 ## Gdzie co jest

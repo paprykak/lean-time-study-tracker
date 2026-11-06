@@ -3,7 +3,7 @@
 Pamięć robocza projektu. Czyta ją i aktualizuje każda sesja na początku i na końcu pracy.
 
 ## Teraz
-- **Faza:** F0–F4 gotowe (F1 zaakceptowana przez Patryka 2026-11-06, z kursem: artykuły w stylu HBR, nie wiadomości); skill `/artykul` gotowy (po uwagach Patryka: bez oznaczeń AI, rzemiosło pisania, redaktor językowy i czytelnik testowy, kontrola redakcyjna przed publikacją). Teraz F5: zaplecze zarabiania.
+- **Faza:** F0–F5 gotowe (F1 zaakceptowana przez Patryka 2026-11-06, z kursem: artykuły w stylu HBR, nie wiadomości); skill `/artykul` gotowy (po uwagach Patryka: bez oznaczeń AI, rzemiosło pisania, redaktor językowy i czytelnik testowy, kontrola redakcyjna przed publikacją). Teraz F6: newsletter i formularze.
 - **Gałąź robocza:** `ccr-a1f628ee-snc89w` (sesja w chmurze). `main` bez zmian: nadal stara aplikacja Lean Time Study Tracker, do pierwszego „wdrażaj”.
 - **Do obejrzenia:** zrzuty F3 w `raporty/F3/` (strona główna, artykuł, dział, wyszukiwarka; treści testowe), zrzuty F2 w `raporty/F2/` (artykuł z kolekcji treści, panel redakcji), podgląd strony głównej i artykułu (`raporty/podglad/`), strona wzorów `/styleguide` (lokalnie `npm run dev` → http://localhost:4321/styleguide), panel na lokalnych plikach: http://localhost:4321/admin/index.html.
 - **Ostatnia sesja:** 2026-11-06: F3 (szablony, wyszukiwarka, start w dwóch krokach) i skill `/artykul` po uwagach Patryka (DECYZJE.md). Wcześniej F2: kolekcje treści, strona artykułu `/<slug>` z kolekcji, okładki 1200×630, mapa strony z `lastmod`, panel Sveltia CMS (przepływ redakcyjny), worker z logowaniem do panelu, testy panelu. Wcześniej tego dnia: repozytorium wyczyszczone i zaadaptowane, fundament Astro 7, fonty, tokeny, logo (odtworzenie koncepcji C), 20 komponentów, `/styleguide`, „Wkrótce” (szkic), 404, testy. `npm run check` zielone lokalnie i w GitHub Actions (tam także iPhone/WebKit: 60 testów E2E na 3 urządzeniach, 52 zaliczone, 8 celowo pominiętych, np. test klawiatury na telefonie).
@@ -63,9 +63,18 @@ Od góry według pilności. Każdy punkt to jedna czynność.
 | IndexNow | klucz w `public/`, skrypt `npm run indexnow` (po wdrożeniu) |
 | Kontrola | `seo-check`: każda zasada w danych organizacji prowadzi do strony i śródtytułu, każdy link w `llms.txt` do zbudowanej strony, klucz IndexNow w `dist/`; E2E dla danych strukturalnych i `llms.txt` |
 
+## Wyniki F5
+| Obszar | Wynik |
+|---|---|
+| Kampanie w slotach | slot sam bierze kampanie swojego miejsca z panelu (daty od–do, „aktywna”), bez JavaScriptu pokazuje kampanię trwającą w chwili buildu, w przeglądarce pilnuje dat co do minuty i losuje jedną z trwających (rotacja); po końcu kampanii autopromocja newslettera |
+| Link i oznaczenie | UTM (`utm_source=rytmhali`, `utm_medium=display`, `utm_campaign=<id>`, bez nadpisywania własnych UTM partnera), `rel="sponsored noopener"`, podpis „REKLAMA”, kreacje 1× i 2× |
+| Zdarzenia | kliknięcie (atrybuty Umami) i wyświetlenie (połowa reklamy na ekranie przez sekundę) z właściwościami kampania, miejsce, slot; działają, gdy skrypt Umami będzie na stronie |
+| Raport dla partnera | `npm run raport-kampanii -- <id>`: wyświetlenia, kliknięcia i CTR według miejsc z API Umami; sprawdzony na atrapie API |
+| Materiał partnera | oznaczenie w nagłówku i na kartach, `sponsor` w danych, linki `sponsored`, bez reklamy w treści (test E2E na fikcyjnym materiale) |
+
 ## Następne kroki
 0. Skill `/artykul` gotowy (2026-11-06): pierwszy tekst po wyborze tematu; po nim lekcje w skillu.
-1. F5: zaplecze zarabiania (kampanie w slotach, rotacja, UTM, autopromocja po kampanii, oznaczenia partnera). Zdarzenia Umami i raport dla partnera czekają na decyzję o analityce (AGENTS.md, zasada 10).
+1. F6: newsletter i formularze (zależne od wyboru dostawcy newslettera i jego klucza).
 1a. Po wdrożeniu produkcji: `npm run indexnow -- --mapa`, a potem Search Console i Bing Webmaster Tools (konta Patryka, weryfikacja domeny w Cloudflare).
 2. Zdjęcia w treści artykułu z rejestru (rysunki z podpisem „Fot.”): dziś w treści są wykresy SVG; zdjęcia z rejestru w środku tekstu dojdą przy pierwszym tekście, który ich potrzebuje.
 3. LCP strony głównej: sprawdzone w Lighthouse na buildzie testowym (wynik w raporcie F3).

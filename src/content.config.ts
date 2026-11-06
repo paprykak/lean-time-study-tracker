@@ -71,7 +71,11 @@ const autorzy = defineCollection({
 });
 
 const partnerzy = defineCollection({
-  loader: glob({ pattern: '*.json', base: './src/content/partnerzy' }),
+  loader: glob({
+    pattern: WSZYSTKIE_TRESCI ? ['partnerzy/*.json', 'testowe/partnerzy/*.json'] : 'partnerzy/*.json',
+    base: './src/content',
+    generateId: ({ entry }) => entry.split('/').at(-1)!.replace(/\.json$/, ''),
+  }),
   schema: ({ image }) =>
     z.object({
       nazwa: z.string(),
@@ -83,7 +87,11 @@ const partnerzy = defineCollection({
 
 /** Kampanie reklamowe sprzedawane bezpośrednio (F5): miejsca, kreacje w formatach slotów, daty, link z UTM. */
 const kampanie = defineCollection({
-  loader: glob({ pattern: '*.json', base: './src/content/kampanie' }),
+  loader: glob({
+    pattern: WSZYSTKIE_TRESCI ? ['kampanie/*.json', 'testowe/kampanie/*.json'] : 'kampanie/*.json',
+    base: './src/content',
+    generateId: ({ entry }) => entry.split('/').at(-1)!.replace(/\.json$/, ''),
+  }),
   schema: ({ image }) =>
     z
       .object({

@@ -1,68 +1,154 @@
 ---
 // Slot reklamowy z zarezerwowanym miejscem (zero przesunięć układu) i zawsze z podpisem „REKLAMA”.
 // Formaty na komputer i telefon osobno; slot bez formatu dla danego ekranu jest na nim ukryty.
-// Bez kampanii slot pokazuje autopromocję newslettera (nigdy pustego miejsca). Stan „pusty” tylko dla /styleguide.
-// Kampanie z panelu (daty, rotacja, zdarzenia Umami) dochodzą w F5.
+// Kampanie z panelu (kolekcja „kampanie”): slot bierze kampanie swojego miejsca, które trwają albo zaczną się
+// w ciągu horyzontu (src/lib/kampanie.ts). Bez JavaScriptu widać kampanię trwającą w chwili buildu; skrypt niżej
+// pilnuje dat co do minuty i losuje jedną z trwających (rotacja). Bez kampanii albo po jej końcu: autopromocja
+// newslettera (nigdy puste miejsce). Link z UTM i rel="sponsored noopener". Stan „pusty” tylko dla /styleguide.
+import { getCollection } from 'astro:content';
+import { getImage } from 'astro:assets';
 import Ikona from './Ikona.astro';
 import { FORMATY, linkReklamy, type Format, type Kampania } from '../lib/reklamy';
+import { kampanieDlaMiejsca, POLE_KREACJI, widocznaBezSkryptu } from '../lib/kampanie';
 import ustawienia from '../data/ustawienia.json';
 
 interface Props {
   komputer?: Format;
   telefon?: Format;
+  /** Kampania podana wprost (tylko /styleguide); bez niej slot czyta kampanie z panelu. */
   kampania?: Kampania;
   /** Tylko /styleguide: pokazuje ramkę z wymiarami zamiast treści. */
   pusty?: boolean;
-  /** Nazwa miejsca do zdarzeń statystyk, np. „glowna-gora”. */
+  /** Miejsce slotu (lista w src/lib/model.ts, MIEJSCA_REKLAM): wybiera kampanie i nazywa zdarzenia statystyk. */
   miejsce: string;
   class?: string;
 }
 const { komputer, telefon, kampania, pusty = false, miejsce, class: klasa } = Astro.props;
-const warianty = [
-  ...(telefon ? [{ ekran: 'telefon' as const, format: telefon }] : []),
-  ...(komputer ? [{ ekran: 'komputer' as const, format: komputer }] : []),
-];
+
+interface Kandydat {
+  id: string;
+  link: string;
+  od?: Date;
+  do?: Date;
+  src: string;
+  srcset?: string;
+  alt: string;
+}
+
+const teraz = new Date();
+const zPanelu = pusty || kampania ? [] : kampanieDlaMiejsca((await getCollection('kampanie')).map((k) => ({ ...k.data, id: k.id })), miejsce, teraz);
+
+/** Kreacje kampanii z panelu w wymiarach formatu (1× i 2× dla ekranów o dużej gęstości, bez powiększania). */
+async function kandydaci(format: Format): Promise<Kandydat[]> {
+  const f = FORMATY[format];
+  return Promise.all(
+    zPanelu.flatMap((k) => {
+      const zrodlo = k.kreacje[POLE_KREACJI[format]];
+      if (!zrodlo) return [];
+      return [
+        (async () => {
+          const x1 = await getImage({ src: zrodlo, width: f.szerokosc, height: f.wysokosc, fit: 'cover' });
+          const x2 = zrodlo.width >= f.szerokosc * 2 ? await getImage({ src: zrodlo, width: f.szerokosc * 2, height: f.wysokosc * 2, fit: 'cover' }) : undefined;
+          return { id: k.id, link: linkReklamy({ id: k.id, link: k.link }), od: k.od, do: k.do, src: x1.src, srcset: x2 && `${x1.src} 1x, ${x2.src} 2x`, alt: k.altKreacji };
+        })(),
+      ];
+    }),
+  );
+}
+
+const warianty = await Promise.all(
+  [...(telefon ? [{ ekran: 'telefon' as const, format: telefon }] : []), ...(komputer ? [{ ekran: 'komputer' as const, format: komputer }] : [])].map(async (w) => {
+    const kreacja = kampania?.[w.ekran];
+    const lista: Kandydat[] = kampania ? (kreacja ? [{ id: kampania.id, link: linkReklamy(kampania), src: kreacja.src, alt: kreacja.alt }] : []) : await kandydaci(w.format);
+    const widoczny = kampania ? lista.length - 1 : widocznaBezSkryptu(lista as Required<Kandydat>[], teraz);
+    return { ...w, lista, widoczny, rotacja: !kampania && lista.length > 0 };
+  }),
+);
 ---
 <div class:list={['slot', { 'slot-tylko-komputer': !telefon, 'slot-tylko-telefon': !komputer }, klasa]} data-slot={miejsce} data-pagefind-ignore="all">
-  {warianty.map(({ ekran, format }) => {
+  {warianty.map(({ ekran, format, lista, widoczny, rotacja }) => {
     const f = FORMATY[format];
-    const kreacja = kampania?.[ekran];
     return (
       <div class:list={['slot-wariant', `slot-${ekran}`, `slot-format-${format}`]} data-format={format}>
         <p class="slot-podpis">Reklama</p>
-        <div class="slot-pole">
+        <div class="slot-pole" data-rotacja={rotacja ? miejsce : undefined}>
           {pusty ? (
             <div class="slot-pusty">
               <span>{f.nazwa}</span>
               <span class="tabular-nums">{f.szerokosc} × {f.wysokosc}</span>
             </div>
-          ) : kampania && kreacja ? (
-            <a
-              href={linkReklamy(kampania)}
-              rel="sponsored noopener"
-              target="_blank"
-              class="block size-full"
-              data-umami-event="Reklama: kliknięcie"
-              data-umami-event-kampania={kampania.id}
-              data-umami-event-miejsce={miejsce}
-            >
-              <img src={kreacja.src} alt={kreacja.alt} width={f.szerokosc} height={f.wysokosc} loading="lazy" decoding="async" class="size-full object-cover" />
-            </a>
           ) : (
-            <a href="/newsletter" class="slot-autopromocja" data-umami-event="Autopromocja: kliknięcie" data-umami-event-miejsce={miejsce}>
-              <span class="slot-autopromocja-dach" aria-hidden="true"></span>
-              <span class="slot-autopromocja-tekst">
-                <span class="slot-autopromocja-tytul">{ustawienia.newsletter.nazwa}</span>
-                <span class="slot-autopromocja-opis">Newsletter Rytmu Hali o produkcji, magazynach, lean i danych.</span>
-              </span>
-              <span class="slot-autopromocja-cta">Zapisz się<Ikona nazwa="strzalka" rozmiar={18} /></span>
-            </a>
+            <>
+              {lista.map((k, i) => (
+                <a
+                  href={k.link}
+                  rel="sponsored noopener"
+                  target="_blank"
+                  class="block size-full"
+                  hidden={i !== widoczny}
+                  data-kampania={k.id}
+                  data-od={k.od?.toISOString()}
+                  data-do={k.do?.toISOString()}
+                  data-umami-event="Reklama: kliknięcie"
+                  data-umami-event-kampania={k.id}
+                  data-umami-event-miejsce={miejsce}
+                  data-umami-event-slot={`${k.id}@${miejsce}`}
+                >
+                  <img src={k.src} srcset={k.srcset} alt={k.alt} width={f.szerokosc} height={f.wysokosc} loading="lazy" decoding="async" class="size-full object-cover" />
+                </a>
+              ))}
+              <a href="/newsletter" class="slot-autopromocja" hidden={widoczny !== -1} data-autopromocja data-umami-event="Autopromocja: kliknięcie" data-umami-event-miejsce={miejsce}>
+                <span class="slot-autopromocja-dach" aria-hidden="true"></span>
+                <span class="slot-autopromocja-tekst">
+                  <span class="slot-autopromocja-tytul">{ustawienia.newsletter.nazwa}</span>
+                  <span class="slot-autopromocja-opis">Newsletter Rytmu Hali o produkcji, magazynach, lean i danych.</span>
+                </span>
+                <span class="slot-autopromocja-cta">Zapisz się<Ikona nazwa="strzalka" rozmiar={18} /></span>
+              </a>
+            </>
           )}
         </div>
       </div>
     );
   })}
 </div>
+
+<script>
+  // Daty i rotacja kampanii w przeglądarce (src/lib/kampanie.ts): w każdym polu slotu jedna z trwających kampanii,
+  // wybrana losowo przy każdym wyświetleniu strony; po końcu kampanii autopromocja newslettera. Wyświetlenie
+  // (połowa slotu na ekranie przez sekundę, próg widoczności IAB) trafia do Umami, gdy jego skrypt jest na stronie.
+  // Właściwość „slot” (kampania@miejsce) pozwala raportowi dla partnera rozbić wynik na miejsca (src/lib/raport-kampanii.mjs).
+  import { wybierz } from '../lib/kampanie';
+
+  type Umami = { track: (zdarzenie: string, dane: Record<string, string>) => void };
+  const teraz = new Date();
+  for (const pole of document.querySelectorAll<HTMLElement>('[data-rotacja]')) {
+    const kampanie = [...pole.querySelectorAll<HTMLElement>('[data-kampania][data-od]')];
+    const i = wybierz(
+      kampanie.map((k) => ({ od: new Date(k.dataset.od!), do: new Date(k.dataset.do!) })),
+      teraz,
+      Math.random(),
+    );
+    kampanie.forEach((k, j) => (k.hidden = j !== i));
+    const autopromocja = pole.querySelector<HTMLElement>('[data-autopromocja]');
+    if (autopromocja) autopromocja.hidden = i !== -1;
+    const widoczna = kampanie[i];
+    if (!widoczna || !('IntersectionObserver' in window)) continue;
+    let odliczanie: number | undefined;
+    const obserwator = new IntersectionObserver(
+      ([wpis]) => {
+        window.clearTimeout(odliczanie);
+        if (!wpis.isIntersecting) return;
+        odliczanie = window.setTimeout(() => {
+          (window as unknown as { umami?: Umami }).umami?.track('Reklama: wyświetlenie', { kampania: widoczna.dataset.kampania!, miejsce: pole.dataset.rotacja!, slot: `${widoczna.dataset.kampania}@${pole.dataset.rotacja}` });
+          obserwator.disconnect();
+        }, 1000);
+      },
+      { threshold: 0.5 },
+    );
+    obserwator.observe(pole);
+  }
+</script>
 
 <style>
   /* Pełna szerokość kolumny; wariant w środku ma najwyżej szerokość formatu i jest wyśrodkowany. */
@@ -112,6 +198,10 @@ const warianty = [
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--color-tekst-drugi);
+  }
+  /* Kampanie i autopromocja w jednym polu: widać jedną, reszta czeka ukryta (wybór: skrypt wyżej). */
+  .slot-pole > [hidden] {
+    display: none !important;
   }
   .slot-pole {
     position: relative;
