@@ -9,9 +9,9 @@ const KOLOR = { tekst: '#1d2530', drugi: '#58626f', linia: '#dde1e6', slupek: '#
 // Druga linia etykiety: [tekst, wyróżnić?]. Wyróżniona (kolor akcentu, pogrubienie) jest decyzja, którą arkusz zmienia
 // względem poprzedniego, żeby na telefonie od razu było widać, czym różnią się słupki.
 const ETYKIETY = [
-  ['Arkusz 1', [['przezbrojenia i konserwacja w stratach', false], [`, cykl producenta ${cykl.nominalnyS} s`, false]]],
-  ['Arkusz 2', [['przezbrojenia i konserwacja poza planem', true], [`, cykl producenta ${cykl.nominalnyS} s`, false]]],
-  ['Arkusz 3', [['przezbrojenia i konserwacja poza planem, ', false], [`norma z ERP ${cykl.standardowyS} s`, true]]],
+  ['Inżynier utrzymania ruchu', [['przezbrojenia i konserwacja to strata', false], [`, cykl producenta ${cykl.nominalnyS} s`, false]]],
+  ['Kierownik zmiany', [['przezbrojenia i konserwacja wyłączone z planu', true], [`, cykl producenta ${cykl.nominalnyS} s`, false]]],
+  ['Planista', [['przezbrojenia i konserwacja wyłączone z planu, ', false], [`norma z ERP ${cykl.standardowyS} s`, true]]],
 ];
 const W = 520, lewy = 16, prawy = 64, gora = 44, wiersz = 92, slupek = 26;
 const H = gora + wiersz * warianty.length + 30;
@@ -32,7 +32,7 @@ warianty.forEach((w, i) => {
   czesci.push(`<rect x="${lewy - 6}" y="${y + 6}" width="${W - lewy + 6}" height="40" fill="#ffffff"/>`);
   czesci.push(`<text x="${lewy}" y="${y + 22}" ${f} font-size="16" font-weight="700" fill="${KOLOR.tekst}">${l1}</text>`);
   const tspany = l2.map(([t, wyr]) => (wyr ? `<tspan fill="${KOLOR.akcent}" font-weight="700">${t}</tspan>` : `<tspan>${t}</tspan>`)).join('');
-  czesci.push(`<text x="${lewy}" y="${y + 41}" ${f} font-size="15" fill="${KOLOR.drugi}" xml:space="preserve">${tspany}</text>`);
+  czesci.push(`<text x="${lewy}" y="${y + 41}" ${f} font-size="14" fill="${KOLOR.drugi}" xml:space="preserve">${tspany}</text>`);
   czesci.push(`<rect x="${lewy}" y="${y + 50}" width="${(wartosc * skala).toFixed(1)}" height="${slupek}" fill="${KOLOR.slupek}"/>`);
   czesci.push(`<text x="${(x(wartosc) + 8).toFixed(1)}" y="${y + 70}" ${f} font-size="18" font-weight="700" fill="${KOLOR.tekst}">${Math.round(wartosc)}%</text>`);
 });
