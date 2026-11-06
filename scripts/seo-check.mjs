@@ -5,6 +5,8 @@ import { createHash } from 'node:crypto';
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
 import { ADRES, PODGLAD, PORTAL, START, TESTOWE } from '../src/lib/srodowisko.mjs';
+import { POLITYKI } from '../src/lib/polityki.mjs';
+import { PLIK_KLUCZA } from '../src/lib/indexnow.mjs';
 
 const DIST = new URL('../dist/', import.meta.url).pathname;
 // Strony, które celowo nie trafiają do wyszukiwarek: techniczne, wyniki wyszukiwania, strony wzorów.
@@ -155,6 +157,32 @@ for (const loc of mapa) if (!zbudowane.has(loc)) bledy.push(`mapa strony: ${loc}
 const naglowki = existsSync(join(DIST, '_headers')) ? readFileSync(join(DIST, '_headers'), 'utf8') : '';
 if (!naglowki) bledy.push('brak dist/_headers');
 else if (PODGLAD && !/X-Robots-Tag: noindex/.test(naglowki.split('\n\n')[1] ?? '')) bledy.push('build podglądu: _headers bez X-Robots-Tag: noindex dla /*');
+
+// Zasady redakcji w danych organizacji (src/lib/polityki.mjs): strona istnieje i ma śródtytuł z kotwicą.
+if (PORTAL) {
+  for (const [pole, sciezka] of Object.entries(POLITYKI)) {
+    const [strona, kotwica] = sciezka.split('#');
+    if (!istnieje(strona)) {
+      bledy.push(`dane organizacji: ${pole} wskazuje ${strona}, a takiej strony nie ma`);
+      continue;
+    }
+    const html = readFileSync(join(DIST, `${strona}.html`), 'utf8');
+    if (kotwica && !html.includes(`id="${kotwica}"`)) bledy.push(`dane organizacji: ${pole} wskazuje ${sciezka}, a strona nie ma śródtytułu z id „${kotwica}” (zmieniony śródtytuł? popraw src/lib/polityki.mjs)`);
+  }
+}
+
+// llms.txt (mapa dla asystentów AI): w portalu jest, a każdy link prowadzi do zbudowanej strony.
+if (PORTAL) {
+  const llms = existsSync(join(DIST, 'llms.txt')) ? readFileSync(join(DIST, 'llms.txt'), 'utf8') : '';
+  if (!llms.startsWith('# ')) bledy.push('brak dist/llms.txt albo nie zaczyna się od nagłówka „# nazwa”');
+  for (const [, url] of llms.matchAll(/\]\((https?:\/\/[^)]+)\)/g)) {
+    if (!url.startsWith(ADRES)) bledy.push(`llms.txt: link spoza serwisu ${url}`);
+    else if (!istnieje(url.slice(ADRES.length) || '/')) bledy.push(`llms.txt: ${url} nie ma odpowiadającej strony`);
+  }
+}
+
+// IndexNow: plik klucza leży publicznie (także przed startem).
+if (readdirSync(DIST).filter((f) => PLIK_KLUCZA.test(f)).length !== 1) bledy.push('IndexNow: w dist/ ma być dokładnie jeden plik klucza <32 znaki>.txt');
 
 if (planowane.size) ostrzezenia.push(`linki do tras planowanych w kolejnych fazach (${planowane.size}): ${[...planowane.keys()].sort().join(', ')}`);
 for (const o of ostrzezenia) console.warn(`⚠ ${o}`);

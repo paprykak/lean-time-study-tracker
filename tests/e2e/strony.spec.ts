@@ -39,6 +39,29 @@ test('strona główna: kanoniczny adres, okładka udostępnień i dane struktura
   await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', 'https://rytmhali.pl/marka/okladka-domyslna.jpg');
   const graf = JSON.parse((await page.locator('script[type="application/ld+json"]').first().textContent())!)['@graph'];
   expect(graf.map((x: { '@type': string }) => x['@type'])).toEqual(['WebSite', 'NewsMediaOrganization']);
+  const [serwis, redakcja] = graf;
+  expect(serwis.potentialAction.target.urlTemplate).toBe('https://rytmhali.pl/szukaj?q={search_term_string}');
+  expect(redakcja.logo).toMatchObject({ url: 'https://rytmhali.pl/marka/ikona-512.png', width: 512, height: 512 });
+  expect(redakcja.publishingPrinciples).toBe('https://rytmhali.pl/zasady-redakcyjne');
+  expect(redakcja.correctionsPolicy).toBe('https://rytmhali.pl/polityka-korekt');
+  // Kotwica z polskimi literami w danych jest zakodowana i prowadzi do istniejącego śródtytułu.
+  const finansowanie = new URL(redakcja.ownershipFundingInfo);
+  await page.goto(finansowanie.pathname);
+  await expect(page.locator(`[id="${decodeURIComponent(finansowanie.hash.slice(1))}"]`)).toHaveText('Niezależność i finansowanie');
+});
+
+test('llms.txt dla asystentów AI: nagłówek, działy, zasady redakcji, linki do istniejących stron', async ({ request }) => {
+  const odp = await request.get('/llms.txt');
+  expect(odp.status()).toBe(200);
+  expect(odp.headers()['content-type']).toContain('text/plain');
+  const tekst = await odp.text();
+  expect(tekst).toMatch(/^# Rytm Hali\n\n> /);
+  expect(tekst).toContain('## Produkcja');
+  expect(tekst).toContain('## Zasady redakcji');
+  expect(tekst).toContain(`(https://rytmhali.pl${ARTYKUL})`);
+  for (const [, url] of [...tekst.matchAll(/\]\((https:\/\/rytmhali\.pl[^)]*)\)/g)].slice(0, 8)) {
+    expect((await request.get(new URL(url).pathname)).status(), url).toBe(200);
+  }
 });
 
 test('strony indeksowane mają adres kanoniczny i są w mapie strony', async ({ page, request }) => {
@@ -59,6 +82,10 @@ test('artykuł: przypisy prowadzą do źródeł, okładka z buildu, dane struktu
     return (j['@graph'] ?? [j]).map((x: { '@type': string }) => x['@type']);
   });
   expect(typy).toEqual(expect.arrayContaining(['Article', 'BreadcrumbList', 'FAQPage']));
+  // Obrazy w proporcjach 16:9, 4:3 i 1:1 (Google) i okładka udostępnień; każdy plik istnieje.
+  const artykul = (await page.locator('script[type="application/ld+json"]').allTextContents()).map((t) => JSON.parse(t)).flatMap((j) => j['@graph'] ?? [j]).find((x) => x['@type'] === 'Article');
+  expect(artykul.image).toHaveLength(4);
+  for (const url of artykul.image) expect((await page.request.get(new URL(url).pathname)).status(), url).toBe(200);
   await expect(page.getByRole('heading', { name: 'Poprawki' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Jak powstał ten tekst' })).toBeVisible();
 });

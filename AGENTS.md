@@ -31,6 +31,7 @@ Pełne zadanie i fazy: `prompty/01-budowa-portalu.md`. Stan prac: `STAN.md`. Dec
 | `npm run logo` | komplet plików logo (SVG, favicony, awatar, okładka); warianty: `node marka/logo/porownaj.mjs <plik.png>` |
 | `npm run zdjecia` | pobiera brakujące zdjęcia z rejestru licencji, kadruje i zapisuje do `src/assets/zdjecia/` |
 | panel lokalnie | `npm run dev` → http://localhost:4321/admin/index.html → „Pracuj z lokalnym repozytorium” (Chrome/Edge, zapis prosto do plików) |
+| `npm run indexnow -- <ścieżki>` | zgłasza adresy do IndexNow (Bing i inne) **tylko po wdrożeniu produkcji**; `--mapa` zgłasza całą mapę strony z `dist/`, `--proba` tylko wypisuje zgłoszenie |
 | `npx wrangler dev` | worker z `/api/*` i plikami z `dist/` lokalnie (sekrety testowe: `--var NAZWA:wartość`, nigdy prawdziwe) |
 
 ## Gdzie co jest

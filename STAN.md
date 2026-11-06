@@ -3,7 +3,7 @@
 Pamięć robocza projektu. Czyta ją i aktualizuje każda sesja na początku i na końcu pracy.
 
 ## Teraz
-- **Faza:** F0–F3 gotowe (F1 zaakceptowana przez Patryka 2026-11-06, z kursem: artykuły w stylu HBR, nie wiadomości); skill `/artykul` gotowy (2026-11-06 po uwagach Patryka: bez oznaczeń AI, rzemiosło pisania, redaktor językowy i czytelnik testowy, kontrola redakcyjna przed publikacją). Teraz F4: SEO i widoczność w AI (w tym ostateczne teksty stron zaufania do akceptacji).
+- **Faza:** F0–F4 gotowe (F1 zaakceptowana przez Patryka 2026-11-06, z kursem: artykuły w stylu HBR, nie wiadomości); skill `/artykul` gotowy (po uwagach Patryka: bez oznaczeń AI, rzemiosło pisania, redaktor językowy i czytelnik testowy, kontrola redakcyjna przed publikacją). Teraz F5: zaplecze zarabiania.
 - **Gałąź robocza:** `ccr-a1f628ee-snc89w` (sesja w chmurze). `main` bez zmian: nadal stara aplikacja Lean Time Study Tracker, do pierwszego „wdrażaj”.
 - **Do obejrzenia:** zrzuty F3 w `raporty/F3/` (strona główna, artykuł, dział, wyszukiwarka; treści testowe), zrzuty F2 w `raporty/F2/` (artykuł z kolekcji treści, panel redakcji), podgląd strony głównej i artykułu (`raporty/podglad/`), strona wzorów `/styleguide` (lokalnie `npm run dev` → http://localhost:4321/styleguide), panel na lokalnych plikach: http://localhost:4321/admin/index.html.
 - **Ostatnia sesja:** 2026-11-06: F3 (szablony, wyszukiwarka, start w dwóch krokach) i skill `/artykul` po uwagach Patryka (DECYZJE.md). Wcześniej F2: kolekcje treści, strona artykułu `/<slug>` z kolekcji, okładki 1200×630, mapa strony z `lastmod`, panel Sveltia CMS (przepływ redakcyjny), worker z logowaniem do panelu, testy panelu. Wcześniej tego dnia: repozytorium wyczyszczone i zaadaptowane, fundament Astro 7, fonty, tokeny, logo (odtworzenie koncepcji C), 20 komponentów, `/styleguide`, „Wkrótce” (szkic), 404, testy. `npm run check` zielone lokalnie i w GitHub Actions (tam także iPhone/WebKit: 60 testów E2E na 3 urządzeniach, 52 zaliczone, 8 celowo pominiętych, np. test klawiatury na telefonie).
@@ -55,13 +55,21 @@ Od góry według pilności. Każdy punkt to jedna czynność.
 - [ ] **Przed publicznym startem:** umowa o pracę (zakaz konkurencji, zgoda na działalność dodatkową); przed pierwszą reklamą: forma działalności i rozmowa z prawnikiem (lista pytań w F7). Pytanie do prawnika: czy Rytm Hali jako regularnie wydawany portal wymaga rejestracji tytułu prasowego w sądzie okręgowym (Prawo prasowe, art. 20) i co to zmienia (autoryzacja, sprostowania, redaktor naczelny).
 - [ ] **Opcjonalnie: klucz OpenAlex** (darmowy, https://help.openalex.org/api/authentication/): lepsze wyszukiwanie badań w skillu `/artykul`. Klucz dodajesz sam w ustawieniach środowiska, nie w czacie.
 
+## Wyniki F4
+| Obszar | Wynik |
+|---|---|
+| Dane strukturalne | `WebSite` z `SearchAction` (w portalu), `NewsMediaOrganization` z logo 512×512 i zasadami redakcji (zasady, etyka, weryfikacja faktów, korekty, finansowanie, redakcja, podpisy, kontakt; `src/lib/polityki.mjs`), `Article` z obrazami 16:9, 4:3, 1:1 i okładką, autor `Person` ze stroną autora, `BreadcrumbList`, `FAQPage`, `DigitalDocument` |
+| Dla asystentów AI | `/llms.txt` z treści: działy z artykułami, materiały, zasady redakcji (tylko teksty indeksowane) |
+| IndexNow | klucz w `public/`, skrypt `npm run indexnow` (po wdrożeniu) |
+| Kontrola | `seo-check`: każda zasada w danych organizacji prowadzi do strony i śródtytułu, każdy link w `llms.txt` do zbudowanej strony, klucz IndexNow w `dist/`; E2E dla danych strukturalnych i `llms.txt` |
+
 ## Następne kroki
-0. Skill `/artykul` gotowy (2026-11-06): pierwszy tekst po decyzji o podpisie i wyborze tematu; po nim lekcje w skillu.
-1. F4: dane strukturalne (`WebSite` z `SearchAction`, `publishingPrinciples` i `correctionsPolicy` w organizacji), `llms.txt`, IndexNow, ostateczne teksty stron zaufania do akceptacji.
+0. Skill `/artykul` gotowy (2026-11-06): pierwszy tekst po wyborze tematu; po nim lekcje w skillu.
+1. F5: zaplecze zarabiania (kampanie w slotach, rotacja, UTM, autopromocja po kampanii, oznaczenia partnera). Zdarzenia Umami i raport dla partnera czekają na decyzję o analityce (AGENTS.md, zasada 10).
+1a. Po wdrożeniu produkcji: `npm run indexnow -- --mapa`, a potem Search Console i Bing Webmaster Tools (konta Patryka, weryfikacja domeny w Cloudflare).
 2. Zdjęcia w treści artykułu z rejestru (rysunki z podpisem „Fot.”): dziś w treści są wykresy SVG; zdjęcia z rejestru w środku tekstu dojdą przy pierwszym tekście, który ich potrzebuje.
 3. LCP strony głównej: sprawdzone w Lighthouse na buildzie testowym (wynik w raporcie F3).
 4. Po podłączeniu Cloudflare: sprawdzić, czy panel widzi podgląd gałęzi (przycisk „Wyświetl podgląd”); jeśli nie, ustawić `backend.preview_context` na nazwę kontroli Workers Builds. Po zmianie nazwy repozytorium: `backend.repo` w `public/admin/config.yml`.
-5. W F4: obrazy 16:9, 4:3 i 1:1 w danych strukturalnych artykułu (teraz okładka 1200×630).
 
 ## Notatki
 - W sesji w chmurze nie ma WebKita: lokalnie `BEZ_WEBKIT=1 npm run check`, iPhone w GitHub Actions.

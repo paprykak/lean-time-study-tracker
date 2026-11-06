@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
-import { cpSync, existsSync, readdirSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import { cpSync, existsSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import tailwindcss from '@tailwindcss/vite';
@@ -11,6 +12,14 @@ import { plikNaglowkow } from './src/lib/naglowki.mjs';
 import { WTYCZKI } from './src/lib/markdown.mjs';
 import { artykulyMapy, listaWMapie, listy } from './src/lib/mapa.mjs';
 import { zostaje } from './src/lib/przed-startem.mjs';
+
+// Pamięć treści Astro (node_modules/.astro/data-store.json) czyści się po zmianie konfiguracji, ale kod wtyczek
+// Markdowna do niej nie wchodzi (funkcji się nie serializuje), więc po zmianie wtyczki lokalny build pokazywał stary
+// HTML. Skrót plików wtyczek w nazwie ostatniej wtyczki zmienia konfigurację i przebudowuje treści.
+const WERSJA_WTYCZEK = createHash('sha256')
+  .update(['./src/lib/markdown.mjs', './src/lib/typografia.mjs'].map((p) => readFileSync(new URL(p, import.meta.url), 'utf8')).join('\n'))
+  .digest('hex')
+  .slice(0, 12);
 
 // Strony, które nigdy nie trafiają do mapy strony (mają noindex albo nie są treścią).
 const POZA_MAPA = /\/(404|410|styleguide|admin|szukaj)(\/|$)|\/newsletter\/./;
@@ -123,7 +132,7 @@ export default defineConfig({
   // po 3. akapicie, rel linków zewnętrznych (src/lib/markdown.mjs).
   // Bez podświetlania składni: Shiki wstawia style w atrybutach, które blokuje CSP z hashami. Kod w artykułach
   // to rzadkość (DECYZJE.md); gdy będzie potrzebny, Prism z klasami CSS.
-  markdown: { syntaxHighlight: false, processor: satteri({ hastPlugins: WTYCZKI }) },
+  markdown: { syntaxHighlight: false, processor: satteri({ hastPlugins: WTYCZKI.map((w, i) => (i === WTYCZKI.length - 1 ? { ...w, name: `${w.name}-${WERSJA_WTYCZEK}` } : w)) }) },
   // CSP w <meta> z hashami każdego skryptu i stylu (bez 'unsafe-inline'). Reszta dyrektyw: src/lib/naglowki.mjs.
   security: {
     csp: {

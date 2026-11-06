@@ -26,7 +26,8 @@
     "zrzuty": "node scripts/zrzuty.mjs",
     "check:szybki": "astro check && vitest run && astro build && node scripts/seo-check.mjs && node scripts/budzet.mjs",
     "check:start": "astro build && node scripts/seo-check.mjs && node scripts/budzet.mjs",
-    "check": "RH_TESTOWE=1 npm run check:szybki && playwright test && lhci autorun && npm run check:start"
+    "check": "RH_TESTOWE=1 npm run check:szybki && playwright test && lhci autorun && npm run check:start",
+    "indexnow": "node scripts/indexnow.mjs"
   },
   "dependencies": {
     "@astrojs/markdown-satteri": "^0.4.7",

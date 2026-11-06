@@ -8,6 +8,7 @@ import Naglowek from '../components/Naglowek.astro';
 import Stopka from '../components/Stopka.astro';
 import ustawienia from '../data/ustawienia.json';
 import { PODGLAD, PORTAL } from '../lib/srodowisko.mjs';
+import { politykiRedakcji } from '../lib/polityki.mjs';
 
 interface Props {
   tytul: string;
@@ -39,14 +40,26 @@ const redakcja = `${adres}/#redakcja`;
 const graf = {
   '@context': 'https://schema.org',
   '@graph': [
-    { '@type': 'WebSite', '@id': `${adres}/#serwis`, url: `${adres}/`, name: ustawienia.nazwa, description: ustawienia.opis, inLanguage: 'pl-PL', publisher: { '@id': redakcja } },
+    {
+      '@type': 'WebSite',
+      '@id': `${adres}/#serwis`,
+      url: `${adres}/`,
+      name: ustawienia.nazwa,
+      description: ustawienia.opis,
+      inLanguage: 'pl-PL',
+      publisher: { '@id': redakcja },
+      // Wyszukiwarka jest tylko w portalu (przed startem produkcja ma samą stronę „Wkrótce”).
+      ...(PORTAL ? { potentialAction: { '@type': 'SearchAction', target: { '@type': 'EntryPoint', urlTemplate: `${adres}/szukaj?q={search_term_string}` }, 'query-input': 'required name=search_term_string' } } : {}),
+    },
     {
       '@type': 'NewsMediaOrganization',
       '@id': redakcja,
       name: ustawienia.nazwa,
       url: `${adres}/`,
-      logo: { '@type': 'ImageObject', url: `${adres}/marka/logo.png`, width: 600, height: 60 },
+      // Google: logo organizacji co najmniej 112 × 112 px, więc kwadratowa ikona, a nie poziomy napis 600 × 60.
+      logo: { '@type': 'ImageObject', url: `${adres}/marka/ikona-512.png`, width: 512, height: 512 },
       email: ustawienia.emailRedakcji,
+      ...(PORTAL ? politykiRedakcji(adres) : {}),
     },
     ...jsonLd,
   ],

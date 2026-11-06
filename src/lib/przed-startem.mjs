@@ -11,9 +11,11 @@ export const ZOSTAJE_PRZED_STARTEM = [
   'index.html', '404.html', '410.html', 'polityka-prywatnosci.html',
   'newsletter/potwierdz.html', 'newsletter/potwierdzono.html', 'newsletter/wypisano.html',
   'robots.txt', '_headers', 'sitemap-index.xml', 'sitemap-0.xml',
-  'favicon.ico', 'favicon.svg', 'apple-touch-icon.png',
+  'favicon.ico', 'favicon.svg', 'apple-touch-icon.png', 'eb64e6dd8e7866eb54da8648fc099141.txt',
   '_astro/', 'admin/', 'fonty/', 'marka/',
 ];
+
+// Plik klucza IndexNow (/<klucz>.txt) zostaje, żeby dało się zgłosić stronę „Wkrótce” i politykę prywatności.
 
 /** Czy plik zostaje w wyniku builda przed startem. */
 export const zostaje = (sciezka) =>
