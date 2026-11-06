@@ -1,0 +1,35 @@
+---
+// Okruszki (ścieżka nawigacji) z danymi strukturalnymi BreadcrumbList.
+import ustawienia from '../data/ustawienia.json';
+interface Props {
+  pozycje: { nazwa: string; adres?: string }[];
+  class?: string;
+}
+const { pozycje, class: klasa } = Astro.props;
+const wszystkie = [{ nazwa: 'Rytm Hali', adres: '/' }, ...pozycje];
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: wszystkie.map((p, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: p.nazwa,
+    ...(p.adres ? { item: ustawienia.adres + (p.adres === '/' ? '/' : p.adres) } : {}),
+  })),
+};
+---
+<nav aria-label="Ścieżka nawigacji" class:list={['text-[0.8125rem] text-tekst-drugi', klasa]}>
+  <ol class="flex flex-wrap items-center gap-x-2">
+    {wszystkie.map((p, i) => (
+      <li class="flex items-center gap-2">
+        {i > 0 && <span aria-hidden="true" class="text-[#8a939e]">/</span>}
+        {p.adres && i < wszystkie.length - 1 ? (
+          <a href={p.adres} class="inline-flex min-h-11 items-center font-medium text-tekst najazd:underline">{p.nazwa}</a>
+        ) : (
+          <span aria-current="page" class="inline-flex min-h-11 items-center">{p.nazwa}</span>
+        )}
+      </li>
+    ))}
+  </ol>
+</nav>
+<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />

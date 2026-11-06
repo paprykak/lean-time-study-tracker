@@ -1,0 +1,45 @@
+{
+  "nazwa": "Rytm Hali",
+  "opis": "Niezależne medium o operacjach: produkcja, magazyn i logistyka, lean i ciągłe doskonalenie, dane i AI, ludzie i szkolenia.",
+  "haslo": "Niezależne medium o operacjach",
+  "adres": "https://rytmhali.pl",
+  "emailRedakcji": "redakcja@rytmhali.pl",
+  "redaktorNaczelny": "Patryk Korpyta",
+  "dzialy": [
+    { "slug": "produkcja", "nazwa": "Produkcja", "nazwaMenu": "Produkcja" },
+    { "slug": "magazyn-i-logistyka", "nazwa": "Magazyn i logistyka", "nazwaMenu": "Magazyn i logistyka" },
+    { "slug": "lean-i-ciagle-doskonalenie", "nazwa": "Lean i ciągłe doskonalenie", "nazwaMenu": "Lean" },
+    { "slug": "dane-i-ai", "nazwa": "Dane i AI", "nazwaMenu": "Dane i AI" },
+    { "slug": "ludzie-i-szkolenia", "nazwa": "Ludzie i szkolenia", "nazwaMenu": "Ludzie i szkolenia" }
+  ],
+  "menuDodatkowe": [{ "nazwa": "Do pobrania", "adres": "/do-pobrania" }],
+  "pasekGorny": [
+    { "nazwa": "Raport zmianowy", "adres": "/newsletter" },
+    { "nazwa": "Reklama i współpraca", "adres": "/reklama" },
+    { "nazwa": "O nas", "adres": "/o-nas" },
+    { "nazwa": "Kontakt", "adres": "/kontakt" }
+  ],
+  "stopka": {
+    "serwis": [
+      { "nazwa": "O nas i redakcja", "adres": "/o-nas" },
+      { "nazwa": "Zasady redakcyjne", "adres": "/zasady-redakcyjne" },
+      { "nazwa": "Polityka korekt", "adres": "/polityka-korekt" },
+      { "nazwa": "Oznaczanie reklam", "adres": "/oznaczanie-reklam" },
+      { "nazwa": "Jak używamy AI", "adres": "/jak-uzywamy-ai" },
+      { "nazwa": "Kontakt", "adres": "/kontakt" }
+    ],
+    "wspolpraca": [
+      { "nazwa": "Reklama i współpraca", "adres": "/reklama" },
+      { "nazwa": "Raport zmianowy", "adres": "/newsletter" },
+      { "nazwa": "Do pobrania", "adres": "/do-pobrania" },
+      { "nazwa": "Kanał RSS", "adres": "/rss.xml" }
+    ],
+    "prawne": [{ "nazwa": "Polityka prywatności", "adres": "/polityka-prywatnosci" }]
+  },
+  "newsletter": {
+    "nazwa": "Raport zmianowy",
+    "opis": "Newsletter Rytmu Hali: najważniejsze teksty o produkcji, magazynach, lean i danych w jednym mailu.",
+    "zgoda": "Chcę otrzymywać newsletter Raport zmianowy na podany adres e-mail. Wypiszę się jednym kliknięciem w każdym wydaniu.",
+    "potwierdzenie": "Sprawdź skrzynkę i kliknij link w wiadomości od nas. Bez potwierdzenia nie wyślemy żadnego wydania."
+  }
+}

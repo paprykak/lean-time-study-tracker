@@ -1,0 +1,125 @@
+---
+// Nagłówek serwisu: pasek górny (komputer), logo z wyszukiwarką i menu działów. Menu na telefonie przewija się
+// w bok kciukiem; cele dotyku mają co najmniej 44 px. Bez JavaScriptu: wyszukiwarka to zwykły formularz GET.
+import Logo from './Logo.astro';
+import Ikona from './Ikona.astro';
+import ustawienia from '../data/ustawienia.json';
+
+interface Props {
+  /** slug aktywnego działu albo adres aktywnej pozycji menu */
+  aktywny?: string;
+  /** Zapytanie wyszukiwarki do pokazania w polu (strona wyników). */
+  zapytanie?: string;
+}
+const { aktywny, zapytanie = '' } = Astro.props;
+const pozycje = [
+  ...ustawienia.dzialy.map((d) => ({ nazwa: d.nazwaMenu, adres: `/dzial/${d.slug}`, klucz: d.slug })),
+  ...ustawienia.menuDodatkowe.map((m) => ({ nazwa: m.nazwa, adres: m.adres, klucz: m.adres })),
+];
+---
+<header class="naglowek">
+  <div class="hidden bg-grafit-ciemny text-tekst-na-ciemnym-drugi md:block">
+    <div class="kontener flex h-9 items-center justify-between text-[0.8125rem]">
+      <p>{ustawienia.haslo}</p>
+      <nav aria-label="Serwis">
+        <ul class="flex items-center gap-6">
+          {ustawienia.pasekGorny.map((l) => (
+            <li><a href={l.adres} class="py-2 najazd:text-white najazd:underline">{l.nazwa}</a></li>
+          ))}
+        </ul>
+      </nav>
+    </div>
+  </div>
+
+  <div class="border-b border-linia bg-tlo">
+    <div class="kontener flex h-16 items-center gap-4 md:h-24">
+      <a href="/" class="inline-flex min-h-11 shrink-0 items-center" aria-label={`${ustawienia.nazwa}, strona główna`}>
+        <Logo wariant="kompakt" class="h-8 w-auto md:hidden" />
+        <Logo wariant="pelne" class="hidden h-[3.75rem] w-auto md:block" />
+      </a>
+      <div class="ml-auto flex items-center gap-3">
+        <form action="/szukaj" method="get" role="search" class="hidden w-72 items-stretch lg:flex">
+          <label for="szukaj-naglowek" class="sr-only">Szukaj w Rytmie Hali</label>
+          <input id="szukaj-naglowek" name="q" type="search" class="pole rounded-r-none border-r-0" placeholder="Szukaj" value={zapytanie} autocomplete="off" />
+          <button type="submit" class="przycisk przycisk-grafit rounded-l-none px-3" aria-label="Szukaj">
+            <Ikona nazwa="szukaj" />
+          </button>
+        </form>
+        <a href="/newsletter" class="przycisk przycisk-glowny hidden md:inline-flex">Zapisz się na newsletter</a>
+        <a href="/szukaj" class="-mr-2 grid size-11 place-items-center text-tekst lg:hidden" aria-label="Szukaj">
+          <Ikona nazwa="szukaj" rozmiar={22} />
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <nav class="menu-dzialow bg-grafit" aria-label="Działy">
+    <div class="kontener">
+      <ul class="menu-dzialow-lista">
+        {pozycje.map((p) => {
+          const biezacy = aktywny === p.klucz;
+          return (
+            <li>
+              <a href={p.adres} class:list={['menu-dzialow-link', { 'menu-dzialow-link-aktywny': biezacy }]} aria-current={biezacy ? 'page' : undefined}>
+                {p.nazwa}
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  </nav>
+</header>
+
+<style>
+  .menu-dzialow-lista {
+    display: flex;
+    gap: 0.25rem;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    /* Wygaszenie prawej krawędzi sygnalizuje, że menu przewija się w bok; odstęp pozwala dociągnąć ostatnią pozycję. */
+    mask-image: linear-gradient(to right, #000 calc(100% - 2.5rem), transparent);
+    padding-right: 2.5rem;
+    margin-inline: -0.75rem;
+  }
+  .menu-dzialow-lista::-webkit-scrollbar {
+    display: none;
+  }
+  @media (min-width: 64rem) {
+    .menu-dzialow-lista {
+      mask-image: none;
+      padding-right: 0;
+    }
+  }
+  .menu-dzialow-link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: 3rem;
+    padding: 0 0.75rem;
+    white-space: nowrap;
+    scroll-snap-align: start;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--color-tekst-na-ciemnym);
+  }
+  .menu-dzialow-link::after {
+    content: "";
+    position: absolute;
+    inset: auto 0.75rem 0 0.75rem;
+    height: 3px;
+    background: transparent;
+  }
+  .menu-dzialow-link:hover::after,
+  :global(.stan-najazd) .menu-dzialow-link::after {
+    background: var(--color-tekst-na-ciemnym-drugi);
+  }
+  .menu-dzialow-link-aktywny::after,
+  .menu-dzialow-link-aktywny:hover::after {
+    background: var(--color-akcent);
+  }
+  .menu-dzialow-link:focus-visible {
+    outline-offset: -3px;
+  }
+</style>

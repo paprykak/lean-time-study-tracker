@@ -1,0 +1,62 @@
+---
+// Karta główna: duże zdjęcie z tytułem na zdjęciu (komputer) albo pod zdjęciem (telefon, czytelniej w słońcu na hali).
+import Zdjecie from '../Zdjecie.astro';
+import Etykieta from './Etykieta.astro';
+import Meta from './Meta.astro';
+import type { ArtykulKarta } from '../../lib/typy';
+
+interface Props {
+  artykul: ArtykulKarta;
+  priorytet?: boolean;
+  poziom?: 'h2' | 'h3';
+  class?: string;
+}
+const { artykul, priorytet = false, poziom = 'h2', class: klasa } = Astro.props;
+const Tytul = poziom;
+---
+<article class:list={['karta karta-glowna', klasa]}>
+  <Zdjecie zdjecie={artykul.zdjecie} proporcja="16-9" szerokosc={820} sizes="(min-width: 1280px) 820px, (min-width: 1024px) 66vw, 100vw" priorytet={priorytet} />
+  <div class="karta-glowna-tekst">
+    <Etykieta artykul={artykul} />
+    <Tytul class="tytul-xl karta-glowna-tytul mt-2">
+      <a href={artykul.adres} class="karta-link karta-tytul">{artykul.tytul}</a>
+    </Tytul>
+    {artykul.lead && <p class="karta-glowna-lead mt-3 hidden text-[1.0625rem] leading-relaxed sm:block">{artykul.lead}</p>}
+    <Meta data={artykul.data} autor={artykul.autor} czasCzytania={artykul.czasCzytania} class="karta-glowna-meta mt-3" />
+  </div>
+</article>
+
+<style>
+  .karta-glowna-tekst {
+    padding-top: 0.875rem;
+  }
+  @media (min-width: 48rem) {
+    .karta-glowna {
+      color: var(--color-tekst-na-ciemnym);
+    }
+    .karta-glowna-tekst {
+      position: absolute;
+      inset: auto 0 0 0;
+      padding: 6rem 2rem 1.75rem;
+      /* Przyciemnienie dołu zdjęcia pod tekstem (czytelność), nie dekoracja */
+      background: linear-gradient(to top, rgb(17 22 29 / 0.94) 0%, rgb(17 22 29 / 0.82) 45%, rgb(17 22 29 / 0) 100%);
+      border-radius: 0 0 var(--radius-karta) var(--radius-karta);
+    }
+    .karta-glowna-tytul {
+      color: var(--color-tekst-na-ciemnym);
+      max-width: 40ch;
+    }
+    .karta-glowna-tekst :global(.kategoria) {
+      color: var(--color-tekst-na-ciemnym);
+      border-left: 3px solid var(--color-akcent);
+      padding-left: 0.5rem;
+    }
+    .karta-glowna-lead {
+      color: #e3e7ec;
+      max-width: 60ch;
+    }
+    .karta-glowna-tekst :global(.karta-glowna-meta) {
+      color: var(--color-tekst-na-ciemnym-drugi);
+    }
+  }
+</style>

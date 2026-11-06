@@ -1,0 +1,152 @@
+---
+// Zapis na newsletter „Raport zmianowy”: zwykły formularz bez skryptu dostawcy. Punkt API (/api/newsletter)
+// w workerze, podwójne potwierdzenie i ochrona przed spamem dochodzą w F6; pole-pułapka jest już w formularzu.
+// Zgoda na otrzymywanie newslettera: osobne, niezaznaczone pole wyboru (treść do akceptacji Patryka, F7).
+import Ikona from './Ikona.astro';
+import ustawienia from '../data/ustawienia.json';
+
+interface Props {
+  /** Prefiks identyfikatorów pól (kilka formularzy na jednej stronie). */
+  id: string;
+  wariant?: 'ramka' | 'pasek';
+  /** Tylko /styleguide: pokazuje stan błędu albo potwierdzenia bez wysyłania. */
+  stan?: 'domyslny' | 'blad' | 'sukces';
+  miejsce: string;
+  class?: string;
+}
+const { id, wariant = 'ramka', stan = 'domyslny', miejsce, class: klasa } = Astro.props;
+const n = ustawienia.newsletter;
+const ids = { email: `${id}-email`, zgoda: `${id}-zgoda`, blad: `${id}-blad`, tytul: `${id}-tytul`, pulapka: `${id}-strona` };
+---
+<section class:list={['newsletter', `newsletter-${wariant}`, klasa]} aria-labelledby={ids.tytul}>
+  <div class="newsletter-opis">
+    <span class="newsletter-dach" aria-hidden="true"></span>
+    <h2 id={ids.tytul} class="font-display text-[1.375rem] leading-tight font-bold text-tekst">{n.nazwa}</h2>
+    <p class="mt-2 text-[0.9375rem] leading-relaxed">{n.opis}</p>
+  </div>
+  {stan === 'sukces' ? (
+    <div class="newsletter-sukces" role="status">
+      <Ikona nazwa="sprawdz" rozmiar={22} class="shrink-0 text-sukces" />
+      <p><strong class="text-tekst">Prawie gotowe.</strong> {n.potwierdzenie}</p>
+    </div>
+  ) : (
+    <form action="/api/newsletter" method="post" class="newsletter-formularz" data-newsletter data-miejsce={miejsce} novalidate={stan === 'blad' ? true : undefined}>
+      <div class="newsletter-wiersz">
+        <div class="min-w-0 flex-1">
+          <label for={ids.email} class="mb-1 block text-[0.875rem] font-semibold text-tekst">Adres e-mail</label>
+          <input
+            id={ids.email}
+            name="email"
+            type="email"
+            required
+            autocomplete="email"
+            inputmode="email"
+            class:list={['pole', { 'stan-blad': stan === 'blad' }]}
+            aria-invalid={stan === 'blad' ? 'true' : undefined}
+            aria-describedby={stan === 'blad' ? ids.blad : undefined}
+            value={stan === 'blad' ? 'kierownik@zaklad' : undefined}
+          />
+        </div>
+        <button type="submit" class="przycisk przycisk-glowny newsletter-przycisk">Zapisz się</button>
+      </div>
+      {stan === 'blad' && (
+        <p id={ids.blad} class="mt-2 flex items-start gap-1.5 text-[0.875rem] font-semibold text-blad" role="alert">
+          <Ikona nazwa="uwaga" rozmiar={18} class="mt-px shrink-0" />Wpisz pełny adres e-mail, np. jan.kowalski@firma.pl.
+        </p>
+      )}
+      <div class="mt-3 flex items-start gap-2">
+        <input id={ids.zgoda} name="zgoda" type="checkbox" value="tak" required class="newsletter-zgoda" />
+        <label for={ids.zgoda} class="text-[0.8125rem] leading-snug">
+          {n.zgoda} Szczegóły w <a href="/polityka-prywatnosci" class="link font-medium">polityce prywatności</a>.
+        </label>
+      </div>
+      {/* Pole-pułapka: niewidoczne dla ludzi, boty je wypełniają. */}
+      <div class="newsletter-pulapka" aria-hidden="true">
+        <label for={ids.pulapka}>Strona internetowa</label>
+        <input id={ids.pulapka} name="strona" type="text" tabindex="-1" autocomplete="off" />
+      </div>
+    </form>
+  )}
+</section>
+
+<style>
+  .newsletter {
+    border: 1px solid var(--color-linia);
+    border-top: 3px solid var(--color-grafit);
+    background: var(--color-tlo-szare);
+    padding: 1.25rem;
+  }
+  .newsletter-dach {
+    display: block;
+    width: 3rem;
+    height: 0.75rem;
+    margin-bottom: 0.75rem;
+    background: var(--color-akcent);
+    clip-path: polygon(0 0, 33.33% 100%, 33.33% 0, 66.66% 100%, 66.66% 0, 100% 100%, 0 100%);
+  }
+  .newsletter-formularz {
+    margin-top: 1rem;
+  }
+  .newsletter-wiersz {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .newsletter-przycisk {
+    width: 100%;
+  }
+  .newsletter-zgoda {
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-top: -0.125rem;
+    flex-shrink: 0;
+    accent-color: var(--color-akcent-tekst);
+  }
+  .newsletter-pulapka {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  .newsletter-sukces {
+    display: flex;
+    gap: 0.625rem;
+    margin-top: 1rem;
+    padding: 0.875rem 1rem;
+    border-left: 3px solid var(--color-sukces);
+    background: var(--color-tlo);
+    font-size: 0.9375rem;
+  }
+  @media (min-width: 40rem) {
+    .newsletter-wiersz {
+      flex-direction: row;
+      align-items: flex-end;
+    }
+    .newsletter-przycisk {
+      width: auto;
+    }
+  }
+  /* Pasek: szeroki układ na całą kolumnę, opis po lewej, formularz po prawej */
+  @media (min-width: 64rem) {
+    .newsletter-pasek {
+      display: grid;
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      gap: 2.5rem;
+      align-items: center;
+      padding: 2rem 2.5rem;
+    }
+    .newsletter-pasek .newsletter-formularz,
+    .newsletter-pasek .newsletter-sukces {
+      margin-top: 0;
+    }
+  }
+  /* Ramka w wąskiej kolumnie: pole i przycisk zawsze jedno pod drugim */
+  .newsletter-ramka .newsletter-wiersz {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .newsletter-ramka .newsletter-przycisk {
+    width: 100%;
+  }
+</style>

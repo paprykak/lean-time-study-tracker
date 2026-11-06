@@ -1,0 +1,28 @@
+---
+// Strona „Wkrótce” (start w dwóch krokach, sekcja F8): logo, opis medium i zapis na listę oczekujących.
+// Formularz działa od F6 (worker /api/newsletter). Do tego czasu strona nie trafia na produkcję.
+import Uklad from '../layouts/Uklad.astro';
+import Newsletter from '../components/Newsletter.astro';
+import ustawienia from '../data/ustawienia.json';
+---
+<Uklad tytul="Rytm Hali: niezależne medium o operacjach" opis={ustawienia.opis} naglowek="minimalny">
+  <div class="kontener grid gap-10 py-10 md:py-16 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-16">
+    <div>
+      <p class="kategoria">Wkrótce start</p>
+      <h1 class="tytul-xl mt-3 max-w-[20ch]">{ustawienia.haslo}</h1>
+      <p class="lead mt-5 max-w-[46ch]">
+        Piszemy dla kierowników produkcji i magazynów, dyrektorów operacyjnych, specjalistów ciągłego doskonalenia i liderów zmian.
+        Konkretnie, ze źródłami, bez reklam udających artykuły.
+      </p>
+      <h2 class="mt-10 font-sans text-kategoria font-bold tracking-[0.08em] text-tekst-drugi uppercase">Działy</h2>
+      <ul class="mt-2 max-w-xl border-t-2 border-grafit">
+        {ustawienia.dzialy.map((d) => (
+          <li class="border-b border-linia py-3 font-display text-[1.125rem] font-bold text-tekst">{d.nazwa}</li>
+        ))}
+      </ul>
+    </div>
+    <div class="lg:pt-10">
+      <Newsletter id="lista-oczekujacych" miejsce="wkrotce" />
+    </div>
+  </div>
+</Uklad>

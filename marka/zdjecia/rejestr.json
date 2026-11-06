@@ -1,0 +1,15 @@
+{
+  "opis": "Rejestr licencji zdjęć Rytmu Hali. Każde zdjęcie w serwisie ma tu wpis przed publikacją. Tylko CC0 albo CC BY, każde pobranie za zgodą Patryka (data zgody w polu zgoda).",
+  "pola": {
+    "plik": "ścieżka w repozytorium, np. src/assets/zdjecia/linia-montazowa.jpg",
+    "zrodlo": "adres strony zdjęcia u źródła (Wikimedia Commons, Unsplash, Pexels, rawpixel)",
+    "autor": "imię i nazwisko albo nazwa autora zgodnie ze źródłem",
+    "licencja": "CC0 1.0 | CC BY 2.0 | CC BY 3.0 | CC BY 4.0",
+    "licencjaUrl": "adres tekstu licencji",
+    "fot": "podpis „Fot.” pod zdjęciem, np. „Fot. Jan Kowalski / Wikimedia Commons, CC BY 4.0”",
+    "opisAlt": "tekst alternatywny",
+    "zgoda": "data zgody Patryka, RRRR-MM-DD",
+    "pobrano": "data pobrania, RRRR-MM-DD"
+  },
+  "zdjecia": []
+}

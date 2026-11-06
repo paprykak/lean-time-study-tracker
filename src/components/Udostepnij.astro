@@ -1,0 +1,94 @@
+---
+// Udostępnianie bez skryptów i ciasteczek serwisów społecznościowych (wzór z patrykkorpyta.pl): zwykłe linki,
+// kopiowanie adresu i systemowe „Udostępnij” na ekranach dotykowych. „gora” to ikony przy metadanych, „dol” to ramka.
+import Ikona from './Ikona.astro';
+
+interface Props {
+  adres: string;
+  tytul: string;
+  wariant: 'gora' | 'dol';
+}
+const { adres, tytul, wariant } = Astro.props;
+const u = encodeURIComponent(adres);
+const kanaly = [
+  { kanal: 'linkedin', nazwa: 'LinkedIn', ikona: 'linkedin', href: `https://www.linkedin.com/sharing/share-offsite/?url=${u}` },
+  { kanal: 'facebook', nazwa: 'Facebook', ikona: 'facebook', href: `https://www.facebook.com/sharer/sharer.php?u=${u}` },
+  { kanal: 'x', nazwa: 'X', ikona: 'x', href: `https://x.com/intent/post?url=${u}&text=${encodeURIComponent(tytul)}` },
+  { kanal: 'e-mail', nazwa: 'E-mail', ikona: 'poczta', href: `mailto:?subject=${encodeURIComponent(tytul)}&body=${encodeURIComponent(`${tytul}\n${adres}`)}` },
+] as const;
+const zdarzenie = (kanal: string) => ({ 'data-umami-event': 'Udostępnienie', 'data-umami-event-kanal': kanal, 'data-umami-event-miejsce': wariant });
+const zewnetrzny = (kanal: string) => (kanal === 'e-mail' ? {} : { target: '_blank', rel: 'noopener' });
+---
+{wariant === 'gora' ? (
+  <div class="flex items-center gap-1" data-udostepnij={wariant}>
+    <span class="sr-only">Udostępnij artykuł:</span>
+    {kanaly.map((k) => (
+      <a href={k.href} class="udostepnij-ikona" aria-label={`Udostępnij: ${k.nazwa}`} title={k.nazwa} {...zewnetrzny(k.kanal)} {...zdarzenie(k.kanal)}>
+        <Ikona nazwa={k.ikona} rozmiar={18} />
+      </a>
+    ))}
+    <button type="button" class="udostepnij-ikona" data-kopiuj={adres} aria-label="Kopiuj link" title="Kopiuj link" {...zdarzenie('link')}><Ikona nazwa="link" rozmiar={18} /></button>
+    <button type="button" class="udostepnij-ikona" data-systemowe data-tytul={tytul} data-adres={adres} aria-label="Udostępnij" title="Udostępnij" hidden {...zdarzenie('telefon')}><Ikona nazwa="udostepnij" rozmiar={18} /></button>
+    <span class="sr-only" role="status" aria-live="polite" data-komunikat></span>
+  </div>
+) : (
+  <section class="border-y border-linia py-5" data-udostepnij={wariant} aria-labelledby="udostepnij-dol">
+    <h2 id="udostepnij-dol" class="font-sans text-[0.9375rem] font-bold text-tekst">Udostępnij artykuł</h2>
+    <div class="mt-3 grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
+      {kanaly.map((k) => (
+        <a href={k.href} class="przycisk przycisk-obrys" {...zewnetrzny(k.kanal)} {...zdarzenie(k.kanal)}><Ikona nazwa={k.ikona} rozmiar={18} />{k.nazwa}</a>
+      ))}
+      <button type="button" class="przycisk przycisk-obrys" data-kopiuj={adres} {...zdarzenie('link')}><Ikona nazwa="link" rozmiar={18} /><span data-etykieta>Kopiuj link</span></button>
+      <button type="button" class="przycisk przycisk-obrys" data-systemowe data-tytul={tytul} data-adres={adres} hidden {...zdarzenie('telefon')}><Ikona nazwa="udostepnij" rozmiar={18} />Udostępnij…</button>
+      <span class="sr-only" role="status" aria-live="polite" data-komunikat></span>
+    </div>
+  </section>
+)}
+
+<script>
+  for (const box of document.querySelectorAll<HTMLElement>('[data-udostepnij]')) {
+    const komunikat = box.querySelector<HTMLElement>('[data-komunikat]');
+    const kopiuj = box.querySelector<HTMLButtonElement>('[data-kopiuj]');
+    const etykieta = kopiuj?.querySelector<HTMLElement>('[data-etykieta]');
+    kopiuj?.addEventListener('click', async () => {
+      let tekst = 'Link skopiowany';
+      try {
+        await navigator.clipboard.writeText(kopiuj.dataset.kopiuj ?? location.href);
+      } catch {
+        tekst = 'Nie udało się skopiować. Skopiuj adres z paska przeglądarki.';
+      }
+      if (komunikat) komunikat.textContent = tekst;
+      if (etykieta) {
+        etykieta.textContent = tekst === 'Link skopiowany' ? 'Skopiowano' : 'Kopiuj link';
+        setTimeout(() => (etykieta.textContent = 'Kopiuj link'), 2500);
+      } else {
+        kopiuj.title = tekst;
+      }
+    });
+    // Systemowe „Udostępnij” (aplikacje LinkedIn, Teams, WhatsApp) tylko na ekranach dotykowych.
+    const systemowe = box.querySelector<HTMLButtonElement>('[data-systemowe]');
+    if (systemowe && 'share' in navigator && matchMedia('(pointer: coarse)').matches) {
+      systemowe.hidden = false;
+      systemowe.addEventListener('click', () => {
+        navigator.share({ title: systemowe.dataset.tytul, url: systemowe.dataset.adres }).catch(() => {});
+      });
+    }
+  }
+</script>
+
+<style>
+  .udostepnij-ikona {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    color: var(--color-tekst-drugi);
+    border: 1px solid transparent;
+  }
+  @media (hover: hover) {
+    .udostepnij-ikona:hover {
+      color: var(--color-tekst);
+      border-color: var(--color-linia);
+    }
+  }
+</style>

@@ -1,0 +1,127 @@
+---
+// Układ każdej strony: <head> z SEO, fontami i danymi strukturalnymi, link „Przejdź do treści”, nagłówek, treść, stopka.
+import '../styles/global.css';
+import fontSans from '../assets/fonty/noto-sans.woff2?url';
+import fontDisplay from '../assets/fonty/noto-sans-display-700.woff2?url';
+import Logo from '../components/Logo.astro';
+import Naglowek from '../components/Naglowek.astro';
+import Stopka from '../components/Stopka.astro';
+import ustawienia from '../data/ustawienia.json';
+import { PODGLAD } from '../lib/srodowisko.mjs';
+
+interface Props {
+  tytul: string;
+  opis: string;
+  /** Okładka udostępnień 1200×630 (adres względny albo pełny). Domyślnie okładka marki. */
+  obraz?: string;
+  typ?: 'website' | 'article';
+  noindex?: boolean;
+  jsonLd?: Record<string, unknown>[];
+  /** „minimalny”: samo logo (strona „Wkrótce”); „pelny”: pasek górny, wyszukiwarka i menu działów. */
+  naglowek?: 'pelny' | 'minimalny';
+  aktywny?: string;
+}
+
+const { tytul, opis, obraz = '/marka/okladka-domyslna.jpg', typ = 'website', noindex = false, jsonLd = [], naglowek = 'pelny', aktywny } = Astro.props;
+const adres = ustawienia.adres;
+// build.format 'file' daje ścieżki z .html przy budowaniu; adres kanoniczny ma być taki jak serwowany (i w mapie strony).
+const sciezka = Astro.url.pathname.replace(/\.html$/, '').replace(/\/index$/, '').replace(/\/$/, '') || '/';
+const kanoniczny = adres + (sciezka === '/' ? '/' : sciezka);
+const okladka = obraz.startsWith('http') ? obraz : adres + obraz;
+const bezIndeksu = noindex || PODGLAD;
+
+const redakcja = `${adres}/#redakcja`;
+const graf = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    { '@type': 'WebSite', '@id': `${adres}/#serwis`, url: `${adres}/`, name: ustawienia.nazwa, description: ustawienia.opis, inLanguage: 'pl-PL', publisher: { '@id': redakcja } },
+    {
+      '@type': 'NewsMediaOrganization',
+      '@id': redakcja,
+      name: ustawienia.nazwa,
+      url: `${adres}/`,
+      logo: { '@type': 'ImageObject', url: `${adres}/marka/logo.png`, width: 600, height: 60 },
+      email: ustawienia.emailRedakcji,
+    },
+    ...jsonLd,
+  ],
+};
+---
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{tytul}</title>
+    <meta name="description" content={opis} />
+    {!bezIndeksu && <link rel="canonical" href={kanoniczny} />}
+    {bezIndeksu && <meta name="robots" content="noindex, follow" />}
+    <link rel="preload" href={fontSans} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={fontDisplay} as="font" type="font/woff2" crossorigin />
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <meta property="og:type" content={typ} />
+    <meta property="og:locale" content="pl_PL" />
+    <meta property="og:site_name" content={ustawienia.nazwa} />
+    <meta property="og:title" content={tytul} />
+    <meta property="og:description" content={opis} />
+    <meta property="og:url" content={kanoniczny} />
+    <meta property="og:image" content={okladka} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <script type="application/ld+json" set:html={JSON.stringify(graf)} />
+  </head>
+  <body class="flex min-h-dvh flex-col">
+    <a href="#tresc" class="przejdz-do-tresci">Przejdź do treści</a>
+    {naglowek === 'pelny' ? (
+      <Naglowek aktywny={aktywny} />
+    ) : (
+      <header class="border-b border-linia">
+        <div class="kontener flex h-16 items-center md:h-24">
+          <a href="/" aria-label={`${ustawienia.nazwa}, strona główna`} class="inline-flex min-h-11 items-center"><Logo wariant="kompakt" class="h-8 w-auto md:hidden" /><Logo class="hidden h-[3.75rem] w-auto md:block" /></a>
+        </div>
+      </header>
+    )}
+    <slot name="pod-naglowkiem" />
+    <main id="tresc" tabindex="-1" class="flex-1 focus:outline-none">
+      <slot />
+    </main>
+    <Stopka wariant={naglowek === 'pelny' ? 'pelna' : 'minimalna'} />
+    <script>
+      import { odswiezCzas } from '../scripts/czas';
+      // Etykiety „07:05 / 5 lis” na listach liczone u czytelnika (strona statyczna).
+      odswiezCzas();
+      // Tabele z treści przewijane w bok (telefon) muszą być osiągalne klawiaturą (WCAG 2.1.1, axe: scrollable-region-focusable).
+      for (const t of document.querySelectorAll<HTMLElement>('.tresc .tabela')) {
+        if (t.scrollWidth > t.clientWidth) {
+          t.tabIndex = 0;
+          t.setAttribute('role', 'region');
+          if (!t.hasAttribute('aria-label')) t.setAttribute('aria-label', t.querySelector('caption')?.textContent?.trim() || 'Tabela (przewijana w bok)');
+        }
+      }
+    </script>
+  </body>
+</html>
+
+<style>
+  .przejdz-do-tresci {
+    position: absolute;
+    left: 0.75rem;
+    top: -4rem;
+    z-index: 50;
+    padding: 0.75rem 1rem;
+    background: var(--color-grafit-ciemny);
+    color: var(--color-tekst-na-ciemnym);
+    font-weight: 600;
+  }
+  .przejdz-do-tresci:focus,
+  .przejdz-do-tresci:global(.stan-fokus) {
+    top: 0.75rem;
+  }
+</style>

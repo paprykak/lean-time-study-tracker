@@ -1,0 +1,48 @@
+---
+// Stopka serwisu: logo w wersji ciemnej, działy, strony zaufania, współpraca, dane wydawcy (stopka redakcyjna w F7).
+import Logo from './Logo.astro';
+import ustawienia from '../data/ustawienia.json';
+
+interface Props {
+  wariant?: 'pelna' | 'minimalna';
+}
+const { wariant = 'pelna' } = Astro.props;
+const rok = new Date().getFullYear();
+const kolumny = [
+  { tytul: 'Działy', linki: ustawienia.dzialy.map((d) => ({ nazwa: d.nazwa, adres: `/dzial/${d.slug}` })) },
+  { tytul: 'Redakcja', linki: ustawienia.stopka.serwis },
+  { tytul: 'Współpraca', linki: ustawienia.stopka.wspolpraca },
+];
+---
+<footer class="mt-16 bg-grafit-ciemny text-tekst-na-ciemnym-drugi">
+  <div class="kontener py-10 md:py-12">
+    {wariant === 'pelna' ? (
+      <div class="grid gap-10 md:grid-cols-[minmax(0,4fr)_repeat(3,minmax(0,3fr))]">
+        <div>
+          <a href="/" aria-label={`${ustawienia.nazwa}, strona główna`} class="inline-block"><Logo motyw="ciemne" class="h-14 w-auto" /></a>
+          <p class="mt-4 max-w-xs text-[0.9375rem] leading-relaxed">{ustawienia.opis}</p>
+        </div>
+        {kolumny.map((k) => (
+          <nav aria-label={k.tytul}>
+            <h2 class="font-sans text-kategoria font-bold tracking-[0.08em] text-white uppercase">{k.tytul}</h2>
+            <ul class="mt-3">
+              {k.linki.map((l) => (
+                <li><a href={l.adres} class="inline-flex min-h-11 items-center text-[0.9375rem] najazd:text-white najazd:underline md:min-h-9">{l.nazwa}</a></li>
+              ))}
+            </ul>
+          </nav>
+        ))}
+      </div>
+    ) : (
+      <a href="/" aria-label={`${ustawienia.nazwa}, strona główna`} class="inline-block"><Logo motyw="ciemne" class="h-12 w-auto" /></a>
+    )}
+    <div class="mt-10 flex flex-col gap-3 border-t border-linia-na-ciemnym pt-6 text-[0.8125rem] md:flex-row md:items-center md:justify-between">
+      <p>© {rok} {ustawienia.nazwa}. Redaktor naczelny: {ustawienia.redaktorNaczelny}. Kontakt: <a href={`mailto:${ustawienia.emailRedakcji}`} class="text-white underline underline-offset-2">{ustawienia.emailRedakcji}</a></p>
+      {wariant === 'pelna' && (
+        <ul class="flex gap-5">
+          {ustawienia.stopka.prawne.map((l) => <li><a href={l.adres} class="inline-flex min-h-11 items-center najazd:text-white najazd:underline md:min-h-0">{l.nazwa}</a></li>)}
+        </ul>
+      )}
+    </div>
+  </div>
+</footer>

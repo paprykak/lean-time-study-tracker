@@ -1,0 +1,23 @@
+---
+// Pozycja listy z godziną (np. „Najnowsze”): godzina albo data w lewej kolumnie o stałej szerokości, tytuł obok.
+import type { ArtykulKarta } from '../../lib/typy';
+import { datetime, godzinaAlboData } from '../../lib/daty';
+
+interface Props {
+  artykul: ArtykulKarta;
+  poziom?: 'h2' | 'h3';
+  class?: string;
+}
+const { artykul, poziom = 'h3', class: klasa } = Astro.props;
+const Tytul = poziom;
+---
+<article class:list={['karta grid grid-cols-[3.25rem_1fr] gap-3 border-t border-linia py-3', klasa]}>
+  <time datetime={datetime(artykul.data)} data-czas-wzgledny class="pt-px text-meta font-bold text-akcent-tekst tabular-nums">{godzinaAlboData(artykul.data)}</time>
+  <div>
+    {artykul.partner && <p class="kategoria text-tekst">Materiał partnera</p>}
+    <Tytul class="tytul-s font-sans text-[0.9375rem] leading-snug font-semibold">
+      <a href={artykul.adres} class="karta-link karta-tytul">{artykul.tytul}</a>
+    </Tytul>
+  </div>
+</article>
+

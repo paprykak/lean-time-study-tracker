@@ -1,0 +1,32 @@
+---
+// Nad tytułem: kategoria (link do działu) albo oznaczenie materiału partnera. Oznaczenie partnera jest zawsze
+// widoczne i nie jest linkiem (zasady Google o treściach sponsorowanych, sekcja 4).
+import type { ArtykulKarta } from '../../lib/typy';
+interface Props {
+  artykul: ArtykulKarta;
+  naCiemnym?: boolean;
+}
+const { artykul, naCiemnym = false } = Astro.props;
+---
+{artykul.partner ? (
+  <p class="karta-nad"><span class="etykieta-partner">Materiał partnera</span></p>
+) : artykul.kategoria ? (
+  <p class="karta-nad">
+    <a href={artykul.kategoria.adres} class:list={['kategoria najazd:underline', { 'kategoria-na-ciemnym': naCiemnym }]}>{artykul.kategoria.nazwa}</a>
+  </p>
+) : null}
+
+<style>
+  .etykieta-partner {
+    display: inline-block;
+    padding: 0.125rem 0.375rem;
+    border: 1px solid var(--color-grafit);
+    background: var(--color-tlo);
+    color: var(--color-tekst);
+    font-size: var(--text-kategoria);
+    line-height: var(--text-kategoria--line-height);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+</style>

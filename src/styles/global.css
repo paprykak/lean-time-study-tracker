@@ -1,0 +1,337 @@
+@import "tailwindcss";
+@import "./fonty.css";
+
+/*
+  Tokeny Rytmu Hali. Jedno źródło kolorów, typografii, odstępów i linii.
+  Kontrast każdej pary tekst/tło pilnuje test src/lib/tokeny.test.ts (WCAG 2.2 AA: 4,5:1 dla tekstu, 3:1 dla dużego tekstu i elementów UI).
+  Jeden kolor akcentu (pomarańcz). „akcent” to pełna barwa marki na powierzchnie, paski i duży tekst;
+  „akcent-tekst” to ten sam odcień przyciemniony do 4,5:1 na białym, dla małego tekstu i przycisków z białym napisem.
+*/
+@theme {
+  --font-sans: "Noto Sans", "Noto Sans Zapasowy", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Noto Sans Display", "Noto Sans Display Zapasowy", "Noto Sans", ui-sans-serif, system-ui, sans-serif;
+
+  /* Powierzchnie */
+  --color-tlo: #ffffff;
+  --color-tlo-szare: #f2f4f6;
+  --color-grafit: #1d2530;
+  --color-grafit-ciemny: #11161d;
+
+  /* Tekst */
+  --color-tekst: #1d2530;
+  --color-tekst-tresc: #2c3440;
+  --color-tekst-drugi: #58626f;
+  --color-tekst-na-ciemnym: #ffffff;
+  --color-tekst-na-ciemnym-drugi: #b4bcc6;
+
+  /* Akcent (jeden) */
+  --color-akcent: #e8590c;
+  --color-akcent-tekst: #c2410c;
+  --color-akcent-ciemny: #9a3412;
+
+  /* Linie */
+  --color-linia: #dde1e6;
+  --color-linia-mocna: #1d2530;
+  --color-linia-na-ciemnym: #2e3846;
+
+  /* Stany */
+  --color-blad: #b42318;
+  --color-sukces: #1a7f4b;
+
+  /* Siatka i odstępy (skala Tailwinda 4 px zostaje, te nazwy porządkują układ) */
+  --container-strona: 1240px;
+  --spacing-rynna: 1rem;
+  --spacing-sekcja: 2.5rem;
+
+  /* Linie i promienie: ostre krawędzie, najwyżej 4 px dla kart i zdjęć (zasady wyglądu, sekcja 6) */
+  --radius-karta: 2px;
+  --radius-przycisk: 2px;
+
+  /* Cienie tylko dla warstw nad treścią (menu, podpowiedzi), nie dla kart */
+  --shadow-warstwa: 0 8px 24px -8px rgb(17 22 29 / 0.18), 0 2px 6px rgb(17 22 29 / 0.08);
+
+  /* Typografia: rozmiar / interlinia */
+  --text-kategoria: 0.75rem;
+  --text-kategoria--line-height: 1rem;
+  --text-meta: 0.8125rem;
+  --text-meta--line-height: 1.25rem;
+}
+
+/*
+  Ciemny motyw: nie na start (DECYZJE.md). Tokeny przygotowane, nic ich nie włącza.
+  Włączenie: atrybut data-motyw="ciemny" na <html> po decyzji i testach kontrastu w obu motywach.
+*/
+:root[data-motyw="ciemny"] {
+  --color-tlo: #11161d;
+  --color-tlo-szare: #1a212b;
+  --color-tekst: #f3f5f7;
+  --color-tekst-tresc: #dfe4ea;
+  --color-tekst-drugi: #a7b0bb;
+  --color-akcent-tekst: #f2783a;
+  --color-linia: #2e3846;
+  --color-linia-mocna: #f3f5f7;
+}
+
+/*
+  Stany do strony /styleguide: klasy .stan-najazd i .stan-fokus na elemencie pokazują wygląd :hover
+  i :focus-visible bez myszy i klawiatury. Komponenty używają wariantów najazd: i fokus: zamiast hover: i focus-visible:.
+*/
+@custom-variant najazd {
+  @media (hover: hover) {
+    &:hover {
+      @slot;
+    }
+  }
+  &.stan-najazd {
+    @slot;
+  }
+}
+@custom-variant fokus {
+  &:focus-visible {
+    @slot;
+  }
+  &:is(.stan-fokus) {
+    @slot;
+  }
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    scroll-padding-top: 1rem;
+  }
+  body {
+    @apply bg-tlo font-sans text-tekst-tresc antialiased;
+    font-size: 1rem;
+    line-height: 1.6;
+    text-rendering: optimizeLegibility;
+  }
+  h1, h2, h3, h4 {
+    @apply font-display font-bold text-tekst;
+    text-wrap: balance;
+  }
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+  ::selection {
+    background: #fde3d3;
+    color: var(--color-grafit-ciemny);
+  }
+  /* Widoczny fokus na jasnym i ciemnym tle: pomarańcz ma 3,6:1 na białym i 5:1 na grafitowym (wymóg: 3:1). */
+  :focus-visible,
+  .stan-fokus {
+    outline: 3px solid var(--color-akcent);
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation: none !important;
+      transition: none !important;
+      scroll-behavior: auto !important;
+    }
+  }
+  img, svg, video {
+    display: block;
+    max-width: 100%;
+  }
+  img {
+    height: auto;
+  }
+  [hidden] {
+    display: none !important;
+  }
+}
+
+@layer components {
+  .kontener {
+    @apply mx-auto w-full px-4 sm:px-6 lg:px-8;
+    /* 1240 px treści + rynny po bokach */
+    max-width: calc(var(--container-strona) + 4rem);
+  }
+
+  /* Hierarchia jak w redakcji: kategoria → tytuł → lead → metadane */
+  .kategoria {
+    @apply inline-block text-kategoria font-bold tracking-[0.08em] text-akcent-tekst uppercase;
+  }
+  .kategoria-na-ciemnym {
+    @apply text-tekst-na-ciemnym;
+  }
+  .tytul-xl {
+    @apply font-display text-[1.75rem] leading-[1.15] font-bold tracking-[-0.01em] text-tekst sm:text-[2.25rem] lg:text-[2.625rem];
+  }
+  .tytul-l {
+    @apply font-display text-[1.375rem] leading-[1.2] font-bold text-tekst sm:text-[1.5rem];
+  }
+  .tytul-m {
+    @apply font-display text-[1.125rem] leading-[1.3] font-bold text-tekst;
+  }
+  .tytul-s {
+    @apply font-display text-[1rem] leading-[1.35] font-bold text-tekst;
+  }
+  .lead {
+    @apply text-[1.125rem] leading-[1.6] text-tekst-tresc sm:text-[1.25rem];
+  }
+  .meta {
+    @apply text-meta text-tekst-drugi;
+  }
+
+  /* Przyciski: prostokątne, 44 px wysokości (cel dotyku), bez cieni */
+  .przycisk {
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-[var(--radius-przycisk)] px-5 text-[0.9375rem] font-semibold transition-colors duration-150;
+  }
+  .przycisk-glowny {
+    @apply bg-akcent-tekst text-white najazd:bg-akcent-ciemny;
+  }
+  .przycisk-grafit {
+    @apply bg-grafit text-white najazd:bg-grafit-ciemny;
+  }
+  .przycisk-obrys {
+    @apply border border-grafit bg-tlo text-tekst najazd:bg-grafit najazd:text-white;
+  }
+  .przycisk:disabled,
+  .przycisk[aria-disabled="true"] {
+    @apply cursor-not-allowed opacity-50;
+  }
+
+  .pole {
+    @apply min-h-11 w-full rounded-[var(--radius-przycisk)] border border-[#8a939e] bg-tlo px-3 text-[1rem] text-tekst placeholder:text-tekst-drugi;
+  }
+  .pole:focus-visible,
+  .pole.stan-fokus {
+    @apply border-grafit;
+    outline: 3px solid var(--color-akcent);
+    outline-offset: 0;
+  }
+  .pole[aria-invalid="true"] {
+    @apply border-blad;
+    box-shadow: inset 0 0 0 1px var(--color-blad);
+  }
+
+  .link {
+    @apply font-semibold text-akcent-tekst underline decoration-1 underline-offset-[3px] najazd:text-akcent-ciemny najazd:decoration-2;
+  }
+
+  /* Zdjęcia: proporcje stałe, więc miejsce jest zarezerwowane zanim obraz się wczyta (CLS) */
+  .zdjecie {
+    @apply block w-full overflow-hidden rounded-[var(--radius-karta)] bg-tlo-szare object-cover;
+  }
+  .proporcja-16-9 {
+    aspect-ratio: 16 / 9;
+  }
+  .proporcja-16-10 {
+    aspect-ratio: 16 / 10;
+  }
+  .proporcja-1-1 {
+    aspect-ratio: 1 / 1;
+  }
+
+  /* Rozciągnięty link: cała karta klika się jednym linkiem w tytule (jedno miejsce w kolejności Tab) */
+  .karta {
+    position: relative;
+  }
+  .karta-link::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+  .karta-link:focus-visible {
+    outline: none;
+  }
+  .karta:has(.karta-link:focus-visible),
+  .karta.stan-fokus {
+    outline: 3px solid var(--color-akcent);
+    outline-offset: 4px;
+  }
+  .karta-nad {
+    position: relative;
+    z-index: 2;
+  }
+  .karta .karta-tytul {
+    text-decoration-line: underline;
+    text-decoration-color: transparent;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
+    transition: text-decoration-color 150ms;
+  }
+  @media (hover: hover) {
+    .karta:hover .karta-tytul {
+      text-decoration-color: currentColor;
+    }
+  }
+  .karta.stan-najazd .karta-tytul {
+    text-decoration-color: currentColor;
+  }
+
+  .sr-tylko {
+    @apply sr-only;
+  }
+}
+
+/* Treść artykułu (szablon w F3; typografia należy do systemu wizualnego) */
+.tresc {
+  @apply text-[1.0625rem] leading-[1.75] text-tekst-tresc sm:text-[1.125rem];
+  max-width: 44rem;
+}
+.tresc > * + * {
+  margin-top: 1.25em;
+}
+.tresc h2 {
+  @apply mt-12 font-display text-[1.5rem] leading-[1.25] font-bold text-tekst sm:text-[1.75rem];
+  scroll-margin-top: 1.5rem;
+}
+.tresc h3 {
+  @apply mt-9 font-display text-[1.25rem] leading-[1.3] font-bold text-tekst;
+  scroll-margin-top: 1.5rem;
+}
+.tresc a {
+  @apply font-semibold text-akcent-tekst underline decoration-1 underline-offset-[3px];
+}
+.tresc a:hover {
+  @apply decoration-2;
+}
+.tresc strong {
+  @apply font-bold text-tekst;
+}
+.tresc ul,
+.tresc ol {
+  @apply space-y-2 pl-6;
+}
+.tresc ul {
+  list-style: square;
+}
+.tresc ol {
+  list-style: decimal;
+}
+.tresc li::marker {
+  @apply text-akcent-tekst;
+}
+.tresc blockquote {
+  @apply border-l-4 border-akcent py-1 pl-5 font-display text-[1.25rem] leading-[1.4] font-bold text-tekst;
+}
+.tresc figure img {
+  @apply w-full rounded-[var(--radius-karta)];
+}
+.tresc figcaption {
+  @apply mt-2 text-meta text-tekst-drugi;
+}
+.tresc hr {
+  @apply my-10 border-linia;
+}
+.tresc .tabela {
+  @apply w-full overflow-x-auto;
+}
+.tresc table {
+  @apply w-full text-[0.9375rem];
+  border-collapse: collapse;
+  min-width: 32rem;
+}
+.tresc th,
+.tresc td {
+  @apply border-b border-linia px-3 py-2 text-left align-top;
+}
+.tresc th {
+  @apply border-b-2 border-grafit font-bold text-tekst;
+}

@@ -1,0 +1,39 @@
+# Pełna kontrola jakości (npm run check) na każdym pushu do gałęzi i na pull requestach:
+# astro check, testy jednostkowe, build, kontrola SEO, budżet rozmiaru, E2E na komputerze, Androidzie i iPhonie
+# (WebKit), dostępność (axe) i Lighthouse. Wdrożenie robi Cloudflare Workers Builds z poleceniem `npm run check:szybki`,
+# więc błąd testów szybkich blokuje produkcję także przy zmianach z panelu CMS.
+name: Kontrola jakości
+
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: kontrola-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  kontrola:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium webkit
+      - run: npm run check
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: raporty-testow
+          path: |
+            playwright-report/
+            test-results/
+            .lighthouseci/
+          retention-days: 7

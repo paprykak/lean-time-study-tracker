@@ -1,0 +1,31 @@
+---
+// Nagłówek sekcji: linia 2 px nad tytułem (grafit, pierwsze 48 px w kolorze akcentu), tytuł i link „Więcej”.
+import Ikona from './Ikona.astro';
+interface Props {
+  tytul: string;
+  id?: string;
+  link?: { nazwa: string; adres: string };
+  poziom?: 'h2' | 'h3';
+  class?: string;
+}
+const { tytul, id, link, poziom = 'h2', class: klasa } = Astro.props;
+const Tytul = poziom;
+---
+<div class:list={['naglowek-sekcji flex items-baseline justify-between gap-4', klasa]}>
+  <Tytul id={id} class="font-display text-[1.25rem] leading-tight font-bold text-tekst">{tytul}</Tytul>
+  {link && (
+    <a href={link.adres} class="link inline-flex shrink-0 items-center gap-1 text-[0.875rem] no-underline najazd:underline">
+      {link.nazwa}<Ikona nazwa="strzalka" rozmiar={16} />
+    </a>
+  )}
+</div>
+
+<style>
+  /* Linia 2 px: grafitowa na całą szerokość, pierwsze 48 px w kolorze akcentu (dwie warstwy tła, bez ramki). */
+  .naglowek-sekcji {
+    padding-top: calc(0.75rem + 2px);
+    background:
+      linear-gradient(var(--color-akcent), var(--color-akcent)) top left / 3rem 2px no-repeat,
+      linear-gradient(var(--color-linia-mocna), var(--color-linia-mocna)) top left / 100% 2px no-repeat;
+  }
+</style>

@@ -1,0 +1,54 @@
+---
+// Zdjęcie w stałej proporcji (miejsce zarezerwowane przed wczytaniem: zero przesunięć układu).
+// AVIF i WebP z srcset przez astro:assets. Bez zdjęcia: pole zastępcze, dozwolone tylko na /styleguide
+// (kontrola SEO blokuje build, gdy data-brak-zdjecia trafi na stronę indeksowaną).
+import { Picture } from 'astro:assets';
+import type { Zdjecie } from '../lib/typy';
+import ikona from '../assets/logo/rytm-hali-ikona.svg?raw';
+
+interface Props {
+  zdjecie?: Zdjecie;
+  proporcja: '16-9' | '16-10' | '1-1';
+  /** Największa szerokość, w jakiej zdjęcie bywa wyświetlane (px CSS). */
+  szerokosc: number;
+  /** Atrybut sizes, np. „(min-width: 1024px) 800px, 100vw”. */
+  sizes: string;
+  /** Zdjęcie nad zgięciem strony (LCP): bez leniwego ładowania, z wysokim priorytetem. */
+  priorytet?: boolean;
+  class?: string;
+}
+const { zdjecie, proporcja, szerokosc, sizes, priorytet = false, class: klasa } = Astro.props;
+const [pw, ph] = proporcja.split('-').map(Number);
+const wysokosc = Math.round((szerokosc * ph) / pw);
+const ikonaBezTytulu = ikona.replace(/<title>[^<]*<\/title>/, '').replace(/ role="img" aria-label="[^"]*"/, ' aria-hidden="true"');
+---
+{zdjecie ? (
+  <Picture
+    src={zdjecie.src}
+    alt={zdjecie.alt}
+    formats={['avif', 'webp']}
+    width={szerokosc}
+    height={wysokosc}
+    fit="cover"
+    layout="constrained"
+    sizes={sizes}
+    priority={priorytet}
+    class:list={['zdjecie', `proporcja-${proporcja}`, klasa]}
+  />
+) : (
+  <div class:list={['zdjecie zdjecie-brak', `proporcja-${proporcja}`, klasa]} data-brak-zdjecia aria-hidden="true">
+    <Fragment set:html={ikonaBezTytulu} />
+  </div>
+)}
+
+<style>
+  .zdjecie-brak {
+    display: grid;
+    place-items: center;
+    background: var(--color-tlo-szare);
+  }
+  .zdjecie-brak :global(svg) {
+    width: min(22%, 4rem);
+    opacity: 0.18;
+  }
+</style>

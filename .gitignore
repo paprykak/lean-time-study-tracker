@@ -1,0 +1,30 @@
+# zależności i wyniki budowania
+node_modules/
+dist/
+.astro/
+.wrangler/
+
+# pamięć podręczna skryptów (źródła fontów pobierane przez npm run fonty)
+.cache/
+
+# testy i raporty jakości
+test-results/
+playwright-report/
+blob-report/
+.lighthouseci/
+
+# zmienne środowiskowe i sekrety (sekrety tylko w Cloudflare: wrangler secret put)
+.env
+.env.*
+.dev.vars
+.dev.vars.*
+
+# logi
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# system i edytory
+.DS_Store
+.idea/

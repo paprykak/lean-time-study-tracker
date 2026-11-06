@@ -1,0 +1,223 @@
+---
+// Slot reklamowy z zarezerwowanym miejscem (zero przesunięć układu) i zawsze z podpisem „REKLAMA”.
+// Formaty na komputer i telefon osobno; slot bez formatu dla danego ekranu jest na nim ukryty.
+// Bez kampanii slot pokazuje autopromocję newslettera (nigdy pustego miejsca). Stan „pusty” tylko dla /styleguide.
+// Kampanie z panelu (daty, rotacja, zdarzenia Umami) dochodzą w F5.
+import Ikona from './Ikona.astro';
+import { FORMATY, linkReklamy, type Format, type Kampania } from '../lib/reklamy';
+import ustawienia from '../data/ustawienia.json';
+
+interface Props {
+  komputer?: Format;
+  telefon?: Format;
+  kampania?: Kampania;
+  /** Tylko /styleguide: pokazuje ramkę z wymiarami zamiast treści. */
+  pusty?: boolean;
+  /** Nazwa miejsca do zdarzeń statystyk, np. „glowna-gora”. */
+  miejsce: string;
+  class?: string;
+}
+const { komputer, telefon, kampania, pusty = false, miejsce, class: klasa } = Astro.props;
+const warianty = [
+  ...(telefon ? [{ ekran: 'telefon' as const, format: telefon }] : []),
+  ...(komputer ? [{ ekran: 'komputer' as const, format: komputer }] : []),
+];
+---
+<div class:list={['slot', { 'slot-tylko-komputer': !telefon, 'slot-tylko-telefon': !komputer }, klasa]} data-slot={miejsce}>
+  {warianty.map(({ ekran, format }) => {
+    const f = FORMATY[format];
+    const kreacja = kampania?.[ekran];
+    return (
+      <div class:list={['slot-wariant', `slot-${ekran}`, `slot-format-${format}`]} data-format={format}>
+        <p class="slot-podpis">Reklama</p>
+        <div class="slot-pole">
+          {pusty ? (
+            <div class="slot-pusty">
+              <span>{f.nazwa}</span>
+              <span class="tabular-nums">{f.szerokosc} × {f.wysokosc}</span>
+            </div>
+          ) : kampania && kreacja ? (
+            <a
+              href={linkReklamy(kampania)}
+              rel="sponsored noopener"
+              target="_blank"
+              class="block size-full"
+              data-umami-event="Reklama: kliknięcie"
+              data-umami-event-kampania={kampania.id}
+              data-umami-event-miejsce={miejsce}
+            >
+              <img src={kreacja.src} alt={kreacja.alt} width={f.szerokosc} height={f.wysokosc} loading="lazy" decoding="async" class="size-full object-cover" />
+            </a>
+          ) : (
+            <a href="/newsletter" class="slot-autopromocja" data-umami-event="Autopromocja: kliknięcie" data-umami-event-miejsce={miejsce}>
+              <span class="slot-autopromocja-dach" aria-hidden="true"></span>
+              <span class="slot-autopromocja-tekst">
+                <span class="slot-autopromocja-tytul">{ustawienia.newsletter.nazwa}</span>
+                <span class="slot-autopromocja-opis">Newsletter Rytmu Hali o produkcji, magazynach, lean i danych.</span>
+              </span>
+              <span class="slot-autopromocja-cta">Zapisz się<Ikona nazwa="strzalka" rozmiar={18} /></span>
+            </a>
+          )}
+        </div>
+      </div>
+    );
+  })}
+</div>
+
+<style>
+  /* Pełna szerokość kolumny; wariant w środku ma najwyżej szerokość formatu i jest wyśrodkowany. */
+  .slot {
+    width: 100%;
+  }
+  /* Wymiary formatów (zgodne z FORMATY w src/lib/reklamy.ts; pilnuje test E2E). Klasy zamiast style="", bo CSP blokuje style w atrybutach. */
+  .slot-format-billboard { --slot-w: 970; --slot-h: 250; }
+  .slot-format-baner { --slot-w: 750; --slot-h: 200; }
+  .slot-format-prostokat { --slot-w: 300; --slot-h: 250; }
+  .slot-format-polstrona { --slot-w: 300; --slot-h: 600; }
+  .slot-format-mobilny { --slot-w: 320; --slot-h: 100; }
+  .slot-format-mobilny-prostokat { --slot-w: 300; --slot-h: 250; }
+  .slot-wariant {
+    width: 100%;
+    max-width: calc(var(--slot-w) * 1px);
+    margin-inline: auto;
+  }
+  /* Telefon do 767 px, komputer od 768 px. Miejsce zarezerwowane przez aspect-ratio także przy węższym ekranie. */
+  .slot-komputer {
+    display: none;
+  }
+  @media (min-width: 48rem) {
+    .slot-telefon {
+      display: none;
+    }
+    .slot-komputer {
+      display: block;
+    }
+  }
+  .slot-tylko-komputer {
+    display: none;
+  }
+  @media (min-width: 48rem) {
+    .slot-tylko-komputer {
+      display: block;
+    }
+    .slot-tylko-telefon {
+      display: none;
+    }
+  }
+  .slot-podpis {
+    height: 1.25rem;
+    font-size: 0.6875rem;
+    line-height: 1.25rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-tekst-drugi);
+  }
+  .slot-pole {
+    position: relative;
+    width: 100%;
+    aspect-ratio: var(--slot-w) / var(--slot-h);
+    overflow: hidden;
+    background: var(--color-tlo-szare);
+    container-type: size;
+  }
+  .slot-pusty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    height: 100%;
+    border: 1px dashed #8a939e;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-tekst-drugi);
+  }
+
+  /* Autopromocja: układ poziomy w szerokich formatach, pionowy w wysokich (zapytania kontenera). */
+  .slot-autopromocja {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    height: 100%;
+    padding: 0 2rem;
+    background: var(--color-grafit);
+    color: var(--color-tekst-na-ciemnym);
+  }
+  .slot-autopromocja-dach {
+    flex-shrink: 0;
+    width: 4.5rem;
+    height: 1.25rem;
+    background: var(--color-akcent);
+    clip-path: polygon(0 0, 33.33% 100%, 33.33% 0, 66.66% 100%, 66.66% 0, 100% 100%, 0 100%);
+  }
+  .slot-autopromocja-tekst {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 0;
+  }
+  .slot-autopromocja-tytul {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.75rem;
+    line-height: 1.1;
+  }
+  .slot-autopromocja-opis {
+    font-size: 0.9375rem;
+    color: var(--color-tekst-na-ciemnym-drugi);
+  }
+  .slot-autopromocja-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    flex-shrink: 0;
+    margin-left: auto;
+    min-height: 2.75rem;
+    padding: 0 1rem;
+    background: var(--color-akcent-tekst);
+    font-weight: 600;
+    font-size: 0.9375rem;
+    white-space: nowrap;
+  }
+  @media (hover: hover) {
+    .slot-autopromocja:hover .slot-autopromocja-cta {
+      background: var(--color-akcent-ciemny);
+    }
+  }
+  .slot-autopromocja:focus-visible {
+    outline-offset: -3px;
+  }
+  /* Wysokie formaty (300×250, 300×600): układ pionowy */
+  @container (max-aspect-ratio: 3 / 2) {
+    .slot-autopromocja {
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    .slot-autopromocja-cta {
+      margin-left: 0;
+    }
+  }
+  /* Niskie formaty (320×100): bez opisu i bez dachu */
+  @container (max-height: 7rem) {
+    .slot-autopromocja {
+      padding: 0 1rem;
+      gap: 0.75rem;
+    }
+    .slot-autopromocja-opis,
+    .slot-autopromocja-dach {
+      display: none;
+    }
+    .slot-autopromocja-tytul {
+      font-size: 1.25rem;
+    }
+  }
+  @container (max-width: 40rem) and (min-height: 7rem) and (min-aspect-ratio: 3 / 2) {
+    .slot-autopromocja-opis {
+      display: none;
+    }
+  }
+</style>

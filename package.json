@@ -1,0 +1,45 @@
+{
+  "name": "rytm-hali",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Rytm Hali (rytmhali.pl): niezależne medium o operacjach. Portal statyczny Astro na Cloudflare Workers.",
+  "engines": {
+    "node": ">=22.23.4"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "seo:check": "node scripts/seo-check.mjs",
+    "budzet": "node scripts/budzet.mjs",
+    "lighthouse": "lhci autorun",
+    "fonty": "node scripts/fonty/generuj-fonty.mjs",
+    "logo": "node marka/logo/generuj-logo.mjs",
+    "zrzuty": "node scripts/zrzuty.mjs",
+    "check:szybki": "astro check && vitest run && astro build && node scripts/seo-check.mjs && node scripts/budzet.mjs",
+    "check": "npm run check:szybki && playwright test && lhci autorun"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.4",
+    "@tailwindcss/vite": "^4.3.4",
+    "astro": "^7.4.7",
+    "tailwindcss": "^4.3.4"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.12",
+    "@axe-core/playwright": "^4.14.0",
+    "@lhci/cli": "^0.16.0",
+    "@playwright/test": "1.63.0",
+    "fontverter": "^2.0.0",
+    "opentype.js": "^2.0.0",
+    "playwright-core": "1.63.0",
+    "subset-font": "^2.9.0",
+    "typescript": "^6.0.3",
+    "vitest": "^5.1.0",
+    "wrangler": "^4.158.0"
+  }
+}

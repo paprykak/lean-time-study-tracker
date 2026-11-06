@@ -1,0 +1,16 @@
+---
+// Logo jako wektor wstawiony w kod strony (bez żądania, ostre w każdej skali). Pliki: marka/logo/ (npm run logo).
+import Jasne from '../assets/logo/rytm-hali-jasne.svg';
+import Ciemne from '../assets/logo/rytm-hali-ciemne.svg';
+import KompaktJasne from '../assets/logo/rytm-hali-kompakt-jasne.svg';
+import KompaktCiemne from '../assets/logo/rytm-hali-kompakt-ciemne.svg';
+
+interface Props {
+  wariant?: 'pelne' | 'kompakt';
+  motyw?: 'jasne' | 'ciemne';
+  class?: string;
+}
+const { wariant = 'pelne', motyw = 'jasne', class: klasa } = Astro.props;
+const Svg = wariant === 'pelne' ? (motyw === 'jasne' ? Jasne : Ciemne) : motyw === 'jasne' ? KompaktJasne : KompaktCiemne;
+---
+<Svg class={klasa} aria-hidden="true" focusable="false" />

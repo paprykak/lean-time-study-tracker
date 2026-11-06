@@ -1,0 +1,19 @@
+// Cloudflare Workers + Assets: statyczny portal z dist/ (build: npm run check:szybki, Workers Builds z GitHuba).
+// Kod workera (punkty API formularzy, 410 dla usuniętych adresów, logowanie do panelu) dochodzi w F2, F6 i F8;
+// do tego czasu Worker serwuje wyłącznie pliki statyczne.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "rytm-hali",
+  "compatibility_date": "2026-11-01",
+  // Produkcja tylko pod rytmhali.pl (bez kopii pod *.workers.dev). Domena musi być w Cloudflare przed pierwszym wdrożeniem main.
+  "workers_dev": false,
+  "routes": [{ "pattern": "rytmhali.pl", "custom_domain": true }],
+  // Adresy podglądu wersji z gałęzi (<wersja>-rytm-hali.<subdomena>.workers.dev). Build gałęzi ≠ main ma noindex
+  // (src/lib/srodowisko.mjs). Dostęp do podglądu zamyka Cloudflare Access (zadanie Patryka w STAN.md).
+  "preview_urls": true,
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page",
+    "html_handling": "auto-trailing-slash"
+  }
+}

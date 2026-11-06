@@ -1,0 +1,37 @@
+---
+// Treść strony błędu: 404 (nie ma takiej strony) i 410 (artykuł usunięty na stałe). Szablon dla /404 i workera (410).
+import Ikona from './Ikona.astro';
+import ustawienia from '../data/ustawienia.json';
+interface Props {
+  kod: 404 | 410;
+  /** Poziom tytułu: h1 na stronie błędu, niżej przy podglądzie na /styleguide. */
+  poziom?: 'h1' | 'h2' | 'h3';
+}
+const { kod, poziom = 'h1' } = Astro.props;
+const Tytul = poziom;
+const Podtytul = poziom === 'h1' ? 'h2' : poziom === 'h2' ? 'h3' : 'h4';
+const prefiks = poziom === 'h1' ? 'szukaj-blad' : `szukaj-blad-${kod}`;
+const tresc = {
+  404: { tytul: 'Nie ma takiej strony', opis: 'Adres mógł się zmienić albo zawiera literówkę. Poszukaj tekstu w wyszukiwarce albo zacznij od działów.' },
+  410: { tytul: 'Ten artykuł został usunięty', opis: 'Redakcja wycofała ten tekst na stałe. Poszukaj aktualnych artykułów w wyszukiwarce albo w działach.' },
+}[kod];
+---
+<section class="kontener py-12 md:py-20">
+  <div class="max-w-2xl">
+    <p class="font-display text-[4.5rem] leading-none font-bold text-akcent tabular-nums md:text-[6rem]" aria-hidden="true">{kod}</p>
+    <Tytul class="tytul-xl mt-4">{tresc.tytul}</Tytul>
+    <p class="lead mt-4">{tresc.opis}</p>
+    <form action="/szukaj" method="get" role="search" class="mt-8 flex max-w-md items-stretch">
+      <label for={prefiks} class="sr-only">Szukaj w Rytmie Hali</label>
+      <input id={prefiks} name="q" type="search" class="pole rounded-r-none border-r-0" placeholder="Czego szukasz?" />
+      <button type="submit" class="przycisk przycisk-grafit rounded-l-none"><Ikona nazwa="szukaj" />Szukaj</button>
+    </form>
+    <Podtytul class="mt-10 font-sans text-kategoria font-bold tracking-[0.08em] text-tekst-drugi uppercase">Działy</Podtytul>
+    <ul class="mt-2 flex flex-wrap gap-2">
+      {ustawienia.dzialy.map((d) => (
+        <li><a href={`/dzial/${d.slug}`} class="przycisk przycisk-obrys">{d.nazwa}</a></li>
+      ))}
+    </ul>
+    <p class="mt-8"><a href="/" class="link inline-flex min-h-11 items-center gap-1.5">Strona główna<Ikona nazwa="strzalka" rozmiar={18} /></a></p>
+  </div>
+</section>

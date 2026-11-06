@@ -1,0 +1,17 @@
+{
+  "licencja": "SIL Open Font License 1.1",
+  "repozytorium": "https://github.com/google/fonts",
+  "commit": "24ddc1f324cac5d9f5aedca126d298f56e3f1640",
+  "zrodla": {
+    "sans": "ofl/notosans/NotoSans[wdth,wght].ttf",
+    "sansItalic": "ofl/notosans/NotoSans-Italic[wdth,wght].ttf",
+    "display": "ofl/notosansdisplay/NotoSansDisplay[wdth,wght].ttf",
+    "licencja": "ofl/notosans/OFL.txt"
+  },
+  "sha256": {
+    "sans": "bfb7bb691513f12e734dc346c03a03f784912432d7e3fa8e56efcf906fe86b3d",
+    "sansItalic": "58e6e0ebd1931b29a365aa2d3e2ee9a9e831a3af7cf3ad1462d4e72154f0b291",
+    "display": "deaa68141fa5ad21bd17d7c11fa79183ceda19b32e40ff5c33874d42f3636dde",
+    "licencja": "cee9892f9f0cc8fe882c9e9537ee6a89621d86ee7ceaf70b02e2b2b1c25c061a"
+  }
+}

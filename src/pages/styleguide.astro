@@ -1,0 +1,454 @@
+---
+// /styleguide (noindex): tokeny, typografia i wszystkie komponenty w stanach (najechanie, fokus, pusty, długi tytuł).
+// Na tej stronie Patryk akceptuje wygląd przed budową szablonów (bramka F1). Treści przykładowe są fikcyjne.
+import Uklad from '../layouts/Uklad.astro';
+import NaZmianie from '../components/NaZmianie.astro';
+import NaglowekSekcji from '../components/NaglowekSekcji.astro';
+import NajczesciejCzytane from '../components/NajczesciejCzytane.astro';
+import SlotReklamowy from '../components/SlotReklamowy.astro';
+import Newsletter from '../components/Newsletter.astro';
+import RamkaAutora from '../components/RamkaAutora.astro';
+import Udostepnij from '../components/Udostepnij.astro';
+import Okruszki from '../components/Okruszki.astro';
+import Stronicowanie from '../components/Stronicowanie.astro';
+import StronaBledu from '../components/StronaBledu.astro';
+import Zdjecie from '../components/Zdjecie.astro';
+import KartaGlowna from '../components/karty/KartaGlowna.astro';
+import KartaBoczna from '../components/karty/KartaBoczna.astro';
+import KartaSiatka from '../components/karty/KartaSiatka.astro';
+import KartaLista from '../components/karty/KartaLista.astro';
+import Meta from '../components/karty/Meta.astro';
+import { ARTYKULY, DLUGI_TYTUL, NA_ZMIANIE, NAJCZESCIEJ } from '../data/przyklady';
+import { tokenyKolorow } from '../lib/tokeny';
+import { kontrast, zapisKontrastu } from '../lib/kontrast';
+import { FORMATY, type Format, type Kampania } from '../lib/reklamy';
+import LogoJasne from '../../marka/logo/svg/rytm-hali-jasne.svg';
+import LogoCiemne from '../../marka/logo/svg/rytm-hali-ciemne.svg';
+import LogoCb from '../../marka/logo/svg/rytm-hali-cb.svg';
+import LogoCbNegatyw from '../../marka/logo/svg/rytm-hali-cb-negatyw.svg';
+import LogoKompaktJasne from '../../marka/logo/svg/rytm-hali-kompakt-jasne.svg';
+import LogoKompaktCiemne from '../../marka/logo/svg/rytm-hali-kompakt-ciemne.svg';
+import Ikonka from '../../marka/logo/svg/rytm-hali-ikona.svg';
+import IkonkaMala from '../../marka/logo/svg/rytm-hali-ikona-mala.svg';
+import IkonkaCb from '../../marka/logo/svg/rytm-hali-ikona-cb.svg';
+import fav16 from '../../marka/logo/png/favicon-16.png?url';
+import fav32 from '../../marka/logo/png/favicon-32.png?url';
+import fav48 from '../../marka/logo/png/favicon-48.png?url';
+import apple from '../../marka/logo/png/apple-touch-icon-180.png?url';
+import awatar from '../../marka/logo/png/awatar-linkedin-400.png?url';
+import okladka from '../../marka/logo/png/okladka-domyslna-1200x630.jpg?url';
+import okladkaObraz from '../../marka/logo/png/okladka-domyslna-1200x630.jpg';
+import k970 from '../assets/przyklady/kreacja-970x250.svg?url';
+import k750 from '../assets/przyklady/kreacja-750x200.svg?url';
+import k300 from '../assets/przyklady/kreacja-300x250.svg?url';
+import k600 from '../assets/przyklady/kreacja-300x600.svg?url';
+import k320 from '../assets/przyklady/kreacja-320x100.svg?url';
+
+const t = tokenyKolorow();
+const KOLORY: { token: string; uzycie: string; tlo?: string }[] = [
+  { token: 'tlo', uzycie: 'Tło stron' },
+  { token: 'tlo-szare', uzycie: 'Pasek „Na zmianie”, ramki, pola zastępcze' },
+  { token: 'grafit', uzycie: 'Menu działów, przyciski grafitowe, linie nagłówków sekcji' },
+  { token: 'grafit-ciemny', uzycie: 'Pasek górny, stopka' },
+  { token: 'tekst', uzycie: 'Tytuły' },
+  { token: 'tekst-tresc', uzycie: 'Treść artykułów' },
+  { token: 'tekst-drugi', uzycie: 'Metadane, podpisy, „REKLAMA”' },
+  { token: 'akcent', uzycie: 'Kolor marki: paski, dach logo, numery, fokus, duży tekst' },
+  { token: 'akcent-tekst', uzycie: 'Kategorie, linki, przycisk główny (mały tekst)' },
+  { token: 'akcent-ciemny', uzycie: 'Linki i przycisk główny po najechaniu' },
+  { token: 'linia', uzycie: 'Cienkie linie między sekcjami i pozycjami list' },
+  { token: 'blad', uzycie: 'Komunikaty błędów formularzy' },
+  { token: 'sukces', uzycie: 'Potwierdzenia formularzy' },
+];
+// Napis na próbce: czarny albo biały, który ma wyższy kontrast z kolorem próbki.
+const napisNaProbce = (hex: string) => (kontrast(hex, '#000000') > kontrast(hex, '#ffffff') ? 'text-black' : 'text-white');
+
+const SPIS = [
+  ['kolory', 'Kolory'],
+  ['typografia', 'Typografia'],
+  ['siatka', 'Siatka i odstępy'],
+  ['logo', 'Logo'],
+  ['przyciski', 'Przyciski i pola'],
+  ['na-zmianie', 'Pasek „Na zmianie”'],
+  ['karty', 'Karty'],
+  ['listy', 'Listy i nagłówki sekcji'],
+  ['reklamy', 'Sloty reklamowe'],
+  ['newsletter', 'Newsletter'],
+  ['autor', 'Ramka autora i udostępnianie'],
+  ['nawigacja', 'Okruszki i stronicowanie'],
+  ['tresc', 'Treść artykułu'],
+  ['blad', 'Strona błędu'],
+] as const;
+
+const kampania: Kampania = {
+  id: 'przyklad-styleguide',
+  reklamodawca: 'Reklamodawca fikcyjny',
+  link: 'https://example.com/',
+  komputer: { src: k970, alt: 'Kreacja przykładowa 970 × 250' },
+  telefon: { src: k320, alt: 'Kreacja przykładowa 320 × 100' },
+};
+const kreacjaDla: Record<Format, string> = { billboard: k970, baner: k750, prostokat: k300, polstrona: k600, mobilny: k320, 'mobilny-prostokat': k300 };
+const kampaniaFormat = (f: Format): Kampania => ({ ...kampania, komputer: { src: kreacjaDla[f], alt: `Kreacja przykładowa ${FORMATY[f].szerokosc} × ${FORMATY[f].wysokosc}` }, telefon: { src: kreacjaDla[f], alt: `Kreacja przykładowa ${FORMATY[f].szerokosc} × ${FORMATY[f].wysokosc}` } });
+const zdjeciePrzyklad = { src: okladkaObraz, alt: 'Okładka marki Rytm Hali: logo na grafitowym tle', fot: 'Rytm Hali (grafika marki)', podpis: 'Przykład potoku obrazów: AVIF i WebP w kilku szerokościach.' };
+---
+<Uklad tytul="System wizualny | Rytm Hali" opis="Tokeny, typografia i komponenty Rytmu Hali do akceptacji wyglądu (strona wewnętrzna)." noindex aktywny="produkcja">
+  <NaZmianie slot="pod-naglowkiem" pozycje={NA_ZMIANIE} />
+
+  <div class="kontener py-8">
+    <p class="kategoria">Bramka F1 · do akceptacji</p>
+    <h1 class="tytul-xl mt-2">System wizualny Rytmu Hali</h1>
+    <p class="lead mt-3 max-w-3xl">
+      Tokeny, typografia i komponenty w stanach: zwykły, po najechaniu, z fokusem klawiatury, pusty i z długim tytułem.
+      Treści są przykładowe i fikcyjne. Nagłówek wyżej pokazuje aktywny dział „Produkcja”.
+    </p>
+    <div class="mt-5 border-l-4 border-akcent bg-tlo-szare px-4 py-3 text-[0.9375rem]">
+      <p><strong class="text-tekst">Zdjęcia:</strong> do czasu zgody Patryka na konkretne zdjęcia (CC0 / CC BY, rejestr licencji) karty pokazują pole zastępcze. Na produkcji pole zastępcze jest zablokowane kontrolą SEO.</p>
+      <p class="mt-1"><strong class="text-tekst">Logo:</strong> robocze odtworzenie koncepcji C z opisu; oryginalne pliki z <code>marka/logo/</code> podmienią je bez zmian w szablonach.</p>
+    </div>
+    <nav aria-label="Spis treści" class="mt-6">
+      <ul class="flex flex-wrap gap-x-5 gap-y-1 text-[0.9375rem]">
+        {SPIS.map(([id, nazwa]) => <li><a href={`#${id}`} class="link inline-flex min-h-11 items-center">{nazwa}</a></li>)}
+      </ul>
+    </nav>
+  </div>
+
+  <div class="kontener space-y-16">
+    {/* KOLORY */}
+    <section aria-labelledby="kolory">
+      <NaglowekSekcji tytul="Kolory" id="kolory" />
+      <p class="mt-3 max-w-3xl text-[0.9375rem]">Białe tło, grafit i jeden akcent (pomarańcz). Kontrast liczony według WCAG 2.2; pary tekst/tło pilnuje test <code>src/lib/tokeny.test.ts</code>.</p>
+      <ul class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {KOLORY.map(({ token, uzycie }) => {
+          const hex = t[token];
+          return (
+            <li class="border border-linia">
+              <div class:list={['flex h-24 items-end p-3 font-mono text-[0.8125rem]', napisNaProbce(hex)]} data-kolor={token}>
+                <span>{hex}</span>
+              </div>
+              <div class="border-t border-linia p-3">
+                <p class="font-bold text-tekst">{token}</p>
+                <p class="meta mt-1">{uzycie}</p>
+                <p class="meta mt-1 tabular-nums">Na białym {zapisKontrastu(kontrast(hex, '#ffffff'))} · na grafitowym {zapisKontrastu(kontrast(hex, t['grafit-ciemny']))}</p>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+
+    {/* TYPOGRAFIA */}
+    <section aria-labelledby="typografia">
+      <NaglowekSekcji tytul="Typografia" id="typografia" />
+      <p class="mt-3 max-w-3xl text-[0.9375rem]">Noto Sans Display Bold w tytułach, Noto Sans w tekście (400–700). Fonty u siebie, podzbiór łaciński z polskimi znakami (30 KB i 17 KB).</p>
+      <div class="mt-6 grid gap-8 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
+        <div class="space-y-6">
+          <div>
+            <p class="meta">Hierarchia jak w redakcji: kategoria, tytuł, lead, metadane</p>
+            <div class="mt-3 border-t border-linia pt-4">
+              <p class="kategoria">Produkcja · Poradnik</p>
+              <p class="tytul-xl mt-2">Zażółć gęślą jaźń: przezbrojenie krótsze o połowę bez nowych maszyn</p>
+              <p class="lead mt-3">Większość czasu przezbrojenia to czynności, które można zrobić, zanim maszyna stanie. Pokazujemy, jak je wyłowić z nagrania.</p>
+              <Meta data={new Date('2026-11-06T06:40:00Z')} autor="Redakcja Rytmu Hali" czasCzytania={9} class="mt-3" />
+            </div>
+          </div>
+        </div>
+        <dl class="divide-y divide-linia border-y border-linia text-[0.9375rem]">
+          {[
+            ['tytul-xl', 'Tytuł artykułu, karta główna', '28 / 36 / 42 px · Display Bold'],
+            ['tytul-l', 'Tytuł sekcji wyróżnionej', '22 / 24 px · Display Bold'],
+            ['tytul-m', 'Karta w siatce', '18 px · Display Bold'],
+            ['tytul-s', 'Karta boczna, listy', '16 px · Display Bold'],
+            ['lead', 'Lead', '18 / 20 px · Sans 400'],
+            ['tresc', 'Treść artykułu', '17 / 18 px · interlinia 1,75'],
+            ['meta', 'Metadane', '13 px · Sans 400'],
+            ['kategoria', 'Kategoria', '12 px · Sans 700 · wersaliki, światło 0,08 em'],
+          ].map(([klasa, nazwa, opis]) => (
+            <div class="grid grid-cols-[7rem_1fr] gap-3 py-3">
+              <dt class="font-mono text-[0.8125rem] text-tekst-drugi">.{klasa}</dt>
+              <dd><span class="font-semibold text-tekst">{nazwa}</span><br /><span class="meta">{opis}</span></dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </section>
+
+    {/* SIATKA */}
+    <section aria-labelledby="siatka">
+      <NaglowekSekcji tytul="Siatka i odstępy" id="siatka" />
+      <p class="mt-3 max-w-3xl text-[0.9375rem]">Treść 1240 px, 12 kolumn, odstęp 24 px na komputerze i 16 px na telefonie. Sekcje dzielą cienkie linie 1 px, nagłówki sekcji mają linię 2 px. Promień kart i zdjęć: 2 px. Bez cieni na kartach.</p>
+      <div class="mt-5 grid grid-cols-4 gap-4 md:grid-cols-12 lg:gap-6" aria-hidden="true">
+        {Array.from({ length: 12 }, (_, i) => <div class:list={['h-16 bg-tlo-szare', { 'hidden md:block': i >= 4 }]}><span class="block h-1 bg-akcent"></span></div>)}
+      </div>
+      <ul class="mt-6 flex flex-wrap items-end gap-6 text-[0.8125rem] text-tekst-drugi" aria-label="Skala odstępów">
+        {[4, 8, 12, 16, 24, 32, 40, 64].map((px) => (
+          <li class="flex flex-col items-start gap-1"><span class="block bg-grafit" data-odstep={px}></span>{px} px</li>
+        ))}
+      </ul>
+    </section>
+
+    {/* LOGO */}
+    <section aria-labelledby="logo">
+      <NaglowekSekcji tytul="Logo" id="logo" />
+      <p class="mt-3 max-w-3xl text-[0.9375rem]">Koncepcja C: plakietka z dachem szedowym, litery RH, napis i podtytuł. Tekst jako krzywe. Pliki: <code>marka/logo/</code> (<code>npm run logo</code>).</p>
+      <div class="mt-6 grid gap-4 md:grid-cols-2">
+        <div class="flex min-h-36 items-center border border-linia p-8"><LogoJasne class="h-16 w-auto" aria-label="Logo, wersja jasna" /></div>
+        <div class="flex min-h-36 items-center bg-grafit-ciemny p-8"><LogoCiemne class="h-16 w-auto" aria-label="Logo, wersja ciemna" /></div>
+        <div class="flex min-h-36 items-center border border-linia p-8"><LogoCb class="h-16 w-auto" aria-label="Logo, wersja czarno-biała" /></div>
+        <div class="flex min-h-36 items-center bg-black p-8"><LogoCbNegatyw class="h-16 w-auto" aria-label="Logo, negatyw" /></div>
+        <div class="flex min-h-24 items-center gap-8 border border-linia p-6"><LogoKompaktJasne class="h-10 w-auto" aria-label="Logo kompaktowe, wersja jasna" /></div>
+        <div class="flex min-h-24 items-center gap-8 bg-grafit p-6"><LogoKompaktCiemne class="h-10 w-auto" aria-label="Logo kompaktowe, wersja ciemna" /></div>
+      </div>
+      <div class="mt-4 flex flex-wrap items-end gap-6 border border-linia p-6">
+        <figure><Ikonka class="size-24" aria-label="Ikona" /><figcaption class="meta mt-2">Ikona</figcaption></figure>
+        <figure><IkonkaCb class="size-24" aria-label="Ikona czarno-biała" /><figcaption class="meta mt-2">Ikona cz.-b.</figcaption></figure>
+        <figure><IkonkaMala class="size-24" aria-label="Ikona mała" /><figcaption class="meta mt-2">Ikona mała (16 px)</figcaption></figure>
+        <figure><img src={fav16} width="16" height="16" alt="Favicon 16 px" /><figcaption class="meta mt-2">16</figcaption></figure>
+        <figure><img src={fav32} width="32" height="32" alt="Favicon 32 px" /><figcaption class="meta mt-2">32</figcaption></figure>
+        <figure><img src={fav48} width="48" height="48" alt="Favicon 48 px" /><figcaption class="meta mt-2">48</figcaption></figure>
+        <figure><img src={apple} width="90" height="90" alt="apple-touch-icon 180 px" class="border border-linia" /><figcaption class="meta mt-2">apple-touch 180</figcaption></figure>
+        <figure><img src={awatar} width="120" height="120" alt="Awatar LinkedIn z marginesem na koło" class="rounded-full border border-linia" /><figcaption class="meta mt-2">Awatar (podgląd w kole)</figcaption></figure>
+      </div>
+      <figure class="mt-4 max-w-2xl">
+        <img src={okladka} width="1200" height="630" alt="Domyślna okładka udostępnień: logo w wersji ciemnej, opis medium i adres rytmhali.pl" loading="lazy" class="h-auto w-full" />
+        <figcaption class="meta mt-2">Domyślna okładka udostępnień 1200 × 630</figcaption>
+      </figure>
+    </section>
+
+    {/* PRZYCISKI I POLA */}
+    <section aria-labelledby="przyciski">
+      <NaglowekSekcji tytul="Przyciski i pola" id="przyciski" />
+      <div class="mt-6 grid gap-6 lg:grid-cols-2 [&>*]:min-w-0">
+        <div class="overflow-x-auto" tabindex="0" role="region" aria-label="Przyciski w stanach (tabela przewijana w bok)">
+        <table class="w-full min-w-[28rem] text-left text-[0.875rem]">
+          <caption class="sr-only">Przyciski w stanach</caption>
+          <thead><tr class="border-b-2 border-grafit"><th scope="col" class="py-2">Wariant</th><th scope="col">Zwykły</th><th scope="col">Najechanie</th><th scope="col">Fokus</th><th scope="col">Wyłączony</th></tr></thead>
+          <tbody>
+            {[
+              ['Główny', 'przycisk-glowny'],
+              ['Grafitowy', 'przycisk-grafit'],
+              ['Obrys', 'przycisk-obrys'],
+            ].map(([nazwa, klasa]) => (
+              <tr class="border-b border-linia">
+                <th scope="row" class="py-3 font-semibold">{nazwa}</th>
+                <td class="py-3 pr-2"><button type="button" class:list={['przycisk', klasa]}>Zapisz</button></td>
+                <td class="pr-2"><button type="button" class:list={['przycisk stan-najazd', klasa]} tabindex="-1">Zapisz</button></td>
+                <td class="pr-2"><button type="button" class:list={['przycisk stan-fokus', klasa]} tabindex="-1">Zapisz</button></td>
+                <td><button type="button" class:list={['przycisk', klasa]} disabled>Zapisz</button></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        </div>
+        <div class="grid gap-4 sm:grid-cols-3">
+          <div><label for="sg-pole-1" class="mb-1 block text-[0.875rem] font-semibold text-tekst">Zwykłe</label><input id="sg-pole-1" class="pole" placeholder="np. jan@firma.pl" /></div>
+          <div><label for="sg-pole-2" class="mb-1 block text-[0.875rem] font-semibold text-tekst">Fokus</label><input id="sg-pole-2" class="pole stan-fokus" value="jan@firma.pl" tabindex="-1" /></div>
+          <div><label for="sg-pole-3" class="mb-1 block text-[0.875rem] font-semibold text-tekst">Błąd</label><input id="sg-pole-3" class="pole" value="jan@firma" aria-invalid="true" aria-describedby="sg-pole-3-blad" /><p id="sg-pole-3-blad" class="mt-1 text-[0.8125rem] font-semibold text-blad">Wpisz pełny adres e-mail.</p></div>
+          <p class="sm:col-span-3"><a href="#przyciski" class="link">Link w tekście</a> · <a href="#przyciski" class="link stan-najazd">po najechaniu</a> · <a href="#przyciski" class="link stan-fokus" tabindex="-1">z fokusem</a></p>
+        </div>
+      </div>
+    </section>
+
+    {/* NA ZMIANIE */}
+    <section aria-labelledby="na-zmianie-sg">
+      <NaglowekSekcji tytul="Pasek „Na zmianie”" id="na-zmianie-sg" />
+      <p class="mt-3 max-w-3xl text-[0.9375rem]">Najnowsze krótkie wiadomości pod nagłówkiem (widoczny na górze tej strony). Bez animacji przewijania. Dziś pokazuje godzinę, wcześniej datę. Bez wiadomości pasek się nie wyświetla.</p>
+    </section>
+
+    {/* KARTY */}
+    <section aria-labelledby="karty">
+      <NaglowekSekcji tytul="Karty" id="karty" />
+      <p class="mt-3 max-w-3xl text-[0.9375rem]">Cała karta klika się jednym linkiem w tytule (jedno miejsce w kolejności klawisza Tab). Po najechaniu tytuł się podkreśla, fokus obrysowuje całą kartę.</p>
+
+      <h3 class="tytul-s mt-8">1. Główna na zdjęciu</h3>
+      <div class="mt-3 grid gap-6 lg:grid-cols-[minmax(0,8fr)_minmax(0,4fr)]">
+        <KartaGlowna artykul={ARTYKULY[0]} poziom="h3" />
+        <div class="space-y-4">
+          <KartaBoczna artykul={ARTYKULY[1]} />
+          <KartaBoczna artykul={ARTYKULY[2]} class="stan-najazd" />
+          <KartaBoczna artykul={ARTYKULY[3]} class="stan-fokus" />
+          <p class="meta">2. Boczne: zwykła, po najechaniu, z fokusem</p>
+        </div>
+      </div>
+
+      <h3 class="tytul-s mt-10">3. Siatka: zwykła, po najechaniu, z fokusem, długi tytuł</h3>
+      <div class="mt-3 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <KartaSiatka artykul={ARTYKULY[1]} zLeadem szerokosc={290} />
+        <KartaSiatka artykul={ARTYKULY[2]} class="stan-najazd" szerokosc={290} />
+        <KartaSiatka artykul={ARTYKULY[4]} class="stan-fokus" szerokosc={290} />
+        <KartaSiatka artykul={DLUGI_TYTUL} szerokosc={290} />
+      </div>
+
+      <h3 class="tytul-s mt-10">Materiał partnera i zdjęcie przez potok obrazów</h3>
+      <div class="mt-3 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <KartaSiatka artykul={ARTYKULY[5]} zLeadem szerokosc={290} />
+        <KartaSiatka artykul={{ ...ARTYKULY[3], zdjecie: zdjeciePrzyklad }} szerokosc={290} />
+      </div>
+
+      <h3 class="tytul-s mt-10">4. Lista z godziną</h3>
+      <div class="mt-3 max-w-xl">
+        {ARTYKULY.slice(0, 4).map((a) => <KartaLista artykul={a} />)}
+        <KartaLista artykul={ARTYKULY[5]} />
+      </div>
+    </section>
+
+    {/* LISTY */}
+    <section aria-labelledby="listy">
+      <NaglowekSekcji tytul="Listy i nagłówki sekcji" id="listy" />
+      <div class="mt-6 grid gap-8 lg:grid-cols-3">
+        <NajczesciejCzytane artykuly={NAJCZESCIEJ} />
+        <div class="space-y-8">
+          <NaglowekSekcji tytul="Produkcja" link={{ nazwa: 'Więcej z działu', adres: '/dzial/produkcja' }} poziom="h3" />
+          <NaglowekSekcji tytul="Nagłówek bez linku" poziom="h3" />
+          <NaglowekSekcji tytul="Bardzo długi nagłówek sekcji, który na telefonie przechodzi do drugiej linii" link={{ nazwa: 'Więcej', adres: '/dzial/produkcja' }} poziom="h3" />
+        </div>
+        <div>
+          <p class="meta">Pusta lista „Najczęściej czytane” się nie wyświetla (zero elementów poniżej).</p>
+          <NajczesciejCzytane artykuly={[]} />
+        </div>
+      </div>
+    </section>
+
+    {/* REKLAMY */}
+    <section aria-labelledby="reklamy">
+      <NaglowekSekcji tytul="Sloty reklamowe" id="reklamy" />
+      <p class="mt-3 max-w-3xl text-[0.9375rem]">Miejsce zarezerwowane w wymiarach formatu, zawsze z podpisem „REKLAMA”. Trzy stany: pusty (tylko tutaj, do planowania), kampania z linkiem <code>rel="sponsored"</code> i UTM, autopromocja newslettera po końcu kampanii.</p>
+      <h3 class="tytul-s mt-8">Formaty (stan pusty)</h3>
+      <div class="mt-3 grid gap-8">
+        <SlotReklamowy komputer="billboard" miejsce="sg-billboard" pusty />
+        <SlotReklamowy komputer="baner" miejsce="sg-baner" pusty />
+        <div class="flex min-w-0 flex-wrap items-start gap-8">
+          <div class="w-[300px] max-w-full"><SlotReklamowy komputer="prostokat" telefon="mobilny-prostokat" miejsce="sg-prostokat" pusty /></div>
+          <div class="w-[300px] max-w-full"><SlotReklamowy komputer="polstrona" miejsce="sg-polstrona" pusty /></div>
+          <div class="w-[320px] max-w-full"><SlotReklamowy telefon="mobilny" miejsce="sg-mobilny" pusty /></div>
+        </div>
+      </div>
+      <p class="meta mt-3">Na komputerze format „mobilny 320 × 100” jest ukryty; na telefonie ukryte są formaty komputerowe (billboard, baner, półstrona).</p>
+      <h3 class="tytul-s mt-8">Kampania</h3>
+      <div class="mt-3 grid gap-8">
+        <SlotReklamowy komputer="billboard" telefon="mobilny" kampania={kampania} miejsce="sg-kampania" />
+        <div class="flex min-w-0 flex-wrap items-start gap-8">
+          <div class="w-[300px] max-w-full"><SlotReklamowy komputer="prostokat" telefon="mobilny-prostokat" kampania={kampaniaFormat('prostokat')} miejsce="sg-kampania-prostokat" /></div>
+        </div>
+      </div>
+      <h3 class="tytul-s mt-8">Autopromocja (brak kampanii)</h3>
+      <div class="mt-3 grid gap-8">
+        <SlotReklamowy komputer="billboard" telefon="mobilny" miejsce="sg-auto-billboard" />
+        <SlotReklamowy komputer="baner" telefon="mobilny-prostokat" miejsce="sg-auto-baner" />
+        <div class="flex min-w-0 flex-wrap items-start gap-8">
+          <div class="w-[300px] max-w-full"><SlotReklamowy komputer="prostokat" telefon="mobilny-prostokat" miejsce="sg-auto-prostokat" /></div>
+          <div class="w-[300px] max-w-full"><SlotReklamowy komputer="polstrona" miejsce="sg-auto-polstrona" /></div>
+        </div>
+      </div>
+    </section>
+
+    {/* NEWSLETTER */}
+    <section aria-labelledby="newsletter">
+      <NaglowekSekcji tytul="Newsletter „Raport zmianowy”" id="newsletter" />
+      <p class="mt-3 max-w-3xl text-[0.9375rem]">Formularz bez skryptu dostawcy. Zgoda jako osobne, niezaznaczone pole; pole-pułapka na boty. Wysyłka i potwierdzenie działają od F6.</p>
+      <div class="mt-6">
+        <Newsletter id="sg-nl-pasek" wariant="pasek" miejsce="sg-pasek" />
+      </div>
+      <div class="mt-6 grid gap-6 md:grid-cols-3">
+        <Newsletter id="sg-nl-ramka" miejsce="sg-ramka" />
+        <Newsletter id="sg-nl-blad" stan="blad" miejsce="sg-blad" />
+        <Newsletter id="sg-nl-sukces" stan="sukces" miejsce="sg-sukces" />
+      </div>
+    </section>
+
+    {/* AUTOR I UDOSTĘPNIANIE */}
+    <section aria-labelledby="autor">
+      <NaglowekSekcji tytul="Ramka autora i udostępnianie" id="autor" />
+      <div class="mt-6 grid gap-8 lg:grid-cols-2">
+        <RamkaAutora imie="Patryk Korpyta" rola="Redaktor naczelny" bio="Założyciel i redaktor naczelny Rytmu Hali. Pisze o produkcji, magazynach, lean i danych w operacjach." adres="/autor/patryk-korpyta" email="redakcja@rytmhali.pl" />
+        <div class="space-y-6">
+          <div>
+            <p class="meta">Przy metadanych artykułu</p>
+            <div class="mt-2"><Udostepnij adres="https://rytmhali.pl/przyklad-smed" tytul="Przezbrojenie krótsze o połowę bez nowych maszyn" wariant="gora" /></div>
+          </div>
+          <Udostepnij adres="https://rytmhali.pl/przyklad-smed" tytul="Przezbrojenie krótsze o połowę bez nowych maszyn" wariant="dol" />
+        </div>
+      </div>
+    </section>
+
+    {/* NAWIGACJA */}
+    <section aria-labelledby="nawigacja">
+      <NaglowekSekcji tytul="Okruszki i stronicowanie" id="nawigacja" />
+      <div class="mt-6 space-y-6">
+        <Okruszki pozycje={[{ nazwa: 'Produkcja', adres: '/dzial/produkcja' }, { nazwa: 'Przezbrojenie krótsze o połowę bez nowych maszyn' }]} />
+        <Stronicowanie biezaca={1} liczba={5} bazowy="/dzial/produkcja" />
+        <Stronicowanie biezaca={6} liczba={20} bazowy="/dzial/produkcja" />
+        <Stronicowanie biezaca={20} liczba={20} bazowy="/dzial/produkcja" />
+      </div>
+    </section>
+
+    {/* TREŚĆ */}
+    <section aria-labelledby="tresc-sg">
+      <NaglowekSekcji tytul="Treść artykułu" id="tresc-sg" />
+      <div class="tresc mt-6">
+        <p>Akapit treści w Noto Sans, 18 px, interlinia 1,75, do 70 znaków w linii. <a href="#tresc-sg">Link w treści</a> jest podkreślony i ma kolor akcentu w odcieniu do tekstu. <strong>Pogrubienie</strong> i <em>kursywa</em> mają własne kroje.</p>
+        <h2>Śródtytuł drugiego poziomu</h2>
+        <p>Śródtytuły dostaną kotwice w szablonie artykułu (F3), a długie teksty spis treści.</p>
+        <ul>
+          <li>Lista punktowana z kwadratowym znacznikiem w kolorze akcentu.</li>
+          <li>Druga pozycja listy, nieco dłuższa, żeby sprawdzić zawijanie do drugiej linii na telefonie.</li>
+        </ul>
+        <blockquote><p>Cytat wyróżniony: Display Bold z paskiem akcentu po lewej.</p></blockquote>
+        <h3>Śródtytuł trzeciego poziomu</h3>
+        <div class="tabela">
+          <table>
+            <caption class="sr-only">Przykładowa tabela wskaźników</caption>
+            <thead><tr><th scope="col">Wskaźnik</th><th scope="col">Definicja</th><th scope="col">Częstotliwość</th><th scope="col">Źródło danych</th></tr></thead>
+            <tbody>
+              <tr><td>Dokładność kompletacji</td><td>Pozycje bez błędu / wszystkie pozycje</td><td>Codziennie</td><td>WMS</td></tr>
+              <tr><td>Czas przezbrojenia</td><td>Od ostatniej dobrej sztuki do pierwszej dobrej</td><td>Każde przezbrojenie</td><td>Karta przezbrojenia</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <figure>
+          <Zdjecie proporcja="16-9" szerokosc={704} sizes="(min-width: 768px) 704px, 100vw" />
+          <figcaption>Podpis zdjęcia w treści. Fot. Autor / źródło, licencja (pole zastępcze do czasu zgody na zdjęcia).</figcaption>
+        </figure>
+        <p>Tabela przewija się w bok na telefonie i jest wtedy osiągalna klawiaturą.</p>
+      </div>
+    </section>
+
+    {/* BŁĄD */}
+    <section aria-labelledby="blad">
+      <NaglowekSekcji tytul="Strona błędu" id="blad" />
+      <p class="mt-3 text-[0.9375rem]">Pełna strona: <a href="/404" class="link">/404</a>. Wariant 410 (artykuł usunięty na stałe) zwraca worker w F8.</p>
+      <div class="mt-4 border border-linia">
+        <div class="pointer-events-none origin-top-left scale-[0.85]" inert>
+          <StronaBledu kod={410} poziom="h3" />
+        </div>
+      </div>
+    </section>
+  </div>
+</Uklad>
+
+<style>
+  [data-kolor] {
+    background: var(--sg-kolor);
+  }
+  [data-kolor="tlo"] { --sg-kolor: var(--color-tlo); }
+  [data-kolor="tlo-szare"] { --sg-kolor: var(--color-tlo-szare); }
+  [data-kolor="grafit"] { --sg-kolor: var(--color-grafit); }
+  [data-kolor="grafit-ciemny"] { --sg-kolor: var(--color-grafit-ciemny); }
+  [data-kolor="tekst"] { --sg-kolor: var(--color-tekst); }
+  [data-kolor="tekst-tresc"] { --sg-kolor: var(--color-tekst-tresc); }
+  [data-kolor="tekst-drugi"] { --sg-kolor: var(--color-tekst-drugi); }
+  [data-kolor="akcent"] { --sg-kolor: var(--color-akcent); }
+  [data-kolor="akcent-tekst"] { --sg-kolor: var(--color-akcent-tekst); }
+  [data-kolor="akcent-ciemny"] { --sg-kolor: var(--color-akcent-ciemny); }
+  [data-kolor="linia"] { --sg-kolor: var(--color-linia); }
+  [data-kolor="blad"] { --sg-kolor: var(--color-blad); }
+  [data-kolor="sukces"] { --sg-kolor: var(--color-sukces); }
+  [data-odstep] { height: 1rem; }
+  [data-odstep="4"] { width: 4px; }
+  [data-odstep="8"] { width: 8px; }
+  [data-odstep="12"] { width: 12px; }
+  [data-odstep="16"] { width: 16px; }
+  [data-odstep="24"] { width: 24px; }
+  [data-odstep="32"] { width: 32px; }
+  [data-odstep="40"] { width: 40px; }
+  [data-odstep="64"] { width: 64px; }
+</style>
