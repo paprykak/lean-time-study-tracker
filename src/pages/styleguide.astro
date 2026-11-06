@@ -19,6 +19,7 @@ import KartaSiatka from '../components/karty/KartaSiatka.astro';
 import KartaLista from '../components/karty/KartaLista.astro';
 import Meta from '../components/karty/Meta.astro';
 import { ARTYKULY, DLUGI_TYTUL, NA_ZMIANIE, NAJCZESCIEJ } from '../data/przyklady';
+import { dostepne, zdjecie } from '../lib/zdjecia';
 import { tokenyKolorow } from '../lib/tokeny';
 import { kontrast, zapisKontrastu } from '../lib/kontrast';
 import { FORMATY, type Format, type Kampania } from '../lib/reklamy';
@@ -37,7 +38,6 @@ import fav48 from '../../marka/logo/png/favicon-48.png?url';
 import apple from '../../marka/logo/png/apple-touch-icon-180.png?url';
 import awatar from '../../marka/logo/png/awatar-linkedin-400.png?url';
 import okladka from '../../marka/logo/png/okladka-domyslna-1200x630.jpg?url';
-import okladkaObraz from '../../marka/logo/png/okladka-domyslna-1200x630.jpg';
 import k970 from '../assets/przyklady/kreacja-970x250.svg?url';
 import k750 from '../assets/przyklady/kreacja-750x200.svg?url';
 import k300 from '../assets/przyklady/kreacja-300x250.svg?url';
@@ -89,7 +89,9 @@ const kampania: Kampania = {
 };
 const kreacjaDla: Record<Format, string> = { billboard: k970, baner: k750, prostokat: k300, polstrona: k600, mobilny: k320, 'mobilny-prostokat': k300 };
 const kampaniaFormat = (f: Format): Kampania => ({ ...kampania, komputer: { src: kreacjaDla[f], alt: `Kreacja przykładowa ${FORMATY[f].szerokosc} × ${FORMATY[f].wysokosc}` }, telefon: { src: kreacjaDla[f], alt: `Kreacja przykładowa ${FORMATY[f].szerokosc} × ${FORMATY[f].wysokosc}` } });
-const zdjeciePrzyklad = { src: okladkaObraz, alt: 'Okładka marki Rytm Hali: logo na grafitowym tle', fot: 'Rytm Hali (grafika marki)', podpis: 'Przykład potoku obrazów: AVIF i WebP w kilku szerokościach.' };
+const scada = zdjecie('stanowisko-scada');
+const linia = zdjecie('linia-montazu-elektroniki', 'Instrukcje stanowiskowe nad każdym stołem linii montażu.');
+const zdjeciaSerwisu = dostepne();
 ---
 <Uklad tytul="System wizualny | Rytm Hali" opis="Tokeny, typografia i komponenty Rytmu Hali do akceptacji wyglądu (strona wewnętrzna)." noindex aktywny="produkcja">
   <NaZmianie slot="pod-naglowkiem" pozycje={NA_ZMIANIE} />
@@ -102,8 +104,8 @@ const zdjeciePrzyklad = { src: okladkaObraz, alt: 'Okładka marki Rytm Hali: log
       Treści są przykładowe i fikcyjne. Nagłówek wyżej pokazuje aktywny dział „Produkcja”.
     </p>
     <div class="mt-5 border-l-4 border-akcent bg-tlo-szare px-4 py-3 text-[0.9375rem]">
-      <p><strong class="text-tekst">Zdjęcia:</strong> do czasu zgody Patryka na konkretne zdjęcia (CC0 / CC BY, rejestr licencji) karty pokazują pole zastępcze. Na produkcji pole zastępcze jest zablokowane kontrolą SEO.</p>
-      <p class="mt-1"><strong class="text-tekst">Logo:</strong> robocze odtworzenie koncepcji C z opisu; oryginalne pliki z <code>marka/logo/</code> podmienią je bez zmian w szablonach.</p>
+      <p><strong class="text-tekst">Zdjęcia:</strong> prawdziwe, z rejestrem licencji (<code>marka/zdjecia/rejestr.json</code>), lista źródeł na dole strony. Zdjęcie, którego pliku jeszcze nie pobrano, pokazuje pole zastępcze; na produkcji pole zastępcze blokuje kontrola SEO.</p>
+      <p class="mt-1"><strong class="text-tekst">Logo:</strong> koncepcja C po szlifie (uzasadnienie w <code>marka/README.md</code>); oryginalne pliki Patryka podmienią je bez zmian w szablonach.</p>
     </div>
     <nav aria-label="Spis treści" class="mt-6">
       <ul class="flex flex-wrap gap-x-5 gap-y-1 text-[0.9375rem]">
@@ -278,10 +280,11 @@ const zdjeciePrzyklad = { src: okladkaObraz, alt: 'Okładka marki Rytm Hali: log
         <KartaSiatka artykul={DLUGI_TYTUL} szerokosc={290} />
       </div>
 
-      <h3 class="tytul-s mt-10">Materiał partnera i zdjęcie przez potok obrazów</h3>
+      <h3 class="tytul-s mt-10">Materiał partnera, kadr z punktem zaczepienia, brak zdjęcia (pusty)</h3>
       <div class="mt-3 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <KartaSiatka artykul={ARTYKULY[5]} zLeadem szerokosc={290} />
-        <KartaSiatka artykul={{ ...ARTYKULY[3], zdjecie: zdjeciePrzyklad }} szerokosc={290} />
+        <KartaSiatka artykul={{ ...ARTYKULY[3], tytul: 'Stanowisko operatora: kadr przycięty od lewej, bez logo z prawej części ściany', zdjecie: scada }} szerokosc={290} />
+        <KartaSiatka artykul={{ ...ARTYKULY[4], tytul: 'Stan pusty: zdjęcie jeszcze niewybrane (dozwolony tylko tutaj)', zdjecie: undefined }} szerokosc={290} />
       </div>
 
       <h3 class="tytul-s mt-10">4. Lista z godziną</h3>
@@ -405,11 +408,27 @@ const zdjeciePrzyklad = { src: okladkaObraz, alt: 'Okładka marki Rytm Hali: log
           </table>
         </div>
         <figure>
-          <Zdjecie proporcja="16-9" szerokosc={704} sizes="(min-width: 768px) 704px, 100vw" />
-          <figcaption>Podpis zdjęcia w treści. Fot. Autor / źródło, licencja (pole zastępcze do czasu zgody na zdjęcia).</figcaption>
+          <Zdjecie zdjecie={linia} proporcja="16-9" szerokosc={704} sizes="(min-width: 768px) 704px, 100vw" />
+          <figcaption>
+            {linia?.podpis} {linia && <a href={linia.zrodlo} rel="noopener" target="_blank">{linia.fot}</a>}
+          </figcaption>
         </figure>
         <p>Tabela przewija się w bok na telefonie i jest wtedy osiągalna klawiaturą.</p>
       </div>
+    </section>
+
+    {/* ŹRÓDŁA ZDJĘĆ */}
+    <section aria-labelledby="zrodla-zdjec">
+      <NaglowekSekcji tytul="Zdjęcia: źródła i licencje" id="zrodla-zdjec" />
+      <p class="mt-3 max-w-3xl text-[0.9375rem]">Wszystkie zdjęcia na tej stronie, z rejestru <code>marka/zdjecia/rejestr.json</code>. Na stronach artykułów podpis „Fot.” stoi pod każdym zdjęciem.</p>
+      <ul class="mt-4 grid gap-x-8 gap-y-2 text-[0.875rem] md:grid-cols-2">
+        {zdjeciaSerwisu.map((z) => (
+          <li class="border-b border-linia py-2">
+            <a href={z.zrodlo} rel="noopener" target="_blank" class="link font-medium">{z.fot}</a>
+            <span class="text-tekst-drugi"> · <a href={z.licencjaUrl} rel="noopener license" target="_blank" class="underline">licencja</a></span>
+          </li>
+        ))}
+      </ul>
     </section>
 
     {/* BŁĄD */}

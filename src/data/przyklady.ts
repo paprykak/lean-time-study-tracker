@@ -1,6 +1,7 @@
 // Treści PRZYKŁADOWE (fikcyjne) wyłącznie dla strony /styleguide. Nie opisują prawdziwych firm ani zdarzeń
 // i nie trafiają do kolekcji treści. Tytuły mają realną długość, żeby sprawdzić zawijanie i rytm siatki.
 import type { ArtykulKarta } from '../lib/typy';
+import { zdjecie } from '../lib/zdjecia';
 import ustawienia from './ustawienia.json';
 
 const dzial = (slug: string) => {
@@ -18,6 +19,7 @@ export const ARTYKULY: ArtykulKarta[] = [
     data: czas('2026-11-06T06:40:00Z'),
     autor: 'Redakcja Rytmu Hali',
     czasCzytania: 9,
+    zdjecie: zdjecie('robot-spawalniczy'),
   },
   {
     tytul: 'Magazyn w szczycie sezonu: pięć wskaźników, które warto liczyć codziennie',
@@ -27,6 +29,7 @@ export const ARTYKULY: ArtykulKarta[] = [
     data: czas('2026-11-06T05:15:00Z'),
     autor: 'Redakcja Rytmu Hali',
     czasCzytania: 7,
+    zdjecie: zdjecie('magazyn-wozek-regaly'),
   },
   {
     tytul: 'Tablica wyników na hali: co pokazywać zmianie, a co kierownictwu',
@@ -36,6 +39,7 @@ export const ARTYKULY: ArtykulKarta[] = [
     data: czas('2026-11-05T14:20:00Z'),
     autor: 'Redakcja Rytmu Hali',
     czasCzytania: 6,
+    zdjecie: zdjecie('sciana-karteczek'),
   },
   {
     tytul: 'Dane z maszyn bez wielkiego wdrożenia: od czego zacząć pomiar OEE',
@@ -45,6 +49,7 @@ export const ARTYKULY: ArtykulKarta[] = [
     data: czas('2026-11-05T09:05:00Z'),
     autor: 'Redakcja Rytmu Hali',
     czasCzytania: 8,
+    zdjecie: zdjecie('robot-cleanroom'),
   },
   {
     tytul: 'Instruktaż stanowiskowy dla nowych pracowników: jak skrócić wdrożenie na zmianie',
@@ -54,6 +59,7 @@ export const ARTYKULY: ArtykulKarta[] = [
     data: czas('2026-11-04T11:30:00Z'),
     autor: 'Redakcja Rytmu Hali',
     czasCzytania: 5,
+    zdjecie: zdjecie('warsztat-szkoleniowy'),
   },
   {
     tytul: 'Automatyczne wózki w magazynie średniej wielkości: koszty i pierwsze miesiące po uruchomieniu',
@@ -61,6 +67,7 @@ export const ARTYKULY: ArtykulKarta[] = [
     lead: 'Materiał przygotowany przez partnera. Redakcja nie odpowiada za jego treść.',
     data: czas('2026-11-04T08:00:00Z'),
     partner: 'Partner przykładowy',
+    zdjecie: zdjecie('sortownia-kartony'),
   },
 ];
 
@@ -68,6 +75,7 @@ export const DLUGI_TYTUL: ArtykulKarta = {
   ...ARTYKULY[0],
   tytul: 'Bardzo długi tytuł do sprawdzenia zawijania: dlaczego planowanie produkcji w arkuszu przestaje działać, gdy liczba wariantów rośnie szybciej niż zespół planistów i liczba zmian w tygodniu',
   adres: '/przyklad-dlugi-tytul',
+  zdjecie: zdjecie('hala-pusta'),
 };
 
 export const NA_ZMIANIE = [

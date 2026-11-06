@@ -13,7 +13,7 @@ Pełne zadanie i fazy: `prompty/01-budowa-portalu.md`. Stan prac: `STAN.md`. Dec
 6. **Node.** Na komputerze Patryka w każdym poleceniu najpierw `source ~/.nvm/nvm.sh` (wersja z `.nvmrc`). W sesji w chmurze Node jest już w PATH.
 7. **Testujesz sam:** komputer, telefon, klawiatura, czytnik ekranu w podstawowym zakresie. Patrykowi pokazujesz zrzuty i wyniki, a nie scenariusze do klikania.
 8. **Lekcje.** Gdy Patryk coś poprawi albo proces zadziała inaczej, dopisz jednozdaniową lekcję z datą na końcu `prompty/01-budowa-portalu.md`.
-9. **Zdjęcia** tylko prawdziwe, z rejestrem licencji (`marka/zdjecia/rejestr.json`: źródło, autor, licencja, podpis „Fot.”), CC0 albo CC BY, każde pobranie za zgodą Patryka.
+9. **Zdjęcia** tylko prawdziwe, z wpisem w rejestrze licencji przed użyciem (`marka/zdjecia/rejestr.json`: źródło, autor, licencja, podpis „Fot.”). Dozwolone: CC0, CC BY, licencja Unsplash i licencja Pexels (decyzja Patryka z 2026-11-06, wybór zdjęć powierzony redakcji). Bez CC BY-SA, bez rozpoznawalnych marek i logo, bez zdjęć od pracodawców Patryka. Pobieranie: `npm run zdjecia`.
 10. **Nowy skrypt zewnętrzny** (analityka, osadzenia, reklamy) wymaga decyzji Patryka i oceny RODO. Domyślnie zero ciasteczek i skryptów stron trzecich.
 
 ## Polecenia
@@ -27,7 +27,8 @@ Pełne zadanie i fazy: `prompty/01-budowa-portalu.md`. Stan prac: `STAN.md`. Dec
 | `npm run check` | `check:szybki` + E2E (komputer, Android, iPhone), axe, Lighthouse. Bez WebKita lokalnie: `BEZ_WEBKIT=1 npm run check` |
 | `npm run zrzuty -- <katalog>` | zrzuty komputer/telefon/klawiatura do raportu po fazie (przy działającym podglądzie) |
 | `npm run fonty` | podzbiór fontów Noto z polskimi znakami i `src/styles/fonty.css` |
-| `npm run logo` | komplet plików logo (SVG, favicony, awatar, okładka) |
+| `npm run logo` | komplet plików logo (SVG, favicony, awatar, okładka); warianty: `node marka/logo/porownaj.mjs <plik.png>` |
+| `npm run zdjecia` | pobiera brakujące zdjęcia z rejestru licencji, kadruje i zapisuje do `src/assets/zdjecia/` |
 
 ## Gdzie co jest
 

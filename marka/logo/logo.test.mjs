@@ -35,6 +35,8 @@ describe('logo', () => {
       expect(svg).toMatch(/viewBox="[\d. ]+"/);
       expect(svg).toContain('<title>Rytm Hali</title>');
       expect(svg).not.toMatch(/<text|font-family|href=|<image/);
+      // Współrzędne zawsze liczbowe (opentype.js 2.0 potrafi zwrócić NaN; geometria.mjs ma własną serializację).
+      expect(svg).not.toMatch(/NaN|Infinity/);
     });
   }
 

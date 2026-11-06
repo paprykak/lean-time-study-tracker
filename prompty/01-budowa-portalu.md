@@ -285,3 +285,7 @@ Mapa strony dla Google News dopiero wtedy, gdy portal publikuje regularnie (decy
 - 2026-11-06 — Astro 7 nie uruchamia drugiego `astro preview`, gdy pierwszy już działa (blokada), więc Playwright i Lighthouse startują podgląd z `--ignore-lock`.
 - 2026-11-06 — CSP z hashami w `<meta>` blokuje atrybuty `style=""`, więc wymiary i kolory zależne od danych idą przez klasy CSS, a kontrola SEO pilnuje, żeby `style=""` nie wróciło.
 - 2026-11-06 — Kolor marki `#e8590c` ma na białym tylko 3,58:1, więc mały tekst w akcencie używa ciemniejszego odcienia tego samego tonu `#c2410c` (test tokenów pilnuje obu warunków).
+- 2026-11-06 — Patryk dopuścił darmowe licencje Unsplash i Pexels (z podpisem „Fot.”) i powierzył wybór zdjęć redakcji, bo na CC0 i CC BY brakuje zdjęć tablic lean i magazynów bez logo; reguła w AGENTS.md (pkt 9).
+- 2026-11-06 — Wyszukiwarki Unsplash i Pexels blokują automaty, a ich API wymaga klucza z konta, więc zdjęcia z tych serwisów wymagają klucza od Patryka; do tego czasu źródłem jest Openverse (CC0 i CC BY, także rawpixel) i Wikimedia Commons.
+- 2026-11-06 — Wikimedia odcina zbyt częste pobieranie (HTTP 429) dla całego adresu sesji, więc zdjęcia pobiera jeden skrypt w spokojnym tempie (`npm run zdjecia`), a nie agenci z wieloma równoległymi zapytaniami.
+- 2026-11-06 — opentype.js 2.0 przy części rozmiarów zapisuje współrzędne jako NaN (`toPathData`), więc logo ma własną serializację ścieżek i test, który wyklucza NaN w plikach SVG.

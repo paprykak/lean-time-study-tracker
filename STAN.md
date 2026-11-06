@@ -22,8 +22,10 @@ Pamięć robocza projektu. Czyta ją i aktualizuje każda sesja na początku i n
 ## Do zrobienia przez Patryka
 Od góry według pilności. Każdy punkt to jedna czynność.
 - [ ] **Akceptacja wyglądu F1:** obejrzyj zrzuty w `raporty/F1/` (albo `/styleguide`) i napisz „akceptuję” albo co zmienić.
-- [ ] **Zgoda na zdjęcia:** lista kandydatów (CC0 i CC BY z Wikimedia Commons) w `marka/zdjecia/kandydaci.md`. Napisz, które pobrać; bez zgody karty pokazują pole zastępcze, a produkcja jest zablokowana.
-- [ ] **Oryginały marki:** skopiuj `marka/` i `makiety/` z `/home/patryk/Pulpit/rytm-hali/` do tego repozytorium (albo potwierdź, że odtworzone logo zostaje). Logo w repozytorium to robocze odtworzenie koncepcji C z opisu.
+- [x] ~~Zgoda na zdjęcia~~ (2026-11-06: dopuszczone CC0, CC BY, Unsplash, Pexels; wybór powierzony redakcji, 10 zdjęć w rejestrze).
+- [ ] **Logo po szlifie:** obejrzyj porównanie „przed i po” (`raporty/F1/logo-porownanie.png`) i napisz „akceptuję” albo co zmienić. Alternatywa do wyboru: podtytuł małymi literami zamiast wersalików.
+- [ ] **Oryginały marki (jeśli są lepsze niż szlif):** skopiuj `marka/` i `makiety/` z `/home/patryk/Pulpit/rytm-hali/` do repozytorium; jeśli szlif Ci odpowiada, oryginały logo nie są potrzebne, ale makiety nadal pomogą przy szablonach (F3).
+- [ ] **Opcjonalnie, więcej zdjęć:** klucz API Unsplash (darmowy, https://unsplash.com/oauth/applications → New Application). Bez klucza nie da się legalnie szukać w Unsplash automatycznie; klucz dodajesz sam w ustawieniach środowiska, nie w czacie.
 - [ ] **Repozytorium:** to repozytorium jest **publiczne** i nazywa się `lean-time-study-tracker`. Prompt zakłada prywatne. GitHub → Settings → General: zmień nazwę na `rytm-hali` i na dole „Change repository visibility” → Private. https://github.com/paprykak/lean-time-study-tracker/settings
 - [ ] **Domeny:** kup `rytmhali.pl` i `rytmhali.com` i dodaj je do Cloudflare (Add a domain). Bez tego nie da się wdrożyć produkcji.
 - [ ] **Cloudflare, projekt Workers z repozytorium:** Workers & Pages → Create → Import a repository → to repozytorium. Build command: `npm run check:szybki`, deploy command: `npx wrangler deploy`, gałęzie inne niż `main`: włącz „Builds for non-production branches”. Potem Zero Trust → Access: zabezpiecz „Preview URLs” Workera (polityka: Twój e-mail). Instrukcja: https://developers.cloudflare.com/workers/ci-cd/builds/
@@ -31,9 +33,8 @@ Od góry według pilności. Każdy punkt to jedna czynność.
 - [ ] **Przed publicznym startem:** umowa o pracę (zakaz konkurencji, zgoda na działalność dodatkową); przed pierwszą reklamą: forma działalności i rozmowa z prawnikiem (lista pytań w F7).
 
 ## Następne kroki (po akceptacji F1)
-1. Zdjęcia: pobranie zatwierdzonych, rejestr licencji, kadry 16:9, 16:10 i 1:1 w kartach i na `/styleguide`.
-2. F2: kolekcje treści (zod), panel Sveltia CMS z polskimi etykietami, okładki 1200×630, czas czytania, linki w obie strony, próba fikcyjnego wpisu.
-3. F3: szablony (główna, dział, temat, autor, artykuł, wyszukiwarka, newsletter, strony stałe, RSS). Każda nowa trasa schodzi z listy `PLANOWANE` w `scripts/seo-check.mjs`.
+1. F2: kolekcje treści (zod), panel Sveltia CMS z polskimi etykietami, okładki 1200×630, czas czytania, linki w obie strony, próba fikcyjnego wpisu.
+2. F3: szablony (główna, dział, temat, autor, artykuł, wyszukiwarka, newsletter, strony stałe, RSS). Każda nowa trasa schodzi z listy `PLANOWANE` w `scripts/seo-check.mjs`.
 
 ## Notatki
 - W sesji w chmurze nie ma WebKita: lokalnie `BEZ_WEBKIT=1 npm run check`, iPhone w GitHub Actions.

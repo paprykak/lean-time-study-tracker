@@ -1,6 +1,8 @@
-# Kandydaci na zdjęcia (do zgody Patryka)
+# Kandydaci na zdjęcia
 
-Stan na 2026-11-06. Źródło: Wikimedia Commons. Licencję każdego pliku sprawdzono dwa razy w API (`LicenseShortName`, `License`, `LicenseUrl`).
+**Stan 2026-11-06:** Patryk dopuścił licencje Unsplash i Pexels i powierzył wybór redakcji. Wybrane: 8 rekomendowanych poniżej i 2 zdjęcia magazynu z rawpixel (Openverse, CC0). Wpisy i podpisy: `rejestr.json`. Pliki pobiera `npm run zdjecia`.
+
+Lista z 2026-11-06. Źródło: Wikimedia Commons. Licencję każdego pliku sprawdzono dwa razy w API (`LicenseShortName`, `License`, `LicenseUrl`).
 **Nic nie zostało pobrane do serwisu.** Po zgodzie: pobranie, wpis w `rejestr.json`, kadry 16:9, 16:10 i 1:1, podpis „Fot.” przy każdym zdjęciu.
 
 ## Rekomendowane (8)

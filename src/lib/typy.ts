@@ -6,8 +6,13 @@ export interface Zdjecie {
   alt: string;
   /** Podpis pod zdjęciem, np. „Linia montażowa w zakładzie…”. */
   podpis?: string;
-  /** Autor zdjęcia do podpisu „Fot.”, np. „Jan Kowalski / Wikimedia Commons, CC BY 4.0”. */
+  /** Autor zdjęcia do podpisu „Fot.”, np. „Fot. Jan Kowalski / Wikimedia Commons, CC BY 4.0”. */
   fot: string;
+  /** Strona zdjęcia u źródła i tekst licencji (link w podpisie, wymagany przy CC BY). */
+  zrodlo?: string;
+  licencjaUrl?: string;
+  /** Punkt zaczepienia kadru (center, left, right, top, bottom). */
+  pozycja?: string;
 }
 
 export interface Odnosnik {

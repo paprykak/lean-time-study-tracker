@@ -27,6 +27,7 @@ Każda decyzja z datą i uzasadnieniem. Decyzje „Patryk” czekają na jego s�
 - **Podpis „REKLAMA” także na autopromocji newslettera** w slocie reklamowym: stała wysokość podpisu (zero przesunięć) i jedna reguła bez wyjątków.
 - **Newsletter:** zgoda jako osobne, niezaznaczone pole wyboru (wymagane), pole-pułapka na boty. Treść zgody i klauzuli to projekt do akceptacji Patryka i oceny prawnika (F7).
 - **Logo odtworzone z opisu koncepcji C**, bo oryginały są tylko na komputerze Patryka. Generator (`marka/logo/generuj-logo.mjs`) robi komplet plików; oryginały podmienią SVG bez zmian w szablonach.
+- **Szlif logo (na prośbę Patryka, w ramach koncepcji C):** dach i korpus jako jedna sylwetka hali, zęby wznoszące się w prawo, monogram i napis w tej samej grubości, blok tekstu wyrównany do okapu i dołu plakietki, podtytuł wersalikami ze stałym światłem zamiast rozstrzelonych małych liter. Uzasadnienie punkt po punkcie: `marka/README.md`. Wariant z podtytułem małymi literami został w `marka/logo/porownaj.mjs` jako alternatywa do decyzji Patryka.
 
 ### Technika
 - **Stack jak w patrykkorpyta.pl:** Astro 7.4, Tailwind 4 (tokeny w `@theme`), TypeScript strict, Vitest, Playwright, axe, Lighthouse CI. Przeniesione i dostosowane: `seo-check`, układ `<head>`, udostępnianie bez skryptów, okruszki, konfiguracje testów.
@@ -39,3 +40,10 @@ Każda decyzja z datą i uzasadnieniem. Decyzje „Patryk” czekają na jego s�
 - **Playwright przypięty do 1.63.0** (zgodność z przeglądarką w środowisku sesji w chmurze; GitHub Actions instaluje przeglądarki tej samej wersji). Testy iPhone'a (WebKit) w GitHub Actions; lokalnie `BEZ_WEBKIT=1`, jeśli brak bibliotek WebKita.
 - **Linki do tras z kolejnych faz** (`/dzial/…`, `/newsletter`, strony zaufania) są w kontroli SEO ostrzeżeniem, nie błędem; lista `PLANOWANE` w `scripts/seo-check.mjs` maleje z każdą fazą i ma być pusta przed startem.
 - **Node:** `engines` ≥ 22.23.4 (wymóg Astro 7); `.nvmrc` = 24 jak na komputerze Patryka i w CI.
+
+### Zdjęcia (2026-11-06)
+- **Dozwolone licencje: CC0, CC BY, Unsplash, Pexels** (Patryk: „jak darmowe, to dopuszczam”), zawsze z podpisem „Fot.” i wpisem w `marka/zdjecia/rejestr.json`. Przy CC BY podpis zaznacza zmiany („kadr”) i linkuje źródło (test rejestru to sprawdza). CC BY-SA odrzucone (obowiązek udostępniania na tej samej licencji nie pasuje do serwisu z treściami partnerów).
+- **Wybór redakcji: 10 zdjęć** (8 z Wikimedia Commons, 2 z rawpixel przez Openverse), po jednym zestawie na każdy dział. Odrzucone mimo poprawnej licencji: rozpoznawalne marki (Opel, Dyson, Toyota), anonimowi autorzy przy zdjęciach wyglądających na firmowe (ryzyko cudzego zdjęcia z przypisaną licencją), zdjęcia reklamowe producentów z twarzami. Lista z uzasadnieniem: `marka/zdjecia/kandydaci.md`.
+- **Rawpixel bez konta daje 1024 px:** te dwa zdjęcia tylko w kartach siatki i bocznych, nie w karcie głównej (zapisane w uwagach rejestru).
+- **Unsplash i Pexels: tylko przez ich API** (wyszukiwarki blokują automaty, nie obchodzimy zabezpieczeń). Klucz API to konto Patryka; do tego czasu źródła: Wikimedia Commons i Openverse.
+- **Pliki zdjęć w repozytorium** (`src/assets/zdjecia/`, JPEG do 2000 px, bez metadanych EXIF), przetwarzane przez `astro:assets` do AVIF i WebP w kilku szerokościach. Strona buduje się także bez części plików (pole zastępcze tylko na `/styleguide`).

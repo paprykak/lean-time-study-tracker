@@ -4,10 +4,32 @@
 Koncepcja C: plakietka z dachem szedowym, litery RH, napis „RYTM HALI”, podtytuł „Produkcja · Magazyn · Dane”.
 Tekst zamieniony na krzywe z fontów Noto (SIL OFL 1.1).
 
-**Stan:** pliki w `logo/svg/` to robocze odtworzenie koncepcji C z opisu w prompcie, wykonane w sesji w chmurze,
-która nie miała dostępu do oryginałów z komputera Patryka (`/home/patryk/Pulpit/rytm-hali/marka/logo/`).
-Po dodaniu oryginałów: podmień pliki w `logo/svg/` (te same nazwy) i uruchom `npm run logo -- --tylko-pochodne`,
-żeby odtworzyć favicony, awatar, logo PNG i okładkę. Szablony nie wymagają zmian.
+**Stan:** pliki w `logo/svg/` to odtworzenie koncepcji C z opisu w prompcie (sesja w chmurze nie miała dostępu
+do oryginałów z `/home/patryk/Pulpit/rytm-hali/marka/logo/`), po szlifie z 2026-11-06 na prośbę Patryka.
+Geometria i wszystkie wymiary: `logo/geometria.mjs` (`PARAMETRY`). Porównanie wariantów w realnych rozmiarach:
+`node marka/logo/porownaj.mjs porownanie.png`. Po dodaniu oryginałów: podmień pliki w `logo/svg/` (te same nazwy)
+i uruchom `npm run logo -- --tylko-pochodne`, żeby odtworzyć favicony, awatar, logo PNG i okładkę.
+
+### Szlif z 2026-11-06: co i dlaczego
+1. **Dach i korpus to jedna sylwetka hali.** Wcześniej dach unosił się nad korpusem (szczelina) i czytał się jak
+   ozdobny ząbkowany pasek albo korona. Połączony z korpusem tworzy klasyczny piktogram hali z dachem szedowym:
+   znak rozpoznawalny od 16 px i jednoznaczny („hala”, nie „piła”).
+2. **Zęby dachu wznoszą się w prawo** (spadek w górę, pionowe przeszklenie po prawej). Kierunek czytania
+   prowadzi oko w górę i do napisu; pionowy bok ostatniego zęba domyka plakietkę od strony tekstu. Rytm trzech
+   równych zębów to wprost „rytm hali”.
+3. **Monogram i napis w tej samej grubości** (Noto Sans Display 800). Wcześniej RH było cięższe od napisu.
+   Korekta par RY i odstępu między słowami (wersaliki z dodatkowym światłem miały za szeroką spację).
+4. **Blok tekstu ma wysokość korpusu:** góra wersalików napisu leży na linii okapu (podstawa dachu), linia bazowa
+   podtytułu na dole plakietki. Dwie linie wyrównania zamiast „pływającego” tekstu.
+5. **Podtytuł wersalikami ze stałym światłem 0,14 em**, rozmiar dobrany tak, żeby miał szerokość napisu.
+   Wcześniej małe litery były rozstrzelone do szerokości napisu (błąd typograficzny: małych liter się nie rozstrzela).
+   Wersaliki z małym rozmiarem i światłem pasują do etykiet kategorii w serwisie.
+6. **Pole rysunku liczone z obrysu glifów** (wielkie J w Noto schodzi pod linię bazową; wcześniej było ucięte).
+7. **Mała ikona (16 px)** bez liter, krawędzie na siatce 16 i 32 px, bez szczeliny: ostra w karcie przeglądarki.
+
+**Pole ochronne:** wokół logo co najmniej wysokość zęba dachu (21 jednostek plakietki, czyli około 1/5 jej boku).
+**Najmniejszy rozmiar:** logo pełne od 48 px wysokości (niżej podtytuł przestaje być czytelny), kompaktowe od 20 px,
+ikona z literami od 24 px, poniżej ikona mała.
 
 | Plik | Użycie |
 |---|---|

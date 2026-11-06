@@ -22,6 +22,19 @@ async function otworz(kontekstOpcje, adres) {
   const strona = await kontekst.newPage();
   await strona.goto(BASE + adres, { waitUntil: 'networkidle' });
   await strona.evaluate(() => document.fonts.ready);
+  // Obrazy mają loading="lazy": przewiń stronę, żeby się wczytały, i poczekaj na komplet przed zrzutem.
+  await strona.evaluate(async () => {
+    for (let y = 0; y < document.documentElement.scrollHeight; y += window.innerHeight / 2) {
+      window.scrollTo(0, y);
+      await new Promise((r) => setTimeout(r, 60));
+    }
+    // Tylko obrazy widoczne (ukryte warianty slotów z loading="lazy" nigdy się nie wczytają) i najwyżej 5 s.
+    const widoczne = [...document.images].filter((img) => !img.complete && img.getClientRects().length > 0);
+    const wczytane = widoczne.map((img) => new Promise((r) => { img.addEventListener('load', r, { once: true }); img.addEventListener('error', r, { once: true }); }));
+    await Promise.race([Promise.all(wczytane), new Promise((r) => setTimeout(r, 5000))]);
+    window.scrollTo(0, 0);
+  });
+  await strona.waitForLoadState('networkidle');
   return { kontekst, strona };
 }
 
