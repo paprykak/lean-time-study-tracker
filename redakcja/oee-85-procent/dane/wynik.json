@@ -1,0 +1,44 @@
+{
+  "zmiana": {
+    "dlugoscMin": 480,
+    "przerwaMin": 30,
+    "konserwacjaPlanowanaMin": 30,
+    "przezbrojeniaMin": 50,
+    "awariaMin": 20,
+    "sztukiRazem": 520,
+    "sztukiDobre": 505
+  },
+  "cykl": {
+    "nominalnyS": 30,
+    "standardowyS": 40
+  },
+  "warianty": [
+    {
+      "nazwa": "Przezbrojenia i konserwacja to strata, cykl nominalny maszyny (30 s)",
+      "czasPlanowany": 450,
+      "czasPracy": 350,
+      "dostepnosc": 0.7777777777777778,
+      "wydajnosc": 0.7428571428571429,
+      "jakosc": 0.9711538461538461,
+      "oee": 0.5611111111111111
+    },
+    {
+      "nazwa": "Przezbrojenia i konserwacja wyłączone z czasu planowanego, cykl nominalny (30 s)",
+      "czasPlanowany": 370,
+      "czasPracy": 350,
+      "dostepnosc": 0.9459459459459459,
+      "wydajnosc": 0.7428571428571429,
+      "jakosc": 0.9711538461538461,
+      "oee": 0.6824324324324325
+    },
+    {
+      "nazwa": "Jak wyżej, ale cykl ze standardu planowania (40 s)",
+      "czasPlanowany": 370,
+      "czasPracy": 350,
+      "dostepnosc": 0.9459459459459459,
+      "wydajnosc": 0.9904761904761905,
+      "jakosc": 0.9711538461538461,
+      "oee": 0.9099099099099098
+    }
+  ]
+}

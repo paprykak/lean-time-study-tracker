@@ -1,0 +1,40 @@
+// Przykład na danych fikcyjnych do artykułu „OEE 85%”: jedna zmiana, te same zdarzenia, trzy definicje OEE.
+// Uruchom: node redakcja/oee-85-procent/dane/oee-warianty.mjs  (zapisuje wynik.json i drukuje tabelę)
+// Sprawdzenie drugim sposobem: OEE = dostępność × wydajność × jakość musi równać się
+// (dobre sztuki × cykl idealny) / czas planowany (czas w pełni produktywny / czas planowany).
+import { writeFileSync } from 'node:fs';
+
+const zmiana = {
+  dlugoscMin: 480, // 8 godzin
+  przerwaMin: 30, // przerwa
+  konserwacjaPlanowanaMin: 30,
+  przezbrojeniaMin: 50, // 2 przezbrojenia po 25 min
+  awariaMin: 20,
+  sztukiRazem: 520,
+  sztukiDobre: 505,
+};
+const cykl = { nominalnyS: 30, standardowyS: 40 };
+
+/** OEE dla wybranej definicji czasu planowanego i cyklu idealnego. */
+function oee({ planowaneWylaczone, cyklIdealnyS }) {
+  const czasPlanowany = zmiana.dlugoscMin - zmiana.przerwaMin - planowaneWylaczone;
+  const czasPracy = zmiana.dlugoscMin - zmiana.przerwaMin - zmiana.konserwacjaPlanowanaMin - zmiana.przezbrojeniaMin - zmiana.awariaMin;
+  const dostepnosc = czasPracy / czasPlanowany;
+  const wydajnosc = (zmiana.sztukiRazem * cyklIdealnyS) / (czasPracy * 60);
+  const jakosc = zmiana.sztukiDobre / zmiana.sztukiRazem;
+  const wynik = dostepnosc * wydajnosc * jakosc;
+  const kontrola = (zmiana.sztukiDobre * cyklIdealnyS) / (czasPlanowany * 60);
+  if (Math.abs(wynik - kontrola) > 1e-12) throw new Error('Iloczyn składowych ≠ czas w pełni produktywny / czas planowany');
+  return { czasPlanowany, czasPracy, dostepnosc, wydajnosc, jakosc, oee: wynik };
+}
+
+const warianty = [
+  { nazwa: 'Przezbrojenia i konserwacja to strata, cykl nominalny maszyny (30 s)', ...oee({ planowaneWylaczone: 0, cyklIdealnyS: cykl.nominalnyS }) },
+  { nazwa: 'Przezbrojenia i konserwacja wyłączone z czasu planowanego, cykl nominalny (30 s)', ...oee({ planowaneWylaczone: zmiana.przezbrojeniaMin + zmiana.konserwacjaPlanowanaMin, cyklIdealnyS: cykl.nominalnyS }) },
+  { nazwa: 'Jak wyżej, ale cykl ze standardu planowania (40 s)', ...oee({ planowaneWylaczone: zmiana.przezbrojeniaMin + zmiana.konserwacjaPlanowanaMin, cyklIdealnyS: cykl.standardowyS }) },
+];
+const proc = (x) => `${(100 * x).toFixed(1).replace('.', ',')}%`;
+for (const w of warianty) {
+  console.log(`${w.nazwa}\n  czas planowany ${w.czasPlanowany} min, praca ${w.czasPracy} min | dostępność ${proc(w.dostepnosc)}, wydajność ${proc(w.wydajnosc)}, jakość ${proc(w.jakosc)} → OEE ${proc(w.oee)}`);
+}
+writeFileSync(new URL('./wynik.json', import.meta.url), JSON.stringify({ zmiana, cykl, warianty }, null, 2));
