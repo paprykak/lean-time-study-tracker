@@ -40,5 +40,19 @@
       "jakosc": 0.9711538461538461,
       "oee": 0.9099099099099098
     }
-  ]
+  ],
+  "minutyWariantu1": {
+    "czasPlanowany": 450,
+    "postoje": {
+      "przezbrojenia": 50,
+      "konserwacja": 30,
+      "awaria": 20
+    },
+    "czasPracy": 350,
+    "czasWTempieIdealnym": 260,
+    "strataTempa": 90,
+    "strataJakosci": 7.5,
+    "wPelniProduktywny": 252.5,
+    "udzial": 0.5611111111111111
+  }
 }
