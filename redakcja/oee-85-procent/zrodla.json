@@ -1,12 +1,12 @@
 {
   "jipm": {
-    "opis": "Shirose K. (1989), rozdział o sześciu dużych stratach i mierzeniu efektywności urządzeń, podrozdział „Levels and Targeted Goals for Overall Effectiveness”, w: S. Nakajima (red.), TPM Development Program: Implementing Total Productive Maintenance, Productivity Press.",
+    "opis": "Shirose K. (1989), Equipment Effectiveness, Chronic Losses, and Other TPM Improvement Concepts, rozdz. 2 w: S. Nakajima (red.), TPM Development Program: Implementing Total Productive Maintenance, Productivity Press (wyd. jap. JIPM 1982), s. 12, 28 i 38.",
     "adres": "https://archive.org/details/tpmdevelopmentpr0000unse_t2q8",
     "rodzaj": "Książka",
     "dostep": "2026-11-06"
   },
   "jonsson": {
-    "opis": "Jonsson P., Lesshammar M. (1999), Evaluation and improvement of manufacturing performance measurement systems – the role of OEE, International Journal of Operations & Production Management, 19(1), 55–78, s. 63.",
+    "opis": "Jonsson P., Lesshammar M. (1999), Evaluation and improvement of manufacturing performance measurement systems – the role of OEE, International Journal of Operations & Production Management, 19(1), 55–78, s. 62–63.",
     "adres": "https://doi.org/10.1108/01443579910244223",
     "rodzaj": "Badanie recenzowane",
     "dostep": "2026-11-06"
@@ -18,7 +18,7 @@
     "dostep": "2026-11-06"
   },
   "vorne-faq": {
-    "opis": "Vorne Industries, OEE FAQ: „I’ve heard that world-class OEE is 85%. Is this my target?”, oee.com.",
+    "opis": "Vorne Industries, OEE FAQ (częste pytania), m.in. „I’ve heard that world-class OEE is 85%. Is this my target?”, oee.com.",
     "adres": "https://www.oee.com/faq/",
     "rodzaj": "Raport firmy",
     "dostep": "2026-11-06"
@@ -36,7 +36,7 @@
     "dostep": "2026-11-06"
   },
   "hedman": {
-    "opis": "Hedman R., Subramaniyan M., Almström P. (2016), Analysis of Critical Factors for Automatic Measurement of OEE, Procedia CIRP, 57, 128–133, s. 129–131.",
+    "opis": "Hedman R., Subramaniyan M., Almström P. (2016), Analysis of Critical Factors for Automatic Measurement of OEE, Procedia CIRP, 57, 128–133, s. 129–132.",
     "adres": "https://doi.org/10.1016/j.procir.2016.11.023",
     "rodzaj": "Badanie recenzowane",
     "dostep": "2026-11-06"
@@ -48,9 +48,9 @@
     "dostep": "2026-11-06"
   },
   "andersson": {
-    "opis": "Andersson C., Bellgran M. (2011), Combining Overall equipment Efficiency (OEE) and productivity measures as drivers for production improvements, w: Proceedings of the 4th Swedish Production Symposium (SPS11), Lund, s. 20–29.",
+    "opis": "Andersson C., Bellgran M. (2011), Combining Overall equipment Efficiency (OEE) and productivity measures as drivers for production improvements, referat na Swedish Production Symposium 2011, Lund, s. 20–29.",
     "adres": "https://lup.lub.lu.se/record/2224801",
-    "rodzaj": "Badanie recenzowane",
+    "rodzaj": "Inne",
     "dostep": "2026-11-06"
   },
   "schiraldi": {
