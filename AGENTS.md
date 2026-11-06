@@ -44,11 +44,19 @@ Pełne zadanie i fazy: `prompty/01-budowa-portalu.md`. Stan prac: `STAN.md`. Dec
 | `src/content.config.ts`, `src/content/` | model treści (schematy zod) i treści: artykuły, materiały, rejestr zdjęć, autorzy, działy, tematy, partnerzy, kampanie |
 | `public/admin/` | panel redakcji Sveltia CMS (`config.yml`; wersja skryptu przypięta z sumą SRI w `index.html` i `package.json`) |
 | `worker/` | Worker Cloudflare dla `/api/*` (logowanie do panelu przez GitHub; dalej newsletter i 410) |
-| `src/lib/markdown.mjs` | wtyczki Markdowna (silnik Sätteri w Astro 7): tabele, miejsce reklamy po 3. akapicie, rel linków |
+| `src/lib/markdown.mjs` | wtyczki Markdowna (silnik Sätteri w Astro 7): przypisy `[n]` do źródeł, rysunki z podpisem, tabele, miejsce reklamy po 3. akapicie, rel linków |
 | `src/data/ustawienia.json` | nazwa, menu, pasek tematów, stopka, teksty newslettera (edycja w panelu: „Ustawienia serwisu”) |
 | `scripts/` | kontrola SEO, budżet, fonty, zrzuty |
 | `marka/` | logo (generator i pliki), wybór zdjęć z uzasadnieniem (`marka/zdjecia/kandydaci.md`) |
 | `tests/e2e/` | Playwright: strony, dostępność, układ, panel redakcji (konfiguracja i próba zapisu wpisu) |
+
+## Skille projektu
+
+| Skill | Do czego |
+|---|---|
+| `/artykul` | Artykuł od tematu do szkicu: research w badaniach i danych publicznych, przypisy, niezależna weryfikacja faktów, zdjęcie z otwartej licencji, karta jakości (`.claude/skills/artykul/`). Teczki artykułów w `redakcja/<slug>/` |
+
+Polecenia skilla: `npm run redakcja:zdjecia` (kandydaci na zdjęcie i stykówka), `npm run redakcja:zrodla -- <slug>` (adresy, DOI, wycofane badania), `npm run redakcja:kontrola -- <slug>` (przypisy, liczby bez źródła, frazy z tekstów generowanych, czytelność). Kontrolę tekstu każdego nietestowego artykułu uruchamia też `npm run check`.
 
 ## Jak pracujemy
 

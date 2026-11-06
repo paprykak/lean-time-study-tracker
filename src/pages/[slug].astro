@@ -20,6 +20,7 @@ import SpisTresci from '../components/artykul/SpisTresci.astro';
 import RamkaDoPobrania from '../components/artykul/RamkaDoPobrania.astro';
 import Faq from '../components/artykul/Faq.astro';
 import Zrodla from '../components/artykul/Zrodla.astro';
+import MetodaArtykulu from '../components/artykul/MetodaArtykulu.astro';
 import Tematy from '../components/artykul/Tematy.astro';
 import { artykuly, doIndeksu, karta, minutyCzytania, powiazaneArtykuly, type Artykul } from '../lib/tresci';
 import { dzial, temat } from '../lib/dane';
@@ -94,6 +95,7 @@ const jsonLd = [
     author: autorzy.map(autorJsonLd),
     publisher: { '@id': `${ADRES}/#redakcja` },
     isPartOf: { '@id': `${ADRES}/#serwis` },
+    ...(d.zrodla.length ? { citation: d.zrodla.map((z) => ({ '@type': 'CreativeWork', name: z.opis, ...(z.adres ? { url: z.adres } : {}) })) } : {}),
     ...(partner ? { sponsor: { '@type': 'Organization', name: partner.data.nazwa, url: partner.data.adres } } : {}),
   },
 ];
@@ -134,6 +136,7 @@ const formatMaterialu = (m: (typeof materialy)[number]) =>
             <RamkaDoPobrania tytul={m.data.tytul} opis={m.data.opis} format={formatMaterialu(m)} adres={`/do-pobrania/${m.id}`} slug={m.id} />
           ))}
           {d.faq.length > 0 && <Faq id={FAQ_ID} pytania={d.faq} />}
+          <MetodaArtykulu metoda={d.metoda} sprawdzono={d.sprawdzono} zrodla={d.zrodla} />
           {d.zrodla.length > 0 && <Zrodla zrodla={d.zrodla} />}
         </div>
 

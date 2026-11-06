@@ -1,14 +1,26 @@
 ---
-// Źródła artykułu: numerowana lista, linki zewnętrzne otwierane bezpiecznie.
+// Źródła artykułu: numerowana lista. Pozycja n ma kotwicę „zrodlo-n”, do której prowadzi przypis [n] w treści
+// (src/lib/markdown.mjs). Przy źródle jego rodzaj i data dostępu; linki zewnętrzne otwierane bezpiecznie.
+import { dataDluga, datetime } from '../../lib/daty';
+
 interface Props {
-  zrodla: { opis: string; adres?: string }[];
+  zrodla: { opis: string; adres?: string; rodzaj?: string; dostep?: Date }[];
 }
 const { zrodla } = Astro.props;
 ---
 <section aria-labelledby="zrodla" class="zrodla">
   <h2 id="zrodla">Źródła</h2>
   <ol>
-    {zrodla.map((z) => <li>{z.adres ? <a href={z.adres} rel="noopener" target="_blank">{z.opis}</a> : z.opis}</li>)}
+    {zrodla.map((z, i) => (
+      <li id={`zrodlo-${i + 1}`}>
+        {z.adres ? <a href={z.adres} rel="noopener" target="_blank">{z.opis}</a> : z.opis}
+        {(z.rodzaj || z.dostep) && (
+          <span class="zrodla-meta">
+            {z.rodzaj}{z.rodzaj && z.dostep && ', '}{z.dostep && <>dostęp <time datetime={datetime(z.dostep)}>{dataDluga(z.dostep)}</time></>}
+          </span>
+        )}
+      </li>
+    ))}
   </ol>
 </section>
 
@@ -19,5 +31,19 @@ const { zrodla } = Astro.props;
     padding-left: 1.5rem;
     font-size: 0.9375rem;
     line-height: 1.6;
+  }
+  .zrodla li {
+    scroll-margin-top: 1.5rem;
+    border-radius: var(--radius-karta);
+  }
+  /* Po kliknięciu przypisu wskazane źródło jest wyróżnione. */
+  .zrodla li:target {
+    background: var(--color-tlo-szare);
+    outline: 2px solid var(--color-tlo-szare);
+  }
+  .zrodla-meta {
+    display: block;
+    color: var(--color-tekst-drugi);
+    font-size: 0.8125rem;
   }
 </style>

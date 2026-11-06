@@ -28,3 +28,6 @@ pnpm-debug.log*
 # system i edytory
 .DS_Store
 .idea/
+
+# robocze pliki redakcji: kandydaci na zdjęcia i stykówki (skill /artykul); teczki artykułów są w repozytorium
+redakcja/*/zdjecia/

@@ -293,3 +293,6 @@ Mapa strony dla Google News dopiero wtedy, gdy portal publikuje regularnie (decy
 - 2026-11-06 — Astro 7 renderuje Markdown silnikiem Sätteri, który pomija wtyczki z `markdown.rehypePlugins`, więc wtyczki serwisu mają API Sätteri (`src/lib/markdown.mjs`) i testy na prawdziwym silniku, a nie na ręcznie zbudowanym drzewie.
 - 2026-11-06 — Sveltia CMS odrzuca względny `public_folder` (np. `../../assets`), a Astro w `image()` przyjmuje ścieżkę od katalogu projektu (`/src/assets/…`), więc panel zapisuje zdjęcia w tej postaci; przed decyzją sprawdzone buildem, także przypadek brakującego pliku.
 - 2026-11-06 — Moduły czytające pliki względem `import.meta.url` psują się przy buildzie, bo kod ląduje w `.astro/.prerender/chunks`, więc pliki z repozytorium czytamy względem katalogu projektu (`process.cwd()`).
+- 2026-11-06 — Patryk: treści oparte na faktach i badaniach, ze zdjęciem z otwartej licencji, lepsze niż HBR, więc powstał skill `/artykul` z przypisami przy każdej liczbie, niezależną weryfikacją faktów i kartą jakości, a kontrola tekstu działa w CI.
+- 2026-11-06 — Przepisy z pamięci bywają nieaktualne (dawny art. 14 ust. 2 Prawa prasowego jest uchylony, autoryzację reguluje art. 14a), więc każdy przepis w skillu i w tekstach sprawdzamy w aktualnym tekście jednolitym przez API Sejmu.
+

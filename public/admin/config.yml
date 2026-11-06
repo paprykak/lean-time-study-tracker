@@ -199,9 +199,16 @@ collections:
         widget: list
         required: false
         summary: '{{fields.opis}}'
+        hint: 'Kolejność ma znaczenie: przypis [1] w treści prowadzi do pierwszego źródła, [2] do drugiego.'
         fields:
           - { name: opis, label: Opis, widget: string, hint: 'Np. „Shingo S., A Revolution in Manufacturing, 1985.”' }
           - { name: adres, label: Adres (opcjonalnie), widget: string, type: url, required: false }
+          - name: rodzaj
+            label: Rodzaj źródła
+            widget: select
+            required: false
+            options: [Badanie recenzowane, Przegląd lub metaanaliza, Dane publiczne, Przepis lub norma, Książka, Raport instytucji, Raport firmy, Rozmowa, Inne]
+          - { name: dostep, label: Data dostępu, widget: datetime, type: date, required: false, hint: 'Kiedy redakcja otworzyła i sprawdziła źródło.' }
       - name: faq
         label: Pytania i odpowiedzi
         label_singular: pytanie
@@ -211,6 +218,18 @@ collections:
         fields:
           - { name: pytanie, label: Pytanie, widget: string, maxlength: 160 }
           - { name: odpowiedz, label: Odpowiedź, widget: text, maxlength: 800 }
+      - name: sprawdzono
+        label: Fakty sprawdzone (data)
+        widget: datetime
+        type: date
+        required: false
+        hint: Data ostatniej pełnej weryfikacji, gdy każde twierdzenie sprawdzono w źródle.
+      - name: metoda
+        label: Jak powstał ten tekst
+        widget: text
+        maxlength: 700
+        required: false
+        hint: 'Metoda, rodzaj źródeł, użycie AI i ewentualny konflikt interesów. Widoczne pod artykułem.'
       - name: powiazane
         label: Powiązane artykuły
         widget: relation

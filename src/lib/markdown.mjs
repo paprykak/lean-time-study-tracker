@@ -65,4 +65,78 @@ export const linki = {
   },
 };
 
-export const WTYCZKI = [tabele, miejsceReklamy, linki];
+/** Przypis w treści: [1], [1, 3] albo [2–4]. Panel może zapisać nawiasy z ukośnikiem (\\[1\\]); w drzewie HTML ich już nie ma. */
+export const PRZYPIS = /\[(\d{1,2}(?:\s*[,–-]\s*\d{1,2})*)\]/g;
+
+/** Numery z treści przypisu: „1, 3” → [1, 3], „2–4” → [2, 3, 4]. */
+export function numeryPrzypisu(tresc) {
+  return tresc.split(/\s*,\s*/).flatMap((czesc) => {
+    const [od, doN] = czesc.split(/\s*[–-]\s*/).map(Number);
+    if (doN === undefined) return [od];
+    return od <= doN && doN - od < 20 ? Array.from({ length: doN - od + 1 }, (_, i) => od + i) : [od, doN];
+  });
+}
+
+const BEZ_PRZYPISOW = new Set(['a', 'code', 'pre', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6']);
+
+/**
+ * Przypisy: [n] w tekście staje się odsyłaczem do n-tego źródła na liście „Źródła” (id „zrodlo-n”).
+ * Każda liczba i każde badanie w artykule ma przypis (skill /artykul, kontrola w src/lib/kontrola-tekstu.mjs).
+ */
+export const przypisy = {
+  name: 'rh-przypisy',
+  text(node, ctx) {
+    if (!PRZYPIS.test(node.value)) return;
+    PRZYPIS.lastIndex = 0;
+    const rodzic = ctx.parent(node);
+    if (rodzic?.type === 'element' && BEZ_PRZYPISOW.has(rodzic.tagName)) return;
+    const czesci = [];
+    let ostatni = 0;
+    for (const m of node.value.matchAll(PRZYPIS)) {
+      if (m.index > ostatni) czesci.push({ type: 'text', value: node.value.slice(ostatni, m.index) });
+      const numery = numeryPrzypisu(m[1]);
+      const odsylacze = numery.flatMap((n, i) => [
+        ...(i > 0 ? [{ type: 'text', value: ', ' }] : []),
+        { type: 'element', tagName: 'a', properties: { href: `#zrodlo-${n}`, ariaLabel: `Źródło ${n}` }, children: [{ type: 'text', value: String(n) }] },
+      ]);
+      czesci.push({
+        type: 'element',
+        tagName: 'sup',
+        properties: { className: ['przypis'] },
+        children: [{ type: 'text', value: '[' }, ...odsylacze, { type: 'text', value: ']' }],
+      });
+      ostatni = m.index + m[0].length;
+    }
+    if (ostatni < node.value.length) czesci.push({ type: 'text', value: node.value.slice(ostatni) });
+    ctx.replaceNode(node, czesci);
+  },
+};
+
+/**
+ * Rysunek z podpisem: akapit z samym obrazem, który ma tytuł (![opis](plik "Rysunek 1. Wniosek. Źródło: …")),
+ * staje się <figure> z <figcaption>. Opis w nawiasach kwadratowych zostaje tekstem alternatywnym.
+ */
+export const rysunki = {
+  name: 'rh-rysunki',
+  element: {
+    filter: ['p'],
+    visit(node, ctx) {
+      const istotne = (node.children ?? []).filter((d) => d.type !== 'text' || d.value.trim() !== '');
+      const [obraz] = istotne;
+      const podpis = obraz?.properties?.title;
+      if (istotne.length !== 1 || obraz.type !== 'element' || obraz.tagName !== 'img' || typeof podpis !== 'string' || !podpis.trim()) return;
+      const { title: _, ...wlasciwosci } = obraz.properties;
+      ctx.replaceNode(node, {
+        type: 'element',
+        tagName: 'figure',
+        properties: { className: ['rysunek'] },
+        children: [
+          { type: 'element', tagName: 'img', properties: wlasciwosci, children: [] },
+          { type: 'element', tagName: 'figcaption', properties: {}, children: [{ type: 'text', value: podpis.trim() }] },
+        ],
+      });
+    },
+  },
+};
+
+export const WTYCZKI = [tabele, rysunki, przypisy, miejsceReklamy, linki];

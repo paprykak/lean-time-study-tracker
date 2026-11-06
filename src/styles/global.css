@@ -323,6 +323,17 @@
 .tresc figcaption {
   @apply mt-2 text-meta text-tekst-drugi;
 }
+/* Przypis [n] (src/lib/markdown.mjs): odsyłacz do n-tego źródła. Interlinia akapitu się nie zmienia. */
+.tresc sup.przypis {
+  @apply text-[0.72em] font-semibold text-tekst-drugi;
+  line-height: 0;
+}
+.tresc sup.przypis a {
+  @apply text-akcent-tekst no-underline;
+}
+.tresc sup.przypis a:hover {
+  @apply underline;
+}
 .tresc hr {
   @apply my-10 border-linia;
 }

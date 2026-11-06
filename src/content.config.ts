@@ -5,7 +5,7 @@ import { defineCollection, reference } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 
-import { FORMATY, LICENCJE, MIEJSCA_REKLAM } from './lib/model';
+import { FORMATY, LICENCJE, MIEJSCA_REKLAM, RODZAJE_ZRODEL } from './lib/model';
 
 // Adresy tylko http(s): link w panelu z literówką albo „javascript:” zatrzymuje build.
 const adresUrl = z.url({ protocol: /^https?$/ });
@@ -152,8 +152,15 @@ const artykuly = defineCollection({
           koniecKampanii: z.coerce.date().optional(),
         })
         .optional(),
-      zrodla: z.array(z.object({ opis: z.string(), adres: adresUrl.optional() })).default([]),
+      // Źródło n odpowiada przypisowi [n] w treści (wtyczka przypisów w src/lib/markdown.mjs, kontrola w src/lib/kontrola-tekstu.mjs).
+      zrodla: z
+        .array(z.object({ opis: z.string(), adres: adresUrl.optional(), rodzaj: z.enum(RODZAJE_ZRODEL).optional(), dostep: z.coerce.date().optional() }))
+        .default([]),
       faq: z.array(z.object({ pytanie: z.string().max(160), odpowiedz: z.string().max(800) })).default([]),
+      /** Data ostatniej pełnej weryfikacji faktów (każde twierdzenie sprawdzone w źródle). */
+      sprawdzono: z.coerce.date().optional(),
+      /** „Jak powstał ten tekst”: metoda, źródła, użycie AI, konflikty interesów (widoczne pod artykułem). */
+      metoda: z.string().max(700).optional(),
       powiazane: z.array(reference('artykuly')).default([]),
       materialy: z.array(reference('materialy')).default([]),
       wyrozniony: z.boolean().default(false),

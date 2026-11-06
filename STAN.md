@@ -32,6 +32,8 @@ Od góry według pilności. Każdy punkt to jedna czynność.
 - [x] ~~Akceptacja wyglądu F1~~ (2026-11-06).
 - [x] ~~Zgoda na zdjęcia~~ (2026-11-06: dopuszczone CC0, CC BY, Unsplash, Pexels; wybór powierzony redakcji, 10 zdjęć w rejestrze).
 - [x] ~~Logo po szlifie~~ (2026-11-06: Patryk zaakceptował wersję z podtytułem wersalikami).
+- [ ] **Decyzja: podpis tekstów pisanych z pomocą AI.** Propozycja: domyślnie „Redakcja Rytmu Hali”, Twoje nazwisko tylko pod tekstami, które sam napisałeś albo przeredagowałeś i przyjmujesz jako swoje; użycie AI opisane w ramce „Jak powstał ten tekst”. Odpowiedz „tak” albo podaj inną zasadę.
+- [ ] **Pierwszy tekst skillem `/artykul`:** podaj temat albo napisz „wybierz sam” (dostaniesz 3 propozycje z tezą i luką w wynikach wyszukiwania).
 - [ ] **Bio w panelu (po pierwszym logowaniu):** Autorzy → Patryk Korpyta: bio z doświadczeniem w operacjach, kompetencje, kwadratowe zdjęcie. Obecne bio to projekt.
 - [ ] **Makiety (opcjonalnie):** skopiuj `makiety/` z `/home/patryk/Pulpit/rytm-hali/` do repozytorium; pomogą porównać szablony F3 z drugą makietą. Logo z repozytorium jest zaakceptowane, oryginały logo nie są potrzebne.
 - [ ] **Opcjonalnie, więcej zdjęć:** klucz API Unsplash (darmowy, https://unsplash.com/oauth/applications → New Application). Bez klucza nie da się legalnie szukać w Unsplash automatycznie; klucz dodajesz sam w ustawieniach środowiska, nie w czacie.
@@ -41,9 +43,11 @@ Od góry według pilności. Każdy punkt to jedna czynność.
 - [ ] **Panel, pierwsze logowanie (gdy strona będzie na Cloudflare):** utwórz token https://github.com/settings/personal-access-tokens/new → Repository access: tylko to repozytorium → Permissions: Contents i Pull requests: Read and write → ważność 90 dni. Na rytmhali.pl/admin kliknij „Zaloguj się za pomocą tokenu dostępu” i wklej. Token zostaje w Twojej przeglądarce; nie wklejaj go w czacie.
 - [ ] **Logowanie przez GitHub (wygodniejsze, po tokenie):** https://github.com/settings/applications/new → nazwa „Rytm Hali: panel”, Homepage `https://rytmhali.pl`, Authorization callback URL `https://rytmhali.pl/api/auth/callback` → Register. Potem w katalogu projektu: `npx wrangler secret put GITHUB_CLIENT_ID` (Client ID) i `npx wrangler secret put GITHUB_CLIENT_SECRET` (Generate a new client secret). Wartości wpisujesz tylko Ty.
 - [ ] **Umami:** dodaj witrynę `rytmhali.pl` w https://cloud.umami.is i podaj identyfikator witryny (to nie jest sekret). Włączymy statystyki po decyzji przy F3.
-- [ ] **Przed publicznym startem:** umowa o pracę (zakaz konkurencji, zgoda na działalność dodatkową); przed pierwszą reklamą: forma działalności i rozmowa z prawnikiem (lista pytań w F7).
+- [ ] **Przed publicznym startem:** umowa o pracę (zakaz konkurencji, zgoda na działalność dodatkową); przed pierwszą reklamą: forma działalności i rozmowa z prawnikiem (lista pytań w F7). Pytanie do prawnika: czy Rytm Hali jako regularnie wydawany portal wymaga rejestracji tytułu prasowego w sądzie okręgowym (Prawo prasowe, art. 20) i co to zmienia (autoryzacja, sprostowania, redaktor naczelny).
+- [ ] **Opcjonalnie: klucz OpenAlex** (darmowy, https://help.openalex.org/api/authentication/): lepsze wyszukiwanie badań w skillu `/artykul`. Klucz dodajesz sam w ustawieniach środowiska, nie w czacie.
 
 ## Następne kroki
+0. Skill `/artykul` gotowy (2026-11-06): pierwszy tekst po decyzji o podpisie i wyborze tematu; po nim lekcje w skillu.
 1. F3: szablony (główna, dział, temat, autor, artykuł, wyszukiwarka, newsletter, strony stałe, RSS) z kolekcji treści. Każda nowa trasa schodzi z listy `PLANOWANE` w `scripts/seo-check.mjs`; podglądy `/podglad/*` znikają, gdy zastąpią je prawdziwe szablony.
 2. W F3: E2E, axe i Lighthouse dla strony artykułu z kolekcji. Produkcja nie ma jeszcze żadnego opublikowanego artykułu, więc testy muszą działać na buildzie z wpisem testowym (np. drugi build z `RH_PODGLAD=1` w CI). W F2 sprawdzone ręcznie skryptem (wyniki wyżej).
 3. W F3: rysunki w treści artykułu tylko z rejestru zdjęć (komponent w Markdownie albo pole listy), bo panel nie pozwala wstawiać obrazów wprost.

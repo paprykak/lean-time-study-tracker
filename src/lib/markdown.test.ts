@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { createSatteriMarkdownProcessor } from '@astrojs/markdown-satteri';
-import { WTYCZKI, ZNACZNIK_REKLAMY } from './markdown.mjs';
+import { numeryPrzypisu, WTYCZKI, ZNACZNIK_REKLAMY } from './markdown.mjs';
 
 // Ten sam potok co przy buildzie (Astro 7, silnik Sätteri), z wtyczkami serwisu.
 const procesor = await createSatteriMarkdownProcessor({ hastPlugins: WTYCZKI });
@@ -49,5 +49,40 @@ describe('śródtytuły', () => {
   it('mają kotwice z polskimi znakami (spis treści)', async () => {
     const { metadata } = await procesor.render('## Krok 1: oddziel czynności\n\nTekst.', { frontmatter: {} });
     expect(metadata.headings).toEqual([{ depth: 2, slug: 'krok-1-oddziel-czynności', text: 'Krok 1: oddziel czynności' }]);
+  });
+});
+
+describe('przypisy', () => {
+  it('[n] w tekście to odsyłacz do n-tego źródła, także kilka numerów i zakres', async () => {
+    const wynik = await html('Przezbrojenie trwa 47 min [1]. Dwa badania [2, 3] i zakres [4–5].');
+    expect(wynik).toContain('<sup class="przypis">[<a href="#zrodlo-1" aria-label="Źródło 1">1</a>]</sup>');
+    expect(wynik).toContain('<a href="#zrodlo-2" aria-label="Źródło 2">2</a>, <a href="#zrodlo-3" aria-label="Źródło 3">3</a>]');
+    expect(wynik.match(/href="#zrodlo-[45]"/g)).toHaveLength(2);
+  });
+
+  it('zapis z panelu z ukośnikami (\\[1\\]) działa tak samo', async () => {
+    expect(await html('Dane GUS \\[1\\].')).toContain('href="#zrodlo-1"');
+  });
+
+  it('bez przypisów w kodzie, linkach i śródtytułach', async () => {
+    const wynik = await html('`kod [1]` i [link [2]](https://example.com)\n\n## Krok [3]');
+    expect(wynik).not.toContain('przypis');
+  });
+
+  it('numery: lista i zakres', () => {
+    expect(numeryPrzypisu('1, 3')).toEqual([1, 3]);
+    expect(numeryPrzypisu('2–4')).toEqual([2, 3, 4]);
+    expect(numeryPrzypisu('7')).toEqual([7]);
+  });
+});
+
+describe('rysunki', () => {
+  it('obraz z tytułem to rysunek z podpisem; opis zostaje tekstem alternatywnym', async () => {
+    const wynik = await html('![Wykres strat](./x.png "Rysunek 1. Połowa czasu to czekanie. Źródło: dane fikcyjne.")');
+    expect(wynik).toMatch(/^<figure class="rysunek"><img [^>]*alt[^>]*Wykres strat[^>]*><figcaption>Rysunek 1\. Połowa czasu to czekanie\. Źródło: dane fikcyjne\.<\/figcaption><\/figure>/);
+  });
+
+  it('obraz bez tytułu zostaje zwykłym obrazem', async () => {
+    expect(await html('![Wykres](./x.png)')).not.toContain('<figure');
   });
 });

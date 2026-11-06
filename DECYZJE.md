@@ -92,3 +92,18 @@ Każda decyzja z datą i uzasadnieniem. Decyzje „Patryk” czekają na jego s�
 ### Przed publicznym startem
 - Do bramki startu (F8) teksty czekają w gałęziach przepływu redakcyjnego (podgląd z `noindex`) albo mają `szkic: true`; na `main` trafia tylko to, co ma być publiczne.
 
+## 2026-11-06 — Skill `/artykul`: jak powstają teksty
+
+Patryk: treści mają opierać się na faktach i badaniach, mieć zdjęcie z otwartej licencji i być lepsze niż Harvard Business Review. Decyzje redakcji:
+- **Jeden skill z procesem i bramkami, a nie „pisarz”**: brief i teza → research → konspekt z rejestrem twierdzeń → pisanie → zdjęcie → weryfikacja niezależna → kontrola automatyczna → karta jakości → oddanie szkicu. Pliki: `.claude/skills/artykul/` (SKILL.md, standard, dowody, styl, zdjęcia, weryfikacja, wzór teczki). Teczka każdego tekstu w `redakcja/<slug>/teczka.md`: źródła, rejestr twierdzeń, weryfikacja, decyzje (ślad pracy na potrzeby poprawek).
+- **„Lepiej niż HBR” mierzalnie**: przypis przy każdej liczbie i każdym wniosku z badania (klikalny, prowadzi do źródła na liście), skala siły dowodów A–D, przeciwdowody i granice w każdym tekście, niezależna weryfikacja faktów (dwa agenty z czystym kontekstem: weryfikator i recenzent), polski kontekst, analiza własna na danych publicznych, działanie na ten tydzień, jawna metoda pod tekstem. Wytyczne HBR sprawdzone u źródła (pięć cech i pięć pytań propozycji); HBR prosi o ujawnienie powiązań finansowych i użycia AI tylko redakcję, my mówimy o nich czytelnikowi.
+- **Przypisy `[n]` w Markdownie** zamiast linków w zdaniach: wtyczka Sätteri robi z nich odsyłacze do listy źródeł (`#zrodlo-n`), a kontrola tekstu w CI nie przepuści nietestowego artykułu z liczbą bez przypisu albo z oznaczenia „dane fikcyjne”, z przypisem bez źródła, ze źródłem bez przypisu ani z frazami z tekstów generowanych.
+- **Nowe pola artykułu**: `zrodla[].rodzaj` i `zrodla[].dostep`, `sprawdzono` (data pełnej weryfikacji) i `metoda`. Ramka „Jak powstał ten tekst” pokazuje metodę, liczbę źródeł według rodzaju i datę weryfikacji; źródła trafiają też do danych strukturalnych (`citation`).
+- **Rysunki z podpisem**: obraz z tytułem w Markdownie staje się `<figure>` z `<figcaption>`; wykresy jako SVG w `src/assets/rysunki/`.
+- **Zdjęcia**: skrypt szuka w Openverse i Wikimedia Commons tylko licencji z rejestru, robi stykówkę do oceny wzrokowej i wpis do rejestru; licencję redakcja potwierdza na stronie źródła. Próba na frazie „cnc machining” od razu pokazała dwa zdjęcia z logo producentów do odrzucenia, więc ocena wzrokowa jest obowiązkowa.
+- **Źródła sprawdzane automatycznie**: adres, metadane DOI z Crossref i wycofania (pole `updated-by` z danymi Retraction Watch; sprawdzone na wycofanej pracy z „Lancetu”).
+- **Autor domyślnie „Redakcja Rytmu Hali”**, a Patryk podpisuje tylko teksty, które napisał albo przeredagował i przyjął jako swoje; użycie AI opisane w ramce metody. **Do decyzji Patryka** (STAN.md).
+- **Niezależność redakcji**: w tekstach redakcyjnych bez reklamy i linków do usług Patryka; konflikt interesów w ramce metody.
+- **Wywiady tylko z prawdziwych rozmów**, z autoryzacją dosłownych cytatów według Prawa prasowego (art. 14a, sprawdzony w tekście jednolitym Dz.U. 2018 poz. 1914; dawny art. 14 ust. 2 jest uchylony).
+- **Źródła badań dostępne bez kont**: Crossref, Eurostat, API Sejmu, Openverse, Wikimedia Commons (z limitem), wyszukiwarka. OpenAlex wymaga od 2026 r. darmowego klucza (konto Patryka, opcjonalnie); GUS BDL nie odpowiada z sesji w chmurze, działa z komputera Patryka.
+

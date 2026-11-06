@@ -1,0 +1,70 @@
+---
+// Ramka „Jak powstał ten tekst”: metoda redakcji, liczba źródeł według rodzaju, data pełnej weryfikacji faktów.
+// Przejrzystość ponad standard magazynów biznesowych: czytelnik widzi, na czym opiera się tekst (skill /artykul).
+import { dataDluga, datetime } from '../../lib/daty';
+import { RODZAJE_ZRODEL } from '../../lib/model';
+import ustawienia from '../../data/ustawienia.json';
+
+interface Props {
+  metoda?: string;
+  sprawdzono?: Date;
+  zrodla: { rodzaj?: string }[];
+}
+const { metoda, sprawdzono, zrodla } = Astro.props;
+// Nazwy w liczbie mnogiej, żeby nie odmieniać ich przez liczebniki („badania recenzowane: 5”).
+const MNOGIE: Record<(typeof RODZAJE_ZRODEL)[number], string> = {
+  'Badanie recenzowane': 'badania recenzowane',
+  'Przegląd lub metaanaliza': 'przeglądy i metaanalizy',
+  'Dane publiczne': 'dane publiczne',
+  'Przepis lub norma': 'przepisy i normy',
+  Książka: 'książki',
+  'Raport instytucji': 'raporty instytucji',
+  'Raport firmy': 'raporty firm',
+  Rozmowa: 'rozmowy',
+  Inne: 'inne',
+};
+const liczby = RODZAJE_ZRODEL.map((r) => ({ nazwa: MNOGIE[r], ile: zrodla.filter((z) => z.rodzaj === r).length })).filter((x) => x.ile > 0);
+const pokaz = Boolean(metoda || sprawdzono || liczby.length);
+---
+{pokaz && (
+  <aside class="metoda" aria-labelledby="jak-powstal">
+    <h2 id="jak-powstal" class="metoda-tytul">Jak powstał ten tekst</h2>
+    {metoda && <p>{metoda}</p>}
+    {liczby.length > 0 && (
+      <p>
+        <strong>Źródła ({zrodla.length}):</strong> {liczby.map((x) => `${x.nazwa}: ${x.ile}`).join(' · ')}. Każde jest na liście poniżej, a przypisy w tekście prowadzą wprost do niego.
+      </p>
+    )}
+    {sprawdzono && (
+      <p>
+        <strong>Fakty sprawdzone:</strong> <time datetime={datetime(sprawdzono)}>{dataDluga(sprawdzono)}</time>. Widzisz błąd? Napisz:
+        <a href={`mailto:${ustawienia.emailRedakcji}`} class="font-semibold text-akcent-tekst underline underline-offset-2">{ustawienia.emailRedakcji}</a>.
+      </p>
+    )}
+  </aside>
+)}
+
+<style>
+  .metoda {
+    margin-top: 2.5rem;
+    padding: 1.25rem;
+    background: var(--color-tlo-szare);
+    border-left: 4px solid var(--color-grafit);
+    font-size: 0.9375rem;
+    line-height: 1.6;
+  }
+  .metoda > * + * {
+    margin-top: 0.5rem;
+  }
+  .metoda-tytul {
+    /* Bez marginesu śródtytułu treści (.tresc h2): to nagłówek ramki. */
+    margin-top: 0;
+    font-family: var(--font-display);
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--color-tekst);
+  }
+  .metoda strong {
+    color: var(--color-tekst);
+  }
+</style>
