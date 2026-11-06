@@ -82,5 +82,23 @@
     "adres": "https://hal.science/hal-00512884",
     "rodzaj": "Badanie recenzowane",
     "dostep": "2026-11-06"
+  },
+  "jagusiak": {
+    "opis": "Jagusiak-Kocik M., Knop K., Sikora Ł. (2016), Ocena poprawy wskaźnika OEE i jego składowych w procesie mieszania emalii poliwinylowej, Zeszyty Naukowe Quality. Production. Improvement, nr 1(4), s. 66–79.",
+    "adres": "https://www.qpi-journal.pl/files/No.-1-4----06.-K.-Knop,-M.-Jagusiak-Kocik-M.,--.-Sikora.pdf",
+    "rodzaj": "Badanie recenzowane",
+    "dostep": "2026-11-06"
+  },
+  "evocon": {
+    "opis": "Devonshire J. (2024, aktualizacja 2026), World-Class OEE: Industry Benchmarks From More Than 50 Countries, Evocon (strona dostawcy oprogramowania do pomiaru OEE; dane klientów firmy).",
+    "adres": "https://evocon.com/articles/world-class-oee-industry-benchmarks-from-more-than-50-countries/",
+    "rodzaj": "Raport firmy",
+    "dostep": "2026-11-06"
+  },
+  "muchiri": {
+    "opis": "Muchiri P., Pintelon L. (2008), Performance measurement using overall equipment effectiveness (OEE): literature review and practical application discussion, International Journal of Production Research, 46(13), 3517–3535 (wersja rękopisu w archiwum HAL).",
+    "adres": "https://hal.science/hal-00512968",
+    "rodzaj": "Przegląd lub metaanaliza",
+    "dostep": "2026-11-06"
   }
 }

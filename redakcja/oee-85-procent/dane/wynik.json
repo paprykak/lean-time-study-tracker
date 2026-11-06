@@ -54,5 +54,15 @@
     "strataJakosci": 7.5,
     "wPelniProduktywny": 252.5,
     "udzial": 0.5611111111111111
+  },
+  "pomocnicze": {
+    "sztukiUtraconeNaTempie": 180,
+    "trzyRazy90": 0.7290000000000001,
+    "z60do85": 1.4166666666666667,
+    "andersson": {
+      "przedStarymCyklem": 0.8522222222222222,
+      "przedNowymCyklem": 0.7211111111111111,
+      "poNowymCyklem": 0.7944444444444444
+    }
   }
 }

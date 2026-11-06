@@ -52,5 +52,18 @@ const proc = (x) => `${(100 * x).toFixed(1).replace('.', ',')}%`;
 for (const w of warianty) {
   console.log(`${w.nazwa}\n  czas planowany ${w.czasPlanowany} min, praca ${w.czasPracy} min | dostępność ${proc(w.dostepnosc)}, wydajność ${proc(w.wydajnosc)}, jakość ${proc(w.jakosc)} → OEE ${proc(w.oee)}`);
 }
+// Rachunki pomocnicze do tekstu.
+const sztukiUtraconeNaTempie = (drzewo.strataTempa * 60) / cykl.nominalnyS; // 90 min w cyklu producenta
+const trzyRazy90 = 0.9 ** 3;
+const z60do85 = 0.85 / 0.6; // ile więcej sztuk przy tym samym czasie i tej samej definicji
+// Andersson i Bellgran (2011): linia 118 szt./h przy cyklu idealnym 26 s (OEE 86%), po usprawnieniu 130 szt./h
+// przy cyklu 22 s (OEE 79%). Ile wyszłoby OEE sprzed zmiany, gdyby liczyć je nowym cyklem 22 s?
+const andersson = {
+  przedStarymCyklem: (118 * 26) / 3600, // ok. 0,85 (autorzy: 86%)
+  przedNowymCyklem: (118 * 22) / 3600, // ok. 0,72
+  poNowymCyklem: (130 * 22) / 3600, // ok. 0,79 (autorzy: 79%)
+};
+const pomocnicze = { sztukiUtraconeNaTempie, trzyRazy90, z60do85, andersson };
 console.log('Wariant 1 w minutach:', drzewo);
-writeFileSync(new URL('./wynik.json', import.meta.url), JSON.stringify({ zmiana, cykl, warianty, minutyWariantu1: drzewo }, null, 2));
+console.log('Rachunki pomocnicze:', pomocnicze);
+writeFileSync(new URL('./wynik.json', import.meta.url), JSON.stringify({ zmiana, cykl, warianty, minutyWariantu1: drzewo, pomocnicze }, null, 2));
