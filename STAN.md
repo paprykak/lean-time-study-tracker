@@ -3,7 +3,7 @@
 Pamięć robocza projektu. Czyta ją i aktualizuje każda sesja na początku i na końcu pracy.
 
 ## Teraz
-- **Faza:** F0 gotowa. F1 gotowa i **czeka na akceptację wyglądu** (bramka). Bez akceptacji nie zaczynamy szablonów (F3); F2 (model treści i panel) może ruszyć zaraz po akceptacji.
+- **Faza:** F0 i F1 gotowe, **F1 zaakceptowana przez Patryka 2026-11-06** (z kursem: artykuły w stylu HBR, nie wiadomości). Teraz F2: model treści i panel redakcyjny.
 - **Gałąź robocza:** `ccr-a1f628ee-snc89w` (sesja w chmurze). `main` bez zmian: nadal stara aplikacja Lean Time Study Tracker, do pierwszego „wdrażaj”.
 - **Do obejrzenia:** podgląd strony głównej i artykułu (`raporty/podglad/`, strony `/podglad/strona-glowna` i `/podglad/artykul`), strona wzorów `/styleguide` (lokalnie `npm run dev` → http://localhost:4321/styleguide) i zrzuty w `raporty/F1/`.
 - **Ostatnia sesja:** 2026-11-06. Repozytorium wyczyszczone i zaadaptowane, fundament Astro 7, fonty, tokeny, logo (odtworzenie koncepcji C), 20 komponentów, `/styleguide`, „Wkrótce” (szkic), 404, testy. `npm run check` zielone lokalnie i w GitHub Actions (tam także iPhone/WebKit: 60 testów E2E na 3 urządzeniach, 52 zaliczone, 8 celowo pominiętych, np. test klawiatury na telefonie).
@@ -21,7 +21,7 @@ Pamięć robocza projektu. Czyta ją i aktualizuje każda sesja na początku i n
 
 ## Do zrobienia przez Patryka
 Od góry według pilności. Każdy punkt to jedna czynność.
-- [ ] **Akceptacja wyglądu F1:** obejrzyj zrzuty w `raporty/F1/` (albo `/styleguide`) i napisz „akceptuję” albo co zmienić.
+- [x] ~~Akceptacja wyglądu F1~~ (2026-11-06).
 - [x] ~~Zgoda na zdjęcia~~ (2026-11-06: dopuszczone CC0, CC BY, Unsplash, Pexels; wybór powierzony redakcji, 10 zdjęć w rejestrze).
 - [x] ~~Logo po szlifie~~ (2026-11-06: Patryk zaakceptował wersję z podtytułem wersalikami).
 - [ ] **Makiety (opcjonalnie):** skopiuj `makiety/` z `/home/patryk/Pulpit/rytm-hali/` do repozytorium; pomogą porównać szablony F3 z drugą makietą. Logo z repozytorium jest zaakceptowane, oryginały logo nie są potrzebne.

@@ -2,7 +2,7 @@
 // Podgląd szablonu strony głównej (F3) z komponentów F1 i treści przykładowych. Noindex, poza mapą strony.
 // Docelowo dobór treści: najnowsze, wyróżnione ręcznie w panelu, najczęściej czytane z Umami albo ręcznie.
 import Uklad from '../../layouts/Uklad.astro';
-import NaZmianie from '../../components/NaZmianie.astro';
+import PasekTematow from '../../components/PasekTematow.astro';
 import SlotReklamowy from '../../components/SlotReklamowy.astro';
 import NaglowekSekcji from '../../components/NaglowekSekcji.astro';
 import NajczesciejCzytane from '../../components/NajczesciejCzytane.astro';
@@ -12,7 +12,7 @@ import KartaBoczna from '../../components/karty/KartaBoczna.astro';
 import KartaSiatka from '../../components/karty/KartaSiatka.astro';
 import KartaLista from '../../components/karty/KartaLista.astro';
 import PodgladInfo from '../../components/PodgladInfo.astro';
-import { GLOWNY, KOLUMNY, NA_ZMIANIE_PODGLAD, NAJCZESCIEJ_PODGLAD, NAJNOWSZE, OBOK_GLOWNEGO, SEKCJA_MAGAZYN, SEKCJA_PRODUKCJA } from '../../data/podglad';
+import { GLOWNY, KOLUMNY, NAJCZESCIEJ_PODGLAD, NAJNOWSZE, OBOK_GLOWNEGO, SEKCJA_MAGAZYN, SEKCJA_PRODUKCJA } from '../../data/podglad';
 
 const sekcje = [
   { id: 'sekcja-produkcja', tytul: 'Produkcja', adres: '/dzial/produkcja', ...SEKCJA_PRODUKCJA },
@@ -20,7 +20,7 @@ const sekcje = [
 ];
 ---
 <Uklad tytul="Podgląd: strona główna | Rytm Hali" opis="Podgląd szablonu strony głównej Rytmu Hali z treściami przykładowymi (strona wewnętrzna)." noindex>
-  <NaZmianie slot="pod-naglowkiem" pozycje={NA_ZMIANIE_PODGLAD} />
+  <PasekTematow slot="pod-naglowkiem" />
 
   <h1 class="sr-only">Rytm Hali: niezależne medium o operacjach</h1>
   <div class="kontener">
@@ -53,7 +53,7 @@ const sekcje = [
             <div class="mt-4 grid gap-6 md:grid-cols-2">
               <KartaSiatka artykul={s.wiodacy} zLeadem szerokosc={400} />
               <div class="[&>article:first-child]:border-t-0 [&>article:first-child]:pt-0">
-                {s.lista.map((x) => <KartaLista artykul={x} />)}
+                {s.lista.map((x) => <KartaLista artykul={x} bezDzialu />)}
               </div>
             </div>
           </section>
@@ -78,7 +78,7 @@ const sekcje = [
         <section aria-labelledby={`kolumna-${i}`}>
           <NaglowekSekcji tytul={k.dzial.nazwa} id={`kolumna-${i}`} link={{ nazwa: 'Więcej', adres: k.dzial.adres }} />
           <div class="mt-2 [&>article:first-child]:border-t-0">
-            {k.lista.map((x) => <KartaLista artykul={x} />)}
+            {k.lista.map((x) => <KartaLista artykul={x} bezDzialu />)}
           </div>
         </section>
       ))}

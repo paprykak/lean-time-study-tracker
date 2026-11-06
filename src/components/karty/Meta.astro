@@ -3,15 +3,23 @@
 import { czasCzytaniaTekst, dataDluga, datetime } from '../../lib/daty';
 interface Props {
   data: Date;
+  /** Na kartach magazynu bez daty (autor i czas czytania); data jest na stronie artykułu. */
+  bezDaty?: boolean;
   autor?: string;
   czasCzytania?: number;
   naCiemnym?: boolean;
   class?: string;
 }
-const { data, autor, czasCzytania, naCiemnym = false, class: klasa } = Astro.props;
+const { data, bezDaty = false, autor, czasCzytania, naCiemnym = false, class: klasa } = Astro.props;
+const elementy = [!bezDaty && 'data', autor && 'autor', czasCzytania && 'czas'].filter(Boolean);
 ---
 <p class:list={['meta flex flex-wrap items-center gap-x-2', { 'text-tekst-na-ciemnym-drugi': naCiemnym }, klasa]}>
-  <time datetime={datetime(data)}>{dataDluga(data)}</time>
-  {autor && <><span aria-hidden="true">·</span><span>{autor}</span></>}
-  {czasCzytania && <><span aria-hidden="true">·</span><span>{czasCzytaniaTekst(czasCzytania)}</span></>}
+  {elementy.map((e, i) => (
+    <>
+      {i > 0 && <span aria-hidden="true">·</span>}
+      {e === 'data' && <time datetime={datetime(data)}>{dataDluga(data)}</time>}
+      {e === 'autor' && <span>{autor}</span>}
+      {e === 'czas' && <span>{czasCzytaniaTekst(czasCzytania!)}</span>}
+    </>
+  ))}
 </p>

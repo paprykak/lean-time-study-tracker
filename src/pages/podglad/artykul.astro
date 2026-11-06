@@ -13,6 +13,7 @@ import Udostepnij from '../../components/Udostepnij.astro';
 import Zdjecie from '../../components/Zdjecie.astro';
 import KartaSiatka from '../../components/karty/KartaSiatka.astro';
 import PodgladInfo from '../../components/PodgladInfo.astro';
+import PasekTematow from '../../components/PasekTematow.astro';
 import NaglowekArtykulu from '../../components/artykul/NaglowekArtykulu.astro';
 import SpisTresci from '../../components/artykul/SpisTresci.astro';
 import RamkaDoPobrania from '../../components/artykul/RamkaDoPobrania.astro';
@@ -37,6 +38,7 @@ const SPIS = [
 const powiazane = [SEKCJA_PRODUKCJA.wiodacy, NAJNOWSZE[3], NAJNOWSZE[0]];
 ---
 <Uklad tytul="Podgląd: artykuł | Rytm Hali" opis="Podgląd szablonu artykułu Rytmu Hali z treścią przykładową (strona wewnętrzna)." noindex typ="article" aktywny="produkcja">
+  <PasekTematow slot="pod-naglowkiem" aktywny="smed" />
   <div class="kontener">
     <PodgladInfo szablon="artykułu" />
     <Okruszki class="mt-2" pozycje={[{ nazwa: 'Produkcja', adres: '/dzial/produkcja' }, { nazwa: GLOWNY.tytul }]} />

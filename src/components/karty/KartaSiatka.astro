@@ -24,6 +24,6 @@ const Tytul = poziom;
       <a href={artykul.adres} class="karta-link karta-tytul">{artykul.tytul}</a>
     </Tytul>
     {zLeadem && artykul.lead && <p class="mt-2 text-[0.9375rem] leading-relaxed">{artykul.lead}</p>}
-    <Meta data={artykul.data} autor={artykul.autor} class="mt-2" />
+    <Meta data={artykul.data} bezDaty autor={artykul.autor} czasCzytania={artykul.czasCzytania} class="mt-2" />
   </div>
 </article>

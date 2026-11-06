@@ -26,6 +26,8 @@ export interface ArtykulKarta {
   adres: string;
   lead?: string;
   kategoria?: Odnosnik;
+  /** Format tekstu: Poradnik, Analiza, Wywiad, Raport, Wzór do pobrania, Komentarz (pole, nie dział). */
+  format?: string;
   data: Date;
   autor?: string;
   czasCzytania?: number;

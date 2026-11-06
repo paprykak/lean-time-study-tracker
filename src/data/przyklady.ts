@@ -14,6 +14,7 @@ export const ARTYKULY: ArtykulKarta[] = [
   {
     tytul: 'Przezbrojenie krótsze o połowę bez nowych maszyn: SMED krok po kroku',
     adres: '/przyklad-smed',
+    format: 'Poradnik',
     lead: 'Większość czasu przezbrojenia to czynności, które można zrobić, zanim maszyna stanie. Pokazujemy, jak je wyłowić z nagrania i ułożyć na nowo.',
     kategoria: dzial('produkcja'),
     data: czas('2026-11-06T06:40:00Z'),
@@ -24,6 +25,7 @@ export const ARTYKULY: ArtykulKarta[] = [
   {
     tytul: 'Magazyn w szczycie sezonu: pięć wskaźników, które warto liczyć codziennie',
     adres: '/przyklad-wskazniki-magazynu',
+    format: 'Analiza',
     lead: 'Kompletacja, dokładność, czas od przyjęcia do lokacji, wypełnienie stref i nadgodziny. Jak je liczyć z danych, które już masz.',
     kategoria: dzial('magazyn-i-logistyka'),
     data: czas('2026-11-06T05:15:00Z'),
@@ -34,6 +36,7 @@ export const ARTYKULY: ArtykulKarta[] = [
   {
     tytul: 'Tablica wyników na hali: co pokazywać zmianie, a co kierownictwu',
     adres: '/przyklad-tablica-wynikow',
+    format: 'Poradnik',
     lead: 'Jedna tablica dla wszystkich zwykle nie działa nikomu. Rozdzielamy wskaźniki zmiany od wskaźników zakładu.',
     kategoria: dzial('lean-i-ciagle-doskonalenie'),
     data: czas('2026-11-05T14:20:00Z'),
@@ -44,6 +47,7 @@ export const ARTYKULY: ArtykulKarta[] = [
   {
     tytul: 'Dane z maszyn bez wielkiego wdrożenia: od czego zacząć pomiar OEE',
     adres: '/przyklad-pomiar-oee',
+    format: 'Analiza',
     lead: 'Najpierw definicje przestojów i jedna linia, potem automatyzacja. Kolejność, która oszczędza miesiące.',
     kategoria: dzial('dane-i-ai'),
     data: czas('2026-11-05T09:05:00Z'),
@@ -54,6 +58,7 @@ export const ARTYKULY: ArtykulKarta[] = [
   {
     tytul: 'Instruktaż stanowiskowy dla nowych pracowników: jak skrócić wdrożenie na zmianie',
     adres: '/przyklad-instruktaz',
+    format: 'Wzór do pobrania',
     lead: 'Cztery kroki instruktażu i karta rozbioru pracy. Bez prezentacji, przy stanowisku.',
     kategoria: dzial('ludzie-i-szkolenia'),
     data: czas('2026-11-04T11:30:00Z'),
@@ -64,6 +69,7 @@ export const ARTYKULY: ArtykulKarta[] = [
   {
     tytul: 'Automatyczne wózki w magazynie średniej wielkości: koszty i pierwsze miesiące po uruchomieniu',
     adres: '/przyklad-material-partnera',
+    format: 'Raport',
     lead: 'Materiał przygotowany przez partnera. Redakcja nie odpowiada za jego treść.',
     data: czas('2026-11-04T08:00:00Z'),
     partner: 'Partner przykładowy',
@@ -77,12 +83,5 @@ export const DLUGI_TYTUL: ArtykulKarta = {
   adres: '/przyklad-dlugi-tytul',
   zdjecie: zdjecie('hala-pusta'),
 };
-
-export const NA_ZMIANIE = [
-  { tytul: 'Przykładowa krótka wiadomość z działu Produkcja, jedna linia na pasku', adres: '/przyklad-wiadomosc-1', data: czas('2026-11-06T07:55:00Z') },
-  { tytul: 'Druga wiadomość: zmiana w harmonogramie przykładowego wydarzenia branżowego', adres: '/przyklad-wiadomosc-2', data: czas('2026-11-06T06:10:00Z') },
-  { tytul: 'Trzecia wiadomość z działu Magazyn i logistyka', adres: '/przyklad-wiadomosc-3', data: czas('2026-11-05T15:30:00Z') },
-  { tytul: 'Czwarta wiadomość, na komputerze widoczna w całości, na telefonie po przewinięciu', adres: '/przyklad-wiadomosc-4', data: czas('2026-11-05T12:00:00Z') },
-];
 
 export const NAJCZESCIEJ = ARTYKULY.slice(0, 5).map((a) => ({ tytul: a.tytul, adres: a.adres }));

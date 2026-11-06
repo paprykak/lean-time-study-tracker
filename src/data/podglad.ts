@@ -11,17 +11,24 @@ const dzial = (slug: string) => {
 const czas = (iso: string) => new Date(iso);
 const R = 'Redakcja Rytmu Hali';
 
+const FORMATY = ['Poradnik', 'Analiza', 'Wywiad', 'Raport', 'Wzór do pobrania', 'Komentarz'] as const;
+let licznik = 0;
+// Format i czas czytania rozłożone równo po przykładach, żeby podgląd pokazywał wszystkie formaty.
 const a = (tytul: string, slug: string, dz: string, iso: string, extra: Partial<ArtykulKarta> = {}): ArtykulKarta => ({
   tytul,
   adres: `/przyklad-${slug}`,
   kategoria: dzial(dz),
+  format: FORMATY[licznik % FORMATY.length],
+  czasCzytania: 4 + ((licznik++ * 3) % 9),
   data: czas(iso),
-  autor: R,
+  autor: licznik % 3 === 0 ? 'Patryk Korpyta' : R,
   ...extra,
 });
 
 export const GLOWNY = a('Przezbrojenie krótsze o połowę bez nowych maszyn: SMED krok po kroku', 'smed', 'produkcja', '2026-11-06T06:40:00Z', {
   lead: 'Większość czasu przezbrojenia to czynności, które można zrobić, zanim maszyna stanie. Pokazujemy, jak je wyłowić z nagrania i ułożyć na nowo.',
+  format: 'Poradnik',
+  autor: 'Patryk Korpyta',
   czasCzytania: 9,
   zdjecie: zdjecie('robot-spawalniczy'),
 });
@@ -103,13 +110,6 @@ export const KOLUMNY = [
       a('Rotacja na stanowiskach: kiedy pomaga, a kiedy tylko przenosi problem', 'rotacja', 'ludzie-i-szkolenia', '2026-10-26T09:00:00Z'),
     ],
   },
-];
-
-export const NA_ZMIANIE_PODGLAD = [
-  { tytul: 'Nowy wzór do pobrania: karta obserwacji przezbrojenia', adres: '/przyklad-wzor-karta', data: czas('2026-11-06T07:55:00Z') },
-  { tytul: 'Raport zmianowy: zapisy na listę oczekujących otwarte', adres: '/przyklad-raport-zmianowy', data: czas('2026-11-06T06:10:00Z') },
-  { tytul: 'Korekta: poprawiliśmy definicję czasu cyklu w poradniku o OEE', adres: '/przyklad-korekta', data: czas('2026-11-05T15:30:00Z') },
-  { tytul: 'W dziale Dane i AI: słownik przestojów do wspólnych definicji', adres: '/przyklad-slownik', data: czas('2026-11-05T12:00:00Z') },
 ];
 
 export const NAJCZESCIEJ_PODGLAD = [GLOWNY, ...OBOK_GLOWNEGO, NAJNOWSZE[0]].map((x) => ({ tytul: x.tytul, adres: x.adres }));

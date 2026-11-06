@@ -6,35 +6,137 @@
   "emailRedakcji": "redakcja@rytmhali.pl",
   "redaktorNaczelny": "Patryk Korpyta",
   "dzialy": [
-    { "slug": "produkcja", "nazwa": "Produkcja", "nazwaMenu": "Produkcja" },
-    { "slug": "magazyn-i-logistyka", "nazwa": "Magazyn i logistyka", "nazwaMenu": "Magazyn i logistyka" },
-    { "slug": "lean-i-ciagle-doskonalenie", "nazwa": "Lean i ciągłe doskonalenie", "nazwaMenu": "Lean" },
-    { "slug": "dane-i-ai", "nazwa": "Dane i AI", "nazwaMenu": "Dane i AI" },
-    { "slug": "ludzie-i-szkolenia", "nazwa": "Ludzie i szkolenia", "nazwaMenu": "Ludzie i szkolenia" }
+    {
+      "slug": "produkcja",
+      "nazwa": "Produkcja",
+      "nazwaMenu": "Produkcja"
+    },
+    {
+      "slug": "magazyn-i-logistyka",
+      "nazwa": "Magazyn i logistyka",
+      "nazwaMenu": "Magazyn i logistyka"
+    },
+    {
+      "slug": "lean-i-ciagle-doskonalenie",
+      "nazwa": "Lean i ciągłe doskonalenie",
+      "nazwaMenu": "Lean"
+    },
+    {
+      "slug": "dane-i-ai",
+      "nazwa": "Dane i AI",
+      "nazwaMenu": "Dane i AI"
+    },
+    {
+      "slug": "ludzie-i-szkolenia",
+      "nazwa": "Ludzie i szkolenia",
+      "nazwaMenu": "Ludzie i szkolenia"
+    }
   ],
-  "menuDodatkowe": [{ "nazwa": "Do pobrania", "adres": "/do-pobrania" }],
+  "menuDodatkowe": [
+    {
+      "nazwa": "Do pobrania",
+      "adres": "/do-pobrania"
+    }
+  ],
+  "tematyWyroznione": [
+    {
+      "nazwa": "SMED i przezbrojenia",
+      "slug": "smed"
+    },
+    {
+      "nazwa": "OEE",
+      "slug": "oee"
+    },
+    {
+      "nazwa": "Kompletacja",
+      "slug": "kompletacja"
+    },
+    {
+      "nazwa": "Gemba",
+      "slug": "gemba"
+    },
+    {
+      "nazwa": "Standard pracy",
+      "slug": "standard-pracy"
+    },
+    {
+      "nazwa": "Matryca kompetencji",
+      "slug": "matryca-kompetencji"
+    },
+    {
+      "nazwa": "AI w planowaniu",
+      "slug": "ai-w-planowaniu"
+    }
+  ],
   "pasekGorny": [
-    { "nazwa": "Raport zmianowy", "adres": "/newsletter" },
-    { "nazwa": "Reklama i współpraca", "adres": "/reklama" },
-    { "nazwa": "O nas", "adres": "/o-nas" },
-    { "nazwa": "Kontakt", "adres": "/kontakt" }
+    {
+      "nazwa": "Raport zmianowy",
+      "adres": "/newsletter"
+    },
+    {
+      "nazwa": "Reklama i współpraca",
+      "adres": "/reklama"
+    },
+    {
+      "nazwa": "O nas",
+      "adres": "/o-nas"
+    },
+    {
+      "nazwa": "Kontakt",
+      "adres": "/kontakt"
+    }
   ],
   "stopka": {
     "serwis": [
-      { "nazwa": "O nas i redakcja", "adres": "/o-nas" },
-      { "nazwa": "Zasady redakcyjne", "adres": "/zasady-redakcyjne" },
-      { "nazwa": "Polityka korekt", "adres": "/polityka-korekt" },
-      { "nazwa": "Oznaczanie reklam", "adres": "/oznaczanie-reklam" },
-      { "nazwa": "Jak używamy AI", "adres": "/jak-uzywamy-ai" },
-      { "nazwa": "Kontakt", "adres": "/kontakt" }
+      {
+        "nazwa": "O nas i redakcja",
+        "adres": "/o-nas"
+      },
+      {
+        "nazwa": "Zasady redakcyjne",
+        "adres": "/zasady-redakcyjne"
+      },
+      {
+        "nazwa": "Polityka korekt",
+        "adres": "/polityka-korekt"
+      },
+      {
+        "nazwa": "Oznaczanie reklam",
+        "adres": "/oznaczanie-reklam"
+      },
+      {
+        "nazwa": "Jak używamy AI",
+        "adres": "/jak-uzywamy-ai"
+      },
+      {
+        "nazwa": "Kontakt",
+        "adres": "/kontakt"
+      }
     ],
     "wspolpraca": [
-      { "nazwa": "Reklama i współpraca", "adres": "/reklama" },
-      { "nazwa": "Raport zmianowy", "adres": "/newsletter" },
-      { "nazwa": "Do pobrania", "adres": "/do-pobrania" },
-      { "nazwa": "Kanał RSS", "adres": "/rss.xml" }
+      {
+        "nazwa": "Reklama i współpraca",
+        "adres": "/reklama"
+      },
+      {
+        "nazwa": "Raport zmianowy",
+        "adres": "/newsletter"
+      },
+      {
+        "nazwa": "Do pobrania",
+        "adres": "/do-pobrania"
+      },
+      {
+        "nazwa": "Kanał RSS",
+        "adres": "/rss.xml"
+      }
     ],
-    "prawne": [{ "nazwa": "Polityka prywatności", "adres": "/polityka-prywatnosci" }]
+    "prawne": [
+      {
+        "nazwa": "Polityka prywatności",
+        "adres": "/polityka-prywatnosci"
+      }
+    ]
   },
   "newsletter": {
     "nazwa": "Raport zmianowy",

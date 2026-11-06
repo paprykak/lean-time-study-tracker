@@ -3,7 +3,7 @@
 import Zdjecie from '../Zdjecie.astro';
 import Etykieta from './Etykieta.astro';
 import type { ArtykulKarta } from '../../lib/typy';
-import { dataDluga, datetime } from '../../lib/daty';
+import { czasCzytaniaTekst, dataDluga, datetime } from '../../lib/daty';
 
 interface Props {
   artykul: ArtykulKarta;
@@ -20,6 +20,6 @@ const Tytul = poziom;
     <Tytul class="tytul-s mt-1">
       <a href={artykul.adres} class="karta-link karta-tytul">{artykul.tytul}</a>
     </Tytul>
-    <p class="meta mt-1"><time datetime={datetime(artykul.data)}>{dataDluga(artykul.data)}</time></p>
+    <p class="meta mt-1">{artykul.czasCzytania ? czasCzytaniaTekst(artykul.czasCzytania) : <time datetime={datetime(artykul.data)}>{dataDluga(artykul.data)}</time>}</p>
   </div>
 </article>

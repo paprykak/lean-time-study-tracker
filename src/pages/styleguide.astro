@@ -2,7 +2,7 @@
 // /styleguide (noindex): tokeny, typografia i wszystkie komponenty w stanach (najechanie, fokus, pusty, długi tytuł).
 // Na tej stronie Patryk akceptuje wygląd przed budową szablonów (bramka F1). Treści przykładowe są fikcyjne.
 import Uklad from '../layouts/Uklad.astro';
-import NaZmianie from '../components/NaZmianie.astro';
+import PasekTematow from '../components/PasekTematow.astro';
 import NaglowekSekcji from '../components/NaglowekSekcji.astro';
 import NajczesciejCzytane from '../components/NajczesciejCzytane.astro';
 import SlotReklamowy from '../components/SlotReklamowy.astro';
@@ -18,7 +18,7 @@ import KartaBoczna from '../components/karty/KartaBoczna.astro';
 import KartaSiatka from '../components/karty/KartaSiatka.astro';
 import KartaLista from '../components/karty/KartaLista.astro';
 import Meta from '../components/karty/Meta.astro';
-import { ARTYKULY, DLUGI_TYTUL, NA_ZMIANIE, NAJCZESCIEJ } from '../data/przyklady';
+import { ARTYKULY, DLUGI_TYTUL, NAJCZESCIEJ } from '../data/przyklady';
 import { dostepne, zdjecie } from '../lib/zdjecia';
 import { tokenyKolorow } from '../lib/tokeny';
 import { kontrast, zapisKontrastu } from '../lib/kontrast';
@@ -69,7 +69,7 @@ const SPIS = [
   ['siatka', 'Siatka i odstępy'],
   ['logo', 'Logo'],
   ['przyciski', 'Przyciski i pola'],
-  ['na-zmianie', 'Pasek „Na zmianie”'],
+  ['tematy-sg', 'Pasek tematów'],
   ['karty', 'Karty'],
   ['listy', 'Listy i nagłówki sekcji'],
   ['reklamy', 'Sloty reklamowe'],
@@ -94,7 +94,7 @@ const linia = zdjecie('linia-montazu-elektroniki', 'Instrukcje stanowiskowe nad 
 const zdjeciaSerwisu = dostepne();
 ---
 <Uklad tytul="System wizualny | Rytm Hali" opis="Tokeny, typografia i komponenty Rytmu Hali do akceptacji wyglądu (strona wewnętrzna)." noindex aktywny="produkcja">
-  <NaZmianie slot="pod-naglowkiem" pozycje={NA_ZMIANIE} />
+  <PasekTematow slot="pod-naglowkiem" />
 
   <div class="kontener py-8">
     <p class="kategoria">Bramka F1 · do akceptacji</p>
@@ -250,10 +250,10 @@ const zdjeciaSerwisu = dostepne();
       </div>
     </section>
 
-    {/* NA ZMIANIE */}
-    <section aria-labelledby="na-zmianie-sg">
-      <NaglowekSekcji tytul="Pasek „Na zmianie”" id="na-zmianie-sg" />
-      <p class="mt-3 max-w-3xl text-[0.9375rem]">Najnowsze krótkie wiadomości pod nagłówkiem (widoczny na górze tej strony). Bez animacji przewijania. Dziś pokazuje godzinę, wcześniej datę. Bez wiadomości pasek się nie wyświetla.</p>
+    {/* PASEK TEMATÓW */}
+    <section aria-labelledby="tematy-sg">
+      <NaglowekSekcji tytul="Pasek tematów" id="tematy-sg" />
+      <p class="mt-3 max-w-3xl text-[0.9375rem]">Stała nawigacja po zagadnieniach pod nagłówkiem (widoczna na górze tej strony), jak „Topics” w magazynach eksperckich. Zastąpiła pasek „Na zmianie” z godzinami, bo Rytm Hali publikuje artykuły, nie wiadomości. Tematy ustawia redakcja w panelu. Na telefonie przewija się w bok.</p>
     </section>
 
     {/* KARTY */}
@@ -287,7 +287,7 @@ const zdjeciaSerwisu = dostepne();
         <KartaSiatka artykul={{ ...ARTYKULY[4], tytul: 'Stan pusty: zdjęcie jeszcze niewybrane (dozwolony tylko tutaj)', zdjecie: undefined }} szerokosc={290} />
       </div>
 
-      <h3 class="tytul-s mt-10">4. Lista z godziną</h3>
+      <h3 class="tytul-s mt-10">4. Lista bez zdjęć: dział i format, tytuł, autor, czas czytania</h3>
       <div class="mt-3 max-w-xl">
         {ARTYKULY.slice(0, 4).map((a) => <KartaLista artykul={a} />)}
         <KartaLista artykul={ARTYKULY[5]} />

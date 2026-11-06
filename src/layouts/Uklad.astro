@@ -94,9 +94,6 @@ const graf = {
     </main>
     <Stopka wariant={naglowek === 'pelny' ? 'pelna' : 'minimalna'} />
     <script>
-      import { odswiezCzas } from '../scripts/czas';
-      // Etykiety „07:05 / 5 lis” na listach liczone u czytelnika (strona statyczna).
-      odswiezCzas();
       // Tabele z treści przewijane w bok (telefon) muszą być osiągalne klawiaturą (WCAG 2.1.1, axe: scrollable-region-focusable).
       for (const t of document.querySelectorAll<HTMLElement>('.tresc .tabela')) {
         if (t.scrollWidth > t.clientWidth) {

@@ -22,7 +22,7 @@ const Tytul = poziom;
       <a href={artykul.adres} class="karta-link karta-tytul">{artykul.tytul}</a>
     </Tytul>
     {artykul.lead && <p class="karta-glowna-lead mt-3 hidden text-[1.0625rem] leading-relaxed sm:block">{artykul.lead}</p>}
-    <Meta data={artykul.data} autor={artykul.autor} czasCzytania={artykul.czasCzytania} class="karta-glowna-meta mt-3" />
+    <Meta data={artykul.data} bezDaty autor={artykul.autor} czasCzytania={artykul.czasCzytania} class="karta-glowna-meta mt-3" />
   </div>
 </article>
 
@@ -46,10 +46,12 @@ const Tytul = poziom;
       color: var(--color-tekst-na-ciemnym);
       max-width: 40ch;
     }
-    .karta-glowna-tekst :global(.kategoria) {
-      color: var(--color-tekst-na-ciemnym);
+    .karta-glowna-tekst :global(.karta-nad) {
       border-left: 3px solid var(--color-akcent);
       padding-left: 0.5rem;
+    }
+    .karta-glowna-tekst :global(.kategoria) {
+      color: var(--color-tekst-na-ciemnym);
     }
     .karta-glowna-lead {
       color: #e3e7ec;

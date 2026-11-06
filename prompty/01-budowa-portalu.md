@@ -38,7 +38,7 @@ Każda poprzeczka ma test, który ją pilnuje. Bez zielonego testu nie ma „got
   - białe tło, grafit `#1d2530` i `#11161d`, pomarańcz `#e8590c`;
   - fonty Noto Sans i Noto Sans Display (hostowane u siebie);
   - gęsta siatka, zdjęcia;
-  - pasek „Na zmianie”, „Najczęściej czytane”;
+  - pasek „Na zmianie”, „Najczęściej czytane”; *(zmiana 2026-11-06: portal publikuje artykuły, nie wiadomości, styl magazynu w rodzaju Harvard Business Review; pasek „Na zmianie” zastąpiony paskiem tematów, bez godzin publikacji, DECYZJE.md)*
   - newsletter „Raport zmianowy”;
   - oznaczone sloty reklamowe.
 - **Stack:** jak w patrykkorpyta.pl, bo jest sprawdzony:
@@ -289,3 +289,4 @@ Mapa strony dla Google News dopiero wtedy, gdy portal publikuje regularnie (decy
 - 2026-11-06 — Wyszukiwarki Unsplash i Pexels blokują automaty, a ich API wymaga klucza z konta, więc zdjęcia z tych serwisów wymagają klucza od Patryka; do tego czasu źródłem jest Openverse (CC0 i CC BY, także rawpixel) i Wikimedia Commons.
 - 2026-11-06 — Wikimedia odcina zbyt częste pobieranie (HTTP 429) dla całego adresu sesji, więc zdjęcia pobiera jeden skrypt w spokojnym tempie (`npm run zdjecia`), a nie agenci z wieloma równoległymi zapytaniami.
 - 2026-11-06 — opentype.js 2.0 przy części rozmiarów zapisuje współrzędne jako NaN (`toPathData`), więc logo ma własną serializację ścieżek i test, który wyklucza NaN w plikach SVG.
+- 2026-11-06 — Patryk: Rytm Hali publikuje artykuły, nie wiadomości („bardziej jak Harvard Business Review”), więc bez godzin publikacji i bez paska wiadomości; zamiast „Na zmianie” pasek tematów, na kartach dział, format, autor i czas czytania.

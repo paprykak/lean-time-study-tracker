@@ -54,3 +54,12 @@ Każda decyzja z datą i uzasadnieniem. Decyzje „Patryk” czekają na jego s�
 - **Na telefonie okruszki bez bieżącej strony** (długi tytuł łamał ścieżkę); bieżąca strona zostaje w danych strukturalnych.
 - **Style linków w treści tylko dla tekstu właściwego** (akapity, listy, tabele, podpisy), z zerową specyficznością: komponenty w treści (reklama, ramka do pobrania, spis treści) zachowują własny wygląd.
 - Podglądy (`/podglad/strona-glowna`, `/podglad/artykul`) mają noindex w `<meta>` i nagłówku, są poza mapą strony i w pełnych testach (axe, 320 px, CSP, Lighthouse). W F3 zastąpią je prawdziwe szablony z kolekcji treści.
+
+### Kurs redakcyjny: artykuły, nie wiadomości (2026-11-06, Patryk)
+- **Rytm Hali to magazyn eksperckich artykułów w rodzaju Harvard Business Review, nie serwis wiadomości.** Konsekwencje w systemie wizualnym:
+  - pasek „Na zmianie” (wiadomości z godziną) zastąpiony **paskiem tematów** (stała nawigacja po zagadnieniach, tematy wybiera redakcja w panelu: `tematyWyroznione` w ustawieniach);
+  - **bez godzin publikacji** w całym serwisie (usunięty skrypt etykiet czasu: mniej JavaScriptu);
+  - nad tytułem **dział i format** (Poradnik, Analiza, Wywiad, Raport, Wzór do pobrania, Komentarz);
+  - na kartach **autor i czas czytania**; data publikacji i aktualizacji na stronie artykułu (teksty mają żyć latami, więc data nie jest najważniejszą informacją na liście);
+  - listy w sekcjach działów bez nazwy działu (jest w nagłówku sekcji), z formatem.
+- W kolejnych fazach z tego kursu wynika też: dłuższe formy, autorzy z opisem kompetencji (E-E-A-T), strony tematów jako huby wiedzy, aktualizacje zamiast nowych wersji tekstu, mapa strony Google News dopiero przy regularnej publikacji wiadomości (na razie nieplanowana).

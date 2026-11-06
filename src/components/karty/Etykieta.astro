@@ -1,18 +1,24 @@
 ---
-// Nad tytułem: kategoria (link do działu) albo oznaczenie materiału partnera. Oznaczenie partnera jest zawsze
-// widoczne i nie jest linkiem (zasady Google o treściach sponsorowanych, sekcja 4).
+// Nad tytułem: dział (link) i format tekstu (Poradnik, Analiza, Wywiad…) albo oznaczenie materiału partnera.
+// Oznaczenie partnera jest zawsze widoczne i nie jest linkiem (zasady Google o treściach sponsorowanych, sekcja 4).
 import type { ArtykulKarta } from '../../lib/typy';
 interface Props {
   artykul: ArtykulKarta;
   naCiemnym?: boolean;
+  /** Bez nazwy działu (np. na liście w sekcji działu, gdzie dział jest w nagłówku). */
+  bezDzialu?: boolean;
 }
-const { artykul, naCiemnym = false } = Astro.props;
+const { artykul, naCiemnym = false, bezDzialu = false } = Astro.props;
+const dzial = !bezDzialu && artykul.kategoria;
+// Skład w linii (nie flex): link działu jest wtedy „w tekście” i spełnia wyjątek WCAG 2.5.8 dla rozmiaru celu.
 ---
 {artykul.partner ? (
   <p class="karta-nad"><span class="etykieta-partner">Materiał partnera</span></p>
-) : artykul.kategoria ? (
-  <p class="karta-nad">
-    <a href={artykul.kategoria.adres} class:list={['kategoria najazd:underline', { 'kategoria-na-ciemnym': naCiemnym }]}>{artykul.kategoria.nazwa}</a>
+) : dzial || artykul.format ? (
+  <p class="karta-nad leading-4">
+    {dzial && <a href={dzial.adres} class:list={['kategoria najazd:underline', { 'kategoria-na-ciemnym': naCiemnym }]}>{dzial.nazwa}</a>}
+    {dzial && artykul.format && <span class:list={['kategoria mx-1.5', naCiemnym ? 'text-tekst-na-ciemnym-drugi' : 'text-tekst-drugi']} aria-hidden="true">·</span>}
+    {artykul.format && <span class:list={['kategoria', naCiemnym ? 'text-tekst-na-ciemnym-drugi' : 'text-tekst-drugi']}>{artykul.format}</span>}
   </p>
 ) : null}
 
