@@ -107,3 +107,28 @@ Patryk: treści mają opierać się na faktach i badaniach, mieć zdjęcie z otw
 - **Wywiady tylko z prawdziwych rozmów**, z autoryzacją dosłownych cytatów według Prawa prasowego (art. 14a, sprawdzony w tekście jednolitym Dz.U. 2018 poz. 1914; dawny art. 14 ust. 2 jest uchylony).
 - **Źródła badań dostępne bez kont**: Crossref, Eurostat, API Sejmu, Openverse, Wikimedia Commons (z limitem), wyszukiwarka. OpenAlex wymaga od 2026 r. darmowego klucza (konto Patryka, opcjonalnie); GUS BDL nie odpowiada z sesji w chmurze, działa z komputera Patryka.
 
+## 2026-11-06 — F3: szablony stron
+
+### Start w dwóch krokach w kodzie
+- **Cztery tryby budowania** (`src/lib/srodowisko.mjs`): produkcja przed startem, podgląd, build testowy, produkcja po starcie. Prompt wymaga, żeby przed bramką startu `main` publikował tylko „Wkrótce”, a cały portal był na podglądzie z `noindex`. Szablony portalu budują się zawsze (błąd w nich zatrzymuje build `main`), ale integracja usuwa ich pliki z `dist/` według listy w `src/lib/przed-startem.mjs`; mapa strony ma wtedy tylko `/`. Start to zmiana `START = true` w F8, na słowo „wdrażaj”.
+- **Zostają przed startem**: „Wkrótce”, 404, 410, polityka prywatności (zgoda przy zapisie na listę oczekujących linkuje do niej) i strony newslettera (worker z F6 przekierowuje na nie). Polityka prywatności jest projektem, więc kontrola SEO ostrzega na produkcji przed startem i blokuje po starcie: przed uruchomieniem zapisu na listę oczekujących musi być zatwierdzona.
+- **Treści testowe w osobnym katalogu** `src/content/testowe/` (24 fikcyjne artykuły z tytułami z podglądu F1 i materiał z plikiem PDF), ładowane tylko w podglądzie i buildzie testowym. Panel redakcji ich nie widzi, produkcja nigdy ich nie ładuje (test i kontrola SEO: treść testowa na produkcji to błąd). Zastąpiły podglądy `/podglad/*` i `src/data/podglad.ts`.
+- **Build testowy** (`RH_TESTOWE=1`): cały portal z treściami testowymi i z zachowaniem produkcji, żeby E2E, axe, Lighthouse i kontrola SEO sprawdzały szablony na treści i ścieżkę indeksowania. `npm run check` buduje go, testuje, a na końcu buduje i sprawdza produkcję przed startem (`check:start`). W Cloudflare `RH_TESTOWE=1` zatrzymuje build.
+
+### Szablony
+- **Strona główna** według podglądu F1, dobór w czystej funkcji z testami (`ukladGlownej`): artykuł wiodący to najnowszy wyróżniony ręcznie, obok trzy kolejne, „Najnowsze” cztery, dwa działy z wiodącym i listą, trzy kolumny działów; żaden tekst dwa razy. Kolumna boczna: „Polecane przez redakcję” (lista w ustawieniach, do 5 tekstów); „Najczęściej czytane” dojdą ze statystykami. Nie nazywamy listy redakcji „najczęściej czytanymi”, bo to byłaby nieprawda.
+- **Dział, temat, autor**: wspólny szablon listy, 10 tekstów na stronę (czołówka 1 + 3, potem siatka), stronicowanie `/dzial/<slug>/2`. Cienkie strony list mają `noindex` i są poza mapą strony: temat poniżej 3 tekstów, dział i autor bez tekstów (`src/lib/mapa.mjs`, PROGI). Mapa strony bierze dla list datę najnowszego tekstu.
+- **Autor**: bio, kompetencje, profile (`rel="me"`), dane `ProfilePage` z osobą; podpis „Redakcja” to organizacja.
+- **Materiały do pobrania**: lista i strona z przyciskiem pobrania (zdarzenie statystyk), podglądami, instrukcją, artykułami, które z materiału korzystają, i danymi `DigitalDocument`.
+- **RSS** całości i każdego działu (`@astrojs/rss`), 30 ostatnich tekstów, z autorem i kategoriami; link w `<head>` każdej strony portalu.
+- **Strony stałe** w kolekcji `strony` (edycja w panelu): projekty tekstów O nas, zasad redakcyjnych, polityki korekt, oznaczania treści sponsorowanych, jak używamy AI, kontaktu, polityki prywatności (sama struktura do F7), reklamy i newslettera. Każdy projekt ma na stronie widoczne oznaczenie; miejsca do decyzji Patryka w nawiasach kwadratowych.
+- **Poprawki pod artykułem** (pole `poprawki`): polityka korekt obiecuje jawny ślad po błędzie, więc serwis musi go pokazywać.
+- **„Reklama i współpraca”**: tabela miejsc i formatów generowana z kodu slotów, więc zawsze zgodna z tym, co serwis wyświetla; zamiast statystyk zdanie, że dane podamy z analityki po pierwszych miesiącach (prompt: bez zmyślonych liczb).
+- **Newsletter**: strona zapisu i strony techniczne (sprawdź skrzynkę, potwierdzono, wypisano) z `noindex`; zapis zadziała w F6.
+- **410**: treść odpowiedzi, którą zwróci worker w F8.
+
+### Wyszukiwarka
+- **Pagefind 1.5.2** (przypięta wersja z kwietnia 2026, nie z ostatniego tygodnia), indeks przy buildzie portalu, tylko artykuły i materiały (`data-pagefind-body`), bez reklam, udostępniania, ramek autora i źródeł. Formularz GET działa z nagłówka i stron błędów; bez JavaScriptu strona prowadzi do działów i tematów; wyniki mają `noindex`.
+- **CSP tylko na `/szukaj`** dostaje `'wasm-unsafe-eval'` (Pagefind liczy w WebAssembly); to nie jest `eval()`, a kontrola SEO pilnuje, żeby nie pojawiło się na innej stronie.
+- **Pagefind nie ma polskiej odmiany słów** i krótkie słowa z tekstu traktuje jak rdzenie („po” pasowało do „politechnika”). Strona wyników zostawia tylko trafienia, w których podświetlone słowo ma z szukanym wspólny początek co najmniej 60% jego długości: „kompletacji” znajduje „kompletacja”, a przypadkowe dopasowania znikają (test E2E).
+

@@ -24,7 +24,8 @@ Pełne zadanie i fazy: `prompty/01-budowa-portalu.md`. Stan prac: `STAN.md`. Dec
 | `npm run build` | build do `dist/` |
 | `npx astro preview --port 4322` | podgląd zbudowanej strony |
 | `npm run check:szybki` | `astro check`, testy jednostkowe, build, kontrola SEO, budżet rozmiaru (to samo uruchamia Cloudflare przed wdrożeniem) |
-| `npm run check` | `check:szybki` + E2E (komputer, Android, iPhone), axe, Lighthouse. Bez WebKita lokalnie: `BEZ_WEBKIT=1 npm run check` |
+| `npm run check` | build testowy (`RH_TESTOWE=1`: cały portal z treściami testowymi) + `check:szybki`, E2E (komputer, Android, iPhone), axe, Lighthouse, na końcu `check:start` (build produkcji przed startem). Bez WebKita lokalnie: `BEZ_WEBKIT=1 npm run check` |
+| `RH_PODGLAD=1 npm run build` | podgląd jak na gałęzi w Cloudflare: cały portal, wszystkie treści, wszędzie noindex |
 | `npm run zrzuty -- <katalog>` | zrzuty komputer/telefon/klawiatura do raportu po fazie (przy działającym podglądzie) |
 | `npm run fonty` | podzbiór fontów Noto z polskimi znakami i `src/styles/fonty.css` |
 | `npm run logo` | komplet plików logo (SVG, favicony, awatar, okładka); warianty: `node marka/logo/porownaj.mjs <plik.png>` |
@@ -45,6 +46,8 @@ Pełne zadanie i fazy: `prompty/01-budowa-portalu.md`. Stan prac: `STAN.md`. Dec
 | `public/admin/` | panel redakcji Sveltia CMS (`config.yml`; wersja skryptu przypięta z sumą SRI w `index.html` i `package.json`) |
 | `worker/` | Worker Cloudflare dla `/api/*` (logowanie do panelu przez GitHub; dalej newsletter i 410) |
 | `src/lib/markdown.mjs` | wtyczki Markdowna (silnik Sätteri w Astro 7): przypisy `[n]` do źródeł, rysunki z podpisem, tabele, miejsce reklamy po 3. akapicie, rel linków |
+| `src/content/strony/` | strony stałe (O nas, zasady, korekty, reklamy, AI, kontakt, polityka prywatności, reklama, newsletter); `projekt: true` = projekt do akceptacji Patryka |
+| `src/content/testowe/` | fikcyjne artykuły i materiał do testów szablonów (tylko podgląd i build testowy; panel ich nie widzi) |
 | `src/data/ustawienia.json` | nazwa, menu, pasek tematów, stopka, teksty newslettera (edycja w panelu: „Ustawienia serwisu”) |
 | `scripts/` | kontrola SEO, budżet, fonty, zrzuty |
 | `marka/` | logo (generator i pliki), wybór zdjęć z uzasadnieniem (`marka/zdjecia/kandydaci.md`) |
@@ -57,6 +60,15 @@ Pełne zadanie i fazy: `prompty/01-budowa-portalu.md`. Stan prac: `STAN.md`. Dec
 | `/artykul` | Artykuł od tematu do szkicu: research w badaniach i danych publicznych, przypisy, niezależna weryfikacja faktów, zdjęcie z otwartej licencji, karta jakości (`.claude/skills/artykul/`). Teczki artykułów w `redakcja/<slug>/` |
 
 Polecenia skilla: `npm run redakcja:zdjecia` (kandydaci na zdjęcie i stykówka), `npm run redakcja:zrodla -- <slug>` (adresy, DOI, wycofane badania), `npm run redakcja:kontrola -- <slug>` (przypisy, liczby bez źródła, frazy z tekstów generowanych, czytelność). Kontrolę tekstu każdego nietestowego artykułu uruchamia też `npm run check`.
+
+## Tryby budowania (`src/lib/srodowisko.mjs`)
+
+| Tryb | Kiedy | Co zawiera |
+|---|---|---|
+| produkcja przed startem | `main` w Cloudflare, `npm run build` | tylko „Wkrótce”, 404, 410, polityka prywatności, strony newslettera (reszta usunięta z `dist/`, `src/lib/przed-startem.mjs`) |
+| podgląd | inne gałęzie w Cloudflare, `RH_PODGLAD=1` | cały portal, szkice, wpisy testowe i fikcyjne treści z `src/content/testowe/`, wszędzie noindex |
+| build testowy | `RH_TESTOWE=1` (tylko `npm run check` i CI) | jak podgląd, ale z zachowaniem produkcji (indeksowanie, kanoniczne, mapa strony); nigdy do wdrożenia |
+| produkcja po starcie | `START = true` w `srodowisko.mjs` (F8, na „wdrażaj”) | cały portal, tylko opublikowane treści |
 
 ## Jak pracujemy
 

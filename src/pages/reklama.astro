@@ -1,0 +1,35 @@
+---
+// Reklama i współpraca (media kit): tekst z src/content/strony/reklama.md, formaty i miejsca z kodu slotów
+// (src/lib/reklamy.ts), więc tabela zawsze zgadza się z tym, co serwis naprawdę wyświetla. Bez zmyślonych liczb.
+import StronaStala from '../components/StronaStala.astro';
+import NaglowekSekcji from '../components/NaglowekSekcji.astro';
+import { FORMATY } from '../lib/reklamy';
+
+const MIEJSCA = [
+  { miejsce: 'Strona główna, pod nagłówkiem', komputer: 'billboard', telefon: 'mobilny' },
+  { miejsce: 'Strona główna, kolumna boczna', komputer: 'prostokat', telefon: 'mobilny-prostokat' },
+  { miejsce: 'Artykuł, w treści po 3. akapicie', komputer: 'baner', telefon: undefined },
+  { miejsce: 'Artykuł, kolumna boczna', komputer: 'polstrona', telefon: undefined },
+  { miejsce: 'Dział, pod nagłówkiem', komputer: 'billboard', telefon: 'mobilny' },
+] as const;
+const opis = (f?: keyof typeof FORMATY) => (f ? `${FORMATY[f].nazwa} ${FORMATY[f].szerokosc} × ${FORMATY[f].wysokosc}` : '—');
+---
+<StronaStala slug="reklama" aktywny="/reklama">
+  <section aria-labelledby="formaty" class="mt-10">
+    <NaglowekSekcji tytul="Miejsca i formaty reklam" id="formaty" />
+    <div class="tabela mt-4 w-full overflow-x-auto" tabindex="0" role="region" aria-label="Miejsca i formaty reklam">
+      <table class="w-full min-w-[32rem] border-collapse text-[0.9375rem]">
+        <caption class="sr-only">Miejsca reklamowe w serwisie i formaty kreacji na komputer i telefon (wymiary w pikselach)</caption>
+        <thead>
+          <tr class="border-b-2 border-grafit text-left"><th scope="col" class="px-3 py-2">Miejsce</th><th scope="col" class="px-3 py-2">Komputer</th><th scope="col" class="px-3 py-2">Telefon</th></tr>
+        </thead>
+        <tbody>
+          {MIEJSCA.map((m) => (
+            <tr class="border-b border-linia"><td class="px-3 py-2">{m.miejsce}</td><td class="px-3 py-2">{opis(m.komputer)}</td><td class="px-3 py-2">{opis(m.telefon)}</td></tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p class="meta mt-3">Kreacja w dokładnym wymiarze albo dwa razy większa (ostra na ekranach o dużej gęstości). Każde miejsce ma stały wymiar, więc reklama nie przesuwa tekstu.</p>
+  </section>
+</StronaStala>

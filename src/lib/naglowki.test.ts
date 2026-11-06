@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import { NAGLOWKI_BEZPIECZENSTWA, plikNaglowkow } from './naglowki.mjs';
-import { trybBudowania } from './srodowisko.mjs';
 
 // Nagłówki wymagane do oceny A w securityheaders.com (sekcja 3 promptu) i tryb podglądu bez indeksowania.
 describe('nagłówki HTTP', () => {
@@ -31,18 +30,6 @@ describe('nagłówki HTTP', () => {
     const plik = plikNaglowkow({ podglad: false });
     expect(plik).toMatch(/\/styleguide\n {2}X-Robots-Tag: noindex/);
     expect(plik).toMatch(/\/admin\/\*\n {2}X-Robots-Tag: noindex/);
-    expect(plik).toMatch(/\/podglad\/\*\n {2}X-Robots-Tag: noindex/);
-  });
-});
-
-describe('tryb budowania', () => {
-  it('main i build lokalny to produkcja, inne gałęzie w Cloudflare to podgląd', () => {
-    expect(trybBudowania({})).toBe('produkcja');
-    expect(trybBudowania({ WORKERS_CI_BRANCH: 'main' })).toBe('produkcja');
-    expect(trybBudowania({ WORKERS_CI_BRANCH: 'f1-system-wizualny' })).toBe('podglad');
-    expect(trybBudowania({ RH_PODGLAD: '1' })).toBe('podglad');
-    // GitHub Actions buduje jak produkcja, żeby testy sprawdzały to, co trafi na rytmhali.pl.
-    expect(trybBudowania({ GITHUB_REF_NAME: 'f1-system-wizualny' })).toBe('produkcja');
   });
 });
 

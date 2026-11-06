@@ -295,4 +295,6 @@ Mapa strony dla Google News dopiero wtedy, gdy portal publikuje regularnie (decy
 - 2026-11-06 — Moduły czytające pliki względem `import.meta.url` psują się przy buildzie, bo kod ląduje w `.astro/.prerender/chunks`, więc pliki z repozytorium czytamy względem katalogu projektu (`process.cwd()`).
 - 2026-11-06 — Patryk: treści oparte na faktach i badaniach, ze zdjęciem z otwartej licencji, lepsze niż HBR, więc powstał skill `/artykul` z przypisami przy każdej liczbie, niezależną weryfikacją faktów i kartą jakości, a kontrola tekstu działa w CI.
 - 2026-11-06 — Przepisy z pamięci bywają nieaktualne (dawny art. 14 ust. 2 Prawa prasowego jest uchylony, autoryzację reguluje art. 14a), więc każdy przepis w skillu i w tekstach sprawdzamy w aktualnym tekście jednolitym przez API Sejmu.
+- 2026-11-06 — Prompt wymaga, żeby przed startem `main` publikował tylko „Wkrótce”, a testy muszą sprawdzać szablony na treści, więc są cztery tryby budowania (produkcja przed startem, podgląd, build testowy z fikcyjnymi treściami, produkcja po starcie) i `npm run check` sprawdza zarówno portal, jak i to, co naprawdę trafi na `main`.
+- 2026-11-06 — Pagefind nie ma polskiej odmiany i dopasowuje krótkie słowa jako rdzenie, więc wyniki wyszukiwania filtrujemy po wspólnym początku słowa; bez tego „politechnika” znajdowała wszystkie teksty ze słowem „po”.
 

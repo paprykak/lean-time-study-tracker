@@ -6,6 +6,8 @@ interface DzialPlik {
   nazwaMenu: string;
   opis: string;
   kolejnosc: number;
+  tytulSeo?: string;
+  opisSeo?: string;
 }
 interface AutorPlik {
   imie: string;
@@ -14,6 +16,8 @@ interface AutorPlik {
 interface TematPlik {
   nazwa: string;
   opis?: string;
+  /** Dział główny tematu (slug). */
+  dzial?: string;
 }
 
 const slugZPliku = (sciezka: string) => sciezka.split('/').at(-1)!.replace(/\.json$/, '');

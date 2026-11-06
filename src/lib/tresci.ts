@@ -1,7 +1,7 @@
-// Dostęp do treści z kolekcji z uwzględnieniem trybu budowania: na produkcji bez szkiców i wpisów testowych,
-// w podglądzie gałęzi wszystko (każda strona ma tam noindex). Kolejność: od najnowszych.
+// Dostęp do treści z kolekcji z uwzględnieniem trybu budowania (src/lib/srodowisko.mjs): na produkcji bez szkiców
+// i wpisów testowych, w podglądzie i buildzie testowym wszystko. Kolejność: od najnowszych.
 import { getCollection, type CollectionEntry } from 'astro:content';
-import { PODGLAD } from './srodowisko.mjs';
+import { PODGLAD, TESTOWE, WSZYSTKIE_TRESCI } from './srodowisko.mjs';
 import { widoczny, powiazane as powiazaneIds, czasCzytania } from './redakcja';
 import { autor, dzial } from './dane';
 import { zdjecie } from './zdjecia';
@@ -10,7 +10,7 @@ import type { ArtykulKarta } from './typy';
 export type Artykul = CollectionEntry<'artykuly'>;
 
 export async function artykuly(): Promise<Artykul[]> {
-  const wszystkie = await getCollection('artykuly', ({ data }) => widoczny(data, PODGLAD));
+  const wszystkie = await getCollection('artykuly', ({ data }) => widoczny(data, WSZYSTKIE_TRESCI));
   return wszystkie.sort((a, b) => b.data.opublikowano.valueOf() - a.data.opublikowano.valueOf());
 }
 
@@ -28,8 +28,9 @@ export function powiazaneArtykuly(a: Artykul, wszystkie: Artykul[], ile = 3): Ar
   return powiazaneIds(rel(a), wszystkie.map(rel), ile).map((id) => wszystkie.find((x) => x.id === id)!);
 }
 
-/** Wpis jest indeksowany tylko, gdy jest opublikowany, nie testowy i nie ma noindex. */
-export const doIndeksu = (a: Artykul) => !a.data.noindex && !a.data.szkic && !a.data.testowy && !PODGLAD;
+/** Wpis jest indeksowany, gdy jest opublikowany, nie testowy i nie ma noindex (w buildzie testowym szkice i wpisy
+ * testowe zachowują się jak opublikowane, żeby testy sprawdzały ścieżkę produkcyjną). Podgląd: nigdy. */
+export const doIndeksu = (a: Artykul) => !a.data.noindex && (TESTOWE || (!a.data.szkic && !a.data.testowy)) && !PODGLAD;
 
 /** Dane karty artykułu na listach (strona główna, dział, temat, autor, „Czytaj także”). */
 export function karta(a: Artykul): ArtykulKarta {

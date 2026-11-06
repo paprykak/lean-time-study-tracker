@@ -16,3 +16,6 @@ export function numeryStron(biezaca: number, liczba: number, sasiedzi = 1): (num
 
 /** Adres strony listy: pierwsza bez numeru (/dzial/produkcja), dalsze z numerem (/dzial/produkcja/2). */
 export const adresStrony = (bazowy: string, n: number) => (n <= 1 ? bazowy : `${bazowy.replace(/\/$/, '')}/${n}`);
+
+/** Artykułów na stronie listy (dział, temat, autor): czołówka 1 + 3 i dwa rzędy po trzy. */
+export const NA_STRONIE = 10;

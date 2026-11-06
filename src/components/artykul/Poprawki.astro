@@ -1,0 +1,46 @@
+---
+// Poprawki pod artykułem (polityka korekt): błąd rzeczowy albo zmiana wniosku z datą. Ślad po błędzie zostaje.
+import { dataDluga, datetime } from '../../lib/daty';
+interface Props {
+  poprawki: { data: Date; opis: string }[];
+}
+const { poprawki } = Astro.props;
+const posortowane = [...poprawki].sort((a, b) => b.data.valueOf() - a.data.valueOf());
+---
+{posortowane.length > 0 && (
+  <section aria-labelledby="poprawki" class="poprawki">
+    <h2 id="poprawki" class="poprawki-tytul">Poprawki</h2>
+    <ul>
+      {posortowane.map((p) => (
+        <li><time datetime={datetime(p.data)} class="font-semibold text-tekst">{dataDluga(p.data)}</time>: {p.opis}</li>
+      ))}
+    </ul>
+    <p class="mt-2 text-[0.875rem]"><a href="/polityka-korekt" class="font-semibold text-akcent-tekst underline underline-offset-2">Jak poprawiamy błędy</a></p>
+  </section>
+)}
+
+<style>
+  .poprawki {
+    margin-top: 2.5rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--color-linia);
+    border-left: 4px solid var(--color-akcent);
+    font-size: 0.9375rem;
+    line-height: 1.6;
+  }
+  .poprawki-tytul {
+    margin-top: 0;
+    font-family: var(--font-display);
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--color-tekst);
+  }
+  .poprawki ul {
+    margin-top: 0.5rem;
+    padding-left: 0;
+    list-style: none;
+  }
+  .poprawki li + li {
+    margin-top: 0.375rem;
+  }
+</style>

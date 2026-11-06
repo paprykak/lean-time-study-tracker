@@ -7,7 +7,7 @@ import Logo from '../components/Logo.astro';
 import Naglowek from '../components/Naglowek.astro';
 import Stopka from '../components/Stopka.astro';
 import ustawienia from '../data/ustawienia.json';
-import { PODGLAD } from '../lib/srodowisko.mjs';
+import { PODGLAD, PORTAL } from '../lib/srodowisko.mjs';
 
 interface Props {
   tytul: string;
@@ -20,9 +20,14 @@ interface Props {
   /** „minimalny”: samo logo (strona „Wkrótce”); „pelny”: pasek górny, wyszukiwarka i menu działów. */
   naglowek?: 'pelny' | 'minimalny';
   aktywny?: string;
+  /** Kanał RSS strony: true = cały serwis (/rss.xml), tekst = adres kanału (np. działu). */
+  rss?: boolean | string;
 }
 
-const { tytul, opis, obraz = '/marka/okladka-domyslna.jpg', typ = 'website', noindex = false, jsonLd = [], naglowek = 'pelny', aktywny } = Astro.props;
+const { tytul, opis, obraz = '/marka/okladka-domyslna.jpg', typ = 'website', noindex = false, jsonLd = [], aktywny, rss } = Astro.props;
+// Przed startem na produkcji są tylko „Wkrótce” i strony błędów: bez menu i stopki z linkami do stron portalu.
+const naglowek = PORTAL ? (Astro.props.naglowek ?? 'pelny') : 'minimalny';
+const kanaly = PORTAL ? [...new Set(['/rss.xml', ...(typeof rss === 'string' ? [rss] : [])])] : [];
 const adres = ustawienia.adres;
 // build.format 'file' daje ścieżki z .html przy budowaniu; adres kanoniczny ma być taki jak serwowany (i w mapie strony).
 const sciezka = Astro.url.pathname.replace(/\.html$/, '').replace(/\/index$/, '').replace(/\/$/, '') || '/';
@@ -63,6 +68,7 @@ const graf = {
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="sitemap" href="/sitemap-index.xml" />
+    {kanaly.map((k) => <link rel="alternate" type="application/rss+xml" title={k === '/rss.xml' ? ustawienia.nazwa : `${ustawienia.nazwa}: ${tytul.split(' | ')[0]}`} href={k} />)}
 
     <meta property="og:type" content={typ} />
     <meta property="og:locale" content="pl_PL" />

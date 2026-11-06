@@ -1,13 +1,13 @@
 // Lighthouse CI: poprzeczki z sekcji 3 promptu na zbudowanej stronie (telefon, ustawienia domyślne Lighthouse).
-// Każdy nowy szablon (dział, artykuł, wyszukiwarka) dopisuje tu swój adres w F3.
+// Działa na buildzie testowym (RH_TESTOWE=1): cały portal z fikcyjnymi treściami. Każdy nowy szablon dopisuje tu adres.
 // SEO ≥ 95 sprawdzamy na stronach indeksowanych. Na stronach z noindex (404, /styleguide) Lighthouse z definicji
 // obniża SEO („strona zablokowana przed indeksowaniem”), więc tam pilnujemy wydajności, dostępności i dobrych praktyk.
 const { chromium } = require('@playwright/test');
 
 const PORT = 4323;
 const adres = (a) => `http://127.0.0.1:${PORT}${a}`;
-const INDEKSOWANE = ['/'];
-const WEWNETRZNE = ['/styleguide', '/podglad/strona-glowna', '/podglad/artykul', '/404'];
+const INDEKSOWANE = ['/', '/testowy-mikroprzestoje', '/dzial/produkcja', '/temat/oee', '/o-nas'];
+const WEWNETRZNE = ['/styleguide', '/szukaj', '/404'];
 
 const kategorie = {
   'categories:performance': ['error', { minScore: 0.95 }],
@@ -34,8 +34,8 @@ module.exports = {
     },
     assert: {
       assertMatrix: [
-        { matchingUrlPattern: `^${adres('/')}$`, assertions: { ...kategorie, ...metryki, 'categories:seo': ['error', { minScore: 0.95 }] } },
-        { matchingUrlPattern: `/(styleguide|404|podglad/.+)$`, assertions: { ...kategorie, ...metryki } },
+        { matchingUrlPattern: `^${adres('')}(/|/testowy-mikroprzestoje|/dzial/produkcja|/temat/oee|/o-nas)$`, assertions: { ...kategorie, ...metryki, 'categories:seo': ['error', { minScore: 0.95 }] } },
+        { matchingUrlPattern: `/(styleguide|szukaj|404)$`, assertions: { ...kategorie, ...metryki } },
       ],
     },
     upload: { target: 'filesystem', outputDir: '.lighthouseci/raporty' },

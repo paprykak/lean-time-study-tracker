@@ -1,0 +1,81 @@
+---
+// Strona listy artykułów: dział, temat, autor. Pierwsza strona: artykuł wiodący i trzy obok (gdy tekstów jest
+// co najmniej cztery), potem siatka; dalsze strony: sama siatka. Stronicowanie po NA_STRONIE tekstów.
+import Uklad from '../../layouts/Uklad.astro';
+import Okruszki from '../Okruszki.astro';
+import PasekTematow from '../PasekTematow.astro';
+import SlotReklamowy from '../SlotReklamowy.astro';
+import Stronicowanie from '../Stronicowanie.astro';
+import Newsletter from '../Newsletter.astro';
+import KartaGlowna from '../karty/KartaGlowna.astro';
+import KartaBoczna from '../karty/KartaBoczna.astro';
+import KartaSiatka from '../karty/KartaSiatka.astro';
+import type { ArtykulKarta } from '../../lib/typy';
+
+interface Props {
+  /** Etykieta nad tytułem: „Dział”, „Temat”, „Autor”. */
+  rodzaj: string;
+  tytul: string;
+  tytulStrony: string;
+  opis: string;
+  /** Opis widoczny pod tytułem (gdy inny niż opis w Google). */
+  wstep?: string;
+  okruszki: { nazwa: string; adres?: string }[];
+  bazowy: string;
+  biezaca: number;
+  liczba: number;
+  artykuly: ArtykulKarta[];
+  noindex?: boolean;
+  aktywny?: string;
+  aktywnyTemat?: string;
+  rss?: string;
+  jsonLd?: Record<string, unknown>[];
+  /** Miejsce reklamy u góry pierwszej strony (dział). */
+  reklama?: string;
+}
+const { rodzaj, tytul, tytulStrony, opis, wstep = opis, okruszki, bazowy, biezaca, liczba, artykuly, noindex = false, aktywny, aktywnyTemat, rss, jsonLd, reklama } = Astro.props;
+const czolowka = biezaca === 1 && artykuly.length >= 4;
+const [wiodacy, ...reszta] = artykuly;
+---
+<Uklad tytul={tytulStrony} opis={opis} noindex={noindex} aktywny={aktywny} rss={rss} jsonLd={jsonLd}>
+  <PasekTematow slot="pod-naglowkiem" aktywny={aktywnyTemat} />
+  <div class="kontener">
+    <Okruszki class="mt-4" pozycje={okruszki} />
+    <header class="mt-4 border-b-2 border-grafit pb-6">
+      <p class="kategoria">{rodzaj}</p>
+      <h1 class="tytul-xl mt-2">{tytul}{biezaca > 1 && <span class="text-tekst-drugi">, strona {biezaca}</span>}</h1>
+      {wstep && biezaca === 1 && <p class="lead mt-3 max-w-3xl">{wstep}</p>}
+      <slot name="naglowek" />
+    </header>
+
+    {reklama && biezaca === 1 && <SlotReklamowy komputer="billboard" telefon="mobilny" miejsce={reklama} class="mt-6" />}
+
+    {artykuly.length === 0 ? (
+      <p class="lead mt-10">Nie ma tu jeszcze tekstów. Pierwsze pojawią się wkrótce.</p>
+    ) : czolowka ? (
+      <>
+        <section aria-label="Najnowsze" class="mt-8 grid gap-6 lg:grid-cols-12">
+          <KartaGlowna artykul={wiodacy} priorytet class="lg:col-span-8" />
+          <div class="grid content-start gap-4 lg:col-span-4 [&>article+article]:border-t [&>article+article]:border-linia [&>article+article]:pt-4">
+            {reszta.slice(0, 3).map((x) => <KartaBoczna artykul={x} poziom="h2" />)}
+          </div>
+        </section>
+        {reszta.length > 3 && (
+          <section aria-label="Wcześniejsze" class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {reszta.slice(3).map((x) => <KartaSiatka artykul={x} zLeadem poziom="h2" szerokosc={400} />)}
+          </section>
+        )}
+      </>
+    ) : (
+      <section aria-label="Artykuły" class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {artykuly.map((x, i) => <KartaSiatka artykul={x} zLeadem poziom="h2" szerokosc={400} priorytet={i === 0} />)}
+      </section>
+    )}
+
+    <Stronicowanie class="mt-10" biezaca={biezaca} liczba={liczba} bazowy={bazowy} />
+
+    <div class="mt-14">
+      <Newsletter id="lista-newsletter" wariant="pasek" miejsce={`lista-${rodzaj.toLowerCase()}`} />
+    </div>
+  </div>
+</Uklad>

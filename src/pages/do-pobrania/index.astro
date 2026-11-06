@@ -1,0 +1,47 @@
+---
+// Materiały do pobrania: wzory, karty i szablony (kolekcja „materialy”). Każdy ma własną stronę z opisem.
+import { getCollection } from 'astro:content';
+import Uklad from '../../layouts/Uklad.astro';
+import Okruszki from '../../components/Okruszki.astro';
+import PasekTematow from '../../components/PasekTematow.astro';
+import Zdjecie from '../../components/Zdjecie.astro';
+import Ikona from '../../components/Ikona.astro';
+import { dzial } from '../../lib/dane';
+import { widoczny } from '../../lib/redakcja';
+import { WSZYSTKIE_TRESCI } from '../../lib/srodowisko.mjs';
+import { odmiana } from '../../lib/redakcja';
+
+const materialy = (await getCollection('materialy', ({ data }) => widoczny(data, WSZYSTKIE_TRESCI))).sort(
+  (a, b) => b.data.opublikowano.valueOf() - a.data.opublikowano.valueOf(),
+);
+---
+<Uklad tytul="Do pobrania: wzory, karty i szablony | Rytm Hali" opis="Bezpłatne wzory, karty i szablony dla produkcji, magazynu i lean: do wydruku albo wypełnienia, z opisem, jak z nich korzystać." aktywny="/do-pobrania">
+  <PasekTematow slot="pod-naglowkiem" />
+  <div class="kontener">
+    <Okruszki class="mt-4" pozycje={[{ nazwa: 'Do pobrania' }]} />
+    <header class="mt-4 border-b-2 border-grafit pb-6">
+      <p class="kategoria">Bezpłatnie</p>
+      <h1 class="tytul-xl mt-2">Do pobrania</h1>
+      <p class="lead mt-3 max-w-3xl">Wzory, karty i szablony do pracy na hali. Każdy z opisem, jak go wypełnić, i z artykułem, który pokazuje go w użyciu.</p>
+    </header>
+    {materialy.length === 0 ? (
+      <p class="lead mt-10">Pierwsze materiały pojawią się wkrótce.</p>
+    ) : (
+      <ul class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {materialy.map((m) => {
+          const dz = dzial(m.data.dzial.id);
+          return (
+            <li class="karta flex flex-col border border-linia p-5">
+              {m.data.podglady[0] && <Zdjecie zdjecie={{ src: m.data.podglady[0], alt: `Podgląd: ${m.data.tytul}`, fot: '' }} proporcja="16-10" szerokosc={400} sizes="(min-width: 1024px) 400px, 100vw" />}
+              {/* Etykieta działu bez linku: cała karta prowadzi do materiału, a mały link obok byłby za małym celem dotyku (WCAG 2.5.8). */}
+              <p class="kategoria mt-3">{dz.nazwa}</p>
+              <h2 class="tytul-m mt-1"><a href={`/do-pobrania/${m.id}`} class="karta-link karta-tytul">{m.data.tytul}</a></h2>
+              <p class="mt-2 text-[0.9375rem] leading-relaxed">{m.data.opis}</p>
+              <p class="meta mt-auto flex items-center gap-1.5 pt-3"><Ikona nazwa="pobierz" rozmiar={16} />{m.data.format}{m.data.strony && `, ${odmiana(m.data.strony, ['strona', 'strony', 'stron'])}`}</p>
+            </li>
+          );
+        })}
+      </ul>
+    )}
+  </div>
+</Uklad>

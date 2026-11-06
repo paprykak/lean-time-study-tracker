@@ -6,6 +6,7 @@ import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 
 import { FORMATY, LICENCJE, MIEJSCA_REKLAM, RODZAJE_ZRODEL } from './lib/model';
+import { WSZYSTKIE_TRESCI } from './lib/srodowisko.mjs';
 
 // Adresy tylko http(s): link w panelu z literówką albo „javascript:” zatrzymuje build.
 const adresUrl = z.url({ protocol: /^https?$/ });
@@ -110,7 +111,11 @@ const kampanie = defineCollection({
 
 /** Materiały do pobrania (wzory, karty): własna strona /do-pobrania/<slug> i ramka w artykułach. */
 const materialy = defineCollection({
-  loader: glob({ pattern: '*.md', base: './src/content/materialy' }),
+  loader: glob({
+    pattern: WSZYSTKIE_TRESCI ? ['materialy/*.md', 'testowe/materialy/*.md'] : 'materialy/*.md',
+    base: './src/content',
+    generateId: ({ entry }) => entry.split('/').at(-1)!.replace(/\.md$/, ''),
+  }),
   schema: ({ image }) =>
     z.object({
       tytul: z.string(),
@@ -128,9 +133,17 @@ const materialy = defineCollection({
     }),
 });
 
-/** Artykuły (Markdown). Adres: /<nazwa pliku>, bez działu w adresie (zmiana działu nie zmienia adresu). */
+/**
+ * Artykuły (Markdown). Adres: /<nazwa pliku>, bez działu w adresie (zmiana działu nie zmienia adresu).
+ * W podglądzie i buildzie testowym dochodzą fikcyjne artykuły z src/content/testowe/artykuly (wypełniają szablony;
+ * panel ich nie widzi, produkcja nigdy ich nie ładuje). Identyfikator to sama nazwa pliku.
+ */
 const artykuly = defineCollection({
-  loader: glob({ pattern: '*.md', base: './src/content/artykuly' }),
+  loader: glob({
+    pattern: WSZYSTKIE_TRESCI ? ['artykuly/*.md', 'testowe/artykuly/*.md'] : 'artykuly/*.md',
+    base: './src/content',
+    generateId: ({ entry }) => entry.split('/').at(-1)!.replace(/\.md$/, ''),
+  }),
   schema: z
     .object({
       tytul: z.string().min(10).max(120),
@@ -161,6 +174,8 @@ const artykuly = defineCollection({
       sprawdzono: z.coerce.date().optional(),
       /** „Jak powstał ten tekst”: metoda, źródła, użycie AI, konflikty interesów (widoczne pod artykułem). */
       metoda: z.string().max(700).optional(),
+      /** Jawne poprawki błędów rzeczowych i zmian wniosków (polityka korekt), widoczne pod tekstem. */
+      poprawki: z.array(z.object({ data: z.coerce.date(), opis: z.string().min(10).max(400) })).default([]),
       powiazane: z.array(reference('artykuly')).default([]),
       materialy: z.array(reference('materialy')).default([]),
       wyrozniony: z.boolean().default(false),
@@ -171,4 +186,20 @@ const artykuly = defineCollection({
     .refine((a) => !a.zaktualizowano || a.zaktualizowano >= a.opublikowano, { message: 'Aktualizacja nie może być przed publikacją', path: ['zaktualizowano'] }),
 });
 
-export const collections = { zdjecia, dzialy, tematy, autorzy, partnerzy, kampanie, materialy, artykuly };
+/**
+ * Strony stałe (O nas, zasady redakcyjne, polityka korekt, oznaczanie reklam, jak używamy AI, kontakt, polityka
+ * prywatności, reklama i współpraca, newsletter). Adresy ustalone w src/pages; tekst edytuje redakcja w panelu.
+ * „projekt: true” = projekt tekstu do akceptacji Patryka: strona pokazuje to wprost, a kontrola SEO nie przepuści
+ * projektu na produkcję po starcie.
+ */
+const strony = defineCollection({
+  loader: glob({ pattern: '*.md', base: './src/content/strony' }),
+  schema: z.object({
+    tytul: z.string().min(3).max(80),
+    opis: z.string().min(70).max(160),
+    zaktualizowano: z.coerce.date(),
+    projekt: z.boolean().default(false),
+  }),
+});
+
+export const collections = { zdjecia, dzialy, tematy, autorzy, partnerzy, kampanie, materialy, artykuly, strony };

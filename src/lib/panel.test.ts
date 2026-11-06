@@ -119,7 +119,7 @@ describe('konfiguracja panelu', () => {
 
 describe('panel a model treści', () => {
   it('każda kolekcja z folderu ma odpowiednik w src/content.config.ts', () => {
-    expect(zFolderu.map((k) => k.name).sort()).toEqual(['artykuly', 'autorzy', 'dzialy', 'kampanie', 'materialy', 'partnerzy', 'tematy', 'zdjecia']);
+    expect(zFolderu.map((k) => k.name).sort()).toEqual(['artykuly', 'autorzy', 'dzialy', 'kampanie', 'materialy', 'partnerzy', 'strony', 'tematy', 'zdjecia']);
   });
 
   for (const k of zFolderu) {

@@ -1,0 +1,101 @@
+---
+// Strona główna portalu (układ z podglądu zaakceptowanego w F1) na treściach z kolekcji. Dobór: src/lib/redakcja.ts
+// (ukladGlownej): wyróżnione ręcznie w panelu, najnowsze, działy bez powtórzeń. „Polecane” to lista redakcji
+// z ustawień serwisu; gdy dojdą statystyki (Umami), w tym miejscu pojawią się „Najczęściej czytane”.
+import SlotReklamowy from './SlotReklamowy.astro';
+import NaglowekSekcji from './NaglowekSekcji.astro';
+import NajczesciejCzytane from './NajczesciejCzytane.astro';
+import Newsletter from './Newsletter.astro';
+import KartaGlowna from './karty/KartaGlowna.astro';
+import KartaBoczna from './karty/KartaBoczna.astro';
+import KartaSiatka from './karty/KartaSiatka.astro';
+import KartaLista from './karty/KartaLista.astro';
+import ustawienia from '../data/ustawienia.json';
+import { DZIALY, dzial } from '../lib/dane';
+import { artykuly, karta } from '../lib/tresci';
+import { ukladGlownej } from '../lib/redakcja';
+
+const wszystkie = await artykuly();
+const u = ukladGlownej(
+  wszystkie.map((a) => ({ id: a.id, dzial: a.data.dzial.id, opublikowano: a.data.opublikowano, wyrozniony: a.data.wyrozniony, a })),
+  DZIALY.map((d) => d.slug),
+);
+const k = (x: { a: (typeof wszystkie)[number] }) => karta(x.a);
+const polecane = ustawienia.polecane
+  .map((slug) => wszystkie.find((a) => a.id === slug))
+  .filter((a) => a !== undefined)
+  .map((a) => ({ tytul: a.data.tytul, adres: `/${a.id}` }));
+---
+<h1 class="sr-only">{ustawienia.nazwa}: {ustawienia.haslo.toLowerCase()}</h1>
+<div class="kontener">
+  <SlotReklamowy komputer="billboard" telefon="mobilny" miejsce="glowna-gora" class="mt-6" />
+
+  {u.glowny ? (
+    <section aria-label="Najważniejsze" class="mt-8 grid gap-6 lg:grid-cols-12">
+      <KartaGlowna artykul={k(u.glowny)} priorytet class="lg:col-span-8" />
+      {u.obok.length > 0 && (
+        <div class="grid content-start gap-4 lg:col-span-4 [&>article+article]:border-t [&>article+article]:border-linia [&>article+article]:pt-4">
+          {u.obok.map((x) => <KartaBoczna artykul={k(x)} poziom="h2" />)}
+        </div>
+      )}
+    </section>
+  ) : (
+    <p class="lead mt-10">Pierwsze teksty już wkrótce. Zapisz się na newsletter, a dostaniesz je od razu.</p>
+  )}
+
+  {u.najnowsze.length > 0 && (
+    <section aria-labelledby="najnowsze" class="mt-12">
+      <NaglowekSekcji tytul="Najnowsze" id="najnowsze" />
+      <div class="mt-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {u.najnowsze.map((x) => <KartaSiatka artykul={k(x)} zLeadem szerokosc={290} />)}
+      </div>
+    </section>
+  )}
+
+  <div class="mt-12 grid gap-10 lg:grid-cols-12 lg:gap-6">
+    <div class="space-y-12 lg:col-span-8">
+      {u.sekcje.map((s) => {
+        const d = dzial(s.dzial);
+        return (
+          <section aria-labelledby={`sekcja-${s.dzial}`}>
+            <NaglowekSekcji tytul={d.nazwa} id={`sekcja-${s.dzial}`} link={{ nazwa: 'Więcej z działu', adres: d.adres }} />
+            <div class="mt-4 grid gap-6 md:grid-cols-2">
+              <KartaSiatka artykul={k(s.wiodacy)} zLeadem szerokosc={400} />
+              {s.lista.length > 0 && (
+                <div class="[&>article:first-child]:border-t-0 [&>article:first-child]:pt-0">
+                  {s.lista.map((x) => <KartaLista artykul={k(x)} bezDzialu />)}
+                </div>
+              )}
+            </div>
+          </section>
+        );
+      })}
+    </div>
+    <aside class="space-y-10 lg:col-span-4" aria-label="Kolumna boczna">
+      {polecane.length > 0 && <NajczesciejCzytane tytul="Polecane przez redakcję" artykuly={polecane} />}
+      <div class="lg:sticky lg:top-6">
+        <SlotReklamowy komputer="prostokat" telefon="mobilny-prostokat" miejsce="glowna-bok" />
+      </div>
+    </aside>
+  </div>
+
+  <div class="mt-14">
+    <Newsletter id="glowna-newsletter" wariant="pasek" miejsce="glowna-pasek" />
+  </div>
+
+  {u.kolumny.length > 0 && (
+    <div class="mt-14 grid gap-10 md:grid-cols-3 md:gap-6">
+      {u.kolumny.map((kol) => {
+        const d = dzial(kol.dzial);
+        return (
+          <section aria-labelledby={`kolumna-${kol.dzial}`}>
+            <NaglowekSekcji tytul={d.nazwa} id={`kolumna-${kol.dzial}`} link={{ nazwa: 'Więcej', adres: d.adres }} />
+            <div class="mt-2 [&>article:first-child]:border-t-0">
+              {kol.lista.map((x) => <KartaLista artykul={k(x)} bezDzialu />)}
+            </div>
+          </section>
+        );
+      })}
+    </div>
+  )}
+</div>

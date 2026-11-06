@@ -230,6 +230,16 @@ collections:
         maxlength: 700
         required: false
         hint: 'Metoda, rodzaj źródeł, użycie AI i ewentualny konflikt interesów. Widoczne pod artykułem.'
+      - name: poprawki
+        label: Poprawki
+        label_singular: poprawka
+        widget: list
+        required: false
+        summary: '{{fields.data}}: {{fields.opis}}'
+        hint: 'Błąd rzeczowy albo zmiana wniosku: co poprawiliśmy i kiedy (polityka korekt). Literówek nie wpisujemy.'
+        fields:
+          - { name: data, label: Data, widget: datetime, type: date, default: '{{now}}' }
+          - { name: opis, label: Co poprawiliśmy, widget: text, minlength: 10, maxlength: 400 }
       - name: powiazane
         label: Powiązane artykuły
         widget: relation
@@ -574,6 +584,35 @@ collections:
       - { name: altKreacji, label: Tekst alternatywny kreacji, widget: string, minlength: 10, hint: 'Co mówi reklama, np. nazwa produktu i hasło.' }
       - { name: aktywna, label: Aktywna, widget: boolean, default: true }
 
+  - name: strony
+    label: Strony stałe
+    label_singular: strona
+    description: 'O nas, zasady redakcyjne, korekty, oznaczanie reklam, jak używamy AI, kontakt, polityka prywatności, reklama, newsletter. Adresy są stałe; nowych stron nie dodajemy w panelu.'
+    icon: description
+    folder: src/content/strony
+    extension: md
+    format: frontmatter
+    create: false
+    delete: false
+    identifier_field: tytul
+    preview_path: '{{slug}}'
+    aliases_field: false
+    fields:
+      - { name: tytul, label: Tytuł, widget: string, minlength: 3, maxlength: 80 }
+      - { name: opis, label: Opis w Google, widget: text, minlength: 70, maxlength: 160 }
+      - { name: zaktualizowano, label: Data aktualizacji, widget: datetime, type: date, default: '{{now}}' }
+      - name: projekt
+        label: Projekt (jeszcze nie zatwierdzony)
+        widget: boolean
+        default: false
+        hint: 'Odznacz, gdy redaktor naczelny zatwierdzi tekst. Projekt ma na stronie widoczne oznaczenie i nie może trafić na produkcję po starcie.'
+      - name: body
+        label: Treść
+        widget: markdown
+        modes: [rich_text, raw]
+        buttons: [bold, italic, link, heading-two, heading-three, quote, bulleted-list, numbered-list]
+        editor_components: []
+
   - divider: true
 
   - name: ustawienia
@@ -608,6 +647,17 @@ collections:
             multiple: true
             min: 3
             hint: Tematy w pasku pod menu, w tej kolejności.
+          - name: polecane
+            label: Polecane przez redakcję (strona główna)
+            widget: relation
+            collection: artykuly
+            value_field: '{{slug}}'
+            display_fields: [tytul]
+            search_fields: [tytul]
+            multiple: true
+            max: 5
+            required: false
+            hint: 'Do 5 tekstów w kolumnie bocznej strony głównej. Gdy dojdą statystyki, obok pojawią się „Najczęściej czytane”.'
           - { name: pasekGorny, label: Pasek górny (komputer), label_singular: link, widget: list, fields: *linki }
           - name: stopka
             label: Stopka

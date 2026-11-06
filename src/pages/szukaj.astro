@@ -1,0 +1,142 @@
+---
+// Wyszukiwarka: Pagefind (statyczny indeks w /pagefind, bez serwera i bez zewnętrznych usług). Formularz GET ?q=
+// działa z nagłówka i ze stron błędów; wyniki dociąga skrypt dopiero po wpisaniu zapytania. Bez JavaScriptu
+// strona prowadzi do działów i tematów. Noindex: strona wyników nie jest treścią.
+// CSP tej strony: Pagefind liczy wyniki w WebAssembly, więc script-src dostaje 'wasm-unsafe-eval' (tylko WebAssembly,
+// bez eval()); reszta polityki jak na całym serwisie.
+import Uklad from '../layouts/Uklad.astro';
+import Okruszki from '../components/Okruszki.astro';
+import Ikona from '../components/Ikona.astro';
+import { DZIALY, TEMATY } from '../lib/dane';
+
+Astro.csp?.insertScriptResource("'self'");
+Astro.csp?.insertScriptResource("'wasm-unsafe-eval'");
+---
+<Uklad tytul="Szukaj w Rytmie Hali" opis="Wyszukiwarka artykułów i materiałów do pobrania Rytmu Hali: produkcja, magazyn i logistyka, lean, dane i AI, ludzie i szkolenia." noindex>
+  <div class="kontener">
+    <Okruszki class="mt-4" pozycje={[{ nazwa: 'Szukaj' }]} />
+    <h1 class="tytul-xl mt-4">Szukaj</h1>
+    <form action="/szukaj" method="get" role="search" class="mt-6 flex max-w-2xl items-stretch" data-formularz>
+      <label for="szukaj-pole" class="sr-only">Czego szukasz?</label>
+      <input id="szukaj-pole" name="q" type="search" class="pole rounded-r-none border-r-0" placeholder="np. przezbrojenie, OEE, kompletacja" autocomplete="off" />
+      <button type="submit" class="przycisk przycisk-grafit rounded-l-none"><Ikona nazwa="szukaj" />Szukaj</button>
+    </form>
+    <p class="meta mt-4 min-h-6" role="status" aria-live="polite" data-status></p>
+    <ol class="max-w-3xl" data-wyniki></ol>
+    <noscript>
+      <p class="mt-4 max-w-2xl">Wyszukiwarka działa w przeglądarce z włączonym JavaScriptem. Bez niego zacznij od działów i tematów poniżej.</p>
+    </noscript>
+
+    <div class="mt-12 grid max-w-4xl gap-8 md:grid-cols-2">
+      <section aria-labelledby="dzialy">
+        <h2 id="dzialy" class="font-sans text-kategoria font-bold tracking-[0.08em] text-tekst-drugi uppercase">Działy</h2>
+        <ul class="mt-2 flex flex-wrap gap-2">
+          {DZIALY.map((d) => <li><a href={d.adres} class="przycisk przycisk-obrys">{d.nazwa}</a></li>)}
+        </ul>
+      </section>
+      <section aria-labelledby="tematy">
+        <h2 id="tematy" class="font-sans text-kategoria font-bold tracking-[0.08em] text-tekst-drugi uppercase">Tematy</h2>
+        <ul class="mt-2 flex flex-wrap gap-2">
+          {TEMATY.map((t) => <li><a href={t.adres} class="przycisk przycisk-obrys">{t.nazwa}</a></li>)}
+        </ul>
+      </section>
+    </div>
+  </div>
+</Uklad>
+
+<script>
+  type Wynik = { url: string; excerpt: string; meta: { title?: string; rodzaj?: string } };
+  type Pagefind = { search: (q: string) => Promise<{ results: { data: () => Promise<Wynik> }[] }>; options: (o: object) => Promise<void> };
+
+  const NA_STRONIE = 20;
+  /** Ile wyników pobrać z Pagefind, zanim odsiejemy te bez trafienia (polski nie ma w Pagefind odmiany słów). */
+  const DO_SPRAWDZENIA = 60;
+  const status = document.querySelector<HTMLElement>('[data-status]')!;
+  const lista = document.querySelector<HTMLOListElement>('[data-wyniki]')!;
+  const pole = document.querySelector<HTMLInputElement>('#szukaj-pole')!;
+  const q = (new URLSearchParams(location.search).get('q') ?? '').trim().slice(0, 200);
+  pole.value = q;
+
+  /** „1 wynik”, „3 wyniki”, „12 wyników”. */
+  const wyniki = (n: number) => {
+    const d = n % 100;
+    const j = n % 10;
+    return `${n} ${n === 1 ? 'wynik' : j >= 2 && j <= 4 && (d < 12 || d > 14) ? 'wyniki' : 'wyników'}`;
+  };
+  /** Długość wspólnego początku dwóch słów. */
+  const wspolnyPoczatek = (a: string, b: string) => {
+    let i = 0;
+    while (i < a.length && i < b.length && a[i] === b[i]) i++;
+    return i;
+  };
+  /**
+   * Czy fragment wyniku ma prawdziwe trafienie: podświetlone słowo zaczyna się tak jak któreś szukane, na co najmniej
+   * 60% jego długości (odmiana: „kompletacja” i „kompletacji” tak; „po” i „politechnika” nie). Krótkie słowa
+   * (do 3 znaków, np. „OEE”, „5S”) muszą się zgadzać w całości na początku.
+   */
+  const trafienie = (fragment: string, zapytanie: string) => {
+    const szukane = zapytanie.toLocaleLowerCase('pl').split(/[^\p{L}\p{N}]+/u).filter(Boolean);
+    const podswietlone = [...fragment.matchAll(/<mark>(.*?)<\/mark>/g)].map((m) => m[1].toLocaleLowerCase('pl'));
+    return podswietlone.some((w) =>
+      szukane.some((t) => (t.length <= 3 ? w.startsWith(t) : wspolnyPoczatek(w, t) >= Math.max(3, Math.ceil(t.length * 0.6)))),
+    );
+  };
+  /** Fragment z Pagefind ma tekst ze strony (już zakodowany) i znaczniki <mark>; inne znaczniki nie przechodzą. */
+  const bezpieczny = (html: string) => html.replace(/<(?!\/?mark>)/g, '&lt;');
+
+  async function szukaj() {
+    if (!q) {
+      status.textContent = 'Wpisz, czego szukasz: zagadnienie, metodę albo wskaźnik.';
+      return;
+    }
+    status.textContent = 'Szukam…';
+    try {
+      const adres = '/pagefind/pagefind.js';
+      const pagefind: Pagefind = await import(/* @vite-ignore */ adres);
+      await pagefind.options({ excerptLength: 24 });
+      const wynik = await pagefind.search(q);
+      // Pagefind nie ma polskiej odmiany słów: krótkie słowa z tekstu traktuje jak rdzenie, więc „po” pasuje do
+      // „politechnika”. Zostają strony, na których podświetlone słowo ma z szukanym wspólny początek (trafienie()).
+      const wszystkie = await Promise.all(wynik.results.slice(0, DO_SPRAWDZENIA).map((r) => r.data()));
+      const trafione = wszystkie.filter((d) => trafienie(d.excerpt, q));
+      const dane = trafione.slice(0, NA_STRONIE);
+      lista.replaceChildren(
+        ...dane.map((d) => {
+          const li = document.createElement('li');
+          li.className = 'border-b border-linia py-5';
+          const rodzaj = document.createElement('p');
+          rodzaj.className = 'kategoria';
+          rodzaj.textContent = d.meta.rodzaj ?? 'Artykuł';
+          const tytul = document.createElement('h2');
+          tytul.className = 'tytul-m mt-1';
+          const link = document.createElement('a');
+          link.href = d.url.replace(/\.html$/, '');
+          link.className = 'najazd:underline';
+          link.textContent = d.meta.title ?? link.href;
+          tytul.append(link);
+          const fragment = document.createElement('p');
+          fragment.className = 'wynik-fragment mt-2 text-[0.9375rem] leading-relaxed';
+          fragment.innerHTML = bezpieczny(d.excerpt);
+          li.append(rodzaj, tytul, fragment);
+          return li;
+        }),
+      );
+      const ile = trafione.length;
+      status.textContent = ile
+        ? `${wyniki(ile)} dla „${q}”${ile > NA_STRONIE ? `, pokazujemy ${NA_STRONIE} najtrafniejszych` : ''}.`
+        : `Brak wyników dla „${q}”. Spróbuj innego słowa albo zajrzyj do działów i tematów poniżej.`;
+    } catch {
+      status.textContent = 'Wyszukiwarka jest chwilowo niedostępna. Zajrzyj do działów i tematów poniżej.';
+    }
+  }
+  szukaj();
+</script>
+
+<style>
+  /* Wyniki dodaje skrypt, więc bez atrybutu zakresu Astro: reguła globalna. */
+  :global(.wynik-fragment mark) {
+    background: var(--color-tlo-szare);
+    color: var(--color-tekst);
+    font-weight: 700;
+  }
+</style>

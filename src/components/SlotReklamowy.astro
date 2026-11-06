@@ -23,7 +23,7 @@ const warianty = [
   ...(komputer ? [{ ekran: 'komputer' as const, format: komputer }] : []),
 ];
 ---
-<div class:list={['slot', { 'slot-tylko-komputer': !telefon, 'slot-tylko-telefon': !komputer }, klasa]} data-slot={miejsce}>
+<div class:list={['slot', { 'slot-tylko-komputer': !telefon, 'slot-tylko-telefon': !komputer }, klasa]} data-slot={miejsce} data-pagefind-ignore="all">
   {warianty.map(({ ekran, format }) => {
     const f = FORMATY[format];
     const kreacja = kampania?.[ekran];

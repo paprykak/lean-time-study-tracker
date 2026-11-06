@@ -1,0 +1,16 @@
+---
+// Strona techniczna newslettera (worker F6 przekierowuje tu po zapisie, potwierdzeniu albo wypisie). Noindex.
+import Uklad from '../../layouts/Uklad.astro';
+import { PORTAL } from '../../lib/srodowisko.mjs';
+---
+<Uklad tytul="Wypisano z newslettera | Rytm Hali" opis="Nie wyślemy Ci już Raportu zmianowego. Jeśli to pomyłka, zapisz się ponownie w każdej chwili." noindex>
+  <section class="kontener py-12 md:py-20">
+    <div class="max-w-2xl">
+      <p class="kategoria">Raport zmianowy</p>
+      <h1 class="tytul-xl mt-3">Wypisano z newslettera</h1>
+      <p class="lead mt-4">Nie wyślemy Ci już Raportu zmianowego. Jeśli to pomyłka, zapisz się ponownie w każdej chwili.</p>
+      <p class="mt-4">Twój adres usuniemy z listy wysyłkowej zgodnie z polityką prywatności.</p>
+      <p class="mt-8"><a href="/" class="link inline-flex min-h-11 items-center">{PORTAL ? 'Wróć do strony głównej' : 'Wróć na stronę Rytmu Hali'}</a></p>
+    </div>
+  </section>
+</Uklad>

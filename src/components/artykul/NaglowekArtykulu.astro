@@ -25,7 +25,7 @@ interface Props {
 const { tytul, lead, kategoria, format, data, aktualizacja, autorzy, czasCzytania, adresKanoniczny, zdjecie, partner, oznaczenie = 'Materiał partnera' } = Astro.props;
 ---
 <header class="naglowek-artykulu">
-  <p class="flex flex-wrap items-center gap-x-2">
+  <p class="flex flex-wrap items-center gap-x-2" data-pagefind-ignore>
     {partner ? (
       <span class="etykieta-partnera">{oznaczenie}</span>
     ) : (

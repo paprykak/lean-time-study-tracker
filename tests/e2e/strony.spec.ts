@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { STRONY } from './strony';
+import { ARTYKUL, INDEKSOWANE, NIEINDEKSOWANE, STRONY } from './strony';
 
 // Podstawowe ścieżki: strona się ładuje, ma jeden widoczny H1, brak błędów konsoli i naruszeń CSP,
 // brak przewijania w bok od 320 px, brak żądań do domen spoza serwisu (prywatność: zero skryptów stron trzecich).
@@ -41,8 +41,46 @@ test('strona główna: kanoniczny adres, okładka udostępnień i dane struktura
   expect(graf.map((x: { '@type': string }) => x['@type'])).toEqual(['WebSite', 'NewsMediaOrganization']);
 });
 
+test('strony indeksowane mają adres kanoniczny i są w mapie strony', async ({ page, request }) => {
+  const mapa = await (await request.get('/sitemap-0.xml')).text();
+  for (const adres of INDEKSOWANE) {
+    await page.goto(adres);
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', `https://rytmhali.pl${adres}`);
+    await expect(page.locator('meta[name="robots"]')).toHaveCount(0);
+    expect(mapa, adres).toContain(`<loc>https://rytmhali.pl${adres}</loc>`);
+  }
+});
+
+test('artykuł: przypisy prowadzą do źródeł, okładka z buildu, dane strukturalne Article', async ({ page }) => {
+  await page.goto(ARTYKUL);
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', `https://rytmhali.pl/okladki${ARTYKUL}.jpg`);
+  const typy = (await page.locator('script[type="application/ld+json"]').allTextContents()).flatMap((t) => {
+    const j = JSON.parse(t);
+    return (j['@graph'] ?? [j]).map((x: { '@type': string }) => x['@type']);
+  });
+  expect(typy).toEqual(expect.arrayContaining(['Article', 'BreadcrumbList', 'FAQPage']));
+  await expect(page.getByRole('heading', { name: 'Poprawki' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Jak powstał ten tekst' })).toBeVisible();
+});
+
+test('wyszukiwarka znajduje artykuł i nie zwraca wyników bez trafienia', async ({ page }) => {
+  await page.goto('/szukaj?q=mikroprzestoje');
+  await expect(page.locator('[data-status]')).toHaveText(/1 wynik/);
+  await expect(page.locator('[data-wyniki] a').first()).toHaveAttribute('href', ARTYKUL);
+  await page.goto('/szukaj?q=politechnika');
+  await expect(page.locator('[data-status]')).toHaveText(/Brak wyników/);
+});
+
+test('kanały RSS: całość i dział', async ({ request }) => {
+  for (const adres of ['/rss.xml', '/dzial/produkcja/rss.xml']) {
+    const odp = await request.get(adres);
+    expect(odp.ok(), adres).toBe(true);
+    expect(await odp.text()).toMatch(/^<\?xml[\s\S]*<rss[\s\S]*<item>/);
+  }
+});
+
 test('strony wewnętrzne mają noindex i nie mają adresu kanonicznego', async ({ page }) => {
-  for (const adres of ['/styleguide', '/podglad/strona-glowna', '/podglad/artykul', '/404']) {
+  for (const adres of NIEINDEKSOWANE) {
     await page.goto(adres);
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
     await expect(page.locator('link[rel="canonical"]')).toHaveCount(0);

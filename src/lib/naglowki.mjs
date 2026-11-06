@@ -54,7 +54,7 @@ export function plikNaglowkow({ podglad }) {
       blok('/obrazy/*', { 'Cache-Control': 'public, max-age=604800' }),
       blok('/marka/*', { 'Cache-Control': 'public, max-age=604800' }),
       blok('/styleguide', { 'X-Robots-Tag': 'noindex, nofollow', 'Cache-Control': 'no-cache' }),
-      blok('/podglad/*', { 'X-Robots-Tag': 'noindex, nofollow', 'Cache-Control': 'no-cache' }),
+      blok('/szukaj', { 'X-Robots-Tag': 'noindex, follow' }),
       blok('/admin/*', { 'X-Robots-Tag': 'noindex, nofollow', 'Cache-Control': 'no-cache', 'Content-Security-Policy': CSP_PANELU }),
     ].join('\n\n') + '\n'
   );

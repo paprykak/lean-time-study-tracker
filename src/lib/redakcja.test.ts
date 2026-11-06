@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { readdirSync } from 'node:fs';
-import { czasCzytania, liczSlowa, powiazane, widoczny, type ArtykulRelacji, tytulStrony, opisStrony, odmiana } from './redakcja';
+import { czasCzytania, liczSlowa, powiazane, widoczny, type ArtykulRelacji, tytulStrony, opisStrony, odmiana, ukladGlownej } from './redakcja';
 import { SLUG, ZAREZERWOWANE } from './model';
 
 describe('czas czytania', () => {
@@ -89,4 +89,31 @@ describe('odmiana po liczebniku', () => {
     [1, '1 strona'], [2, '2 strony'], [4, '4 strony'], [5, '5 stron'], [11, '11 stron'], [12, '12 stron'],
     [14, '14 stron'], [21, '21 stron'], [22, '22 strony'], [112, '112 stron'], [124, '124 strony'],
   ])('%i → %s', (n, oczekiwane) => expect(odmiana(n, strony)).toBe(oczekiwane));
+});
+
+describe('strona główna: dobór treści', () => {
+  const DZIALY = ['produkcja', 'magazyn', 'lean', 'dane', 'ludzie'];
+  const art = (id: string, dzial: string, dzien: number, wyrozniony = false) => ({ id, dzial, opublikowano: new Date(2026, 10, dzien), wyrozniony });
+  const wszystkie = DZIALY.flatMap((d, i) => Array.from({ length: 5 }, (_, j) => art(`${d}-${j}`, d, 28 - j * 5 - i)));
+
+  it('artykuł wiodący to najnowszy wyróżniony, a bez wyróżnionych najnowszy', () => {
+    expect(ukladGlownej(wszystkie, DZIALY).glowny.id).toBe('produkcja-0');
+    const zWyroznionym = [...wszystkie, art('starszy-wyrozniony', 'dane', 1, true)];
+    expect(ukladGlownej(zWyroznionym, DZIALY).glowny.id).toBe('starszy-wyrozniony');
+  });
+
+  it('każdy tekst najwyżej raz; sekcje: 3 obok, 4 najnowsze, 2 działy z wiodącym i listą, 3 kolumny', () => {
+    const u = ukladGlownej(wszystkie, DZIALY);
+    const ids = [u.glowny, ...u.obok, ...u.najnowsze, ...u.sekcje.flatMap((s) => [s.wiodacy, ...s.lista]), ...u.kolumny.flatMap((k) => k.lista)].map((a) => a.id);
+    expect(new Set(ids).size).toBe(ids.length);
+    expect([u.obok.length, u.najnowsze.length, u.sekcje.length, u.kolumny.length]).toEqual([3, 4, 2, 3]);
+    expect(u.sekcje.map((s) => s.dzial)).toEqual(['produkcja', 'magazyn']);
+  });
+
+  it('mało tekstów: sekcje bez treści znikają, nic się nie powtarza', () => {
+    const u = ukladGlownej([art('a', 'produkcja', 5), art('b', 'lean', 4), art('c', 'lean', 3)], DZIALY);
+    expect(u.glowny.id).toBe('a');
+    expect(u.obok.map((a) => a.id)).toEqual(['b', 'c']);
+    expect([u.najnowsze.length, u.sekcje.length, u.kolumny.length]).toEqual([0, 0, 0]);
+  });
 });

@@ -1,0 +1,53 @@
+---
+// Strona stała z kolekcji „strony” (src/content/strony/<slug>.md). Projekt tekstu (projekt: true) ma widoczne
+// oznaczenie i atrybut data-projekt: kontrola SEO nie przepuści go na produkcję po starcie.
+import { getEntry, render } from 'astro:content';
+import Uklad from '../layouts/Uklad.astro';
+import Okruszki from './Okruszki.astro';
+import { dataDluga, datetime } from '../lib/daty';
+import { ADRES } from '../lib/srodowisko.mjs';
+
+interface Props {
+  slug: string;
+  /** Strony techniczne bez indeksowania (np. potwierdzenia newslettera). */
+  noindex?: boolean;
+  aktywny?: string;
+}
+const { slug, noindex = false, aktywny } = Astro.props;
+const strona = await getEntry('strony', slug);
+if (!strona) throw new Error(`Nie ma strony stałej „${slug}” (src/content/strony/${slug}.md)`);
+const { Content } = await render(strona);
+const d = strona.data;
+const jsonLd = [{ '@type': 'WebPage', '@id': `${ADRES}/${slug}#strona`, name: d.tytul, description: d.opis, dateModified: d.zaktualizowano.toISOString(), isPartOf: { '@id': `${ADRES}/#serwis` }, publisher: { '@id': `${ADRES}/#redakcja` } }];
+---
+<Uklad tytul={`${d.tytul} | Rytm Hali`} opis={d.opis} noindex={noindex} aktywny={aktywny} jsonLd={jsonLd}>
+  <div class="kontener">
+    <Okruszki class="mt-4" pozycje={[{ nazwa: d.tytul }]} />
+    <div class="mt-4 grid gap-10 lg:grid-cols-12 lg:gap-6">
+      <article class="min-w-0 lg:col-span-8">
+        {d.projekt && (
+          <p class="projekt" data-projekt>
+            <strong>Projekt tekstu</strong> do akceptacji redaktora naczelnego. Nie jest jeszcze obowiązujący; miejsca w nawiasach kwadratowych czekają na uzupełnienie.
+          </p>
+        )}
+        <h1 class="tytul-xl mt-2">{d.tytul}</h1>
+        <p class="meta mt-3">Aktualizacja: <time datetime={datetime(d.zaktualizowano)}>{dataDluga(d.zaktualizowano)}</time></p>
+        <div class="tresc mt-8"><Content /></div>
+        <slot />
+      </article>
+      <aside class="lg:col-span-4" aria-label="Kolumna boczna">
+        <slot name="bok" />
+      </aside>
+    </div>
+  </div>
+</Uklad>
+
+<style>
+  .projekt {
+    margin-bottom: 1.25rem;
+    padding: 0.75rem 1rem;
+    background: var(--color-tlo-szare);
+    border-left: 4px solid var(--color-akcent);
+    font-size: 0.9375rem;
+  }
+</style>

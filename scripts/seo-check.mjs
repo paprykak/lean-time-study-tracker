@@ -4,21 +4,21 @@
 import { createHash } from 'node:crypto';
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
-import { ADRES, PODGLAD } from '../src/lib/srodowisko.mjs';
+import { ADRES, PODGLAD, PORTAL, START, TESTOWE } from '../src/lib/srodowisko.mjs';
 
 const DIST = new URL('../dist/', import.meta.url).pathname;
-// Strony, które celowo nie trafiają do wyszukiwarek.
-const NOINDEX_OK = new Set(['/404', '/styleguide', '/podglad/strona-glowna', '/podglad/artykul']);
+// Strony, które celowo nie trafiają do wyszukiwarek: techniczne, wyniki wyszukiwania, strony wzorów.
+const NOINDEX_OK = new Set(['/404', '/410', '/styleguide', '/szukaj', '/newsletter/potwierdz', '/newsletter/potwierdzono', '/newsletter/wypisano']);
+// Noindex z danych: listy poniżej progu artykułów (src/lib/mapa.mjs, PROGI) i artykuły z polem noindex.
+const NOINDEX_Z_DANYCH = /^\/(dzial|temat|autor)\//;
 // Pole zastępcze zamiast zdjęcia wolno pokazać tylko na stronie wzorów (zasady wyglądu: bez szarych prostokątów na produkcji).
 const POLE_ZASTEPCZE_OK = new Set(['/styleguide']);
-// Trasy z planu faz F2–F7, których jeszcze nie ma: link do nich to ostrzeżenie, nie błąd. Usuń wpis, gdy trasa powstanie.
-const PLANOWANE = [
-  /^\/dzial\//, /^\/temat\//, /^\/autor\//, /^\/szukaj$/, /^\/newsletter$/, /^\/reklama$/, /^\/o-nas$/, /^\/kontakt$/,
-  /^\/zasady-redakcyjne$/, /^\/polityka-korekt$/, /^\/oznaczanie-reklam$/, /^\/jak-uzywamy-ai$/, /^\/polityka-prywatnosci$/,
-  /^\/do-pobrania$/, /^\/do-pobrania\//, /^\/rss\.xml$/,
-];
-// Adresy fikcyjnych artykułów ze strony wzorów i podglądów szablonów (src/data/przyklady.ts, src/data/podglad.ts).
+// Trasy z planu kolejnych faz, których jeszcze nie ma: link do nich to ostrzeżenie, nie błąd. Pusta od F3.
+const PLANOWANE = [];
+// Adresy fikcyjnych artykułów na stronie wzorów (src/data/przyklady.ts).
 const PRZYKLADOWE = /^\/przyklad-/;
+// Prawdziwa produkcja (nie podgląd i nie build testowy): bez treści testowych i projektów tekstów.
+const PRODUKCJA = !PODGLAD && !TESTOWE;
 const POMIN_KATALOGI = new Set(['_astro', 'admin']);
 
 const bledy = [];
@@ -93,7 +93,9 @@ for (const plik of strony) {
   const csp = html.match(/<meta http-equiv="content-security-policy" content="([^"]*)"/)?.[1];
   if (!csp) bledy.push(`${gdzie} brak CSP w <meta>`);
   else {
-    if (/unsafe-eval|unsafe-inline/.test(csp)) bledy.push(`${gdzie} CSP zawiera unsafe-eval albo unsafe-inline`);
+    // 'wasm-unsafe-eval' (tylko WebAssembly, strona wyszukiwarki) jest dozwolone; 'unsafe-eval' i 'unsafe-inline' nie.
+    if (/'unsafe-eval'|'unsafe-inline'/.test(csp)) bledy.push(`${gdzie} CSP zawiera 'unsafe-eval' albo 'unsafe-inline'`);
+    if (/'wasm-unsafe-eval'/.test(csp) && adres !== '/szukaj') bledy.push(`${gdzie} 'wasm-unsafe-eval' poza stroną wyszukiwarki`);
     const hash = (tresc) => `'sha256-${createHash('sha256').update(tresc).digest('base64')}'`;
     for (const [, atrybuty, tresc] of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g)) {
       if (/\bsrc=/.test(atrybuty) || /application\/ld\+json/.test(atrybuty) || !tresc.trim()) continue;
@@ -106,7 +108,7 @@ for (const plik of strony) {
   // Linki wewnętrzne prowadzą do istniejących stron
   for (const [, href] of html.matchAll(/<a\b[^>]*\shref="(\/[^"#]*)(?:#[^"]*)?"/g)) {
     if (href.startsWith('//') || istnieje(href)) continue;
-    if ((adres === '/styleguide' || adres.startsWith('/podglad/')) && PRZYKLADOWE.test(href)) continue;
+    if (adres === '/styleguide' && PRZYKLADOWE.test(href)) continue;
     if (PLANOWANE.some((w) => w.test(href.split('?')[0]))) planowane.set(href, (planowane.get(href) ?? 0) + 1);
     else bledy.push(`${gdzie} link do nieistniejącej strony ${href}`);
   }
@@ -115,13 +117,18 @@ for (const plik of strony) {
   const og = html.match(/<meta property="og:image" content="([^"]*)"/)?.[1];
   if (og?.startsWith(ADRES) && !istnieje(og.slice(ADRES.length))) bledy.push(`${gdzie} og:image ${og} nie istnieje w dist/`);
 
+  // Produkcja: bez treści testowych; projekt strony stałej blokuje start (przed startem tylko ostrzega).
+  if (PRODUKCJA && (adres.startsWith('/testowy-') || html.includes('Tekst testowy (fikcyjny)'))) bledy.push(`${gdzie} treść testowa na produkcji`);
+  if (PRODUKCJA && html.includes('data-projekt')) (START ? bledy : ostrzezenia).push(`${gdzie} projekt tekstu do akceptacji Patryka${START ? '' : ' (przed startem i przed uruchomieniem zapisu na listę musi być zatwierdzony)'}`);
+
   if (PODGLAD) {
     if (!noindex) bledy.push(`${gdzie} build podglądu bez noindex`);
     continue;
   }
 
   if (noindex) {
-    if (!NOINDEX_OK.has(adres)) bledy.push(`${gdzie} ma noindex, a nie jest na liście wyjątków`);
+    const artykul = /<meta property="og:type" content="article"/.test(html);
+    if (!NOINDEX_OK.has(adres) && !NOINDEX_Z_DANYCH.test(adres) && !artykul) bledy.push(`${gdzie} ma noindex, a nie jest na liście wyjątków`);
     if (mapa.has(pelny(adres))) bledy.push(`${gdzie} ma noindex, a jest w mapie strony`);
     continue;
   }
@@ -151,5 +158,6 @@ else if (PODGLAD && !/X-Robots-Tag: noindex/.test(naglowki.split('\n\n')[1] ?? '
 if (planowane.size) ostrzezenia.push(`linki do tras planowanych w kolejnych fazach (${planowane.size}): ${[...planowane.keys()].sort().join(', ')}`);
 for (const o of ostrzezenia) console.warn(`⚠ ${o}`);
 for (const b of bledy) console.error(`✗ ${b}`);
-console.log(`\nKontrola SEO (${PODGLAD ? 'podgląd' : 'produkcja'}): ${strony.length} stron, ${bledy.length} błędów, ${ostrzezenia.length} ostrzeżeń.`);
+const tryb = PODGLAD ? 'podgląd' : TESTOWE ? 'build testowy' : PORTAL ? 'produkcja' : 'produkcja przed startem';
+console.log(`\nKontrola SEO (${tryb}): ${strony.length} stron, ${bledy.length} błędów, ${ostrzezenia.length} ostrzeżeń.`);
 process.exit(bledy.length ? 1 : 0);

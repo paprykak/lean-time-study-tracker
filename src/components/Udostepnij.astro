@@ -20,7 +20,7 @@ const zdarzenie = (kanal: string) => ({ 'data-umami-event': 'Udostępnienie', 'd
 const zewnetrzny = (kanal: string) => (kanal === 'e-mail' ? {} : { target: '_blank', rel: 'noopener' });
 ---
 {wariant === 'gora' ? (
-  <div class="flex items-center gap-1" data-udostepnij={wariant}>
+  <div class="flex items-center gap-1" data-udostepnij={wariant} data-pagefind-ignore="all">
     <span class="sr-only">Udostępnij artykuł:</span>
     {kanaly.map((k) => (
       <a href={k.href} class="udostepnij-ikona" aria-label={`Udostępnij: ${k.nazwa}`} title={k.nazwa} {...zewnetrzny(k.kanal)} {...zdarzenie(k.kanal)}>

@@ -25,10 +25,12 @@
     "redakcja:kontrola": "node scripts/redakcja/kontrola.mjs",
     "zrzuty": "node scripts/zrzuty.mjs",
     "check:szybki": "astro check && vitest run && astro build && node scripts/seo-check.mjs && node scripts/budzet.mjs",
-    "check": "npm run check:szybki && playwright test && lhci autorun"
+    "check:start": "astro build && node scripts/seo-check.mjs && node scripts/budzet.mjs",
+    "check": "RH_TESTOWE=1 npm run check:szybki && playwright test && lhci autorun && npm run check:start"
   },
   "dependencies": {
     "@astrojs/markdown-satteri": "^0.4.7",
+    "@astrojs/rss": "^4.0.19",
     "@astrojs/sitemap": "^3.7.4",
     "@resvg/resvg-js": "^2.6.2",
     "@tailwindcss/vite": "^4.3.4",
@@ -47,6 +49,7 @@
     "ajv": "^8.20.0",
     "fontverter": "^2.0.0",
     "opentype.js": "^2.0.0",
+    "pagefind": "1.5.2",
     "playwright-core": "1.63.0",
     "subset-font": "^2.9.0",
     "typescript": "^6.0.3",

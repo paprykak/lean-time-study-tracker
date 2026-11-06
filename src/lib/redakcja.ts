@@ -21,8 +21,8 @@ export function liczSlowa(markdown: string): number {
 /** Czas czytania w minutach (zaokrąglony w górę, co najmniej 1). */
 export const czasCzytania = (markdown: string) => Math.max(1, Math.ceil(liczSlowa(markdown) / SLOWA_NA_MINUTE));
 
-/** Widoczność wpisu: na produkcji bez szkiców i wpisów testowych; w podglądzie gałęzi wszystko (z noindex). */
-export const widoczny = (d: { szkic?: boolean; testowy?: boolean }, podglad: boolean) => podglad || (!d.szkic && !d.testowy);
+/** Widoczność wpisu: na produkcji bez szkiców i wpisów testowych; w podglądzie i buildzie testowym wszystko. */
+export const widoczny = (d: { szkic?: boolean; testowy?: boolean }, wszystkie: boolean) => wszystkie || (!d.szkic && !d.testowy);
 
 export interface ArtykulRelacji {
   id: string;
@@ -82,4 +82,42 @@ export function odmiana(n: number, [jeden, kilka, wiele]: [string, string, strin
   const jednosci = n % 10;
   const slowo = n === 1 ? jeden : jednosci >= 2 && jednosci <= 4 && (dziesiatki < 12 || dziesiatki > 14) ? kilka : wiele;
   return `${n} ${slowo}`;
+}
+
+export interface ArtykulUkladu {
+  id: string;
+  dzial: string;
+  opublikowano: Date;
+  wyrozniony?: boolean;
+}
+
+/**
+ * Dobór treści na stronę główną (prompt F3): artykuł wiodący to najnowszy wyróżniony ręcznie (pole „wyrozniony”),
+ * a bez wyróżnionych najnowszy; obok trzy kolejne (najpierw wyróżnione); „Najnowsze” cztery następne; dwa pierwsze
+ * działy (według kolejności) z artykułem wiodącym i listą trzech; trzy kolejne działy w kolumnach po cztery.
+ * Żaden tekst nie pojawia się na stronie dwa razy; sekcje bez tekstów znikają.
+ */
+export function ukladGlownej<T extends ArtykulUkladu>(wszystkie: T[], kolejnoscDzialow: string[]) {
+  const posortowane = [...wszystkie].sort((a, b) => b.opublikowano.valueOf() - a.opublikowano.valueOf());
+  const uzyte = new Set<string>();
+  const wez = (lista: T[], ile: number) => {
+    const wynik = lista.filter((a) => !uzyte.has(a.id)).slice(0, ile);
+    wynik.forEach((a) => uzyte.add(a.id));
+    return wynik;
+  };
+  const wyroznione = posortowane.filter((a) => a.wyrozniony);
+  const [glowny] = wez(wyroznione.length ? wyroznione : posortowane, 1);
+  const obok = wez([...wyroznione, ...posortowane], 3);
+  const najnowsze = wez(posortowane, 4);
+  const sekcje: { dzial: string; wiodacy: T; lista: T[] }[] = [];
+  const kolumny: { dzial: string; lista: T[] }[] = [];
+  for (const dzial of kolejnoscDzialow) {
+    const zDzialu = posortowane.filter((a) => a.dzial === dzial);
+    if (!zDzialu.some((a) => !uzyte.has(a.id))) continue;
+    if (sekcje.length < 2) {
+      const [wiodacy, ...lista] = wez(zDzialu, 4);
+      sekcje.push({ dzial, wiodacy, lista });
+    } else if (kolumny.length < 3) kolumny.push({ dzial, lista: wez(zDzialu, 4) });
+  }
+  return { glowny, obok, najnowsze, sekcje, kolumny };
 }

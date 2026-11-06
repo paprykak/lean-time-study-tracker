@@ -1,0 +1,75 @@
+---
+// Autor: /autor/<slug>. Bio, kompetencje i profile (doświadczenie i wiarygodność autora), lista tekstów.
+// Dane strukturalne ProfilePage z osobą (dla podpisu „Redakcja”: organizacja Rytm Hali). Noindex bez tekstów.
+import type { GetStaticPaths, Page } from 'astro';
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import StronaListy from '../../../components/listy/StronaListy.astro';
+import Ikona from '../../../components/Ikona.astro';
+import { artykuly, karta, type Artykul } from '../../../lib/tresci';
+import { PROGI } from '../../../lib/mapa.mjs';
+import { ADRES } from '../../../lib/srodowisko.mjs';
+import { NA_STRONIE } from '../../../lib/stronicowanie';
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const wszystkie = await artykuly();
+  const autorzy = await getCollection('autorzy');
+  return autorzy.flatMap((autor) => {
+    const teksty = wszystkie.filter((a) => a.data.autorzy.some((x) => x.id === autor.id));
+    return paginate(teksty, { params: { slug: autor.id }, pageSize: NA_STRONIE, props: { autor, liczba: teksty.length } });
+  });
+}) satisfies GetStaticPaths;
+
+type Autor = Awaited<ReturnType<typeof getCollection<'autorzy'>>>[number];
+interface Props {
+  page: Page<Artykul>;
+  autor: Autor;
+  liczba: number;
+}
+const { page, autor, liczba } = Astro.props;
+const a = autor.data;
+const adres = `/autor/${autor.id}`;
+const strona = page.currentPage > 1 ? ` (strona ${page.currentPage})` : '';
+// Opis w Google do 155 znaków także z dopiskiem „(strona n)” na dalszych stronach.
+const opis = `${a.imie}, ${a.rola.toLowerCase()} w Rytmie Hali: ${a.bio}`.slice(0, 140).replace(/\s+\S*$/, '') + '…';
+const osoba =
+  a.typ === 'Redakcja'
+    ? { '@id': `${ADRES}/#redakcja` }
+    : { '@type': 'Person', '@id': `${ADRES}${adres}#osoba`, name: a.imie, jobTitle: a.rola, description: a.bio, url: `${ADRES}${adres}`, ...(a.sameAs.length ? { sameAs: a.sameAs } : {}), ...(a.kompetencje.length ? { knowsAbout: a.kompetencje } : {}) };
+const jsonLd = [{ '@type': 'ProfilePage', '@id': `${ADRES}${adres}#strona`, url: `${ADRES}${adres}`, mainEntity: osoba, isPartOf: { '@id': `${ADRES}/#serwis` } }];
+const linkedin = a.sameAs.find((u) => /linkedin\.com/.test(u));
+const inne = a.sameAs.filter((u) => u !== linkedin);
+---
+<StronaListy
+  rodzaj={a.typ === 'Redakcja' ? 'Zespół' : 'Autor'}
+  tytul={a.imie}
+  tytulStrony={`${a.imie}${strona}: ${a.rola} | Rytm Hali`}
+  opis={`${opis}${strona}`}
+  wstep={a.rola}
+  okruszki={[{ nazwa: a.imie, adres: page.currentPage > 1 ? adres : undefined }, ...(page.currentPage > 1 ? [{ nazwa: `Strona ${page.currentPage}` }] : [])]}
+  bazowy={adres}
+  biezaca={page.currentPage}
+  liczba={page.lastPage}
+  artykuly={page.data.map(karta)}
+  noindex={liczba < PROGI.autor}
+  jsonLd={jsonLd}
+>
+  {page.currentPage === 1 && (
+    <div slot="naglowek" class="mt-5 grid max-w-3xl gap-5 sm:grid-cols-[auto_1fr]">
+      {a.zdjecie && <Image src={a.zdjecie} alt={`${a.imie}, zdjęcie`} width={120} height={120} class="size-[120px] rounded-[var(--radius-karta)] object-cover" />}
+      <div>
+        <p class="text-[1.0625rem] leading-relaxed">{a.bio}</p>
+        {a.kompetencje.length > 0 && (
+          <ul class="mt-3 flex flex-wrap gap-2" aria-label="Kompetencje">
+            {a.kompetencje.map((k) => <li class="border border-linia px-2 py-1 text-[0.875rem]">{k}</li>)}
+          </ul>
+        )}
+        <p class="mt-3 flex flex-wrap gap-x-5 gap-y-2">
+          {linkedin && <a href={linkedin} rel="me noopener" target="_blank" class="link inline-flex min-h-11 items-center gap-1.5"><Ikona nazwa="linkedin" rozmiar={18} />LinkedIn</a>}
+          {inne.map((u) => <a href={u} rel="me noopener" target="_blank" class="link inline-flex min-h-11 items-center">{new URL(u).hostname.replace(/^www\./, '')}</a>)}
+          {a.email && <a href={`mailto:${a.email}`} class="link inline-flex min-h-11 items-center gap-1.5"><Ikona nazwa="poczta" rozmiar={18} />{a.email}</a>}
+        </p>
+      </div>
+    </div>
+  )}
+</StronaListy>

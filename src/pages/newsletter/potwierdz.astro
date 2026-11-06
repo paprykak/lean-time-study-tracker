@@ -1,0 +1,16 @@
+---
+// Strona techniczna newslettera (worker F6 przekierowuje tu po zapisie, potwierdzeniu albo wypisie). Noindex.
+import Uklad from '../../layouts/Uklad.astro';
+import { PORTAL } from '../../lib/srodowisko.mjs';
+---
+<Uklad tytul="Sprawdź skrzynkę | Rytm Hali" opis="Wysłaliśmy wiadomość z linkiem potwierdzającym. Kliknij go, a zapiszemy Cię na Raport zmianowy. Bez potwierdzenia nie wyślemy żadnego wydania." noindex>
+  <section class="kontener py-12 md:py-20">
+    <div class="max-w-2xl">
+      <p class="kategoria">Raport zmianowy</p>
+      <h1 class="tytul-xl mt-3">Sprawdź skrzynkę</h1>
+      <p class="lead mt-4">Wysłaliśmy wiadomość z linkiem potwierdzającym. Kliknij go, a zapiszemy Cię na Raport zmianowy. Bez potwierdzenia nie wyślemy żadnego wydania.</p>
+      <p class="mt-4">Nie widzisz wiadomości? Sprawdź folder ze spamem albo ofertami. Link jest ważny przez ograniczony czas.</p>
+      <p class="mt-8"><a href="/" class="link inline-flex min-h-11 items-center">{PORTAL ? 'Wróć do strony głównej' : 'Wróć na stronę Rytmu Hali'}</a></p>
+    </div>
+  </section>
+</Uklad>
