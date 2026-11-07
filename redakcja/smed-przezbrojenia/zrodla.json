@@ -1,0 +1,26 @@
+{
+  "barrantes": {
+    "opis": "Barrantes Gerónimo D., Silva Lostaunau K., Córdova Aguirre J. (2022), Analysis of the Implementation of the SMED Methodology to Reduce Changeover Times in the Food Industry: A Literature Review, Proceedings of the 1st Australian International Conference on Industrial Engineering and Operations Management, Sydney, s. 2201–2212.",
+    "adres": "https://ieomsociety.org/proceedings/2022australia/475.pdf",
+    "rodzaj": "Przegląd lub metaanaliza",
+    "dostep": "2026-11-07"
+  },
+  "stadnicka": {
+    "opis": "Stadnicka D. (2015), Setup analysis: combining SMED with other tools, Management and Production Engineering Review, 6(1), 36–50.",
+    "adres": "https://doi.org/10.1515/mper-2015-0006",
+    "rodzaj": "Badanie recenzowane",
+    "dostep": "2026-11-07"
+  },
+  "diazreza": {
+    "opis": "Díaz-Reza J. R., García-Alcaraz J. L., Mendoza-Fong J. R., Martínez-Loya V., Jiménez Macías E., Blanco-Fernández J. (2017), Interrelations among SMED Stages: A Causal Model, Complexity, art. 5912940.",
+    "adres": "https://doi.org/10.1155/2017/5912940",
+    "rodzaj": "Badanie recenzowane",
+    "dostep": "2026-11-07"
+  },
+  "harris": {
+    "opis": "Harris F. W. (1915), What quantity to make at once, w: Operation and Costs: Planning and Filling Orders, Cost-Keeping Methods, Controlling Your Operations, Standardizing Material and Labor Costs, Chicago: A. W. Shaw, rozdz. IV (pierwodruk wzoru: Factory, The Magazine of Management, 1913).",
+    "adres": "https://archive.org/details/operationcostspl00chicrich",
+    "rodzaj": "Książka",
+    "dostep": "2026-11-07"
+  }
+}

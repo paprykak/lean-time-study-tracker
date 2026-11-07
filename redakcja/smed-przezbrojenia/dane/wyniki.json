@@ -1,0 +1,79 @@
+{
+ "zalozenia": {
+  "popyt_roczny_szt": 24000,
+  "koszt_godziny_postoju_zl": 600,
+  "koszt_utrzymania_szt_rok_zl": 5.0,
+  "czas_przezbrojenia_min": 60,
+  "waskie_gardlo_przezbrojenia_tyg": 15,
+  "waskie_gardlo_czas_min": 50,
+  "tygodnie_pracy": 48,
+  "marza_z_godziny_zl": 400
+ },
+ "linia_bez_waskiego_gardla": [
+  {
+   "skrocenie_przezbrojenia_proc": 0,
+   "koszt_przezbrojenia_zl": 600,
+   "partia_szt": 2400,
+   "przezbrojen_rocznie": 10.0,
+   "koszt_roczny_zl": 12000,
+   "oszczednosc_roczna_zl": 0,
+   "oszczednosc_proc": 0.0
+  },
+  {
+   "skrocenie_przezbrojenia_proc": 20,
+   "koszt_przezbrojenia_zl": 480,
+   "partia_szt": 2147,
+   "przezbrojen_rocznie": 11.2,
+   "koszt_roczny_zl": 10733,
+   "oszczednosc_roczna_zl": 1267,
+   "oszczednosc_proc": 10.6
+  },
+  {
+   "skrocenie_przezbrojenia_proc": 38,
+   "koszt_przezbrojenia_zl": 372,
+   "partia_szt": 1890,
+   "przezbrojen_rocznie": 12.7,
+   "koszt_roczny_zl": 9449,
+   "oszczednosc_roczna_zl": 2551,
+   "oszczednosc_proc": 21.3
+  },
+  {
+   "skrocenie_przezbrojenia_proc": 50,
+   "koszt_przezbrojenia_zl": 300,
+   "partia_szt": 1697,
+   "przezbrojen_rocznie": 14.1,
+   "koszt_roczny_zl": 8485,
+   "oszczednosc_roczna_zl": 3515,
+   "oszczednosc_proc": 29.3
+  },
+  {
+   "skrocenie_przezbrojenia_proc": 75,
+   "koszt_przezbrojenia_zl": 150,
+   "partia_szt": 1200,
+   "przezbrojen_rocznie": 20.0,
+   "koszt_roczny_zl": 6000,
+   "oszczednosc_roczna_zl": 6000,
+   "oszczednosc_proc": 50.0
+  }
+ ],
+ "waskie_gardlo": [
+  {
+   "skrocenie_proc": 20,
+   "odzyskane_godziny_tyg": 2.5,
+   "odzyskane_godziny_rok": 120.0,
+   "marza_roczna_zl": 48000
+  },
+  {
+   "skrocenie_proc": 38,
+   "odzyskane_godziny_tyg": 4.75,
+   "odzyskane_godziny_rok": 228.0,
+   "marza_roczna_zl": 91200
+  },
+  {
+   "skrocenie_proc": 50,
+   "odzyskane_godziny_tyg": 6.25,
+   "odzyskane_godziny_rok": 300.0,
+   "marza_roczna_zl": 120000
+  }
+ ]
+}
