@@ -2,7 +2,6 @@
 tytul: Zasady redakcyjne
 opis: "Jak pracuje redakcja Rytmu Hali: fakty ze źródeł pierwotnych, przypis przy każdej liczbie, weryfikacja przed publikacją, niezależność i jawne korekty."
 zaktualizowano: 2026-11-06
-projekt: true
 ---
 
 Te zasady obowiązują w każdym tekście redakcyjnym Rytmu Hali. Gdy je łamiemy, poprawiamy tekst i piszemy o tym pod nim.

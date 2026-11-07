@@ -1,15 +1,14 @@
 ---
 tytul: Polityka korekt
 opis: "Jak poprawiamy błędy w tekstach Rytmu Hali: zgłoszenie, sprawdzenie, jawna poprawka z datą pod tekstem. Czym różni się korekta od aktualizacji."
-zaktualizowano: 2026-11-06
-projekt: true
+zaktualizowano: 2026-11-07
 ---
 
 Mylimy się rzadko, ale się mylimy. Gdy to się zdarzy, poprawiamy tekst jawnie.
 
 ## Jak zgłosić błąd
 
-Napisz na [redakcja@rytmhali.pl](mailto:redakcja@rytmhali.pl): adres tekstu, co jest błędne i, jeśli możesz, źródło, które to pokazuje. Każde zgłoszenie czytamy i sprawdzamy w źródłach. [DO DECYZJI: termin odpowiedzi, np. 3 dni robocze.]
+Napisz na [redakcja@rytmhali.pl](mailto:redakcja@rytmhali.pl): adres tekstu, co jest błędne i, jeśli możesz, źródło, które to pokazuje. Każde zgłoszenie czytamy i sprawdzamy w źródłach. Odpowiadamy w ciągu 3 dni roboczych.
 
 ## Jak poprawiamy
 
@@ -20,4 +19,4 @@ Napisz na [redakcja@rytmhali.pl](mailto:redakcja@rytmhali.pl): adres tekstu, co 
 
 ## Sprostowania
 
-Prawo do sprostowania wynika z Prawa prasowego. [DO UZUPEŁNIENIA po ocenie prawnika (pytanie 3 w liście dla prawnika): tryb i terminy publikacji sprostowań.]
+Prawo do sprostowania wynika z Prawa prasowego. Sprostowanie wyślij na [redakcja@rytmhali.pl](mailto:redakcja@rytmhali.pl); publikujemy je zgodnie z tą ustawą.

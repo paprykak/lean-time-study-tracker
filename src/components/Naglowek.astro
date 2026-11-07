@@ -5,6 +5,7 @@ import Logo from './Logo.astro';
 import Ikona from './Ikona.astro';
 import ustawienia from '../data/ustawienia.json';
 import { DZIALY } from '../lib/dane';
+import { formularzAktywny } from '../lib/srodowisko.mjs';
 
 interface Props {
   /** slug aktywnego działu albo adres aktywnej pozycji menu */
@@ -13,6 +14,8 @@ interface Props {
   zapytanie?: string;
 }
 const { aktywny, zapytanie = '' } = Astro.props;
+// Bez działającego zapisu przycisk prowadzi do opisu newslettera, a nie wzywa do zapisu (FORMULARZE).
+const napisNewslettera = formularzAktywny('newsletter') ? 'Zapisz się na newsletter' : 'Newsletter';
 const pozycje = [
   ...DZIALY.map((d) => ({ nazwa: d.nazwaMenu, adres: d.adres, klucz: d.slug })),
   ...ustawienia.menuDodatkowe.map((m) => ({ nazwa: m.nazwa, adres: m.adres, klucz: m.adres })),
@@ -46,7 +49,7 @@ const pozycje = [
             <Ikona nazwa="szukaj" />
           </button>
         </form>
-        <a href="/newsletter" class="przycisk przycisk-glowny hidden md:inline-flex">Zapisz się na newsletter</a>
+        <a href="/newsletter" class="przycisk przycisk-glowny hidden md:inline-flex">{napisNewslettera}</a>
         <a href="/szukaj" class="-mr-2 grid size-11 place-items-center text-tekst lg:hidden" aria-label="Szukaj">
           <Ikona nazwa="szukaj" rozmiar={22} />
         </a>

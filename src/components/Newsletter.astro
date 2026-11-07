@@ -3,8 +3,10 @@
 // worker/formularze.js) zapisuje przez API Brevo z podwójnym potwierdzeniem; ochrona: pole-pułapka, limit prób na IP,
 // tylko z tej domeny. Wynik: przekierowanie na /newsletter/potwierdz albo /newsletter/blad.
 // Zgoda na otrzymywanie newslettera: osobne, niezaznaczone pole wyboru (treść do akceptacji Patryka, F7).
+// Bez konfiguracji Brevo produkcja pokazuje zamiast formularza informację, że zapisy ruszą wkrótce (FORMULARZE).
 import Ikona from './Ikona.astro';
 import ustawienia from '../data/ustawienia.json';
+import { formularzAktywny } from '../lib/srodowisko.mjs';
 
 interface Props {
   /** Prefiks identyfikatorów pól (kilka formularzy na jednej stronie). */
@@ -18,6 +20,7 @@ interface Props {
 const { id, wariant = 'ramka', stan = 'domyslny', miejsce, class: klasa } = Astro.props;
 const n = ustawienia.newsletter;
 const ids = { email: `${id}-email`, zgoda: `${id}-zgoda`, blad: `${id}-blad`, tytul: `${id}-tytul`, pulapka: `${id}-strona` };
+const wkrotce = stan === 'domyslny' && !formularzAktywny('newsletter');
 ---
 <section class:list={['newsletter', `newsletter-${wariant}`, klasa]} aria-labelledby={ids.tytul}>
   <div class="newsletter-opis">
@@ -30,6 +33,10 @@ const ids = { email: `${id}-email`, zgoda: `${id}-zgoda`, blad: `${id}-blad`, ty
       <Ikona nazwa="sprawdz" rozmiar={22} class="shrink-0 text-sukces" />
       <p><strong class="text-tekst">Prawie gotowe.</strong> {n.potwierdzenie}</p>
     </div>
+  ) : wkrotce ? (
+    <p class="newsletter-wkrotce text-[0.9375rem] leading-relaxed" data-newsletter-wkrotce>
+      <strong class="text-tekst">Zapisy ruszą wkrótce.</strong> Pierwsze wydanie zapowiemy na stronie głównej.
+    </p>
   ) : (
     <form action="/api/newsletter" method="post" class="newsletter-formularz" data-newsletter data-miejsce={miejsce} novalidate={stan === 'blad' ? true : undefined}>
       <div class="newsletter-wiersz">

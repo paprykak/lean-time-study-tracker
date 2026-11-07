@@ -2,7 +2,6 @@
 tytul: Oznaczanie treści sponsorowanych
 opis: "Jak oznaczamy reklamy i materiały partnerów w Rytmie Hali: podpis „Reklama”, oznaczenie „Materiał partnera”, linki sponsorowane i brak wpływu na redakcję."
 zaktualizowano: 2026-11-06
-projekt: true
 ---
 
 Reklama musi być rozpoznawalna od pierwszego spojrzenia. Dlatego stosujemy trzy zasady bez wyjątków.

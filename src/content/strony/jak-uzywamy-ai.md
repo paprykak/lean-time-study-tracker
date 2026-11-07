@@ -2,7 +2,6 @@
 tytul: Jak używamy AI
 opis: "Do czego redakcja Rytmu Hali używa narzędzi AI, czego im nie powierza i kto odpowiada za każdy tekst. Fakty sprawdzamy u źródła, tekst zatwierdza redaktor."
 zaktualizowano: 2026-11-06
-projekt: true
 ---
 
 Narzędzia sztucznej inteligencji pomagają nam szukać badań i danych, porządkować materiał i pracować nad tekstem. Nie zastępują redakcji: za każdy tekst odpowiadamy my, a o publikacji decyduje redaktor naczelny.

@@ -1,13 +1,12 @@
 ---
 tytul: "Raport zmianowy: newsletter Rytmu Hali"
 opis: "Raport zmianowy, newsletter Rytmu Hali: najważniejsze teksty o produkcji, magazynach, lean i danych w jednym mailu. Wypis jednym kliknięciem."
-zaktualizowano: 2026-11-06
-projekt: true
+zaktualizowano: 2026-11-07
 ---
 
-„Raport zmianowy” to najważniejsze teksty Rytmu Hali w jednym mailu: poradniki, analizy i wzory do pobrania, które warto przeczytać przed odprawą. [DO DECYZJI: częstotliwość, np. co dwa tygodnie.]
+„Raport zmianowy” to najważniejsze teksty Rytmu Hali w jednym mailu: poradniki, analizy i wzory do pobrania, które warto przeczytać przed odprawą. Wydanie wysyłamy co dwa tygodnie.
 
-- Bez reklam w treści maila poza oznaczonymi miejscami partnerów. [DO DECYZJI]
+- Bez reklam w treści maila poza oznaczonymi miejscami partnerów.
 - Zapis wymaga potwierdzenia linkiem w wiadomości, którą od nas dostaniesz.
 - Wypisać się możesz jednym kliknięciem w każdym wydaniu.
 
