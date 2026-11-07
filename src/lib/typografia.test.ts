@@ -20,6 +20,7 @@ describe('typografia: twarde spacje', () => {
   it('liczby: tysiące, jednostki i rok', () => {
     expect(pokaz(typografia('12 500 zł, 47 min, 1 250 000 palet, w 2017 r. i 18,5 %'))).toBe('12~500~zł, 47~min, 1~250~000~palet, w~2017~r. i~18,5~%');
     expect(pokaz(typografia('od 2017 500 osób'))).toBe('od 2017 500~osób');
+    expect(pokaz(typografia('średnia z 4 tygodni, 26 tygodnie, 15,2 sztuki, 120 sztuk, 4 okresów, 12 miesięcy'))).toBe('średnia z~4~tygodni, 26~tygodnie, 15,2~sztuki, 120~sztuk, 4~okresów, 12~miesięcy');
   });
 
   it('skróty wiążą się z tym, co po nich, a półpauza nie zaczyna wiersza', () => {

@@ -6,6 +6,7 @@ import { join } from 'node:path';
 import satori from 'satori';
 import { Resvg } from '@resvg/resvg-js';
 import sharp from 'sharp';
+import { typografia } from './typografia.mjs';
 
 // Ścieżki od katalogu projektu (build i testy uruchamiane są z niego). Nie z import.meta.url: przy buildzie moduł
 // trafia do .astro/.prerender/chunks i ścieżka względna wskazywałaby w złe miejsce.
@@ -64,7 +65,8 @@ export async function okladka({ tytul, etykieta, zdjecie, pozycja = 'center' }: 
         el(
           'div',
           { display: 'flex', marginTop: 18, fontFamily: 'Noto Sans Display', fontWeight: 700, fontSize: rozmiarTytulu(tytul), lineHeight: 1.1, color: '#ffffff' },
-          tytul,
+          // Ta sama typografia co w tytule na stronie: liczba i jednoliterowe słowa nie zostają na końcu wiersza.
+          typografia(tytul),
         ),
       ]),
       el('img', { position: 'absolute', left: 0, bottom: 0 }, undefined, { src: PAS, width: SZEROKOSC, height: 24 }),

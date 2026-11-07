@@ -13,7 +13,7 @@ const JEDNOLITEROWE_NA_KONCU = new RegExp(`(?<=^|[\\s(„"'‚])([aiouwzAIOUWZ])
 const SKROTY = new RegExp(`(?<=(?:^|[\\s(])(?:np\\.|tzw\\.|m\\.in\\.|nr|art\\.|ust\\.|pkt|poz\\.|prof\\.|dr|mgr|inż\\.))${ODSTEP}(?=\\S)`, 'g');
 const TYSIACE = /(?<=(?<![\d.,])\d{1,3}(?:[  ]\d{3})*) (?=\d{3}(?!\d))/g;
 const JEDNOSTKI = new RegExp(
-  `(?<=\\d)${ODSTEP}(?=(?:r\\.|zł|gr|min|godz\\.|h|s|kg|t|m|mm|cm|km|m²|m³|°C|%|‰|proc\\.|tys\\.|mln|mld|szt\\.|pkt|osób|osoby|dni|lat|zmian|palet|EUR|USD|PLN)(?![\\p{L}]))`,
+  `(?<=\\d)${ODSTEP}(?=(?:r\\.|zł|gr|min|godz\\.|h|s|kg|t|m|mm|cm|km|m²|m³|°C|%|‰|proc\\.|tys\\.|mln|mld|szt\\.|pkt|osób|osoby|dni|lat|zmian|palet|tygodni|tygodnie|miesięcy|miesiące|godzin|godziny|sztuk|sztuki|okresów|okresy|EUR|USD|PLN)(?![\\p{L}]))`,
   'gu',
 );
 const PAUZA = new RegExp(`${ODSTEP}(?=[–—](?:\\s|$))`, 'g');

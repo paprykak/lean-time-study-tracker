@@ -80,3 +80,12 @@ Wypełniam po napisaniu tekstu (każde zdanie z liczbą: przypis i miejsce w źr
   - IKEA (pallet racking 4), zdjęcia historyczne czarno-białe (archiwa fińskie, amerykańskie): marka albo zdjęcie nie pokazuje dzisiejszej hali.
 - Wybrane: `magazyn-regaly-paletowe`. Strona: https://commons.wikimedia.org/wiki/File:ID_Logistics_Boll%C3%A8ne-_ITM-_%C3%A9picerie_I24.jpg. Autor RhôneA7, praca własna, CC BY 4.0, zdjęcie z 2024-02-09. Licencję i autora potwierdziłem 2026-11-07 w metadanych pliku (API Commons). Alejka centrum dystrybucji żywności (strefa artykułów spożywczych), regały paletowe pełne kartonów, bez ludzi i bez czytelnych marek.
 - Kadry 16:9, 1:1 i okładka: do sprawdzenia po buildzie podglądu.
+
+## 9. Weryfikacja
+- Runda 1 (2026-11-07): weryfikator faktów i recenzent uruchomieni równolegle, z czystym kontekstem. Wyniki niżej.
+
+## 10. Kontrola automatyczna
+- `redakcja:kontrola` (wersja 1 po uzupełnieniach): 2001 słów, 146 zdań, średnio 13,7 słowa w zdaniu, FOG-PL 9,1, 10 śródtytułów, 16 źródeł, 16 zacytowanych; zróżnicowanie długości zdań 0,45, strona bierna 0. Bez błędów i bez uwag. Wcześniejsze uwagi poprawione: „dany”, pogrubienia kroków (zamienione na podtytuły „Krok n”), zdania ponad 30 słów, akapity ponad 6 zdań.
+- `redakcja:zrodla`: źródła bez problemów; Interfaces (INFORMS) odpowiada 403 automatom, DOI potwierdzony w Crossref (187 cytowań).
+- Testy: `kontrola-tekstu`, `zdjecia`, `redakcja`, `panel`: 90 zaliczonych, 1 pominięty. Arkusz: `arkusz/test.py` 20 wartości zgodnych, zero błędów formuł.
+- Podgląd (`RH_PODGLAD=1`): `/prognozowanie-popytu` i `/do-pobrania/test-prognozy`, komputer i telefon (Pixel 7): axe 0 naruszeń, przewijanie poziome 0.
