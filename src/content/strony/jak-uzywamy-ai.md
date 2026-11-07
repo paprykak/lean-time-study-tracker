@@ -1,6 +1,6 @@
 ---
 tytul: Jak używamy AI
-opis: "Do czego redakcja Rytmu Hali używa narzędzi AI, czego im nie powierza i kto odpowiada za każdy tekst. Fakty sprawdzamy u źródła, tekst zatwierdza redaktor."
+opis: "Do czego redakcja Rytmu Hali używa narzędzi AI, czego im nie powierza i kto odpowiada za każdy tekst. Fakty sprawdzamy u źródła, a za publikację odpowiada redaktor naczelny."
 zaktualizowano: 2026-11-06
 ---
 
@@ -21,4 +21,4 @@ Narzędzia sztucznej inteligencji pomagają nam szukać badań i danych, porząd
 
 ## Kto odpowiada za tekst
 
-Każdy tekst przed publikacją czyta w całości redaktor naczelny. Może go zatwierdzić, zmienić albo odrzucić, a twierdzenia sprawdzamy w źródłach, do których prowadzą przypisy. Za opublikowany tekst odpowiada redakcja. Gdy się pomylimy, poprawiamy błąd jawnie, zgodnie z [polityką korekt](/polityka-korekt).
+Każdy tekst przed publikacją przechodzi weryfikację: twierdzenia sprawdzamy w źródłach, do których prowadzą przypisy, a rachunki przeliczamy. Za publikację odpowiada redaktor naczelny. Czyta każdy tekst w całości, przed publikacją albo krótko po niej, i może go zmienić albo wycofać. Za opublikowany tekst odpowiada redakcja. Gdy się pomylimy, poprawiamy błąd jawnie, zgodnie z [polityką korekt](/polityka-korekt).

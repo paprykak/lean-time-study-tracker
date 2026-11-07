@@ -73,7 +73,7 @@ Kopie tekstów źródeł: `.cache/redakcja/<slug>/` (poza repozytorium). Fragmen
 - Liczby do odświeżenia i kiedy (np. dane Eurostatu w grudniu):
 
 ## 13. Kontrola redakcyjna
-Patryk czyta cały tekst przed publikacją i decyduje. To warunek publikacji (SKILL.md, zasada 6).
+Patryk czyta cały tekst przed publikacją i decyduje; na jego polecenie „publikuj od razu” czyta go krótko po publikacji (SKILL.md, zasada 6). Zapisz, który tryb zastosowano.
 | Data | Kto | Decyzja (zatwierdzam / zmiany / odrzucam) | Co zmieniono |
 |---|---|---|---|
 

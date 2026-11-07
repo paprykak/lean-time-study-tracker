@@ -61,7 +61,7 @@ Pełne zadanie i fazy: `prompty/01-budowa-portalu.md`. Stan prac: `STAN.md`. Dec
 
 | Skill | Do czego |
 |---|---|
-| `/artykul` | Artykuł od tematu do szkicu: research w badaniach i danych publicznych, przypisy, rzemiosło pisania (`pisanie.md`), niezależna weryfikacja faktów, redaktor językowy i czytelnik testowy, zdjęcie z otwartej licencji, karta jakości (`.claude/skills/artykul/`). Bez oznaczeń AI; każdy tekst przed publikacją czyta i zatwierdza Patryk. Teczki artykułów w `redakcja/<slug>/` |
+| `/artykul` | Artykuł od tematu do szkicu: research w badaniach i danych publicznych, przypisy, rzemiosło pisania (`pisanie.md`), niezależna weryfikacja faktów, redaktor językowy i czytelnik testowy, zdjęcie z otwartej licencji, karta jakości (`.claude/skills/artykul/`). Bez oznaczeń AI; Patryk czyta każdy tekst przed publikacją albo, na jego polecenie „publikuj od razu”, krótko po niej (decyzja z 2026-11-07). Teczki artykułów w `redakcja/<slug>/` |
 
 Polecenia skilla: `npm run redakcja:zdjecia` (kandydaci na zdjęcie i stykówka), `npm run redakcja:zrodla -- <slug>` (adresy, DOI, wycofane badania), `npm run redakcja:kontrola -- <slug>` (przypisy, liczby i wnioski z badań bez źródła, frazy z tekstów generowanych, czytelność, rytm, styl). Kontrolę tekstu każdego nietestowego artykułu uruchamia też `npm run check`.
 
