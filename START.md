@@ -20,6 +20,8 @@ Szczegóły kont i sekretów: STAN.md („Do zrobienia przez Patryka”).
 
 ## Krok 2: pełny portal
 
+**2026-11-07: start pełnego portalu decyzją Patryka** (bez punktów 1 i 4 poniżej; krok 1 pominięty). Zrobione: 2 (strony zaufania zatwierdzone), 5 (`START = true`, check zielony, „wdrażaj”), 6 (test produkcji, IndexNow). Zostaje: 1 (kolejne teksty), 3 (Umami), 4 (prawnik), 7 (przeglądy po 14 i 28 dniach).
+
 | # | Co | Kto |
 |---|---|---|
 | 1 | Bramka: co najmniej 12 opublikowanych artykułów w co najmniej 4 działach, każdy przeczytany i zatwierdzony przez Patryka (kontrola redakcyjna) | Patryk i skill `/artykul` |
