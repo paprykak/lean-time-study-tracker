@@ -1,11 +1,39 @@
 {
+ "adresy": {
+  "jeden": {
+   "n": "O5",
+   "mt": "O6",
+   "mn": "O7",
+   "ms": "O8",
+   "mw": "O9",
+   "rn": "O10",
+   "rp": "O11",
+   "fp": "O12",
+   "od": "O13"
+  },
+  "jeden_werdykt": "N16",
+  "korekty": {
+   "n": "K5",
+   "mp": "K6",
+   "mq": "K7",
+   "r": "K8",
+   "f": "K9",
+   "ile": "K10",
+   "wg_p": "K11",
+   "wg_k": "K12",
+   "wd_p": "K13",
+   "wd_k": "K14"
+  },
+  "korekty_werdykt": "J17"
+ },
  "jeden_indeks": {
   "okresy": 26,
   "mae_twoja": 15.192307692307692,
   "mae_naiwna": 15.153846153846153,
   "mae_srednia": 12.442307692307692,
+  "mae_wygladzanie": 12.460439485584722,
   "twoja_do_naiwnej": 1.00253807106599,
-  "twoja_do_sredniej": 1.2210200927357033,
+  "twoja_do_najlepszej_prostej": 1.2210200927357033,
   "odchylenie": 0.020445529447665547
  },
  "korekty": {
@@ -18,17 +46,17 @@
   "IND-001": {
    "okresy": 12,
    "twoja_do_naiwnej": 1.2835314091680814,
-   "twoja_do_sredniej": 1.2663316582914572
+   "twoja_do_najlepszej_prostej": 1.4267763584996016
   },
   "IND-002": {
    "okresy": 12,
    "twoja_do_naiwnej": 0.9166666666666666,
-   "twoja_do_sredniej": 1.2941176470588236
+   "twoja_do_najlepszej_prostej": 1.349295593788864
   },
   "IND-003": {
    "okresy": 12,
    "twoja_do_naiwnej": 0.8867924528301887,
-   "twoja_do_sredniej": 1.1124260355029585
+   "twoja_do_najlepszej_prostej": 1.157210334385182
   }
  },
  "sprzedaz": [

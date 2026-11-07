@@ -1,22 +1,23 @@
 // Rysunek 1 do artykułu „prognozowanie-popytu”: o ile zwycięzca konkursu M5 był dokładniejszy od najlepszej
 // z 24 metod porównawczych organizatorów na każdym z 12 poziomów agregacji (dane: m5-wyniki.json z m5.py).
+// Na każdym poziomie najlepsza może być inna metoda porównawcza (L1: ESX, L12: Com_tb); opis w tekście artykułu.
 // Układ wąski, etykiety nad słupkami (obraz wypełnia kolumnę tekstu: na telefonie napisy ok. 12 px).
 import { readFileSync, writeFileSync } from 'node:fs';
 
 const dane = JSON.parse(readFileSync(new URL('./m5-wyniki.json', import.meta.url), 'utf8'));
 const poprawa = dane.poprawa_zwyciezcy_nad_najlepszym_benchmarkiem_wg_poziomu_proc;
 const POZIOMY = [
-  ['L1', 'Cała sieć', '1 szereg'],
-  ['L2', 'Stan', '3 szeregi'],
+  ['L1', 'Suma 10 sklepów', '1 szereg'],
+  ['L2', 'Stan USA', '3 szeregi'],
   ['L3', 'Sklep', '10'],
   ['L4', 'Kategoria', '3'],
   ['L5', 'Dział', '7'],
-  ['L6', 'Stan × kategoria', '9'],
-  ['L7', 'Stan × dział', '21'],
+  ['L6', 'Stan USA × kategoria', '9'],
+  ['L7', 'Stan USA × dział', '21'],
   ['L8', 'Sklep × kategoria', '30'],
   ['L9', 'Sklep × dział', '70'],
   ['L10', 'Produkt, suma sklepów', '3 049'],
-  ['L11', 'Produkt × stan', '9 147'],
+  ['L11', 'Produkt × stan USA', '9 147'],
   ['L12', 'Produkt w sklepie', '30 490'],
 ];
 const KOLOR = { tekst: '#1d2530', drugi: '#58626f', linia: '#dde1e6', slupek: '#1d2530', akcent: '#c2410c' };

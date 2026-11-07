@@ -94,5 +94,11 @@
     "adres": "https://mpra.ub.uni-muenchen.de/36713/",
     "rodzaj": "Inne",
     "dostep": "2026-11-07"
+  },
+  "excel": {
+    "opis": "Microsoft (2026), Tworzenie prognozy w programie Excel dla systemu Windows, pomoc techniczna Microsoft (Excel dla Microsoft 365, 2024 i 2021).",
+    "adres": "https://support.microsoft.com/pl-pl/office/create-a-forecast-in-excel-for-windows-22c500da-6da7-45e5-bfdc-60a7062329fd",
+    "rodzaj": "Inne",
+    "dostep": "2026-11-07"
   }
 }

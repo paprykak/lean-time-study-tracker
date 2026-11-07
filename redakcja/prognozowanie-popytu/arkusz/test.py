@@ -1,6 +1,8 @@
 # Sprawdza formuły arkusza „Test prognozy”: przelicza plik w LibreOffice (bez interfejsu) i porównuje wyniki
-# z wartościami policzonymi w Pythonie (przyklad.json). Uruchom z katalogu projektu po arkusz.py:
+# z wartościami policzonymi w Pythonie (przyklad.json). Sprawdza też wyprzedzenie: kopia pliku z wyprzedzeniem 3
+# musi dać wynik zgodny z Pythonem dla h = 3. Uruchom z katalogu projektu po arkusz.py:
 # python3 redakcja/prognozowanie-popytu/arkusz/test.py
+import importlib.util
 import json
 import subprocess
 import sys
@@ -12,13 +14,14 @@ from openpyxl import load_workbook
 KORZEN = Path(__file__).resolve().parents[3]
 PLIK = KORZEN / 'public/pobierz/test-prognozy.xlsx'
 oczek = json.loads(Path(__file__).with_name('przyklad.json').read_text(encoding='utf8'))
-
-with tempfile.TemporaryDirectory() as tmp:
-    subprocess.run(['soffice', '--headless', '--calc', '--convert-to', 'xlsx', '--outdir', tmp, str(PLIK)],
-                   check=True, capture_output=True, timeout=180)
-    wb = load_workbook(Path(tmp) / PLIK.name, data_only=True)
-
+A = oczek['adresy']
 bledy = []
+
+
+def przelicz(plik, katalog):
+    subprocess.run(['soffice', '--headless', '--calc', '--convert-to', 'xlsx', '--outdir', katalog, str(plik)],
+                   check=True, capture_output=True, timeout=180)
+    return load_workbook(Path(katalog) / Path(plik).name, data_only=True)
 
 
 def sprawdz(opis, wartosc, oczekiwana, tol=1e-6):
@@ -28,33 +31,64 @@ def sprawdz(opis, wartosc, oczekiwana, tol=1e-6):
         bledy.append(opis)
 
 
-j, k, w = wb['Jeden indeks'], wb['Korekty'], wb['Wiele indeksów']
-o = oczek['jeden_indeks']
-sprawdz('jeden indeks: okresy', j['L5'].value, o['okresy'])
-sprawdz('jeden indeks: błąd Twojej', j['L6'].value, o['mae_twoja'])
-sprawdz('jeden indeks: błąd naiwnej', j['L7'].value, o['mae_naiwna'])
-sprawdz('jeden indeks: błąd średniej', j['L8'].value, o['mae_srednia'])
-sprawdz('jeden indeks: Twój ÷ naiwna', j['L9'].value, o['twoja_do_naiwnej'])
-sprawdz('jeden indeks: Twój ÷ średnia', j['L10'].value, o['twoja_do_sredniej'])
-sprawdz('jeden indeks: odchylenie', j['L13'].value, o['odchylenie'])
-o = oczek['korekty']
-sprawdz('korekty: okresy', k['K5'].value, o['okresy'])
-sprawdz('korekty: błąd po', k['K6'].value, o['mae_po'])
-sprawdz('korekty: błąd przed', k['K7'].value, o['mae_przed'])
-sprawdz('korekty: po ÷ przed', k['K8'].value, o['po_do_przed'])
-for r, indeks in enumerate(['IND-001', 'IND-002', 'IND-003'], start=5):
-    o = oczek['wiele'][indeks]
-    sprawdz(f'{indeks}: okresy', w[f'L{r}'].value, o['okresy'])
-    sprawdz(f'{indeks}: Twój ÷ naiwna', w[f'M{r}'].value, o['twoja_do_naiwnej'])
-    sprawdz(f'{indeks}: Twój ÷ średnia', w[f'N{r}'].value, o['twoja_do_sredniej'])
-for arkusz, adres in [(j, 'K17'), (k, 'J17'), (w, 'O5'), (w, 'O6'), (w, 'O7')]:
-    print(f'  werdykt {arkusz.title}!{adres}: {arkusz[adres].value}')
-# Pusty wiersz bez danych nie może dać błędu formuły (#VALUE!, #DIV/0! itd.).
-for arkusz in (j, k, w):
-    for wiersz in arkusz.iter_rows(min_row=5, max_row=60):
-        for c in wiersz:
-            if isinstance(c.value, str) and c.value.startswith('#'):
-                bledy.append(f'{arkusz.title}!{c.coordinate} = {c.value}')
+with tempfile.TemporaryDirectory() as tmp:
+    wb = przelicz(PLIK, tmp)
+    j, k, w = wb['Jeden indeks'], wb['Korekty'], wb['Wiele indeksów']
+    o, a = oczek['jeden_indeks'], A['jeden']
+    sprawdz('jeden indeks: okresy', j[a['n']].value, o['okresy'])
+    sprawdz('jeden indeks: błąd Twojej', j[a['mt']].value, o['mae_twoja'])
+    sprawdz('jeden indeks: błąd naiwnej', j[a['mn']].value, o['mae_naiwna'])
+    sprawdz('jeden indeks: błąd średniej', j[a['ms']].value, o['mae_srednia'])
+    sprawdz('jeden indeks: błąd wygładzania', j[a['mw']].value, o['mae_wygladzanie'])
+    sprawdz('jeden indeks: Twój ÷ naiwna', j[a['rn']].value, o['twoja_do_naiwnej'])
+    sprawdz('jeden indeks: Twój ÷ najlepsza prosta', j[a['rp']].value, o['twoja_do_najlepszej_prostej'])
+    sprawdz('jeden indeks: odchylenie', j[a['od']].value, o['odchylenie'])
+    o, a = oczek['korekty'], A['korekty']
+    sprawdz('korekty: okresy', k[a['n']].value, o['okresy'])
+    sprawdz('korekty: błąd po', k[a['mp']].value, o['mae_po'])
+    sprawdz('korekty: błąd przed', k[a['mq']].value, o['mae_przed'])
+    sprawdz('korekty: po ÷ przed', k[a['r']].value, o['po_do_przed'])
+    for r, indeks in enumerate(['IND-001', 'IND-002', 'IND-003'], start=5):
+        o = oczek['wiele'][indeks]
+        sprawdz(f'{indeks}: okresy', w[f'Q{r}'].value, o['okresy'])
+        sprawdz(f'{indeks}: Twój ÷ naiwna', w[f'R{r}'].value, o['twoja_do_naiwnej'])
+        sprawdz(f'{indeks}: Twój ÷ najlepsza prosta', w[f'S{r}'].value, o['twoja_do_najlepszej_prostej'])
+    for arkusz, adres in [(j, A['jeden_werdykt']), (k, A['korekty_werdykt']), (w, 'T5'), (w, 'T6'), (w, 'T7'), (w, 'R60')]:
+        print(f'  {arkusz.title}!{adres}: {arkusz[adres].value}')
+    for arkusz in (j, k, w):
+        for wiersz in arkusz.iter_rows(min_row=5, max_row=70):
+            for c in wiersz:
+                if isinstance(c.value, str) and c.value.startswith('#'):
+                    bledy.append(f'{arkusz.title}!{c.coordinate} = {c.value}')
+
+    # Wyprzedzenie 3: zmień parametr w kopii i porównaj z Pythonem.
+    spec = importlib.util.spec_from_file_location('arkusz_gen', Path(__file__).with_name('arkusz.py'))
+    from openpyxl import load_workbook as lw
+    kopia = Path(tmp) / 'h3' / 'test-prognozy.xlsx'
+    kopia.parent.mkdir()
+    wb3 = lw(PLIK)
+    wb3['Jeden indeks']['O1'] = 3
+    wb3.save(kopia)
+    j3 = przelicz(kopia, str(Path(tmp) / 'h3wynik'))['Jeden indeks']
+    sz, tw = oczek['sprzedaz'], oczek['twoja']
+
+    def poziomy(s, alfa=0.2):
+        wynik, p = [], None
+        for y in s:
+            p = y if p is None else alfa * y + (1 - alfa) * p
+            wynik.append(p)
+        return wynik
+
+    lv = poziomy(sz)
+    h = 3
+    idx = [i for i in range(len(sz)) if tw[i] is not None and i - h - 3 >= 0]
+    mae = lambda pary: sum(abs(x - y) for x, y in pary) / len(pary)
+    a = A['jeden']
+    sprawdz('h=3: okresy', j3[a['n']].value, len(idx))
+    sprawdz('h=3: błąd naiwnej', j3[a['mn']].value, mae([(sz[i - h], sz[i]) for i in idx]))
+    sprawdz('h=3: błąd średniej', j3[a['ms']].value, mae([(sum(sz[i - h - 3:i - h + 1]) / 4, sz[i]) for i in idx]))
+    sprawdz('h=3: błąd wygładzania', j3[a['mw']].value, mae([(lv[i - h], sz[i]) for i in idx]))
+
 if bledy:
     print('BŁĘDY:', bledy)
     sys.exit(1)

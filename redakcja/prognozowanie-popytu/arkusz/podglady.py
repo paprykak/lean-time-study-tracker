@@ -1,4 +1,4 @@
-# Podglądy arkusza „Test prognozy” do strony materiału: górna część arkuszy „Jeden indeks” i „Korekty”
+# Podglądy arkusza „Test prognozy” do strony materiału: górna część arkuszy „Wiele indeksów” i „Jeden indeks”
 # w proporcji 16:10. Plik przelicza i drukuje LibreOffice (bez interfejsu), strony renderuje pdftoppm.
 # Uruchom z katalogu projektu po arkusz.py: python3 redakcja/prognozowanie-popytu/arkusz/podglady.py
 import subprocess
@@ -22,7 +22,7 @@ with tempfile.TemporaryDirectory() as tmp:
             if tekst in subprocess.run(['pdftotext', '-f', str(n), '-l', str(n), str(pdf), '-'], capture_output=True, text=True).stdout:
                 return n
         raise SystemExit(f'Nie ma strony z tekstem: {tekst}')
-    for i, tekst in enumerate(['Jeden indeks: Twoja prognoza', 'Korekty: czy poprawka'], start=1):
+    for i, tekst in enumerate(['Wiele indeksów: czy Twoja', 'Jeden indeks: Twoja prognoza'], start=1):
         n = strona_z(tekst)
         subprocess.run(['pdftoppm', '-r', '150', '-png', '-f', str(n), '-l', str(n), '-singlefile', str(pdf), str(t / f's{i}')], check=True)
         im = Image.open(t / f's{i}.png').convert('RGB')

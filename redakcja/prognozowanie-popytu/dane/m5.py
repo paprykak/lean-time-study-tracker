@@ -57,6 +57,22 @@ wynik = {
     'L12_benchmarki': {k: round(v['L12'], 3) for k, v in sorted(bench.items(), key=lambda kv: kv[1]['L12'])},
     'L12_zwyciezca': round(zw['L12'], 3),
 }
+import statistics
+# Uzupełnienia po recenzji (2026-11-07): zwycięzca względem prognozy naiwnej, średniej ruchomej i ES_bu na każdym poziomie,
+# mediana 50 najlepszych zespołów względem najlepszej metody porównawczej i część przewagi nad prognozą naiwną,
+# którą daje już automatyczne wygładzanie wykładnicze (ES_bu).
+wynik['zwyciezca_nad_metoda_wg_poziomu_proc'] = {
+    m: {p: poprawa(zw[p], bench[m][p]) for p in POZIOMY} for m in ('Naive', 'sNaive', 'MA', 'ES_bu')
+}
+wynik['mediana_top50_nad_najlepszym_benchmarkiem_wg_poziomu_proc'] = {
+    p: poprawa(statistics.median(v[p] for v in top.values()), min(b[p] for b in bench.values())) for p in POZIOMY
+}
+wynik['es_bu_czesc_przewagi_zwyciezcy_nad_naiwna_proc'] = {
+    p: round(100 * (bench['Naive'][p] - bench['ES_bu'][p]) / (bench['Naive'][p] - zw[p]), 1) for p in POZIOMY
+}
+wynik['es_bu_nad_naiwna_i_ma_avg_proc'] = {'Naive': poprawa(bench['ES_bu']['Avg'], bench['Naive']['Avg']), 'MA': poprawa(bench['ES_bu']['Avg'], bench['MA']['Avg'])}
+wynik['esx_nad_es_td_avg_proc'] = poprawa(bench['ESX']['Avg'], bench['ES_td']['Avg'])
+wynik['arimax_nad_arima_td_avg_proc'] = poprawa(bench['ARIMAX']['Avg'], bench['ARIMA_td']['Avg'])
 cel = Path(__file__).with_name('m5-wyniki.json')
 cel.write_text(json.dumps(wynik, ensure_ascii=False, indent=1) + '\n', encoding='utf8')
 print(json.dumps(wynik, ensure_ascii=False, indent=1))

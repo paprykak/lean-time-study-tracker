@@ -1,6 +1,6 @@
 ---
 tytul: "Test prognozy: czy pobijasz prognozy, które nic nie kosztują?"
-opis: "Arkusz porównuje Twoją prognozę popytu z dwiema darmowymi: naiwną i średnią z 4 okresów. Liczy błąd w sztukach, wartość dodaną prognozy (FVA) i to, czy korekty planisty zmniejszają błąd. Także dla wielu indeksów naraz."
+opis: "Arkusz porównuje Twoją prognozę popytu z trzema darmowymi: naiwną, średnią z 4 okresów i wygładzaniem wykładniczym, liczonymi z Twoim wyprzedzeniem. Liczy błąd w sztukach, wartość dodaną prognozy (FVA) i skutki korekt planisty."
 plik: /pobierz/test-prognozy.xlsx
 format: XLSX
 podglady:
@@ -13,21 +13,21 @@ opublikowano: 2026-11-07
 szkic: true
 ---
 
-Prognoza, za którą płacisz czasem planisty albo licencją systemu, powinna mylić się mniej niż dwie prognozy, które nic nie kosztują: sprzedaż z poprzedniego okresu (prognoza naiwna) i średnia z czterech poprzednich okresów. Arkusz sprawdza to na Twoich danych i pokazuje wynik w jednym zdaniu.
+Prognoza, za którą płacisz czasem planisty albo licencją systemu, powinna mylić się mniej niż trzy prognozy, które nic nie kosztują: ostatnia znana sprzedaż (prognoza naiwna), średnia z czterech okresów i wygładzanie wykładnicze. Arkusz sprawdza to na Twoich danych i liczy darmowe prognozy z takim samym wyprzedzeniem, z jakim robisz swoją.
 
 ## Co jest w arkuszu
 
-- **Jeden indeks:** sprzedaż i Twoja prognoza okres po okresie. Arkusz dolicza obie darmowe prognozy, średni błąd każdej w sztukach, wartość dodaną Twojej prognozy (FVA) i odchylenie, czyli czy prognoza systematycznie zawyża albo zaniża sprzedaż.
+- **Wiele indeksów:** dane w kolumnach indeks, okres, sprzedaż, prognoza dla około 20 indeksów. Wynik dla każdego indeksu, dla wszystkich razem i liczba indeksów, w których Twoja prognoza bije najlepszą prostą metodę.
+- **Jeden indeks:** ten sam test dla jednego indeksu, z błędem każdej prognozy w sztukach, wartością dodaną (FVA) i odchyleniem, czyli tym, czy prognoza średnio zawyża albo zaniża sprzedaż.
 - **Korekty:** prognoza systemu i prognoza po korekcie planisty. Arkusz pokazuje, czy korekty zmniejszają błąd, osobno w górę i w dół.
-- **Wiele indeksów:** dane w kolumnach indeks, okres, sprzedaż, prognoza. Wynik i werdykt dla każdego indeksu.
 
-Dane przykładowe są fikcyjne. Nadpisz je swoimi.
+W pomarańczowych polach ustawiasz wyprzedzenie prognozy i wagę ostatniego okresu w wygładzaniu. Dane przykładowe są fikcyjne. Nadpisz je swoimi.
 
 ## Jak z niego korzystać
 
-1. Wybierz 20 indeksów: kilkanaście z największą sprzedażą i kilka zwykłych.
-2. Wklej sprzedaż i prognozę z ostatnich 26–52 tygodni. Bierz prognozę zrobioną przed tygodniem, z takim wyprzedzeniem, z jakim naprawdę zamawiasz.
+1. Wylosuj około 20 indeksów z listy sprzedaży z roku przed testem, po kilka z grup A, B i C, razem z wycofanymi.
+2. Wklej sprzedaż i prognozę z ostatnich 26–52 tygodni. Bierz prognozę, z którą naprawdę zamawiałeś, i wpisz jej wyprzedzenie.
 3. Jeśli prognozę poprawia planista, wklej też prognozę systemu sprzed korekty.
-4. Przeczytaj werdykt i porównaj go z tabelą decyzji w artykule.
+4. Wniosek wyciągaj z wyniku dla wszystkich indeksów razem. Wynik dla jednego indeksu to wskazówka, a nie dowód.
 
 Uzasadnienie, dowody z konkursów prognostycznych i badań w firmach oraz trzy pytania do dostawcy systemu prognoz znajdziesz w artykule [„Zanim kupisz AI do prognoz, sprawdź, czy bijesz średnią z 4 tygodni”](/prognozowanie-popytu). Arkusz możesz kopiować i używać w firmie.
