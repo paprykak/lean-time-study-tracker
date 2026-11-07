@@ -81,6 +81,10 @@ wynik['top50_lepsze_od_ES_bu_wg_poziomu'] = {p: sum(v[p] < bench['ES_bu'][p] for
 wynik['es_bu_czesc_przewagi_zwyciezcy_nad_snaive_proc'] = {
     p: round(100 * (bench['sNaive'][p] - bench['ES_bu'][p]) / (bench['sNaive'][p] - zw[p]), 1) for p in POZIOMY
 }
+# Wersja 4 recenzji: proste metody z arkusza (SES, MA) względem ES_bu na każdym poziomie (o ile bardziej się mylą).
+wynik['ses_ma_gorsze_od_ES_bu_wg_poziomu_proc'] = {
+    m: {p: round(100 * (bench[m][p] / bench['ES_bu'][p] - 1), 1) for p in POZIOMY} for m in ('SES', 'MA')
+}
 cel = Path(__file__).with_name('m5-wyniki.json')
 cel.write_text(json.dumps(wynik, ensure_ascii=False, indent=1) + '\n', encoding='utf8')
 print(json.dumps(wynik, ensure_ascii=False, indent=1))

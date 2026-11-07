@@ -23,7 +23,7 @@ const q = (s) => JSON.stringify(s);
 const n = {
   tytul: 'Zanim kupisz AI do prognoz, sprawdź, czy bijesz średnią z 4 tygodni',
   tytulSeo: 'Prognozowanie popytu z AI czy prognoza naiwna? Jak sprawdzić',
-  opisSeo: 'W konkursie M5 AI przy pojedynczym produkcie myliło się tylko o 3% mniej niż proste wygładzanie wykładnicze. Jak w godzinę sprawdzić własną prognozę popytu.',
+  opisSeo: 'W konkursie M5 AI przy pojedynczym produkcie myliło się tylko o 3% mniej niż automatyczne wygładzanie wykładnicze. Jak w godzinę sprawdzić własną prognozę.',
   lead: 'W konkursie M5 zwycięska metoda AI myliła się o połowę mniej niż automatyczne wygładzanie wykładnicze przy sumie sprzedaży wszystkich sklepów, ale tylko o 3% mniej przy pojedynczym produkcie w sklepie. Zanim kupisz system prognoz, sprawdź, czy Twoja prognoza bije proste metody.',
   podpisZdjecia: 'Regały w centrum dystrybucji żywności. Tu prognoza dla pojedynczego indeksu zamienia się w palety zapasu.',
   faq: [
@@ -34,7 +34,7 @@ const n = {
     ['Jak prognozować sprzedaż w Excelu?', 'Excel ma narzędzie Arkusz prognozy (karta Dane, grupa Prognoza), które liczy wygładzanie wykładnicze z trendem i sezonowością. Zanim zaufasz jakiejkolwiek metodzie, porównaj jej błąd z prognozą naiwną i ze średnią z czterech tygodni na tych samych tygodniach, z takim wyprzedzeniem, z jakim zamawiasz. Gotowy arkusz z tym porównaniem znajdziesz w materiałach do pobrania.'],
   ],
   metoda:
-    'Tekst opiera się głównie na recenzowanych wynikach konkursów prognostycznych M4 i M5 i na oficjalnych plikach wyników ich organizatorów. Z pliku M5 sami policzyliśmy przewagę zwycięzcy na 12 poziomach danych, a remis w teście sprawdziliśmy symulacją; dane i kod są w archiwum redakcji. Artykuły o M5, ankietę Fildesa i Goodwina oraz pracę Hyndmana i Koehler znamy z wersji roboczych, a badania korekt prognoz i porównanie Spiliotisa i in. ze streszczeń. Dane M5 pochodzą z handlu detalicznego. Przykłady są fikcyjne. Konflikt interesów: redaktor naczelny prowadzi doradztwo w operacjach; tekst nie odsyła do jego usług, a wymienione firmy nie mają związku z redakcją.',
+    'Tekst opiera się głównie na recenzowanych wynikach konkursu prognostycznego M5 i na oficjalnym pliku wyników jego organizatorów, z którego sami policzyliśmy przewagę zwycięzcy na 12 poziomach danych. Remis w teście sprawdziliśmy symulacją; dane i kod są w archiwum redakcji. Artykuł o M5, ankietę Fildesa i Goodwina oraz pracę Hyndmana i Koehler znamy z wersji roboczych, a badania korekt prognoz i porównanie Spiliotisa i in. ze streszczeń. Dane M5 pochodzą z handlu detalicznego. Przykłady są fikcyjne. Konflikt interesów: redaktor naczelny prowadzi doradztwo w operacjach; tekst nie odsyła do jego usług, a wymieniona firma nie ma związku z redakcją.',
 };
 for (const [pole, max] of [['tytul', 70], ['tytulSeo', 60], ['opisSeo', 160], ['lead', 320], ['metoda', 700]]) {
   if (n[pole].length > max) throw new Error(`${pole}: ${n[pole].length} > ${max} znaków`);
@@ -47,7 +47,7 @@ const yaml = [
   `opisSeo: ${q(n.opisSeo)}`,
   `lead: ${q(n.lead)}`,
   'dzial: dane-i-ai',
-  'format: Analiza',
+  'format: Poradnik',
   'tematy:',
   '  - ai-w-planowaniu',
   'autorzy:',
