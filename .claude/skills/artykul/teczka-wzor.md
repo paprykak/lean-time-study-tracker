@@ -22,12 +22,17 @@ Plik `redakcja/<slug>/teczka.md`. Notatki redakcji do jednego artykułu: nie tra
 - Sztafeta pytań (pytanie → sekcja, która na nie odpowiada):
 - Zakończenie (klamra z otwarciem albo pierwszy krok):
 - Test przekazania (zdanie, z którym czytelnik prześle tekst koledze):
+- Zakres: format, długość docelowa (dolna połowa widełek), narzędzie do pobrania tak/nie i dlaczego:
+- Specyfikacja narzędzia (jeśli jest; zamrożona przed pisaniem): dane wejściowe, co liczy, progi i werdykty, test:
+- Czytelnik konspektu (persona, data, najważniejsze uwagi i co zmieniono):
 
 ## 4. Źródła
 | Nr | Opis | Rodzaj | Siła (A–D) | Adres | Dostęp | Co wspiera | Ograniczenia (próba, plan, kontekst) |
 |---|---|---|---|---|---|---|---|
 
 ## 5. Rejestr twierdzeń
+Kopie tekstów źródeł: `.cache/redakcja/<slug>/` (poza repozytorium). Fragment wystarcza weryfikatorowi bez otwierania całego źródła.
+
 | Twierdzenie w tekście (skrót) | Przypis | Miejsce w źródle (strona, tabela, dosłowny fragment) | Werdykt weryfikacji |
 |---|---|---|---|
 

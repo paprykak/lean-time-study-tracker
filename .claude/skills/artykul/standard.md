@@ -28,7 +28,7 @@ Wspólne dla wszystkich: tytuł do 70 znaków (teza albo obietnica wglądu, nie 
 
 | Format | Długość (słowa) | Budowa |
 |---|---|---|
-| **Poradnik** | 1 500–2 500 | W skrócie (Problem, Dlaczego, Co zrobić) → diagnoza → rama z nazwą i rysunkiem → 3–5 kroków (każdy: wniosek, uzasadnienie, przykład) → przypadek prowadzący → kiedy to nie działa → co zrobić w tym tygodniu |
+| **Poradnik** | 1 500–2 500 (cel: do 2 000) | W skrócie (Problem, Dlaczego, Co zrobić) → diagnoza → rama z nazwą i rysunkiem → 3–5 kroków (każdy: wniosek, uzasadnienie, przykład) → przypadek prowadzący → kiedy to nie działa → co zrobić w tym tygodniu |
 | **Analiza** | 2 000–3 500 | W skrócie → teza i stawka → dowody (najmocniejsze najpierw) → mechanizm (dlaczego tak jest) → przeciwdowody → co z tego wynika dla decyzji → co zrobić |
 | **Raport** | 1 500–3 000 | Kluczowe liczby (3–5) → dane i metoda analizy własnej → wyniki z rysunkami → interpretacja i ograniczenia danych → implikacje |
 | **Wywiad** | 1 500–3 000 | Wstęp: kim jest rozmówca i dlaczego warto go słuchać → pytania i autoryzowane odpowiedzi → ramka „Co z tego wynika” z faktami sprawdzonymi przez redakcję |
@@ -50,7 +50,7 @@ Liczby źródeł według rodzaju i datę weryfikacji ramka dopisuje sama (z pól
 - [ ] Licencja zdjęcia potwierdzona na stronie źródła, data w teczce.
 - [ ] Zero danych pracodawców Patryka, zmyślonych cytatów i cudzego doświadczenia w pierwszej osobie.
 - [ ] `metoda` opisuje najważniejsze źródła i konflikt interesów (albo jego brak), bez wzmianki o narzędziach.
-- [ ] Czytelnik testowy: przyjemność i wartość co najmniej 8/10, punkt porzucenia usunięty, a to, co zabiera, pokrywa się z trzema rzeczami z planu tekstu.
+- [ ] Czytelnik testowy: przyjemność i wartość co najmniej 8/10, punkt porzucenia usunięty, a to, co zabiera, pokrywa się z trzema rzeczami z planu tekstu. Gdy po drugim czytelniku ocena jest niższa, nie ma trzeciej rundy: raport podaje oceny i nierozwiązane uwagi, a o publikacji decyduje Patryk ([weryfikacja.md](weryfikacja.md)).
 - [ ] Redaktor językowy: każda poprawka przyjęta albo odrzucona z powodem w teczce; zdania z faktami po poprawkach sprawdzone ponownie.
 
 **Ocena** (0 = brak, 1 = częściowo, 2 = w pełni). Próg: co najmniej 28 z 32 punktów, żadnego zera, a kryteria 1, 3, 7, 13 i 15 na 2.

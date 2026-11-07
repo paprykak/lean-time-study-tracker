@@ -56,7 +56,7 @@ Nie kończysz streszczeniem, morałem, apelem („Nie czekaj!”), pytaniem reto
 3. **Kontrola stylu:** `npm run redakcja:kontrola -- <slug>`; każdą uwagę poprawiasz albo w teczce piszesz, dlaczego zostaje.
 4. **Pierwsze i ostatnie zdania:** tytuł, lead, pierwsze zdanie tekstu, pierwsze zdanie każdej sekcji i ostatnie zdanie tekstu przepisujesz jeszcze raz, każde osobno. Te zdania czytelnik czyta najuważniej, a przeglądający czyta tylko je.
 
-Potem formę oceniają redaktor językowy i czytelnik testowy ([weryfikacja.md](weryfikacja.md), runda 2).
+Potem formę oceniają redaktor językowy i czytelnik testowy ([weryfikacja.md](weryfikacja.md), runda 2). Budowę sprawdza wcześniej czytelnik konspektu (agent 0), więc przebieg strukturalny poprawia szczegóły, a nie cały plan.
 
 ## 8. Przed i po
 Wzorce formy. Fakty i liczby w prawdziwym tekście zawsze ze źródła albo oznaczone jako fikcyjne.
