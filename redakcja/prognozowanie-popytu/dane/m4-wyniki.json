@@ -1,0 +1,100 @@
+{
+ "zrodlo": "Mcompetitions/M4-methods, Evaluation and Ranks.xlsx, arkusz Point Forecasts-Summary",
+ "liczba_metod": 59,
+ "liczba_zgloszen": 49,
+ "typy_w_tabeli_benchmarkow": [
+  "Benchmark"
+ ],
+ "zwyciezca": {
+  "zespol": "Smyl, S.",
+  "afiliacja": "Uber Technologies",
+  "typ": "Hybrid",
+  "owa": 0.8208548754209313,
+  "smape": 11.374402
+ },
+ "comb_owa": 0.8976361303983924,
+ "naive2_owa": 1,
+ "poprawa_zwyciezcy_nad_comb_owa_proc": 8.6,
+ "zgloszenia_lepsze_od_comb_owa": 17,
+ "zgloszenia_lepsze_od_naive2_owa": 29,
+ "czyste_ml": [
+  {
+   "zespol": "Trotta, B.",
+   "afiliacja": "Individual",
+   "typ": "Machine Learning",
+   "owa": 0.9150450172025495,
+   "ranga_owa": 23
+  },
+  {
+   "zespol": "Kyriakides, I. & Artusi, A.",
+   "afiliacja": "University of Nicosia",
+   "typ": "Combination (ML)",
+   "owa": 1.0896974549234129,
+   "ranga_owa": 43
+  },
+  {
+   "zespol": "Alves Santos Junior, J. G.",
+   "afiliacja": "Individual",
+   "typ": "Machine Learning",
+   "owa": 1.1510459037743466,
+   "ranga_owa": 46
+  },
+  {
+   "zespol": "Mukhopadhyay, S.",
+   "afiliacja": "University of Texas",
+   "typ": "Machine Learning",
+   "owa": 1.4807692244975286,
+   "ranga_owa": 54
+  },
+  {
+   "zespol": "Pełka, P.",
+   "afiliacja": "Czestochowa University of Technology",
+   "typ": "Machine Learning",
+   "owa": 1.5950919675484045,
+   "ranga_owa": 56
+  }
+ ],
+ "czyste_ml_lepsze_od_comb": 0,
+ "czyste_ml_lepsze_od_naive2": 1,
+ "benchmarki_ml": {
+  "RNN": 1.4817254837455394,
+  "MLP": 1.6415310982524325
+ },
+ "pierwsza_piatka": [
+  {
+   "zespol": "Smyl, S.",
+   "afiliacja": "Uber Technologies",
+   "typ": "Hybrid",
+   "owa": 0.8208548754209313,
+   "ranga_owa": 1
+  },
+  {
+   "zespol": "Montero-Manso, P., Talagala, T., Hyndman, R. J. & Athanasopoulos, G.",
+   "afiliacja": "University of A Coruña & Monash University",
+   "typ": "Combination (S & ML)",
+   "owa": 0.8377020377296039,
+   "ranga_owa": 2
+  },
+  {
+   "zespol": "Pawlikowski, M., Chorowska, A. & Yanchuk, O.",
+   "afiliacja": "ProLogistica Soft",
+   "typ": "Combination (S)",
+   "owa": 0.8412612873787163,
+   "ranga_owa": 3
+  },
+  {
+   "zespol": "Jaganathan, S. & Prakash, P.",
+   "afiliacja": "Individual",
+   "typ": "Combination (S & ML)",
+   "owa": 0.8419665561111417,
+   "ranga_owa": 4
+  },
+  {
+   "zespol": "Fiorucci, J. A. & Louzada, F.",
+   "afiliacja": "University of Brasilia & University of São Paulo",
+   "typ": "Combination (S)",
+   "owa": 0.8425905421546492,
+   "ranga_owa": 5
+  }
+ ]
+}
