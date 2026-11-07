@@ -53,6 +53,8 @@ const yaml = [
   'opublikowano: 2026-11-06',
   'zdjecie: linia-rozlewnicza',
   `podpisZdjecia: ${q(n.podpisZdjecia)}`,
+  'materialy:',
+  '  - karta-definicji-oee',
   'zrodla:',
   ...kolejnosc.flatMap((k) => {
     const z = zrodla[k];

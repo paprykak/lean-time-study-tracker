@@ -12,6 +12,8 @@ autorzy:
 opublikowano: 2026-11-06
 zdjecie: linia-rozlewnicza
 podpisZdjecia: "Linia rozlewnicza w ruchu: ile z jej czasu jest stratą, rozstrzyga dopiero definicja OEE."
+materialy:
+  - karta-definicji-oee
 zrodla:
   - opis: "Vorne Industries, World-Class OEE, oee.com (strona producenta systemów do pomiaru OEE)."
     adres: "https://www.oee.com/world-class-oee/"
