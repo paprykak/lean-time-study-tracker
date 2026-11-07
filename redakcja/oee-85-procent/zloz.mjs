@@ -61,7 +61,7 @@ const yaml = [
   'faq:',
   ...n.faq.flatMap(([p, o]) => [`  - pytanie: ${q(p)}`, `    odpowiedz: ${q(o)}`]),
   `metoda: ${q(n.metoda)}`,
-  ...(process.env.SPRAWDZONO ? [`sprawdzono: ${process.env.SPRAWDZONO}`] : []),
+  `sprawdzono: ${process.env.SPRAWDZONO ?? '2026-11-07'}`,
   'szkic: true',
   '---',
   '',

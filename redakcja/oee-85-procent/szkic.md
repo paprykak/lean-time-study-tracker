@@ -4,7 +4,7 @@
 
 **Dlaczego.** W TPM (kompleksowym utrzymaniu ruchu) liczba 85% jest celem, do którego zakład ma dojść dzięki usprawnieniom [@jipm]. Zmierzone średnie są niższe, a wynik zależy od tego, co uznasz za czas planowany i jaki cykl przyjmiesz za idealny [@andersson].
 
-**Co zrobić.** Spisz dla swojej maszyny kartę definicji OEE (osiem decyzji, wzór niżej), porównuj wynik tylko z nią samą, a stratę pokazuj zarządowi w minutach i złotych.
+**Co zrobić.** Spisz dla swojej maszyny kartę definicji OEE (osiem decyzji, wzór niżej), porównuj maszynę tylko z nią samą, a stratę pokazuj zarządowi w minutach i złotych.
 
 ## Jedna zmiana, trzy wyniki z tego samego wzoru
 
@@ -16,7 +16,7 @@ Zmiana trwała osiem godzin. Pół godziny zajęła przerwa, drugie pół godzin
 
 | | Inżynier | Kierownik | Planista |
 | --- | --- | --- | --- |
-| Przezbrojenia, konserwacja | strata | wyłączone z planu | wyłączone z planu |
+| Przezbrojenia i konserwacja jako strata | tak | nie | nie |
 | Cykl idealny | 30 s, producent | 30 s, producent | 40 s, ERP |
 | Dostępność | 77,8% | 94,6% | 94,6% |
 | Wydajność (tempo) | 74,3% | 74,3% | 99,0% |
@@ -31,7 +31,7 @@ Tymczasem firmy liczą bardzo różnie. W szwedzkich ankietach mniej niż połow
 
 ## 85% to cel, który wyznaczyli twórcy TPM
 
-Najwcześniej znaleźliśmy tę liczbę w książce wydanej w 1982 r. przez JIPM, japoński instytut utrzymania ruchu. Kunio Shirose pisze w niej, że w badanych firmach efektywność urządzeń wynosiła średnio 40–60%, a dzięki TPM można ją podnieść do 85–95% [@jipm]. Same 85% to iloczyn trzech wartości przypisywanych Seiichiemu Nakajimie, redaktorowi tej książki: dostępności ponad 90%, wydajności ponad 95% i jakości ponad 99%. Według Nakajimy tyle zakład powinien mieć w idealnych warunkach [@jonsson]. Cel, nie średnia.
+Najwcześniej znaleźliśmy tę liczbę w książce wydanej w 1982 r. przez JIPM, japoński instytut utrzymania ruchu. Kunio Shirose pisze w niej, że w badanych firmach efektywność urządzeń wynosiła średnio 40–60%, a dzięki TPM można ją podnieść do 85–95% [@jipm]. Same 85% bierze się z mnożenia trzech celów, które późniejsi autorzy przypisują Seiichiemu Nakajimie, redaktorowi tej książki. To dostępność 0,90, wydajność 0,95 i jakość 0,99, czyli 0,90 × 0,95 × 0,99 ≈ 0,85. Według Nakajimy tyle zakład powinien mieć w idealnych warunkach [@jonsson].
 
 Vorne, producent systemów do pomiaru OEE, dodaje, że według Nakajimy wszystkie zakłady nagrodzone w Japonii za wdrożenie TPM miały ponad 85% [@vorne-wc]. Ta sama firma nazywa jednak 85% wygodnym i przekonującym, ale zupełnie sztucznym punktem odniesienia [@vorne-faq].
 
@@ -53,7 +53,7 @@ W Polsce znaleźliśmy tylko studia pojedynczych maszyn. W studium z AGH dzienne
 
 ## Usprawnienie potrafi obniżyć OEE
 
-OEE potrafi spaść, gdy linia robi więcej. W studium przypadku z 2011 r. zmiana testu i nowe urządzenie skróciły cykl idealny półautomatycznej linii montażowej z 26 do 22 sekund. Dotychczasowe przestoje zostały, więc OEE spadło z 86 do 79%, a linia zaczęła robić 130 zamiast 118 sztuk na godzinę [@andersson]. Kto patrzy tylko na OEE, uzna usprawnienie za pogorszenie. Gdyby zakład porównywał oba okresy tym samym cyklem 22 sekund, przed usprawnieniem miałby około 73% (rachunek redakcji: 86% × 22/26), a po nim 79%.
+OEE potrafi spaść, gdy linia robi więcej. W studium przypadku z 2011 r. zmiana testu i nowe urządzenie skróciły cykl idealny półautomatycznej linii montażowej z 26 do 22 sekund. Dotychczasowe przestoje zostały, więc produkcja wzrosła mniej niż możliwości linii: o 10%, ze 118 do 130 sztuk na godzinę, podczas gdy szybszy cykl pozwalał na 18%. OEE spadło przez to z 86 do 79% [@andersson]. Kto patrzy tylko na OEE, uzna usprawnienie za pogorszenie. Gdyby zakład porównywał oba okresy tym samym cyklem 22 sekund, przed usprawnieniem miałby około 73% (rachunek redakcji: 86% × 22/26), a po nim 79%.
 
 Podobnie działa jedna norma dla wielu wyrobów. W studium z AGH zakład nie określał normy czasu dla każdego wyrobu, więc autorzy przyjęli dla wyrobów o różnej trudności jedno średnie tempo: 2000 sztuk na godzinę. Sami piszą, że to uproszczenie znacząco zaniża wydajność, a wynik kolejnego tygodnia może się wyraźnie zmienić, gdy maszyna będzie robić inne wyroby [@agh].
 
@@ -82,13 +82,13 @@ Podobny obraz dało badanie około 20 przypadków: dominowały w nim straty wyda
 
 Dla każdej maszyny albo linii spisz na jednej kartce, jak liczysz, także jeśli liczysz OEE od lat. Przy każdej decyzji pogrubiliśmy ustawienie, od którego warto zacząć:
 
-1. **Czas planowany: zmiana minus przerwy, a czas bez zleceń osobno, w godzinach.** W analizie z 2006 r. ta sama maszyna, liczona razem z czasem bez zleceń, miała OEE 47% przy mniejszym obciążeniu i 59% przy większym, choć tempo i jakość były identyczne [@deron].
+1. **Czas planowany: zmiana minus przerwy, a czas bez zleceń osobno.** Zarządowi pokazuj go obok OEE jako liczbę godzin w miesiącu, w których maszyna stała bez pracy. W analizie z 2006 r. ta sama maszyna, liczona razem z czasem bez zleceń, miała OEE 47% przy mniejszym obciążeniu i 59% przy większym. Tempo i jakość były identyczne [@deron].
 2. **Przezbrojenia: w stratach.** Tylko wtedy widać je w wyniku i zespół ma powód do usprawnień [@bokrantz]. Zalicz do nich wymianę oprzyrządowania pod nowy wyrób, regulację i braki powstałe przy tej regulacji, bo tak tę stratę opisuje TPM [@jipm]. Wymianę zużytego narzędzia w trakcie serii zapisuj osobno.
 3. **Konserwacja planowa, sprzątanie, odprawy: w stratach, jeśli chcesz je skracać.** Każde zdarzenie z osobnym kodem.
 4. **Brak operatora i materiału: w stratach, z osobnym kodem przyczyny.** Vorne zalicza takie przyczyny do nieplanowanych postojów [@vorne-straty]. Kod pokaże, ile maszyna stoi przez siebie, a ile przez braki ludzi i materiału. Gdy jeden operator obsługuje dwie maszyny, czekanie maszyny na niego zapisuj właśnie tak, zamiast chować je w niższej wydajności.
-5. **Cykl idealny: cykl producenta albo czas z programu CNC, osobno dla każdego wyrobu.** W TPM celem jest dojście do prędkości, na którą maszynę zaprojektowano, i jej przekroczenie [@jipm]. Jeśli maszyna pracuje szybciej, weź najkrótszy powtarzalny cykl zmierzony na kilkunastu kolejnych sztukach, a nie pojedynczy rekord. Przy setkach indeksów zacznij od kilkunastu, które zajmują maszynie najwięcej godzin. Normy z ERP z zapasem czasu nie bierz, bo zawyży wynik jak w arkuszu planisty.
+5. **Cykl idealny: cykl producenta albo czas z programu CNC, osobno dla każdego wyrobu.** W TPM celem jest dojście do prędkości, na którą maszynę zaprojektowano, i jej przekroczenie [@jipm]. Jeśli maszyna pracuje szybciej, weź najkrótszy powtarzalny cykl zmierzony na kilkunastu kolejnych sztukach, a nie pojedynczy rekord. Przy setkach indeksów zacznij od kilkunastu, które zajmują maszynie najwięcej godzin. Czas z programu zwykle nie obejmuje załadunku i rozładunku. Jeśli operator robi je przy zatrzymanej maszynie, dolicz ich najkrótszy powtarzalny czas. Normy z ERP z zapasem czasu nie bierz, bo zawyży wynik jak w arkuszu planisty.
 6. **Dobra sztuka: tylko dobra za pierwszym razem.** W TPM przeróbka to strata jakości, tak jak brak [@jipm].
-7. **Krótkie zatrzymania: próg, na przykład dwie minuty.** Dłuższe zatrzymanie dostaje przyczynę i liczy się jako przestój, krótsze obniża tylko wydajność. Vorne radzi wiązać próg z zasadą wpisywania przyczyn [@vorne-straty].
+7. **Krótkie zatrzymania: próg, na przykład dwie minuty.** Dłuższe zatrzymanie dostaje przyczynę i liczy się jako przestój, krótsze obniża tylko wydajność. Tak radzi Vorne [@vorne-straty].
 8. **Źródło danych: zapisz, czy to licznik, czy ręczny zapis.** Przy ręcznym zapisie krótkie zatrzymania i część przestojów łatwo pominąć [@muchiri], więc takiego wyniku nie porównuj z danymi z czujników.
 
 Potem policz OEE za ostatni miesiąc w dwóch albo trzech arkuszach. Jeśli OEE ma prowadzić do usprawnień, wybierz ten, który pokazuje straty, nawet jeśli daje niższą liczbę. Zapisz go na karcie i przelicz nim historię. Od tej chwili zmiana wyniku znaczy, że coś zmieniło się na hali: w pracy maszyny albo w asortymencie.
@@ -99,7 +99,7 @@ Kartę daj do zatwierdzenia komuś, kogo nie rozlicza się z OEE, na przykład k
 
 Wybierz maszynę, przed którą rośnie kolejka, a za którą inne czekają. Tylko tam odzyskana minuta daje więcej sztuk na końcu linii. To ona wyznacza, ile linia wyprodukuje, dlatego Vorne radzi właśnie na niej mierzyć OEE całej linii [@vorne-faq]. W produkcji gniazdowej, gdzie wąskie gardło wędruje razem z asortymentem, weź maszynę, która ogranicza produkcję najczęściej, i porównuj tygodnie o podobnym asortymencie.
 
-Na ręcznym montażu tempo wyznaczają ludzie, więc OEE stanowiska mówi niewiele. Tam rozpisz na minuty zmianę całego gniazda: czekanie na części, poprawki, przezbrojenia i przestoje z braku ludzi. Za cykl idealny weź czas ze standardu pracy bez zapasu czasu, jeśli go macie, i porównuj gniazdo tylko z nim samym, bo tempo zależy też od tego, kto stoi przy stole.
+Na ręcznym montażu tempo wyznaczają ludzie, więc OEE stanowiska mówi niewiele. Tam rozpisz na minuty zmianę całego gniazda: czekanie na części, poprawki, przezbrojenia i przestoje z braku ludzi. Za cykl idealny weź czas ze standardu pracy bez zapasu czasu, jeśli go macie. Porównuj gniazdo tylko z nim samym, bo tempo zależy też od tego, kto stoi przy stole.
 
 Potrzebujesz rejestru przestojów z czasem i przyczyną, licznika sztuk dobrych i wadliwych oraz cyklu idealnego dla każdego wyrobu. Jeśli rejestr nie odróżnia przezbrojeń od awarii i krótkich zatrzymań, popraw go, zanim zaczniesz mówić o procentach. Cel zapisz w minutach jednej straty: zamiast „podnieść OEE o pięć punktów do marca” napisz „przezbrojenia z 50 do 35 minut na zmianę do marca”. Gdy zarząd zapyta o procent, przelicz minuty według swojej karty. W naszym fikcyjnym przykładzie 15 minut krótsze przezbrojenia przy tym samym tempie i jakości to około 2,4 punktu OEE, z 56,1 do 58,5%.
 
@@ -107,7 +107,7 @@ Potrzebujesz rejestru przestojów z czasem i przyczyną, licznika sztuk dobrych 
 
 Wystarczą trzy zdania. Pierwsze: „85% to cel z programu TPM, a w dużym badaniu maszyny miały średnio 65%, i to przy wydajności zwykle wpisanej z automatu jako 100%” [@jipm] [@hedman]. Drugie: „Liczymy według spisanej karty i porównujemy się z naszym wynikiem sprzed miesiąca”. Trzecie: „Największa strata to tyle a tyle minut na zmianę, czyli tyle sztuk i tyle złotych, i to ją teraz zmniejszamy”.
 
-W naszym fikcyjnym przykładzie trzecie zdanie brzmiałoby tak: wolniejsze tempo i krótkie zatrzymania zabierają 90 minut na zmianę, czyli 180 sztuk. Przy marży 8 zł na sztuce to 1440 zł na zmianę, a przy dwóch zmianach przez 250 dni w roku 720 tys. zł rocznie. To górna granica. Tyle zyskasz tylko wtedy, gdy maszyna jest wąskim gardłem i są zamówienia na te sztuki, a całych 90 minut zwykle nie odzyskasz od razu.
+W naszym fikcyjnym przykładzie trzecie zdanie brzmiałoby tak: wolniejsze tempo i krótkie zatrzymania zabierają 90 minut na zmianę, czyli 180 sztuk. Licz marżę pokrycia, czyli cenę minus koszty zmienne, bo koszty stałe i tak poniesiesz. Przy 8 zł na sztuce to 1440 zł na zmianę, a przy dwóch zmianach przez 250 dni w roku 720 tys. zł rocznie. To górna granica. Tyle zyskasz tylko wtedy, gdy maszyna jest wąskim gardłem i są zamówienia na te sztuki, a całych 90 minut zwykle nie odzyskasz od razu.
 
 Tak samo z rachunkiem DSR z początku tekstu. Jest prawdziwy pod trzema warunkami: maszyna jest wąskim gardłem, na dodatkowe sztuki są zamówienia (te dwa zastrzega sam autor [@itwiz]), a oba wyniki policzono według tej samej karty. Sprawdź je, zanim uznasz, że lepsze OEE zastąpi zakup maszyny, albo obiecasz zarządowi więcej sztuk.
 

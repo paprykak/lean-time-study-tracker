@@ -26,7 +26,7 @@ Powód wyboru 1: teza sporna i sprawdzalna w źródłach, największa wartość 
 ## 3. Plan tekstu (pisanie.md, część 1)
 - Obietnica: po lekturze kierownik wie, skąd się wzięło 85% i dlaczego to nie norma, spisze kartę definicji OEE dla swojej maszyny i przestanie porównywać wynik z liczbą z internetu albo z innym zakładem liczącym inaczej.
 - Trzy rzeczy do zabrania: **wgląd** — 85% to cel z książki o TPM, a wynik OEE zależy od definicji (czas planowany, cykl idealny) tak samo jak od maszyny; **narzędzie** — karta definicji OEE (decyzje do spisania przed pierwszym pomiarem) i rachunek strat w minutach; **kryterium decyzji** — porównuj tę samą maszynę w czasie przy stałej definicji, a między zakładami tylko przy identycznej definicji.
-- Zdanie do zapamiętania: „OEE mówi, ile tracisz, a nie jak wypadasz na tle świata.”
+- Zdanie do zapamiętania: „OEE mówi, ile tracisz, a nie jak wypadasz na tle świata.” (w wersji końcowej: „OEE pokaże ci, gdzie maszyna traci minuty. Jak wypadasz na tle świata, z niego nie wyczytasz.”, po uwagach redaktora językowego)
 - Czego czytelnik nie wie: kto i kiedy podał 85% i jako co; że składowe 90/95/99 to cele; że cykl idealny i czas planowany to decyzje, nie fakty; że istnieje norma ISO 22400-2 z definicją; co mówią badania o zmierzonym OEE.
 - Otwarcie (paradoks, ilustracja na danych fikcyjnych): trzy osoby liczą OEE tej samej zmiany i dostają 56%, 68% i 91% — każda poprawnie (dane z `dane/wynik.json`).
 - Sztafeta pytań: skąd 85%? → ile mają zakłady naprawdę? → dlaczego wyniki tak się różnią (definicje)? → czy OEE w ogóle ma sens? (tak: trend i straty w minutach) → co zrobić w poniedziałek (karta definicji) → kiedy porównanie z innymi ma sens (granice).
@@ -57,6 +57,7 @@ Kolejność jak w artykule (przypis [n]). Adres w artykule to DOI albo strona; d
 Nieużyte, przeczytane: Muchiri i Pintelon (2008), Ingemansson (2004), Evocon (D), TeepTrak, Symestic, Wikipedia PL/EN (szczegóły w zrodla-agent-badania.md i zrodla-agent-kontekst.md). Książka Nakajimy *Introduction to TPM* (1988): legalnej wersji online brak; jedyna kopia na archive.org to wrzutka użytkownika w kolekcji „opensource” (prawdopodobnie bez praw), nie korzystano.
 
 ## 5. Rejestr twierdzeń
+Numery przypisów w tabeli pochodzą z wersji z rundy 1; w wersji końcowej kolejność źródeł jest inna (pole `zrodla` w artykule, klucze w `zrodla.json`). Twierdzenia dodane później i ich miejsca w źródłach są w raportach weryfikacji (sekcja 9).
 | Twierdzenie w tekście (skrót) | Przypis | Miejsce w źródle | Werdykt weryfikacji |
 |---|---|---|---|
 | 85% nazywane „światową klasą” | [1] | grafika: „85% OEE is often referred to as World-Class and is based on having 90% Availability, 95% Performance, and 99% Quality” | |
@@ -109,7 +110,7 @@ Nieużyte, przeczytane: Muchiri i Pintelon (2008), Ingemansson (2004), Evocon (D
 - Frazy i liczba kandydatów: „factory machine”, „stamping press line”, „machine shop lathes”, „packaging machine”, „conveyor bottles”, „bottling line” (stykówki w `zdjecia/`); po 12–24 kandydatów.
 - Odrzucone z czołówki i powód: winiarnia Coppola (marka na kartonach), robot spawalniczy (czytelne logo XIRIS i szyld; przy okazji poprawiono uwagi w jego wpisie w rejestrze), tokarka i butelki z rawpixel (anonimowy autor, 1024 px), kandydaci z twarzami (art. 81).
 - Wybrane: `linia-rozlewnicza`, https://commons.wikimedia.org/wiki/File:Wine_bottling_line_at_Chateau_Ste._Michelle_Winery.jpg, David Herrera, CC BY 2.0 (Flickr, licencja potwierdzona przez recenzenta Commons 2009-03-17); strona i metadane API sprawdzone 2026-11-06. Oryginał 2816 × 2112 px.
-- Kadr: lewo 0,43, góra 0,40, 0,57 × 0,4275 → 1605 × 903 px (16:9); pomija silnik z napisem producenta i naklejkę ostrzegawczą; butelki bez etykiet. Kadry 16:9, 1:1 i okładka: po buildzie podglądu.
+- Kadr: lewo 0,43, góra 0,40, 0,57 × 0,4275 → 1605 × 903 px (16:9); pomija silnik z napisem producenta i naklejkę ostrzegawczą; butelki bez etykiet. Kadry 16:9 (artykuł), 1:1 (karty) i okładka 1200×630 sprawdzone na zrzutach podglądu 2026-11-07.
 
 ## 9. Weryfikacja
 - Runda 1, weryfikator faktów (wersja sprzed przebudowy, 70 twierdzeń): POTWIERDZONE 57, CZĘŚCIOWO 13, NIEPOTWIERDZONE 0, SPRZECZNE 0. Poprawione wszystkie CZĘŚCIOWO: przedział „zwykle 50–70%” (zastąpiony średnimi 51–65% z zastrzeżeniem metody), pełny cytat Jonssona („world-class firms”, „typical manufacturing capability”), s. 62–63, „za wcześniejszym opracowaniem” przy 30–80%, Hedman (100% to wartość domyślna, autorzy uważają tyle prawdziwych 100% za mało prawdopodobne; „przeanalizowali” zamiast „zebrali”), Bokrantz (respondenci podali, że firma rejestruje), AGH (zaniża wydajność; jeden cykl przyjęli autorzy), Schiraldi („wydają się rozbieżne”), Ylipää usunięty z akapitu o tempie (pojęcie niezdefiniowane w streszczeniu), opis źródeł [2] i [3] (tytuł rozdziału, strony, 1982; referat bez potwierdzonej recenzji → rodzaj „Inne”), `metoda` (badania z opisaną metodą szwedzkie; dane JIPM; norma ze streszczenia), FAQ („w dużym stopniu”), brakujące przypisy (Ljungberg przy uwadze na awariach, Vorne FAQ przy wąskim gardle, Bokrantz przy pkt 2 karty).
@@ -124,24 +125,61 @@ Nieużyte, przeczytane: Muchiri i Pintelon (2008), Ingemansson (2004), Evocon (D
 - Czytelnik testowy 5 (wersja 6): krzywa 3/5/4/4/3/5/4/4/5; przewijał przy akapicie o ISO; przyjemność 6/10, wartość 8/10. Wprowadzone (wersja 7): rozbicie arkuszy i średnie z badań w tabelach, ISO i analiza z 2006 r. po jednym zdaniu, „trop” zamiast listy autorów, pomiar straty tempa bez systemu MES (kartka przy maszynie), premie przy zmianie definicji, zdanie dla zarządu bez „uczciwiej”. Zmiana szablonu: tabele mieszczą się na telefonie (min-width 32rem usunięte).
 - Czytelnik testowy 6 (wersja 7): krzywa 4/5/4/4/3/5/4/4/5; przewijał przy ankietach i ISO („trzeci raz ta sama teza”); przyjemność 6/10, wartość 7/10. Wprowadzone (wersja 8): środkowa sekcja zbudowana na dwóch historiach („Usprawnienie potrafi obniżyć OEE”), dowody na różne definicje w jednym akapicie otwarcia, ISO bez osobnego źródła o statusie normy, dopiski o fikcji wplecione w zdania, „minimum dla zakładu po TPM” wyjaśnione, Evocon (klienci, zawyżanie), trzy warunki rachunku DSR w jednym zdaniu, zdanie dla zarządu krótsze, rysunek z trzema liniami etykiet (czytelny na telefonie), krótsze komórki tabeli.
 - Wniosek po sześciu czytelnikach: wartość 7–8/10, przyjemność 6–7/10. Każdy z czytelników 3–6 wskazał ten sam brak, którego redakcja nie może uzupełnić sama: prawdziwą historię polskiego zakładu (choćby anonimową), który zmienił definicję OEE, i reakcję zarządu. Zgodnie z SKILL.md (zasada 3) taka historia może pochodzić tylko z materiału Patryka albo z rozmowy, którą przeprowadzi. To jest najważniejsza decyzja dla Patryka.
-- Czytelnik testowy 7: (w toku)
+- Weryfikacja wersji 7 (nowy weryfikator): 36 twierdzeń, POTWIERDZONE 34, CZĘŚCIOWO 2 (ISO bez „wydają się”; „wyraźnie poniżej 85%” przy 78,9%) → poprawione.
+- Czytelnik testowy 7 (wersja 8): krzywa 4/5/3/4/4/5/4/3/5; przewijał przy „archeologii źródeł” o Nakajimie; przyjemność 6/10, wartość 7/10. Wprowadzone (wersja 9): krótsza sekcja o 85% bez „minimum, do którego się dąży”, porównania zakładów przeniesione do sekcji o zarządzie, karta z pogrubionymi ustawieniami startowymi, cel w minutach przeliczony na punkty OEE (15 min = 2,4 pkt, dane/wynik.json → pomocnicze.cel), kwota dla zarządu jako górna granica, przyczyny krótkich zatrzymań i wolniejszego tempa (JIPM s. 12 i 30), montaż ręczny, operator na dwóch maszynach.
+- Weryfikacja wersji 8 i 9: v8 — 33 twierdzenia, 30 POTWIERDZONE, 3 CZĘŚCIOWO (AGH „w ogóle”, „zwykle” przy 100%, „minimum po TPM”) → brzmienia weryfikatora; v9 — 28 twierdzeń, 27 POTWIERDZONE, 1 SPRZECZNE z rachunkiem w tekście („o kilka punktów” przy spadku do 35 pkt) → „wyraźnie spadnie”; rady doprecyzowane (najkrótszy powtarzalny cykl, standard pracy bez zapasu czasu).
+- Czytelnik testowy 8 (wersja 9): krzywa 4/4/3/4/3/5/4/4/5; przewijał od zdania o ISO do sekcji o minutach; przyjemność 7/10, wartość 8/10. Wprowadzone (wersja końcowa): logika spadku OEE u Anderssona (produkcja +10%, możliwości +18%), mnożenie 0,90 × 0,95 × 0,99 ≈ 0,85 na ekranie, czas bez zleceń pokazywany zarządowi w godzinach, czas z programu CNC a załadunek, marża pokrycia, bez hasła „Cel, nie średnia”. Zmiany po rundzie 8 dotyczą rachunków (sprawdzone w kodzie: 130/118 = +10,2%, 26/22 = +18,2%, 0,8464) i rad bez nowych źródeł; zdanie o Anderssonie oparte na tym samym fragmencie (s. 9 pliku: „the existing downtime is causing the OEE to drop to 79%”).
+- Bilans ośmiu czytelników testowych: przyjemność 6, 6, 7, 7, 6, 6, 6, 7 → ostatnio 7/10; wartość 7, 7, 7, 8, 8, 7, 7, 8 → ostatnio 8/10. Bramka (8/10 i 8/10) nie jest spełniona dla przyjemności. Powtarzające się powody: brak prawdziwej historii z polskiej hali (czytelnicy 3–8), gęstość przypisów i nazwisk w środku tekstu, dopiski o fikcyjnych danych (wymusza je kontrola: każdy akapit z liczbą potrzebuje przypisu albo oznaczenia fikcji). Pierwszego redakcja nie uzupełni sama (SKILL.md, zasada 3).
 - Domknięcie: zdania zmienione i dodane po rundzie 1 (wiersze „do domknięcia” w rejestrze) idą do ponownej weryfikacji.
-- `sprawdzono`: (po domknięciu)
+- `sprawdzono`: 2026-11-07 (po ostatniej rundzie weryfikacji; zero zdań niepotwierdzonych i sprzecznych w wersji końcowej, poprawki ostatniej rundy wprowadzone brzmieniem weryfikatora).
 
 ## 10. Kontrola automatyczna
-- `redakcja:kontrola` (wersja po rundzie 2): 2335 słów, 174 zdania, średnio 13,4 słowa, FOG-PL 8,8, 10 śródtytułów, 18 źródeł, 18 przypisów; rytm 0,45, akapity 0,34, strona bierna 0, półpauzy 0; 0 błędów, 0 uwag.
-- `redakcja:zrodla` (wersja z 14 źródłami): wszystkie adresy 200 albo 403 przy Emerald (blokada automatów; DOI potwierdzone w Crossref, otwarte wersje w repozytoriach); bez wycofanych prac. Powtórzyć po domknięciu (18 źródeł).
+- `redakcja:kontrola` (wersja końcowa): 2105 słów, 148 zdań, średnio 14,2 słowa w zdaniu, FOG-PL 9,0, 9 śródtytułów, 17 źródeł, 17 przypisów; rytm 0,50, akapity 0,39, strona bierna 0, półpauzy 0; 0 błędów, 0 uwag.
+- `redakcja:zrodla` (17 źródeł): wszystkie adresy 200, cztery DOI Emerald 403 (blokada automatów; treść czytana z otwartych wersji, DOI potwierdzone w Crossref); bez wycofanych prac.
 - Testy: `npx vitest run src/lib/kontrola-tekstu.test.ts src/lib/zdjecia.test.ts src/lib/redakcja.test.ts`: 62 zaliczone, 1 pominięty.
+- Podgląd (`RH_PODGLAD=1`): axe WCAG 2.2 AA na komputerze i telefonie (Pixel 7): 0 naruszeń; strona bez przewijania w poziomie; tabele mieszczą się na telefonie po poprawce szablonu (min-width 32rem usunięte z `.tresc table`).
 
 ## 11. Karta jakości
-- Bramki twarde: …
-- Punkty (1–16) i suma:
+Bramki twarde:
+- [x] Weryfikacja: zero twierdzeń niepotwierdzonych albo sprzecznych w wersji końcowej (pięć rund, ostatnia: 27/28 potwierdzonych, jedno zdanie sprzeczne z rachunkiem poprawione).
+- [x] Kontrola automatyczna bez błędów (`redakcja:kontrola`, `redakcja:zrodla`, testy).
+- [x] Licencja zdjęcia potwierdzona na stronie źródła (2026-11-06).
+- [x] Zero danych pracodawców Patryka, zmyślonych cytatów i cudzego doświadczenia w pierwszej osobie; scena oznaczona jako fikcyjna.
+- [x] `metoda` opisuje źródła i konflikt interesów, bez wzmianki o narzędziach.
+- [ ] **Czytelnik testowy: przyjemność 7/10 (próg 8), wartość 8/10.** Niespełniona dla przyjemności po ośmiu lekturach; zob. sekcja 9 i 12.
+- [x] Redaktor językowy: poprawki przyjęte albo odrzucone z powodem (sekcja 9).
+
+| # | Kryterium | Pkt | Uzasadnienie |
+|---|---|---|---|
+| 1 | Teza | 2 | W leadzie: 85% to w TPM cel, nie średnia; bez spisanej definicji OEE nie nadaje się do porównań. |
+| 2 | Nowość | 2 | Ta sama zmiana 56/68/91% (i 60% według Nakajimy), 702/884 maszyn z domyślnym 100%, karta ośmiu decyzji, strata tempa bez MES; nie ma tego w polskich wynikach. |
+| 3 | Dowody | 1 | Każda liczba ma przypis, ale kluczowe tezy mają źródła C (JIPM, badania szwedzkie, studia przypadków); badań A/B o poziomach OEE nie ma i tekst mówi to wprost. |
+| 4 | Przeciwdowody | 2 | Nakajima (punkt odniesienia w idealnych warunkach), nagrodzone zakłady, Evocon (6%, realnie 3%), linia z 86%, warunki sensownego porównania. |
+| 5 | Pewność | 2 | Próby opisane, przykład oznaczony, „wydają się rozbieżne”, „górna granica”. |
+| 6 | Polski kontekst | 2 | Dwa polskie studia, rozdział AGH, polski materiał sponsorowany, normy z ERP, premie i kadry, produkcja gniazdowa; polskich badań wielu zakładów brak, co tekst mówi. |
+| 7 | Użyteczność | 2 | Karta z ustawieniami startowymi, tabela minut, pomiar bez MES, cel w minutach i w punktach, trzy zdania dla zarządu. |
+| 8 | Przypadek | 2 | Fikcyjna odprawa oznaczona przy pierwszym użyciu, wraca w tabelach, karcie i zakończeniu. |
+| 9 | Dane i rysunek | 2 | Rysunek z tytułem-wnioskiem, tabele, rachunki w `dane/`. |
+| 10 | Czytelność | 2 | FOG-PL 9,0, średnio 14,2 słowa, śródtytuły-wnioski. |
+| 11 | Zdjęcie | 2 | Prawdziwa linia, bez marek, kadry sprawdzone na zrzutach i okładce. |
+| 12 | Test dyrektora | 2 | Czytelnicy: „60% może być uczciwym wynikiem”, „wydajność równo 100% = nikt nie mierzy”, OEE spada przy większej produkcji. |
+| 13 | Otwarcie | 2 | Scena i paradoks w pierwszych zdaniach, akapit sedna przed pierwszym śródtytułem po rozbiciu. |
+| 14 | Łuk | 2 | Skąd 85% → ile mają zakłady → dlaczego definicja zmienia wynik → jak czytać własny wynik → karta → od czego zacząć → co powiedzieć zarządowi → powrót na odprawę. |
+| 15 | Zdania | 2 | Kontrola stylu: 0 uwag; uwagi czytelników poprawione w kolejnych wersjach. |
+| 16 | Gęstość wartości | 1 | Czytelnicy nadal przewijają część o pochodzeniu 85% i środek karty na telefonie. |
+
+Suma: 30/32. Kryterium 3 ma 1 pkt, a karta wymaga 2: badań A/B nie ma, więc tekst nie dostanie 2 w żadnej wersji (decyzja dla Patryka, sekcja 12).
 
 ## 12. Dla Patryka
 - Decyzje do podjęcia:
-- Miejsca `[DO UZUPEŁNIENIA]`:
-- Czego nie udało się sprawdzić:
-- Liczby do odświeżenia i kiedy (np. dane Eurostatu w grudniu):
+  1. **Dwie bramki niespełnione.** Czytelnik testowy (przyjemność 7/10 przy progu 8) i kryterium 3 karty (źródła A/B). Do wyboru: (a) dostarczyć prawdziwą, anonimową historię polskiego zakładu, który zmienił definicję OEE i przeszedł rozmowę z zarządem — wszyscy czytelnicy od trzeciego wskazali to jako brak; wpiszę ją zamiast fikcyjnej sceny albo obok niej i powtórzę rundę czytelnika; (b) przyjąć tekst jako Analizę z jawnym „badań A/B nie ma” (dowody.md na to pozwala, karta jakości nie); (c) skrócić do formatu Komentarz (700–1200 słów, oznaczony jako opinia).
+  2. Tytuł: „Ta sama zmiana może mieć 56 albo 91% OEE, zależnie od tego, kto liczy” (tytuł SEO: „OEE 85% to cel, nie średnia. Jak liczyć i porównywać OEE”).
+  3. Karta definicji do pobrania (PDF z ośmioma decyzjami i tabelą minut) jako materiał w „Do pobrania” — prosiło o to pięciu czytelników; mogę ją przygotować.
+  4. Data publikacji w pliku (`opublikowano: 2026-11-06`) do ustawienia przy zatwierdzeniu.
+- Miejsca `[DO UZUPEŁNIENIA]`: brak.
+- Czego nie udało się sprawdzić: książki Nakajimy z 1984 r. w oryginale (wartości 90/95/99 za Jonssonem i Vorne); pełnych tekstów prac Ylipää i in. (2017), Ljungberga (1998) i Schiraldiego i Varisco (2020) — tylko streszczenia; treści normy ISO 22400-2 (płatna).
+- Liczby do odświeżenia: strona Evocon (aktualizowana, ostatnio 2026-06-26), status ISO 22400-2 (nowe wydanie w toku).
+- Propozycja procesu: kontrola tekstu wymaga oznaczenia fikcji w każdym akapicie z liczbą, co daje powtarzane „dane fikcyjne”, które przeszkadzały czytelnikom. Można dopuścić oznaczenie na poziomie sekcji (np. pierwszy akapit sekcji z „fikcyjn…” obejmuje akapity do następnego śródtytułu) — zmiana w `src/lib/kontrola-tekstu.mjs` z testem.
 
 ## 13. Kontrola redakcyjna
 Patryk czyta cały tekst przed publikacją i decyduje. To warunek publikacji (SKILL.md, zasada 6).
