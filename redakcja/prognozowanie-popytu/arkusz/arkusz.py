@@ -207,7 +207,7 @@ INSTRUKCJA = [
           'Prognoza, za którą płacisz czasem planisty albo licencją systemu, powinna mylić się mniej niż one. Arkusz to sprawdza.'),
     ('h', 'Jak go wypełnić'),
     ('p', '1. Wpisz wyprzedzenie: o ile okresów naprzód robisz prognozę, z którą zamawiasz albo planujesz produkcję (np. 6, jeśli prognozę na tydzień 20 '
-          'robisz w tygodniu 14). Darmowe prognozy znają wtedy tylko sprzedaż, którą Ty znałeś w chwili prognozy.'),
+          'robisz po zamknięciu tygodnia 14). Darmowe prognozy znają wtedy tylko sprzedaż, którą Ty znałeś w chwili prognozy.'),
     ('p', '2. „Wiele indeksów”: wklej indeks, okres, sprzedaż i prognozę dla około 20 indeksów, posortowane według indeksu i okresu, najlepiej 26–52 tygodnie. '
           'Indeksy wylosuj z listy sprzedaży z roku przed testem, po kilka z grup A, B i C, i nie pomijaj wycofanych.'),
     ('p', '3. „Jeden indeks”: ten sam test dla jednego indeksu, z wykresem w kolumnach. Wynik dla jednego indeksu to wskazówka, a nie dowód.'),
@@ -221,7 +221,8 @@ INSTRUKCJA = [
     ('h', 'Na co uważać'),
     ('p', '• Jeden indeks niczego nie rozstrzyga: w symulacji redakcji dwie równie dobre prognozy porównane na 26 tygodniach różniły się przez sam przypadek '
           'o 20–30%. Wniosek wyciągaj z wyniku dla wszystkich indeksów razem i z liczby indeksów, w których Twoja prognoza wygrywa.'),
-    ('p', '• Przy sezonowości porównaj się też z sezonową prognozą naiwną: sprzedażą z tego samego tygodnia rok wcześniej (wymaga roku historii przed testem).'),
+    ('p', '• Wygładzanie w tym arkuszu to wersja prosta: nie uwzględnia trendu ani sezonowości. Przy nich użyj też Arkusza prognozy w Excelu (karta Dane) '
+          'i porównaj się z sezonową prognozą naiwną: sprzedażą z tego samego tygodnia rok wcześniej (wymaga roku historii przed testem).'),
     ('p', '• Indeksy, które w wielu okresach nie sprzedają się wcale, oceniaj osobno, po zapasie i poziomie obsługi. Przy nich najmniejszy błąd w sztukach może dać prognoza „zero”.'),
     ('p', '• Popyt to nie zawsze sprzedaż: gdy towaru zabrakło, sprzedaż jest niższa od popytu. Takie okresy oznacz albo pomiń.'),
     ('p', '• Jeśli system nadpisuje dawne prognozy, zacznij co tydzień zapisywać ich kopię. Po kwartale będziesz mieć dane do testu.'),

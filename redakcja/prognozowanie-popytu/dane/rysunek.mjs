@@ -1,11 +1,11 @@
-// Rysunek 1 do artykułu „prognozowanie-popytu”: o ile zwycięzca konkursu M5 był dokładniejszy od najlepszej
-// z 24 metod porównawczych organizatorów na każdym z 12 poziomów agregacji (dane: m5-wyniki.json z m5.py).
-// Na każdym poziomie najlepsza może być inna metoda porównawcza (L1: ESX, L12: Com_tb); opis w tekście artykułu.
+// Rysunek 1 do artykułu „prognozowanie-popytu”: o ile mniej mylił się zwycięzca konkursu M5 niż automatycznie
+// dobierane wygładzanie wykładnicze (metoda porównawcza ES_bu, ustalona z góry) na każdym z 12 poziomów
+// (dane: m5-wyniki.json z m5.py, klucz zwyciezca_nad_metoda_wg_poziomu_proc.ES_bu).
 // Układ wąski, etykiety nad słupkami (obraz wypełnia kolumnę tekstu: na telefonie napisy ok. 12 px).
 import { readFileSync, writeFileSync } from 'node:fs';
 
 const dane = JSON.parse(readFileSync(new URL('./m5-wyniki.json', import.meta.url), 'utf8'));
-const poprawa = dane.poprawa_zwyciezcy_nad_najlepszym_benchmarkiem_wg_poziomu_proc;
+const poprawa = dane.zwyciezca_nad_metoda_wg_poziomu_proc.ES_bu;
 const POZIOMY = [
   ['L1', 'Suma 10 sklepów', '1 szereg'],
   ['L2', 'Stan USA', '3 szeregi'],
@@ -21,7 +21,7 @@ const POZIOMY = [
   ['L12', 'Produkt w sklepie', '30 490'],
 ];
 const KOLOR = { tekst: '#1d2530', drugi: '#58626f', linia: '#dde1e6', slupek: '#1d2530', akcent: '#c2410c' };
-const W = 440, lewy = 12, prawy = 52, gora = 30, wiersz = 46, slupek = 16, max = 50;
+const W = 440, lewy = 12, prawy = 52, gora = 30, wiersz = 46, slupek = 16, max = 60;
 const H = gora + wiersz * POZIOMY.length + 34;
 const skala = (W - lewy - prawy) / max;
 const x = (p) => lewy + p * skala;
@@ -29,7 +29,7 @@ const f = 'font-family="Noto Sans, Arial, Helvetica, sans-serif"';
 const pl = (n) => n.toLocaleString('pl-PL', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 const czesci = [];
 const dol = gora + wiersz * POZIOMY.length;
-for (const p of [0, 10, 20, 30, 40, 50]) {
+for (const p of [0, 10, 20, 30, 40, 50, 60]) {
   czesci.push(`<line x1="${x(p)}" y1="${gora - 6}" x2="${x(p)}" y2="${dol}" stroke="${KOLOR.linia}" stroke-width="1"/>`);
   czesci.push(`<text x="${x(p)}" y="${dol + 22}" ${f} font-size="14" fill="${KOLOR.drugi}" text-anchor="${p === 0 ? 'start' : p === max ? 'end' : 'middle'}">${p}%</text>`);
 }

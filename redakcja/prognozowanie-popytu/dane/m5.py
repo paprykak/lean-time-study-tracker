@@ -73,6 +73,14 @@ wynik['es_bu_czesc_przewagi_zwyciezcy_nad_naiwna_proc'] = {
 wynik['es_bu_nad_naiwna_i_ma_avg_proc'] = {'Naive': poprawa(bench['ES_bu']['Avg'], bench['Naive']['Avg']), 'MA': poprawa(bench['ES_bu']['Avg'], bench['MA']['Avg'])}
 wynik['esx_nad_es_td_avg_proc'] = poprawa(bench['ESX']['Avg'], bench['ES_td']['Avg'])
 wynik['arimax_nad_arima_td_avg_proc'] = poprawa(bench['ARIMAX']['Avg'], bench['ARIMA_td']['Avg'])
+# Wersja 3 (po drugiej rundzie weryfikacji): stały punkt odniesienia ES_bu (ustalony z góry, nie wybrany po fakcie).
+wynik['mediana_top50_nad_ES_bu_wg_poziomu_proc'] = {
+    p: poprawa(statistics.median(v[p] for v in top.values()), bench['ES_bu'][p]) for p in POZIOMY
+}
+wynik['top50_lepsze_od_ES_bu_wg_poziomu'] = {p: sum(v[p] < bench['ES_bu'][p] for v in top.values()) for p in POZIOMY}
+wynik['es_bu_czesc_przewagi_zwyciezcy_nad_snaive_proc'] = {
+    p: round(100 * (bench['sNaive'][p] - bench['ES_bu'][p]) / (bench['sNaive'][p] - zw[p]), 1) for p in POZIOMY
+}
 cel = Path(__file__).with_name('m5-wyniki.json')
 cel.write_text(json.dumps(wynik, ensure_ascii=False, indent=1) + '\n', encoding='utf8')
 print(json.dumps(wynik, ensure_ascii=False, indent=1))
