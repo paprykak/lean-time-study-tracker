@@ -16,7 +16,7 @@ Zmiana trwała osiem godzin. Pół godziny zajęła przerwa, drugie pół godzin
 
 | | Inżynier | Kierownik | Planista |
 | --- | --- | --- | --- |
-| Przezbrojenia, konserwacja | strata | poza czasem planowanym | poza czasem planowanym |
+| Przezbrojenia, konserwacja | strata | wyłączone z planu | wyłączone z planu |
 | Cykl idealny | 30 s, producent | 30 s, producent | 40 s, ERP |
 | Dostępność | 77,8% | 94,6% | 94,6% |
 | Wydajność (tempo) | 74,3% | 74,3% | 99,0% |
@@ -31,11 +31,11 @@ Tymczasem firmy liczą bardzo różnie. W szwedzkich ankietach mniej niż połow
 
 ## 85% to cel, który wyznaczyli twórcy TPM
 
-Najwcześniej znaleźliśmy tę liczbę w książce wydanej w 1982 r. przez JIPM, japoński instytut utrzymania ruchu. Kunio Shirose pisze w niej, że w badanych firmach efektywność urządzeń wynosiła średnio 40–60%, a dzięki TPM można ją podnieść do 85–95% [@jipm]. Same 85% to iloczyn trzech wartości, które Nakajima, redaktor tej książki, podał według późniejszych autorów w 1984 r. To dostępność ponad 90%, wydajność ponad 95% i jakość ponad 99%. Uważał taki wynik za dobry punkt odniesienia dla możliwości typowego zakładu [@jonsson] i za minimum, do którego firmy powinny dążyć [@vorne-wc]. To minimum dla zakładu, który przeszedł program TPM, a nie opis przeciętnego wyniku: badane przez JIPM firmy miały wtedy średnio 40–60% [@jipm].
+Najwcześniej znaleźliśmy tę liczbę w książce wydanej w 1982 r. przez JIPM, japoński instytut utrzymania ruchu. Kunio Shirose pisze w niej, że w badanych firmach efektywność urządzeń wynosiła średnio 40–60%, a dzięki TPM można ją podnieść do 85–95% [@jipm]. Same 85% to iloczyn trzech wartości, które Nakajima, redaktor tej książki, podał według późniejszych autorów w 1984 r. To dostępność ponad 90%, wydajność ponad 95% i jakość ponad 99%. Uważał taki wynik za dobry punkt odniesienia dla możliwości typowego zakładu [@jonsson] i za minimum, do którego firmy powinny dążyć [@vorne-wc]. To poziom, do którego według JIPM zakład może dojść dzięki TPM, a nie opis przeciętnego wyniku: badane przez JIPM firmy miały wtedy średnio 40–60% [@jipm].
 
 Dziś te liczby powtarza Vorne, producent systemów do pomiaru OEE, z zastrzeżeniem, że dotyczą produkcji liczonej w sztukach. Według niego Nakajima zauważył, że wszystkie zakłady nagrodzone w Japonii za wdrożenie TPM miały ponad 85% [@vorne-wc]. Ta sama firma nazywa jednak 85% wygodnym i przekonującym, ale zupełnie sztucznym punktem odniesienia [@vorne-faq].
 
-Ile zakładów naprawdę przekracza 85%, nie wiadomo. Dostawca oprogramowania Evocon, który zbiera dane z ponad 3,5 tys. maszyn swoich klientów, podaje, że średnie roczne OEE co najmniej 85% ma około 6% z nich. Ponieważ klienci często zawyżają wynik, prawdziwy odsetek ocenia na około 3%. Nie podaje jednak, według jakiej definicji liczyli [@evocon].
+Ile zakładów naprawdę przekracza 85%, nie wiadomo. Dostawca oprogramowania Evocon, który zbiera dane z ponad 3,5 tys. maszyn swoich klientów, podaje, że średnie roczne OEE co najmniej 85% ma około 6% firm. Ponieważ klienci często liczą tak, że wynik wychodzi zawyżony, prawdziwy odsetek ocenia na około 3%. Nie podaje jednak, według jakiej definicji liczyli [@evocon].
 
 ## Zmierzone średnie są niższe niż 85%
 
@@ -51,7 +51,7 @@ Porządnych badań wielu zakładów jest niewiele. Oto te, które znaleźliśmy,
 
 Nawet te średnie mogą być zawyżone. W badaniu 884 maszyn aż 702 miały wpisaną wydajność 100%, a 796 jakość 100%. To wartość domyślna systemu, a autorzy uważają za mało prawdopodobne, by tyle maszyn naprawdę pracowało bez tych strat. Pytają nawet, czy firmy mierzą OEE, czy tylko dostępność [@hedman].
 
-Tych liczb nie uśredniaj i nie traktuj jak nowej normy, bo badania różnią się metodą, latami i próbą. W studium z AGH przezbrojeń w ogóle nie liczono jako straty [@agh]. Wszystkie średnie leżą jednak poniżej 85%, od 51,5 do 78,9%.
+Tych liczb nie uśredniaj i nie traktuj jak nowej normy, bo badania różnią się metodą, latami i próbą. W studium z AGH przezbrojeń mieszczących się w planie nie liczono jako straty, stratą było dopiero ich przedłużenie [@agh]. Wszystkie średnie leżą jednak poniżej 85%, od 51,5 do 78,9%.
 
 ## Usprawnienie potrafi obniżyć OEE
 
@@ -109,7 +109,7 @@ Potrzebujesz rejestru przestojów z czasem i przyczyną, licznika sztuk dobrych 
 
 ## Co powiedzieć zarządowi, który pyta, dlaczego nie 85%
 
-Wystarczą trzy zdania. Pierwsze: „85% to cel z programu TPM, a w dużym badaniu maszyny miały średnio 65%, i to przy wydajności wpisanej z automatu jako 100%” [@jipm] [@hedman]. Drugie: „Liczymy według spisanej karty i porównujemy się z naszym wynikiem sprzed miesiąca”. Trzecie: „Największa strata to tyle a tyle minut na zmianę, czyli tyle sztuk i tyle złotych, i to ją teraz zmniejszamy”.
+Wystarczą trzy zdania. Pierwsze: „85% to cel z programu TPM, a w dużym badaniu maszyny miały średnio 65%, i to przy wydajności zwykle wpisanej z automatu jako 100%” [@jipm] [@hedman]. Drugie: „Liczymy według spisanej karty i porównujemy się z naszym wynikiem sprzed miesiąca”. Trzecie: „Największa strata to tyle a tyle minut na zmianę, czyli tyle sztuk i tyle złotych, i to ją teraz zmniejszamy”.
 
 W naszym fikcyjnym przykładzie trzecie zdanie brzmiałoby tak: wolniejsze tempo i krótkie zatrzymania zabierają 90 minut na zmianę, czyli 180 sztuk. Przy marży 8 zł na sztuce to 1440 zł na zmianę, a przy dwóch zmianach przez 250 dni w roku 720 tys. zł rocznie. Tyle zyskasz naprawdę tylko wtedy, gdy maszyna jest wąskim gardłem i są zamówienia na te sztuki.
 
