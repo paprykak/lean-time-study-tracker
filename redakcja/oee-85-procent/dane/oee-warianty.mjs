@@ -71,7 +71,13 @@ zarzad.zlNaRok = zarzad.zlNaZmiane * zarzad.zmianNaDzien * zarzad.dniWRoku;
 // Ujęcie TPM (Nakajima według Jonssona i Lesshammara, s. 62): planowana konserwacja poza czasem planowanym,
 // przezbrojenia w stratach, cykl producenta.
 const tpm = oee({ planowaneWylaczone: zmiana.konserwacjaPlanowanaMin, cyklIdealnyS: cykl.nominalnyS });
-const pomocnicze = { sztukiUtraconeNaTempie, trzyRazy90, z60do85, andersson, zarzad, tpm };
+// Cel w minutach przeliczony na punkty OEE (arkusz inżyniera, dane fikcyjne): przezbrojenia krótsze o 15 min,
+// wydajność i jakość bez zmian, więc maszyna pracuje 15 min dłużej w tym samym tempie.
+const w1 = warianty[0];
+const celMinuty = 15;
+const celOee = ((w1.czasPracy + celMinuty) / w1.czasPlanowany) * w1.wydajnosc * w1.jakosc;
+const cel = { minuty: celMinuty, oeePrzed: w1.oee, oeePo: celOee, punkty: 100 * (celOee - w1.oee) };
+const pomocnicze = { sztukiUtraconeNaTempie, trzyRazy90, z60do85, andersson, zarzad, tpm, cel };
 console.log('Wariant 1 w minutach:', drzewo);
 console.log('Rachunki pomocnicze:', pomocnicze);
 writeFileSync(new URL('./wynik.json', import.meta.url), JSON.stringify({ zmiana, cykl, warianty, minutyWariantu1: drzewo, pomocnicze }, null, 2));
