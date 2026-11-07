@@ -5,7 +5,7 @@
   "koszt_utrzymania_szt_rok_zl": 5.0,
   "czas_przezbrojenia_min": 60,
   "waskie_gardlo_przezbrojenia_tyg": 15,
-  "waskie_gardlo_czas_min": 50,
+  "waskie_gardlo_czas_min": 60,
   "tygodnie_pracy": 48,
   "marza_z_godziny_zl": 400
  },
@@ -59,21 +59,28 @@
  "waskie_gardlo": [
   {
    "skrocenie_proc": 20,
-   "odzyskane_godziny_tyg": 2.5,
-   "odzyskane_godziny_rok": 120.0,
-   "marza_roczna_zl": 48000
+   "odzyskane_godziny_tyg": 3.0,
+   "odzyskane_godziny_rok": 144.0,
+   "marza_roczna_zl": 57600
   },
   {
    "skrocenie_proc": 38,
-   "odzyskane_godziny_tyg": 4.75,
-   "odzyskane_godziny_rok": 228.0,
-   "marza_roczna_zl": 91200
+   "odzyskane_godziny_tyg": 5.7,
+   "odzyskane_godziny_rok": 273.6,
+   "marza_roczna_zl": 109440
   },
   {
    "skrocenie_proc": 50,
-   "odzyskane_godziny_tyg": 6.25,
-   "odzyskane_godziny_rok": 300.0,
-   "marza_roczna_zl": 120000
+   "odzyskane_godziny_tyg": 7.5,
+   "odzyskane_godziny_rok": 360.0,
+   "marza_roczna_zl": 144000
   }
- ]
+ ],
+ "rozbicie_50proc": {
+  "koszt_przezbrojen_przed_zl": 6000,
+  "koszt_zapasu_przed_zl": 6000,
+  "koszt_przy_starych_partiach_zl": 9000,
+  "oszczednosc_stare_partie_zl": 3000,
+  "dodatkowo_z_mniejszych_partii_zl": 515
+ }
 }

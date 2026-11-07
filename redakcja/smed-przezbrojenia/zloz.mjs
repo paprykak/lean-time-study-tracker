@@ -4,8 +4,8 @@ import { zloz } from '../wspolne/zloz.mjs';
 zloz(import.meta.url, {
   tytul: 'Skracaj przezbrojenia najpierw na wąskim gardle',
   tytulSeo: 'SMED: ile daje skrócenie przezbrojenia i gdzie zacząć',
-  opisSeo: 'Wdrożenia SMED skracają przezbrojenia zwykle o 20–50%, nie o 90%. Na wąskim gardle zysk rośnie z odzyskanym czasem, gdzie indziej tylko z pierwiastkiem.',
-  lead: 'Opublikowane wdrożenia SMED skracają przezbrojenia zwykle o 20–50%, a nie o 90%. Ile to warte, zależy od miejsca: na wąskim gardle każda odzyskana godzina to sprzedana produkcja, a gdzie indziej przezbrojenie krótsze o połowę obniża koszt partii i zapasu tylko o 29%.',
+  opisSeo: 'SMED skraca przezbrojenia o 20–90%, zależnie od przypadku. Na wąskim gardle odzyskany czas to produkcja, gdzie indziej głównie czas ustawiaczy.',
+  lead: 'Opisane wdrożenia SMED skracają przezbrojenia od około 20% do 90%. Ile to warte, zależy od miejsca: na wąskim gardle odzyskana godzina może stać się sprzedaną produkcją, a gdzie indziej oszczędzasz głównie czas ustawiaczy, i to tylko wtedy, gdy zrobią w nim coś innego.',
   dzial: 'lean-i-ciagle-doskonalenie',
   format: 'Poradnik',
   tematy: ['smed'],
@@ -14,12 +14,12 @@ zloz(import.meta.url, {
   podpisZdjecia: 'Linia montażu z instrukcjami nad stanowiskami. Każda zmiana wyrobu na takiej linii to przezbrojenie, które da się nagrać i skrócić.',
   powiazane: ['oee-85-procent'],
   faq: [
-    ['Co to jest SMED?', 'SMED (Single Minute Exchange of Die) to metoda skracania przezbrojeń, którą rozwinął Shigeo Shingo. Najpierw rozdziela się czynności wymagające zatrzymanej maszyny od tych, które można zrobić w trakcie jej pracy, potem przenosi jak najwięcej czynności do pracy maszyny i upraszcza resztę.'],
-    ['O ile SMED skraca przezbrojenie?', 'W opublikowanych przypadkach zwykle o 20–50%: przegląd 30 artykułów z przemysłu spożywczego przytacza wyniki od 21% do około 67%, a polskie badanie opisuje skrócenie o 37,67%. Już pierwszy etap, rozdzielenie czynności, ma według literatury skracać przezbrojenie o 30–50%.'],
-    ['Gdzie zacząć skracanie przezbrojeń?', 'Na maszynie, która ogranicza wydajność całego zakładu, czyli na wąskim gardle. Tam odzyskany czas zamienia się w dodatkową produkcję. Na maszynach z wolnym czasem krótsze przezbrojenie daje mniejsze partie, a oszczędność rośnie tylko z pierwiastkiem kosztu przezbrojenia.'],
-    ['Jak policzyć opłacalną wielkość partii?', 'Klasycznym wzorem Harrisa: partia rośnie z pierwiastkiem z iloczynu popytu i kosztu przezbrojenia, podzielonego przez koszt utrzymania sztuki w zapasie. Z tego samego wzoru wynika, że przezbrojenie krótsze o połowę obniża roczny koszt przezbrojeń i zapasu o około 29%.'],
+    ['Co to jest SMED?', 'SMED (Single Minute Exchange of Die) to metoda skracania przezbrojeń, którą rozwinął Shigeo Shingo; nazwa oznacza przezbrojenie w jednocyfrowej liczbie minut. Najpierw obserwuje się i nagrywa przezbrojenie, potem rozdziela czynności wymagające zatrzymanej maszyny od tych, które można zrobić w trakcie jej pracy, przenosi jak najwięcej czynności do pracy maszyny, a na końcu usprawnia i standaryzuje resztę.'],
+    ['O ile SMED skraca przezbrojenie?', 'W opisanych przypadkach od około 20% do 90%. Przegląd 30 artykułów, głównie z przemysłu spożywczego, przytacza skrócenia od 20% do 49% i w jednym projekcie około 67%, a inne opisy podają 59–90%. Polskie badanie opisuje skrócenie o 37,67%. Tylko co trzeci opis mówi o ograniczeniach, więc przeciętny wynik może być niższy.'],
+    ['Gdzie zacząć skracanie przezbrojeń?', 'Na maszynie, która ogranicza wydajność całego zakładu, czyli na wąskim gardle. Tam odzyskany czas może zamienić się w dodatkową produkcję albo zastąpić nadgodziny. Na maszynach z wolnym czasem krótsze przezbrojenie oszczędza głównie czas ustawiaczy i pozwala na mniejsze partie.'],
+    ['Jak policzyć opłacalną wielkość partii?', 'Klasycznym wzorem Harrisa: partia rośnie z pierwiastkiem z iloczynu popytu i kosztu przezbrojenia, podzielonego przez koszt utrzymania sztuki w zapasie. Przezbrojenie krótsze o połowę zmniejsza więc opłacalną partię o około 29%, a nie o połowę.'],
   ],
-  metoda: 'Tekst opiera się na przeglądzie 30 artykułów o SMED w przemyśle spożywczym (2022), polskim badaniu z Politechniki Rzeszowskiej (2015), badaniu ankietowym 250 pracowników zakładów w Meksyku (2017) i wzorze Harrisa na wielkość partii (1915). Rachunki dla wąskiego gardła i dla linii z wolnym czasem policzyliśmy na danych fikcyjnych; kod jest w archiwum redakcji. Wyniki wdrożeń pochodzą z opisów przypadków, które częściej opisują sukcesy niż porażki. Przykłady są fikcyjne. Konflikt interesów: redaktor naczelny prowadzi doradztwo w operacjach; tekst nie odsyła do jego usług.',
+  metoda: 'Tekst opiera się na przeglądzie 30 artykułów o SMED, głównie z przemysłu spożywczego (2022), polskim badaniu z Politechniki Rzeszowskiej (2015), badaniu ankietowym 250 pracowników zakładów w Meksyku (2017) i wzorze Harrisa na wielkość partii (1915). Rachunki dla wąskiego gardła i dla maszyny z wolnym czasem policzyliśmy na danych fikcyjnych; kod jest w archiwum redakcji. Wyniki wdrożeń pochodzą z opisów pojedynczych przypadków, a tylko co trzeci opisuje ograniczenia. Przykłady są fikcyjne. Konflikt interesów: redaktor naczelny prowadzi doradztwo w operacjach; tekst nie odsyła do jego usług.',
   sprawdzono: null,
   szkic: true,
 });

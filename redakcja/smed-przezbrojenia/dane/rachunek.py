@@ -27,8 +27,9 @@ for w in wyniki['linia_bez_waskiego_gardla']:
     w['oszczednosc_roczna_zl'] = baza - w['koszt_roczny_zl']
     w['oszczednosc_proc'] = round(100 * (1 - w['koszt_roczny_zl'] / baza), 1)
 
-# B. Wąskie gardło: 15 przezbrojeń tygodniowo po 50 min, 48 tygodni pracy, marża 400 zł z godziny pracy linii.
-PRZEZBROJENIA_TYG, CZAS_B, TYGODNIE, MARZA_H = 15, 50, 48, 400
+# B. Wąskie gardło (wtryskarka z przykładu w tekście): 15 przezbrojeń tygodniowo po 60 min, 48 tygodni pracy,
+#    marża 400 zł z godziny pracy maszyny. Do tego koszt samych przezbrojeń przy starych partiach (część A, 50%).
+PRZEZBROJENIA_TYG, CZAS_B, TYGODNIE, MARZA_H = 15, 60, 48, 400
 for skrocenie in (0.2, 0.38, 0.5):
     godziny_tyg = PRZEZBROJENIA_TYG * CZAS_B * skrocenie / 60
     wyniki.setdefault('waskie_gardlo', []).append({
@@ -37,5 +38,15 @@ for skrocenie in (0.2, 0.38, 0.5):
     })
 wyniki['zalozenia'].update({'waskie_gardlo_przezbrojenia_tyg': PRZEZBROJENIA_TYG, 'waskie_gardlo_czas_min': CZAS_B,
                             'tygodnie_pracy': TYGODNIE, 'marza_z_godziny_zl': MARZA_H})
+# Rozbicie oszczędności przy przezbrojeniu krótszym o połowę: same przezbrojenia przy starych partiach vs mniejsze partie.
+S0 = KOSZT_GODZINY * CZAS_MIN / 60
+Q0 = sqrt(2 * D * S0 / H)
+koszt_stare_partie = D / Q0 * S0 * 0.5 + Q0 / 2 * H
+wyniki['rozbicie_50proc'] = {
+    'koszt_przezbrojen_przed_zl': round(D / Q0 * S0), 'koszt_zapasu_przed_zl': round(Q0 / 2 * H),
+    'koszt_przy_starych_partiach_zl': round(koszt_stare_partie),
+    'oszczednosc_stare_partie_zl': round(12000 - koszt_stare_partie),
+    'dodatkowo_z_mniejszych_partii_zl': round(koszt_stare_partie - sqrt(2 * D * S0 * 0.5 * H)),
+}
 print(json.dumps(wyniki, ensure_ascii=False, indent=1))
 Path(__file__).with_name('wyniki.json').write_text(json.dumps(wyniki, ensure_ascii=False, indent=1) + '\n', encoding='utf8')

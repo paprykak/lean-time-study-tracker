@@ -8,35 +8,35 @@
 
 ## Połowa czasu kompletującego to chodzenie
 
-Weźmy kierownika magazynu dystrybutora chemii gospodarczej, w którym ośmiu kompletujących zbiera na zmianę kilka tysięcy linii zamówień (to przykład, firma jest fikcyjna). Dostawca robotów mobilnych obiecuje mu, że roboty przejmą chodzenie między regałami. Brzmi rozsądnie, bo chodzenia jest dużo. Pytanie brzmi jednak inaczej: ile z tego chodzenia jest naprawdę potrzebne?
+Wyobraź sobie kierownika magazynu dystrybutora chemii gospodarczej, w którym ośmiu kompletujących zbiera na zmianę kilka tysięcy linii zamówień (to przykład, firma jest fikcyjna). Dostawca robotów mobilnych obiecuje mu, że roboty przejmą chodzenie między regałami. Brzmi rozsądnie, bo chodzenia jest dużo. Pytanie brzmi jednak inaczej: ile z tego chodzenia jest naprawdę potrzebne?
 
-Przegląd badań nad kompletacją, który napisali René de Koster i współautorzy, podaje typowy podział czasu kompletującego w magazynie, w którym człowiek idzie do towaru. Droga to 50%, szukanie 20%, samo pobranie 15%, przygotowanie 10%, a reszta 5% [@dekoster]. Te proporcje pochodzą z podręcznika, a nie z pomiaru autorów przeglądu, ale autorzy dodają, że droga jest zwykle największym składnikiem czasu i pierwszym kandydatem do poprawy [@dekoster]. Przytaczają przy tym zdanie Johna Bartholdiego i Stevena Hackmana: „czas drogi to marnotrawstwo; kosztuje roboczogodziny, a nie dodaje wartości” [@dekoster].
+Przegląd badań nad kompletacją, który napisali René de Koster i współautorzy, podaje typowy podział czasu kompletującego w magazynie, w którym człowiek idzie do towaru. Droga to 50%, szukanie 20%, samo pobranie 15%, przygotowanie 10%, a reszta 5% [@dekoster]. Te proporcje pochodzą z podręcznika, a nie z pomiaru autorów przeglądu, ale autorzy dodają, że droga jest zwykle największym składnikiem czasu i pierwszym kandydatem do poprawy [@dekoster]. Przytaczają przy tym zdanie Johna Bartholdiego i Stevena Hackmana: „Czas drogi to marnotrawstwo. Kosztuje roboczogodziny, ale nie dodaje wartości” [@dekoster].
 
-Zanim kupisz roboty do kompletacji, skróć więc drogę, którą dziś pokonuje magazynier. Rozmieszczenie towaru i zasada trasy skracają ją w badaniach o 27–43% [@tarczynski, @leduc], a żadna z nich nie wymaga inwestycji. Robot, który przejmie chodzenie później, przejmie go już mniej.
+Zanim kupisz roboty do kompletacji, skróć więc drogę, którą dziś pokonuje magazynier. Samo rozmieszczenie według rotacji skracało drogę w modelu o 32–43% [@leduc], a czas kompletacji w polskim badaniu o 27% [@tarczynski]. Żadna z tych zmian nie wymaga zakupu sprzętu: kosztują roboczogodziny przy przenoszeniu towaru i kilka wolniejszych dni. Robot, który przejmie chodzenie później, przejmie go już mniej.
 
 ## Najczęściej pobierane indeksy powinny leżeć najbliżej wydań
 
-Popyt w magazynie rzadko rozkłada się równo. W klasycznym podziale ABC najszybsza grupa to często około 15% indeksów, które dają około 85% obrotu [@dekoster]. Jeśli te indeksy leżą rozrzucone po całej hali, kompletujący chodzi po nie wszędzie. Jeśli leżą blisko punktu wydań, większość zamówień kończy się kilka alejek od biurka.
+Popyt w magazynie rzadko rozkłada się równo. W klasycznej metodzie Pareto najszybsza klasa to około 15% indeksów, które dają około 85% ruchu [@dekoster]. Jeśli te indeksy leżą rozrzucone po całej hali, kompletujący chodzi po nie wszędzie. Jeśli leżą blisko punktu wydań, większość zamówień kończy się kilka alejek od biurka.
 
-Rozprawa Tho Le-Duca z Uniwersytetu Erazma w Rotterdamie pokazuje skalę tej różnicy w modelu magazynu. Składowanie według ABC skracało drogę nawet o 32% przy umiarkowanie skośnym popycie i o 43% przy silnie skośnym, w porównaniu ze składowaniem losowym [@leduc]. Polskie badanie symulacyjne opublikowane w „Optimum. Studia Ekonomiczne” dało podobny rząd wielkości. Właściwe składowanie skróciło średni czas kompletacji o 26,93% bez zmiany trasy [@tarczynski].
+Rozprawa Tho Le-Duca z Uniwersytetu Erazma w Rotterdamie pokazuje skalę tej różnicy w modelu pojedynczej alejki. Składowanie według ABC skracało drogę nawet o 32% przy umiarkowanie skośnym popycie i o 43% przy silnie skośnym, w porównaniu ze składowaniem losowym [@leduc]. Polskie badanie symulacyjne opublikowane w „Optimum. Studia Ekonomiczne” dało podobny rząd wielkości. Właściwe składowanie skróciło średni czas kompletacji o 26,93% bez zmiany trasy [@tarczynski].
 
-Granice klas znajdziesz w danych. Ułóż indeksy od najczęściej pobieranych i dopisz, jaki odsetek wszystkich pobrań dają łącznie kolejne indeksy. Tam, gdzie krzywa przestaje szybko rosnąć, kończy się klasa A; zwykle to kilkanaście procent indeksów. Resztę podziel na jedną albo dwie klasy wolniejsze.
+Granice klas znajdziesz w danych. Ułóż indeksy od najczęściej pobieranych i dopisz, jaki odsetek wszystkich pobrań dają łącznie kolejne indeksy. Tam, gdzie krzywa przestaje szybko rosnąć, kończy się klasa A; w opisanych modelach to od kilkunastu do 30% indeksów [@dekoster, @leduc]. Resztę podziel na jedną albo dwie klasy wolniejsze.
 
-Klasy wyznaczaj według częstości pobrań, czyli liczby linii zamówień na indeks, a nie według wartości sprzedaży [@dekoster]. Drogę wydłuża każda wizyta przy regale, niezależnie od tego, ile kosztuje towar. Pełne uszeregowanie wszystkich indeksów według rotacji daje w symulacjach jeszcze krótszą drogę niż podział na klasy, ale autorzy tej analizy zalecają w praktyce 2–4 klasy, bo łatwiej je utrzymać [@dekoster].
+Klasy wyznaczaj według częstości pobrań, czyli liczby linii zamówień na indeks [@dekoster]. Nie według wartości sprzedaży: drogę wydłuża każda wizyta przy regale, niezależnie od tego, ile kosztuje towar. Pełne uszeregowanie wszystkich indeksów według rotacji daje w symulacjach jeszcze krótszą drogę niż podział na klasy, ale autorzy tej analizy zalecają w praktyce 2–4 klasy, bo łatwiej je utrzymać [@dekoster].
 
 ## Trasa zależy od tego, ile pobrań wypada na alejkę
 
-Najczęstsza zasada trasy w magazynach nazywa się S-shape: kompletujący przechodzi całą długością każdej alejki, w której ma coś do pobrania, i wraca do wydań. Jest prosta i nikt się na niej nie gubi. Według badań cytowanych w przeglądzie de Kostera trasy S-shape są jednak przy losowym składowaniu średnio o 7–33% dłuższe od najkrótszych możliwych [@dekoster]. Najlepsza z prostych zasad schodzi średnio do około 5% ponad optimum [@dekoster].
+Najczęstsza w praktyce zasada trasy nazywa się S-shape: kompletujący przechodzi całą długością każdej alejki, w której ma coś do pobrania, i wraca do wydań [@tarczynski]. Jest prosta i nikt się na niej nie gubi. Według badań cytowanych w przeglądzie de Kostera trasy S-shape są jednak przy losowym składowaniu średnio o 7–33% dłuższe od najkrótszych możliwych [@dekoster]. Najlepsza z prostych zasad schodzi średnio do około 5% ponad optimum [@dekoster].
 
-Jedną z takich zasad jest largest gap. Kompletujący wchodzi do alejki z przodu albo z tyłu i zawraca tam, gdzie między pobraniami jest największa przerwa, zamiast przechodzić alejkę w całości. Ta zasada wygrywa z S-shape wtedy, gdy na alejkę wypada mniej niż około 4 pobrań [@dekoster]. Przy gęstych zamówieniach i tak przechodzisz prawie każdą alejkę do końca, więc wybór trasy traci znaczenie.
+Jedną z takich zasad jest largest gap. Kompletujący przechodzi w całości pierwszą i ostatnią alejkę z pobraniami. Do pozostałych wchodzi z przodu, z tyłu albo z obu stron i zawraca tak, żeby ominąć największą przerwę między pobraniami [@dekoster]. Ta zasada wygrywa z S-shape wtedy, gdy na alejkę wypada mniej niż około 4 pobrań [@dekoster]. Przy gęstych zamówieniach i losowym rozmieszczeniu i tak przechodzisz prawie każdą alejkę do końca, więc wybór trasy traci znaczenie.
 
 Sprawdziliśmy to w symulacji na danych fikcyjnych. Magazyn ma 10 alejek po 30 miejsc z każdej strony, 600 indeksów, z których 20% daje 80% pobrań, a punkt wydań stoi w rogu. Dla każdego wariantu policzyliśmy drogę dla 20 tysięcy zamówień.
 
-![Wykres słupkowy: o ile krótsza jest droga kompletującego niż przy losowym rozmieszczeniu towaru i trasie S-shape. Zamówienie z 5 pozycjami: sama trasa largest gap 19%, samo rozmieszczenie według rotacji 34%, oba razem 42%. Z 15 pozycjami: 20%, 29% i 45%. Z 30 pozycjami: 6%, 19% i 33%.](../../assets/rysunki/kompletacja-droga-1.svg "Rysunek 1. Rozmieszczenie według rotacji skraca drogę bardziej niż zmiana trasy, a trasa traci znaczenie przy dużych zamówieniach. Źródło: symulacja redakcji na danych fikcyjnych (10 alejek, 600 indeksów, 20 tys. zamówień na wariant).")
+![Wykres słupkowy: o ile krótsza jest droga kompletującego niż przy losowym rozmieszczeniu towaru i trasie S-shape. Zamówienie z 5 pozycjami: sama trasa largest gap 19%, samo rozmieszczenie według rotacji 34%, oba razem 42%. Z 15 pozycjami: 20%, 29% i 45%. Z 30 pozycjami: 6%, 19% i 33%.](../../assets/rysunki/kompletacja-droga-1.svg "Rysunek 1. Rozmieszczenie według rotacji skraca drogę bardziej niż zmiana trasy, a przy losowym rozmieszczeniu trasa traci znaczenie przy dużych zamówieniach. Źródło: symulacja redakcji na danych fikcyjnych (10 alejek, 600 indeksów, 20 tys. zamówień na wariant).")
 
-Przy zamówieniach z 5 pozycjami sama zmiana trasy skróciła drogę o 19%, samo rozmieszczenie według rotacji o 34%, a oba kroki razem o 42%. Przy 30 pozycjach zmiana trasy dała już tylko 6%, bo kompletujący i tak odwiedzał prawie każdą alejkę. Rozmieszczenie działało przy każdej wielkości zamówienia.
+Przy zamówieniach z 5 pozycjami sama zmiana trasy skróciła drogę o 19%, samo rozmieszczenie według rotacji o 34%, a oba kroki razem o 42%. Przy 30 pozycjach i losowym rozmieszczeniu zmiana trasy dała już tylko 6%, bo kompletujący i tak odwiedzał prawie każdą alejkę. Ale przy rozmieszczeniu według rotacji largest gap skracała drogę jeszcze o 18%, bo pobrania skupiały się z przodu alejek. Rozmieszczenie działało przy każdej wielkości zamówienia.
 
-Wniosek dla kierownika jest prosty: najpierw rozmieszczenie, potem trasa.
+Rozmieszczenie daje więcej przy każdej wielkości zamówienia, ale trasę zmienisz taniej i szybciej. Przy zamówieniach do kilkunastu pozycji zmień ją od razu.
 
 ## Strefy i łączenie zamówień dają więcej, ale kosztują sortowanie
 
@@ -64,7 +64,9 @@ Gdy na alejkę wypada mniej niż około 4 pobrań, kompletujący nie musi przech
 
 Nową trasę pokaż kompletującym na planie hali i przećwicz na kilku rundach, zanim ocenisz wynik. Pierwsze dni zwykle idą wolniej, bo ludzie chodzą po nowych lokalizacjach, a nie z pamięci. Dlatego pomiar po zmianie zacznij dopiero po tygodniu.
 
-Efekt mierz czasem na linię zamówienia z systemu magazynowego, dwa tygodnie przed zmianą i dwa tygodnie po niej, przy podobnych zamówieniach. Weźmy przykład na danych fikcyjnych. Jeśli droga to połowa czasu kompletacji, a skrócisz ją o 40%, czas kompletacji spadnie mniej więcej o 20%. Przy ośmiu kompletujących na zmianę to około półtora etatu na zmianę. Jeśli roczny koszt etatu kompletującego wynosi 80 tys. zł, przy dwóch zmianach daje to około 240 tys. zł rocznie. Dopiero od tej liczby licz zwrot z robotów: przejmą chodzenie, którego już będzie mniej.
+Efekt mierz czasem na linię zamówienia z systemu magazynowego, dwa tygodnie przed zmianą i dwa tygodnie po niej, przy podobnych zamówieniach. Weźmy przykład na danych fikcyjnych.
+
+Jeśli droga to połowa czasu kompletacji, a skrócisz ją o 40%, czas kompletacji spadnie mniej więcej o 20%. Przy ośmiu kompletujących na zmianę to około 1,6 etatu na zmianę. Pieniądze z tego będą dopiero wtedy, gdy obsłużysz tym czasem więcej zamówień albo zrezygnujesz z nadgodzin i pracowników tymczasowych. Przy 80 tys. zł rocznego kosztu etatu i dwóch zmianach to do około 250 tys. zł rocznie. Dopiero od tej liczby licz zwrot z robotów: przejmą chodzenie, którego już będzie mniej.
 
 ## Trzy pytania do dostawcy automatyzacji
 
@@ -84,6 +86,6 @@ Nasza symulacja nie uwzględnia tłoku. Gdy najczęściej pobierane indeksy stoj
 
 ## Najpierw krótsza droga, potem roboty
 
-Kierownik magazynu z początku tekstu nie musi odrzucać oferty robotów. Najpierw jednak wyeksportuje linie zamówień z kwartału i sprawdzi, gdzie leżą jego najczęściej pobierane indeksy. Przeniesie je bliżej wydań i zmierzy czas na linię. Potem zapyta dostawcę, ile robot zaoszczędzi na drodze, która już jest krótsza.
+Oferty robotów nie trzeba odrzucać. Najpierw jednak wyeksportuje linie zamówień z kwartału i sprawdzi, gdzie leżą jego najczęściej pobierane indeksy. Przeniesie je bliżej wydań i zmierzy czas na linię. Potem zapyta dostawcę, ile robot zaoszczędzi na drodze, która już jest krótsza.
 
 Roboty mogą się opłacić. Ale płacenie za to, żeby maszyna szybciej pokonywała niepotrzebną drogę, to automatyzowanie marnotrawstwa.
