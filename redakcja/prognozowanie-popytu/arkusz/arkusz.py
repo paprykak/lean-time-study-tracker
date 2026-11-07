@@ -225,7 +225,7 @@ INSTRUKCJA = [
           'i porównaj się z sezonową prognozą naiwną: sprzedażą z tego samego tygodnia rok wcześniej (wymaga roku historii przed testem).'),
     ('p', '• Indeksy, które w wielu okresach nie sprzedają się wcale, oceniaj osobno, po zapasie i poziomie obsługi. Przy nich najmniejszy błąd w sztukach może dać prognoza „zero”.'),
     ('p', '• Popyt to nie zawsze sprzedaż: gdy towaru zabrakło, sprzedaż jest niższa od popytu. Takie okresy oznacz albo pomiń.'),
-    ('p', '• Jeśli system nadpisuje dawne prognozy, zacznij co tydzień zapisywać ich kopię. Po kwartale będziesz mieć dane do testu.'),
+    ('p', '• Jeśli system nadpisuje dawne prognozy, zacznij co tydzień zapisywać ich kopię. Po kwartale zrobisz pierwszy test, a po pół roku pełny.'),
     ('p', 'Uzasadnienie i źródła: artykuł na rytmhali.pl/prognozowanie-popytu. Arkusz możesz kopiować i używać w firmie.'),
 ]
 r = 4
