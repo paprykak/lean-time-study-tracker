@@ -1,6 +1,6 @@
 ---
 tytul: Jak używamy AI
-opis: "Do czego redakcja Rytmu Hali używa narzędzi AI, czego im nie powierza i kto odpowiada za każdy tekst. Fakty sprawdzamy u źródła, a za publikację odpowiada redaktor naczelny."
+opis: "Do czego redakcja Rytmu Hali używa narzędzi AI i czego im nie powierza. Fakty sprawdzamy u źródła, a za publikację odpowiada redaktor naczelny."
 zaktualizowano: 2026-11-06
 ---
 
