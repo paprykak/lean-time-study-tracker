@@ -25,19 +25,19 @@ Zmiana trwała osiem godzin. Pół godziny zajęła przerwa, drugie pół godzin
 
 Najbliżej klasycznego TPM jest arkusz inżyniera, bo przezbrojenie i regulacja to w TPM jedna z sześciu dużych strat [@jipm]. Gdyby inżynier wyłączył jeszcze planową konserwację, jak w definicji Nakajimy [@jonsson], wyszłoby 60%. Arkusz kierownika mierzy maszynę w czasie, który zostaje po przezbrojeniach. Arkusz planisty sprawdza raczej, czy maszyna nadąża za planem, niż ile traci.
 
-Kłopot w tym, że każda z tych liczb trafi potem do porównania z 85%. Z różnicy wylicza się, ile zakład mógłby zyskać: w materiale sponsorowanym firmy DSR, dostawcy systemów IT dla produkcji, czytamy, że przejście z 60 do 85% OEE daje 42% więcej produkcji [@itwiz]. Nawet rozdział książki wydanej przez AGH podaje 85% jako „światowy standard”, a w tym samym zdaniu 60% jako wynik pożądany [@agh].
+Kłopot w tym, że każda z tych liczb trafi potem do porównania z 85%. Z różnicy wylicza się, ile zakład mógłby zyskać. W materiale sponsorowanym firmy DSR, dostawcy systemów IT dla produkcji, czytamy, że przejście z 60 do 85% OEE daje 42% więcej produkcji [@itwiz]. Nawet rozdział książki wydanej przez AGH podaje 85% jako „światowy standard”, a w tym samym zdaniu 60% jako wynik pożądany [@agh].
 
-Tymczasem firmy liczą bardzo różnie. W szwedzkich ankietach mniej niż połowa respondentów podała, że ich firma rejestruje przezbrojenie jako zakłócenie produkcji, choć według autorów niemal każda definicja OEE od początku liczy je jako stratę [@bokrantz]. Nawet norma ISO 22400-2 podaje, według analizy z 2020 r., dwie rozbieżne definicje OEE [@schiraldi]. Jeśli nie wiesz, jak policzono wynik, porównanie z 85% albo z innym zakładem mówi niewiele. Pod koniec tekstu znajdziesz kartę definicji, która to naprawia, i gotową odpowiedź dla zarządu.
+Tymczasem firmy liczą bardzo różnie. W szwedzkich ankietach mniej niż połowa respondentów podała, że ich firma rejestruje przezbrojenie jako zakłócenie produkcji, choć według autorów niemal każda definicja OEE od początku liczy je jako stratę [@bokrantz]. Nawet norma ISO 22400-2 podaje, według analizy z 2020 r., dwie definicje OEE, które wydają się rozbieżne [@schiraldi]. Jeśli nie wiesz, jak policzono wynik, porównanie z 85% albo z innym zakładem mówi niewiele. Pod koniec tekstu znajdziesz kartę definicji, która to naprawia, i gotową odpowiedź dla zarządu.
 
 ## 85% to cel, który wyznaczyli twórcy TPM
 
-Najwcześniej znaleźliśmy tę liczbę w książce wydanej w 1982 r. przez JIPM, japoński instytut utrzymania ruchu. Kunio Shirose pisze w niej, że w badanych firmach efektywność urządzeń wynosiła średnio 40–60%, a dzięki TPM można ją podnieść do 85–95% [@jipm]. Same 85% to iloczyn trzech wartości, które według późniejszych autorów podał Nakajima, redaktor tej książki: dostępność ponad 90%, wydajność ponad 95% i jakość ponad 99%. Uważał taki wynik za dobry punkt odniesienia dla możliwości typowego zakładu [@jonsson] i za minimum, które firmy powinny osiągnąć [@vorne-wc]. To minimum dla zakładu, który przeszedł program TPM, a nie opis przeciętnego wyniku: badane przez JIPM firmy miały wtedy średnio 40–60% [@jipm].
+Najwcześniej znaleźliśmy tę liczbę w książce wydanej w 1982 r. przez JIPM, japoński instytut utrzymania ruchu. Kunio Shirose pisze w niej, że w badanych firmach efektywność urządzeń wynosiła średnio 40–60%, a dzięki TPM można ją podnieść do 85–95% [@jipm]. Same 85% to iloczyn trzech wartości, które Nakajima, redaktor tej książki, podał według późniejszych autorów w 1984 r. To dostępność ponad 90%, wydajność ponad 95% i jakość ponad 99%. Uważał taki wynik za dobry punkt odniesienia dla możliwości typowego zakładu [@jonsson] i za minimum, do którego firmy powinny dążyć [@vorne-wc]. To minimum dla zakładu, który przeszedł program TPM, a nie opis przeciętnego wyniku: badane przez JIPM firmy miały wtedy średnio 40–60% [@jipm].
 
 Dziś te liczby powtarza Vorne, producent systemów do pomiaru OEE, z zastrzeżeniem, że dotyczą produkcji liczonej w sztukach. Według niego Nakajima zauważył, że wszystkie zakłady nagrodzone w Japonii za wdrożenie TPM miały ponad 85% [@vorne-wc]. Ta sama firma nazywa jednak 85% wygodnym i przekonującym, ale zupełnie sztucznym punktem odniesienia [@vorne-faq].
 
 Ile zakładów naprawdę przekracza 85%, nie wiadomo. Dostawca oprogramowania Evocon, który zbiera dane z ponad 3,5 tys. maszyn swoich klientów, podaje, że średnie roczne OEE co najmniej 85% ma około 6% z nich. Ponieważ klienci często zawyżają wynik, prawdziwy odsetek ocenia na około 3%. Nie podaje jednak, według jakiej definicji liczyli [@evocon].
 
-## Zmierzone średnie są dalekie od 85%
+## Zmierzone średnie są niższe niż 85%
 
 Porządnych badań wielu zakładów jest niewiele. Oto te, które znaleźliśmy, i dwa polskie studia pojedynczych maszyn:
 
@@ -49,7 +49,9 @@ Porządnych badań wielu zakładów jest niewiele. Oto te, które znaleźliśmy,
 | Polska, studium z AGH [@agh] | 1 maszyna, tydzień | 68% (dziennie 46–83%) |
 | Polska, zakład farb [@jagusiak] | 1 mieszadło, 31 dni | 78,9% |
 
-Nawet te średnie mogą być zawyżone. W badaniu 884 maszyn aż 702 miały wpisaną wydajność 100%, a 796 jakość 100%. To wartość domyślna systemu, a autorzy uważają za mało prawdopodobne, by tyle maszyn naprawdę pracowało bez tych strat. Pytają nawet, czy firmy mierzą OEE, czy tylko dostępność [@hedman]. Tych liczb nie uśredniaj i nie traktuj jak nowej normy, bo badania różnią się metodą, latami i próbą. Wszystkie leżą jednak wyraźnie poniżej 85%.
+Nawet te średnie mogą być zawyżone. W badaniu 884 maszyn aż 702 miały wpisaną wydajność 100%, a 796 jakość 100%. To wartość domyślna systemu, a autorzy uważają za mało prawdopodobne, by tyle maszyn naprawdę pracowało bez tych strat. Pytają nawet, czy firmy mierzą OEE, czy tylko dostępność [@hedman].
+
+Tych liczb nie uśredniaj i nie traktuj jak nowej normy, bo badania różnią się metodą, latami i próbą. W studium z AGH przezbrojeń w ogóle nie liczono jako straty [@agh]. Wszystkie średnie leżą jednak poniżej 85%, od 51,5 do 78,9%.
 
 ## Usprawnienie potrafi obniżyć OEE
 
