@@ -4,7 +4,7 @@
 import { createHash } from 'node:crypto';
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
-import { ADRES, PODGLAD, PORTAL, START, TESTOWE } from '../src/lib/srodowisko.mjs';
+import { ADRES, FORMULARZE, PODGLAD, PORTAL, START, TESTOWE } from '../src/lib/srodowisko.mjs';
 import { POLITYKI } from '../src/lib/polityki.mjs';
 import { PLIK_KLUCZA } from '../src/lib/indexnow.mjs';
 
@@ -123,6 +123,11 @@ for (const plik of strony) {
   // Produkcja: bez treści testowych; projekt strony stałej blokuje start (przed startem tylko ostrzega).
   if (PRODUKCJA && (adres.startsWith('/testowy-') || html.includes('Tekst testowy (fikcyjny)'))) bledy.push(`${gdzie} treść testowa na produkcji`);
   if (PRODUKCJA && html.includes('data-projekt')) (START ? bledy : ostrzezenia).push(`${gdzie} projekt tekstu do akceptacji Patryka${START ? '' : ' (przed startem i przed uruchomieniem zapisu na listę musi być zatwierdzony)'}`);
+  // Formularz bez skonfigurowanej usługi kończy się stroną błędu: na produkcji go nie pokazujemy (FORMULARZE).
+  // Wyjątek: strona wzorów (noindex) pokazuje stany formularza dla redakcji.
+  for (const [rodzaj, dziala] of Object.entries(FORMULARZE)) {
+    if (PRODUKCJA && !dziala && adres !== '/styleguide' && html.includes(`action="/api/${rodzaj}"`)) bledy.push(`${gdzie} formularz /api/${rodzaj} bez skonfigurowanej usługi (FORMULARZE w srodowisko.mjs)`);
+  }
 
   if (PODGLAD) {
     if (!noindex) bledy.push(`${gdzie} build podglądu bez noindex`);

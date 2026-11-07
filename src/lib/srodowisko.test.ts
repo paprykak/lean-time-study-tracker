@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildTestowy, trybBudowania, zakres } from './srodowisko.mjs';
+import { buildTestowy, formularzAktywny, trybBudowania, zakres } from './srodowisko.mjs';
 import { zostaje } from './przed-startem.mjs';
 
 describe('tryby budowania', () => {
@@ -23,6 +23,22 @@ describe('tryby budowania', () => {
   it('build testowy nie może powstać w Cloudflare', () => {
     expect(() => buildTestowy({ RH_TESTOWE: '1', WORKERS_CI_BRANCH: 'main' })).toThrow(/tylko do testów/);
     expect(buildTestowy({ RH_TESTOWE: '1' })).toBe(true);
+  });
+});
+
+describe('formularze', () => {
+  const wylaczone = { newsletter: false, kontakt: false };
+
+  it('produkcja pokazuje formularz tylko wtedy, gdy jego usługa jest skonfigurowana', () => {
+    expect(formularzAktywny('newsletter', { WORKERS_CI_BRANCH: 'main' }, wylaczone)).toBe(false);
+    expect(formularzAktywny('kontakt', {}, wylaczone)).toBe(false);
+    expect(formularzAktywny('newsletter', { WORKERS_CI_BRANCH: 'main' }, { newsletter: true, kontakt: false })).toBe(true);
+  });
+
+  it('podgląd i build testowy pokazują formularze zawsze', () => {
+    expect(formularzAktywny('newsletter', { WORKERS_CI_BRANCH: 'wdrozenie/start' }, wylaczone)).toBe(true);
+    expect(formularzAktywny('kontakt', { RH_PODGLAD: '1' }, wylaczone)).toBe(true);
+    expect(formularzAktywny('kontakt', { RH_TESTOWE: '1' }, wylaczone)).toBe(true);
   });
 });
 

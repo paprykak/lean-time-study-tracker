@@ -9,7 +9,7 @@ tematy:
   - oee
 autorzy:
   - redakcja
-opublikowano: 2026-11-06
+opublikowano: 2026-11-07
 zdjecie: linia-rozlewnicza
 podpisZdjecia: "Linia rozlewnicza w ruchu: ile z jej czasu jest stratą, rozstrzyga dopiero definicja OEE."
 materialy:
@@ -96,7 +96,7 @@ faq:
     odpowiedz: "Tylko wtedy, gdy oba liczą według tej samej definicji: ten sam czas planowany, ten sam rodzaj cyklu idealnego, te same zasady liczenia dobrych sztuk i to samo źródło danych. Bez tego różnica wyników może pochodzić z arkuszy, a nie z maszyn."
 metoda: "Tekst opiera się na badaniach z opisaną metodą, które mierzą OEE w wielu zakładach (głównie szwedzkie, dwa znamy ze streszczeń), i na danych JIPM z Japonii z książki o wdrażaniu TPM (bez opisu próby). Korzystamy też z analizy definicji OEE w normie ISO 22400-2 (znamy ją ze streszczenia) i z dwóch polskich studiów przypadku. Materiały dostawców systemów OEE i IT oznaczamy w tekście. Książki Nakajimy z 1984 r. nie sprawdziliśmy w oryginale, więc jego założenia podajemy za autorami, którzy ją cytują. Przykład z trzema arkuszami jest fikcyjny; rachunki są w archiwum redakcji. Konflikt interesów: redaktor naczelny prowadzi doradztwo w operacjach, także przy OEE; tekst nie odsyła do jego usług."
 sprawdzono: 2026-11-07
-szkic: true
+szkic: false
 ---
 ## W skrócie
 

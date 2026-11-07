@@ -1,16 +1,13 @@
 ---
 tytul: Stopka redakcyjna
-opis: "Stopka redakcyjna Rytmu Hali: tytuł, wydawca, redaktor naczelny, adres redakcji i kontakt oraz zasady, według których pracuje redakcja."
-zaktualizowano: 2026-11-06
-projekt: true
+opis: "Stopka redakcyjna Rytmu Hali: tytuł, wydawca, redaktor naczelny i kontakt z redakcją oraz zasady, według których pracuje redakcja."
+zaktualizowano: 2026-11-07
 ---
 
 - **Tytuł:** Rytm Hali (rytmhali.pl)
-- **Wydawca:** [DO UZUPEŁNIENIA: nazwa albo imię i nazwisko, adres, dane rejestrowe]
+- **Wydawca:** Patryk Korpyta
 - **Redaktor naczelny:** Patryk Korpyta
-- **Adres redakcji:** [DO UZUPEŁNIENIA]
-- **Kontakt:** [redakcja@rytmhali.pl](mailto:redakcja@rytmhali.pl), [formularz kontaktowy](/kontakt)
-- **Rejestracja tytułu prasowego:** [DO DECYZJI po opinii prawnika]
+- **Kontakt z redakcją:** [redakcja@rytmhali.pl](mailto:redakcja@rytmhali.pl), [strona kontaktu](/kontakt)
 
 ## Zasady redakcji
 

@@ -1,8 +1,7 @@
 ---
 tytul: O nas i redakcja
 opis: "Rytm Hali to niezależne medium o operacjach: produkcji, magazynie, lean i danych. Kto pisze, dla kogo, jak pracujemy i z czego się utrzymujemy."
-zaktualizowano: 2026-11-06
-projekt: true
+zaktualizowano: 2026-11-07
 ---
 
 Rytm Hali to niezależne medium o operacjach: produkcji, magazynie i logistyce, lean i ciągłym doskonaleniu, danych i AI oraz ludziach na hali. Piszemy dla kierowników produkcji i magazynów, dyrektorów operacyjnych, specjalistów ciągłego doskonalenia i liderów zmian w polskich firmach.
@@ -25,6 +24,6 @@ Redaktor naczelny prowadzi też działalność doradczą w obszarze operacji. W 
 
 ## Wydawca
 
-[DO UZUPEŁNIENIA: wydawca, forma działalności, adres i dane rejestrowe, po decyzji o formie prawnej.]
+Wydawcą Rytmu Hali jest Patryk Korpyta.
 
 Kontakt z redakcją: [redakcja@rytmhali.pl](mailto:redakcja@rytmhali.pl). Błąd w tekście? Zobacz [politykę korekt](/polityka-korekt).

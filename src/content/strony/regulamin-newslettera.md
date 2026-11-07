@@ -1,19 +1,16 @@
 ---
 tytul: Regulamin newslettera
 opis: "Zasady newslettera Raport zmianowy: kto go wysyła, jak się zapisać i wypisać, co zawiera, jak zgłosić reklamację i gdzie są zasady ochrony danych."
-zaktualizowano: 2026-11-06
-projekt: true
+zaktualizowano: 2026-11-07
 ---
-
-> **Projekt do oceny prawnika.** Miejsca w nawiasach kwadratowych czekają na decyzję redaktora naczelnego albo prawnika.
 
 ## Kto wysyła newsletter
 
-Newsletter „Raport zmianowy” wysyła [DO UZUPEŁNIENIA: wydawca Rytmu Hali, adres i dane rejestrowe], wydawca serwisu rytmhali.pl. Kontakt: [redakcja@rytmhali.pl](mailto:redakcja@rytmhali.pl).
+Newsletter „Raport zmianowy” wysyła Patryk Korpyta, wydawca serwisu rytmhali.pl. Kontakt: [redakcja@rytmhali.pl](mailto:redakcja@rytmhali.pl).
 
 ## Czym jest newsletter
 
-Bezpłatny newsletter z tekstami Rytmu Hali o produkcji, magazynach, lean, danych i ludziach na hali, wysyłany [DO DECYZJI: częstotliwość, np. raz w tygodniu]. Wydanie może zawierać oznaczone reklamy i materiały partnerów; oznaczamy je zawsze tak, żeby nie budziły wątpliwości, że nie są tekstem redakcji.
+Bezpłatny newsletter z tekstami Rytmu Hali o produkcji, magazynach, lean, danych i ludziach na hali, wysyłany co dwa tygodnie. Wydanie może zawierać oznaczone reklamy i materiały partnerów; oznaczamy je zawsze tak, żeby nie budziły wątpliwości, że nie są tekstem redakcji.
 
 ## Zapis
 
@@ -28,7 +25,7 @@ Wypisać się możesz w każdej chwili, bez kosztów: jednym kliknięciem w link
 
 ## Reklamacje
 
-Uwagi i reklamacje dotyczące newslettera wyślij na [redakcja@rytmhali.pl](mailto:redakcja@rytmhali.pl). Odpowiemy w ciągu [DO DECYZJI: np. 14 dni].
+Uwagi i reklamacje dotyczące newslettera wyślij na [redakcja@rytmhali.pl](mailto:redakcja@rytmhali.pl). Odpowiemy w ciągu 14 dni.
 
 ## Dane osobowe
 
@@ -36,4 +33,4 @@ Zasady przetwarzania danych subskrybentów opisuje [polityka prywatności](/poli
 
 ## Zmiany regulaminu
 
-O zmianach regulaminu napiszemy do subskrybentów co najmniej [DO DECYZJI: np. 14 dni] przed ich wejściem w życie. Jeśli nie akceptujesz zmian, możesz się wypisać.
+O zmianach regulaminu napiszemy do subskrybentów co najmniej 14 dni przed ich wejściem w życie. Jeśli nie akceptujesz zmian, możesz się wypisać.

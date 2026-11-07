@@ -1,6 +1,6 @@
 ---
 tytul: "Karta definicji OEE"
-opis: "Osiem decyzji, które ustalają, co mierzy Twój wynik OEE, z ustawieniem startowym przy każdej. Do tego zmiana rozpisana na minuty, rachunek dla zarządu i rejestr zmian definicji. Dwie strony A4 do wydruku."
+opis: "Osiem decyzji, które ustalają, co mierzy Twój wynik OEE, z ustawieniem startowym przy każdej, rachunek dla zarządu i rejestr zmian. Dwie strony A4."
 plik: /pobierz/karta-definicji-oee.pdf
 format: PDF
 strony: 2
@@ -11,7 +11,7 @@ dzial: produkcja
 tematy:
   - oee
 opublikowano: 2026-11-07
-szkic: true
+szkic: false
 ---
 
 Ten sam wynik OEE może znaczyć coś innego w każdym zakładzie, a nawet na każdej zmianie, jeśli nie spisano, co wlicza się do czasu planowanego, jaki cykl jest idealny i która sztuka jest dobra. Karta zamienia te ustalenia w jedną kartkę, którą dołączasz do każdego raportu z OEE.

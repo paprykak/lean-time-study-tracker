@@ -11,6 +11,7 @@ import Ikona from './Ikona.astro';
 import { FORMATY, linkReklamy, type Format, type Kampania } from '../lib/reklamy';
 import { kampanieDlaMiejsca, POLE_KREACJI, widocznaBezSkryptu } from '../lib/kampanie';
 import ustawienia from '../data/ustawienia.json';
+import { formularzAktywny } from '../lib/srodowisko.mjs';
 
 interface Props {
   komputer?: Format;
@@ -24,6 +25,8 @@ interface Props {
   class?: string;
 }
 const { komputer, telefon, kampania, pusty = false, miejsce, class: klasa } = Astro.props;
+// Bez działającego zapisu autopromocja nie wzywa do zapisu, tylko prowadzi do opisu newslettera.
+const wezwanie = formularzAktywny('newsletter') ? 'Zapisz się' : 'Wkrótce';
 
 interface Kandydat {
   id: string;
@@ -103,7 +106,7 @@ const warianty = await Promise.all(
                   <span class="slot-autopromocja-tytul">{ustawienia.newsletter.nazwa}</span>
                   <span class="slot-autopromocja-opis">Newsletter Rytmu Hali o produkcji, magazynach, lean i danych.</span>
                 </span>
-                <span class="slot-autopromocja-cta">Zapisz się<Ikona nazwa="strzalka" rozmiar={18} /></span>
+                <span class="slot-autopromocja-cta">{wezwanie}<Ikona nazwa="strzalka" rozmiar={18} /></span>
               </a>
             </>
           )}

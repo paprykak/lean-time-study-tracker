@@ -13,7 +13,25 @@ export const ADRES = 'https://rytmhali.pl';
 export const GALAZ_PRODUKCYJNA = 'main';
 
 /** Bramka publicznego startu (prompt, sekcja 5: 12 artykułów w 4 działach i strony zaufania). Zmiana w F8, na „wdrażaj”. */
-export const START = false;
+export const START = true;
+
+/**
+ * Formularze, które działają na produkcji (F6). Zapis na newsletter wymaga konta Brevo (zmienne i sekret w Cloudflare),
+ * kontakt wymaga Email Routing i wiązania POCZTA. Do tego czasu produkcja pokazuje zamiast formularza informację,
+ * że ruszy wkrótce, bo formularz bez konfiguracji kończy się stroną błędu (DECYZJE.md, F8). Włączasz w tym samym
+ * commicie, w którym konfiguracja trafia do wrangler.jsonc.
+ */
+export const FORMULARZE = { newsletter: false, kontakt: false };
+
+/**
+ * Czy pokazać formularz. Podgląd i build testowy pokazują go zawsze (próby na podglądzie, testy E2E formularzy).
+ * @param {'newsletter' | 'kontakt'} rodzaj
+ * @param {Record<string, string | undefined>} env
+ * @param {Record<string, boolean>} formularze
+ */
+export function formularzAktywny(rodzaj, env = process.env, formularze = FORMULARZE) {
+  return Boolean(formularze[rodzaj]) || trybBudowania(env) === 'podglad' || buildTestowy(env);
+}
 
 /** @param {Record<string, string | undefined>} env */
 export function trybBudowania(env = process.env) {

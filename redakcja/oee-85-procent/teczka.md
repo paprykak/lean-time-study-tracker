@@ -185,6 +185,7 @@ Suma: 30/32. Kryterium 3 ma 1 pkt, a karta wymaga 2: badań A/B nie ma, więc te
 Patryk czyta cały tekst przed publikacją i decyduje. To warunek publikacji (SKILL.md, zasada 6).
 | Data | Kto | Decyzja (zatwierdzam / zmiany / odrzucam) | Co zmieniono |
 |---|---|---|---|
+| 2026-11-07 | Patryk Korpyta | zatwierdzam („Zatwierdzam OEE”, po lekturze na podglądzie gałęzi `wdrozenie/start`) | bez zmian w tekście; publikacja jako Analiza z jawnym „badań A/B nie ma” (sekcja 12, wariant b), razem z kartą definicji |
 
 ## 14. Zmiany po publikacji
 | Data | Co zmieniono | Dlaczego |
