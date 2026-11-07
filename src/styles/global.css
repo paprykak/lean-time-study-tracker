@@ -348,7 +348,17 @@
 .tresc table {
   @apply w-full text-[0.9375rem];
   border-collapse: collapse;
-  min-width: 32rem;
+}
+/* Na telefonie tabela mieści się w kolumnie tekstu; przewija się w poziomie (.tabela) tylko wtedy,
+   gdy treść komórek naprawdę się nie mieści. Wcześniej min-width 32rem wypychało nawet tabele z dwiema kolumnami. */
+@media (max-width: 40rem) {
+  .tresc table {
+    @apply text-[0.875rem];
+  }
+  .tresc th,
+  .tresc td {
+    @apply px-2;
+  }
 }
 .tresc th,
 .tresc td {
