@@ -234,7 +234,7 @@ INSTRUKCJA = [
     ('p', '2. „Wiele indeksów”: wklej cztery kolumny (indeks, okres, sprzedaż, Twoja prognoza na ten okres) dla około 20 indeksów, posortowane według indeksu i okresu, '
           'najlepiej 26–52 tygodnie. Kody indeksów w tabeli wyników pojawią się same. Indeksy wylosuj z listy sprzedaży z roku przed testem, po kilka z grup A, B i C, '
           'i nie pomijaj wycofanych.'),
-    ('p', 'Jako sprzedaż wklej to, co prognozujesz: jeśli prognozujesz zamówienia klientów, wklej zamówienia, a nie wysyłki. Okres, w którym towaru zabrakło, zostaw z pustą sprzedażą. '
+    ('p', 'Jako sprzedaż wklej to, co prognozujesz: jeśli prognozujesz zamówienia klientów, wklej zamówienia, a nie wysyłki. Okres, w którym towaru zabrakło, zostaw z pustą sprzedażą (wypadnie z porównania razem z okresami, których prognozy by go użyły, więc przy częstych brakach okresów zostanie mało). '
           'Arkusz działa też na miesiącach (weź wtedy co najmniej dwa lata) i na sumach: rodzinę wyrobów wklej jako jeden indeks.'),
     ('p', '3. „Jeden indeks”: ten sam test dla jednego indeksu, okres po okresie. Wynik dla jednego indeksu to wskazówka, a nie dowód.'),
     ('p', '4. „Korekty”: jeśli system liczy prognozę, a planista ją poprawia, wklej obie. Arkusz pokaże, czy korekty zmniejszają błąd, osobno w górę i w dół. '
@@ -250,7 +250,7 @@ INSTRUKCJA = [
     ('p', 'Odchylenie pokazuje, czy prognoza średnio zawyża (wynik dodatni) albo zaniża (ujemny) sprzedaż.'),
     ('h', 'Na co uważać'),
     ('p', '• Jeden indeks niczego nie rozstrzyga: w symulacji redakcji dwie równie dobre prognozy porównane na 26 tygodniach różniły się przez sam przypadek '
-          'o 20–30%. Dla 20 indeksów razem przypadek mieścił się zwykle w ±10% przy wyprzedzeniu 1–2 okresy, w ±15% przy 3–4 i w ±20% przy dłuższym. Takie granice remisu stosuje arkusz.'),
+          'o 20–30%. Dla 20 indeksów razem przypadek mieścił się zwykle w ±10% przy wyprzedzeniu 1–2 okresy, w ±15% przy 3–4 i w ±20% przy 5–8 (dłuższego wyprzedzenia nie sprawdzaliśmy). Takie granice remisu stosuje arkusz.'),
     ('p', '• Gdy Twoja prognoza i prosta metoda są równie dobre, Twoja wygrywa zwykle w 6–14 indeksach na 20. Dopiero wynik spoza tego przedziału coś mówi.'),
     ('p', '• Wygładzanie w tym arkuszu to wersja prosta: nie uwzględnia trendu ani sezonowości. Przy nich użyj też Arkusza prognozy w Excelu (karta Dane). '
           'Do testu ustaw w „Opcjach” „Początek prognozy” przed końcem danych: Excel policzy wtedy prognozę tylko z wcześniejszych danych.'),
@@ -371,7 +371,7 @@ wm[WER_M] = (
 wm.merge_cells(f'P{r + 9}:T{r + 12}')
 wm[WER_M].font = Font(name=FONT, bold=True, size=11, color=AKCENT)
 wm[WER_M].alignment = Alignment(wrap_text=True, vertical='top')
-wm[f'P{r + 13}'] = ('Remis to różnica w granicach z komórki Q3: ±10% przy wyprzedzeniu 1–2 okresy, ±15% przy 3–4, ±20% przy dłuższym. '
+wm[f'P{r + 13}'] = ('Remis to różnica w granicach z komórki Q3: ±10% przy wyprzedzeniu 1–2 okresy, ±15% przy 3–4, ±20% przy dłuższym (symulacja sprawdzała do 8 okresów). '
                     'W symulacji redakcji dwie równie dobre prognozy dla 20 indeksów po 26 okresów różniły się przez przypadek zwykle w tych granicach.')
 wm.merge_cells(f'P{r + 13}:T{r + 14}')
 wm[f'P{r + 13}'].font = Font(name=FONT, italic=True, size=9, color=DRUGI)
