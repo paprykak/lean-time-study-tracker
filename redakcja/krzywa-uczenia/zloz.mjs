@@ -19,7 +19,7 @@ zloz(import.meta.url, {
     ['Co to jest instruktaż stanowiskowy TWI?', 'Job Instruction to moduł programu Training Within Industry z lat 40. Instruktor najpierw rozpisuje pracę na kroki i kluczowe punkty, a potem uczy w czterech krokach: przygotuj nową osobę, pokaż operację, daj spróbować i sprawdzaj dalej, stopniowo wycofując się z opieki.'],
     ['Jak policzyć koszt wdrożenia nowego pracownika?', 'Poza rekrutacją i szkoleniem wstępnym policz godziny produkcji poniżej normy: dla każdego tygodnia różnicę między normą a wydajnością nowej osoby razy przepracowane godziny. Suma tych godzin to koszt drogi do normy, który można porównywać między instruktorami i zmianami.'],
   ],
-  metoda: 'Tekst opiera się na danych GUS o wolnych miejscach pracy (2026), pomiarach czasu montażu wiązek przewodów z Politechniki w Kownie (2014), pracy o zapominaniu w krzywej uczenia (2022), rozdziale o historii krzywej uczenia przy produkcji bombowca B-17 (1999), raporcie programu Training Within Industry (1945) i badaniu firm zgłoszonych do tego programu (NBER, 2021). Koszt drogi do normy policzyliśmy na danych z opublikowanej tabeli; kod jest w archiwum redakcji. Wyniki programu z 1945 r. to oświadczenia zakładów, bez grupy porównawczej. Przykłady są fikcyjne. Konflikt interesów: redaktor naczelny prowadzi doradztwo w operacjach; tekst nie odsyła do jego usług.',
-  sprawdzono: null,
-  szkic: true,
+  metoda: 'Tekst opiera się na danych GUS o wolnych miejscach pracy (2026), pomiarach czasu montażu wiązek przewodów z politechniki w Kownie (2014), pracy o zapominaniu w krzywej uczenia (2022), rozdziale o krzywej uczenia przy produkcji bombowca B-17 (1999), raporcie programu Training Within Industry (1945) i badaniu firm zgłoszonych do tego programu (NBER, 2021). Koszt nauki policzyliśmy na danych z opublikowanej tabeli (przy innych założeniach 110–166 godzin zamiast 117); kod jest w archiwum redakcji. Wyniki programu z 1945 r. to oświadczenia zakładów, bez grupy porównawczej. Przykłady są fikcyjne. Konflikt interesów: redaktor naczelny prowadzi doradztwo w operacjach; tekst nie odsyła do jego usług.',
+  sprawdzono: '2026-11-07',
+  szkic: false,
 });

@@ -20,6 +20,6 @@ zloz(import.meta.url, {
     ['Jak policzyć opłacalną wielkość partii?', 'Klasycznym wzorem Harrisa: partia rośnie z pierwiastkiem z iloczynu popytu i kosztu przezbrojenia, podzielonego przez koszt utrzymania sztuki w zapasie. Przezbrojenie krótsze o połowę zmniejsza więc opłacalną partię o około 29%, a nie o połowę.'],
   ],
   metoda: 'Tekst opiera się na przeglądzie 30 artykułów o SMED, głównie z przemysłu spożywczego (2022), polskim badaniu z Politechniki Rzeszowskiej (2015), badaniu ankietowym 250 pracowników zakładów w Meksyku (2017) i wzorze Harrisa na wielkość partii (1915). Rachunki dla wąskiego gardła i dla maszyny z wolnym czasem policzyliśmy na danych fikcyjnych; kod jest w archiwum redakcji. Wyniki wdrożeń pochodzą z opisów pojedynczych przypadków, a tylko co trzeci opisuje ograniczenia. Przykłady są fikcyjne. Konflikt interesów: redaktor naczelny prowadzi doradztwo w operacjach; tekst nie odsyła do jego usług.',
-  sprawdzono: null,
-  szkic: true,
+  sprawdzono: '2026-11-07',
+  szkic: false,
 });

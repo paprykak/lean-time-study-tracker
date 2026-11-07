@@ -48,38 +48,39 @@ faq:
     odpowiedz: "Job Instruction to moduł programu Training Within Industry z lat 40. Instruktor najpierw rozpisuje pracę na kroki i kluczowe punkty, a potem uczy w czterech krokach: przygotuj nową osobę, pokaż operację, daj spróbować i sprawdzaj dalej, stopniowo wycofując się z opieki."
   - pytanie: "Jak policzyć koszt wdrożenia nowego pracownika?"
     odpowiedz: "Poza rekrutacją i szkoleniem wstępnym policz godziny produkcji poniżej normy: dla każdego tygodnia różnicę między normą a wydajnością nowej osoby razy przepracowane godziny. Suma tych godzin to koszt drogi do normy, który można porównywać między instruktorami i zmianami."
-metoda: "Tekst opiera się na danych GUS o wolnych miejscach pracy (2026), pomiarach czasu montażu wiązek przewodów z Politechniki w Kownie (2014), pracy o zapominaniu w krzywej uczenia (2022), rozdziale o historii krzywej uczenia przy produkcji bombowca B-17 (1999), raporcie programu Training Within Industry (1945) i badaniu firm zgłoszonych do tego programu (NBER, 2021). Koszt drogi do normy policzyliśmy na danych z opublikowanej tabeli; kod jest w archiwum redakcji. Wyniki programu z 1945 r. to oświadczenia zakładów, bez grupy porównawczej. Przykłady są fikcyjne. Konflikt interesów: redaktor naczelny prowadzi doradztwo w operacjach; tekst nie odsyła do jego usług."
-szkic: true
+metoda: "Tekst opiera się na danych GUS o wolnych miejscach pracy (2026), pomiarach czasu montażu wiązek przewodów z politechniki w Kownie (2014), pracy o zapominaniu w krzywej uczenia (2022), rozdziale o krzywej uczenia przy produkcji bombowca B-17 (1999), raporcie programu Training Within Industry (1945) i badaniu firm zgłoszonych do tego programu (NBER, 2021). Koszt nauki policzyliśmy na danych z opublikowanej tabeli (przy innych założeniach 110–166 godzin zamiast 117); kod jest w archiwum redakcji. Wyniki programu z 1945 r. to oświadczenia zakładów, bez grupy porównawczej. Przykłady są fikcyjne. Konflikt interesów: redaktor naczelny prowadzi doradztwo w operacjach; tekst nie odsyła do jego usług."
+sprawdzono: 2026-11-07
+szkic: false
 ---
 ## W skrócie
 
 **Problem.** Na koniec drugiego kwartału 2026 r. przetwórstwo przemysłowe miało 24,7 tys. wolnych miejsc pracy, najwięcej dla robotników przemysłowych i rzemieślników oraz operatorów i monterów maszyn [1]. Każda osoba, która je zajmie, zacznie poniżej normy, a godziny tej różnicy rzadko ktoś liczy.
 
-**Dlaczego.** Plan wdrożenia liczy się w dniach szkolenia, a nauka w sztukach. W badaniu ręcznego montażu wiązek przewodów czas jednej sztuki spadł z 6,9 do około 2 godzin dopiero przy 163. sztuce, według naszego szacunku po mniej więcej 470 godzinach pracy [2].
+**Dlaczego.** Plan wdrożenia liczy się w dniach szkolenia, a nauka w sztukach. W badaniu ręcznego montażu wiązek przewodów czas jednej sztuki spadł z 6,9 do około 2 godzin dopiero przy 163. sztuce [2].
 
 **Co zrobić.** Mierz krzywą uczenia każdej nowej osoby w sztukach i godzinach, a nie w dniach. Próbuj ją skracać instruktażem, który ma strukturę, na przykład czterema krokami Training Within Industry, programu z lat 40. [3].
 
 ## Koszt nauki skupia się w pierwszych sztukach
 
-Godzin, które nowa osoba przepracuje poniżej normy, nie widać w żadnym planie szkolenia. Weźmy zakład, który montuje urządzenia grzewcze i na jesienny szczyt zatrudnia sześć nowych osób (to przykład, firma jest fikcyjna). Plan szkolenia ma trzy dni: zasady BHP, oprowadzenie po hali i dwa dni przy doświadczonym operatorze. Od czwartego dnia arkusz wydajności liczy je według pełnej normy. Przez kolejne tygodnie linia nie wyrabia planu, a nikt nie łączy tego z nowymi ludźmi.
+Godzin, które nowa osoba przepracuje poniżej normy, nie widać w żadnym planie szkolenia. Weźmy zakład, który montuje urządzenia grzewcze i na jesienny szczyt zatrudnia sześć nowych osób (to przykład, firma jest fikcyjna). Szkolenie trwa trzy dni: BHP, oprowadzenie po hali i dwa dni przy doświadczonym operatorze. Od czwartego dnia arkusz wydajności liczy je według pełnej normy. Przez kolejne tygodnie linia nie wyrabia planu, a nikt nie łączy tego z nowymi ludźmi.
 
-Jak długo trwa nauka przy pracy ręcznej, pokazują pomiary z Politechniki w Kownie. Badacze zebrali dane z produkcji ręcznie montowanych wiązek przewodów: 13 pomiarów czasu od 2. do 460. sztuki. Druga sztuka zajęła 6,88 godziny, 44. – 3,08, 100. – 2,42, a 163. – 2,05 godziny [2]. Potem czas przestał spadać i do sztuki 460 wahał się między 2,1 a 2,2 godziny [2]. Autorzy nie podają, ilu operatorów montowało wiązki ani czy byli nowi [2].
+Ile trwa nauka przy pracy ręcznej, pokazują pomiary z politechniki w Kownie. Badacze zmierzyli w 13 punktach czas ręcznego montażu wiązek przewodów, od 2. do 460. sztuki. Druga sztuka zajęła 6,88 godziny, setna 2,42, a 163. już 2,05 godziny [2]. Potem czas przestał spadać i do sztuki 460 wahał się między 2,1 a 2,2 godziny [2]. Autorzy nie podają, ilu operatorów montowało wiązki ani czy byli nowi [2].
 
 ![Wykres liniowy: czas ręcznego montażu jednej wiązki przewodów według numeru zmontowanej sztuki. 6,88 godziny przy drugiej sztuce, 3,08 przy 44., 2,42 przy 100., 2,05 przy 163., potem od 2,1 do 2,2 godziny aż do 460. sztuki; czas ustalony 2,15 godziny.](../../assets/rysunki/krzywa-uczenia-1.svg "Rysunek 1. Czas montażu spadał przez pierwsze 163 sztuki, a potem zatrzymał się na poziomie około 2,15 godziny. Źródło: Kleiza i Tilindis (2014), tabela 1; czas ustalony to średnia z pomiarów od 163. sztuki, obliczenia redakcji.")
 
-Z tych danych szacujemy, że nauka kosztowała około 117 godzin ponad czas, na którym montaż się potem ustalił (obliczenia redakcji na danych z tabeli 1) [2]. To tyle, ile po nauce trwa montaż około 54 wiązek. Przy innych założeniach wychodzi od 110 do 166 godzin. Ważniejsze, że 112 z tych 117 godzin przypadło na pierwsze 100 sztuk.
+Z tych danych szacujemy, że nauka kosztowała około 117 godzin ponad czas, na którym montaż się potem ustalił (obliczenia redakcji) [2]. To tyle, ile po nauce trwa montaż około 54 wiązek. Ważniejsze, że 112 z tych 117 godzin przypadło na pierwsze 100 sztuk.
 
 Licz wdrożenie w sztukach i godzinach poniżej normy, a nie w dniach szkolenia. O jego koszcie decydują pierwsze tygodnie, a nie ostatnie procenty do normy, i właśnie te tygodnie da się zmierzyć i próbować skrócić.
 
 ## Krzywa uczenia ma kształt, który da się zmierzyć
 
-W produkcji krzywą uczenia (learning curve) opisał w 1936 r. T. P. Wright, na danych z budowy samolotów. Czas pracy spadał w nich o stały procent przy każdym podwojeniu łącznej liczby wyprodukowanych sztuk [4]. Na wykresie, na którym obie osie mają skalę logarytmiczną, taka krzywa jest prostą. W praktyce po pewnym czasie się wypłaszcza. W badaniu z Kowna czas ustalił się w siedmiu z jedenastu eksperymentów, według modelu autorów między 157. a 298. sztuką [2].
+W produkcji krzywą uczenia (learning curve) opisał w 1936 r. T. P. Wright, na danych z budowy samolotów. Czas pracy spadał w nich o stały procent przy każdym podwojeniu łącznej liczby wyprodukowanych sztuk [4]. W praktyce po pewnym czasie się wypłaszcza. W badaniu z Kowna czas ustalił się w siedmiu z jedenastu eksperymentów, według modelu autorów między 157. a 298. sztuką [2].
 
 To jednak krzywa zakładu albo wyrobu, a nie jednej osoby. Wśród przyczyn spadku kosztów praca z 1936 r. wymienia wprawę pracownika, mniej zmian, które go rozpraszają, i rozłożenie czasu przezbrojeń na więcej sztuk. Wymienia też coraz więcej oprzyrządowania i standaryzacji, dzięki którym można zatrudniać mniej wykwalifikowanych ludzi [5]. Krzywa nowej osoby na Twojej linii może więc mieć inny kształt. Trzeba ją zmierzyć, a nie przyjąć z podręcznika.
 
 Kształt krzywej psują przerwy. Peltokorpi i Jaber przypominają, że klasyczna krzywa nie uwzględnia przerw w produkcji, a straty wydajności z powodu zapominania mogą być bardzo duże, zwłaszcza przy krótkich seriach z przerwami [4]. Przerwy trwające tygodnie albo miesiące mogą prowadzić do znaczącej utraty wiedzy [4]. Nowa osoba, którą co kilka dni przesuwasz na inne stanowisko, za każdym razem zaczyna częściowo od nowa.
 
-Krzywa mówi też, kiedy przestać czekać na wprawę. Gdy czas na sztukę przestaje spadać mimo kolejnych setek sztuk, dalsza poprawa nie przyjdzie sama. Trzeba zmienić stanowisko, narzędzie albo metodę.
+Z krzywej odczytasz też, kiedy przestać czekać na wprawę. Gdy czas na sztukę przestaje spadać mimo kolejnych setek sztuk, dalsza poprawa nie przyjdzie sama. Trzeba zmienić stanowisko, narzędzie albo metodę.
 
 ## Cztery kroki instruktażu są dobrze opisane, słabiej zmierzone
 
@@ -90,13 +91,13 @@ W czasie drugiej wojny światowej amerykańskie fabryki traciły doświadczonych
 - **Daj spróbować:** niech wykona pracę, a Ty poprawiaj błędy; niech przy kolejnym powtórzeniu sama objaśni, na co trzeba uważać; powtarzaj, aż upewnisz się, że umie.
 - **Sprawdzaj dalej:** zostaw ją samą przy pracy, wskaż, do kogo ma iść po pomoc, zaglądaj często, zachęcaj do pytań i stopniowo wycofuj się z opieki.
 
-Karta programu kończyła się zdaniem, które dobrze streszcza jego podejście: jeśli pracownik się nie nauczył, to instruktor go nie nauczył [3].
+Karta instruktora kończyła się zdaniem: jeśli pracownik się nie nauczył, to instruktor go nie nauczył [3].
 
-Dowody skuteczności są jednak słabsze niż opis metody. Pierwsze zestawienie wyników, z maja 1943 r., oparto na ponad 600 dobrowolnych oświadczeniach zakładów [3]. Wśród zakładów, które podały wynik dla czasu szkolenia, 48% zgłosiło skrócenie o co najmniej 25% [3]. Według raportu w zakładzie produkującym kord oponowy czas wdrożenia nowych pracowników skrócił się w ciągu 30 dni od wprowadzenia instruktażu o 50–75% [3]. Raport sam przyznaje, że łącznych liczb nie dało się zebrać, a zestawienia służyły między innymi do uzasadniania budżetu programu [3]. To dowody zebrane przez zainteresowanych, bez grupy porównawczej.
+Dowody skuteczności są jednak słabsze niż opis metody. Wyniki z lat 40. to dobrowolne oświadczenia zakładów o całym programie, nie tylko o instruktażu. W pierwszym zestawieniu, z maja 1943 r., 48% zakładów, które podały wynik, zgłosiło czas szkolenia krótszy o co najmniej 25% [3]. Raport sam przyznaje, że łącznych liczb nie dało się zebrać, a zestawienia służyły między innymi do uzasadniania budżetu programu [3]. Nie porównuje też tych zakładów z takimi, które instruktażu nie wprowadziły.
 
-Mocniejsze dowody przyniosło dopiero badanie ekonomistów, którzy prześledzili losy wszystkich firm zgłoszonych do programu. Zgłosiło się 11 575 firm, ale z braku pieniędzy i instruktorów 48% z nich nie dostało żadnego szkolenia [6]. Firmy przeszkolone miały po roku sprzedaż wyższą o 5,3% niż te, które się zgłosiły, a szkolenia nie dostały. Ich łączna produktywność czynników, czyli produkcja uzyskana z tej samej pracy i kapitału, była wyższa o 6% w roku szkolenia i o 27% po dziesięciu latach [6]. Ten wynik łączy firmy przeszkolone w dowolnym module programu i mierzy całe firmy.
+Mocniejsze dowody przyniosło dopiero badanie ekonomistów, którzy prześledzili losy wszystkich firm zgłoszonych do programu. Zgłosiło się 11 575 firm, ale z braku pieniędzy i instruktorów 48% z nich nie dostało żadnego szkolenia [6]. Firmy przeszkolone miały po roku sprzedaż wyższą o 5,3% niż te, które się zgłosiły, a szkolenia nie dostały. Ich produktywność, liczona łącznie dla pracy i kapitału, była wyższa o 6% w roku szkolenia i o 27% po dziesięciu latach [6]. Ten wynik łączy firmy przeszkolone w dowolnym module programu i mierzy całe firmy.
 
-Osobno policzony efekt samego instruktażu też był dodatni, ale mniejszy niż modułu o relacjach z pracownikami [6]. Badania pojedynczych pracowników z grupą porównawczą nie znaleźliśmy.
+Osobno policzony efekt samego instruktażu na sprzedaż i produktywność też był dodatni, ale mniejszy niż modułu, który uczył przełożonych postępowania z ludźmi [6]. Badania pojedynczych pracowników z grupą porównawczą nie znaleźliśmy.
 
 ## Jak zmierzyć i skrócić wdrożenie
 
@@ -116,7 +117,7 @@ Wyznacz instruktora, który zna cztery kroki, a nie tylko „kogoś doświadczon
 
 ### Krok 4. Mierz krzywą i licz godziny poniżej normy
 
-Codziennie zapisuj datę, liczbę sztuk nowej osoby i jej godziny pracy, a co tydzień zsumuj wyniki. Na wykresie czasu na sztukę według łącznej liczby sztuk zobaczysz, kiedy krzywa się wypłaszcza. Pojedyncze dni skaczą, więc patrz na średnią z kilku dni, a nie na najlepszy wynik. Godziny poniżej normy policzysz prosto: od godzin pracy odejmij liczbę sztuk pomnożoną przez normę na sztukę.
+Codziennie zapisuj datę, liczbę sztuk nowej osoby i jej godziny pracy, a co tydzień zsumuj wyniki. Na wykresie czasu na sztukę według łącznej liczby sztuk zobaczysz, kiedy krzywa się wypłaszcza. Pojedyncze dni skaczą. Patrz na średnią z kilku dni, a nie na najlepszy wynik. Godziny poniżej normy policzysz prosto: od godzin pracy odejmij liczbę sztuk pomnożoną przez normę na sztukę.
 
 Weźmy przykład na danych fikcyjnych. Norma to 12 minut na sztukę. Nowa osoba przez pierwsze trzy tygodnie robi średnio 70% normy, w czwartym tygodniu 90%, a od piątego pełną normę. Tak wygląda jej arkusz:
 
@@ -129,7 +130,7 @@ Weźmy przykład na danych fikcyjnych. Norma to 12 minut na sztukę. Nowa osoba 
 | 5 | 40 | 200 | 12,0 | 0 |
 | Razem | 200 | 800 | — | 40 |
 
-Przy sześciu nowych osobach przed szczytem to 240 godzin poniżej normy, czyli sześć tygodni pracy jednego operatora (przykład na danych fikcyjnych).
+W pierwszym tygodniu 140 sztuk po 12 minut to 28 godzin normy, więc 12 z 40 godzin wypadło poniżej normy. Przy sześciu nowych osobach przed szczytem to razem 240 godzin poniżej normy, czyli sześć tygodni pracy jednego operatora (przykład na danych fikcyjnych).
 
 Porównuj instruktorów na tym samym stanowisku i dopiero po kilku osobach każdego. Przy sześciu osobach różnica mówi więcej o ludziach niż o instruktażu.
 
@@ -137,7 +138,7 @@ Porównuj instruktorów na tym samym stanowisku i dopiero po kilku osobach każd
 
 Pomiary z montażu wiązek dotyczą jednego procesu i jedenastu eksperymentów, a autorzy nie podają, kto montował. Pokazują uczenie się montażu konkretnego wyrobu, a nie to, jak szybko uczy się nowa osoba na wyrobie, który zakład robi od lat. Raport TWI to oświadczenia zakładów, a badanie firm zgłoszonych do programu mierzy wyniki całych firm.
 
-Instruktaż nie zastąpi standardu. Jeśli każda zmiana wykonuje pracę inaczej, nowa osoba uczy się trzech sposobów naraz, a jej krzywa nie ma do czego zbiec. Najpierw ustal jeden sposób pracy, potem ucz go wszystkich.
+Instruktaż nie zastąpi standardu. Jeśli każda zmiana wykonuje pracę inaczej, nowa osoba uczy się trzech sposobów naraz i nie wie, który jest właściwy. Najpierw ustal jeden sposób pracy, potem ucz go wszystkich.
 
 Twoja krzywa może być krótsza przy prostych, powtarzalnych czynnościach albo dłuższa przy pracy z wieloma wariantami. Dlatego ten tekst nie podaje normy wdrożenia w dniach: podaje sposób, żeby ją zmierzyć u siebie. Pomiar z pierwszej rekrutacji jest punktem wyjścia. Po trzeciej masz już normę, na której możesz planować.
 

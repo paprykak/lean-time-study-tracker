@@ -20,6 +20,6 @@ zloz(import.meta.url, {
     ['Czy strefy kompletacji się opłacają?', 'Mogą dać najwięcej: w polskim badaniu symulacyjnym kompletacja synchroniczna w pięciu strefach skróciła czas o blisko 70%. Wymaga jednak dodatkowej pracy w sortowni albo sortowni automatycznej, a źle dobrane składowanie i trasa mogą wydłużyć czas. Zacznij od rozmieszczenia i trasy.'],
   ],
   metoda: 'Tekst opiera się na przeglądzie badań nad kompletacją de Kostera i in. (2007), rozprawie Le-Duca (2005) i polskim badaniu symulacyjnym z „Optimum. Studia Ekonomiczne” (2017). Własną symulację drogi kompletującego (10 alejek, 600 indeksów, 20% indeksów daje 80% pobrań, 20 tys. zamówień na wariant) policzyliśmy na danych fikcyjnych; kod jest w archiwum redakcji. Podział czasu kompletującego pochodzi z podręcznika cytowanego w przeglądzie, a nie z pomiarów w polskich magazynach. Przykłady są fikcyjne. Konflikt interesów: redaktor naczelny prowadzi doradztwo w operacjach; tekst nie odsyła do jego usług.',
-  sprawdzono: null,
-  szkic: true,
+  sprawdzono: '2026-11-07',
+  szkic: false,
 });

@@ -37,11 +37,12 @@ faq:
   - pytanie: "Czy strefy kompletacji się opłacają?"
     odpowiedz: "Mogą dać najwięcej: w polskim badaniu symulacyjnym kompletacja synchroniczna w pięciu strefach skróciła czas o blisko 70%. Wymaga jednak dodatkowej pracy w sortowni albo sortowni automatycznej, a źle dobrane składowanie i trasa mogą wydłużyć czas. Zacznij od rozmieszczenia i trasy."
 metoda: "Tekst opiera się na przeglądzie badań nad kompletacją de Kostera i in. (2007), rozprawie Le-Duca (2005) i polskim badaniu symulacyjnym z „Optimum. Studia Ekonomiczne” (2017). Własną symulację drogi kompletującego (10 alejek, 600 indeksów, 20% indeksów daje 80% pobrań, 20 tys. zamówień na wariant) policzyliśmy na danych fikcyjnych; kod jest w archiwum redakcji. Podział czasu kompletującego pochodzi z podręcznika cytowanego w przeglądzie, a nie z pomiarów w polskich magazynach. Przykłady są fikcyjne. Konflikt interesów: redaktor naczelny prowadzi doradztwo w operacjach; tekst nie odsyła do jego usług."
-szkic: true
+sprawdzono: 2026-11-07
+szkic: false
 ---
 ## W skrócie
 
-**Problem.** W magazynie, w którym kompletujący sam chodzi do regałów, droga zajmuje typowo połowę jego czasu, a kompletacja może pochłaniać nawet 55% kosztów operacyjnych całego magazynu [1]. Za tę drogę płacisz, zanim ktokolwiek dotknie towaru.
+**Problem.** W magazynie, w którym kompletujący sam chodzi do regałów, droga zajmuje typowo połowę jego czasu, a kompletacja może pochłaniać nawet 55% kosztów operacyjnych całego magazynu [1].
 
 **Dlaczego.** Długość drogi zależy od dwóch decyzji, które nic nie kosztują: gdzie leżą najczęściej pobierane indeksy i jaką trasą idzie kompletujący. W polskim badaniu symulacyjnym sama zmiana składowania skróciła średni czas kompletacji o 27% [2].
 
@@ -49,7 +50,7 @@ szkic: true
 
 ## Połowa czasu kompletującego to chodzenie
 
-Wyobraź sobie kierownika magazynu dystrybutora chemii gospodarczej, w którym ośmiu kompletujących zbiera na zmianę kilka tysięcy linii zamówień (to przykład, firma jest fikcyjna). Dostawca robotów mobilnych obiecuje mu, że roboty przejmą chodzenie między regałami. Chodzenia jest dużo, więc oferta brzmi rozsądnie. Ile z niego jest jednak potrzebne?
+Wyobraź sobie kierownika magazynu dystrybutora chemii gospodarczej, w którym ośmiu kompletujących zbiera na zmianę kilka tysięcy linii zamówień, czyli pozycji na zamówieniach (to przykład, firma jest fikcyjna). Dostawca robotów mobilnych obiecuje mu, że roboty przejmą chodzenie między regałami. Chodzenia jest dużo, więc oferta brzmi rozsądnie. Ile z niego jest jednak potrzebne?
 
 Przegląd badań nad kompletacją zamówień (order picking), który napisali René de Koster i współautorzy, podaje typowy podział czasu kompletującego w magazynie, w którym człowiek idzie do towaru. Droga to 50%, szukanie 20%, samo pobranie 15%, przygotowanie 10%, a reszta 5% [1]. Te proporcje pochodzą z podręcznika, a nie z pomiaru autorów przeglądu, ale autorzy dodają, że droga jest zwykle największym składnikiem czasu i pierwszym kandydatem do poprawy [1].
 
@@ -57,7 +58,7 @@ Zanim kupisz roboty do kompletacji, skróć drogę, którą dziś pokonuje magaz
 
 ## Najczęściej pobierane indeksy powinny leżeć najbliżej wydań
 
-Popyt w magazynie rzadko rozkłada się równo. W klasycznej metodzie Pareto najszybsza klasa to około 15% indeksów, które dają około 85% ruchu [1]. Jeśli te indeksy leżą rozrzucone po całej hali, kompletujący chodzi po nie wszędzie. Jeśli leżą blisko punktu wydań, czyli miejsca, w którym kompletujący oddaje zebrany towar, większość zamówień kończy się kilka alejek od niego.
+Popyt w magazynie rzadko rozkłada się równo. W klasycznej metodzie Pareto najszybsza klasa to około 15% indeksów (pozycji asortymentu, SKU), które dają około 85% ruchu [1]. Jeśli te indeksy leżą rozrzucone po całej hali, kompletujący chodzi po nie wszędzie. Jeśli leżą blisko punktu wydań, czyli miejsca, w którym kompletujący oddaje zebrany towar, większość zamówień kończy się kilka alejek od niego.
 
 Rozprawa Tho Le-Duca z Uniwersytetu Erazma w Rotterdamie pokazuje skalę tej różnicy w modelu pojedynczej alejki. Składowanie według ABC skracało drogę nawet o 32% przy umiarkowanie skośnym popycie i o 43% przy silnie skośnym, w porównaniu ze składowaniem losowym [3]. Polskie badanie symulacyjne opublikowane w „Optimum. Studia Ekonomiczne” dało podobny rząd wielkości. Właściwe składowanie skróciło średni czas kompletacji o 26,93% bez zmiany trasy [2].
 
@@ -83,7 +84,7 @@ Rozmieszczenie daje więcej, ale wymaga przenoszenia towaru. Trasę zmienisz bez
 
 Kolejny krok to podział magazynu na strefy albo kompletowanie kilku zamówień naraz. W polskim badaniu symulacyjnym najlepszy wariant, kompletacja synchroniczna w pięciu strefach, skrócił czas o blisko 70% względem magazynu bez stref, ze składowaniem losowym i trasą S-shape [2]. Autorzy zastrzegają jednak, że taki wariant wymaga dodatkowej pracy w sortowni, czyli przy rozdzielaniu towaru na zamówienia, albo dużych nakładów na sortownię automatyczną [2]. Ostrzegają też, że źle dobrane składowanie i trasa przy strefach mogą dać czasy dłuższe niż w magazynie bez stref [2].
 
-Łączenie kilku małych zamówień w jedną rundę działa podobnie: kompletujący pobiera więcej w każdej alejce przy tej samej drodze, ale potem ktoś musi rozdzielić towar na zamówienia. Przy okazji w każdej alejce wypada więcej pobrań, a wtedy, jak pisaliśmy wyżej, prosta trasa S-shape traci mniej.
+Łączenie kilku małych zamówień w jedną rundę działa podobnie: kompletujący pobiera więcej w każdej alejce przy tej samej drodze, ale potem ktoś musi rozdzielić towar na zamówienia. Przy okazji w każdej alejce wypada więcej pobrań, bo jedna runda obejmuje kilka zamówień, a wtedy, jak pisaliśmy wyżej, prosta trasa S-shape traci mniej.
 
 Strefy i łączenie zamówień to więc decyzja o organizacji pracy, a nie poprawka na jutro. Rozmieszczenie i trasę zmienisz bez sortowni i bez nowych ludzi.
 
@@ -93,7 +94,7 @@ Strefy i łączenie zamówień to więc decyzja o organizacji pracy, a nie popra
 
 Zanim cokolwiek przeniesiesz, sprawdź, ile drogi naprawdę jest w Twoim magazynie. Przez kilka dni obserwuj 20–30 rund kompletacji na różnych zmianach i zapisuj osobno czas chodzenia i czas przy regale. Jeśli chodzenie to mniej niż jedna trzecia czasu, większy zysk leży w szukaniu i pobieraniu: w oznaczeniu lokalizacji, kolejności na liście i opakowaniach.
 
-Wyeksportuj z systemu magazynowego linie zamówień z ostatniego kwartału: indeks, lokalizację i numer zamówienia. Policz, ile razy pobierano każdy indeks, i ułóż indeksy od najczęściej pobieranych. Policz też średnią liczbę pobrań na alejkę w jednym zamówieniu albo w jednej rundzie kompletacji. Ta liczba podpowie zasadę trasy.
+Wyeksportuj z systemu magazynowego linie zamówień z ostatniego kwartału: indeks, lokalizację i numer zamówienia. Bez systemu magazynowego wystarczy zestawienie dokumentów wydania (WZ) w arkuszu. Policz, ile razy pobierano każdy indeks, i ułóż indeksy od najczęściej pobieranych. Policz też średnią liczbę pobrań na alejkę w jednym zamówieniu albo w jednej rundzie kompletacji. Ta liczba podpowie zasadę trasy.
 
 ### Krok 2. Przenieś najczęściej pobierane indeksy bliżej wydań
 
@@ -109,7 +110,7 @@ Nową trasę pokaż kompletującym na planie hali i przećwicz na kilku rundach,
 
 Efekt mierz czasem na linię zamówienia z systemu magazynowego, dwa tygodnie przed zmianą i dwa tygodnie po niej, przy podobnych zamówieniach.
 
-Przykład na danych fikcyjnych: jeśli droga to połowa czasu kompletacji, a skrócisz ją o 40%, czas kompletacji spadnie mniej więcej o 20%. Przy ośmiu kompletujących na zmianę to około 1,6 etatu na zmianę, a przy czterdziestu około 8 etatów. Pieniądze z tego będą dopiero wtedy, gdy obsłużysz tym czasem więcej zamówień albo zrezygnujesz z nadgodzin i pracowników tymczasowych. Przy 80 tys. zł rocznego kosztu etatu, ośmiu kompletujących i dwóch zmianach to do około 250 tys. zł rocznie. Zwrot z robotów licz od drogi, która zostanie po tej zmianie: roboty przejmą chodzenie, którego już będzie mniej.
+Przykład na danych fikcyjnych: jeśli droga to połowa czasu kompletacji, a skrócisz ją o 40%, czas kompletacji spadnie mniej więcej o 20%. Przy ośmiu kompletujących na zmianę to około 1,6 etatu na zmianę, a przy czterdziestu około 8 etatów. Pieniądze z tego będą dopiero wtedy, gdy obsłużysz tym czasem więcej zamówień albo zrezygnujesz z nadgodzin i pracowników tymczasowych. Przy 80 tys. zł rocznego kosztu etatu, ośmiu kompletujących i dwóch zmianach to około 256 tys. zł rocznie (1,6 etatu razy dwie zmiany razy 80 tys. zł). Zwrot z robotów licz od drogi, która zostanie po tej zmianie: roboty przejmą chodzenie, którego już będzie mniej.
 
 ## Trzy pytania do dostawcy automatyzacji
 
