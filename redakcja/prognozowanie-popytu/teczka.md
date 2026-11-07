@@ -142,6 +142,7 @@ Wypełniam po napisaniu tekstu (każde zdanie z liczbą: przypis i miejsce w źr
 Patryk czyta cały tekst przed publikacją i decyduje. To warunek publikacji (SKILL.md, zasada 6).
 | Data | Kto | Decyzja (zatwierdzam / zmiany / odrzucam) | Co zmieniono |
 |---|---|---|---|
+| 2026-11-07 | Patryk Korpyta | zatwierdzam („Zatwierdzam i wdrażaj”, po raporcie wersji 8 ze zrzutami) | bez zmian w tekście; decyzje z sekcji 12: publikacja wersji 8 bez kolejnego czytelnika, arkusz i zdjęcie bez zmian; publikacja razem z arkuszem „Test prognozy” |
 
 ## 14. Zmiany po publikacji
 | Data | Co zmieniono | Dlaczego |

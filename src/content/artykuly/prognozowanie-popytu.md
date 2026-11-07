@@ -74,7 +74,7 @@ faq:
     odpowiedz: "Excel ma narzędzie Arkusz prognozy (karta Dane, grupa Prognoza), które liczy wygładzanie wykładnicze z trendem i sezonowością. Do sprawdzenia trafności ustaw w Opcjach Początek prognozy przed końcem danych: Excel policzy wtedy prognozę tylko z wcześniejszej sprzedaży. Zanim zaufasz jakiejkolwiek metodzie, porównaj jej błąd z prognozą naiwną i ze średnią z czterech tygodni, z takim wyprzedzeniem, z jakim zamawiasz. Gotowy arkusz z tym porównaniem znajdziesz w materiałach do pobrania."
 metoda: "Tekst opiera się głównie na recenzowanych wynikach konkursu prognostycznego M5 i na oficjalnym pliku wyników jego organizatorów, z którego sami policzyliśmy przewagę zwycięzcy na 12 poziomach danych. Remis w teście sprawdziliśmy symulacją; dane i kod są w archiwum redakcji. Artykuł o M5, ankietę Fildesa i Goodwina oraz pracę Hyndmana i Koehler znamy z wersji roboczych, a badania korekt prognoz i porównanie Spiliotisa i in. ze streszczeń. Dane M5 pochodzą z handlu detalicznego. Przykłady są fikcyjne. Konflikt interesów: redaktor naczelny prowadzi doradztwo w operacjach; tekst nie odsyła do jego usług, a wymienione firmy nie mają związku z redakcją."
 sprawdzono: 2026-11-07
-szkic: true
+szkic: false
 ---
 ## W skrócie
 

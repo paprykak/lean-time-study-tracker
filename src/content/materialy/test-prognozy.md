@@ -10,7 +10,7 @@ dzial: dane-i-ai
 tematy:
   - ai-w-planowaniu
 opublikowano: 2026-11-07
-szkic: true
+szkic: false
 ---
 
 Prognoza, za którą płacisz czasem planisty albo licencją systemu, powinna mylić się mniej niż trzy prognozy, które nic nie kosztują: ostatnia znana sprzedaż (prognoza naiwna), średnia z czterech okresów i wygładzanie wykładnicze. Arkusz sprawdza to na Twoich danych i liczy darmowe prognozy z takim samym wyprzedzeniem, z jakim robisz swoją.
