@@ -10,12 +10,17 @@
   // Produkcja tylko pod rytmhali.pl (bez kopii pod *.workers.dev). Domena musi być w Cloudflare przed pierwszym wdrożeniem main.
   "workers_dev": false,
   "routes": [{ "pattern": "rytmhali.pl", "custom_domain": true }],
-  // Adresy podglądu wersji z gałęzi (<wersja>-rytm-hali.<subdomena>.workers.dev). Build gałęzi ≠ main ma noindex
+  // Adresy podglądu gałęzi (<gałąź>-rytm-hali.<subdomena>.workers.dev). Build gałęzi ≠ main ma noindex
   // (src/lib/srodowisko.mjs). Dostęp do podglądu zamyka Cloudflare Access (zadanie Patryka w STAN.md).
   "preview_urls": true,
   // Limit prób formularzy (zapis na newsletter, kontakt): 5 na minutę z jednego IP (worker/formularze.js).
   // namespace_id to dowolna liczba unikalna w koncie Cloudflare.
   "ratelimits": [{ "name": "LIMIT_FORMULARZY", "namespace_id": "1001", "simple": { "limit": 5, "period": 60 } }],
+  // Podglądy gałęzi (Workers Builds: npx wrangler preview) wymagają własnych wiązań. Osobny licznik limitu,
+  // żeby próby na podglądzie nie zużywały limitu produkcji (2026-11-07, DECYZJE.md).
+  "previews": {
+    "ratelimits": [{ "name": "LIMIT_FORMULARZY", "namespace_id": "1002", "simple": { "limit": 5, "period": 60 } }]
+  },
   // Poczta formularza kontaktowego (send_email) i zmienne Brevo dochodzą, gdy Patryk włączy Email Routing i założy
   // konto Brevo (STAN.md): "send_email": [{ "name": "POCZTA" }], "vars": { "ADRES_REDAKCJI", "BREVO_LISTA",
   // "BREVO_SZABLON_DOI" }, sekret BREVO_API_KEY przez npx wrangler secret put.

@@ -182,3 +182,8 @@ Patryk: bez oznaczeń, że tekst powstał z użyciem AI, a teksty mają być nap
 - **CSP tylko na `/szukaj`** dostaje `'wasm-unsafe-eval'` (Pagefind liczy w WebAssembly); to nie jest `eval()`, a kontrola SEO pilnuje, żeby nie pojawiło się na innej stronie.
 - **Pagefind nie ma polskiej odmiany słów** i krótkie słowa z tekstu traktuje jak rdzenie („po” pasowało do „politechnika”). Strona wyników zostawia tylko trafienia, w których podświetlone słowo ma z szukanym wspólny początek co najmniej 60% jego długości: „kompletacji” znajduje „kompletacja”, a przypadkowe dopasowania znikają (test E2E).
 
+
+## 2026-11-07 — F8: wdrożenie i start
+
+- **Pełny portal od razu (Patryk, 2026-11-07):** start bez bramki 12 tekstów w 4 działach (prompt, sekcja 5). Blokady zostają: strona stała z `projekt: true` zatrzymuje build produkcji po starcie, a tekst bez kontroli redakcyjnej Patryka nie dostaje `szkic: false`. Prowadzi to `prompty/02-wdrozenie-rytmhali.md` z komputera Patryka.
+- **Podglądy gałęzi przez `npx wrangler preview`** (nowy system „Previews” w Workers Builds, ustawiony przez panel przy imporcie repozytorium). Polecenie wymaga bloku `previews` z własnymi wiązaniami, więc `LIMIT_FORMULARZY` ma na podglądzie osobny licznik (`namespace_id` 1002), żeby próby na podglądzie nie zużywały limitu produkcji. Klasyczne `npx wrangler versions upload` w tym systemie nie działa: każda gałąź jest osobnym podglądem i wrangler odrzuca nazwę Workera z `wrangler.jsonc` (sprawdzone buildem 2026-11-07).
