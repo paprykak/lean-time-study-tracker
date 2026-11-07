@@ -73,6 +73,7 @@ faq:
   - pytanie: "Jak prognozować sprzedaż w Excelu?"
     odpowiedz: "Excel ma narzędzie Arkusz prognozy (karta Dane, grupa Prognoza), które liczy wygładzanie wykładnicze z trendem i sezonowością. Do sprawdzenia trafności ustaw w Opcjach Początek prognozy przed końcem danych: Excel policzy wtedy prognozę tylko z wcześniejszej sprzedaży. Zanim zaufasz jakiejkolwiek metodzie, porównaj jej błąd z prognozą naiwną i ze średnią z czterech tygodni, z takim wyprzedzeniem, z jakim zamawiasz. Gotowy arkusz z tym porównaniem znajdziesz w materiałach do pobrania."
 metoda: "Tekst opiera się głównie na recenzowanych wynikach konkursu prognostycznego M5 i na oficjalnym pliku wyników jego organizatorów, z którego sami policzyliśmy przewagę zwycięzcy na 12 poziomach danych. Remis w teście sprawdziliśmy symulacją; dane i kod są w archiwum redakcji. Artykuł o M5, ankietę Fildesa i Goodwina oraz pracę Hyndmana i Koehler znamy z wersji roboczych, a badania korekt prognoz i porównanie Spiliotisa i in. ze streszczeń. Dane M5 pochodzą z handlu detalicznego. Przykłady są fikcyjne. Konflikt interesów: redaktor naczelny prowadzi doradztwo w operacjach; tekst nie odsyła do jego usług, a wymienione firmy nie mają związku z redakcją."
+sprawdzono: 2026-11-07
 szkic: true
 ---
 ## W skrócie
@@ -115,7 +116,7 @@ U producenta działają jednak dwie siły w przeciwne strony. Dane tygodniowe s�
 
 Na poziomach od stanu USA do działu w sklepie zwycięzca M5 mylił się o 21–42% mniej niż automatyczne wygładzanie [2]. Jeśli planujesz zdolności produkcyjne dla rodziny wyrobów, zakupy surowca dla wielu wyrobów albo obsadę magazynu, zysk z lepszej metody może być duży. Spiliotis i współautorzy porównali też prognozy dziennego popytu na pojedyncze indeksy: część metod uczenia maszynowego była w nich trafniejsza od statystycznych i słabiej zawyżała albo zaniżała sprzedaż [7].
 
-Zwycięzcy M5 korzystali jednak z tego, czego większość firm nie ma. Prawie wszystkie czołowe zespoły uczyły modele naraz na historii sprzedaży setek albo tysięcy produktów, a nie każdego produktu osobno, i używały danych o cenach, kalendarzu i wydarzeniach [4]. Firma z kilkudziesięcioma indeksami i bez danych o promocjach nie ma takiej bazy. Dane M5 pochodziły z handlu detalicznego, a autorzy zastrzegają, że wniosków nie da się uogólnić poza ten obszar [4]. Nowszych modeli, wytrenowanych wcześniej na wielu cudzych historiach sprzedaży (ang. foundation models), ten tekst nie ocenia. Każdy z nich sprawdzisz jednak tym samym testem.
+Zwycięzcy M5 korzystali jednak z tego, czego większość firm nie ma. Prawie wszystkie czołowe zespoły uczyły modele naraz na historii sprzedaży setek albo tysięcy produktów, a nie każdego produktu osobno, i używały danych o cenach, kalendarzu i wydarzeniach [4]. Firma z kilkudziesięcioma indeksami i bez danych o promocjach nie ma takiej bazy. Dane M5 pochodziły z handlu detalicznego, a autorzy zastrzegają, że wniosków nie da się uogólnić poza ten obszar [4]. Nowszych modeli, wytrenowanych wcześniej na ogromnej liczbie szeregów czasowych z różnych dziedzin (ang. time series foundation models), ten tekst nie ocenia. Każdy z nich sprawdzisz jednak tym samym testem.
 
 ## Duże korekty w dół pomagają, małe i w górę często szkodzą
 
@@ -123,7 +124,7 @@ Robert Fildes i współpracownicy zebrali dane o ponad 60 tysiącach prognoz z c
 
 W 2025 r. Fildes, Goodwin i De Baets połączyli publicznie dostępne dane z sześciu badań, razem około 147 tysięcy prognoz [3]. Korekty zmniejszały błąd i odchylenie, czyli systematyczne zawyżanie albo zaniżanie, tylko w nieco ponad połowie indeksów, a wyniki różniły się między zbiorami danych [3]. Korekty w górę częściej szkodziły, a duże korekty w dół zwykle pomagały [3]. Autorzy nie znaleźli mocnych dowodów, że planiści skutecznie wykorzystują informacje niedostępne dla systemu; wyglądało raczej na to, że reagują na sygnały, które mało mówią o przyszłej sprzedaży [3].
 
-Korekty pomagają więc średnio, ale nie wszystkie. Które pomagają w Twojej firmie, bez pomiaru nie wie nikt, także sam planista. Jeśli korekty nie wnoszą nowej informacji, sama prognoza systemu bywa lepsza od obecnego procesu [6], a pierwszy zysk leży w korektach, nie w nowym systemie.
+Korekty pomagają więc tylko w części przypadków. Które pomagają w Twojej firmie, bez pomiaru nie wie nikt, także sam planista. Jeśli korekty nie wnoszą nowej informacji, sama prognoza systemu bywa lepsza od obecnego procesu [6], a pierwszy zysk leży w korektach, nie w nowym systemie.
 
 ## Test trzech darmowych prognoz w trzech krokach
 
@@ -147,7 +148,7 @@ Plik sumuje błędy w sztukach, więc o wyniku decydują indeksy sprzedawane w n
 
 Na jednym indeksie przypadek bywa duży. W naszej symulacji na danych fikcyjnych dwie równie dobre prognozy, porównane na 26 tygodniach jednego indeksu, różniły się zwykle o mniej niż 30%, ale co dziesiąta para bardziej. Dla 20 indeksów różnej wielkości po 26 tygodni różnica była zwykle mniejsza niż 10% przy wyprzedzeniu 1–2 tygodni. Przy 3–4 tygodniach mieściła się zwykle w 15%, a przy 5–8 tygodniach w 20%; dłuższego wyprzedzenia nie sprawdzaliśmy.
 
-Te progi plik nazywa granicą remisu i sam dobiera je do Twojego wyprzedzenia. Mniejsza próba to większy przypadek: przy 15 indeksach po 20 tygodni fałszywy werdykt wychodził nawet w co piątym porównaniu. Dlatego test po kwartale, a także test na kilku rodzinach wyrobów, plik oznaczy jako wynik wstępny.
+Te progi plik nazywa granicą remisu i sam dobiera je do Twojego wyprzedzenia. Mniejsza próba to większy przypadek: przy 15 indeksach po 20 porównanych tygodni fałszywy werdykt wychodził nawet w co piątym porównaniu. Dlatego test po kwartale, a także test na kilku rodzinach wyrobów, plik oznaczy jako wynik wstępny.
 
 Rozstrzyga wynik dla wszystkich indeksów razem. Liczba indeksów, w których wygrywasz, tylko go uzupełnia: przy równie dobrych prognozach wychodzi zwykle od 6 do 14 na 20. Pod wynikami plik sam wskaże wiersz tabeli. „Gorsza” i „lepsza” znaczą w niej: o więcej niż granica remisu.
 
@@ -158,7 +159,7 @@ Rozstrzyga wynik dla wszystkich indeksów razem. Liczba indeksów, w których wy
 | Remis z prostymi metodami | Twój proces nie dodaje wartości ponad darmową prognozę | Sprawdź korekty i uprość proces. System musi w pilotażu pobić proste metody o więcej niż granica remisu |
 | Lepsza od wszystkich darmowych prognoz | Proces działa | Nowy system musi w pilotażu pobić Ciebie o więcej niż granica remisu. Największe szanse ma przy setkach powiązanych indeksów i danych o cenach, promocjach i wydarzeniach |
 
-Różnicę błędu przelicz na zapas. Zapas bezpieczeństwa wyznacza się z rozrzutu błędu prognozy w czasie dostawy, czyli z jego odchylenia standardowego [6]. W klasycznym wzorze to mnożnik zależny od poziomu obsługi klienta razy ten rozrzut, a rozrzut zmienia się zwykle w tej samej proporcji co średni błąd. Jeśli magazyn trzyma zapas bezpieczeństwa za 1,2 mln zł, prognoza z błędem mniejszym o 10% pozwala go zmniejszyć mniej więcej o 120 tys. zł (przykład na danych fikcyjnych). To kwota jednorazowa, a licencję płacisz co roku: z jej ceną porównaj roczny koszt utrzymania tych 120 tys. zł w zapasie.
+Różnicę błędu przelicz na zapas. Zapas bezpieczeństwa wyznacza się z rozrzutu (wariancji) błędu prognozy w czasie dostawy [6]. W klasycznym wzorze to mnożnik zależny od poziomu obsługi klienta razy odchylenie standardowe tego błędu; zakładamy tu, że rośnie ono w tej samej proporcji co średni błąd. Jeśli magazyn trzyma zapas bezpieczeństwa za 1,2 mln zł, prognoza z błędem mniejszym o 10% pozwala go zmniejszyć mniej więcej o 120 tys. zł (przykład na danych fikcyjnych). To kwota jednorazowa, a licencję płacisz co roku: z jej ceną porównaj roczny koszt utrzymania tych 120 tys. zł w zapasie.
 
 ### Krok 3. Zmierz wartość dodaną korekt
 
@@ -178,7 +179,7 @@ Przy indeksach, które w większości tygodni nie sprzedają się wcale, najmnie
 
 Pierwsze: z jaką metodą porównywaliście? Prognoza naiwna to łatwy rywal, wygładzanie wykładnicze trudniejszy, a Twoja obecna prognoza to jedyny, który się liczy. Drugie: na jakim poziomie? Wynik dla sumy firmy nic nie mówi o indeksie w magazynie, co pokazał rysunek wyżej. Trzecie: na czyich danych? Poproś o test na około 20 wylosowanych indeksach z Twojej sprzedaży, na poziomie i z wyprzedzeniem, z jakimi zamawiasz.
 
-Na żadne z nich nie odpowiada obietnica, od której zaczęliśmy. Blog polskiej firmy programistycznej Netguru powołuje się na analizę McKinsey Global Institute z 2023 roku. Według niej firmy wdrażające prognozy oparte na sztucznej inteligencji „zmniejszają błąd prognozy o 20–50% w porównaniu z tradycyjnymi statystycznymi punktami odniesienia” [1]. Odnośnika do tej analizy nie ma. Ten sam tekst przyznaje dalej, że dobrze dostrojone metody statystyczne często dorównują gradient boostingowi, jednej z metod uczenia maszynowego. Przy dojrzałych, szybko rotujących indeksach z długą historią czystych danych różnica wynosi według autora 1–2 punkty procentowe błędu MAPE [1].
+Na żadne z nich nie odpowiada obietnica, od której zaczęliśmy. Blog polskiej firmy programistycznej Netguru powołuje się na analizę McKinsey Global Institute z 2023 roku. Według niej firmy wdrażające prognozy oparte na sztucznej inteligencji „zmniejszają błąd prognozy o 20–50% w porównaniu z tradycyjnymi statystycznymi punktami odniesienia” [1]. Odnośnika do tej analizy nie ma. Ten sam tekst przyznaje dalej, że dobrze dostrojone metody statystyczne często dorównują gradient boostingowi, jednej z metod uczenia maszynowego, w granicach 1–2 punktów błędu MAPE [1]. Dotyczy to „dojrzałych, szybko zmieniających się SKU” z co najmniej trzyletnią historią czystych danych [1].
 
 Wynik testu wpisz do umowy jako warunek odbioru pilotażu, a próg ustaw nie niżej niż granica remisu dla Twojego wyprzedzenia, bo inaczej system może przejść odbiór przez przypadek. Pilnuj też, by system nie widział sprzedaży z tygodni oceny: przekazuj ją dostawcy tydzień po tygodniu, dopiero gdy dostaniesz od niego prognozy. Przegląd stanu wiedzy o prognozowaniu ostrzega, że dane testowe, miary i metody do porównania bywają dobrane tak, że przesadnie pokazują zalety nowej metody [6]. Zapis może wyglądać jak ten niżej. To przykład liczbowy i propozycja redakcji, a nie wzór umowy, więc brzmienie i próg ustal z prawnikiem.
 
