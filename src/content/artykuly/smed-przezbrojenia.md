@@ -45,33 +45,33 @@ szkic: true
 ---
 ## W skrócie
 
-**Problem.** O SMED, czyli metodzie skracania przezbrojeń, czyta się, że skraca je nawet o 90% [1]. Opisane przypadki rozciągają się od około 20% do 90% [2, 1], a tylko co trzeci opis wdrożenia mówi o jego ograniczeniach [2].
+**Problem.** O SMED, czyli metodzie skracania przezbrojeń, czyta się, że skraca je nawet o 90% [1]. Opisane przypadki rozciągają się od około 20% do 90% [2, 1]. Sam procent nie mówi jednak, ile zakład zarobi.
 
-**Dlaczego.** Godzina przezbrojenia kosztuje różnie w różnych miejscach zakładu. Na wąskim gardle płacisz za nią dwa razy: czasem ludzi i produkcją, której nie będzie. Na maszynie, która ma wolny czas, płacisz głównie ludźmi, a mniejsze partie dokładają niewiele, bo opłacalna partia rośnie z pierwiastkiem kosztu przezbrojenia [3].
+**Dlaczego.** Godzina przezbrojenia kosztuje różnie w różnych miejscach zakładu. Na wąskim gardle (bottleneck) płacisz za nią dwa razy: czasem ludzi i produkcją, której nie będzie. Na maszynie, która ma wolny czas, płacisz głównie ludźmi, a mniejsze partie dokładają niewiele, bo opłacalna partia maleje dużo wolniej niż koszt przezbrojenia [3].
 
 **Co zrobić.** Zacznij SMED od maszyny, która ogranicza wydajność całego zakładu. Nagraj jedno przezbrojenie, rozdziel czynności na te przy zatrzymanej maszynie i te, które da się zrobić w trakcie pracy, i zdecyduj z góry, na co przeznaczysz odzyskany czas.
 
 ## Opisane wdrożenia skracają przezbrojenia o 20–90%
 
-Obietnica brzmi kusząco: przezbrojenie z godziny do kilku minut. Weźmy kierownika produkcji w zakładzie, który na kilku wtryskarkach robi elementy obudów do sprzętu AGD (to przykład, firma jest fikcyjna). Przezbrojenie trwa u niego godzinę. Firma doradcza zapowiada, że po warsztatach SMED zejdzie do kilku minut, a zakład zarobi na tym setki tysięcy złotych rocznie. Kierownik ma dwa pytania: ile to jest naprawdę i od której maszyny zacząć.
+Wtryskarka stoi, ustawiacz odkręca formę, a przed maszyną rośnie kolejka palet. Weźmy zakład, który na kilku wtryskarkach robi elementy obudów do sprzętu AGD (to przykład, firma jest fikcyjna). Przezbrojenie (changeover) trwa tam godzinę. Firma doradcza zapowiada, że po warsztatach SMED zejdzie do kilku minut, a zakład zarobi na tym setki tysięcy złotych rocznie. Kierownik produkcji ma dwa pytania: ile to jest naprawdę i od której maszyny zacząć.
 
-Opisane wdrożenia dają szeroki przedział. Przegląd 30 artykułów o SMED, głównie z przemysłu spożywczego, przytacza skrócenia od 20% do 49%, a w jednym projekcie dla firmy spożywczej około 67% [2]. Zespół badaczy z Meksyku i Hiszpanii przytacza inne opisy, z wynikami od 59% do 90% [1]. Polskie badanie z Politechniki Rzeszowskiej opisuje przypadek, w którym przezbrojenie skróciło się z 72 do 45 minut, czyli o 37,67% [4]. Według twórcy metody, Shigeo Shingo, na którego powołują się badacze z Meksyku i Hiszpanii, już pierwszy etap, czyli rozdzielenie czynności, skraca przezbrojenie o 30–50% [1].
+Opisane wdrożenia dają szeroki przedział. Przegląd 30 artykułów o SMED, głównie z przemysłu spożywczego, przytacza skrócenia od 20% do 49%, a w jednym projekcie dla firmy spożywczej około 67% [2]. Zespół badaczy z Meksyku i Hiszpanii przytacza inne opisy, z wynikami od 59% do 90% [1]. Polskie badanie z Politechniki Rzeszowskiej opisuje przypadek, w którym przezbrojenie skróciło się z 72 do 45 minut, czyli o 37,67% [4]. Już pierwszy etap, rozdzielenie czynności, skraca przezbrojenie o 30–50%, twierdzi twórca metody, Shigeo Shingo, cytowany przez badaczy z Meksyku i Hiszpanii [1].
 
-Skracaj więc przezbrojenia najpierw tam, gdzie maszyna ogranicza wydajność całego zakładu. Procent z prezentacji mówi niewiele; zysk zależy od tego, na której maszynie odzyskasz minuty i co z nimi zrobisz.
+Skracaj przezbrojenia najpierw tam, gdzie maszyna ogranicza wydajność całego zakładu. Procent z prezentacji mówi niewiele; zysk zależy od tego, na której maszynie odzyskasz minuty i co z nimi zrobisz.
 
 ## Na wąskim gardle płacisz za przezbrojenie dwa razy
 
-Weźmy maszynę, przed którą stoi kolejka i która decyduje, ile zakład sprzeda. Godzina przezbrojenia to tam godzina produkcji, której nie będzie. Krótsze przezbrojenie oddaje tę godzinę. Zysk rośnie wprost proporcjonalnie do odzyskanego czasu.
+Weźmy maszynę, przed którą stoi kolejka i która decyduje, ile zakład sprzeda. Godzina przezbrojenia kosztuje tam dwa razy: czas ustawiaczy i godzinę produkcji, której nie będzie. Krótsze przezbrojenie oddaje obie. Zysk rośnie wprost proporcjonalnie do odzyskanego czasu.
 
-Załóżmy, że jedna z wtryskarek kierownika jest wąskim gardłem. Przezbraja się 15 razy w tygodniu po godzinie, zakład pracuje 48 tygodni w roku, a godzina pracy maszyny daje 400 zł marży (przykład na danych fikcyjnych). Skrócenie przezbrojeń o 38% oddaje 5,7 godziny tygodniowo, czyli około 274 godzin rocznie. To około 109 tys. zł marży, jeśli rynek kupi dodatkową produkcję. Przy skróceniu o połowę wychodzi 360 godzin i 144 tys. zł.
+Załóżmy, że jedna z wtryskarek kierownika jest wąskim gardłem. Przezbraja się 15 razy w tygodniu po godzinie, zakład pracuje 48 tygodni w roku, a godzina pracy maszyny daje 400 zł marży (przykład na danych fikcyjnych). Skrócenie przezbrojeń o 38% oddaje 5,7 godziny tygodniowo, czyli około 274 godzin rocznie. To około 109 tys. zł marży, jeśli rynek kupi dodatkową produkcję. Przy skróceniu o połowę wychodzi 360 godzin i 144 tys. zł. Czasu ustawiaczy w tym rachunku nawet nie liczymy.
 
-Jeśli rynek nie kupi więcej, odzyskane godziny wciąż mają wartość. Zastąpią nadgodziny albo dodatkowe zmiany, które dziś ratują terminy, więc licz wtedy ich koszt zamiast marży. Na tej samej maszynie możesz też wybrać mniejsze partie. Decyzję podejmij przed warsztatem, bo odzyskany czas bez decyzji rozpływa się w mikroprzestojach i dłuższych przerwach.
+Jeśli rynek nie kupi więcej, odzyskane godziny wciąż mają wartość. Zastąpią nadgodziny albo dodatkowe zmiany, które dziś ratują terminy, więc licz wtedy ich koszt zamiast marży. Na tej samej maszynie możesz też wybrać mniejsze partie. Decyzję podejmij przed warsztatem. Odzyskany czas bez decyzji rozpływa się w mikroprzestojach i dłuższych przerwach.
 
 ## Poza wąskim gardłem zysk jest mały
 
-Większość maszyn w zakładzie ma wolny czas. Nie wszystkie. Przezbrojenie takiej maszyny kosztuje ludzi, energię i odpad, ale nie odbiera sprzedaży, bo jej wolny czas nie ma kupca. Krótsze przezbrojenie oszczędza tam czas ustawiaczy i pozwala robić mniejsze partie.
+Większość maszyn w zakładzie ma wolny czas. Przezbrojenie takiej maszyny kosztuje ludzi, energię i odpad, ale nie odbiera sprzedaży, bo jej wolny czas nie ma kupca. Krótsze przezbrojenie oszczędza tam czas ustawiaczy i pozwala robić mniejsze partie.
 
-Ile wart jest mniejszy zapas, policzył ponad sto lat temu Ford Whitman Harris. Opłacalna wielkość partii rośnie u niego z pierwiastkiem kosztu przezbrojenia [3]. W jego rachunku koszt przezbrojenia obejmuje też obsługę zlecenia w biurze, której SMED nie skraca [3].
+Ile wart jest mniejszy zapas, policzył ponad sto lat temu Ford Whitman Harris. W jego wzorze opłacalna partia maleje dużo wolniej niż koszt przezbrojenia: gdy przezbrojenie tanieje o połowę, partia maleje tylko o około 29% [3]. W jego rachunku koszt przezbrojenia obejmuje też obsługę zlecenia w biurze, której SMED nie skraca [3].
 
 Policzyliśmy to dla jednego wyrobu na danych fikcyjnych. Roczny popyt to 24 tysiące sztuk, jedno godzinne przezbrojenie kosztuje 600 zł (ludzie, energia, odpad), a utrzymanie sztuki w zapasie przez rok 5 zł.
 
@@ -83,7 +83,7 @@ Policzyliśmy to dla jednego wyrobu na danych fikcyjnych. Roczny popyt to 24 tys
 | 50% | 1 697 szt. | 14,1 | 8 485 zł | 3 515 zł |
 | 75% | 1 200 szt. | 20 | 6 000 zł | 6 000 zł |
 
-Przy przezbrojeniu krótszym o połowę i dotychczasowych partiach oszczędzasz połowę kosztu samych przezbrojeń, w przykładzie na danych fikcyjnych 3 000 zł rocznie na wyrób. To prawdziwe pieniądze tylko wtedy, gdy ustawiacze zrobią w odzyskanym czasie coś innego. Mniejsze partie dokładają 515 zł. Tylko tyle. Nawet przy 20 takich wyrobach na jednej maszynie daje to około 70 tys. zł rocznie, mniej niż połowę tego, co oddaje to samo skrócenie na wąskim gardle.
+Przy przezbrojeniu krótszym o połowę i dotychczasowych partiach oszczędzasz połowę kosztu samych przezbrojeń, w przykładzie na danych fikcyjnych 3 000 zł rocznie na wyrób. To prawdziwe pieniądze tylko wtedy, gdy ustawiacze zrobią w odzyskanym czasie coś innego. Mniejsze partie dokładają tylko 515 zł. Nawet przy 20 takich wyrobach na jednej maszynie daje to około 70 tys. zł rocznie, mniej niż połowę tego, co oddaje to samo skrócenie na wąskim gardle.
 
 Harris zauważył też, że brygadziści, którzy dobrze czują koszt przezbrojenia przy małych zleceniach, robią prawie zawsze duże partie, jeśli nikt ich nie pilnuje [3]. Gdy przezbrojenie się skraca, a planista dalej układa harmonogram według starych partii, mniejszego zapasu nie będzie.
 
@@ -91,17 +91,17 @@ Harris zauważył też, że brygadziści, którzy dobrze czują koszt przezbroje
 
 W przeglądzie 30 artykułów tylko 10, czyli 30%, opisywało ograniczenia wdrożenia, a rachunki oszczędności kosztów nie były podane szczegółowo [2]. Liczby z artykułów mogą więc zawyżać przeciętny wynik. Jako główną przeszkodę autorzy przeglądu wskazują brak przeszkolenia pracowników [2].
 
-Badacze z Meksyku i Hiszpanii, którzy przebadali ankietą 250 pracowników zakładów maquiladora, piszą we wstępie, że wdrożenia SMED rzadko dają tam oczekiwane wyniki, a firmy często porzucają metodę [1]. To ich obserwacja, a nie wynik ankiety. Ich zdaniem dzieje się tak zwykle wtedy, gdy firma nie zna dobrze kolejnych etapów metody albo nie wie, jak się ze sobą wiążą [1].
+Badacze z Meksyku i Hiszpanii przebadali ankietą 250 pracowników zakładów maquiladora w przygranicznym Ciudad Juárez, czyli meksykańskich fabryk, często filii firm zagranicznych [1]. We wstępie piszą, że wdrożenia SMED rzadko dają tam oczekiwane wyniki, a firmy często porzucają metodę [1]. To ich obserwacja, a nie wynik ankiety. Ich zdaniem dzieje się tak zwykle wtedy, gdy firma nie zna dobrze kolejnych etapów metody albo nie wie, jak się ze sobą wiążą [1].
 
-Polskie dane mówią o czymś innym: w wielu firmach przezbrojeń w ogóle nie skracano. W ankiecie wśród operatorów z firm na Podkarpaciu tylko w 33% przypadków podejmowano działania, żeby skrócić przezbrojenia, a 47% badanych firm według szacunku z badania nigdy tego nie robiło [4]. Ankietę wypełniło jednak 29 operatorów z 88 losowo wybranych firm, więc to sygnał, a nie obraz całego przemysłu [4].
+Polskie dane pokazują inny kłopot: w wielu firmach nikt nie próbował skracać przezbrojeń. W ankiecie wśród operatorów z firm na Podkarpaciu tylko w 33% przypadków podejmowano działania, żeby skrócić przezbrojenia, a 47% badanych firm według szacunku z badania nigdy tego nie robiło [4]. Ankietę wypełniło jednak 29 operatorów z 88 losowo wybranych firm, więc to sygnał, a nie obraz całego przemysłu [4].
 
 ## SMED w czterech krokach
 
 ### Krok 1. Wybierz maszynę, która ogranicza zakład
 
-Szukaj maszyny, przed którą zawsze czeka materiał, a za którą następne stanowiska stoją bez pracy. Przez tydzień zapisuj raz dziennie, ile pojemników albo palet czeka przed każdą maszyną w ciągu. Tam, gdzie kolejka rośnie, a nie znika do końca zmiany, masz kandydata. Potwierdź go danymi: wysokim wykorzystaniem, nadgodzinami na tej maszynie i liczbą przezbrojeń w tygodniu.
+Szukaj maszyny, przed którą zawsze czeka materiał, a za którą następne stanowiska stoją bez pracy. Przez tydzień zapisuj raz dziennie, ile pojemników albo palet czeka przed każdą maszyną w ciągu. Tam, gdzie kolejka rośnie, a nie znika do końca zmiany, masz kandydata. Drugi test: gdy ta maszyna stanie na godzinę, czy cały zakład traci godzinę produkcji? Jeśli tak, masz wąskie gardło. Potwierdź je danymi: wysokim wykorzystaniem, nadgodzinami na tej maszynie i liczbą przezbrojeń w tygodniu.
 
-Jeśli takiej maszyny nie ma, a kłopotem jest zapas, zacznij od wyrobów, które robisz w największych partiach. Tam krótsze przezbrojenie najszybciej przełoży się na mniejsze partie.
+Jeśli żadna maszyna nie ogranicza zakładu, SMED da mniej. Zacznij wtedy od maszyny, na której ustawiacze spędzają najwięcej godzin na przezbrojeniach, i licz zysk w ich czasie.
 
 ### Krok 2. Nagraj przezbrojenie i rozdziel czynności
 
@@ -113,22 +113,24 @@ Nagranie obejrzyj razem z operatorem, który przezbrajał, i z ustawiaczem z inn
 
 Drugi etap to zamiana jak największej części czynności przy zatrzymanej maszynie na takie, które robi się w trakcie pracy [1]. W polskim badaniu w 33% przypadków operator musiał przynosić narzędzia i przyrządy z innych miejsc [4]. Takie chodzenie to najtańsze minuty do odzyskania.
 
-Na nagraniu szukaj czynności, które zwykle da się zrobić przed zatrzymaniem maszyny: przyniesienia formy, narzędzi i materiału, wydruku dokumentacji, sprawdzenia nowego programu, wstępnego nagrzania albo przygotowania pojemników na nowy wyrób. Każdą z nich wpisz na listę „przed zatrzymaniem” i przypisz do konkretnej osoby. Dopiero gdy ta lista działa, przychodzi trzeci etap: usprawnienie i standaryzacja wszystkich czynności [1].
+Na nagraniu szukaj czynności, które zwykle da się zrobić przed zatrzymaniem maszyny: przyniesienia formy, narzędzi i materiału, wydruku dokumentacji, sprawdzenia nowego programu, wstępnego nagrzania albo przygotowania pojemników na nowy wyrób. Każdą z nich wpisz na listę „przed zatrzymaniem” i przypisz do konkretnej osoby.
+
+Na wtryskarce taka lista może wyglądać tak. Przed zatrzymaniem: przywieź formę pod maszynę, przygotuj węże i złącza wody, nagrzej formę, jeśli masz osobny termostat, i wysusz materiał. Przy zatrzymanej maszynie zostają odpięcie starej formy, zamocowanie nowej, podłączenie wody, ustawienie parametrów i próbne wtryski do pierwszej dobrej sztuki. Gdy lista „przed zatrzymaniem” działa, przychodzi trzeci etap: usprawnienie i standaryzacja wszystkich czynności [1]. Na wtryskarce to na przykład szybkozłącza wody i parametry zapisane dla każdej formy.
 
 ### Krok 4. Zapisz standard i zmierz dwa wyniki
 
-Nowy sposób przezbrojenia zapisz jako standard ze zdjęciami i przeszkol według niego wszystkie zmiany, bo brak przeszkolenia to główna przeszkoda wdrożeń [2]. Mierz czas przezbrojenia przez miesiąc i osobno to, co zrobiłeś z odzyskanym czasem: dodatkową produkcję, mniej nadgodzin albo mniejsze partie. Bez drugiej liczby nie wiesz, czy SMED zarobił.
+Nowy sposób przezbrojenia zapisz jako standard ze zdjęciami i przeszkol według niego wszystkie zmiany, bo brak przeszkolenia to główna przeszkoda wdrożeń [2]. Przez miesiąc mierz czas przezbrojenia i osobno to, na co poszedł odzyskany czas: dodatkową produkcję, mniej nadgodzin albo mniejsze partie. Bez drugiej liczby nie wiesz, czy SMED zarobił.
 
 Zarządowi pokaż rachunek w tej samej postaci, w jakiej liczyliśmy go wyżej. Na wąskim gardle: odzyskane godziny w roku razy marża z godziny pracy maszyny albo koszt nadgodzin, których nie będzie. Poza nim: zaoszczędzony czas ustawiaczy, jeśli zrobią w nim coś innego, i mniejszy zapas, jeśli partie naprawdę się zmniejszyły. Obie liczby sprawdź po kwartale na danych z produkcji, a nie z planu warsztatu.
 
-## Kiedy te liczby się nie sprawdzą
+## Kiedy ten rachunek zawiedzie
 
-Wyniki z przeglądu dotyczą głównie przemysłu spożywczego, a tylko co trzeci opis mówi o ograniczeniach [2]. Polskie badanie to jedna firma i jedno stanowisko. Nasze rachunki są na danych fikcyjnych i prostym modelu: zakładają stały popyt, stały koszt przezbrojenia i to, że rynek kupi dodatkową produkcję z wąskiego gardła.
+Wyniki z przeglądu dotyczą głównie przemysłu spożywczego [2]. Polskie badanie to jedna firma i jedno stanowisko. Nasze rachunki są na danych fikcyjnych i prostym modelu: zakładają stały popyt, stały koszt przezbrojenia i to, że rynek kupi dodatkową produkcję z wąskiego gardła.
 
-Liczy się czas do pierwszej dobrej sztuki, a nie do uruchomienia maszyny. Przezbrojenie skrócone o kwadrans, po którym pierwsze sztuki przez pół godziny idą do odpadu, nic nie oddaje. Jeśli wąskie gardło przesuwa się między maszynami, skrócenie przezbrojeń na jednej z nich oddaje mniej, niż pokazuje rachunek. Jeśli mierzysz OEE, nie zmieniaj definicji przezbrojeń przed SMED i po nim, o czym piszemy w [tekście o OEE](/oee-85-procent).
+Liczy się czas do pierwszej dobrej sztuki, a nie do uruchomienia maszyny. Przezbrojenie skrócone o kwadrans, po którym pierwsze sztuki przez pół godziny idą do odpadu, nic nie oddaje. Jeśli wąskie gardło przesuwa się między maszynami, skrócenie przezbrojeń na jednej z nich oddaje mniej, niż pokazuje rachunek. Jeśli mierzysz OEE (całkowitą efektywność urządzeń), nie zmieniaj po wdrożeniu SMED definicji przezbrojenia; piszemy o tym w [tekście o OEE](/oee-85-procent).
 
 ## Najpierw maszyna z kolejką
 
-Wróćmy do zakładu z wtryskarkami. Zamiast warsztatu dla całej hali kierownik wskaże maszynę, przed którą stoi kolejka, i nagra na niej jedno przezbrojenie. Z doradcą umówi się na wynik w godzinach odzyskanych na tej maszynie i w złotówkach, które z nich będą, a nie w procentach z prezentacji.
+Wróćmy do zakładu z wtryskarkami. Zamiast warsztatu dla całej hali kierownik wskaże maszynę, przed którą stoi kolejka palet. Z doradcą umówi się na wynik w godzinach odzyskanych na tej maszynie i w złotówkach, które z nich będą, a nie w procentach z prezentacji. Na maszynie z wolnym czasem przezbrojenie krótsze o połowę oszczędza głównie czas ustawiaczy, a na wąskim gardle oddaje połowę straconej produkcji.
 
-Na maszynie, która ma wolny czas, przezbrojenie krótsze o połowę oszczędza głównie czas ustawiaczy. Na wąskim gardle oddaje połowę straconej produkcji, jeśli rynek ją kupi albo zastąpi nią nadgodziny.
+W poniedziałek nagraj na tej maszynie jedno przezbrojenie, od ostatniej dobrej sztuki do pierwszej dobrej, i zaznacz, co dało się zrobić przed zatrzymaniem.
