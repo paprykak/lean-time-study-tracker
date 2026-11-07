@@ -118,7 +118,7 @@ Drugi etap to zamiana jak największej części czynności przy zatrzymanej masz
 
 Na nagraniu szukaj czynności, które zwykle da się zrobić przed zatrzymaniem maszyny: przyniesienia formy, narzędzi i materiału, wydruku dokumentacji, sprawdzenia nowego programu, wstępnego nagrzania albo przygotowania pojemników na nowy wyrób. Każdą z nich wpisz na listę „przed zatrzymaniem” i przypisz do konkretnej osoby.
 
-Na wtryskarce taka lista może wyglądać tak. Przed zatrzymaniem: przywieź formę pod maszynę, przygotuj węże i złącza wody, nagrzej formę, jeśli masz osobny termostat, i wysusz materiał. Przy zatrzymanej maszynie zostają odpięcie starej formy, zamocowanie nowej, podłączenie wody, ustawienie parametrów i próbne wtryski do pierwszej dobrej sztuki. Gdy lista „przed zatrzymaniem” działa, przychodzi trzeci etap: usprawnienie i standaryzacja wszystkich czynności [1]. Na wtryskarce to na przykład szybkozłącza wody i parametry zapisane dla każdej formy. Na prasie zasada jest ta sama: matrycę i mocowania przygotuj przy prasie, zanim ją zatrzymasz.
+Na wtryskarce taka lista może wyglądać tak. Przed zatrzymaniem: przywieź formę pod maszynę, przygotuj węże i złącza wody, nagrzej formę, jeśli masz osobny termostat, i wysusz materiał. Przy zatrzymanej maszynie zostają odpięcie starej formy, zamocowanie nowej, podłączenie wody, ustawienie parametrów i próbne wtryski do pierwszej dobrej sztuki. Gdy lista „przed zatrzymaniem” działa, przychodzi trzeci etap: usprawnienie i standaryzacja wszystkich czynności [1]. Na wtryskarce to na przykład szybkozłącza wody i parametry zapisane dla każdej formy. Na prasie zasada jest ta sama: matrycę i mocowania przygotuj przy prasie, zanim zatrzymasz prasę.
 
 ### Krok 4. Zapisz standard i zmierz dwa wyniki
 

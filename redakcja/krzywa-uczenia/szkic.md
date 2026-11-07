@@ -1,6 +1,6 @@
 ## W skrócie
 
-**Problem.** Na koniec drugiego kwartału 2026 r. przetwórstwo przemysłowe miało 24,7 tys. wolnych miejsc pracy, najwięcej dla robotników przemysłowych i rzemieślników oraz operatorów i monterów maszyn [@gus]. Każda osoba, która je zajmie, zacznie poniżej normy, a godziny tej różnicy rzadko ktoś liczy.
+**Problem.** Na koniec drugiego kwartału 2026 r. przetwórstwo przemysłowe miało 24,7 tys. wolnych miejsc pracy, najwięcej dla robotników przemysłowych i rzemieślników oraz operatorów i monterów maszyn [@gus]. Każda osoba, która je zajmie, zacznie poniżej normy, a tych godzin nie widać w planie szkolenia liczonym w dniach.
 
 **Dlaczego.** Plan wdrożenia liczy się w dniach szkolenia, a nauka w sztukach. W badaniu ręcznego montażu wiązek przewodów czas jednej sztuki spadł z 6,9 do około 2 godzin dopiero przy 163. sztuce [@kleiza].
 

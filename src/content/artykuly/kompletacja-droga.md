@@ -84,7 +84,7 @@ Rozmieszczenie daje więcej, ale wymaga przenoszenia towaru. Trasę zmienisz bez
 
 Kolejny krok to podział magazynu na strefy albo kompletowanie kilku zamówień naraz. W polskim badaniu symulacyjnym najlepszy wariant, kompletacja synchroniczna w pięciu strefach, skrócił czas o blisko 70% względem magazynu bez stref, ze składowaniem losowym i trasą S-shape [2]. Autorzy zastrzegają jednak, że taki wariant wymaga dodatkowej pracy w sortowni, czyli przy rozdzielaniu towaru na zamówienia, albo dużych nakładów na sortownię automatyczną [2]. Ostrzegają też, że źle dobrane składowanie i trasa przy strefach mogą dać czasy dłuższe niż w magazynie bez stref [2].
 
-Łączenie kilku małych zamówień w jedną rundę działa podobnie: kompletujący pobiera więcej w każdej alejce przy tej samej drodze, ale potem ktoś musi rozdzielić towar na zamówienia. Przy okazji w każdej alejce wypada więcej pobrań, bo jedna runda obejmuje kilka zamówień, a wtedy, jak pisaliśmy wyżej, prosta trasa S-shape traci mniej.
+Łączenie kilku małych zamówień w jedną rundę działa podobnie: kompletujący pobiera więcej w każdej alejce przy tej samej drodze, ale potem ktoś musi rozdzielić towar na zamówienia. Gęstsze pobrania mają też drugi skutek: jak pisaliśmy wyżej, prosta trasa S-shape traci wtedy mniej.
 
 Strefy i łączenie zamówień to więc decyzja o organizacji pracy, a nie poprawka na jutro. Rozmieszczenie i trasę zmienisz bez sortowni i bez nowych ludzi.
 
