@@ -1,0 +1,20 @@
+{
+  "dekoster": {
+    "opis": "de Koster R., Le-Duc T., Roodbergen K. J. (2007), Design and control of warehouse order picking: A literature review, European Journal of Operational Research, 182(2), 481–501.",
+    "adres": "https://doi.org/10.1016/j.ejor.2006.07.009",
+    "rodzaj": "Przegląd lub metaanaliza",
+    "dostep": "2026-11-07"
+  },
+  "tarczynski": {
+    "opis": "Tarczyński G., Jakubiak M. (2017), Wpływ kompletacji strefowej, składowania towarów i metody wyznaczania trasy magazyniera na efektywność procesu kompletacji zamówień, Optimum. Studia Ekonomiczne, 3(87), 137–152.",
+    "adres": "https://doi.org/10.15290/ose.2017.03.87.10",
+    "rodzaj": "Badanie recenzowane",
+    "dostep": "2026-11-07"
+  },
+  "leduc": {
+    "opis": "Le-Duc T. (2005), Design and Control of Efficient Order Picking Processes, rozprawa doktorska, Erasmus University Rotterdam (ERIM), rozdz. 2.",
+    "adres": "https://repub.eur.nl/pub/6910/EPS2005064LIS_9058920941_LEDUC.pdf",
+    "rodzaj": "Inne",
+    "dostep": "2026-11-07"
+  }
+}

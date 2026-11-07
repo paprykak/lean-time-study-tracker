@@ -1,0 +1,53 @@
+{
+ "parametry": {
+  "alejki": 10,
+  "miejsca_na_strone": 30,
+  "rozstaw_alejek_m": 3.0,
+  "lokalizacje": 600,
+  "zipf_s": 1.051,
+  "udzial_20proc_indeksow_w_pobraniach": 0.8,
+  "zamowienia_na_wariant": 20000
+ },
+ "5_pozycji": {
+  "srednia_droga_m": {
+   "losowe + S-shape": 173.8,
+   "losowe + largest gap": 140.4,
+   "wg rotacji + S-shape": 114.9,
+   "wg rotacji + largest gap": 100.5
+  },
+  "krocej_niz_losowe_S_shape_proc": {
+   "losowe + S-shape": 0.0,
+   "losowe + largest gap": 19.2,
+   "wg rotacji + S-shape": 33.9,
+   "wg rotacji + largest gap": 42.2
+  }
+ },
+ "15_pozycji": {
+  "srednia_droga_m": {
+   "losowe + S-shape": 307.3,
+   "losowe + largest gap": 245.7,
+   "wg rotacji + S-shape": 217.2,
+   "wg rotacji + largest gap": 168.3
+  },
+  "krocej_niz_losowe_S_shape_proc": {
+   "losowe + S-shape": 0.0,
+   "losowe + largest gap": 20.0,
+   "wg rotacji + S-shape": 29.3,
+   "wg rotacji + largest gap": 45.2
+  }
+ },
+ "30_pozycji": {
+  "srednia_droga_m": {
+   "losowe + S-shape": 358.8,
+   "losowe + largest gap": 337.4,
+   "wg rotacji + S-shape": 291.7,
+   "wg rotacji + largest gap": 240.5
+  },
+  "krocej_niz_losowe_S_shape_proc": {
+   "losowe + S-shape": 0.0,
+   "losowe + largest gap": 6.0,
+   "wg rotacji + S-shape": 18.7,
+   "wg rotacji + largest gap": 33.0
+  }
+ }
+}
