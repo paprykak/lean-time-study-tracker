@@ -94,7 +94,8 @@ test('wyszukiwarka znajduje artykuł i nie zwraca wyników bez trafienia', async
   await page.goto('/szukaj?q=mikroprzestoje');
   await expect(page.locator('[data-status]')).toHaveText(/1 wynik/);
   await expect(page.locator('[data-wyniki] a').first()).toHaveAttribute('href', ARTYKUL);
-  await page.goto('/szukaj?q=politechnika');
+  // Słowo spoza tematyki serwisu: „politechnika” pojawiło się w prawdziwych tekstach (2026-11-07).
+  await page.goto('/szukaj?q=kangur');
   await expect(page.locator('[data-status]')).toHaveText(/Brak wyników/);
 });
 
