@@ -24,7 +24,7 @@ const n = {
   tytul: 'Zanim kupisz AI do prognoz, sprawdź, czy bijesz proste metody',
   tytulSeo: 'Prognozowanie popytu z AI czy prognoza naiwna? Jak sprawdzić',
   opisSeo: 'W konkursie M5 AI przy pojedynczym produkcie myliło się tylko o 3% mniej niż automatyczne wygładzanie wykładnicze. Jak w godzinę sprawdzić własną prognozę.',
-  lead: 'W konkursie M5 czołowe zespoły myliły się przy sumie sprzedaży wszystkich sklepów o 40–53% mniej niż automatycznie dobierane wygładzanie wykładnicze, ale przy pojedynczym produkcie w sklepie tylko o około 3% mniej. Zanim kupisz system prognoz, sprawdź, czy Twoja prognoza bije proste metody.',
+  lead: 'W konkursie M5 zwycięzca mylił się przy sumie sprzedaży wszystkich sklepów o 53% mniej niż automatycznie dobierane wygładzanie wykładnicze, a typowy zespół z czołowej pięćdziesiątki o 40%. Przy pojedynczym produkcie w sklepie przewaga spadała do około 3%. Zanim kupisz system prognoz, sprawdź, czy bijesz proste metody.',
   podpisZdjecia: 'Regały w centrum dystrybucji żywności. Tu prognoza dla pojedynczego indeksu zamienia się w palety zapasu.',
   faq: [
     ['Co to jest prognoza naiwna?', 'To prognoza, w której na następny okres przyjmujesz ostatnią znaną sprzedaż. Nic nie kosztuje i nie wymaga systemu, dlatego służy jako punkt odniesienia: prognoza, która nie myli się mniej niż naiwna, nie wnosi wartości. Zwykle trudniej pobić średnią z czterech ostatnich tygodni albo wygładzanie wykładnicze.'],

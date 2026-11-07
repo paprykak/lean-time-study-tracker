@@ -74,10 +74,10 @@
   "kategoria": "gorsza od naiwnej"
  },
  "werdykty_razem": {
-  "gorsza od naiwnej": "Gorsza od naiwnej: problem w procesie, nie w algorytmie. Sprawdź odchylenie i korekty, zwłaszcza małe i w górę.",
-  "prosta lepsza": "Prosta metoda dałaby mniejszy błąd za darmo. Przejdź na wygładzanie (przy trendzie i sezonowości w wersji, która je uwzględnia) i mierz dalej.",
-  "remis": "Remis z prostymi metodami: Twój proces nie dodaje wartości ponad darmową prognozę. Zmierz, czy korekty pomagają, i uprość proces tam, gdzie nie pomagają.",
-  "bije wszystkie": "Bije wszystkie darmowe prognozy: proces działa, nowy system musi pobić Ciebie. Pilotaż ma sens przy setkach powiązanych indeksów i danych o cenach, promocjach i wydarzeniach."
+  "gorsza od naiwnej": "Gorsza od naiwnej: problem w procesie, nie w algorytmie. Sprawdź odchylenie i korekty, zwłaszcza małe i w górę. Z zakupem systemu poczekaj.",
+  "prosta lepsza": "Prosta metoda dałaby mniejszy błąd za darmo. Przejdź na wygładzanie (przy trendzie i sezonowości w wersji, która je uwzględnia) i mierz dalej. Z zakupem systemu poczekaj.",
+  "remis": "Remis z prostymi metodami: Twój proces nie dodaje wartości ponad darmową prognozę. Sprawdź korekty i uprość proces. System musi w pilotażu wyraźnie pobić proste metody.",
+  "bije wszystkie": "Bije wszystkie darmowe prognozy: proces działa. Nowy system musi w pilotażu wyraźnie pobić Ciebie; największe szanse ma przy setkach powiązanych indeksów i danych o cenach, promocjach i wydarzeniach."
  },
  "sprzedaz": [
   104,

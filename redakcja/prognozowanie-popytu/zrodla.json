@@ -23,12 +23,6 @@
     "rodzaj": "Badanie recenzowane",
     "dostep": "2026-11-07"
   },
-  "gus2026": {
-    "opis": "GUS (2026), Społeczeństwo informacyjne w Polsce w 2026 r., informacja sygnalna z 21.10.2026, s. 4.",
-    "adres": "https://publikacje.new.stat.gov.pl/sites/default/files/2026-10/spoleczenstwo_informacyjne_w_polsce_w_2026.pdf",
-    "rodzaj": "Dane publiczne",
-    "dostep": "2026-11-07"
-  },
   "fildes2009": {
     "opis": "Fildes R., Goodwin P., Lawrence M., Nikolopoulos K. (2009), Effective forecasting and judgmental adjustments: an empirical evaluation and strategies for improvement in supply-chain planning, International Journal of Forecasting, 25(1), 3–23 (według streszczenia autorów).",
     "adres": "https://doi.org/10.1016/j.ijforecast.2008.11.010",

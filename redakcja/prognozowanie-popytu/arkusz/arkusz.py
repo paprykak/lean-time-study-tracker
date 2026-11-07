@@ -34,12 +34,12 @@ H_DOMYSLNE = 1       # wyprzedzenie prognozy w okresach
 
 
 def granica(h):
-    """Granica remisu z symulacji redakcji (dane/remis.py): ±10% przy wyprzedzeniu 1–2, ±15% przy 3–6, ±20% dalej."""
-    return 0.10 if h <= 2 else 0.15 if h <= 6 else 0.20
+    """Granica remisu z symulacji redakcji (dane/remis.py): ±10% przy wyprzedzeniu 1–2, ±15% przy 3–4, ±20% od 5."""
+    return 0.10 if h <= 2 else 0.15 if h <= 4 else 0.20
 
 
 def granica_f(h):
-    return f'IF({h}<=2,0.1,IF({h}<=6,0.15,0.2))'
+    return f'IF({h}<=2,0.1,IF({h}<=4,0.15,0.2))'
 ALFA = 0.2           # waga ostatniego okresu w wygładzaniu wykładniczym prostym
 
 
@@ -231,8 +231,11 @@ INSTRUKCJA = [
     ('h', 'Jak go wypełnić'),
     ('p', '1. Wpisz wyprzedzenie: o ile okresów naprzód robisz prognozę, z którą zamawiasz albo planujesz produkcję (np. 6, jeśli prognozę na tydzień 20 '
           'robisz po zamknięciu tygodnia 14). Darmowe prognozy znają wtedy tylko sprzedaż, którą Ty znałeś w chwili prognozy.'),
-    ('p', '2. „Wiele indeksów”: wklej indeks, okres, sprzedaż i prognozę dla około 20 indeksów, posortowane według indeksu i okresu, najlepiej 26–52 tygodnie. '
-          'Indeksy wylosuj z listy sprzedaży z roku przed testem, po kilka z grup A, B i C, i nie pomijaj wycofanych.'),
+    ('p', '2. „Wiele indeksów”: wklej cztery kolumny (indeks, okres, sprzedaż, Twoja prognoza na ten okres) dla około 20 indeksów, posortowane według indeksu i okresu, '
+          'najlepiej 26–52 tygodnie. Kody indeksów w tabeli wyników pojawią się same. Indeksy wylosuj z listy sprzedaży z roku przed testem, po kilka z grup A, B i C, '
+          'i nie pomijaj wycofanych.'),
+    ('p', 'Jako sprzedaż wklej to, co prognozujesz: jeśli prognozujesz zamówienia klientów, wklej zamówienia, a nie wysyłki. Okres, w którym towaru zabrakło, zostaw z pustą sprzedażą. '
+          'Arkusz działa też na miesiącach (weź wtedy co najmniej dwa lata) i na sumach: rodzinę wyrobów wklej jako jeden indeks.'),
     ('p', '3. „Jeden indeks”: ten sam test dla jednego indeksu, okres po okresie. Wynik dla jednego indeksu to wskazówka, a nie dowód.'),
     ('p', '4. „Korekty”: jeśli system liczy prognozę, a planista ją poprawia, wklej obie. Arkusz pokaże, czy korekty zmniejszają błąd, osobno w górę i w dół. '
           'Wiersze wielu indeksów możesz wkleić jeden pod drugim: arkusz policzy je razem.'),
@@ -241,13 +244,13 @@ INSTRUKCJA = [
     ('p', '„Twój błąd ÷ błąd naiwnej” poniżej 1 znaczy, że Twoja prognoza myli się mniej niż naiwna. To minimum. Właściwy sprawdzian to '
           '„Twój błąd ÷ błąd lepszej prostej metody”: średniej z czterech okresów albo wygładzania wykładniczego, zależnie od tego, która myli się mniej '
           'dla wszystkich indeksów razem.'),
-    ('p', 'Werdykt pod tabelą „Wiele indeksów” daje jedną z czterech odpowiedzi: gorsza od naiwnej, prosta metoda lepsza, remis albo bije wszystkie darmowe. '
-          'Każda ma w artykule zalecenie, co zrobić dalej.'),
+    ('p', 'Werdykt pod tabelą „Wiele indeksów” daje jedną z czterech odpowiedzi: gorsza od naiwnej, prosta metoda lepsza, remis albo bije wszystkie darmowe, '
+          'razem z zaleceniem, co zrobić dalej. Tym samym arkuszem ocenisz pilotaż systemu: zamiast swojej prognozy wklej prognozę systemu dostawcy.'),
     ('p', 'Wartość dodana prognozy (FVA, forecast value added) to ten sam wynik w procentach: o ile Twoja prognoza zmniejsza błąd darmowej. Wynik ujemny oznacza, że go zwiększa.'),
     ('p', 'Odchylenie pokazuje, czy prognoza średnio zawyża (wynik dodatni) albo zaniża (ujemny) sprzedaż.'),
     ('h', 'Na co uważać'),
     ('p', '• Jeden indeks niczego nie rozstrzyga: w symulacji redakcji dwie równie dobre prognozy porównane na 26 tygodniach różniły się przez sam przypadek '
-          'o 20–30%. Dla 20 indeksów razem przypadek mieścił się zwykle w ±10%, a przy wyprzedzeniu dłuższym niż 2 okresy w ±15–20%. Takie granice remisu stosuje arkusz.'),
+          'o 20–30%. Dla 20 indeksów razem przypadek mieścił się zwykle w ±10% przy wyprzedzeniu 1–2 okresy, w ±15% przy 3–4 i w ±20% przy dłuższym. Takie granice remisu stosuje arkusz.'),
     ('p', '• Gdy Twoja prognoza i prosta metoda są równie dobre, Twoja wygrywa zwykle w 6–14 indeksach na 20. Dopiero wynik spoza tego przedziału coś mówi.'),
     ('p', '• Wygładzanie w tym arkuszu to wersja prosta: nie uwzględnia trendu ani sezonowości. Przy nich użyj też Arkusza prognozy w Excelu (karta Dane). '
           'Do testu ustaw w „Opcjach” „Początek prognozy” przed końcem danych: Excel policzy wtedy prognozę tylko z wcześniejszych danych.'),
@@ -281,7 +284,7 @@ komorka(wm, 'P3', 'Granica remisu (zależy od wyprzedzenia)', gruba=True)
 komorka(wm, 'Q3', f'={granica_f(H_M)}', '0%', formula=True)
 G_M = '$Q$3'
 naglowek(wm, 4, ['Indeks', 'Okres', 'Sprzedaż (sztuki)', 'Twoja prognoza', 'Prognoza naiwna', 'Średnia z 4 okresów', 'Wygładzanie wykładnicze',
-                 'Błąd Twojej', 'Błąd naiwnej', 'Błąd średniej', 'Błąd wygładzania', 'Nr okresu (pomoc.)', 'Poziom wygładzony (pomoc.)'])
+                 'Błąd Twojej', 'Błąd naiwnej', 'Błąd średniej', 'Błąd wygładzania', 'Nr okresu (pomoc.)', 'Poziom wygładzony (pomoc.)', 'Nr indeksu (pomoc.)'])
 C = f'$C$5:$C${OSTATNI_M}'
 M_ = f'$M$5:$M${OSTATNI_M}'
 for i in range(OSTATNI_M - 4):
@@ -294,6 +297,7 @@ for i in range(OSTATNI_M - 4):
         wm.cell(row=r, column=4, value=pr)
     k = f'(ROW()-4-{H_M})'
     wm.cell(row=r, column=12, value=f'=IF(A{r}="","",1)' if r == 5 else f'=IF(A{r}="","",IF(A{r}=A{r - 1},L{r - 1}+1,1))')
+    wm.cell(row=r, column=14, value=f'=IF(A{r}="","",1)' if r == 5 else f'=IF(A{r}="","",IF(L{r}=1,N{r - 1}+1,N{r - 1}))')
     wm.cell(row=r, column=13, value=(f'=IF(A{r}="","",IF(ISNUMBER(C{r}),C{r},""))' if r == 5 else
             f'=IF(A{r}="","",IF(L{r}=1,IF(ISNUMBER(C{r}),C{r},""),IF(ISNUMBER(C{r}),IF(ISNUMBER(M{r - 1}),{A_M}*C{r}+(1-{A_M})*M{r - 1},C{r}),M{r - 1})))'))
     wm.cell(row=r, column=5, value=f'=IF(A{r}="","",IF(L{r}-{H_M}<1,"",IF(ISNUMBER(INDEX({C},{k})),INDEX({C},{k}),"")))')
@@ -304,17 +308,16 @@ for i in range(OSTATNI_M - 4):
     wm.cell(row=r, column=9, value=f'=IF(ISNUMBER(H{r}),ABS(E{r}-C{r}),"")')
     wm.cell(row=r, column=10, value=f'=IF(ISNUMBER(H{r}),ABS(F{r}-C{r}),"")')
     wm.cell(row=r, column=11, value=f'=IF(ISNUMBER(H{r}),ABS(G{r}-C{r}),"")')
-    wiersz_danych(wm, r, 13, 5)
+    wiersz_danych(wm, r, 14, 5)
     for kol in (6, 7, 10, 11, 13):
         wm.cell(row=r, column=kol).number_format = LICZBA1
-naglowek(wm, 4, ['Indeks (wpisz kod)', 'Porównane okresy', 'Twój błąd ÷ błąd naiwnej', 'Twój błąd ÷ lepsza prosta (łącznie)',
+naglowek(wm, 4, ['Indeks (z kolumny A, do 50)', 'Porównane okresy', 'Twój błąd ÷ błąd naiwnej', 'Twój błąd ÷ lepsza prosta (łącznie)',
                  'Wskazówka (jeden indeks to nie dowód)'], od=16)
 ZM = lambda kol: f'${kol}$5:${kol}${OSTATNI_M}'
 SREDNIA_LEPSZA = f'SUM({ZM("J")})<=SUM({ZM("K")})'
 for i in range(50):
     r = 5 + i
-    if i < 3:
-        wm.cell(row=r, column=16, value=['IND-001', 'IND-002', 'IND-003'][i])
+    wm.cell(row=r, column=16, value=f'=IFERROR(INDEX({ZM("A")},MATCH({i + 1},{ZM("N")},0)),"")')
     wm.cell(row=r, column=17, value=f'=IF(P{r}="","",COUNTIFS({ZM("A")},P{r},{ZM("H")},">=0"))')
     wm.cell(row=r, column=18, value=f'=IF(OR(P{r}="",Q{r}=0),"",IFERROR(SUMIF({ZM("A")},P{r},{ZM("H")})/SUMIF({ZM("A")},P{r},{ZM("I")}),""))')
     wm.cell(row=r, column=19, value=(f'=IF(OR(P{r}="",Q{r}=0),"",IFERROR(SUMIF({ZM("A")},P{r},{ZM("H")})/'
@@ -352,10 +355,10 @@ wm[f'P{r + 5}'].font = Font(name=FONT, italic=True, size=9, color=DRUGI)
 wm[f'P{r + 5}'].alignment = Alignment(wrap_text=True, vertical='top')
 rn, rp = RAZEM['rn'], RAZEM['rp']
 WERDYKTY_M = {
-    'gorsza od naiwnej': 'Gorsza od naiwnej: problem w procesie, nie w algorytmie. Sprawdź odchylenie i korekty, zwłaszcza małe i w górę.',
-    'prosta lepsza': 'Prosta metoda dałaby mniejszy błąd za darmo. Przejdź na wygładzanie (przy trendzie i sezonowości w wersji, która je uwzględnia) i mierz dalej.',
-    'remis': 'Remis z prostymi metodami: Twój proces nie dodaje wartości ponad darmową prognozę. Zmierz, czy korekty pomagają, i uprość proces tam, gdzie nie pomagają.',
-    'bije wszystkie': 'Bije wszystkie darmowe prognozy: proces działa, nowy system musi pobić Ciebie. Pilotaż ma sens przy setkach powiązanych indeksów i danych o cenach, promocjach i wydarzeniach.',
+    'gorsza od naiwnej': 'Gorsza od naiwnej: problem w procesie, nie w algorytmie. Sprawdź odchylenie i korekty, zwłaszcza małe i w górę. Z zakupem systemu poczekaj.',
+    'prosta lepsza': 'Prosta metoda dałaby mniejszy błąd za darmo. Przejdź na wygładzanie (przy trendzie i sezonowości w wersji, która je uwzględnia) i mierz dalej. Z zakupem systemu poczekaj.',
+    'remis': 'Remis z prostymi metodami: Twój proces nie dodaje wartości ponad darmową prognozę. Sprawdź korekty i uprość proces. System musi w pilotażu wyraźnie pobić proste metody.',
+    'bije wszystkie': 'Bije wszystkie darmowe prognozy: proces działa. Nowy system musi w pilotażu wyraźnie pobić Ciebie; największe szanse ma przy setkach powiązanych indeksów i danych o cenach, promocjach i wydarzeniach.',
 }
 wm[f'P{r + 8}'] = 'Werdykt dla wszystkich indeksów razem'
 wm[f'P{r + 8}'].font = Font(name=FONT, bold=True, size=11, color=ATRAMENT)
@@ -365,15 +368,15 @@ wm[WER_M] = (
     f'IF({rn}>1+{G_M},"{WERDYKTY_M["gorsza od naiwnej"]}",IF({rp}>1+{G_M},"{WERDYKTY_M["prosta lepsza"]}",'
     f'IF(AND({rn}<1-{G_M},{rp}<1-{G_M}),"{WERDYKTY_M["bije wszystkie"]}","{WERDYKTY_M["remis"]}"))))'
 )
-wm.merge_cells(f'P{r + 9}:T{r + 11}')
+wm.merge_cells(f'P{r + 9}:T{r + 12}')
 wm[WER_M].font = Font(name=FONT, bold=True, size=11, color=AKCENT)
 wm[WER_M].alignment = Alignment(wrap_text=True, vertical='top')
-wm[f'P{r + 12}'] = ('Remis to różnica w granicach z komórki Q3: ±10% przy wyprzedzeniu 1–2 okresy, ±15% przy 3–6, ±20% przy dłuższym. '
+wm[f'P{r + 13}'] = ('Remis to różnica w granicach z komórki Q3: ±10% przy wyprzedzeniu 1–2 okresy, ±15% przy 3–4, ±20% przy dłuższym. '
                     'W symulacji redakcji dwie równie dobre prognozy dla 20 indeksów po 26 okresów różniły się przez przypadek zwykle w tych granicach.')
-wm.merge_cells(f'P{r + 12}:T{r + 13}')
-wm[f'P{r + 12}'].font = Font(name=FONT, italic=True, size=9, color=DRUGI)
-wm[f'P{r + 12}'].alignment = Alignment(wrap_text=True, vertical='top')
-for kol, sz in zip('ABCDEFGHIJKLMNOPQRST', [10, 7, 10, 10, 10, 10, 11, 9, 9, 9, 10, 9, 11, 3, 3, 30, 11, 12, 12, 18]):
+wm.merge_cells(f'P{r + 13}:T{r + 14}')
+wm[f'P{r + 13}'].font = Font(name=FONT, italic=True, size=9, color=DRUGI)
+wm[f'P{r + 13}'].alignment = Alignment(wrap_text=True, vertical='top')
+for kol, sz in zip('ABCDEFGHIJKLMNOPQRST', [10, 7, 10, 10, 10, 10, 11, 9, 9, 9, 10, 9, 11, 9, 3, 30, 11, 12, 12, 18]):
     wm.column_dimensions[kol].width = sz
 wm.column_dimensions['P'].width = 44
 wm.freeze_panes = 'A5'
@@ -509,7 +512,7 @@ for arkusz in (ins, wm, ws, wk):
     arkusz.sheet_properties.pageSetUpPr.fitToPage = True
     arkusz.page_margins.left = arkusz.page_margins.right = 0.4
 ins.page_setup.fitToHeight = 1
-wm.print_area = 'A1:T71'
+wm.print_area = 'A1:T72'
 ws.print_area = 'A1:O40'
 wk.print_area = 'A1:K40'
 

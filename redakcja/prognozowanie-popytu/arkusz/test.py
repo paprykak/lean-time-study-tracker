@@ -79,12 +79,12 @@ with tempfile.TemporaryDirectory() as tmp:
     kopia.parent.mkdir()
     wb3 = lw(PLIK)
     wb3['Jeden indeks']['O1'] = 3
-    wb3['Wiele indeksów']['Q1'] = 7
+    wb3['Wiele indeksów']['Q1'] = 5
     wb3.save(kopia)
     wynik3 = przelicz(kopia, str(Path(tmp) / 'h3wynik'))
     j3 = wynik3['Jeden indeks']
     sprawdz('granica remisu (jeden, h=3)', j3['O3'].value, 0.15)
-    sprawdz('granica remisu (wiele, h=7)', wynik3['Wiele indeksów']['Q3'].value, 0.20)
+    sprawdz('granica remisu (wiele, h=5)', wynik3['Wiele indeksów']['Q3'].value, 0.20)
     sz, tw = oczek['sprzedaz'], oczek['twoja']
 
     def poziomy(s, alfa=0.2):

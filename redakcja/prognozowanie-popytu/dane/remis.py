@@ -2,7 +2,7 @@
 # dwóch prognoz o tej samej trafności, gdy porównujemy je na n okresach. Błędy normalne, korelacja rho
 # (prognozy zwykle mylą się podobnie, bo widzą te same dane). Uruchom: python3 redakcja/prognozowanie-popytu/dane/remis.py
 # Część 2 (numpy): 20 indeksów różnej wielkości liczonych razem, jak w arkuszu „Wiele indeksów”, z wyprzedzeniem h.
-# Uzasadnia granice remisu w arkuszu (±10% przy h 1–2, ±15% przy h 3–6, ±20% dalej) i liczbę wygranych indeksów.
+# Uzasadnia granice remisu w arkuszu (±10% przy h 1–2, ±15% przy h 3–4, ±20% od 5) i liczbę wygranych indeksów.
 import json
 import math
 import random
