@@ -41,7 +41,7 @@ zrodla:
     adres: "https://doi.org/10.1016/j.ijforecast.2021.07.006"
     rodzaj: "Badanie recenzowane"
     dostep: 2026-11-07
-  - opis: "Petropoulos F. i in. (2022), Forecasting: theory and practice, International Journal of Forecasting, 38(3), 705–871, rozdz. 2.12, 3.1 i 3.2.3."
+  - opis: "Petropoulos F. i in. (2022), Forecasting: theory and practice, International Journal of Forecasting, 38(3), 705–871, rozdz. 2.12, 3.1, 3.2.2 i 3.2.3."
     adres: "https://doi.org/10.1016/j.ijforecast.2021.11.001"
     rodzaj: "Przegląd lub metaanaliza"
     dostep: 2026-11-07
