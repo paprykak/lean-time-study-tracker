@@ -195,6 +195,7 @@ oczekiwane_korekty = {
 }
 oczekiwane_korekty['po_do_przed'] = oczekiwane_korekty['mae_po'] / oczekiwane_korekty['mae_przed']
 oczekiwane_wiele, sumy = {}, {}
+odch_licznik = odch_mianownik = 0
 for indeks in ['IND-001', 'IND-002', 'IND-003']:
     w = [x for x in wiele if x[0] == indeks]
     sz = [x[2] for x in w]
@@ -205,6 +206,8 @@ for indeks in ['IND-001', 'IND-002', 'IND-003']:
     bw = sum(abs(darmowe(sz, t)[2] - sz[t]) for t in t_idx)
     oczekiwane_wiele[indeks] = {'okresy': len(t_idx), 'twoja_do_naiwnej': bt / bn}
     sumy[indeks] = (bt, bn, bs, bw)
+    odch_licznik += sum(w[t][3] - sz[t] for t in t_idx)
+    odch_mianownik += sum(sz[t] for t in t_idx)
 T_, N_, S_, W_ = (sum(v[k] for v in sumy.values()) for k in range(4))
 srednia_lepsza = S_ <= W_
 for indeks, (bt, bn, bs, bw) in sumy.items():
@@ -218,6 +221,7 @@ oczekiwane_razem = {
     'kategoria': ('gorsza od naiwnej' if rn_l > 1 + g else 'prosta lepsza' if rp_l > 1 + g
                   else 'bije wszystkie' if rn_l < 1 - g and rp_l < 1 - g else 'remis'),
     'wstepny': sum(1 for v in oczekiwane_wiele.values() if v['okresy'] >= PEWNY_OKRESY) < PEWNY_INDEKSY,
+    'odchylenie': odch_licznik / odch_mianownik,
 }
 
 # ---------- Skoroszyt ----------
@@ -344,7 +348,7 @@ for i in range(50):
 r = 57
 wm[f'P{r}'] = 'Wszystkie indeksy razem'
 wm[f'P{r}'].font = Font(name=FONT, bold=True, size=11, color=ATRAMENT)
-RAZEM = {'rn': f'R{r + 1}', 'rp': f'R{r + 2}', 'lepsza': f'R{r + 3}', 'wygrane': f'R{r + 4}'}
+RAZEM = {'rn': f'R{r + 1}', 'rp': f'R{r + 2}', 'lepsza': f'R{r + 3}', 'wygrane': f'R{r + 4}', 'od': f'R{r + 5}'}
 komorka(wm, f'P{r + 1}', 'Twój błąd ÷ błąd naiwnej (suma błędów)')
 komorka(wm, RAZEM['rn'], f'=IFERROR(SUM(H5:H{OSTATNI_M})/SUM(I5:I{OSTATNI_M}),"")', '0.00', formula=True)
 komorka(wm, f'P{r + 2}', 'Twój błąd ÷ błąd lepszej prostej metody (suma błędów)')
@@ -353,14 +357,17 @@ komorka(wm, f'P{r + 3}', 'Lepsza prosta metoda dla wszystkich indeksów razem')
 komorka(wm, RAZEM['lepsza'], f'=IF(COUNT(H5:H{OSTATNI_M})=0,"",IF({SREDNIA_LEPSZA},"średnia z 4 okresów","wygładzanie"))', '@', formula=True)
 komorka(wm, f'P{r + 4}', 'Indeksy, w których Twoja prognoza myli się mniej niż ta metoda')
 komorka(wm, RAZEM['wygrane'], '=COUNTIF(S5:S54,"<1")&" z "&COUNT(S5:S54)', '@', formula=True)
-for rr in range(r + 1, r + 5):
+komorka(wm, f'P{r + 5}', 'Odchylenie Twojej prognozy (+ zawyża, − zaniża), % sprzedaży')
+komorka(wm, RAZEM['od'], f'=IFERROR(SUMPRODUCT(ISNUMBER(H5:H{OSTATNI_M})*(D5:D{OSTATNI_M}-C5:C{OSTATNI_M}))/SUMPRODUCT(ISNUMBER(H5:H{OSTATNI_M})*C5:C{OSTATNI_M}),"")',
+        '0.0%;−0.0%', formula=True)
+for rr in range(r + 1, r + 6):
     wm.merge_cells(f'P{rr}:Q{rr}')
     wm.merge_cells(f'R{rr}:S{rr}')
-wm[f'P{r + 5}'] = ('Gdy prognozy są równie dobre, Twoja wygrywa zwykle w 6–14 indeksach na 20 (symulacja redakcji). '
+wm[f'P{r + 6}'] = ('Gdy prognozy są równie dobre, Twoja wygrywa zwykle w 6–14 indeksach na 20 (symulacja redakcji). '
                    'Suma błędów waży indeksy według wielkości sprzedaży: szybko rotujące indeksy przeważają.')
-wm.merge_cells(f'P{r + 5}:T{r + 6}')
-wm[f'P{r + 5}'].font = Font(name=FONT, italic=True, size=9, color=DRUGI)
-wm[f'P{r + 5}'].alignment = Alignment(wrap_text=True, vertical='top')
+wm.merge_cells(f'P{r + 6}:T{r + 7}')
+wm[f'P{r + 6}'].font = Font(name=FONT, italic=True, size=9, color=DRUGI)
+wm[f'P{r + 6}'].alignment = Alignment(wrap_text=True, vertical='top')
 rn, rp = RAZEM['rn'], RAZEM['rp']
 WERDYKTY_M = {
     'gorsza od naiwnej': 'Gorsza od naiwnej: problem w procesie, nie w algorytmie. Sprawdź odchylenie i korekty, zwłaszcza małe i w górę. Z zakupem systemu poczekaj.',
@@ -368,23 +375,23 @@ WERDYKTY_M = {
     'remis': 'Remis z prostymi metodami: Twój proces nie dodaje wartości ponad darmową prognozę. Sprawdź korekty i uprość proces. System musi w pilotażu wyraźnie pobić proste metody.',
     'bije wszystkie': 'Bije wszystkie darmowe prognozy: proces działa. Nowy system musi w pilotażu wyraźnie pobić Ciebie; największe szanse ma przy setkach powiązanych indeksów i danych o cenach, promocjach i wydarzeniach.',
 }
-wm[f'P{r + 8}'] = 'Werdykt dla wszystkich indeksów razem'
-wm[f'P{r + 8}'].font = Font(name=FONT, bold=True, size=11, color=ATRAMENT)
-WER_M = f'P{r + 9}'
+wm[f'P{r + 9}'] = 'Werdykt dla wszystkich indeksów razem'
+wm[f'P{r + 9}'].font = Font(name=FONT, bold=True, size=11, color=ATRAMENT)
+WER_M = f'P{r + 10}'
 wm[WER_M] = (
     f'=IF(COUNT(H5:H{OSTATNI_M})<8,"Za mało danych: porównaj około 20 indeksów po 26 okresów.",'
     f'IF(COUNTIF(Q5:Q54,">={PEWNY_OKRESY}")>={PEWNY_INDEKSY},"","{WSTEPNY}")&'
     f'IF({rn}>1+{G_M},"{WERDYKTY_M["gorsza od naiwnej"]}",IF({rp}>1+{G_M},"{WERDYKTY_M["prosta lepsza"]}",'
     f'IF(AND({rn}<1-{G_M},{rp}<1-{G_M}),"{WERDYKTY_M["bije wszystkie"]}","{WERDYKTY_M["remis"]}"))))'
 )
-wm.merge_cells(f'P{r + 9}:T{r + 12}')
+wm.merge_cells(f'P{r + 10}:T{r + 13}')
 wm[WER_M].font = Font(name=FONT, bold=True, size=11, color=AKCENT)
 wm[WER_M].alignment = Alignment(wrap_text=True, vertical='top')
-wm[f'P{r + 13}'] = ('Remis to różnica w granicach z komórki Q3: ±10% przy wyprzedzeniu 1–2 okresy, ±15% przy 3–4, ±20% przy dłuższym (symulacja sprawdzała do 8 okresów). '
+wm[f'P{r + 14}'] = ('Remis to różnica w granicach z komórki Q3: ±10% przy wyprzedzeniu 1–2 okresy, ±15% przy 3–4, ±20% przy dłuższym (symulacja sprawdzała do 8 okresów). '
                     'W symulacji redakcji dwie równie dobre prognozy dla 20 indeksów po 26 okresów różniły się przez przypadek zwykle w tych granicach.')
-wm.merge_cells(f'P{r + 13}:T{r + 14}')
-wm[f'P{r + 13}'].font = Font(name=FONT, italic=True, size=9, color=DRUGI)
-wm[f'P{r + 13}'].alignment = Alignment(wrap_text=True, vertical='top')
+wm.merge_cells(f'P{r + 14}:T{r + 15}')
+wm[f'P{r + 14}'].font = Font(name=FONT, italic=True, size=9, color=DRUGI)
+wm[f'P{r + 14}'].alignment = Alignment(wrap_text=True, vertical='top')
 for kol, sz in zip('ABCDEFGHIJKLMNOPQRST', [10, 7, 10, 10, 10, 10, 11, 9, 9, 9, 10, 9, 11, 9, 3, 30, 11, 12, 12, 18]):
     wm.column_dimensions[kol].width = sz
 wm.column_dimensions['P'].width = 44
@@ -521,7 +528,7 @@ for arkusz in (ins, wm, ws, wk):
     arkusz.sheet_properties.pageSetUpPr.fitToPage = True
     arkusz.page_margins.left = arkusz.page_margins.right = 0.4
 ins.page_setup.fitToHeight = 1
-wm.print_area = 'A1:T72'
+wm.print_area = 'A1:T73'
 ws.print_area = 'A1:O40'
 wk.print_area = 'A1:K40'
 

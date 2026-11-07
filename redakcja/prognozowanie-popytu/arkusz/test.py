@@ -56,6 +56,7 @@ with tempfile.TemporaryDirectory() as tmp:
     o, a = oczek['razem'], A['razem']
     sprawdz('razem: Twój ÷ naiwna', w[a['rn']].value, o['twoja_do_naiwnej'])
     sprawdz('razem: Twój ÷ lepsza prosta', w[a['rp']].value, o['twoja_do_lepszej_prostej'])
+    sprawdz('razem: odchylenie', w[a['od']].value, o['odchylenie'])
     sprawdz('granica remisu (wiele, h=1)', w['Q3'].value, 0.10)
     sprawdz('granica remisu (jeden, h=1)', j['O3'].value, 0.10)
     for opis, adres, oczekiwany in [('razem: lepsza prosta', a['lepsza'], o['lepsza_prosta']), ('razem: wygrane', a['wygrane'], o['wygrane']),

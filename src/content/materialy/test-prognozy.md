@@ -17,7 +17,7 @@ Prognoza, za którą płacisz czasem planisty albo licencją systemu, powinna my
 
 ## Co jest w arkuszu
 
-- **Wiele indeksów:** dane w kolumnach indeks, okres, sprzedaż, prognoza dla około 20 indeksów. Wynik dla każdego indeksu i dla wszystkich razem, liczba indeksów, w których Twoja prognoza bije lepszą prostą metodę, oraz werdykt z zaleceniem: gorsza od naiwnej, prosta metoda lepsza, remis albo bije wszystkie darmowe. Granicę remisu (±10–20%) arkusz dobiera do wyprzedzenia.
+- **Wiele indeksów:** dane w kolumnach indeks, okres, sprzedaż, prognoza dla około 20 indeksów. Wynik dla każdego indeksu i dla wszystkich razem, liczba indeksów, w których Twoja prognoza bije lepszą prostą metodę, oraz werdykt z zaleceniem: gorsza od naiwnej, prosta metoda lepsza, remis albo bije wszystkie darmowe. Granicę remisu (±10–20%) arkusz dobiera do wyprzedzenia, a pewny werdykt daje od 20 indeksów po 26 porównanych tygodni (krótszą próbę oznacza jako wynik wstępny). Pokazuje też, czy prognoza systematycznie zawyża albo zaniża sprzedaż.
 - **Jeden indeks:** ten sam test dla jednego indeksu, z błędem każdej prognozy w sztukach, wartością dodaną (FVA) i odchyleniem, czyli tym, czy prognoza średnio zawyża albo zaniża sprzedaż.
 - **Korekty:** prognoza systemu i prognoza po korekcie planisty. Arkusz pokazuje, czy korekty zmniejszają błąd, osobno w górę i w dół.
 

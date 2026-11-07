@@ -29,9 +29,10 @@
    "rn": "R58",
    "rp": "R59",
    "lepsza": "R60",
-   "wygrane": "R61"
+   "wygrane": "R61",
+   "od": "R62"
   },
-  "razem_werdykt": "P66"
+  "razem_werdykt": "P67"
  },
  "jeden_indeks": {
   "okresy": 26,
@@ -72,7 +73,8 @@
   "lepsza_prosta": "wygładzanie",
   "wygrane": "0 z 3",
   "kategoria": "gorsza od naiwnej",
-  "wstepny": true
+  "wstepny": true,
+  "odchylenie": 0.05669546436285097
  },
  "werdykty_razem": {
   "gorsza od naiwnej": "Gorsza od naiwnej: problem w procesie, nie w algorytmie. Sprawdź odchylenie i korekty, zwłaszcza małe i w górę. Z zakupem systemu poczekaj.",
