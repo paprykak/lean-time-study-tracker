@@ -1,0 +1,38 @@
+{
+  "gus": {
+    "opis": "GUS (2026), Popyt na pracę w 2 kwartale 2026 r., informacja sygnalna, 9 września 2026.",
+    "adres": "https://stat.gov.pl/obszary-tematyczne/rynek-pracy/popyt-na-prace/popyt-na-prace-w-2-kwartale-2026-r-,2,63.html",
+    "rodzaj": "Dane publiczne",
+    "dostep": "2026-11-07"
+  },
+  "kleiza": {
+    "opis": "Kleiza V., Tilindis J. (2014), Log-linear learning model for predicting a steady-state manual assembly time, Nonlinear Analysis: Modelling and Control, 19(4), 592–601, tabele 1 i 3.",
+    "adres": "https://doi.org/10.15388/NA.2014.4.5",
+    "rodzaj": "Badanie recenzowane",
+    "dostep": "2026-11-07"
+  },
+  "peltokorpi": {
+    "opis": "Peltokorpi J., Jaber M. Y. (2022), Interference-adjusted power learning curve model with forgetting, International Journal of Industrial Ergonomics, 88, 103257.",
+    "adres": "https://doi.org/10.1016/j.ergon.2021.103257",
+    "rodzaj": "Badanie recenzowane",
+    "dostep": "2026-11-07"
+  },
+  "mishina": {
+    "opis": "Mishina K. (1999), Learning by New Experiences: Revisiting the Flying Fortress Learning Curve, w: Lamoreaux N. R., Raff D. M. G., Temin P. (red.), Learning by Doing in Markets, Firms, and Countries, University of Chicago Press, s. 145–184.",
+    "adres": "https://www.nber.org/chapters/c10232",
+    "rodzaj": "Książka",
+    "dostep": "2026-11-07"
+  },
+  "twi": {
+    "opis": "War Manpower Commission, Bureau of Training, Training Within Industry Service (1945), The Training Within Industry Report 1940–1945, Washington: U.S. Government Printing Office.",
+    "adres": "https://www.govinfo.gov/content/pkg/GOVPUB-PR32_5200-00275cf1fd80a1d51995ae716fd38f34/html/GOVPUB-PR32_5200-00275cf1fd80a1d51995ae716fd38f34.htm",
+    "rodzaj": "Raport instytucji",
+    "dostep": "2026-11-07"
+  },
+  "bianchi": {
+    "opis": "Bianchi N., Giorcelli M. (2021), The Dynamics and Spillovers of Management Interventions: Evidence from the Training Within Industry Program, NBER Working Paper 28833.",
+    "adres": "https://doi.org/10.3386/w28833",
+    "rodzaj": "Inne",
+    "dostep": "2026-11-07"
+  }
+}
