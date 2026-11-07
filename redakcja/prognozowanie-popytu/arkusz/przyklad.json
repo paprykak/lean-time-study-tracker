@@ -71,7 +71,8 @@
   "twoja_do_lepszej_prostej": 1.3978672914473478,
   "lepsza_prosta": "wygładzanie",
   "wygrane": "0 z 3",
-  "kategoria": "gorsza od naiwnej"
+  "kategoria": "gorsza od naiwnej",
+  "wstepny": true
  },
  "werdykty_razem": {
   "gorsza od naiwnej": "Gorsza od naiwnej: problem w procesie, nie w algorytmie. Sprawdź odchylenie i korekty, zwłaszcza małe i w górę. Z zakupem systemu poczekaj.",
@@ -79,6 +80,7 @@
   "remis": "Remis z prostymi metodami: Twój proces nie dodaje wartości ponad darmową prognozę. Sprawdź korekty i uprość proces. System musi w pilotażu wyraźnie pobić proste metody.",
   "bije wszystkie": "Bije wszystkie darmowe prognozy: proces działa. Nowy system musi w pilotażu wyraźnie pobić Ciebie; największe szanse ma przy setkach powiązanych indeksów i danych o cenach, promocjach i wydarzeniach."
  },
+ "wstepny": "Wynik wstępny (pewny werdykt od 20 indeksów po 26 porównanych okresów): ",
  "sprzedaz": [
   104,
   113,

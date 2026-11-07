@@ -31,6 +31,8 @@ OSTATNI = 204        # ostatni wiersz danych w arkuszach jednego indeksu (200 ok
 OSTATNI_M = 2004     # ostatni wiersz danych w arkuszu wielu indeksów
 REMIS_K = 0.10       # granica remisu w arkuszu „Korekty”: umowna, ta sama prognoza przed korektą i po niej
 H_DOMYSLNE = 1       # wyprzedzenie prognozy w okresach
+PEWNY_INDEKSY, PEWNY_OKRESY = 20, 26   # próba, dla której symulacja wyznaczyła granice remisu (dane/remis.py, część 3)
+WSTEPNY = 'Wynik wstępny (pewny werdykt od 20 indeksów po 26 porównanych okresów): '
 
 
 def granica(h):
@@ -215,6 +217,7 @@ oczekiwane_razem = {
     'wygrane': f"{sum(1 for v in oczekiwane_wiele.values() if v['twoja_do_lepszej_prostej'] < 1)} z {len(oczekiwane_wiele)}",
     'kategoria': ('gorsza od naiwnej' if rn_l > 1 + g else 'prosta lepsza' if rp_l > 1 + g
                   else 'bije wszystkie' if rn_l < 1 - g and rp_l < 1 - g else 'remis'),
+    'wstepny': sum(1 for v in oczekiwane_wiele.values() if v['okresy'] >= PEWNY_OKRESY) < PEWNY_INDEKSY,
 }
 
 # ---------- Skoroszyt ----------
@@ -234,8 +237,13 @@ INSTRUKCJA = [
     ('p', '2. „Wiele indeksów”: wklej cztery kolumny (indeks, okres, sprzedaż, Twoja prognoza na ten okres) dla około 20 indeksów, posortowane według indeksu i okresu, '
           'najlepiej 26–52 tygodnie. Kody indeksów w tabeli wyników pojawią się same. Indeksy wylosuj z listy sprzedaży z roku przed testem, po kilka z grup A, B i C, '
           'i nie pomijaj wycofanych.'),
+    ('p', 'Prognoza to wersja, którą miałeś tyle okresów wcześniej, ile wynosi wyprzedzenie, a nie ostatnia poprawka. Jeśli ERP trzyma tylko ostatnią wersję, '
+          'zacznij co tydzień zapisywać kopię prognoz. Zbierz 35–52 tygodnie: pierwsze tygodnie każdego indeksu służą tylko darmowym prognozom, a pewny werdykt '
+          'wymaga 20 indeksów po 26 porównanych tygodni (krótszą próbę arkusz oznaczy jako wynik wstępny).'),
     ('p', 'Jako sprzedaż wklej to, co prognozujesz: jeśli prognozujesz zamówienia klientów, wklej zamówienia, a nie wysyłki. Okres, w którym towaru zabrakło, zostaw z pustą sprzedażą (wypadnie z porównania razem z okresami, których prognozy by go użyły, więc przy częstych brakach okresów zostanie mało). '
-          'Arkusz działa też na miesiącach (weź wtedy co najmniej dwa lata) i na sumach: rodzinę wyrobów wklej jako jeden indeks.'),
+          'Arkusz działa też na miesiącach i na sumach: rodzinę wyrobów wklej jako jeden indeks (kilka rodzin to jednak za mało na pewny werdykt).'),
+    ('p', 'Arkusz sumuje błędy w sztukach, więc o wyniku łącznym decydują indeksy sprzedawane w największych ilościach. Gdy indeksy mają bardzo różną wartość, '
+          'wpisz sprzedaż i prognozę w złotych (ilość razy koszt jednostkowy). Prognozę klienta sprawdzisz w kopii arkusza: wklej ją zamiast swojej.'),
     ('p', '3. „Jeden indeks”: ten sam test dla jednego indeksu, okres po okresie. Wynik dla jednego indeksu to wskazówka, a nie dowód.'),
     ('p', '4. „Korekty”: jeśli system liczy prognozę, a planista ją poprawia, wklej obie. Arkusz pokaże, czy korekty zmniejszają błąd, osobno w górę i w dół. '
           'Wiersze wielu indeksów możesz wkleić jeden pod drugim: arkusz policzy je razem.'),
@@ -283,7 +291,7 @@ A_M = parametr(wm, 2, 'P', 'Waga ostatniego okresu w wygładzaniu (α, 0,1–0,3
 komorka(wm, 'P3', 'Granica remisu (zależy od wyprzedzenia)', gruba=True)
 komorka(wm, 'Q3', f'={granica_f(H_M)}', '0%', formula=True)
 G_M = '$Q$3'
-naglowek(wm, 4, ['Indeks', 'Okres', 'Sprzedaż (sztuki)', 'Twoja prognoza', 'Prognoza naiwna', 'Średnia z 4 okresów', 'Wygładzanie wykładnicze',
+naglowek(wm, 4, ['Indeks', 'Okres', 'Sprzedaż (sztuki albo zł)', 'Twoja prognoza', 'Prognoza naiwna', 'Średnia z 4 okresów', 'Wygładzanie wykładnicze',
                  'Błąd Twojej', 'Błąd naiwnej', 'Błąd średniej', 'Błąd wygładzania', 'Nr okresu (pomoc.)', 'Poziom wygładzony (pomoc.)', 'Nr indeksu (pomoc.)'])
 C = f'$C$5:$C${OSTATNI_M}'
 M_ = f'$M$5:$M${OSTATNI_M}'
@@ -364,7 +372,8 @@ wm[f'P{r + 8}'] = 'Werdykt dla wszystkich indeksów razem'
 wm[f'P{r + 8}'].font = Font(name=FONT, bold=True, size=11, color=ATRAMENT)
 WER_M = f'P{r + 9}'
 wm[WER_M] = (
-    f'=IF(COUNT(H5:H{OSTATNI_M})<8,"Za mało danych: porównaj około 20 indeksów po 26–52 okresy.",'
+    f'=IF(COUNT(H5:H{OSTATNI_M})<8,"Za mało danych: porównaj około 20 indeksów po 26 okresów.",'
+    f'IF(COUNTIF(Q5:Q54,">={PEWNY_OKRESY}")>={PEWNY_INDEKSY},"","{WSTEPNY}")&'
     f'IF({rn}>1+{G_M},"{WERDYKTY_M["gorsza od naiwnej"]}",IF({rp}>1+{G_M},"{WERDYKTY_M["prosta lepsza"]}",'
     f'IF(AND({rn}<1-{G_M},{rp}<1-{G_M}),"{WERDYKTY_M["bije wszystkie"]}","{WERDYKTY_M["remis"]}"))))'
 )
@@ -525,7 +534,7 @@ wb.save(WYNIK)
 DANE.write_text(json.dumps({
     'adresy': {'jeden': adr, 'jeden_werdykt': wer_j, 'korekty': adr_k, 'korekty_werdykt': wer_k, 'razem': RAZEM, 'razem_werdykt': WER_M},
     'jeden_indeks': oczekiwane_jeden, 'korekty': oczekiwane_korekty, 'wiele': oczekiwane_wiele, 'razem': oczekiwane_razem,
-    'werdykty_razem': WERDYKTY_M,
+    'werdykty_razem': WERDYKTY_M, 'wstepny': WSTEPNY,
     'sprzedaz': sprzedaz, 'system': system, 'twoja': twoja,
 }, ensure_ascii=False, indent=1) + '\n', encoding='utf8')
 print(f'zapisano {WYNIK.relative_to(KORZEN)}')

@@ -3,6 +3,7 @@
 # (prognozy zwykle mylą się podobnie, bo widzą te same dane). Uruchom: python3 redakcja/prognozowanie-popytu/dane/remis.py
 # Część 2 (numpy): 20 indeksów różnej wielkości liczonych razem, jak w arkuszu „Wiele indeksów”, z wyprzedzeniem h.
 # Uzasadnia granice remisu w arkuszu (±10% przy h 1–2, ±15% przy h 3–4, ±20% od 5) i liczbę wygranych indeksów.
+# Część 3: przy jakiej próbie werdykt jest pełny (20 indeksów po 26 porównanych okresów), a kiedy tylko wstępny.
 import json
 import math
 import random
@@ -72,4 +73,29 @@ for rho, rho_bc in ((0.5, 0.8), (0.9, 0.95)):
     for h in (1, 3, 6):
         wynik[f'wiele_beta1.0_h{h}_rho{rho}'] = w = wiele(1.0, h, rho, rho_bc)
         print('wiele', 1.0, h, rho, w['twoja_do_sredniej_przedzial_90proc'])
+# ---------- Część 3: mniejsze próby (ile danych potrzeba do pełnego werdyktu w arkuszu) ----------
+# Ten sam model co w części 2; liczymy, jak często dwie równie dobre prognozy dostają werdykt inny niż remis
+# (Twoja ÷ lepsza z dwóch prostych poza granicą arkusza: ±10% przy h 1–2, ±15% przy 3–4, ±20% od 5).
+def proba(rozmiary, T, beta, h, rho=0.7, rho_bc=0.9, R=4000):
+    roz = np.array(rozmiary, dtype=float)
+    k = len(roz)
+    kor = np.array([[1, rho, rho], [rho, 1, rho_bc], [rho, rho_bc, 1]])
+    z = rng.standard_normal((R, k, T + h - 1, 3)) @ np.linalg.cholesky(kor).T
+    c = np.cumsum(np.concatenate([np.zeros((R, k, 1, 3)), z], axis=2), axis=2)
+    e = (c[:, :, h:, :] - c[:, :, :-h, :]) / np.sqrt(h) * (roz ** beta)[None, :, None, None]
+    S = np.abs(e).sum(axis=2).sum(axis=1)
+    rb = S[:, 0] / np.minimum(S[:, 1], S[:, 2])
+    g = 0.10 if h <= 2 else 0.15 if h <= 4 else 0.20
+    return {'przedzial_90proc': [round(float(np.quantile(rb, .05)), 2), round(float(np.quantile(rb, .95)), 2)],
+            'falszywy_werdykt': round(float(np.mean(np.abs(rb - 1) > g)), 2)}
+
+
+PROBY = {'20_indeksow': [400] * 7 + [60] * 7 + [15] * 6, '15_indeksow': [400] * 5 + [60] * 5 + [15] * 5,
+         '6_rodzin': [400] * 6, '3_indeksy_jak_przyklad': [400, 60, 15]}
+for nazwa, roz in PROBY.items():
+    for T in ((12,) if nazwa.startswith('3_') else (13, 20, 26)):
+        for h in (1, 2, 4, 6):
+            for beta in (0.5, 1.0):
+                wynik[f'proba_{nazwa}_T{T}_h{h}_beta{beta}'] = w = proba(roz, T, beta, h)
+            print('proba', nazwa, T, h, w)
 Path(__file__).with_name('remis-wyniki.json').write_text(json.dumps(wynik, indent=1) + '\n', encoding='utf8')

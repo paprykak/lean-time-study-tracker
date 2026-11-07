@@ -59,7 +59,7 @@ with tempfile.TemporaryDirectory() as tmp:
     sprawdz('granica remisu (wiele, h=1)', w['Q3'].value, 0.10)
     sprawdz('granica remisu (jeden, h=1)', j['O3'].value, 0.10)
     for opis, adres, oczekiwany in [('razem: lepsza prosta', a['lepsza'], o['lepsza_prosta']), ('razem: wygrane', a['wygrane'], o['wygrane']),
-                                    ('razem: werdykt', A['razem_werdykt'], oczek['werdykty_razem'][o['kategoria']])]:
+                                    ('razem: werdykt', A['razem_werdykt'], (oczek['wstepny'] if o['wstepny'] else '') + oczek['werdykty_razem'][o['kategoria']])]:
         ok = w[adres].value == oczekiwany
         print(f"{'✓' if ok else '✗'} {opis}: {w[adres].value}")
         if not ok:
@@ -103,6 +103,35 @@ with tempfile.TemporaryDirectory() as tmp:
     sprawdz('h=3: błąd naiwnej', j3[a['mn']].value, mae([(sz[i - h], sz[i]) for i in idx]))
     sprawdz('h=3: błąd średniej', j3[a['ms']].value, mae([(sum(sz[i - h - 3:i - h + 1]) / 4, sz[i]) for i in idx]))
     sprawdz('h=3: błąd wygładzania', j3[a['mw']].value, mae([(lv[i - h], sz[i]) for i in idx]))
+
+    # Pełna próba: 20 indeksów po 33 tygodnie (h = 1, czyli 29 porównanych) daje werdykt bez dopisku „Wynik wstępny”.
+    import random
+    los = random.Random(5)
+    pelna = Path(tmp) / 'pelna' / 'test-prognozy.xlsx'
+    pelna.parent.mkdir()
+    wbp = lw(PLIK)
+    wp = wbp['Wiele indeksów']
+    for r in range(5, 5 + 60):
+        for k in range(1, 5):
+            wp.cell(row=r, column=k).value = None
+    r = 5
+    for i in range(20):
+        for t_ in range(33):
+            sp = max(0, round(100 + los.gauss(0, 15)))
+            wp.cell(row=r, column=1).value = f'K{i + 1:02d}'
+            wp.cell(row=r, column=2).value = t_ + 1
+            wp.cell(row=r, column=3).value = sp
+            wp.cell(row=r, column=4).value = round(100 + los.gauss(0, 10))
+            r += 1
+    wbp.save(pelna)
+    wp2 = przelicz(pelna, str(Path(tmp) / 'pelna-wynik'))['Wiele indeksów']
+    sprawdz('pełna próba: porównane okresy K01', wp2['Q5'].value, 29)
+    sprawdz('pełna próba: porównane okresy K20', wp2['Q24'].value, 29)
+    werdykt_pelny = wp2[A['razem_werdykt']].value
+    ok = isinstance(werdykt_pelny, str) and not werdykt_pelny.startswith('Wynik wstępny') and werdykt_pelny in oczek['werdykty_razem'].values()
+    print(f"{'✓' if ok else '✗'} pełna próba: werdykt bez dopisku: {werdykt_pelny}")
+    if not ok:
+        bledy.append('pełna próba: werdykt')
 
 if bledy:
     print('BŁĘDY:', bledy)
