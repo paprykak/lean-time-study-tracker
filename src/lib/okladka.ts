@@ -66,7 +66,8 @@ export async function okladka({ tytul, etykieta, zdjecie, pozycja = 'center' }: 
           'div',
           { display: 'flex', marginTop: 18, fontFamily: 'Noto Sans Display', fontWeight: 700, fontSize: rozmiarTytulu(tytul), lineHeight: 1.1, color: '#ffffff' },
           // Ta sama typografia co w tytule na stronie: liczba i jednoliterowe słowa nie zostają na końcu wiersza.
-          typografia(tytul),
+          // Do tego dwa ostatnie słowa razem, żeby ostatni wiersz okładki nie miał jednego słowa (wdowy).
+          typografia(tytul).replace(/ (\S+)$/u, '\u00a0$1'),
         ),
       ]),
       el('img', { position: 'absolute', left: 0, bottom: 0 }, undefined, { src: PAS, width: SZEROKOSC, height: 24 }),
