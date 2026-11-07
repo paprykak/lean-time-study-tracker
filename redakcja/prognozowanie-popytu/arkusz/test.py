@@ -52,8 +52,19 @@ with tempfile.TemporaryDirectory() as tmp:
         o = oczek['wiele'][indeks]
         sprawdz(f'{indeks}: okresy', w[f'Q{r}'].value, o['okresy'])
         sprawdz(f'{indeks}: Twój ÷ naiwna', w[f'R{r}'].value, o['twoja_do_naiwnej'])
-        sprawdz(f'{indeks}: Twój ÷ najlepsza prosta', w[f'S{r}'].value, o['twoja_do_najlepszej_prostej'])
-    for arkusz, adres in [(j, A['jeden_werdykt']), (k, A['korekty_werdykt']), (w, 'T5'), (w, 'T6'), (w, 'T7'), (w, 'R60')]:
+        sprawdz(f'{indeks}: Twój ÷ lepsza prosta łącznie', w[f'S{r}'].value, o['twoja_do_lepszej_prostej'])
+    o, a = oczek['razem'], A['razem']
+    sprawdz('razem: Twój ÷ naiwna', w[a['rn']].value, o['twoja_do_naiwnej'])
+    sprawdz('razem: Twój ÷ lepsza prosta', w[a['rp']].value, o['twoja_do_lepszej_prostej'])
+    sprawdz('granica remisu (wiele, h=1)', w['Q3'].value, 0.10)
+    sprawdz('granica remisu (jeden, h=1)', j['O3'].value, 0.10)
+    for opis, adres, oczekiwany in [('razem: lepsza prosta', a['lepsza'], o['lepsza_prosta']), ('razem: wygrane', a['wygrane'], o['wygrane']),
+                                    ('razem: werdykt', A['razem_werdykt'], oczek['werdykty_razem'][o['kategoria']])]:
+        ok = w[adres].value == oczekiwany
+        print(f"{'✓' if ok else '✗'} {opis}: {w[adres].value}")
+        if not ok:
+            bledy.append(opis)
+    for arkusz, adres in [(j, A['jeden_werdykt']), (k, A['korekty_werdykt']), (w, 'T5'), (w, 'T6'), (w, 'T7')]:
         print(f'  {arkusz.title}!{adres}: {arkusz[adres].value}')
     for arkusz in (j, k, w):
         for wiersz in arkusz.iter_rows(min_row=5, max_row=70):
@@ -68,8 +79,12 @@ with tempfile.TemporaryDirectory() as tmp:
     kopia.parent.mkdir()
     wb3 = lw(PLIK)
     wb3['Jeden indeks']['O1'] = 3
+    wb3['Wiele indeksów']['Q1'] = 7
     wb3.save(kopia)
-    j3 = przelicz(kopia, str(Path(tmp) / 'h3wynik'))['Jeden indeks']
+    wynik3 = przelicz(kopia, str(Path(tmp) / 'h3wynik'))
+    j3 = wynik3['Jeden indeks']
+    sprawdz('granica remisu (jeden, h=3)', j3['O3'].value, 0.15)
+    sprawdz('granica remisu (wiele, h=7)', wynik3['Wiele indeksów']['Q3'].value, 0.20)
     sz, tw = oczek['sprzedaz'], oczek['twoja']
 
     def poziomy(s, alfa=0.2):

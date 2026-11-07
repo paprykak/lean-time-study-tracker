@@ -68,5 +68,437 @@
    1.06
   ],
   "poza_remisem_5proc": 0.15
+ },
+ "wiele_beta0.5_h1_rho0.7": {
+  "twoja_do_sredniej_przedzial_90proc": [
+   0.94,
+   1.07
+  ],
+  "twoja_do_sredniej_poza_remisem": {
+   "5proc": 0.21,
+   "10proc": 0.01,
+   "15proc": 0.0,
+   "20proc": 0.0
+  },
+  "twoja_do_lepszej_prostej_5_50_95": [
+   0.95,
+   1.01,
+   1.08
+  ],
+  "twoja_do_lepszej_prostej_poza_remisem": {
+   "5proc": 0.22,
+   "10proc": 0.02,
+   "15proc": 0.0,
+   "20proc": 0.0
+  },
+  "wygrane_indeksy_6_do_14_z_20": 0.963
+ },
+ "wiele_beta0.5_h2_rho0.7": {
+  "twoja_do_sredniej_przedzial_90proc": [
+   0.92,
+   1.09
+  ],
+  "twoja_do_sredniej_poza_remisem": {
+   "5proc": 0.31,
+   "10proc": 0.05,
+   "15proc": 0.0,
+   "20proc": 0.0
+  },
+  "twoja_do_lepszej_prostej_5_50_95": [
+   0.93,
+   1.012,
+   1.1
+  ],
+  "twoja_do_lepszej_prostej_poza_remisem": {
+   "5proc": 0.32,
+   "10proc": 0.06,
+   "15proc": 0.0,
+   "20proc": 0.0
+  },
+  "wygrane_indeksy_6_do_14_z_20": 0.95
+ },
+ "wiele_beta0.5_h3_rho0.7": {
+  "twoja_do_sredniej_przedzial_90proc": [
+   0.91,
+   1.1
+  ],
+  "twoja_do_sredniej_poza_remisem": {
+   "5proc": 0.38,
+   "10proc": 0.08,
+   "15proc": 0.01,
+   "20proc": 0.0
+  },
+  "twoja_do_lepszej_prostej_5_50_95": [
+   0.93,
+   1.016,
+   1.11
+  ],
+  "twoja_do_lepszej_prostej_poza_remisem": {
+   "5proc": 0.39,
+   "10proc": 0.08,
+   "15proc": 0.01,
+   "20proc": 0.0
+  },
+  "wygrane_indeksy_6_do_14_z_20": 0.961
+ },
+ "wiele_beta0.5_h4_rho0.7": {
+  "twoja_do_sredniej_przedzial_90proc": [
+   0.9,
+   1.11
+  ],
+  "twoja_do_sredniej_poza_remisem": {
+   "5proc": 0.42,
+   "10proc": 0.12,
+   "15proc": 0.02,
+   "20proc": 0.0
+  },
+  "twoja_do_lepszej_prostej_5_50_95": [
+   0.92,
+   1.017,
+   1.12
+  ],
+  "twoja_do_lepszej_prostej_poza_remisem": {
+   "5proc": 0.43,
+   "10proc": 0.12,
+   "15proc": 0.03,
+   "20proc": 0.01
+  },
+  "wygrane_indeksy_6_do_14_z_20": 0.961
+ },
+ "wiele_beta0.5_h6_rho0.7": {
+  "twoja_do_sredniej_przedzial_90proc": [
+   0.88,
+   1.14
+  ],
+  "twoja_do_sredniej_poza_remisem": {
+   "5proc": 0.52,
+   "10proc": 0.19,
+   "15proc": 0.05,
+   "20proc": 0.01
+  },
+  "twoja_do_lepszej_prostej_5_50_95": [
+   0.9,
+   1.019,
+   1.16
+  ],
+  "twoja_do_lepszej_prostej_poza_remisem": {
+   "5proc": 0.53,
+   "10proc": 0.2,
+   "15proc": 0.06,
+   "20proc": 0.02
+  },
+  "wygrane_indeksy_6_do_14_z_20": 0.957
+ },
+ "wiele_beta0.5_h8_rho0.7": {
+  "twoja_do_sredniej_przedzial_90proc": [
+   0.86,
+   1.15
+  ],
+  "twoja_do_sredniej_poza_remisem": {
+   "5proc": 0.58,
+   "10proc": 0.25,
+   "15proc": 0.08,
+   "20proc": 0.02
+  },
+  "twoja_do_lepszej_prostej_5_50_95": [
+   0.89,
+   1.021,
+   1.17
+  ],
+  "twoja_do_lepszej_prostej_poza_remisem": {
+   "5proc": 0.58,
+   "10proc": 0.26,
+   "15proc": 0.09,
+   "20proc": 0.03
+  },
+  "wygrane_indeksy_6_do_14_z_20": 0.964
+ },
+ "wiele_beta1.0_h1_rho0.7": {
+  "twoja_do_sredniej_przedzial_90proc": [
+   0.92,
+   1.09
+  ],
+  "twoja_do_sredniej_poza_remisem": {
+   "5proc": 0.31,
+   "10proc": 0.05,
+   "15proc": 0.0,
+   "20proc": 0.0
+  },
+  "twoja_do_lepszej_prostej_5_50_95": [
+   0.93,
+   1.012,
+   1.1
+  ],
+  "twoja_do_lepszej_prostej_poza_remisem": {
+   "5proc": 0.32,
+   "10proc": 0.06,
+   "15proc": 0.0,
+   "20proc": 0.0
+  },
+  "wygrane_indeksy_6_do_14_z_20": 0.96
+ },
+ "wiele_beta1.0_h2_rho0.7": {
+  "twoja_do_sredniej_przedzial_90proc": [
+   0.91,
+   1.1
+  ],
+  "twoja_do_sredniej_poza_remisem": {
+   "5proc": 0.42,
+   "10proc": 0.09,
+   "15proc": 0.01,
+   "20proc": 0.0
+  },
+  "twoja_do_lepszej_prostej_5_50_95": [
+   0.92,
+   1.014,
+   1.12
+  ],
+  "twoja_do_lepszej_prostej_poza_remisem": {
+   "5proc": 0.43,
+   "10proc": 0.1,
+   "15proc": 0.02,
+   "20proc": 0.0
+  },
+  "wygrane_indeksy_6_do_14_z_20": 0.958
+ },
+ "wiele_beta1.0_h3_rho0.7": {
+  "twoja_do_sredniej_przedzial_90proc": [
+   0.89,
+   1.12
+  ],
+  "twoja_do_sredniej_poza_remisem": {
+   "5proc": 0.47,
+   "10proc": 0.16,
+   "15proc": 0.03,
+   "20proc": 0.01
+  },
+  "twoja_do_lepszej_prostej_5_50_95": [
+   0.91,
+   1.017,
+   1.13
+  ],
+  "twoja_do_lepszej_prostej_poza_remisem": {
+   "5proc": 0.47,
+   "10proc": 0.16,
+   "15proc": 0.04,
+   "20proc": 0.01
+  },
+  "wygrane_indeksy_6_do_14_z_20": 0.956
+ },
+ "wiele_beta1.0_h4_rho0.7": {
+  "twoja_do_sredniej_przedzial_90proc": [
+   0.88,
+   1.13
+  ],
+  "twoja_do_sredniej_poza_remisem": {
+   "5proc": 0.52,
+   "10proc": 0.19,
+   "15proc": 0.05,
+   "20proc": 0.01
+  },
+  "twoja_do_lepszej_prostej_5_50_95": [
+   0.9,
+   1.019,
+   1.15
+  ],
+  "twoja_do_lepszej_prostej_poza_remisem": {
+   "5proc": 0.52,
+   "10proc": 0.21,
+   "15proc": 0.06,
+   "20proc": 0.02
+  },
+  "wygrane_indeksy_6_do_14_z_20": 0.962
+ },
+ "wiele_beta1.0_h6_rho0.7": {
+  "twoja_do_sredniej_przedzial_90proc": [
+   0.86,
+   1.17
+  ],
+  "twoja_do_sredniej_poza_remisem": {
+   "5proc": 0.59,
+   "10proc": 0.29,
+   "15proc": 0.11,
+   "20proc": 0.04
+  },
+  "twoja_do_lepszej_prostej_5_50_95": [
+   0.88,
+   1.025,
+   1.2
+  ],
+  "twoja_do_lepszej_prostej_poza_remisem": {
+   "5proc": 0.6,
+   "10proc": 0.3,
+   "15proc": 0.13,
+   "20proc": 0.05
+  },
+  "wygrane_indeksy_6_do_14_z_20": 0.963
+ },
+ "wiele_beta1.0_h8_rho0.7": {
+  "twoja_do_sredniej_przedzial_90proc": [
+   0.84,
+   1.19
+  ],
+  "twoja_do_sredniej_poza_remisem": {
+   "5proc": 0.64,
+   "10proc": 0.36,
+   "15proc": 0.16,
+   "20proc": 0.07
+  },
+  "twoja_do_lepszej_prostej_5_50_95": [
+   0.86,
+   1.027,
+   1.22
+  ],
+  "twoja_do_lepszej_prostej_poza_remisem": {
+   "5proc": 0.65,
+   "10proc": 0.36,
+   "15proc": 0.18,
+   "20proc": 0.08
+  },
+  "wygrane_indeksy_6_do_14_z_20": 0.958
+ },
+ "wiele_beta1.0_h1_rho0.5": {
+  "twoja_do_sredniej_przedzial_90proc": [
+   0.91,
+   1.1
+  ],
+  "twoja_do_sredniej_poza_remisem": {
+   "5proc": 0.41,
+   "10proc": 0.1,
+   "15proc": 0.01,
+   "20proc": 0.0
+  },
+  "twoja_do_lepszej_prostej_5_50_95": [
+   0.93,
+   1.017,
+   1.12
+  ],
+  "twoja_do_lepszej_prostej_poza_remisem": {
+   "5proc": 0.41,
+   "10proc": 0.1,
+   "15proc": 0.02,
+   "20proc": 0.0
+  },
+  "wygrane_indeksy_6_do_14_z_20": 0.957
+ },
+ "wiele_beta1.0_h3_rho0.5": {
+  "twoja_do_sredniej_przedzial_90proc": [
+   0.87,
+   1.15
+  ],
+  "twoja_do_sredniej_poza_remisem": {
+   "5proc": 0.55,
+   "10proc": 0.23,
+   "15proc": 0.07,
+   "20proc": 0.02
+  },
+  "twoja_do_lepszej_prostej_5_50_95": [
+   0.9,
+   1.023,
+   1.17
+  ],
+  "twoja_do_lepszej_prostej_poza_remisem": {
+   "5proc": 0.55,
+   "10proc": 0.24,
+   "15proc": 0.08,
+   "20proc": 0.02
+  },
+  "wygrane_indeksy_6_do_14_z_20": 0.962
+ },
+ "wiele_beta1.0_h6_rho0.5": {
+  "twoja_do_sredniej_przedzial_90proc": [
+   0.83,
+   1.21
+  ],
+  "twoja_do_sredniej_poza_remisem": {
+   "5proc": 0.65,
+   "10proc": 0.37,
+   "15proc": 0.18,
+   "20proc": 0.08
+  },
+  "twoja_do_lepszej_prostej_5_50_95": [
+   0.86,
+   1.031,
+   1.24
+  ],
+  "twoja_do_lepszej_prostej_poza_remisem": {
+   "5proc": 0.66,
+   "10proc": 0.38,
+   "15proc": 0.2,
+   "20proc": 0.09
+  },
+  "wygrane_indeksy_6_do_14_z_20": 0.965
+ },
+ "wiele_beta1.0_h1_rho0.9": {
+  "twoja_do_sredniej_przedzial_90proc": [
+   0.95,
+   1.06
+  ],
+  "twoja_do_sredniej_poza_remisem": {
+   "5proc": 0.12,
+   "10proc": 0.0,
+   "15proc": 0.0,
+   "20proc": 0.0
+  },
+  "twoja_do_lepszej_prostej_5_50_95": [
+   0.96,
+   1.01,
+   1.06
+  ],
+  "twoja_do_lepszej_prostej_poza_remisem": {
+   "5proc": 0.12,
+   "10proc": 0.0,
+   "15proc": 0.0,
+   "20proc": 0.0
+  },
+  "wygrane_indeksy_6_do_14_z_20": 0.961
+ },
+ "wiele_beta1.0_h3_rho0.9": {
+  "twoja_do_sredniej_przedzial_90proc": [
+   0.93,
+   1.07
+  ],
+  "twoja_do_sredniej_poza_remisem": {
+   "5proc": 0.25,
+   "10proc": 0.02,
+   "15proc": 0.0,
+   "20proc": 0.0
+  },
+  "twoja_do_lepszej_prostej_5_50_95": [
+   0.94,
+   1.013,
+   1.09
+  ],
+  "twoja_do_lepszej_prostej_poza_remisem": {
+   "5proc": 0.26,
+   "10proc": 0.03,
+   "15proc": 0.0,
+   "20proc": 0.0
+  },
+  "wygrane_indeksy_6_do_14_z_20": 0.951
+ },
+ "wiele_beta1.0_h6_rho0.9": {
+  "twoja_do_sredniej_przedzial_90proc": [
+   0.91,
+   1.1
+  ],
+  "twoja_do_sredniej_poza_remisem": {
+   "5proc": 0.38,
+   "10proc": 0.09,
+   "15proc": 0.01,
+   "20proc": 0.0
+  },
+  "twoja_do_lepszej_prostej_5_50_95": [
+   0.93,
+   1.018,
+   1.12
+  ],
+  "twoja_do_lepszej_prostej_poza_remisem": {
+   "5proc": 0.4,
+   "10proc": 0.1,
+   "15proc": 0.01,
+   "20proc": 0.0
+  },
+  "wygrane_indeksy_6_do_14_z_20": 0.957
  }
 }

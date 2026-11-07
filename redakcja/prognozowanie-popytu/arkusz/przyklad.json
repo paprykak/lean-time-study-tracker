@@ -24,7 +24,14 @@
    "wd_p": "K13",
    "wd_k": "K14"
   },
-  "korekty_werdykt": "J17"
+  "korekty_werdykt": "J17",
+  "razem": {
+   "rn": "R58",
+   "rp": "R59",
+   "lepsza": "R60",
+   "wygrane": "R61"
+  },
+  "razem_werdykt": "P66"
  },
  "jeden_indeks": {
   "okresy": 26,
@@ -46,18 +53,31 @@
   "IND-001": {
    "okresy": 12,
    "twoja_do_naiwnej": 1.2835314091680814,
-   "twoja_do_najlepszej_prostej": 1.4267763584996016
+   "twoja_do_lepszej_prostej": 1.4267763584996016
   },
   "IND-002": {
    "okresy": 12,
    "twoja_do_naiwnej": 0.9166666666666666,
-   "twoja_do_najlepszej_prostej": 1.349295593788864
+   "twoja_do_lepszej_prostej": 1.349295593788864
   },
   "IND-003": {
    "okresy": 12,
    "twoja_do_naiwnej": 0.8867924528301887,
-   "twoja_do_najlepszej_prostej": 1.157210334385182
+   "twoja_do_lepszej_prostej": 1.157210334385182
   }
+ },
+ "razem": {
+  "twoja_do_naiwnej": 1.1814814814814816,
+  "twoja_do_lepszej_prostej": 1.3978672914473478,
+  "lepsza_prosta": "wygładzanie",
+  "wygrane": "0 z 3",
+  "kategoria": "gorsza od naiwnej"
+ },
+ "werdykty_razem": {
+  "gorsza od naiwnej": "Gorsza od naiwnej: problem w procesie, nie w algorytmie. Sprawdź odchylenie i korekty, zwłaszcza małe i w górę.",
+  "prosta lepsza": "Prosta metoda dałaby mniejszy błąd za darmo. Przejdź na wygładzanie (przy trendzie i sezonowości w wersji, która je uwzględnia) i mierz dalej.",
+  "remis": "Remis z prostymi metodami: Twój proces nie dodaje wartości ponad darmową prognozę. Zmierz, czy korekty pomagają, i uprość proces tam, gdzie nie pomagają.",
+  "bije wszystkie": "Bije wszystkie darmowe prognozy: proces działa, nowy system musi pobić Ciebie. Pilotaż ma sens przy setkach powiązanych indeksów i danych o cenach, promocjach i wydarzeniach."
  },
  "sprzedaz": [
   104,

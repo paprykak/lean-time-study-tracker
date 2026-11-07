@@ -30,4 +30,4 @@ W pomarańczowych polach ustawiasz wyprzedzenie prognozy i wagę ostatniego okre
 3. Jeśli prognozę poprawia planista, wklej też prognozę systemu sprzed korekty.
 4. Wniosek wyciągaj z wyniku dla wszystkich indeksów razem. Wynik dla jednego indeksu to wskazówka, a nie dowód.
 
-Uzasadnienie, dowody z konkursów prognostycznych i badań w firmach oraz trzy pytania do dostawcy systemu prognoz znajdziesz w artykule [„Zanim kupisz AI do prognoz, sprawdź, czy bijesz średnią z 4 tygodni”](/prognozowanie-popytu). Arkusz możesz kopiować i używać w firmie.
+Uzasadnienie, dowody z konkursów prognostycznych i badań w firmach oraz trzy pytania do dostawcy systemu prognoz znajdziesz w artykule [„Zanim kupisz AI do prognoz, sprawdź, czy bijesz proste metody”](/prognozowanie-popytu). Arkusz możesz kopiować i używać w firmie.

@@ -29,8 +29,17 @@ LICZBA = '#,##0;−#,##0'
 LICZBA1 = '#,##0.0;−#,##0.0'
 OSTATNI = 204        # ostatni wiersz danych w arkuszach jednego indeksu (200 okresów)
 OSTATNI_M = 2004     # ostatni wiersz danych w arkuszu wielu indeksów
-REMIS = 0.05         # umowny próg remisu redakcji: ±5%
+REMIS_K = 0.10       # granica remisu w arkuszu „Korekty”: umowna, ta sama prognoza przed korektą i po niej
 H_DOMYSLNE = 1       # wyprzedzenie prognozy w okresach
+
+
+def granica(h):
+    """Granica remisu z symulacji redakcji (dane/remis.py): ±10% przy wyprzedzeniu 1–2, ±15% przy 3–6, ±20% dalej."""
+    return 0.10 if h <= 2 else 0.15 if h <= 6 else 0.20
+
+
+def granica_f(h):
+    return f'IF({h}<=2,0.1,IF({h}<=6,0.15,0.2))'
 ALFA = 0.2           # waga ostatniego okresu w wygładzaniu wykładniczym prostym
 
 
@@ -183,7 +192,7 @@ oczekiwane_korekty = {
     'mae_przed': mae([(system[i], sprzedaz[i]) for i in idx_k]),
 }
 oczekiwane_korekty['po_do_przed'] = oczekiwane_korekty['mae_po'] / oczekiwane_korekty['mae_przed']
-oczekiwane_wiele = {}
+oczekiwane_wiele, sumy = {}, {}
 for indeks in ['IND-001', 'IND-002', 'IND-003']:
     w = [x for x in wiele if x[0] == indeks]
     sz = [x[2] for x in w]
@@ -192,7 +201,21 @@ for indeks in ['IND-001', 'IND-002', 'IND-003']:
     bn = sum(abs(darmowe(sz, t)[0] - sz[t]) for t in t_idx)
     bs = sum(abs(darmowe(sz, t)[1] - sz[t]) for t in t_idx)
     bw = sum(abs(darmowe(sz, t)[2] - sz[t]) for t in t_idx)
-    oczekiwane_wiele[indeks] = {'okresy': len(t_idx), 'twoja_do_naiwnej': bt / bn, 'twoja_do_najlepszej_prostej': bt / min(bs, bw)}
+    oczekiwane_wiele[indeks] = {'okresy': len(t_idx), 'twoja_do_naiwnej': bt / bn}
+    sumy[indeks] = (bt, bn, bs, bw)
+T_, N_, S_, W_ = (sum(v[k] for v in sumy.values()) for k in range(4))
+srednia_lepsza = S_ <= W_
+for indeks, (bt, bn, bs, bw) in sumy.items():
+    oczekiwane_wiele[indeks]['twoja_do_lepszej_prostej'] = bt / (bs if srednia_lepsza else bw)
+g = granica(H_DOMYSLNE)
+rn_l, rp_l = T_ / N_, T_ / min(S_, W_)
+oczekiwane_razem = {
+    'twoja_do_naiwnej': rn_l, 'twoja_do_lepszej_prostej': rp_l,
+    'lepsza_prosta': 'średnia z 4 okresów' if srednia_lepsza else 'wygładzanie',
+    'wygrane': f"{sum(1 for v in oczekiwane_wiele.values() if v['twoja_do_lepszej_prostej'] < 1)} z {len(oczekiwane_wiele)}",
+    'kategoria': ('gorsza od naiwnej' if rn_l > 1 + g else 'prosta lepsza' if rp_l > 1 + g
+                  else 'bije wszystkie' if rn_l < 1 - g and rp_l < 1 - g else 'remis'),
+}
 
 # ---------- Skoroszyt ----------
 wb = Workbook()
@@ -210,19 +233,25 @@ INSTRUKCJA = [
           'robisz po zamknięciu tygodnia 14). Darmowe prognozy znają wtedy tylko sprzedaż, którą Ty znałeś w chwili prognozy.'),
     ('p', '2. „Wiele indeksów”: wklej indeks, okres, sprzedaż i prognozę dla około 20 indeksów, posortowane według indeksu i okresu, najlepiej 26–52 tygodnie. '
           'Indeksy wylosuj z listy sprzedaży z roku przed testem, po kilka z grup A, B i C, i nie pomijaj wycofanych.'),
-    ('p', '3. „Jeden indeks”: ten sam test dla jednego indeksu, z wykresem w kolumnach. Wynik dla jednego indeksu to wskazówka, a nie dowód.'),
-    ('p', '4. „Korekty”: jeśli system liczy prognozę, a planista ją poprawia, wklej obie. Arkusz pokaże, czy korekty zmniejszają błąd, osobno w górę i w dół.'),
+    ('p', '3. „Jeden indeks”: ten sam test dla jednego indeksu, okres po okresie. Wynik dla jednego indeksu to wskazówka, a nie dowód.'),
+    ('p', '4. „Korekty”: jeśli system liczy prognozę, a planista ją poprawia, wklej obie. Arkusz pokaże, czy korekty zmniejszają błąd, osobno w górę i w dół. '
+          'Wiersze wielu indeksów możesz wkleić jeden pod drugim: arkusz policzy je razem.'),
     ('p', 'Białe kolumny wypełniasz Ty, szare liczą się same, a pomarańczowe pola to ustawienia. Dane przykładowe są fikcyjne: nadpisz je swoimi.'),
     ('h', 'Jak czytać wynik'),
     ('p', '„Twój błąd ÷ błąd naiwnej” poniżej 1 znaczy, że Twoja prognoza myli się mniej niż naiwna. To minimum. Właściwy sprawdzian to '
-          '„Twój błąd ÷ błąd najlepszej prostej metody”: średniej z czterech okresów albo wygładzania wykładniczego, zależnie od tego, która myli się mniej.'),
+          '„Twój błąd ÷ błąd lepszej prostej metody”: średniej z czterech okresów albo wygładzania wykładniczego, zależnie od tego, która myli się mniej '
+          'dla wszystkich indeksów razem.'),
+    ('p', 'Werdykt pod tabelą „Wiele indeksów” daje jedną z czterech odpowiedzi: gorsza od naiwnej, prosta metoda lepsza, remis albo bije wszystkie darmowe. '
+          'Każda ma w artykule zalecenie, co zrobić dalej.'),
     ('p', 'Wartość dodana prognozy (FVA, forecast value added) to ten sam wynik w procentach: o ile Twoja prognoza zmniejsza błąd darmowej. Wynik ujemny oznacza, że go zwiększa.'),
     ('p', 'Odchylenie pokazuje, czy prognoza średnio zawyża (wynik dodatni) albo zaniża (ujemny) sprzedaż.'),
     ('h', 'Na co uważać'),
     ('p', '• Jeden indeks niczego nie rozstrzyga: w symulacji redakcji dwie równie dobre prognozy porównane na 26 tygodniach różniły się przez sam przypadek '
-          'o 20–30%. Wniosek wyciągaj z wyniku dla wszystkich indeksów razem i z liczby indeksów, w których Twoja prognoza wygrywa.'),
-    ('p', '• Wygładzanie w tym arkuszu to wersja prosta: nie uwzględnia trendu ani sezonowości. Przy nich użyj też Arkusza prognozy w Excelu (karta Dane) '
-          'i porównaj się z sezonową prognozą naiwną: sprzedażą z tego samego tygodnia rok wcześniej (wymaga roku historii przed testem).'),
+          'o 20–30%. Dla 20 indeksów razem przypadek mieścił się zwykle w ±10%, a przy wyprzedzeniu dłuższym niż 2 okresy w ±15–20%. Takie granice remisu stosuje arkusz.'),
+    ('p', '• Gdy Twoja prognoza i prosta metoda są równie dobre, Twoja wygrywa zwykle w 6–14 indeksach na 20. Dopiero wynik spoza tego przedziału coś mówi.'),
+    ('p', '• Wygładzanie w tym arkuszu to wersja prosta: nie uwzględnia trendu ani sezonowości. Przy nich użyj też Arkusza prognozy w Excelu (karta Dane). '
+          'Do testu ustaw w „Opcjach” „Początek prognozy” przed końcem danych: Excel policzy wtedy prognozę tylko z wcześniejszych danych.'),
+    ('p', '• Przy sezonowości porównaj się też z sezonową prognozą naiwną: sprzedażą z tego samego tygodnia rok wcześniej (wymaga roku historii przed testem).'),
     ('p', '• Indeksy, które w wielu okresach nie sprzedają się wcale, oceniaj osobno, po zapasie i poziomie obsługi. Przy nich najmniejszy błąd w sztukach może dać prognoza „zero”.'),
     ('p', '• Popyt to nie zawsze sprzedaż: gdy towaru zabrakło, sprzedaż jest niższa od popytu. Takie okresy oznacz albo pomiń.'),
     ('p', '• Jeśli system nadpisuje dawne prognozy, zacznij co tydzień zapisywać ich kopię. Po kwartale zrobisz pierwszy test, a po pół roku pełny.'),
@@ -240,14 +269,17 @@ for rodzaj, tekst in INSTRUKCJA:
 ins.column_dimensions['A'].width = 120
 ins.sheet_view.showGridLines = False
 
-UWAGA_JEDEN = (f'Remis to różnica do ±{int(REMIS * 100)}% (umowna granica redakcji). Na jednym indeksie przypadek bywa większy: '
-               'wniosek wyciągaj z arkusza „Wiele indeksów”.')
+UWAGA_JEDEN = ('Jeden indeks to wskazówka, a nie dowód: w symulacji redakcji dwie równie dobre prognozy różniły się na 26 okresach '
+               'przez przypadek nawet o 20–30%. Wniosek wyciągaj z arkusza „Wiele indeksów”.')
 
 # Arkusz 2: wiele indeksów (najważniejszy)
 wm = wb.create_sheet('Wiele indeksów')
 tytul(wm, 'Wiele indeksów: czy Twoja prognoza bije darmowe?', 'Dane posortowane według indeksu, a w nim według okresu. Pierwsze okresy indeksu służą tylko darmowym prognozom. Dane przykładowe są fikcyjne.')
 H_M = parametr(wm, 1, 'P', 'Wyprzedzenie prognozy (okresy)', H_DOMYSLNE, '0')
 A_M = parametr(wm, 2, 'P', 'Waga ostatniego okresu w wygładzaniu (α, 0,1–0,3)', ALFA, '0.00')
+komorka(wm, 'P3', 'Granica remisu (zależy od wyprzedzenia)', gruba=True)
+komorka(wm, 'Q3', f'={granica_f(H_M)}', '0%', formula=True)
+G_M = '$Q$3'
 naglowek(wm, 4, ['Indeks', 'Okres', 'Sprzedaż (sztuki)', 'Twoja prognoza', 'Prognoza naiwna', 'Średnia z 4 okresów', 'Wygładzanie wykładnicze',
                  'Błąd Twojej', 'Błąd naiwnej', 'Błąd średniej', 'Błąd wygładzania', 'Nr okresu (pomoc.)', 'Poziom wygładzony (pomoc.)'])
 C = f'$C$5:$C${OSTATNI_M}'
@@ -275,8 +307,10 @@ for i in range(OSTATNI_M - 4):
     wiersz_danych(wm, r, 13, 5)
     for kol in (6, 7, 10, 11, 13):
         wm.cell(row=r, column=kol).number_format = LICZBA1
-naglowek(wm, 4, ['Indeks (wpisz kod)', 'Porównane okresy', 'Twój błąd ÷ błąd naiwnej', 'Twój błąd ÷ najlepsza prosta', 'Werdykt'], od=16)
+naglowek(wm, 4, ['Indeks (wpisz kod)', 'Porównane okresy', 'Twój błąd ÷ błąd naiwnej', 'Twój błąd ÷ lepsza prosta (łącznie)',
+                 'Wskazówka (jeden indeks to nie dowód)'], od=16)
 ZM = lambda kol: f'${kol}$5:${kol}${OSTATNI_M}'
+SREDNIA_LEPSZA = f'SUM({ZM("J")})<=SUM({ZM("K")})'
 for i in range(50):
     r = 5 + i
     if i < 3:
@@ -284,10 +318,10 @@ for i in range(50):
     wm.cell(row=r, column=17, value=f'=IF(P{r}="","",COUNTIFS({ZM("A")},P{r},{ZM("H")},">=0"))')
     wm.cell(row=r, column=18, value=f'=IF(OR(P{r}="",Q{r}=0),"",IFERROR(SUMIF({ZM("A")},P{r},{ZM("H")})/SUMIF({ZM("A")},P{r},{ZM("I")}),""))')
     wm.cell(row=r, column=19, value=(f'=IF(OR(P{r}="",Q{r}=0),"",IFERROR(SUMIF({ZM("A")},P{r},{ZM("H")})/'
-                                     f'MIN(SUMIF({ZM("A")},P{r},{ZM("J")}),SUMIF({ZM("A")},P{r},{ZM("K")})),""))'))
+                                     f'IF({SREDNIA_LEPSZA},SUMIF({ZM("A")},P{r},{ZM("J")}),SUMIF({ZM("A")},P{r},{ZM("K")})),""))'))
     wm.cell(row=r, column=20, value=(
-        f'=IF(P{r}="","",IF(Q{r}<8,"za mało okresów",IF(R{r}>{1 + REMIS},"gorsza od naiwnej",IF(S{r}>{1 + REMIS},"prosta metoda lepsza",'
-        f'IF(AND(R{r}<{1 - REMIS},S{r}<{1 - REMIS}),"bije wszystkie trzy","remis")))))'
+        f'=IF(OR(P{r}="",Q{r}=""),"",IF(Q{r}<8,"za mało okresów",IF(R{r}>1+{G_M},"gorsza od naiwnej",IF(S{r}>1+{G_M},"prosta metoda lepsza",'
+        f'IF(AND(R{r}<1-{G_M},S{r}<1-{G_M}),"bije darmowe","remis")))))'
     ))
     for k, fmt in zip(range(16, 21), ['@', '0', '0.00', '0.00', '@']):
         c = wm.cell(row=r, column=k)
@@ -299,16 +333,46 @@ for i in range(50):
 r = 57
 wm[f'P{r}'] = 'Wszystkie indeksy razem'
 wm[f'P{r}'].font = Font(name=FONT, bold=True, size=11, color=ATRAMENT)
+RAZEM = {'rn': f'R{r + 1}', 'rp': f'R{r + 2}', 'lepsza': f'R{r + 3}', 'wygrane': f'R{r + 4}'}
 komorka(wm, f'P{r + 1}', 'Twój błąd ÷ błąd naiwnej (suma błędów)')
-komorka(wm, f'R{r + 1}', f'=IFERROR(SUM(H5:H{OSTATNI_M})/SUM(I5:I{OSTATNI_M}),"")', '0.00', formula=True)
-komorka(wm, f'P{r + 2}', 'Twój błąd ÷ błąd najlepszej prostej metody (suma błędów)')
-komorka(wm, f'R{r + 2}', f'=IFERROR(SUM(H5:H{OSTATNI_M})/MIN(SUM(J5:J{OSTATNI_M}),SUM(K5:K{OSTATNI_M})),"")', '0.00', formula=True)
-komorka(wm, f'P{r + 3}', 'Indeksy, w których Twoja prognoza bije najlepszą prostą metodę')
-komorka(wm, f'R{r + 3}', '=COUNTIF(S5:S54,"<"&(1-0.05))&" z "&COUNT(S5:S54)', '@', formula=True)
-for rr in (r + 1, r + 2, r + 3):
+komorka(wm, RAZEM['rn'], f'=IFERROR(SUM(H5:H{OSTATNI_M})/SUM(I5:I{OSTATNI_M}),"")', '0.00', formula=True)
+komorka(wm, f'P{r + 2}', 'Twój błąd ÷ błąd lepszej prostej metody (suma błędów)')
+komorka(wm, RAZEM['rp'], f'=IFERROR(SUM(H5:H{OSTATNI_M})/MIN(SUM(J5:J{OSTATNI_M}),SUM(K5:K{OSTATNI_M})),"")', '0.00', formula=True)
+komorka(wm, f'P{r + 3}', 'Lepsza prosta metoda dla wszystkich indeksów razem')
+komorka(wm, RAZEM['lepsza'], f'=IF(COUNT(H5:H{OSTATNI_M})=0,"",IF({SREDNIA_LEPSZA},"średnia z 4 okresów","wygładzanie"))', '@', formula=True)
+komorka(wm, f'P{r + 4}', 'Indeksy, w których Twoja prognoza myli się mniej niż ta metoda')
+komorka(wm, RAZEM['wygrane'], '=COUNTIF(S5:S54,"<1")&" z "&COUNT(S5:S54)', '@', formula=True)
+for rr in range(r + 1, r + 5):
     wm.merge_cells(f'P{rr}:Q{rr}')
-wm[f'P{r + 4}'] = 'Suma błędów waży indeksy według wielkości sprzedaży: szybko rotujące indeksy przeważają.'
-wm[f'P{r + 4}'].font = Font(name=FONT, italic=True, size=9, color=DRUGI)
+    wm.merge_cells(f'R{rr}:S{rr}')
+wm[f'P{r + 5}'] = ('Gdy prognozy są równie dobre, Twoja wygrywa zwykle w 6–14 indeksach na 20 (symulacja redakcji). '
+                   'Suma błędów waży indeksy według wielkości sprzedaży: szybko rotujące indeksy przeważają.')
+wm.merge_cells(f'P{r + 5}:T{r + 6}')
+wm[f'P{r + 5}'].font = Font(name=FONT, italic=True, size=9, color=DRUGI)
+wm[f'P{r + 5}'].alignment = Alignment(wrap_text=True, vertical='top')
+rn, rp = RAZEM['rn'], RAZEM['rp']
+WERDYKTY_M = {
+    'gorsza od naiwnej': 'Gorsza od naiwnej: problem w procesie, nie w algorytmie. Sprawdź odchylenie i korekty, zwłaszcza małe i w górę.',
+    'prosta lepsza': 'Prosta metoda dałaby mniejszy błąd za darmo. Przejdź na wygładzanie (przy trendzie i sezonowości w wersji, która je uwzględnia) i mierz dalej.',
+    'remis': 'Remis z prostymi metodami: Twój proces nie dodaje wartości ponad darmową prognozę. Zmierz, czy korekty pomagają, i uprość proces tam, gdzie nie pomagają.',
+    'bije wszystkie': 'Bije wszystkie darmowe prognozy: proces działa, nowy system musi pobić Ciebie. Pilotaż ma sens przy setkach powiązanych indeksów i danych o cenach, promocjach i wydarzeniach.',
+}
+wm[f'P{r + 8}'] = 'Werdykt dla wszystkich indeksów razem'
+wm[f'P{r + 8}'].font = Font(name=FONT, bold=True, size=11, color=ATRAMENT)
+WER_M = f'P{r + 9}'
+wm[WER_M] = (
+    f'=IF(COUNT(H5:H{OSTATNI_M})<8,"Za mało danych: porównaj około 20 indeksów po 26–52 okresy.",'
+    f'IF({rn}>1+{G_M},"{WERDYKTY_M["gorsza od naiwnej"]}",IF({rp}>1+{G_M},"{WERDYKTY_M["prosta lepsza"]}",'
+    f'IF(AND({rn}<1-{G_M},{rp}<1-{G_M}),"{WERDYKTY_M["bije wszystkie"]}","{WERDYKTY_M["remis"]}"))))'
+)
+wm.merge_cells(f'P{r + 9}:T{r + 11}')
+wm[WER_M].font = Font(name=FONT, bold=True, size=11, color=AKCENT)
+wm[WER_M].alignment = Alignment(wrap_text=True, vertical='top')
+wm[f'P{r + 12}'] = ('Remis to różnica w granicach z komórki Q3: ±10% przy wyprzedzeniu 1–2 okresy, ±15% przy 3–6, ±20% przy dłuższym. '
+                    'W symulacji redakcji dwie równie dobre prognozy dla 20 indeksów po 26 okresów różniły się przez przypadek zwykle w tych granicach.')
+wm.merge_cells(f'P{r + 12}:T{r + 13}')
+wm[f'P{r + 12}'].font = Font(name=FONT, italic=True, size=9, color=DRUGI)
+wm[f'P{r + 12}'].alignment = Alignment(wrap_text=True, vertical='top')
 for kol, sz in zip('ABCDEFGHIJKLMNOPQRST', [10, 7, 10, 10, 10, 10, 11, 9, 9, 9, 10, 9, 11, 3, 3, 30, 11, 12, 12, 18]):
     wm.column_dimensions[kol].width = sz
 wm.column_dimensions['P'].width = 44
@@ -319,6 +383,9 @@ ws = wb.create_sheet('Jeden indeks')
 tytul(ws, 'Jeden indeks: Twoja prognoza kontra trzy darmowe', 'Białe kolumny wypełniasz Ty, szare liczą się same, pomarańczowe pola to ustawienia. Dane przykładowe są fikcyjne.')
 H_J = parametr(ws, 1, 'N', 'Wyprzedzenie prognozy (okresy)', H_DOMYSLNE, '0')
 A_J = parametr(ws, 2, 'N', 'Waga ostatniego okresu w wygładzaniu (α, 0,1–0,3)', ALFA, '0.00')
+komorka(ws, 'N3', 'Granica remisu (zależy od wyprzedzenia)', gruba=True)
+komorka(ws, 'O3', f'={granica_f(H_J)}', '0%', formula=True)
+G_J = '$O$3'
 naglowek(ws, 4, ['Okres', 'Sprzedaż (sztuki)', 'Twoja prognoza na ten okres', 'Prognoza naiwna', 'Średnia z 4 okresów', 'Wygładzanie wykładnicze',
                  'Błąd Twojej', 'Błąd naiwnej', 'Błąd średniej', 'Błąd wygładzania', 'Odchylenie Twojej (prognoza − sprzedaż)', 'Poziom wygładzony (pomoc.)'])
 B = f'$B$5:$B${OSTATNI}'
@@ -352,16 +419,16 @@ adr, dalej = blok_wynikow(ws, 'N', [
     ('ms', 'Średni błąd średniej z 4 okresów (sztuki)', f'=IFERROR(AVERAGE({Z("I")}),"")', LICZBA1),
     ('mw', 'Średni błąd wygładzania wykładniczego (sztuki)', f'=IFERROR(AVERAGE({Z("J")}),"")', LICZBA1),
     ('rn', 'Twój błąd ÷ błąd naiwnej', lambda a: f'=IFERROR({a["mt"]}/{a["mn"]},"")', '0.00'),
-    ('rp', 'Twój błąd ÷ błąd najlepszej prostej metody', lambda a: f'=IFERROR({a["mt"]}/MIN({a["ms"]},{a["mw"]}),"")', '0.00'),
-    ('fp', 'Wartość dodana względem najlepszej prostej (FVA)', lambda a: f'=IFERROR(1-{a["rp"]},"")', '0.0%;−0.0%'),
+    ('rp', 'Twój błąd ÷ błąd lepszej prostej metody', lambda a: f'=IFERROR({a["mt"]}/MIN({a["ms"]},{a["mw"]}),"")', '0.00'),
+    ('fp', 'Wartość dodana względem lepszej prostej (FVA)', lambda a: f'=IFERROR(1-{a["rp"]},"")', '0.0%;−0.0%'),
     ('od', 'Odchylenie (+ zawyża, − zaniża), % sprzedaży', f'=IFERROR(SUM({Z("K")})/SUMPRODUCT(({Z("G")}<>"")*{Z("B")}),"")', '0.0%;−0.0%'),
 ], wiersz0=5)
 wer_j = werdykt(ws, 'N', dalej + 1, (
     f'=IF({adr["n"]}<8,"Za mało okresów: porównaj co najmniej 8–12.",'
-    f'IF({adr["rn"]}>{1 + REMIS},"Twoja prognoza myli się bardziej niż naiwna. Sprawdź korekty i odchylenie.",'
-    f'IF({adr["rp"]}>{1 + REMIS},"Prosta metoda (średnia albo wygładzanie) myliłaby się mniej niż Twoja prognoza.",'
-    f'IF(AND({adr["rn"]}<{1 - REMIS},{adr["rp"]}<{1 - REMIS}),"Twoja prognoza bije wszystkie trzy darmowe prognozy.",'
-    f'"Remis: Twoja prognoza nie jest wyraźnie lepsza od prostych metod."))))'
+    f'IF({adr["rn"]}>1+{G_J},"Wskazówka: Twoja prognoza myli się bardziej niż naiwna. Sprawdź korekty i odchylenie.",'
+    f'IF({adr["rp"]}>1+{G_J},"Wskazówka: prosta metoda (średnia albo wygładzanie) myliłaby się mniej niż Twoja prognoza.",'
+    f'IF(AND({adr["rn"]}<1-{G_J},{adr["rp"]}<1-{G_J}),"Wskazówka: Twoja prognoza bije wszystkie trzy darmowe prognozy.",'
+    f'"Wskazówka: remis, Twoja prognoza nie jest wyraźnie lepsza od prostych metod."))))'
 ), UWAGA_JEDEN)
 for kol, sz in zip('ABCDEFGHIJKL', [8, 10, 12, 11, 11, 12, 10, 10, 10, 11, 14, 11]):
     ws.column_dimensions[kol].width = sz
@@ -370,10 +437,11 @@ ws.freeze_panes = 'A5'
 
 # Arkusz 4: korekty
 wk = wb.create_sheet('Korekty')
-tytul(wk, 'Korekty: czy poprawka planisty zmniejsza błąd?', 'Wklej prognozę systemu (przed korektą) i prognozę po korekcie. Dane przykładowe są fikcyjne.')
-naglowek(wk, 4, ['Okres', 'Sprzedaż (sztuki)', 'Prognoza systemu (przed korektą)', 'Prognoza po korekcie',
+tytul(wk, 'Korekty: czy poprawka planisty zmniejsza błąd?', 'Wklej prognozę systemu (przed korektą) i prognozę po korekcie. '
+      'Wiersze wielu indeksów możesz wkleić jeden pod drugim. Dane przykładowe są fikcyjne.')
+naglowek(wk, 4, ['Indeks i okres', 'Sprzedaż (sztuki)', 'Prognoza systemu (przed korektą)', 'Prognoza po korekcie',
                  'Błąd po korekcie', 'Błąd przed korektą', 'Odchylenie po korekcie', 'Korekta (po − przed)'])
-for i in range(OSTATNI - 4):
+for i in range(OSTATNI_M - 4):
     r = 5 + i
     if i < TYGODNIE:
         wk.cell(row=r, column=1, value=f'T{i + 1:02d}')
@@ -385,24 +453,26 @@ for i in range(OSTATNI - 4):
     wk.cell(row=r, column=7, value=f'=IF(ISNUMBER(E{r}),D{r}-B{r},"")')
     wk.cell(row=r, column=8, value=f'=IF(ISNUMBER(E{r}),D{r}-C{r},"")')
     wiersz_danych(wk, r, 8, 5)
+ZK = lambda kol: f'{kol}5:{kol}{OSTATNI_M}'
 adr_k, dalej = blok_wynikow(wk, 'J', [
-    ('n', 'Porównane okresy', f'=COUNT({Z("E")})', '0'),
-    ('mp', 'Średni błąd po korekcie (sztuki)', f'=IFERROR(AVERAGE({Z("E")}),"")', LICZBA1),
-    ('mq', 'Średni błąd prognozy systemu (sztuki)', f'=IFERROR(AVERAGE({Z("F")}),"")', LICZBA1),
+    ('n', 'Porównane okresy', f'=COUNT({ZK("E")})', '0'),
+    ('mp', 'Średni błąd po korekcie (sztuki)', f'=IFERROR(AVERAGE({ZK("E")}),"")', LICZBA1),
+    ('mq', 'Średni błąd prognozy systemu (sztuki)', f'=IFERROR(AVERAGE({ZK("F")}),"")', LICZBA1),
     ('r', 'Błąd po korekcie ÷ błąd przed korektą', lambda a: f'=IFERROR({a["mp"]}/{a["mq"]},"")', '0.00'),
     ('f', 'Wartość dodana korekty (FVA)', lambda a: f'=IFERROR(1-{a["r"]},"")', '0.0%;−0.0%'),
-    ('ile', 'Okresy z korektą', f'=SUMPRODUCT(({Z("E")}<>"")*({Z("H")}<>0))', '0'),
-    ('wg_p', 'Korekty w górę: średni błąd przed', f'=IFERROR(AVERAGEIF({Z("H")},">0",{Z("F")}),"brak")', LICZBA1),
-    ('wg_k', 'Korekty w górę: średni błąd po', f'=IFERROR(AVERAGEIF({Z("H")},">0",{Z("E")}),"brak")', LICZBA1),
-    ('wd_p', 'Korekty w dół: średni błąd przed', f'=IFERROR(AVERAGEIF({Z("H")},"<0",{Z("F")}),"brak")', LICZBA1),
-    ('wd_k', 'Korekty w dół: średni błąd po', f'=IFERROR(AVERAGEIF({Z("H")},"<0",{Z("E")}),"brak")', LICZBA1),
+    ('ile', 'Okresy z korektą', f'=SUMPRODUCT(({ZK("E")}<>"")*({ZK("H")}<>0))', '0'),
+    ('wg_p', 'Korekty w górę: średni błąd przed', f'=IFERROR(AVERAGEIF({ZK("H")},">0",{ZK("F")}),"brak")', LICZBA1),
+    ('wg_k', 'Korekty w górę: średni błąd po', f'=IFERROR(AVERAGEIF({ZK("H")},">0",{ZK("E")}),"brak")', LICZBA1),
+    ('wd_p', 'Korekty w dół: średni błąd przed', f'=IFERROR(AVERAGEIF({ZK("H")},"<0",{ZK("F")}),"brak")', LICZBA1),
+    ('wd_k', 'Korekty w dół: średni błąd po', f'=IFERROR(AVERAGEIF({ZK("H")},"<0",{ZK("E")}),"brak")', LICZBA1),
 ], wiersz0=5)
 wer_k = werdykt(wk, 'J', dalej + 1, (
     f'=IF({adr_k["n"]}<8,"Za mało okresów: porównaj co najmniej 8–12.",'
-    f'IF({adr_k["r"]}<{1 - REMIS},"Korekty zmniejszają błąd.",'
-    f'IF({adr_k["r"]}<={1 + REMIS},"Remis: korekty nie zmieniają błędu, a zajmują czas planisty.",'
+    f'IF({adr_k["r"]}<{1 - REMIS_K},"Korekty zmniejszają błąd.",'
+    f'IF({adr_k["r"]}<={1 + REMIS_K},"Remis: korekty nie zmieniają błędu, a zajmują czas planisty.",'
     f'"Korekty zwiększają błąd. Porównaj korekty w górę i w dół: które psują prognozę?")))'
-), f'Remis to różnica do ±{int(REMIS * 100)}% (umowna granica redakcji). Wynik dla jednego indeksu to wskazówka, nie dowód.')
+), f'Remis to różnica do ±{int(REMIS_K * 100)}% (umowna granica redakcji). Wynik dla jednego indeksu to wskazówka, a nie dowód: '
+   'wklej wiersze wielu indeksów jeden pod drugim.')
 for kol, sz in zip('ABCDEFGH', [8, 10, 13, 12, 11, 11, 13, 12]):
     wk.column_dimensions[kol].width = sz
 wk.column_dimensions['I'].width = 3
@@ -410,11 +480,12 @@ wk.freeze_panes = 'A5'
 
 # Czerwony wynik, gdy prognoza myli się bardziej od darmowej.
 czerwony = Font(name=FONT, bold=True, color='B42318')
-for arkusz, zakres, pierwsza in [(ws, f'{adr["rn"]}:{adr["rp"]}', adr['rn']), (wk, adr_k['r'], adr_k['r']), (wm, 'R5:S54', 'R5')]:
-    arkusz.conditional_formatting.add(zakres, FormulaRule(formula=[f'AND(ISNUMBER({pierwsza}),{pierwsza}>{1 + REMIS})'], font=czerwony))
+for arkusz, zakres, pierwsza, g in [(ws, f'{adr["rn"]}:{adr["rp"]}', adr['rn'], G_J), (wk, adr_k['r'], adr_k['r'], REMIS_K),
+                                    (wm, 'R5:S54', 'R5', G_M), (wm, f'{RAZEM["rn"]}:{RAZEM["rp"]}', RAZEM['rn'], G_M)]:
+    arkusz.conditional_formatting.add(zakres, FormulaRule(formula=[f'AND(ISNUMBER({pierwsza}),{pierwsza}>1+{g})'], font=czerwony))
 
 # Kolumny wejścia: liczby nieujemne (ostrzeżenie, nie blokada); wyprzedzenie: liczba całkowita od 1.
-for arkusz, zakres in [(ws, f'B5:C{OSTATNI}'), (wk, f'B5:D{OSTATNI}'), (wm, f'C5:D{OSTATNI_M}')]:
+for arkusz, zakres in [(ws, f'B5:C{OSTATNI}'), (wk, f'B5:D{OSTATNI_M}'), (wm, f'C5:D{OSTATNI_M}')]:
     dv = DataValidation(type='decimal', operator='greaterThanOrEqual', formula1='0', allow_blank=True,
                         showErrorMessage=True, errorStyle='warning', errorTitle='Sprawdź wartość', error='Wpisz liczbę sztuk (0 albo więcej).')
     arkusz.add_data_validation(dv)
@@ -438,7 +509,7 @@ for arkusz in (ins, wm, ws, wk):
     arkusz.sheet_properties.pageSetUpPr.fitToPage = True
     arkusz.page_margins.left = arkusz.page_margins.right = 0.4
 ins.page_setup.fitToHeight = 1
-wm.print_area = 'A1:T60'
+wm.print_area = 'A1:T71'
 ws.print_area = 'A1:O40'
 wk.print_area = 'A1:K40'
 
@@ -449,9 +520,11 @@ wb.properties.creator = 'Rytm Hali'
 WYNIK.parent.mkdir(parents=True, exist_ok=True)
 wb.save(WYNIK)
 DANE.write_text(json.dumps({
-    'adresy': {'jeden': adr, 'jeden_werdykt': wer_j, 'korekty': adr_k, 'korekty_werdykt': wer_k},
-    'jeden_indeks': oczekiwane_jeden, 'korekty': oczekiwane_korekty, 'wiele': oczekiwane_wiele,
+    'adresy': {'jeden': adr, 'jeden_werdykt': wer_j, 'korekty': adr_k, 'korekty_werdykt': wer_k, 'razem': RAZEM, 'razem_werdykt': WER_M},
+    'jeden_indeks': oczekiwane_jeden, 'korekty': oczekiwane_korekty, 'wiele': oczekiwane_wiele, 'razem': oczekiwane_razem,
+    'werdykty_razem': WERDYKTY_M,
     'sprzedaz': sprzedaz, 'system': system, 'twoja': twoja,
 }, ensure_ascii=False, indent=1) + '\n', encoding='utf8')
 print(f'zapisano {WYNIK.relative_to(KORZEN)}')
-print(json.dumps({'jeden_indeks': oczekiwane_jeden, 'korekty': oczekiwane_korekty, 'wiele': oczekiwane_wiele}, ensure_ascii=False, indent=1))
+print(json.dumps({'jeden_indeks': oczekiwane_jeden, 'korekty': oczekiwane_korekty, 'wiele': oczekiwane_wiele, 'razem': oczekiwane_razem},
+                 ensure_ascii=False, indent=1))
