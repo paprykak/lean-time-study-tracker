@@ -16,14 +16,14 @@ Pełne teksty otwartych źródeł: `.cache/redakcja/smed-przezbrojenia/` (poza r
 ## 9. Weryfikacja
 - Runda 1, weryfikator faktów (69 pozycji): 39 POTWIERDZONE, 19 CZĘŚCIOWO, 11 NIEPOTWIERDZONE, 0 SPRZECZNE. Niepotwierdzone (m.in. „zwykle 20–50%, nie 90%”, „opisy pokazują sukcesy”) usunięte albo zastąpione brzmieniem źródeł (20–90%, 10 z 30 opisów z ograniczeniami); autorzy i tytuł przeglądu Barrantes poprawione.
 - Runda 1, recenzent: karta 24/32. Błąd: rachunek pomijał, że przy starych partiach też oszczędzasz koszt przezbrojeń; rachunek przepisany (3 000 zł z przezbrojeń + 515 zł z mniejszych partii). Usunięta definicja z otwarcia, przypadek wtryskarki wszedł do rachunków.
-- Runda 2, redaktor językowy: przyjęte „co trzeci opis” raz zamiast trzech razy, rozpisane „dwa razy” (ludzie i produkcja), finał z krokiem na poniedziałek, szyk zdania o Shingo, usunięte „Tylko tyle.” i „Nie wszystkie.”, „nikt nie próbował”, rozwinięte OEE, bezosobowa forma w kroku 4, otwarcie sceną zamiast ramy z kompletacji. Odrzucone: scalenie akapitów meksykańskiego i polskiego (dwa różne kłopoty, po skróceniu oba krótkie). Słowa: 1413 przed rundą, 1575 po (dopisane czynności na wtryskarce i prasie, test wąskiego gardła, wniosek dla zarządu).
+- Runda 2, redaktor językowy: przyjęte „co trzeci opis” raz zamiast trzech razy, rozpisane „dwa razy” (ludzie i produkcja), finał z krokiem na poniedziałek, szyk zdania o Shingo, usunięte „Tylko tyle.” i „Nie wszystkie.”, „nikt nie próbował”, rozwinięte OEE, bezosobowa forma w kroku 4, otwarcie sceną zamiast ramy z kompletacji. Odrzucone: scalenie akapitów meksykańskiego i polskiego (dwa różne kłopoty, po skróceniu oba krótkie). Słowa: 1413 przed rundą, 1570 po (dopisane czynności na wtryskarce i prasie, test wąskiego gardła, wniosek dla zarządu).
 - Runda 2, czytelnik testowy 1 (kierownik wtryskarni, 120 osób): porzucenia brak, zwolnienie przy Harrisie i tabeli; przyjemność 6/10, wartość 7/10. Zrobione: lista czynności przezbrojenia wtryskarki, wyjaśnione „maquiladora”, zdanie o największych partiach zastąpione regułą dla zakładu bez wąskiego gardła, drugi test wąskiego gardła, Harris w jednym zdaniu wniosku.
 - Domknięcie, czytelnik testowy 2 (specjalista lean, tłoczenie i obróbka): przewijanie w sekcji o porażkach; przyjemność 6/10, wartość 7/10. Zrobione: sekcja skrócona, wniosek dla zarządu, prasa i matryca, wyjaśnione 515 zł, „skracały się” zamiast „rozciągają się”, bez „mikroprzestojów”, jedno „Weźmy” mniej. Na później: pełny przykład z tłoczenia; czasu zwrotu warsztatu nie podajemy (brak źródła cen).
 - Domknięcie, weryfikacja zmienionych zdań (model sonnet): S1–S7 i D1–D4: 9 POTWIERDZONE, 2 CZĘŚCIOWO („zwykle” przy przyczynach porażek; autorstwo i rok u Harrisa); obie poprawione w brzmieniu weryfikatora.
 - `sprawdzono`: 2026-11-07.
 
 ## 10. Kontrola automatyczna
-- `redakcja:kontrola`: 1575 słów i tabela, FOG-PL 9,7, średnio 14,4 słowa w zdaniu, rytm 0,45; bez błędów i uwag.
+- `redakcja:kontrola`: 1570 słów i tabela, FOG-PL 9,7, średnio 14,5 słowa w zdaniu, rytm 0,45; bez błędów i uwag.
 - `redakcja:zrodla`: 4 źródła bez problemów.
 - Testy: pełne `npm run check` przed wdrożeniem (wynik w STAN.md).
 

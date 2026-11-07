@@ -16,14 +16,14 @@ Pełne teksty otwartych źródeł: `.cache/redakcja/kompletacja-droga/` (poza re
 ## 9. Weryfikacja
 - Runda 1, weryfikator faktów (52 twierdzenia): 39 POTWIERDZONE, 11 CZĘŚCIOWO, 1 NIEPOTWIERDZONE, 1 SPRZECZNE (podpis zdjęcia). Poprawione wszystkie: zakresy w leadzie i opisie SEO do wyników symulacji (33–45%), podpis zdjęcia, brzmienia częściowe.
 - Runda 1, recenzent: karta 25/32. Błędy: czas kompletacji utożsamiony z drogą, wolne etaty liczone jak gotówka, zakresy 27–43% i 20–45% niezgodne ze źródłami, brak spornej tezy w leadzie; wszystkie poprawione. Na później: źródło o tłoku kompletujących (np. Gue, Meller, Skufca 2006) do sekcji o granicach.
-- Runda 2, redaktor językowy: przyjęte scalenie opisu symulacji, podmiot i klamra w zakończeniu (wraca dystrybutor chemii), stały termin „klasa A”, zapowiedź przykładu, zdanie o podręczniku, nowe ostatnie zdanie, polskie nazwy tras z angielskimi w nawiasie, „order picking” przy pierwszym użyciu, inny śródtytuł ograniczeń. Usunięte zdania bez źródła („zmienisz w miesiąc”); zdanie o łączeniu zamówień oparte na progu z wcześniejszej części tekstu. Słowa: 1579 przed rundą, 1687 po (cięcia ok. 60 słów, dopisane przenoszenie i uzupełnianie, objaśnienia pojęć, wariant dla 40 osób).
+- Runda 2, redaktor językowy: przyjęte scalenie opisu symulacji, podmiot i klamra w zakończeniu (wraca dystrybutor chemii), stały termin „klasa A”, zapowiedź przykładu, zdanie o podręczniku, nowe ostatnie zdanie, polskie nazwy tras z angielskimi w nawiasie, „order picking” przy pierwszym użyciu, inny śródtytuł ograniczeń. Usunięte zdania bez źródła („zmienisz w miesiąc”); zdanie o łączeniu zamówień oparte na progu z wcześniejszej części tekstu. Słowa: 1579 przed rundą, 1678 po (cięcia ok. 60 słów, dopisane przenoszenie i uzupełnianie, objaśnienia pojęć, wariant dla 40 osób).
 - Runda 2, czytelnik testowy 1 (kierownik magazynu dystrybucyjnego, 40 osób na zmianę): porzucenia brak, przewijanie przy opisie symulacji; przyjemność 6/10, wartość 7/10. Zrobione: jeden punkt odniesienia dla procentów, usunięta pozorna sprzeczność rady o kolejności, objaśnione „punkt wydań” i „sortownia”, akapit o przenoszeniu i uzupełnianiu, wariant dla 40 osób. Co zabiera, pokrywa się z planem.
 - Domknięcie, czytelnik testowy 2 (właściciel hurtowni, 25 osób w magazynie): przewijanie od „Granice klas znajdziesz w danych”; przyjemność 6/10, wartość 7/10. Zrobione: SKU, „linia zamówienia”, arkusz z WZ bez systemu magazynowego, rozpisany rachunek etatów, usunięte zdanie-hasło. Na później: strefy i łączenie zamówień jako krótka ramka, mniejsza gęstość liczb w środku, rysunek obu tras.
 - Domknięcie, weryfikacja zmienionych zdań (model sonnet): K1–K5 i D9: 4 POTWIERDZONE, 2 CZĘŚCIOWO (zaokrąglenie 256 tys. zł, zdanie o łączeniu zamówień jako wniosek redakcji); obie poprawione.
 - `sprawdzono`: 2026-11-07.
 
 ## 10. Kontrola automatyczna
-- `redakcja:kontrola`: 1687 słów, FOG-PL 10,6, średnio 14,9 słowa w zdaniu, rytm 0,46; bez błędów i uwag.
+- `redakcja:kontrola`: 1678 słów, FOG-PL 10,5, średnio 14,8 słowa w zdaniu, rytm 0,46; bez błędów i uwag.
 - `redakcja:zrodla`: 3 źródła bez problemów (DOI de Kostera i Tarczyńskiego potwierdzone).
 - Testy: pełne `npm run check` przed wdrożeniem (wynik w STAN.md).
 

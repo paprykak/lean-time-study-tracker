@@ -16,14 +16,14 @@ Pełne teksty otwartych źródeł: `.cache/redakcja/krzywa-uczenia/` (poza repoz
 ## 9. Weryfikacja
 - Runda 1, weryfikator faktów: 42 POTWIERDZONE, 21 CZĘŚCIOWO, 1 SPRZECZNE (opis rozdziału Mishiny w `metoda`), 0 NIEPOTWIERDZONE. Poprawione wszystkie (lead, opis SEO, metoda, zakres 157–298 sztuk w siedmiu eksperymentach).
 - Runda 1, recenzent: karta 25/32. Błąd: teza porównywała niewspółmierne jednostki; nowy tytuł i teza (sztuki kontra dni), oszacowania oznaczone jako obliczenia redakcji, pełniejsze cztery kroki TWI, uczciwy śródtytuł o dowodach.
-- Runda 2, redaktor językowy: przyjęte zdanie o arkuszu z czwartego dnia, „Ważniejsze, że…”, liczby cyframi, szyk zdania o Kownie, strona czynna przy Wrighcie, lead bez zapowiedzi, „Ty poprawiaj”, przygotowanie instruktora przeniesione do kroku 1 zamiast powtórzenia, otwarcie bez frazy o pierwszym dniu, zakończenie z pierwszym krokiem, inny śródtytuł ograniczeń. Odrzucone: zapis „Sztuka nr 2…” (w prozie czytelniejsze liczebniki porządkowe). Słowa: 1538 przed rundą, 1506 po.
+- Runda 2, redaktor językowy: przyjęte zdanie o arkuszu z czwartego dnia, „Ważniejsze, że…”, liczby cyframi, szyk zdania o Kownie, strona czynna przy Wrighcie, lead bez zapowiedzi, „Ty poprawiaj”, przygotowanie instruktora przeniesione do kroku 1 zamiast powtórzenia, otwarcie bez frazy o pierwszym dniu, zakończenie z pierwszym krokiem, inny śródtytuł ograniczeń. Odrzucone: zapis „Sztuka nr 2…” (w prozie czytelniejsze liczebniki porządkowe). Słowa: 1538 przed rundą, 1502 po.
 - Runda 2, czytelnik testowy 1 (kierowniczka HR i szkoleń w zakładzie montażowym): porzucenia brak, zwolnienie przy TWI i NBER; przyjemność 6/10, wartość 6/10. Zrobione: arkusz wdrożenia w tabeli z przykładem, prostsze nazwy („czas, na którym montaż się ustalił”), wyjaśniona produktywność, zdanie o instruktorze bez wolnego czasu, skrócona historia TWI.
 - Domknięcie, czytelnik testowy 2 (lider zespołu na linii montażu elektroniki): przewijanie od akapitu o dowodach TWI; przyjemność 6/10, wartość 7/10. Zrobione: dowody TWI w czterech zdaniach (bez kordu i liczby oświadczeń), bez zdania o skali logarytmicznej, przedział 110–166 godzin przeniesiony do `metoda`, bez „470 godzin”, objaśniona kolumna tabeli, konkret zamiast „krzywa nie ma do czego zbiec”. Na później: część praktyczna przed sekcją o TWI (zmiana budowy).
 - Domknięcie, weryfikacja zmienionych zdań (model sonnet): C1–C9 i D5–D8: 13 POTWIERDZONE; uwaga do D7 przyjęta (efekt instruktażu „na sprzedaż i produktywność”); dopisane, że wyniki z lat 40. dotyczą całego programu.
 - `sprawdzono`: 2026-11-07.
 
 ## 10. Kontrola automatyczna
-- `redakcja:kontrola`: 1506 słów i tabela, FOG-PL 9,2, średnio 14,8 słowa w zdaniu, rytm 0,45; bez błędów i uwag. Akapit sedna po 196 słowach.
+- `redakcja:kontrola`: 1502 słowa i tabela, FOG-PL 9,2, średnio 14,7 słowa w zdaniu, rytm 0,46; bez błędów i uwag. Akapit sedna po 196 słowach.
 - `redakcja:zrodla`: 6 źródeł bez problemów.
 - Testy: pełne `npm run check` przed wdrożeniem (wynik w STAN.md).
 
