@@ -59,12 +59,6 @@
     "rodzaj": "Badanie recenzowane",
     "dostep": "2026-11-06"
   },
-  "iso": {
-    "opis": "ISO 22400-2:2014, Automation systems and integration – Key performance indicators (KPIs) for manufacturing operations management – Part 2: Definitions and descriptions, karta normy w katalogu ISO (status: do rewizji).",
-    "adres": "https://committee.iso.org/standard/54497.html",
-    "rodzaj": "Przepis lub norma",
-    "dostep": "2026-11-06"
-  },
   "ylipaa": {
     "opis": "Ylipää T., Skoogh A., Bokrantz J., Gopalakrishnan M. (2017), Identification of maintenance improvement potential using OEE assessment, International Journal of Productivity and Performance Management, 66(1), 126–143 (streszczenie).",
     "adres": "https://doi.org/10.1108/IJPPM-01-2016-0028",
