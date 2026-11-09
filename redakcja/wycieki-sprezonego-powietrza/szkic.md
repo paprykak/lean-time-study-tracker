@@ -48,7 +48,7 @@ Moc znajdziesz na tabliczce znamionowej sprężarki albo w jej dokumentacji. Lic
 |---|---|---|---|---|---|
 | 15.11 | nr 1, 37 kW | 0,5 | 0,75 | 40% | do 45 500 |
 
-Sprężarki z falownikiem nie przełączają się między obciążeniem a odpoczynkiem, więc dla nich jest druga metoda: spadek ciśnienia [@doe]. Doprowadź sieć do ciśnienia roboczego p1, wyłącz sprężarkę i zmierz czas T w minutach, w którym ciśnienie spadnie do p2, czyli mniej więcej połowy roboczego. Potrzebna jest też pojemność sieci V w m³, czyli zbiorników i rurociągów [@doe]. Pojemność zbiornika podaje jego tabliczka znamionowa, a pojemność rur policzysz z długości i średnicy wewnętrznej: na przykład 100 m rury o średnicy 50 mm to około 0,2 m³. W jednostkach SI wzór wygląda tak (przeliczenie redakcji):
+Sprężarki z falownikiem nie przełączają się między obciążeniem a odpoczynkiem, więc dla nich jest druga metoda: spadek ciśnienia [@doe]. Doprowadź sieć do ciśnienia roboczego p1, wyłącz sprężarkę i zmierz czas T w minutach, w którym ciśnienie spadnie do p2, czyli mniej więcej połowy roboczego. Potrzebna jest też pojemność sieci V w m³, czyli zbiorników i rurociągów [@doe]. Pojemność zbiornika znajdziesz w jego dokumentacji, a pojemność rur policzysz z długości i średnicy wewnętrznej: na przykład 100 m rury o średnicy 50 mm to około 0,2 m³. W jednostkach SI wzór wygląda tak (przeliczenie redakcji):
 
 **wyciek (m³/min) = V × (p1 − p2) / (1,013 × T) × 1,25** [@doe]
 
