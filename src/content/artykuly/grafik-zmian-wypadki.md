@@ -23,8 +23,8 @@ zrodla:
     adres: "https://doi.org/10.1080/07420528.2017.1367305"
     rodzaj: "Przegląd lub metaanaliza"
     dostep: 2026-11-09
-  - opis: "Matre D., Skogstad M., Sterud T., Nordby K.-C., Knardahl S., Christensen J. O., Lie J.-A. S. (2021), Safety incidents associated with extended working hours. A systematic review and meta-analysis, Scandinavian Journal of Work, Environment & Health 47(6), 415–424."
-    adres: "https://doi.org/10.5271/sjweh.3958"
+  - opis: "Matre D., Skogstad M., Sterud T., Nordby K.-C., Knardahl S., Christensen J. O., Lie J.-A. S. (2021), Safety incidents associated with extended working hours. A systematic review and meta-analysis, Scandinavian Journal of Work, Environment & Health 47(6), 415–424, DOI 10.5271/sjweh.3958."
+    adres: "https://pmc.ncbi.nlm.nih.gov/articles/PMC8504541/"
     rodzaj: "Przegląd lub metaanaliza"
     dostep: 2026-11-09
   - opis: "Moen L. V., Lie J.-A. S., Sterud T., Christensen J. O., Haugen F., Skogstad M., Nordby K.-C., Matre D. (2025), Association of non-standard working time arrangements with safety incidents: a systematic review, BMJ Open 15(9), e100931."

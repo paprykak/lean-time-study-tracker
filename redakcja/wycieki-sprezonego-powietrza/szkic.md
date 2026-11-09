@@ -16,7 +16,7 @@ Poradnik amerykańskiego Departamentu Energii opisuje dokładnie ten mechanizm: 
 
 ## Dwa razy większy otwór to cztery razy wyższy rachunek
 
-Ile powietrza ucieka przez otwór, wynika z fizyki przepływu przez dyszę. Przeliczyliśmy to dla 6 i 7 barów i dla otworu idealnego, czyli okrągłego i o gładkich krawędziach, takiego jak w tabeli Departamentu Energii. Nasz rachunek zgadza się z tą tabelą dla wszystkich trzech średnic, które podaje [@doe].
+Ile powietrza ucieka przez otwór, wynika z fizyki przepływu przez dyszę. Przeliczyliśmy to dla 6 i 7 barów i dla otworu idealnego, przez który powietrze płynie bez strat, takiego jak w tabeli Departamentu Energii. Nasz rachunek zgadza się z tą tabelą dla wszystkich trzech średnic, które podaje [@doe].
 
 Koszt policzyliśmy przy cenie 0,7685 zł za kWh bez VAT. Tyle według Eurostatu płaciły w pierwszym półroczu 2026 r. polskie firmy zużywające od 2 do 20 GWh rocznie [@eurostat]. Mniejsze firmy płaciły więcej, nawet ponad 1,12 zł, więc ich rachunek będzie wyższy [@eurostat]. Moc 6,5 kW na każdy metr sześcienny powietrza na minutę wyliczyliśmy z tej samej tabeli; zakłada ona sprawną sprężarkę i ciśnienie około 7 barów [@doe]. Przy 6 barach sprężarka zużywa trochę mniej energii, więc koszty dla 6 barów są w naszym rachunku raczej zawyżone o kilka procent.
 

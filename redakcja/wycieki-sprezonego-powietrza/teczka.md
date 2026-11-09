@@ -58,5 +58,40 @@ Badań recenzowanych z pomiarem udziału wycieków w wielu zakładach nie znale�
 | jeden przypadek: 62% wycieków; ok. 44% oszczędności instalacji | nascimento | abstrakt: „The results suggested 62% of leaks in the study case.”; „the savings would represent around 44% in the compressed air system” |
 
 ## 7. Analiza własna i rachunki
-- `dane/wycieki.py`: przepływ krytyczny przez otwór idealny (Cd = 1, 20 °C, powietrze wolne 1,013 bar); sprawdzenie: model daje 6,5 / 26,0 / 104,0 cfm dla 1/16″, 1/8″, 1/4″ przy 100 psi, dokładnie jak tabela DOE. Moc 6,50 kW na 1 m³/min wynika z tej samej tabeli (koszt / cena / 8 760 h). Wyniki dla 1–4 mm przy 6 i 7 barach, koszt przy 0,7685 zł/kWh dla 8 760 h i 4 000 h. Przykład na danych fikcyjnych: T = 0,5 min, t = 2 min → 20%; sprężarki 75 kW, 4 000 h → ok. 46 100 zł rocznie; przy 10% → ok. 23 100 zł.
+- `dane/wycieki.py`: przepływ krytyczny przez otwór idealny (Cd = 1, 20 °C, powietrze wolne 1,013 bar); sprawdzenie: model daje 6,5 / 26,0 / 104,0 cfm dla 1/16″, 1/8″, 1/4″ przy 100 psi, dokładnie jak tabela DOE. Moc 6,50 kW na 1 m³/min wynika z tej samej tabeli (koszt / cena / 8 760 h). Wyniki dla 1–4 mm przy 6 i 7 barach, koszt przy 0,7685 zł/kWh dla 8 760 h i 4 000 h. Przykład na danych fikcyjnych (po weryfikacji): jedna sprężarka 37 kW, T = 0,5 min, t = 0,75 min → 40% jej wydajności (20% obu); 4 000 h, 0,7685 zł/kWh → do ok. 45 500 zł rocznie; naprawa połowy → do ok. 22 700 zł; przy poborze sprężarki odciążonej 15–35% mocy oszczędność 65–85% tej kwoty, czyli 14,8–19,3 tys. zł. Spadek ciśnienia: V = 3 m³, 6 → 3 bar w 5 min → 2,22 m³/min, 19,5% wydajności dwóch sprężarek po 37 kW. Ciśnienie: 1 bar ≈ 7,25 × 2 psi, więc 1% na 2 psi ≈ 7%/bar, 1,6–2% ≈ 12–15%/bar; wyciek 6 → 7 bar +14,3%. Rura 100 m × 50 mm: 0,196 m³.
 - Rysunek: `dane/rysunek.mjs` → `src/assets/rysunki/wycieki-sprezonego-powietrza-1.svg`.
+- Schemat testu: `dane/schemat.mjs` → `src/assets/rysunki/wycieki-sprezonego-powietrza-2.svg`.
+
+## 8. Zdjęcie
+- Wybór: „Compressor room Coal Mine Winterslag Genk Belgium” (Eebie, Wikimedia Commons, CC BY 4.0) — hala sprężarek dawnej kopalni; pasuje do tezy (każdy metr sześcienny trzeba najpierw sprężyć), bez ludzi i marek w kadrze. Stan licencji i pobrania: sekcja 12.
+
+## 9. Weryfikacja
+- Runda 1, weryfikator faktów (model główny, ok. 73 twierdzenia): ok. 54 POTWIERDZONE, 15 CZĘŚCIOWO, 2 NIEPOTWIERDZONE, 2 SPRZECZNE. Poprawione: 25 tys. zł tylko przy sieci pod ciśnieniem całą dobę (lead, opisSeo, FAQ), 20% jako szacunek wydajności sprężarek bez metody, wynik detektora (Dudić) zawężony do jednego badania, tytuł raportu Radgena, 74 zamiast 75 kW, wzór kosztu dla sprężarki z testu.
+- Runda 1, recenzent (model główny): karta 24/30 (bez kryterium 11). Zrobione: 20% opisane jako szacunek bez metody, sprężarka odciążona pobiera 15–35% mocy (realna oszczędność 15–19 tys. zł), cena z faktury tylko z opłat zmiennych, akapit o spadku ciśnienia w sieci (DOE Fact Sheet 4), 430 zł miesięcznie za otwór 2 mm, opis audytorów kampanii niemieckiej. Wspólna rama trzech tekstów zmieniona (różne otwarcia i zakończenia).
+- Runda 2, redaktor językowy (sonnet): przyjęte m.in. otwarcie „Weźmy…” z oznaczeniem przykładu, śródtytuł „Dwa razy większy otwór to cztery razy wyższy rachunek”, scalenie sekcji o liczbie 20% i o granicach rachunku w „Ten rachunek ma granice”, odesłanie do rysunku 1 zamiast „tabeli”, tabela skutków podniesienia ciśnienia zamiast dwóch akapitów liczb, zdanie o ciśnieniu bez zaprzeczenia, porządek listy miejsc wycieków, zakończenie wracające do syku. Odrzucone: zmiana tytułu (ma tezę; wzorzec „nie X, tylko Y” użyty raz), nowy lead (obecny ma tezę i warunek całej doby), usunięcie zdania o zgodności z tabelą DOE (skrócone, bez jednostek calowych, bo pokazuje, że rachunek jest sprawdzony). Słowa: ok. 1 780 przed rundą, 1 772 po (doszła tabela, akapit o spadku ciśnienia i wyjaśnienia czytelników).
+- Runda 2, czytelnik testowy 1 (kierownik utrzymania ruchu, obróbka metali, 140 osób): przewijanie w sekcji o liczbie 20%; przyjemność 6/10, wartość 7/10. Zrobione: sekcja skrócona i scalona, mniej przypisów w otwarciu, prostszy przykład testu („do”, 65–85%), akapit „gdy wycieków jest mało, a ciśnienia brakuje”, skąd wziąć pojemność sieci, bez stóp sześciennych i psi w tekście głównym. Zapamiętał: kwadrat średnicy i 25 tys. zł, 6 → 7 barów = ok. 7% energii i 14% wycieków, test T × 100 / (T + t) — zgodne z trzema rzeczami z planu.
+- Domknięcie, czytelnik testowy 2 (dyrektor zakładu, 90 osób): przewijanie przy wzorze dla sprężarek z falownikiem; przyjemność 6/10, wartość 8/10. Zrobione: wyjaśnione „otwór idealny” i mnożnik 1,25, pogodzone 40% z 20%, krótszy akapit o cenach, wyjaśniona różnica 7% i 12–15%. Na później: ramka „dla utrzymania ruchu” ze wzorem dla falownika i ramka „co powiedzieć utrzymaniu ruchu”.
+- Domknięcie, weryfikacja zmienionych zdań (sonnet, kopie źródeł): A1–A10 POTWIERDZONE (Radgen s. 3-200 „typically the most cost effective measure”; Eurostat pasma ID 0,7685, IC 0,878, IB 1,1243; DOE Fact Sheet 4 „within the last 30 feet”; Nascimento 62%). Zdania zmienione po domknięciu sprawdzone przez redakcję w poradniku DOE: s. 28 „The 1.25 multiplier corrects leakage to normal system pressure, allowing for reduced leakage with falling system pressure”; dodatkowe 0,6–1,0% na 2 psi z poboru nieregulowanego (stąd 1,6–2%).
+- `sprawdzono`: 2026-11-09.
+
+## 10. Kontrola automatyczna
+- `redakcja:kontrola`: 1 772 słowa (bez tabel), FOG-PL 9,2, średnio 14,9 słowa w zdaniu, bez błędów. Uwagi zostają z uzasadnieniem: „zdania ponad 30 słów” to zdania z dwukropkiem przed tabelą albo wzorem, które skrypt skleja z następnym blokiem; rytm 0,44 przy celu 0,45 — tekst ma dwie procedury krok po kroku, gdzie zdania podobnej długości są czytelniejsze.
+- `redakcja:zrodla`: 5 źródeł bez problemów (MDPI 403 dla automatów, DOI sprawdzony w Crossref).
+- Testy: pełne `npm run check` przed wdrożeniem (wynik w STAN.md).
+
+## 11. Karta jakości
+- Bramki twarde: weryfikacja ✓; kontrola automatyczna ✓; licencja zdjęcia: sekcja 12; dane pracodawców ✓; metoda ✓; redaktor językowy ✓; **czytelnik testowy ✗** (6/10 i 6/10 za przyjemność; 7/10 i 8/10 za wartość).
+- Punkty (ocena redakcji po poprawkach; recenzent po rundzie 1: 24/30 bez kryterium 11): 1:2, 2:1, 3:1, 4:2, 5:2, 6:2, 7:2, 8:2, 9:2, 10:2, 11:2, 12:2, 13:2, 14:2, 15:2, 16:2 = **30/32**. Kryterium 3 (obowiązkowe) na 1: liczby 20% i 5–10% mają tylko źródło klasy C (poradnik rządowy), co tekst mówi wprost; recenzowanych pomiarów z wielu zakładów nie znaleźliśmy. Kryterium 2: rada „najpierw wycieki” jest znana, nowe są koszt w złotych przy polskich cenach i test w jednostkach SI.
+
+## 12. Dla Patryka
+- Bramka czytelnika (8/10 za przyjemność) i kryterium 3 niespełnione; tekst opublikowany na polecenie „publikuj od razu”. Do decyzji: ramka dla utrzymania ruchu ze wzorem dla falownika.
+- Zdjęcie: Wikimedia Commons przez cały dzień odpowiadał 429 (limit zapytań); licencja i plik według stanu opisanego w STAN.md.
+- Liczby do odświeżenia: ceny Eurostatu (nrg_pc_205) po publikacji danych za 2026-S2.
+
+## 13. Kontrola redakcyjna
+Tryb „publikuj od razu” (SKILL.md, zasada 6): Patryk czyta tekst krótko po publikacji.
+| Data | Kto | Decyzja | Co zmieniono |
+|---|---|---|---|
+| 2026-11-09 | Patryk (polecenie z rozmowy: „Od razu publikuj”) | publikuj od razu, bez lektury przed publikacją | czyta po publikacji; zmiany wpisujemy w sekcji 14 |
+
+## 14. Zmiany po publikacji
