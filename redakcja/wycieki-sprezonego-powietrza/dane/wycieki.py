@@ -61,12 +61,13 @@ for d in [1, 2, 3, 4]:
         print(w)
 
 # Przykład na danych fikcyjnych: test załadunku i koszt wycieków
-T_on, t_off = 0.5, 2.0  # minuty pracy pod obciążeniem / bez obciążenia, przy wyłączonych odbiorach
+# Test jednej sprężarki 37 kW (druga wyłączona), przy wyłączonych odbiorach; w zakładzie są dwie po 37 kW (74 kW)
+T_on, t_off = 0.5, 0.75  # minuty pracy pod obciążeniem / bez obciążenia
 udzial = T_on * 100 / (T_on + t_off)
-moc_sprezarek, godziny = 75, 4000
+moc_sprezarek, godziny = 37, 4000
 koszt = udzial / 100 * moc_sprezarek * godziny * CENA
-koszt_10 = 0.10 * moc_sprezarek * godziny * CENA
-wyniki['przyklad'] = {'udzial_proc': udzial, 'koszt_pln': round(koszt, -2), 'koszt_przy_10proc': round(koszt_10, -2), 'oszczednosc': round(koszt - koszt_10, -2)}
+koszt_10 = udzial / 2 / 100 * moc_sprezarek * godziny * CENA  # wycieki zmniejszone o połowę
+wyniki['przyklad'] = {'udzial_proc_jednej_37kW': udzial, 'udzial_proc_obu_74kW': udzial * 37 / 74, 'koszt_pln': round(koszt, -2), 'koszt_po_naprawie_polowy': round(koszt_10, -2), 'oszczednosc': round(koszt - koszt_10, -2)}
 print('\nPrzykład:', wyniki['przyklad'])
 Path(__file__).with_name('wyniki.json').write_text(json.dumps(wyniki, ensure_ascii=False, indent=1) + '\n')
 
@@ -74,9 +75,9 @@ Path(__file__).with_name('wyniki.json').write_text(json.dumps(wyniki, ensure_asc
 # wyciek [m3/min powietrza wolnego] = V [m3] × (p1 − p2) [bar] / (1,013 × T [min]) × 1,25
 V, p1, p2, Tmin = 3.0, 6.0, 3.0, 5.0
 wyciek = V * (p1 - p2) / (1.013 * Tmin) * 1.25
-wydajnosc = 75 / MOC  # m3/min, które dają sprężarki 75 kW przy mocy z tabeli DOE
+wydajnosc = 74 / MOC  # m3/min, które dają dwie sprężarki po 37 kW przy mocy z tabeli DOE
 wyniki['spadek_cisnienia'] = {'V_m3': V, 'p1': p1, 'p2': p2, 'T_min': Tmin, 'wyciek_m3min': round(wyciek, 2),
-                              'wydajnosc_75kW_m3min': round(wydajnosc, 1), 'udzial_proc': round(wyciek / wydajnosc * 100, 1)}
+                              'wydajnosc_74kW_m3min': round(wydajnosc, 1), 'udzial_proc': round(wyciek / wydajnosc * 100, 1)}
 # Ciśnienie: 2 psi ≈ 1% energii (DOE); 1 bar = 14,504 psi
 wyniki['bar_na_proc_energii'] = round(14.504 / 2, 1)
 wyniki['wzrost_wycieku_6_7_bar_proc'] = round((przeplyw_m3min(2, 7) / przeplyw_m3min(2, 6) - 1) * 100, 1)

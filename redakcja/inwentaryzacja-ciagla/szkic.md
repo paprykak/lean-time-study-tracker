@@ -4,7 +4,7 @@
 
 **Dlaczego.** Każde przyjęcie, pobranie i przesunięcie może zostawić błąd, a najwięcej operacji mają najczęściej pobierane indeksy. W naszym modelu na danych fikcyjnych przy spisie raz w roku średnio 45% stanów jest błędnych, a przy liczeniu cyklicznym według rotacji 22%.
 
-**Co zrobić.** Ustawa o rachunkowości pozwala liczyć zapasy w strzeżonych składowiskach z ewidencją ilościowo-wartościową raz w ciągu dwóch lat, a więc rozłożyć spis na cały okres [@ustawa]. Licz najczęściej tam, gdzie błąd rośnie najszybciej, i naprawiaj przyczyny różnic, bo samo liczenie daje tylko część efektu.
+**Co zrobić.** Ustawa o rachunkowości pozwala inwentaryzować zapasy w strzeżonych składowiskach z ewidencją ilościowo-wartościową raz w ciągu dwóch lat [@ustawa]. Na tej podstawie firmy rozkładają spis na cały ten okres. Licz najczęściej tam, gdzie błąd rośnie najszybciej, i naprawiaj przyczyny różnic, bo samo liczenie daje tylko część efektu.
 
 ## Dwanaście kartonów, których nie ma
 
@@ -12,7 +12,7 @@ System pokazuje dwanaście kartonów. Na półce nie ma żadnego. Kompletujący 
 
 Weźmy hurtownię artykułów elektrotechnicznych z 6 000 indeksów (to przykład, firma jest fikcyjna). Co roku w pierwszym tygodniu stycznia zamyka magazyn na dwa dni i liczy wszystko. Różnice zostają wyjaśnione, stany poprawione. Do marca magazynierzy znów zgłaszają puste lokalizacje, w których system widzi towar.
 
-Badanie, które Nicole DeHoratius i Ananth Raman opublikowali w „Management Science”, pokazuje skalę zjawiska w handlu: 65% z prawie 370 tys. rekordów było błędnych [@dehoratius]. Błędy zmniejszały regularne audyty stanów, a zwiększały złożoność sklepu i struktura dostaw [@dehoratius]. Roczny spis spełnia ustawę, ale nie naprawi stanów w magazynie. Ustawa pozwala liczyć zapasy przez cały rok, a liczenie według rotacji daje dokładniejsze stany, jeśli przy okazji naprawiasz to, co błędy robi.
+Badanie, które Nicole DeHoratius i Ananth Raman opublikowali w „Management Science”, pokazuje skalę zjawiska w handlu: 65% z prawie 370 tys. rekordów było błędnych [@dehoratius]. Mniej błędów wiązało się z praktykami audytu stanów, a więcej ze złożonością sklepu i strukturą dostaw [@dehoratius]. Roczny spis spełnia ustawę, ale nie naprawi stanów w magazynie. Ustawa pozwala rozłożyć inwentaryzację zapasów na dwa lata, a liczenie według rotacji daje dokładniejsze stany, jeśli przy okazji naprawiasz to, co błędy robi.
 
 ## Błędy rosną od dnia po spisie
 
@@ -24,19 +24,23 @@ Skąd tak szybki przyrost? Indeks klasy A ma w roku 2 000 operacji, po 8 dzienni
 
 Po kwartale od spisu błędnych jest 37% stanów, a na koniec roku 63%. Średnio przez rok to 45%. Liczenie cykliczne, w którym indeksy A liczy się co miesiąc, B co kwartał, a C raz w roku, utrzymuje odsetek błędnych stanów na poziomie 22%. Gdy błąd zostawia co pięćsetna operacja zamiast co dwusetnej, to samo liczenie daje 10%.
 
-Model jest uproszczony i nie kalibrowaliśmy go do żadnego badania. Pokazuje jednak mechanizm: błędy rosną tam, gdzie jest najwięcej ruchu, a liczenie bez poprawy procesu tylko je ścina. To samo wyszło w symulacji centrum dystrybucyjnego, którą przeprowadzili Iuri Destro i współautorzy. W najlepszym magazynie bez liczenia cyklicznego rozbieżności rosły w ciągu roku z 0,10% do 4,55%, a jedna osoba licząca utrzymywała je na 0,13% [@destro]. W najsłabszym magazynie nawet zespół dziesięciu liczących dawał w ciągu roku więcej utraconej sprzedaży niż najlepszy magazyn bez liczenia [@destro]. Autorzy piszą, że liczenie działa lepiej, gdy idzie za nim ograniczenie błędów przy przyjęciach i pobraniach [@destro].
+Model jest uproszczony i nie kalibrowaliśmy go do żadnego badania. Pokazuje jednak mechanizm: błędy rosną tam, gdzie jest najwięcej ruchu, a liczenie bez poprawy procesu tylko je ścina. Drugą część tego mechanizmu pokazała symulacja centrum dystrybucyjnego, którą przeprowadzili Iuri Destro i współautorzy. W magazynie z najlepszej kategorii benchmarku bez liczenia cyklicznego rozbieżności rosły w ciągu roku z 0,10% do 4,55%, a z jedną osobą liczącą tylko do 0,13% [@destro]. W najsłabszym magazynie nawet zespół dziesięciu liczących dawał w ciągu roku więcej utraconej sprzedaży niż najlepszy magazyn bez liczenia [@destro]. Autorzy piszą, że liczenie działa lepiej, gdy idzie za nim ograniczenie błędów przy przyjęciach i pobraniach [@destro].
 
 ## Co mówi ustawa
 
-Ustawa o rachunkowości każe inwentaryzować zapasy na ostatni dzień roku obrotowego, spisem z natury, z wyjaśnieniem i rozliczeniem różnic [@ustawa]. Termin uznaje się za dotrzymany, jeśli spis rozpoczęto nie wcześniej niż 3 miesiące przed końcem roku i zakończono do 15. dnia następnego roku [@ustawa].
+Ustawa o rachunkowości każe inwentaryzować zapasy na ostatni dzień roku obrotowego, spisem z natury, z wyjaśnieniem i rozliczeniem różnic [@ustawa]. Termin uznaje się za dotrzymany, jeśli spis rozpoczęto nie wcześniej niż 3 miesiące przed końcem roku i zakończono do 15. dnia następnego roku [@ustawa]. Stan na koniec roku ustala się wtedy, dopisując lub odpisując obroty od dnia spisu [@ustawa]. Nie dotyczy to m.in. produktów w toku produkcji ani materiałów i towarów odpisywanych w koszty w momencie zakupu [@ustawa].
 
 Dla zapasów materiałów, towarów, produktów gotowych i półproduktów w strzeżonych składowiskach, objętych ewidencją ilościowo-wartościową, wystarczy inwentaryzacja raz w ciągu dwóch lat [@ustawa]. To podstawa, na której firmy rozkładają spis na cały okres, czyli prowadzą inwentaryzację ciągłą. Samo to określenie w ustawie nie pada. Różnice trzeba wyjaśnić i rozliczyć w księgach roku obrotowego, na który przypadał termin inwentaryzacji [@ustawa].
 
 Zanim zmienisz zasady, zadaj głównemu księgowemu cztery pytania. Czy nasz magazyn to strzeżone składowisko w rozumieniu naszej polityki rachunkowości? Czy prowadzimy ewidencję ilościowo-wartościową dla wszystkich indeksów, które chcemy liczyć cyklicznie? Jak zapiszemy harmonogram liczenia w instrukcji inwentaryzacyjnej? Jak będziemy rozliczać różnice w trakcie roku i czy biegły rewident chce być obecny przy części liczeń? Odpowiedzi należą do księgowości i biegłego rewidenta, a nie do magazynu.
 
-Jeśli w tym roku spis jest już zaplanowany, nie odwołuj go. Zrób ostatni pełny spis, a od stycznia licz według harmonogramu zapisanego w instrukcji inwentaryzacyjnej. Pierwszy rok pokaże, ile naprawdę kosztuje liczenie i jak zmienia się dokładność. Po dwóch latach każdy indeks będzie policzony co najmniej raz, a najczęściej pobierane kilkanaście razy.
+Jeśli w tym roku spis jest już zaplanowany, nie odwołuj go. Zrób ostatni pełny spis, a od stycznia licz według harmonogramu zapisanego w instrukcji inwentaryzacyjnej. Pierwszy rok pokaże, ile naprawdę kosztuje liczenie i jak zmienia się dokładność. W hurtowni z przykładu (dane fikcyjne) po dwóch latach każdy indeks będzie policzony co najmniej dwa razy, a najczęściej pobierane około 24 razy.
 
 ## Plan liczenia w czterech krokach
+
+Plan ma cztery kroki, ale każde pojedyncze liczenie wygląda tak samo: od wyboru lokalizacji do naprawy przyczyny.
+
+![Schemat jednego liczenia w sześciu krokach: 1. lokalizacja z harmonogramu albo wywołana brakiem towaru, stanem zero albo ujemnym; 2. liczenie na ślepo, gdy lokalizacja stoi; 3. różnica ponad próg: drugie liczenie przez inną osobę; 4. przyczyna różnicy; 5. korekta zatwierdzona przez osobę spoza zespołu liczącego; 6. raz w miesiącu naprawa przyczyny, która dała najwięcej różnic. Strzałka wraca od kroku 6 do kroku 1: mniej błędów przy operacjach.](../../assets/rysunki/inwentaryzacja-ciagla-2.svg "Rysunek 2. Każde liczenie kończy się przyczyną, a nie tylko korektą stanu. Źródło: opracowanie redakcji.")
 
 ### Krok 1. Podziel indeksy według liczby operacji
 
@@ -51,9 +55,9 @@ Dla hurtowni z przykładu (dane fikcyjne) plan wygląda tak:
 | C | 3 000 | 0,3 | raz w roku | 3 000 |
 | Razem | 6 000 | | | 24 429 |
 
-To około 98 lokalizacji na dzień roboczy, zamiast dwóch dni zamkniętego magazynu w styczniu. Ile godzin to zajmie, sprawdź u siebie: zmierz czas liczenia 20 lokalizacji i pomnóż.
+To około 98 liczeń na dzień roboczy, gdy każdy indeks ma jedną lokalizację, zamiast dwóch dni zamkniętego magazynu w styczniu. Ile godzin to zajmie, sprawdź u siebie: zmierz czas liczenia 20 lokalizacji i pomnóż.
 
-Ile osób na to przeznaczyć? W symulacji centrum dystrybucyjnego ze stu kompletującymi najlepszy magazyn utrzymywał stany z jedną osobą liczącą, a typowy z trzema [@destro]. W swojej hurtowni policz to sam: liczba lokalizacji dziennie razy zmierzony czas jednej.
+Ile osób na to przeznaczyć? W symulacji centrum dystrybucyjnego ze stu kompletującymi magazyn z najlepszej kategorii potrzebował jednej albo dwóch osób liczących (tekst i tabela autorów różnią się), a typowy dwóch albo trzech [@destro]. W swojej hurtowni policz to sam: liczba lokalizacji dziennie razy zmierzony czas jednej.
 
 ### Krok 2. Licz także wtedy, gdy coś się nie zgadza
 
@@ -67,7 +71,7 @@ Licz wtedy, gdy w lokalizacji nic się nie dzieje: przed pierwszą zmianą albo 
 
 ### Krok 4. Każdą różnicę doprowadź do przyczyny
 
-Korekta stanu bez przyczyny to zamiecenie błędu pod dywan. Przy każdej różnicy zapisz, skąd się wzięła: przyjęcie, pobranie, przesunięcie bez zapisu, ubytek, zła jednostka miary. W badaniu pięciu sklepów, które przeprowadzili Hsiao-Hui Chuang i Rogelio Oliva, głównymi przyczynami błędnych stanów były ubytki na zapleczu i na półce [@chuang]. W tym samym badaniu więcej pracy na pełny etat zmniejszało błędy, a praca w niepełnym wymiarze ich nie zmniejszała [@chuang].
+Korekta stanu bez przyczyny to zamiecenie błędu pod dywan. Przy każdej różnicy zapisz, skąd się wzięła: przyjęcie, pobranie, przesunięcie bez zapisu, ubytek, zła jednostka miary. W symulacji systemu zapasów sklepu, którą zbudowali Howard Hao-Chun Chuang i Rogelio Oliva, głównymi przyczynami błędnych stanów były ubytki na zapleczu i na półce [@chuang]. W tej samej pracy analiza danych z pięciu sklepów dała silne dowody, że więcej pracy na pełny etat zmniejsza błędy, a praca w niepełnym wymiarze ich nie zmniejsza [@chuang].
 
 Raz w miesiącu policz, która przyczyna dała najwięcej różnic, i napraw ją w procesie: kontrolę przy przyjęciu, skanowanie przy pobraniu, zasady przesunięć. W naszym modelu na danych fikcyjnych to właśnie mniejsza liczba błędów przy operacjach obniżała odsetek błędnych stanów z 22 do 10%.
 
@@ -89,18 +93,18 @@ W poniedziałek wylosuj z systemu 20 lokalizacji, policz je na ślepo i podziel 
 
 ## Ile o tym naprawdę wiemy
 
-Najmocniejsze badanie dotyczy handlu detalicznego, a nie magazynu hurtowego, i czytaliśmy je w streszczeniu, bo pełny tekst jest płatny [@dehoratius]. Badanie przyczyn błędów objęło pięć sklepów [@chuang]. Wyniki dla centrum dystrybucyjnego pochodzą z symulacji, a nie z pomiaru [@destro]. Nasz model jest ilustracją mechanizmu, nie prognozą dla konkretnego magazynu.
+Najmocniejsze badanie dotyczy handlu detalicznego, a nie magazynu hurtowego, i czytaliśmy je w streszczeniu, bo pełny tekst jest płatny [@dehoratius]. Przyczyny błędów Chuang i Oliva badali w symulacji, a wpływ zatrudnienia na danych z pięciu sklepów [@chuang]. Wyniki dla centrum dystrybucyjnego pochodzą z symulacji, a nie z pomiaru [@destro]. Nasz model jest ilustracją mechanizmu, nie prognozą dla konkretnego magazynu.
 
-Wszystkie te źródła wskazują jednak w tę samą stronę: stany psują się z każdą operacją, regularne liczenie je poprawia, a w słabym procesie liczenie nie wystarcza [@dehoratius, @destro].
+Kierunek jest jednak spójny. Audyty i liczenie wiążą się z mniejszą liczbą błędów [@dehoratius, @destro], a w symulacji przy wielu błędach operacji samo liczenie nie wystarczało [@destro].
 
 ## Kiedy liczenie cykliczne nie wystarczy
 
-Przepis o inwentaryzacji raz w ciągu dwóch lat dotyczy tylko zapasów w strzeżonych składowiskach z ewidencją ilościowo-wartościową [@ustawa]. Bez niej spis i tak trzeba zrobić w terminie wokół końca roku [@ustawa]. Liczenie cykliczne nadal poprawi stany, ale spisu nie zastąpi.
+Przepis o inwentaryzacji raz w ciągu dwóch lat dotyczy tylko zapasów w strzeżonych składowiskach z ewidencją ilościowo-wartościową [@ustawa]. Bez niej albo poza strzeżonym składowiskiem spis trzeba zrobić na koniec roku, zwykle w oknie od 3 miesięcy przed jego końcem do 15 stycznia [@ustawa]. Inne terminy mają m.in. sklepy [@ustawa]. Liczenie cykliczne nadal poprawi stany, ale spisu nie zastąpi.
 
-Mały magazyn z kilkuset indeksami może taniej policzyć wszystko w jeden dzień. W magazynie z dużą liczbą błędów przy przyjęciach i pobraniach liczenie gasi pożar, którego źródło dalej działa [@destro]. Wtedy pierwsza złotówka powinna iść w proces, a dopiero druga w liczących.
+Mały magazyn z kilkuset indeksami może taniej policzyć wszystko w jeden dzień. W symulacji Destro i współautorów w magazynach z wieloma błędami przy przyjęciach i pobraniach samo liczenie nie wystarczało [@destro]. Liczenie gasi wtedy pożar, którego źródło dalej działa. Wtedy pierwsza złotówka powinna iść w proces, a dopiero druga w liczących.
 
 ## Kartony, których już nie szukasz
 
-Hurtownia z początku tekstu nie musi zamykać magazynu na dwa dni w styczniu. Może liczyć około stu lokalizacji dziennie, najczęściej pobierane indeksy co miesiąc, i co miesiąc naprawiać przyczynę, która dała najwięcej różnic. Księgowość dostanie inwentaryzację rozłożoną na dwa lata, a kompletujący stany, którym da się wierzyć.
+Hurtownia z początku tekstu nie musi zamykać magazynu na dwa dni w styczniu. Może robić około stu liczeń dziennie, najczęściej pobierane indeksy co miesiąc, i co miesiąc naprawiać przyczynę, która dała najwięcej różnic. Księgowość dostanie inwentaryzację rozłożoną na dwa lata, a kompletujący stany, którym da się wierzyć.
 
 Zacznij w poniedziałek od 20 losowych lokalizacji policzonych na ślepo. Wynik powie, ile kartonów w systemie istnieje tylko w systemie.

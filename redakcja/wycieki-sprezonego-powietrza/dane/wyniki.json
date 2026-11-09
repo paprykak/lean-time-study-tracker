@@ -68,10 +68,11 @@
   }
  ],
  "przyklad": {
-  "udzial_proc": 20.0,
-  "koszt_pln": 46100.0,
-  "koszt_przy_10proc": 23100.0,
-  "oszczednosc": 23100.0
+  "udzial_proc_jednej_37kW": 40.0,
+  "udzial_proc_obu_74kW": 20.0,
+  "koszt_pln": 45500.0,
+  "koszt_po_naprawie_polowy": 22700.0,
+  "oszczednosc": 22700.0
  },
  "spadek_cisnienia": {
   "V_m3": 3.0,
@@ -79,8 +80,8 @@
   "p2": 3.0,
   "T_min": 5.0,
   "wyciek_m3min": 2.22,
-  "wydajnosc_75kW_m3min": 11.5,
-  "udzial_proc": 19.2
+  "wydajnosc_74kW_m3min": 11.4,
+  "udzial_proc": 19.5
  },
  "bar_na_proc_energii": 7.3,
  "wzrost_wycieku_6_7_bar_proc": 14.3
