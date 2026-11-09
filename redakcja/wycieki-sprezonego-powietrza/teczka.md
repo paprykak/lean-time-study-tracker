@@ -63,7 +63,7 @@ Badań recenzowanych z pomiarem udziału wycieków w wielu zakładach nie znale�
 - Schemat testu: `dane/schemat.mjs` → `src/assets/rysunki/wycieki-sprezonego-powietrza-2.svg`.
 
 ## 8. Zdjęcie
-- Wybór: „Compressor room Coal Mine Winterslag Genk Belgium” (Eebie, Wikimedia Commons, CC BY 4.0) — hala sprężarek dawnej kopalni; pasuje do tezy (każdy metr sześcienny trzeba najpierw sprężyć), bez ludzi i marek w kadrze. Stan licencji i pobrania: sekcja 12.
+- Wybór: „Compressor room Coal Mine Winterslag Genk Belgium” (Eebie, Wikimedia Commons, CC BY 4.0) — hala sprężarek dawnej kopalni; pasuje do tezy (każdy metr sześcienny trzeba najpierw sprężyć), bez ludzi i marek w kadrze. Licencja potwierdzona 2026-11-09 (sekcja 12); kadr 16:9 ze środka zdjęcia bez zmian.
 
 ## 9. Weryfikacja
 - Runda 1, weryfikator faktów (model główny, ok. 73 twierdzenia): ok. 54 POTWIERDZONE, 15 CZĘŚCIOWO, 2 NIEPOTWIERDZONE, 2 SPRZECZNE. Poprawione: 25 tys. zł tylko przy sieci pod ciśnieniem całą dobę (lead, opisSeo, FAQ), 20% jako szacunek wydajności sprężarek bez metody, wynik detektora (Dudić) zawężony do jednego badania, tytuł raportu Radgena, 74 zamiast 75 kW, wzór kosztu dla sprężarki z testu.
@@ -80,12 +80,12 @@ Badań recenzowanych z pomiarem udziału wycieków w wielu zakładach nie znale�
 - Testy: pełne `npm run check` przed wdrożeniem (wynik w STAN.md).
 
 ## 11. Karta jakości
-- Bramki twarde: weryfikacja ✓; kontrola automatyczna ✓; licencja zdjęcia: sekcja 12; dane pracodawców ✓; metoda ✓; redaktor językowy ✓; **czytelnik testowy ✗** (6/10 i 6/10 za przyjemność; 7/10 i 8/10 za wartość).
+- Bramki twarde: weryfikacja ✓; kontrola automatyczna ✓; licencja zdjęcia ✓ (Commons, CC BY 4.0, 2026-11-09); dane pracodawców ✓; metoda ✓; redaktor językowy ✓; **czytelnik testowy ✗** (6/10 i 6/10 za przyjemność; 7/10 i 8/10 za wartość).
 - Punkty (ocena redakcji po poprawkach; recenzent po rundzie 1: 24/30 bez kryterium 11): 1:2, 2:1, 3:1, 4:2, 5:2, 6:2, 7:2, 8:2, 9:2, 10:2, 11:2, 12:2, 13:2, 14:2, 15:2, 16:2 = **30/32**. Kryterium 3 (obowiązkowe) na 1: liczby 20% i 5–10% mają tylko źródło klasy C (poradnik rządowy), co tekst mówi wprost; recenzowanych pomiarów z wielu zakładów nie znaleźliśmy. Kryterium 2: rada „najpierw wycieki” jest znana, nowe są koszt w złotych przy polskich cenach i test w jednostkach SI.
 
 ## 12. Dla Patryka
 - Bramka czytelnika (8/10 za przyjemność) i kryterium 3 niespełnione; tekst opublikowany na polecenie „publikuj od razu”. Do decyzji: ramka dla utrzymania ruchu ze wzorem dla falownika.
-- Zdjęcie: Wikimedia Commons przez cały dzień odpowiadał 429 (limit zapytań); licencja i plik według stanu opisanego w STAN.md.
+- Zdjęcie: licencja potwierdzona 2026-11-09 w metadanych pliku w Wikimedia Commons (CC BY 4.0, praca własna autora, zdjęcie z 2024-03-10, bez ograniczeń); Commons odpowiadał 429 przez ok. godzinę, plik pobrany po przerwie, bez obchodzenia limitu.
 - Liczby do odświeżenia: ceny Eurostatu (nrg_pc_205) po publikacji danych za 2026-S2.
 
 ## 13. Kontrola redakcyjna

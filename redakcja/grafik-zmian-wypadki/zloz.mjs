@@ -20,6 +20,6 @@ zloz(import.meta.url, {
     ['Czy praca w nocy zwiększa ryzyko wypadku?', 'Według metaanalizy z 2017 r. ryzyko urazu na zmianie nocnej jest o około 36% wyższe niż na rannej (14 badań). Przegląd z 2025 r. potwierdza kierunek, ale ocenia pewność dowodów jako niską lub bardzo niską.'],
   ],
   metoda: 'Tekst opiera się na przeglądzie badań z 2005 r. (Folkard, Lombardi, Tucker), metaanalizach z 2017 i 2021 r., przeglądzie systematycznym z 2025 r., danych GUS o wypadkach przy pracy w 2024 r. i tekście jednolitym Kodeksu pracy z 2026 r. Metaanalizę z 2017 r. czytaliśmy w streszczeniu, bo pełny tekst jest płatny. Pewność dowodów oceniana w przeglądach jest niska. Przykład zakładu jest fikcyjny. Tekst nie jest poradą prawną. Konflikt interesów: redaktor naczelny prowadzi doradztwo w operacjach; tekst nie odsyła do jego usług.',
-  sprawdzono: null,
-  szkic: true,
+  sprawdzono: '2026-11-09',
+  szkic: false,
 });

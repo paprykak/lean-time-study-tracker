@@ -20,6 +20,6 @@ zloz(import.meta.url, {
     ['Dlaczego stany w systemie się nie zgadzają?', 'Błąd może powstać przy każdym przyjęciu, pobraniu i przesunięciu. W symulacji systemu zapasów sklepu głównymi przyczynami były ubytki na zapleczu i na półce, a w badaniu 37 sklepów mniej błędnych rekordów wiązało się z praktykami audytu stanów.'],
   ],
   metoda: 'Tekst opiera się na badaniu prawie 370 tys. rekordów stanów z „Management Science” (czytanym w streszczeniu, bo pełny tekst jest płatny), pracy o przyczynach błędów (symulacja i dane z pięciu sklepów), symulacji centrum dystrybucyjnego i tekście jednolitym ustawy o rachunkowości z 2026 r. Model narastania błędów policzyliśmy na danych fikcyjnych; kod jest w archiwum redakcji. Przykład hurtowni jest fikcyjny. Tekst nie jest poradą prawną ani księgową. Konflikt interesów: redaktor naczelny prowadzi doradztwo w operacjach; tekst nie odsyła do jego usług.',
-  sprawdzono: null,
-  szkic: true,
+  sprawdzono: '2026-11-09',
+  szkic: false,
 });

@@ -57,7 +57,7 @@ Dembe i in. (2005) czytany tylko w abstrakcie i niepotrzebny przy metaanalizach;
 - Rachunki do tekstu: średnie ryzyko serii czterech nocy (1 + 1,06 + 1,17 + 1,36) / 4 = 1,1475 (ok. +15%), serii trzech 1,077 (ok. +8%); trzy przerwy 21:00, 0:00, 3:00 dają odcinki 3 h, 2 h 45 min, 2 h 45 min, 2 h 45 min; trzecia przerwa 15 / 720 min = 2,08% zmiany; odpoczynek 6:00–18:00 = 12 h, po nadgodzinach do 8:00 — 10 h.
 
 ## 8. Zdjęcie
-- Wybór: „Kanagawa Kawasaki night view xl” (Yudai_photography, Wikimedia Commons, CC BY 4.0) — zakłady przemysłowe w Kawasaki nocą, bez ludzi i czytelnych marek; pasuje do tezy (ruch ciągły, noc). Stan licencji i pobrania: sekcja 12.
+- Wybór: „Kanagawa Kawasaki night view xl” (Yudai_photography, Wikimedia Commons, CC BY 4.0) — zakłady przemysłowe w Kawasaki nocą, bez ludzi i czytelnych marek; pasuje do tezy (ruch ciągły, noc). Licencja potwierdzona 2026-11-09 (sekcja 12); kadr 16:9 ze środka zdjęcia bez zmian.
 
 ## 9. Weryfikacja
 - Runda 1, weryfikator faktów (model główny, 59 twierdzeń): 38 POTWIERDZONE, 17 CZĘŚCIOWO, 2 NIEPOTWIERDZONE, 2 SPRZECZNE. Poprawione: gałęzie przypisane przeglądowi z 2005 r. (pochodziły z przeglądu z 2025 r.), opis kształtu U (noce w poprzednim tygodniu), Matre: > 12 h wobec ≤ 8 h z trzech badań i niska pewność, Moen: pewność „niska lub bardzo niska”, mianownik RR w metaanalizie z 2017 r., brzmienia art. 134, 135, 151 i 151⁷ Kodeksu pracy, odpoczynek 12 h zamiast 24 h, nadgodziny łamiące 11 h odpoczynku; rysunek 1 przerysowany od zera.
@@ -73,12 +73,12 @@ Dembe i in. (2005) czytany tylko w abstrakcie i niepotrzebny przy metaanalizach;
 - `redakcja:zrodla`: 6 źródeł bez problemów; adres metaanalizy z 2021 r. zmieniony na PMC (strona czasopisma odpowiadała 503), DOI zostaje w opisie.
 
 ## 11. Karta jakości
-- Bramki twarde: weryfikacja ✓; kontrola automatyczna ✓; licencja zdjęcia: sekcja 12; dane pracodawców ✓; metoda ✓ (bez porady prawnej); redaktor językowy ✓; **czytelnik testowy ✗** (6/10 i 6/10 za przyjemność; 8/10 i 7/10 za wartość).
+- Bramki twarde: weryfikacja ✓; kontrola automatyczna ✓; licencja zdjęcia ✓ (Commons, CC BY 4.0, 2026-11-09); dane pracodawców ✓; metoda ✓ (bez porady prawnej); redaktor językowy ✓; **czytelnik testowy ✗** (6/10 i 6/10 za przyjemność; 8/10 i 7/10 za wartość).
 - Punkty (ocena redakcji po poprawkach; recenzent po rundzie 1: 24/30 bez kryterium 11): 1:2, 2:2, 3:2, 4:2, 5:2, 6:2, 7:2, 8:2, 9:2, 10:2, 11:2, 12:2, 13:2, 14:2, 15:2, 16:1 = **31/32**. Kryterium 16 na 1: test usunięcia wciąż znajduje powtórzenia liczby 36% (lead, „W skrócie”, pytanie 1, FAQ).
 
 ## 12. Dla Patryka
 - Bramka czytelnika (8/10 za przyjemność) niespełniona; tekst opublikowany na polecenie „publikuj od razu”. Do decyzji: akapit o wprowadzaniu zmiany grafiku z załogą (rozmowa, okres próbny) — wymaga źródła o partycypacji pracowników w układaniu grafików.
-- Zdjęcie: Wikimedia Commons przez cały dzień odpowiadał 429; licencja i plik według stanu w STAN.md.
+- Zdjęcie: licencja potwierdzona 2026-11-09 w metadanych pliku w Wikimedia Commons (CC BY 4.0, źródło find47 (Photo METI Project), zdjęcie z 2018-03-16, bez ograniczeń); Commons odpowiadał 429 przez ok. godzinę, plik pobrany po przerwie, bez obchodzenia limitu.
 - Tekst nie jest poradą prawną; przepisy według tekstu jednolitego Kodeksu pracy Dz.U. 2026 poz. 1245.
 
 ## 13. Kontrola redakcyjna

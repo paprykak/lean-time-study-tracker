@@ -11,7 +11,7 @@ autorzy:
   - redakcja
 opublikowano: 2026-11-09
 zdjecie: magazyn-inwentaryzacja
-podpisZdjecia: ""
+podpisZdjecia: "Regały paletowe w centrum dystrybucyjnym; litery na słupkach oznaczają alejki. Stan w systemie jest wart tyle, ile jego zgodność z tym, co naprawdę stoi w każdej lokalizacji."
 powiazane:
   - kompletacja-droga
 zrodla:
@@ -41,7 +41,8 @@ faq:
   - pytanie: "Dlaczego stany w systemie się nie zgadzają?"
     odpowiedz: "Błąd może powstać przy każdym przyjęciu, pobraniu i przesunięciu. W symulacji systemu zapasów sklepu głównymi przyczynami były ubytki na zapleczu i na półce, a w badaniu 37 sklepów mniej błędnych rekordów wiązało się z praktykami audytu stanów."
 metoda: "Tekst opiera się na badaniu prawie 370 tys. rekordów stanów z „Management Science” (czytanym w streszczeniu, bo pełny tekst jest płatny), pracy o przyczynach błędów (symulacja i dane z pięciu sklepów), symulacji centrum dystrybucyjnego i tekście jednolitym ustawy o rachunkowości z 2026 r. Model narastania błędów policzyliśmy na danych fikcyjnych; kod jest w archiwum redakcji. Przykład hurtowni jest fikcyjny. Tekst nie jest poradą prawną ani księgową. Konflikt interesów: redaktor naczelny prowadzi doradztwo w operacjach; tekst nie odsyła do jego usług."
-szkic: true
+sprawdzono: 2026-11-09
+szkic: false
 ---
 ## W skrócie
 

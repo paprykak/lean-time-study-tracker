@@ -45,7 +45,8 @@ faq:
   - pytanie: "Czy obniżenie ciśnienia daje oszczędności?"
     odpowiedz: "Tak, ale dopiero po uszczelnieniu sieci. Każde 2 psi (ok. 0,14 bara) więcej to około 1% więcej energii przy pełnej wydajności sprężarki, a wyższe ciśnienie zwiększa też przepływ przez każdy wyciek."
 metoda: "Tekst opiera się na poradniku Departamentu Energii USA (Compressed Air Challenge), materiałach niemieckiej kampanii „Druckluft effizient” (Fraunhofer ISI), danych Eurostatu o cenach energii dla firm w Polsce i dwóch badaniach recenzowanych. Koszt wycieków policzyliśmy z równania przepływu przez otwór; model odtwarza tabelę Departamentu Energii, a kod jest w archiwum redakcji. Recenzowanych pomiarów udziału wycieków w wielu zakładach nie znaleźliśmy. Przykłady są fikcyjne. Konflikt interesów: redaktor naczelny prowadzi doradztwo w operacjach; tekst nie odsyła do jego usług."
-szkic: true
+sprawdzono: 2026-11-09
+szkic: false
 ---
 ## W skrócie
 
