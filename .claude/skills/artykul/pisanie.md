@@ -27,6 +27,7 @@ Nie otwieraj definicją, historią metody od jej początków, zapowiedzią („W
 - **Zmiana tempa:** po gęstym akapicie z danymi krótki akapit z wnioskiem, czasem jedno zdanie.
 - **Przejście w zdaniu, nie w śródtytule:** ostatnie zdanie sekcji otwiera następną. Śródtytuły czytane po kolei opowiadają cały argument (test szkieletu).
 - **Dowód tam, gdzie rodzi się wątpliwość:** rysunek, tabela albo liczba stoi w miejscu, w którym sceptyk zapyta „skąd wiecie?”. Zdanie przed rysunkiem mówi, co czytelnik na nim zobaczy.
+- **Obraz zamiast akapitu:** ludzie lubią obrazy, a długi blok tekstu na telefonie męczy. Proces, porównanie, rachunek albo listę kroków pokaż schematem, tabelą lub wykresem, kiedy pokazują więcej niż proza; tekst mówi, co z obrazu wynika ([styl.md](styl.md), „Elementy tekstu”). Już w planie (teczka, sekcja 3) wypisz elementy wizualne: co pokazują i w której sekcji.
 
 ## 4. Zdania, które czyta się same
 - **Podmiot i orzeczenie na początku**, blisko siebie. Czytelnik nie trzyma w pamięci trzech wtrąceń, czekając na czasownik.
@@ -35,7 +36,7 @@ Nie otwieraj definicją, historią metody od jej początków, zapowiedzią („W
 - **Rzeczownik konkretny i czasownik mocny** zamiast przymiotników i przysłówków. Słabo: „Występują znaczące przestoje.” Lepiej: „Maszyna stoi 40 minut na zmianę.”
 - **Liczby po ludzku:** przekładasz je na jednostkę czytelnika (minuty na zmianę, złote na miesiąc, palety na godzinę), zaokrąglasz, gdy precyzja nic nie wnosi, i porównujesz ze znanym. „Dwie godziny pracy maszyny na dobę” mówi więcej niż „8,3% czasu kalendarzowego”.
 - **Ludzie z nazwą roli:** operator, ustawiacz, lider zmiany, planista, magazynier, a nie „pracownicy”. Czytelnik widzi, kto czeka, kto decyduje i kto płaci za błąd.
-- **Najwyżej jeden obraz na sekcję:** porównanie z hali, świeże i dokładne. Bez „serca zakładu”, „krwiobiegu firmy” i „DNA organizacji”.
+- **Najwyżej jedna metafora na sekcję:** porównanie z hali, świeże i dokładne. Bez „serca zakładu”, „krwiobiegu firmy” i „DNA organizacji”.
 - **Humor rzadko**, z obserwacji, nigdy kosztem ludzi z hali.
 - **Termin stały do końca:** słowo raz wybrane na pojęcie zostaje (przezbrojenie nie staje się raz „zmianą asortymentu”, a raz „przestawieniem”). Synonimy tylko dla słów ogólnych.
 
