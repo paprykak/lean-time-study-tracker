@@ -14,7 +14,7 @@ Przegląd badań z 2005 r. (Folkard, Lombardi, Tucker) zestawia wyniki wcześnie
 
 Grafik jest więc także oceną ryzyka. Trzy liczby, od których ono zależy, policzysz w nim, zanim trafi na tablicę ogłoszeń: kolejne noce, godziny na zmianie i odstępy między przerwami.
 
-## Grafik ma trzy dźwignie ryzyka
+## Ryzyko zależy od nocy, godzin i przerw
 
 Badania podają ryzyko względne: wynik 1,36 znaczy, że na tę samą liczbę przepracowanych godzin wypada o 36% więcej wypadków niż na zmianie, z którą porównujesz [@fischer]. Część badań liczy tylko urazy, część także zdarzenia bez urazu, więc „ryzyko wypadku” obejmuje w tym tekście jedne i drugie [@fischer, @matre, @moen].
 
@@ -40,7 +40,7 @@ Policz najdłuższą serię nocy w grafiku każdej osoby, a nie brygady. Zamiany
 
 ### 2. Ile godzin trwa zmiana nocna i kto na niej pracuje?
 
-Pora nocna to 8 godzin między 21:00 a 7:00, które zakład wyznacza na przykład w regulaminie pracy [@kp]. Pracującym w nocy jest według Kodeksu pracy ten, kto ma w każdej dobie co najmniej 3 godziny pracy w porze nocnej [@kp]. Tak samo jest, gdy na porę nocną przypada co najmniej jedna czwarta czasu pracy w okresie rozliczeniowym [@kp]. Taka osoba nie może pracować dłużej niż 8 godzin na dobę, jeżeli wykonuje prace szczególnie niebezpieczne albo związane z dużym wysiłkiem fizycznym lub umysłowym [@kp].
+Kodeks pracy ogranicza do 8 godzin na dobę pracę osoby pracującej w nocy, jeżeli wykonuje ona prace szczególnie niebezpieczne albo związane z dużym wysiłkiem fizycznym lub umysłowym [@kp]. Pora nocna to 8 godzin między 21:00 a 7:00 [@kp]. Pracującym w nocy jest ten, kto ma w niej w każdej dobie co najmniej 3 godziny pracy albo jedną czwartą czasu pracy w okresie rozliczeniowym [@kp].
 
 Wykaz takich prac ustala pracodawca w porozumieniu z zakładową organizacją związkową, a gdy jej nie ma, z przedstawicielami pracowników, po zasięgnięciu opinii lekarza sprawującego opiekę profilaktyczną [@kp]. Zapytaj kadry i służbę BHP, czy wykaz istnieje i czy grafik nocnych dwunastek go uwzględnia. Przepis ma wyjątki, więc wątpliwe przypadki rozstrzygnie prawnik.
 
@@ -54,7 +54,7 @@ Pracownikowi przysługuje co najmniej 11 godzin nieprzerwanego odpoczynku w każ
 
 ### 5. Ile nadgodzin dokładasz do długich zmian?
 
-Nadgodziny ze względu na szczególne potrzeby pracodawcy nie mogą przekroczyć 150 godzin w roku kalendarzowym na pracownika [@kp]. Inną liczbę może ustalić układ zbiorowy, regulamin pracy albo umowa o pracę [@kp]. Nadgodzina dołożona do dwunastki to jednak trzynasta godzina pracy, czyli ta, na której według części badań ryzyko jest najwyższe [@fischer].
+Nadgodziny ze względu na szczególne potrzeby pracodawcy nie mogą przekroczyć 150 godzin w roku kalendarzowym na pracownika [@kp]. Inną liczbę może ustalić układ zbiorowy, regulamin pracy albo umowa o pracę [@kp]. Nadgodzina dołożona do dwunastki to jednak trzynasta godzina pracy, a według metaanalizy z 2017 r. ryzyko rośnie wyraźnie już od dziewiątej [@fischer].
 
 Pięć pytań mieści się na jednej kartce.
 
@@ -96,9 +96,11 @@ Przy kilku wypadkach rocznie własne dane nic nie udowodnią. Pokażą jednak, c
 
 Jeśli zmian 12-godzinnych nie da się zmienić, zostaje kilka ruchów w ich obrębie. Każdy wynika z tych samych trzech dźwigni.
 
-Skróć serie nocy. Czwarta noc ma ryzyko o 36% wyższe niż pierwsza, ale wcześniejsze noce są bezpieczniejsze, więc średnio cała seria czterech nocy wypada o około 15% gorzej niż pierwsza noc [@folkard]. Seria trzech nocy wypada średnio o około 8% gorzej (obie średnie to obliczenia redakcji) [@folkard]. Nowsze badania są tu niejednoznaczne: w dwóch z nich przy większej liczbie nocy ryzyko z czasem malało [@moen]. Jeśli po skróceniu serii brakuje nocy w cyklu, dołóż je w kolejnym tygodniu.
+Skróć serie nocy. Pierwsze noce w serii są bezpieczniejsze niż ostatnia, więc średnio cała seria czterech nocy wypada o około 15% gorzej niż pierwsza noc [@folkard]. Seria trzech nocy wypada średnio o około 8% gorzej (obie średnie to obliczenia redakcji) [@folkard]. Skrócenie serii z czterech do trzech nocy zmniejsza więc nadwyżkę ryzyka na nocnych zmianach mniej więcej o połowę.
 
-Dodaj przerwę ponad minimum z Kodeksu i rozłóż przerwy równo. Według metaanalizy z 2017 r. ryzyko jest najwyższe, gdy przerwy wypadają rzadziej niż co 4 godziny albo trwają krócej niż 30 minut [@fischer]. Tak samo jest przy zmianach dłuższych niż 11 godzin i przy pracy w nocy, zwłaszcza po więcej niż trzech nocach z rzędu [@fischer]. Grafik z przykładu spełnia każdy z nich. Trzy 15-minutowe przerwy o 21:00, 0:00 i 3:00 dzielą zmianę na odcinki najwyżej trzygodzinne, a trzecia przerwa kosztuje około 2% czasu zmiany. To niewiele.
+Nowsze badania są tu niejednoznaczne: w dwóch z nich przy większej liczbie nocy ryzyko z czasem malało [@moen]. Jeśli po skróceniu serii brakuje nocy w cyklu, dołóż je w kolejnym tygodniu. Krótsze serie oznaczają jednak częstsze przejścia między dniem a nocą, więc taką zmianę omów z załogą i obserwuj rejestr zdarzeń.
+
+Dodaj przerwę ponad minimum z Kodeksu i rozłóż przerwy równo. Według metaanalizy z 2017 r. ryzyko jest najwyższe, gdy przerwy wypadają rzadziej niż co 4 godziny albo trwają krócej niż 30 minut [@fischer]. Tak samo jest przy zmianach dłuższych niż 11 godzin i przy pracy w nocy, zwłaszcza po więcej niż trzech nocach z rzędu [@fischer]. Grafik z przykładu spełnia wszystkie te warunki. Trzy 15-minutowe przerwy o 21:00, 0:00 i 3:00 dzielą zmianę na odcinki najwyżej trzygodzinne, a trzecia przerwa kosztuje około 2% czasu zmiany. To niewiele.
 
 Według metaanalizy z 2017 r. ryzyko wyraźnie rośnie po dziewiątej godzinie pracy [@fischer]. Prace, przy których pomyłka kosztuje najwięcej, na przykład przezbrojenia, czyszczenie maszyn czy prace na wysokości, planuj więc na początek zmiany. Nie dokładaj nadgodzin do dwunastek. Nie układaj też grafiku tak, żeby po ostatniej nocy ta sama osoba wracała już następnego dnia na zmianę dzienną. Kodeks wymaga tylko 11 godzin odpoczynku w każdej dobie [@kp], więc taki skok trzeba wykluczyć w grafiku.
 

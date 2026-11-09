@@ -16,9 +16,9 @@ Poradnik amerykańskiego Departamentu Energii opisuje dokładnie ten mechanizm: 
 
 ## Dwa razy większy otwór to cztery razy wyższy rachunek
 
-Ile powietrza ucieka przez otwór, wynika z fizyki przepływu przez dyszę. Przeliczyliśmy to dla 6 i 7 barów i dla otworu idealnego, takiego jak w tabeli Departamentu Energii. Nasz rachunek zgadza się z tą tabelą dla wszystkich trzech średnic, które podaje [@doe].
+Ile powietrza ucieka przez otwór, wynika z fizyki przepływu przez dyszę. Przeliczyliśmy to dla 6 i 7 barów i dla otworu idealnego, czyli okrągłego i o gładkich krawędziach, takiego jak w tabeli Departamentu Energii. Nasz rachunek zgadza się z tą tabelą dla wszystkich trzech średnic, które podaje [@doe].
 
-Koszt policzyliśmy przy cenie 0,7685 zł za kWh bez VAT. Tyle według Eurostatu płaciły w pierwszym półroczu 2026 r. polskie firmy zużywające od 2 do 20 GWh rocznie [@eurostat]. Mniejsze firmy płaciły więcej, więc ich rachunek będzie wyższy: 0,878 zł przy zużyciu od 0,5 do 2 GWh i ponad 1,12 zł przy mniejszym [@eurostat]. Moc 6,5 kW na każdy metr sześcienny powietrza na minutę wyliczyliśmy z tej samej tabeli; zakłada ona sprawną sprężarkę i ciśnienie około 7 barów [@doe]. Przy 6 barach sprężarka zużywa trochę mniej energii, więc koszty dla 6 barów są w naszym rachunku raczej zawyżone o kilka procent.
+Koszt policzyliśmy przy cenie 0,7685 zł za kWh bez VAT. Tyle według Eurostatu płaciły w pierwszym półroczu 2026 r. polskie firmy zużywające od 2 do 20 GWh rocznie [@eurostat]. Mniejsze firmy płaciły więcej, nawet ponad 1,12 zł, więc ich rachunek będzie wyższy [@eurostat]. Moc 6,5 kW na każdy metr sześcienny powietrza na minutę wyliczyliśmy z tej samej tabeli; zakłada ona sprawną sprężarkę i ciśnienie około 7 barów [@doe]. Przy 6 barach sprężarka zużywa trochę mniej energii, więc koszty dla 6 barów są w naszym rachunku raczej zawyżone o kilka procent.
 
 ![Wykres słupkowy: roczny koszt energii jednego wycieku przy 6 barach. Otwór 1 mm: 65 litrów na minutę, 2 800 zł przy sieci pod ciśnieniem przez cały rok i 1 300 zł przy dwóch zmianach. Otwór 2 mm: 259 l/min, 11 300 i 5 200 zł. Otwór 3 mm: 583 l/min, 25 500 i 11 600 zł. Otwór 4 mm: 1 037 l/min, 45 300 i 20 700 zł.](../../assets/rysunki/wycieki-sprezonego-powietrza-1.svg "Rysunek 1. Dwa razy większy otwór to cztery razy większy wyciek i cztery razy wyższy rachunek. Źródło: obliczenia redakcji (przepływ przez otwór idealny, model zgodny z tabelą DOE), cena energii Eurostat 2026-S1.")
 
@@ -52,7 +52,7 @@ Sprężarki z falownikiem nie przełączają się między obciążeniem a odpocz
 
 **wyciek (m³/min) = V × (p1 − p2) / (1,013 × T) × 1,25** [@doe]
 
-Mnożnik 1,25 przelicza wynik na ciśnienie robocze [@doe]. Przykład na danych fikcyjnych: sieć o pojemności 3 m³ traci ciśnienie z 6 do 3 barów w 5 minut. To 2,2 m³ na minutę, czyli około 20% wydajności dwóch sprężarek po 37 kW.
+Mnożnik 1,25 uwzględnia, że przy spadającym ciśnieniu wycieka mniej, i przelicza wynik na ciśnienie robocze [@doe]. Przykład na danych fikcyjnych: sieć o pojemności 3 m³ traci ciśnienie z 6 do 3 barów w 5 minut. To 2,2 m³ na minutę, czyli około 20% wydajności dwóch sprężarek po 37 kW. Wynik zgadza się z testem jednej sprężarki: 40% wydajności jednej to 20% wydajności obu.
 
 Obie metody z poradnika Departamentu Energii różnią się tym, czego potrzebujesz i co dostajesz [@doe]:
 
@@ -81,11 +81,11 @@ Każde 0,14 bara (2 psi) więcej na wylocie sprężarki to około 1% więcej ene
 
 | Co rośnie po podniesieniu ciśnienia o 1 bar | O ile | Skąd |
 |---|---|---|
-| energia przy pełnej wydajności sprężarki | ok. 7% | 1% na każde 2 psi [@doe], przeliczenie redakcji |
-| energia, gdy w sieci jest dużo poboru bez reduktora, w tym wycieków | ok. 12–15% | 1,6–2% na każde 2 psi [@doe], przeliczenie redakcji |
+| energia przy pełnej wydajności sprężarki | ok. 7% | poradnik DOE [@doe], przeliczenie redakcji |
+| energia, gdy w sieci jest dużo poboru bez reduktora, w tym wycieków | ok. 12–15% | poradnik DOE [@doe], przeliczenie redakcji |
 | wyciek przez ten sam otwór, z 6 do 7 barów | ok. 14% | obliczenia redakcji (rysunek 1) |
 
-W zakładzie z przykładu (dane fikcyjne) podniesienie nastawy z 6 do 7 barów dołożyło więc około 7% do zużycia energii przy tej samej ilości powietrza, a wycieki zwiększyło o 14%.
+Większa liczba w drugim wierszu bierze się stąd, że wycieki i odbiory bez reduktora same pobierają więcej powietrza, gdy ciśnienie rośnie. W zakładzie z przykładu (dane fikcyjne) podniesienie nastawy z 6 do 7 barów dołożyło więc co najmniej 7% do zużycia energii przy tej samej ilości powietrza, a wycieki zwiększyło o 14%.
 
 Bywa też, że test pokaże mało wycieków, a na końcu hali dalej brakuje ciśnienia. Wtedy szukaj spadku po drodze. Zmierz w szczycie zmiany ciśnienie za sprężarką i przy docisku. Dobrze zaprojektowana sieć traci od sprężarki do punktu poboru znacznie mniej niż 10% ciśnienia [@doe]. Największe spadki są zwykle tuż przy urządzeniach, na ostatnich metrach sieci: w za cienkich albo nieszczelnych wężach, szybkozłączach, filtrach i reduktorach [@doe]. Gdy po naprawach ciśnienie na końcu sieci jest stabilne, obniżaj nastawę stopniowo, sprawdzając, czy najbardziej wymagające urządzenie dalej pracuje.
 

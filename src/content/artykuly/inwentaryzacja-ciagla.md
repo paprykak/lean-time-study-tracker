@@ -59,19 +59,19 @@ Hurtownia ma 6 000 indeksów. Co roku w pierwszym tygodniu stycznia zamyka magaz
 
 Skalę zjawiska w handlu pokazało badanie opublikowane w „Management Science” (DeHoratius, Raman): w 37 sklepach jednej sieci 65% z prawie 370 tys. rekordów było błędnych [1]. Mniej błędów wiązało się z praktykami audytu stanów, a więcej ze złożonością sklepu i strukturą dostaw [1].
 
-Magazyny wypadają lepiej. Stowarzyszenie Warehousing Education and Research Council (WERC) co roku porównuje wskaźniki magazynów, które zgłaszają do niego swoje dane [3]. W jego zestawieniu z 2019 r. typowy magazyn ma dokładność inwentaryzacji od 97% do 99%, najlepsze co najmniej 99,9%, a najsłabsza kategoria mniej niż 90% [3]. To inne zakłady i inne źródło danych, więc tych liczb nie zestawiamy wprost z wynikiem ze sklepów. Niezależnie od punktu startu błędy zaczynają narastać od dnia po spisie, bo każda operacja może zostawić nowy. Dlatego spis raz w roku nie wystarczy.
+Magazyny wypadają lepiej. Stowarzyszenie Warehousing Education and Research Council (WERC) co roku porównuje wskaźniki magazynów, które zgłaszają do niego swoje dane [3]. W jego zestawieniu z 2019 r. magazyn typowy, czyli ze środkowej z pięciu kategorii, ma dokładność inwentaryzacji od 97% do 99%. Najlepsze magazyny mają co najmniej 99,9%, a najsłabsze mniej niż 90% [3]. To inne zakłady i inne źródło danych, więc tych liczb nie zestawiamy wprost z wynikiem ze sklepów. Niezależnie od punktu startu błędy zaczynają narastać od dnia po spisie, bo każda operacja może zostawić nowy. Dlatego spis raz w roku nie wystarczy.
 
 ## Błędy rosną od dnia po spisie
 
-Zbudowaliśmy prosty model hurtowni z przykładu (dane fikcyjne). W modelu 20% indeksów (klasa A) ma po 8 operacji dziennie, 30% (klasa B) po 2, a połowa (klasa C) po 0,3. Zakładamy, że co dwusetna operacja zostawia błąd w stanie i że błędy się nie znoszą.
+Zbudowaliśmy prosty model hurtowni z przykładu (dane fikcyjne). W modelu 20% indeksów (klasa A) ma po 8 operacji dziennie, 30% (klasa B) po 2, a połowa (klasa C) po 0,3. Zakładamy, że co dwusetna operacja zostawia błąd w stanie i że błędy się nie znoszą. To założenie przykładu, a nie pomiar.
 
 ![Wykres liniowy: odsetek indeksów z błędnym stanem w systemie w ciągu roku. Przy spisie w styczniu rośnie od zera do 63% na koniec roku. Przy liczeniu cyklicznym utrzymuje się na poziomie 22%, a przy liczeniu cyklicznym i mniejszej liczbie błędów przy operacjach na poziomie 10%.](../../assets/rysunki/inwentaryzacja-ciagla-1.svg "Rysunek 1. Spis raz w roku zostawia rosnącą liczbę błędnych stanów, a liczenie cykliczne trzyma ją niżej; najwięcej daje liczenie połączone z poprawą przyjęć i pobrań. Źródło: model redakcji na danych fikcyjnych (6 000 indeksów, błąd przy co dwusetnej operacji albo co pięćsetnej).")
 
 Po kwartale od spisu błędnych jest 37% stanów, a na koniec roku 63%. Średnio przez rok to 45%. Liczenie cykliczne, w którym indeksy A liczy się co miesiąc, B co kwartał, a C raz w roku, utrzymuje odsetek błędnych stanów na poziomie 22%. Gdy błąd zostawia co pięćsetna operacja zamiast co dwusetnej, to samo liczenie daje 10%.
 
-Klasa A psuje się pierwsza. W modelu (dane fikcyjne) indeks z 8 operacjami dziennie ma ich w roku 2 000, więc przy błędzie co dwusetnej zbierze średnio dziesięć błędów. Około 70% indeksów klasy C przechodzi rok bez żadnego błędu, a w klasie A prawie żaden. Dlatego A liczymy co miesiąc, a C raz w roku. Model jest uproszczony i nie kalibrowaliśmy go do żadnego badania, ale przy rzadszych błędach krzywa ma ten sam kształt, tylko rośnie wolniej.
+Klasa A psuje się pierwsza. W modelu (dane fikcyjne) indeks z 8 operacjami dziennie ma ich w roku 2 000, więc przy błędzie co dwusetnej zbierze średnio dziesięć błędów. Około 70% indeksów klasy C przechodzi rok bez żadnego błędu, a w klasie A prawie żaden. Dlatego A liczymy co miesiąc, a C raz w roku. Przy rzadszych błędach krzywa ma ten sam kształt, tylko rośnie wolniej.
 
-Ten sam kierunek pokazała symulacja centrum dystrybucyjnego, którą przeprowadzili Iuri Destro i współautorzy. Mierzy ona rozbieżność ilości w całym magazynie, a nie odsetek błędnych indeksów, więc jej liczb nie zestawiamy z modelem [3]. W magazynie z najlepszej kategorii bez liczenia cyklicznego rozbieżność rosła w ciągu roku z 0,10% do 4,55%, a z jedną osobą liczącą tylko do 0,13% [3]. Autorzy piszą, że liczenie działa lepiej, gdy idzie za nim ograniczenie błędów przy przyjęciach i pobraniach [3].
+Ten sam kierunek pokazała symulacja centrum dystrybucyjnego, którą przeprowadzili Iuri Destro i współautorzy. Liczy ona rozbieżność inaczej niż nasz model: jako różnicę ilości towaru w całym magazynie [3]. W magazynie z najlepszej kategorii bez liczenia cyklicznego rozbieżność rosła w ciągu roku z 0,10% do 4,55%, a z jedną osobą liczącą tylko do 0,13% [3]. Autorzy piszą, że liczenie działa lepiej, gdy idzie za nim ograniczenie błędów przy przyjęciach i pobraniach [3].
 
 ## Ustawa pozwala liczyć zapasy przez dwa lata, ale nie wszędzie
 
@@ -115,7 +115,7 @@ Liczenie nie jest jednak darmowe. Przy 2 minutach na lokalizację (dane fikcyjne
 
 Rachunek jest dobry, jeśli dodatkowe 600 godzin kosztuje mniej niż szukanie towaru, niepełne dostawy i korekty, których unikniesz. Swój czas liczenia poznasz, gdy zmierzysz czas 20 lokalizacji.
 
-Ile osób na to przeznaczyć? W symulacji centrum dystrybucyjnego ze stu kompletującymi magazyn z najlepszej kategorii potrzebował jednej albo dwóch osób liczących (tekst i tabela autorów różnią się), a typowy dwóch albo trzech [3]. W swojej hurtowni pomnóż liczbę lokalizacji dziennie przez zmierzony czas jednej.
+Ile osób na to przeznaczyć? W symulacji centrum dystrybucyjnego ze stu kompletującymi magazyn z najlepszej kategorii potrzebował jednej albo dwóch osób liczących, a typowy dwóch albo trzech [3]. W swojej hurtowni pomnóż liczbę lokalizacji dziennie przez zmierzony czas jednej.
 
 ### Krok 2. Licz także wtedy, gdy coś się nie zgadza
 
@@ -159,6 +159,6 @@ Przepis o inwentaryzacji raz w ciągu dwóch lat dotyczy tylko zapasów w strze�
 
 Styczniowe zamknięcie magazynu może zniknąć z kalendarza hurtowni, jeśli księgowość potwierdzi, że jej zapasy spełniają warunki ustawy. Hurtownia może wtedy robić około stu liczeń dziennie, najczęściej pobierane indeksy co miesiąc, i co miesiąc naprawiać przyczynę, która dała najwięcej różnic.
 
-Zacznij w poniedziałek od 20 losowych lokalizacji policzonych na ślepo i zanieś wynik głównemu księgowemu razem z czterema pytaniami. Trzy niezgodne lokalizacje albo więcej to wynik poniżej 90%, czyli poniżej progu najsłabszej kategorii w zestawieniu WERC [3].
+Zacznij w poniedziałek od 20 losowych lokalizacji policzonych na ślepo i zanieś wynik głównemu księgowemu razem z czterema pytaniami. Jeśli niezgodne są trzy lokalizacje albo więcej, to sygnał, że dokładność może być niższa niż 90%, czyli próg najsłabszej kategorii w zestawieniu WERC [3].
 
-Spis powie, ile kartonów było w styczniu. Liczenie z naprawą przyczyn powie, dlaczego brakuje ich dziś.
+Spis pokaże, ile kartonów brakowało w styczniu. Liczenie z naprawą przyczyn pokaże, dlaczego brakuje ich dziś.
