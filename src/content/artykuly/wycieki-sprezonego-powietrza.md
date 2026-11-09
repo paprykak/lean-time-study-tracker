@@ -27,8 +27,8 @@ zrodla:
     adres: "https://www.aceee.org/wp-content/uploads/proceedings-1980-2020/2003/SS03_Panel3_Paper18.pdf"
     rodzaj: "Raport instytucji"
     dostep: 2026-11-09
-  - opis: "Dudić S., Ignjatović I., Šešlija D., Blagojević V., Stojiljković M. (2012), Leakage Quantification of Compressed Air on Pipes Using Thermovision, Thermal Science 16(suppl. 2), S555–S565."
-    adres: "https://doi.org/10.2298/TSCI120503191D"
+  - opis: "Dudić S., Ignjatović I., Šešlija D., Blagojević V., Stojiljković M. (2012), Leakage Quantification of Compressed Air on Pipes Using Thermovision, Thermal Science 16(suppl. 2), S555–S565, DOI 10.2298/TSCI120503191D."
+    adres: "https://www.thermalscience.rs/pdfs/papers-2012/TSCI120503191D.pdf"
     rodzaj: "Badanie recenzowane"
     dostep: 2026-11-09
   - opis: "Nascimento M. i in. (2022), Quantifying Compressed Air Leakage through Non-Intrusive Load Monitoring Techniques in the Context of Energy Audits, Energies 15(9), 3213."
