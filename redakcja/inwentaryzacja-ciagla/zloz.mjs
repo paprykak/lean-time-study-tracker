@@ -11,7 +11,7 @@ zloz(import.meta.url, {
   tematy: ['zapasy'],
   opublikowano: '2026-11-09',
   zdjecie: 'magazyn-inwentaryzacja',
-  podpisZdjecia: '',
+  podpisZdjecia: 'Regały paletowe w centrum dystrybucyjnym; litery na słupkach oznaczają alejki. Stan w systemie jest wart tyle, ile jego zgodność z tym, co naprawdę stoi w każdej lokalizacji.',
   powiazane: ['kompletacja-droga'],
   faq: [
     ['Czy inwentaryzacja ciągła jest zgodna z ustawą o rachunkowości?', 'Ustawa nie używa tego określenia, ale pozwala inwentaryzować zapasy materiałów, towarów, produktów gotowych i półproduktów w strzeżonych składowiskach, objętych ewidencją ilościowo-wartościową, raz w ciągu dwóch lat (art. 26 ust. 3 pkt 2). Na tej podstawie firmy rozkładają spis na cały okres. O szczegółach decyduje polityka rachunkowości, więc ustal je z głównym księgowym i biegłym rewidentem.'],

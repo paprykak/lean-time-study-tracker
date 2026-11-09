@@ -10,8 +10,8 @@ zloz(import.meta.url, {
   format: 'Poradnik',
   tematy: ['czas-pracy'],
   opublikowano: '2026-11-09',
-  zdjecie: 'zaklad-chemiczny-noca',
-  podpisZdjecia: 'Zakłady przemysłowe w Kawasaki nocą. W zakładach o ruchu ciągłym ktoś zawsze jest na zmianie, a grafik decyduje, która to dla niego noc z rzędu.',
+  zdjecie: 'zaklady-kawasaki-noca',
+  podpisZdjecia: 'Zakłady przemysłowe w Kawasaki nocą. W zakładach o ruchu ciągłym ktoś zawsze jest na zmianie, a to grafik decyduje, ile nocy z rzędu przepracuje.',
   powiazane: ['krzywa-uczenia'],
   faq: [
     ['Czy zmiany 12-godzinne są legalne?', 'Tak, w systemie równoważnego czasu pracy Kodeks pracy pozwala wydłużyć dobowy wymiar do 12 godzin, jeśli uzasadnia to rodzaj lub organizacja pracy, zwykle w okresie rozliczeniowym do miesiąca (art. 135). Pracujący w nocy, który wykonuje prace szczególnie niebezpieczne albo związane z dużym wysiłkiem fizycznym lub umysłowym, nie może jednak pracować dłużej niż 8 godzin na dobę (art. 151⁷ § 3). Wątpliwe przypadki rozstrzygnie prawnik.'],
