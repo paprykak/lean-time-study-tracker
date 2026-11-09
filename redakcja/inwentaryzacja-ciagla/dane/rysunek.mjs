@@ -23,7 +23,7 @@ const pl = (v) => v.toLocaleString('pl-PL', { maximumFractionDigits: 0 });
 c.push(`<text x="${x(250) - 2}" y="${y(roczny[250]) - 8}" ${f} font-size="15" font-weight="700" fill="#1d2530" text-anchor="end">${pl(roczny[250])}%</text>`);
 c.push(`<text x="${x(250) - 2}" y="${y(cykl) - 8}" ${f} font-size="15" font-weight="700" fill="#c2410c" text-anchor="end">${pl(cykl)}%</text>`);
 c.push(`<text x="${x(250) - 2}" y="${y(cykl2) - 8}" ${f} font-size="15" font-weight="700" fill="#c2410c" text-anchor="end">${pl(cykl2)}%</text>`);
-const leg = [['#1d2530', '', 'Spis raz w roku (w styczniu)'], ['#c2410c', '', 'Liczenie cykliczne według rotacji'], ['#c2410c', '7 5', 'Liczenie cykliczne i mniej błędów przy operacjach']];
+const leg = [['#1d2530', '', 'Spis raz w roku (w styczniu)'], ['#c2410c', '', 'Liczenie cykliczne'], ['#c2410c', '7 5', 'Liczenie cykliczne i mniej błędów przy operacjach']];
 leg.forEach(([k, dash, opis], i) => {
   const yy = H - B + 36 + i * 18;
   c.push(`<line x1="${L}" y1="${yy}" x2="${L + 24}" y2="${yy}" stroke="${k}" stroke-width="3" ${dash ? `stroke-dasharray="${dash}"` : ''}/><text x="${L + 32}" y="${yy + 5}" ${f} font-size="13" fill="#1d2530">${opis}</text>`);

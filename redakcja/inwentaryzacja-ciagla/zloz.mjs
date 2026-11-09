@@ -5,7 +5,7 @@ zloz(import.meta.url, {
   tytul: 'Roczny spis spełnia ustawę, ale nie naprawi stanów w magazynie',
   tytulSeo: 'Inwentaryzacja ciągła w magazynie: przepisy i plan',
   opisSeo: 'W badaniu 37 sklepów 65% stanów w systemie było błędnych. Co ustawa o rachunkowości mówi o inwentaryzacji ciągłej i jak ułożyć liczenie cykliczne.',
-  lead: 'W badaniu 37 sklepów jednej sieci 65% stanów w systemie było błędnych. Spis raz w roku tego nie zmienia, bo błędy narastają od następnego dnia. Ustawa pozwala rozłożyć inwentaryzację zapasów w strzeżonych składowiskach na dwa lata, a liczenie według rotacji powinno poprawić stany, jeśli naprawiasz też przyczyny błędów.',
+  lead: 'W badaniu 37 sklepów jednej sieci 65% stanów w systemie było błędnych. Spis raz w roku tego nie zmienia, bo błędy narastają od następnego dnia. Ustawa pozwala rozłożyć inwentaryzację zapasów w strzeżonych składowiskach na dwa lata, a liczenie cykliczne powinno poprawić stany, jeśli naprawiasz też przyczyny błędów.',
   dzial: 'magazyn-i-logistyka',
   format: 'Poradnik',
   tematy: ['zapasy'],

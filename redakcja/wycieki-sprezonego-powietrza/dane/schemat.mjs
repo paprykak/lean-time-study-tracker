@@ -5,7 +5,7 @@ const r = schemat({
   tytul: 'Test wycieków w sobotę, krok po kroku',
   kroki: [
     { tekst: 'Wyłącz wszystkie odbiory powietrza: maszyny, narzędzia, stanowiska' },
-    { tekst: 'Zostaw włączoną jedną sprężarkę, jeśli wystarcza' },
+    { tekst: 'Zostaw włączoną jedną sprężarkę, jeśli sama utrzyma ciśnienie' },
     { tekst: 'Zmierz kilka cykli: T = minuty pod obciążeniem, t = minuty odpoczynku' },
     { tekst: 'Udział wycieków (%) = ' + 'T × 100 / (T + t)'.replace(/ /g, '\u00a0'), akcent: true },
     { tekst: 'Koszt roczny = udział × moc tej sprężarki (kW) × godziny pod ciśnieniem × cena kWh'.replace(/ × /g, '\u00a0×\u00a0'), akcent: true },
