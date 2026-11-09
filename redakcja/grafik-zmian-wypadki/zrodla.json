@@ -1,0 +1,38 @@
+{
+ "folkard": {
+  "opis": "Folkard S., Lombardi D. A., Tucker P. T. (2005), Shiftwork: Safety, Sleepiness and Sleep, Industrial Health 43(1), 20–23.",
+  "adres": "https://doi.org/10.2486/indhealth.43.20",
+  "rodzaj": "Przegląd lub metaanaliza",
+  "dostep": "2026-11-09"
+ },
+ "matre": {
+  "opis": "Matre D., Skogstad M., Sterud T., Nordby K.-C., Knardahl S., Christensen J. O., Lie J.-A. S. (2021), Safety incidents associated with extended working hours. A systematic review and meta-analysis, Scandinavian Journal of Work, Environment & Health 47(6), 415–424.",
+  "adres": "https://doi.org/10.5271/sjweh.3958",
+  "rodzaj": "Przegląd lub metaanaliza",
+  "dostep": "2026-11-09"
+ },
+ "moen": {
+  "opis": "Moen L. V., Lie J.-A. S., Sterud T., Christensen J. O., Haugen F., Skogstad M., Nordby K.-C., Matre D. (2025), Association of non-standard working time arrangements with safety incidents: a systematic review, BMJ Open 15(9), e100931.",
+  "adres": "https://doi.org/10.1136/bmjopen-2025-100931",
+  "rodzaj": "Przegląd lub metaanaliza",
+  "dostep": "2026-11-09"
+ },
+ "fischer": {
+  "opis": "Fischer D., Lombardi D. A., Folkard S., Willetts J., Christiani D. C. (2017), Updating the „Risk Index”: A systematic review and meta-analysis of occupational injuries and work schedule characteristics, Chronobiology International 34(10), 1423–1438 (streszczenie).",
+  "adres": "https://doi.org/10.1080/07420528.2017.1367305",
+  "rodzaj": "Przegląd lub metaanaliza",
+  "dostep": "2026-11-09"
+ },
+ "kp": {
+  "opis": "Ustawa z dnia 26 czerwca 1974 r. – Kodeks pracy, tekst jednolity Dz.U. 2026 poz. 1245 (art. 132, 134, 135, 151, 151⁷).",
+  "adres": "https://api.sejm.gov.pl/eli/acts/DU/2026/1245/text/T/D20261245L.pdf",
+  "rodzaj": "Przepis lub norma",
+  "dostep": "2026-11-09"
+ },
+ "gus": {
+  "opis": "Główny Urząd Statystyczny (2025), Wypadki przy pracy w 2024 r.",
+  "adres": "https://stat.gov.pl/obszary-tematyczne/rynek-pracy/warunki-pracy-wypadki-przy-pracy/wypadki-przy-pracy-w-2024-r-,4,18.html",
+  "rodzaj": "Dane publiczne",
+  "dostep": "2026-11-09"
+ }
+}

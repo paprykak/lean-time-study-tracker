@@ -1,0 +1,25 @@
+// Składa src/content/artykuly/grafik-zmian-wypadki.md z teczki. Uruchom: node redakcja/grafik-zmian-wypadki/zloz.mjs
+import { zloz } from '../wspolne/zloz.mjs';
+
+zloz(import.meta.url, {
+  tytul: 'Ryzyko wypadku rośnie z każdą kolejną nocą w grafiku',
+  tytulSeo: 'Zmiany nocne i 12-godzinne a ryzyko wypadku',
+  opisSeo: 'Czwarta noc z rzędu, dwunasta godzina zmiany i długi odcinek bez przerwy podnoszą ryzyko wypadku. Jak sprawdzić grafik w pięciu pytaniach.',
+  lead: 'Na czwartej nocy z rzędu ryzyko wypadku jest o około jedną trzecią wyższe niż na pierwszej, a zmiana 12-godzinna ma je o jedną czwartą wyższe niż 8-godzinna. Pewność tych szacunków jest niska, ale kierunek się powtarza. Grafik da się sprawdzić w pięciu pytaniach, zanim trafi na tablicę.',
+  dzial: 'ludzie-i-szkolenia',
+  format: 'Poradnik',
+  tematy: ['czas-pracy'],
+  opublikowano: '2026-11-09',
+  zdjecie: 'zaklad-chemiczny-noca',
+  podpisZdjecia: 'Zakład chemiczny w Kawasaki nocą. W zakładach o ruchu ciągłym ktoś zawsze jest na zmianie, a grafik decyduje, która to dla niego noc z rzędu.',
+  powiazane: ['krzywa-uczenia'],
+  faq: [
+    ['Czy zmiany 12-godzinne są legalne?', 'Tak, w systemie równoważnego czasu pracy Kodeks pracy pozwala wydłużyć dobowy wymiar do 12 godzin w okresie rozliczeniowym do miesiąca (art. 135 § 1). Pracujący w nocy, który wykonuje prace szczególnie niebezpieczne albo związane z dużym wysiłkiem fizycznym lub umysłowym, nie może jednak pracować dłużej niż 8 godzin na dobę (art. 151⁷ § 3). Wątpliwe przypadki rozstrzygnie prawnik.'],
+    ['Ile nocy z rzędu to bezpiecznie?', 'Badania nie wyznaczają bezpiecznej granicy, ale pokazują, że ryzyko rośnie z każdą kolejną nocą: według przeglądu badań z 2005 r. na drugiej nocy o około 6%, na trzeciej o 17%, a na czwartej o 36% względem pierwszej.'],
+    ['Jakie przerwy przysługują przy zmianie 12-godzinnej?', 'Kodeks pracy daje co najmniej 15 minut przerwy przy dobie od 6 godzin i kolejne co najmniej 15 minut, gdy doba pracy jest dłuższa niż 9 godzin (art. 134 § 1). Badania pokazują, że ryzyko wypadku rośnie z czasem od ostatniej przerwy, więc liczy się też ich rozłożenie.'],
+    ['Czy praca w nocy zwiększa ryzyko wypadku?', 'Według metaanalizy z 2017 r. ryzyko urazu na zmianie nocnej jest o około 36% wyższe niż na rannej (14 badań). Przegląd z 2025 r. potwierdza kierunek, ale ocenia pewność dowodów jako niską.'],
+  ],
+  metoda: 'Tekst opiera się na przeglądzie badań z 2005 r. (Folkard, Lombardi, Tucker), metaanalizach z 2017 i 2021 r., przeglądzie systematycznym z 2025 r., danych GUS o wypadkach przy pracy w 2024 r. i tekście jednolitym Kodeksu pracy z 2026 r. Metaanalizę z 2017 r. czytaliśmy w streszczeniu, bo pełny tekst jest płatny. Pewność dowodów oceniana w przeglądach jest niska. Przykład zakładu jest fikcyjny. Tekst nie jest poradą prawną. Konflikt interesów: redaktor naczelny prowadzi doradztwo w operacjach; tekst nie odsyła do jego usług.',
+  sprawdzono: null,
+  szkic: true,
+});

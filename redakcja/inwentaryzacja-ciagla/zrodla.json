@@ -1,0 +1,26 @@
+{
+ "dehoratius": {
+  "opis": "DeHoratius N., Raman A. (2008), Inventory Record Inaccuracy: An Empirical Analysis, Management Science 54(4), 627–641 (streszczenie).",
+  "adres": "https://doi.org/10.1287/mnsc.1070.0789",
+  "rodzaj": "Badanie recenzowane",
+  "dostep": "2026-11-09"
+ },
+ "chuang": {
+  "opis": "Chuang H. H.-C., Oliva R. (2015), Inventory record inaccuracy: Causes and labor effects, Journal of Operations Management 39–40, 63–78 (streszczenie).",
+  "adres": "https://doi.org/10.1016/j.jom.2015.07.006",
+  "rodzaj": "Badanie recenzowane",
+  "dostep": "2026-11-09"
+ },
+ "destro": {
+  "opis": "Destro I. R., Staudt F. H., Somensi K., Taboada C. (2023), The impacts of inventory record inaccuracy and cycle counting on distribution center performance, Production 33, e20220077.",
+  "adres": "https://doi.org/10.1590/0103-6513.20220077",
+  "rodzaj": "Badanie recenzowane",
+  "dostep": "2026-11-09"
+ },
+ "ustawa": {
+  "opis": "Ustawa z dnia 29 września 1994 r. o rachunkowości, tekst jednolity Dz.U. 2026 poz. 522 (art. 26 i 27).",
+  "adres": "https://api.sejm.gov.pl/eli/acts/DU/2026/522",
+  "rodzaj": "Przepis lub norma",
+  "dostep": "2026-11-09"
+ }
+}

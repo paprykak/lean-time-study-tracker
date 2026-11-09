@@ -1,0 +1,32 @@
+{
+ "doe": {
+  "opis": "U.S. Department of Energy, Compressed Air Challenge (b.d.), Improving Compressed Air System Performance: A Sourcebook for Industry, 3. wyd., Fact Sheets 1–3.",
+  "adres": "https://www.compressedairchallenge.org/data/sites/1/media/library/sourcebook/Improving_Compressed_Air-Sourcebook.pdf",
+  "rodzaj": "Raport instytucji",
+  "dostep": "2026-11-09"
+ },
+ "radgen": {
+  "opis": "Radgen P. (2003), The „Efficient Compressed Air” Campaign in Germany: A Successful Program for Energy Efficiency, w: ACEEE Summer Study on Energy Efficiency in Industry, s. 3-194–3-206 (Fraunhofer ISI).",
+  "adres": "https://www.aceee.org/wp-content/uploads/proceedings-1980-2020/2003/SS03_Panel3_Paper18.pdf",
+  "rodzaj": "Raport instytucji",
+  "dostep": "2026-11-09"
+ },
+ "eurostat": {
+  "opis": "Eurostat (2026), Electricity prices for non-household consumers – bi-annual data (nrg_pc_205), Polska, pasma ID i IC, bez VAT i podatków zwrotnych, PLN/kWh, aktualizacja 19 października 2026.",
+  "adres": "https://ec.europa.eu/eurostat/databrowser/view/nrg_pc_205/default/table?lang=en",
+  "rodzaj": "Dane publiczne",
+  "dostep": "2026-11-09"
+ },
+ "dudic": {
+  "opis": "Dudić S., Ignjatović I., Šešlija D., Blagojević V., Stojiljković M. (2012), Leakage Quantification of Compressed Air on Pipes Using Thermovision, Thermal Science 16(suppl. 2), S555–S565.",
+  "adres": "https://doi.org/10.2298/TSCI120503191D",
+  "rodzaj": "Badanie recenzowane",
+  "dostep": "2026-11-09"
+ },
+ "nascimento": {
+  "opis": "Nascimento M. i in. (2022), Quantifying Compressed Air Leakage through Non-Intrusive Load Monitoring Techniques in the Context of Energy Audits, Energies 15(9), 3213.",
+  "adres": "https://doi.org/10.3390/en15093213",
+  "rodzaj": "Badanie recenzowane",
+  "dostep": "2026-11-09"
+ }
+}
