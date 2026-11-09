@@ -2,7 +2,7 @@
 tytul: "Nie podnoś ciśnienia, tylko uszczelnij sieć sprężonego powietrza"
 tytulSeo: "Koszt wycieku sprężonego powietrza i jak go zmierzyć"
 opisSeo: "Otwór 3 mm przy 6 barach to do 25 tys. zł rocznie, gdy sieć pracuje całą dobę. Jak w sobotę zmierzyć wycieki sprężonego powietrza i ich koszt."
-lead: "W zakładzie, który nie dba o szczelność sieci, wycieki zabierają typowo jedną piątą wydajności sprężarek. Otwór 3 mm przy 6 barach to w naszym rachunku do 25 tys. zł rocznie, gdy sieć jest pod ciśnieniem całą dobę. Kto podnosi ciśnienie, żeby maszyny na końcu hali dostały powietrze, płaci więcej i powiększa wycieki."
+lead: "Według szacunku Departamentu Energii USA wycieki zabierają w zaniedbanej sieci około jednej piątej wydajności sprężarek. Otwór 3 mm przy 6 barach to w naszym rachunku do 25 tys. zł rocznie, gdy sieć jest pod ciśnieniem całą dobę. Kto podnosi ciśnienie zamiast uszczelnić sieć, płaci więcej i powiększa wycieki."
 dzial: produkcja
 format: Poradnik
 tematy:
@@ -41,7 +41,7 @@ faq:
   - pytanie: "Jak sprawdzić, ile powietrza ucieka z instalacji?"
     odpowiedz: "Gdy żadne urządzenie nie pobiera powietrza, zmierz, ile minut sprężarka pracuje pod obciążeniem (T) i ile odpoczywa (t). Udział wycieków to T × 100 / (T + t). Przy sprężarce z falownikiem zmierz czas spadku ciśnienia w sieci od ciśnienia roboczego do mniej więcej jego połowy i użyj wzoru z pojemnością sieci."
   - pytanie: "Jaki poziom wycieków jest normalny?"
-    odpowiedz: "Według poradnika Departamentu Energii USA zakład, który nie dba o szczelność, traci typowo około 20% wydajności sprężarek, a systematyczne wyszukiwanie i naprawa wycieków mogą obniżyć je poniżej 5–10%."
+    odpowiedz: "Poradnik Departamentu Energii USA szacuje, bez podania metody, że zakład, który nie dba o szczelność, traci około 20% wydajności sprężarek, a systematyczne wyszukiwanie i naprawa wycieków mogą obniżyć je poniżej 5–10%."
   - pytanie: "Czy obniżenie ciśnienia daje oszczędności?"
     odpowiedz: "Tak, ale dopiero po uszczelnieniu sieci. Każde 2 psi (ok. 0,14 bara) więcej to około 1% więcej energii przy pełnej wydajności sprężarki, a wyższe ciśnienie zwiększa też przepływ przez każdy wyciek."
 metoda: "Tekst opiera się na poradniku Departamentu Energii USA (Compressed Air Challenge), materiałach niemieckiej kampanii „Druckluft effizient” (Fraunhofer ISI), danych Eurostatu o cenach energii dla firm w Polsce i dwóch badaniach recenzowanych. Koszt wycieków policzyliśmy z równania przepływu przez otwór; model odtwarza tabelę Departamentu Energii, a kod jest w archiwum redakcji. Recenzowanych pomiarów udziału wycieków w wielu zakładach nie znaleźliśmy. Przykłady są fikcyjne. Konflikt interesów: redaktor naczelny prowadzi doradztwo w operacjach; tekst nie odsyła do jego usług."
@@ -49,9 +49,9 @@ szkic: true
 ---
 ## W skrócie
 
-**Problem.** W zakładzie, który nie dba o szczelność sieci, wycieki zabierają typowo równowartość około 20% wydajności sprężarek [1]. Za tę część płacisz pełną cenę prądu, a powietrze nie dociera do żadnej maszyny.
+**Problem.** Poradnik amerykańskiego Departamentu Energii szacuje, bez podania metody, że w zakładzie, który nie dba o szczelność sieci, wycieki zabierają około 20% wydajności sprężarek [1]. Ile u ciebie, pokaże jeden test w sobotę.
 
-**Dlaczego.** W naszym rachunku wyciek przez otwór 3 mm przy 6 barach to około 580 litrów na minutę [1]. Jeśli sieć jest pod ciśnieniem przez cały rok, kosztuje to ponad 25 tys. zł rocznie [2]. Gdy na końcu hali brakuje ciśnienia, ktoś zwykle podnosi nastawę sprężarki. To zwiększa i zużycie energii, i same wycieki [1].
+**Dlaczego.** W naszym rachunku wyciek przez otwór 3 mm przy 6 barach to około 580 litrów na minutę [1]. Jeśli sieć jest pod ciśnieniem przez cały rok, kosztuje to do 25 tys. zł rocznie [2]. Wyciek rośnie z kwadratem średnicy: jedna dziura 4 mm kosztuje tyle co szesnaście otworów 1 mm. Gdy na końcu hali brakuje ciśnienia, ktoś zwykle podnosi nastawę sprężarki. To zwiększa i zużycie energii, i same wycieki [1].
 
 **Co zrobić.** W sobotę, gdy maszyny stoją, zmierz, jak długo sprężarka pracuje pod obciążeniem, a jak długo odpoczywa. Ze wzoru w tym tekście policzysz udział wycieków i ich koszt w złotówkach. Potem znajdź i napraw największe nieszczelności, a dopiero na końcu wróć do pytania o ciśnienie i nową sprężarkę.
 
@@ -59,9 +59,9 @@ szkic: true
 
 W sobotę rano, kiedy hala stoi, słychać syk. Dochodzi zza prasy, spod szybkozłącza przy stanowisku spawalniczym, z węża, który ktoś zostawił pod regałem. W tygodniu zagłusza go produkcja, ale sprężarki pracują dalej i uzupełniają to, co ucieka.
 
-Weźmy zakład obróbki metali z dwiema sprężarkami po 37 kW, pracujący na dwie zmiany (to przykład, firma jest fikcyjna). Od kilku miesięcy pneumatyczny docisk na końcu hali zgłasza za niskie ciśnienie. Utrzymanie ruchu podniosło więc nastawę sprężarek z 6 do 7 barów, a kierownik produkcji pyta o trzecią sprężarkę.
+Tak wygląda sobota w zakładzie obróbki metali z dwiema sprężarkami po 37 kW, pracującym na dwie zmiany (przykład na danych fikcyjnych). Od kilku miesięcy pneumatyczny docisk na końcu hali zgłasza za niskie ciśnienie. Utrzymanie ruchu podniosło więc nastawę sprężarek z 6 do 7 barów, a kierownik produkcji pyta o trzecią sprężarkę.
 
-Poradnik amerykańskiego Departamentu Energii opisuje dokładnie ten mechanizm: wycieki obniżają ciśnienie w sieci i prowadzą do dokupowania niepotrzebnej mocy sprężarek [1]. W zakładzie, który nie dba o szczelność, wycieki to typowo około 20% wydajności sprężarek, a systematyczne wyszukiwanie i naprawa mogą obniżyć je poniżej 5–10% [1]. Autor raportu z niemieckiej kampanii, w której przebadano instalacje w około 100 firmach, pisze, że ograniczanie wycieków jest zwykle najbardziej opłacalnym działaniem [3]. Nie podnoś więc ciśnienia, tylko uszczelnij sieć. Najpierw policz, ile u ciebie ucieka, a dopiero potem rozmawiaj o sprężarce.
+Poradnik amerykańskiego Departamentu Energii opisuje dokładnie ten mechanizm: wycieki obniżają ciśnienie w sieci i prowadzą do dokupowania niepotrzebnej mocy sprężarek [1]. Ten sam poradnik szacuje, nie podając metody, że w zakładzie, który nie dba o szczelność, wycieki to około 20% wydajności sprężarek [1]. Systematyczne wyszukiwanie i naprawa mogą według niego obniżyć je poniżej 5–10% [1]. Autor raportu z niemieckiej kampanii, w której producenci sprężarek i doradcy przebadali instalacje w około 100 firmach, pisze, że ograniczanie wycieków jest zwykle najbardziej opłacalnym działaniem [3]. Zanim więc ktoś podniesie ciśnienie albo zamówi sprężarkę, trzeba zmierzyć, ile powietrza ucieka, i uszczelnić sieć.
 
 ## Otwór 3 mm kosztuje więcej niż nowy wąż
 
@@ -81,17 +81,19 @@ Test działa przy sprężarkach, które na przemian pracują pod obciążeniem i
 
 **udział wycieków (%) = T × 100 / (T + t)** [1]
 
-Przykład na danych fikcyjnych: w zakładzie z przykładu na czas testu zostaje włączona jedna sprężarka 37 kW. Pracuje pod obciążeniem przez 30 sekund, potem odpoczywa przez 45 sekund. Udział wycieków w jej wydajności to 0,5 × 100 / (0,5 + 0,75), czyli 40%, a więc piąta część wydajności obu sprężarek. Przy 4 000 godzinach w roku i cenie 0,7685 zł za kWh to około 45 tys. zł rocznie. Gdy zmniejszysz wycieki o połowę, oszczędzisz około 23 tys. zł.
+Przykład na danych fikcyjnych: w zakładzie z przykładu na czas testu zostaje włączona jedna sprężarka 37 kW. Pracuje pod obciążeniem przez 30 sekund, potem odpoczywa przez 45 sekund. Udział wycieków w jej wydajności to 0,5 × 100 / (0,5 + 0,75), czyli 40%, a więc piąta część wydajności obu sprężarek.
+
+Przy 4 000 godzinach w roku i cenie 0,7685 zł za kWh to do około 45 tys. zł rocznie. Gdy zmniejszysz wycieki o połowę, oszczędzisz do około 23 tys. zł. Obie kwoty to górna granica: sprężarka śrubowa bez obciążenia zwykle dalej pobiera 15–35% pełnej mocy [1]. Jeśli sterownik jej nie wyłącza, realna oszczędność wyniesie około 15–19 tys. zł.
 
 Na pieniądze przeliczysz każdy wynik tak samo. Pomnóż udział wycieków przez moc w kW sprężarki, która pracowała w czasie testu, przez godziny, w których sieć jest pod ciśnieniem, i przez swoją cenę kWh. Gdy masz dwie sprężarki, a jedna wystarcza na potrzeby testu, zostaw włączoną jedną. Cały test mieści się w sześciu krokach.
 
 ![Schemat w sześciu krokach: 1. wyłącz wszystkie odbiory powietrza; 2. zostaw włączoną jedną sprężarkę, jeśli wystarcza; 3. zmierz kilka cykli: T to minuty pod obciążeniem, t to minuty odpoczynku; 4. udział wycieków w procentach to T razy 100 przez T plus t; 5. koszt roczny to udział razy moc tej sprężarki w kW razy godziny pod ciśnieniem razy cena kWh; 6. zapisz wynik w karcie i powtórz test po naprawach.](../../assets/rysunki/wycieki-sprezonego-powietrza-2.svg "Rysunek 2. Test wycieków zajmuje jedną sobotę i nie wymaga żadnego zakupu. Źródło: opracowanie redakcji na podstawie poradnika Departamentu Energii USA (s. 28).")
 
-Moc znajdziesz na tabliczce znamionowej sprężarki albo w jej dokumentacji. Godziny to czas, w którym sieć jest pod ciśnieniem, a nie tylko czas pracy maszyn: przy dwóch zmianach przez 250 dni to 4 000 godzin, przy pracy ciągłej 8 760. Cenę policz z faktury: całą kwotę za energię i dystrybucję podziel przez liczbę zużytych kWh. Wynik zapisz w karcie testu, żeby za kwartał porównać go z następnym (przykład na danych fikcyjnych):
+Moc znajdziesz na tabliczce znamionowej sprężarki albo w jej dokumentacji. Godziny to czas, w którym sieć jest pod ciśnieniem, a nie tylko czas pracy maszyn: przy dwóch zmianach przez 250 dni to 4 000 godzin, przy pracy ciągłej 8 760. Cenę policz z faktury: zmienne opłaty za energię i dystrybucję podziel przez liczbę zużytych kWh. Opłaty stałe po naprawie wycieków nie spadną. Wynik zapisz w karcie testu, żeby za kwartał porównać go z następnym. Poniżej przykład na danych fikcyjnych, dla 4 000 godzin w roku i 0,7685 zł za kWh.
 
-| Data | Sprężarka | T (min) | t (min) | Udział wycieków | Moc (kW) | Godziny w roku | Cena (zł/kWh) | Koszt (zł/rok) |
-|---|---|---|---|---|---|---|---|---|
-| 15.11 | nr 1 (druga wyłączona) | 0,5 | 0,75 | 40% | 37 | 4 000 | 0,7685 | 45 500 |
+| Data | Sprężarka | T (min) | t (min) | Udział | Koszt (zł/rok) |
+|---|---|---|---|---|---|
+| 15.11 | nr 1, 37 kW | 0,5 | 0,75 | 40% | do 45 500 |
 
 Sprężarki z falownikiem nie przełączają się między obciążeniem a odpoczynkiem. Wtedy użyj spadku ciśnienia [1]. Doprowadź sieć do ciśnienia roboczego p1, wyłącz sprężarkę i zmierz, ile minut (T) trwa spadek do p2, mniej więcej połowy ciśnienia roboczego [1]. Potrzebna jest też pojemność sieci V w m³: zbiorniki i rurociągi [1]. W jednostkach SI wzór wygląda tak (przeliczenie redakcji):
 
@@ -118,13 +120,15 @@ Najlepszym narzędziem jest detektor ultradźwiękowy, który wyłapuje syk wyci
 
 Każdy znaleziony wyciek oznacz zawieszką z numerem i wpisz na listę: miejsce, szacunkowa wielkość, kto naprawia i do kiedy. Duże wycieki naprawiaj w tym samym tygodniu, drobne przy najbliższym postoju. Po naprawach powtórz test z kroku 1. Druga liczba pokaże zarządowi efekt w złotówkach.
 
-Naprawy bywają tanie w porównaniu z tym, co ucieka. Autor raportu z kampanii niemieckiej podaje typowy przykład: wymiana odwadniacza kondensatu sterowanego czasowo na elektroniczny kosztuje około 150 euro, a daje zwykle około 100 euro oszczędności rocznie [3]. Odwadniacz sterowany czasem otwiera się według zegara, także wtedy, gdy kondensatu prawie nie ma, i wypuszcza przy tym sprężone powietrze [1].
+Porównaj cenę części z tabelą: otwór 2 mm przy dwóch zmianach to w naszym rachunku około 430 zł miesięcznie. Autor raportu z kampanii niemieckiej podaje też typowy przykład: wymiana odwadniacza kondensatu sterowanego czasowo na elektroniczny kosztuje około 150 euro, a daje zwykle około 100 euro oszczędności rocznie [3]. Odwadniacz sterowany czasem otwiera się według zegara, także wtedy, gdy kondensatu prawie nie ma, i wypuszcza przy tym sprężone powietrze [1].
 
 ## Krok 3. Ciśnienie obniżaj dopiero po uszczelnieniu
 
 Każde 2 psi, czyli około 0,14 bara, więcej na wylocie sprężarki to około 1% więcej energii przy pełnej wydajności [1]. W przeliczeniu redakcji to około 7% na każdy bar. Wyższe ciśnienie zwiększa też wycieki: im mniejsza różnica ciśnień na otworze, tym mniejszy przepływ [1].
 
-W zakładzie z przykładu (dane fikcyjne) podniesienie nastawy z 6 do 7 barów zwiększyło więc zużycie energii o około 7% przy tej samej ilości powietrza, a wycieki o 14%. Gdy w sieci jest dużo poboru, którego nie reguluje żaden reduktor, w tym wycieków, poradnik podaje 1,6–2% więcej energii na każde 2 psi [1]. W przeliczeniu redakcji to około 12–15% na bar. A docisk na końcu hali dalej będzie zgłaszał spadki, jeśli ich przyczyną są nieszczelności po drodze. Gdy po naprawach ciśnienie na końcu sieci jest stabilne, obniżaj nastawę stopniowo, sprawdzając, czy najbardziej wymagające urządzenie dalej pracuje.
+W zakładzie z przykładu (dane fikcyjne) podniesienie nastawy z 6 do 7 barów zwiększyło więc zużycie energii o około 7% przy tej samej ilości powietrza, a wycieki o 14%. Gdy w sieci jest dużo poboru, którego nie reguluje żaden reduktor, w tym wycieków, poradnik podaje 1,6–2% więcej energii na każde 2 psi [1]. W przeliczeniu redakcji to około 12–15% na bar.
+
+Zanim jednak obwinisz wycieki, zmierz w szczycie zmiany ciśnienie za sprężarką i przy docisku. Dobrze zaprojektowana sieć traci od sprężarki do punktu poboru znacznie mniej niż 10% ciśnienia [1]. Największe spadki są zwykle w punktach poboru, na ostatnich około 9 metrach: w za cienkich albo nieszczelnych wężach, szybkozłączach, filtrach i reduktorach [1]. Gdy po naprawach ciśnienie na końcu sieci jest stabilne, obniżaj nastawę stopniowo, sprawdzając, czy najbardziej wymagające urządzenie dalej pracuje.
 
 ## Krok 4. Utrzymaj wynik
 
@@ -134,15 +138,15 @@ Według poradnika Departamentu Energii systematyczne wyszukiwanie i naprawa mog�
 
 Dopiero gdy sieć jest szczelna, wróć do pytania o nową sprężarkę. Powtórz test, sprawdź ciśnienie na końcu sieci w szczycie zmiany i zobacz, czy sprężarki dalej pracują bez odpoczynku. Jeśli tak, potrzebujesz więcej powietrza. Jeśli nie, zakup nie jest potrzebny.
 
-## Ile o tym naprawdę wiemy
+## Liczba 20% to szacunek, nie pomiar
 
 Liczba „20% w typowym zakładzie” pochodzi z poradnika rządowego, a nie z badania, w którym zmierzono wycieki w setkach fabryk [1]. Poradnik nie opisuje, skąd ją wziął. Recenzowanych pomiarów z wielu zakładów nie znaleźliśmy.
 
-Najbliższe takiemu badaniu są audyty niemieckiej kampanii „Druckluft effizient”, którą prowadziły Niemiecka Agencja Energetyczna, Instytut Fraunhofera ISI i związek producentów maszyn VDMA [3]. W Niemczech instalacje sprężonego powietrza zużywały wtedy około 7% energii elektrycznej przemysłu [3]. Około 100 firm dostało darmowy audyt, w którym zidentyfikowane oszczędności wynosiły zwykle od 10 do 35% energii instalacji [3]. Audytorzy skupiali się na wyciekach, bo według nich odpowiadają one za największą część strat [3]. To jednak firmy, które odpowiedziały na zaproszenie, a nie losowa próba.
+Najbliższe takiemu badaniu są audyty niemieckiej kampanii „Druckluft effizient”, którą prowadziły Niemiecka Agencja Energetyczna, Instytut Fraunhofera ISI i związek producentów maszyn VDMA [3]. W Niemczech instalacje sprężonego powietrza zużywały wtedy około 7% energii elektrycznej przemysłu [3]. Około 100 firm dostało darmowy audyt, w którym zidentyfikowane oszczędności wynosiły zwykle od 10 do 35% energii instalacji [3]. Audytorzy, producenci sprężarek i doradcy pod nadzorem niezależnej organizacji badawczej, skupiali się na wyciekach, bo według nich odpowiadają one za największą część strat [3]. To jednak firmy, które odpowiedziały na zaproszenie, a nie losowa próba.
 
 Jedyny recenzowany pomiar w działającej instalacji, do którego dotarliśmy, dotyczy budynku usługowego. Autorzy oszacowali tam udział wycieków na 62%, a ich usunięcie dałoby około 44% oszczędności energii instalacji [5]. To pojedynczy przypadek, a nie średnia. Dlatego zamiast przyjmować cudzą liczbę, zmierz własną w sobotę.
 
-## Kiedy ten rachunek nie pasuje
+## Rachunek zależy od godzin i sterowania
 
 Tabela zakłada, że sieć jest pod ciśnieniem przez wszystkie godziny w roku albo na dwie zmiany. Jeśli po pracy odcinasz powietrze zaworem głównym, wycieki kosztują tylko w godzinach pracy. Jeśli sprężarki chodzą w weekendy dla jednej maszyny, płacisz za wycieki także wtedy.
 
@@ -154,4 +158,4 @@ Mała instalacja z kilkoma odbiorami może mieć tak niski rachunek, że nie op�
 
 Zakład z dwiema sprężarkami nie musi kupować trzeciej, zanim nie zmierzy, ile powietrza traci. Wystarczy jedna sobota: test sprężarki, obchód hali z detektorem albo pędzlem i lista nieszczelności. Wynik w procentach przelicza się na złotówki tym samym wzorem, którego użyliśmy w przykładzie.
 
-Następna rozmowa o ciśnieniu i nowej sprężarce będzie wtedy krótsza. Syk w sobotę rano to dźwięk rachunku za prąd, który płacisz także od poniedziałku do piątku.
+Następna rozmowa o ciśnieniu i nowej sprężarce zacznie się wtedy od liczby w złotówkach, a nie od skarg z końca hali.

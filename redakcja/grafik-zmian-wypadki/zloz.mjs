@@ -5,7 +5,7 @@ zloz(import.meta.url, {
   tytul: 'Na czwartej nocy z rzędu ryzyko wypadku jest o jedną trzecią wyższe',
   tytulSeo: 'Zmiany nocne i 12-godzinne a ryzyko wypadku',
   opisSeo: 'Kolejne noce, długie zmiany i praca bez przerwy wiążą się z wyższym ryzykiem wypadku. Jak sprawdzić grafik zmian w pięciu pytaniach.',
-  lead: 'Na czwartej nocy z rzędu ryzyko wypadku jest o około jedną trzecią wyższe niż na pierwszej, a dla zmiany 12-godzinnej przegląd badań szacuje je na o jedną czwartą wyższe niż dla 8-godzinnej. Pewność tych szacunków jest niska. Grafik da się sprawdzić w pięciu pytaniach, zanim trafi na tablicę.',
+  lead: 'Na czwartej nocy z rzędu ryzyko wypadku jest o około jedną trzecią wyższe niż na pierwszej, a wyższe ryzyko wiąże się też z długimi zmianami i pracą bez przerwy. Grafik zmian jest więc decyzją o bezpieczeństwie, a nie tylko o obsadzie. Da się go sprawdzić w pięciu pytaniach, zanim trafi na tablicę.',
   dzial: 'ludzie-i-szkolenia',
   format: 'Poradnik',
   tematy: ['czas-pracy'],
