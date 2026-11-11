@@ -1,7 +1,7 @@
 // Dodatek za pracę w porze nocnej (art. 151^8 § 1 Kodeksu pracy): 20% stawki godzinowej wynikającej z minimalnego
-// wynagrodzenia za każdą godzinę pracy w porze nocnej. Stawkę godzinową liczymy jak w objaśnieniu urzędowym
-// (OBJASNIENIA.zpeDodatekNocny): minimalne wynagrodzenie dzielone przez wymiar czasu pracy w danym miesiącu.
-// Zaokrąglamy do grosza na każdym kroku, tak jak w tym objaśnieniu (stawka, dodatek za godzinę, kwota).
+// wynagrodzenia za każdą godzinę pracy w porze nocnej. Stawka godzinowa: minimalne wynagrodzenie dzielone przez liczbę
+// godzin do przepracowania w danym miesiącu (§ 4b rozporządzenia, t.j. Dz.U. 2017 poz. 927; tak samo objaśnienie ZPE).
+// Zaokrąglamy do grosza na każdym kroku, tak jak w przykładzie z objaśnienia ZPE (stawka, dodatek za godzinę, kwota).
 import { PLACA_MINIMALNA } from '../../data/prawo';
 import { wymiarMiesiaca, type WymiarMiesiaca } from './czas-pracy';
 

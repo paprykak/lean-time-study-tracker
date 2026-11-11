@@ -125,6 +125,13 @@ export const AKTY = {
     adres: eli(1996, 279),
     sprawdzono: '2026-11-11',
   },
+  wynagrodzenieRozp: {
+    nazwa: 'Rozporządzenie w sprawie sposobu ustalania wynagrodzenia w okresie niewykonywania pracy oraz wynagrodzenia stanowiącego podstawę obliczania odszkodowań i innych należności z Kodeksu pracy',
+    publikator: 'Dz.U. 2017 poz. 927',
+    uwaga: 'tekst jednolity; § 4a: stawka za godzinę z pensji miesięcznej, § 4b: dodatek nocny',
+    adres: eli(2017, 927),
+    sprawdzono: '2026-11-11',
+  },
   placa2025: {
     nazwa: 'Rozporządzenie w sprawie minimalnego wynagrodzenia w 2025 r.',
     publikator: 'Dz.U. 2024 poz. 1362',

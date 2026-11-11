@@ -34,7 +34,7 @@ export const NARZEDZIA: Narzedzie[] = [
     nazwa: 'Dodatek za pracę w nocy',
     krotko: 'Ile wynosi dodatek nocny w danym miesiącu: z płacy minimalnej, wymiaru godzin i Twojego grafiku.',
     kategoria: 'czas-pracy',
-    przepisy: ['kodeksPracy', 'dniWolne', 'minimalneWynagrodzenie', 'placa2025', 'placa2026', 'placa2027'],
+    przepisy: ['kodeksPracy', 'wynagrodzenieRozp', 'dniWolne', 'minimalneWynagrodzenie', 'placa2025', 'placa2026', 'placa2027'],
     sprawdzono: '2026-11-11',
   },
   {
@@ -75,6 +75,14 @@ export const NARZEDZIA: Narzedzie[] = [
     krotko: 'Ile godzin i dni do przepracowania w miesiącu, kwartale albo roku. Na pełny i niepełny etat, ze świętami.',
     kategoria: 'czas-pracy',
     przepisy: ['kodeksPracy', 'dniWolne'],
+    sprawdzono: '2026-11-11',
+  },
+  {
+    slug: 'kalkulator-nadgodzin',
+    nazwa: 'Kalkulator nadgodzin',
+    krotko: 'Dodatek za nadgodziny 50% i 100% przy stawce godzinowej albo pensji. Z czasem wolnym zamiast dodatku.',
+    kategoria: 'czas-pracy',
+    przepisy: ['kodeksPracy', 'wynagrodzenieRozp', 'dniWolne'],
     sprawdzono: '2026-11-11',
   },
 ];

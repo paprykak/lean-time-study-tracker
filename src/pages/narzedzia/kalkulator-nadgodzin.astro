@@ -1,0 +1,197 @@
+---
+// Kalkulator nadgodzin: dodatek 100% i 50% (art. 151^1 Kp), stawka za godzinę z pensji (§ 4a rozporządzenia
+// o ustalaniu wynagrodzenia), czas wolny zamiast dodatku (art. 151^2), limit 150 h (art. 151 § 3).
+// Logika: src/lib/narzedzia/nadgodziny.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { nazwaMiesiaca } from '../../lib/narzedzia/czas-pracy';
+import { nadgodziny, LIMIT_ROCZNY } from '../../lib/narzedzia/nadgodziny';
+import { LATA } from '../../data/prawo';
+import { zl, godz } from '../../lib/narzedzia/format';
+
+const teraz = new Date();
+const rok = LATA.includes(teraz.getUTCFullYear()) ? teraz.getUTCFullYear() : LATA[LATA.length - 1];
+const miesiac = teraz.getUTCMonth() + 1;
+const start = nadgodziny({ wynagrodzenie: { rodzaj: 'godzinowa', stawka: 35 }, godziny100: 0, godziny50: 8 });
+
+const faq = [
+  {
+    pytanie: 'Ile wynosi dodatek za nadgodziny?',
+    odpowiedz: '100% wynagrodzenia za nadgodziny w nocy, w niedziele i święta, które według rozkładu nie są dniami pracy, w dniu wolnym udzielonym za pracę w niedzielę albo święto oraz za przekroczenie przeciętnej normy tygodniowej. 50% za nadgodziny w pozostałe dni (art. 151^1 § 1 i 2 Kodeksu pracy). Dodatek jest oprócz normalnego wynagrodzenia za te godziny.',
+  },
+  {
+    pytanie: 'Jak policzyć stawkę za godzinę przy pensji miesięcznej?',
+    odpowiedz: 'Pensję z osobistego zaszeregowania dzieli się przez liczbę godzin pracy do przepracowania w danym miesiącu (§ 4a rozporządzenia w sprawie sposobu ustalania wynagrodzenia). Dlatego ta sama pensja daje inną stawkę w miesiącu ze 160 i ze 184 godzinami.',
+  },
+  {
+    pytanie: 'Od czego liczy się dodatek, gdy nie mam stawki zasadniczej?',
+    odpowiedz: 'Gdy w warunkach wynagradzania nie wyodrębniono stawki godzinowej ani miesięcznej z osobistego zaszeregowania, podstawą dodatku jest 60% wynagrodzenia (art. 151^1 § 3 Kodeksu pracy).',
+  },
+  {
+    pytanie: 'Czy zamiast dodatku można dostać wolne?',
+    odpowiedz: 'Tak. Na wniosek pracownika pracodawca może dać czas wolny w tym samym wymiarze, a bez wniosku w wymiarze o połowę wyższym, najpóźniej do końca okresu rozliczeniowego i bez obniżenia pensji za pełny miesięczny wymiar. Wtedy dodatek nie przysługuje (art. 151^2 Kodeksu pracy).',
+  },
+  {
+    pytanie: 'Ile nadgodzin można przepracować w roku?',
+    odpowiedz: `Z powodu szczególnych potrzeb pracodawcy najwyżej ${LIMIT_ROCZNY} godzin w roku kalendarzowym, chyba że układ zbiorowy, regulamin pracy albo umowa o pracę ustalają inną liczbę (art. 151 § 3 i 4). Limit nie obejmuje nadgodzin przy akcji ratowniczej albo usuwaniu awarii. Tygodniowy czas pracy z nadgodzinami nie może przekraczać przeciętnie 48 godzin w okresie rozliczeniowym (art. 131 § 1).`,
+  },
+  {
+    pytanie: 'Czy za nadgodziny w nocy należy się też dodatek nocny?',
+    odpowiedz: 'Tak. Nadgodziny w nocy dają dodatek 100% (art. 151^1 § 1 pkt 1 lit. a), a dodatek za pracę w porze nocnej należy się za każdą godzinę w porze nocnej (art. 151^8 § 1). Policz go osobnym kalkulatorem dodatku nocnego.',
+  },
+];
+---
+<StronaNarzedzia
+  slug="kalkulator-nadgodzin"
+  tytul="Kalkulator nadgodzin: dodatek 50% i 100%"
+  opis="Policz dodatek za nadgodziny 50% i 100% przy stawce godzinowej albo pensji miesięcznej, z czasem wolnym zamiast dodatku i limitem 150 godzin w roku."
+  h1="Kalkulator nadgodzin"
+  lead="Za nadgodziny należy się normalne wynagrodzenie i dodatek: 100% w nocy, w wolne niedziele i święta, 50% w pozostałe dni. Wpisz stawkę albo pensję i liczbę godzin, a policzymy dodatek i alternatywę w czasie wolnym."
+  faq={faq}
+>
+  <form class="kalkulator" data-nadgodziny novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twoje wynagrodzenie</h2>
+      <fieldset class="mt-4">
+        <legend class="etykieta">Jak jesteś wynagradzany</legend>
+        <div class="opcje-pionowe mt-2">
+          <label><input type="radio" name="rodzaj" value="godzinowa" checked /> Stawka godzinowa</label>
+          <label><input type="radio" name="rodzaj" value="miesieczna" /> Pensja miesięczna (stawka zasadnicza)</label>
+          <label><input type="radio" name="rodzaj" value="bez-zaszeregowania" /> Bez wyodrębnionej stawki zasadniczej</label>
+        </div>
+      </fieldset>
+      <div class="mt-4">
+        <label for="n-kwota" class="etykieta-pola" data-w="etykieta-kwoty">Stawka za godzinę (zł brutto)</label>
+        <input id="n-kwota" name="kwota" class="pole mt-1 max-w-48" type="text" inputmode="decimal" autocomplete="off" value="35" aria-describedby="n-kwota-blad" />
+        <p id="n-kwota-blad" class="blad-pola" data-blad="kwota" hidden></p>
+      </div>
+      <fieldset class="mt-4" data-tylko-pensja hidden>
+        <legend class="etykieta">Miesiąc nadgodzin</legend>
+        <div class="mt-2 grid grid-cols-[minmax(0,3fr)_minmax(0,2fr)] gap-3">
+          <label class="sr-only" for="n-miesiac">Miesiąc</label>
+          <select id="n-miesiac" name="miesiac" class="pole">
+            {Array.from({ length: 12 }, (_, i) => <option value={i + 1} selected={i + 1 === miesiac}>{nazwaMiesiaca(i + 1)}</option>)}
+          </select>
+          <label class="sr-only" for="n-rok">Rok</label>
+          <select id="n-rok" name="rok" class="pole">
+            {LATA.map((r) => <option value={r} selected={r === rok}>{r}</option>)}
+          </select>
+        </div>
+      </fieldset>
+      <div class="mt-4 grid gap-4 sm:grid-cols-2">
+        <div>
+          <label for="n-100" class="etykieta-pola">Nadgodziny z dodatkiem 100%</label>
+          <input id="n-100" name="godziny100" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="0" aria-describedby="n-100-opis n-godziny-blad" />
+          <p id="n-100-opis" class="meta mt-1">W nocy, w wolną niedzielę albo święto, w dniu wolnym za niedzielę lub święto, ponad normę tygodniową.</p>
+        </div>
+        <div>
+          <label for="n-50" class="etykieta-pola">Nadgodziny z dodatkiem 50%</label>
+          <input id="n-50" name="godziny50" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="8" aria-describedby="n-50-opis n-godziny-blad" />
+          <p id="n-50-opis" class="meta mt-1">W pozostałe dni, na przykład po zmianie w dzień roboczy.</p>
+        </div>
+        <p id="n-godziny-blad" class="blad-pola sm:col-span-2" data-blad="godziny" hidden></p>
+      </div>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Za nadgodziny razem (brutto)</h2>
+      <p class="wynik-kwota" aria-live="polite" aria-atomic="true"><span data-w="razem">{zl(start.razem)}</span></p>
+      <dl class="wynik-lista">
+        <div><dt>Podstawa dodatku za godzinę</dt><dd><span data-w="stawka">{zl(start.stawka)}</span><span class="wynik-opis" data-w="stawka-opis"></span></dd></div>
+        <div><dt>Dodatek 100%</dt><dd data-w="d100">{zl(start.dodatek100)}</dd></div>
+        <div><dt>Dodatek 50%</dt><dd data-w="d50">{zl(start.dodatek50)}</dd></div>
+        <div><dt>Normalne wynagrodzenie za te godziny</dt><dd data-w="normalne">{zl(start.normalne)}</dd></div>
+        <div><dt>Zamiast dodatku: czas wolny</dt><dd data-w="wolne">{godz(start.wolneNaWniosek)} na Twój wniosek albo {godz(start.wolneBezWniosku)} bez wniosku</dd></div>
+      </dl>
+      <p class="meta mt-3">Normalne wynagrodzenie liczymy tą samą stawką za godzinę. Zaokrąglamy do grosza.</p>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="kiedy-100">Kiedy dodatek 100%, a kiedy 50%</h2>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Wysokość dodatku za nadgodziny</caption>
+        <thead><tr><th scope="col">Nadgodziny przypadające</th><th scope="col">Dodatek</th><th scope="col">Podstawa</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">w nocy</th><td>100%</td><td>art. 151<sup>1</sup> § 1 pkt 1 lit. a</td></tr>
+          <tr><th scope="row">w niedziele i święta, które według rozkładu nie są dniami pracy</th><td>100%</td><td>art. 151<sup>1</sup> § 1 pkt 1 lit. b</td></tr>
+          <tr><th scope="row">w dniu wolnym udzielonym za pracę w niedzielę albo święto</th><td>100%</td><td>art. 151<sup>1</sup> § 1 pkt 1 lit. c</td></tr>
+          <tr><th scope="row">za przekroczenie przeciętnej normy tygodniowej w okresie rozliczeniowym</th><td>100%</td><td>art. 151<sup>1</sup> § 2</td></tr>
+          <tr><th scope="row">w każdy inny dzień</th><td>50%</td><td>art. 151<sup>1</sup> § 1 pkt 2</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Dodatek 100% za przekroczenie normy tygodniowej nie należy się, gdy przekroczenie wynika z nadgodzin, za które
+      pracownikowi już przysługuje dodatek 100% albo 50% (art. 151<sup>1</sup> § 2). Pracownikowi na stanowisku, na którym przekroczone są
+      najwyższe dopuszczalne stężenia lub natężenia czynników szkodliwych, nie wolno zlecać nadgodzin z powodu
+      szczególnych potrzeb pracodawcy (art. 151 § 2).
+    </p>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Przy stawce godzinowej podstawą dodatku jest ta stawka. Przy pensji miesięcznej dzielimy ją przez liczbę godzin
+      pracy do przepracowania w danym miesiącu (§ 4a rozporządzenia w sprawie sposobu ustalania wynagrodzenia), więc
+      w miesiącu ze 184 godzinami stawka jest niższa niż w miesiącu ze 160. Gdy stawki zasadniczej nie wyodrębniono,
+      podstawą jest 60% wynagrodzenia (art. 151<sup>1</sup> § 3 Kodeksu pracy). Dodatek 100% to stawka razy godziny,
+      dodatek 50% to połowa stawki razy godziny.
+    </p>
+
+    <h2 id="niepelny-etat">Niepełny etat: godziny ponad umowę to nie zawsze nadgodziny</h2>
+    <p>
+      W umowie na niepełny etat strony ustalają, ile godzin ponad umówiony wymiar pracownik może przepracować, zanim
+      dostanie dodatek jak za nadgodziny (art. 151 § 5 Kodeksu pracy). Godziny do tej granicy są płatne normalnie.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { nadgodziny, type Wynagrodzenie } from '../../lib/narzedzia/nadgodziny';
+  import { godz, wpisanaLiczba, zl } from '../../lib/narzedzia/format';
+  import { nazwaMiesiaca } from '../../lib/narzedzia/czas-pracy';
+
+  const form = document.querySelector<HTMLFormElement>('[data-nadgodziny]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const pole = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const blad = (k: string, pola: HTMLInputElement[], tekst: string | null) => {
+      const b = form.querySelector<HTMLElement>(`[data-blad="${k}"]`)!;
+      b.hidden = !tekst;
+      b.textContent = tekst ?? '';
+      for (const p of pola) p.setAttribute('aria-invalid', tekst ? 'true' : 'false');
+    };
+    const przelicz = () => {
+      const rodzaj = (form.querySelector<HTMLInputElement>('input[name="rodzaj"]:checked')?.value ?? 'godzinowa') as Wynagrodzenie['rodzaj'];
+      form.querySelector<HTMLElement>('[data-tylko-pensja]')!.hidden = rodzaj === 'godzinowa';
+      w('etykieta-kwoty').textContent =
+        rodzaj === 'godzinowa' ? 'Stawka za godzinę (zł brutto)' : rodzaj === 'miesieczna' ? 'Pensja zasadnicza (zł brutto miesięcznie)' : 'Wynagrodzenie miesięczne (zł brutto)';
+      const kwota = wpisanaLiczba(pole('kwota').value);
+      const g100 = wpisanaLiczba(pole('godziny100').value || '0');
+      const g50 = wpisanaLiczba(pole('godziny50').value || '0');
+      const zlaKwota = !(kwota > 0);
+      const zleGodziny = Number.isNaN(g100) || Number.isNaN(g50);
+      blad('kwota', [pole('kwota')], zlaKwota ? 'Wpisz kwotę w złotych, na przykład 35 albo 6400.' : null);
+      blad('godziny', [pole('godziny100'), pole('godziny50')], zleGodziny ? 'Wpisz liczbę godzin, na przykład 8 albo 2,5.' : null);
+      if (zlaKwota || zleGodziny) {
+        w('razem').textContent = '—';
+        return;
+      }
+      const rok = Number((form.elements.namedItem('rok') as HTMLSelectElement).value);
+      const miesiac = Number((form.elements.namedItem('miesiac') as HTMLSelectElement).value);
+      const wyn: Wynagrodzenie = rodzaj === 'godzinowa' ? { rodzaj, stawka: kwota } : { rodzaj, kwota, rok, miesiac };
+      const r = nadgodziny({ wynagrodzenie: wyn, godziny100: g100, godziny50: g50 });
+      w('razem').textContent = zl(r.razem);
+      w('stawka').textContent = zl(r.stawka);
+      w('stawka-opis').textContent =
+        r.wymiar === null ? '' : `${rodzaj === 'bez-zaszeregowania' ? '60% wynagrodzenia' : 'pensja'} : ${r.wymiar} h w ${nazwaMiesiaca(miesiac, 'miejscownik')} ${rok}`;
+      w('d100').textContent = zl(r.dodatek100);
+      w('d50').textContent = zl(r.dodatek50);
+      w('normalne').textContent = zl(r.normalne);
+      w('wolne').textContent = `${godz(r.wolneNaWniosek)} na Twój wniosek albo ${godz(r.wolneBezWniosku)} bez wniosku`;
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>
