@@ -53,11 +53,18 @@ export const NARZEDZIA: Narzedzie[] = [
     przepisy: ['dozorTechniczny', 'kwalifikacjeUdt', 'zmianaUdt2018', 'przecietneWynagrodzenie2025', 'kodeksPracy', 'kodeksCywilny'],
     sprawdzono: '2026-11-11',
   },
+  {
+    slug: 'ile-kg-wolno-dzwigac',
+    nazwa: 'Ile kg wolno dźwigać',
+    krotko: 'Ile kilogramów wolno podnosić i przenosić w pracy: kobiety, mężczyźni, ciąża, młodociani. Z mapą regału.',
+    kategoria: 'transport',
+    przepisy: ['recznePrace', 'praceKobietCiaza', 'praceMlodocianych', 'kodeksPracy'],
+    sprawdzono: '2026-11-11',
+  },
 ];
 
 /** Następne narzędzia w kolejce (bez stron i linków; lista na /narzedzia). Zdejmujesz pozycję, gdy narzędzie rusza. */
 export const W_PRZYGOTOWANIU: { nazwa: string; kategoria: KategoriaNarzedzia }[] = [
-  { nazwa: 'Ile kg wolno dźwigać w pracy', kategoria: 'transport' },
   { nazwa: 'Testy UDT na wózki widłowe', kategoria: 'uprawnienia' },
   { nazwa: 'Grafik 12-godzinny z kontrolą przepisów', kategoria: 'czas-pracy' },
   { nazwa: 'Temperatura w pracy: kiedy pracodawca musi działać', kategoria: 'bhp' },

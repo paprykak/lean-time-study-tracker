@@ -90,6 +90,27 @@ export const AKTY = {
     adres: 'https://eli.gov.pl/eli/MP/2026/192/ogl',
     sprawdzono: '2026-11-11',
   },
+  recznePrace: {
+    nazwa: 'Rozporządzenie w sprawie bezpieczeństwa i higieny pracy przy ręcznych pracach transportowych',
+    publikator: 'Dz.U. 2018 poz. 1139',
+    uwaga: 'tekst jednolity; § 2, 3, 13, 14, 16 i 17',
+    adres: eli(2018, 1139),
+    sprawdzono: '2026-11-11',
+  },
+  praceKobietCiaza: {
+    nazwa: 'Rozporządzenie w sprawie wykazu prac uciążliwych, niebezpiecznych lub szkodliwych dla zdrowia kobiet w ciąży i kobiet karmiących dziecko piersią',
+    publikator: 'Dz.U. 2017 poz. 796',
+    uwaga: 'załącznik, cz. I',
+    adres: eli(2017, 796),
+    sprawdzono: '2026-11-11',
+  },
+  praceMlodocianych: {
+    nazwa: 'Rozporządzenie w sprawie wykazu prac wzbronionych młodocianym i warunków ich zatrudniania przy niektórych z tych prac',
+    publikator: 'Dz.U. 2023 poz. 1240',
+    uwaga: 'załącznik nr 1, cz. I ust. 1',
+    adres: eli(2023, 1240),
+    sprawdzono: '2026-11-11',
+  },
   placa2025: {
     nazwa: 'Rozporządzenie w sprawie minimalnego wynagrodzenia w 2025 r.',
     publikator: 'Dz.U. 2024 poz. 1362',

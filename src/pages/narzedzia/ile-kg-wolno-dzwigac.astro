@@ -1,0 +1,315 @@
+---
+// Ile kg wolno dźwigać: granice masy z rozporządzenia o ręcznych pracach transportowych (§ 13, § 17), dla kobiet
+// w ciąży i karmiących (Dz.U. 2017 poz. 796) i młodocianych (Dz.U. 2023 poz. 1240). Logika: src/lib/narzedzia/dzwiganie.ts.
+// Mapa regału: strefa do wysokości barków i powyżej barków dla wybranej osoby i rodzaju pracy.
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { CZYNNOSCI, OSOBY, limit, type Czynnosc, type Osoba } from '../../lib/narzedzia/dzwiganie';
+import { liczba } from '../../lib/narzedzia/format';
+
+const kg = (x: { kg: number; zakaz: boolean }) => (x.zakaz ? 'zakaz' : `${liczba(x.kg)} kg`);
+const czynnosci = Object.keys(CZYNNOSCI) as Czynnosc[];
+const osoby = Object.keys(OSOBY) as Osoba[];
+const domyslnie = { osoba: 'mezczyzna' as Osoba, czynnosc: 'podnoszenie' as Czynnosc };
+const start = limit(domyslnie.osoba, domyslnie.czynnosc, 'stala');
+const startBarki = limit(domyslnie.osoba, 'nad-barki', 'stala');
+
+const faq = [
+  {
+    pytanie: 'Ile kg może dźwigać mężczyzna w pracy?',
+    odpowiedz: 'Przy pracy stałej do 30 kg, przy dorywczej do 50 kg. Powyżej barków do 21 kg przy pracy stałej i 35 kg przy dorywczej (§ 13 ust. 1 i 2 rozporządzenia o ręcznych pracach transportowych).',
+  },
+  {
+    pytanie: 'Ile kg może dźwigać kobieta w pracy?',
+    odpowiedz: 'Przy pracy stałej do 12 kg, przy dorywczej do 20 kg. Powyżej barków do 8 kg przy pracy stałej i 14 kg przy dorywczej (§ 13 ust. 1 i 2).',
+  },
+  {
+    pytanie: 'Ile kg można dźwigać w ciąży?',
+    odpowiedz: 'Kobiecie w ciąży nie wolno ręcznie podnosić ani przenosić przedmiotów cięższych niż 3 kg. Zabronione jest też przenoszenie pod górę przy pracy stałej (przy dorywczej do 1 kg) i udział w zespołowym przenoszeniu (załącznik do rozporządzenia z 3 kwietnia 2017 r., cz. I ust. 1). Kobieta karmiąca piersią: do 6 kg przy pracy stałej i 10 kg przy dorywczej.',
+  },
+  {
+    pytanie: 'Co to jest praca dorywcza przy dźwiganiu?',
+    odpowiedz: 'To ręczne przemieszczanie przedmiotów nie częściej niż 4 razy na godzinę, jeżeli łącznie trwa nie dłużej niż 4 godziny na dobę (§ 2 pkt 2 rozporządzenia). Częstsze albo dłuższe dźwiganie to praca stała z niższymi granicami.',
+  },
+  {
+    pytanie: 'Ile kg może dźwigać młodociany pracownik?',
+    odpowiedz: 'Dziewczyna do 60% wartości dla kobiet, chłopak do 40% wartości dla mężczyzn, czyli przy pracy stałej 7,2 kg i 12 kg. Młodocianym nie wolno też powierzać prac polegających wyłącznie na podnoszeniu, przenoszeniu i przewożeniu ciężarów ani prac załadunkowych i wyładunkowych (załącznik nr 1 do rozporządzenia z 19 czerwca 2023 r., cz. I ust. 1).',
+  },
+  {
+    pytanie: 'Czy pracodawca może kazać dźwigać więcej, jeśli pracownik się zgodzi?',
+    odpowiedz: 'Nie. To górne granice z przepisów BHP, a zgoda pracownika ich nie zmienia. Pracodawca ma przede wszystkim eliminować ręczne prace transportowe, a gdy się nie da, organizować pracę i dawać sprzęt pomocniczy, na przykład wózki, chwytaki i wciągniki (§ 3 rozporządzenia).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="ile-kg-wolno-dzwigac"
+  tytul="Ile kg wolno dźwigać w pracy: limity z przepisów"
+  opis="Ile kilogramów wolno podnosić i przenosić w pracy: mężczyźni 30 kg, kobiety 12 kg przy pracy stałej, w ciąży 3 kg. Sprawdź ładunek i mapę regału."
+  h1="Ile kg wolno dźwigać w pracy"
+  lead="Przepisy BHP ograniczają masę, którą jedna osoba może ręcznie podnosić i przenosić. Granica zależy od tego, kto dźwiga, jak wysoko, jak daleko i jak często. Wybierz sytuację i wpisz masę ładunku."
+  faq={faq}
+>
+  <form class="kalkulator" data-dzwiganie novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Sytuacja</h2>
+
+      <div class="mt-4">
+        <label for="dz-osoba" class="etykieta-pola">Kto dźwiga</label>
+        <select id="dz-osoba" name="osoba" class="pole mt-1">
+          {osoby.map((o) => <option value={o} selected={o === domyslnie.osoba}>{OSOBY[o]}</option>)}
+        </select>
+      </div>
+
+      <div class="mt-4">
+        <label for="dz-czynnosc" class="etykieta-pola">Co robi</label>
+        <select id="dz-czynnosc" name="czynnosc" class="pole mt-1">
+          {czynnosci.map((c) => <option value={c} selected={c === domyslnie.czynnosc}>{CZYNNOSCI[c]}</option>)}
+        </select>
+      </div>
+
+      <fieldset class="mt-6">
+        <legend class="etykieta">Jak często</legend>
+        <div class="opcje-pionowe mt-2">
+          <label><input type="radio" name="tryb" value="stala" checked /> Praca stała</label>
+          <label><input type="radio" name="tryb" value="dorywcza" aria-describedby="dz-dorywcza" /> Praca dorywcza</label>
+        </div>
+        <p id="dz-dorywcza" class="meta mt-1">Dorywcza: najwyżej 4 razy na godzinę i łącznie do 4 godzin na dobę (§ 2 pkt 2 rozporządzenia).</p>
+      </fieldset>
+
+      <div class="mt-4">
+        <label for="dz-masa" class="etykieta-pola">Masa ładunku w kg (opcjonalnie)</label>
+        <input id="dz-masa" name="masa" class="pole mt-1 max-w-40" type="text" inputmode="decimal" autocomplete="off" aria-describedby="dz-masa-blad" />
+        <p id="dz-masa-blad" class="blad-pola" data-blad="masa" hidden></p>
+      </div>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Najwyższa dopuszczalna masa</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-kwota" data-w="limit">{kg(start)}</p>
+        <p class="status-terminu" data-w="status" hidden></p>
+      </div>
+      <p class="meta mt-2" data-w="podstawa">Podstawa: {start.podstawa}</p>
+      <p class="wynik-uwaga" data-w="uwaga" hidden></p>
+
+      <figure class="mt-5">
+        <svg class="regal" viewBox="0 0 320 250" role="img" aria-labelledby="regal-tytul" data-regal>
+          <title id="regal-tytul" data-w="regal-tytul">Mapa regału: do wysokości barków {kg(start)}, powyżej barków {kg(startBarki)} na osobę</title>
+          <rect class="regal-strefa-gora" x="96" y="12" width="210" height="96" />
+          <rect class="regal-strefa-dol" x="96" y="108" width="210" height="128" />
+          <line class="regal-slup" x1="96" y1="8" x2="96" y2="236" />
+          <line class="regal-slup" x1="306" y1="8" x2="306" y2="236" />
+          <line class="regal-polka" x1="96" y1="12" x2="306" y2="12" />
+          <line class="regal-polka" x1="96" y1="60" x2="306" y2="60" />
+          <line class="regal-polka" x1="96" y1="150" x2="306" y2="150" />
+          <line class="regal-polka" x1="96" y1="196" x2="306" y2="196" />
+          <line class="regal-podloga" x1="8" y1="236" x2="312" y2="236" />
+          <line class="regal-barki" x1="8" y1="108" x2="312" y2="108" />
+          <circle class="regal-czlowiek" cx="46" cy="90" r="11" />
+          <path class="regal-czlowiek" d="M30 108 h32 l-4 70 h-6 l-4 58 h-4 l-4 -58 h-6 z" />
+          <text class="regal-etykieta" x="64" y="102">barki</text>
+          <text class="regal-wartosc" x="201" y="49" text-anchor="middle" data-w="regal-gora">{kg(startBarki)}</text>
+          <text class="regal-opis" x="201" y="80" text-anchor="middle">powyżej barków</text>
+          <text class="regal-wartosc" x="201" y="178" text-anchor="middle" data-w="regal-dol">{kg(start)}</text>
+          <text class="regal-opis" x="201" y="222" text-anchor="middle">do wysokości barków</text>
+        </svg>
+        <figcaption class="meta mt-2">Mapa regału dla wybranej osoby i rodzaju pracy: ile może ważyć jeden ładunek podnoszony na dolne i na górne półki.</figcaption>
+      </figure>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Tabele poniżej działają bez niego.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="tabela">Ile kg wolno dźwigać: tabela dla dorosłych</h2>
+    <p>Granice z § 13 i § 17 rozporządzenia w sprawie BHP przy ręcznych pracach transportowych, dla jednej osoby:</p>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Dopuszczalna masa ręcznie przemieszczanych przedmiotów dla kobiet i mężczyzn</caption>
+        <thead>
+          <tr><th scope="col">Czynność</th><th scope="col">Mężczyzna, stała</th><th scope="col">Mężczyzna, dorywcza</th><th scope="col">Kobieta, stała</th><th scope="col">Kobieta, dorywcza</th></tr>
+        </thead>
+        <tbody>
+          {czynnosci.map((c) => (
+            <tr>
+              <th scope="row">{CZYNNOSCI[c]}</th>
+              <td>{kg(limit('mezczyzna', c, 'stala'))}</td>
+              <td>{kg(limit('mezczyzna', c, 'dorywcza'))}</td>
+              <td>{kg(limit('kobieta', c, 'stala'))}</td>
+              <td>{kg(limit('kobieta', c, 'dorywcza'))}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Pod górę: granice dotyczą przenoszenia po nierównej powierzchni, pochylniach albo schodach na wysokość ponad 4 m
+      (§ 13 ust. 4 i 5). Zespołowo: przedmioty dłuższe niż 4 m i cięższe niż 30 kg (mężczyźni) albo 20 kg (kobiety)
+      przenosi się zespołowo, a łącznie najwyżej 500 kg dla mężczyzn i 200 kg dla kobiet, na odległość do 25 m
+      (§ 17 ust. 1 i 3).
+    </p>
+
+    <h2 id="ciaza">Kobiety w ciąży i karmiące piersią</h2>
+    <p>
+      Kobiety w ciąży i karmiące piersią nie mogą wykonywać prac uciążliwych, niebezpiecznych lub szkodliwych dla
+      zdrowia (art. 176 § 1 Kodeksu pracy). Wykaz takich prac podaje rozporządzenie z 3 kwietnia 2017 r.:
+    </p>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Dopuszczalna masa dla kobiet w ciąży i karmiących</caption>
+        <thead><tr><th scope="col">Czynność</th><th scope="col">W ciąży, stała</th><th scope="col">W ciąży, dorywcza</th><th scope="col">Karmiąca, stała</th><th scope="col">Karmiąca, dorywcza</th></tr></thead>
+        <tbody>
+          {czynnosci.map((c) => (
+            <tr>
+              <th scope="row">{CZYNNOSCI[c]}</th>
+              <td>{kg(limit('ciaza', c, 'stala'))}</td>
+              <td>{kg(limit('ciaza', c, 'dorywcza'))}</td>
+              <td>{kg(limit('karmiaca', c, 'stala'))}</td>
+              <td>{kg(limit('karmiaca', c, 'dorywcza'))}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p>
+      W ciąży przenoszenie pod górę jest zabronione przy pracy stałej, a przy dorywczej dozwolone do 1 kg, bez względu
+      na wysokość (cz. I ust. 1 pkt 5). Dla kobiet karmiących granice pod górę i na odległość ponad 25 m to 6 kg,
+      a przy kącie ponad 30° 4 kg przy pracy stałej (cz. I ust. 2 pkt 5–7).
+    </p>
+
+    <h2 id="mlodociani">Młodociani</h2>
+    <p>
+      Młodociana pracownica może przemieszczać ładunki do 60% wartości dla kobiet, a młodociany pracownik do 40% wartości
+      dla mężczyzn (załącznik nr 1 do rozporządzenia z 19 czerwca 2023 r., cz. I ust. 1 pkt 4). Przy pracy stałej to
+      {' '}{kg(limit('mlodociana', 'podnoszenie', 'stala'))} i {kg(limit('mlodociany', 'podnoszenie', 'stala'))}. Młodocianym
+      nie wolno powierzać prac polegających wyłącznie na podnoszeniu, przenoszeniu i przewożeniu ciężarów ani prac
+      załadunkowych i wyładunkowych (cz. I ust. 1 pkt 1 i 3).
+    </p>
+
+    <h2 id="pchanie">Pchanie, ciągnięcie i przetaczanie</h2>
+    <p>
+      Przy oburęcznym przemieszczaniu siła potrzebna do ruszenia przedmiotu nie może przekraczać 300 N przy pchaniu
+      i 250 N przy ciągnięciu dla mężczyzn oraz 120 N i 100 N dla kobiet (§ 14). Ręcznie przetaczany przedmiot okrągły,
+      na przykład beczka, może ważyć do 200 kg na mężczyznę i 80 kg na kobietę po twardej, gładkiej i poziomej
+      nawierzchni, a wtaczany na pochylnię do 50 kg i 20 kg (§ 16).
+    </p>
+
+    <h2 id="najpierw-sprzet">Granica to nie norma: najpierw sprzęt</h2>
+    <p>
+      Pracodawca ma stosować rozwiązania techniczne i organizacyjne, które eliminują ręczne prace transportowe,
+      a gdy się nie da, organizować pracę i dawać sprzęt pomocniczy oraz środki ochrony indywidualnej (§ 3). Sprzętem
+      pomocniczym są w szczególności pasy, zawiesia, chwytaki, uchwyty, ręczne wciągniki, pochylnie, taczki i wózki
+      (§ 2 pkt 3). Ocena ryzyka zawodowego może wymagać niższej masy niż granica z przepisów.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { limit, porownaj, type Czynnosc, type Osoba, type Tryb } from '../../lib/narzedzia/dzwiganie';
+  import { liczba, wpisanaLiczba } from '../../lib/narzedzia/format';
+
+  const form = document.querySelector<HTMLFormElement>('[data-dzwiganie]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const svg = (k: string) => form.querySelector<SVGElement>(`[data-w="${k}"]`)!;
+    const kg = (x: { kg: number; zakaz: boolean }) => (x.zakaz ? 'zakaz' : `${liczba(x.kg)} kg`);
+    const masaPole = form.elements.namedItem('masa') as HTMLInputElement;
+    const bladMasy = form.querySelector<HTMLElement>('[data-blad="masa"]')!;
+
+    const przelicz = () => {
+      const osoba = (form.elements.namedItem('osoba') as HTMLSelectElement).value as Osoba;
+      const czynnosc = (form.elements.namedItem('czynnosc') as HTMLSelectElement).value as Czynnosc;
+      const tryb = (form.querySelector<HTMLInputElement>('input[name="tryb"]:checked')?.value ?? 'stala') as Tryb;
+      const l = limit(osoba, czynnosc, tryb);
+      w('limit').textContent = l.zakaz ? 'Zakaz' : kg(l);
+      w('podstawa').textContent = `Podstawa: ${l.podstawa}`;
+
+      const mlodociani = osoba === 'mlodociany' || osoba === 'mlodociana';
+      const uwaga = l.zakaz
+        ? 'Tej osobie nie wolno wykonywać tej pracy.'
+        : mlodociani
+          ? 'Młodocianym nie wolno powierzać prac polegających wyłącznie na podnoszeniu, przenoszeniu i przewożeniu ciężarów ani prac załadunkowych i wyładunkowych.'
+          : null;
+      w('uwaga').hidden = !uwaga;
+      w('uwaga').textContent = uwaga ?? '';
+
+      // Mapa regału: dolne półki to podnoszenie i przenoszenie (§ 13 ust. 1), górne podnoszenie powyżej barków
+      // (§ 13 ust. 2), zawsze dla wybranej osoby i rodzaju pracy.
+      const dolna = limit(osoba, 'podnoszenie', tryb);
+      const gorna = limit(osoba, 'nad-barki', tryb);
+      svg('regal-dol').textContent = kg(dolna);
+      svg('regal-gora').textContent = kg(gorna);
+      svg('regal-tytul').textContent = `Mapa regału: do wysokości barków ${kg(dolna)}, powyżej barków ${kg(gorna)} na osobę`;
+
+      const status = w('status');
+      const tekst = masaPole.value.trim();
+      const masa = tekst ? wpisanaLiczba(tekst) : Number.NaN;
+      const blad = tekst && (Number.isNaN(masa) || masa <= 0) ? 'Wpisz masę w kilogramach, na przykład 18 albo 7,5.' : null;
+      bladMasy.hidden = !blad;
+      bladMasy.textContent = blad ?? '';
+      masaPole.setAttribute('aria-invalid', blad ? 'true' : 'false');
+      if (!tekst || blad) {
+        status.hidden = true;
+        return;
+      }
+      const p = porownaj(masa, l);
+      status.hidden = false;
+      status.dataset.status = p.miesciSie ? 'w-terminie' : 'po-terminie';
+      status.textContent = l.zakaz
+        ? `${liczba(masa)} kg: ta praca jest zabroniona`
+        : p.miesciSie
+          ? `${liczba(masa)} kg mieści się w granicy (zapas ${liczba(-p.roznica)} kg)`
+          : `${liczba(masa)} kg przekracza granicę o ${liczba(p.roznica)} kg`;
+    };
+
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>
+
+<style>
+  .regal {
+    display: block;
+    width: 100%;
+    max-width: 22rem;
+    height: auto;
+  }
+  .regal-strefa-gora {
+    fill: #fff4ed;
+  }
+  .regal-strefa-dol {
+    fill: var(--color-tlo);
+  }
+  .regal-slup,
+  .regal-polka {
+    stroke: var(--color-grafit);
+    stroke-width: 3;
+  }
+  .regal-podloga {
+    stroke: var(--color-grafit);
+    stroke-width: 2;
+  }
+  .regal-barki {
+    stroke: var(--color-akcent);
+    stroke-width: 2;
+    stroke-dasharray: 6 4;
+  }
+  .regal-czlowiek {
+    fill: #8a939e;
+  }
+  .regal-etykieta {
+    font-size: 12px;
+    font-weight: 700;
+    fill: var(--color-akcent-tekst);
+  }
+  .regal-wartosc {
+    font-family: var(--font-display);
+    font-size: 26px;
+    font-weight: 700;
+    fill: var(--color-tekst);
+  }
+  .regal-opis {
+    font-size: 13px;
+    fill: var(--color-tekst-drugi);
+  }
+</style>
