@@ -1,0 +1,160 @@
+---
+// Przerwy w pracy (art. 134, 141, 187, 202 § 3^1 Kp). Logika: src/lib/narzedzia/przerwy.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { przerwy } from '../../lib/narzedzia/przerwy';
+import { godzinyIMinuty } from '../../lib/narzedzia/czas-pracy';
+
+const start = przerwy({ godziny: 12 });
+const WYMIARY = [4, 6, 8, 10, 12, 16, 24];
+
+const faq = [
+  {
+    pytanie: 'Ile przerwy przy 8 godzinach pracy?',
+    odpowiedz: 'Co najmniej 15 minut, wliczane do czasu pracy, bo przerwa należy się, gdy dobowy wymiar wynosi co najmniej 6 godzin (art. 134 § 1 pkt 1 i § 2 Kodeksu pracy).',
+  },
+  {
+    pytanie: 'Ile przerwy przy 12 godzinach pracy?',
+    odpowiedz: 'Dwie przerwy po co najmniej 15 minut: jedna za wymiar co najmniej 6 godzin i dodatkowa za wymiar dłuższy niż 9 godzin. Obie wlicza się do czasu pracy (art. 134).',
+  },
+  {
+    pytanie: 'Czy przerwa na obiad jest płatna?',
+    odpowiedz: 'Przerwy z art. 134 są wliczane do czasu pracy, więc płatne. Pracodawca może dodatkowo wprowadzić jedną przerwę na posiłek albo sprawy osobiste do 60 minut, niewliczaną do czasu pracy, ale tylko w układzie zbiorowym, regulaminie pracy albo umowie o pracę (art. 141).',
+  },
+  {
+    pytanie: 'Ile przerw na karmienie piersią?',
+    odpowiedz: 'Dwie przerwy po 30 minut, a przy więcej niż jednym dziecku po 45 minut, wliczane do czasu pracy; na wniosek można je wykorzystać łącznie. Przy pracy do 6 godzin dziennie przysługuje jedna przerwa, a poniżej 4 godzin żadna (art. 187).',
+  },
+  {
+    pytanie: 'Jaka przerwa dla młodocianego?',
+    odpowiedz: 'Gdy dobowy wymiar młodocianego przekracza 4,5 godziny, pracodawca wprowadza przerwę trwającą nieprzerwanie 30 minut, wliczaną do czasu pracy (art. 202 § 3^1 Kodeksu pracy).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="przerwy-w-pracy"
+  tytul="Przerwy w pracy: ile przy 8 i 12 godzinach"
+  opis="Ile przerw w pracy należy się przy zmianie 8 i 12 godzin, które są wliczane do czasu pracy, przerwa na posiłek do 60 minut, karmienie piersią i młodociani."
+  h1="Przerwy w pracy: kalkulator"
+  lead="Przy zmianie od 6 godzin należy się 15 minut przerwy, przy dłuższej niż 9 godzin kolejne 15. Są też przerwy na karmienie i dla młodocianych. Wpisz długość zmiany, a pokażemy, ile przerw się należy i które są płatne."
+  faq={faq}
+>
+  <form class="kalkulator" data-przerwy novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twoja zmiana</h2>
+      <div class="mt-4">
+        <label for="pr-godziny" class="etykieta-pola">Dobowy wymiar czasu pracy (godziny)</label>
+        <input id="pr-godziny" name="godziny" class="pole mt-1 max-w-32" type="text" inputmode="decimal" autocomplete="off" value="12" aria-describedby="pr-blad" />
+        <p id="pr-blad" class="blad-pola" data-blad="godziny" hidden></p>
+      </div>
+      <div class="mt-4">
+        <label for="pr-karmienie" class="etykieta-pola">Karmienie piersią</label>
+        <select id="pr-karmienie" name="karmienie" class="pole mt-1">
+          <option value="nie" selected>Nie dotyczy</option>
+          <option value="jedno">Jedno dziecko</option>
+          <option value="wiecej">Więcej niż jedno dziecko</option>
+        </select>
+      </div>
+      <div class="mt-4">
+        <label for="pr-niew" class="etykieta-pola">Przerwa niewliczana z regulaminu (minuty, 0–60)</label>
+        <input id="pr-niew" name="niewliczana" class="pole mt-1 max-w-32" type="text" inputmode="numeric" autocomplete="off" value="0" aria-describedby="pr-niew-opis" />
+        <p id="pr-niew-opis" class="meta mt-1">Tylko gdy pracodawca wprowadził ją w regulaminie, układzie albo umowie (art. 141).</p>
+      </div>
+      <label class="mt-4 flex items-start gap-3 text-[0.9375rem]">
+        <input type="checkbox" name="mlodociany" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+        <span>Pracownik młodociany (15–18 lat)</span>
+      </label>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Płatne przerwy na zmianie</h2>
+      <p class="wynik-kwota" aria-live="polite" aria-atomic="true"><span data-w="wliczane">{start.wliczane} min</span></p>
+      <ul class="lista-przerw mt-3" data-w="lista">
+        {start.lista.map((p) => <li>{p.minuty} min: {p.opis} ({p.podstawa})</li>)}
+      </ul>
+      <dl class="wynik-lista">
+        <div><dt>Przerwy niewliczane do czasu pracy</dt><dd data-w="niewliczane">{start.niewliczane} min</dd></div>
+        <div><dt>Czas w pracy z przerwami</dt><dd data-w="w-pracy">{godzinyIMinuty(start.wPracy / 60)}</dd></div>
+      </dl>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="tabela">Przerwy w pracy: tabela</h2>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Przerwy wliczane do czasu pracy według dobowego wymiaru</caption>
+        <thead><tr><th scope="col">Dobowy wymiar</th><th scope="col">Przerwy z art. 134</th><th scope="col">Razem płatne</th></tr></thead>
+        <tbody>
+          {WYMIARY.map((h) => {
+            const p = przerwy({ godziny: h });
+            return <tr><th scope="row">{h} h</th><td>{p.lista.length ? `${p.lista.length} × 15 min` : 'brak'}</td><td>{p.wliczane} min</td></tr>;
+          })}
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Przerwa należy się przy dobowym wymiarze co najmniej 6 godzin, dodatkowa przy wymiarze dłuższym niż 9 godzin
+      i kolejna przy dłuższym niż 16 godzin; wszystkie trwają co najmniej 15 minut i wlicza się je do czasu pracy
+      (art. 134 Kodeksu pracy). Pracodawca może wprowadzić jedną przerwę do 60 minut niewliczaną do czasu pracy,
+      na posiłek albo sprawy osobiste, ale tylko w układzie zbiorowym, regulaminie pracy albo umowie o pracę (art. 141).
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { przerwy } from '../../lib/narzedzia/przerwy';
+  import { godzinyIMinuty } from '../../lib/narzedzia/czas-pracy';
+  import { wpisanaLiczba } from '../../lib/narzedzia/format';
+
+  const form = document.querySelector<HTMLFormElement>('[data-przerwy]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const pole = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const przelicz = () => {
+      const h = wpisanaLiczba(pole('godziny').value);
+      const n = wpisanaLiczba(pole('niewliczana').value || '0');
+      const b = form.querySelector<HTMLElement>('[data-blad="godziny"]')!;
+      const blad = !(h > 0 && h <= 24) ? 'Wpisz wymiar od 1 do 24 godzin, na przykład 8 albo 12.' : !(n >= 0 && n <= 60) ? 'Przerwa niewliczana: od 0 do 60 minut.' : null;
+      b.hidden = !blad;
+      b.textContent = blad ?? '';
+      pole('godziny').setAttribute('aria-invalid', blad ? 'true' : 'false');
+      if (blad) {
+        w('wliczane').textContent = '—';
+        return;
+      }
+      const r = przerwy({
+        godziny: h,
+        niewliczana: n,
+        mlodociany: pole('mlodociany').checked,
+        karmienie: (form.elements.namedItem('karmienie') as HTMLSelectElement).value as 'nie' | 'jedno' | 'wiecej',
+      });
+      w('wliczane').textContent = `${r.wliczane} min`;
+      w('lista').replaceChildren(
+        ...(r.lista.length
+          ? r.lista.map((p) => {
+              const li = document.createElement('li');
+              li.textContent = `${p.minuty} min: ${p.opis} (${p.podstawa.replace('^1', '¹')})`;
+              return li;
+            })
+          : [Object.assign(document.createElement('li'), { textContent: 'Przy tym wymiarze przerwy z Kodeksu pracy nie przysługują.' })]),
+      );
+      w('niewliczane').textContent = `${r.niewliczane} min`;
+      w('w-pracy').textContent = godzinyIMinuty(r.wPracy / 60);
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>
+
+<style>
+  .lista-przerw {
+    display: grid;
+    gap: 0.375rem;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    list-style: disc;
+    padding-left: 1.25rem;
+  }
+</style>

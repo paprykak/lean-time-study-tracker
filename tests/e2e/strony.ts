@@ -12,9 +12,10 @@ export const NARZEDZIE_NADGODZINY = '/narzedzia/kalkulator-nadgodzin';
 export const NARZEDZIE_URLOP = '/narzedzia/kalkulator-urlopu';
 export const NARZEDZIE_GRAFIK = '/narzedzia/kontrola-grafiku';
 export const NARZEDZIE_WYPOWIEDZENIE = '/narzedzia/okres-wypowiedzenia';
+export const NARZEDZIE_PRZERWY = '/narzedzia/przerwy-w-pracy';
 export const STRONY = [
-  '/', ARTYKUL, '/narzedzia', NARZEDZIE, NARZEDZIE_BHP, NARZEDZIE_UDT, NARZEDZIE_KG, NARZEDZIE_TEMP, NARZEDZIE_WYMIAR, NARZEDZIE_NADGODZINY, NARZEDZIE_URLOP, NARZEDZIE_GRAFIK, NARZEDZIE_WYPOWIEDZENIE, '/dzial/produkcja', '/dzial/produkcja/2', '/temat/oee', '/autor/redakcja', '/do-pobrania', '/do-pobrania/testowy-karta-obserwacji',
+  '/', ARTYKUL, '/narzedzia', NARZEDZIE, NARZEDZIE_BHP, NARZEDZIE_UDT, NARZEDZIE_KG, NARZEDZIE_TEMP, NARZEDZIE_WYMIAR, NARZEDZIE_NADGODZINY, NARZEDZIE_URLOP, NARZEDZIE_GRAFIK, NARZEDZIE_WYPOWIEDZENIE, NARZEDZIE_PRZERWY, '/dzial/produkcja', '/dzial/produkcja/2', '/temat/oee', '/autor/redakcja', '/do-pobrania', '/do-pobrania/testowy-karta-obserwacji',
   '/szukaj', '/o-nas', '/kontakt', '/polityka-prywatnosci', '/regulamin-newslettera', '/stopka-redakcyjna', '/reklama', '/newsletter', '/newsletter/potwierdz', '/newsletter/blad', '/kontakt/wyslano', '/styleguide', '/404', '/410',
 ] as const;
-export const INDEKSOWANE = ['/', ARTYKUL, '/narzedzia', NARZEDZIE, NARZEDZIE_BHP, NARZEDZIE_UDT, NARZEDZIE_KG, NARZEDZIE_TEMP, NARZEDZIE_WYMIAR, NARZEDZIE_NADGODZINY, NARZEDZIE_URLOP, NARZEDZIE_GRAFIK, NARZEDZIE_WYPOWIEDZENIE, '/dzial/produkcja', '/temat/oee', '/do-pobrania'] as const;
+export const INDEKSOWANE = ['/', ARTYKUL, '/narzedzia', NARZEDZIE, NARZEDZIE_BHP, NARZEDZIE_UDT, NARZEDZIE_KG, NARZEDZIE_TEMP, NARZEDZIE_WYMIAR, NARZEDZIE_NADGODZINY, NARZEDZIE_URLOP, NARZEDZIE_GRAFIK, NARZEDZIE_WYPOWIEDZENIE, NARZEDZIE_PRZERWY, '/dzial/produkcja', '/temat/oee', '/do-pobrania'] as const;
 export const NIEINDEKSOWANE = ['/styleguide', '/404', '/410', '/szukaj', '/newsletter/potwierdz', '/newsletter/blad', '/kontakt/wyslano', '/kontakt/blad'] as const;

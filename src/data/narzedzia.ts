@@ -109,6 +109,14 @@ export const NARZEDZIA: Narzedzie[] = [
     przepisy: ['kodeksPracy', 'zmianaStazu2025'],
     sprawdzono: '2026-11-11',
   },
+  {
+    slug: 'przerwy-w-pracy',
+    nazwa: 'Przerwy w pracy',
+    krotko: 'Ile przerw przy zmianie 8 i 12 godzin, które są płatne, przerwy na karmienie i dla młodocianych.',
+    kategoria: 'czas-pracy',
+    przepisy: ['kodeksPracy'],
+    sprawdzono: '2026-11-11',
+  },
 ];
 
 /** Następne narzędzia w kolejce (bez stron i linków; lista na /narzedzia). Zdejmujesz pozycję, gdy narzędzie rusza. */
