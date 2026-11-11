@@ -1,0 +1,263 @@
+---
+// Terminy badań UDT i przeglądów konserwacyjnych UTB (rozporządzenie z 2018 r., Dz.U. 2018 poz. 2176, załączniki 1 i 2).
+// Logika: src/lib/narzedzia/badania-utb.ts (testy obok). Bez JavaScriptu działa tabela.
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { FORMY, GRUPY, URZADZENIA, co } from '../../lib/narzedzia/badania-utb';
+
+const START = 'wozek-siedzisko';
+const opisUrzadzenia = (u: (typeof URZADZENIA)[number]) =>
+  u.badanieLat
+    ? `Dozór ${FORMY[u.forma].nazwa}: ${FORMY[u.forma].badanie} ${co(u.badanieLat)}${u.przegladDni ? `, przegląd konserwacyjny co ${u.przegladDni} dni` : ''}.`
+    : `Dozór uproszczony: bez okresowych badań UDT${u.przegladDni ? `, przegląd konserwacyjny co ${u.przegladDni} dni` : ''}.`;
+
+const faq = [
+  {
+    pytanie: 'Co ile badanie UDT wózka widłowego?',
+    odpowiedz: 'Wózek podnośnikowy z mechanicznym napędem podnoszenia, z siedziskiem albo podestem dla operatora, jest objęty dozorem pełnym i ma badanie okresowe co rok. Wózek prowadzony albo zdalnie sterowany jest objęty dozorem ograniczonym i ma badanie doraźne kontrolne co 2 lata (załącznik nr 1 do rozporządzenia z 2018 r., lp. 38 i 39).',
+  },
+  {
+    pytanie: 'Co ile przegląd konserwacyjny wózka widłowego?',
+    odpowiedz: 'Co 30 dni, a wózka prowadzonego albo zdalnie sterowanego co 60 dni (załącznik nr 2, lp. 33 i 34). Te terminy obowiązują, o ile instrukcja eksploatacji producenta nie podaje innych (§ 9 ust. 3 rozporządzenia).',
+  },
+  {
+    pytanie: 'Co ile badanie UDT suwnicy?',
+    odpowiedz: 'Suwnica ogólnego przeznaczenia z napędem mechanicznym: dozór pełny, badanie okresowe co 2 lata, przegląd konserwacyjny co 30 dni. Suwnica z napędem ręcznym wszystkich mechanizmów: dozór ograniczony, badanie doraźne kontrolne co 2 lata, przegląd co 90 dni. Suwnica specjalnego przeznaczenia: badanie co rok (załączniki nr 1 i 2).',
+  },
+  {
+    pytanie: 'Od kiedy liczy się termin pierwszego badania UDT?',
+    odpowiedz: 'Termin pierwszego badania okresowego liczy się od dnia wydania decyzji zezwalającej na eksploatację (§ 22 ust. 2 rozporządzenia). Terminy badań wyznacza się, podając miesiąc i rok (§ 22 ust. 1).',
+  },
+  {
+    pytanie: 'Czy UDT może wyznaczyć badanie wcześniej?',
+    odpowiedz: 'Tak. Gdy uzasadnia to stan techniczny, organ dozoru technicznego może decyzją skrócić termin kolejnego badania (§ 3 ust. 2 rozporządzenia). Wiążący jest termin, który wyznaczył inspektor, a nie wyliczenie z kalkulatora.',
+  },
+  {
+    pytanie: 'Co wpisuje się do dziennika konserwacji?',
+    odpowiedz: 'Wykonane przeglądy, usunięte usterki i ich wynik, z imieniem i nazwiskiem konserwującego, numerem jego zaświadczenia kwalifikacyjnego, datą przeglądu i stanem licznika roboczogodzin lub cykli, jeśli urządzenie go ma (§ 9 ust. 1 pkt 5). Dziennik zakłada i przechowuje eksploatujący, osobno dla każdego urządzenia; może być elektroniczny (§ 7 ust. 2 i 3).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="badania-udt"
+  tytul="Badanie UDT wózka widłowego i suwnicy: co ile"
+  opis="Co ile badanie UDT i przegląd konserwacyjny wózka widłowego, suwnicy, wciągnika, podestu i dźwigu. Kalkulator następnego terminu z tabelą z rozporządzenia."
+  h1="Badania UDT i przeglądy konserwacyjne: kalkulator terminów"
+  lead="Wózek widłowy z siedziskiem bada UDT co rok, a konserwujący robi przegląd co 30 dni, jeśli instrukcja producenta nie podaje innych terminów. Wybierz urządzenie, wpisz daty ostatniego badania i przeglądu, a pokażemy następne terminy."
+  faq={faq}
+>
+  <form class="kalkulator" data-utb novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twoje urządzenie</h2>
+
+      <div class="mt-4">
+        <label for="utb-rodzaj" class="etykieta-pola">Urządzenie</label>
+        <select id="utb-rodzaj" name="rodzaj" class="pole mt-1" aria-describedby="utb-rodzaj-opis">
+          {GRUPY.map((g) => (
+            <optgroup label={g}>
+              {URZADZENIA.filter((u) => u.grupa === g).map((u) => <option value={u.id} selected={u.id === START}>{u.nazwa}</option>)}
+            </optgroup>
+          ))}
+        </select>
+        <p id="utb-rodzaj-opis" class="meta mt-1" data-w="rodzaj-opis">{opisUrzadzenia(URZADZENIA.find((u) => u.id === START)!)}</p>
+      </div>
+
+      <div class="mt-4" data-tylko-badanie>
+        <label for="utb-badanie" class="etykieta-pola">Ostatnie badanie UDT</label>
+        <input id="utb-badanie" name="badanie" type="date" class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" aria-describedby="utb-badanie-opis utb-badanie-blad" />
+        <p id="utb-badanie-opis" class="meta mt-1">Przed pierwszym badaniem wpisz datę decyzji zezwalającej na eksploatację (§ 22 ust. 2).</p>
+        <p id="utb-badanie-blad" class="blad-pola" data-blad="badanie" hidden></p>
+      </div>
+
+      <div class="mt-4" data-tylko-przeglad>
+        <label for="utb-przeglad" class="etykieta-pola">Ostatni przegląd konserwacyjny</label>
+        <input id="utb-przeglad" name="przeglad" type="date" class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" aria-describedby="utb-przeglad-blad" />
+        <p id="utb-przeglad-blad" class="blad-pola" data-blad="przeglad" hidden></p>
+      </div>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta" data-w="naglowek">Następne badanie UDT</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-data" data-w="badanie">Wpisz datę</p>
+        <p class="status-terminu" data-w="status-badania" hidden></p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Forma dozoru</dt><dd data-w="forma">pełny: badanie okresowe co rok</dd></div>
+        <div><dt>Następny przegląd konserwacyjny</dt><dd data-w="przeglad">wpisz datę ostatniego przeglądu</dd></div>
+        <div><dt>Przegląd konstrukcji, toru jezdnego i instalacji</dt><dd>co najmniej raz na 12 miesięcy, jeśli instrukcja nie podaje innego terminu (§ 9 ust. 1 pkt 3)</dd></div>
+        <div><dt>Podstawa</dt><dd data-w="lp">załącznik nr 1, lp. 38; załącznik nr 2, lp. 33</dd></div>
+      </dl>
+      <p class="wynik-uwaga" data-w="uwaga" hidden></p>
+      <p class="mt-5">
+        <button type="button" class="przycisk przycisk-grafit" data-ics disabled>Dodaj do kalendarza (.ics)</button>
+      </p>
+      <p class="meta mt-2">Przypomnienia: w dniu następnego przeglądu i pierwszego dnia miesiąca badania (tylko te, które jeszcze nie minęły). Wiążący jest termin wyznaczony przez inspektora UDT.</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Tabela poniżej działa bez niego.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="tabela">Co ile badanie UDT i przegląd: tabela</h2>
+    <p>
+      Formy dozoru i terminy badań podaje załącznik nr 1, a terminy przeglądów konserwacyjnych załącznik nr 2 do
+      rozporządzenia z 30 października 2018 r. Wybrane urządzenia spotykane w zakładach i magazynach:
+    </p>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Formy dozoru, terminy badań UDT i przeglądów konserwacyjnych</caption>
+        <thead><tr><th scope="col">Urządzenie</th><th scope="col">Badanie UDT (dozór)</th><th scope="col">Przegląd</th></tr></thead>
+        <tbody>
+          {URZADZENIA.map((u) => (
+            <tr>
+              <th scope="row">{u.nazwa}</th>
+              <td>{u.badanieLat ? co(u.badanieLat) : 'brak'} ({FORMY[u.forma].nazwa})</td>
+              <td>{u.przegladDni ? `co ${u.przegladDni} dni` : 'według instrukcji'}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Przy dozorze pełnym inspektor wykonuje badania okresowe, przy ograniczonym badania doraźne kontrolne (art. 13
+      ust. 1 pkt 2 i 3 ustawy o dozorze technicznym, załącznik nr 1) o tym samym celu i zakresie (§ 19 rozporządzenia). Urządzeń
+      objętych dozorem uproszczonym UDT nie bada, poza badaniem po wypadku albo niebezpiecznym uszkodzeniu (§ 12
+      ust. 2). Formę dozoru konkretnego urządzenia ustala decyzja zezwalająca na eksploatację (art. 14 ust. 4 ustawy),
+      więc sprawdź ją w dokumentach urządzenia. Przegląd konserwacyjny urządzenia o udźwigu do 250 kg wynika z wiersza
+      załącznika nr 2 dla jego rodzaju albo z instrukcji eksploatacji.
+    </p>
+
+    <h2 id="jak-liczymy">Jak liczymy termin badania</h2>
+    <p>
+      Terminy badań wyznacza się, podając miesiąc i rok (§ 22 ust. 1). Pierwsze badanie okresowe liczy się od dnia
+      wydania decyzji zezwalającej na eksploatację (§ 22 ust. 2). Do daty ostatniego badania dodajemy rok, 2 albo
+      3 lata z załącznika nr 1 i pokazujemy miesiąc, w którym wypada termin. Organ dozoru może skrócić termin decyzją,
+      gdy uzasadnia to stan techniczny (§ 3 ust. 2), dlatego wiążący jest termin z protokołu badania.
+    </p>
+
+    <h2 id="konserwacja">Przegląd konserwacyjny i dziennik konserwacji</h2>
+    <p>
+      Konserwujący wykonuje przeglądy w terminach i zakresach z instrukcji eksploatacji, a gdy instrukcja ich nie
+      podaje, w terminach z załącznika nr 2 (§ 9 ust. 1 pkt 2 i ust. 3). Przegląd obejmuje w szczególności:
+    </p>
+    <ul>
+      <li>stan mechanizmów napędowych, hamulców, cięgien nośnych i ich zamocowań;</li>
+      <li>działanie urządzeń zabezpieczających i ograniczników ruchu;</li>
+      <li>działanie sterowania, sygnalizacji i oświetlenia;</li>
+      <li>prawidłowość obsługi urządzenia.</li>
+    </ul>
+    <p>
+      Co najmniej raz na 12 miesięcy, jeśli instrukcja nie podaje innego terminu, konserwujący przegląda też
+      konstrukcję nośną z połączeniami, tor jezdny oraz instalację ochrony przeciwporażeniowej i uziemienia (§ 9 ust. 1
+      pkt 3). Każdą czynność wpisuje do dziennika konserwacji, który eksploatujący prowadzi osobno dla każdego
+      urządzenia, także w formie elektronicznej (§ 7 ust. 2 i 3, § 9 ust. 1 pkt 5).
+    </p>
+
+    <h2 id="pomiary">Pomiary elektryczne</h2>
+    <p>
+      Przy urządzeniach z aparatami elektrycznymi eksploatujący zapewnia pomiary rezystancji izolacji oraz uziemień
+      i ochrony przeciwporażeniowej (§ 6 ust. 1). Wyniki wpisuje się do dziennika konserwacji (§ 6 ust. 3).
+    </p>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Terminy pomiarów elektrycznych UTB</caption>
+        <thead><tr><th scope="col">Pomiar</th><th scope="col">Co rok</th><th scope="col">Co 2 lata</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Rezystancja izolacji</th><td>strefy zagrożone wybuchem, wyziewy żrące, praca na otwartym powietrzu, przemieszczanie osób</td><td>pozostałe warunki</td></tr>
+          <tr><th scope="row">Uziemienia i ochrona przeciwporażeniowa</th><td>otwarte powietrze, duża wilgotność, gorąco, wyziewy żrące, przemieszczanie osób</td><td>pozostałe warunki</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { FORMY, co, ileMiesiecy, terminyUtb, urzadzenie, type StatusTerminu } from '../../lib/narzedzia/badania-utb';
+  import { nazwaMiesiaca } from '../../lib/narzedzia/czas-pracy';
+  import { dataPoPolsku, dzisWPolsce, ileDni, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { plikIcs, type Wydarzenie } from '../../lib/narzedzia/kalendarz-ics';
+
+  const form = document.querySelector<HTMLFormElement>('[data-utb]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const pole = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const ics = form.querySelector<HTMLButtonElement>('[data-ics]')!;
+    const ETYKIETA: Record<StatusTerminu, string> = { 'po-terminie': 'Po terminie', pilne: 'Pilne', wkrotce: 'Wkrótce', 'w-terminie': 'W terminie' };
+    let wydarzenia: Wydarzenie[] = [];
+
+    const sprawdzDate = (nazwa: string) => {
+      const v = pole(nazwa).value;
+      const blad = v && !poprawnaData(v) ? 'Wpisz pełną datę: dzień, miesiąc i rok.' : null;
+      const b = form.querySelector<HTMLElement>(`[data-blad="${nazwa}"]`)!;
+      b.hidden = !blad;
+      b.textContent = blad ?? '';
+      pole(nazwa).setAttribute('aria-invalid', blad ? 'true' : 'false');
+      return v && !blad ? v : null;
+    };
+
+    const przelicz = () => {
+      const u = urzadzenie((form.elements.namedItem('rodzaj') as HTMLSelectElement).value)!;
+      const forma = FORMY[u.forma];
+      w('rodzaj-opis').textContent = u.badanieLat
+        ? `Dozór ${forma.nazwa}: ${forma.badanie} ${co(u.badanieLat)}${u.przegladDni ? `, przegląd konserwacyjny co ${u.przegladDni} dni` : ''}.`
+        : `Dozór uproszczony: bez okresowych badań UDT${u.przegladDni ? `, przegląd konserwacyjny co ${u.przegladDni} dni` : ''}.`;
+      w('forma').textContent = u.badanieLat ? `${forma.nazwa}: ${forma.badanie} ${co(u.badanieLat)}` : 'uproszczony: bez badań UDT, poza badaniem po wypadku albo awarii (§ 12 ust. 2)';
+      w('lp').textContent = `załącznik nr 1, lp. ${u.lp[0]}${u.lp[1] ? `; załącznik nr 2, lp. ${u.lp[1]}` : ''}`;
+      form.querySelector<HTMLElement>('[data-tylko-badanie]')!.hidden = !u.badanieLat;
+
+      const dzis = dzisWPolsce();
+      const r = terminyUtb(u, sprawdzDate('badanie'), sprawdzDate('przeglad'), dzis);
+      const status = w('status-badania');
+      wydarzenia = [];
+
+      if (!u.badanieLat) {
+        w('naglowek').textContent = 'Badanie UDT';
+        w('badanie').textContent = 'Nie dotyczy';
+        status.hidden = true;
+      } else if (r.badanie && r.miesiecyDoBadania !== null && r.statusBadania) {
+        w('naglowek').textContent = `Następne ${forma.badanie}`;
+        const [rok, mies] = r.badanie.split('-').map(Number);
+        w('badanie').textContent = `${nazwaMiesiaca(mies)} ${rok}`;
+        status.hidden = false;
+        status.dataset.status = r.statusBadania;
+        status.textContent = `${ETYKIETA[r.statusBadania]}: ${ileMiesiecy(r.miesiecyDoBadania)}`;
+        const pierwszy = `${r.badanie}-01`;
+        if (pierwszy >= dzis.slice(0, 7) + '-01') wydarzenia.push({ data: pierwszy < dzis ? dzis : pierwszy, tytul: `Badanie UDT w tym miesiącu: ${u.nazwa}`, opis: `Termin badania: ${nazwaMiesiaca(mies)} ${rok} (${forma.badanie} ${co(u.badanieLat)}). Sprawdź termin w protokole ostatniego badania.` });
+      } else {
+        w('naglowek').textContent = `Następne ${forma.badanie}`;
+        w('badanie').textContent = 'Wpisz datę';
+        status.hidden = true;
+      }
+
+      if (!u.przegladDni) w('przeglad').textContent = 'według instrukcji eksploatacji albo wiersza załącznika nr 2 dla rodzaju urządzenia';
+      else if (r.przeglad && r.dniDoPrzegladu !== null && r.statusPrzegladu) {
+        w('przeglad').textContent = `${dataPoPolsku(r.przeglad)} (${ileDni(r.dniDoPrzegladu)}${r.statusPrzegladu === 'po-terminie' ? ', po terminie' : ''})`;
+        if (r.dniDoPrzegladu >= 0) wydarzenia.push({ data: r.przeglad, tytul: `Przegląd konserwacyjny: ${u.nazwa}`, opis: `Przegląd co ${u.przegladDni} dni (załącznik nr 2 do rozporządzenia z 2018 r.), o ile instrukcja eksploatacji nie podaje innego terminu. Wpis do dziennika konserwacji.` });
+      } else w('przeglad').textContent = `co ${u.przegladDni} dni: wpisz datę ostatniego przeglądu`;
+
+      const uwaga =
+        r.statusBadania === 'po-terminie' || r.statusPrzegladu === 'po-terminie'
+          ? 'Termin według tabeli minął. Sprawdź protokół ostatniego badania i dziennik konserwacji, a jeśli termin rzeczywiście minął, skontaktuj się z konserwującym albo z oddziałem UDT.'
+          : null;
+      w('uwaga').hidden = !uwaga;
+      w('uwaga').textContent = uwaga ?? '';
+      ics.disabled = wydarzenia.length === 0;
+    };
+
+    ics.addEventListener('click', () => {
+      if (!wydarzenia.length) return;
+      const blob = new Blob([plikIcs(wydarzenia, 'badania-udt')], { type: 'text/calendar;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'badania-udt.ics';
+      document.body.append(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    });
+
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>

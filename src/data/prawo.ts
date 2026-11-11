@@ -76,6 +76,13 @@ export const AKTY = {
     adres: eli(2019, 1008),
     sprawdzono: '2026-11-11',
   },
+  warunkiUtb: {
+    nazwa: 'Rozporządzenie w sprawie warunków technicznych dozoru technicznego w zakresie eksploatacji, napraw i modernizacji urządzeń transportu bliskiego',
+    publikator: 'Dz.U. 2018 poz. 2176',
+    uwaga: 'bez zmian; § 3, § 6–9, § 12, § 22, załącznik nr 1 (formy dozoru i terminy badań) i nr 2 (przeglądy konserwacyjne)',
+    adres: eli(2018, 2176),
+    sprawdzono: '2026-11-11',
+  },
   zmianaUdt2018: {
     nazwa: 'Ustawa z 9 listopada 2018 r. o zmianie ustawy o dozorze technicznym',
     publikator: 'Dz.U. 2018 poz. 2518',

@@ -54,6 +54,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-11',
   },
   {
+    slug: 'badania-udt',
+    nazwa: 'Badania UDT i przeglądy konserwacyjne',
+    krotko: 'Kiedy następne badanie UDT i przegląd konserwacyjny wózka widłowego, suwnicy, podestu. Z kalendarzem.',
+    kategoria: 'transport',
+    przepisy: ['warunkiUtb', 'dozorTechniczny', 'kodeksCywilny'],
+    sprawdzono: '2026-11-11',
+  },
+  {
     slug: 'ile-kg-wolno-dzwigac',
     nazwa: 'Ile kg wolno dźwigać',
     krotko: 'Ile kilogramów wolno podnosić i przenosić w pracy: kobiety, mężczyźni, ciąża, młodociani. Z mapą regału.',
