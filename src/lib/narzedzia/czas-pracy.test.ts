@@ -86,3 +86,25 @@ describe('opisWymiaru', () => {
     expect(opisWymiaru(wymiarMiesiaca(2025, 11))).toBe('20 dni od poniedziałku do piątku, minus święta: 1 listopada, 11 listopada');
   });
 });
+
+describe('wymiarOkresu i pomocnicze', async () => {
+  const { wymiarOkresu, swietaWSobote, godzinyIMinuty } = await import('./czas-pracy');
+  it('rok 2027: 2008 h, 251 dni pracy; sierpień 2026 = 160 h (przykład biznes.gov.pl)', () => {
+    expect(wymiarOkresu(2027, 1, 12).godziny).toBe(2008);
+    expect(wymiarOkresu(2027, 1, 12).godziny / 8).toBe(251);
+    expect(wymiarOkresu(2026, 8, 1).godziny).toBe(160);
+  });
+  it('okres przez przełom roku: listopad 2026 – styczeń 2027', () => {
+    const w = wymiarOkresu(2026, 11, 3);
+    expect(w.miesiace.map((m) => `${m.rok}-${m.miesiac}`)).toEqual(['2026-11', '2026-12', '2027-1']);
+    expect(w.godziny).toBe(160 + 160 + 152);
+  });
+  it('święta w sobotę w 2027 r.: 1 maja i 25 grudnia', () => {
+    expect(swietaWSobote(2027).map((s) => s.data)).toEqual(['2027-05-01', '2027-12-25']);
+  });
+  it('godziny i minuty', () => {
+    expect(godzinyIMinuty(160)).toBe('160 h');
+    expect(godzinyIMinuty(160 / 3)).toBe('53 h 20 min');
+    expect(() => wymiarOkresu(2026, 1, 13)).toThrow(RangeError);
+  });
+});

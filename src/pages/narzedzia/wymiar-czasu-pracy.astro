@@ -1,0 +1,217 @@
+---
+// Wymiar czasu pracy w okresie rozliczeniowym (art. 129–130 Kp), na pełny i niepełny etat, ze świętami z ustawy
+// o dniach wolnych od pracy. Logika: src/lib/narzedzia/czas-pracy.ts (testy obok). Bez JavaScriptu działają tabele roczne.
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { dzienMiesiaca, nazwaMiesiaca, swieta, swietaWSobote, wymiarMiesiaca, wymiarOkresu } from '../../lib/narzedzia/czas-pracy';
+import { LATA } from '../../data/prawo';
+
+const rokBudowy = new Date().getUTCFullYear();
+const lata = [rokBudowy, rokBudowy + 1];
+const tabele = lata.map((rok) => ({ rok, miesiace: Array.from({ length: 12 }, (_, i) => wymiarMiesiaca(rok, i + 1)), rocznie: wymiarOkresu(rok, 1, 12) }));
+const DNI = ['niedziela', 'poniedziałek', 'wtorek', 'środa', 'czwartek', 'piątek', 'sobota'];
+const dzienTygodnia = (data: string) => DNI[new Date(`${data}T00:00:00Z`).getUTCDay()];
+const latDoWyboru = [...new Set([...LATA, ...lata])].sort((a, b) => a - b);
+const start = wymiarMiesiaca(rokBudowy, new Date().getUTCMonth() + 1);
+const ETATY = [
+  ['1', 'pełny etat'],
+  ['7/8', '7/8 etatu'],
+  ['4/5', '4/5 etatu'],
+  ['3/4', '3/4 etatu'],
+  ['2/3', '2/3 etatu'],
+  ['1/2', '1/2 etatu'],
+  ['1/3', '1/3 etatu'],
+  ['1/4', '1/4 etatu'],
+] as const;
+const OKRESY = [1, 2, 3, 4, 6, 12];
+const okres = (n: number) => (n === 1 ? '1 miesiąc' : n === 12 ? '12 miesięcy (rok)' : n < 5 ? `${n} miesiące` : `${n} miesięcy`);
+
+const faq = [
+  ...tabele.map((t) => ({
+    pytanie: `Ile godzin do przepracowania w ${t.rok} r.?`,
+    odpowiedz: `Na pełny etat ${t.rocznie.godziny} godzin, czyli ${t.rocznie.godziny / 8} dni pracy po 8 godzin. W ${t.rok} r. wymiar obniża ${t.rocznie.swietaObnizajace.length} świąt, które nie wypadają w niedzielę${swietaWSobote(t.rok).length ? `, w tym ${swietaWSobote(t.rok).length === 1 ? 'jedno' : swietaWSobote(t.rok).length} w sobotę (${swietaWSobote(t.rok).map((s) => dzienMiesiaca(s.data)).join(', ')})` : ''}.`,
+  })),
+  {
+    pytanie: 'Jak obliczyć wymiar czasu pracy?',
+    odpowiedz: 'Pomnóż 40 godzin przez liczbę pełnych tygodni w okresie rozliczeniowym, dodaj 8 godzin za każdy pozostały dzień od poniedziałku do piątku i odejmij 8 godzin za każde święto, które nie wypada w niedzielę (art. 130 § 1 i 2 Kodeksu pracy). Wychodzi tyle samo, co 8 godzin razy liczba dni od poniedziałku do piątku minus 8 godzin za takie święta.',
+  },
+  {
+    pytanie: 'Czy święto w sobotę zmniejsza wymiar czasu pracy?',
+    odpowiedz: 'Tak. Każde święto w okresie rozliczeniowym, które nie wypada w niedzielę, obniża wymiar o 8 godzin, także święto w sobotę (art. 130 § 2 Kodeksu pracy). W takim okresie pracuje się więc o jeden dzień mniej.',
+  },
+  {
+    pytanie: 'Jak liczyć wymiar na pół etatu?',
+    odpowiedz: 'Tak jak dla pełnego etatu, a potem proporcjonalnie obniżyć: na pół etatu połowa, na 3/4 etatu trzy czwarte (biznes.gov.pl). Przy 1/3 etatu wymiar bywa ułamkowy, na przykład 160 godzin daje 53 godziny i 20 minut.',
+  },
+  {
+    pytanie: 'Jak długi może być okres rozliczeniowy?',
+    odpowiedz: 'Do 4 miesięcy (art. 129 § 1 Kodeksu pracy). Gdy uzasadniają to przyczyny obiektywne, techniczne albo organizacyjne, można go przedłużyć, ale najwyżej do 12 miesięcy (art. 129 § 2). W systemie równoważnym z pracą do 12 godzin na dobę okres nie może przekraczać 1 miesiąca, w szczególnie uzasadnionych przypadkach 3 miesięcy, a przy pracach zależnych od pory roku lub warunków atmosferycznych 4 miesięcy (art. 135).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="wymiar-czasu-pracy"
+  tytul={`Wymiar czasu pracy ${lata.join(' i ')}: kalkulator i tabela`}
+  opis={`Ile godzin do przepracowania w ${lata[0]} i ${lata[1]} r.: wymiar czasu pracy w każdym miesiącu, w okresie rozliczeniowym i na niepełny etat, ze świętami i dniami wolnymi.`}
+  h1="Wymiar czasu pracy: kalkulator"
+  lead="Ile godzin i dni trzeba przepracować w miesiącu, kwartale albo roku. Wybierz początek i długość okresu rozliczeniowego oraz etat, a policzymy wymiar ze wszystkimi świętami. Niżej tabele na cały rok."
+  faq={faq}
+  objasnienia={['biznesCzasPracy']}
+>
+  <form class="kalkulator" data-wymiar novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Okres rozliczeniowy</h2>
+      <fieldset class="mt-4">
+        <legend class="etykieta">Początek okresu</legend>
+        <div class="mt-2 grid grid-cols-[minmax(0,3fr)_minmax(0,2fr)] gap-3">
+          <label class="sr-only" for="w-miesiac">Miesiąc</label>
+          <select id="w-miesiac" name="miesiac" class="pole">
+            {Array.from({ length: 12 }, (_, i) => <option value={i + 1} selected={i + 1 === start.miesiac}>{nazwaMiesiaca(i + 1)}</option>)}
+          </select>
+          <label class="sr-only" for="w-rok">Rok</label>
+          <select id="w-rok" name="rok" class="pole">
+            {latDoWyboru.map((r) => <option value={r} selected={r === rokBudowy}>{r}</option>)}
+          </select>
+        </div>
+      </fieldset>
+      <div class="mt-4 grid gap-4 sm:grid-cols-2">
+        <div>
+          <label for="w-dlugosc" class="etykieta-pola">Długość okresu</label>
+          <select id="w-dlugosc" name="dlugosc" class="pole mt-1">
+            {OKRESY.map((n) => <option value={n} selected={n === 1}>{okres(n)}</option>)}
+          </select>
+        </div>
+        <div>
+          <label for="w-etat" class="etykieta-pola">Etat</label>
+          <select id="w-etat" name="etat" class="pole mt-1">
+            {ETATY.map(([v, n]) => <option value={v} selected={v === '1'}>{n}</option>)}
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Wymiar czasu pracy: <span data-w="okres">{nazwaMiesiaca(start.miesiac)} {start.rok}</span></h2>
+      <p class="wynik-kwota" aria-live="polite" aria-atomic="true"><span data-w="godziny">{start.godziny} h</span></p>
+      <dl class="wynik-lista">
+        <div><dt>Dni pracy po 8 godzin (pełny etat)</dt><dd data-w="dni">{start.godziny / 8}</dd></div>
+        <div><dt>Dni od poniedziałku do piątku</dt><dd data-w="pon-pt">{start.dniPonPt}</dd></div>
+        <div><dt>Święta obniżające wymiar</dt><dd data-w="swieta">{start.swietaObnizajace.length ? start.swietaObnizajace.map((s) => `${dzienMiesiaca(s.data)} (${s.nazwa})`).join(', ') : 'brak'}</dd></div>
+      </dl>
+      <div class="mt-4 overflow-x-auto" data-w="miesiace-blok" hidden>
+        <table class="tabela-miesiecy">
+          <caption class="sr-only">Wymiar w kolejnych miesiącach okresu</caption>
+          <thead><tr><th scope="col">Miesiąc</th><th scope="col">Pełny etat</th><th scope="col">Twój etat</th></tr></thead>
+          <tbody data-w="miesiace"></tbody>
+        </table>
+      </div>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    {tabele.map((t) => (
+      <>
+        <h2 id={`wymiar-${t.rok}`}>Wymiar czasu pracy {t.rok}: tabela</h2>
+        <p>Pełny etat: {t.rocznie.godziny} godzin w roku, {t.rocznie.godziny / 8} dni pracy.</p>
+        <div class="tabela">
+          <table>
+            <caption class="sr-only">Wymiar czasu pracy w {t.rok} r. według miesięcy</caption>
+            <thead><tr><th scope="col">Miesiąc</th><th scope="col">Dni pracy</th><th scope="col">Godziny</th><th scope="col">Święta obniżające wymiar</th></tr></thead>
+            <tbody>
+              {t.miesiace.map((m) => (
+                <tr>
+                  <th scope="row">{nazwaMiesiaca(m.miesiac)}</th>
+                  <td>{m.godziny / 8}</td>
+                  <td>{m.godziny} h</td>
+                  <td>{m.swietaObnizajace.length ? m.swietaObnizajace.map((s) => dzienMiesiaca(s.data)).join(', ') : '—'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <h3 id={`swieta-${t.rok}`}>Dni wolne od pracy {t.rok}</h3>
+        <ul>
+          {swieta(t.rok).map((s) => (
+            <li>{dzienMiesiaca(s.data)} ({dzienTygodnia(s.data)}): {s.nazwa}{dzienTygodnia(s.data) === 'sobota' ? ', święto w sobotę obniża wymiar' : dzienTygodnia(s.data) === 'niedziela' ? ', w niedzielę nie obniża wymiaru' : ''}</li>
+          ))}
+        </ul>
+      </>
+    ))}
+
+    <h2 id="jak-liczymy">Jak liczymy wymiar</h2>
+    <p>
+      Wymiar w okresie rozliczeniowym to 40 godzin razy liczba tygodni w okresie plus 8 godzin za każdy pozostały dzień
+      od poniedziałku do piątku (art. 130 § 1 Kodeksu pracy), a tygodnie liczy się od pierwszego dnia okresu (art. 128
+      § 3 pkt 2). Każde święto, które nie wypada w niedzielę, obniża wymiar o 8 godzin (art. 130 § 2). Dni wolne od pracy
+      wymienia ustawa o dniach wolnych od pracy; od 2025 r. jest wśród nich Wigilia.
+    </p>
+    <p>
+      Wymiar przy niepełnym etacie liczy się tak samo jak dla pełnego, a potem obniża proporcjonalnie do etatu
+      (biznes.gov.pl). Wymiar obniża też usprawiedliwiona nieobecność, o liczbę godzin, które pracownik miał wtedy
+      przepracować według rozkładu (art. 130 § 3); tego kalkulator nie uwzględnia.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { dzienMiesiaca, godzinyIMinuty, nazwaMiesiaca, wymiarOkresu } from '../../lib/narzedzia/czas-pracy';
+
+  const form = document.querySelector<HTMLFormElement>('[data-wymiar]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const wartosc = (n: string) => (form.elements.namedItem(n) as HTMLSelectElement).value;
+    const przelicz = () => {
+      const rok = Number(wartosc('rok'));
+      const miesiac = Number(wartosc('miesiac'));
+      const dlugosc = Number(wartosc('dlugosc'));
+      const [l, m] = wartosc('etat').split('/').map(Number);
+      const etat = m ? l / m : 1;
+      const o = wymiarOkresu(rok, miesiac, dlugosc);
+      const ostatni = o.miesiace[o.miesiace.length - 1];
+      w('okres').textContent =
+        dlugosc === 1 ? `${nazwaMiesiaca(miesiac)} ${rok}` : `${nazwaMiesiaca(miesiac)} ${rok} – ${nazwaMiesiaca(ostatni.miesiac)} ${ostatni.rok}`;
+      w('godziny').textContent = godzinyIMinuty(o.godziny * etat);
+      w('dni').textContent = String(o.godziny / 8);
+      w('pon-pt').textContent = String(o.dniPonPt);
+      w('swieta').textContent = o.swietaObnizajace.length ? o.swietaObnizajace.map((s) => `${dzienMiesiaca(s.data)} (${s.nazwa})`).join(', ') : 'brak';
+      const blok = w('miesiace-blok');
+      blok.hidden = dlugosc === 1 && etat === 1;
+      const tbody = w('miesiace');
+      tbody.replaceChildren(
+        ...o.miesiace.map((x) => {
+          const tr = document.createElement('tr');
+          const th = document.createElement('th');
+          th.scope = 'row';
+          th.textContent = `${nazwaMiesiaca(x.miesiac)} ${x.rok}`;
+          const pelny = document.createElement('td');
+          pelny.textContent = `${x.godziny} h`;
+          const twoj = document.createElement('td');
+          twoj.textContent = godzinyIMinuty(x.godziny * etat);
+          tr.append(th, pelny, twoj);
+          return tr;
+        }),
+      );
+    };
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>
+
+<style>
+  .tabela-miesiecy {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .tabela-miesiecy th,
+  .tabela-miesiecy td {
+    padding: 0.375rem 0.5rem;
+    border-bottom: 1px solid var(--color-linia);
+    text-align: left;
+  }
+  .tabela-miesiecy thead th {
+    color: var(--color-tekst-drugi);
+    font-weight: 600;
+  }
+</style>

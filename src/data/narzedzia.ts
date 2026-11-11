@@ -69,6 +69,14 @@ export const NARZEDZIA: Narzedzie[] = [
     przepisy: ['ogolneBhp', 'temperatura2026', 'napoje', 'kodeksPracy'],
     sprawdzono: '2026-11-11',
   },
+  {
+    slug: 'wymiar-czasu-pracy',
+    nazwa: 'Wymiar czasu pracy',
+    krotko: 'Ile godzin i dni do przepracowania w miesiącu, kwartale albo roku. Na pełny i niepełny etat, ze świętami.',
+    kategoria: 'czas-pracy',
+    przepisy: ['kodeksPracy', 'dniWolne'],
+    sprawdzono: '2026-11-11',
+  },
 ];
 
 /** Następne narzędzia w kolejce (bez stron i linków; lista na /narzedzia). Zdejmujesz pozycję, gdy narzędzie rusza. */

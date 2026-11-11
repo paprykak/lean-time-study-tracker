@@ -167,6 +167,12 @@ export const OBJASNIENIA = {
     adres: 'https://www.udt.gov.pl/uslugi-udt/dozor-techniczny/kwalifikacje-osob/przedluzanie-okresu-waznosci-zaswiadczen-kwalifikacyjnych',
     sprawdzono: '2026-11-11',
   },
+  biznesCzasPracy: {
+    nazwa: 'biznes.gov.pl, „Jak ustalać i rozliczać czas pracy”',
+    opis: 'wymiar przy niepełnym etacie liczy się jak dla pełnego i obniża proporcjonalnie do etatu; przykład: sierpień 2026 r. = 160 godzin',
+    adres: 'https://www.biznes.gov.pl/pl/portal/00133',
+    sprawdzono: '2026-11-11',
+  },
 } as const;
 
 /** Przeciętne wynagrodzenie z komunikatu GUS (art. 20 pkt 1 lit. a ustawy o emeryturach i rentach z FUS): podstawa opłaty za egzamin UDT. */

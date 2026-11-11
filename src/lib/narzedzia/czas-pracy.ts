@@ -148,3 +148,41 @@ export function opisWymiaru(w: WymiarMiesiaca): string {
     : ', bez świąt obniżających wymiar';
   return `${w.dniPonPt} dni od poniedziałku do piątku${swietaTekst}`;
 }
+
+export interface WymiarOkresu {
+  /** Wymiar dla pełnego etatu, godziny. */
+  godziny: number;
+  dniPonPt: number;
+  swietaObnizajace: Swieto[];
+  miesiace: WymiarMiesiaca[];
+}
+
+/**
+ * Wymiar czasu pracy w okresie rozliczeniowym zaczynającym się w danym miesiącu (art. 130 § 1 i 2 Kp). Tygodnie
+ * liczymy od pierwszego dnia okresu (art. 128 § 3 pkt 2), ale 5 dni od poniedziałku do piątku w każdym pełnym tygodniu
+ * daje to samo co 8 godzin za każdy taki dzień, więc wymiar okresu to suma wymiarów miesięcy.
+ */
+export function wymiarOkresu(rok: number, miesiacStart: number, liczbaMiesiecy: number): WymiarOkresu {
+  if (!Number.isInteger(liczbaMiesiecy) || liczbaMiesiecy < 1 || liczbaMiesiecy > 12) throw new RangeError('Okres rozliczeniowy: od 1 do 12 miesięcy');
+  const miesiace = Array.from({ length: liczbaMiesiecy }, (_, i) => {
+    const indeks = miesiacStart - 1 + i;
+    return wymiarMiesiaca(rok + Math.floor(indeks / 12), (indeks % 12) + 1);
+  });
+  return {
+    godziny: miesiace.reduce((s, m) => s + m.godziny, 0),
+    dniPonPt: miesiace.reduce((s, m) => s + m.dniPonPt, 0),
+    swietaObnizajace: miesiace.flatMap((m) => m.swietaObnizajace),
+    miesiace,
+  };
+}
+
+/** Święta wypadające w sobotę (obniżają wymiar o 8 godzin, art. 130 § 2 Kp). */
+export const swietaWSobote = (rok: number) => swieta(rok).filter((s) => dzienTygodnia(s.data) === 6);
+
+/** „53 h 20 min”, „160 h” (wymiar przy niepełnym etacie bywa ułamkowy). */
+export function godzinyIMinuty(godziny: number): string {
+  const minuty = Math.round(godziny * 60);
+  const h = Math.floor(minuty / 60);
+  const m = minuty % 60;
+  return m ? `${h} h ${m} min` : `${h} h`;
+}
