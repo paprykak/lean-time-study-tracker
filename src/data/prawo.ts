@@ -62,6 +62,34 @@ export const AKTY = {
     adres: eli(2003, 1650),
     sprawdzono: '2026-11-11',
   },
+  dozorTechniczny: {
+    nazwa: 'Ustawa o dozorze technicznym',
+    publikator: 'Dz.U. 2024 poz. 1194',
+    uwaga: 'tekst jednolity; późniejsza zmiana Dz.U. 2026 poz. 252 nie dotyczy kwalifikacji; art. 22–23',
+    adres: eli(2024, 1194),
+    sprawdzono: '2026-11-11',
+  },
+  kwalifikacjeUdt: {
+    nazwa: 'Rozporządzenie w sprawie sposobu i trybu sprawdzania kwalifikacji przy obsłudze i konserwacji urządzeń technicznych oraz przedłużania zaświadczeń',
+    publikator: 'Dz.U. 2019 poz. 1008',
+    uwaga: '§ 6–7 i załącznik nr 3: rodzaje urządzeń i okresy ważności',
+    adres: eli(2019, 1008),
+    sprawdzono: '2026-11-11',
+  },
+  zmianaUdt2018: {
+    nazwa: 'Ustawa z 9 listopada 2018 r. o zmianie ustawy o dozorze technicznym',
+    publikator: 'Dz.U. 2018 poz. 2518',
+    uwaga: 'art. 3: zaświadczenia wydane przed 1 czerwca 2019 r. zachowały ważność przez 5 lat',
+    adres: eli(2018, 2518),
+    sprawdzono: '2026-11-11',
+  },
+  przecietneWynagrodzenie2025: {
+    nazwa: 'Komunikat Prezesa GUS w sprawie przeciętnego wynagrodzenia w gospodarce narodowej w 2025 r.',
+    publikator: 'M.P. 2026 poz. 192',
+    uwaga: '8903,56 zł',
+    adres: 'https://eli.gov.pl/eli/MP/2026/192/ogl',
+    sprawdzono: '2026-11-11',
+  },
   placa2025: {
     nazwa: 'Rozporządzenie w sprawie minimalnego wynagrodzenia w 2025 r.',
     publikator: 'Dz.U. 2024 poz. 1362',
@@ -98,7 +126,16 @@ export const OBJASNIENIA = {
     adres: 'https://www.biznes.gov.pl/pl/portal/00132',
     sprawdzono: '2026-11-11',
   },
+  udtPrzedluzanie: {
+    nazwa: 'Urząd Dozoru Technicznego, „Przedłużanie okresu ważności zaświadczeń kwalifikacyjnych” i FAQ',
+    opis: 'zaświadczenia bez daty ważności (postępowania wszczęte przed 1 czerwca 2019 r.) straciły ważność 1 stycznia 2024 r.; wniosek po terminie nie przedłuża zaświadczenia',
+    adres: 'https://www.udt.gov.pl/uslugi-udt/dozor-techniczny/kwalifikacje-osob/przedluzanie-okresu-waznosci-zaswiadczen-kwalifikacyjnych',
+    sprawdzono: '2026-11-11',
+  },
 } as const;
+
+/** Przeciętne wynagrodzenie z komunikatu GUS (art. 20 pkt 1 lit. a ustawy o emeryturach i rentach z FUS): podstawa opłaty za egzamin UDT. */
+export const PRZECIETNE_WYNAGRODZENIE = { zaRok: 2025, kwota: 8903.56, ogloszono: '2026-02-10', akt: 'przecietneWynagrodzenie2025' as KluczAktu };
 
 export interface PlacaMinimalna {
   /** Minimalne wynagrodzenie za pracę w pełnym wymiarze, zł brutto miesięcznie. */

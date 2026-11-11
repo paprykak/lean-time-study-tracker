@@ -1,0 +1,270 @@
+---
+// Ważność zaświadczeń kwalifikacyjnych UDT i termin wniosku o przedłużenie (art. 22–23 ustawy o dozorze technicznym,
+// rozporządzenie z 2019 r., zał. 3). Logika: src/lib/narzedzia/uprawnienia-udt.ts (testy obok). Bez JavaScriptu działa tabela.
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { PRZECIETNE_WYNAGRODZENIE } from '../../data/prawo';
+import { KONSERWACJA, OBSLUGA, MIESIECY_PRZED, PROCENT_OPLATY, oplataEgzaminu } from '../../lib/narzedzia/uprawnienia-udt';
+import { zl } from '../../lib/narzedzia/format';
+
+const oplata = zl(oplataEgzaminu(PRZECIETNE_WYNAGRODZENIE.kwota));
+const przecietne = zl(PRZECIETNE_WYNAGRODZENIE.kwota);
+
+const faq = [
+  {
+    pytanie: 'Ile lat są ważne uprawnienia UDT na wózek widłowy?',
+    odpowiedz: 'Na wózki jezdniowe podnośnikowe z mechanicznym napędem podnoszenia 10 lat. Na wózki z wysięgnikiem i z operatorem podnoszonym razem z ładunkiem 5 lat; to zaświadczenie obejmuje też pozostałe wózki. Konserwator wózków ma zaświadczenie na 5 lat (załącznik nr 3 do rozporządzenia z 2019 r.).',
+  },
+  {
+    pytanie: 'Do kiedy złożyć wniosek o przedłużenie uprawnień UDT?',
+    odpowiedz: 'Najpóźniej 3 miesiące przed dniem upływu ważności zaświadczenia (art. 23 ust. 2c pkt 1 ustawy o dozorze technicznym). Wniosek złożony później nie przedłuży zaświadczenia, a po jego wygaśnięciu trzeba zdać egzamin od nowa.',
+  },
+  {
+    pytanie: 'Czy przedłużenie uprawnień UDT jest płatne?',
+    odpowiedz: 'Nie, przedłużenie jest bezpłatne i następuje na wniosek (art. 23 ust. 2a). Warunek: przez co najmniej 3 lata w ostatnich 5 latach ważności wykonywano czynności z zaświadczenia, co potwierdza się oświadczeniem pod rygorem odpowiedzialności karnej (art. 23 ust. 2c pkt 2 i ust. 2d).',
+  },
+  {
+    pytanie: 'Czy stare uprawnienia UDT bez daty ważności są nadal ważne?',
+    odpowiedz: 'Nie. Zaświadczenia wydane przed 1 czerwca 2019 r. zachowały ważność przez 5 lat (art. 3 ustawy z 9 listopada 2018 r.), a według UDT te bez daty ważności straciły ją 1 stycznia 2024 r. Wnioski o przedłużenie można było składać do jesieni 2023 r., teraz potrzebny jest nowy egzamin.',
+  },
+  {
+    pytanie: 'Ile kosztuje egzamin UDT?',
+    odpowiedz: `Opłata za sprawdzenie kwalifikacji to 3,75% przeciętnego wynagrodzenia ogłoszonego przez Prezesa GUS, obowiązującego w dniu złożenia wniosku (art. 23 ust. 4). Od ogłoszenia komunikatu za ${PRZECIETNE_WYNAGRODZENIE.zaRok} r. (${przecietne}) to ${oplata}. Kurs przygotowawczy to osobny koszt, którego przepisy nie regulują.`,
+  },
+  {
+    pytanie: 'Czy na ręczny wózek paletowy potrzebne są uprawnienia UDT?',
+    odpowiedz: 'Nie: wymóg dotyczy wózków jezdniowych podnośnikowych z mechanicznym napędem podnoszenia, a załącznik nr 3 wyłącza urządzenia o napędzie ręcznym wszystkich mechanizmów i o udźwigu do 250 kg (uwagi pod tabelą 1). Pracodawca i tak musi przeszkolić pracownika przed dopuszczeniem do pracy (art. 237^3 Kodeksu pracy).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="waznosc-uprawnien-udt"
+  tytul="Ważność uprawnień UDT i termin przedłużenia"
+  opis="Do kiedy ważne są uprawnienia UDT na wózki, suwnice i podesty i do kiedy złożyć wniosek o przedłużenie. Okresy ważności, warunki, opłata za egzamin."
+  h1="Ważność uprawnień UDT i termin wniosku o przedłużenie"
+  lead={`Zaświadczenie kwalifikacyjne UDT jest ważne 5 albo 10 lat, zależnie od urządzenia. Wniosek o przedłużenie trzeba złożyć najpóźniej ${MIESIECY_PRZED} miesiące przed końcem ważności; później zostaje tylko nowy egzamin. Wpisz datę z zaświadczenia, a policzymy terminy.`}
+  faq={faq}
+  objasnienia={['udtPrzedluzanie']}
+>
+  <form class="kalkulator" data-udt novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twoje zaświadczenie</h2>
+
+      <div class="mt-4">
+        <label for="udt-rodzaj" class="etykieta-pola">Rodzaj urządzenia</label>
+        <select id="udt-rodzaj" name="rodzaj" class="pole mt-1" aria-describedby="udt-rodzaj-opis">
+          <optgroup label="Obsługa">
+            {OBSLUGA.map((r) => <option value={r.id} selected={r.id === 'o-wozki'}>{r.krotko} ({r.lata} lat)</option>)}
+          </optgroup>
+          <optgroup label="Konserwacja">
+            {KONSERWACJA.map((r) => <option value={r.id}>Konserwacja: {r.krotko} ({r.lata} lat)</option>)}
+          </optgroup>
+        </select>
+        <p id="udt-rodzaj-opis" class="meta mt-1" data-w="rodzaj-opis">Wózki z mechanicznym napędem podnoszenia, bez wózków z wysięgnikiem i z podnoszonym operatorem. Zaświadczenie ważne 10 lat.</p>
+      </div>
+
+      <fieldset class="mt-6">
+        <legend class="etykieta">Data ważności na zaświadczeniu</legend>
+        <div class="opcje-pionowe mt-2">
+          <label><input type="radio" name="tryb" value="data" checked /> Jest data ważności</label>
+          <label><input type="radio" name="tryb" value="bez-daty" /> Nie ma daty (wydane przed 1 czerwca 2019 r.)</label>
+        </div>
+      </fieldset>
+
+      <div class="mt-4" data-tylko-data>
+        <label for="udt-data" class="etykieta-pola">Zaświadczenie ważne do</label>
+        <input id="udt-data" name="data" type="date" class="pole mt-1 max-w-56" min="2019-06-01" max="2100-12-31" aria-describedby="udt-data-blad" />
+        <p id="udt-data-blad" class="blad-pola" data-blad="data" hidden></p>
+      </div>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta" data-w="naglowek">Wniosek o przedłużenie najpóźniej</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-data" data-w="termin">Wpisz datę</p>
+        <p class="status-terminu" data-w="status" hidden></p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Zaświadczenie ważne do</dt><dd data-w="wazne-do">—</dd></div>
+        <div><dt>Po przedłużeniu ważne do</dt><dd data-w="po-przedluzeniu">—</dd></div>
+        <div><dt>Warunek przedłużenia</dt><dd>co najmniej 3 lata pracy z urządzeniem w ostatnich 5 latach ważności</dd></div>
+        <div><dt>Gdzie i za ile</dt><dd>w jednostce, która wydała zaświadczenie (UDT, TDT albo WDT), bezpłatnie</dd></div>
+      </dl>
+      <p class="wynik-uwaga" data-w="uwaga" hidden></p>
+      <p class="mt-5">
+        <button type="button" class="przycisk przycisk-grafit" data-ics disabled>Dodaj do kalendarza (.ics)</button>
+      </p>
+      <p class="meta mt-2">Przypomnienia: 30 dni przed ostatnim dniem na wniosek, w tym dniu i w dniu końca ważności (tylko te, które jeszcze nie minęły).</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Tabele poniżej działają bez niego.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="ile-lat">Ile lat są ważne uprawnienia UDT: obsługa</h2>
+    <p>
+      Zaświadczenia kwalifikacyjne do obsługi i konserwacji urządzeń wydaje się na 5 do 10 lat, zależnie od rodzaju
+      urządzenia, trudności obsługi i zagrożenia (art. 22 ust. 3a ustawy o dozorze technicznym). Okresy dla
+      konkretnych urządzeń podaje załącznik nr 3 do rozporządzenia z 2019 r. Wybrane urządzenia spotykane w zakładach
+      i magazynach:
+    </p>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Okresy ważności zaświadczeń UDT do obsługi urządzeń</caption>
+        <thead><tr><th scope="col">Urządzenie</th><th scope="col">Rodzaj zaświadczenia</th><th scope="col">Ważne</th></tr></thead>
+        <tbody>
+          {OBSLUGA.map((r) => (<tr><th scope="row">{r.grupa}</th><td>{r.nazwa}</td><td>{r.lata} lat</td></tr>))}
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Wymóg nie obejmuje urządzeń o napędzie ręcznym wszystkich mechanizmów, urządzeń o udźwigu do 250 kg (poza
+      dźwigami i urządzeniami do przemieszczania osób), a przy wciągnikach, wciągarkach, suwnicach i żurawiach także
+      urządzeń z napędem elektrycznym jednofazowym o udźwigu do 1000 kg (uwagi pod tabelą 1 załącznika nr 3).
+    </p>
+
+    <h2 id="konserwacja">Uprawnienia UDT konserwatora</h2>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Okresy ważności zaświadczeń UDT do konserwacji urządzeń</caption>
+        <thead><tr><th scope="col">Urządzenie</th><th scope="col">Rodzaj zaświadczenia</th><th scope="col">Ważne</th></tr></thead>
+        <tbody>
+          {KONSERWACJA.map((r) => (<tr><th scope="row">{r.grupa}</th><td>{r.nazwa}</td><td>{r.lata} lat</td></tr>))}
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="jak-przedluzyc">Jak przedłużyć uprawnienia UDT</h2>
+    <ol>
+      <li><strong>Sprawdź warunek:</strong> przez co najmniej 3 lata w ostatnich 5 latach ważności wykonywano czynności z zaświadczenia (art. 23 ust. 2c pkt 2).</li>
+      <li><strong>Złóż wniosek</strong> na papierze albo elektronicznie do jednostki dozoru technicznego, która wydała zaświadczenie (§ 7 ust. 1 rozporządzenia), najpóźniej {MIESIECY_PRZED} miesiące przed końcem ważności (art. 23 ust. 2c pkt 1). UDT przyjmuje wnioski także przez portal eUDT.</li>
+      <li><strong>Dołącz oświadczenie</strong> o wykonywaniu czynności z zaświadczenia, z klauzulą o odpowiedzialności karnej za fałszywe oświadczenie (art. 23 ust. 2d).</li>
+      <li><strong>Odbierz nowe zaświadczenie.</strong> Przedłużenie jest bezpłatne (art. 23 ust. 2a), a nowy okres ważności liczy się od dnia upływu poprzedniego (§ 7 ust. 4 i 5). Zaświadczenie przedłuża się w zakresie, w jakim wykazano spełnienie warunku (§ 7 ust. 3).</li>
+    </ol>
+    <p>
+      Termin wniosku liczymy jak w art. 112 Kodeksu cywilnego: 3 miesiące wstecz od daty końca ważności, a gdy takiego
+      dnia w miesiącu nie ma, ostatni dzień miesiąca. Złóż wniosek z zapasem: UDT podaje, że wniosek po terminie nie
+      przedłuży zaświadczenia.
+    </p>
+
+    <h2 id="bez-daty">Uprawnienia bez daty ważności, sprzed 1 czerwca 2019 r.</h2>
+    <p>
+      Zaświadczenia wydane przed 1 czerwca 2019 r. zachowały ważność przez 5 lat (art. 3 ustawy z 9 listopada 2018 r.
+      o zmianie ustawy o dozorze technicznym). UDT wyjaśnia, że zaświadczenia bez daty ważności straciły ją
+      1 stycznia 2024 r., a wnioski o ich przedłużenie przyjmował do jesieni 2023 r. Kto ich nie złożył, musi ponownie
+      zdać egzamin.
+    </p>
+
+    <h2 id="oplata">Ile kosztuje egzamin UDT</h2>
+    <p>
+      Opłata za sprawdzenie kwalifikacji to {PROCENT_OPLATY.toLocaleString('pl-PL')}% przeciętnego wynagrodzenia
+      w gospodarce narodowej ogłoszonego przez Prezesa GUS, obowiązującego w dniu złożenia wniosku (art. 23 ust. 4
+      ustawy). Za {PRZECIETNE_WYNAGRODZENIE.zaRok} r. GUS ogłosił {przecietne}, więc egzamin kosztuje {oplata}.
+      Potwierdzenie opłaty dołącza się do wniosku o egzamin (art. 23 ust. 3).
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { rodzaj, terminyUdt, KONIEC_STARYCH, type StatusUdt } from '../../lib/narzedzia/uprawnienia-udt';
+  import { dataPoPolsku, dzisWPolsce, ileDni, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { plikIcs } from '../../lib/narzedzia/kalendarz-ics';
+
+  const form = document.querySelector<HTMLFormElement>('[data-udt]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const rodzajSelect = form.elements.namedItem('rodzaj') as HTMLSelectElement;
+    const dataPole = form.elements.namedItem('data') as HTMLInputElement;
+    const ics = form.querySelector<HTMLButtonElement>('[data-ics]')!;
+    const bladDaty = form.querySelector<HTMLElement>('[data-blad="data"]')!;
+    const STATUS: Record<StatusUdt, string> = {
+      wygaslo: 'Wygasło',
+      'za-pozno-na-wniosek': 'Za późno na wniosek',
+      pilne: 'Pilne',
+      wkrotce: 'Wkrótce',
+      'w-terminie': 'W terminie',
+    };
+    const KLASA: Record<StatusUdt, string> = { wygaslo: 'po-terminie', 'za-pozno-na-wniosek': 'po-terminie', pilne: 'pilne', wkrotce: 'wkrotce', 'w-terminie': 'w-terminie' };
+    let wydarzenia: ReturnType<typeof terminyUdt>['wydarzenia'] = [];
+
+    const uwaga = (tekst: string | null) => {
+      w('uwaga').hidden = !tekst;
+      w('uwaga').textContent = tekst ?? '';
+    };
+
+    const przelicz = () => {
+      const r = rodzaj(rodzajSelect.value)!;
+      w('rodzaj-opis').textContent = `${r.nazwa}. Zaświadczenie ważne ${r.lata} lat.`;
+      const tryb = form.querySelector<HTMLInputElement>('input[name="tryb"]:checked')?.value ?? 'data';
+      form.querySelector<HTMLElement>('[data-tylko-data]')!.hidden = tryb !== 'data';
+      const status = w('status');
+      wydarzenia = [];
+
+      if (tryb === 'bez-daty') {
+        w('naglowek').textContent = 'Zaświadczenie straciło ważność';
+        w('termin').textContent = dataPoPolsku(KONIEC_STARYCH);
+        status.hidden = false;
+        status.dataset.status = 'po-terminie';
+        status.textContent = 'Przedłużenie nie jest już możliwe';
+        w('wazne-do').textContent = `do ${dataPoPolsku(KONIEC_STARYCH)} (przepis przejściowy)`;
+        w('po-przedluzeniu').textContent = 'nie dotyczy';
+        uwaga('Zaświadczenia bez daty ważności straciły ją 1 stycznia 2024 r. (art. 3 ustawy z 2018 r., objaśnienie UDT). Żeby dalej obsługiwać urządzenie, trzeba ponownie zdać egzamin.');
+        ics.disabled = true;
+        return;
+      }
+
+      w('naglowek').textContent = 'Wniosek o przedłużenie najpóźniej';
+      const data = dataPole.value;
+      const blad = data && !poprawnaData(data) ? 'Wpisz pełną datę: dzień, miesiąc i rok.' : null;
+      bladDaty.hidden = !blad;
+      bladDaty.textContent = blad ?? '';
+      dataPole.setAttribute('aria-invalid', blad ? 'true' : 'false');
+      if (!data || blad) {
+        w('termin').textContent = 'Wpisz datę';
+        status.hidden = true;
+        w('wazne-do').textContent = '—';
+        w('po-przedluzeniu').textContent = '—';
+        uwaga(null);
+        ics.disabled = true;
+        return;
+      }
+
+      const wynik = terminyUdt({ waznoDo: data, lata: r.lata, dzis: dzisWPolsce(), nazwa: r.nazwa });
+      w('termin').textContent = dataPoPolsku(wynik.wniosekDo);
+      status.hidden = false;
+      status.dataset.status = KLASA[wynik.status];
+      status.textContent =
+        wynik.status === 'wygaslo'
+          ? `${STATUS.wygaslo}: ${ileDni(wynik.dniDoKonca)}`
+          : wynik.status === 'za-pozno-na-wniosek'
+            ? STATUS['za-pozno-na-wniosek']
+            : `${STATUS[wynik.status]}: ${ileDni(wynik.dniDoWniosku)}`;
+      w('wazne-do').textContent = dataPoPolsku(wynik.waznoDo);
+      w('po-przedluzeniu').textContent = wynik.status === 'wygaslo' || wynik.status === 'za-pozno-na-wniosek' ? 'przedłużenie już niemożliwe' : `${dataPoPolsku(wynik.poPrzedluzeniu)} (o ${r.lata} lat od końca ważności)`;
+      uwaga(
+        wynik.status === 'wygaslo'
+          ? 'Zaświadczenie straciło ważność. Żeby dalej obsługiwać urządzenie, trzeba ponownie zdać egzamin.'
+          : wynik.status === 'za-pozno-na-wniosek'
+            ? `Minął termin wniosku. Według UDT wniosek złożony później niż 3 miesiące przed końcem ważności nie przedłuży zaświadczenia; po ${dataPoPolsku(wynik.waznoDo)} potrzebny będzie nowy egzamin.`
+            : null,
+      );
+      wydarzenia = wynik.wydarzenia;
+      ics.disabled = wydarzenia.length === 0;
+    };
+
+    ics.addEventListener('click', () => {
+      if (!wydarzenia.length) return;
+      const blob = new Blob([plikIcs(wydarzenia, 'waznosc-uprawnien-udt')], { type: 'text/calendar;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'uprawnienia-udt.ics';
+      document.body.append(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    });
+
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>

@@ -45,11 +45,18 @@ export const NARZEDZIA: Narzedzie[] = [
     przepisy: ['szkoleniaBhp', 'kodeksPracy', 'ogolneBhp', 'kodeksCywilny'],
     sprawdzono: '2026-11-11',
   },
+  {
+    slug: 'waznosc-uprawnien-udt',
+    nazwa: 'Ważność uprawnień UDT',
+    krotko: 'Do kiedy ważne jest zaświadczenie UDT i do kiedy złożyć wniosek o przedłużenie. Wózki, suwnice, podesty.',
+    kategoria: 'uprawnienia',
+    przepisy: ['dozorTechniczny', 'kwalifikacjeUdt', 'zmianaUdt2018', 'przecietneWynagrodzenie2025', 'kodeksPracy', 'kodeksCywilny'],
+    sprawdzono: '2026-11-11',
+  },
 ];
 
 /** Następne narzędzia w kolejce (bez stron i linków; lista na /narzedzia). Zdejmujesz pozycję, gdy narzędzie rusza. */
 export const W_PRZYGOTOWANIU: { nazwa: string; kategoria: KategoriaNarzedzia }[] = [
-  { nazwa: 'Ważność uprawnień UDT i termin wniosku o przedłużenie', kategoria: 'uprawnienia' },
   { nazwa: 'Ile kg wolno dźwigać w pracy', kategoria: 'transport' },
   { nazwa: 'Testy UDT na wózki widłowe', kategoria: 'uprawnienia' },
   { nazwa: 'Grafik 12-godzinny z kontrolą przepisów', kategoria: 'czas-pracy' },
