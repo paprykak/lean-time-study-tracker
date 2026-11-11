@@ -137,6 +137,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-11',
   },
   {
+    slug: 'placa-minimalna',
+    nazwa: 'Płaca minimalna: sprawdź pasek',
+    krotko: 'Czy pensja nie jest niższa od płacy minimalnej: co się wlicza (bez nocy, nadgodzin, stażu), ile wyrównania.',
+    kategoria: 'wynagrodzenie',
+    przepisy: ['minimalneWynagrodzenie', 'placa2025', 'placa2026', 'placa2027'],
+    sprawdzono: '2026-11-11',
+  },
+  {
     slug: 'kontrola-grafiku',
     nazwa: 'Kontrola grafiku zmian',
     krotko: 'Sprawdź grafik 12 h albo trzyzmianowy: odpoczynek 11 i 35 h, wolne niedziele, dni wolne, godziny a wymiar.',

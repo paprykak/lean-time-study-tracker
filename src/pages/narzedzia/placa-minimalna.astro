@@ -1,0 +1,169 @@
+---
+// Płaca minimalna: czy pensja nie jest niższa (art. 6–8 ustawy o minimalnym wynagrodzeniu), stawka na zleceniu (art. 8a).
+// Logika: src/lib/narzedzia/placa-minimalna.ts (testy obok). Kwoty: PLACA_MINIMALNA w src/data/prawo.ts.
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { AKTY, LATA, PLACA_MINIMALNA } from '../../data/prawo';
+import { NIEWLICZANE, sprawdzPlace } from '../../lib/narzedzia/placa-minimalna';
+import { zl } from '../../lib/narzedzia/format';
+import { dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+const rokBiezacy = Number(dzisWPolsce().slice(0, 4));
+const rok = LATA.includes(rokBiezacy) ? rokBiezacy : LATA[LATA.length - 1];
+const p = PLACA_MINIMALNA[rok];
+const start = sprawdzPlace({ rok, zasadnicze: 4500, wliczane: 200 });
+const ETATY = [
+  { wartosc: '1', nazwa: 'pełny etat' },
+  { wartosc: '0.875', nazwa: '7/8 etatu' },
+  { wartosc: '0.75', nazwa: '3/4 etatu' },
+  { wartosc: '0.5', nazwa: '1/2 etatu' },
+  { wartosc: '0.25', nazwa: '1/4 etatu' },
+];
+
+const faq = [
+  {
+    pytanie: `Ile wynosi płaca minimalna w ${rok} r.?`,
+    odpowiedz: `${zl(p.miesiecznie)} brutto miesięcznie przy pełnym etacie, a minimalna stawka godzinowa na zleceniu i umowie o świadczenie usług ${zl(p.stawkaGodzinowa)} (${AKTY[p.akt].publikator}).`,
+  },
+  {
+    pytanie: 'Czy dodatek nocny i nadgodziny wlicza się do płacy minimalnej?',
+    odpowiedz: 'Nie. Do porównania z płacą minimalną nie wlicza się wynagrodzenia za nadgodziny, dodatku za pracę w nocy, dodatku za staż pracy, dodatku za szczególne warunki pracy, nagrody jubileuszowej ani odprawy emerytalnej lub rentowej (art. 6 ust. 5 ustawy o minimalnym wynagrodzeniu za pracę).',
+  },
+  {
+    pytanie: 'Ile wynosi płaca minimalna na pół etatu?',
+    odpowiedz: `Proporcjonalnie do liczby godzin do przepracowania w miesiącu (art. 8 ust. 1 ustawy): przy 1/2 etatu w ${rok} r. ${zl(p.miesiecznie / 2)}.`,
+  },
+  {
+    pytanie: 'Co, jeśli pensja jest niższa od płacy minimalnej?',
+    odpowiedz: 'Pracodawca dopłaca wyrównanie do płacy minimalnej za każdy miesiąc, razem z wypłatą wynagrodzenia (art. 7 ust. 1 i 2 ustawy). Pracownikom ze stawką godzinową i tym, którzy nie przepracowali pełnego miesiąca, wyrównanie przysługuje za każdą godzinę pracy (art. 7 ust. 3 i 4).',
+  },
+  {
+    pytanie: 'Czy na zleceniu obowiązuje stawka minimalna?',
+    odpowiedz: `Tak: za każdą godzinę wykonywania zlecenia lub usług co najmniej ${zl(p.stawkaGodzinowa)} w ${rok} r. Nie można zrzec się tego prawa, a przy umowach dłuższych niż miesiąc wypłata należy się co najmniej raz w miesiącu (art. 8a ust. 1, 4 i 6 ustawy).`,
+  },
+];
+---
+<StronaNarzedzia
+  slug="placa-minimalna"
+  tytul={`Płaca minimalna ${rok}: sprawdź, czy dostajesz tyle, ile trzeba`}
+  opis={`Płaca minimalna w ${rok} r.: ${zl(p.miesiecznie)} brutto, na zleceniu ${zl(p.stawkaGodzinowa)} za godzinę. Sprawdź pasek: co się wlicza, czego nie (nadgodziny, noc, staż), ile wyrównania.`}
+  h1="Płaca minimalna: sprawdź swój pasek"
+  lead={`W ${rok} r. pensja na pełny etat nie może być niższa niż ${zl(p.miesiecznie)} brutto. Nadgodzin, dodatku nocnego ani stażowego nie wolno do niej wliczać. Wpisz pensję zasadniczą i premie, a policzymy, czy należy się wyrównanie.`}
+  faq={faq}
+>
+  <form class="kalkulator" data-placa novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twój pasek</h2>
+      <div class="mt-4 grid gap-4 sm:grid-cols-2">
+        <div>
+          <label for="p-rok" class="etykieta-pola">Rok</label>
+          <select id="p-rok" name="rok" class="pole mt-1">
+            {LATA.map((r) => <option value={r} selected={r === rok}>{r} ({zl(PLACA_MINIMALNA[r].miesiecznie)})</option>)}
+          </select>
+        </div>
+        <div>
+          <label for="p-etat" class="etykieta-pola">Wymiar etatu</label>
+          <select id="p-etat" name="etat" class="pole mt-1">
+            {ETATY.map((e) => <option value={e.wartosc}>{e.nazwa}</option>)}
+          </select>
+        </div>
+      </div>
+      <div class="mt-4">
+        <label for="p-zasadnicze" class="etykieta-pola">Pensja zasadnicza (zł brutto)</label>
+        <input id="p-zasadnicze" name="zasadnicze" class="pole mt-1 max-w-48" type="text" inputmode="decimal" autocomplete="off" value="4500" aria-describedby="p-blad" />
+      </div>
+      <div class="mt-4">
+        <label for="p-wliczane" class="etykieta-pola">Premie i inne dodatki z tego miesiąca (zł)</label>
+        <input id="p-wliczane" name="wliczane" class="pole mt-1 max-w-48" type="text" inputmode="decimal" autocomplete="off" value="200" aria-describedby="p-wliczane-opis p-blad" />
+        <p id="p-wliczane-opis" class="meta mt-1">Bez składników z listy obok: one się nie liczą.</p>
+      </div>
+      <p id="p-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+      <div class="mt-5">
+        <p class="etykieta">Nie wlicza się (art. 6 ust. 5)</p>
+        <ul class="mt-2 list-disc space-y-1 pl-5 text-[0.9375rem] text-tekst-tresc">
+          {NIEWLICZANE.map((n) => <li>{n}</li>)}
+        </ul>
+      </div>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta" data-w="naglowek">Wyrównanie do płacy minimalnej</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-kwota" data-w="wyrownanie">{zl(start.wyrownanie)}</p>
+        <p class="status-terminu" data-w="status" data-status="po-terminie">Pensja niższa od płacy minimalnej</p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Płaca minimalna na Twój etat</dt><dd data-w="minimum">{zl(start.minimum)}</dd></div>
+        <div><dt>Twoje wynagrodzenie do porównania</dt><dd data-w="liczone">{zl(start.liczone)}</dd></div>
+        <div><dt>Na zleceniu za godzinę</dt><dd data-w="zlecenie">{zl(start.stawkaZlecenie)}</dd></div>
+      </dl>
+      <p class="meta mt-4">Dotyczy pełnego przepracowanego miesiąca. Przy nieobecności, na przykład chorobie, wyrównanie liczy się za każdą przepracowaną godzinę (art. 7 ust. 4).</p>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="tabela">Płaca minimalna i stawka godzinowa</h2>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Płaca minimalna i minimalna stawka godzinowa według roku</caption>
+        <thead><tr><th scope="col">Rok</th><th scope="col">Pełny etat</th><th scope="col">1/2 etatu</th><th scope="col">Zlecenie, za godzinę</th><th scope="col">Źródło</th></tr></thead>
+        <tbody>
+          {LATA.map((r) => {
+            const x = PLACA_MINIMALNA[r];
+            return <tr><th scope="row">{r}</th><td>{zl(x.miesiecznie)}</td><td>{zl(x.miesiecznie / 2)}</td><td>{zl(x.stawkaGodzinowa)}</td><td><a href={AKTY[x.akt].adres} class="link" rel="noopener">{AKTY[x.akt].publikator}</a></td></tr>;
+          })}
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="co-sie-wlicza">Co wlicza się do płacy minimalnej</h2>
+    <p>
+      Do porównania bierze się składniki wynagrodzenia i inne świadczenia ze stosunku pracy, które według zasad GUS są
+      wynagrodzeniami osobowymi (art. 6 ust. 4 ustawy), na przykład pensję zasadniczą, premie regulaminowe i dodatek
+      funkcyjny. Wyłączone są wynagrodzenie za nadgodziny, dodatek za pracę w nocy, dodatek za staż pracy, dodatek za
+      szczególne warunki pracy (od 1 stycznia 2024 r.), nagroda jubileuszowa oraz odprawa emerytalna lub rentowa
+      (art. 6 ust. 5). Jeśli pracodawca „dobija” do płacy minimalnej dodatkiem nocnym albo stażowym, pensja jest za niska.
+    </p>
+    <p>
+      Przy niepełnym etacie minimum jest proporcjonalne do godzin do przepracowania w miesiącu (art. 8 ust. 1). Gdy
+      wynagrodzenie jest niższe, pracodawca dopłaca wyrównanie co miesiąc, razem z wypłatą (art. 7 ust. 1 i 2).
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { sprawdzPlace } from '../../lib/narzedzia/placa-minimalna';
+  import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
+
+  const form = document.querySelector<HTMLFormElement>('[data-placa]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const przelicz = () => {
+      const zasadnicze = wpisanaLiczba(el('zasadnicze').value);
+      const wliczane = wpisanaLiczba(el('wliczane').value || '0');
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      const blad = !(zasadnicze >= 0) || !(wliczane >= 0) || zasadnicze + wliczane === 0 ? 'Wpisz pensję zasadniczą, na przykład 4500.' : null;
+      b.hidden = !blad;
+      b.textContent = blad ?? '';
+      for (const n of ['zasadnicze', 'wliczane']) el(n).setAttribute('aria-invalid', blad ? 'true' : 'false');
+      const status = w('status');
+      if (blad) {
+        w('wyrownanie').textContent = '—';
+        status.hidden = true;
+        return;
+      }
+      const r = sprawdzPlace({ rok: Number(el('rok').value), etat: Number(el('etat').value), zasadnicze, wliczane });
+      w('wyrownanie').textContent = zl(r.wyrownanie);
+      status.hidden = false;
+      status.dataset.status = r.zgodne ? 'w-terminie' : 'po-terminie';
+      status.textContent = r.zgodne ? 'Pensja nie jest niższa od płacy minimalnej' : 'Pensja niższa od płacy minimalnej';
+      w('minimum').textContent = zl(r.minimum);
+      w('liczone').textContent = zl(r.liczone);
+      w('zlecenie').textContent = zl(r.stawkaZlecenie);
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>
