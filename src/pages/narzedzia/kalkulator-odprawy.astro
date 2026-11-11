@@ -1,0 +1,194 @@
+---
+// Odprawa z przyczyn niedotyczących pracownika (art. 8 i 10 ustawy z 13 marca 2003 r.) i emerytalna albo rentowa
+// (art. 92^1 Kp). Logika: src/lib/narzedzia/odprawy.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { LATA, PLACA_MINIMALNA } from '../../data/prawo';
+import { odprawa } from '../../lib/narzedzia/odprawy';
+import { zl } from '../../lib/narzedzia/format';
+import { dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+const dzis = dzisWPolsce();
+const rokBiezacy = Number(dzis.slice(0, 4));
+const rok = LATA.includes(rokBiezacy) ? rokBiezacy : LATA[LATA.length - 1];
+const limit = 15 * PLACA_MINIMALNA[rok].miesiecznie;
+const koniec = `${rok}-${dzis.slice(5, 10)}`;
+const start = odprawa({ rodzaj: 'zwolnienie', stale: 6000, zatrudnienieOd: `${rok - 5}-01-01`, rozwiazanie: koniec });
+
+const faq = [
+  {
+    pytanie: 'Ile wynosi odprawa przy zwolnieniu z przyczyn pracodawcy?',
+    odpowiedz: `Jedno miesięczne wynagrodzenie przy pracy u tego pracodawcy krócej niż 2 lata, dwa przy pracy od 2 do 8 lat i trzy przy pracy dłuższej niż 8 lat (art. 8 ust. 1 ustawy o zwolnieniach grupowych). Odprawa nie może przekroczyć 15-krotności płacy minimalnej z dnia rozwiązania umowy (art. 8 ust. 4): w ${rok} r. ${zl(limit)}.`,
+  },
+  {
+    pytanie: 'Komu przysługuje odprawa przy zwolnieniu?',
+    odpowiedz: 'Pracownikowi pracodawcy zatrudniającego co najmniej 20 osób, gdy umowa jest rozwiązywana wypowiedzeniem pracodawcy albo porozumieniem stron z przyczyn niedotyczących pracownika. Przy zwolnieniu indywidualnym te przyczyny muszą być jedynym powodem rozwiązania umowy (art. 1 ust. 1 i art. 10 ust. 1 ustawy).',
+  },
+  {
+    pytanie: 'Ile wynosi odprawa emerytalna?',
+    odpowiedz: 'Jedno miesięczne wynagrodzenie, gdy stosunek pracy ustaje w związku z przejściem na emeryturę albo rentę z tytułu niezdolności do pracy (art. 92^1 § 1 Kodeksu pracy). Przysługuje raz: kto ją otrzymał, nie nabywa do niej prawa ponownie (art. 92^1 § 2). Układ zbiorowy albo przepisy szczególne mogą przewidywać więcej.',
+  },
+  {
+    pytanie: 'Od czego liczy się odprawę?',
+    odpowiedz: 'Od wynagrodzenia liczonego jak ekwiwalent za urlop (art. 8 ust. 3 ustawy, § 2 ust. 1 pkt 7 rozporządzenia z 29 maja 1996 r.): stałe składniki w wysokości z miesiąca rozwiązania umowy, średnia zmiennych z 3 miesięcy i jedna dwunasta premii kwartalnych i rocznych z 12 miesięcy (§ 15–17 rozporządzenia urlopowego).',
+  },
+  {
+    pytanie: 'Czy liczy się staż u poprzedniego pracodawcy?',
+    odpowiedz: 'Tak, jeśli zakład pracy przeszedł na nowego pracodawcę (art. 23^1 Kodeksu pracy) albo nowy pracodawca jest następcą prawnym poprzedniego (art. 8 ust. 2 ustawy w związku z art. 36 § 1^1 Kodeksu pracy). Wtedy wpisz datę rozpoczęcia pracy u poprzedniego pracodawcy.',
+  },
+];
+---
+<StronaNarzedzia
+  slug="kalkulator-odprawy"
+  tytul="Odprawa przy zwolnieniu i emerytalna: kalkulator"
+  opis={`Policz odprawę przy zwolnieniu z przyczyn pracodawcy (1, 2 albo 3 pensje, najwyżej ${zl(limit)} w ${rok} r.) i odprawę emerytalną. Staż, premie, limit.`}
+  h1="Kalkulator odprawy: zwolnienie i emerytura"
+  lead={`Przy zwolnieniu z przyczyn pracodawcy przysługuje odprawa: 1, 2 albo 3 pensje zależnie od stażu, najwyżej ${zl(limit)} w ${rok} r. Przy przejściu na emeryturę albo rentę jedna pensja. Wpisz daty i wynagrodzenie.`}
+  faq={faq}
+>
+  <form class="kalkulator" data-odprawa novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Koniec pracy</h2>
+      <fieldset class="mt-4">
+        <legend class="etykieta">Dlaczego kończy się umowa</legend>
+        <div class="opcje-pionowe mt-2">
+          <label><input type="radio" name="rodzaj" value="zwolnienie" checked /> Zwolnienie z przyczyn niedotyczących pracownika</label>
+          <label><input type="radio" name="rodzaj" value="emerytalna" /> Przejście na emeryturę albo rentę</label>
+        </div>
+      </fieldset>
+      <div class="mt-4 grid gap-4 sm:grid-cols-2" data-tylko-zwolnienie>
+        <div>
+          <label for="o-od" class="etykieta-pola">Początek pracy u tego pracodawcy</label>
+          <input id="o-od" name="od" type="date" class="pole mt-1" min="1950-01-01" max="2100-12-31" value={`${rok - 5}-01-01`} aria-describedby="o-blad" />
+        </div>
+        <div>
+          <label for="o-do" class="etykieta-pola">Dzień rozwiązania umowy</label>
+          <input id="o-do" name="do" type="date" class="pole mt-1" min="1950-01-01" max="2100-12-31" value={koniec} aria-describedby="o-blad" />
+        </div>
+      </div>
+      <div class="mt-4">
+        <label for="o-stale" class="etykieta-pola">Pensja i stałe dodatki miesięcznie (zł brutto)</label>
+        <input id="o-stale" name="stale" class="pole mt-1 max-w-48" type="text" inputmode="decimal" autocomplete="off" value="6000" aria-describedby="o-blad" />
+      </div>
+      <div class="mt-4">
+        <label for="o-zmienne" class="etykieta-pola">Średnia premii i dodatków zmiennych z 3 miesięcy (zł)</label>
+        <input id="o-zmienne" name="zmienne" class="pole mt-1 max-w-48" type="text" inputmode="decimal" autocomplete="off" value="0" aria-describedby="o-blad" />
+      </div>
+      <div class="mt-4">
+        <label for="o-dluzsze" class="etykieta-pola">Premie kwartalne i roczne z 12 miesięcy, razem (zł)</label>
+        <input id="o-dluzsze" name="dluzsze" class="pole mt-1 max-w-48" type="text" inputmode="decimal" autocomplete="off" value="0" aria-describedby="o-blad" />
+      </div>
+      <p id="o-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Odprawa (brutto)</h2>
+      <p class="wynik-kwota" aria-live="polite" aria-atomic="true"><span data-w="kwota">{zl(start.kwota)}</span></p>
+      <dl class="wynik-lista">
+        <div><dt>Miesięczne wynagrodzenie do odprawy</dt><dd data-w="miesieczne">{zl(start.miesieczne)}</dd></div>
+        <div><dt>Liczba pensji</dt><dd data-w="miesiecy">{start.miesiecy} (staż od 2 do 8 lat)</dd></div>
+        <div><dt>Najwyższa odprawa</dt><dd data-w="limit">{zl(limit)} (15 płac minimalnych)</dd></div>
+        <div><dt>Podstawa</dt><dd data-w="podstawa">art. 8 ustawy o zwolnieniach grupowych</dd></div>
+      </dl>
+      <p class="wynik-uwaga" data-w="uwaga" hidden></p>
+      <p class="meta mt-4">Odprawa z ustawy przysługuje u pracodawcy zatrudniającego co najmniej 20 osób (art. 1 ust. 1 i art. 10 ust. 1).</p>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="tabela">Odprawa przy zwolnieniu: ile pensji</h2>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Wysokość odprawy według stażu u pracodawcy</caption>
+        <thead><tr><th scope="col">Praca u tego pracodawcy</th><th scope="col">Odprawa</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">krócej niż 2 lata</th><td>1 miesięczne wynagrodzenie</td></tr>
+          <tr><th scope="row">od 2 do 8 lat</th><td>2 miesięczne wynagrodzenia</td></tr>
+          <tr><th scope="row">ponad 8 lat</th><td>3 miesięczne wynagrodzenia</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Odprawa nie może przekroczyć 15-krotności minimalnego wynagrodzenia obowiązującego w dniu rozwiązania stosunku
+      pracy (art. 8 ust. 4 ustawy).
+      {LATA.map((r, i) => <>{i === 0 ? ' Limit wynosi' : ','} {zl(15 * PLACA_MINIMALNA[r].miesiecznie)} w {r} r.</>)}
+    </p>
+
+    <h2 id="kiedy">Kiedy przysługuje odprawa przy zwolnieniu</h2>
+    <ul>
+      <li>pracodawca zatrudnia co najmniej 20 pracowników (art. 1 ust. 1 ustawy);</li>
+      <li>umowę rozwiązuje wypowiedzenie pracodawcy albo porozumienie stron z jego inicjatywy, z przyczyn niedotyczących pracownika, na przykład likwidacji stanowiska;</li>
+      <li>przy zwolnieniu jednej albo kilku osób te przyczyny są jedynym powodem rozwiązania umowy (art. 10 ust. 1).</li>
+    </ul>
+    <p>
+      Do stażu wlicza się okres pracy u poprzedniego pracodawcy, gdy zakład pracy przeszedł na nowego albo nowy
+      pracodawca jest następcą prawnym (art. 8 ust. 2 ustawy, art. 36 § 1<sup>1</sup> Kodeksu pracy). Od 2026 r. do okresu
+      zatrudnienia u danego pracodawcy wlicza się też m.in. zlecenia wykonywane na jego rzecz (art. 302<sup>1</sup> § 8 Kodeksu
+      pracy); czy obejmuje to odprawę z ustawy o zwolnieniach grupowych, warto potwierdzić w dziale kadr albo w PIP,
+      bo ustawa odsyła wprost tylko do art. 36 § 1<sup>1</sup>.
+    </p>
+
+    <h2 id="emerytalna">Odprawa emerytalna i rentowa</h2>
+    <p>
+      Pracownik spełniający warunki do emerytury albo renty z tytułu niezdolności do pracy, którego stosunek pracy
+      ustał w związku z przejściem na emeryturę albo rentę, dostaje jednomiesięczne wynagrodzenie (art. 92<sup>1</sup> § 1
+      Kodeksu pracy). Przysługuje tylko raz (art. 92<sup>1</sup> § 2) i nie ma limitu kwotowego. Liczy się ją jak
+      ekwiwalent za urlop (§ 2 ust. 1 pkt 7 rozporządzenia z 29 maja 1996 r.).
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { odprawa, type RodzajOdprawy } from '../../lib/narzedzia/odprawy';
+  import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
+  import { poprawnaData } from '../../lib/narzedzia/terminy';
+
+  const form = document.querySelector<HTMLFormElement>('[data-odprawa]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const STAZ = { 1: 'staż krótszy niż 2 lata', 2: 'staż od 2 do 8 lat', 3: 'staż ponad 8 lat' } as const;
+
+    const przelicz = () => {
+      const rodzaj = (form.querySelector<HTMLInputElement>('input[name="rodzaj"]:checked')?.value ?? 'zwolnienie') as RodzajOdprawy;
+      form.querySelector<HTMLElement>('[data-tylko-zwolnienie]')!.hidden = rodzaj !== 'zwolnienie';
+      const stale = wpisanaLiczba(el('stale').value);
+      const zmienne = wpisanaLiczba(el('zmienne').value || '0');
+      const dluzsze = wpisanaLiczba(el('dluzsze').value || '0');
+      const od = el('od').value;
+      const do_ = el('do').value;
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      let blad =
+        !(stale > 0) ? 'Wpisz pensję miesięczną, na przykład 6000.'
+        : !(zmienne >= 0 && dluzsze >= 0) ? 'Kwoty premii nie mogą być ujemne.'
+        : rodzaj === 'zwolnienie' && !(poprawnaData(od) && poprawnaData(do_)) ? 'Wpisz pełne daty: początek pracy i dzień rozwiązania umowy.'
+        : rodzaj === 'zwolnienie' && do_ < od ? 'Dzień rozwiązania umowy nie może być wcześniejszy niż początek pracy.'
+        : null;
+      let r: ReturnType<typeof odprawa> | null = null;
+      if (!blad) {
+        try {
+          r = odprawa({ rodzaj, stale, zmienne, dluzsze12: dluzsze, zatrudnienieOd: od, rozwiazanie: do_ });
+        } catch {
+          blad = 'Kalkulator zna płacę minimalną tylko na lata, które są w tabeli poniżej. Wybierz dzień rozwiązania umowy z tych lat.';
+        }
+      }
+      b.hidden = !blad;
+      b.textContent = blad ?? '';
+      if (blad || !r) {
+        w('kwota').textContent = '—';
+        return;
+      }
+      w('kwota').textContent = zl(r.kwota);
+      w('miesieczne').textContent = zl(r.miesieczne);
+      w('miesiecy').textContent = rodzaj === 'emerytalna' ? '1 (art. 92¹ § 1 Kodeksu pracy)' : `${r.miesiecy} (${STAZ[r.miesiecy as 1 | 2 | 3]})`;
+      w('limit').textContent = r.limit === null ? 'brak limitu' : `${zl(r.limit)} (15 płac minimalnych)`;
+      w('podstawa').textContent = rodzaj === 'emerytalna' ? 'art. 92¹ Kodeksu pracy' : 'art. 8 ustawy o zwolnieniach grupowych';
+      const uwaga = r.ograniczona ? `Odprawa obliczona z pensji przekracza limit, więc wynosi ${zl(r.kwota)} (art. 8 ust. 4 ustawy).` : null;
+      w('uwaga').hidden = !uwaga;
+      w('uwaga').textContent = uwaga ?? '';
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>

@@ -76,6 +76,13 @@ export const AKTY = {
     adres: eli(2019, 1008),
     sprawdzono: '2026-11-11',
   },
+  zwolnieniaGrupowe: {
+    nazwa: 'Ustawa o szczególnych zasadach rozwiązywania z pracownikami stosunków pracy z przyczyn niedotyczących pracowników',
+    publikator: 'Dz.U. 2026 poz. 1195',
+    uwaga: 'tekst jednolity, bez późniejszych zmian; art. 1, 8 i 10',
+    adres: eli(2026, 1195),
+    sprawdzono: '2026-11-11',
+  },
   zasilkowa: {
     nazwa: 'Ustawa o świadczeniach pieniężnych z ubezpieczenia społecznego w razie choroby i macierzyństwa',
     publikator: 'Dz.U. 2026 poz. 854',

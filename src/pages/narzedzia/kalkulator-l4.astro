@@ -168,7 +168,7 @@ const faq = [
       w('pracodawca').textContent = `${r.dniPracodawca} dni: ${zl(r.wynagrodzenieChorobowe)}`;
       w('zus').textContent = `${r.dniZus} dni: ${zl(r.zasilek)}`;
       w('podstawa').textContent = `${zl(r.podstawa)}${r.podstawaPodniesiona ? ' (minimum z płacy minimalnej)' : ''}`;
-      const uwaga = r.dniZus > 0 ? `Limit ${r.limitPracodawcy} dni wynagrodzenia od pracodawcy w tym roku się wyczerpuje; za ${r.dniZus} dni przysługuje zasiłek chorobowy (art. 92 § 4 Kodeksu pracy).` : null;
+      const uwaga = r.dniZus > 0 ? `Limit ${r.limitPracodawcy} dni wynagrodzenia od pracodawcy w\u00a0tym roku się wyczerpuje; za ${r.dniZus} dni przysługuje zasiłek chorobowy (art.\u00a092 §\u00a04 Kodeksu pracy).` : null;
       w('uwaga').hidden = !uwaga;
       w('uwaga').textContent = uwaga ?? '';
     };
