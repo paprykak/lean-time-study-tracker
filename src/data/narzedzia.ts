@@ -93,12 +93,19 @@ export const NARZEDZIA: Narzedzie[] = [
     przepisy: ['kodeksPracy', 'zmianaStazu2025'],
     sprawdzono: '2026-11-11',
   },
+  {
+    slug: 'kontrola-grafiku',
+    nazwa: 'Kontrola grafiku zmian',
+    krotko: 'Sprawdź grafik 12 h albo trzyzmianowy: odpoczynek 11 i 35 h, wolne niedziele, dni wolne, godziny a wymiar.',
+    kategoria: 'czas-pracy',
+    przepisy: ['kodeksPracy', 'dniWolne'],
+    sprawdzono: '2026-11-11',
+  },
 ];
 
 /** Następne narzędzia w kolejce (bez stron i linków; lista na /narzedzia). Zdejmujesz pozycję, gdy narzędzie rusza. */
 export const W_PRZYGOTOWANIU: { nazwa: string; kategoria: KategoriaNarzedzia }[] = [
   { nazwa: 'Testy UDT na wózki widłowe', kategoria: 'uprawnienia' },
-  { nazwa: 'Grafik 12-godzinny z kontrolą przepisów', kategoria: 'czas-pracy' },
 ];
 
 export const adresNarzedzia = (slug: string) => `/narzedzia/${slug}`;

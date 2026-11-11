@@ -1,0 +1,320 @@
+---
+// Kontrola grafiku zmian w miesiącu: wzory rotacji (czterobrygadowy 12 h, dzień-noc, trzyzmianowy 8 h) i kontrola
+// przepisów (art. 128–135, 147, 151, 151^12 Kp). Logika: src/lib/narzedzia/grafik.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { ZMIANY, WZORY, grafikZWzoru, sprawdzGrafik, type Wzor } from '../../lib/narzedzia/grafik';
+import { nazwaMiesiaca } from '../../lib/narzedzia/czas-pracy';
+import { LATA } from '../../data/prawo';
+
+const teraz = new Date();
+const rok = LATA.includes(teraz.getUTCFullYear()) ? teraz.getUTCFullYear() : LATA[LATA.length - 1];
+const miesiac = teraz.getUTCMonth() + 1;
+const wzory = Object.keys(WZORY) as Wzor[];
+const czterobrygadowy = sprawdzGrafik(rok, miesiac, grafikZWzoru(rok, miesiac, 'czterobrygadowy-12'));
+
+const faq = [
+  {
+    pytanie: 'Ile nadgodzin daje system czterobrygadowy 12 h?',
+    odpowiedz: `Przy rotacji 2 dni, 2 noce, 4 wolne brygada pracuje 4 zmiany po 12 godzin na 8 dni, czyli przeciętnie 42 godziny tygodniowo. W ${nazwaMiesiaca(miesiac, 'miejscownik')} ${rok} r. wychodzi ${czterobrygadowy.godziny} godzin przy wymiarze ${czterobrygadowy.wymiar}; liczba zmian zależy od dnia cyklu na początku miesiąca. Godziny ponad wymiar to nadgodziny z dodatkiem.`,
+  },
+  {
+    pytanie: 'Ile godzin odpoczynku między zmianami?',
+    odpowiedz: 'Co najmniej 11 godzin nieprzerwanego odpoczynku w każdej dobie (art. 132 § 1 Kodeksu pracy) i co najmniej 35 godzin w każdym tygodniu, obejmujących te 11 godzin (art. 133 § 1). Przy przejściu na inną zmianę odpoczynek tygodniowy może być krótszy, ale nie krótszy niż 24 godziny (art. 133 § 2).',
+  },
+  {
+    pytanie: 'Czy można pracować 12 godzin?',
+    odpowiedz: 'Tak, w systemie równoważnym czasu pracy dobowy wymiar można przedłużyć do 12 godzin, a dłuższe dni równoważy się krótszymi albo dniami wolnymi w okresie rozliczeniowym do 1 miesiąca, w szczególnych przypadkach do 3 albo 4 miesięcy (art. 135). Pracownicy w ciąży, opiekujący się dzieckiem do 4 lat bez ich zgody i pracujący przy przekroczeniach norm czynników szkodliwych nie mogą pracować dłużej niż 8 godzin (art. 148).',
+  },
+  {
+    pytanie: 'Jak często wolna niedziela?',
+    odpowiedz: 'Pracownik pracujący w niedziele powinien mieć wolną niedzielę co najmniej raz na 4 tygodnie (art. 151^12 Kodeksu pracy). Za pracę w niedzielę należy się inny dzień wolny w ciągu 6 dni przed albo po niej, a gdy to niemożliwe, do końca okresu rozliczeniowego (art. 151^11 § 1 i 2).',
+  },
+  {
+    pytanie: 'Co to jest doba pracownicza?',
+    odpowiedz: 'To 24 kolejne godziny od rozpoczęcia pracy według rozkładu (art. 128 § 3 pkt 1). Gdy kolejna zmiana zaczyna się wcześniej niż 24 godziny po początku poprzedniej, część pracy przypada w tej samej dobie, a praca ponad wymiar tej doby to godziny nadliczbowe.',
+  },
+];
+---
+<StronaNarzedzia
+  slug="kontrola-grafiku"
+  tytul="Kontrola grafiku zmian: 12 h, odpoczynek, niedziele"
+  opis="Sprawdź grafik zmian na miesiąc: system czterobrygadowy 12 h i trzyzmianowy, odpoczynek 11 i 35 godzin, wolne niedziele, dni wolne i godziny a wymiar."
+  h1="Kontrola grafiku zmian"
+  lead="Wybierz miesiąc i wzór rotacji albo ustaw zmiany dzień po dniu. Sprawdzimy grafik z Kodeksem pracy: odpoczynek dobowy i tygodniowy, wolne niedziele, dni wolne, 12 godzin na dobę i godziny a wymiar."
+  faq={faq}
+>
+  <form class="kalkulator" data-grafik novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Grafik</h2>
+      <fieldset class="mt-4">
+        <legend class="etykieta">Miesiąc</legend>
+        <div class="mt-2 grid grid-cols-[minmax(0,3fr)_minmax(0,2fr)] gap-3">
+          <label class="sr-only" for="g-miesiac">Miesiąc</label>
+          <select id="g-miesiac" name="miesiac" class="pole">
+            {Array.from({ length: 12 }, (_, i) => <option value={i + 1} selected={i + 1 === miesiac}>{nazwaMiesiaca(i + 1)}</option>)}
+          </select>
+          <label class="sr-only" for="g-rok">Rok</label>
+          <select id="g-rok" name="rok" class="pole">
+            {LATA.map((r) => <option value={r} selected={r === rok}>{r}</option>)}
+          </select>
+        </div>
+      </fieldset>
+      <div class="mt-4 grid gap-4 sm:grid-cols-[minmax(0,3fr)_minmax(0,1fr)]">
+        <div>
+          <label for="g-wzor" class="etykieta-pola">Wzór rotacji</label>
+          <select id="g-wzor" name="wzor" class="pole mt-1">
+            {wzory.map((w) => <option value={w} selected={w === 'czterobrygadowy-12'}>{WZORY[w].nazwa}</option>)}
+          </select>
+        </div>
+        <div>
+          <label for="g-start" class="etykieta-pola">Start cyklu</label>
+          <select id="g-start" name="start" class="pole mt-1" aria-describedby="g-start-opis">
+            {WZORY['czterobrygadowy-12'].cykl.map((_, i) => <option value={i}>{i + 1}</option>)}
+          </select>
+        </div>
+      </div>
+      <p id="g-start-opis" class="meta mt-1">Który dzień cyklu przypada na 1. dzień miesiąca: tak ustawisz każdą z brygad. Wzór trzyzmianowy zaczynamy od poniedziałku.</p>
+      <p class="mt-3"><button type="button" class="przycisk przycisk-obrys" data-wypelnij>Wypełnij grafik wzorem</button></p>
+
+      <fieldset class="mt-5">
+        <legend class="etykieta">Zmiany dzień po dniu</legend>
+        <p class="meta mt-1">{Object.entries(ZMIANY).map(([k, z]) => `${k}: ${z.nazwa}`).join(' · ')} · W: wolne</p>
+        <div class="kalendarz mt-3" data-kalendarz>
+          {['pn', 'wt', 'śr', 'cz', 'pt', 'so', 'nd'].map((d) => <span class="kalendarz-naglowek" aria-hidden="true">{d}</span>)}
+        </div>
+      </fieldset>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Wynik kontroli</h2>
+      <div aria-live="polite">
+        <p class="wynik-data" data-w="naglowek">Grafik do sprawdzenia</p>
+        <p class="meta mt-1" data-w="podsumowanie"></p>
+        <ul class="lista-kontroli mt-4" data-w="lista"></ul>
+      </div>
+      <noscript><p class="wynik-uwaga">Kontrola działa w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="zasady">Co sprawdzamy</h2>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Zasady sprawdzane w grafiku</caption>
+        <thead><tr><th scope="col">Zasada</th><th scope="col">Wymóg</th><th scope="col">Podstawa</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Godziny a wymiar</th><td>suma godzin w grafiku równa wymiarowi miesiąca; ponad wymiar to nadgodziny</td><td>art. 130, 151 Kp</td></tr>
+          <tr><th scope="row">Długość zmiany</th><td>najwyżej 12 godzin w systemie równoważnym</td><td>art. 135 Kp</td></tr>
+          <tr><th scope="row">Odpoczynek dobowy</th><td>co najmniej 11 godzin bez przerwy</td><td>art. 132 Kp</td></tr>
+          <tr><th scope="row">Doba pracownicza</th><td>kolejna zmiana nie wcześniej niż 24 h po początku poprzedniej, inaczej nadgodziny</td><td>art. 128 § 3 pkt 1 Kp</td></tr>
+          <tr><th scope="row">Odpoczynek tygodniowy</th><td>co najmniej 35 godzin w każdym tygodniu, przy zmianie zmiany co najmniej 24</td><td>art. 133 Kp</td></tr>
+          <tr><th scope="row">Wolna niedziela</th><td>co najmniej raz na 4 tygodnie</td><td>art. 151<sup>12</sup> Kp</td></tr>
+          <tr><th scope="row">Dni wolne</th><td>tyle co niedziel, świąt i wolnych sobót w okresie</td><td>art. 147 Kp</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Okresem rozliczeniowym jest tu miesiąc, a tygodnie liczymy od 1. dnia miesiąca (art. 128 § 3 pkt 2 Kodeksu pracy);
+      ostatnie dni ponad pełne tygodnie pomijamy przy odpoczynku tygodniowym. Niedziela to 24 godziny od 6:00, chyba że
+      pracodawca ustalił inną godzinę (art. 151<sup>9</sup> § 2). Kontrola nie zna grafiku z poprzedniego miesiąca, więc
+      odpoczynek na przełomie miesięcy sprawdź sam.
+    </p>
+
+    <h2 id="czterobrygadowy">System czterobrygadowy 12 h w liczbach</h2>
+    <p>
+      Przy rotacji „2 dni, 2 noce, 4 wolne” każda z czterech brygad pracuje 4 zmiany na 8 dni, więc zakład ma obsadę
+      przez całą dobę i wszystkie dni, a brygada przepracowuje przeciętnie 42 godziny na tydzień. Wymiar to przeciętnie
+      40 godzin (art. 129 § 1), więc taki grafik w większości miesięcy wychodzi ponad wymiar i wymaga nadgodzin albo
+      dni wolnych w zamian. Wyjątkiem jest system dla pracy w ruchu ciągłym, który pozwala na przeciętnie 43 godziny
+      tygodniowo w okresie do 4 tygodni (art. 138 § 1).
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { ZMIANY, WZORY, grafikZWzoru, sprawdzGrafik, type KodDnia, type Wzor } from '../../lib/narzedzia/grafik';
+  import { dniWMiesiacu, nazwaMiesiaca } from '../../lib/narzedzia/czas-pracy';
+
+  const form = document.querySelector<HTMLFormElement>('[data-grafik]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const sel = (n: string) => form.elements.namedItem(n) as HTMLSelectElement;
+    const kalendarz = form.querySelector<HTMLElement>('[data-kalendarz]')!;
+    const KODY: KodDnia[] = ['W', ...(Object.keys(ZMIANY) as KodDnia[])];
+    const DNI = ['niedziela', 'poniedziałek', 'wtorek', 'środa', 'czwartek', 'piątek', 'sobota'];
+    const STAN = { ok: 'W porządku', uwaga: 'Uwaga', blad: 'Naruszenie' } as const;
+
+    const odswiezStart = () => {
+      const cykl = WZORY[sel('wzor').value as Wzor].cykl.length;
+      const s = sel('start');
+      const poprzedni = Number(s.value);
+      s.replaceChildren(
+        ...Array.from({ length: cykl }, (_, i) => {
+          const o = document.createElement('option');
+          o.value = String(i);
+          o.textContent = String(i + 1);
+          return o;
+        }),
+      );
+      s.value = String(Math.min(poprzedni, cykl - 1));
+    };
+
+    const zbuduj = (kody: KodDnia[]) => {
+      const rok = Number(sel('rok').value);
+      const miesiac = Number(sel('miesiac').value);
+      for (const el of kalendarz.querySelectorAll('.kalendarz-dzien, .kalendarz-pusty')) el.remove();
+      const pierwszy = (new Date(Date.UTC(rok, miesiac - 1, 1)).getUTCDay() + 6) % 7;
+      for (let i = 0; i < pierwszy; i++) {
+        const p = document.createElement('span');
+        p.className = 'kalendarz-pusty';
+        p.setAttribute('aria-hidden', 'true');
+        kalendarz.append(p);
+      }
+      kody.forEach((kod, i) => {
+        const dzien = i + 1;
+        const dt = new Date(Date.UTC(rok, miesiac - 1, dzien)).getUTCDay();
+        const box = document.createElement('label');
+        box.className = 'kalendarz-dzien';
+        if (dt === 0) box.classList.add('kalendarz-niedziela');
+        const nr = document.createElement('span');
+        nr.className = 'kalendarz-nr';
+        nr.textContent = String(dzien);
+        const s = document.createElement('select');
+        s.name = `d${dzien}`;
+        s.className = 'kalendarz-wybor';
+        s.setAttribute('aria-label', `${dzien} ${nazwaMiesiaca(miesiac)} (${DNI[dt]})`);
+        for (const k of KODY) {
+          const o = document.createElement('option');
+          o.value = k;
+          o.textContent = k;
+          if (k === kod) o.selected = true;
+          s.append(o);
+        }
+        box.append(nr, s);
+        kalendarz.append(box);
+      });
+    };
+
+    const wypelnij = () => {
+      const rok = Number(sel('rok').value);
+      const miesiac = Number(sel('miesiac').value);
+      zbuduj(grafikZWzoru(rok, miesiac, sel('wzor').value as Wzor, Number(sel('start').value)));
+      sprawdz();
+    };
+
+    const sprawdz = () => {
+      const rok = Number(sel('rok').value);
+      const miesiac = Number(sel('miesiac').value);
+      const kody = Array.from({ length: dniWMiesiacu(rok, miesiac) }, (_, i) => (sel(`d${i + 1}`)?.value ?? 'W') as KodDnia);
+      const wynik = sprawdzGrafik(rok, miesiac, kody);
+      const bledy = wynik.kontrole.filter((k) => k.stan === 'blad').length;
+      const uwagi = wynik.kontrole.filter((k) => k.stan === 'uwaga').length;
+      w('naglowek').textContent = bledy ? `Naruszenia: ${bledy}` : uwagi ? `Bez naruszeń, uwagi: ${uwagi}` : 'Grafik zgodny';
+      w('podsumowanie').textContent = `${wynik.zmian} zmian, ${wynik.godziny} h przy wymiarze ${wynik.wymiar} h, dni wolnych: ${wynik.dniWolnych}`;
+      const lista = w('lista');
+      lista.replaceChildren(
+        ...wynik.kontrole.map((k) => {
+          const li = document.createElement('li');
+          li.dataset.stan = k.stan;
+          const t = document.createElement('strong');
+          t.textContent = `${STAN[k.stan]}: ${k.tytul}`;
+          const o = document.createElement('span');
+          o.className = 'lista-opis';
+          o.textContent = `${k.opis}${k.dni.length ? ` Dni: ${k.dni.join(', ')}.` : ''}`;
+          const p = document.createElement('span');
+          p.className = 'lista-podstawa';
+          p.textContent = k.podstawa.replace(/\^(\d+)/g, (_, d: string) => [...d].map((c) => '⁰¹²³⁴⁵⁶⁷⁸⁹'[Number(c)]).join(''));
+          li.append(t, o, p);
+          return li;
+        }),
+      );
+    };
+
+    // Wzory tygodniowe (cykl wielokrotnością 7 dni) zaczynamy od poniedziałku: start cyklu = dzień tygodnia 1. dnia miesiąca.
+    const wyrownaj = () => {
+      const cykl = WZORY[sel('wzor').value as Wzor].cykl.length;
+      if (cykl % 7) return;
+      const pierwszy = new Date(Date.UTC(Number(sel('rok').value), Number(sel('miesiac').value) - 1, 1)).getUTCDay();
+      sel('start').value = String((pierwszy + 6) % 7);
+    };
+
+    form.addEventListener('change', (e) => {
+      const t = e.target as HTMLElement;
+      if (t.getAttribute('name') === 'wzor') odswiezStart();
+      if (['miesiac', 'rok', 'wzor'].includes(t.getAttribute('name') ?? '')) wyrownaj();
+      if (['miesiac', 'rok', 'wzor', 'start'].includes(t.getAttribute('name') ?? '')) wypelnij();
+      else sprawdz();
+    });
+    form.querySelector('[data-wypelnij]')!.addEventListener('click', wypelnij);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    wypelnij();
+  }
+</script>
+
+<style>
+  .kalendarz {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 0.25rem;
+  }
+  .kalendarz-naglowek {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-align: center;
+    color: var(--color-tekst-drugi);
+  }
+  .kalendarz :global(.kalendarz-dzien) {
+    display: grid;
+    gap: 0.125rem;
+    padding: 0.25rem;
+    border: 1px solid var(--color-linia);
+    border-radius: var(--radius-przycisk);
+    text-align: center;
+  }
+  .kalendarz :global(.kalendarz-niedziela) {
+    background: var(--color-tlo-szare);
+  }
+  .kalendarz :global(.kalendarz-nr) {
+    font-size: 0.75rem;
+    color: var(--color-tekst-drugi);
+  }
+  .kalendarz :global(.kalendarz-wybor) {
+    min-height: 2.75rem;
+    width: 100%;
+    border: 1px solid #8a939e;
+    border-radius: var(--radius-przycisk);
+    background: var(--color-tlo);
+    font-weight: 700;
+    text-align: center;
+    color: var(--color-tekst);
+  }
+  .lista-kontroli {
+    display: grid;
+    gap: 0.5rem;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+  .lista-kontroli :global(li) {
+    padding: 0.625rem 0.875rem;
+    border-left: 4px solid var(--color-sukces);
+    background: var(--color-tlo);
+  }
+  .lista-kontroli :global(li[data-stan="uwaga"]) {
+    border-color: var(--color-akcent);
+  }
+  .lista-kontroli :global(li[data-stan="blad"]) {
+    border-color: var(--color-blad);
+  }
+  .lista-kontroli :global(li[data-stan="blad"] strong) {
+    color: var(--color-blad);
+  }
+  .lista-kontroli :global(.lista-opis),
+  .lista-kontroli :global(.lista-podstawa) {
+    display: block;
+    margin-top: 0.25rem;
+  }
+  .lista-kontroli :global(.lista-podstawa) {
+    font-size: 0.8125rem;
+    color: var(--color-tekst-drugi);
+  }
+</style>
