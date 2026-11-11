@@ -85,6 +85,14 @@ export const NARZEDZIA: Narzedzie[] = [
     przepisy: ['kodeksPracy', 'wynagrodzenieRozp', 'dniWolne'],
     sprawdzono: '2026-11-11',
   },
+  {
+    slug: 'kalkulator-urlopu',
+    nazwa: 'Kalkulator urlopu wypoczynkowego',
+    krotko: 'Ile dni urlopu: 20 czy 26, ze szkołą i stażem z umów zlecenia od 2026 r., na niepełny etat i część roku.',
+    kategoria: 'czas-pracy',
+    przepisy: ['kodeksPracy', 'zmianaStazu2025'],
+    sprawdzono: '2026-11-11',
+  },
 ];
 
 /** Następne narzędzia w kolejce (bez stron i linków; lista na /narzedzia). Zdejmujesz pozycję, gdy narzędzie rusza. */

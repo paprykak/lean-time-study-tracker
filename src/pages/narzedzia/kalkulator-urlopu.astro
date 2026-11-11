@@ -1,0 +1,233 @@
+---
+// Kalkulator urlopu wypoczynkowego (art. 152–155^3 Kp, staż z art. 302^1 od 2026 r.). Logika: src/lib/narzedzia/urlop.ts.
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { SZKOLY, urlop, type Szkola } from '../../lib/narzedzia/urlop';
+
+const szkoly = Object.keys(SZKOLY) as Szkola[];
+const ETATY = ['1/1', '7/8', '4/5', '3/4', '2/3', '1/2', '1/3', '1/4'] as const;
+const start = urlop({ stazMiesiecy: 5 * 12, szkola: 'zasadnicza', etat: [1, 1], sytuacja: 'caly-rok' });
+const lata = (n: number) => (n === 1 ? 'rok' : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? `${n} lata` : `${n} lat`);
+
+const faq = [
+  {
+    pytanie: 'Ile dni urlopu przysługuje w 2026 i 2027 r.?',
+    odpowiedz: '20 dni przy stażu krótszym niż 10 lat i 26 dni przy stażu co najmniej 10 lat (art. 154 § 1 Kodeksu pracy). Do stażu wlicza się wszystkie poprzednie umowy o pracę, bez względu na przerwy (art. 154^1), lata ukończonej szkoły (art. 155) i od 2026 r. także udokumentowane okresy zleceń i działalności (art. 302^1).',
+  },
+  {
+    pytanie: 'Czy umowa zlecenie liczy się do stażu pracy i urlopu?',
+    odpowiedz: 'Od 2026 r. tak: do okresu zatrudnienia wlicza się okresy umowy zlecenia, umowy agencyjnej i prowadzenia działalności, w których podlegało się ubezpieczeniom emerytalnemu i rentowym albo opłacano składki (art. 302^1 Kodeksu pracy). Potwierdza je zaświadczenie z ZUS, o które wnioskuje się przez PUE ZUS (art. 302^1 § 11–13, art. 302^2). Zasada obowiązuje od 1 stycznia 2026 r. w sektorze finansów publicznych i od 1 maja 2026 r. u pozostałych pracodawców; obecny pracownik ma 24 miesiące od tych dat na udokumentowanie okresów (art. 5, 9 i 10 ustawy z 26 września 2025 r.).',
+  },
+  {
+    pytanie: 'Ile lat szkoły wlicza się do stażu urlopowego?',
+    odpowiedz: 'Zasadnicza szkoła zawodowa do 3 lat (czas nauki z programu), średnia zawodowa do 5 lat, średnia zawodowa po zasadniczej 5 lat, liceum 4 lata, szkoła policealna 6 lat, szkoła wyższa 8 lat. Lat różnych szkół się nie sumuje: liczy się jedna (art. 155 § 1). Gdy nauka przypadała w czasie pracy, wlicza się albo okres pracy, albo nauki, zależnie od tego, co korzystniejsze (art. 155 § 2).',
+  },
+  {
+    pytanie: 'Ile urlopu na pół etatu?',
+    odpowiedz: 'Proporcjonalnie do etatu, a niepełny dzień zaokrągla się w górę: na pół etatu 10 albo 13 dni, na 1/3 etatu 7 albo 9 dni (art. 154 § 2). Dzień urlopu odpowiada 8 godzinom (art. 154^2 § 2), więc 10 dni to 80 godzin.',
+  },
+  {
+    pytanie: 'Ile urlopu przy zmianie pracy w trakcie roku?',
+    odpowiedz: 'U dotychczasowego pracodawcy proporcjonalnie do okresu przepracowanego w tym roku, a u nowego proporcjonalnie do okresu do końca roku (przy umowie co najmniej do końca roku) albo do okresu zatrudnienia w tym roku (art. 155^1). Każdy rozpoczęty miesiąc to 1/12 wymiaru, a niepełny dzień zaokrągla się w górę (art. 155^2a i 155^3).',
+  },
+  {
+    pytanie: 'Ile urlopu w pierwszej pracy?',
+    odpowiedz: 'W roku, w którym podejmuje się pierwszą pracę, prawo do urlopu przybywa z upływem każdego miesiąca pracy: 1/12 wymiaru, czyli przy 20 dniach 1 i 2/3 dnia (13 godzin 20 minut) za miesiąc (art. 153 § 1). Od następnego roku przysługuje pełny wymiar.',
+  },
+];
+---
+<StronaNarzedzia
+  slug="kalkulator-urlopu"
+  tytul="Kalkulator urlopu: 20 czy 26 dni, staż i etat"
+  opis="Ile dni urlopu wypoczynkowego: 20 czy 26, staż z wykształceniem i umowami zlecenia od 2026 r., niepełny etat, zmiana pracy w ciągu roku i pierwsza praca."
+  h1="Kalkulator urlopu wypoczynkowego"
+  lead="Urlop wynosi 20 albo 26 dni, zależnie od stażu, do którego wlicza się szkołę, a od 2026 r. także zlecenia i działalność. Na niepełny etat i przy zmianie pracy w trakcie roku jest proporcjonalny. Wpisz swoje dane."
+  faq={faq}
+>
+  <form class="kalkulator" data-urlop novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twój staż i etat</h2>
+      <fieldset class="mt-4">
+        <legend class="etykieta">Staż pracy</legend>
+        <div class="mt-2 grid grid-cols-2 gap-3">
+          <div>
+            <label for="u-lata" class="etykieta-pola">Lata</label>
+            <input id="u-lata" name="lata" class="pole mt-1" type="text" inputmode="numeric" autocomplete="off" value="5" aria-describedby="u-staz-opis u-staz-blad" />
+          </div>
+          <div>
+            <label for="u-miesiace" class="etykieta-pola">Miesiące</label>
+            <input id="u-miesiace" name="miesiace" class="pole mt-1" type="text" inputmode="numeric" autocomplete="off" value="0" aria-describedby="u-staz-opis u-staz-blad" />
+          </div>
+        </div>
+        <p id="u-staz-opis" class="meta mt-1">Wszystkie umowy o pracę, a od 2026 r. także udokumentowane zlecenia i działalność ze składkami.</p>
+        <p id="u-staz-blad" class="blad-pola" data-blad="staz" hidden></p>
+      </fieldset>
+      <div class="mt-4">
+        <label for="u-szkola" class="etykieta-pola">Ukończona szkoła</label>
+        <select id="u-szkola" name="szkola" class="pole mt-1">
+          {szkoly.map((s) => <option value={s} selected={s === 'zasadnicza'}>{SZKOLY[s].nazwa}{SZKOLY[s].lata ? ` (${lata(SZKOLY[s].lata)})` : ''}</option>)}
+        </select>
+      </div>
+      <div class="mt-4 grid gap-4 sm:grid-cols-2">
+        <div>
+          <label for="u-etat" class="etykieta-pola">Etat</label>
+          <select id="u-etat" name="etat" class="pole mt-1">
+            {ETATY.map((e) => <option value={e}>{e === '1/1' ? 'pełny etat' : `${e} etatu`}</option>)}
+          </select>
+        </div>
+        <div>
+          <label for="u-sytuacja" class="etykieta-pola">W tym roku</label>
+          <select id="u-sytuacja" name="sytuacja" class="pole mt-1">
+            <option value="caly-rok" selected>Cały rok u tego pracodawcy</option>
+            <option value="czesc-roku">Część roku (zmiana pracy)</option>
+            <option value="pierwsza-praca">Pierwsza praca w życiu</option>
+          </select>
+        </div>
+      </div>
+      <div class="mt-4" data-tylko-czesc hidden>
+        <label for="u-mies-rok" class="etykieta-pola" data-w="etykieta-miesiecy">Miesiące pracy u tego pracodawcy w tym roku</label>
+        <input id="u-mies-rok" name="miesiaceWRoku" class="pole mt-1 max-w-32" type="text" inputmode="numeric" autocomplete="off" value="6" aria-describedby="u-mies-opis" />
+        <p id="u-mies-opis" class="meta mt-1" data-w="opis-miesiecy">Rozpoczęty miesiąc liczy się jak pełny. U nowego pracodawcy na umowie do końca roku: miesiące do końca roku.</p>
+      </div>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta" data-w="naglowek">Urlop w tym roku</h2>
+      <p class="wynik-kwota" aria-live="polite" aria-atomic="true"><span data-w="dni">{start.dni} dni</span></p>
+      <dl class="wynik-lista">
+        <div><dt>W godzinach (dzień = 8 h)</dt><dd data-w="godziny">{start.godziny} h</dd></div>
+        <div><dt>Wymiar podstawowy</dt><dd data-w="podstawowy">{start.wymiarPodstawowy} dni</dd></div>
+        <div><dt>Staż do urlopu (praca i szkoła)</dt><dd data-w="staz">{lata(Math.floor(start.stazDoUrlopu / 12))}</dd></div>
+        <div><dt>Do 26 dni</dt><dd data-w="do-26">brakuje {lata(Math.ceil(start.doDziesieciuLat / 12))}</dd></div>
+      </dl>
+      <p class="wynik-uwaga" data-w="uwaga" hidden></p>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="tabela">Ile dni urlopu: tabela</h2>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Wymiar urlopu według stażu i etatu</caption>
+        <thead><tr><th scope="col">Etat</th><th scope="col">Staż do 10 lat</th><th scope="col">Staż od 10 lat</th></tr></thead>
+        <tbody>
+          {ETATY.map((e) => {
+            const [l, m] = e.split('/').map(Number) as [number, number];
+            const a = urlop({ stazMiesiecy: 0, szkola: 'brak', etat: [l, m], sytuacja: 'caly-rok' });
+            const b = urlop({ stazMiesiecy: 120, szkola: 'brak', etat: [l, m], sytuacja: 'caly-rok' });
+            return <tr><th scope="row">{e === '1/1' ? 'pełny' : e}</th><td>{a.wymiarRoczny} dni ({a.godziny} h)</td><td>{b.wymiarRoczny} dni ({b.godziny} h)</td></tr>;
+          })}
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="szkola">Szkoła w stażu urlopowym</h2>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Lata nauki wliczane do stażu urlopowego</caption>
+        <thead><tr><th scope="col">Ukończona szkoła</th><th scope="col">Wlicza się</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">zasadnicza lub równorzędna szkoła zawodowa</th><td>czas nauki z programu, najwyżej 3 lata</td></tr>
+          <tr><th scope="row">średnia szkoła zawodowa</th><td>czas nauki z programu, najwyżej 5 lat</td></tr>
+          <tr><th scope="row">średnia szkoła zawodowa dla absolwentów zasadniczych</th><td>5 lat</td></tr>
+          <tr><th scope="row">średnia szkoła ogólnokształcąca</th><td>4 lata</td></tr>
+          <tr><th scope="row">szkoła policealna</th><td>6 lat</td></tr>
+          <tr><th scope="row">szkoła wyższa</th><td>8 lat</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Lat różnych szkół się nie sumuje (art. 155 § 1 Kodeksu pracy). Absolwent studiów ma więc 26 dni urlopu po 2 latach
+      pracy, a absolwent liceum po 6 latach. Gdy nauka przypadała w czasie zatrudnienia, wlicza się albo okres pracy,
+      albo okres nauki, zależnie od tego, co korzystniejsze (art. 155 § 2); kalkulator dodaje lata szkoły do stażu,
+      więc w takim przypadku wpisz staż bez lat pracy w czasie nauki, jeśli były krótsze niż nauka.
+    </p>
+
+    <h2 id="staz-2026">Staż pracy od 2026 r.: zlecenia i działalność</h2>
+    <p>
+      Od 2026 r. do okresu zatrudnienia wlicza się między innymi okresy prowadzenia działalności gospodarczej, za które
+      opłacono składki emerytalne, rentowe lub wypadkowe, oraz okresy umów zlecenia i agencyjnych, w których podlegało
+      się ubezpieczeniom emerytalnemu i rentowemu (art. 302<sup>1</sup> § 1 i 2 Kodeksu pracy). Gdy okresy się nakładają,
+      liczy się ten korzystniejszy (art. 302<sup>1</sup> § 10). Potwierdza je zaświadczenie z ZUS, o które wnioskuje się
+      elektronicznie przez PUE ZUS (art. 302<sup>1</sup> § 11–13, art. 302<sup>2</sup>).
+    </p>
+    <p>
+      Nowe zasady obowiązują od 1 stycznia 2026 r. u pracodawców z sektora finansów publicznych i od 1 maja 2026 r.
+      u pozostałych. Pracownik zatrudniony w tym dniu ma 24 miesiące na udokumentowanie okresów; nieudokumentowanych
+      w tym terminie pracodawca nie wlicza (art. 5, 9 i 10 ustawy z 26 września 2025 r.).
+    </p>
+
+    <h2 id="zasady">Jak wykorzystać urlop</h2>
+    <p>
+      Pracodawca udziela urlopu w roku, w którym pracownik uzyskał do niego prawo (art. 161). Na wniosek pracownika urlop
+      można podzielić na części, ale co najmniej jedna powinna trwać 14 kolejnych dni kalendarzowych (art. 162). Urlopu
+      udziela się w dni pracy według rozkładu, w godzinach odpowiadających wymiarowi czasu pracy w danym dniu (art. 154<sup>2</sup>
+      § 1). Prawa do urlopu nie można się zrzec (art. 152 § 2).
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { urlop, type Szkola } from '../../lib/narzedzia/urlop';
+  import { liczba } from '../../lib/narzedzia/format';
+  import { godzinyIMinuty } from '../../lib/narzedzia/czas-pracy';
+
+  const form = document.querySelector<HTMLFormElement>('[data-urlop]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const pole = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const lata = (n: number) => (n === 1 ? 'rok' : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? `${n} lata` : `${n} lat`);
+    const okres = (mies: number) => {
+      const l = Math.floor(mies / 12);
+      const m = mies % 12;
+      return [l ? lata(l) : '', m ? `${m} mies.` : ''].filter(Boolean).join(' ') || '0 mies.';
+    };
+    const calkowita = (t: string) => (/^\d{1,3}$/.test(t.trim()) ? Number(t.trim()) : Number.NaN);
+
+    const przelicz = () => {
+      const sytuacja = (form.elements.namedItem('sytuacja') as HTMLSelectElement).value as 'caly-rok' | 'czesc-roku' | 'pierwsza-praca';
+      form.querySelector<HTMLElement>('[data-tylko-czesc]')!.hidden = sytuacja === 'caly-rok';
+      w('opis-miesiecy').textContent =
+        sytuacja === 'pierwsza-praca'
+          ? 'Pełne miesiące przepracowane od początku pierwszej pracy w tym roku.'
+          : 'Rozpoczęty miesiąc liczy się jak pełny. U nowego pracodawcy na umowie do końca roku: miesiące do końca roku.';
+      const l = calkowita(pole('lata').value || '0');
+      const m = calkowita(pole('miesiace').value || '0');
+      const zly = Number.isNaN(l) || Number.isNaN(m) || m > 11;
+      const b = form.querySelector<HTMLElement>('[data-blad="staz"]')!;
+      b.hidden = !zly;
+      b.textContent = zly ? 'Wpisz pełne lata i miesiące (0–11), na przykład 7 i 4.' : '';
+      for (const p of [pole('lata'), pole('miesiace')]) p.setAttribute('aria-invalid', zly ? 'true' : 'false');
+      if (zly) {
+        w('dni').textContent = '—';
+        return;
+      }
+      const [el, em] = (form.elements.namedItem('etat') as HTMLSelectElement).value.split('/').map(Number);
+      const mWRoku = calkowita(pole('miesiaceWRoku').value || '0');
+      const r = urlop({
+        stazMiesiecy: l * 12 + m,
+        szkola: (form.elements.namedItem('szkola') as HTMLSelectElement).value as Szkola,
+        etat: [el, em],
+        sytuacja,
+        miesiaceWRoku: Number.isNaN(mWRoku) ? 12 : Math.min(12, mWRoku),
+      });
+      w('naglowek').textContent = sytuacja === 'pierwsza-praca' ? 'Urlop nabyty do tej pory' : 'Urlop w tym roku';
+      w('dni').textContent = Number.isInteger(r.dni) ? `${r.dni} dni` : `${liczba(Math.round(r.dni * 100) / 100)} dnia`;
+      w('godziny').textContent = godzinyIMinuty(r.godziny);
+      w('podstawowy').textContent = `${r.wymiarPodstawowy} dni${el !== em ? `, na ${el}/${em} etatu ${r.wymiarRoczny} dni` : ''}`;
+      w('staz').textContent = okres(r.stazDoUrlopu);
+      w('do-26').textContent = r.doDziesieciuLat ? `brakuje ${okres(r.doDziesieciuLat)}` : 'już przysługuje';
+      const uwaga =
+        sytuacja === 'pierwsza-praca'
+          ? `W pierwszym roku pracy po każdym pełnym miesiącu przybywa ${godzinyIMinuty((r.zaMiesiac ?? 0) * 8)} urlopu (1/12 wymiaru, art. 153 § 1).`
+          : r.doDziesieciuLat > 0 && r.doDziesieciuLat <= 12
+            ? 'Gdy w tym roku przekroczysz 10 lat stażu, a urlop był już wykorzystany, należy się urlop uzupełniający do 26 dni (art. 158).'
+            : null;
+      w('uwaga').hidden = !uwaga;
+      w('uwaga').textContent = uwaga ?? '';
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>

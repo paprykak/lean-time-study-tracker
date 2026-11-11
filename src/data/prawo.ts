@@ -132,6 +132,13 @@ export const AKTY = {
     adres: eli(2017, 927),
     sprawdzono: '2026-11-11',
   },
+  zmianaStazu2025: {
+    nazwa: 'Ustawa z 26 września 2025 r. o zmianie ustawy – Kodeks pracy oraz niektórych innych ustaw (staż pracy)',
+    publikator: 'Dz.U. 2025 poz. 1423',
+    uwaga: 'art. 302^1 Kp; w mocy od 1 stycznia 2026 r., u pracodawców spoza sektora finansów publicznych od 1 maja 2026 r. (art. 9 i 10)',
+    adres: eli(2025, 1423),
+    sprawdzono: '2026-11-11',
+  },
   placa2025: {
     nazwa: 'Rozporządzenie w sprawie minimalnego wynagrodzenia w 2025 r.',
     publikator: 'Dz.U. 2024 poz. 1362',
