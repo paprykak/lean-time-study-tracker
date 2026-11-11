@@ -1,0 +1,193 @@
+---
+// Ekwiwalent za niewykorzystany urlop (art. 171 Kp, § 6 i § 14–19 rozporządzenia z 8 stycznia 1997 r.).
+// Logika: src/lib/narzedzia/ekwiwalent.ts (testy obok). Bez JavaScriptu działa tabela współczynników.
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { LATA } from '../../data/prawo';
+import { dniPracyWRoku, ekwiwalent, wspolczynnik } from '../../lib/narzedzia/ekwiwalent';
+import { liczba, zl } from '../../lib/narzedzia/format';
+import { dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+const rokBiezacy = Number(dzisWPolsce().slice(0, 4));
+const rok = LATA.includes(rokBiezacy) ? rokBiezacy : LATA[LATA.length - 1];
+const start = ekwiwalent({ rok, stale: 6000, godzinyUrlopu: 40 });
+const wsp = (r: number, etat = 1) => liczba(Math.round(wspolczynnik(r) * etat * 100) / 100);
+const ETATY = [
+  { wartosc: '1', nazwa: 'pełny etat' },
+  { wartosc: '0.875', nazwa: '7/8 etatu' },
+  { wartosc: '0.75', nazwa: '3/4 etatu' },
+  { wartosc: '0.5', nazwa: '1/2 etatu' },
+  { wartosc: '0.25', nazwa: '1/4 etatu' },
+];
+
+const faq = [
+  {
+    pytanie: `Jaki jest współczynnik ekwiwalentu za urlop w ${rok} r.?`,
+    odpowiedz: `${wsp(rok)} przy pełnym etacie: ${dniPracyWRoku(rok)} dni pracy w roku podzielone przez 12 (§ 19 ust. 2 rozporządzenia z 1997 r.). Przy niepełnym etacie współczynnik obniża się proporcjonalnie, na przykład przy 1/2 etatu do ${wsp(rok, 0.5)} (§ 19 ust. 3).`,
+  },
+  {
+    pytanie: 'Kiedy przysługuje ekwiwalent za niewykorzystany urlop?',
+    odpowiedz: 'Gdy urlop nie został wykorzystany w całości lub w części z powodu rozwiązania albo wygaśnięcia stosunku pracy (art. 171 § 1 Kodeksu pracy). Pracodawca nie musi go wypłacić, jeśli strony postanowią, że urlop wykorzystasz w kolejnej umowie z tym samym pracodawcą, zawartej bezpośrednio po poprzedniej (art. 171 § 3).',
+  },
+  {
+    pytanie: 'Kiedy pracodawca wypłaca ekwiwalent za urlop?',
+    odpowiedz: 'W terminie wypłaty wynagrodzenia. Jeżeli ten termin przypada przed dniem rozwiązania umowy, ekwiwalent wypłaca się w ciągu 10 dni od rozwiązania, a gdy ten dzień jest wolny od pracy, dzień wcześniej (art. 171 § 4 i 5 Kodeksu pracy, od 27 stycznia 2026 r.).',
+  },
+  {
+    pytanie: 'Czy premie wlicza się do ekwiwalentu za urlop?',
+    odpowiedz: 'Premie miesięczne i inne zmienne składniki za okresy do miesiąca wlicza się średnio z 3 miesięcy przed miesiącem nabycia prawa do ekwiwalentu (§ 16), a premie kwartalne i za dłuższe okresy średnio z 12 miesięcy (§ 17). Nie wlicza się m.in. jednorazowych nagród za konkretne osiągnięcie, nagród jubileuszowych, „trzynastki”, wynagrodzenia chorobowego i odpraw (§ 6).',
+  },
+  {
+    pytanie: 'Jak policzyć ekwiwalent za urlop przy niepełnym etacie?',
+    odpowiedz: 'Tak samo jak przy pełnym, ale współczynnik obniża się proporcjonalnie do etatu (§ 19 ust. 3). Ekwiwalent za dzień dzieli się przez dobową normę czasu pracy, zwykle 8 godzin (§ 18 pkt 2), i mnoży przez liczbę godzin niewykorzystanego urlopu.',
+  },
+];
+---
+<StronaNarzedzia
+  slug="ekwiwalent-za-urlop"
+  tytul={`Ekwiwalent za urlop ${rok}: kalkulator i współczynnik`}
+  opis={`Policz ekwiwalent za niewykorzystany urlop przy odejściu z pracy. Współczynnik ${rok}: ${wsp(rok)}, premie z 3 i 12 miesięcy, niepełny etat, termin wypłaty.`}
+  h1="Ekwiwalent za niewykorzystany urlop: kalkulator"
+  lead={`Gdy odchodzisz z pracy z niewykorzystanym urlopem, pracodawca płaci ekwiwalent. Liczy się go z pensji i średniej premii, podzielonych przez współczynnik: w ${rok} r. ${wsp(rok)} przy pełnym etacie. Wpisz kwoty i liczbę dni urlopu.`}
+  faq={faq}
+>
+  <form class="kalkulator" data-ekwiwalent novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twoje wynagrodzenie</h2>
+      <div class="mt-4 grid gap-4 sm:grid-cols-2">
+        <div>
+          <label for="e-rok" class="etykieta-pola">Rok odejścia z pracy</label>
+          <select id="e-rok" name="rok" class="pole mt-1">
+            {LATA.map((r) => <option value={r} selected={r === rok}>{r} (współczynnik {wsp(r)})</option>)}
+          </select>
+        </div>
+        <div>
+          <label for="e-etat" class="etykieta-pola">Wymiar etatu</label>
+          <select id="e-etat" name="etat" class="pole mt-1">
+            {ETATY.map((e) => <option value={e.wartosc}>{e.nazwa}</option>)}
+          </select>
+        </div>
+      </div>
+      <div class="mt-4">
+        <label for="e-stale" class="etykieta-pola">Pensja i stałe dodatki miesięcznie (zł brutto)</label>
+        <input id="e-stale" name="stale" class="pole mt-1 max-w-48" type="text" inputmode="decimal" autocomplete="off" value="6000" aria-describedby="e-stale-opis e-blad" />
+        <p id="e-stale-opis" class="meta mt-1">W wysokości z miesiąca, w którym kończy się umowa (§ 15).</p>
+      </div>
+      <div class="mt-4">
+        <label for="e-zmienne" class="etykieta-pola">Średnia premii i dodatków zmiennych z 3 miesięcy (zł)</label>
+        <input id="e-zmienne" name="zmienne" class="pole mt-1 max-w-48" type="text" inputmode="decimal" autocomplete="off" value="0" aria-describedby="e-zmienne-opis e-blad" />
+        <p id="e-zmienne-opis" class="meta mt-1">Premie miesięczne, dodatki za noc i nadgodziny wypłacone w 3 miesiącach przed miesiącem odejścia (§ 16).</p>
+      </div>
+      <div class="mt-4">
+        <label for="e-dluzsze" class="etykieta-pola">Premie kwartalne i roczne z 12 miesięcy, razem (zł)</label>
+        <input id="e-dluzsze" name="dluzsze" class="pole mt-1 max-w-48" type="text" inputmode="decimal" autocomplete="off" value="0" aria-describedby="e-dluzsze-opis e-blad" />
+        <p id="e-dluzsze-opis" class="meta mt-1">Suma wypłacona w 12 miesiącach; liczymy jedną dwunastą (§ 17). Bez „trzynastki” (§ 6).</p>
+      </div>
+      <div class="mt-4 grid grid-cols-2 gap-4">
+        <div>
+          <label for="e-dni" class="etykieta-pola">Dni urlopu</label>
+          <input id="e-dni" name="dni" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="5" aria-describedby="e-blad" />
+        </div>
+        <div>
+          <label for="e-godziny" class="etykieta-pola">i godzin</label>
+          <input id="e-godziny" name="godziny" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="0" aria-describedby="e-blad" />
+        </div>
+      </div>
+      <p id="e-blad" class="blad-pola" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Ekwiwalent za urlop (brutto)</h2>
+      <p class="wynik-kwota" aria-live="polite" aria-atomic="true"><span data-w="kwota">{zl(start.kwota)}</span></p>
+      <dl class="wynik-lista">
+        <div><dt>Podstawa miesięczna</dt><dd data-w="podstawa">{zl(start.podstawa)}</dd></div>
+        <div><dt>Współczynnik</dt><dd data-w="wspolczynnik">{wsp(rok)} ({dniPracyWRoku(rok)} dni pracy / 12)</dd></div>
+        <div><dt>Ekwiwalent za 1 dzień urlopu</dt><dd data-w="za-dzien">{zl(start.zaDzien)}</dd></div>
+        <div><dt>Ekwiwalent za 1 godzinę urlopu</dt><dd data-w="za-godzine">{zl(start.zaGodzine)}</dd></div>
+        <div><dt>Godziny urlopu</dt><dd data-w="godziny-urlopu">40 h (dzień urlopu = 8 h)</dd></div>
+      </dl>
+      <p class="meta mt-4">Liczymy na współczynniku bez zaokrąglenia, bo przepis go nie przewiduje. Przy współczynniku zaokrąglonym do dwóch miejsc wynik różni się o grosze.</p>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="wspolczynnik">Współczynnik ekwiwalentu za urlop</h2>
+    <p>
+      Współczynnik ustala się osobno na każdy rok: od liczby dni w roku odejmuje się niedziele, święta i dni wolne
+      wynikające z pięciodniowego tygodnia pracy, a wynik dzieli przez 12 (§ 19 ust. 2 rozporządzenia z 1997 r.). Stosuje
+      się współczynnik z roku, w którym pracownik nabył prawo do ekwiwalentu (§ 19 ust. 1). Przy niepełnym etacie obniża
+      się go proporcjonalnie (§ 19 ust. 3).
+    </p>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Współczynnik ekwiwalentu za urlop według roku i etatu</caption>
+        <thead><tr><th scope="col">Rok</th><th scope="col">Dni pracy</th><th scope="col">Pełny etat</th><th scope="col">3/4 etatu</th><th scope="col">1/2 etatu</th></tr></thead>
+        <tbody>
+          {LATA.map((r) => <tr><th scope="row">{r}</th><td>{dniPracyWRoku(r)}</td><td>{wsp(r)}</td><td>{wsp(r, 0.75)}</td><td>{wsp(r, 0.5)}</td></tr>)}
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Od 2025 r. Wigilia jest dniem wolnym od pracy, dlatego w 2025 r. było 249 dni pracy. Święto przypadające
+      w sobotę też obniża wymiar czasu pracy o 8 godzin (art. 130 § 2 Kodeksu pracy), więc odejmujemy za nie dzień.
+    </p>
+
+    <h2 id="jak-liczyc">Jak liczyć ekwiwalent za urlop</h2>
+    <ol>
+      <li><strong>Podstawa:</strong> pensja i stałe dodatki w wysokości z miesiąca nabycia prawa (§ 15), średnia składników zmiennych z 3 miesięcy (§ 16) i jedna dwunasta składników za okresy dłuższe niż miesiąc, wypłaconych w 12 miesiącach (§ 17).</li>
+      <li><strong>Ekwiwalent za dzień:</strong> podstawa podzielona przez współczynnik (§ 18 pkt 1).</li>
+      <li><strong>Ekwiwalent za godzinę:</strong> ekwiwalent za dzień podzielony przez dobową normę czasu pracy, zwykle 8 (§ 18 pkt 2).</li>
+      <li><strong>Kwota:</strong> ekwiwalent za godzinę razy liczba godzin niewykorzystanego urlopu (§ 18 pkt 3).</li>
+    </ol>
+    <p>
+      Do podstawy nie wlicza się m.in. jednorazowych wypłat za konkretne zadanie albo osiągnięcie, wynagrodzenia za
+      przestój i gotowość do pracy, nagród jubileuszowych, wynagrodzenia za urlop i chorobę, dodatkowego wynagrodzenia
+      rocznego, wyrównania do płacy minimalnej ani odpraw (§ 6 w związku z § 14). Liczbę dni niewykorzystanego urlopu
+      sprawdzisz w <a href="/narzedzia/kalkulator-urlopu">kalkulatorze urlopu</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { dniPracyWRoku, ekwiwalent } from '../../lib/narzedzia/ekwiwalent';
+  import { liczba, wpisanaLiczba, zl } from '../../lib/narzedzia/format';
+
+  const form = document.querySelector<HTMLFormElement>('[data-ekwiwalent]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const wartosc = (n: string) => (form.elements.namedItem(n) as HTMLInputElement | HTMLSelectElement).value;
+    const kwotaPola = (n: string) => wpisanaLiczba(wartosc(n) || '0');
+    const pola = ['stale', 'zmienne', 'dluzsze', 'dni', 'godziny'];
+
+    const przelicz = () => {
+      const rok = Number(wartosc('rok'));
+      const etat = Number(wartosc('etat'));
+      const [stale, zmienne, dluzsze, dni, godziny] = pola.map(kwotaPola);
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      const blad =
+        !(stale > 0) ? 'Wpisz pensję miesięczną, na przykład 6000.'
+        : !(zmienne >= 0 && dluzsze >= 0) ? 'Kwoty premii nie mogą być ujemne.'
+        : !(dni >= 0 && godziny >= 0) || dni + godziny === 0 ? 'Wpisz liczbę dni albo godzin niewykorzystanego urlopu.'
+        : dni > 100 ? 'Wpisz najwyżej 100 dni urlopu.'
+        : null;
+      b.hidden = !blad;
+      b.textContent = blad ?? '';
+      for (const n of pola) (form.elements.namedItem(n) as HTMLInputElement).setAttribute('aria-invalid', blad ? 'true' : 'false');
+      if (blad) {
+        w('kwota').textContent = '—';
+        return;
+      }
+      const godzinyUrlopu = dni * 8 + godziny;
+      const r = ekwiwalent({ rok, stale, zmienne, dluzsze12: dluzsze, etat, godzinyUrlopu });
+      w('kwota').textContent = zl(r.kwota);
+      w('podstawa').textContent = zl(r.podstawa);
+      w('wspolczynnik').textContent = `${liczba(Math.round(r.wspolczynnik * 100) / 100)} (${dniPracyWRoku(rok)} dni pracy / 12${etat < 1 ? ` × ${liczba(etat)} etatu` : ''})`;
+      w('za-dzien').textContent = zl(r.zaDzien);
+      w('za-godzine').textContent = zl(r.zaGodzine);
+      w('godziny-urlopu').textContent = `${liczba(godzinyUrlopu)} h (dzień urlopu = 8 h)`;
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>

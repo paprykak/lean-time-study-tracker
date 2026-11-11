@@ -14,9 +14,11 @@ export const NARZEDZIE_GRAFIK = '/narzedzia/kontrola-grafiku';
 export const NARZEDZIE_WYPOWIEDZENIE = '/narzedzia/okres-wypowiedzenia';
 export const NARZEDZIE_PRZERWY = '/narzedzia/przerwy-w-pracy';
 export const NARZEDZIE_BADANIA_UDT = '/narzedzia/badania-udt';
+export const NARZEDZIE_EKWIWALENT = '/narzedzia/ekwiwalent-za-urlop';
+export const NARZEDZIE_L4 = '/narzedzia/kalkulator-l4';
 export const STRONY = [
-  '/', ARTYKUL, '/narzedzia', NARZEDZIE, NARZEDZIE_BHP, NARZEDZIE_UDT, NARZEDZIE_KG, NARZEDZIE_TEMP, NARZEDZIE_WYMIAR, NARZEDZIE_NADGODZINY, NARZEDZIE_URLOP, NARZEDZIE_GRAFIK, NARZEDZIE_WYPOWIEDZENIE, NARZEDZIE_PRZERWY, NARZEDZIE_BADANIA_UDT, '/dzial/produkcja', '/dzial/produkcja/2', '/temat/oee', '/autor/redakcja', '/do-pobrania', '/do-pobrania/testowy-karta-obserwacji',
+  '/', ARTYKUL, '/narzedzia', NARZEDZIE, NARZEDZIE_BHP, NARZEDZIE_UDT, NARZEDZIE_KG, NARZEDZIE_TEMP, NARZEDZIE_WYMIAR, NARZEDZIE_NADGODZINY, NARZEDZIE_URLOP, NARZEDZIE_GRAFIK, NARZEDZIE_WYPOWIEDZENIE, NARZEDZIE_PRZERWY, NARZEDZIE_BADANIA_UDT, NARZEDZIE_EKWIWALENT, NARZEDZIE_L4, '/dzial/produkcja', '/dzial/produkcja/2', '/temat/oee', '/autor/redakcja', '/do-pobrania', '/do-pobrania/testowy-karta-obserwacji',
   '/szukaj', '/o-nas', '/kontakt', '/polityka-prywatnosci', '/regulamin-newslettera', '/stopka-redakcyjna', '/reklama', '/newsletter', '/newsletter/potwierdz', '/newsletter/blad', '/kontakt/wyslano', '/styleguide', '/404', '/410',
 ] as const;
-export const INDEKSOWANE = ['/', ARTYKUL, '/narzedzia', NARZEDZIE, NARZEDZIE_BHP, NARZEDZIE_UDT, NARZEDZIE_KG, NARZEDZIE_TEMP, NARZEDZIE_WYMIAR, NARZEDZIE_NADGODZINY, NARZEDZIE_URLOP, NARZEDZIE_GRAFIK, NARZEDZIE_WYPOWIEDZENIE, NARZEDZIE_PRZERWY, NARZEDZIE_BADANIA_UDT, '/dzial/produkcja', '/temat/oee', '/do-pobrania'] as const;
+export const INDEKSOWANE = ['/', ARTYKUL, '/narzedzia', NARZEDZIE, NARZEDZIE_BHP, NARZEDZIE_UDT, NARZEDZIE_KG, NARZEDZIE_TEMP, NARZEDZIE_WYMIAR, NARZEDZIE_NADGODZINY, NARZEDZIE_URLOP, NARZEDZIE_GRAFIK, NARZEDZIE_WYPOWIEDZENIE, NARZEDZIE_PRZERWY, NARZEDZIE_BADANIA_UDT, NARZEDZIE_EKWIWALENT, NARZEDZIE_L4, '/dzial/produkcja', '/temat/oee', '/do-pobrania'] as const;
 export const NIEINDEKSOWANE = ['/styleguide', '/404', '/410', '/szukaj', '/newsletter/potwierdz', '/newsletter/blad', '/kontakt/wyslano', '/kontakt/blad'] as const;

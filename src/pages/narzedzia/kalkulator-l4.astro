@@ -1,0 +1,180 @@
+---
+// Wynagrodzenie chorobowe i zasiłek chorobowy pracownika (art. 92 Kp, ustawa zasiłkowa). Logika: src/lib/narzedzia/chorobowe.ts.
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { LATA, PLACA_MINIMALNA } from '../../data/prawo';
+import { POWODY, SKLADKI_PRACOWNIKA, chorobowe, minimalnaPodstawa, type Powod } from '../../lib/narzedzia/chorobowe';
+import { liczba, zl } from '../../lib/narzedzia/format';
+import { dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+const rokBiezacy = Number(dzisWPolsce().slice(0, 4));
+const rok = LATA.includes(rokBiezacy) ? rokBiezacy : LATA[LATA.length - 1];
+const start = chorobowe({ rok, brutto: 6000, dni: 10 });
+const PRZYKLADY = [5000, 6000, 8000];
+
+const faq = [
+  {
+    pytanie: 'Ile płatne jest L4?',
+    odpowiedz: '80% podstawy, a 100% w czasie ciąży, po wypadku w drodze do pracy lub z pracy i przy badaniach oraz zabiegu dawcy komórek, tkanek i narządów (art. 92 § 1 Kodeksu pracy, art. 11 ustawy zasiłkowej). Pobyt w szpitalu też jest płatny 80%: obniżkę do 70% uchylono od 1 stycznia 2022 r.',
+  },
+  {
+    pytanie: 'Kto płaci za L4: pracodawca czy ZUS?',
+    odpowiedz: 'Pracodawca płaci wynagrodzenie chorobowe łącznie do 33 dni choroby w roku kalendarzowym, a od roku po 50. urodzinach do 14 dni. Za dalsze dni przysługuje zasiłek chorobowy z ZUS (art. 92 § 1, 4 i 5 Kodeksu pracy). Pracodawca, który zgłasza do ubezpieczenia chorobowego więcej niż 20 osób, sam wypłaca też zasiłek (art. 61 ust. 1 pkt 1 ustawy zasiłkowej).',
+  },
+  {
+    pytanie: 'Jak liczy się podstawę chorobowego?',
+    odpowiedz: `Z przeciętnego miesięcznego wynagrodzenia z 12 miesięcy przed miesiącem, w którym zaczęła się choroba (art. 36 ustawy zasiłkowej), po odjęciu składek płaconych przez pracownika: ${liczba(SKLADKI_PRACOWNIKA)}% (emerytalna 9,76%, rentowe 1,5%, chorobowa 2,45%). Za dzień przysługuje jedna trzydziesta podstawy razy 80% albo 100%.`,
+  },
+  {
+    pytanie: 'Czy chorobowe może być niższe niż od płacy minimalnej?',
+    odpowiedz: `Przy pełnym etacie podstawa nie może być niższa niż płaca minimalna po odjęciu ${liczba(SKLADKI_PRACOWNIKA)}% (art. 45 ust. 1 ustawy zasiłkowej): w ${rok} r. ${zl(minimalnaPodstawa(rok))}. Przy niepełnym etacie tego minimum nie ma.`,
+  },
+  {
+    pytanie: 'Od kiedy przysługuje chorobowe w nowej pracy?',
+    odpowiedz: 'Po 30 dniach nieprzerwanego ubezpieczenia chorobowego; wlicza się poprzednie okresy, jeśli przerwa nie przekroczyła 30 dni. Od pierwszego dnia przysługuje m.in. po co najmniej 10 latach obowiązkowego ubezpieczenia chorobowego, absolwentom zgłoszonym do 90 dni od ukończenia szkoły i po wypadku w drodze do pracy (art. 4 ustawy zasiłkowej, art. 92 § 3 pkt 2 Kodeksu pracy).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="kalkulator-l4"
+  tytul="Kalkulator L4: ile dostaniesz na zwolnieniu lekarskim"
+  opis="Policz wynagrodzenie chorobowe i zasiłek na L4: 80% albo 100%, podstawa minus 13,71% składek, 33 albo 14 dni od pracodawcy, potem ZUS. Bez obniżki w szpitalu."
+  h1="Kalkulator L4: wynagrodzenie chorobowe i zasiłek"
+  lead="Na zwolnieniu lekarskim dostajesz 80% podstawy, a w ciąży i po wypadku w drodze do pracy 100%. Przez pierwsze 33 dni choroby w roku płaci pracodawca, dalej ZUS. Wpisz przeciętne wynagrodzenie i liczbę dni zwolnienia."
+  faq={faq}
+>
+  <form class="kalkulator" data-l4 novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twoje zwolnienie</h2>
+      <div class="mt-4">
+        <label for="l4-brutto" class="etykieta-pola">Przeciętne wynagrodzenie brutto z 12 miesięcy (zł)</label>
+        <input id="l4-brutto" name="brutto" class="pole mt-1 max-w-48" type="text" inputmode="decimal" autocomplete="off" value="6000" aria-describedby="l4-brutto-opis l4-blad" />
+        <p id="l4-brutto-opis" class="meta mt-1">Średnia z 12 miesięcy przed miesiącem, w którym zaczęła się choroba, z premiami; przy krótszej pracy średnia z pełnych miesięcy (art. 36).</p>
+      </div>
+      <div class="mt-4 grid gap-4 sm:grid-cols-2">
+        <div>
+          <label for="l4-dni" class="etykieta-pola">Dni zwolnienia</label>
+          <input id="l4-dni" name="dni" class="pole mt-1" type="text" inputmode="numeric" autocomplete="off" value="10" aria-describedby="l4-blad" />
+        </div>
+        <div>
+          <label for="l4-wykorzystane" class="etykieta-pola">Dni L4 w tym roku przed tym zwolnieniem</label>
+          <input id="l4-wykorzystane" name="wykorzystane" class="pole mt-1" type="text" inputmode="numeric" autocomplete="off" value="0" aria-describedby="l4-blad" />
+        </div>
+      </div>
+      <div class="mt-4 grid gap-4 sm:grid-cols-2">
+        <div>
+          <label for="l4-powod" class="etykieta-pola">Powód niezdolności do pracy</label>
+          <select id="l4-powod" name="powod" class="pole mt-1">
+            {(Object.keys(POWODY) as Powod[]).map((p) => <option value={p}>{POWODY[p].nazwa} ({POWODY[p].procent}%)</option>)}
+          </select>
+        </div>
+        <div>
+          <label for="l4-rok" class="etykieta-pola">Rok zwolnienia</label>
+          <select id="l4-rok" name="rok" class="pole mt-1">
+            {LATA.map((r) => <option value={r} selected={r === rok}>{r}</option>)}
+          </select>
+        </div>
+      </div>
+      <label class="mt-4 flex items-start gap-3 text-[0.9375rem]">
+        <input type="checkbox" name="pelnyEtat" checked class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+        <span>Pracuję na pełny etat (minimum podstawy z płacy minimalnej)</span>
+      </label>
+      <label class="mt-3 flex items-start gap-3 text-[0.9375rem]">
+        <input type="checkbox" name="po50" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+        <span>50. urodziny były przed tym rokiem kalendarzowym (pracodawca płaci 14 dni)</span>
+      </label>
+      <p id="l4-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Za zwolnienie razem (brutto)</h2>
+      <p class="wynik-kwota" aria-live="polite" aria-atomic="true"><span data-w="razem">{zl(start.razem)}</span></p>
+      <dl class="wynik-lista">
+        <div><dt>Za jeden dzień</dt><dd data-w="za-dzien">{zl(start.zaDzien)} ({start.procent}%)</dd></div>
+        <div><dt>Od pracodawcy (wynagrodzenie chorobowe)</dt><dd data-w="pracodawca">{start.dniPracodawca} dni: {zl(start.wynagrodzenieChorobowe)}</dd></div>
+        <div><dt>Z ZUS (zasiłek chorobowy)</dt><dd data-w="zus">{start.dniZus} dni: {zl(start.zasilek)}</dd></div>
+        <div><dt>Podstawa miesięczna</dt><dd data-w="podstawa">{zl(start.podstawa)}</dd></div>
+      </dl>
+      <p class="wynik-uwaga" data-w="uwaga" hidden></p>
+      <p class="meta mt-4">Kwoty w zaokrągleniu do grosza. Pracodawca może płacić więcej, jeśli tak stanowią jego przepisy płacowe (art. 92 § 1 pkt 1).</p>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="przyklady">Ile na L4: przykłady za 10 dni choroby w {rok} r.</h2>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Wynagrodzenie chorobowe za 10 dni przy różnych pensjach</caption>
+        <thead><tr><th scope="col">Brutto miesięcznie</th><th scope="col">Podstawa</th><th scope="col">80%, za dzień</th><th scope="col">80%, 10 dni</th><th scope="col">100%, 10 dni</th></tr></thead>
+        <tbody>
+          {PRZYKLADY.map((b) => {
+            const r80 = chorobowe({ rok, brutto: b, dni: 10 });
+            const r100 = chorobowe({ rok, brutto: b, dni: 10, powod: 'ciaza' });
+            return <tr><th scope="row">{zl(b)}</th><td>{zl(r80.podstawa)}</td><td>{zl(r80.zaDzien)}</td><td>{zl(r80.razem)}</td><td>{zl(r100.razem)}</td></tr>;
+          })}
+          <tr><th scope="row">płaca minimalna {zl(PLACA_MINIMALNA[rok].miesiecznie)}</th><td>{zl(minimalnaPodstawa(rok))}</td><td>{zl(chorobowe({ rok, brutto: PLACA_MINIMALNA[rok].miesiecznie, dni: 1 }).zaDzien)}</td><td>{zl(chorobowe({ rok, brutto: PLACA_MINIMALNA[rok].miesiecznie, dni: 10 }).razem)}</td><td>{zl(chorobowe({ rok, brutto: PLACA_MINIMALNA[rok].miesiecznie, dni: 10, powod: 'ciaza' }).razem)}</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="jak-liczymy">Jak liczymy wynagrodzenie chorobowe i zasiłek</h2>
+    <ol>
+      <li><strong>Podstawa:</strong> przeciętne miesięczne wynagrodzenie z 12 miesięcy przed miesiącem choroby (art. 36 ust. 1 ustawy zasiłkowej) po odjęciu składek pracownika: emerytalnej 9,76%, rentowych 1,5% i chorobowej 2,45% (art. 3 pkt 3 ustawy zasiłkowej, art. 16 i 22 ustawy o systemie ubezpieczeń społecznych).</li>
+      <li><strong>Minimum:</strong> przy pełnym etacie podstawa nie jest niższa niż płaca minimalna minus {liczba(SKLADKI_PRACOWNIKA)}% (art. 45 ust. 1).</li>
+      <li><strong>Za dzień:</strong> jedna trzydziesta podstawy (art. 36 ust. 3) razy 80% albo 100%, za każdy dzień zwolnienia, także wolny od pracy (art. 92 § 2 Kodeksu pracy, art. 11 ust. 4 ustawy).</li>
+      <li><strong>Kto płaci:</strong> pracodawca do 33 dni choroby w roku, po roku 50. urodzin do 14 dni; za dalsze dni zasiłek (art. 92 Kodeksu pracy). Okres zasiłkowy, razem z dniami opłaconymi przez pracodawcę, trwa najdłużej 182 dni, a w ciąży i przy gruźlicy 270 dni (art. 8 ust. 1 i art. 12 ust. 1 ustawy).</li>
+    </ol>
+    <p>
+      Premie miesięczne wlicza się w kwotach wypłaconych za miesiące z okresu podstawy, a kwartalne i roczne w jednej
+      dwunastej kwot za cztery kwartały albo rok przed miesiącem choroby (art. 42). Kalkulator przyjmuje średnią, którą
+      wpiszesz. Przy bardzo wysokich zarobkach, gdy w roku przekroczono roczny limit składek emerytalnej i rentowych,
+      odliczenie jest niższe niż {liczba(SKLADKI_PRACOWNIKA)}%, a podstawa wyższa. Wypadek przy pracy i choroba zawodowa
+      mają osobne zasady i kalkulator ich nie liczy.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { chorobowe, okresZasilkowy, type Powod } from '../../lib/narzedzia/chorobowe';
+  import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
+
+  const form = document.querySelector<HTMLFormElement>('[data-l4]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const pola = ['brutto', 'dni', 'wykorzystane'];
+
+    const przelicz = () => {
+      const powod = (form.elements.namedItem('powod') as HTMLSelectElement).value as Powod;
+      const brutto = wpisanaLiczba(el('brutto').value);
+      const dni = wpisanaLiczba(el('dni').value);
+      const wykorzystane = wpisanaLiczba(el('wykorzystane').value || '0');
+      const maks = okresZasilkowy(powod);
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      const blad =
+        !(brutto > 0) ? 'Wpisz przeciętne wynagrodzenie brutto, na przykład 6000.'
+        : !(Number.isInteger(dni) && dni >= 1 && dni <= maks) ? `Wpisz liczbę dni zwolnienia od 1 do ${maks}.`
+        : !(Number.isInteger(wykorzystane) && wykorzystane >= 0 && wykorzystane <= 366) ? 'Dni L4 w tym roku: liczba całkowita od 0.'
+        : null;
+      b.hidden = !blad;
+      b.textContent = blad ?? '';
+      for (const n of pola) el(n).setAttribute('aria-invalid', blad ? 'true' : 'false');
+      if (blad) {
+        w('razem').textContent = '—';
+        return;
+      }
+      const r = chorobowe({ rok: Number((form.elements.namedItem('rok') as HTMLSelectElement).value), brutto, dni, wykorzystane, powod, pelnyEtat: el('pelnyEtat').checked, po50: el('po50').checked });
+      w('razem').textContent = zl(r.razem);
+      w('za-dzien').textContent = `${zl(r.zaDzien)} (${r.procent}%)`;
+      w('pracodawca').textContent = `${r.dniPracodawca} dni: ${zl(r.wynagrodzenieChorobowe)}`;
+      w('zus').textContent = `${r.dniZus} dni: ${zl(r.zasilek)}`;
+      w('podstawa').textContent = `${zl(r.podstawa)}${r.podstawaPodniesiona ? ' (minimum z płacy minimalnej)' : ''}`;
+      const uwaga = r.dniZus > 0 ? `Limit ${r.limitPracodawcy} dni wynagrodzenia od pracodawcy w tym roku się wyczerpuje; za ${r.dniZus} dni przysługuje zasiłek chorobowy (art. 92 § 4 Kodeksu pracy).` : null;
+      w('uwaga').hidden = !uwaga;
+      w('uwaga').textContent = uwaga ?? '';
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>

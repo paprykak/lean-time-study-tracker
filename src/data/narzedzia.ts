@@ -102,6 +102,22 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-11',
   },
   {
+    slug: 'ekwiwalent-za-urlop',
+    nazwa: 'Ekwiwalent za niewykorzystany urlop',
+    krotko: 'Ile wynosi ekwiwalent za urlop przy odejściu z pracy. Współczynnik na 2026 i 2027 r., premie, niepełny etat.',
+    kategoria: 'czas-pracy',
+    przepisy: ['kodeksPracy', 'urlopowe', 'dniWolne'],
+    sprawdzono: '2026-11-11',
+  },
+  {
+    slug: 'kalkulator-l4',
+    nazwa: 'Kalkulator L4: chorobowe i zasiłek',
+    krotko: 'Ile dostaniesz na zwolnieniu lekarskim: 80% albo 100%, 33 albo 14 dni od pracodawcy, potem zasiłek z ZUS.',
+    kategoria: 'czas-pracy',
+    przepisy: ['kodeksPracy', 'zasilkowa', 'systemUbezpieczen', 'zmianaZasilkowa2021', 'minimalneWynagrodzenie', 'placa2025', 'placa2026', 'placa2027'],
+    sprawdzono: '2026-11-11',
+  },
+  {
     slug: 'kontrola-grafiku',
     nazwa: 'Kontrola grafiku zmian',
     krotko: 'Sprawdź grafik 12 h albo trzyzmianowy: odpoczynek 11 i 35 h, wolne niedziele, dni wolne, godziny a wymiar.',

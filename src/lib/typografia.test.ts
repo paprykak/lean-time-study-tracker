@@ -25,6 +25,7 @@ describe('typografia: twarde spacje', () => {
 
   it('skróty wiążą się z tym, co po nich, a półpauza nie zaczyna wiersza', () => {
     expect(pokaz(typografia('np. Toyota, art. 14a, tzw. SMED'))).toBe('np.~Toyota, art.~14a, tzw.~SMED');
+    expect(pokaz(typografia('(§ 15), zgodnie z § 9 ust. 3'))).toBe('(§~15), zgodnie z~§~9 ust.~3');
     expect(pokaz(typografia('Przezbrojenie – czas od ostatniej sztuki'))).toBe('Przezbrojenie~– czas od ostatniej sztuki');
   });
 });

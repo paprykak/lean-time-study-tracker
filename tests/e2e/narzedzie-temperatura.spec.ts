@@ -18,7 +18,7 @@ test('36°C w pomieszczeniu z pogody: zakaz pracy', async ({ page }) => {
 
 test('36°C z technologii: bez zakazu', async ({ page }) => {
   await page.getByLabel('Temperatura (°C)').fill('36');
-  await page.getByLabel(/Ciepło pochodzi z technologii/).check();
+  await page.getByLabel(/Ciepło pochodzi z\stechnologii/).check();
   await expect(naglowek(page)).toHaveText('36°C: bez dodatkowych obowiązków');
 });
 
@@ -36,7 +36,7 @@ test('biuro 16°C: za zimno', async ({ page }) => {
 
 test('otwarta przestrzeń, duży wysiłek, 33°C: zakaz', async ({ page }) => {
   await page.getByLabel('Na otwartej przestrzeni').check();
-  await expect(page.getByLabel(/Ciepło pochodzi z technologii/)).toBeHidden();
+  await expect(page.getByLabel(/Ciepło pochodzi z\stechnologii/)).toBeHidden();
   await page.getByLabel('Rodzaj pracy').selectOption('duzy');
   await page.getByLabel('Temperatura (°C)').fill('33');
   await expect(naglowek(page)).toHaveText('33°C: pracy nie wolno wykonywać');

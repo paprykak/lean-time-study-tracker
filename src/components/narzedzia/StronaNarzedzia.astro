@@ -33,6 +33,7 @@ const { slug, tytul, opis, h1, lead, faq, objasnienia = [] } = Astro.props;
 const n = narzedzie(slug);
 const adres = `${ustawienia.adres}${adresNarzedzia(slug)}`;
 const inne = NARZEDZIA.filter((x) => x.slug !== slug);
+const formularz = typografiaWHtml(await Astro.slots.render('default'));
 const wyjasnienie = typografiaWHtml(await Astro.slots.render('wyjasnienie'));
 const jsonLd = [
   {
@@ -64,7 +65,7 @@ const jsonLd = [
     </header>
 
     <div class="mt-8">
-      <slot />
+      <Fragment set:html={formularz} />
     </div>
 
     <div class="mt-14 grid gap-12 lg:grid-cols-12 lg:gap-10">
