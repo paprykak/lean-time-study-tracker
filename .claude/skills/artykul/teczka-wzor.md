@@ -23,7 +23,7 @@ Plik `redakcja/<slug>/teczka.md`. Notatki redakcji do jednego artykułu: nie tra
 - Zakończenie (klamra z otwarciem albo pierwszy krok):
 - Test przekazania (zdanie, z którym czytelnik prześle tekst koledze):
 - Zakres: format, długość docelowa (dolna połowa widełek), narzędzie do pobrania tak/nie i dlaczego:
-- Elementy wizualne (zwykle 3–6: wykres, schemat, tabela, karta; co każdy pokazuje i w której sekcji):
+- Elementy wizualne (co najmniej 6 w Poradniku i Analizie, co najmniej 4 rodzaje: wykres, mapa, diagram, tabela, karta; co każdy pokazuje, z jakich danych, którym generatorem i w której sekcji):
 - Specyfikacja narzędzia (jeśli jest; zamrożona przed pisaniem): dane wejściowe, co liczy, progi i werdykty, test:
 - Czytelnik konspektu (persona, data, najważniejsze uwagi i co zmieniono):
 

@@ -64,7 +64,7 @@ Liczby źródeł według rodzaju i datę weryfikacji ramka dopisuje sama (z pól
 | 6 | Polski kontekst | polskie dane, prawo albo realia tam, gdzie istnieją |
 | 7 | Użyteczność | czytelnik wie, co zrobić w tym tygodniu; jest rachunek, krok albo wzór |
 | 8 | Przypadek | jeden przypadek prowadzi przez tekst, ze źródłem albo oznaczony jako fikcyjny |
-| 9 | Dane i obrazy | analiza własna albo rysunek z tytułem-wnioskiem i źródłem; w Poradniku i Analizie co najmniej trzy wartościowe elementy wizualne (wykres, schemat, tabela, karta), czytelne na telefonie |
+| 9 | Dane i obrazy | analiza własna albo rysunek z tytułem-wnioskiem i źródłem; w Poradniku i Analizie co najmniej sześć wartościowych elementów wizualnych co najmniej czterech rodzajów (wykres, mapa, diagram, tabela, karta), w Komentarzu i Przypadku co najmniej trzy; czytelne na telefonie; liczby z badań na wykresie albo w tabeli, a nie w ciągu prozy |
 | 10 | Czytelność | FOG-PL do 12, średnio do 18 słów w zdaniu, śródtytuły-wnioski |
 | 11 | Zdjęcie | autentyczne, trafne do tezy, kadry 16:9 i 1:1 działają, alt opisuje treść |
 | 12 | Test dyrektora | sceptyczny dyrektor po 3 minutach pomyśli „tego nie wiedziałem” albo „to zmienia moją decyzję” |

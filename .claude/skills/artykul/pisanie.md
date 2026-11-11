@@ -27,7 +27,7 @@ Nie otwieraj definicją, historią metody od jej początków, zapowiedzią („W
 - **Zmiana tempa:** po gęstym akapicie z danymi krótki akapit z wnioskiem, czasem jedno zdanie.
 - **Przejście w zdaniu, nie w śródtytule:** ostatnie zdanie sekcji otwiera następną. Śródtytuły czytane po kolei opowiadają cały argument (test szkieletu).
 - **Dowód tam, gdzie rodzi się wątpliwość:** rysunek, tabela albo liczba stoi w miejscu, w którym sceptyk zapyta „skąd wiecie?”. Zdanie przed rysunkiem mówi, co czytelnik na nim zobaczy.
-- **Obraz zamiast akapitu:** ludzie lubią obrazy, a długi blok tekstu na telefonie męczy. Proces, porównanie, rachunek albo listę kroków pokaż schematem, tabelą lub wykresem, kiedy pokazują więcej niż proza; tekst mówi, co z obrazu wynika ([styl.md](styl.md), „Elementy tekstu”). Już w planie (teczka, sekcja 3) wypisz elementy wizualne: co pokazują i w której sekcji.
+- **Obraz zamiast akapitu:** ludzie lubią obrazy, a długi blok tekstu na telefonie męczy. Proces, porównanie, rachunek albo listę kroków pokaż schematem, tabelą lub wykresem, kiedy pokazują więcej niż proza; tekst mówi, co z obrazu wynika ([styl.md](styl.md), „Elementy tekstu”). Już w planie (teczka, sekcja 3) wypisz co najmniej 6 elementów wizualnych co najmniej czterech rodzajów (wykres, mapa, diagram, tabela): co każdy pokazuje, z jakich danych i w której sekcji. Liczby z badań pokazuj obrazem, a w prozie zostaw wniosek.
 
 ## 4. Zdania, które czyta się same
 - **Podmiot i orzeczenie na początku**, blisko siebie. Czytelnik nie trzyma w pamięci trzech wtrąceń, czekając na czasownik.
