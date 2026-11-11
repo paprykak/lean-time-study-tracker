@@ -1,0 +1,170 @@
+---
+// Okres wypowiedzenia i ostatni dzień umowy (art. 30 § 2^1, 34, 36, 37 Kp). Logika: src/lib/narzedzia/wypowiedzenie.ts.
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+
+const faq = [
+  {
+    pytanie: 'Ile wynosi okres wypowiedzenia umowy o pracę?',
+    odpowiedz: 'Przy umowie na czas nieokreślony i określony: 2 tygodnie, gdy zatrudnienie u danego pracodawcy trwało krócej niż 6 miesięcy, 1 miesiąc od 6 miesięcy i 3 miesiące od 3 lat (art. 36 § 1 Kodeksu pracy). Przy umowie na okres próbny: 3 dni robocze, 1 tydzień albo 2 tygodnie, zależnie od długości okresu próbnego (art. 34).',
+  },
+  {
+    pytanie: 'Kiedy kończy się okres wypowiedzenia?',
+    odpowiedz: 'Okres liczony w tygodniach kończy się w sobotę, a liczony w miesiącach ostatniego dnia miesiąca (art. 30 § 2^1). Wypowiedzenie złożone 22 lipca z okresem miesięcznym kończy się 31 sierpnia, a z trzymiesięcznym 31 października (przykład gov.pl). Okres tygodniowy musi obejmować pełne tygodnie, więc przy doręczeniu w poniedziałek dwutygodniowy kończy się w trzecią sobotę.',
+  },
+  {
+    pytanie: 'Czy do okresu wypowiedzenia liczą się wcześniejsze umowy?',
+    odpowiedz: 'Liczy się okres zatrudnienia u danego pracodawcy na podstawie wszystkich umów, bez względu na ich liczbę i przerwy (gov.pl), a także zatrudnienie u poprzedniego pracodawcy przy przejściu zakładu pracy (art. 36 § 1^1). Od 2026 r. wlicza się też okresy umów zlecenia i działalności na rzecz tego samego pracodawcy (art. 302^1 § 8), ale nie do wypowiedzeń, które trwały w dniu wejścia zmian w życie (art. 8 ustawy z 26 września 2025 r.).',
+  },
+  {
+    pytanie: 'Ile dni wolnych na szukanie pracy?',
+    odpowiedz: 'Gdy wypowiada pracodawca, a okres wypowiedzenia trwa co najmniej 2 tygodnie: 2 dni robocze przy wypowiedzeniu dwutygodniowym i miesięcznym, 3 dni robocze przy trzymiesięcznym, z zachowaniem wynagrodzenia (art. 37 Kodeksu pracy).',
+  },
+  {
+    pytanie: 'Czy można skrócić okres wypowiedzenia?',
+    odpowiedz: 'Po wypowiedzeniu strony mogą się porozumieć co do wcześniejszego rozwiązania umowy, a tryb rozwiązania się nie zmienia (art. 36 § 6). Przy stanowisku z odpowiedzialnością materialną strony mogą w umowie ustalić 1 miesiąc zamiast 2 tygodni i 3 miesiące zamiast 1 miesiąca (art. 36 § 5).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="okres-wypowiedzenia"
+  tytul="Okres wypowiedzenia: kalkulator ostatniego dnia umowy"
+  opis="Ile trwa okres wypowiedzenia umowy o pracę i który dzień jest ostatnim dniem umowy: 2 tygodnie do soboty, miesiąc do końca miesiąca. Z dniami na szukanie pracy."
+  h1="Okres wypowiedzenia: ile trwa i kiedy się kończy"
+  lead="Okres wypowiedzenia zależy od rodzaju umowy i stażu u pracodawcy, a kończy się w sobotę albo ostatniego dnia miesiąca. Wpisz datę rozpoczęcia pracy i dzień, w którym wypowiedzenie doręczono, a policzymy ostatni dzień umowy."
+  faq={faq}
+  objasnienia={['govUstanie']}
+>
+  <form class="kalkulator" data-wypowiedzenie novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Umowa i wypowiedzenie</h2>
+      <div class="mt-4">
+        <label for="wy-rodzaj" class="etykieta-pola">Rodzaj umowy</label>
+        <select id="wy-rodzaj" name="rodzaj" class="pole mt-1">
+          <option value="stala" selected>Na czas nieokreślony albo określony</option>
+          <option value="probna-2tyg">Na okres próbny do 2 tygodni</option>
+          <option value="probna-ponad-2tyg">Na okres próbny dłuższy niż 2 tygodnie</option>
+          <option value="probna-3mies">Na okres próbny 3 miesiące</option>
+        </select>
+      </div>
+      <div class="mt-4 grid gap-4 sm:grid-cols-2">
+        <div data-tylko-stala>
+          <label for="wy-od" class="etykieta-pola">Początek pracy u tego pracodawcy</label>
+          <input id="wy-od" name="od" type="date" class="pole mt-1" min="1960-01-01" max="2100-12-31" aria-describedby="wy-od-opis" />
+          <p id="wy-od-opis" class="meta mt-1">Pierwszy dzień pierwszej umowy z tym pracodawcą.</p>
+        </div>
+        <div>
+          <label for="wy-dor" class="etykieta-pola">Doręczenie wypowiedzenia</label>
+          <input id="wy-dor" name="doreczenie" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" />
+        </div>
+      </div>
+      <p id="wy-blad" class="blad-pola" data-blad="daty" hidden></p>
+      <fieldset class="mt-5">
+        <legend class="etykieta">Kto wypowiada</legend>
+        <div class="przelacznik mt-2">
+          <label><input type="radio" name="kto" value="pracodawca" checked /> Pracodawca</label>
+          <label><input type="radio" name="kto" value="pracownik" /> Pracownik</label>
+        </div>
+      </fieldset>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Ostatni dzień umowy</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-data" data-w="koniec">Wpisz daty</p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Okres wypowiedzenia</dt><dd data-w="okres">—</dd></div>
+        <div><dt>Staż u pracodawcy w dniu doręczenia</dt><dd data-w="staz">—</dd></div>
+        <div><dt>Dni na szukanie pracy</dt><dd data-w="poszukiwanie">—</dd></div>
+        <div><dt>Podstawa</dt><dd data-w="podstawa">—</dd></div>
+      </dl>
+      <p class="wynik-uwaga" data-w="uwaga" hidden></p>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="tabela">Okresy wypowiedzenia: tabela</h2>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Okresy wypowiedzenia umowy o pracę</caption>
+        <thead><tr><th scope="col">Umowa i staż u pracodawcy</th><th scope="col">Okres wypowiedzenia</th><th scope="col">Kończy się</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">czas nieokreślony lub określony, krócej niż 6 miesięcy</th><td>2 tygodnie</td><td>w sobotę</td></tr>
+          <tr><th scope="row">czas nieokreślony lub określony, od 6 miesięcy</th><td>1 miesiąc</td><td>ostatniego dnia miesiąca</td></tr>
+          <tr><th scope="row">czas nieokreślony lub określony, od 3 lat</th><td>3 miesiące</td><td>ostatniego dnia miesiąca</td></tr>
+          <tr><th scope="row">okres próbny do 2 tygodni</th><td>3 dni robocze</td><td>według rozkładu pracy</td></tr>
+          <tr><th scope="row">okres próbny dłuższy niż 2 tygodnie</th><td>1 tydzień</td><td>w sobotę</td></tr>
+          <tr><th scope="row">okres próbny 3 miesiące</th><td>2 tygodnie</td><td>w sobotę</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Podstawa: art. 34, art. 36 § 1 i art. 30 § 2<sup>1</sup> Kodeksu pracy.</p>
+
+    <h2 id="jak-liczymy">Jak liczymy ostatni dzień</h2>
+    <p>
+      Okres w miesiącach liczymy od 1. dnia miesiąca po doręczeniu do ostatniego dnia miesiąca, w którym upływa
+      (art. 30 § 2<sup>1</sup>; przykład gov.pl: wypowiedzenie 22 lipca, miesięczne do 31 sierpnia). Okres w tygodniach
+      obejmuje pełne tygodnie od niedzieli do soboty po dniu doręczenia; dnia doręczenia nie liczymy. Staż to pełne
+      miesiące od początku pracy u tego pracodawcy do doręczenia. Gdy w trakcie wypowiedzenia staż przekroczy 6 miesięcy
+      albo 3 lata, sprawdź w kadrach, czy okres się nie zmienia.
+    </p>
+    <p>
+      Oświadczenie o wypowiedzeniu składa się na piśmie (art. 30 § 3). Wypowiedzenie przez pracodawcę umowy na czas
+      określony albo nieokreślony wymaga podania przyczyny i pouczenia o odwołaniu do sądu pracy (art. 30 § 4 i 5).
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { dniNaPoszukiwanie, koniecWypowiedzenia, okresWypowiedzenia, pelneMiesiace, type RodzajUmowy } from '../../lib/narzedzia/wypowiedzenie';
+  import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
+
+  const form = document.querySelector<HTMLFormElement>('[data-wypowiedzenie]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const pole = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const DNI = ['niedziela', 'poniedziałek', 'wtorek', 'środa', 'czwartek', 'piątek', 'sobota'];
+    const lata = (n: number) => (n === 1 ? '1 rok' : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? `${n} lata` : `${n} lat`);
+    const przelicz = () => {
+      const rodzaj = (form.elements.namedItem('rodzaj') as HTMLSelectElement).value as RodzajUmowy;
+      const stala = rodzaj === 'stala';
+      form.querySelector<HTMLElement>('[data-tylko-stala]')!.hidden = !stala;
+      const od = pole('od').value;
+      const dor = pole('doreczenie').value;
+      const b = form.querySelector<HTMLElement>('[data-blad="daty"]')!;
+      const blad =
+        (dor && !poprawnaData(dor)) || (stala && od && !poprawnaData(od))
+          ? 'Wpisz pełne daty: dzień, miesiąc i rok.'
+          : stala && od && dor && od > dor
+            ? 'Początek pracy musi być przed doręczeniem wypowiedzenia.'
+            : null;
+      b.hidden = !blad;
+      b.textContent = blad ?? '';
+      if (blad || !dor || (stala && !od)) {
+        w('koniec').textContent = 'Wpisz daty';
+        for (const k of ['okres', 'staz', 'poszukiwanie', 'podstawa']) w(k).textContent = '—';
+        w('uwaga').hidden = true;
+        return;
+      }
+      const staz = stala ? pelneMiesiace(od, dor) : 0;
+      const okres = okresWypowiedzenia(rodzaj, staz);
+      const koniec = koniecWypowiedzenia(dor, okres);
+      w('koniec').textContent = koniec ? `${dataPoPolsku(koniec)} (${DNI[new Date(`${koniec}T00:00:00Z`).getUTCDay()]})` : '3 dni robocze';
+      w('okres').textContent = okres.opis;
+      w('staz').textContent = stala ? [Math.floor(staz / 12) ? lata(Math.floor(staz / 12)) : '', staz % 12 ? `${staz % 12} mies.` : ''].filter(Boolean).join(' ') || 'mniej niż miesiąc' : 'nie dotyczy';
+      const pracodawca = (form.querySelector<HTMLInputElement>('input[name="kto"]:checked')?.value ?? 'pracodawca') === 'pracodawca';
+      const dni = pracodawca ? dniNaPoszukiwanie(okres) : 0;
+      w('poszukiwanie').textContent = dni ? `${dni} dni robocze, płatne` : pracodawca ? 'nie przysługują przy tym okresie' : 'nie przysługują (wypowiada pracownik)';
+      w('podstawa').textContent = `${okres.podstawa}; koniec: art. 30 § 2¹`;
+      const uwaga = koniec
+        ? null
+        : 'Przy okresie próbnym do 2 tygodni wypowiedzenie trwa 3 dni robocze; które to dni, zależy od rozkładu pracy.';
+      w('uwaga').hidden = !uwaga;
+      w('uwaga').textContent = uwaga ?? '';
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>

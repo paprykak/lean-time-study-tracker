@@ -15,6 +15,9 @@ test('kampania w slocie: link z UTM, rel="sponsored noopener", podpis „REKLAMA
   expect(Object.fromEntries(adres.searchParams)).toEqual({ utm_source: 'rytmhali', utm_medium: 'display', utm_campaign: 'testowa-kampania-a' });
   await expect(page.locator('[data-slot="glowna-gora"] .slot-wariant:visible .slot-podpis')).toHaveText(/reklama/i);
   const img = link.locator('img');
+  // Slot jest pod narzędziami na stronie głównej; na niskim ekranie (iPhone) leży poniżej pierwszego widoku,
+  // a kreacja ładuje się leniwie, więc przewijamy do niej przed sprawdzeniem.
+  await img.scrollIntoViewIfNeeded();
   await expect(img).toHaveJSProperty('complete', true);
   expect(await img.evaluate((i: HTMLImageElement) => i.naturalWidth)).toBeGreaterThan(0);
   expect(await page.content()).not.toContain('testowa-kampania-zakonczona');

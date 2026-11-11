@@ -101,6 +101,14 @@ export const NARZEDZIA: Narzedzie[] = [
     przepisy: ['kodeksPracy', 'dniWolne'],
     sprawdzono: '2026-11-11',
   },
+  {
+    slug: 'okres-wypowiedzenia',
+    nazwa: 'Okres wypowiedzenia',
+    krotko: 'Ile trwa wypowiedzenie i który dzień jest ostatnim dniem umowy: 2 tygodnie, miesiąc albo 3 miesiące.',
+    kategoria: 'czas-pracy',
+    przepisy: ['kodeksPracy', 'zmianaStazu2025'],
+    sprawdzono: '2026-11-11',
+  },
 ];
 
 /** Następne narzędzia w kolejce (bez stron i linków; lista na /narzedzia). Zdejmujesz pozycję, gdy narzędzie rusza. */

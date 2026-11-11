@@ -187,6 +187,12 @@ export const OBJASNIENIA = {
     adres: 'https://www.biznes.gov.pl/pl/portal/00133',
     sprawdzono: '2026-11-11',
   },
+  govUstanie: {
+    nazwa: 'gov.pl (Ministerstwo Rodziny, Pracy i Polityki Społecznej), „Ustanie stosunku pracy”',
+    opis: 'przykład: wypowiedzenie złożone 22 lipca, okres miesięczny kończy się 31 sierpnia, trzymiesięczny 31 października',
+    adres: 'https://www.gov.pl/web/rodzina/ustanie-stosunku-pracy',
+    sprawdzono: '2026-11-11',
+  },
 } as const;
 
 /** Przeciętne wynagrodzenie z komunikatu GUS (art. 20 pkt 1 lit. a ustawy o emeryturach i rentach z FUS): podstawa opłaty za egzamin UDT. */
