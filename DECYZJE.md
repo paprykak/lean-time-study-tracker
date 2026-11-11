@@ -222,3 +222,8 @@ Patryk: bez oznaczeń, że tekst powstał z użyciem AI, a teksty mają być nap
 
   Każde narzędzie wchodzi na produkcję osobno, po zielonym `npm run check`. Patryk powiedział „wdrażaj wszystko na bieżąco”.
 - **Hasło i opis serwisu** w `ustawienia.json`: „Narzędzia i przepisy dla ludzi z hali”. Strony zaufania (O nas, zasady redakcyjne) nadal opisują medium z artykułami; ich nowe brzmienie to tekst strony zaufania, więc czeka na Patryka (STAN.md).
+
+## 2026-11-11 — Skalowanie listy narzędzi
+- **Strona główna przy kilkunastu narzędziach:** 6 kart z wyboru redakcji (`NA_GLOWNEJ` w `src/data/narzedzia.ts`: L4, dodatek nocny, nadgodziny, urlop, uprawnienia UDT, wypowiedzenie), a pod nimi zwarta lista wszystkich narzędzi według kategorii. Przy 16 kartach strona na telefonie miała ok. 5000 px narzędzi przed artykułami; lista skaluje się do kilkudziesięciu pozycji bez zmiany układu. Gdy będą statystyki, wybór kart zastąpią najczęściej otwierane narzędzia.
+- **Kategorie:** dawna „Czas pracy i wynagrodzenie” (11 narzędzi) podzielona na „Czas pracy i grafik”, „Wynagrodzenie i zasiłki”, „Urlopy i dni wolne” oraz „Umowa i jej koniec”; adresy narzędzi się nie zmieniają.
+- **Niepewność w przepisach mówimy wprost:** gdy oficjalne źródło nie rozstrzyga sprawy (np. ile godzin ma „dzień” zwolnienia z art. 188 przy zmianach 12-godzinnych, zaokrąglenie współczynnika ekwiwalentu), narzędzie nie zgaduje: liczy według brzmienia przepisu i pisze, czego przepis nie mówi.

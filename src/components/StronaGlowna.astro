@@ -13,7 +13,7 @@ import KartaSiatka from './karty/KartaSiatka.astro';
 import KartaLista from './karty/KartaLista.astro';
 import KartaNarzedzia from './narzedzia/KartaNarzedzia.astro';
 import Tekst from './Tekst.astro';
-import { NARZEDZIA, W_PRZYGOTOWANIU } from '../data/narzedzia';
+import { KATEGORIE, NA_GLOWNEJ, NARZEDZIA, W_PRZYGOTOWANIU, adresNarzedzia, narzedzie, type KategoriaNarzedzia } from '../data/narzedzia';
 import ustawienia from '../data/ustawienia.json';
 import { DZIALY, dzial } from '../lib/dane';
 import { artykuly, karta } from '../lib/tresci';
@@ -26,6 +26,10 @@ const u = ukladGlownej(
   DZIALY.map((d) => d.slug),
 );
 const k = (x: { a: (typeof wszystkie)[number] }) => karta(x.a);
+const wyroznione = NA_GLOWNEJ.map(narzedzie);
+const kategorie = (Object.keys(KATEGORIE) as KategoriaNarzedzia[])
+  .map((k) => ({ klucz: k, nazwa: KATEGORIE[k].nazwa, narzedzia: NARZEDZIA.filter((n) => n.kategoria === k) }))
+  .filter((k) => k.narzedzia.length > 0);
 const polecane = ustawienia.polecane
   .map((slug) => wszystkie.find((a) => a.id === slug))
   .filter((a) => a !== undefined)
@@ -39,17 +43,28 @@ const polecane = ustawienia.polecane
       <Tekst t="Kalkulatory i ściągi z prawa pracy i BHP dla produkcji, magazynów i logistyki. Liczymy według przepisów, a przy każdym narzędziu podajemy źródło w Dzienniku Ustaw i datę sprawdzenia." />
     </p>
     <div class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-      {NARZEDZIA.map((n) => <KartaNarzedzia narzedzie={n} poziom="h2" />)}
-      {W_PRZYGOTOWANIU.length > 0 && (
-        <div class="border border-dashed border-[#8a939e] p-5">
-          <h2 class="kategoria">Wkrótce</h2>
-          <ul class="mt-2 space-y-1.5 text-[0.9375rem] text-tekst-tresc">
-            {W_PRZYGOTOWANIU.slice(0, 4).map((w) => <li>{w.nazwa}</li>)}
+      {wyroznione.map((n) => <KartaNarzedzia narzedzie={n} poziom="h2" />)}
+    </div>
+  </section>
+
+  <section aria-labelledby="wszystkie-narzedzia" class="mt-10 border-t-2 border-grafit pt-5">
+    <h2 id="wszystkie-narzedzia" class="tytul-m">Wszystkie narzędzia ({NARZEDZIA.length})</h2>
+    <div class="mt-4 grid gap-x-8 gap-y-6 sm:grid-cols-2 lg:grid-cols-4">
+      {kategorie.map((k) => (
+        <div>
+          <h3 class="kategoria">{k.nazwa}</h3>
+          <ul class="mt-2">
+            {k.narzedzia.map((n) => (
+              <li class="border-b border-linia"><a href={adresNarzedzia(n.slug)} class="block py-2 text-[0.9375rem] font-semibold text-tekst underline-offset-[3px] najazd:text-akcent-tekst najazd:underline">{n.nazwa}</a></li>
+            ))}
           </ul>
         </div>
-      )}
+      ))}
     </div>
-    <p class="mt-5"><a href="/narzedzia" class="link">Wszystkie narzędzia</a></p>
+    {W_PRZYGOTOWANIU.length > 0 && (
+      <p class="meta mt-4">Wkrótce: {W_PRZYGOTOWANIU.slice(0, 4).map((w) => w.nazwa).join(', ')}.</p>
+    )}
+    <p class="mt-4"><a href="/narzedzia" class="link">Narzędzia z opisami</a></p>
   </section>
 
   <SlotReklamowy komputer="billboard" telefon="mobilny" miejsce="glowna-gora" class="mt-12" />

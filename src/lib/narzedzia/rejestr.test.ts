@@ -4,7 +4,7 @@
 import { existsSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { AKTY, LATA, OBJASNIENIA, PLACA_MINIMALNA } from '../../data/prawo';
-import { KATEGORIE, NARZEDZIA, W_PRZYGOTOWANIU } from '../../data/narzedzia';
+import { KATEGORIE, NA_GLOWNEJ, NARZEDZIA, W_PRZYGOTOWANIU } from '../../data/narzedzia';
 
 const dzis = new Date();
 const MAKS_WIEK_DNI = 455;
@@ -26,6 +26,12 @@ describe('rejestr narzędzi', () => {
   it('narzędzie w przygotowaniu nie dubluje gotowego', () => {
     const gotowe = new Set(NARZEDZIA.map((n) => n.nazwa));
     for (const w of W_PRZYGOTOWANIU) expect(gotowe.has(w.nazwa)).toBe(false);
+  });
+  it('karty na stronie głównej: istniejące narzędzia, bez powtórzeń, pełne rzędy po 3', () => {
+    const slugi = new Set(NARZEDZIA.map((n) => n.slug));
+    for (const s of NA_GLOWNEJ) expect(slugi.has(s)).toBe(true);
+    expect(new Set(NA_GLOWNEJ).size).toBe(NA_GLOWNEJ.length);
+    expect(NA_GLOWNEJ.length % 3).toBe(0);
   });
 });
 

@@ -7,7 +7,10 @@
 import type { KluczAktu } from './prawo';
 
 export const KATEGORIE = {
-  'czas-pracy': { nazwa: 'Czas pracy i wynagrodzenie', krotko: 'Czas pracy' },
+  'czas-pracy': { nazwa: 'Czas pracy i grafik', krotko: 'Czas pracy' },
+  wynagrodzenie: { nazwa: 'Wynagrodzenie i zasiłki', krotko: 'Wynagrodzenie' },
+  urlopy: { nazwa: 'Urlopy i dni wolne', krotko: 'Urlopy' },
+  umowa: { nazwa: 'Umowa i jej koniec', krotko: 'Umowa' },
   bhp: { nazwa: 'BHP i badania', krotko: 'BHP' },
   uprawnienia: { nazwa: 'Uprawnienia UDT i SEP', krotko: 'Uprawnienia' },
   transport: { nazwa: 'Transport ręczny i magazyn', krotko: 'Magazyn' },
@@ -33,7 +36,7 @@ export const NARZEDZIA: Narzedzie[] = [
     slug: 'dodatek-za-prace-w-nocy',
     nazwa: 'Dodatek za pracę w nocy',
     krotko: 'Ile wynosi dodatek nocny w danym miesiącu: z płacy minimalnej, wymiaru godzin i Twojego grafiku.',
-    kategoria: 'czas-pracy',
+    kategoria: 'wynagrodzenie',
     przepisy: ['kodeksPracy', 'wynagrodzenieRozp', 'dniWolne', 'minimalneWynagrodzenie', 'placa2025', 'placa2026', 'placa2027'],
     sprawdzono: '2026-11-11',
   },
@@ -89,7 +92,7 @@ export const NARZEDZIA: Narzedzie[] = [
     slug: 'kalkulator-nadgodzin',
     nazwa: 'Kalkulator nadgodzin',
     krotko: 'Dodatek za nadgodziny 50% i 100% przy stawce godzinowej albo pensji. Z czasem wolnym zamiast dodatku.',
-    kategoria: 'czas-pracy',
+    kategoria: 'wynagrodzenie',
     przepisy: ['kodeksPracy', 'wynagrodzenieRozp', 'dniWolne'],
     sprawdzono: '2026-11-11',
   },
@@ -97,7 +100,7 @@ export const NARZEDZIA: Narzedzie[] = [
     slug: 'kalkulator-urlopu',
     nazwa: 'Kalkulator urlopu wypoczynkowego',
     krotko: 'Ile dni urlopu: 20 czy 26, ze szkołą i stażem z umów zlecenia od 2026 r., na niepełny etat i część roku.',
-    kategoria: 'czas-pracy',
+    kategoria: 'urlopy',
     przepisy: ['kodeksPracy', 'zmianaStazu2025'],
     sprawdzono: '2026-11-11',
   },
@@ -105,7 +108,7 @@ export const NARZEDZIA: Narzedzie[] = [
     slug: 'ekwiwalent-za-urlop',
     nazwa: 'Ekwiwalent za niewykorzystany urlop',
     krotko: 'Ile wynosi ekwiwalent za urlop przy odejściu z pracy. Współczynnik na 2026 i 2027 r., premie, niepełny etat.',
-    kategoria: 'czas-pracy',
+    kategoria: 'urlopy',
     przepisy: ['kodeksPracy', 'urlopowe', 'dniWolne'],
     sprawdzono: '2026-11-11',
   },
@@ -113,7 +116,7 @@ export const NARZEDZIA: Narzedzie[] = [
     slug: 'kalkulator-l4',
     nazwa: 'Kalkulator L4: chorobowe i zasiłek',
     krotko: 'Ile dostaniesz na zwolnieniu lekarskim: 80% albo 100%, 33 albo 14 dni od pracodawcy, potem zasiłek z ZUS.',
-    kategoria: 'czas-pracy',
+    kategoria: 'wynagrodzenie',
     przepisy: ['kodeksPracy', 'zasilkowa', 'systemUbezpieczen', 'zmianaZasilkowa2021', 'minimalneWynagrodzenie', 'placa2025', 'placa2026', 'placa2027'],
     sprawdzono: '2026-11-11',
   },
@@ -121,8 +124,16 @@ export const NARZEDZIA: Narzedzie[] = [
     slug: 'kalkulator-odprawy',
     nazwa: 'Kalkulator odprawy',
     krotko: 'Odprawa przy zwolnieniu z przyczyn pracodawcy (1, 2 albo 3 pensje, z limitem) i odprawa emerytalna.',
-    kategoria: 'czas-pracy',
+    kategoria: 'umowa',
     przepisy: ['zwolnieniaGrupowe', 'kodeksPracy', 'wynagrodzenieRozp', 'urlopowe', 'minimalneWynagrodzenie', 'placa2025', 'placa2026', 'placa2027'],
+    sprawdzono: '2026-11-11',
+  },
+  {
+    slug: 'wolne-na-dziecko',
+    nazwa: 'Wolne na dziecko i siła wyższa',
+    krotko: '2 dni albo 16 godzin na dziecko do 14 lat i na pilne sprawy rodzinne, przy niepełnym etacie proporcjonalnie.',
+    kategoria: 'urlopy',
+    przepisy: ['kodeksPracy', 'wynagrodzenieRozp'],
     sprawdzono: '2026-11-11',
   },
   {
@@ -137,7 +148,7 @@ export const NARZEDZIA: Narzedzie[] = [
     slug: 'okres-wypowiedzenia',
     nazwa: 'Okres wypowiedzenia',
     krotko: 'Ile trwa wypowiedzenie i który dzień jest ostatnim dniem umowy: 2 tygodnie, miesiąc albo 3 miesiące.',
-    kategoria: 'czas-pracy',
+    kategoria: 'umowa',
     przepisy: ['kodeksPracy', 'zmianaStazu2025'],
     sprawdzono: '2026-11-11',
   },
@@ -155,6 +166,9 @@ export const NARZEDZIA: Narzedzie[] = [
 export const W_PRZYGOTOWANIU: { nazwa: string; kategoria: KategoriaNarzedzia }[] = [
   { nazwa: 'Testy UDT na wózki widłowe', kategoria: 'uprawnienia' },
 ];
+
+/** Karty na stronie głównej (wybór redakcji, dopóki nie ma statystyk); pozostałe narzędzia są tam na zwartej liście. */
+export const NA_GLOWNEJ = ['kalkulator-l4', 'dodatek-za-prace-w-nocy', 'kalkulator-nadgodzin', 'kalkulator-urlopu', 'waznosc-uprawnien-udt', 'okres-wypowiedzenia'] as const;
 
 export const adresNarzedzia = (slug: string) => `/narzedzia/${slug}`;
 

@@ -1,0 +1,132 @@
+---
+// Wolne na sprawy rodzinne: art. 188 (opieka nad dzieckiem do 14 lat), art. 148^1 (siła wyższa), art. 173^1 (urlop
+// opiekuńczy), art. 189^1 (jedno z rodziców) Kodeksu pracy. Logika: src/lib/narzedzia/wolne-rodzinne.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { URLOP_OPIEKUNCZY_DNI, godzinyZwolnienia } from '../../lib/narzedzia/wolne-rodzinne';
+
+const ETATY = [
+  { wartosc: '1', nazwa: 'pełny etat' },
+  { wartosc: '0.875', nazwa: '7/8 etatu' },
+  { wartosc: '0.75', nazwa: '3/4 etatu' },
+  { wartosc: '0.6', nazwa: '3/5 etatu' },
+  { wartosc: '0.5', nazwa: '1/2 etatu' },
+  { wartosc: '0.25', nazwa: '1/4 etatu' },
+];
+
+const faq = [
+  {
+    pytanie: 'Ile dni wolnego na dziecko w roku?',
+    odpowiedz: 'Pracownikowi wychowującemu przynajmniej jedno dziecko do 14 lat przysługuje w roku kalendarzowym zwolnienie od pracy w wymiarze 2 dni albo 16 godzin, płatne (art. 188 § 1 Kodeksu pracy). Liczba dzieci nie zwiększa wymiaru.',
+  },
+  {
+    pytanie: 'Czy oboje rodzice mogą wziąć 2 dni na dziecko?',
+    odpowiedz: 'Nie. Jeżeli oboje rodzice lub opiekunowie dziecka są zatrudnieni, ze zwolnienia z art. 188 może korzystać jedno z nich (art. 189^1 Kodeksu pracy).',
+  },
+  {
+    pytanie: 'Czym jest wolne z powodu siły wyższej?',
+    odpowiedz: 'To 2 dni albo 16 godzin w roku na pilne sprawy rodzinne spowodowane chorobą lub wypadkiem, gdy niezbędna jest natychmiastowa obecność pracownika. Płatne w połowie, a pracodawca musi go udzielić na wniosek złożony najpóźniej w dniu zwolnienia (art. 148^1 § 1 i 3 Kodeksu pracy).',
+  },
+  {
+    pytanie: 'Czy urlop opiekuńczy jest płatny?',
+    odpowiedz: `Nie. Urlop opiekuńczy to ${URLOP_OPIEKUNCZY_DNI} dni w roku na osobistą opiekę lub wsparcie członka rodziny albo domownika, który wymaga ich z poważnych względów medycznych (art. 173^1 Kodeksu pracy). Przepis nie przyznaje za ten czas wynagrodzenia; wniosek składa się najpóźniej dzień przed urlopem.`,
+  },
+  {
+    pytanie: 'Ile godzin wolnego na dziecko przy niepełnym etacie?',
+    odpowiedz: 'Wymiar godzinowy ustala się proporcjonalnie do etatu, a niepełną godzinę zaokrągla w górę: na 1/2 etatu 8 godzin, na 3/4 etatu 12 godzin (art. 188 § 3 Kodeksu pracy). Wymiar w dniach zostaje taki sam: 2 dni.',
+  },
+];
+---
+<StronaNarzedzia
+  slug="wolne-na-dziecko"
+  tytul="Wolne na dziecko (art. 188) i siła wyższa: 2 dni albo 16 godzin"
+  opis="Ile wolnego na dziecko do 14 lat i z powodu siły wyższej: 2 dni albo 16 godzin, przy niepełnym etacie proporcjonalnie, płatne 100% albo 50%. Urlop opiekuńczy 5 dni."
+  h1="Wolne na dziecko, siła wyższa i urlop opiekuńczy"
+  lead="Rodzic dziecka do 14 lat ma w roku 2 dni albo 16 godzin płatnego wolnego, a każdy pracownik dodatkowo 2 dni albo 16 godzin na pilne sprawy rodzinne za połowę pensji. Wybierz etat, a pokażemy wymiar w godzinach."
+  faq={faq}
+>
+  <form class="kalkulator" data-wolne novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twój etat</h2>
+      <div class="mt-4">
+        <label for="w-etat" class="etykieta-pola">Wymiar etatu</label>
+        <select id="w-etat" name="etat" class="pole mt-1">
+          {ETATY.map((e) => <option value={e.wartosc}>{e.nazwa}</option>)}
+        </select>
+      </div>
+      <div class="mt-4">
+        <label for="w-norma" class="etykieta-pola">Dobowa norma czasu pracy</label>
+        <select id="w-norma" name="norma" class="pole mt-1" aria-describedby="w-norma-opis">
+          <option value="8" selected>8 godzin</option>
+          <option value="7">7 godzin (niższa norma z odrębnych przepisów)</option>
+        </select>
+        <p id="w-norma-opis" class="meta mt-1">Niższa norma z odrębnych przepisów obniża wymiar godzinowy (art. 148<sup>1</sup> § 5, art. 188 § 4).</p>
+      </div>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Wolne na dziecko do 14 lat w roku</h2>
+      <p class="wynik-kwota" aria-live="polite" aria-atomic="true"><span data-w="dziecko">2 dni albo 16 h</span></p>
+      <dl class="wynik-lista">
+        <div><dt>Płatne</dt><dd>100% (art. 188 § 1)</dd></div>
+        <div><dt>Siła wyższa w pilnych sprawach rodzinnych</dt><dd data-w="sila">2 dni albo 16 h, płatne 50% (art. 148<sup>1</sup>)</dd></div>
+        <div><dt>Urlop opiekuńczy</dt><dd>{URLOP_OPIEKUNCZY_DNI} dni, bez wynagrodzenia (art. 173<sup>1</sup>)</dd></div>
+      </dl>
+      <p class="meta mt-4">Dni albo godziny wybierasz w pierwszym wniosku w danym roku (art. 188 § 2, art. 148<sup>1</sup> § 2).</p>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="porownanie">Trzy rodzaje wolnego na sprawy rodzinne</h2>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Porównanie zwolnień od pracy na sprawy rodzinne</caption>
+        <thead><tr><th scope="col">Zwolnienie</th><th scope="col">Wymiar w roku</th><th scope="col">Wynagrodzenie</th><th scope="col">Wniosek</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Opieka nad dzieckiem do 14 lat (art. 188)</th><td>2 dni albo 16 h</td><td>100%</td><td>przepis nie podaje terminu</td></tr>
+          <tr><th scope="row">Siła wyższa (art. 148<sup>1</sup>)</th><td>2 dni albo 16 h</td><td>50%</td><td>najpóźniej w dniu zwolnienia</td></tr>
+          <tr><th scope="row">Urlop opiekuńczy (art. 173<sup>1</sup>)</th><td>{URLOP_OPIEKUNCZY_DNI} dni</td><td>bez wynagrodzenia</td><td>najpóźniej dzień przed</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Wynagrodzenie za płatne zwolnienie liczy się jak za urlop, a składniki zmienne z miesiąca, w którym przypadło
+      zwolnienie (§ 5 ust. 1 rozporządzenia z 29 maja 1996 r.). Ze zwolnienia na dziecko korzysta jedno z pracujących
+      rodziców (art. 189<sup>1</sup>); wolne z powodu siły wyższej i urlop opiekuńczy przysługują każdemu pracownikowi.
+    </p>
+
+    <h2 id="niepelny-etat">Wymiar w godzinach według etatu</h2>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Wymiar godzinowy zwolnienia na dziecko i z powodu siły wyższej według etatu</caption>
+        <thead><tr><th scope="col">Etat</th><th scope="col">Godziny w roku</th></tr></thead>
+        <tbody>
+          {ETATY.map((e) => <tr><th scope="row">{e.nazwa}</th><td>{godzinyZwolnienia(Number(e.wartosc))} h</td></tr>)}
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Przy niepełnym etacie wymiar godzinowy jest proporcjonalny, a niepełną godzinę zaokrągla się w górę (art. 188 § 3,
+      art. 148<sup>1</sup> § 4). Przepisy nie mówią, ile godzin ma „dzień” zwolnienia przy zmianach dłuższych niż
+      8 godzin. Jeśli pracujesz w takim systemie, zapytaj w kadrach, jak pracodawca rozlicza wybór 2 dni, zanim złożysz
+      pierwszy wniosek w roku.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { godzinyZwolnienia } from '../../lib/narzedzia/wolne-rodzinne';
+
+  const form = document.querySelector<HTMLFormElement>('[data-wolne]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const wartosc = (n: string) => Number((form.elements.namedItem(n) as HTMLSelectElement).value);
+    const przelicz = () => {
+      const h = godzinyZwolnienia(wartosc('etat'), wartosc('norma'));
+      w('dziecko').textContent = `2 dni albo ${h} h`;
+      w('sila').innerHTML = `2 dni albo ${h} h, płatne 50% (art. 148<sup>1</sup>)`;
+    };
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>
