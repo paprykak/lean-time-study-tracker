@@ -1,0 +1,250 @@
+---
+// Temperatura w pracy: minimum (§ 30 przepisów ogólnych BHP), napoje (§ 4 rozporządzenia o posiłkach i napojach)
+// i nowe przepisy o upale (§ 30a, od 11 stycznia 2027 r.). Logika: src/lib/narzedzia/temperatura.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { OD_30A } from '../../lib/narzedzia/temperatura';
+
+const faq = [
+  {
+    pytanie: 'Jaka jest minimalna temperatura w pracy?',
+    odpowiedz: 'W pomieszczeniach pracy co najmniej 14°C, chyba że nie pozwalają na to względy technologiczne. W biurach i tam, gdzie wykonuje się lekką pracę fizyczną, co najmniej 18°C (§ 30 rozporządzenia w sprawie ogólnych przepisów BHP).',
+  },
+  {
+    pytanie: 'Jaka jest maksymalna temperatura w pracy?',
+    odpowiedz: 'Od 11 stycznia 2027 r. w pomieszczeniach pracy najwyżej 35°C, a przy pracy na otwartej przestrzeni z dużym wysiłkiem fizycznym 32°C, chyba że nie pozwalają na to względy technologiczne. Gdy pogoda podniesie temperaturę ponad te progi, pracy nie wolno wykonywać (§ 30a ust. 1 i 2). Do tego dnia § 30 tych przepisów określa tylko temperaturę minimalną.',
+  },
+  {
+    pytanie: 'Od jakiej temperatury pracodawca musi dać wodę?',
+    odpowiedz: 'Gdy temperatura na stanowisku spowodowana pogodą przekracza 28°C, a przy pracy na otwartej przestrzeni, gdy jest poniżej 10°C albo powyżej 25°C. Przy pracy z dużym wysiłkiem fizycznym napoje należą się zawsze (§ 4 ust. 1 rozporządzenia w sprawie profilaktycznych posiłków i napojów).',
+  },
+  {
+    pytanie: 'Co pracodawca musi zrobić przy upale od 2027 r.?',
+    odpowiedz: 'Gdy przez pogodę temperatura w pomieszczeniu przekroczy 28°C (25°C przy dużym wysiłku), zastosować rozwiązania techniczne obniżające temperaturę albo organizacyjne chroniące zdrowie. Na otwartej przestrzeni powyżej 25°C rozwiązania organizacyjne. Ustala je po konsultacji z komisją BHP albo z pracownikami i po opinii lekarza medycyny pracy, a potem informuje o nich pracowników (§ 30a ust. 3–7).',
+  },
+  {
+    pytanie: 'Kogo nie dotyczą progi 35°C i 32°C?',
+    odpowiedz: 'Przepisu o progach nie stosuje się do prac z art. 151^10 pkt 1, 2, 5–8 i 9 lit. c–h Kodeksu pracy, czyli między innymi akcji ratowniczych, pracy w ruchu ciągłym, w transporcie i komunikacji, w zakładowych strażach, przy pilnowaniu mienia, w rolnictwie, gastronomii i hotelach, a także do żłobków, służb mundurowych i żołnierzy (§ 30a ust. 8).',
+  },
+  {
+    pytanie: 'Czym jest duży wysiłek fizyczny w tych przepisach?',
+    odpowiedz: 'Praca, przy której efektywny wydatek energetyczny w ciągu zmiany przekracza 1500 kcal (6280 kJ) u mężczyzn i 1000 kcal (4187 kJ) u kobiet. Ocenę wysiłku na stanowisku zna służba BHP.',
+  },
+];
+---
+<StronaNarzedzia
+  slug="temperatura-w-pracy"
+  tytul="Temperatura w pracy: minimum, upał i przepisy od 2027"
+  opis="Jaka temperatura w pracy jest dozwolona: minimum 14 i 18°C, napoje od 28°C, zakaz pracy powyżej 35°C i 32°C od 11 stycznia 2027 r. Sprawdź swoją sytuację."
+  h1="Temperatura w pracy: co musi zrobić pracodawca"
+  lead="Za zimno czy już za gorąco? Wpisz temperaturę i opisz pracę, a pokażemy, co mówią przepisy: minimum w pomieszczeniach, napoje i nowe zasady na upał z § 30a, które wchodzą w życie 11 stycznia 2027 r."
+  faq={faq}
+>
+  <form class="kalkulator" data-temperatura novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Warunki pracy</h2>
+
+      <fieldset class="mt-4">
+        <legend class="etykieta">Gdzie</legend>
+        <div class="przelacznik mt-2">
+          <label><input type="radio" name="miejsce" value="pomieszczenie" checked /> W pomieszczeniu</label>
+          <label><input type="radio" name="miejsce" value="otwarta" /> Na otwartej przestrzeni</label>
+        </div>
+      </fieldset>
+
+      <div class="mt-4">
+        <label for="t-temp" class="etykieta-pola">Temperatura (°C)</label>
+        <input id="t-temp" name="temperatura" class="pole mt-1 max-w-32" type="text" inputmode="decimal" autocomplete="off" value="30" aria-describedby="t-temp-blad" />
+        <p id="t-temp-blad" class="blad-pola" data-blad="temperatura" hidden></p>
+      </div>
+
+      <div class="mt-4">
+        <label for="t-wysilek" class="etykieta-pola">Rodzaj pracy</label>
+        <select id="t-wysilek" name="wysilek" class="pole mt-1" aria-describedby="t-wysilek-opis">
+          <option value="biuro-lekka">Biuro albo lekka praca fizyczna</option>
+          <option value="zwykla" selected>Inna praca</option>
+          <option value="duzy">Duży wysiłek fizyczny</option>
+        </select>
+        <p id="t-wysilek-opis" class="meta mt-1">Duży wysiłek: ponad 1500 kcal na zmianę u mężczyzn i 1000 kcal u kobiet (ocenę zna służba BHP).</p>
+      </div>
+
+      <div class="mt-5 space-y-2 text-[0.9375rem]">
+        <label class="flex items-start gap-3" data-tylko-pomieszczenie>
+          <input type="checkbox" name="technologia" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+          <span>Ciepło pochodzi z technologii (piec, suszarnia, proces), a nie z pogody</span>
+        </label>
+        <label class="flex items-start gap-3">
+          <input type="checkbox" name="wyjatek" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" aria-describedby="t-wyjatek-opis" />
+          <span>Praca w ruchu ciągłym, w transporcie, przy ochronie mienia albo w innym wyjątku z § 30a ust. 8</span>
+        </label>
+        <p id="t-wyjatek-opis" class="meta ml-8">Lista wyjątków niżej, w pytaniach i odpowiedziach.</p>
+      </div>
+
+      <div class="mt-5">
+        <label for="t-data" class="etykieta-pola">Stan prawny na dzień</label>
+        <select id="t-data" name="data" class="pole mt-1 max-w-72">
+          <option value="dzis" selected>Dziś</option>
+          <option value={OD_30A}>Od 11 stycznia 2027 r. (nowe przepisy o upale)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Co mówią przepisy</h2>
+      <div aria-live="polite">
+        <p class="wynik-data" data-w="naglowek">Wpisz temperaturę</p>
+        <ul class="lista-obowiazkow mt-4" data-w="lista"></ul>
+      </div>
+      <noscript><p class="wynik-uwaga">Ocena liczy się w przeglądarce i potrzebuje JavaScriptu. Progi są w tabeli poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="progi">Progi temperatury w pracy: tabela</h2>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Progi temperatury w przepisach BHP</caption>
+        <thead><tr><th scope="col">Sytuacja</th><th scope="col">Próg</th><th scope="col">Co z tego wynika</th><th scope="col">Podstawa</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Pomieszczenie pracy</th><td>poniżej 14°C</td><td>za zimno, chyba że nie pozwala technologia</td><td>§ 30</td></tr>
+          <tr><th scope="row">Biuro, lekka praca fizyczna</th><td>poniżej 18°C</td><td>za zimno</td><td>§ 30</td></tr>
+          <tr><th scope="row">Stanowisko, upał z pogody</th><td>powyżej 28°C</td><td>napoje</td><td>§ 4 ust. 1 pkt 5 (napoje)</td></tr>
+          <tr><th scope="row">Otwarta przestrzeń</th><td>poniżej 10°C albo powyżej 25°C</td><td>napoje gorące albo zimne</td><td>§ 4 ust. 1 pkt 3 (napoje)</td></tr>
+          <tr><th scope="row">Duży wysiłek fizyczny</th><td>każda temperatura</td><td>napoje</td><td>§ 4 ust. 1 pkt 4 (napoje)</td></tr>
+          <tr><th scope="row">Pomieszczenie, od 11.01.2027</th><td>powyżej 28°C (25°C przy dużym wysiłku)</td><td>rozwiązania techniczne albo organizacyjne</td><td>§ 30a ust. 3</td></tr>
+          <tr><th scope="row">Otwarta przestrzeń, od 11.01.2027</th><td>powyżej 25°C</td><td>rozwiązania organizacyjne</td><td>§ 30a ust. 4</td></tr>
+          <tr><th scope="row">Pomieszczenie, od 11.01.2027</th><td>powyżej 35°C</td><td>pracy nie wolno wykonywać, gdy to skutek pogody</td><td>§ 30a ust. 1 i 2</td></tr>
+          <tr><th scope="row">Otwarta przestrzeń, duży wysiłek, od 11.01.2027</th><td>powyżej 32°C</td><td>pracy nie wolno wykonywać</td><td>§ 30a ust. 1 i 2</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      § 30 i § 30a to paragrafy rozporządzenia w sprawie ogólnych przepisów BHP; „napoje” to rozporządzenie w sprawie
+      profilaktycznych posiłków i napojów. Przy mikroklimacie gorącym (wskaźnik WBGT powyżej 25°C) i zimnym (WCI
+      powyżej 1000) napoje należą się także (§ 4 ust. 1 pkt 1 i 2), a przy gorącym mikroklimacie mają być wzbogacone
+      w sole mineralne i witaminy (§ 4 ust. 2).
+    </p>
+
+    <h2 id="od-2027">Co się zmienia 11 stycznia 2027 r.</h2>
+    <p>
+      Rozporządzenie z 9 lipca 2026 r. dodaje do przepisów ogólnych BHP § 30a z górną granicą temperatury:
+      35°C w pomieszczeniach i 32°C przy dużym wysiłku na otwartej przestrzeni, chyba że nie pozwalają
+      na to względy technologiczne. Gdy próg przekroczy pogoda, pracy nie wolno wykonywać. Od 28°C w pomieszczeniu
+      (25°C przy dużym wysiłku) pracodawca musi obniżać temperaturę rozwiązaniami technicznymi albo chronić zdrowie
+      rozwiązaniami organizacyjnymi, a na otwartej przestrzeni od 25°C stosować rozwiązania organizacyjne.
+    </p>
+    <p>
+      Rozwiązania organizacyjne pracodawca ustala po konsultacji w komisji BHP, a gdy jej nie ma, z pracownikami
+      albo ich przedstawicielami i po opinii lekarza medycyny pracy, a potem informuje o nich pracowników
+      (§ 30a ust. 5–7). Przepisy weszły do Dziennika Ustaw 10 lipca 2026 r. i zaczną obowiązywać po 6 miesiącach.
+    </p>
+
+    <h2 id="napoje">Napoje: kiedy i jakie</h2>
+    <p>
+      Pracodawca zapewnia napoje w ilości zaspokajającej potrzeby, zimne albo gorące, zależnie od warunków pracy
+      (§ 4 ust. 2 rozporządzenia o napojach). Napoje mają być dostępne przez całą zmianę (§ 6 ust. 3). Stanowiska,
+      na których się należą, i zasady wydawania ustala pracodawca w porozumieniu ze związkami zawodowymi, a gdy ich
+      nie ma, po opinii przedstawicieli pracowników (§ 5).
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { ocenTemperature, podsumowanie, type Miejsce, type Wysilek } from '../../lib/narzedzia/temperatura';
+  import { dzisWPolsce } from '../../lib/narzedzia/terminy';
+  import { liczba } from '../../lib/narzedzia/format';
+
+  const form = document.querySelector<HTMLFormElement>('[data-temperatura]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const pole = form.elements.namedItem('temperatura') as HTMLInputElement;
+    const blad = form.querySelector<HTMLElement>('[data-blad="temperatura"]')!;
+    const NAGLOWEK = {
+      zakaz: 'Pracy nie wolno wykonywać',
+      obowiazki: 'Pracodawca ma obowiązki',
+      'bez-obowiazkow': 'Bez dodatkowych obowiązków',
+    } as const;
+    const ETYKIETA = { zakaz: 'Zakaz.', obowiazek: 'Obowiązek.', zapowiedz: 'Od 11 stycznia 2027 r.:' } as const;
+
+    const przelicz = () => {
+      const miejsce = (form.querySelector<HTMLInputElement>('input[name="miejsce"]:checked')?.value ?? 'pomieszczenie') as Miejsce;
+      form.querySelector<HTMLElement>('[data-tylko-pomieszczenie]')!.hidden = miejsce !== 'pomieszczenie';
+      const tekst = pole.value.trim().replace(',', '.');
+      const t = /^-?\d+(\.\d+)?$/.test(tekst) ? Number(tekst) : Number.NaN;
+      const zly = Number.isNaN(t) || t < -40 || t > 60;
+      blad.hidden = !zly;
+      blad.textContent = zly ? 'Wpisz temperaturę w stopniach Celsjusza, na przykład 30 albo 17,5.' : '';
+      pole.setAttribute('aria-invalid', zly ? 'true' : 'false');
+      const lista = w('lista');
+      lista.replaceChildren();
+      if (zly) {
+        w('naglowek').textContent = 'Wpisz temperaturę';
+        return;
+      }
+      const dataPole = (form.elements.namedItem('data') as HTMLSelectElement).value;
+      const punkty = ocenTemperature({
+        miejsce,
+        wysilek: (form.elements.namedItem('wysilek') as HTMLSelectElement).value as Wysilek,
+        temperatura: t,
+        zPogody: miejsce === 'otwarta' || !(form.elements.namedItem('technologia') as HTMLInputElement).checked,
+        wyjatek: (form.elements.namedItem('wyjatek') as HTMLInputElement).checked,
+        data: dataPole === 'dzis' ? dzisWPolsce() : dataPole,
+      });
+      w('naglowek').textContent = `${liczba(t)}°C: ${NAGLOWEK[podsumowanie(punkty)].toLowerCase()}`;
+      for (const p of punkty) {
+        const li = document.createElement('li');
+        li.dataset.poziom = p.poziom;
+        const e = document.createElement('strong');
+        e.textContent = `${ETYKIETA[p.poziom]} `;
+        const tresc = document.createElement('span');
+        tresc.textContent = p.tekst;
+        const zrodlo = document.createElement('span');
+        zrodlo.className = 'lista-podstawa';
+        zrodlo.textContent = p.podstawa;
+        li.append(e, tresc, zrodlo);
+        lista.append(li);
+      }
+      if (!punkty.length) {
+        const li = document.createElement('li');
+        li.textContent = 'Przy tej temperaturze i takiej pracy omawiane przepisy nie nakładają dodatkowych obowiązków. Ocena ryzyka zawodowego może wymagać więcej.';
+        lista.append(li);
+      }
+    };
+
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>
+
+<style>
+  .lista-obowiazkow {
+    display: grid;
+    gap: 0.625rem;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+  }
+  .lista-obowiazkow :global(li) {
+    padding: 0.625rem 0.875rem;
+    border-left: 4px solid var(--color-grafit);
+    background: var(--color-tlo);
+  }
+  .lista-obowiazkow :global(li[data-poziom="zakaz"]) {
+    border-color: var(--color-blad);
+  }
+  .lista-obowiazkow :global(li[data-poziom="zakaz"] strong) {
+    color: var(--color-blad);
+  }
+  .lista-obowiazkow :global(li[data-poziom="obowiazek"]) {
+    border-color: var(--color-akcent);
+  }
+  .lista-obowiazkow :global(li[data-poziom="zapowiedz"]) {
+    border-left-style: dashed;
+  }
+  .lista-obowiazkow :global(.lista-podstawa) {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.8125rem;
+    color: var(--color-tekst-drugi);
+  }
+</style>

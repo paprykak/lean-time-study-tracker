@@ -111,6 +111,20 @@ export const AKTY = {
     adres: eli(2023, 1240),
     sprawdzono: '2026-11-11',
   },
+  temperatura2026: {
+    nazwa: 'Rozporządzenie z 9 lipca 2026 r. zmieniające rozporządzenie w sprawie ogólnych przepisów BHP (§ 30a: temperatura)',
+    publikator: 'Dz.U. 2026 poz. 927',
+    uwaga: 'wchodzi w życie 11 stycznia 2027 r.',
+    adres: eli(2026, 927),
+    sprawdzono: '2026-11-11',
+  },
+  napoje: {
+    nazwa: 'Rozporządzenie w sprawie profilaktycznych posiłków i napojów',
+    publikator: 'Dz.U. 1996 poz. 279',
+    uwaga: '§ 4: napoje; zmiana Dz.U. 2019 poz. 1160 dotyczy tylko posiłków',
+    adres: eli(1996, 279),
+    sprawdzono: '2026-11-11',
+  },
   placa2025: {
     nazwa: 'Rozporządzenie w sprawie minimalnego wynagrodzenia w 2025 r.',
     publikator: 'Dz.U. 2024 poz. 1362',

@@ -61,13 +61,20 @@ export const NARZEDZIA: Narzedzie[] = [
     przepisy: ['recznePrace', 'praceKobietCiaza', 'praceMlodocianych', 'kodeksPracy'],
     sprawdzono: '2026-11-11',
   },
+  {
+    slug: 'temperatura-w-pracy',
+    nazwa: 'Temperatura w pracy',
+    krotko: 'Za zimno albo za gorąco? Co musi zrobić pracodawca: minimum 14 i 18°C, napoje, nowe progi upału od 2027 r.',
+    kategoria: 'bhp',
+    przepisy: ['ogolneBhp', 'temperatura2026', 'napoje', 'kodeksPracy'],
+    sprawdzono: '2026-11-11',
+  },
 ];
 
 /** Następne narzędzia w kolejce (bez stron i linków; lista na /narzedzia). Zdejmujesz pozycję, gdy narzędzie rusza. */
 export const W_PRZYGOTOWANIU: { nazwa: string; kategoria: KategoriaNarzedzia }[] = [
   { nazwa: 'Testy UDT na wózki widłowe', kategoria: 'uprawnienia' },
   { nazwa: 'Grafik 12-godzinny z kontrolą przepisów', kategoria: 'czas-pracy' },
-  { nazwa: 'Temperatura w pracy: kiedy pracodawca musi działać', kategoria: 'bhp' },
 ];
 
 export const adresNarzedzia = (slug: string) => `/narzedzia/${slug}`;
