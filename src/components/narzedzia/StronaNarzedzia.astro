@@ -1,0 +1,135 @@
+---
+// Wspólny układ strony narzędzia: okruszki, nagłówek z datą sprawdzenia, narzędzie (slot domyślny), wyjaśnienie
+// (slot „wyjasnienie”, typografia artykułu), pytania i odpowiedzi, podstawa prawna z rejestru przepisów,
+// zastrzeżenie i inne narzędzia. Dane strukturalne: WebApplication (bezpłatne narzędzie w przeglądarce).
+// Narzędzia liczą w przeglądarce i niczego nie wysyłają, więc nie przetwarzamy danych osobowych.
+import Uklad from '../../layouts/Uklad.astro';
+import Okruszki from '../Okruszki.astro';
+import Faq from '../artykul/Faq.astro';
+import Newsletter from '../Newsletter.astro';
+import KartaNarzedzia from './KartaNarzedzia.astro';
+import ustawienia from '../../data/ustawienia.json';
+import { AKTY, OBJASNIENIA } from '../../data/prawo';
+import { KATEGORIE, NARZEDZIA, W_PRZYGOTOWANIU, adresNarzedzia, narzedzie } from '../../data/narzedzia';
+import Tekst from '../Tekst.astro';
+import { dataDluga } from '../../lib/daty';
+import { typografiaWHtml } from '../../lib/typografia.mjs';
+
+interface Props {
+  slug: string;
+  /** <title> bez nazwy serwisu (dopisujemy „| Rytm Hali”), do ok. 50 znaków. */
+  tytul: string;
+  /** Meta description, do 155 znaków. */
+  opis: string;
+  /** Nagłówek H1 (może być dłuższy niż nazwa w rejestrze). */
+  h1: string;
+  lead: string;
+  faq: { pytanie: string; odpowiedz: string }[];
+  /** Objaśnienia urzędowe użyte do metody (klucze z OBJASNIENIA). */
+  objasnienia?: (keyof typeof OBJASNIENIA)[];
+}
+const { slug, tytul, opis, h1, lead, faq, objasnienia = [] } = Astro.props;
+const n = narzedzie(slug);
+const adres = `${ustawienia.adres}${adresNarzedzia(slug)}`;
+const inne = NARZEDZIA.filter((x) => x.slug !== slug);
+const wyjasnienie = typografiaWHtml(await Astro.slots.render('wyjasnienie'));
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: n.nazwa,
+    description: opis,
+    url: adres,
+    applicationCategory: 'BusinessApplication',
+    operatingSystem: 'Przeglądarka internetowa',
+    inLanguage: 'pl-PL',
+    isAccessibleForFree: true,
+    offers: { '@type': 'Offer', price: 0, priceCurrency: 'PLN' },
+    dateModified: n.sprawdzono,
+    publisher: { '@id': `${ustawienia.adres}/#redakcja` },
+  },
+];
+---
+<Uklad tytul={`${tytul} | ${ustawienia.nazwa}`} opis={opis} jsonLd={jsonLd} aktywny="narzedzia">
+  <div class="kontener">
+    <Okruszki class="mt-4" pozycje={[{ nazwa: 'Narzędzia', adres: '/narzedzia' }, { nazwa: n.nazwa }]} />
+    <header class="mt-4 max-w-3xl">
+      <p class="kategoria">{KATEGORIE[n.kategoria].nazwa}</p>
+      <h1 class="tytul-xl mt-2">{h1}</h1>
+      <p class="lead mt-3"><Tekst t={lead} /></p>
+      <p class="meta mt-3">
+        Sprawdzono z przepisami: <time datetime={n.sprawdzono}>{dataDluga(new Date(`${n.sprawdzono}T12:00:00Z`))}</time>. Liczy w przeglądarce: niczego nie wysyłamy ani nie zapisujemy.
+      </p>
+    </header>
+
+    <div class="mt-8">
+      <slot />
+    </div>
+
+    <div class="mt-14 grid gap-12 lg:grid-cols-12 lg:gap-10">
+      <div class="tresc min-w-0 lg:col-span-8">
+        <Fragment set:html={wyjasnienie} />
+        <Faq id="pytania" pytania={faq} />
+
+        <section aria-labelledby="podstawa-prawna">
+          <h2 id="podstawa-prawna">Podstawa prawna i źródła</h2>
+          <ul>
+            {n.przepisy.map((k) => {
+              const a = AKTY[k];
+              return (
+                <li>
+                  <a href={a.adres} rel="noopener">{a.nazwa}</a> ({a.publikator}{'uwaga' in a ? `, ${a.uwaga}` : ''}), sprawdzono {dataDluga(new Date(`${a.sprawdzono}T12:00:00Z`))}.
+                </li>
+              );
+            })}
+            {objasnienia.map((k) => {
+              const o = OBJASNIENIA[k];
+              return (
+                <li>
+                  <a href={o.adres} rel="noopener">{o.nazwa}</a>: {o.opis}, sprawdzono {dataDluga(new Date(`${o.sprawdzono}T12:00:00Z`))}.
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+
+        <aside class="zastrzezenie" aria-label="Zastrzeżenie">
+          <p>
+            Narzędzie liczy według przepisów powszechnych. Regulamin wynagradzania, układ zbiorowy albo umowa mogą dawać
+            więcej. To nie jest porada prawna: o konkretną wypłatę zapytaj dział kadr, a w sporze skorzystaj
+            z <a href="https://www.pip.gov.pl/dla-pracownikow/porady-prawne" rel="noopener">porad prawnych Państwowej Inspekcji Pracy</a>.
+            Widzisz błąd albo zmianę w przepisach? <a href="/kontakt">Napisz do redakcji</a>, poprawimy według <a href="/polityka-korekt">polityki korekt</a>.
+          </p>
+        </aside>
+      </div>
+
+      <aside class="space-y-10 lg:col-span-4" aria-label="Więcej narzędzi">
+        <section aria-labelledby="inne-narzedzia">
+          <h2 id="inne-narzedzia" class="font-display text-[1.25rem] font-bold text-tekst">{inne.length ? 'Inne narzędzia' : 'Następne narzędzia'}</h2>
+          {inne.length > 0 ? (
+            <div class="mt-3 divide-y divide-linia border-t-2 border-grafit">
+              {inne.map((x) => <KartaNarzedzia narzedzie={x} wariant="mala" />)}
+            </div>
+          ) : (
+            <ul class="mt-3 divide-y divide-linia border-t-2 border-grafit text-[0.9375rem]">
+              {W_PRZYGOTOWANIU.map((w) => <li class="py-3">{w.nazwa}</li>)}
+            </ul>
+          )}
+          <p class="mt-3"><a href="/narzedzia" class="link text-[0.9375rem]">Wszystkie narzędzia</a></p>
+        </section>
+        <Newsletter id="narzedzie-newsletter" miejsce={`narzedzie-${slug}`} />
+      </aside>
+    </div>
+  </div>
+</Uklad>
+
+<style>
+  .zastrzezenie {
+    margin-top: 2.5rem;
+    padding: 1rem 1.25rem;
+    border-left: 3px solid var(--color-grafit);
+    background: var(--color-tlo-szare);
+    font-size: 0.9375rem;
+    line-height: 1.6;
+  }
+</style>

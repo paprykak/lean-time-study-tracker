@@ -192,3 +192,33 @@ Patryk: bez oznaczeń, że tekst powstał z użyciem AI, a teksty mają być nap
 - **Formularze tylko wtedy, gdy działają** (`FORMULARZE` w `srodowisko.mjs`): bez Brevo i Email Routing produkcja pokazuje „Zapisy ruszą wkrótce”, a nagłówek i autopromocja nie wzywają do zapisu. Podgląd i build testowy pokazują formularze zawsze (testy E2E). Kontrola SEO blokuje formularz bez usługi na produkcji (poza stroną wzorów).
 - **Tekst o OEE czeka na lekturę Patryka**: strony „Jak używamy AI” i „Zasady redakcyjne” obiecują, że redaktor naczelny czyta każdy tekst w całości przed publikacją, i na tej kontroli opiera się brak oznaczeń AI (decyzja z 2026-11-06). Polecenie publikacji nie zastępuje lektury, więc tekst wejdzie po słowie Patryka. Tekst o prognozach czeka na koniec weryfikacji.
 - **Publikacja bez lektury przed publikacją (Patryk, 2026-11-07: „Opublikuj wszystkie artykuły. Od razu napisz kolejne trzy i też publikuj od razu!”, potem „Publikuj od razu bez oznaczenia AI” i „Zmień strony i publikuj od razu”).** Redakcja przedstawiła dwa skutki: (1) podstawa zwolnienia z oznaczania z art. 50 ust. 4 AI Act opiera się na kontroli redakcyjnej, więc kontrola dopiero po publikacji ją osłabia; (2) strony zaufania obiecywały lekturę przed publikacją. Decyzja Patryka: teksty na jego polecenie idą na produkcję po pełnej weryfikacji faktów, bez oznaczenia AI, a on czyta je krótko po publikacji i może je zmienić albo wycofać. Strony „Jak używamy AI”, „Zasady redakcyjne” i „O nas” mówią to teraz czytelnikom (brzmienie zatwierdzone przez Patryka w podglądzie; „O nas” poprawione tak samo, bo miało tę samą obietnicę). Domyślny tryb skilla `/artykul` zostaje: lektura przed publikacją.
+
+## 2026-11-11 — Nowy profil: narzędzia i przepisy dla ludzi z hali
+
+- **Zmiana profilu (Patryk, 2026-11-11: „chce zmienic profil strony. nie chce piosac artykulow…”, potem „ok, zacznij wdrazac majac na uwadze ze bedziemy to pozniej skalowac. zaczynaj i wdrazaj wszystko na biezaco”).** Redakcja zbadała nisze i dała ranking. Wybrany kierunek to darmowe narzędzia o prawie pracy, BHP i uprawnieniach na hali. W Polsce nie ma ich w jednym miejscu, mają popyt w wyszukiwarce (podpowiedzi Google z 2026-11-11) i zarobią później przez porównywarkę kursów UDT, szkolenia z KFS i panel dla pracodawców. Artykuły zostają jako biblioteka niżej na stronie głównej i w działach; nowych na razie nie piszemy, a dwa wstrzymane szkice leżą w `redakcja/*/wstrzymane/`, poza `src/`.
+- **Granica z GembaHQ:** Rytm Hali odpowiada na pytania „czy wolno, czy muszę, ile mi się należy, jak zdać” (prawo i ludzie na hali). GembaHQ zostaje przy wydajności i doskonaleniu (OEE, SMED, ILUO, chronometraż, ABC), żeby projekty się nie kanibalizowały.
+- **Architektura pod skalę:**
+  - **rejestr narzędzi** `src/data/narzedzia.ts` zasila stronę główną, `/narzedzia`, menu, `llms.txt` i testy;
+  - **rejestr przepisów** `src/data/prawo.ts` trzyma akty z adresem ELI w Dzienniku Ustaw, datą sprawdzenia u źródła i płacą minimalną według lat;
+  - **obliczenia** to czyste funkcje w `src/lib/narzedzia/` z testami jednostkowymi, wspólne dla kolejnych narzędzi (kalendarz świąt, wymiar czasu pracy, godziny nocne);
+  - **wspólny układ** `StronaNarzedzia` zapewnia nagłówek z datą sprawdzenia, podstawę prawną z rejestru, pytania i odpowiedzi, zastrzeżenie z odesłaniem do porad PIP i dane `WebApplication`.
+  Adresy `/narzedzia/<slug>` zostawiają miejsce na wersje językowe (`/uk/…`, `/en/…`).
+- **Dane prawne się starzeją, więc pilnuje ich test:**
+  - płaca minimalna musi być wpisana na bieżący rok;
+  - żadne sprawdzenie u źródła nie może być starsze niż 15 miesięcy;
+  - nowe rozporządzenie o płacy minimalnej wychodzi do 15 września, wtedy dopisujesz kolejny rok.
+- **Bez danych osobowych:** narzędzia liczą w przeglądarce i niczego nie wysyłają, więc polityka prywatności się nie zmienia. Przypomnienia o terminach pójdą jako plik kalendarza `.ics` do pobrania, a nie e-mail. Konta, zapisy i panel pracodawcy wymagają decyzji Patryka i oceny RODO (AGENTS.md, zasada 10).
+- **Każde twierdzenie prawne ze źródłem w przepisie, bez porad:**
+  - metodę liczenia, której przepis nie rozstrzyga wprost, bierzemy z objaśnienia urzędowego i je podajemy;
+  - przykład: stawka do dodatku nocnego to płaca minimalna podzielona przez wymiar miesiąca, według objaśnienia ZPE na gov.pl;
+  - wynik w każdym miesiącu 2026 r. zgadza się z niezależną tabelą kadrową.
+- **Kolejność narzędzi:**
+  1. dodatek za pracę w nocy;
+  2. termin szkolenia okresowego BHP;
+  3. ważność uprawnień UDT;
+  4. ile kg wolno dźwigać;
+  5. testy UDT;
+  6. grafik 12-godzinny.
+
+  Każde narzędzie wchodzi na produkcję osobno, po zielonym `npm run check`. Patryk powiedział „wdrażaj wszystko na bieżąco”.
+- **Hasło i opis serwisu** w `ustawienia.json`: „Narzędzia i przepisy dla ludzi z hali”. Strony zaufania (O nas, zasady redakcyjne) nadal opisują medium z artykułami; ich nowe brzmienie to tekst strony zaufania, więc czeka na Patryka (STAN.md).

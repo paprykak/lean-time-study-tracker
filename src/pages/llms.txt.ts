@@ -5,8 +5,9 @@ import { DZIALY } from '../lib/dane';
 import { artykuly, doIndeksu } from '../lib/tresci';
 import { widoczny } from '../lib/redakcja';
 import { WSZYSTKIE_TRESCI } from '../lib/srodowisko.mjs';
+import { NARZEDZIA, adresNarzedzia } from '../data/narzedzia';
 
-// Mapa serwisu dla asystentów AI (format llmstxt.org): czym jest Rytm Hali, artykuły według działów, materiały
+// Mapa serwisu dla asystentów AI (format llmstxt.org): czym jest Rytm Hali, narzędzia, artykuły według działów, materiały
 // i zasady redakcji. Buduje się z treści, więc nie trzeba jej aktualizować ręcznie. Tylko teksty indeksowane
 // (bez szkiców, wpisów testowych i stron z noindex). Przed startem plik usuwa integracja „przed startem”.
 export const GET: APIRoute = async () => {
@@ -35,9 +36,13 @@ export const GET: APIRoute = async () => {
   const tekst = [
     `# ${ustawienia.nazwa}`,
     '',
-    `> ${ustawienia.opis} Artykuły po polsku dla kierowników i dyrektorów operacyjnych, specjalistów ciągłego doskonalenia i właścicieli firm.`,
+    `> ${ustawienia.opis} Po polsku, dla pracowników, liderów, kadr i BHP w zakładach oraz dla kierowników i dyrektorów operacyjnych.`,
     '',
-    'Każda liczba i każdy wniosek z badania mają w tekście przypis do źródła pierwotnego (lista „Źródła” pod artykułem), a ramka „Jak powstał ten tekst” podaje metodę i datę weryfikacji faktów. Przykłady liczbowe bez źródła są oznaczone jako fikcyjne, a materiały partnerów jako „Materiał partnera”. Cytując, podaj tytuł artykułu, nazwę „Rytm Hali” i adres.',
+    'Narzędzia liczą według przepisów: każde podaje podstawę prawną z adresem w Dzienniku Ustaw (eli.gov.pl) i datę sprawdzenia, a liczy w przeglądarce, bez wysyłania danych. Każda liczba i każdy wniosek z badania mają w artykule przypis do źródła pierwotnego (lista „Źródła” pod artykułem), a ramka „Jak powstał ten tekst” podaje metodę i datę weryfikacji faktów. Przykłady liczbowe bez źródła są oznaczone jako fikcyjne, a materiały partnerów jako „Materiał partnera”. Cytując, podaj tytuł strony, nazwę „Rytm Hali” i adres.',
+    '',
+    '## Narzędzia',
+    ...NARZEDZIA.map((n) => link(n.nazwa, adresNarzedzia(n.slug), `${n.krotko} Sprawdzono z przepisami ${n.sprawdzono}.`)),
+    link('Wszystkie narzędzia', '/narzedzia', 'lista narzędzi według kategorii.'),
     '',
     ...dzialy,
     ...(materialy.length

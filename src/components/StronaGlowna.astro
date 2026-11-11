@@ -1,5 +1,6 @@
 ---
-// Strona główna portalu (układ z podglądu zaakceptowanego w F1) na treściach z kolekcji. Dobór: src/lib/redakcja.ts
+// Strona główna: najpierw narzędzia (profil serwisu od 2026-11-11, DECYZJE.md; rejestr src/data/narzedzia.ts),
+// niżej biblioteka artykułów w układzie z podglądu zaakceptowanego w F1. Dobór artykułów: src/lib/redakcja.ts
 // (ukladGlownej): wyróżnione ręcznie w panelu, najnowsze, działy bez powtórzeń. „Polecane” to lista redakcji
 // z ustawień serwisu; gdy dojdą statystyki (Umami), w tym miejscu pojawią się „Najczęściej czytane”.
 import SlotReklamowy from './SlotReklamowy.astro';
@@ -10,6 +11,9 @@ import KartaGlowna from './karty/KartaGlowna.astro';
 import KartaBoczna from './karty/KartaBoczna.astro';
 import KartaSiatka from './karty/KartaSiatka.astro';
 import KartaLista from './karty/KartaLista.astro';
+import KartaNarzedzia from './narzedzia/KartaNarzedzia.astro';
+import Tekst from './Tekst.astro';
+import { NARZEDZIA, W_PRZYGOTOWANIU } from '../data/narzedzia';
 import ustawienia from '../data/ustawienia.json';
 import { DZIALY, dzial } from '../lib/dane';
 import { artykuly, karta } from '../lib/tresci';
@@ -27,12 +31,32 @@ const polecane = ustawienia.polecane
   .filter((a) => a !== undefined)
   .map((a) => ({ tytul: a.data.tytul, adres: `/${a.id}` }));
 ---
-<h1 class="sr-only">{ustawienia.nazwa}: {ustawienia.haslo.toLowerCase()}</h1>
 <div class="kontener">
-  <SlotReklamowy komputer="billboard" telefon="mobilny" miejsce="glowna-gora" class="mt-6" />
+  <section aria-labelledby="glowna-tytul" class="mt-8 md:mt-10">
+    <p class="kategoria">Bezpłatnie, bez logowania</p>
+    <h1 id="glowna-tytul" class="tytul-xl mt-2 max-w-[22ch]">{ustawienia.haslo}</h1>
+    <p class="lead mt-4 max-w-[52ch]">
+      <Tekst t="Kalkulatory i ściągi z prawa pracy i BHP dla produkcji, magazynów i logistyki. Liczymy według przepisów, a przy każdym narzędziu podajemy źródło w Dzienniku Ustaw i datę sprawdzenia." />
+    </p>
+    <div class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {NARZEDZIA.map((n) => <KartaNarzedzia narzedzie={n} poziom="h2" />)}
+      {W_PRZYGOTOWANIU.length > 0 && (
+        <div class="border border-dashed border-[#8a939e] p-5">
+          <h2 class="kategoria">Wkrótce</h2>
+          <ul class="mt-2 space-y-1.5 text-[0.9375rem] text-tekst-tresc">
+            {W_PRZYGOTOWANIU.slice(0, 4).map((w) => <li>{w.nazwa}</li>)}
+          </ul>
+        </div>
+      )}
+    </div>
+    <p class="mt-5"><a href="/narzedzia" class="link">Wszystkie narzędzia</a></p>
+  </section>
 
+  <SlotReklamowy komputer="billboard" telefon="mobilny" miejsce="glowna-gora" class="mt-12" />
+
+  <NaglowekSekcji tytul="Artykuły" id="artykuly" class="mt-12" />
   {u.glowny ? (
-    <section aria-label="Najważniejsze" class="mt-8 grid gap-6 lg:grid-cols-12">
+    <section aria-label="Najważniejsze artykuły" class="mt-6 grid gap-6 lg:grid-cols-12">
       <KartaGlowna artykul={k(u.glowny)} priorytet class="lg:col-span-8" />
       {u.obok.length > 0 && (
         <div class="grid content-start gap-4 lg:col-span-4 [&>article+article]:border-t [&>article+article]:border-linia [&>article+article]:pt-4">

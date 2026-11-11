@@ -1,0 +1,39 @@
+---
+// Karta narzędzia (strona główna, /narzedzia, „Inne narzędzia”): kategoria, nazwa z rozciągniętym linkiem, jedno zdanie.
+import Ikona from '../Ikona.astro';
+import Tekst from '../Tekst.astro';
+import { KATEGORIE, adresNarzedzia, type Narzedzie } from '../../data/narzedzia';
+
+interface Props {
+  narzedzie: Narzedzie;
+  poziom?: 'h2' | 'h3';
+  /** „mala”: bez opisu (kolumna boczna). */
+  wariant?: 'pelna' | 'mala';
+}
+const { narzedzie: n, poziom = 'h3', wariant = 'pelna' } = Astro.props;
+const Tytul = poziom;
+---
+<article class:list={['karta karta-narzedzia flex flex-col bg-tlo', wariant === 'pelna' ? 'p-5' : 'py-3']}>
+  <p class="kategoria">{KATEGORIE[n.kategoria].krotko}</p>
+  <Tytul class="tytul-m mt-1">
+    <a href={adresNarzedzia(n.slug)} class="karta-link karta-tytul">{n.nazwa}</a>
+  </Tytul>
+  {wariant === 'pelna' && <p class="mt-2 text-[0.9375rem] leading-relaxed text-tekst-tresc"><Tekst t={n.krotko} /></p>}
+  {wariant === 'pelna' && (
+    <p class="mt-auto flex items-center gap-1 pt-4 text-[0.875rem] font-semibold text-akcent-tekst" aria-hidden="true">
+      Otwórz<Ikona nazwa="strzalka" rozmiar={16} />
+    </p>
+  )}
+</article>
+
+<style>
+  .karta-narzedzia.p-5 {
+    border: 1px solid var(--color-linia);
+    border-top: 3px solid var(--color-grafit);
+  }
+  @media (hover: hover) {
+    .karta-narzedzia.p-5:hover {
+      border-top-color: var(--color-akcent);
+    }
+  }
+</style>

@@ -1,0 +1,72 @@
+---
+// Wszystkie narzędzia według kategorii (rejestr: src/data/narzedzia.ts) i lista tych w przygotowaniu.
+import Uklad from '../../layouts/Uklad.astro';
+import Okruszki from '../../components/Okruszki.astro';
+import NaglowekSekcji from '../../components/NaglowekSekcji.astro';
+import KartaNarzedzia from '../../components/narzedzia/KartaNarzedzia.astro';
+import Newsletter from '../../components/Newsletter.astro';
+import Tekst from '../../components/Tekst.astro';
+import ustawienia from '../../data/ustawienia.json';
+import { KATEGORIE, NARZEDZIA, W_PRZYGOTOWANIU, adresNarzedzia, type KategoriaNarzedzia } from '../../data/narzedzia';
+
+const kategorie = (Object.keys(KATEGORIE) as KategoriaNarzedzia[])
+  .map((k) => ({ klucz: k, ...KATEGORIE[k], narzedzia: NARZEDZIA.filter((n) => n.kategoria === k) }))
+  .filter((k) => k.narzedzia.length > 0);
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'Narzędzia Rytmu Hali',
+    url: `${ustawienia.adres}/narzedzia`,
+    inLanguage: 'pl-PL',
+    mainEntity: {
+      '@type': 'ItemList',
+      itemListElement: NARZEDZIA.map((n, i) => ({ '@type': 'ListItem', position: i + 1, name: n.nazwa, url: `${ustawienia.adres}${adresNarzedzia(n.slug)}` })),
+    },
+  },
+];
+---
+<Uklad
+  tytul={`Narzędzia dla produkcji i magazynu: kalkulatory | ${ustawienia.nazwa}`}
+  opis="Bezpłatne kalkulatory i ściągi z przepisów dla produkcji, magazynów i logistyki: czas pracy, BHP, uprawnienia UDT. Każda liczba ze źródłem w Dzienniku Ustaw."
+  jsonLd={jsonLd}
+  aktywny="narzedzia"
+>
+  <div class="kontener">
+    <Okruszki class="mt-4" pozycje={[{ nazwa: 'Narzędzia' }]} />
+    <header class="mt-4 border-b-2 border-grafit pb-6">
+      <p class="kategoria">Bezpłatnie, bez logowania</p>
+      <h1 class="tytul-xl mt-2">Narzędzia</h1>
+      <p class="lead mt-3 max-w-3xl">
+        <Tekst t="Kalkulatory i ściągi z przepisów dla ludzi z hali: ile się należy, czy wolno, kiedy mija termin. Liczymy według przepisów, przy każdym narzędziu podajemy źródło i datę sprawdzenia, a dane zostają w Twojej przeglądarce." />
+      </p>
+    </header>
+
+    {kategorie.map((k) => (
+      <section aria-labelledby={`kategoria-${k.klucz}`} class="mt-10">
+        <NaglowekSekcji tytul={k.nazwa} id={`kategoria-${k.klucz}`} />
+        <div class="mt-4 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {k.narzedzia.map((n) => <KartaNarzedzia narzedzie={n} />)}
+        </div>
+      </section>
+    ))}
+
+    {W_PRZYGOTOWANIU.length > 0 && (
+      <section aria-labelledby="w-przygotowaniu" class="mt-12">
+        <NaglowekSekcji tytul="W przygotowaniu" id="w-przygotowaniu" />
+        <ul class="mt-4 grid gap-x-6 sm:grid-cols-2 lg:grid-cols-3">
+          {W_PRZYGOTOWANIU.map((w) => (
+            <li class="border-b border-linia py-3">
+              <span class="kategoria block">{KATEGORIE[w.kategoria].krotko}</span>
+              <span class="mt-1 block font-semibold text-tekst">{w.nazwa}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    <div class="mt-14">
+      <Newsletter id="narzedzia-newsletter" wariant="pasek" miejsce="narzedzia" />
+    </div>
+  </div>
+</Uklad>

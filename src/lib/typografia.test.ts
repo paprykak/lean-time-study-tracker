@@ -45,3 +45,13 @@ describe('typografia: dywiz i HTML', () => {
     expect(czesciTypografii('bez zmian')).toEqual([{ type: 'text', value: 'bez zmian' }]);
   });
 });
+
+describe('typografiaWHtml', () => {
+  it('twarde spacje w tekście, znaczniki i atrybuty bez zmian', async () => {
+    const { typografiaWHtml, NBSP } = await import('./typografia.mjs');
+    const html = '<p class="a i">Stawka z płacy w <a href="/x y">art. 151<sup>8</sup></a> i 160 h.</p><script>var a = "w x";</script>';
+    expect(typografiaWHtml(html)).toBe(
+      `<p class="a i">Stawka z${NBSP}płacy w${NBSP}<a href="/x y">art.${NBSP}151<sup>8</sup></a> i${NBSP}160${NBSP}h.</p><script>var a = "w x";</script>`,
+    );
+  });
+});

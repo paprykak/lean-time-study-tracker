@@ -70,3 +70,14 @@ export function czesciTypografii(tekst, opcje) {
   if (ostatni < t.length || !czesci.length) czesci.push({ type: 'text', value: t.slice(ostatni) });
   return czesci;
 }
+
+/**
+ * Polska typografia w gotowym HTML (strony pisane w .astro, np. wyjaśnienia pod narzędziami): twarde spacje tylko
+ * w tekście między znacznikami, bez zmian w znacznikach, atrybutach, skryptach i stylach. Tekst przed znacznikiem
+ * traktujemy jak ciąg dalszy („w <a>…”), żeby jednoliterowe słowo nie zostało samo na końcu wiersza.
+ * @param {string} html
+ */
+export function typografiaWHtml(html) {
+  const czesci = html.split(/(<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>|<[^>]+>)/);
+  return czesci.map((c, i) => (i % 2 === 1 || !c ? c : typografia(c, { ciagDalszy: i < czesci.length - 1 }))).join('');
+}

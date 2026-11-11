@@ -1,0 +1,473 @@
+---
+// Kalkulator dodatku za pracę w porze nocnej (art. 151^8 § 1 Kp). Logika: src/lib/narzedzia/dodatek-nocny.ts
+// i czas-pracy.ts (testy obok). Bez JavaScriptu działa tabela stawek; kalkulator liczy w przeglądarce.
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { LATA, PLACA_MINIMALNA } from '../../data/prawo';
+import { dodatekNocny, tabelaRoku, PROCENT_USTAWOWY } from '../../lib/narzedzia/dodatek-nocny';
+import { nazwaMiesiaca, opisWymiaru } from '../../lib/narzedzia/czas-pracy';
+import { godz, zl } from '../../lib/narzedzia/format';
+
+const teraz = new Date();
+const rokBudowy = teraz.getUTCFullYear();
+const lataTabel = LATA.filter((r) => r >= rokBudowy);
+const tabele = (lataTabel.length ? lataTabel : LATA.slice(-1)).map((rok) => ({ rok, wiersze: tabelaRoku(rok) }));
+const rokDomyslny = LATA.includes(rokBudowy) ? rokBudowy : LATA[LATA.length - 1];
+const miesiacDomyslny = LATA.includes(rokBudowy) ? teraz.getUTCMonth() + 1 : 1;
+const przyklad = dodatekNocny({ rok: rokDomyslny, miesiac: miesiacDomyslny, godziny: 8 });
+const okresPrzykladu = `${nazwaMiesiaca(miesiacDomyslny)} ${rokDomyslny}`;
+
+const zakres = (rok: number) => {
+  const w = tabelaRoku(rok);
+  const min = Math.min(...w.map((x) => x.zaGodzine));
+  const max = Math.max(...w.map((x) => x.zaGodzine));
+  const miesiace = (v: number) => w.filter((x) => x.zaGodzine === v).map((x) => nazwaMiesiaca(x.wymiar.miesiac)).join(', ');
+  return { min, max, tekst: `od ${zl(min)} (${miesiace(min)}) do ${zl(max)} (${miesiace(max)}) za godzinę` };
+};
+const lataFaq = tabele.map((t) => t.rok);
+const latka = lataFaq.join(' i ');
+
+const faq = [
+  ...lataFaq.map((rok) => ({
+    pytanie: `Ile wynosi dodatek za pracę w nocy w ${rok} r.?`,
+    odpowiedz: `W ${rok} r. minimalne wynagrodzenie to ${PLACA_MINIMALNA[rok].miesiecznie} zł, więc ustawowy dodatek wynosi ${zakres(rok).tekst}. Za ośmiogodzinną noc to od ${zl(zakres(rok).min * 8)} do ${zl(zakres(rok).max * 8)} brutto. Kwota zależy od liczby godzin do przepracowania w miesiącu: tabela na tej stronie podaje ją miesiąc po miesiącu.`,
+  })),
+  {
+    pytanie: 'Czy dodatek nocny liczy się od mojej stawki?',
+    odpowiedz: 'Nie. Ustawowe minimum to 20% stawki godzinowej wynikającej z minimalnego wynagrodzenia, niezależnie od tego, ile zarabiasz (art. 151^8 § 1 Kodeksu pracy). Pracodawca może ustalić dodatek wyższy, na przykład w regulaminie wynagradzania albo w umowie: wtedy wpisz jego procent w opcjach kalkulatora.',
+  },
+  {
+    pytanie: 'Dlaczego w każdym miesiącu dodatek jest inny?',
+    odpowiedz: 'Bo minimalne wynagrodzenie dzieli się przez liczbę godzin do przepracowania w danym miesiącu, a ta zmienia się z liczbą dni roboczych i świąt. Im mniej godzin w miesiącu, tym wyższa stawka i wyższy dodatek za każdą godzinę nocną.',
+  },
+  {
+    pytanie: 'Czy pracodawca może wliczyć dodatek nocny do płacy minimalnej?',
+    odpowiedz: 'Nie. Przy sprawdzaniu, czy pensja nie jest niższa od minimalnego wynagrodzenia, dodatku za pracę w porze nocnej się nie uwzględnia (art. 6 ust. 5 pkt 4 ustawy o minimalnym wynagrodzeniu za pracę). Dodatek jest ponad płacę minimalną.',
+  },
+  {
+    pytanie: 'Czy za nadgodziny w nocy należy się też dodatek nocny?',
+    odpowiedz: 'Dodatek nocny przysługuje za każdą godzinę pracy w porze nocnej (art. 151^8 § 1 Kodeksu pracy), także nadliczbową. Za nadgodziny w nocy należy się ponadto dodatek 100% wynagrodzenia (art. 151^1 § 1 pkt 1 lit. a).',
+  },
+  {
+    pytanie: 'Czy dodatek nocny przysługuje na umowie zlecenia?',
+    odpowiedz: 'Kodeks pracy daje go pracownikowi, czyli osobie zatrudnionej na podstawie umowy o pracę, powołania, wyboru, mianowania albo spółdzielczej umowy o pracę (art. 2 i art. 151^8 Kodeksu pracy). Umowa zlecenia nie jest żadną z nich.',
+  },
+];
+---
+<StronaNarzedzia
+  slug="dodatek-za-prace-w-nocy"
+  tytul={`Dodatek za pracę w nocy ${latka}: kalkulator`}
+  opis={`Policz dodatek nocny za dowolny miesiąc: 20% stawki z płacy minimalnej (${tabele.map((t) => `${PLACA_MINIMALNA[t.rok].miesiecznie} zł w ${t.rok}`).join(', ')}), godziny z grafiku i tabela stawek.`}
+  h1="Kalkulator dodatku za pracę w nocy"
+  lead="Za każdą godzinę w porze nocnej należy się co najmniej 20% stawki godzinowej z płacy minimalnej. Stawka zmienia się co miesiąc, bo zależy od liczby godzin do przepracowania. Wybierz miesiąc i wpisz godziny albo policz je z grafiku zmian."
+  faq={faq}
+  objasnienia={['zpeDodatekNocny', 'biznesWynagrodzenie']}
+>
+  <form class="kalkulator" data-dodatek-nocny novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twoje dane</h2>
+
+      <fieldset class="mt-4">
+        <legend class="etykieta">Miesiąc</legend>
+        <div class="mt-2 grid grid-cols-[minmax(0,3fr)_minmax(0,2fr)] gap-3">
+          <label class="sr-only" for="dn-miesiac">Miesiąc</label>
+          <select id="dn-miesiac" name="miesiac" class="pole">
+            {Array.from({ length: 12 }, (_, i) => (
+              <option value={i + 1} selected={i + 1 === miesiacDomyslny}>{nazwaMiesiaca(i + 1)}</option>
+            ))}
+          </select>
+          <label class="sr-only" for="dn-rok">Rok</label>
+          <select id="dn-rok" name="rok" class="pole">
+            {LATA.map((r) => <option value={r} selected={r === rokDomyslny}>{r}</option>)}
+          </select>
+        </div>
+      </fieldset>
+
+      <fieldset class="mt-6">
+        <legend class="etykieta">Godziny w porze nocnej</legend>
+        <div class="przelacznik mt-2" role="radiogroup" aria-label="Jak podasz godziny">
+          <label><input type="radio" name="tryb" value="godziny" checked /> Znam liczbę godzin</label>
+          <label><input type="radio" name="tryb" value="grafik" /> Policz z grafiku</label>
+        </div>
+
+        <div class="mt-4" data-tryb="godziny">
+          <label for="dn-godziny" class="etykieta-pola">Godziny nocne w miesiącu</label>
+          <input id="dn-godziny" name="godziny" class="pole mt-1 max-w-48" type="text" inputmode="decimal" autocomplete="off" value="8" aria-describedby="dn-godziny-blad" />
+          <p id="dn-godziny-blad" class="blad-pola" data-blad="godziny" hidden></p>
+        </div>
+
+        <div class="mt-4 grid gap-4 sm:grid-cols-2" data-tryb="grafik" hidden>
+          <div>
+            <label for="dn-od" class="etykieta-pola">Początek zmiany</label>
+            <input id="dn-od" name="od" class="pole mt-1" type="time" step="900" value="22:00" aria-describedby="dn-zmiana-blad" />
+          </div>
+          <div>
+            <label for="dn-do" class="etykieta-pola">Koniec zmiany</label>
+            <input id="dn-do" name="do" class="pole mt-1" type="time" step="900" value="06:00" aria-describedby="dn-zmiana-blad" />
+          </div>
+          <div>
+            <label for="dn-pora" class="etykieta-pola">Pora nocna u pracodawcy</label>
+            <select id="dn-pora" name="pora" class="pole mt-1" aria-describedby="dn-pora-opis">
+              <option value="21:00">21:00–5:00</option>
+              <option value="22:00" selected>22:00–6:00</option>
+              <option value="23:00">23:00–7:00</option>
+            </select>
+            <p id="dn-pora-opis" class="meta mt-1">Jest w regulaminie pracy albo w informacji o warunkach zatrudnienia.</p>
+          </div>
+          <div>
+            <label for="dn-zmiany" class="etykieta-pola">Takich zmian w miesiącu</label>
+            <input id="dn-zmiany" name="zmiany" class="pole mt-1" type="text" inputmode="numeric" autocomplete="off" value="5" aria-describedby="dn-zmiana-blad" />
+          </div>
+          <p id="dn-zmiana-blad" class="blad-pola sm:col-span-2" data-blad="zmiana" hidden></p>
+        </div>
+      </fieldset>
+
+      <details class="mt-6">
+        <summary class="etykieta rozwin">Pracodawca płaci więcej niż 20%?</summary>
+        <div class="mt-3">
+          <label for="dn-procent" class="etykieta-pola">Dodatek w procentach stawki z płacy minimalnej</label>
+          <input id="dn-procent" name="procent" class="pole mt-1 max-w-32" type="text" inputmode="decimal" autocomplete="off" value={PROCENT_USTAWOWY} aria-describedby="dn-procent-blad" />
+          <p id="dn-procent-blad" class="blad-pola" data-blad="procent" hidden></p>
+        </div>
+      </details>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Dodatek za <span data-w="okres">{okresPrzykladu}</span></h2>
+      <p class="wynik-kwota" aria-live="polite" aria-atomic="true">
+        <span data-w="kwota">{zl(przyklad.kwota)}</span> <span class="wynik-brutto">brutto</span>
+      </p>
+      <dl class="wynik-lista">
+        <div><dt>Minimalne wynagrodzenie</dt><dd data-w="placa">{zl(przyklad.placaMinimalna)}</dd></div>
+        <div><dt>Wymiar czasu pracy</dt><dd><span data-w="wymiar">{godz(przyklad.wymiar.godziny)}</span><span class="wynik-opis" data-w="wymiar-opis">{opisWymiaru(przyklad.wymiar)}</span></dd></div>
+        <div><dt>Stawka godzinowa</dt><dd data-w="stawka">{zl(przyklad.placaMinimalna)} : {godz(przyklad.wymiar.godziny)} = {zl(przyklad.stawka)}</dd></div>
+        <div><dt>Dodatek za godzinę</dt><dd data-w="za-godzine">{PROCENT_USTAWOWY}% × {zl(przyklad.stawka)} = {zl(przyklad.zaGodzine)}</dd></div>
+        <div><dt>Godziny w porze nocnej</dt><dd><span data-w="godziny">{godz(8)}</span><span class="wynik-opis" data-w="godziny-opis"></span></dd></div>
+        <div class="wynik-suma"><dt>Dodatek w miesiącu</dt><dd data-w="wynik">8 × {zl(przyklad.zaGodzine)} = {zl(przyklad.kwota)}</dd></div>
+      </dl>
+      <p class="wynik-uwaga" data-w="pracujacy-w-nocy" hidden>
+        Zmiana ma co najmniej 3 godziny w porze nocnej. Jeśli tak wygląda Twój rozkład w każdej dobie, jesteś w rozumieniu
+        Kodeksu pracy pracującym w nocy (art. 151<sup>7</sup> § 2): przy pracach szczególnie niebezpiecznych albo z dużym
+        wysiłkiem Twoja doba pracy nie może przekroczyć 8 godzin.
+      </p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Tabela stawek poniżej działa bez niego.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="jak-liczymy">Jak liczymy dodatek za pracę w nocy</h2>
+    <p>
+      Kodeks pracy daje za każdą godzinę pracy w porze nocnej dodatek w wysokości 20% stawki godzinowej wynikającej
+      z minimalnego wynagrodzenia (art. 151<sup>8</sup> § 1). Stawkę godzinową liczymy tak jak w objaśnieniu na rządowej
+      Zintegrowanej Platformie Edukacyjnej: minimalne wynagrodzenie dzielone przez liczbę godzin do przepracowania
+      w danym miesiącu. W tym samym duchu ustawa o minimalnym wynagrodzeniu przelicza płacę minimalną na godzinę przy
+      wyrównaniach (art. 7 ust. 3).
+    </p>
+    <ol>
+      <li><strong>Płaca minimalna w roku:</strong> {tabele.map((t) => `${PLACA_MINIMALNA[t.rok].miesiecznie} zł w ${t.rok} r.`).join(', ')} (rozporządzenia Rady Ministrów).</li>
+      <li><strong>Wymiar czasu pracy w miesiącu:</strong> 8 godzin za każdy dzień od poniedziałku do piątku, minus 8 godzin za każde święto, które nie wypada w niedzielę, także w sobotę (art. 130 § 1 i 2 Kodeksu pracy). Od 2025 r. świętem jest też Wigilia.</li>
+      <li><strong>Stawka godzinowa:</strong> płaca minimalna podzielona przez wymiar.</li>
+      <li><strong>Dodatek za godzinę:</strong> 20% stawki (albo więcej, jeśli tak ustalił pracodawca).</li>
+      <li><strong>Dodatek w miesiącu:</strong> dodatek za godzinę razy liczba godzin w porze nocnej.</li>
+    </ol>
+    <p>
+      Przykład: {okresPrzykladu} r. ma {przyklad.wymiar.godziny} godzin do przepracowania ({opisWymiaru(przyklad.wymiar)}).{' '}
+      {zl(przyklad.placaMinimalna)} : {przyklad.wymiar.godziny} h = {zl(przyklad.stawka)}, a 20% z tego to {zl(przyklad.zaGodzine)}.
+      Jedna ośmiogodzinna noc daje więc {zl(przyklad.kwota)} brutto dodatku.
+    </p>
+    <p>
+      Zaokrąglamy do grosza na każdym kroku, jak w objaśnieniu urzędowym. Program kadrowy, który liczy bez zaokrągleń,
+      może dać wynik inny o kilka groszy.
+    </p>
+
+    {tabele.map((t) => (
+      <>
+        <h2 id={`stawki-${t.rok}`}>Dodatek nocny w {t.rok} r. miesiąc po miesiącu</h2>
+        <p>Płaca minimalna w {t.rok} r.: {PLACA_MINIMALNA[t.rok].miesiecznie} zł. Dodatek ustawowy (20%) za godzinę i za ośmiogodzinną noc:</p>
+        <div class="tabela">
+          <table>
+            <caption class="sr-only">Dodatek za pracę w nocy w {t.rok} r. według miesięcy</caption>
+            <thead>
+              <tr><th scope="col">Miesiąc</th><th scope="col">Wymiar</th><th scope="col">Stawka godzinowa</th><th scope="col">Dodatek za 1 h</th><th scope="col">Za 8 h</th></tr>
+            </thead>
+            <tbody>
+              {t.wiersze.map((w) => (
+                <tr>
+                  <th scope="row">{nazwaMiesiaca(w.wymiar.miesiac)}</th>
+                  <td>{godz(w.wymiar.godziny)}</td>
+                  <td>{zl(w.stawka)}</td>
+                  <td>{zl(w.zaGodzine)}</td>
+                  <td>{zl(w.kwota)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </>
+    ))}
+
+    <h2 id="pora-nocna">Pora nocna: które 8 godzin</h2>
+    <p>
+      Pora nocna to 8 godzin między 21:00 a 7:00 (art. 151<sup>7</sup> § 1 Kodeksu pracy). Które dokładnie, ustala
+      pracodawca w regulaminie pracy (art. 104<sup>1</sup> § 1 pkt 4), a gdy regulaminu nie ma, podaje w informacji
+      o warunkach zatrudnienia (art. 29 § 3). Dlatego ta sama zmiana 14:00–22:00 daje 0 godzin nocnych, gdy pora nocna
+      zaczyna się o 22:00, i jedną godzinę, gdy zaczyna się o 21:00. Dla młodocianych pora nocna przypada między 22:00
+      a 6:00 (art. 203 § 1<sup>1</sup>).
+    </p>
+
+    <h2 id="pracujacy-w-nocy">Kto jest „pracującym w nocy”</h2>
+    <p>
+      Pracujący w nocy to ktoś, kogo rozkład obejmuje w każdej dobie co najmniej 3 godziny w porze nocnej albo komu
+      co najmniej jedna czwarta czasu pracy w okresie rozliczeniowym przypada na porę nocną (art. 151<sup>7</sup> § 2).
+      Jeśli taka osoba wykonuje prace szczególnie niebezpieczne albo związane z dużym wysiłkiem fizycznym lub umysłowym,
+      jej czas pracy nie może przekroczyć 8 godzin na dobę (art. 151<sup>7</sup> § 3). Wykaz takich prac ustala
+      pracodawca w porozumieniu ze związkami zawodowymi albo przedstawicielami pracowników, po opinii lekarza medycyny
+      pracy (art. 151<sup>7</sup> § 4).
+    </p>
+
+    <h2 id="kogo-nie-wolno">Kogo nie wolno zatrudniać w nocy</h2>
+    <ul>
+      <li>Pracownicy w ciąży (art. 178 § 1). Pracodawca zmienia jej rozkład albo przenosi ją do innej pracy, a gdy to niemożliwe, zwalnia z obowiązku świadczenia pracy (art. 178<sup>1</sup>).</li>
+      <li>Pracownika wychowującego dziecko do 8. roku życia: bez jego zgody (art. 178 § 2).</li>
+      <li>Młodocianego (art. 203 § 1).</li>
+    </ul>
+
+    <h2 id="ryczalt">Ryczałt zamiast dodatku</h2>
+    <p>
+      Pracownikom, którzy pracują w porze nocnej stale poza zakładem pracy, pracodawca może zamiast dodatku płacić
+      ryczałt w wysokości odpowiadającej przewidywanemu wymiarowi pracy w nocy (art. 151<sup>8</sup> § 2).
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { dodatekNocny } from '../../lib/narzedzia/dodatek-nocny';
+  import { dniWMiesiacu, minuty, minutyNocneZmiany, nazwaMiesiaca, opisWymiaru } from '../../lib/narzedzia/czas-pracy';
+  import { godz, liczba, wpisanaLiczba, zl } from '../../lib/narzedzia/format';
+
+  const form = document.querySelector<HTMLFormElement>('[data-dodatek-nocny]');
+  if (form) {
+    const pole = <T extends HTMLElement = HTMLInputElement>(nazwa: string) => form.elements.namedItem(nazwa) as unknown as T;
+    const wynik = (klucz: string) => form.querySelector<HTMLElement>(`[data-w="${klucz}"]`)!;
+    const blad = (klucz: string) => form.querySelector<HTMLElement>(`[data-blad="${klucz}"]`)!;
+
+    const pokazBlad = (klucz: string, pola: HTMLElement[], tekst: string | null) => {
+      const b = blad(klucz);
+      b.hidden = !tekst;
+      b.textContent = tekst ?? '';
+      for (const p of pola) p.setAttribute('aria-invalid', tekst ? 'true' : 'false');
+    };
+
+    // Domyślnie bieżący miesiąc, jeśli rok jest w danych (strona jest budowana raz, a czytana przez cały rok).
+    const dzis = new Date();
+    const rokSelect = pole<HTMLSelectElement>('rok');
+    if ([...rokSelect.options].some((o) => Number(o.value) === dzis.getFullYear())) {
+      rokSelect.value = String(dzis.getFullYear());
+      pole<HTMLSelectElement>('miesiac').value = String(dzis.getMonth() + 1);
+    }
+
+    const przelicz = () => {
+      const rok = Number(rokSelect.value);
+      const miesiac = Number(pole<HTMLSelectElement>('miesiac').value);
+      const tryb = (form.querySelector<HTMLInputElement>('input[name="tryb"]:checked')?.value ?? 'godziny') as 'godziny' | 'grafik';
+      for (const el of form.querySelectorAll<HTMLElement>('[data-tryb]')) el.hidden = el.dataset.tryb !== tryb;
+      const maks = 8 * dniWMiesiacu(rok, miesiac);
+      let godziny = Number.NaN;
+      let opisGodzin = '';
+      let ok = true;
+      const nocNaZmianie = { min: 0 };
+
+      if (tryb === 'godziny') {
+        const p = pole('godziny');
+        godziny = wpisanaLiczba(p.value);
+        const tekst = Number.isNaN(godziny)
+          ? 'Wpisz liczbę godzin, na przykład 8 albo 7,5.'
+          : godziny > maks
+            ? `W ${nazwaMiesiaca(miesiac, 'miejscownik')} ${rok} r. pora nocna ma razem najwyżej ${maks} godzin (8 godzin na dobę).`
+            : null;
+        pokazBlad('godziny', [p], tekst);
+        ok = !tekst;
+      } else {
+        const od = pole('od');
+        const do_ = pole('do');
+        const zm = pole('zmiany');
+        const a = minuty(od.value);
+        const b = minuty(do_.value);
+        const pora = minuty(pole<HTMLSelectElement>('pora').value) as number;
+        const zmiany = wpisanaLiczba(zm.value);
+        let tekst: string | null = null;
+        if (a === null || b === null) tekst = 'Wpisz początek i koniec zmiany, na przykład 22:00 i 6:00.';
+        else if (!Number.isInteger(zmiany) || zmiany > dniWMiesiacu(rok, miesiac)) tekst = `Wpisz liczbę zmian od 0 do ${dniWMiesiacu(rok, miesiac)}.`;
+        pokazBlad('zmiana', tekst === null ? [od, do_, zm] : a === null || b === null ? [od, do_] : [zm], tekst);
+        if (tekst === null && a !== null && b !== null) {
+          nocNaZmianie.min = minutyNocneZmiany(a, b, pora);
+          godziny = (nocNaZmianie.min / 60) * zmiany;
+          opisGodzin = `${liczba(zmiany)} × ${godz(nocNaZmianie.min / 60)} na zmianie`;
+        }
+        ok = tekst === null;
+      }
+
+      const pp = pole('procent');
+      const procent = wpisanaLiczba(pp.value);
+      const tekstProcent = Number.isNaN(procent) || procent < 20 ? 'Dodatek nie może być niższy niż 20%.' : procent > 300 ? 'Wpisz procent do 300.' : null;
+      pokazBlad('procent', [pp], tekstProcent);
+      ok = ok && !tekstProcent;
+
+      wynik('okres').textContent = `${nazwaMiesiaca(miesiac)} ${rok}`;
+      wynik('pracujacy-w-nocy').hidden = !(ok && tryb === 'grafik' && nocNaZmianie.min >= 180);
+      if (!ok) {
+        wynik('kwota').textContent = '—';
+        wynik('wynik').textContent = 'popraw dane powyżej';
+        return;
+      }
+      const w = dodatekNocny({ rok, miesiac, godziny, procent });
+      wynik('kwota').textContent = zl(w.kwota);
+      wynik('placa').textContent = zl(w.placaMinimalna);
+      wynik('wymiar').textContent = godz(w.wymiar.godziny);
+      wynik('wymiar-opis').textContent = opisWymiaru(w.wymiar);
+      wynik('stawka').textContent = `${zl(w.placaMinimalna)} : ${godz(w.wymiar.godziny)} = ${zl(w.stawka)}`;
+      wynik('za-godzine').textContent = `${liczba(w.procent)}% × ${zl(w.stawka)} = ${zl(w.zaGodzine)}`;
+      wynik('godziny').textContent = godz(godziny);
+      wynik('godziny-opis').textContent = opisGodzin;
+      wynik('wynik').textContent = `${liczba(godziny)} × ${zl(w.zaGodzine)} = ${zl(w.kwota)}`;
+    };
+
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>
+
+<style>
+  .kalkulator {
+    display: grid;
+    border: 1px solid var(--color-linia);
+    border-top: 3px solid var(--color-grafit);
+  }
+  @media (min-width: 64rem) {
+    .kalkulator {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    }
+  }
+  .kalkulator-pola {
+    padding: 1.25rem;
+  }
+  @media (min-width: 40rem) {
+    .kalkulator-pola {
+      padding: 1.75rem;
+    }
+  }
+  .kalkulator-wynik {
+    padding: 1.25rem;
+    background: var(--color-tlo-szare);
+  }
+  @media (min-width: 40rem) {
+    .kalkulator-wynik {
+      padding: 1.75rem;
+    }
+  }
+  .etykieta {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-tekst-drugi);
+  }
+  .rozwin {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    cursor: pointer;
+  }
+  .etykieta-pola {
+    display: block;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--color-tekst);
+  }
+  .przelacznik {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .przelacznik label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    padding: 0 0.875rem;
+    border: 1px solid #8a939e;
+    border-radius: var(--radius-przycisk);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .przelacznik label:has(input:checked) {
+    border-color: var(--color-grafit);
+    box-shadow: inset 0 0 0 1px var(--color-grafit);
+  }
+  .przelacznik input {
+    accent-color: var(--color-akcent-tekst);
+    width: 1.125rem;
+    height: 1.125rem;
+  }
+  .blad-pola {
+    margin-top: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-blad);
+  }
+  .wynik-kwota {
+    margin-top: 0.5rem;
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    line-height: 1.1;
+    font-weight: 700;
+    color: var(--color-tekst);
+  }
+  .wynik-brutto {
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-tekst-drugi);
+  }
+  .wynik-lista {
+    margin-top: 1.25rem;
+    border-top: 1px solid var(--color-linia);
+    font-size: 0.9375rem;
+  }
+  .wynik-lista > div {
+    display: grid;
+    gap: 0.125rem;
+    padding: 0.625rem 0;
+    border-bottom: 1px solid var(--color-linia);
+  }
+  .wynik-lista dt {
+    color: var(--color-tekst-drugi);
+  }
+  .wynik-lista dd {
+    font-weight: 600;
+    color: var(--color-tekst);
+    font-variant-numeric: tabular-nums;
+  }
+  .wynik-opis {
+    display: block;
+    font-weight: 400;
+    color: var(--color-tekst-drugi);
+  }
+  .wynik-opis:empty {
+    display: none;
+  }
+  .wynik-suma dd {
+    font-size: 1.0625rem;
+  }
+  .wynik-uwaga {
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    border-left: 3px solid var(--color-akcent);
+    background: var(--color-tlo);
+    font-size: 0.875rem;
+    line-height: 1.55;
+  }
+</style>

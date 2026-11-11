@@ -1,5 +1,5 @@
 ---
-// Nagłówek serwisu: pasek górny (komputer), logo z wyszukiwarką i menu działów. Menu na telefonie przewija się
+// Nagłówek serwisu: pasek górny (komputer), logo z wyszukiwarką i menu (narzędzia i działy). Menu na telefonie przewija się
 // w bok kciukiem; cele dotyku mają co najmniej 44 px. Bez JavaScriptu: wyszukiwarka to zwykły formularz GET.
 import Logo from './Logo.astro';
 import Ikona from './Ikona.astro';
@@ -16,7 +16,9 @@ interface Props {
 const { aktywny, zapytanie = '' } = Astro.props;
 // Bez działającego zapisu przycisk prowadzi do opisu newslettera, a nie wzywa do zapisu (FORMULARZE).
 const napisNewslettera = formularzAktywny('newsletter') ? 'Zapisz się na newsletter' : 'Newsletter';
+// Narzędzia na początku menu: od 2026-11-11 to główny profil serwisu (DECYZJE.md); działy to biblioteka artykułów.
 const pozycje = [
+  { nazwa: 'Narzędzia', adres: '/narzedzia', klucz: 'narzedzia' },
   ...DZIALY.map((d) => ({ nazwa: d.nazwaMenu, adres: d.adres, klucz: d.slug })),
   ...ustawienia.menuDodatkowe.map((m) => ({ nazwa: m.nazwa, adres: m.adres, klucz: m.adres })),
 ];
@@ -57,7 +59,7 @@ const pozycje = [
     </div>
   </div>
 
-  <nav class="menu-dzialow bg-grafit" aria-label="Działy">
+  <nav class="menu-dzialow bg-grafit" aria-label="Menu główne">
     <div class="kontener">
       <ul class="menu-dzialow-lista">
         {pozycje.map((p) => {

@@ -6,7 +6,7 @@ const { chromium } = require('@playwright/test');
 
 const PORT = 4323;
 const adres = (a) => `http://127.0.0.1:${PORT}${a}`;
-const INDEKSOWANE = ['/', '/testowy-mikroprzestoje', '/dzial/produkcja', '/temat/oee', '/o-nas'];
+const INDEKSOWANE = ['/', '/testowy-mikroprzestoje', '/narzedzia/dodatek-za-prace-w-nocy', '/dzial/produkcja', '/temat/oee', '/o-nas'];
 const WEWNETRZNE = ['/styleguide', '/szukaj', '/404'];
 
 const kategorie = {
