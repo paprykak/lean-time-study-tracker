@@ -37,15 +37,23 @@ export const NARZEDZIA: Narzedzie[] = [
     przepisy: ['kodeksPracy', 'dniWolne', 'minimalneWynagrodzenie', 'placa2025', 'placa2026', 'placa2027'],
     sprawdzono: '2026-11-11',
   },
+  {
+    slug: 'szkolenie-okresowe-bhp',
+    nazwa: 'Termin szkolenia okresowego BHP',
+    krotko: 'Co ile szkolenie okresowe na Twoim stanowisku i do kiedy masz je zrobić. Z przypomnieniem w kalendarzu.',
+    kategoria: 'bhp',
+    przepisy: ['szkoleniaBhp', 'kodeksPracy', 'ogolneBhp', 'kodeksCywilny'],
+    sprawdzono: '2026-11-11',
+  },
 ];
 
 /** Następne narzędzia w kolejce (bez stron i linków; lista na /narzedzia). Zdejmujesz pozycję, gdy narzędzie rusza. */
 export const W_PRZYGOTOWANIU: { nazwa: string; kategoria: KategoriaNarzedzia }[] = [
-  { nazwa: 'Termin szkolenia okresowego BHP', kategoria: 'bhp' },
   { nazwa: 'Ważność uprawnień UDT i termin wniosku o przedłużenie', kategoria: 'uprawnienia' },
   { nazwa: 'Ile kg wolno dźwigać w pracy', kategoria: 'transport' },
   { nazwa: 'Testy UDT na wózki widłowe', kategoria: 'uprawnienia' },
   { nazwa: 'Grafik 12-godzinny z kontrolą przepisów', kategoria: 'czas-pracy' },
+  { nazwa: 'Temperatura w pracy: kiedy pracodawca musi działać', kategoria: 'bhp' },
 ];
 
 export const adresNarzedzia = (slug: string) => `/narzedzia/${slug}`;

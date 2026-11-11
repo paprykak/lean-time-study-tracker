@@ -41,6 +41,27 @@ export const AKTY = {
     adres: eli(2024, 1773),
     sprawdzono: '2026-11-11',
   },
+  kodeksCywilny: {
+    nazwa: 'Kodeks cywilny',
+    publikator: 'Dz.U. 2026 poz. 795',
+    uwaga: 'tekst jednolity; art. 112: terminy w miesiącach i latach',
+    adres: eli(2026, 795),
+    sprawdzono: '2026-11-11',
+  },
+  szkoleniaBhp: {
+    nazwa: 'Rozporządzenie w sprawie szkolenia w dziedzinie bezpieczeństwa i higieny pracy',
+    publikator: 'Dz.U. 2024 poz. 1327',
+    uwaga: 'tekst jednolity; zmiana Dz.U. 2025 poz. 1640 dotyczy tylko potwierdzania instruktażu (§ 12)',
+    adres: eli(2024, 1327),
+    sprawdzono: '2026-11-11',
+  },
+  ogolneBhp: {
+    nazwa: 'Rozporządzenie w sprawie ogólnych przepisów bezpieczeństwa i higieny pracy',
+    publikator: 'Dz.U. 2003 poz. 1650',
+    uwaga: 'tekst jednolity ze zmianami, ostatnia Dz.U. 2026 poz. 927; § 80: prace szczególnie niebezpieczne',
+    adres: eli(2003, 1650),
+    sprawdzono: '2026-11-11',
+  },
   placa2025: {
     nazwa: 'Rozporządzenie w sprawie minimalnego wynagrodzenia w 2025 r.',
     publikator: 'Dz.U. 2024 poz. 1362',

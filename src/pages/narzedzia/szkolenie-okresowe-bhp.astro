@@ -1,0 +1,257 @@
+---
+// Termin szkolenia okresowego BHP (§ 14–15 rozporządzenia o szkoleniu BHP, art. 237^3 Kp) z plikiem kalendarza .ics.
+// Logika: src/lib/narzedzia/szkolenie-bhp.ts, terminy.ts, kalendarz-ics.ts (testy obok). Bez JavaScriptu działa tabela.
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { GRUPY, KLUCZE_GRUP, PRZYPOMNIENIE_DNI } from '../../lib/narzedzia/szkolenie-bhp';
+
+const lata = (n: number) => (n === 1 ? 'co rok' : n >= 5 ? `co ${n} lat` : `co ${n} lata`);
+const miesiace = (n: number) => `do ${n} miesięcy`;
+const raz = (n: number) => (n === 1 ? 'raz w roku' : `raz na ${n} ${n >= 5 ? 'lat' : 'lata'}`);
+
+const faq = [
+  {
+    pytanie: 'Co ile szkolenie okresowe BHP na produkcji i w magazynie?',
+    odpowiedz: 'Na stanowiskach robotniczych nie rzadziej niż raz na 3 lata, a tam, gdzie wykonuje się prace szczególnie niebezpieczne, nie rzadziej niż raz w roku (§ 15 ust. 1 rozporządzenia w sprawie szkolenia BHP). Kierownicy, mistrzowie i brygadziści, technolodzy i służba BHP: nie rzadziej niż raz na 5 lat, a pracownicy biurowi raz na 6 lat (§ 15 ust. 2).',
+  },
+  {
+    pytanie: 'Kiedy pierwsze szkolenie okresowe po rozpoczęciu pracy?',
+    odpowiedz: 'Osoby kierujące pracownikami (także pracodawca) przechodzą je w ciągu 6 miesięcy od rozpoczęcia pracy na stanowisku, a pozostali w ciągu 12 miesięcy (§ 15 ust. 4). Przed dopuszczeniem do pracy obowiązuje szkolenie wstępne, czyli instruktaż ogólny i stanowiskowy.',
+  },
+  {
+    pytanie: 'Czy szkolenie okresowe u poprzedniego pracodawcy się liczy?',
+    odpowiedz: 'Z pierwszego szkolenia okresowego może być zwolniona osoba, która przedłoży aktualne zaświadczenie o odbyciu wymaganego szkolenia okresowego u innego pracodawcy albo odbyła szkolenie dla innej grupy stanowisk z programem obejmującym zakres wymagany na nowym stanowisku (§ 15 ust. 5).',
+  },
+  {
+    pytanie: 'Czy pracownik biurowy musi mieć szkolenie okresowe?',
+    odpowiedz: 'Nie musi, gdy przeważająca działalność pracodawcy jest w grupie z kategorią ryzyka nie wyższą niż trzecia (przepisy o ubezpieczeniu wypadkowym), chyba że ocena ryzyka zawodowego wskaże, że szkolenie jest konieczne (art. 237^3 § 2^2 Kodeksu pracy). Wtedy pracodawca przeprowadza je w ciągu 6 miesięcy (art. 237^3 § 2^3 i 2^4).',
+  },
+  {
+    pytanie: 'Kto płaci za szkolenie BHP i czy odbywa się w czasie pracy?',
+    odpowiedz: 'Szkolenia BHP pracowników odbywają się w czasie pracy i na koszt pracodawcy (art. 237^3 § 3 Kodeksu pracy).',
+  },
+  {
+    pytanie: 'Jak kończy się szkolenie okresowe?',
+    odpowiedz: 'Egzaminem przed komisją powołaną przez organizatora szkolenia. Po wyniku pozytywnym organizator wydaje zaświadczenie, a jego odpis trafia do akt osobowych (§ 16 rozporządzenia). Datę z tego zaświadczenia wpisz w kalkulatorze.',
+  },
+];
+---
+<StronaNarzedzia
+  slug="szkolenie-okresowe-bhp"
+  tytul="Szkolenie okresowe BHP: co ile i do kiedy"
+  opis="Co ile szkolenie okresowe BHP i do kiedy je zrobić: robotnicy co 3 lata, prace szczególnie niebezpieczne co rok, kierownicy co 5 lat. Z przypomnieniem."
+  h1="Termin szkolenia okresowego BHP"
+  lead="Szkolenie okresowe BHP robi się co rok, co 3, 5 albo 6 lat, zależnie od stanowiska. Wybierz stanowisko i wpisz datę ostatniego szkolenia. Pokażemy termin następnego i dodamy przypomnienie do kalendarza."
+  faq={faq}
+>
+  <form class="kalkulator" data-szkolenie-bhp novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twoje dane</h2>
+
+      <div class="mt-4">
+        <label for="bhp-grupa" class="etykieta-pola">Stanowisko</label>
+        <select id="bhp-grupa" name="grupa" class="pole mt-1" aria-describedby="bhp-grupa-opis">
+          {KLUCZE_GRUP.map((k) => <option value={k} selected={k === 'robotnicze'}>{GRUPY[k].nazwa}</option>)}
+        </select>
+        <p id="bhp-grupa-opis" class="meta mt-1" data-w="grupa-opis">{GRUPY.robotnicze.przyklady}; szkolenie {lata(GRUPY.robotnicze.coIleLat)}.</p>
+      </div>
+
+      <div class="mt-4" data-tylko-biuro hidden>
+        <label class="flex items-start gap-3 text-[0.9375rem]">
+          <input type="checkbox" name="zwolnienie" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" aria-describedby="bhp-zwolnienie-opis" />
+          <span>Przeważająca działalność pracodawcy ma kategorię ryzyka nie wyższą niż 3, a ocena ryzyka nie wymaga szkolenia</span>
+        </label>
+        <p id="bhp-zwolnienie-opis" class="meta mt-1 ml-8">Kategorię ryzyka zna dział kadr albo BHP (art. 237<sup>3</sup> § 2<sup>2</sup> Kodeksu pracy).</p>
+      </div>
+
+      <fieldset class="mt-6">
+        <legend class="etykieta">Szkolenie okresowe na tym stanowisku</legend>
+        <div class="opcje-pionowe mt-2">
+          <label><input type="radio" name="tryb" value="kolejne" checked /> Już było: podam datę ostatniego</label>
+          <label><input type="radio" name="tryb" value="pierwsze" /> Jeszcze nie było: podam datę rozpoczęcia pracy</label>
+        </div>
+      </fieldset>
+
+      <div class="mt-4">
+        <label for="bhp-data" class="etykieta-pola" data-w="etykieta-daty">Data ostatniego szkolenia okresowego (z zaświadczenia)</label>
+        <input id="bhp-data" name="data" type="date" class="pole mt-1 max-w-56" min="1990-01-01" max="2100-12-31" aria-describedby="bhp-data-blad" />
+        <p id="bhp-data-blad" class="blad-pola" data-blad="data" hidden></p>
+      </div>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta" data-w="naglowek">Następne szkolenie okresowe najpóźniej</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-data" data-w="termin">Wpisz datę</p>
+        <p class="status-terminu" data-w="status" hidden></p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Jak często</dt><dd data-w="czestotliwosc">nie rzadziej niż {raz(GRUPY.robotnicze.coIleLat)}</dd></div>
+        <div><dt>Pierwsze szkolenie okresowe</dt><dd data-w="pierwsze">{miesiace(GRUPY.robotnicze.pierwszeMiesiecy)} od rozpoczęcia pracy na stanowisku</dd></div>
+        <div><dt>Forma</dt><dd data-w="forma">{GRUPY.robotnicze.forma}</dd></div>
+        <div><dt>Podstawa</dt><dd data-w="podstawa">{GRUPY.robotnicze.podstawa} rozporządzenia w sprawie szkolenia BHP</dd></div>
+      </dl>
+      <p class="mt-5">
+        <button type="button" class="przycisk przycisk-grafit" data-ics disabled>Dodaj do kalendarza (.ics)</button>
+      </p>
+      <p class="meta mt-2">Plik ma przypomnienie w dniu terminu i {PRZYPOMNIENIE_DNI} dni wcześniej, jeśli ten dzień jeszcze nie minął. Otworzy go kalendarz w telefonie, Outlook i Kalendarz Google.</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Tabela poniżej działa bez niego.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="co-ile">Co ile szkolenie okresowe BHP: tabela</h2>
+    <p>
+      Przepisy mówią, jak rzadko wolno szkolić: „nie rzadziej niż”. Pracodawca ustala częstotliwość i czas trwania
+      szkolenia po konsultacji z pracownikami albo ich przedstawicielami (§ 15 ust. 3), więc może szkolić częściej.
+    </p>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Częstotliwość szkolenia okresowego BHP według stanowisk</caption>
+        <thead>
+          <tr><th scope="col">Stanowisko</th><th scope="col">Nie rzadziej niż</th><th scope="col">Pierwsze szkolenie</th><th scope="col">Forma</th></tr>
+        </thead>
+        <tbody>
+          {KLUCZE_GRUP.map((k) => (
+            <tr>
+              <th scope="row">{GRUPY[k].nazwa}<span class="block font-normal text-tekst-drugi">{GRUPY[k].przyklady}</span></th>
+              <td>{lata(GRUPY[k].coIleLat)}</td>
+              <td>{miesiace(GRUPY[k].pierwszeMiesiecy)} od rozpoczęcia pracy</td>
+              <td>{GRUPY[k].forma}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Źródło: § 14 ust. 2 i § 15 ust. 1, 2 i 4 rozporządzenia w sprawie szkolenia w dziedzinie BHP. Stanowisko
+      administracyjno-biurowe może nie wymagać szkolenia okresowego (art. 237<sup>3</sup> § 2<sup>2</sup> Kodeksu pracy, niżej).
+    </p>
+
+    <h2 id="jak-liczymy">Jak liczymy termin</h2>
+    <p>
+      Do daty ostatniego szkolenia okresowego (z zaświadczenia) dodajemy liczbę lat dla stanowiska, a do daty
+      rozpoczęcia pracy przy pierwszym szkoleniu 6 albo 12 miesięcy. Termin kończy się w dniu o tej samej dacie,
+      a gdy takiego dnia w miesiącu nie ma, w ostatnim dniu miesiąca, jak w art. 112 Kodeksu cywilnego: szkolenie
+      z 29 lutego 2024 r. przy częstotliwości co rok wypada najpóźniej 28 lutego 2025 r. Zaplanuj szkolenie z zapasem:
+      kończy się egzaminem i zaświadczeniem (§ 16 rozporządzenia).
+    </p>
+
+    <h2 id="szkolenie-wstepne">Najpierw szkolenie wstępne</h2>
+    <p>
+      Pracodawca nie może dopuścić do pracy osoby bez dostatecznej znajomości przepisów i zasad BHP
+      (art. 237<sup>3</sup> § 1 Kodeksu pracy) i przed dopuszczeniem do pracy zapewnia jej przeszkolenie
+      (art. 237<sup>3</sup> § 2). Wyjątek: praca na tym samym stanowisku u tego samego pracodawcy bezpośrednio po
+      poprzedniej umowie. Odbycie instruktażu pracownik i kierownik potwierdzają na papierze albo elektronicznie
+      w karcie szkolenia wstępnego, która trafia do akt osobowych (§ 12 rozporządzenia, w brzmieniu od grudnia 2025 r.).
+    </p>
+
+    <h2 id="szczegolnie-niebezpieczne">Prace szczególnie niebezpieczne: co rok</h2>
+    <p>
+      Na stanowiskach robotniczych z pracami szczególnie niebezpiecznymi szkolenie okresowe jest co najmniej raz
+      w roku. Które prace są szczególnie niebezpieczne, wynika z przepisów BHP i instrukcji eksploatacji urządzeń,
+      a resztę uznaje pracodawca: ustala i aktualizuje wykaz takich prac w zakładzie (§ 80 rozporządzenia w sprawie
+      ogólnych przepisów BHP). Zapytaj o ten wykaz służbę BHP.
+    </p>
+
+    <h2 id="biuro">Biuro: kiedy szkolenie okresowe nie jest wymagane</h2>
+    <p>
+      Szkolenie okresowe pracownika na stanowisku administracyjno-biurowym nie jest wymagane, gdy przeważająca
+      działalność pracodawcy jest w grupie z kategorią ryzyka nie wyższą niż trzecia, chyba że ocena ryzyka
+      zawodowego wskaże, że jest konieczne (art. 237<sup>3</sup> § 2<sup>2</sup>). Gdy kategoria wzrośnie albo ocena
+      ryzyka pokaże potrzebę szkolenia, pracodawca przeprowadza je w ciągu 6 miesięcy (art. 237<sup>3</sup>
+      § 2<sup>3</sup> i 2<sup>4</sup>).
+    </p>
+
+    <h2 id="rownowazne">Co zastępuje szkolenie okresowe</h2>
+    <p>
+      Ukończenie w tym okresie szkolenia, dokształcania albo doskonalenia zawodowego, którego program obejmuje
+      program szkolenia okresowego dla danego stanowiska, uważa się za równoznaczne z odbyciem szkolenia
+      okresowego (§ 17 rozporządzenia).
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { GRUPY, terminSzkolenia, type GrupaStanowisk } from '../../lib/narzedzia/szkolenie-bhp';
+  import { dataPoPolsku, dzisWPolsce, ileDni, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { plikIcs } from '../../lib/narzedzia/kalendarz-ics';
+
+  const form = document.querySelector<HTMLFormElement>('[data-szkolenie-bhp]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const grupaSelect = form.elements.namedItem('grupa') as HTMLSelectElement;
+    const dataPole = form.elements.namedItem('data') as HTMLInputElement;
+    const zwolnienie = form.elements.namedItem('zwolnienie') as HTMLInputElement;
+    const ics = form.querySelector<HTMLButtonElement>('[data-ics]')!;
+    const bladDaty = form.querySelector<HTMLElement>('[data-blad="data"]')!;
+    const lata = (n: number) => (n === 1 ? 'co rok' : n >= 5 ? `co ${n} lat` : `co ${n} lata`);
+    const OPIS_STATUSU = { 'po-terminie': 'Po terminie', pilne: 'Pilne', wkrotce: 'Wkrótce', 'w-terminie': 'W terminie', niewymagane: '' } as const;
+    let wydarzenia: ReturnType<typeof terminSzkolenia>['wydarzenia'] = [];
+
+    const przelicz = () => {
+      const grupa = grupaSelect.value as GrupaStanowisk;
+      const g = GRUPY[grupa];
+      const tryb = (form.querySelector<HTMLInputElement>('input[name="tryb"]:checked')?.value ?? 'kolejne') as 'kolejne' | 'pierwsze';
+      const biuro = grupa === 'administracyjno-biurowe';
+      form.querySelector<HTMLElement>('[data-tylko-biuro]')!.hidden = !biuro;
+      w('grupa-opis').textContent = `${g.przyklady}; szkolenie ${lata(g.coIleLat)}.`;
+      w('czestotliwosc').textContent = `nie rzadziej niż ${g.coIleLat === 1 ? 'raz w roku' : `raz na ${g.coIleLat} ${g.coIleLat >= 5 ? 'lat' : 'lata'}`}`;
+      w('pierwsze').textContent = `do ${g.pierwszeMiesiecy} miesięcy od rozpoczęcia pracy na stanowisku`;
+      w('forma').textContent = g.forma;
+      w('podstawa').textContent = `${g.podstawa} rozporządzenia w sprawie szkolenia BHP`;
+      w('etykieta-daty').textContent = tryb === 'kolejne' ? 'Data ostatniego szkolenia okresowego (z zaświadczenia)' : 'Data rozpoczęcia pracy na tym stanowisku';
+      w('naglowek').textContent = tryb === 'kolejne' ? 'Następne szkolenie okresowe najpóźniej' : 'Pierwsze szkolenie okresowe najpóźniej';
+
+      const dzis = dzisWPolsce();
+      const data = dataPole.value;
+      const zwolniony = biuro && zwolnienie.checked;
+      const status = w('status');
+      let blad: string | null = null;
+      if (!zwolniony) {
+        if (!data) blad = null;
+        else if (!poprawnaData(data)) blad = 'Wpisz pełną datę: dzień, miesiąc i rok.';
+        else if (tryb === 'kolejne' && data > dzis) blad = 'Ta data jest w przyszłości. Wpisz datę ukończenia ostatniego szkolenia.';
+      }
+      bladDaty.hidden = !blad;
+      bladDaty.textContent = blad ?? '';
+      dataPole.setAttribute('aria-invalid', blad ? 'true' : 'false');
+
+      if (zwolniony) {
+        w('termin').textContent = 'Nie jest wymagane';
+        status.hidden = false;
+        status.dataset.status = 'niewymagane';
+        status.textContent = 'Chyba że ocena ryzyka zawodowego wskaże inaczej (art. 237³ § 2² Kp).';
+        wydarzenia = [];
+      } else if (!data || blad) {
+        w('termin').textContent = 'Wpisz datę';
+        status.hidden = true;
+        wydarzenia = [];
+      } else {
+        const wynik = terminSzkolenia({ grupa, ostatnie: tryb === 'kolejne' ? data : null, poczatekPracy: tryb === 'pierwsze' ? data : null, dzis });
+        w('termin').textContent = dataPoPolsku(wynik.termin!);
+        status.hidden = false;
+        status.dataset.status = wynik.status;
+        status.textContent = `${OPIS_STATUSU[wynik.status]}: ${ileDni(wynik.dni!)}`;
+        wydarzenia = wynik.wydarzenia;
+      }
+      ics.disabled = wydarzenia.length === 0;
+    };
+
+    ics.addEventListener('click', () => {
+      if (!wydarzenia.length) return;
+      const blob = new Blob([plikIcs(wydarzenia, 'szkolenie-okresowe-bhp')], { type: 'text/calendar;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'szkolenie-okresowe-bhp.ics';
+      document.body.append(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    });
+
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>
