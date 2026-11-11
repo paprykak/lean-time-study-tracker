@@ -1,0 +1,20 @@
+{
+ "minitab": {
+  "opis": "Minitab (b.d.), Demonstration of the Deming funnel experiment (makro dydaktyczne), za: Deming W. E. (1986), Out of the Crisis, MIT CAES, s. 327–332.",
+  "adres": "https://support.minitab.com/en-us/minitab/macro-library/macro-files/educational-macros/funnel/",
+  "rodzaj": "Raport firmy",
+  "dostep": "2026-11-11"
+ },
+ "nist": {
+  "opis": "NIST/SEMATECH e-Handbook of Statistical Methods, rozdz. 6.3.1–6.3.2: średnia długość serii (ARL), karty wartości indywidualnych, reguły Western Electric (WECO).",
+  "adres": "https://www.itl.nist.gov/div898/handbook/pmc/section3/pmc32.htm",
+  "rodzaj": "Raport instytucji",
+  "dostep": "2026-11-11"
+ },
+ "vangestel": {
+  "opis": "Van Gestel P., Pons D. J., Pulakanam V. (2015), Operator agency in process intervention: tampering versus application of tacit knowledge, Journal of Industrial Engineering International 11(3), 403–425, DOI 10.1007/s40092-015-0105-y.",
+  "adres": "https://link.springer.com/article/10.1007/s40092-015-0105-y",
+  "rodzaj": "Badanie recenzowane",
+  "dostep": "2026-11-11"
+ }
+}

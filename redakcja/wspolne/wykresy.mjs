@@ -107,8 +107,8 @@ function niceKrok(maks, celKresek = 5) {
   return 10 * p;
 }
 
-export function linia({ plik, tytul, x, y, serie, poziome = [], pionowe = [], H: Hwys = 300, obszar }) {
-  const L = 46, R = 16;
+export function linia({ plik, tytul, x, y, serie, poziome = [], pionowe = [], H: Hwys = 300, obszar, marginesL = 46 }) {
+  const L = marginesL, R = 16;
   const c = [];
   const T = tytulRys(c, tytul) + 22;
   const B = T + Hwys - 80;
@@ -330,4 +330,30 @@ export function osCzasu({ plik, tytul, od, do: doT, odcinki, znaczniki = [], opi
   let y = T + h + 24;
   if (opis) lamanie(opis, 58).forEach((l) => { y += 18; c.push(txt(W - R, y, l, { fill: KOLORY.akcent, anchor: 'end' })); });
   return zapisz(plik, y + 12, c);
+}
+
+// panele({ plik, tytul, panele: [{ tytul, punkty: [[x, y]], akcent? }], x: { min, max }, y: { min, max, krok?, format? }, wys?, zero? })
+//   „małe wielokrotności”: kilka wykresów na wspólnej skali jeden pod drugim (porównanie wariantów na telefonie).
+export function panele({ plik, tytul, panele: lista, x, y, wys = 86, zero = true, format = (v) => pl(v) }) {
+  const c = [];
+  let top = tytulRys(c, tytul) + 16;
+  const L = 40, R = 12;
+  const sx = (v) => L + ((v - x.min) / (x.max - x.min)) * (W - L - R);
+  for (const p of lista) {
+    c.push(txt(L, top + 4, p.tytul, { weight: 700, fill: p.akcent ? KOLORY.akcent : KOLORY.grafit }));
+    const T = top + 12, B = T + wys;
+    const sy = (v) => B - ((Math.max(y.min, Math.min(y.max, v)) - y.min) / (y.max - y.min)) * (B - T);
+    c.push(`<rect x="${L}" y="${T}" width="${W - L - R}" height="${wys}" fill="${KOLORY.tlo}"/>`);
+    for (const v of [y.min, zero ? 0 : null, y.max].filter((v) => v != null)) {
+      c.push(`<line x1="${L}" y1="${r(sy(v))}" x2="${W - R}" y2="${r(sy(v))}" stroke="${v === 0 ? KOLORY.szary : KOLORY.siatka}"${v === 0 ? ' stroke-dasharray="3 3"' : ''}/>`);
+      c.push(txt(L - 6, sy(v) + 4.5, format(v), { fill: KOLORY.szary, anchor: 'end' }));
+    }
+    const kolor = p.akcent ? KOLORY.akcent : KOLORY.grafit;
+    const pts = p.punkty.map(([a, b]) => `${r(sx(a))},${r(sy(b))}`).join(' ');
+    c.push(`<polyline points="${pts}" fill="none" stroke="${kolor}" stroke-width="1.4" stroke-opacity="0.7"/>`);
+    for (const [a, b] of p.punkty) if (b > y.max || b < y.min) c.push(`<path d="M${r(sx(a)) - 3},${r(sy(b)) + (b > y.max ? 4 : -4)} L${r(sx(a))},${r(sy(b))} L${r(sx(a)) + 3},${r(sy(b)) + (b > y.max ? 4 : -4)}" fill="none" stroke="${kolor}" stroke-width="1.5"/>`);
+    top = B + 26;
+  }
+  if (x.opis) { c.push(txt(W - R, top - 8, x.opis, { fill: KOLORY.szary, anchor: 'end' })); top += 8; }
+  return zapisz(plik, top, c);
 }

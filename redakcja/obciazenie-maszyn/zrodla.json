@@ -1,0 +1,38 @@
+{
+ "little": {
+  "opis": "Little J. D. C. (2011), OR Forum — Little's Law as Viewed on Its 50th Anniversary, Operations Research 59(3), 536–549, DOI 10.1287/opre.1110.0940.",
+  "adres": "https://people.cs.umass.edu/~emery/classes/cmpsci691st/readings/OS/Littles-Law-50-Years-Later.pdf",
+  "rodzaj": "Badanie recenzowane",
+  "dostep": "2026-11-11"
+ },
+ "larson": {
+  "opis": "Larson R. C., Odoni A. R. (1981, wydanie internetowe MIT 1999), Urban Operations Research, rozdz. 4.7: The M/G/1 Queueing System (wzory Pollaczka–Chinczyna).",
+  "adres": "https://web.mit.edu/urban_or_book/www/book/chapter4/4.7.html",
+  "rodzaj": "Książka",
+  "dostep": "2026-11-11"
+ },
+ "bartolucci": {
+  "opis": "Bartolucci S., Vivo P. (2026), Queue & AI: When Faster Tasks Slow Down the Workflow, preprint arXiv:2605.27202, sekcja 4.2.2 (przybliżenie dla kolejki G/G/1 za Kingmanem, 1961).",
+  "adres": "https://arxiv.org/abs/2605.27202",
+  "rodzaj": "Inne",
+  "dostep": "2026-11-11"
+ },
+ "nieto": {
+  "opis": "Nieto Y., Gläßer D., Reiner G. (2010), Is there empirical evidence on non-linear relationship between lead time and resource utilization in manufacturing processes?, POMS 21st Annual Conference, Vancouver, referat nr 015-0579.",
+  "adres": "https://pomsmeetings.org/confproceedings/015/FullPapers/015-0579.pdf",
+  "rodzaj": "Inne",
+  "dostep": "2026-11-11"
+ },
+ "eurostat": {
+  "opis": "Eurostat (2026), Business and consumer surveys — industry, quarterly data (ei_bsin_q_r2), wskaźnik BS-ICU-PC: current level of capacity utilisation in manufacturing industry, %, dane wyrównane sezonowo, aktualizacja 29 października 2026.",
+  "adres": "https://ec.europa.eu/eurostat/databrowser/view/ei_bsin_q_r2/default/table?lang=en",
+  "rodzaj": "Dane publiczne",
+  "dostep": "2026-11-11"
+ },
+ "gus": {
+  "opis": "Główny Urząd Statystyczny (2025), Badanie koniunktury gospodarczej — GUS jako wielowymiarowe i uniwersalne narzędzie diagnostyki gospodarczej, V Kongres Statystyki Polskiej, slajd 8 (metoda liczenia wskaźników ilościowych).",
+  "adres": "https://kongres2025.stat.gov.pl/Content/Docs/Prezentacje/Sess2/04%20-%20V%20Kongres%20Statystyki%20Polskiej%20-%20badanie%20koniunktury%20gospodarczej.pdf",
+  "rodzaj": "Raport instytucji",
+  "dostep": "2026-11-11"
+ }
+}
