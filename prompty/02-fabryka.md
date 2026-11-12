@@ -29,7 +29,10 @@ Nie pasuje: artykuły i materiały o wydajności, działy i tematy z czasów mag
 - *weryfikator kodu i UX* (adwersarz): przypadki brzegowe, telefon 320 px, czytnik ekranu, typografia, odmiana;
 - *redaktor*: prosty język, zdania krótkie, forma neutralna płciowo, bez porad prawnych.
 
-Weryfikatorzy dostają pliki, a nie wnioski budowniczego. Każda uwaga o błędzie jest poprawiana; ulepszenia tylko wtedy,
+Wszystkie sesje dzielą jeden limit API konta (okno 5-godzinne). W pierwszej rundzie 8 zespołów z wieloma podagentami
+wyczerpało go w 20 minut, więc: najwyżej 3 podagentów naraz na zespół, zespoły startują falami, a przy błędzie limitu zespół
+zatwierdza stan pośredni na swojej gałęzi (commit z dopiskiem WIP, push), planuje sobie wznowienie przez `send_later` po czasie
+resetu i kończy turę. Weryfikatorzy dostają pliki, a nie wnioski budowniczego. Każda uwaga o błędzie jest poprawiana; ulepszenia tylko wtedy,
 gdy kosztują mniej niż akapit.
 
 ## 3. Pakiet roboczy
