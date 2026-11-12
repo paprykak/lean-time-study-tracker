@@ -1,0 +1,162 @@
+---
+// Kalkulator stażu pracy z okresów: umowy o pracę, zlecenia, działalność (art. 302^1 Kp od 2026 r.), ze szkołą do urlopu.
+// Logika: src/lib/narzedzia/staz-pracy.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { RODZAJE, obliczStaz, opisStazu, type Okres } from '../../lib/narzedzia/staz-pracy';
+import { SZKOLY } from '../../lib/narzedzia/urlop';
+
+const WIERSZE: (Okres | null)[] = [
+  { od: '2014-09-01', do: '2019-08-31', rodzaj: 'umowa' },
+  { od: '2019-10-01', do: '2021-12-31', rodzaj: 'zlecenie' },
+  { od: '2022-01-10', do: '2026-10-31', rodzaj: 'umowa' },
+  null,
+  null,
+  null,
+];
+const SZKOLA = 'zasadnicza';
+const r = obliczStaz(WIERSZE.filter((w): w is Okres => w !== null), SZKOLA);
+
+const faq = [
+  {
+    pytanie: 'Co wlicza się do stażu pracy od 2026 r.?',
+    odpowiedz: 'Oprócz umów o pracę także okresy umowy zlecenia i innych umów o świadczenie usług, umowy agencyjnej i prowadzenia działalności gospodarczej, w których podlegało się ubezpieczeniom emerytalnemu i rentowym albo za które opłacono składki, a także udokumentowana praca zarobkowa za granicą na innej podstawie niż umowa o pracę (art. 302^1 § 1–7 Kodeksu pracy).',
+  },
+  {
+    pytanie: 'Czy nakładające się umowy liczą się podwójnie?',
+    odpowiedz: 'Nie. Gdy okresy się nakładają, na przykład etat i zlecenie w tym samym czasie, do stażu wlicza się okres najkorzystniejszy (art. 302^1 § 10 Kodeksu pracy). Kalkulator liczy każdy dzień raz.',
+  },
+  {
+    pytanie: 'Jak udokumentować zlecenia i działalność do stażu pracy?',
+    odpowiedz: 'Zaświadczeniem z ZUS o podleganiu ubezpieczeniom albo o opłaceniu składek (art. 302^1 § 11–13). Wniosek składa się elektronicznie przez profil na platformie ZUS (art. 302^2). Okresy za granicą trzeba udokumentować innymi dokumentami (art. 302^1 § 7).',
+  },
+  {
+    pytanie: 'Od ilu lat stażu przysługuje 26 dni urlopu?',
+    odpowiedz: 'Od 10 lat (art. 154 § 1 Kodeksu pracy). Do stażu urlopowego wlicza się też szkołę, na przykład 3 lata za zasadniczą szkołę zawodową i 8 lat za studia (art. 155 § 1). Lat nauki nie sumuje się z pracą w czasie nauki: liczy się to, co korzystniejsze (art. 155 § 2).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="staz-pracy"
+  tytul="Kalkulator stażu pracy: umowy, zlecenia i działalność"
+  opis="Policz staż pracy z umów o pracę, zleceń i działalności, które od 2026 r. wlicza się do stażu. Nakładające się okresy liczymy raz. Sprawdź, czy masz 20 czy 26 dni urlopu."
+  h1="Kalkulator stażu pracy"
+  lead="Od 2026 r. do stażu pracy wlicza się także zlecenia i działalność gospodarczą. Wpisz swoje okresy pracy, a policzymy staż w latach, miesiącach i dniach, osobno same umowy o pracę i staż do urlopu ze szkołą."
+  faq={faq}
+>
+  <form class="kalkulator" data-staz novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twoje okresy pracy</h2>
+      <p class="meta mt-1">Kolejność dowolna. Okres, który trwa, zakończ dzisiejszą datą.</p>
+      {WIERSZE.map((w, i) => (
+        <fieldset class="mt-4">
+          <legend class="etykieta">Okres {i + 1}</legend>
+          <div class="mt-2 grid grid-cols-2 gap-3">
+            <div>
+              <label for={`s-od-${i}`} class="etykieta-pola">Od</label>
+              <input id={`s-od-${i}`} name={`od-${i}`} type="date" class="pole mt-1" min="1960-01-01" max="2100-12-31" value={w?.od ?? ''} aria-describedby="s-blad" />
+            </div>
+            <div>
+              <label for={`s-do-${i}`} class="etykieta-pola">Do</label>
+              <input id={`s-do-${i}`} name={`do-${i}`} type="date" class="pole mt-1" min="1960-01-01" max="2100-12-31" value={w?.do ?? ''} aria-describedby="s-blad" />
+            </div>
+          </div>
+          <label for={`s-rodzaj-${i}`} class="sr-only">Rodzaj okresu {i + 1}</label>
+          <select id={`s-rodzaj-${i}`} name={`rodzaj-${i}`} class="pole mt-2">
+            {Object.entries(RODZAJE).map(([k, nazwa]) => <option value={k} selected={k === (w?.rodzaj ?? 'umowa')}>{nazwa}</option>)}
+          </select>
+        </fieldset>
+      ))}
+      <p id="s-blad" class="blad-pola mt-3" data-blad="okresy" hidden></p>
+      <div class="mt-4">
+        <label for="s-szkola" class="etykieta-pola">Ukończona szkoła (do urlopu)</label>
+        <select id="s-szkola" name="szkola" class="pole mt-1">
+          {Object.entries(SZKOLY).map(([k, s]) => <option value={k} selected={k === SZKOLA}>{s.nazwa}{s.lata ? ` (${s.lata} lat)` : ''}</option>)}
+        </select>
+      </div>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Staż pracy</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-data" data-w="razem">{opisStazu(r.razem)}</p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>W tym same umowy o pracę</dt><dd data-w="umowy">{opisStazu(r.umowy)}</dd></div>
+        <div><dt>Staż do urlopu ze szkołą</dt><dd data-w="urlopowy">{opisStazu(r.doUrlopu)}</dd></div>
+        <div><dt>Urlop w roku</dt><dd data-w="urlop">{r.dniUrlopu} dni{r.brakuje ? `, do 26 dni brakuje ${opisStazu(r.brakuje)}` : ''}</dd></div>
+      </dl>
+      <p class="wynik-uwaga">Zlecenia i działalność trzeba udokumentować zaświadczeniem z ZUS. Pracodawca uwzględnia je od 1 stycznia 2026 r. w sektorze finansów publicznych i od 1 maja 2026 r. u pozostałych pracodawców.</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="co-sie-wlicza">Co wlicza się do stażu pracy</h2>
+    <ul>
+      <li>umowy o pracę, także u poprzednich pracodawców;</li>
+      <li>od 2026 r.: zlecenia i inne umowy o świadczenie usług oraz umowy agencyjne, w których podlegało się ubezpieczeniom emerytalnemu i rentowym (art. 302<sup>1</sup> § 2 Kodeksu pracy);</li>
+      <li>od 2026 r.: działalność gospodarcza, za którą opłacono składki emerytalne, rentowe lub wypadkowe, a także pierwsze miesiące działalności bez składek społecznych z „ulgi na start” (art. 18 ust. 1 Prawa przedsiębiorców) i zawieszenie działalności na opiekę nad dzieckiem ze składkami (art. 302<sup>1</sup> § 1, 4 i 5);</li>
+      <li>od 2026 r.: udokumentowane zlecenia i działalność, w których nie podlegało się ubezpieczeniom z mocy odrębnych przepisów, na przykład zlecenie ucznia albo studenta do 26 lat (art. 302<sup>1</sup> § 3);</li>
+      <li>od 2026 r.: udokumentowana praca zarobkowa za granicą na innej podstawie niż umowa o pracę (art. 302<sup>1</sup> § 7).</li>
+    </ul>
+    <p>
+      Zasada obowiązuje od 1 stycznia 2026 r. w jednostkach sektora finansów publicznych i od 1 maja 2026 r.
+      u pozostałych pracodawców; osoba zatrudniona w tych dniach ma 24 miesiące na udokumentowanie okresów (art. 5, 9 i 10
+      ustawy z 26 września 2025 r., Dz.U. 2025 poz. 1423). Do stażu u danego pracodawcy, na przykład do okresu
+      wypowiedzenia, wlicza się te okresy tylko wtedy, gdy praca była wykonywana na rzecz tego pracodawcy (art. 302<sup>1</sup>
+      § 8). Ile dni urlopu przysługuje przy niepełnym etacie albo zmianie pracy, policzy
+      <a href="/narzedzia/kalkulator-urlopu">kalkulator urlopu</a>.
+    </p>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Okresy, które się nakładają albo stykają, łączymy i liczymy każdy dzień raz (art. 302<sup>1</sup> § 10). Każdy ciągły
+      okres liczymy w pełnych miesiącach kalendarzowych (art. 112 Kodeksu cywilnego), a pozostałe dni ze wszystkich okresów
+      sumujemy i zamieniamy na miesiące po 30 dni (art. 114 Kodeksu cywilnego); 12 miesięcy to rok. Przepisy prawa pracy nie
+      określają sposobu sumowania okresów z przerwami, więc w kadrach wynik może różnić się o kilka dni. Szkołę dodajemy
+      w pełnych latach z art. 155 § 1; gdy nauka przypadała w czasie pracy, liczy się albo nauka, albo praca, zależnie od
+      tego, co korzystniejsze (art. 155 § 2), czego kalkulator nie rozdziela.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { obliczStaz, opisStazu, type Okres, type RodzajOkresu } from '../../lib/narzedzia/staz-pracy';
+  import { poprawnaData } from '../../lib/narzedzia/terminy';
+  import type { Szkola } from '../../lib/narzedzia/urlop';
+
+  const form = document.querySelector<HTMLFormElement>('[data-staz]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const przelicz = () => {
+      const okresy: Okres[] = [];
+      let blad: string | null = null;
+      for (let i = 0; i < 6; i++) {
+        const od = el(`od-${i}`).value;
+        const do_ = el(`do-${i}`).value;
+        if (!od && !do_) continue;
+        if (!poprawnaData(od) || !poprawnaData(do_)) blad = `Okres ${i + 1}: wpisz obie daty, od i do.`;
+        else if (do_ < od) blad = `Okres ${i + 1}: koniec nie może być wcześniejszy niż początek.`;
+        else okresy.push({ od, do: do_, rodzaj: el(`rodzaj-${i}`).value as RodzajOkresu });
+      }
+      if (!blad && okresy.length === 0) blad = 'Wpisz daty co najmniej jednego okresu pracy.';
+      const b = form.querySelector<HTMLElement>('[data-blad="okresy"]')!;
+      b.hidden = !blad;
+      b.textContent = blad ?? '';
+      if (blad) {
+        w('razem').textContent = '—';
+        return;
+      }
+      const r = obliczStaz(okresy, el('szkola').value as Szkola);
+      w('razem').textContent = opisStazu(r.razem);
+      w('umowy').textContent = opisStazu(r.umowy);
+      w('urlopowy').textContent = opisStazu(r.doUrlopu);
+      w('urlop').textContent = `${r.dniUrlopu} dni${r.brakuje ? `, do 26 dni brakuje ${opisStazu(r.brakuje)}` : ''}`;
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>

@@ -257,6 +257,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-11',
   },
   {
+    slug: 'staz-pracy',
+    nazwa: 'Kalkulator stażu pracy',
+    krotko: 'Staż z umów o pracę, zleceń i działalności (od 2026 r.) bez liczenia okresów podwójnie; 20 czy 26 dni urlopu.',
+    kategoria: 'umowa',
+    przepisy: ['kodeksPracy', 'kodeksCywilny'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'zasilek-dla-bezrobotnych',
     nazwa: 'Zasiłek dla bezrobotnych',
     krotko: 'Czy przysługuje Ci zasiłek, ile na rękę, od kiedy i do kiedy, także po porozumieniu stron.',
