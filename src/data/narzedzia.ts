@@ -225,6 +225,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-12',
   },
   {
+    slug: 'wyplata-z-nadgodzinami',
+    nazwa: 'Wypłata z nadgodzinami i nockami',
+    krotko: 'Wypłata za miesiąc z nadgodzinami 50% i 100% i dodatkiem nocnym: brutto, na rękę i ile zostaje z dodatków.',
+    kategoria: 'wynagrodzenie',
+    przepisy: ['kodeksPracy', 'wynagrodzenieRozp', 'dniWolne', 'placa2026', 'pit', 'systemUbezpieczen', 'swiadczeniaZdrowotne'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'kalkulator-ppk',
     nazwa: 'Kalkulator PPK',
     krotko: 'Ile PPK zabiera z pensji na rękę, ile dokłada pracodawca i państwo i ile masz na koncie po roku.',

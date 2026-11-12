@@ -1,0 +1,171 @@
+---
+// Wypłata w miesiącu z nadgodzinami i nockami: brutto i na rękę (art. 151^1 i 151^8 Kp, netto z umowy o pracę).
+// Logika: src/lib/narzedzia/wyplata-dodatki.ts (testy obok) oraz nadgodziny.ts, dodatek-nocny.ts, netto.ts.
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { LATA } from '../../data/prawo';
+import { nazwaMiesiaca } from '../../lib/narzedzia/czas-pracy';
+import { zl } from '../../lib/narzedzia/format';
+import { dzisWPolsce } from '../../lib/narzedzia/terminy';
+import { wyplataZDodatkami } from '../../lib/narzedzia/wyplata-dodatki';
+
+const dzis = dzisWPolsce();
+const rokBiezacy = Number(dzis.slice(0, 4));
+const rok = LATA.includes(rokBiezacy) ? rokBiezacy : LATA[LATA.length - 1];
+const miesiac = rok === rokBiezacy ? Number(dzis.slice(5, 7)) : 1;
+const D = { pensja: 6000, godziny50: 10, godziny100: 0, godzinyNocne: 40 };
+const r = wyplataZDodatkami({ rok, miesiac, ...D });
+
+const faq = [
+  {
+    pytanie: 'Ile na rękę za nadgodziny?',
+    odpowiedz: `Za każdą nadgodzinę dostajesz normalną stawkę za godzinę i dodatek 50% albo 100% (art. 151¹ Kodeksu pracy). Przy pensji ${zl(D.pensja)} brutto w miesiącu z ${r.wymiar} godzinami pracy godzina to ${zl(r.stawka)}. Od całej wypłaty pobiera się składki i podatek: na przykład ${zl(r.zaNadgodziny + r.dodatekNocny)} brutto za ${D.godziny50} nadgodzin i ${D.godzinyNocne} godzin nocnych to ${zl(r.dodatkiNaReke)} więcej na rękę.`,
+  },
+  {
+    pytanie: 'Jak liczy się dodatek za pracę w nocy?',
+    odpowiedz: 'Co najmniej 20% stawki godzinowej z płacy minimalnej za każdą godzinę w porze nocnej (art. 151⁸ § 1 Kodeksu pracy). Stawkę liczy się z płacy minimalnej podzielonej przez liczbę godzin do przepracowania w danym miesiącu (§ 4b rozporządzenia z 29 maja 1996 r.), a nie z Twojej pensji.',
+  },
+  {
+    pytanie: 'Czy nocne nadgodziny liczą się podwójnie?',
+    odpowiedz: 'Nadgodzina w nocy ma dodatek 100% (art. 151¹ § 1 pkt 1 Kodeksu pracy) i dodatkowo dodatek nocny za tę godzinę (art. 151⁸). Wpisz ją wtedy w polu nadgodzin 100% i w godzinach nocnych.',
+  },
+];
+---
+<StronaNarzedzia
+  slug="wyplata-z-nadgodzinami"
+  tytul="Wypłata z nadgodzinami i nockami: ile na rękę"
+  opis="Policz wypłatę za miesiąc z nadgodzinami (50% i 100%) i dodatkiem za pracę w nocy: brutto, na rękę i ile z dodatków zostaje po składkach i podatku. Godziny pracy z kalendarza."
+  h1="Wypłata z nadgodzinami i nockami"
+  lead="Wpisz pensję i godziny z miesiąca: nadgodziny i godziny w nocy. Policzymy wypłatę brutto i na rękę oraz ile z dodatków zostaje po składkach i podatku."
+  faq={faq}
+>
+  <form class="kalkulator" data-wyplata-dodatki novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Pensja i godziny</h2>
+      <div class="mt-4 grid grid-cols-2 items-end gap-3">
+        <div>
+          <label for="x-miesiac" class="etykieta-pola">Miesiąc</label>
+          <select id="x-miesiac" name="miesiac" class="pole mt-1">
+            {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => <option value={m} selected={m === miesiac}>{nazwaMiesiaca(m)}</option>)}
+          </select>
+        </div>
+        <div>
+          <label for="x-rok" class="etykieta-pola">Rok</label>
+          <select id="x-rok" name="rok" class="pole mt-1">
+            {LATA.map((y) => <option value={y} selected={y === rok}>{y}</option>)}
+          </select>
+        </div>
+      </div>
+      <div class="mt-4">
+        <label for="x-pensja" class="etykieta-pola">Pensja zasadnicza brutto (zł)</label>
+        <input id="x-pensja" name="pensja" class="pole mt-1 max-w-48" type="text" inputmode="decimal" autocomplete="off" value={D.pensja} aria-describedby="x-blad" />
+      </div>
+      <div class="mt-4 grid grid-cols-2 items-end gap-3">
+        <div>
+          <label for="x-g50" class="etykieta-pola">Nadgodziny z dodatkiem 50%</label>
+          <input id="x-g50" name="g50" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value={D.godziny50} aria-describedby="x-blad" />
+        </div>
+        <div>
+          <label for="x-g100" class="etykieta-pola">Nadgodziny z dodatkiem 100%</label>
+          <input id="x-g100" name="g100" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value={D.godziny100} aria-describedby="x-blad" />
+        </div>
+      </div>
+      <div class="mt-4">
+        <label for="x-noc" class="etykieta-pola">Godziny pracy w nocy</label>
+        <input id="x-noc" name="noc" class="pole mt-1 max-w-48" type="text" inputmode="decimal" autocomplete="off" value={D.godzinyNocne} aria-describedby="x-blad" />
+      </div>
+      <label class="mt-4 flex items-start gap-3 text-[0.9375rem]">
+        <input type="checkbox" name="pit2" checked class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+        <span>Złożony PIT-2 (zaliczka mniejsza o 300 zł)</span>
+      </label>
+      <label class="mt-3 flex items-start gap-3 text-[0.9375rem]">
+        <input type="checkbox" name="ppk" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+        <span>Odkładam w PPK (2% i 1,5% od pracodawcy)</span>
+      </label>
+      <p id="x-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Na rękę za miesiąc</h2>
+      <p class="wynik-kwota" aria-live="polite" aria-atomic="true"><span data-w="netto">{zl(r.netto)}</span></p>
+      <dl class="wynik-lista">
+        <div><dt>Brutto razem</dt><dd data-w="brutto">{zl(r.brutto)}</dd></div>
+        <div><dt>Za nadgodziny (stawka i dodatek)</dt><dd data-w="nadgodziny">{zl(r.zaNadgodziny)}</dd></div>
+        <div><dt>Dodatek nocny</dt><dd data-w="nocny">{zl(r.dodatekNocny)}</dd></div>
+        <div><dt>Z dodatków zostaje na rękę</dt><dd data-w="dodatki">{zl(r.dodatkiNaReke)}</dd></div>
+        <div><dt>Sama pensja na rękę</dt><dd data-w="pensja-netto">{zl(r.nettoSamaPensja)}</dd></div>
+        <div><dt>Stawka za godzinę w tym miesiącu</dt><dd data-w="stawka">{zl(r.stawka)} ({r.wymiar} h)</dd></div>
+      </dl>
+      <p class="wynik-uwaga" data-w="uwaga" hidden></p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <ul>
+      <li>Stawka za godzinę: pensja zasadnicza podzielona przez liczbę godzin do przepracowania w wybranym miesiącu (§ 4a rozporządzenia z 29 maja 1996 r., art. 130 Kodeksu pracy).</li>
+      <li>Nadgodziny: normalna stawka i dodatek 100% (w nocy, w niedziele i święta wolne według rozkładu, w dniu wolnym za niedzielę lub święto) albo 50% w pozostałe dni (art. 151<sup>1</sup> § 1).</li>
+      <li>Dodatek nocny: 20% stawki z płacy minimalnej za godzinę (art. 151<sup>8</sup> § 1, § 4b rozporządzenia).</li>
+      <li>Na rękę: składki, składka zdrowotna i zaliczka na podatek od całej wypłaty, koszty 250 zł, tak jak w <a href="/narzedzia/brutto-netto">kalkulatorze brutto–netto</a>.</li>
+    </ul>
+    <p>
+      Kalkulator zakłada pensję miesięczną i rozliczenie nadgodzin w tym samym miesiącu. Przy stawce godzinowej albo
+      innym okresie rozliczeniowym kwoty mogą się różnić. Szczegóły nadgodzin, czas wolny zamiast dodatku i limit 150
+      godzin pokazuje <a href="/narzedzia/kalkulator-nadgodzin">kalkulator nadgodzin</a>, a dodatek nocny w każdym miesiącu
+      <a href="/narzedzia/dodatek-za-prace-w-nocy">kalkulator dodatku nocnego</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
+  import { wyplataZDodatkami } from '../../lib/narzedzia/wyplata-dodatki';
+
+  const form = document.querySelector<HTMLFormElement>('[data-wyplata-dodatki]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const godziny = (n: string) => (el(n).value.trim() === '' ? 0 : wpisanaLiczba(el(n).value));
+    const przelicz = () => {
+      const pensja = wpisanaLiczba(el('pensja').value);
+      const g50 = godziny('g50');
+      const g100 = godziny('g100');
+      const noc = godziny('noc');
+      let blad: string | null = null;
+      if (!(pensja > 0 && pensja < 1_000_000)) blad = 'Wpisz pensję brutto, na przykład 6000.';
+      else if (![g50, g100, noc].every((g) => g >= 0 && g <= 400)) blad = 'Godziny: liczby od 0 do 400.';
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      b.hidden = !blad;
+      b.textContent = blad ?? '';
+      const uwaga = w('uwaga');
+      if (blad) {
+        w('netto').textContent = '—';
+        uwaga.hidden = true;
+        return;
+      }
+      const r = wyplataZDodatkami({
+        rok: Number(el('rok').value),
+        miesiac: Number(el('miesiac').value),
+        pensja,
+        godziny50: g50,
+        godziny100: g100,
+        godzinyNocne: noc,
+        pit2: el('pit2').checked,
+        ppk: el('ppk').checked,
+      });
+      w('netto').textContent = zl(r.netto);
+      w('brutto').textContent = zl(r.brutto);
+      w('nadgodziny').textContent = zl(r.zaNadgodziny);
+      w('nocny').textContent = zl(r.dodatekNocny);
+      w('dodatki').textContent = zl(r.dodatkiNaReke);
+      w('pensja-netto').textContent = zl(r.nettoSamaPensja);
+      w('stawka').textContent = `${zl(r.stawka)} (${r.wymiar} h)`;
+      uwaga.hidden = !r.progPrzekroczony;
+      uwaga.textContent = r.progPrzekroczony ? 'Przy takiej wypłacie co miesiąc dochód przekroczy w roku 120 000 zł i w ostatnich miesiącach zaliczka wyniesie 32%.' : '';
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>
