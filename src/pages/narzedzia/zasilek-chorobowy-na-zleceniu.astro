@@ -1,0 +1,182 @@
+---
+// Zasiłek chorobowy na umowie zlecenia (art. 3 pkt 4, 4, 8, 11, 48–49, 61 ustawy zasiłkowej; art. 6, 8, 9, 11 ustawy
+// o systemie ubezpieczeń społecznych; art. 8–9 ustawy wypadkowej; art. 34 ustawy o PIT).
+// Logika: src/lib/narzedzia/zasilek-zlecenie.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { ODLICZENIE_CHOROBOWE, PRZYCZYNY, zasilekZlecenie } from '../../lib/narzedzia/zasilek-zlecenie';
+import { liczba, zl } from '../../lib/narzedzia/format';
+
+const start = zasilekZlecenie({ status: 'zlecenie-chorobowe', przyczyna: 'choroba', przychod: 4000, dni: 10 });
+
+const faq = [
+  {
+    pytanie: 'Czy na umowie zlecenia należy się L4 płatne?',
+    odpowiedz: 'Tak, gdy zgłosisz się do dobrowolnego ubezpieczenia chorobowego i płacisz z umowy składki emerytalną i rentową obowiązkowo (art. 11 ust. 2 ustawy o systemie ubezpieczeń społecznych). Zasiłek przysługuje po 90 dniach nieprzerwanego ubezpieczenia chorobowego (art. 4 ust. 1 pkt 2 ustawy zasiłkowej). Bez chorobowego zwolnienie nie jest płatne, poza wypadkiem przy pracy.',
+  },
+  {
+    pytanie: 'Jak obliczyć zasiłek chorobowy z umowy zlecenia?',
+    odpowiedz: `Bierze się przeciętny miesięczny przychód ze zlecenia z 12 miesięcy przed miesiącem, w którym zaczęła się choroba, albo z pełnych miesięcy, gdy umowa trwa krócej (art. 48 ustawy zasiłkowej). Odejmuje się ${liczba(ODLICZENIE_CHOROBOWE)}% (art. 3 pkt 4), dzieli przez 30 i mnoży przez 80% oraz liczbę dni L4 (art. 11). Przy przychodzie 4000 zł i 10 dniach choroby to ${zl(start.brutto)} brutto.`,
+  },
+  {
+    pytanie: 'Kto wypłaca zasiłek chorobowy zleceniobiorcy?',
+    odpowiedz: 'Zleceniodawca, który zgłasza do ubezpieczenia chorobowego ponad 20 osób, a w pozostałych przypadkach ZUS (art. 61 ust. 1 ustawy zasiłkowej). Zleceniobiorca nie dostaje wynagrodzenia chorobowego za pierwsze 33 dni, jak pracownik na etacie: zasiłek należy się od pierwszego dnia zwolnienia, gdy minął okres wyczekiwania.',
+  },
+  {
+    pytanie: 'Czy student na zleceniu dostanie zasiłek chorobowy?',
+    odpowiedz: 'Nie. Uczeń szkoły ponadpodstawowej albo student do 26 lat nie podlega ubezpieczeniom ze zlecenia (art. 6 ust. 4 ustawy o systemie ubezpieczeń społecznych), więc nie ma też chorobowego ani wypadkowego.',
+  },
+  {
+    pytanie: 'A gdy mam etat i zlecenie?',
+    odpowiedz: 'Gdy zlecenie jest u Twojego pracodawcy, traktuje się je jak pracę na etacie (art. 8 ust. 2a ustawy o systemie ubezpieczeń społecznych) i zasiłek liczy się z obu umów, jak u pracownika. Gdy etat z pensją co najmniej minimalną masz gdzie indziej, emerytalne i rentowe ze zlecenia są dobrowolne (art. 9 ust. 1 i 1a), więc chorobowego ze zlecenia nie ma, a zasiłek należy się tylko z etatu.',
+  },
+  {
+    pytanie: 'Czy od zasiłku chorobowego płaci się podatek?',
+    odpowiedz: 'Tak. Płatnik pobiera zaliczkę 12% (art. 34 ust. 3 ustawy o PIT dla zasiłków wypłacanych przez ZUS). Składek ZUS ani zdrowotnej od zasiłku się nie płaci.',
+  },
+];
+---
+<StronaNarzedzia
+  slug="zasilek-chorobowy-na-zleceniu"
+  tytul="Zasiłek chorobowy na zleceniu: kalkulator"
+  opis="Ile ZUS płaci za L4 na umowie zlecenia: podstawa z przychodu minus 13,71%, 80 albo 100%, 90 dni czekania, kto wypłaca, student, etat i zlecenie."
+  h1="Zasiłek chorobowy na zleceniu: kalkulator"
+  lead="Na zleceniu za chorobę płaci ZUS albo duży zleceniodawca, i to tylko z dobrowolnym chorobowym. Wpisz przeciętny przychód z umowy i dni L4, a policzymy zasiłek i kwotę na rękę."
+  faq={faq}
+>
+  <form class="kalkulator" data-zlecenie-l4 novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twoje zlecenie</h2>
+      <div class="mt-4">
+        <label for="z-status" class="etykieta-pola">Twoja sytuacja</label>
+        <select id="z-status" name="status" class="pole mt-1">
+          <option value="zlecenie-chorobowe" selected>Zlecenie z chorobowym</option>
+          <option value="zlecenie-bez-chorobowego">Zlecenie bez chorobowego</option>
+          <option value="student">Student, uczeń do 26 lat</option>
+          <option value="etat-gdzie-indziej">Etat w innej firmie</option>
+          <option value="u-pracodawcy">Zlecenie u pracodawcy</option>
+        </select>
+      </div>
+      <div class="mt-4">
+        <label for="z-przyczyna" class="etykieta-pola">Powód L4</label>
+        <select id="z-przyczyna" name="przyczyna" class="pole mt-1">
+          {Object.entries(PRZYCZYNY).map(([k, p]) => <option value={k}>{p.nazwa}</option>)}
+        </select>
+      </div>
+      <div class="mt-4 grid grid-cols-2 items-end gap-4">
+        <div>
+          <label for="z-przychod" class="etykieta-pola">Przychód miesięcznie (zł brutto)</label>
+          <input id="z-przychod" name="przychod" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="4000" aria-describedby="z-blad z-przychod-opis" />
+        </div>
+        <div>
+          <label for="z-dni" class="etykieta-pola">Dni L4</label>
+          <input id="z-dni" name="dni" class="pole mt-1" type="text" inputmode="numeric" autocomplete="off" value="10" aria-describedby="z-blad" />
+        </div>
+      </div>
+      <p id="z-przychod-opis" class="meta mt-1">Średnia z pełnych miesięcy umowy, najwyżej z 12 przed miesiącem L4. Gdy chorujesz w pierwszym miesiącu: kwota z umowy za miesiąc.</p>
+      <p id="z-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Zasiłek za te dni (brutto)</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-kwota" data-w="kwota">{zl(start.brutto)}</p>
+        <p class="meta" data-w="opis">{start.procent}% podstawy, {zl(start.zaDzien)} za dzień</p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Na rękę</dt><dd data-w="netto">{zl(start.netto)} (zaliczka {start.zaliczka} zł)</dd></div>
+        <div><dt>Podstawa</dt><dd data-w="podstawa">{zl(start.podstawa)} (przychód minus 13,71%)</dd></div>
+        <div><dt>Okres zasiłkowy</dt><dd data-w="okres">najwyżej {start.okresZasilkowy} dni</dd></div>
+        <div><dt>Wypłaca</dt><dd>ZUS, a zleceniodawca, gdy zgłasza do chorobowego ponad 20 osób</dd></div>
+      </dl>
+      <p class="wynik-uwaga" data-w="uwaga">Zasiłek przysługuje po 90 dniach nieprzerwanego dobrowolnego ubezpieczenia chorobowego.</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="zasady">Zasady zasiłku na zleceniu</h2>
+    <ul>
+      <li>Chorobowe ze zlecenia jest dobrowolne: obejmuje Cię od dnia ze zgłoszenia, gdy z tej umowy masz obowiązkowo emerytalne i rentowe (art. 11 ust. 2 i art. 14 ust. 1 ustawy o systemie ubezpieczeń społecznych).</li>
+      <li>Zasiłek po 90 dniach nieprzerwanego ubezpieczenia chorobowego; wcześniejsze ubezpieczenie z przerwą do 30 dni się wlicza (art. 4 ust. 1–2 ustawy zasiłkowej). Od pierwszego dnia po wypadku w drodze do pracy lub z pracy i dla absolwentów do 90 dni po szkole (art. 4 ust. 3).</li>
+      <li>Podstawa: przeciętny miesięczny przychód z 12 miesięcy kalendarzowych przed miesiącem, w którym zaczęła się choroba, albo z pełnych miesięcy, gdy ubezpieczenie trwa krócej (art. 48 ust. 1–2 i art. 36 ust. 2). Przychód to podstawa składki chorobowej minus 13,71% (art. 3 pkt 4). Gdy choroba zaczęła się przed upływem pełnego miesiąca ubezpieczenia, liczy się kwota z umowy za ten miesiąc (art. 49 ust. 1 pkt 2).</li>
+      <li>Pomija się miesiące, w których z powodu zasiłku praca trwała mniej niż połowę miesiąca (art. 50 ust. 1); gdy tak było w każdym miesiącu, bierze się wszystkie (ust. 2).</li>
+      <li>Wysokość: 80% podstawy, 100% w ciąży, przy badaniach dawcy i po wypadku w drodze; za każdy dzień, także wolny (art. 11 ustawy zasiłkowej). Najwyżej 182 dni, w ciąży i przy gruźlicy 270 (art. 8 ust. 1).</li>
+      <li>Wypadek przy pracy: zasiłek z ubezpieczenia wypadkowego 100% od pierwszego dnia, także bez chorobowego; wtedy z podstawy składki wypadkowej odejmuje się 11,26% (art. 8 i art. 9 ust. 1–3 ustawy wypadkowej).</li>
+      <li>Nie ma minimalnej podstawy: przepis o płacy minimalnej (art. 45 ustawy zasiłkowej) dotyczy pracy w pełnym wymiarze, a art. 48 ust. 2 do niego nie odsyła.</li>
+    </ul>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Podstawa = przychód × (1 − 13,71%), zaokrąglona do grosza. Za dzień: podstawa × 80% albo 100% / 30, do grosza.
+      Zasiłek: stawka za dzień × dni L4. Zaliczka na podatek: 12% zasiłku, do pełnych złotych (art. 34 ust. 3 ustawy
+      o PIT, art. 63 § 1 Ordynacji podatkowej). Przychód wpisujesz jako średnią z pełnych miesięcy: przepis każe pominąć
+      miesiące, w których przez ponad połowę miesiąca był zasiłek, więc policz ją bez nich. Gdy zleceniodawca wypłaca
+      zasiłek sam, sposób poboru zaliczki może się różnić o kilka złotych.
+    </p>
+    <p>
+      Od kiedy L4 jest płatne, policzy <a href="/narzedzia/okres-wyczekiwania">kalkulator okresu wyczekiwania</a>, ile
+      zostaje na rękę z samej umowy, <a href="/narzedzia/zlecenie-netto">kalkulator zlecenia netto</a>, a zasiłek na
+      etacie <a href="/narzedzia/kalkulator-l4">kalkulator L4</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { PRZYCZYNY, zasilekZlecenie, type Przyczyna, type Status } from '../../lib/narzedzia/zasilek-zlecenie';
+  import { liczba, wpisanaLiczba, zl } from '../../lib/narzedzia/format';
+  import { typografia } from '../../lib/typografia.mjs';
+
+  const form = document.querySelector<HTMLFormElement>('[data-zlecenie-l4]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const pisz = (k: string, tekst: string) => {
+      w(k).textContent = typografia(tekst);
+    };
+    const BRAK: Partial<Record<Status, string>> = {
+      'zlecenie-bez-chorobowego': 'Bez dobrowolnego chorobowego zasiłek chorobowy ze zlecenia nie przysługuje (art. 11 ust. 2 ustawy o systemie ubezpieczeń społecznych). Wyjątek: wypadek przy pracy, wtedy zasiłek z ubezpieczenia wypadkowego.',
+      student: 'Uczeń lub student do 26 lat nie podlega ubezpieczeniom ze zlecenia (art. 6 ust. 4 ustawy o systemie ubezpieczeń społecznych), więc zasiłku nie ma.',
+      'etat-gdzie-indziej': 'Przy etacie z pensją co najmniej minimalną w innej firmie emerytalne i rentowe ze zlecenia są dobrowolne, więc chorobowego ze zlecenia nie ma (art. 9 ust. 1 i 1a, art. 11 ust. 2 ustawy o systemie). Zasiłek należy się z etatu: policzy go kalkulator L4.',
+      'u-pracodawcy': 'Zlecenie u własnego pracodawcy traktuje się jak etat (art. 8 ust. 2a ustawy o systemie): wynagrodzenie chorobowe i zasiłek liczy się z pensji i zlecenia razem, jak w kalkulatorze L4.',
+    };
+    const przelicz = () => {
+      const status = el('status').value as Status;
+      const przyczyna = el('przyczyna').value as Przyczyna;
+      const przychod = wpisanaLiczba(el('przychod').value);
+      const dni = wpisanaLiczba(el('dni').value);
+      const blad =
+        !(przychod > 0) ? 'Wpisz przeciętny miesięczny przychód, na przykład 4000.'
+        : !(Number.isInteger(dni) && dni >= 1 && dni <= 270) ? 'Dni L4 wpisz jako liczbę całkowitą od 1 do 270.'
+        : null;
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      b.hidden = !blad;
+      b.textContent = blad ?? '';
+      if (blad) {
+        for (const k of ['kwota', 'netto', 'podstawa', 'okres']) w(k).textContent = '—';
+        w('opis').textContent = '';
+        return;
+      }
+      const r = zasilekZlecenie({ status, przyczyna, przychod, dni });
+      const uwagi: string[] = [];
+      if (!r.przysluguje) {
+        pisz('kwota', zl(0));
+        pisz('opis', 'zasiłek ze zlecenia nie przysługuje');
+        for (const k of ['netto', 'podstawa', 'okres']) w(k).textContent = '—';
+        uwagi.push(BRAK[status] ?? '');
+      } else {
+        pisz('kwota', zl(r.brutto));
+        pisz('opis', `${r.procent}% podstawy, ${zl(r.zaDzien)} za dzień (${PRZYCZYNY[przyczyna].podstawa})`);
+        pisz('netto', `${zl(r.netto)} (zaliczka ${r.zaliczka} zł)`);
+        pisz('podstawa', `${zl(r.podstawa)} (przychód minus ${liczba(r.odliczenie)}%)`);
+        pisz('okres', `najwyżej ${r.okresZasilkowy} dni`);
+        uwagi.push(r.bezWyczekiwania ? 'Po wypadku zasiłek przysługuje od pierwszego dnia, bez okresu wyczekiwania.' : 'Zasiłek przysługuje po 90 dniach nieprzerwanego dobrowolnego ubezpieczenia chorobowego.');
+        if (przyczyna === 'wypadek-przy-pracy') uwagi.push(status === 'zlecenie-chorobowe' ? 'To zasiłek z ubezpieczenia wypadkowego, liczony z tej samej podstawy co chorobowy (art. 9 ust. 3 pkt 2 ustawy wypadkowej).' : 'Bez chorobowego zasiłek po wypadku przy pracy liczy się z podstawy składki wypadkowej minus 11,26% (art. 9 ust. 3 pkt 3 ustawy wypadkowej).');
+      }
+      pisz('uwaga', uwagi.join(' '));
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>

@@ -569,6 +569,22 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-12',
   },
   {
+    slug: 'okres-wyczekiwania',
+    nazwa: 'Okres wyczekiwania na L4',
+    krotko: 'Od kiedy płatne L4 w nowej pracy: 30 dni na etacie, 90 na zleceniu, wcześniejsze umowy, wyjątki.',
+    kategoria: 'wynagrodzenie',
+    przepisy: ['zasilkowa', 'kodeksPracy', 'systemUbezpieczen', 'wypadkowa'],
+    sprawdzono: '2026-11-12',
+  },
+  {
+    slug: 'zasilek-chorobowy-na-zleceniu',
+    nazwa: 'Zasiłek chorobowy na zleceniu',
+    krotko: 'Ile ZUS płaci za L4 na umowie zlecenia: podstawa z przychodu, 80 albo 100%, kto wypłaca, ile na rękę.',
+    kategoria: 'wynagrodzenie',
+    przepisy: ['zasilkowa', 'systemUbezpieczen', 'wypadkowa', 'pit', 'ordynacja'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'swiadczenie-urlopowe',
     nazwa: 'Świadczenie urlopowe',
     krotko: 'Ile najwyżej wynosi świadczenie urlopowe przy Twoim etacie, kiedy się należy i ile zostaje na rękę.',
