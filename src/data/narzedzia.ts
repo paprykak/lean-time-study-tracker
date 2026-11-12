@@ -457,6 +457,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-11',
   },
   {
+    slug: 'dyzur-w-pracy',
+    nazwa: 'Dyżur w pracy: wolne albo wynagrodzenie',
+    krotko: 'Ile za dyżur w zakładzie: czas wolny równy dyżurowi albo stawka, bez stawki 60%; dyżur w domu bez zapłaty.',
+    kategoria: 'czas-pracy',
+    przepisy: ['kodeksPracy', 'wynagrodzenieRozp', 'dniWolne'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'przerwy-w-pracy',
     nazwa: 'Przerwy w pracy',
     krotko: 'Ile przerw przy zmianie 8 i 12 godzin, które są płatne, przerwy na karmienie i dla młodocianych.',

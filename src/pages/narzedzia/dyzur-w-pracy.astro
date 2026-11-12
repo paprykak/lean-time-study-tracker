@@ -1,0 +1,214 @@
+---
+// Dyżur w pracy (art. 151^5 Kp, § 4 i § 4a rozporządzenia z 29 maja 1996 r.). Logika: src/lib/narzedzia/dyzur.ts.
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { LATA } from '../../data/prawo';
+import { nazwaMiesiaca } from '../../lib/narzedzia/czas-pracy';
+import { dyzur } from '../../lib/narzedzia/dyzur';
+import { zl } from '../../lib/narzedzia/format';
+import { dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+const dzis = dzisWPolsce();
+const rokBiezacy = Number(dzis.slice(0, 4));
+const rok = LATA.includes(rokBiezacy) ? rokBiezacy : LATA[LATA.length - 1];
+const miesiac = rok === rokBiezacy ? Number(dzis.slice(5, 7)) : 1;
+const start = dyzur({ miejsce: 'zaklad', godzinyDyzuru: 12, godzinyPracy: 2, rok, miesiac, rodzaj: 'miesieczna', stawka: 6000 });
+
+const faq = [
+  {
+    pytanie: 'Czy dyżur wlicza się do czasu pracy?',
+    odpowiedz: 'Nie, jeżeli w czasie dyżuru nie pracowałeś albo nie pracowałaś. Gdy pracodawca wezwał Cię do pracy, ten czas jest czasem pracy (art. 151⁵ § 2 Kodeksu pracy) i rozlicza się go jak pracę, także jako nadgodziny. Dyżur nie może naruszać prawa do 11 godzin odpoczynku na dobę i 35 godzin w tygodniu (art. 151⁵ § 2 w związku z art. 132 i 133).',
+  },
+  {
+    pytanie: 'Ile płaci się za dyżur w pracy?',
+    odpowiedz: 'Za dyżur w zakładzie albo w innym miejscu wyznaczonym przez pracodawcę należy się czas wolny w wymiarze odpowiadającym długości dyżuru, a gdy nie można go udzielić, wynagrodzenie ze stawki godzinowej albo miesięcznej z osobistego zaszeregowania, a bez wyodrębnionej stawki 60% wynagrodzenia (art. 151⁵ § 3 Kodeksu pracy).',
+  },
+  {
+    pytanie: 'Czy za dyżur pod telefonem w domu należy się wynagrodzenie?',
+    odpowiedz: 'Nie. Za dyżur pełniony w domu nie przysługuje ani czas wolny, ani wynagrodzenie (art. 151⁵ § 3 Kodeksu pracy). Płatna jest tylko praca wykonana na wezwanie, bo to czas pracy (§ 2).',
+  },
+  {
+    pytanie: 'Kogo nie dotyczą przepisy o wynagrodzeniu za dyżur?',
+    odpowiedz: 'Pracowników zarządzających w imieniu pracodawcy zakładem pracy: nie mają prawa do czasu wolnego ani wynagrodzenia za dyżur, a dyżur nie musi u nich uwzględniać odpoczynku z art. 132 i 133 (art. 151⁵ § 4 Kodeksu pracy).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="dyzur-w-pracy"
+  tytul="Dyżur w pracy: czas wolny albo wynagrodzenie"
+  opis="Ile za dyżur w zakładzie pracy: czas wolny równy długości dyżuru albo wynagrodzenie ze stawki, a bez stawki 60%. Dyżur w domu bez wynagrodzenia."
+  h1="Dyżur w pracy: ile się należy"
+  lead="Za dyżur poza domem należy się czas wolny albo pieniądze, a za pracę w czasie dyżuru wynagrodzenie jak za pracę. Wpisz godziny dyżuru, czas faktycznej pracy i stawkę, a policzymy rekompensatę."
+  faq={faq}
+>
+  <form class="kalkulator" data-dyzur novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twój dyżur</h2>
+      <div class="mt-4">
+        <label for="d-miejsce" class="etykieta-pola">Gdzie pełnisz dyżur</label>
+        <select id="d-miejsce" name="miejsce" class="pole mt-1">
+          <option value="zaklad" selected>W zakładzie lub wskazanym miejscu</option>
+          <option value="dom">W domu (pod telefonem)</option>
+        </select>
+      </div>
+      <div class="mt-4 grid grid-cols-2 items-end gap-3">
+        <div>
+          <label for="d-godziny" class="etykieta-pola">Godziny dyżuru</label>
+          <input id="d-godziny" name="godziny" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="12" aria-describedby="d-blad" />
+        </div>
+        <div>
+          <label for="d-praca" class="etykieta-pola">W tym godziny pracy</label>
+          <input id="d-praca" name="praca" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="2" aria-describedby="d-praca-opis d-blad" />
+        </div>
+      </div>
+      <p id="d-praca-opis" class="meta mt-1">Czas, w którym na wezwanie faktycznie pracowałeś albo pracowałaś: to czas pracy, płatny jak praca (art. 151⁵ § 2).</p>
+      <fieldset class="mt-4" data-tylko-zaklad>
+        <legend class="etykieta">Jak jesteś wynagradzany</legend>
+        <div class="opcje-pionowe mt-2">
+          <label><input type="radio" name="rodzaj" value="godzinowa" /> Stawka godzinowa</label>
+          <label><input type="radio" name="rodzaj" value="miesieczna" checked /> Pensja miesięczna (stawka zasadnicza)</label>
+          <label><input type="radio" name="rodzaj" value="bez-stawki" /> Bez wyodrębnionej stawki (60%)</label>
+        </div>
+      </fieldset>
+      <div class="mt-4" data-tylko-stawka>
+        <label for="d-stawka" class="etykieta-pola" data-w="etykieta-stawki">Pensja zasadnicza (zł brutto)</label>
+        <input id="d-stawka" name="stawka" class="pole mt-1 max-w-48" type="text" inputmode="decimal" autocomplete="off" value="6000" aria-describedby="d-blad" />
+      </div>
+      <div data-tylko-60 hidden><div class="mt-4 grid gap-4">
+        <div>
+          <label for="d-stale" class="etykieta-pola">Stałe składniki miesięcznie (zł)</label>
+          <input id="d-stale" name="stale" class="pole mt-1 max-w-48" type="text" inputmode="decimal" autocomplete="off" value="5000" />
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label for="d-zmienne" class="etykieta-pola">Zmienne z 3 miesięcy, razem (zł)</label>
+            <input id="d-zmienne" name="zmienne" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="0" />
+          </div>
+          <div>
+            <label for="d-zgodz" class="etykieta-pola">Przepracowane godziny w tych miesiącach</label>
+            <input id="d-zgodz" name="zgodz" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="480" />
+          </div>
+        </div>
+      </div></div>
+      <div class="mt-4 grid grid-cols-2 gap-4" data-tylko-zaklad-czas>
+        <div>
+          <label for="d-miesiac" class="etykieta-pola">Miesiąc dyżuru</label>
+          <select id="d-miesiac" name="miesiac" class="pole mt-1">
+            {Array.from({ length: 12 }, (_, i) => <option value={i + 1} selected={i + 1 === miesiac}>{nazwaMiesiaca(i + 1)}</option>)}
+          </select>
+        </div>
+        <div>
+          <label for="d-rok" class="etykieta-pola">Rok</label>
+          <select id="d-rok" name="rok" class="pole mt-1">
+            {LATA.map((r) => <option value={r} selected={r === rok}>{r}</option>)}
+          </select>
+        </div>
+      </div>
+      <p id="d-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Za dyżur bez pracy</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-kwota"><span data-w="wolne">{start.czasWolny} h wolnego</span></p>
+        <p class="meta" data-w="albo">albo, gdy nie można dać wolnego, {zl(start.kwota)} brutto</p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Za godzinę dyżuru</dt><dd data-w="za-godzine">{zl(start.zaGodzine)}</dd></div>
+        <div><dt>Godziny pracy w czasie dyżuru</dt><dd data-w="praca">{start.praca} h, płatne jak praca</dd></div>
+        <div><dt>Godzin do przepracowania w miesiącu</dt><dd data-w="wymiar">{start.wymiar} h</dd></div>
+      </dl>
+      <p class="wynik-uwaga">Dyżur nie może naruszać 11 godzin odpoczynku na dobę i 35 godzin w tygodniu (art. 151⁵ § 2). Nie dotyczy to pracowników zarządzających zakładem (§ 4).</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="zasady">Zasady dyżuru</h2>
+    <ul>
+      <li>Dyżur to pozostawanie poza normalnymi godzinami pracy w gotowości do pracy w zakładzie albo w innym miejscu wyznaczonym przez pracodawcę (art. 151<sup>5</sup> § 1 Kodeksu pracy).</li>
+      <li>Czas dyżuru bez pracy nie jest czasem pracy; praca na wezwanie w czasie dyżuru jest (§ 2).</li>
+      <li>Za dyżur poza domem: czas wolny równy długości dyżuru, a gdy nie można go udzielić, wynagrodzenie ze stawki godzinowej albo miesięcznej, a bez wyodrębnionej stawki 60% wynagrodzenia; za dyżur w domu nic (§ 3).</li>
+      <li>Wynagrodzenie za godzinę: pensja miesięczna przez godziny do przepracowania w miesiącu (§ 4a rozporządzenia z 29 maja 1996 r.); 60% według zasad wynagrodzenia urlopowego, stałe składniki przez godziny w miesiącu, zmienne przez godziny przepracowane w okresie, z którego się je liczy (§ 4 ust. 1–2).</li>
+    </ul>
+    <p>
+      Pracę w czasie dyżuru poza normalnymi godzinami rozlicza się jak nadgodziny: policzy je
+      <a href="/narzedzia/kalkulator-nadgodzin">kalkulator nadgodzin</a>. Odpoczynek dobowy i tygodniowy sprawdzi
+      <a href="/narzedzia/kontrola-grafiku">kontrola grafiku</a>.
+    </p>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Rekompensatę liczymy za godziny dyżuru bez pracy, bo godziny pracy w czasie dyżuru są czasem pracy i dostajesz za nie
+      wynagrodzenie jak za pracę. Przepis o dyżurze, inaczej niż przepis o przestoju, nie podnosi stawki do płacy
+      minimalnej, więc kalkulator tego nie robi.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { dyzur, type MiejsceDyzuru } from '../../lib/narzedzia/dyzur';
+  import type { RodzajStawki } from '../../lib/narzedzia/przestoj';
+  import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
+
+  const form = document.querySelector<HTMLFormElement>('[data-dyzur]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const liczba = (n: string) => wpisanaLiczba(el(n).value || '0');
+    const godz = (x: number) => `${String(x).replace('.', ',')} h`;
+    const przelicz = () => {
+      const miejsce = el('miejsce').value as MiejsceDyzuru;
+      const rodzaj = (form.querySelector<HTMLInputElement>('input[name="rodzaj"]:checked')?.value ?? 'miesieczna') as RodzajStawki;
+      const zaklad = miejsce === 'zaklad';
+      form.querySelector<HTMLElement>('[data-tylko-zaklad]')!.hidden = !zaklad;
+      form.querySelector<HTMLElement>('[data-tylko-zaklad-czas]')!.hidden = !zaklad;
+      form.querySelector<HTMLElement>('[data-tylko-stawka]')!.hidden = !zaklad || rodzaj === 'bez-stawki';
+      form.querySelector<HTMLElement>('[data-tylko-60]')!.hidden = !zaklad || rodzaj !== 'bez-stawki';
+      w('etykieta-stawki').textContent = rodzaj === 'godzinowa' ? 'Stawka za godzinę (zł brutto)' : 'Pensja zasadnicza (zł brutto)';
+      const godziny = liczba('godziny');
+      const praca = liczba('praca');
+      const stawka = liczba('stawka');
+      const blad =
+        !(godziny > 0 && godziny <= 744) ? 'Wpisz godziny dyżuru, na przykład 12.'
+        : !(praca >= 0 && praca <= godziny) ? 'Godziny pracy nie mogą przekraczać godzin dyżuru.'
+        : zaklad && rodzaj !== 'bez-stawki' && !(stawka > 0) ? 'Wpisz stawkę albo pensję.'
+        : zaklad && rodzaj === 'bez-stawki' && !(liczba('stale') >= 0 && liczba('zmienne') >= 0 && liczba('zgodz') >= 0) ? 'Kwoty i godziny nie mogą być ujemne.'
+        : null;
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      b.hidden = !blad;
+      b.textContent = blad ?? '';
+      if (blad) {
+        w('wolne').textContent = '—';
+        w('albo').textContent = '';
+        return;
+      }
+      const r = dyzur({
+        miejsce,
+        godzinyDyzuru: godziny,
+        godzinyPracy: praca,
+        rok: Number(el('rok').value),
+        miesiac: Number(el('miesiac').value),
+        rodzaj,
+        stawka,
+        stale: liczba('stale'),
+        zmienneSuma: liczba('zmienne'),
+        zmienneGodziny: liczba('zgodz'),
+      });
+      if (r.domowy) {
+        w('wolne').textContent = 'Nic';
+        w('albo').textContent = 'Za dyżur w domu nie należy się czas wolny ani wynagrodzenie (art. 151⁵ § 3).';
+        w('za-godzine').textContent = '—';
+      } else {
+        w('wolne').textContent = `${godz(r.czasWolny)} wolnego`;
+        w('albo').textContent = `albo, gdy nie można dać wolnego, ${zl(r.kwota)} brutto`;
+        w('za-godzine').textContent = `${zl(r.zaGodzine)}${rodzaj === 'bez-stawki' ? ' (60%)' : ''}`;
+      }
+      w('praca').textContent = `${godz(r.praca)}, płatne jak praca`;
+      w('wymiar').textContent = godz(r.wymiar);
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>
