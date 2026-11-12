@@ -41,6 +41,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-11',
   },
   {
+    slug: 'halas-w-pracy',
+    nazwa: 'Hałas w pracy: normy dB',
+    krotko: 'Ekspozycja na hałas w ciągu zmiany i norma: 85 dB, próg 80 dB, ciąża 65 dB, ile godzin przy 90 dB.',
+    kategoria: 'bhp',
+    przepisy: ['ndsNdn', 'halasBhp', 'praceKobietCiaza', 'praceMlodocianych'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'odszkodowanie-za-wypadek-przy-pracy',
     nazwa: 'Odszkodowanie za wypadek przy pracy',
     krotko: 'Ile ZUS płaci za każdy procent uszczerbku na zdrowiu po wypadku przy pracy, zwiększenie i dodatek.',

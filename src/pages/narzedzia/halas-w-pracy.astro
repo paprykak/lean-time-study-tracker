@@ -1,0 +1,207 @@
+---
+// Hałas na stanowisku pracy: L_EX,8h z poziomów i czasów, NDN (Dz.U. 2018 poz. 1286), próg działania i obowiązki
+// pracodawcy (Dz.U. 2005 nr 157 poz. 1318), limity dla kobiet w ciąży i młodocianych. Logika: src/lib/narzedzia/halas.ts.
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { dopuszczalnyCzas, godzinyIMinuty, LIMITY, ocenaHalasu, PROG_DZIALANIA } from '../../lib/narzedzia/halas';
+
+const D = [
+  { poziom: 88, godziny: 4 },
+  { poziom: 80, godziny: 4 },
+];
+const r = ocenaHalasu(D, 'dorosly');
+const dB = (x: number) => `${x.toLocaleString('pl-PL', { minimumFractionDigits: 1, maximumFractionDigits: 1 })} dB`;
+const POZIOMY = [85, 88, 91, 94, 97, 100, 103, 106];
+const ok = LIMITY.dorosly;
+
+const faq = [
+  {
+    pytanie: 'Jaki hałas jest dopuszczalny w pracy?',
+    odpowiedz: `Poziom ekspozycji odniesiony do 8-godzinnego dnia pracy nie może przekraczać ${ok.lex} dB, maksymalny poziom dźwięku A ${ok.maksA} dB, a szczytowy poziom dźwięku C ${ok.szczytC} dB; te wartości obowiązują jednocześnie (rozporządzenie w sprawie najwyższych dopuszczalnych stężeń i natężeń czynników szkodliwych, załącznik, część B, pkt A.1.2–1.5).`,
+  },
+  {
+    pytanie: 'Od ilu decybeli pracodawca musi dać ochronniki słuchu?',
+    odpowiedz: `Gdy hałasu nie da się ograniczyć innymi środkami, pracodawca udostępnia ochronniki słuchu powyżej progu działania ${PROG_DZIALANIA} dB, a od ${ok.lex} dB także nadzoruje, czy są noszone (§ 6 ust. 1 rozporządzenia w sprawie BHP przy pracach związanych z narażeniem na hałas). Od ${ok.lex} dB musi też wprowadzić program ograniczenia hałasu (§ 5 ust. 2), a miejsca powyżej NDN oznaczyć (§ 7 ust. 1).`,
+  },
+  {
+    pytanie: 'Ile godzin można pracować przy 90 dB?',
+    odpowiedz: `Około ${godzinyIMinuty(dopuszczalnyCzas(90))}. Każde 3 dB więcej to mniej więcej o połowę krótszy czas, po którym ekspozycja osiąga ${ok.lex} dB: przy 88 dB około ${godzinyIMinuty(dopuszczalnyCzas(88))}, przy 94 dB około ${godzinyIMinuty(dopuszczalnyCzas(94))}, bez ochronników i pozostałego hałasu w ciągu dnia.`,
+  },
+  {
+    pytanie: 'Jaki hałas jest dopuszczalny w ciąży i dla młodocianych?',
+    odpowiedz: `Kobietom w ciąży nie wolno pracować przy ekspozycji powyżej ${LIMITY.ciaza.lex} dB, szczytowym poziomie C powyżej ${LIMITY.ciaza.szczytC} dB albo maksymalnym A powyżej ${LIMITY.ciaza.maksA} dB (rozporządzenie w sprawie prac wzbronionych kobietom w ciąży, załącznik, cz. III). Młodocianym: powyżej ${LIMITY.mlodociany.lex} dB, ${LIMITY.mlodociany.szczytC} dB i ${LIMITY.mlodociany.maksA} dB (wykaz prac wzbronionych młodocianym, załącznik nr 1, cz. I ust. 2 pkt 6).`,
+  },
+  {
+    pytanie: 'Kto mierzy hałas na stanowisku pracy?',
+    odpowiedz: 'Pracodawca dokonuje pomiarów hałasu i porównuje wyniki z NDN i progami działania (§ 3 ust. 1 rozporządzenia w sprawie BHP przy pracach związanych z narażeniem na hałas); tryb i częstotliwość określają przepisy o badaniach i pomiarach czynników szkodliwych (§ 3 ust. 2). Wyniki pomiarów to dane do tego kalkulatora.',
+  },
+];
+---
+<StronaNarzedzia
+  slug="halas-w-pracy"
+  tytul="Hałas w pracy: normy dB i kalkulator dawki"
+  opis="Policz ekspozycję na hałas odniesioną do 8 godzin i porównaj z normą: 85 dB, próg działania 80 dB, 65 dB w ciąży, 80 dB dla młodocianych. Ile godzin przy 90 dB."
+  h1="Hałas w pracy: ekspozycja i normy"
+  lead="Hałas ocenia się dla całej zmiany, nie dla jednej maszyny. Wpisz poziomy dźwięku i czas pracy przy każdym z nich, a policzymy ekspozycję odniesioną do 8 godzin i sprawdzimy ją z przepisami."
+  faq={faq}
+>
+  <form class="kalkulator" data-halas novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Hałas w ciągu zmiany</h2>
+      <div class="mt-4">
+        <label for="h-grupa" class="etykieta-pola">Kto pracuje</label>
+        <select id="h-grupa" name="grupa" class="pole mt-1">
+          <option value="dorosly" selected>Pracownik</option>
+          <option value="mlodociany">Młodociany (15–18 lat)</option>
+          <option value="ciaza">Kobieta w ciąży</option>
+        </select>
+      </div>
+      {
+        [0, 1, 2, 3].map((i) => (
+          <div class="mt-4 grid grid-cols-2 items-end gap-3">
+            <div>
+              <label for={`h-poziom-${i}`} class="etykieta-pola">Hałas {i + 1}: poziom (dB)</label>
+              <input id={`h-poziom-${i}`} name={`poziom-${i}`} class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value={D[i]?.poziom ?? ''} aria-describedby="h-blad" />
+            </div>
+            <div>
+              <label for={`h-czas-${i}`} class="etykieta-pola">Hałas {i + 1}: godziny</label>
+              <input id={`h-czas-${i}`} name={`czas-${i}`} class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value={D[i]?.godziny ?? ''} aria-describedby="h-blad" />
+            </div>
+          </div>
+        ))
+      }
+      <p class="meta mt-1">Równoważny poziom dźwięku A z pomiaru dla każdej części zmiany; puste wiersze pomijamy. Godziny można wpisać z ułamkiem, na przykład 1,5.</p>
+      <div class="mt-4 grid grid-cols-2 items-end gap-3">
+        <div>
+          <label for="h-maks" class="etykieta-pola">Maksymalny poziom A (dB)</label>
+          <input id="h-maks" name="maks" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="" aria-describedby="h-opcja h-blad" />
+        </div>
+        <div>
+          <label for="h-szczyt" class="etykieta-pola">Szczytowy poziom C (dB)</label>
+          <input id="h-szczyt" name="szczyt" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="" aria-describedby="h-opcja h-blad" />
+        </div>
+      </div>
+      <p id="h-opcja" class="meta mt-1">Nieobowiązkowo, gdy są w wynikach pomiaru.</p>
+      <p id="h-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Ekspozycja odniesiona do 8 godzin</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-kwota"><span data-w="lex">{dB(r.lex)}</span></p>
+        <p class="status-terminu" data-w="status" data-status="po-terminie">Przekroczona norma {ok.lex} dB</p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Co musi zrobić pracodawca</dt><dd data-w="obowiazki">Niezwłocznie ograniczyć narażenie poniżej NDN, ustalić przyczyny, dobrać środki ochronne i działania zapobiegawcze (§ 9 ust. 2).</dd></div>
+        <div><dt>Limit dla tej osoby</dt><dd data-w="limit">{ok.lex} dB, maksymalny A {ok.maksA} dB, szczytowy C {ok.szczytC} dB</dd></div>
+        <div><dt>Czas w hałasie</dt><dd data-w="czas">{godzinyIMinuty(r.godziny)}</dd></div>
+      </dl>
+      <p class="wynik-uwaga">Kalkulator nie zastępuje pomiaru i nie uwzględnia tłumienia ochronników słuchu.</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Normy są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="czas">Ile godzin wolno przy danym poziomie</h2>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Czas, po którym ekspozycja na hałas osiąga 85 dB, przy stałym poziomie dźwięku</caption>
+        <thead><tr><th scope="col">Poziom dźwięku A</th><th scope="col">Czas do osiągnięcia 85 dB</th></tr></thead>
+        <tbody>
+          {POZIOMY.map((p) => <tr><th scope="row">{p} dB</th><td>{godzinyIMinuty(dopuszczalnyCzas(p))}</td></tr>)}
+        </tbody>
+      </table>
+    </div>
+    <p>Czas bez ochronników słuchu, gdy przez resztę dnia jest cicho. Wartości zaokrąglone w dół do pełnej minuty.</p>
+
+    <h2 id="zasady">Normy i obowiązki pracodawcy</h2>
+    <ul>
+      <li>NDN: ekspozycja odniesiona do 8 godzin (albo do tygodnia przy nierównym hałasie) {ok.lex} dB, maksymalny poziom A {ok.maksA} dB, szczytowy poziom C {ok.szczytC} dB, wszystkie naraz (załącznik do rozporządzenia z 12 czerwca 2018 r., część B, pkt A.1).</li>
+      <li>Próg działania: {PROG_DZIALANIA} dB, a dla szczytowego poziomu C {ok.szczytC} dB (załącznik do rozporządzenia z 5 sierpnia 2005 r.). Powyżej progu pracodawca planuje działania zmniejszające ryzyko (§ 3 ust. 3) i udostępnia ochronniki słuchu (§ 6 ust. 1 pkt 1).</li>
+      <li>Od NDN: program działań organizacyjno-technicznych (§ 5 ust. 2) i nadzór nad noszeniem ochronników (§ 6 ust. 1 pkt 2); powyżej NDN oznakowanie i wydzielenie stref (§ 7 ust. 1) oraz niezwłoczne ograniczenie narażenia (§ 9 ust. 2).</li>
+      <li>Kobiety w ciąży: zakaz pracy powyżej {LIMITY.ciaza.lex} dB, {LIMITY.ciaza.szczytC} dB(C) albo {LIMITY.ciaza.maksA} dB(A); młodociani: powyżej {LIMITY.mlodociany.lex} dB, {LIMITY.mlodociany.szczytC} dB(C) albo {LIMITY.mlodociany.maksA} dB(A).</li>
+    </ul>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Ekspozycja odniesiona do 8 godzin to 10·log<sub>10</sub> z sumy (czas w godzinach / 8) · 10<sup>poziom/10</sup>
+      dla wszystkich części zmiany. Liczy się energia dźwięku z całego dnia, więc 12 godzin przy 85 dB daje 86,8 dB.
+      Definicje i metody pomiaru określają Polskie Normy (pkt A.1.7 załącznika), a wartości do kalkulatora pochodzą
+      z pomiarów pracodawcy (§ 3 ust. 1). Przy granicy liczymy jak przepisy: NDN nie może być przekroczone, a obowiązki
+      z § 5 ust. 2 i § 6 ust. 1 pkt 2 zaczynają się już przy osiągnięciu NDN.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { wpisanaLiczba } from '../../lib/narzedzia/format';
+  import { godzinyIMinuty, LIMITY, ocenaHalasu, PROG_DZIALANIA, type Grupa, type Okres } from '../../lib/narzedzia/halas';
+
+  const form = document.querySelector<HTMLFormElement>('[data-halas]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const dB = (x: number) => `${x.toLocaleString('pl-PL', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}\u00a0dB`;
+    const opcjonalna = (n: string) => (el(n).value.trim() === '' ? undefined : wpisanaLiczba(el(n).value));
+    const przelicz = () => {
+      const grupa = el('grupa').value as Grupa;
+      const l = LIMITY[grupa];
+      const okresy: Okres[] = [];
+      let blad: string | null = null;
+      for (let i = 0; i < 4; i++) {
+        const tp = el(`poziom-${i}`).value.trim();
+        const tc = el(`czas-${i}`).value.trim();
+        if (!tp && !tc) continue;
+        const poziom = wpisanaLiczba(tp);
+        const godziny = wpisanaLiczba(tc);
+        if (!(poziom >= 0 && poziom <= 160) || !(godziny > 0 && godziny <= 24)) {
+          blad = `Hałas ${i + 1}: wpisz poziom od 0 do 160\u00a0dB i czas w godzinach, na przykład 85 i 4.`;
+          break;
+        }
+        okresy.push({ poziom, godziny });
+      }
+      const maks = opcjonalna('maks');
+      const szczyt = opcjonalna('szczyt');
+      if (!blad && !okresy.length) blad = 'Wpisz co najmniej jeden poziom hałasu i czas.';
+      else if (!blad && okresy.reduce((s, o) => s + o.godziny, 0) > 24) blad = 'Łączny czas nie może przekroczyć 24 godzin.';
+      else if (!blad && ((maks !== undefined && !(maks >= 0 && maks <= 200)) || (szczyt !== undefined && !(szczyt >= 0 && szczyt <= 200)))) blad = 'Poziom maksymalny i szczytowy: od 0 do 200\u00a0dB.';
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      b.hidden = !blad;
+      b.textContent = blad ?? '';
+      const status = w('status');
+      if (blad) {
+        w('lex').textContent = '—';
+        status.hidden = true;
+        return;
+      }
+      const r = ocenaHalasu(okresy, grupa, maks, szczyt);
+      w('lex').textContent = dB(r.lex);
+      status.hidden = false;
+      const szczegolna = grupa !== 'dorosly';
+      if (r.przekroczone) {
+        status.dataset.status = 'po-terminie';
+        status.textContent = szczegolna ? `Praca wzbroniona: ${l.nazwa}, limit ${l.lex}\u00a0dB` : `Przekroczona norma ${l.lex}\u00a0dB`;
+        w('obowiazki').textContent = szczegolna
+          ? 'Pracodawca nie może zatrudniać tej osoby przy takim hałasie (wykaz prac wzbronionych).'
+          : 'Niezwłocznie ograniczyć narażenie poniżej NDN, ustalić przyczyny, dobrać środki ochronne i działania zapobiegawcze (§\u00a09 ust.\u00a02).';
+      } else if (r.osiagaNdn && !szczegolna) {
+        status.dataset.status = 'pilne';
+        status.textContent = `Na granicy normy ${l.lex}\u00a0dB`;
+        w('obowiazki').textContent = 'Program ograniczenia hałasu i nadzór nad noszeniem ochronników słuchu (§\u00a05 ust.\u00a02, §\u00a06 ust.\u00a01 pkt\u00a02).';
+      } else if (r.powyzejProgu && !szczegolna) {
+        status.dataset.status = 'wkrotce';
+        status.textContent = `Powyżej progu działania ${PROG_DZIALANIA}\u00a0dB`;
+        w('obowiazki').textContent = 'Udostępnić ochronniki słuchu i zaplanować działania zmniejszające ryzyko (§\u00a06 ust.\u00a01 pkt\u00a01, §\u00a03 ust.\u00a03).';
+      } else {
+        status.dataset.status = 'w-terminie';
+        status.textContent = szczegolna ? `W limicie: ${l.nazwa}, ${l.lex}\u00a0dB` : `Poniżej progu działania ${PROG_DZIALANIA}\u00a0dB`;
+        w('obowiazki').textContent = 'Ograniczać ryzyko do najniższego możliwego poziomu (§\u00a05 ust.\u00a01); bez dodatkowych obowiązków z progów.';
+      }
+      w('limit').textContent = `${l.lex}\u00a0dB, maksymalny A ${l.maksA}\u00a0dB, szczytowy C ${l.szczytC}\u00a0dB`;
+      w('czas').textContent = godzinyIMinuty(r.godziny);
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>

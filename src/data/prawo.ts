@@ -258,6 +258,20 @@ export const AKTY = {
     adres: eli(2002, 271),
     sprawdzono: '2026-11-12',
   },
+  ndsNdn: {
+    nazwa: 'Rozporządzenie w sprawie najwyższych dopuszczalnych stężeń i natężeń czynników szkodliwych dla zdrowia w środowisku pracy',
+    publikator: 'Dz.U. 2018 poz. 1286',
+    uwaga: 'zmiany: Dz.U. 2020 poz. 61, 2021 poz. 325, 2023 poz. 1661, 2024 poz. 1017, 2026 poz. 447 i 1211, bez zmian części o hałasie (załącznik, część B, pkt A: 85 dB, 115 dB(A), 135 dB(C))',
+    adres: eli(2018, 1286),
+    sprawdzono: '2026-11-12',
+  },
+  halasBhp: {
+    nazwa: 'Rozporządzenie w sprawie bezpieczeństwa i higieny pracy przy pracach związanych z narażeniem na hałas lub drgania mechaniczne',
+    publikator: 'Dz.U. 2005 nr 157 poz. 1318',
+    uwaga: 'bez zmian; załącznik: próg działania 80 dB, szczytowy C 135 dB; § 3, 5, 6, 7 i 9',
+    adres: eli(2005, 1318),
+    sprawdzono: '2026-11-12',
+  },
   podstawaSkladek: {
     nazwa: 'Rozporządzenie w sprawie szczegółowych zasad ustalania podstawy wymiaru składek na ubezpieczenia emerytalne i rentowe',
     publikator: 'Dz.U. 2025 poz. 316',
