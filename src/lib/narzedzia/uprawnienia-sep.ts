@@ -5,23 +5,26 @@
 //   pracodawcy, inspektora pracy, Prezesa URE), ust. 2 (praca pod nadzorem bez świadectwa), ust. 4 (opłata od osoby
 //   kierującej wniosek), ust. 4a i 4b (bez opłaty w komisjach MON i Ministra Sprawiedliwości; ust. 4b od 21 lipca 2026 r.,
 //   Dz.U. 2026 poz. 900).
-// - Ustawa z 20 maja 2021 r. o zmianie ustawy – Prawo energetyczne (Dz.U. 2021 poz. 1093), w życie 3 lipca 2021 r.:
-//   art. 25 – świadectwa wydane wcześniej zachowują ważność przez okres, na jaki zostały wydane, jednak (poza osobami
-//   z dawnego art. 54 ust. 1c pkt 2) nie dłużej niż 5 lat od dnia wejścia w życie ustawy.
+// - Ustawa z 20 maja 2021 r. o zmianie ustawy – Prawo energetyczne oraz niektórych innych ustaw (Dz.U. 2021 poz. 1093),
+//   w życie 3 lipca 2021 r.: art. 25 – świadectwa wydane wcześniej zachowują ważność przez okres, na jaki zostały wydane;
+//   pkt 2: nie dłużej niż 5 lat od dnia wejścia w życie ustawy; pkt 1 (osoby z dawnego art. 54 ust. 1c pkt 2: usługi
+//   dla konsumentów i MŚP): bez tego limitu.
 // - Rozporządzenie Ministra Klimatu i Środowiska z 1 lipca 2022 r. (Dz.U. 2022 poz. 1392): § 4 (stanowiska E i D),
 //   § 5 (sama obsługa bez świadectwa), § 13 (świadectwo do 14 dni po egzaminie), § 14 ust. 1 (opłata: 10% minimalnego
 //   wynagrodzenia obowiązującego w dniu złożenia wniosku), załącznik nr 1 (grupy i punkty).
-// - Kodeks cywilny, t.j. Dz.U. 2026 poz. 795, art. 112 (termin w latach; 29 lutego + 5 lat = 28 lutego).
+// - Kodeks cywilny, t.j. Dz.U. 2026 poz. 795, art. 110–112 (Prawo energetyczne nie określa sposobu liczenia terminu;
+//   termin w latach kończy się z upływem dnia rocznicy; 29 lutego + 5 lat = 28 lutego).
 // - Płaca minimalna: PLACA_MINIMALNA w src/data/prawo.ts (rozporządzenia Rady Ministrów, Dz.U. 2025 poz. 1242 i 2026 poz. 1213).
 //
 // Przyjęte interpretacje (badanie prawne z 12 listopada 2026 r.):
-// 1. „Po upływie 5 lat od dnia wydania”: rocznica według art. 112 KC. Przepis nie przesądza, czy ostatni dzień ważności
-//    to rocznica, czy dzień przed nią. Bezpiecznie dla pracownika: ważne do dnia poprzedzającego rocznicę włącznie;
-//    rocznicę pokazujemy osobno jako odczytanie według art. 112 KC.
-// 2. Świadectwa wydane przed 3 lipca 2021 r. bez terminu („bezterminowe”) wygasły: bezpiecznie z końcem 2 lipca 2026 r.
+// 1. „Po upływie 5 lat od dnia wydania”: według art. 110–112 KC świadectwo jest ważne do końca dnia rocznicy.
+//    Dla zapasu przyjmujemy dzień wcześniej (ostatni dzień „z zapasem”). W dniu rocznicy narzędzie nie pisze „wygasło”,
+//    tylko status 'ostatni-dzien-kc': dziś ostatni dzień według KC, bezpieczny termin minął wczoraj.
+// 2. Świadectwa wydane przed 3 lipca 2021 r. bez terminu („bezterminowe”) wygasły: z zapasem z końcem 2 lipca 2026 r.
 //    (według art. 112 KC z upływem 3 lipca 2026 r.). Świadectwa z wpisanym terminem: do tego terminu, ale nie dłużej
-//    niż do 2 lipca 2026 r. Limit stosujemy zawsze, bo narzędzie nie wie, czy osoba należała do grupy z dawnego
-//    ust. 1c pkt 2 (tam świadectwa i tak były 5-letnie, więc wygasały najpóźniej 2 lipca 2026 r.).
+//    niż do 2 lipca 2026 r. Limit z art. 25 pkt 2 stosujemy zawsze, bo narzędzie nie wie, czy osoba należała do grupy
+//    z art. 25 pkt 1 (dawny ust. 1c pkt 2), dla której limitu nie ma. Zakładamy, że tej grupie świadectwa wydawano
+//    na 5 lat (sprawdzanie „co pięć lat”); przepis tego nie przesądza – to wariant bezpieczny.
 // 3. Wpis „ważne do dnia” na świadectwie (wzór, zał. nr 3) rozstrzyga: jest wynikiem. Obliczenie służy do kontroli;
 //    przy rozbieżności pokazujemy obie daty.
 // 4. Liczy się data wydania, nie egzaminu (§ 13: do 14 dni później). Gdy znana jest tylko data egzaminu, liczymy od niej:
@@ -51,7 +54,7 @@ export const PROCENT_OPLATY = 10;
 /** Komisja wydaje świadectwo najpóźniej tyle dni po egzaminie (§ 13). */
 export const DNI_NA_WYDANIE = 14;
 
-export type StatusSep = 'wazne' | 'wkrotce' | 'wygaslo';
+export type StatusSep = 'wazne' | 'wkrotce' | 'ostatni-dzien-kc' | 'wygaslo';
 export type PodstawaSep = 'nowe' | 'stare-bez-terminu' | 'stare-z-terminem';
 
 export interface DaneSep {
@@ -121,15 +124,16 @@ export function waznoscSep({ wydano, wpis, zDatyEgzaminu = false, dzis }: DaneSe
   }
 
   const dniDoKonca = dniMiedzy(dzis, waznoDo);
-  const status: StatusSep = dniDoKonca < 0 ? 'wygaslo' : dniDoKonca <= WKROTCE_DNI ? 'wkrotce' : 'wazne';
-  const opis = `Świadectwo kwalifikacyjne ważne do ${dataPoPolsku(waznoDo)} Przepis nie przewiduje przedłużenia: potrzebny nowy egzamin w komisji kwalifikacyjnej, a nowe świadectwo jest ważne 5 lat od dnia jego wydania. Przypomnienie z wyprzedzeniem to propozycja redakcji, nie termin z przepisu. Policzone na rytmhali.pl/narzedzia/waznosc-uprawnien-sep.`;
+  const status: StatusSep =
+    dniDoKonca < 0 ? (wedlugKc === dzis ? 'ostatni-dzien-kc' : 'wygaslo') : dniDoKonca <= WKROTCE_DNI ? 'wkrotce' : 'wazne';
+  const opis = `${wedlugKc ? `Świadectwo kwalifikacyjne ważne z zapasem do ${dataPoPolsku(waznoDo)} (według art. 110–112 Kodeksu cywilnego do końca ${dataPoPolsku(wedlugKc)}).` : `Świadectwo kwalifikacyjne ważne do ${dataPoPolsku(waznoDo)}`} Przepis nie przewiduje przedłużenia: potrzebny nowy egzamin w komisji kwalifikacyjnej, a nowe świadectwo jest ważne 5 lat od dnia jego wydania. Przypomnienie z wyprzedzeniem to propozycja redakcji, nie termin z przepisu. Policzone na rytmhali.pl/narzedzia/waznosc-uprawnien-sep.`;
   const kandydaci: Wydarzenie[] = [
     ...PRZYPOMNIENIA_MIESIACE.map((m) => ({
       data: dodajMiesiace(waznoDo, -m),
       tytul: `Uprawnienia SEP: ${m === 1 ? 'za miesiąc' : `za ${m} miesiące`} koniec ważności, umów egzamin`,
       opis,
     })),
-    { data: waznoDo, tytul: 'Uprawnienia SEP: ostatni dzień ważności świadectwa', opis },
+    { data: waznoDo, tytul: wedlugKc ? 'Uprawnienia SEP: ostatni dzień ważności z zapasem (według KC jutro)' : 'Uprawnienia SEP: ostatni dzień ważności świadectwa', opis },
   ];
   return {
     podstawa,
@@ -172,25 +176,25 @@ export interface Grupa {
 
 const p = (nazwy: string[]): Punkt[] => nazwy.map((nazwa, i) => ({ nr: i + 1, nazwa }));
 
-/** Załącznik nr 1 do rozporządzenia z 2022 r. (nazwy skrócone, progi dosłownie). */
+/** Załącznik nr 1 do rozporządzenia z 2022 r. (Dz.U. 2022 poz. 1392), brzmienie dosłowne punktów. */
 export const GRUPY: Grupa[] = [
   {
     id: 'G1',
     nazwa: 'Urządzenia, instalacje i sieci elektroenergetyczne',
     punkty: p([
-      'urządzenia prądotwórcze przyłączone do sieci, bez względu na napięcie',
-      'urządzenia, instalacje i sieci o napięciu nie wyższym niż 1 kV',
-      'urządzenia, instalacje i sieci o napięciu wyższym niż 1 kV i nie wyższym niż 30 kV',
-      'urządzenia, instalacje i sieci o napięciu wyższym niż 30 kV i nie wyższym niż 110 kV',
-      'urządzenia, instalacje i sieci o napięciu wyższym niż 110 kV',
+      'urządzenia prądotwórcze przyłączone do sieci przesyłowej lub dystrybucyjnej energii elektrycznej bez względu na wysokość napięcia znamionowego',
+      'urządzenia, instalacje i sieci elektroenergetyczne o napięciu znamionowym nie wyższym niż 1 kV',
+      'urządzenia, instalacje i sieci elektroenergetyczne o napięciu znamionowym wyższym niż 1 kV i napięciu znamionowym nie wyższym niż 30 kV',
+      'urządzenia, instalacje i sieci elektroenergetyczne o napięciu znamionowym wyższym niż 30 kV i napięciu znamionowym nie wyższym niż 110 kV',
+      'urządzenia, instalacje i sieci elektroenergetyczne o napięciu znamionowym wyższym niż 110 kV',
       'zespoły prądotwórcze o mocy wyższej niż 50 kW',
       'urządzenia elektrotermiczne',
       'urządzenia do elektrolizy',
       'sieci elektrycznego oświetlenia ulicznego',
       'elektryczna sieć trakcyjna',
       'elektryczne urządzenia w wykonaniu przeciwwybuchowym',
-      'magazyny energii elektrycznej oddające energię do sieci, o mocy wyższej niż 10 kW',
-      'aparatura kontrolno-pomiarowa, automatyka, sterowanie i zabezpieczenia urządzeń z pkt 1–12',
+      'urządzenia umożliwiające magazynowanie energii elektrycznej i jej wprowadzanie do sieci elektroenergetycznej o mocy wyższej niż 10 kW',
+      'aparatura kontrolno-pomiarowa oraz urządzenia i instalacje automatycznej regulacji, sterowania i zabezpieczeń urządzeń i instalacji wymienionych w pkt 1–12',
       'urządzenia techniki wojskowej lub uzbrojenia',
       'urządzenia ratowniczo-gaśnicze',
       'urządzenia ochrony granic',
@@ -200,27 +204,27 @@ export const GRUPY: Grupa[] = [
     id: 'G2',
     nazwa: 'Urządzenia cieplne i inne urządzenia energetyczne',
     punkty: p([
-      'kotły parowe i wodne o mocy wyższej niż 50 kW i nie wyższej niż 500 kW',
-      'kotły parowe i wodne o mocy wyższej niż 500 kW i nie wyższej niż 1800 kW',
-      'kotły parowe i wodne o mocy wyższej niż 1800 kW',
-      'sieci i instalacje cieplne o przesyle ciepła wyższym niż 50 kW i nie wyższym niż 500 kW',
-      'sieci i instalacje cieplne o przesyle ciepła wyższym niż 500 kW',
-      'turbiny parowe i wodne o mocy wyższej niż 50 kW i nie wyższej niż 15 MW',
-      'turbiny parowe i wodne o mocy wyższej niż 15 MW i nie wyższej niż 100 MW',
-      'turbiny parowe i wodne o mocy wyższej niż 100 MW i nie wyższej niż 500 MW',
-      'turbiny parowe i wodne o mocy wyższej niż 500 MW',
-      'przemysłowe urządzenia odbiorcze pary i gorącej wody o mocy wyższej niż 50 kW i nie wyższej niż 500 kW',
+      'kotły parowe oraz wodne na paliwa stałe, płynne i gazowe, o mocy wyższej niż 50 kW i mocy nie wyższej niż 500 kW, wraz z urządzeniami pomocniczymi',
+      'kotły parowe oraz wodne na paliwa stałe, płynne i gazowe, o mocy wyższej niż 500 kW i o mocy nie wyższej niż 1800 kW, wraz z urządzeniami pomocniczymi',
+      'kotły parowe oraz wodne na paliwa stałe, płynne i gazowe, o mocy wyższej niż 1800 kW, wraz z urządzeniami pomocniczymi',
+      'sieci i instalacje cieplne wraz z urządzeniami pomocniczymi, o przesyle ciepła wyższym niż 50 kW i o przesyle ciepła nie wyższym niż 500 kW',
+      'sieci i instalacje cieplne wraz z urządzeniami pomocniczymi, o przesyle ciepła wyższym niż 500 kW',
+      'turbiny parowe oraz wodne o mocy wyższej niż 50 kW i o mocy nie wyższej niż 15 MW, wraz z urządzeniami pomocniczymi',
+      'turbiny parowe oraz wodne o mocy wyższej niż 15 MW i o mocy nie wyższej niż 100 MW, wraz z urządzeniami pomocniczymi',
+      'turbiny parowe oraz wodne o mocy wyższej niż 100 MW i o mocy nie wyższej niż 500 MW, wraz z urządzeniami pomocniczymi',
+      'turbiny parowe oraz wodne o mocy wyższej niż 500 MW, wraz z urządzeniami pomocniczymi',
+      'przemysłowe urządzenia odbiorcze pary i gorącej wody o mocy wyższej niż 50 kW i o mocy nie wyższej niż 500 kW',
       'przemysłowe urządzenia odbiorcze pary i gorącej wody o mocy wyższej niż 500 kW',
-      'wentylacja, klimatyzacja i chłodnictwo o mocy wyższej niż 50 kW i nie wyższej niż 500 kW',
-      'wentylacja, klimatyzacja i chłodnictwo o mocy wyższej niż 500 kW',
-      'pompy, ssawy, wentylatory i dmuchawy o mocy wyższej niż 50 kW i nie wyższej niż 500 kW',
+      'urządzenia wentylacji, klimatyzacji i chłodnicze o mocy wyższej niż 50 kW i o mocy nie wyższej niż 500 kW',
+      'urządzenia wentylacji, klimatyzacji i chłodnicze o mocy wyższej niż 500 kW',
+      'pompy, ssawy, wentylatory i dmuchawy o mocy wyższej niż 50 kW i o mocy nie wyższej niż 500 kW',
       'pompy, ssawy, wentylatory i dmuchawy o mocy wyższej niż 500 kW',
-      'sprężarki o mocy wyższej niż 20 kW i nie wyższej niż 200 kW, instalacje sprężonego powietrza i gazów technicznych',
-      'sprężarki o mocy wyższej niż 200 kW, instalacje sprężonego powietrza i gazów technicznych',
-      'składowanie, magazynowanie i rozładunek paliw, ponad 100 Mg',
+      'sprężarki o mocy wyższej niż 20 kW i o mocy nie wyższej niż 200 kW oraz instalacje sprężonego powietrza i gazów technicznych',
+      'sprężarki o mocy wyższej niż 200 kW oraz instalacje sprężonego powietrza i gazów technicznych',
+      'urządzenia do składowania, magazynowania i rozładunku paliw o pojemności składowania odpowiadającej masie ponad 100 Mg',
       'piece przemysłowe o mocy wyższej niż 50 kW',
-      'magazyny ciepła lub chłodu o mocy wyższej niż 10 kW',
-      'aparatura kontrolno-pomiarowa i automatyka do urządzeń z pkt 1–20',
+      'urządzenia umożliwiające przechowywanie ciepła lub chłodu w celu ich późniejszego wykorzystania o mocy wyższej niż 10 kW',
+      'aparatura kontrolno-pomiarowa i urządzenia automatycznej regulacji do urządzeń, instalacji i sieci wymienionych w pkt 1–20',
       'urządzenia techniki wojskowej lub uzbrojenia',
       'urządzenia ratowniczo-gaśnicze',
       'urządzenia ochrony granic',
@@ -231,19 +235,19 @@ export const GRUPY: Grupa[] = [
     nazwa: 'Urządzenia, instalacje i sieci gazowe',
     punkty: p([
       'urządzenia do produkcji paliw gazowych, generatory gazu',
-      'przetwarzanie i uzdatnianie paliw gazowych, rozprężalnie i rozlewnie gazu płynnego, mieszalnie',
+      'urządzenia do przetwarzania i uzdatniania paliw gazowych, rozkładnie paliw gazowych, urządzenia przeróbki gazu ziemnego, oczyszczalnie gazu, rozprężalnie i rozlewnie gazu płynnego, odazotownie, mieszalnie',
       'urządzenia do magazynowania paliw gazowych',
-      'sieci gazowe o ciśnieniu nie wyższym niż 0,5 MPa',
-      'sieci gazowe o ciśnieniu wyższym niż 0,5 MPa',
+      'sieci gazowe o ciśnieniu nie wyższym niż 0,5 MPa (gazociągi, stacje gazowe, zespoły gazowe na przyłączu, w tym punkty gazowe)',
+      'sieci gazowe o ciśnieniu wyższym niż 0,5 MPa (gazociągi, stacje gazowe, zespoły gazowe na przyłączu, tłocznie gazu)',
       'urządzenia i instalacje gazowe o ciśnieniu nie wyższym niż 5 kPa',
       'urządzenia i instalacje gazowe o ciśnieniu wyższym niż 5 kPa',
       'przemysłowe odbiorniki paliw gazowych o mocy wyższej niż 50 kW',
       'turbiny gazowe',
-      'aparatura kontrolno-pomiarowa i sterowanie do urządzeń z pkt 1–9',
-      'skraplanie gazu ziemnego',
-      'regazyfikacja skroplonego gazu ziemnego',
-      'instalacje do tankowania sprężonego gazu ziemnego (CNG)',
-      'instalacje do tankowania skroplonego gazu ziemnego (LNG)',
+      'aparatura kontrolno-pomiarowa, urządzenia sterowania do urządzeń, instalacji i sieci wymienionych w pkt 1–9',
+      'urządzenia i instalacje do skraplania gazu ziemnego',
+      'urządzenia i instalacje do regazyfikacji skroplonego gazu ziemnego',
+      'instalacje do tankowania sprężonego gazu ziemnego',
+      'instalacje do tankowania skroplonego gazu ziemnego',
       'urządzenia techniki wojskowej lub uzbrojenia',
     ]),
   },

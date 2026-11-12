@@ -27,6 +27,12 @@ describe('ważność po 3 lipca 2021 r. (art. 54 ust. 1aa PE, art. 112 KC)', () 
   it('pierwszy dzień nowych zasad 3.07.2021: do 2.07.2026, wygasło 133 dni temu', () => {
     expect(waznoscSep({ wydano: '2021-07-03', dzis: DZIS })).toMatchObject({ podstawa: 'nowe', waznoDo: '2026-07-02', dniDoKonca: -133, status: 'wygaslo' });
   });
+  it('dzień rocznicy (art. 110–112 KC): ostatni dzień według KC, nie „wygasło”; dzień później wygasło', () => {
+    expect(waznoscSep({ wydano: '2021-11-12', dzis: DZIS })).toMatchObject({ waznoDo: '2026-11-11', wedlugKc: '2026-11-12', dniDoKonca: -1, status: 'ostatni-dzien-kc' });
+    expect(waznoscSep({ wydano: '2021-11-11', dzis: DZIS })).toMatchObject({ wedlugKc: '2026-11-11', dniDoKonca: -2, status: 'wygaslo' });
+    expect(waznoscSep({ wydano: '2015-06-10', dzis: '2026-07-03' }).status).toBe('ostatni-dzien-kc');
+    expect(waznoscSep({ wydano: '2015-06-10', dzis: '2026-07-04' }).status).toBe('wygaslo');
+  });
   it('próg „wkrótce”: 90 dni tak, 91 dni nie', () => {
     expect(waznoscSep({ wydano: '2022-02-11', dzis: DZIS })).toMatchObject({ waznoDo: '2027-02-10', status: 'wkrotce' });
     expect(waznoscSep({ wydano: '2022-02-12', dzis: DZIS })).toMatchObject({ waznoDo: '2027-02-11', status: 'wazne' });
