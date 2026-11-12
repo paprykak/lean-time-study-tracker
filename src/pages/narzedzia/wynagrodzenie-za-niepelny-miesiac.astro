@@ -1,0 +1,263 @@
+---
+// Wynagrodzenie za niepełny miesiąc (§ 11–12 rozporządzenia z 29 maja 1996 r., art. 80 Kp, art. 7–8 ustawy o minimalnym
+// wynagrodzeniu). Logika: src/lib/narzedzia/niepelny-miesiac.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { LATA, PLACA_MINIMALNA } from '../../data/prawo';
+import { niepelnyMiesiac } from '../../lib/narzedzia/niepelny-miesiac';
+import { nazwaMiesiaca } from '../../lib/narzedzia/czas-pracy';
+import { zl } from '../../lib/narzedzia/format';
+import { dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+const dzis = dzisWPolsce();
+const rokBiezacy = Number(dzis.slice(0, 4));
+const rok = LATA.includes(rokBiezacy) ? rokBiezacy : LATA[LATA.length - 1];
+const miesiac = rok === rokBiezacy ? Number(dzis.slice(5, 7)) : 1;
+const start = niepelnyMiesiac({ rok, miesiac, stawka: 6000, dniL4: 10 });
+const ETATY = [
+  { wartosc: '1', nazwa: 'pełny etat' },
+  { wartosc: '0.875', nazwa: '7/8 etatu' },
+  { wartosc: '0.75', nazwa: '3/4 etatu' },
+  { wartosc: '0.5', nazwa: '1/2 etatu' },
+  { wartosc: '0.25', nazwa: '1/4 etatu' },
+];
+
+const faq = [
+  {
+    pytanie: 'Jak liczy się pensję za miesiąc z L4?',
+    odpowiedz: 'Pensję miesięczną dzieli się przez 30, mnoży przez liczbę dni ze zwolnienia lekarskiego w tym miesiącu (z sobotami i niedzielami) i odejmuje od pełnej pensji (§ 11 rozporządzenia z 29 maja 1996 r.). Przy pensji 6000 zł i 10 dniach L4 zostaje 4000 zł. Za dni L4 dostajesz osobno wynagrodzenie chorobowe albo zasiłek.',
+  },
+  {
+    pytanie: 'Jak liczy się pensję po urlopie bezpłatnym?',
+    odpowiedz: 'Pensję dzieli się przez liczbę godzin do przepracowania w tym miesiącu, mnoży przez godziny nieobecności i odejmuje od pełnej pensji (§ 12 ust. 1 rozporządzenia z 29 maja 1996 r.). Tak samo przy nieobecności nieusprawiedliwionej i innej, za którą nie ma wynagrodzenia.',
+  },
+  {
+    pytanie: 'Ile zarobię za pierwszy niepełny miesiąc pracy?',
+    odpowiedz: 'Przy przyjęciu albo odejściu w trakcie miesiąca liczy się godziny, nie dni kalendarzowe: pensję dzieli się przez godziny do przepracowania w całym miesiącu i odejmuje kwotę za godziny przed początkiem albo po końcu umowy (§ 12 ust. 2). Przy umowie od 16 listopada 2026 r. i pensji 6000 zł to 3300 zł (88 z 160 godzin).',
+  },
+  {
+    pytanie: 'Dlaczego w lutym L4 obniża pensję mniej?',
+    odpowiedz: 'Bo przepis każe zawsze dzielić przez 30, także w lutym, który ma 28 albo 29 dni. Przy 26 dniach L4 w lutym potrąca się 26/30 pensji, więc za 2 dni pracy zostaje 4/30. W miesiącu z 31 dniami przy 30 dniach L4 i jednym dniu pracy zostaje 0 zł. Gdy L4 obejmuje wszystkie dni miesiąca, pensja zasadnicza za ten miesiąc wynosi 0 zł, bo wynagrodzenie należy się za pracę wykonaną (art. 80 Kodeksu pracy).',
+  },
+  {
+    pytanie: 'Czy za część miesiąca należy się płaca minimalna?',
+    odpowiedz: `Tak, proporcjonalnie: za każdą przepracowaną godzinę co najmniej płaca minimalna podzielona przez godziny do przepracowania w miesiącu przy pełnym etacie (art. 7 ust. 4 i art. 8 ustawy o minimalnym wynagrodzeniu). W ${rok} r. płaca minimalna wynosi ${zl(PLACA_MINIMALNA[rok].miesiecznie)}. Do porównania liczą się też premie i stałe dodatki, ale nie nadgodziny, dodatek nocny, stażowy ani za szczególne warunki pracy (art. 6 ust. 4–5).`,
+  },
+];
+---
+<StronaNarzedzia
+  slug="wynagrodzenie-za-niepelny-miesiac"
+  tytul="Wynagrodzenie za niepełny miesiąc: kalkulator"
+  opis="Pensja za część miesiąca: po L4 (1/30 za dzień), urlopie bezpłatnym (za godzinę), przy przyjęciu albo odejściu w trakcie miesiąca. Z płacą minimalną."
+  h1="Wynagrodzenie za niepełny miesiąc: kalkulator"
+  lead="Za miesiąc z L4, urlopem bezpłatnym albo z umową od połowy miesiąca pensję liczy się według dwóch różnych wzorów: za chorobę przez 30, za resztę przez godziny. Wpisz pensję i nieobecności, a pokażemy wynik i każde potrącenie."
+  faq={faq}
+>
+  <form class="kalkulator" data-niepelny novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twój miesiąc</h2>
+      <div class="mt-4 grid gap-4 sm:grid-cols-2">
+        <div>
+          <label for="n-stawka" class="etykieta-pola">Pensja miesięczna (zł brutto)</label>
+          <input id="n-stawka" name="stawka" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="6000" aria-describedby="n-blad" />
+        </div>
+        <div>
+          <label for="n-etat" class="etykieta-pola">Wymiar etatu</label>
+          <select id="n-etat" name="etat" class="pole mt-1">
+            {ETATY.map((e) => <option value={e.wartosc}>{e.nazwa}</option>)}
+          </select>
+        </div>
+      </div>
+      <div class="mt-4 grid grid-cols-2 gap-4">
+        <div>
+          <label for="n-miesiac" class="etykieta-pola">Miesiąc</label>
+          <select id="n-miesiac" name="miesiac" class="pole mt-1">
+            {Array.from({ length: 12 }, (_, i) => <option value={i + 1} selected={i + 1 === miesiac}>{nazwaMiesiaca(i + 1)}</option>)}
+          </select>
+        </div>
+        <div>
+          <label for="n-rok" class="etykieta-pola">Rok</label>
+          <select id="n-rok" name="rok" class="pole mt-1">
+            {LATA.map((r) => <option value={r} selected={r === rok}>{r}</option>)}
+          </select>
+        </div>
+      </div>
+      <div class="mt-4 grid grid-cols-2 items-end gap-4">
+        <div>
+          <label for="n-l4" class="etykieta-pola">Dni L4 lub zasiłku</label>
+          <input id="n-l4" name="l4" class="pole mt-1" type="text" inputmode="numeric" autocomplete="off" value="10" aria-describedby="n-blad n-l4-opis" />
+        </div>
+        <div>
+          <label for="n-nieob" class="etykieta-pola">Godziny bez płacy</label>
+          <input id="n-nieob" name="nieobecnosc" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="0" aria-describedby="n-blad n-nieob-opis" />
+        </div>
+      </div>
+      <p id="n-l4-opis" class="meta mt-1">L4: dni kalendarzowe ze zwolnienia w tym miesiącu, z weekendami.</p>
+      <p id="n-nieob-opis" class="meta mt-1">Godziny bez płacy: urlop bezpłatny, nieobecność nieusprawiedliwiona.</p>
+      <fieldset class="mt-4">
+        <legend class="etykieta-pola">Umowa w tym miesiącu</legend>
+        <div class="opcje-pionowe mt-2">
+          <label><input type="radio" name="umowa" value="caly" checked /> Przez cały miesiąc</label>
+          <label><input type="radio" name="umowa" value="czesc" /> Od lub do dnia w trakcie miesiąca</label>
+        </div>
+      </fieldset>
+      <div class="mt-3 grid grid-cols-2 gap-4" data-czesc hidden>
+        <div>
+          <label for="n-od" class="etykieta-pola">Pierwszy dzień umowy</label>
+          <input id="n-od" name="od" class="pole mt-1" type="text" inputmode="numeric" autocomplete="off" value="1" aria-describedby="n-blad" />
+        </div>
+        <div>
+          <label for="n-do" class="etykieta-pola">Ostatni dzień umowy</label>
+          <input id="n-do" name="do" class="pole mt-1" type="text" inputmode="numeric" autocomplete="off" value="30" aria-describedby="n-blad" />
+        </div>
+      </div>
+      <details class="mt-4">
+        <summary class="etykieta-pola">Grafik inny niż wymiar</summary>
+        <div class="mt-2 grid grid-cols-2 gap-4">
+          <div>
+            <label for="n-hm" class="etykieta-pola">Godziny w miesiącu</label>
+            <input id="n-hm" name="hm" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" placeholder={String(start.godzinyMiesiaca)} aria-describedby="n-blad" />
+          </div>
+          <div>
+            <label for="n-hu" class="etykieta-pola">W dniach umowy</label>
+            <input id="n-hu" name="hu" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" placeholder={String(start.godzinyUmowy)} aria-describedby="n-blad" />
+          </div>
+        </div>
+        <p class="meta mt-1">Puste pole: liczymy z wymiaru czasu pracy.</p>
+      </details>
+      <p id="n-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Pensja za ten miesiąc (brutto)</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-kwota" data-w="kwota">{zl(start.wynagrodzenie)}</p>
+        <p class="meta" data-w="opis">Bez wynagrodzenia chorobowego lub zasiłku za dni L4</p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Pełna pensja</dt><dd data-w="stawka">{zl(6000)}</dd></div>
+        <div><dt data-w="l4-etykieta">Minus L4 (1/30 za dzień)</dt><dd data-w="l4">{zl(start.potracenieL4)}</dd></div>
+        <div><dt>Minus nieobecność bez płacy</dt><dd data-w="nieobecnosc">{zl(start.potracenieNieobecnosci)}</dd></div>
+        <div><dt>Minus dni poza umową</dt><dd data-w="poza">{zl(start.potraceniePozaUmowa)}</dd></div>
+        <div><dt>Godzin do przepracowania</dt><dd data-w="godziny">{start.godzinyMiesiaca} h, za godzinę {zl(start.zaGodzine)}</dd></div>
+      </dl>
+      <p class="wynik-uwaga" data-w="uwaga">Za dni L4 dostajesz osobno wynagrodzenie chorobowe albo zasiłek. Płacę minimalną sprawdzisz przy miesiącu bez L4.</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Wzory są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="wzory">Dwa wzory na niepełny miesiąc</h2>
+    <ul>
+      <li>Choroba albo zasiłek (macierzyński, opiekuńczy, wypadkowy): pensja / 30 × dni ze zwolnienia, odjęte od pełnej pensji (§ 11 ust. 1–2 rozporządzenia z 29 maja 1996 r.). Liczą się wszystkie dni kalendarzowe zwolnienia, także weekendy, bo wynagrodzenie chorobowe i zasiłek należą się za każdy dzień (art. 92 § 2 Kodeksu pracy).</li>
+      <li>Inna nieobecność bez wynagrodzenia (urlop bezpłatny, nieobecność nieusprawiedliwiona): pensja / godziny do przepracowania w miesiącu × godziny nieobecności (§ 12 ust. 1).</li>
+      <li>Umowa od albo do dnia w trakcie miesiąca: ten sam wzór godzinowy dla godzin poza umową (§ 12 ust. 2).</li>
+      <li>Wzory dotyczą stałej pensji miesięcznej. Stawki godzinowe, akord i premie za wykonaną pracę liczy się za faktycznie przepracowany czas, bo wynagrodzenie przysługuje za pracę wykonaną (art. 80 Kodeksu pracy).</li>
+    </ul>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Godziny do przepracowania w miesiącu bierzemy z wymiaru czasu pracy (art. 130 Kodeksu pracy) razy etat; gdy grafik
+      jest inny, wpisz godziny z grafiku. Przy umowie przez część miesiąca liczymy 8 godzin razy etat za każdy dzień od
+      poniedziałku do piątku w dniach umowy, minus 8 godzin za każde święto w tych dniach, które nie wypada w niedzielę.
+      Każde potrącenie zaokrąglamy do grosza i odejmujemy od pełnej pensji.
+    </p>
+    <p>
+      Czego przepis nie rozstrzyga: gdy w jednym miesiącu jest L4 i inna nieobecność albo umowa przez część miesiąca,
+      odejmujemy obie kwoty, bo każdy z paragrafów każe odjąć swoją kwotę od wynagrodzenia za cały miesiąc. Gdy wynik
+      wyjdzie poniżej zera, pokazujemy 0 zł. Gdy L4 obejmuje wszystkie dni umowy w miesiącu, pensja zasadnicza wynosi
+      0 zł: § 11 dotyczy przepracowanej części miesiąca, a za brak pracy wynagrodzenie nie przysługuje (art. 80).
+      Wyrównanie do płacy minimalnej liczymy tylko dla miesiąca bez L4, bo nie znamy godzin pracy w dniach zwolnienia:
+      płaca minimalna podzielona przez godziny pełnego etatu w miesiącu, razy przepracowane godziny (art. 7 ust. 4 i art. 8
+      ustawy o minimalnym wynagrodzeniu).
+    </p>
+    <p>
+      Ile wyniesie wynagrodzenie chorobowe za dni L4, policzy <a href="/narzedzia/kalkulator-l4">kalkulator L4</a>, ile godzin
+      ma miesiąc, <a href="/narzedzia/wymiar-czasu-pracy">kalkulator wymiaru czasu pracy</a>, a czy cała pensja nie jest niższa
+      od minimalnej, <a href="/narzedzia/placa-minimalna">kalkulator płacy minimalnej</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { niepelnyMiesiac, wymiarCzesci } from '../../lib/narzedzia/niepelny-miesiac';
+  import { dniWMiesiacu, wymiarMiesiaca } from '../../lib/narzedzia/czas-pracy';
+  import { liczba, wpisanaLiczba, zl } from '../../lib/narzedzia/format';
+  import { odmiana } from '../../lib/redakcja';
+  import { typografia } from '../../lib/typografia.mjs';
+
+  const form = document.querySelector<HTMLFormElement>('[data-niepelny]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const pisz = (k: string, tekst: string) => {
+      w(k).textContent = typografia(tekst);
+    };
+    const opcjonalna = (n: string) => (el(n).value.trim() ? wpisanaLiczba(el(n).value) : undefined);
+    const calkowita = (n: string) => {
+      const x = wpisanaLiczba(el(n).value || '0');
+      return Number.isInteger(x) ? x : Number.NaN;
+    };
+    const przelicz = () => {
+      const rok = Number(el('rok').value);
+      const miesiac = Number(el('miesiac').value);
+      const etat = Number(el('etat').value);
+      const czesc = form.querySelector<HTMLInputElement>('input[name="umowa"]:checked')?.value === 'czesc';
+      form.querySelector<HTMLElement>('[data-czesc]')!.hidden = !czesc;
+      const dniMies = dniWMiesiacu(rok, miesiac);
+      const od = czesc ? calkowita('od') : 1;
+      const do_ = czesc ? calkowita('do') : dniMies;
+      const stawka = wpisanaLiczba(el('stawka').value);
+      const dniL4 = calkowita('l4');
+      const nieob = wpisanaLiczba(el('nieobecnosc').value || '0');
+      const hm = opcjonalna('hm');
+      const hu = opcjonalna('hu');
+      el('hm').placeholder = liczba(wymiarMiesiaca(rok, miesiac).godziny * etat);
+      el('hu').placeholder = od >= 1 && do_ <= dniMies && od <= do_ ? liczba(wymiarCzesci(rok, miesiac, od, do_) * etat) : '';
+      el('hu').disabled = !czesc;
+      const blad =
+        !(stawka > 0) ? 'Wpisz pensję miesięczną, na przykład 6000.'
+        : !(od >= 1 && do_ <= dniMies && od <= do_) ? `Dni umowy wpisz od 1 do ${dniMies}, pierwszy nie później niż ostatni.`
+        : !(dniL4 >= 0) ? 'Dni L4 wpisz jako liczbę całkowitą.'
+        : dniL4 > do_ - od + 1 ? `W tym miesiącu umowa trwa ${odmiana(do_ - od + 1, ['dzień', 'dni', 'dni'])}: tyle najwyżej może mieć L4.`
+        : !(nieob >= 0) ? 'Godziny nieobecności wpisz jako liczbę, na przykład 16.'
+        : (hm !== undefined && !(hm > 0)) || (hu !== undefined && !(hu >= 0)) ? 'Godziny z grafiku wpisz jako liczbę większą od zera.'
+        : null;
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      let r: ReturnType<typeof niepelnyMiesiac> | null = null;
+      let komunikat = blad;
+      if (!komunikat) {
+        try {
+          r = niepelnyMiesiac({ rok, miesiac, stawka, etat, od, do: do_, dniL4, godzinyNieobecnosci: nieob, godzinyMiesiaca: hm, godzinyUmowy: czesc ? hu : undefined });
+        } catch {
+          komunikat = 'Godzin nieobecności albo godzin w dniach umowy jest więcej, niż przypada do przepracowania.';
+        }
+      }
+      b.hidden = !komunikat;
+      b.textContent = komunikat ?? '';
+      if (!r) {
+        for (const k of ['kwota', 'l4', 'nieobecnosc', 'poza']) w(k).textContent = '—';
+        w('opis').textContent = '';
+        return;
+      }
+      pisz('kwota', zl(r.wynagrodzenie));
+      pisz('opis', dniL4 ? 'Bez wynagrodzenia chorobowego lub zasiłku za dni L4' : 'Za stałą pensję, bez dodatków za wykonaną pracę');
+      pisz('stawka', zl(stawka));
+      pisz('l4-etykieta', `Minus L4 (${zl(r.zaDzienL4)} za dzień)`);
+      pisz('l4', zl(r.potracenieL4));
+      pisz('nieobecnosc', zl(r.potracenieNieobecnosci));
+      pisz('poza', r.godzinyPoza ? `${zl(r.potraceniePozaUmowa)} (${liczba(r.godzinyPoza)} h)` : zl(0));
+      pisz('godziny', `${liczba(r.godzinyMiesiaca)} h, za godzinę ${zl(r.zaGodzine)}`);
+      const uwagi: string[] = [];
+      if (r.calyMiesiacL4) uwagi.push('L4 obejmuje wszystkie dni umowy w tym miesiącu, więc pensja zasadnicza wynosi 0 zł: wynagrodzenie należy się za pracę wykonaną (art. 80 Kodeksu pracy). Za te dni należy się wynagrodzenie chorobowe albo zasiłek.');
+      else if (r.ujemne) uwagi.push('Potrącenia przekraczają pensję, więc pokazujemy 0 zł. Przepis nie mówi, co wtedy: zapytaj dział kadr o sposób rozliczenia.');
+      else if (dniL4) uwagi.push(`Za ${odmiana(dniL4, ['dzień', 'dni', 'dni'])} L4 dostajesz osobno wynagrodzenie chorobowe albo zasiłek. Pensję dzieli się zawsze przez 30, bez względu na liczbę dni w miesiącu.`);
+      if (r.wyrownanie > 0) uwagi.push(`Za przepracowane godziny należy się co najmniej ${zl(r.minimum!)} (płaca minimalna za godzinę), czyli wyrównanie ${zl(r.wyrownanie)}, jeśli pensja to jedyny składnik wliczany do płacy minimalnej.`);
+      else if (!dniL4 && r.minimum !== null) uwagi.push(`Płaca minimalna za przepracowane godziny: ${zl(r.minimum)}. Pensja nie jest od niej niższa.`);
+      pisz('uwaga', uwagi.join(' '));
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>

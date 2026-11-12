@@ -553,6 +553,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-12',
   },
   {
+    slug: 'wynagrodzenie-za-niepelny-miesiac',
+    nazwa: 'Wynagrodzenie za niepełny miesiąc',
+    krotko: 'Pensja za część miesiąca: po L4 (1/30), urlopie bezpłatnym, przy przyjęciu albo odejściu w trakcie miesiąca.',
+    kategoria: 'wynagrodzenie',
+    przepisy: ['kodeksPracy', 'wynagrodzenieRozp', 'minimalneWynagrodzenie', 'dniWolne', 'placa2025', 'placa2026', 'placa2027'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'swiadczenie-urlopowe',
     nazwa: 'Świadczenie urlopowe',
     krotko: 'Ile najwyżej wynosi świadczenie urlopowe przy Twoim etacie, kiedy się należy i ile zostaje na rękę.',

@@ -25,7 +25,7 @@ test('3/4 etatu i młodociany bez proporcji', async ({ page }) => {
 
 test('13 dni urlopu: warunek niespełniony; koniec przed początkiem to błąd', async ({ page }) => {
   await page.getByLabel('Ostatni dzień').fill('2026-07-18');
-  await expect(page.locator('[data-w="urlop"]')).toContainText(/13\sdni/);
+  await expect(page.locator('[data-w="urlop"]')).toHaveText(/^13\sdni\skalendarzowych:/);
   await expect(page.locator('[data-w="termin"]')).toContainText(/nie\snależy/);
   await page.getByLabel('Ostatni dzień').fill('2026-07-01');
   await expect(page.locator('[data-blad="dane"]')).toBeVisible();

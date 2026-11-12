@@ -228,7 +228,7 @@ const faq = [
         return;
       }
       const u = urlop(od, do_);
-      pisz('urlop', `${u.dni} ${odmiana(u.dni, ['dzień', 'dni', 'dni'])} kalendarzowych: ${u.spelnia ? 'warunek spełniony' : 'za mało, potrzeba co najmniej 14 kolejnych dni'}`);
+      pisz('urlop', `${odmiana(u.dni, ['dzień kalendarzowy', 'dni kalendarzowe', 'dni kalendarzowych'])}: ${u.spelnia ? 'warunek spełniony' : 'za mało, potrzeba co najmniej 14 kolejnych dni'}`);
       pisz('termin', u.spelnia ? dataPoPolsku(u.terminWyplaty) : 'świadczenie nie należy się za ten urlop');
       const ponad = kwota !== null && kwota > m.kwota;
       const doWyplaty = kwota !== null && !ponad ? kwota : m.kwota;
