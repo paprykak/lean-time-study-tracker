@@ -489,6 +489,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-12',
   },
   {
+    slug: 'przedawnienie-wynagrodzenia',
+    nazwa: 'Przedawnienie wynagrodzenia i nadgodzin',
+    krotko: 'Do kiedy możesz upomnieć się o niezapłaconą pensję i nadgodziny: 3 lata od dnia wypłaty za każdy miesiąc.',
+    kategoria: 'wynagrodzenie',
+    przepisy: ['kodeksPracy', 'kodeksCywilny', 'dniWolne'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'przerwy-w-pracy',
     nazwa: 'Przerwy w pracy',
     krotko: 'Ile przerw przy zmianie 8 i 12 godzin, które są płatne, przerwy na karmienie i dla młodocianych.',

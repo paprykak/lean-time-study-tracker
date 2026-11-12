@@ -1,0 +1,188 @@
+---
+// Przedawnienie wynagrodzenia i nadgodzin: 3 lata od dnia wymagalności (art. 291 § 1 Kp), wypłata w dniu z art. 85
+// § 1–3, przerwanie biegu (art. 295). Logika: src/lib/narzedzia/przedawnienie.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { wyplatyDoDochodzenia } from '../../lib/narzedzia/przedawnienie';
+import { nazwaMiesiaca } from '../../lib/narzedzia/czas-pracy';
+import { dataPoPolsku, dzisWPolsce, ileDni } from '../../lib/narzedzia/terminy';
+
+const dzis = dzisWPolsce();
+const lista = wyplatyDoDochodzenia(dzis, 'nastepny', 10);
+const [pierwsza] = lista;
+if (!pierwsza) throw new Error('Brak wypłat do pokazania');
+const miesiac = (za: string) => `${nazwaMiesiaca(Number(za.slice(5, 7)))} ${za.slice(0, 4)} r.`;
+
+const faq = [
+  {
+    pytanie: 'Ile lat wstecz można żądać zapłaty za nadgodziny?',
+    odpowiedz: '3 lata od dnia, w którym zapłata stała się wymagalna, czyli zwykle od dnia wypłaty (art. 291 § 1 Kodeksu pracy). Za każdy miesiąc termin biegnie osobno, więc co miesiąc przedawnia się kolejna wypłata. Bieg przedawnienia przerywa pozew w sądzie pracy albo uznanie długu przez pracodawcę, a potem termin biegnie od nowa (art. 295).',
+  },
+  {
+    pytanie: 'Co, jeśli pracodawca uzna, że jest mi winien pieniądze?',
+    odpowiedz: 'Uznanie roszczenia przez pracodawcę przerywa bieg przedawnienia i termin 3 lat liczy się od nowa (art. 295 § 1 pkt 2 i § 2 Kodeksu pracy). Gdy przerwę spowodował pozew, przedawnienie nie biegnie, dopóki sprawa się nie skończy.',
+  },
+  {
+    pytanie: 'Czy po 3 latach pracodawca na pewno nie zapłaci?',
+    odpowiedz: 'Po upływie terminu pracodawca może uchylić się od zapłaty, ale musi powołać się na przedawnienie; może też się tego zrzec (art. 292 Kodeksu pracy). Zrzeczenie się zarzutu przed upływem terminu jest nieważne. Terminów przedawnienia nie można skrócić ani wydłużyć umową (art. 291 § 4).',
+  },
+  {
+    pytanie: 'Kiedy przedawnia się roszczenie pracodawcy o szkodę?',
+    odpowiedz: 'Po roku od dnia, w którym pracodawca dowiedział się o szkodzie, ale najpóźniej po 3 latach od jej wyrządzenia (art. 291 § 2 Kodeksu pracy). Przy szkodzie wyrządzonej umyślnie stosuje się przepisy Kodeksu cywilnego (§ 3).',
+  },
+  {
+    pytanie: 'Jak długo można ściągać zasądzone wynagrodzenie?',
+    odpowiedz: 'Roszczenie stwierdzone prawomocnym wyrokiem sądu pracy albo ugodą zawartą przed sądem przedawnia się po 10 latach od uprawomocnienia się wyroku lub zawarcia ugody (art. 291 § 5 Kodeksu pracy).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="przedawnienie-wynagrodzenia"
+  tytul="Przedawnienie wynagrodzenia i nadgodzin"
+  opis="Do kiedy możesz upomnieć się o niezapłaconą pensję i nadgodziny: 3 lata od dnia wypłaty za każdy miesiąc osobno. Najstarszy miesiąc i daty przedawnienia."
+  h1="Przedawnienie wynagrodzenia i nadgodzin"
+  lead="Niezapłacone wynagrodzenie i nadgodziny przedawniają się po 3 latach, za każdy miesiąc osobno. Wpisz, kiedy dostajesz wypłatę, a pokażemy najstarszy miesiąc, o który możesz jeszcze wystąpić, i kolejne terminy."
+  faq={faq}
+>
+  <form class="kalkulator" data-przedawnienie novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Wypłata</h2>
+      <div class="mt-4">
+        <label for="p-rodzaj" class="etykieta-pola">Kiedy dostajesz wypłatę za miesiąc</label>
+        <select id="p-rodzaj" name="rodzaj" class="pole mt-1">
+          <option value="nastepny" selected>W następnym miesiącu</option>
+          <option value="ten">W tym samym miesiącu</option>
+          <option value="ostatni">Ostatniego dnia miesiąca</option>
+        </select>
+      </div>
+      <div class="mt-4" data-pole="dzien">
+        <label for="p-dzien" class="etykieta-pola">Dzień wypłaty</label>
+        <input id="p-dzien" name="dzien" class="pole mt-1 max-w-24" type="text" inputmode="numeric" autocomplete="off" value="10" aria-describedby="p-dzien-opis p-blad" />
+        <p id="p-dzien-opis" class="meta mt-1">Wypłata za miesiąc przychodzi najpóźniej 10. dnia następnego miesiąca (art. 85 § 2 Kodeksu pracy).</p>
+      </div>
+      <label class="mt-4 flex items-start gap-3 text-[0.9375rem]">
+        <input type="checkbox" name="soboty" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+        <span>Soboty są u mnie dniami pracy</span>
+      </label>
+      <div class="mt-4">
+        <label for="p-dzis" class="etykieta-pola">Sprawdź na dzień</label>
+        <input id="p-dzis" name="naDzien" type="date" class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" value={dzis} aria-describedby="p-blad" />
+      </div>
+      <div class="mt-4">
+        <label for="p-inna" class="etykieta-pola">Inna należność: dzień, w którym miała być zapłacona</label>
+        <input id="p-inna" name="inna" type="date" class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" aria-describedby="p-inna-opis p-blad" />
+        <p id="p-inna-opis" class="meta mt-1">Nieobowiązkowe, np. dla odprawy albo ekwiwalentu za urlop.</p>
+      </div>
+      <p id="p-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Najstarsza wypłata, o którą możesz wystąpić</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-data" data-w="najstarsza">za {miesiac(pierwsza.za)}</p>
+        <p class="meta" data-w="opis">Wypłata z {dataPoPolsku(pierwsza.wymagalna)} przedawnia się z końcem dnia {dataPoPolsku(pierwsza.koniec)}</p>
+        <p class="status-terminu" data-w="status" data-status={pierwsza.status}>Zostało: {ileDni(pierwsza.zostalo).replace('za ', '')}</p>
+      </div>
+      <dl class="wynik-lista">
+        <div data-wiersz="inna" hidden><dt>Inna należność przedawnia się</dt><dd data-w="inna"></dd></div>
+      </dl>
+      <h3 class="etykieta mt-5">Kolejne terminy</h3>
+      <ul class="mt-2 grid gap-1 text-[0.9375rem]" data-w="lista">
+        {lista.slice(1, 6).map((w) => <li>za {miesiac(w.za)}: do {dataPoPolsku(w.koniec)}</li>)}
+      </ul>
+      <p class="wynik-uwaga">To najwcześniejszy możliwy termin: pozew złożony najpóźniej tego dnia jest w terminie, a bieg przedawnienia przerywa też uznanie długu przez pracodawcę (art. 295 Kodeksu pracy).</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Wynik pokazuje wypłatę 10. dnia następnego miesiąca.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="zasady">Zasady przedawnienia w prawie pracy</h2>
+    <ul>
+      <li>Roszczenia ze stosunku pracy przedawniają się po 3 latach od dnia, w którym stały się wymagalne (art. 291 § 1 Kodeksu pracy). Wynagrodzenie jest wymagalne w dniu wypłaty, więc za każdy miesiąc termin biegnie osobno.</li>
+      <li>Wypłata przychodzi co najmniej raz w miesiącu, w stałym terminie, najpóźniej 10. dnia następnego miesiąca; gdy ten dzień jest wolny od pracy, w dniu poprzedzającym (art. 85 § 1–3). Termin wypłaty w każdym miesiącu pokaże <a href="/narzedzia/termin-wyplaty-wynagrodzenia">kalkulator terminu wypłaty</a>.</li>
+      <li>Bieg przedawnienia przerywa każda czynność przed organem powołanym do rozstrzygania sporów lub egzekwowania roszczeń, podjęta bezpośrednio w celu dochodzenia roszczenia, na przykład pozew w sądzie pracy, oraz uznanie roszczenia przez pracodawcę (art. 295 § 1). Po przerwie termin biegnie od nowa, a po pozwie dopiero po zakończeniu sprawy (§ 2).</li>
+      <li>Przedawnienie nie biegnie, gdy z powodu siły wyższej nie można dochodzić roszczeń przed sądem (art. 293), a roszczenie o urlop wypoczynkowy w czasie urlopu wychowawczego (art. 293<sup>1</sup>).</li>
+      <li>Po upływie terminu pracodawca może odmówić zapłaty, ale musi powołać się na przedawnienie (art. 292).</li>
+    </ul>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Dzień wypłaty przesuwamy na wcześniejszy dzień pracy, gdy wypada w niedzielę, w święto albo, jeśli tak jest
+      w Twoim zakładzie, w sobotę. Od niego liczymy 3 lata: termin kończy się z upływem dnia o tej samej dacie (art. 112
+      Kodeksu cywilnego w związku z art. 300 Kodeksu pracy), a wypłata z 29 lutego przedawnia się 28 lutego. Nie
+      przesuwamy końca terminu na koniec roku, jak w art. 118 Kodeksu cywilnego, ani na następny dzień roboczy: Kodeks
+      pracy ma własne przepisy o przedawnieniu, a gdyby sąd przyjął dłuższy termin, nasza data i tak będzie
+      bezpieczna. Gdy nadgodziny rozlicza się dopiero po końcu okresu rozliczeniowego, zapłata jest wymagalna później,
+      więc liczenie od wypłaty za miesiąc pracy daje termin najwcześniejszy. Ile należy
+      się za nadgodziny, policzy <a href="/narzedzia/kalkulator-nadgodzin">kalkulator nadgodzin</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { przedawnienie, wyplatyDoDochodzenia, type RodzajWyplaty } from '../../lib/narzedzia/przedawnienie';
+  import { nazwaMiesiaca } from '../../lib/narzedzia/czas-pracy';
+  import { dataPoPolsku, ileDni, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { typografia } from '../../lib/typografia.mjs';
+
+  const form = document.querySelector<HTMLFormElement>('[data-przedawnienie]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const pisz = (k: string, tekst: string) => {
+      w(k).textContent = typografia(tekst);
+    };
+    const miesiac = (za: string) => `${nazwaMiesiaca(Number(za.slice(5, 7)))} ${za.slice(0, 4)} r.`;
+    const przelicz = () => {
+      const rodzaj = el('rodzaj').value as RodzajWyplaty;
+      form.querySelector<HTMLElement>('[data-pole="dzien"]')!.hidden = rodzaj === 'ostatni';
+      const tekst = el('dzien').value.trim();
+      const dzien = /^\d{1,2}$/.test(tekst) ? Number(tekst) : NaN;
+      const naDzien = el('naDzien').value;
+      const inna = el('inna').value;
+      let blad: string | null = null;
+      if (!poprawnaData(naDzien)) blad = 'Wpisz dzień, na który sprawdzamy.';
+      else if (rodzaj === 'nastepny' && !(dzien >= 1 && dzien <= 10)) blad = 'Wypłata w następnym miesiącu: dzień od 1 do 10.';
+      else if (rodzaj === 'ten' && !(dzien >= 1 && dzien <= 28)) blad = 'Dzień wypłaty: od 1 do 28 albo wybierz ostatni dzień miesiąca.';
+      else if (inna && !poprawnaData(inna)) blad = 'Popraw datę innej należności.';
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      b.hidden = !blad;
+      b.textContent = blad ?? '';
+      const status = w('status');
+      if (blad) {
+        w('najstarsza').textContent = '—';
+        w('opis').textContent = '';
+        status.hidden = true;
+        return;
+      }
+      const lista = wyplatyDoDochodzenia(naDzien, rodzaj, rodzaj === 'ostatni' ? 0 : dzien, !el('soboty').checked);
+      const [p] = lista;
+      status.hidden = !p;
+      if (p) {
+        pisz('najstarsza', `za ${miesiac(p.za)}`);
+        pisz('opis', `Wypłata z ${dataPoPolsku(p.wymagalna)} przedawnia się z końcem dnia ${dataPoPolsku(p.koniec)}`);
+        status.dataset.status = p.status;
+        pisz('status', `Zostało: ${ileDni(p.zostalo).replace('za ', '')}`);
+      } else {
+        w('najstarsza').textContent = '—';
+        pisz('opis', 'W tym dniu nie ma jeszcze wymagalnej wypłaty.');
+      }
+      w('lista').replaceChildren(
+        ...lista.slice(1, 6).map((x) => {
+          const li = document.createElement('li');
+          li.textContent = typografia(`za ${miesiac(x.za)}: do ${dataPoPolsku(x.koniec)}`);
+          return li;
+        }),
+      );
+      const wiersz = form.querySelector<HTMLElement>('[data-wiersz="inna"]')!;
+      wiersz.hidden = !inna;
+      if (inna) {
+        const r = przedawnienie(inna, naDzien);
+        pisz('inna', `${dataPoPolsku(r.koniec)} (${ileDni(r.zostalo)})`);
+      }
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>

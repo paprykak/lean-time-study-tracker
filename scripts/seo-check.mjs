@@ -89,6 +89,10 @@ for (const plik of strony) {
   // Pusty alt Astro zapisuje skrótem (`alt`), a HTML traktuje go jak alt="".
   for (const [img] of html.matchAll(/<img\b[^>]*>/g)) if (!/\salt(?:="|[\s>])/.test(img)) bledy.push(`${gdzie} obraz bez atrybutu alt: ${img.slice(0, 90)}`);
 
+  // Podwójna kropka po skrócie daty („2026 r..”): data z dataPoPolsku kończy się kropką, więc zdanie nie dostaje drugiej.
+  const tekst = html.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>|<[^>]+>/g, ' ');
+  if (/\sr\.\.(?!\.)/.test(tekst)) bledy.push(`${gdzie} podwójna kropka po „r.” w tekście strony`);
+
   // Pole zastępcze zamiast zdjęcia tylko na stronie wzorów
   if (html.includes('data-brak-zdjecia') && !POLE_ZASTEPCZE_OK.has(adres)) bledy.push(`${gdzie} pole zastępcze zamiast zdjęcia (zasady wyglądu: prawdziwe zdjęcia na produkcji)`);
 

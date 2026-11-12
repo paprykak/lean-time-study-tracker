@@ -158,7 +158,7 @@ const faq = [
       w trzecim, a przy przyuczeniu 7% (§ 19 ust. 2 i § 20 rozporządzenia, stawki od 1 września 2023 r.). Bierzemy
       przeciętne wynagrodzenie z poprzedniego kwartału, ogłoszone przez Prezesa GUS, od pierwszego dnia miesiąca po
       ogłoszeniu w Monitorze Polskim. Teraz to {zl(podstawa.kwota)} za {podstawa.kwartal} ({podstawa.publikator}),
-      od {dataPoPolsku(podstawa.od)}. Kwotę zaokrąglamy w górę do grosza, bo przepis mówi „nie mniej niż”. Przy lekkich
+      od {dataPoPolsku(podstawa.od)} Kwotę zaokrąglamy w górę do grosza, bo przepis mówi „nie mniej niż”. Przy lekkich
       pracach wynagrodzenie ustala umowa o pracę.
     </p>
   </Fragment>
@@ -217,7 +217,7 @@ const faq = [
           'opis',
           r.limitDoby === 6
             ? `Masz ${r.lata} lat. Od 16. urodzin, ${dataPoPolsku(r.szesnascie)}, do 8 godzin.`
-            : `Masz ${r.lata} lat. Pełnoletność: ${dataPoPolsku(r.osiemnascie)}.`,
+            : `Masz ${r.lata} lat. Pełnoletność: ${dataPoPolsku(r.osiemnascie)}`,
         );
         if (r.status === 'ponizej-15') {
           pisz(

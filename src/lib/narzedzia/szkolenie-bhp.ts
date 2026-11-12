@@ -111,7 +111,7 @@ export function terminSzkolenia(d: DaneSzkolenia): WynikSzkolenia {
   }
   const dni = dniMiedzy(d.dzis, termin);
   const planuj = dodajDni(termin, -PRZYPOMNIENIE_DNI);
-  const opis = `Szkolenie okresowe BHP (${g.nazwa.toLowerCase()}): najpóźniej ${dataPoPolsku(termin)}. Policzone na rytmhali.pl/narzedzia/szkolenie-okresowe-bhp.`;
+  const opis = `Szkolenie okresowe BHP (${g.nazwa.toLowerCase()}): najpóźniej ${dataPoPolsku(termin)} Policzone na rytmhali.pl/narzedzia/szkolenie-okresowe-bhp.`;
   const wydarzenia: Wydarzenie[] = [
     ...(dniMiedzy(d.dzis, planuj) >= 0 ? [{ data: planuj, tytul: 'Zaplanuj szkolenie okresowe BHP', opis }] : []),
     { data: termin, tytul: 'Ostatni dzień na szkolenie okresowe BHP', opis },
