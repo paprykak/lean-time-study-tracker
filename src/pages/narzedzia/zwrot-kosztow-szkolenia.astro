@@ -1,0 +1,180 @@
+---
+// Lojalka: zwrot kosztów nauki i szkoleń opłaconych przez pracodawcę (art. 103^1–103^5 Kp), proporcjonalnie do okresu
+// pracy po ukończeniu nauki. Logika: src/lib/narzedzia/lojalka.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { lojalka } from '../../lib/narzedzia/lojalka';
+import { dataPoPolsku } from '../../lib/narzedzia/terminy';
+import { zl } from '../../lib/narzedzia/format';
+
+const D = { koszt: 5000, ukonczenie: '2026-03-31', miesiecy: 24, koniecPracy: '2027-01-15', rozwiazanie: 'wypowiedzenie-pracownika' as const };
+const r = lojalka(D);
+if (r.stan !== 'zwrot' || r.kwota === null) throw new Error('Wartości domyślne powinny dawać zwrot');
+
+const faq = [
+  {
+    pytanie: 'Czy muszę oddać pieniądze za szkolenie, gdy odchodzę z pracy?',
+    odpowiedz: 'Tylko w sytuacjach z art. 103⁵ Kodeksu pracy: gdy bez uzasadnionej przyczyny nie podejmiesz albo przerwiesz naukę, gdy pracodawca zwolni Cię dyscyplinarnie, gdy sam wypowiesz umowę (poza wypowiedzeniem z powodu mobbingu) albo gdy rozwiążesz ją bez wypowiedzenia z art. 55 lub 94³ mimo braku przyczyn. Zwrot dotyczy tylko okresu wskazanego w umowie, najwyżej 3 lat po ukończeniu nauki.',
+  },
+  {
+    pytanie: 'Ile trzeba oddać z lojalki?',
+    odpowiedz: 'Część kosztów proporcjonalną do tej części okresu po ukończeniu nauki, której nie przepracujesz (art. 103⁵ Kodeksu pracy). Przy zobowiązaniu na 2 lata i odejściu po roku to mniej więcej połowa. Umowa nie może ustalić zasad mniej korzystnych dla pracownika niż Kodeks pracy (art. 103⁴ § 2).',
+  },
+  {
+    pytanie: 'Jakie koszty obejmuje zwrot?',
+    odpowiedz: 'Koszty dodatkowych świadczeń, które pracodawca dał na naukę: opłaty za kształcenie, przejazd, podręczniki i zakwaterowanie (art. 103³ Kodeksu pracy). Nie obejmuje wynagrodzenia za urlop szkoleniowy i zwolnienia z pracy na zajęcia, bo do nich masz prawo z mocy przepisów (art. 103¹ § 3).',
+  },
+  {
+    pytanie: 'Czy oddaję pieniądze, gdy pracodawca mnie zwolni albo rozwiążemy umowę za porozumieniem?',
+    odpowiedz: 'Wypowiedzenia przez pracodawcę, porozumienia stron i końca umowy na czas określony nie ma w art. 103⁵ Kodeksu pracy, więc z tego przepisu zwrot się wtedy nie należy. Przy porozumieniu warto sprawdzić, czy jego treść nie mówi o zwrocie.',
+  },
+  {
+    pytanie: 'Ile dni urlopu szkoleniowego mi przysługuje?',
+    odpowiedz: '6 dni przed egzaminem eksternistycznym, maturalnym i zawodowym, a 21 dni w ostatnim roku studiów na pracę dyplomową i egzamin dyplomowy (art. 103² § 1 Kodeksu pracy). Urlopu udziela się w dni pracy według Twojego grafiku (§ 2), a za ten czas i za zwolnienia na zajęcia zachowujesz wynagrodzenie (art. 103¹ § 3).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="zwrot-kosztow-szkolenia"
+  tytul="Lojalka: ile oddać za szkolenie"
+  opis="Ile zwrócić pracodawcy za opłacone szkolenie albo studia przy odejściu z pracy: kiedy zwrot się należy, proporcja do przepracowanych dni, najwyżej 3 lata."
+  h1="Lojalka: zwrot kosztów szkolenia"
+  lead="Pracodawca zapłacił za kurs albo studia, a Ty odchodzisz przed końcem okresu z umowy? Wpisz koszt i daty, a policzymy, czy i ile musisz oddać."
+  faq={faq}
+>
+  <form class="kalkulator" data-lojalka novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Szkolenie i odejście</h2>
+      <div class="mt-4">
+        <label for="l-koszt" class="etykieta-pola">Koszt opłacony przez pracodawcę (zł)</label>
+        <input id="l-koszt" name="koszt" class="pole mt-1 max-w-40" type="text" inputmode="decimal" autocomplete="off" value={D.koszt} aria-describedby="l-koszt-opis l-blad" />
+        <p id="l-koszt-opis" class="meta mt-1">Opłaty za naukę, przejazdy, podręczniki, noclegi, bez wynagrodzenia za dni szkolenia.</p>
+      </div>
+      <div class="mt-4 grid grid-cols-2 items-end gap-3">
+        <div>
+          <label for="l-ukonczenie" class="etykieta-pola">Koniec nauki</label>
+          <input id="l-ukonczenie" name="ukonczenie" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={D.ukonczenie} aria-describedby="l-blad" />
+        </div>
+        <div>
+          <label for="l-miesiecy" class="etykieta-pola">Zobowiązanie (mies.)</label>
+          <input id="l-miesiecy" name="miesiecy" class="pole mt-1" type="text" inputmode="numeric" autocomplete="off" value={D.miesiecy} aria-describedby="l-blad" />
+        </div>
+      </div>
+      <div class="mt-4">
+        <label for="l-koniec" class="etykieta-pola">Ostatni dzień pracy</label>
+        <input id="l-koniec" name="koniecPracy" type="date" class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" value={D.koniecPracy} aria-describedby="l-blad" />
+      </div>
+      <div class="mt-4">
+        <label for="l-rozwiazanie" class="etykieta-pola">Jak kończy się umowa</label>
+        <select id="l-rozwiazanie" name="rozwiazanie" class="pole mt-1">
+          <option value="wypowiedzenie-pracownika" selected>Ja ją wypowiadam</option>
+          <option value="dyscyplinarka">Dyscyplinarka</option>
+          <option value="art55-bez-podstaw">Odchodzę bez wypowiedzenia</option>
+          <option value="mobbing">Odchodzę z powodu mobbingu</option>
+          <option value="wypowiedzenie-pracodawcy">Pracodawca ją wypowiada</option>
+          <option value="porozumienie">Porozumienie stron</option>
+          <option value="koniec-umowy">Kończy się umowa terminowa</option>
+        </select>
+      </div>
+      <p id="l-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Do zwrotu</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-kwota" data-w="kwota">{zl(r.kwota)}</p>
+        <p class="meta" data-w="opis">Za {r.okres - r.przepracowane} z {r.okres} dni zobowiązania, których nie przepracujesz ({r.podstawa} Kodeksu pracy)</p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Zobowiązanie trwa do</dt><dd data-w="koniec">{dataPoPolsku(r.koniecZobowiazania)}</dd></div>
+        <div><dt>Przepracowane po nauce</dt><dd data-w="przepracowane">{r.przepracowane} dni</dd></div>
+      </dl>
+      <p class="wynik-uwaga">Zwrot przy odejściu z pracy dotyczy okresu wskazanego w umowie o podnoszeniu kwalifikacji (art. 103<sup>5</sup> pkt 2–4). Umowy nie trzeba zawierać, gdy pracodawca nie zamierza zobowiązać Cię do pozostania w pracy po nauce (art. 103<sup>4</sup> § 3).</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="kiedy">Kiedy oddajesz koszty</h2>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Czy zwracasz koszty nauki przy danym sposobie zakończenia umowy</caption>
+        <thead><tr><th scope="col">Jak kończy się umowa</th><th scope="col">Zwrot</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Wypowiadasz umowę</th><td>tak (art. 103<sup>5</sup> pkt 3)</td></tr>
+          <tr><th scope="row">Wypowiadasz z powodu mobbingu (art. 94<sup>3</sup>)</th><td>nie</td></tr>
+          <tr><th scope="row">Dyscyplinarka (art. 52)</th><td>tak (pkt 2)</td></tr>
+          <tr><th scope="row">Odchodzisz bez wypowiedzenia bez podstaw (art. 55, 94<sup>3</sup>)</th><td>tak (pkt 4)</td></tr>
+          <tr><th scope="row">Pracodawca wypowiada umowę</th><td>nie</td></tr>
+          <tr><th scope="row">Porozumienie stron, koniec umowy terminowej</th><td>nie ma tego w art. 103<sup>5</sup></td></tr>
+          <tr><th scope="row">Rezygnujesz z nauki bez uzasadnionej przyczyny</th><td>tak (pkt 1)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Okres zobowiązania zaczyna się dzień po ukończeniu nauki (art. 111 § 2 Kodeksu cywilnego w związku z art. 300
+      Kodeksu pracy) i trwa tyle miesięcy, ile wpisano w umowie, najwyżej 3 lata (art. 103<sup>5</sup> pkt 2 Kodeksu pracy). Zwrot to koszt pomnożony przez część tego okresu, której nie przepracujesz:
+      liczymy w dniach kalendarzowych, bo przepis nie mówi, czy w dniach, czy w miesiącach, a wynik zaokrąglamy do grosza.
+      Przy odejściu w trakcie nauki przepis każe liczyć proporcjonalnie do okresu zatrudnienia w czasie nauki, ale nie
+      mówi jak, więc tego nie liczymy. Czy odejście jest w terminie wypowiedzenia, sprawdzi
+      <a href="/narzedzia/okres-wypowiedzenia">kalkulator okresu wypowiedzenia</a>, a ważność uprawnień zdobytych na
+      kursie <a href="/narzedzia/waznosc-uprawnien-udt">kalkulator ważności uprawnień UDT</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { lojalka, type Rozwiazanie } from '../../lib/narzedzia/lojalka';
+  import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
+  import { typografia } from '../../lib/typografia.mjs';
+
+  const form = document.querySelector<HTMLFormElement>('[data-lojalka]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const pisz = (k: string, tekst: string) => {
+      w(k).textContent = typografia(tekst);
+    };
+    const przelicz = () => {
+      const koszt = wpisanaLiczba(el('koszt').value);
+      const tekstM = el('miesiecy').value.trim();
+      const miesiecy = /^\d{1,2}$/.test(tekstM) ? Number(tekstM) : NaN;
+      const ukonczenie = el('ukonczenie').value;
+      const koniecPracy = el('koniecPracy').value;
+      let blad: string | null = null;
+      if (!(koszt >= 0)) blad = 'Wpisz koszt w złotych, np. 4500.';
+      else if (!(miesiecy >= 1 && miesiecy <= 36)) blad = 'Zobowiązanie: od 1 do 36 miesięcy (najwyżej 3 lata).';
+      else if (!poprawnaData(ukonczenie) || !poprawnaData(koniecPracy)) blad = 'Wpisz datę końca nauki i ostatni dzień pracy.';
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      b.hidden = !blad;
+      b.textContent = blad ?? '';
+      if (blad) {
+        w('kwota').textContent = '—';
+        w('opis').textContent = '';
+        return;
+      }
+      const r = lojalka({ koszt, ukonczenie, miesiecy, koniecPracy, rozwiazanie: el('rozwiazanie').value as Rozwiazanie });
+      pisz('koniec', dataPoPolsku(r.koniecZobowiazania));
+      pisz('przepracowane', `${r.przepracowane} dni`);
+      if (r.stan === 'w-trakcie') {
+        w('kwota').textContent = '—';
+        pisz('opis', 'Odchodzisz przed końcem nauki: przepis każe liczyć zwrot proporcjonalnie do okresu zatrudnienia w czasie nauki, ale nie mówi jak (art. 103⁵ Kodeksu pracy).');
+      } else if (r.stan === 'po-okresie') {
+        pisz('kwota', zl(0));
+        pisz('opis', `Zobowiązanie skończyło się ${dataPoPolsku(r.koniecZobowiazania)}, więc nic nie oddajesz.`);
+      } else if (r.stan === 'bez-zwrotu') {
+        pisz('kwota', zl(0));
+        pisz('opis', 'Przy takim zakończeniu umowy art. 103⁵ Kodeksu pracy nie przewiduje zwrotu.');
+      } else {
+        pisz('kwota', zl(r.kwota ?? 0));
+        pisz('opis', `Za ${r.okres - r.przepracowane} z ${r.okres} dni zobowiązania, których nie przepracujesz (${r.podstawa} Kodeksu pracy)`);
+      }
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>

@@ -513,6 +513,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-12',
   },
   {
+    slug: 'zwrot-kosztow-szkolenia',
+    nazwa: 'Lojalka: zwrot kosztów szkolenia',
+    krotko: 'Ile oddać pracodawcy za opłacony kurs albo studia przy odejściu z pracy: kiedy zwrot, proporcja, 3 lata.',
+    kategoria: 'umowa',
+    przepisy: ['kodeksPracy', 'kodeksCywilny'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'przerwy-w-pracy',
     nazwa: 'Przerwy w pracy',
     krotko: 'Ile przerw przy zmianie 8 i 12 godzin, które są płatne, przerwy na karmienie i dla młodocianych.',
