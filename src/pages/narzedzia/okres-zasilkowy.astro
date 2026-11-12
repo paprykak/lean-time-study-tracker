@@ -1,0 +1,167 @@
+---
+// Okres zasiłkowy: 182 albo 270 dni (art. 8 ust. 1 ustawy zasiłkowej), sumowanie zwolnień z przerwą do 60 dni i wyjątek
+// ciąży (art. 9 ust. 1–2). Logika: src/lib/narzedzia/okres-zasilkowy.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { LIMIT, MAKS_PRZERWA, okresZasilkowy } from '../../lib/narzedzia/okres-zasilkowy';
+import { dataPoPolsku, dodajDni, dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+const dzis = dzisWPolsce();
+const WIERSZE = 5;
+const D = [
+  { od: dodajDni(dzis, -120), do: dodajDni(dzis, -80) },
+  { od: dodajDni(dzis, -40), do: dzis },
+];
+const r = okresZasilkowy(D, 'choroba');
+
+const faq = [
+  {
+    pytanie: 'Jak liczyć 182 dni zwolnienia lekarskiego?',
+    odpowiedz: `Zasiłek chorobowy przysługuje najwyżej przez ${LIMIT.choroba} dni, a przy gruźlicy i w ciąży ${LIMIT.ciaza} (art. 8 ust. 1 ustawy zasiłkowej). Do tego okresu wlicza się wszystkie dni niezdolności do pracy, także te, za które płaci pracodawca, oraz wcześniejsze zwolnienia, jeśli przerwa między nimi nie przekroczyła ${MAKS_PRZERWA} dni (art. 9 ust. 1–2).`,
+  },
+  {
+    pytanie: 'Ile dni przerwy w L4 zeruje okres zasiłkowy?',
+    odpowiedz: `Przerwa dłuższa niż ${MAKS_PRZERWA} dni, czyli co najmniej ${MAKS_PRZERWA + 1} dni bez zwolnienia między końcem jednego a początkiem kolejnego. Wtedy nowe zwolnienie zaczyna nowy okres zasiłkowy (art. 9 ust. 2 ustawy zasiłkowej).`,
+  },
+  {
+    pytanie: 'Czy zwolnienie z powodu innej choroby zaczyna nowy okres?',
+    odpowiedz: `Nie. Przepis łączy zwolnienia bez względu na chorobę, jeśli przerwa między nimi nie przekracza ${MAKS_PRZERWA} dni (art. 9 ust. 2 ustawy zasiłkowej).`,
+  },
+  {
+    pytanie: 'Jak liczy się okres zasiłkowy w ciąży?',
+    odpowiedz: `W ciąży okres zasiłkowy wynosi ${LIMIT.ciaza} dni (art. 8 ust. 1 ustawy zasiłkowej). Gdy po przerwie, nawet krótszej niż ${MAKS_PRZERWA} dni, zwolnienie wystąpiło w trakcie ciąży, wcześniejszych zwolnień się nie wlicza (art. 9 ust. 2 zd. 2).`,
+  },
+  {
+    pytanie: 'Co po wyczerpaniu okresu zasiłkowego?',
+    odpowiedz: 'Gdy nadal nie możesz pracować, a dalsze leczenie albo rehabilitacja rokują powrót do zdolności do pracy, możesz dostać świadczenie rehabilitacyjne z ZUS (art. 18 ustawy zasiłkowej). Przy zatrudnieniu co najmniej 6 miesięcy pracodawca może rozwiązać umowę bez wypowiedzenia po okresie zasiłkowym, a gdy dostaniesz świadczenie rehabilitacyjne, po jego pierwszych 3 miesiącach (art. 53 § 1 pkt 1 lit. b Kodeksu pracy).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="okres-zasilkowy"
+  tytul="Okres zasiłkowy: ile zostało ze 182 dni L4"
+  opis="Ile dni L4 zostało z okresu zasiłkowego: 182 albo 270 dni, przerwa do 60 dni łączy zwolnienia, od kiedy nowy okres. Wpisz daty swoich zwolnień."
+  h1="Okres zasiłkowy: ile dni L4 zostało"
+  lead="Zwolnienia lekarskie z przerwami do 60 dni sumują się do jednego okresu zasiłkowego, najwyżej 182 dni. Wpisz daty swoich zwolnień, a policzymy, ile dni zostało i od kiedy zaczyna się nowy okres."
+  faq={faq}
+>
+  <form class="kalkulator" data-zasilkowy novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twoje zwolnienia</h2>
+      <p class="meta mt-1">Od najstarszego; puste wiersze pomijamy.</p>
+      {Array.from({ length: WIERSZE }, (_, i) => (
+        <fieldset class="mt-4">
+          <legend class="etykieta-pola">Zwolnienie {i + 1}</legend>
+          <div class="mt-1 grid grid-cols-2 items-end gap-3">
+            <div>
+              <label for={`z-od${i + 1}`} class="meta">Od</label>
+              <input id={`z-od${i + 1}`} name={`od${i + 1}`} type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={D[i]?.od} aria-describedby="z-blad" />
+            </div>
+            <div>
+              <label for={`z-do${i + 1}`} class="meta">Do</label>
+              <input id={`z-do${i + 1}`} name={`do${i + 1}`} type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={D[i]?.do} aria-describedby="z-blad" />
+            </div>
+          </div>
+        </fieldset>
+      ))}
+      <div class="mt-4">
+        <label for="z-przyczyna" class="etykieta-pola">Ostatnie zwolnienie</label>
+        <select id="z-przyczyna" name="przyczyna" class="pole mt-1">
+          <option value="choroba" selected>Choroba, wypadek</option>
+          <option value="gruzlica">Gruźlica</option>
+          <option value="ciaza">W trakcie ciąży</option>
+        </select>
+      </div>
+      <p id="z-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Zostało z okresu zasiłkowego</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-kwota" data-w="zostalo">{r.zostalo} dni</p>
+        <p class="meta" data-w="opis">Wykorzystane {r.wykorzystane} z {r.limit} dni, okres od {dataPoPolsku(r.poczatekOkresu)}</p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt data-w="limit-etykieta">Okres kończy się</dt><dd data-w="limit">{dataPoPolsku(r.koniecLimitu)}, jeśli ostatnie zwolnienie potrwa bez przerwy</dd></div>
+        <div><dt>Nowy okres zasiłkowy</dt><dd data-w="nowy">przy zwolnieniu od {dataPoPolsku(r.nowyOkresOd)} albo później</dd></div>
+      </dl>
+      <p class="wynik-uwaga">Liczą się wszystkie dni zwolnienia, także te, za które płaci pracodawca (art. 9 ust. 1 ustawy zasiłkowej).</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="zasady">Zasady okresu zasiłkowego</h2>
+    <ul>
+      <li>Zasiłek chorobowy najwyżej przez {LIMIT.choroba} dni, przy gruźlicy i niezdolności w trakcie ciąży {LIMIT.ciaza} dni (art. 8 ust. 1 ustawy zasiłkowej).</li>
+      <li>Do okresu zasiłkowego wlicza się wszystkie dni niezdolności do pracy (art. 9 ust. 1) i wcześniejsze zwolnienia, gdy przerwa nie przekroczyła {MAKS_PRZERWA} dni, bez względu na chorobę (art. 9 ust. 2).</li>
+      <li>Gdy po przerwie zwolnienie wystąpiło w trakcie ciąży, zwolnień sprzed przerwy się nie wlicza (art. 9 ust. 2 zd. 2).</li>
+      <li>Przy kilku umowach okres zasiłkowy jest jeden (art. 9 ust. 4).</li>
+      <li>Po końcu umowy zasiłek trwa najwyżej 91 dni, poza gruźlicą, ciążą i badaniami dawców narządów (art. 8 ust. 2); to policzy <a href="/narzedzia/l4-po-zwolnieniu">kalkulator L4 po zwolnieniu z pracy</a>.</li>
+    </ul>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Zwolnienia porządkujemy od najstarszego, a nachodzące na siebie albo stykające się łączymy w jedno. Przerwa to dni
+      między ostatnim dniem jednego a pierwszym dniem kolejnego zwolnienia. Od ostatniego zwolnienia cofamy się, dopóki
+      przerwy nie przekraczają {MAKS_PRZERWA} dni, i sumujemy wszystkie dni w tym łańcuchu. Nie uwzględniamy zwolnień
+      w pierwszych 30 dniach ubezpieczenia, których też się nie wlicza (art. 9 ust. 3). Ile wyniesie zasiłek, policzy
+      <a href="/narzedzia/kalkulator-l4">kalkulator L4</a>, do kiedy pracodawca nie może Cię zwolnić,
+      <a href="/narzedzia/zwolnienie-na-l4">kalkulator ochrony na L4</a>, a co po okresie zasiłkowym,
+      <a href="/narzedzia/swiadczenie-rehabilitacyjne">kalkulator świadczenia rehabilitacyjnego</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { okresZasilkowy, type PrzyczynaZwolnienia, type Zwolnienie } from '../../lib/narzedzia/okres-zasilkowy';
+  import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { typografia } from '../../lib/typografia.mjs';
+
+  const form = document.querySelector<HTMLFormElement>('[data-zasilkowy]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const pisz = (k: string, tekst: string) => {
+      w(k).textContent = typografia(tekst);
+    };
+    const przelicz = () => {
+      const lista: Zwolnienie[] = [];
+      let blad: string | null = null;
+      for (let i = 1; i <= 5; i++) {
+        const od = el(`od${i}`).value;
+        const do_ = el(`do${i}`).value;
+        if (!od && !do_) continue;
+        if (!poprawnaData(od) || !poprawnaData(do_)) blad = `Uzupełnij obie daty zwolnienia ${i}.`;
+        else if (do_ < od) blad = `Zwolnienie ${i}: koniec przed początkiem.`;
+        else lista.push({ od, do: do_ });
+      }
+      if (!blad && !lista.length) blad = 'Wpisz co najmniej jedno zwolnienie.';
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      b.hidden = !blad;
+      b.textContent = blad ?? '';
+      if (blad) {
+        w('zostalo').textContent = '—';
+        w('opis').textContent = '';
+        return;
+      }
+      const r = okresZasilkowy(lista, el('przyczyna').value as PrzyczynaZwolnienia);
+      pisz('zostalo', `${r.zostalo} dni`);
+      pisz(
+        'opis',
+        `Wykorzystane ${r.wykorzystane} z ${r.limit} dni, okres od ${dataPoPolsku(r.poczatekOkresu)}${r.ponadLimit ? `; ${r.ponadLimit} dni zwolnienia ponad limit` : ''}`,
+      );
+      if (r.zostalo > 0) {
+        pisz('limit-etykieta', 'Okres kończy się');
+        pisz('limit', `${dataPoPolsku(r.koniecLimitu)}, jeśli ostatnie zwolnienie potrwa bez przerwy`);
+      } else {
+        pisz('limit-etykieta', 'Okres zasiłkowy minął');
+        pisz('limit', `${dataPoPolsku(r.koniecLimitu)}; dalej może przysługiwać świadczenie rehabilitacyjne`);
+      }
+      pisz('nowy', `przy zwolnieniu od ${dataPoPolsku(r.nowyOkresOd)} albo później`);
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>

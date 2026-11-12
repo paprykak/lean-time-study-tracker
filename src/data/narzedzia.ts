@@ -521,6 +521,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-12',
   },
   {
+    slug: 'okres-zasilkowy',
+    nazwa: 'Okres zasiłkowy: ile zostało z 182 dni',
+    krotko: 'Ile dni L4 zostało z okresu zasiłkowego: 182 albo 270 dni, przerwa do 60 dni łączy zwolnienia, nowy okres.',
+    kategoria: 'wynagrodzenie',
+    przepisy: ['zasilkowa', 'kodeksPracy'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'przerwy-w-pracy',
     nazwa: 'Przerwy w pracy',
     krotko: 'Ile przerw przy zmianie 8 i 12 godzin, które są płatne, przy monitorze, na karmienie, dla młodocianych.',
