@@ -553,6 +553,22 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-12',
   },
   {
+    slug: 'urlop-w-godzinach',
+    nazwa: 'Urlop w godzinach przy zmianach 12 h',
+    krotko: 'Ile godzin urlopu masz przy zmianach 12 h, ile zmian się zmieści, reszta na część dnia i urlop na żądanie.',
+    kategoria: 'urlopy',
+    przepisy: ['kodeksPracy'],
+    sprawdzono: '2026-11-12',
+  },
+  {
+    slug: 'urlop-szkoleniowy',
+    nazwa: 'Urlop szkoleniowy i zwolnienia na naukę',
+    krotko: 'Ile dni i godzin urlopu szkoleniowego masz przed egzaminem i w ostatnim roku studiów, co przy nauce bez zgody.',
+    kategoria: 'urlopy',
+    przepisy: ['kodeksPracy'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'przerwy-w-pracy',
     nazwa: 'Przerwy w pracy',
     krotko: 'Ile przerw przy zmianie 8 i 12 godzin, które są płatne, przy monitorze, na karmienie, dla młodocianych.',

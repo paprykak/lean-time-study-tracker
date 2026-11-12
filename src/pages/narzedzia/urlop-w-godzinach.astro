@@ -1,0 +1,236 @@
+---
+// Urlop w godzinach przy grafiku zmianowym (art. 154^2 § 1–4 Kp) i urlop na żądanie (art. 167^2–167^3, art. 168).
+// Logika: src/lib/narzedzia/urlop-godzinowy.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { NA_ZADANIE, opisWyniku, pelneZmiany, urlopGodzinowy } from '../../lib/narzedzia/urlop-godzinowy';
+
+const WIERSZE = 3;
+const r = urlopGodzinowy({ dni: 26, godziny: 0, dzien: 8, plan: [{ dlugosc: 12, liczba: 4 }], naZadanieWykorzystane: 0 });
+const o = opisWyniku(r);
+
+const TABELA = [
+  { nazwa: '20 dni', godziny: 160 },
+  { nazwa: '26 dni', godziny: 208 },
+  { nazwa: '20 dni, norma 7 h', godziny: 140 },
+  { nazwa: '26 dni, norma 7 h', godziny: 182 },
+];
+const komorka = (g: number, d: number) => {
+  const { pelne, reszta } = pelneZmiany(g, d);
+  return reszta ? `${pelne} i ${reszta} h` : `${pelne}`;
+};
+
+const faq = [
+  {
+    pytanie: 'Ile dni urlopu przy pracy po 12 godzin?',
+    odpowiedz: 'Wymiar urlopu jest w dniach: 20 albo 26 (art. 154 § 1 Kodeksu pracy), ale wykorzystuje się go w godzinach, bo jeden dzień urlopu odpowiada 8 godzinom pracy (art. 154^2 § 2). 20 dni to 160 h, czyli 13 zmian po 12 h i 4 h, a 26 dni to 208 h, czyli 17 zmian po 12 h i 4 h. Urlopu udziela się w dni pracy z grafiku, w godzinach, które w tym dniu masz przepracować (art. 154^2 § 1), więc jedna zmiana 12 h zużywa 12 h urlopu.',
+  },
+  {
+    pytanie: 'Czy urlop na żądanie przy 12 godzinach to 1,5 dnia?',
+    odpowiedz: 'Przepis mówi o 4 dniach urlopu na żądanie w roku kalendarzowym (art. 167^2 Kodeksu pracy) i nie rozstrzyga wprost, ile godzin zużywa taki dzień przy zmianie 12 h. Narzędzie liczy jeden dzień na żądanie jako jedną zmianę z grafiku, czyli 12 h z puli urlopu, bo urlopu udziela się w dni pracy w godzinach dobowego wymiaru czasu pracy (art. 154^2 § 1). W tym odczytaniu cztery zmiany na żądanie po 12 h zużywają 48 h urlopu.',
+  },
+  {
+    pytanie: 'Co z resztą 4 godzin urlopu?',
+    odpowiedz: 'Gdy zostaje mniej urlopu, niż trwa zmiana, można go wziąć na część dnia pracy: urlop w godzinach odpowiadających części dobowego wymiaru jest dopuszczalny tylko wtedy, gdy pozostała część urlopu jest niższa niż pełny dobowy wymiar czasu pracy w dniu, na który ma być udzielony (art. 154^2 § 4). Przy 4 h reszty i zmianie 12 h to 4 h urlopu i 8 h pracy tego dnia.',
+  },
+  {
+    pytanie: 'Ile dni na żądanie po zmianie pracy w ciągu roku?',
+    odpowiedz: 'Łącznie najwyżej 4 dni w roku kalendarzowym, niezależnie od liczby pracodawców, u których kolejno pracujesz w tym roku (art. 167^3 Kodeksu pracy). Gdy u poprzedniego pracodawcy wykorzystano już 2 dni na żądanie, u nowego zostają 2. Żądanie zgłaszasz najpóźniej w dniu rozpoczęcia urlopu (art. 167^2).',
+  },
+  {
+    pytanie: 'Do kiedy wykorzystać zaległy urlop i dni na żądanie?',
+    odpowiedz: 'Urlopu niewykorzystanego w ustalonym terminie trzeba udzielić najpóźniej do 30 września następnego roku kalendarzowego, ale ten termin nie dotyczy części urlopu udzielanej na żądanie (art. 168 Kodeksu pracy). Limit 4 dni na żądanie dotyczy każdego roku kalendarzowego (art. 167^2).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="urlop-w-godzinach"
+  tytul="Urlop w godzinach: zmiany 12 h i na żądanie"
+  opis="Urlop przy zmianach 12 h: ile godzin masz z 20 albo 26 dni, ile zmian się zmieści, co z resztą godzin i ile zmian na żądanie zostało. Wpisz swój plan."
+  h1="Urlop w godzinach przy zmianach 12 h i urlop na żądanie"
+  lead="Urlop masz w dniach, ale przy grafiku zmianowym wykorzystujesz go w godzinach: dzień urlopu to 8 h, a zmiana 12 h zużywa 12 h. Wpisz, ile urlopu zostało i jakie zmiany chcesz wziąć, a policzymy, ile zostanie i ile jeszcze zmian się zmieści."
+  faq={faq}
+>
+  <form class="kalkulator" data-urlop-godzinowy novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twój urlop i plan</h2>
+      <fieldset class="mt-4">
+        <legend class="etykieta">Urlop do wykorzystania</legend>
+        <div class="mt-2 grid grid-cols-2 items-end gap-3">
+          <div>
+            <label for="ug-dni" class="etykieta-pola">Dni</label>
+            <input id="ug-dni" name="dni" class="pole mt-1" type="text" inputmode="numeric" autocomplete="off" value="26" aria-describedby="ug-blad" />
+          </div>
+          <div>
+            <label for="ug-godziny" class="etykieta-pola">Dodatkowe godziny</label>
+            <input id="ug-godziny" name="godziny" class="pole mt-1" type="text" inputmode="numeric" autocomplete="off" value="0" aria-describedby="ug-godziny-opis ug-blad" />
+          </div>
+        </div>
+        <p id="ug-godziny-opis" class="meta mt-1">Na przykład resztka z poprzedniego rozliczenia (0–7 h).</p>
+      </fieldset>
+      <div class="mt-4">
+        <label for="ug-dzien" class="etykieta-pola">Dzień urlopu</label>
+        <select id="ug-dzien" name="dzien" class="pole mt-1" aria-describedby="ug-blad">
+          <option value="8" selected>8 h</option>
+          <option value="7">7 h (niższa norma)</option>
+        </select>
+      </div>
+      <fieldset class="mt-4">
+        <legend class="etykieta">Planowany urlop</legend>
+        <p class="meta mt-1">Zmiany w kolejności; puste wiersze pomijamy.</p>
+        {Array.from({ length: WIERSZE }, (_, i) => (
+          <div class="mt-3 grid grid-cols-2 items-end gap-3">
+            <div>
+              <label for={`ug-dl${i + 1}`} class="etykieta-pola">Zmiana {i + 1}: długość (h)</label>
+              <input id={`ug-dl${i + 1}`} name={`dlugosc${i + 1}`} class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value={i === 0 ? '12' : ''} aria-describedby="ug-blad" />
+            </div>
+            <div>
+              <label for={`ug-ile${i + 1}`} class="etykieta-pola">Liczba zmian</label>
+              <input id={`ug-ile${i + 1}`} name={`liczba${i + 1}`} class="pole mt-1" type="text" inputmode="numeric" autocomplete="off" value={i === 0 ? '4' : ''} aria-describedby="ug-blad" />
+            </div>
+          </div>
+        ))}
+      </fieldset>
+      <div class="mt-4">
+        <label for="ug-zadanie" class="etykieta-pola">Urlop na żądanie wykorzystany w tym roku (dni)</label>
+        <input id="ug-zadanie" name="zadanie" class="pole mt-1 max-w-32" type="text" inputmode="numeric" autocomplete="off" value="0" aria-describedby="ug-zadanie-opis ug-blad" />
+        <p id="ug-zadanie-opis" class="meta mt-1">Od 0 do {NA_ZADANIE}, łącznie u wszystkich pracodawców w tym roku.</p>
+      </div>
+      <p id="ug-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Zostanie po planie</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-kwota" data-w="zostalo">{o.zostalo}</p>
+        <p class="meta" data-w="opis">{o.opis}</p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Masz</dt><dd data-w="masz">{o.masz}</dd></div>
+        <div><dt>Plan zużyje</dt><dd data-w="plan">{o.plan}</dd></div>
+        <div><dt>Plan w całości</dt><dd data-w="pokrycie">{o.pokrycie}</dd></div>
+        <div><dt>Jeszcze po 12 h</dt><dd data-w="po12">{o.po12}</dd></div>
+        <div><dt>Jeszcze po 8 h</dt><dd data-w="po8">{o.po8}</dd></div>
+        <div><dt>Na żądanie zostało</dt><dd data-w="na-zadanie">{o.naZadanie}</dd></div>
+      </dl>
+      <p class="wynik-uwaga">Na część zmiany urlop wolno wziąć tylko wtedy, gdy zostało go mniej, niż trwa ta zmiana (art. 154<sup>2</sup> § 4 Kodeksu pracy).</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="tabela">Urlop w godzinach i w zmianach: tabela</h2>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Wymiar urlopu w godzinach i liczba pełnych zmian z resztą godzin</caption>
+        <thead><tr><th scope="col">Urlop</th><th scope="col">Godziny</th><th scope="col">Zmiany 8 h</th><th scope="col">Zmiany 10 h</th><th scope="col">Zmiany 12 h</th></tr></thead>
+        <tbody>
+          {TABELA.map((t) => (
+            <tr><th scope="row">{t.nazwa}</th><td>{t.godziny} h</td><td>{komorka(t.godziny, 8)}</td><td>{komorka(t.godziny, 10)}</td><td>{komorka(t.godziny, 12)}</td></tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Zapis „13 i 4 h” oznacza 13 pełnych zmian i 4 h, które wykorzystasz jako część kolejnej zmiany.
+    </p>
+
+    <h2 id="zasady">Zasady urlopu w godzinach</h2>
+    <ul>
+      <li>Wymiar urlopu to 20 dni przy zatrudnieniu krótszym niż 10 lat i 26 dni przy co najmniej 10 latach (art. 154 § 1 Kodeksu pracy). Przy niepełnym etacie wymiar jest proporcjonalny, a niepełny dzień zaokrągla się w górę (art. 154 § 2). Ile dni Ci przysługuje, policzy <a href="/narzedzia/kalkulator-urlopu">kalkulator urlopu</a>.</li>
+      <li>Urlopu udziela się w dni, które są dla Ciebie dniami pracy według rozkładu, w wymiarze godzinowym odpowiadającym dobowemu wymiarowi czasu pracy w danym dniu (art. 154<sup>2</sup> § 1). Jeden dzień urlopu odpowiada 8 godzinom pracy (§ 2).</li>
+      <li>Gdy dobowa norma czasu pracy z odrębnych przepisów jest niższa niż 8 godzin, te zasady stosuje się odpowiednio (art. 154<sup>2</sup> § 3).</li>
+      <li>Urlop na część dnia pracy jest dopuszczalny tylko wtedy, gdy pozostała część urlopu jest niższa niż pełny dobowy wymiar czasu pracy w dniu, na który ma być udzielony (art. 154<sup>2</sup> § 4).</li>
+      <li>Na żądanie pracodawca udziela najwyżej 4 dni urlopu w roku kalendarzowym, w terminie wskazanym przez pracownika; żądanie zgłasza się najpóźniej w dniu rozpoczęcia urlopu (art. 167<sup>2</sup>). Limit obowiązuje łącznie u wszystkich kolejnych pracodawców w roku (art. 167<sup>3</sup>).</li>
+      <li>Termin 30 września następnego roku na zaległy urlop nie dotyczy części udzielanej na żądanie (art. 168).</li>
+      <li>Gdy urlop jest dzielony na części na wniosek pracownika, co najmniej jedna część powinna trwać nie mniej niż 14 kolejnych dni kalendarzowych (art. 162).</li>
+    </ul>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Urlop do wykorzystania przeliczamy na godziny: dni razy 8 h (albo razy niższa norma, np. 7 h) plus dodatkowe godziny. Plan sumujemy zmiana po zmianie
+      w kolejności wierszy. Zmiana jest w całości urlopem, dopóki zostaje co najmniej tyle godzin, ile ona trwa; resztę,
+      krótszą niż zmiana, pokazujemy jako część jednej zmiany, bo tylko wtedy przepis pozwala na urlop w części dnia
+      (art. 154<sup>2</sup> § 4). Pozostałe godziny pokazujemy w dniach po 8 h i w pełnych zmianach po 12 i 8 h z resztą.
+    </p>
+    <p>
+      Przy niższej dobowej normie przepis każe stosować zasady „odpowiednio” (art. 154<sup>2</sup> § 3) i nie podaje
+      liczby godzin. Odczytujemy go tak, że jeden dzień urlopu odpowiada tej niższej normie, np. 7 h.
+    </p>
+    <p>
+      Przepis o urlopie na żądanie mówi o 4 dniach urlopu (art. 167<sup>2</sup>) i nie rozstrzyga, czy dzień na żądanie
+      przy zmianie 12 h to 8 czy 12 godzin. Liczymy go jako jeden dzień pracy z grafiku, czyli całą zmianę, bo urlopu
+      udziela się w dni pracy w godzinach dobowego wymiaru czasu pracy (art. 154<sup>2</sup> § 1). Długość tej zmiany
+      bierzemy z pierwszego wypełnionego wiersza planu. Urlop na żądanie to część urlopu wypoczynkowego (art. 168),
+      więc te godziny pochodzą z tej samej puli.
+    </p>
+    <p>
+      Czy grafik mieści się w normach czasu pracy, sprawdzi <a href="/narzedzia/kontrola-grafiku">kontrola grafiku</a>,
+      a ile wyniesie wypłata za dni urlopu, <a href="/narzedzia/wynagrodzenie-za-urlop">kalkulator wynagrodzenia za urlop</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { opisWyniku, urlopGodzinowy, type DzienUrlopu, type Zmiana } from '../../lib/narzedzia/urlop-godzinowy';
+  import { wpisanaLiczba } from '../../lib/narzedzia/format';
+  import { typografia } from '../../lib/typografia.mjs';
+
+  const form = document.querySelector<HTMLFormElement>('[data-urlop-godzinowy]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const pisz = (k: string, tekst: string) => {
+      w(k).textContent = typografia(tekst);
+    };
+    const POLA = ['zostalo', 'opis', 'masz', 'plan', 'pokrycie', 'po12', 'po8', 'na-zadanie'];
+    const przelicz = () => {
+      let blad: string | null = null;
+      const plan: Zmiana[] = [];
+      for (let i = 1; i <= 3; i++) {
+        const dl = el(`dlugosc${i}`).value.trim();
+        const ile = el(`liczba${i}`).value.trim();
+        if (!dl && !ile) continue;
+        if (!dl || !ile) blad ??= `Zmiana ${i}: uzupełnij długość i liczbę zmian.`;
+        else plan.push({ dlugosc: wpisanaLiczba(dl), liczba: wpisanaLiczba(ile) });
+      }
+      const dniTekst = el('dni').value.trim();
+      if (!dniTekst) blad ??= 'Wpisz liczbę dni urlopu do wykorzystania.';
+      let r: ReturnType<typeof urlopGodzinowy> | null = null;
+      if (!blad) {
+        try {
+          r = urlopGodzinowy({
+            dni: wpisanaLiczba(dniTekst),
+            godziny: wpisanaLiczba(el('godziny').value || '0'),
+            dzien: Number(el('dzien').value) as DzienUrlopu,
+            plan,
+            naZadanieWykorzystane: wpisanaLiczba(el('zadanie').value || '0'),
+          });
+        } catch (e) {
+          if (!(e instanceof RangeError)) throw e;
+          blad = e.message;
+        }
+      }
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      b.hidden = !blad;
+      b.textContent = blad ? typografia(blad) : '';
+      if (!r) {
+        w('zostalo').textContent = '—';
+        for (const k of POLA.slice(1)) w(k).textContent = '';
+        return;
+      }
+      const o = opisWyniku(r);
+      pisz('zostalo', o.zostalo);
+      pisz('opis', o.opis);
+      pisz('masz', o.masz);
+      pisz('plan', o.plan);
+      pisz('pokrycie', o.pokrycie);
+      pisz('po12', o.po12);
+      pisz('po8', o.po8);
+      pisz('na-zadanie', o.naZadanie);
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>

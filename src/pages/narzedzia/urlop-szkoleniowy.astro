@@ -1,0 +1,224 @@
+---
+// Urlop szkoleniowy i zwolnienia na naukę (art. 103^1–103^4 i 103^6 Kp): ile dni i godzin urlopu szkoleniowego,
+// jakie inne uprawnienia. Zwrot kosztów (art. 103^5) liczy zwrot-kosztow-szkolenia. Logika:
+// src/lib/narzedzia/urlop-szkoleniowy.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { EGZAMINY, NAZWA, WYMIAR, urlopSzkoleniowy, type Egzamin } from '../../lib/narzedzia/urlop-szkoleniowy';
+import { godz } from '../../lib/narzedzia/format';
+import { odmiana } from '../../lib/redakcja';
+
+const D = { zaZgoda: true, egzaminy: ['zawodowy'] as Egzamin[], zmiana: 12 };
+const r = urlopSzkoleniowy(D);
+const DNI: [string, string, string] = ['dzień', 'dni', 'dni'];
+const ETYKIETA: Record<Egzamin, string> = {
+  eksternistyczny: 'Egzamin eksternistyczny',
+  maturalny: 'Egzamin maturalny',
+  zawodowy: 'Egzamin zawodowy (kwalifikacje w zawodzie)',
+  studia: 'Ostatni rok studiów (praca i egzamin dyplomowy)',
+};
+const ZMIANY = [8, 10, 12];
+const pozycje = r.pozycje.map((p) => `${NAZWA[p.egzamin]}: ${odmiana(p.dni, DNI)}`).join('; ');
+
+const faq = [
+  {
+    pytanie: 'Ile dni urlopu szkoleniowego na studia?',
+    odpowiedz: `${WYMIAR.studia} dni w ostatnim roku studiów, na przygotowanie pracy dyplomowej oraz przygotowanie się i przystąpienie do egzaminu dyplomowego (art. 103^2 § 1 pkt 4 Kodeksu pracy). We wcześniejszych latach przepis nie daje dni urlopu szkoleniowego, ale przysługuje zwolnienie z całości lub części dnia pracy na dojazd na obowiązkowe zajęcia i na czas ich trwania (art. 103^1 § 2 pkt 2). Oba uprawnienia dotyczą nauki z inicjatywy pracodawcy albo za jego zgodą (art. 103^1 § 1).`,
+  },
+  {
+    pytanie: 'Czy urlop szkoleniowy jest płatny?',
+    odpowiedz: 'Tak. Za czas urlopu szkoleniowego oraz zwolnienia z całości lub części dnia pracy zachowujesz prawo do wynagrodzenia (art. 103^1 § 3 Kodeksu pracy). Opłaty za naukę, przejazd, podręczniki i zakwaterowanie pracodawca może pokryć, ale przepis go do tego nie zobowiązuje (art. 103^3).',
+  },
+  {
+    pytanie: 'Czy urlop szkoleniowy przysługuje bez zgody pracodawcy?',
+    odpowiedz: 'Nie. Urlop szkoleniowy i płatne zwolnienie na zajęcia przysługują przy podnoszeniu kwalifikacji, czyli nauce z inicjatywy pracodawcy albo za jego zgodą (art. 103^1 § 1–2 Kodeksu pracy). Przy nauce na innych zasadach mogą Ci być przyznane zwolnienie z całości lub części dnia pracy bez wynagrodzenia i urlop bezpłatny, w wymiarze ustalonym w porozumieniu z pracodawcą (art. 103^6).',
+  },
+  {
+    pytanie: 'Ile godzin urlopu szkoleniowego przy zmianach 12 godzin?',
+    odpowiedz: `Urlopu szkoleniowego udziela się w dni, które są dla Ciebie dniami pracy według rozkładu czasu pracy (art. 103^2 § 2 Kodeksu pracy). Przepis nie przelicza tych dni na 8 godzin, jak robi to art. 154^2 § 2 przy urlopie wypoczynkowym. Według brzmienia 6 dni to 6 zmian, czyli ${6 * 12} godzin, a ${WYMIAR.studia} dni w ostatnim roku studiów to ${WYMIAR.studia * 12} godzin.`,
+  },
+  {
+    pytanie: 'Czy na studia podyplomowe albo kurs przysługuje urlop szkoleniowy?',
+    odpowiedz: 'Art. 103^2 § 1 Kodeksu pracy wymienia tylko egzaminy eksternistyczne, egzamin maturalny, egzamin potwierdzający kwalifikacje w zawodzie lub egzamin zawodowy oraz ostatni rok studiów. Kursów tam nie ma, a przepis nie rozstrzyga wprost, czy ostatni rok studiów obejmuje studia podyplomowe. Przy nauce za zgodą pracodawcy zostaje zwolnienie z pracy na obowiązkowe zajęcia z zachowaniem wynagrodzenia (art. 103^1 § 2 pkt 2 i § 3).',
+  },
+  {
+    pytanie: 'Czy pracodawca musi podpisać ze mną umowę o podnoszenie kwalifikacji?',
+    odpowiedz: 'Pracodawca zawiera z Tobą umowę na piśmie, która nie może być mniej korzystna niż przepisy Kodeksu pracy o podnoszeniu kwalifikacji (art. 103^4 § 1–2). Nie ma obowiązku jej zawarcia, jeżeli pracodawca nie zamierza zobowiązać Cię do pozostania w pracy po nauce (art. 103^4 § 3). Urlop szkoleniowy i zwolnienie na zajęcia wynikają z przepisu, nie z umowy (art. 103^1 § 2).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="urlop-szkoleniowy"
+  tytul="Urlop szkoleniowy: ile dni i godzin na naukę"
+  opis="Ile dni urlopu szkoleniowego masz przed maturą, egzaminem zawodowym i w ostatnim roku studiów, ile to godzin przy Twojej zmianie i co bez zgody pracodawcy."
+  h1="Urlop szkoleniowy i zwolnienia na naukę"
+  lead="Uczysz się za zgodą pracodawcy? Zaznacz, co zdajesz w tym roku, i wpisz długość zmiany, a policzymy dni i godziny urlopu szkoleniowego oraz pokażemy, co jeszcze Ci przysługuje."
+  faq={faq}
+>
+  <form class="kalkulator" data-szkoleniowy novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twoja nauka</h2>
+      <fieldset class="mt-4">
+        <legend class="etykieta-pola">Uczysz się za zgodą albo z inicjatywy pracodawcy?</legend>
+        <div class="przelacznik mt-2">
+          <label for="s-zgoda-tak"><input id="s-zgoda-tak" type="radio" name="zgoda" value="tak" checked /> Tak</label>
+          <label for="s-zgoda-nie"><input id="s-zgoda-nie" type="radio" name="zgoda" value="nie" /> Nie</label>
+        </div>
+      </fieldset>
+
+      <fieldset class="mt-5">
+        <legend class="etykieta-pola">W tym roku</legend>
+        {EGZAMINY.map((e) => (
+          <label for={`s-${e}`} class="mt-3 flex items-start gap-3 text-[0.9375rem]">
+            <input id={`s-${e}`} type="checkbox" name="egzamin" value={e} checked={D.egzaminy.includes(e)} class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+            <span>{ETYKIETA[e]}: {WYMIAR[e]} dni</span>
+          </label>
+        ))}
+      </fieldset>
+
+      <fieldset class="mt-5">
+        <legend class="etykieta-pola">Długość Twojej zmiany</legend>
+        <div class="przelacznik mt-2">
+          {ZMIANY.map((h) => (
+            <label for={`s-zmiana-${h}`}><input id={`s-zmiana-${h}`} type="radio" name="zmiana" value={h} checked={h === D.zmiana} /> {h} h</label>
+          ))}
+          <label for="s-zmiana-inna"><input id="s-zmiana-inna" type="radio" name="zmiana" value="inna" /> Inna</label>
+        </div>
+        <div class="mt-3" data-inna hidden>
+          <label for="s-inna" class="meta">Godziny na zmianie</label>
+          <input id="s-inna" name="inna" class="pole mt-1 max-w-40" type="text" inputmode="decimal" autocomplete="off" value="7,5" aria-describedby="s-blad" />
+        </div>
+      </fieldset>
+      <p id="s-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Urlop szkoleniowy w tym roku</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-kwota" data-w="dni">{odmiana(r.dni, DNI)}</p>
+        <p class="meta" data-w="opis">{godz(r.godziny)} przy zmianie {godz(D.zmiana)}: każdy dzień urlopu to cała zmiana z grafiku</p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Z czego</dt><dd data-w="pozycje">{pozycje}</dd></div>
+        <div><dt>Wynagrodzenie</dt><dd data-w="placa">zachowujesz prawo do wynagrodzenia</dd></div>
+      </dl>
+      <div data-gdy="tak">
+        <p class="etykieta mt-4">Przysługuje Ci też</p>
+        <ul class="wynik-uwaga">
+          <li>zwolnienie z całości lub części dnia pracy na dojazd na obowiązkowe zajęcia i na czas ich trwania, z zachowaniem wynagrodzenia (art. 103<sup>1</sup> § 2 pkt 2 i § 3);</li>
+          <li>umowa na piśmie, nie mniej korzystna niż przepisy; pracodawca nie musi jej zawierać, gdy nie zobowiązuje Cię do pozostania w pracy (art. 103<sup>4</sup>);</li>
+          <li>pracodawca może pokryć opłaty za naukę, przejazd, podręczniki i zakwaterowanie (art. 103<sup>3</sup>).</li>
+        </ul>
+      </div>
+      <div data-gdy="nie" hidden>
+        <p class="etykieta mt-4">Bez zgody pracodawcy</p>
+        <ul class="wynik-uwaga">
+          <li>urlop szkoleniowy i płatne zwolnienie na zajęcia nie przysługują (art. 103<sup>1</sup> § 1–2);</li>
+          <li>mogą Ci być przyznane zwolnienie z całości lub części dnia pracy bez wynagrodzenia i urlop bezpłatny, w wymiarze ustalonym w porozumieniu z pracodawcą (art. 103<sup>6</sup>).</li>
+        </ul>
+      </div>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="zasady">Co przysługuje przy nauce</h2>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Uprawnienia pracownika przy nauce za zgodą pracodawcy i bez niej</caption>
+        <thead><tr><th scope="col">Uprawnienie</th><th scope="col">Za zgodą albo z inicjatywy pracodawcy</th><th scope="col">Na innych zasadach</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Urlop szkoleniowy</th><td>6 dni do egzaminu, 21 dni w ostatnim roku studiów (art. 103<sup>2</sup> § 1)</td><td>nie</td></tr>
+          <tr><th scope="row">Zwolnienie na zajęcia</th><td>z wynagrodzeniem (art. 103<sup>1</sup> § 2 pkt 2 i § 3)</td><td>bez wynagrodzenia, jeśli zostanie przyznane (art. 103<sup>6</sup> pkt 1)</td></tr>
+          <tr><th scope="row">Urlop bezpłatny</th><td>nie ma go w art. 103<sup>1</sup>–103<sup>5</sup></td><td>jeśli zostanie przyznany (art. 103<sup>6</sup> pkt 2)</td></tr>
+          <tr><th scope="row">Opłaty za naukę, przejazd, podręczniki</th><td>pracodawca może je pokryć (art. 103<sup>3</sup>)</td><td>nie ma ich w art. 103<sup>6</sup></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Podnoszenie kwalifikacji to zdobywanie lub uzupełnianie wiedzy i umiejętności z inicjatywy pracodawcy albo za jego
+      zgodą (art. 103<sup>1</sup> § 1 Kodeksu pracy). Wymiar urlopu przy nauce na innych zasadach ustala porozumienie
+      z pracodawcą (art. 103<sup>6</sup>). Kiedy trzeba oddać pracodawcy koszty dodatkowych świadczeń na naukę
+      (art. 103<sup>5</sup>), policzy <a href="/narzedzia/zwrot-kosztow-szkolenia">kalkulator lojalki</a>.
+    </p>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Dni bierzemy z art. 103<sup>2</sup> § 1: po 6 dni do egzaminów eksternistycznych, do matury i do egzaminu
+      potwierdzającego kwalifikacje w zawodzie lub egzaminu zawodowego oraz 21 dni w ostatnim roku studiów. Gdy w jednym
+      roku zaznaczysz dwie pozycje, na przykład maturę i egzamin zawodowy, dodajemy dni: każdy punkt przepisu przyznaje
+      urlop „dla pracownika przystępującego do” danego egzaminu, ale przepis nie mówi o sumowaniu wprost.
+    </p>
+    <p>
+      Urlopu szkoleniowego udziela się w dni, które są dla Ciebie dniami pracy zgodnie z rozkładem czasu pracy
+      (art. 103<sup>2</sup> § 2). W odróżnieniu od urlopu wypoczynkowego, gdzie dzień urlopu odpowiada 8 godzinom pracy
+      (art. 154<sup>2</sup> § 2), ten przepis nie przelicza dni na godziny. Odczytujemy go więc tak, że dzień urlopu
+      szkoleniowego to cała zmiana z Twojego grafiku: godziny to dni razy długość zmiany, przy 12 godzinach 6 dni to
+      72 godziny, a nie 48. Ile dni urlopu wypoczynkowego Ci przysługuje, policzy
+      <a href="/narzedzia/kalkulator-urlopu">kalkulator urlopu</a>.
+    </p>
+    <p>
+      Przepis nie mówi, kiedy urlop szkoleniowy wziąć, na przykład czy bezpośrednio przed egzaminem, więc narzędzie tego
+      nie ustala. Nie liczy też czasu zwolnień na zajęcia, bo zależy od planu zajęć i dojazdu (art. 103<sup>1</sup> § 2
+      pkt 2).
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { NAZWA, urlopSzkoleniowy, type Egzamin } from '../../lib/narzedzia/urlop-szkoleniowy';
+  import { godz, wpisanaLiczba } from '../../lib/narzedzia/format';
+  import { odmiana } from '../../lib/redakcja';
+  import { typografia } from '../../lib/typografia.mjs';
+
+  const form = document.querySelector<HTMLFormElement>('[data-szkoleniowy]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const pisz = (k: string, tekst: string) => {
+      w(k).textContent = typografia(tekst);
+    };
+    const wybrane = (n: string) => form.querySelector<HTMLInputElement>(`input[name="${n}"]:checked`)?.value ?? '';
+    const przelicz = () => {
+      const zaZgoda = wybrane('zgoda') !== 'nie';
+      const egzaminy = [...form.querySelectorAll<HTMLInputElement>('input[name="egzamin"]:checked')].map((x) => x.value as Egzamin);
+      const tryb = wybrane('zmiana');
+      form.querySelector<HTMLElement>('[data-inna]')!.hidden = tryb !== 'inna';
+      const inna = form.querySelector<HTMLInputElement>('[name="inna"]')!;
+      const zmiana = tryb === 'inna' ? wpisanaLiczba(inna.value) : Number(tryb);
+      let blad: string | null = null;
+      if (!Number.isFinite(zmiana)) blad = 'Wpisz długość zmiany w godzinach, np. 7,5.';
+      else if (zmiana <= 0) blad = 'Zmiana musi trwać więcej niż 0 godzin.';
+      else if (zmiana > 24) blad = 'Zmiana nie może trwać dłużej niż 24 godziny.';
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      b.hidden = !blad;
+      b.textContent = blad ?? '';
+      inna.setAttribute('aria-invalid', String(!!blad));
+      for (const el of form.querySelectorAll<HTMLElement>('[data-gdy]')) el.hidden = el.dataset.gdy !== (zaZgoda ? 'tak' : 'nie');
+      if (blad) {
+        w('dni').textContent = '—';
+        w('opis').textContent = '';
+        w('pozycje').textContent = '—';
+        return;
+      }
+      const r = urlopSzkoleniowy({ zaZgoda, egzaminy, zmiana });
+      pisz('dni', odmiana(r.dni, ['dzień', 'dni', 'dni']));
+      if (!zaZgoda) {
+        pisz('opis', 'Urlop szkoleniowy przysługuje tylko przy nauce z inicjatywy albo za zgodą pracodawcy');
+        pisz('pozycje', 'nie dotyczy');
+        pisz('placa', 'zwolnienie bez wynagrodzenia i urlop bezpłatny, jeśli je uzgodnisz');
+        return;
+      }
+      pisz('placa', 'zachowujesz prawo do wynagrodzenia');
+      if (!r.dni) {
+        pisz('opis', 'Bez egzaminu z listy nie ma dni urlopu szkoleniowego, ale zostaje płatne zwolnienie na zajęcia');
+        pisz('pozycje', 'nic nie zaznaczono');
+        return;
+      }
+      pisz('opis', `${godz(r.godziny)} przy zmianie ${godz(zmiana)}: każdy dzień urlopu to cała zmiana z grafiku`);
+      pisz('pozycje', r.pozycje.map((p) => `${NAZWA[p.egzamin]}: ${odmiana(p.dni, ['dzień', 'dni', 'dni'])}`).join('; '));
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>
