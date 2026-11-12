@@ -121,7 +121,7 @@ export const AKTY = {
   rynekPracy: {
     nazwa: 'Ustawa o rynku pracy i służbach zatrudnienia',
     publikator: 'Dz.U. 2025 poz. 620',
-    uwaga: 'późniejsze zmiany nie dotyczą art. 259–261 (składka na Fundusz Pracy)',
+    uwaga: 'późniejsze zmiany (do Dz.U. 2026 poz. 1123) nie dotyczą art. 218–237 (zasiłek) ani art. 259–261 (składka na Fundusz Pracy)',
     adres: eli(2025, 620),
     sprawdzono: '2026-11-12',
   },
@@ -215,6 +215,13 @@ export const AKTY = {
     uwaga: '8903,56 zł',
     adres: 'https://eli.gov.pl/eli/MP/2026/192/ogl',
     sprawdzono: '2026-11-11',
+  },
+  zasilekBezrobotni2026: {
+    nazwa: 'Obwieszczenie Ministra Rodziny, Pracy i Polityki Społecznej w sprawie wysokości zasiłku dla bezrobotnych',
+    publikator: 'M.P. 2026 poz. 268',
+    uwaga: 'od 1 czerwca 2026 r.: 1783,90 zł w pierwszych 90 dniach, potem 1400,90 zł; poprzednio M.P. 2025 poz. 510',
+    adres: 'https://eli.gov.pl/eli/MP/2026/268/ogl',
+    sprawdzono: '2026-11-12',
   },
   recznePrace: {
     nazwa: 'Rozporządzenie w sprawie bezpieczeństwa i higieny pracy przy ręcznych pracach transportowych',

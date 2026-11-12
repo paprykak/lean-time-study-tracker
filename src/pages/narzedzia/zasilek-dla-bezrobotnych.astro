@@ -1,0 +1,220 @@
+---
+// Zasiłek dla bezrobotnych: prawo, kwota brutto i na rękę, okresy wypłaty, karencja po porozumieniu stron.
+// Logika i podstawy prawne: src/lib/narzedzia/zasilek-bezrobotny.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { zl } from '../../lib/narzedzia/format';
+import { dataPoPolsku, dzisWPolsce } from '../../lib/narzedzia/terminy';
+import { KWOTY_ZASILKU, kwotyNa, naReke, zasilekDlaBezrobotnych } from '../../lib/narzedzia/zasilek-bezrobotny';
+
+const dzis = dzisWPolsce();
+const k = kwotyNa(dzis) ?? KWOTY_ZASILKU[KWOTY_ZASILKU.length - 1];
+const rejestracja = kwotyNa(dzis) ? dzis : k.od;
+const r = zasilekDlaBezrobotnych({ rejestracja, staz365: true, staz20: false, okres365: false, koniec: 'pracodawca' });
+const wyzsza = naReke(k.pierwsze90);
+const nizsza = naReke(k.potem);
+const od = dataPoPolsku(k.od);
+const procent120 = (x: number) => Math.round(x * 120) / 100;
+
+const faq = [
+  {
+    pytanie: 'Ile wynosi zasiłek dla bezrobotnych?',
+    odpowiedz: `Od ${od}: ${zl(k.pierwsze90)} brutto miesięcznie przez pierwsze 90 dni i ${zl(k.potem)} brutto przez kolejne dni (obwieszczenie ministra, ${k.zrodlo}). Na rękę to około ${zl(wyzsza.netto)} i ${zl(nizsza.netto)}: urząd pracy potrąca 9% składki zdrowotnej i 12% zaliczki na podatek. Przy co najmniej 20 latach stażu zasiłek wynosi 120%: ${zl(procent120(k.pierwsze90))} i ${zl(procent120(k.potem))} brutto.`,
+  },
+  {
+    pytanie: 'Komu przysługuje zasiłek dla bezrobotnych?',
+    odpowiedz: 'Osobie zarejestrowanej jako bezrobotna, która w 18 miesiącach przed rejestracją przez łącznie co najmniej 365 dni pracowała albo opłacała składki od co najmniej płacy minimalnej, na przykład na umowie o pracę, zleceniu albo we własnej firmie (art. 218 ust. 1 ustawy o rynku pracy i służbach zatrudnienia). Zasiłek przysługuje od dnia rejestracji w urzędzie pracy.',
+  },
+  {
+    pytanie: 'Czy po porozumieniu stron dostanę zasiłek?',
+    odpowiedz: 'Tak, ale gdy porozumienie nie wynikało z upadłości, likwidacji pracodawcy, zmniejszenia zatrudnienia z przyczyn zakładu ani zmiany miejsca zamieszkania, zasiłek przysługuje dopiero po 90 dniach od rejestracji (art. 220 ust. 1 pkt 5 i ust. 2 pkt 3), a okres jego pobierania skraca się o te 90 dni (art. 225 ust. 3).',
+  },
+  {
+    pytanie: 'Czy po złożeniu wypowiedzenia przysługuje zasiłek?',
+    odpowiedz: 'Nie, jeśli to Ty rozwiązujesz ostatnią umowę za wypowiedzeniem. Wyjątki: zmiana miejsca zamieszkania i rozwiązanie umowy bez wypowiedzenia z winy pracodawcy albo z powodu szkodliwego wpływu pracy na zdrowie (art. 55 § 1 i 1¹ Kodeksu pracy). Zasiłku nie ma też po zwolnieniu dyscyplinarnym z Twojej winy (art. 219 ust. 1). Zakaz nie działa, gdy ostatnia praca nie jest podstawą prawa do zasiłku (art. 219 ust. 2).',
+  },
+  {
+    pytanie: 'Jak długo wypłacany jest zasiłek dla bezrobotnych?',
+    odpowiedz: '180 dni. 365 dni przysługuje osobom z niepełnosprawnością, z Kartą Dużej Rodziny, po 50. roku życia z co najmniej 20 latami stażu, samotnie wychowującym dziecko do 18 lat oraz rodzicom dziecka do 18 lat, gdy małżonek też jest bezrobotny i stracił zasiłek po upływie okresu jego pobierania (art. 225 ust. 1).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="zasilek-dla-bezrobotnych"
+  tytul="Zasiłek dla bezrobotnych: ile na rękę i jak długo"
+  opis={`Zasiłek dla bezrobotnych od ${od}: ${zl(k.pierwsze90)} i ${zl(k.potem)} brutto. Sprawdź, czy Ci przysługuje, ile dostaniesz na rękę, od kiedy i do kiedy, także po porozumieniu stron.`}
+  h1="Zasiłek dla bezrobotnych: ile i jak długo"
+  lead="Wpisz datę rejestracji w urzędzie pracy i zaznacz swoją sytuację. Policzymy, czy przysługuje Ci zasiłek, od kiedy do kiedy i ile dostaniesz miesięcznie brutto i na rękę."
+  faq={faq}
+>
+  <form class="kalkulator" data-bezrobotny novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twoja sytuacja</h2>
+      <div class="mt-4">
+        <label for="b-data" class="etykieta-pola">Data rejestracji w urzędzie pracy</label>
+        <input id="b-data" name="rejestracja" type="date" class="pole mt-1 max-w-56" min={KWOTY_ZASILKU[0].od} value={rejestracja} aria-describedby="b-blad" />
+        <p id="b-blad" class="blad-pola" data-blad="data" hidden></p>
+      </div>
+      <div class="mt-4">
+        <label for="b-koniec" class="etykieta-pola">Jak skończyła się ostatnia praca</label>
+        <select id="b-koniec" name="koniec" class="pole mt-1">
+          <option value="pracodawca" selected>Wypowiedzenie od pracodawcy, koniec umowy</option>
+          <option value="porozumienie-zaklad">Porozumienie: przyczyny zakładu, przeprowadzka</option>
+          <option value="porozumienie">Porozumienie z innego powodu</option>
+          <option value="wypowiedzenie-wlasne">Moje wypowiedzenie</option>
+          <option value="dyscyplinarka">Dyscyplinarka z mojej winy</option>
+        </select>
+        <p class="meta mt-1">Przyczyny zakładu to upadłość, likwidacja albo zmniejszenie zatrudnienia. Własne wypowiedzenie z powodu przeprowadzki i rozwiązanie umowy z art. 55 Kodeksu pracy (z winy pracodawcy albo ze względu na zdrowie) wybierz jak wypowiedzenie od pracodawcy (art. 219 ust. 1 pkt 1).</p>
+      </div>
+      <label class="mt-4 flex items-start gap-3 text-[0.9375rem]">
+        <input type="checkbox" name="staz365" checked class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+        <span>W 18 miesiącach przed rejestracją mam co najmniej 365 dni pracy od płacy minimalnej (etat, zlecenie, własna firma)</span>
+      </label>
+      <label class="mt-3 flex items-start gap-3 text-[0.9375rem]">
+        <input type="checkbox" name="staz20" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+        <span>Mam co najmniej 20 lat stażu pracy (zasiłek 120%)</span>
+      </label>
+      <label class="mt-3 flex items-start gap-3 text-[0.9375rem]">
+        <input type="checkbox" name="okres365" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+        <span>Należę do grupy z zasiłkiem na 365 dni (lista pod kalkulatorem)</span>
+      </label>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta" data-w="naglowek">Na rękę miesięcznie, pierwsze 90 dni</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-kwota"><span data-w="kwota">{zl(wyzsza.netto)}</span></p>
+        <p class="meta" data-w="podpis">{zl(k.pierwsze90)} brutto</p>
+      </div>
+      <dl class="wynik-lista" data-w="szczegoly">
+        <div><dt>Zasiłek od</dt><dd data-w="od">{r.prawo ? dataPoPolsku(r.wyplataOd) : '—'}</dd></div>
+        <div><dt>Ostatni dzień zasiłku</dt><dd data-w="do">{r.prawo ? dataPoPolsku(r.koniec) : '—'}</dd></div>
+        <div><dt>Dni z zasiłkiem</dt><dd data-w="dni">{r.prawo ? `${r.dniWyplaty} dni` : '—'}</dd></div>
+      </dl>
+      <h3 class="etykieta mt-5">Miesięcznie w kolejnych okresach</h3>
+      <ul class="mt-2 grid gap-2 text-[0.9375rem]" data-w="odcinki">
+        {r.prawo && r.odcinki.map((o) => <li>{dataPoPolsku(o.od)} – {dataPoPolsku(o.do)}: {o.brutto === null ? 'kwota po waloryzacji z 1 czerwca, jeszcze nieogłoszona' : `${zl(o.brutto)} brutto, ${zl(o.netto!)} na rękę`}</li>)}
+      </ul>
+      <p class="wynik-uwaga" data-w="uwaga" hidden></p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Kwoty i zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="kwoty">Kwoty zasiłku</h2>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Zasiłek dla bezrobotnych brutto i na rękę</caption>
+        <thead><tr><th scope="col">Okres</th><th scope="col">Brutto</th><th scope="col">Na rękę</th><th scope="col">Przy 20 latach stażu (120%)</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Pierwsze 90 dni</th><td>{zl(k.pierwsze90)}</td><td>{zl(wyzsza.netto)}</td><td>{zl(procent120(k.pierwsze90))} brutto, {zl(naReke(procent120(k.pierwsze90)).netto)} na rękę</td></tr>
+          <tr><th scope="row">Kolejne dni</th><td>{zl(k.potem)}</td><td>{zl(nizsza.netto)}</td><td>{zl(procent120(k.potem))} brutto, {zl(naReke(procent120(k.potem)).netto)} na rękę</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Kwoty obowiązują od {od} ({k.zrodlo}); co roku 1 czerwca rosną o średnioroczną inflację z poprzedniego roku (art. 228
+      ustawy o rynku pracy i służbach zatrudnienia). Zasiłek za niepełny miesiąc to 1/30 kwoty za każdy dzień (art. 237
+      ust. 1). Urząd pracy potrąca składkę zdrowotną 9% (art. 79 ust. 1, art. 81 ust. 8 pkt 5 i art. 85 ust. 6 ustawy
+      o świadczeniach opieki zdrowotnej) i zaliczkę na podatek 12% bez kwoty zmniejszającej (art. 35 ust. 1 pkt 5 i ust. 4
+      ustawy o PIT). Składki emerytalną i rentową płaci urząd z Funduszu Pracy (art. 16 ust. 9 ustawy o systemie ubezpieczeń
+      społecznych), więc nie zmniejszają wypłaty. W zeznaniu rocznym podatek liczy się od wszystkich dochodów według skali,
+      z kwotą zmniejszającą, więc przy niskich dochodach w roku część zaliczek może wrócić.
+    </p>
+
+    <h2 id="365-dni">Kto dostaje zasiłek przez 365 dni</h2>
+    <ul>
+      <li>osoby z niepełnosprawnością;</li>
+      <li>członkowie rodzin z Kartą Dużej Rodziny;</li>
+      <li>osoby po 50. roku życia z co najmniej 20 latami stażu;</li>
+      <li>osoby samotnie wychowujące dziecko do 18 lat (dziecko z niepełnosprawnością uczące się: do 24 lat);</li>
+      <li>rodzice dziecka do 18 lat, gdy małżonek też jest bezrobotny i stracił prawo do zasiłku po upływie okresu jego pobierania.</li>
+    </ul>
+    <p>Podstawa: art. 225 ust. 1 pkt 2. Pozostałe osoby dostają zasiłek przez 180 dni.</p>
+
+    <h2 id="kiedy">Od kiedy zasiłek</h2>
+    <p>
+      Zasiłek przysługuje za każdy dzień od rejestracji w urzędzie pracy (art. 218 ust. 1), wypłacany co miesiąc z dołu,
+      najpóźniej 14 dni po okresie, za który się należy (art. 237). Po porozumieniu stron z innych przyczyn niż upadłość,
+      likwidacja, zmniejszenie zatrudnienia albo przeprowadzka zasiłek przysługuje po 90 dniach od rejestracji, a okres
+      pobierania skraca się o te dni (art. 220 ust. 1 pkt 5, ust. 2 pkt 3 i art. 225 ust. 3). Kwotę wyższą liczymy wtedy za
+      pierwsze 90 dni wypłaty, bo przepis mówi o „pierwszych 90 dniach posiadania prawa do zasiłku” (art. 224 ust. 1);
+      decyzję wydaje urząd pracy. Gdy pracodawca wypłacił odszkodowanie za skrócenie okresu wypowiedzenia, zasiłek
+      przysługuje po okresie, za który je wypłacono (art. 220 ust. 1 pkt 1 i ust. 2 pkt 1); kalkulator tego nie liczy.
+      Odprawę z pracy policzy <a href="/narzedzia/kalkulator-odprawy">kalkulator odprawy</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { zl } from '../../lib/narzedzia/format';
+  import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { KWOTY_ZASILKU, kwotyNa, zasilekDlaBezrobotnych, type KoniecPracy } from '../../lib/narzedzia/zasilek-bezrobotny';
+
+  const POWODY = {
+    staz: 'Zasiłek wymaga co najmniej 365 dni pracy od płacy minimalnej w 18 miesiącach przed rejestracją (art. 218 ust. 1). Do tych dni wlicza się też m.in. urlop wychowawczy i zasiłek chorobowy po ustaniu pracy (art. 218 ust. 2). Rejestracja w urzędzie pracy daje jednak ubezpieczenie zdrowotne, jeśli nie masz go z innego tytułu (art. 66 ust. 1 pkt 24 ustawy o świadczeniach opieki zdrowotnej).',
+    'wypowiedzenie-wlasne': 'Po własnym wypowiedzeniu zasiłek nie przysługuje, chyba że powodem była zmiana miejsca zamieszkania albo umowa została rozwiązana z art. 55 § 1 lub 1¹ Kodeksu pracy (art. 219 ust. 1 pkt 1). Zakaz nie działa, gdy ostatnia praca nie jest podstawą prawa do zasiłku (art. 219 ust. 2).',
+    dyscyplinarka: 'Po rozwiązaniu umowy bez wypowiedzenia z Twojej winy zasiłek nie przysługuje (art. 219 ust. 1 pkt 2), chyba że ostatnia praca nie jest podstawą prawa do zasiłku (art. 219 ust. 2).',
+  } as const;
+
+  const form = document.querySelector<HTMLFormElement>('[data-bezrobotny]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const przelicz = () => {
+      const rejestracja = el('rejestracja').value;
+      const b = form.querySelector<HTMLElement>('[data-blad="data"]')!;
+      let blad: string | null = null;
+      if (!poprawnaData(rejestracja)) blad = 'Wpisz datę rejestracji.';
+      else if (rejestracja < KWOTY_ZASILKU[0].od) blad = 'Kalkulator liczy zasiłek według ustawy w mocy od 1 czerwca 2025 r.';
+      else if (!kwotyNa(rejestracja)) blad = 'Kwoty zasiłku na ten dzień nie są jeszcze ogłoszone (waloryzacja co roku od 1 czerwca).';
+      b.hidden = !blad;
+      b.textContent = blad ?? '';
+      const uwaga = w('uwaga');
+      if (blad) {
+        w('kwota').textContent = '—';
+        w('podpis').textContent = '';
+        w('odcinki').replaceChildren();
+        return;
+      }
+      const r = zasilekDlaBezrobotnych({
+        rejestracja,
+        staz365: el('staz365').checked,
+        staz20: el('staz20').checked,
+        okres365: el('okres365').checked,
+        koniec: el('koniec').value as KoniecPracy,
+      });
+      if (!r.prawo) {
+        w('naglowek').textContent = 'Zasiłek';
+        w('kwota').textContent = 'nie przysługuje';
+        w('podpis').textContent = '';
+        for (const k of ['od', 'do', 'dni']) w(k).textContent = '—';
+        w('odcinki').replaceChildren();
+        uwaga.hidden = false;
+        uwaga.textContent = POWODY[r.powod];
+        return;
+      }
+      const pierwszy = r.odcinki[0];
+      w('naglowek').textContent = 'Na rękę miesięcznie, pierwsze 90 dni';
+      w('kwota').textContent = pierwszy.netto === null ? '—' : zl(pierwszy.netto);
+      w('podpis').textContent = pierwszy.brutto === null ? '' : `${zl(pierwszy.brutto)} brutto${r.procent === 120 ? ' (120%)' : ''}`;
+      w('od').textContent = dataPoPolsku(r.wyplataOd);
+      w('do').textContent = dataPoPolsku(r.koniec);
+      w('dni').textContent = `${r.dniWyplaty} dni`;
+      w('odcinki').replaceChildren(
+        ...r.odcinki.map((o) =>
+          Object.assign(document.createElement('li'), {
+            textContent: `${dataPoPolsku(o.od)} – ${dataPoPolsku(o.do)}: ${o.brutto === null ? 'kwota po waloryzacji z 1 czerwca, jeszcze nieogłoszona' : `${zl(o.brutto)} brutto, ${zl(o.netto!)} na rękę`}`,
+          }),
+        ),
+      );
+      uwaga.hidden = !r.karencja;
+      uwaga.textContent = r.karencja
+        ? 'Po porozumieniu stron z innego powodu niż likwidacja, upadłość, redukcja albo przeprowadzka zasiłek przysługuje po 90 dniach od rejestracji, a okres pobierania jest krótszy o te dni (art. 220 i art. 225 ust. 3).'
+        : '';
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>

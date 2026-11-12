@@ -257,6 +257,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-11',
   },
   {
+    slug: 'zasilek-dla-bezrobotnych',
+    nazwa: 'Zasiłek dla bezrobotnych',
+    krotko: 'Czy przysługuje Ci zasiłek, ile na rękę, od kiedy i do kiedy, także po porozumieniu stron.',
+    kategoria: 'umowa',
+    przepisy: ['rynekPracy', 'zasilekBezrobotni2026', 'swiadczeniaZdrowotne', 'pit', 'systemUbezpieczen'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'okres-wypowiedzenia',
     nazwa: 'Okres wypowiedzenia',
     krotko: 'Ile trwa wypowiedzenie i który dzień jest ostatnim dniem umowy: 2 tygodnie, miesiąc albo 3 miesiące.',
