@@ -1,0 +1,141 @@
+---
+// Terminy odwołania do sądu pracy (art. 264 Kp) i sprostowania świadectwa pracy (art. 97 § 2^1), z przesunięciem
+// z sobót i dni wolnych (art. 115 KC). Logika: src/lib/narzedzia/termin-odwolania.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { SPRAWY, terminCzynnosci, type Sprawa } from '../../lib/narzedzia/termin-odwolania';
+import { dataPoPolsku, dniMiedzy, dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+const dzis = dzisWPolsce();
+const SPRAWA: Sprawa = 'wypowiedzenie';
+const t = terminCzynnosci(dzis, SPRAWA);
+
+const faq = [
+  {
+    pytanie: 'Ile jest czasu na odwołanie od wypowiedzenia do sądu pracy?',
+    odpowiedz: '21 dni od dnia doręczenia pisma z wypowiedzeniem (art. 264 § 1 Kodeksu pracy). Tyle samo przy zwolnieniu dyscyplinarnym i innym rozwiązaniu umowy bez wypowiedzenia, liczone od doręczenia zawiadomienia, oraz przy wygaśnięciu umowy, liczone od dnia wygaśnięcia (art. 264 § 2).',
+  },
+  {
+    pytanie: 'Jak liczyć 21 dni na odwołanie?',
+    odpowiedz: 'Dnia doręczenia nie wlicza się (art. 111 § 2 Kodeksu cywilnego), więc przy doręczeniu w czwartek termin kończy się w czwartek za trzy tygodnie. Gdy ostatni dzień wypada w sobotę, niedzielę albo święto, termin kończy się w najbliższy dzień roboczy (art. 115 Kodeksu cywilnego).',
+  },
+  {
+    pytanie: 'Czy wystarczy nadać odwołanie na poczcie w ostatnim dniu?',
+    odpowiedz: 'Tak, jeśli nadajesz je w placówce operatora pocztowego świadczącego usługi powszechne: oddanie tam pisma jest równoznaczne z wniesieniem go do sądu (art. 165 § 2 Kodeksu postępowania cywilnego). Nadanie u kuriera nie ma takiego skutku.',
+  },
+  {
+    pytanie: 'Co, gdy termin minął?',
+    odpowiedz: 'Gdy termin minął bez Twojej winy, na przykład z powodu choroby, możesz złożyć do sądu pracy wniosek o przywrócenie terminu w ciągu 7 dni od ustania przyczyny i uprawdopodobnić te okoliczności (art. 265 Kodeksu pracy).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="odwolanie-do-sadu-pracy"
+  tytul="Odwołanie od wypowiedzenia: termin 21 dni do sądu pracy"
+  opis="Policz ostatni dzień na odwołanie od wypowiedzenia albo dyscyplinarki do sądu pracy (21 dni) i na sprostowanie świadectwa pracy (14 dni), z przesunięciem z soboty i świąt."
+  h1="Odwołanie do sądu pracy: do kiedy"
+  lead="Na odwołanie od wypowiedzenia albo zwolnienia dyscyplinarnego jest 21 dni. Wybierz sprawę i wpisz dzień doręczenia pisma, a policzymy ostatni dzień na złożenie odwołania."
+  faq={faq}
+>
+  <form class="kalkulator" data-odwolanie novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twoja sprawa</h2>
+      <div class="mt-4">
+        <label for="o-sprawa" class="etykieta-pola">Sprawa</label>
+        <select id="o-sprawa" name="sprawa" class="pole mt-1">
+          {Object.entries(SPRAWY).map(([k, s]) => <option value={k} selected={k === SPRAWA}>{s.nazwa}</option>)}
+        </select>
+      </div>
+      <div class="mt-4">
+        <label for="o-data" class="etykieta-pola" data-w="etykieta-daty">{SPRAWY[SPRAWA].zdarzenie}</label>
+        <input id="o-data" name="data" type="date" class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" value={dzis} aria-describedby="o-blad" />
+        <p id="o-blad" class="blad-pola" data-blad="data" hidden></p>
+      </div>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Ostatni dzień</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-data" data-w="koniec">{dataPoPolsku(t.koniec)}</p>
+        <p class="status-terminu" data-w="status" data-status="w-terminie">Zostało {dniMiedzy(dzis, t.koniec)} dni</p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Gdzie złożyć</dt><dd data-w="gdzie">{SPRAWY[SPRAWA].gdzie}</dd></div>
+        <div><dt>Termin</dt><dd data-w="termin">{SPRAWY[SPRAWA].dni} dni ({SPRAWY[SPRAWA].przepis})</dd></div>
+        <div><dt>Przesunięcie</dt><dd data-w="przesuniecie">{t.przesuniecie.length ? t.przesuniecie.map((p) => p.powod).join(', ') : 'brak'}</dd></div>
+      </dl>
+      <p class="wynik-uwaga">Gdy pismo nie zostało odebrane do rąk własnych, na przykład zostało awizowane, dzień doręczenia może być inny. W razie wątpliwości złóż odwołanie wcześniej albo zapytaj prawnika lub Państwową Inspekcję Pracy.</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="terminy">Terminy w sporze z pracodawcą</h2>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Terminy odwołania i sprostowania świadectwa pracy</caption>
+        <thead><tr><th scope="col">Sprawa</th><th scope="col">Termin</th><th scope="col">Od kiedy</th><th scope="col">Przepis</th></tr></thead>
+        <tbody>
+          {Object.values(SPRAWY).map((s) => <tr><th scope="row">{s.nazwa}</th><td>{s.dni} dni</td><td>{s.zdarzenie.replace('Dzień ', 'od dnia ').replace('albo wygaśnięcia', 'albo od wygaśnięcia')}</td><td>{s.przepis}</td></tr>)}
+          <tr><th scope="row">Przywrócenie terminu</th><td>7 dni</td><td>od ustania przyczyny spóźnienia</td><td>art. 265 § 2 Kodeksu pracy</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Dnia, w którym doręczono pismo, nie wliczamy (art. 111 § 2 Kodeksu cywilnego). Gdy ostatni dzień wypada w sobotę
+      albo dzień ustawowo wolny od pracy, termin upływa w najbliższym dniu, który nie jest sobotą ani dniem wolnym (art. 115
+      Kodeksu cywilnego). Przepisy Kodeksu cywilnego stosuje się w sprawach pracowniczych przez art. 300 Kodeksu pracy,
+      a w postępowaniu sądowym przez art. 165 § 1 Kodeksu postępowania cywilnego. Pismo do sądu można nadać w placówce
+      operatora pocztowego świadczącego usługi powszechne: liczy się dzień nadania (art. 165 § 2 Kodeksu postępowania
+      cywilnego). Gdy pracodawca nie zawiadomi o odmowie sprostowania świadectwa pracy, żądanie sprostowania wnosi się do
+      sądu pracy (art. 97 § 2¹ zdanie trzecie Kodeksu pracy). Ile trwa okres wypowiedzenia, policzy <a href="/narzedzia/okres-wypowiedzenia">kalkulator okresu wypowiedzenia</a>,
+      a czy zasiłek przysługuje po zwolnieniu, <a href="/narzedzia/zasilek-dla-bezrobotnych">kalkulator zasiłku dla bezrobotnych</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { SPRAWY, terminCzynnosci, type Sprawa } from '../../lib/narzedzia/termin-odwolania';
+  import { dataPoPolsku, dniMiedzy, dzisWPolsce, poprawnaData } from '../../lib/narzedzia/terminy';
+
+  const form = document.querySelector<HTMLFormElement>('[data-odwolanie]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const przelicz = () => {
+      const sprawa = el('sprawa').value as Sprawa;
+      const s = SPRAWY[sprawa];
+      w('etykieta-daty').textContent = s.zdarzenie;
+      const data = el('data').value;
+      const blad = poprawnaData(data) ? null : 'Wpisz datę.';
+      const b = form.querySelector<HTMLElement>('[data-blad="data"]')!;
+      b.hidden = !blad;
+      b.textContent = blad ?? '';
+      const status = w('status');
+      if (blad) {
+        w('koniec').textContent = '—';
+        status.hidden = true;
+        return;
+      }
+      const t = terminCzynnosci(data, sprawa);
+      const zostalo = dniMiedzy(dzisWPolsce(), t.koniec);
+      w('koniec').textContent = dataPoPolsku(t.koniec);
+      w('gdzie').textContent = s.gdzie;
+      w('termin').textContent = `${s.dni} dni (${s.przepis})`;
+      w('przesuniecie').textContent = t.przesuniecie.length ? `z ${dataPoPolsku(t.pierwotny)}: ${t.przesuniecie.map((p) => p.powod).join(', ')}` : 'brak';
+      status.hidden = false;
+      status.dataset.status = zostalo < 0 ? 'po-terminie' : zostalo <= 3 ? 'wkrotce' : 'w-terminie';
+      status.textContent =
+        zostalo < 0
+          ? 'Termin minął: możliwy tylko wniosek o przywrócenie terminu (art. 265 Kodeksu pracy)'
+          : zostalo === 0
+            ? 'To dziś: złóż albo nadaj pismo dzisiaj'
+            : `Zostało ${zostalo} ${zostalo === 1 ? 'dzień' : 'dni'}`;
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>

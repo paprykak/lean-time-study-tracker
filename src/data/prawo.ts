@@ -44,7 +44,7 @@ export const AKTY = {
   kodeksCywilny: {
     nazwa: 'Kodeks cywilny',
     publikator: 'Dz.U. 2026 poz. 795',
-    uwaga: 'tekst jednolity; art. 112: terminy w miesiącach i latach',
+    uwaga: 'tekst jednolity; art. 111–115: terminy w dniach, miesiącach i latach, koniec w sobotę lub dzień wolny',
     adres: eli(2026, 795),
     sprawdzono: '2026-11-11',
   },
@@ -221,6 +221,13 @@ export const AKTY = {
     publikator: 'M.P. 2026 poz. 292',
     uwaga: 'od 1 kwietnia 2026 r. do 31 marca 2027 r.: 1781 zł za 1% uszczerbku; poprzednio M.P. 2025 poz. 222 (1636 zł)',
     adres: 'https://eli.gov.pl/eli/MP/2026/292/ogl',
+    sprawdzono: '2026-11-12',
+  },
+  kpc: {
+    nazwa: 'Kodeks postępowania cywilnego',
+    publikator: 'Dz.U. 2026 poz. 468',
+    uwaga: 'tekst jednolity; art. 165 § 1–2: terminy według prawa cywilnego, nadanie w placówce operatora świadczącego pocztowe usługi powszechne',
+    adres: eli(2026, 468),
     sprawdzono: '2026-11-12',
   },
   emerytury: {

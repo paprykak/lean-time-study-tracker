@@ -297,6 +297,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-12',
   },
   {
+    slug: 'odwolanie-do-sadu-pracy',
+    nazwa: 'Odwołanie do sądu pracy: termin',
+    krotko: 'Ostatni dzień na odwołanie od wypowiedzenia lub dyscyplinarki (21 dni) i sprostowanie świadectwa pracy.',
+    kategoria: 'umowa',
+    przepisy: ['kodeksPracy', 'kodeksCywilny', 'kpc', 'dniWolne'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'okres-wypowiedzenia',
     nazwa: 'Okres wypowiedzenia',
     krotko: 'Ile trwa wypowiedzenie i który dzień jest ostatnim dniem umowy: 2 tygodnie, miesiąc albo 3 miesiące.',
