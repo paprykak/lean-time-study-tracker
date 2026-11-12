@@ -201,6 +201,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-12',
   },
   {
+    slug: 'zasilek-opiekunczy',
+    nazwa: 'Zasiłek opiekuńczy',
+    krotko: 'Ile za opiekę nad chorym dzieckiem albo członkiem rodziny: 80% podstawy, limity 60, 30 i 14 dni w roku.',
+    kategoria: 'wynagrodzenie',
+    przepisy: ['zasilkowa', 'systemUbezpieczen', 'minimalneWynagrodzenie', 'placa2025', 'placa2026', 'placa2027'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'kontrola-grafiku',
     nazwa: 'Kontrola grafiku zmian',
     krotko: 'Sprawdź grafik 12 h albo trzyzmianowy: odpoczynek 11 i 35 h, wolne niedziele, dni wolne, godziny a wymiar.',

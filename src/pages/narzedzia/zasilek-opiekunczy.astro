@@ -1,0 +1,168 @@
+---
+// Zasiłek opiekuńczy (art. 32–35 i 47 ustawy zasiłkowej). Logika: src/lib/narzedzia/opiekunczy.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { LATA } from '../../data/prawo';
+import { LIMITY_OPIEKI, LIMIT_LACZNY, zasilekOpiekunczy, type RodzajOpieki } from '../../lib/narzedzia/opiekunczy';
+import { zl } from '../../lib/narzedzia/format';
+import { dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+const rokBiezacy = Number(dzisWPolsce().slice(0, 4));
+const rok = LATA.includes(rokBiezacy) ? rokBiezacy : LATA[LATA.length - 1];
+const start = zasilekOpiekunczy({ rok, brutto: 6000, rodzaj: 'dziecko', dni: 5 });
+
+const faq = [
+  {
+    pytanie: 'Ile wynosi zasiłek opiekuńczy?',
+    odpowiedz: '80% podstawy wymiaru, czyli przeciętnego wynagrodzenia z 12 miesięcy po odjęciu składek pracownika, za każdy dzień opieki, także wolny od pracy (art. 35 ust. 1 i 2 oraz art. 47 ustawy zasiłkowej).',
+  },
+  {
+    pytanie: 'Ile dni opieki na dziecko w roku?',
+    odpowiedz: 'Na chore dziecko do 14 lat albo na zdrowe dziecko do 8 lat, gdy nieprzewidzianie zamknięto żłobek, przedszkole lub szkołę, zachorowała niania albo rodzic stale opiekujący się dzieckiem jest w szpitalu lub rodzi: 60 dni w roku. Na dziecko z orzeczeniem do 18 lat 30 dni, na innego chorego członka rodziny 14 dni, łącznie najwyżej 60 dni (art. 33 ustawy zasiłkowej).',
+  },
+  {
+    pytanie: 'Czy oboje rodzice mają po 60 dni?',
+    odpowiedz: 'Nie. Limity obowiązują bez względu na liczbę osób uprawnionych do zasiłku i liczbę dzieci (art. 33 ust. 3), więc 60 dni w roku przypada łącznie na rodziców. Mogą je dzielić między siebie.',
+  },
+  {
+    pytanie: 'Kiedy zasiłek opiekuńczy nie przysługuje?',
+    odpowiedz: 'Gdy poza pracownikiem są inni członkowie rodziny we wspólnym gospodarstwie domowym, którzy mogą zapewnić opiekę. Nie dotyczy to opieki nad chorym dzieckiem do 2 lat (art. 34 ustawy zasiłkowej).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="zasilek-opiekunczy"
+  tytul="Zasiłek opiekuńczy: ile za opiekę nad chorym dzieckiem"
+  opis="Policz zasiłek opiekuńczy: 80% podstawy za dzień opieki nad chorym dzieckiem do 14 lat, dzieckiem do 8 lat przy zamkniętym przedszkolu albo chorym członkiem rodziny. Limity 60, 30 i 14 dni."
+  h1="Zasiłek opiekuńczy: kalkulator"
+  lead="Gdy opiekujesz się chorym dzieckiem albo członkiem rodziny, ZUS albo pracodawca płaci zasiłek opiekuńczy: 80% podstawy za każdy dzień. Na dziecko przysługuje do 60 dni w roku, na innego członka rodziny do 14 dni. Wpisz wynagrodzenie i liczbę dni."
+  faq={faq}
+>
+  <form class="kalkulator" data-opiekunczy novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twoja opieka</h2>
+      <div class="mt-4">
+        <label for="o-brutto" class="etykieta-pola">Przeciętne wynagrodzenie brutto z 12 miesięcy (zł)</label>
+        <input id="o-brutto" name="brutto" class="pole mt-1 max-w-48" type="text" inputmode="decimal" autocomplete="off" value="6000" aria-describedby="o-blad" />
+      </div>
+      <div class="mt-4">
+        <label for="o-rodzaj" class="etykieta-pola">Nad kim opieka</label>
+        <select id="o-rodzaj" name="rodzaj" class="pole mt-1">
+          {(Object.keys(LIMITY_OPIEKI) as RodzajOpieki[]).map((r) => <option value={r}>{LIMITY_OPIEKI[r].nazwa} ({LIMITY_OPIEKI[r].dni} dni)</option>)}
+        </select>
+      </div>
+      <div class="mt-4 grid gap-4 sm:grid-cols-3">
+        <div>
+          <label for="o-dni" class="etykieta-pola">Dni opieki</label>
+          <input id="o-dni" name="dni" class="pole mt-1" type="text" inputmode="numeric" autocomplete="off" value="5" aria-describedby="o-blad" />
+        </div>
+        <div>
+          <label for="o-ten" class="etykieta-pola">Wcześniej w roku: ten rodzaj</label>
+          <input id="o-ten" name="ten" class="pole mt-1" type="text" inputmode="numeric" autocomplete="off" value="0" aria-describedby="o-blad" />
+        </div>
+        <div>
+          <label for="o-lacznie" class="etykieta-pola">Wcześniej w roku: łącznie</label>
+          <input id="o-lacznie" name="lacznie" class="pole mt-1" type="text" inputmode="numeric" autocomplete="off" value="0" aria-describedby="o-lacznie-opis o-blad" />
+        </div>
+      </div>
+      <p id="o-lacznie-opis" class="meta mt-1">Dni zasiłku opiekuńczego w tym roku w całej rodzinie, także drugiego rodzica.</p>
+      <div class="mt-4 grid grid-cols-2 gap-4">
+        <div>
+          <label for="o-rok" class="etykieta-pola">Rok</label>
+          <select id="o-rok" name="rok" class="pole mt-1">
+            {LATA.map((r) => <option value={r} selected={r === rok}>{r}</option>)}
+          </select>
+        </div>
+      </div>
+      <label class="mt-4 flex items-start gap-3 text-[0.9375rem]">
+        <input type="checkbox" name="pelnyEtat" checked class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+        <span>Pracuję na pełny etat (minimum podstawy z płacy minimalnej)</span>
+      </label>
+      <p id="o-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Zasiłek opiekuńczy (brutto)</h2>
+      <p class="wynik-kwota" aria-live="polite" aria-atomic="true"><span data-w="kwota">{zl(start.kwota)}</span></p>
+      <dl class="wynik-lista">
+        <div><dt>Za jeden dzień (80%)</dt><dd data-w="za-dzien">{zl(start.zaDzien)}</dd></div>
+        <div><dt>Dni płatne</dt><dd data-w="dni">{start.dniPlatne}</dd></div>
+        <div><dt>Zostało do limitu przed tą opieką</dt><dd data-w="pozostalo">{start.pozostalo} dni</dd></div>
+        <div><dt>Podstawa miesięczna</dt><dd data-w="podstawa">{zl(start.podstawa)}</dd></div>
+      </dl>
+      <p class="wynik-uwaga" data-w="uwaga" hidden></p>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="limity">Limity zasiłku opiekuńczego w roku</h2>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Limity dni zasiłku opiekuńczego w roku kalendarzowym</caption>
+        <thead><tr><th scope="col">Opieka nad</th><th scope="col">Dni w roku</th></tr></thead>
+        <tbody>
+          {(Object.keys(LIMITY_OPIEKI) as RodzajOpieki[]).map((r) => <tr><th scope="row">{LIMITY_OPIEKI[r].nazwa}</th><td>{LIMITY_OPIEKI[r].dni}</td></tr>)}
+          <tr><th scope="row">łącznie na wszystkie rodzaje opieki</th><td>{LIMIT_LACZNY} (30, gdy opieka dotyczy tylko dziecka z orzeczeniem i innych członków rodziny)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Limity z art. 33 ustawy zasiłkowej obowiązują w roku kalendarzowym, bez względu na liczbę uprawnionych i liczbę
+      dzieci. Zasiłek wynosi 80% podstawy (art. 35 ust. 1), a podstawę liczy się jak przy zasiłku chorobowym: z przeciętnego
+      wynagrodzenia z 12 miesięcy po odjęciu 13,71% składek pracownika, przy pełnym etacie nie mniej niż od płacy
+      minimalnej (art. 36, 45 i 47). Zasiłek przysługuje za każdy dzień, także wolny od pracy (art. 35 ust. 2 w związku
+      z art. 11 ust. 4). Policz też <a href="/narzedzia/wolne-na-dziecko">2 dni wolnego na dziecko z art. 188 Kodeksu pracy</a>,
+      płatne w 100%.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { zasilekOpiekunczy, type RodzajOpieki } from '../../lib/narzedzia/opiekunczy';
+  import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
+
+  const form = document.querySelector<HTMLFormElement>('[data-opiekunczy]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const calk = (n: string) => wpisanaLiczba(el(n).value || '0');
+    const przelicz = () => {
+      const brutto = calk('brutto');
+      const dni = calk('dni');
+      const ten = calk('ten');
+      const lacznie = calk('lacznie');
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      const blad =
+        !(brutto > 0) ? 'Wpisz przeciętne wynagrodzenie brutto, na przykład 6000.'
+        : !(Number.isInteger(dni) && dni >= 1 && dni <= 366) ? 'Wpisz liczbę dni opieki, na przykład 5.'
+        : !(Number.isInteger(ten) && ten >= 0 && Number.isInteger(lacznie) && lacznie >= 0) ? 'Wcześniejsze dni: liczby całkowite od 0.'
+        : null;
+      b.hidden = !blad;
+      b.textContent = blad ?? '';
+      if (blad) {
+        w('kwota').textContent = '—';
+        return;
+      }
+      const r = zasilekOpiekunczy({
+        rok: Number(el('rok').value),
+        brutto,
+        pelnyEtat: el('pelnyEtat').checked,
+        rodzaj: el('rodzaj').value as RodzajOpieki,
+        dni,
+        wykorzystaneTenRodzaj: ten,
+        wykorzystaneLacznie: lacznie,
+      });
+      w('kwota').textContent = zl(r.kwota);
+      w('za-dzien').textContent = zl(r.zaDzien);
+      w('dni').textContent = String(r.dniPlatne);
+      w('pozostalo').textContent = `${r.pozostalo} dni`;
+      w('podstawa').textContent = zl(r.podstawa);
+      const uwaga = r.dniPonadLimit > 0 ? `Za ${r.dniPonadLimit} dni ponad roczny limit zasiłek nie przysługuje (art. 33 ustawy zasiłkowej).` : null;
+      w('uwaga').hidden = !uwaga;
+      w('uwaga').textContent = uwaga ?? '';
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>

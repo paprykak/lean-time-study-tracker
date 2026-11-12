@@ -25,6 +25,15 @@ export const okresZasilkowy = (powod: Powod) => (powod === 'ciaza' ? 270 : 182);
 /** Najniższa podstawa przy pełnym etacie (art. 45 ust. 1). */
 export const minimalnaPodstawa = (rok: number) => doGrosza(PLACA_MINIMALNA[rok].miesiecznie * (1 - SKLADKI_PRACOWNIKA / 100));
 
+/** Podstawa zasiłku pracownika (art. 36 i 45; dla zasiłku opiekuńczego przez art. 47): brutto minus 13,71%, nie mniej niż minimum przy pełnym etacie. */
+export function podstawaZasilku(rok: number, brutto: number, pelnyEtat = true) {
+  if (!PLACA_MINIMALNA[rok]) throw new RangeError(`Brak płacy minimalnej na ${rok} r.`);
+  if (!(brutto > 0)) throw new RangeError('Wynagrodzenie musi być dodatnie');
+  const wyliczona = doGrosza(brutto * (1 - SKLADKI_PRACOWNIKA / 100));
+  const podstawa = Math.max(wyliczona, pelnyEtat ? minimalnaPodstawa(rok) : 0);
+  return { podstawa, podniesiona: podstawa > wyliczona };
+}
+
 export interface DaneChorobowego {
   rok: number;
   /** Przeciętne miesięczne wynagrodzenie brutto (przychód oskładkowany) z 12 miesięcy. */
@@ -42,13 +51,9 @@ export interface DaneChorobowego {
 export function chorobowe(d: DaneChorobowego) {
   const powod = d.powod ?? 'choroba';
   const wykorzystane = d.wykorzystane ?? 0;
-  if (!PLACA_MINIMALNA[d.rok]) throw new RangeError(`Brak płacy minimalnej na ${d.rok} r.`);
-  if (!(d.brutto > 0)) throw new RangeError('Wynagrodzenie musi być dodatnie');
   if (!(Number.isInteger(d.dni) && d.dni >= 1 && d.dni <= okresZasilkowy(powod))) throw new RangeError('Dni od 1 do końca okresu zasiłkowego');
   if (!(Number.isInteger(wykorzystane) && wykorzystane >= 0 && wykorzystane <= 366)) throw new RangeError('Wykorzystane dni od 0 do 366');
-  const wyliczona = doGrosza(d.brutto * (1 - SKLADKI_PRACOWNIKA / 100));
-  const minimum = d.pelnyEtat === false ? 0 : minimalnaPodstawa(d.rok);
-  const podstawa = Math.max(wyliczona, minimum);
+  const { podstawa, podniesiona } = podstawaZasilku(d.rok, d.brutto, d.pelnyEtat !== false);
   const procent = POWODY[powod].procent;
   const zaDzien = doGrosza((podstawa / 30) * (procent / 100));
   const limitPracodawcy = d.po50 ? 14 : 33;
@@ -56,7 +61,7 @@ export function chorobowe(d: DaneChorobowego) {
   const dniZus = d.dni - dniPracodawca;
   return {
     podstawa,
-    podstawaPodniesiona: podstawa > wyliczona,
+    podstawaPodniesiona: podniesiona,
     procent,
     zaDzien,
     limitPracodawcy,
