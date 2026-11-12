@@ -617,6 +617,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-12',
   },
   {
+    slug: 'dorabianie-do-renty',
+    nazwa: 'Dorabianie do renty i emerytury',
+    krotko: 'Ile zarobić bez zmniejszenia renty albo wcześniejszej emerytury, o ile ZUS ją zmniejszy i kiedy zawiesi.',
+    kategoria: 'wynagrodzenie',
+    przepisy: ['emerytury', 'dorabianieProgi2026', 'dorabianieZmniejszenia2026'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'przerwy-w-pracy',
     nazwa: 'Przerwy w pracy',
     krotko: 'Ile przerw przy zmianie 8 i 12 godzin, które są płatne, przy monitorze, na karmienie, dla młodocianych.',

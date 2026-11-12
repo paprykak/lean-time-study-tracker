@@ -1,0 +1,207 @@
+---
+// Dorabianie do renty i emerytury (art. 103, 103a, 104, 127 i 138 ustawy o emeryturach i rentach z FUS, Dz.U. 2025
+// poz. 1749; kwoty z komunikatów Prezesa ZUS). Logika: src/lib/narzedzia/dorabianie.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { MAKS_ZMNIEJSZENIA, PROGI_PRZYCHODU, dorabianie, maksZmniejszenie, okresNaDzien, okresyProgow, progiNaDzien } from '../../lib/narzedzia/dorabianie';
+import { zl } from '../../lib/narzedzia/format';
+import { dataPoPolsku, dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+const okres = okresNaDzien(dzisWPolsce());
+const progi = progiNaDzien(okres)!;
+const maks = MAKS_ZMNIEJSZENIA[MAKS_ZMNIEJSZENIA.length - 1];
+const start = dorabianie({ swiadczenie: 'renta-calkowita', przychod: 6800, data: okres });
+const maksStart = maksZmniejszenie('renta-calkowita', okres)!;
+
+const faq = [
+  {
+    pytanie: 'Ile można dorobić do renty bez zmniejszenia?',
+    odpowiedz: `Do 70% przeciętnego miesięcznego wynagrodzenia, które ZUS ogłasza co kwartał. Od ${dataPoPolsku(progi.od)} to ${zl(progi.p70)} brutto miesięcznie. Powyżej tej kwoty renta maleje, a powyżej ${zl(progi.p130)} jest zawieszona (art. 104 ust. 7–8 ustawy o emeryturach i rentach z FUS, ${progi.publikator}).`,
+  },
+  {
+    pytanie: 'Czy emeryt może dorabiać bez limitu?',
+    odpowiedz: 'Tak, po osiągnięciu wieku emerytalnego 60 lat (kobiety) albo 65 lat (mężczyźni): limity przychodu wtedy nie obowiązują (art. 103 ust. 2). Emerytura jest jednak zawieszona, gdy praca trwa dalej u tego samego pracodawcy bez rozwiązania umowy o pracę przed dniem nabycia prawa do emerytury (art. 103a). Osoba na emeryturze przed tym wiekiem, na przykład wcześniejszej, ma takie same limity jak rencista.',
+  },
+  {
+    pytanie: 'O ile ZUS zmniejszy rentę?',
+    odpowiedz: `O kwotę, o którą przychód przekroczył próg 70%, ale nie więcej niż o kwotę maksymalnego zmniejszenia. Od ${dataPoPolsku(maks.od)} to ${zl(maks.calkowita)} przy emeryturze i rencie z tytułu całkowitej niezdolności do pracy, ${zl(maks.czesciowa)} przy częściowej i ${zl(maks.rodzinna)} przy rencie rodzinnej dla jednej osoby (art. 104 ust. 8–9, ${maks.publikator}).`,
+  },
+  {
+    pytanie: 'Co liczy się do przychodu?',
+    odpowiedz: 'Przychód z zatrudnienia, innej pracy zarobkowej i działalności, które podlegają obowiązkowym ubezpieczeniom społecznym, także z pracy za granicą (art. 104 ust. 1–3), oraz z pracy bez składek z powodu ubezpieczenia z innego tytułu (ust. 4). Wlicza się też zasiłki chorobowy, macierzyński i opiekuńczy, wynagrodzenie za czas choroby, świadczenie rehabilitacyjne i dodatek wyrównawczy (ust. 6). Nie wlicza się honorariów za działalność twórczą i artystyczną (ust. 5).',
+  },
+  {
+    pytanie: 'Czy trzeba powiedzieć ZUS o dorabianiu?',
+    odpowiedz: 'Tak. Osoba na rencie albo emeryturze zawiadamia ZUS o podjęciu pracy i wysokości przychodu, a po roku o przychodzie z poprzedniego roku; ten sam obowiązek ma pracodawca i zleceniodawca (art. 127 ust. 1–2). Nie dotyczy to emerytów, którzy osiągnęli wiek 60 albo 65 lat przed podjęciem pracy (ust. 1a). Świadczenie wypłacone za dużo trzeba oddać: za najwyżej rok przed rokiem decyzji ZUS, gdy przychód zgłoszono, a w innych przypadkach za najwyżej 3 lata (art. 138 ust. 5).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="dorabianie-do-renty"
+  tytul="Ile można dorobić do renty i emerytury"
+  opis={`Limity dorabiania od ${dataPoPolsku(progi.od)}: ${zl(progi.p70)} bez zmniejszenia, ${zl(progi.p130)} do zawieszenia. O ile ZUS zmniejszy rentę i kto dorabia bez limitu.`}
+  h1="Ile można dorobić do renty i emerytury"
+  lead="Wybierz świadczenie i wpisz przychód brutto z miesiąca, a pokażemy, czy ZUS zostawi świadczenie bez zmian, zmniejszy je i o ile, czy je zawiesi."
+  faq={faq}
+>
+  <form class="kalkulator" data-dorabianie novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Świadczenie i przychód</h2>
+      <div class="mt-4">
+        <label for="d-swiadczenie" class="etykieta-pola">Świadczenie</label>
+        <select id="d-swiadczenie" name="swiadczenie" class="pole mt-1">
+          <option value="renta-calkowita" selected>Renta, całkowita niezdolność</option>
+          <option value="renta-czesciowa">Renta, częściowa niezdolność</option>
+          <option value="renta-rodzinna">Renta rodzinna, 1 osoba</option>
+          <option value="emerytura">Emerytura przed 60/65 lat</option>
+          <option value="emerytura-wiek">Emerytura od 60/65 lat</option>
+        </select>
+      </div>
+      <div class="mt-4 grid grid-cols-1 gap-4">
+        <div>
+          <label for="d-przychod" class="etykieta-pola">Przychód w miesiącu (zł brutto)</label>
+          <input id="d-przychod" name="przychod" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="6800" aria-describedby="d-blad" />
+        </div>
+        <div>
+          <label for="d-okres" class="etykieta-pola">Okres</label>
+          <select id="d-okres" name="okres" class="pole mt-1">
+            {okresyProgow().map((o) => <option value={o.od} selected={o.od === okres}>{o.nazwa}</option>)}
+          </select>
+        </div>
+      </div>
+      <p id="d-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Świadczenie w tym miesiącu</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-data" data-w="stan">Zmniejszenie o {zl(start.zmniejszenie)}</p>
+        <p class="meta" data-w="opis">przychód ponad próg 70%, najwyżej {zl(maksStart.kwota)}</p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Bez zmniejszenia do</dt><dd data-w="p70">{zl(progi.p70)}</dd></div>
+        <div><dt>Zawieszenie powyżej</dt><dd data-w="p130">{zl(progi.p130)}</dd></div>
+        <div><dt>Najwyższe zmniejszenie</dt><dd data-w="maks">{zl(maksStart.kwota)}</dd></div>
+        <div><dt>Do zawieszenia brakuje</dt><dd data-w="zapas">{zl(progi.p130 - 6800)}</dd></div>
+      </dl>
+      <p class="wynik-uwaga" data-w="uwaga">Wynik dotyczy jednego miesiąca. Ostatecznie rozlicza ZUS decyzją, także po roku.</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady i kwoty są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="zasady">Zasady dorabiania</h2>
+    <ul>
+      <li>Limity dotyczą rent z tytułu niezdolności do pracy, rent rodzinnych i emerytur osób, które nie osiągnęły wieku emerytalnego 60 lat (kobiety) albo 65 lat (mężczyźni) (art. 103 ust. 1–2 ustawy o emeryturach i rentach z FUS).</li>
+      <li>Po osiągnięciu tego wieku emerytura nie zależy od przychodu, ale jest zawieszona, gdy praca trwa dalej u tego samego pracodawcy bez rozwiązania umowy o pracę przed dniem nabycia prawa do emerytury (art. 103a).</li>
+      <li>Przychód do 70% przeciętnego miesięcznego wynagrodzenia z ostatniego ogłoszonego kwartału: świadczenie bez zmian. Powyżej 70%, do 130%: świadczenie maleje o kwotę przekroczenia, najwyżej o kwotę maksymalnego zmniejszenia. Powyżej 130%: prawo do świadczenia jest zawieszone (art. 104 ust. 7–8).</li>
+      <li>Kwoty przychodu ogłasza Prezes ZUS w Monitorze Polskim co kwartał, zaokrąglone w górę do 10 groszy (art. 104 ust. 10 pkt 1). Kwoty maksymalnych zmniejszeń rosną przy waloryzacji (ust. 9).</li>
+      <li>Do przychodu wlicza się zasiłki chorobowy, macierzyński i opiekuńczy, wynagrodzenie za czas choroby, świadczenie rehabilitacyjne i dodatek wyrównawczy (art. 104 ust. 6), nie wlicza honorariów za działalność twórczą i artystyczną (ust. 5).</li>
+      <li>O pracy i przychodzie trzeba zawiadomić ZUS; obowiązek ma też pracodawca i zleceniodawca (art. 127 ust. 1–2). Świadczenie wypłacone za dużo podlega zwrotowi za najwyżej rok przed rokiem decyzji ZUS, gdy przychód zgłoszono, a w innych przypadkach za najwyżej 3 lata (art. 138 ust. 5).</li>
+    </ul>
+
+    <h2 id="kwoty">Kwoty przychodu</h2>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Kwoty przychodu 70% i 130% przeciętnego wynagrodzenia według komunikatów Prezesa ZUS</caption>
+        <thead><tr><th scope="col">Od</th><th scope="col">70%</th><th scope="col">130%</th><th scope="col">Komunikat</th></tr></thead>
+        <tbody>
+          {[...PROGI_PRZYCHODU].reverse().map((p) => (
+            <tr><th scope="row">{dataPoPolsku(p.od)}</th><td>{zl(p.p70)}</td><td>{zl(p.p130)}</td><td>{p.publikator}</td></tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Maksymalne zmniejszenie od {dataPoPolsku(maks.od)} ({maks.publikator}): {zl(maks.calkowita)} przy emeryturze
+      i rencie z tytułu całkowitej niezdolności do pracy, {zl(maks.czesciowa)} przy częściowej niezdolności,
+      {zl(maks.rodzinna)} przy rencie rodzinnej dla jednej osoby.
+    </p>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Porównujemy przychód brutto z miesiąca z kwotami z wybranego okresu. Do progu 70% włącznie świadczenie jest bez
+      zmian. Powyżej niego, do progu 130% włącznie, zmniejszenie to przychód minus próg 70%, najwyżej kwota maksymalnego
+      zmniejszenia obowiązująca w pierwszym dniu okresu. Powyżej 130% prawo do świadczenia jest zawieszone. Ustawa nie
+      definiuje przychodu z pracy kwotowo (poza działalnością, art. 104 ust. 1a), więc przyjmujemy kwotę brutto, przed
+      składkami i podatkiem; w szczególnych przypadkach o kwocie decyduje ZUS.
+    </p>
+    <p>
+      Wynik dotyczy jednego miesiąca. Prezes ZUS ogłasza też kwoty graniczne przychodu za cały rok (art. 104 ust. 10
+      pkt 2), a zasady rozliczenia miesięcznego i rocznego określa rozporządzenie (art. 106), więc przy przychodzie
+      nierównym w ciągu roku ostateczna kwota wynika z rozliczenia ZUS. Nie liczymy renty rodzinnej dla kilku osób
+      (art. 105), świadczeń wypłacanych w części (art. 104 ust. 8a–8b) ani emerytur pomostowych i renty socjalnej, które
+      regulują osobne ustawy. Ile zostanie na rękę z pensji, policzy
+      <a href="/narzedzia/brutto-netto">kalkulator brutto–netto</a>, a do kiedy chroni Cię przed zwolnieniem wiek
+      bliski emerytalnemu, <a href="/narzedzia/ochrona-przedemerytalna">kalkulator ochrony przedemerytalnej</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { dorabianie, maksZmniejszenie, progiNaDzien, type Swiadczenie } from '../../lib/narzedzia/dorabianie';
+  import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
+  import { dataPoPolsku, dzisWPolsce } from '../../lib/narzedzia/terminy';
+  import { typografia } from '../../lib/typografia.mjs';
+
+  const form = document.querySelector<HTMLFormElement>('[data-dorabianie]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const pisz = (k: string, tekst: string) => {
+      w(k).textContent = typografia(tekst);
+    };
+    const przelicz = () => {
+      const wybor = el('swiadczenie').value;
+      const okres = el('okres').value;
+      const przychod = wpisanaLiczba(el('przychod').value);
+      const blad = !(przychod >= 0 && przychod < 10_000_000) ? 'Wpisz przychód brutto z miesiąca, na przykład 6800.' : null;
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      b.hidden = !blad;
+      b.textContent = blad ? typografia(blad) : '';
+      if (blad) {
+        for (const k of ['stan', 'p70', 'p130', 'maks', 'zapas']) w(k).textContent = '—';
+        w('opis').textContent = '';
+        w('uwaga').textContent = '';
+        return;
+      }
+      const swiadczenie = (wybor === 'emerytura-wiek' ? 'emerytura' : wybor) as Swiadczenie;
+      const r = dorabianie({ swiadczenie, przychod, data: okres, wiekEmerytalny: wybor === 'emerytura-wiek' });
+      const progi = progiNaDzien(okres)!;
+      const maks = maksZmniejszenie(swiadczenie, okres)!;
+      const uwagi: string[] = [];
+      if (r.stan === 'bez-limitu') {
+        pisz('stan', 'Bez limitu');
+        pisz('opis', 'po 60/65 latach przychód nie zmniejsza emerytury');
+        for (const k of ['p70', 'p130', 'maks', 'zapas']) pisz(k, 'nie dotyczy');
+        uwagi.push('Emerytura jest jednak zawieszona, gdy praca trwa dalej u tego samego pracodawcy bez rozwiązania umowy o pracę przed dniem nabycia prawa do emerytury (art. 103a).');
+      } else {
+        pisz('p70', zl(progi.p70));
+        pisz('p130', zl(progi.p130));
+        pisz('maks', zl(maks.kwota));
+        if (r.stan === 'bez-zmian') {
+          pisz('stan', 'Bez zmian');
+          pisz('opis', `możesz zarobić jeszcze ${zl(r.zapas ?? 0)} brutto bez zmniejszenia`);
+          pisz('zapas', zl(Math.round((progi.p130 - przychod) * 100) / 100));
+        } else if (r.stan === 'zmniejszenie') {
+          pisz('stan', `Zmniejszenie o ${zl(r.zmniejszenie)}`);
+          pisz('opis', r.zmniejszenie < maks.kwota ? 'o tyle przychód przekracza próg 70%' : 'przekroczenie jest większe, ale ZUS zmniejsza najwyżej o tę kwotę');
+          pisz('zapas', zl(Math.round((progi.p130 - przychod) * 100) / 100));
+        } else {
+          pisz('stan', 'Zawieszenie');
+          pisz('opis', 'przychód powyżej progu 130%: w tym miesiącu ZUS nie wypłaci świadczenia');
+          pisz('zapas', 'próg przekroczony');
+        }
+        if (wybor === 'emerytura') uwagi.push('Limity przestają obowiązywać po osiągnięciu 60 lat (kobiety) albo 65 lat (mężczyźni).');
+      }
+      uwagi.push('Wynik dotyczy jednego miesiąca. Ostatecznie rozlicza ZUS decyzją, także po roku.');
+      if (progiNaDzien(dzisWPolsce())?.mozeNieaktualne && okres === progiNaDzien(dzisWPolsce())?.od) {
+        uwagi.push(`Kwoty obowiązują od ${dataPoPolsku(okres)}; ZUS ogłasza nowe co kwartał, więc sprawdź, czy nie ma już nowszego komunikatu.`);
+      }
+      pisz('uwaga', uwagi.join(' '));
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>
