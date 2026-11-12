@@ -17,7 +17,7 @@ const faq = [
   },
   {
     pytanie: 'Ile wynosi okres wyczekiwania na umowie zlecenia?',
-    odpowiedz: `${DNI_WYCZEKIWANIA.dobrowolne} dni, bo zleceniobiorca podlega ubezpieczeniu chorobowemu dobrowolnie (art. 4 ust. 1 pkt 2 ustawy zasiłkowej, art. 11 ust. 2 ustawy o systemie ubezpieczeń społecznych). Bez zgłoszenia do dobrowolnego ubezpieczenia chorobowego zasiłku chorobowego nie ma w ogóle.`,
+    odpowiedz: `Co do zasady ${DNI_WYCZEKIWANIA.dobrowolne} dni, bo zleceniobiorca podlega ubezpieczeniu chorobowemu dobrowolnie (art. 4 ust. 1 pkt 2 ustawy zasiłkowej, art. 11 ust. 2 ustawy o systemie ubezpieczeń społecznych), a bez zgłoszenia do niego zasiłku chorobowego nie ma. Wyjątki: zlecenie u własnego pracodawcy traktuje się jak etat (art. 8 ust. 2a ustawy o systemie), więc obowiązuje ${DNI_WYCZEKIWANIA.obowiazkowe} dni, a po wypadku przy pracy zasiłek z ubezpieczenia wypadkowego należy się bez chorobowego i bez czekania (art. 8 ustawy wypadkowej).`,
   },
   {
     pytanie: 'Czy poprzednia praca skraca okres wyczekiwania?',
@@ -25,7 +25,7 @@ const faq = [
   },
   {
     pytanie: 'Kto ma zasiłek chorobowy od pierwszego dnia?',
-    odpowiedz: `Absolwent szkoły lub uczelni, który podjął ubezpieczenie w ciągu ${DNI_ABSOLWENTA} dni od jej ukończenia; osoba po wypadku w drodze do pracy lub z pracy; ubezpieczony obowiązkowo z wcześniejszym co najmniej 10-letnim okresem obowiązkowego ubezpieczenia chorobowego (art. 4 ust. 3 ustawy zasiłkowej). Po wypadku przy pracy albo przy chorobie zawodowej zasiłek z ubezpieczenia wypadkowego należy się bez okresu wyczekiwania (art. 8 ustawy wypadkowej).`,
+    odpowiedz: `Między innymi absolwent szkoły lub uczelni, który podjął ubezpieczenie w ciągu ${DNI_ABSOLWENTA} dni od jej ukończenia; osoba po wypadku w drodze do pracy lub z pracy; ubezpieczony obowiązkowo z wcześniejszym co najmniej 10-letnim okresem obowiązkowego ubezpieczenia chorobowego (art. 4 ust. 3 ustawy zasiłkowej). Po wypadku przy pracy albo przy chorobie zawodowej zasiłek z ubezpieczenia wypadkowego należy się bez okresu wyczekiwania (art. 8 ustawy wypadkowej).`,
   },
   {
     pytanie: 'Co, gdy L4 zaczęło się przed końcem okresu wyczekiwania?',
@@ -119,8 +119,8 @@ const faq = [
       <li>Umowa o pracę: ubezpieczenie chorobowe jest obowiązkowe, prawo do zasiłku po {DNI_WYCZEKIWANIA.obowiazkowe} dniach nieprzerwanego ubezpieczenia (art. 4 ust. 1 pkt 1 ustawy zasiłkowej, art. 11 ust. 1 ustawy o systemie ubezpieczeń społecznych).</li>
       <li>Zlecenie i działalność: chorobowe jest dobrowolne, prawo po {DNI_WYCZEKIWANIA.dobrowolne} dniach (art. 4 ust. 1 pkt 2 ustawy zasiłkowej, art. 11 ust. 2 ustawy o systemie). Zlecenie u własnego pracodawcy traktuje się jak pracę na etacie (art. 8 ust. 2a ustawy o systemie).</li>
       <li>Wcześniejsze okresy ubezpieczenia chorobowego wlicza się, gdy przerwa nie przekroczyła {MAKS_PRZERWA} dni albo wynikała z urlopu wychowawczego, bezpłatnego lub czynnej służby wojskowej (art. 4 ust. 2).</li>
-      <li>Od pierwszego dnia: absolwenci ubezpieczeni w ciągu {DNI_ABSOLWENTA} dni od ukończenia szkoły, uczelni lub szkoły doktorskiej, niezdolność po wypadku w drodze do pracy lub z pracy, ubezpieczeni obowiązkowo z wcześniejszymi co najmniej 10 latami obowiązkowego chorobowego (art. 4 ust. 3 pkt 1–3). Po wypadku przy pracy i przy chorobie zawodowej zasiłek z ubezpieczenia wypadkowego należy się od pierwszego dnia (art. 8 ust. 1–2 ustawy wypadkowej).</li>
-      <li>Wynagrodzenie chorobowe od pracodawcy nie przysługuje, gdy nie ma prawa do zasiłku (art. 92 § 3 pkt 2 Kodeksu pracy), więc okres wyczekiwania dotyczy też pierwszych 33 dni L4 w roku, płatnych przez pracodawcę.</li>
+      <li>Od pierwszego dnia: absolwenci ubezpieczeni w ciągu {DNI_ABSOLWENTA} dni od ukończenia szkoły, uczelni lub szkoły doktorskiej, niezdolność po wypadku w drodze do pracy lub z pracy, ubezpieczeni obowiązkowo z wcześniejszymi co najmniej 10 latami obowiązkowego chorobowego (art. 4 ust. 3 pkt 1–3; pkt 4–5 dotyczą posłów, senatorów i dawnych funkcjonariuszy Służby Celnej). Po wypadku przy pracy i przy chorobie zawodowej zasiłek z ubezpieczenia wypadkowego należy się od pierwszego dnia (art. 8 ust. 1–2 ustawy wypadkowej).</li>
+      <li>Wynagrodzenie chorobowe od pracodawcy nie przysługuje, gdy nie ma prawa do zasiłku (art. 92 § 3 pkt 2 Kodeksu pracy), więc okres wyczekiwania dotyczy też dni L4 płatnych przez pracodawcę: do 33 dni w roku, a po roku, w którym kończysz 50 lat, do 14 dni (art. 92 § 1 i 5).</li>
     </ul>
 
     <h2 id="jak-liczymy">Jak liczymy</h2>

@@ -23,15 +23,15 @@ const faq = [
   },
   {
     pytanie: 'Czy student na zleceniu dostanie zasiłek chorobowy?',
-    odpowiedz: 'Nie. Uczeń szkoły ponadpodstawowej albo student do 26 lat nie podlega ubezpieczeniom ze zlecenia (art. 6 ust. 4 ustawy o systemie ubezpieczeń społecznych), więc nie ma też chorobowego ani wypadkowego.',
+    odpowiedz: 'Nie. Uczeń szkoły ponadpodstawowej albo student do 26 lat nie podlega obowiązkowo emerytalnemu i rentowemu ze zlecenia (art. 6 ust. 4 ustawy o systemie ubezpieczeń społecznych), a chorobowe można mieć tylko przy tych obowiązkowych (art. 11 ust. 2). Nie podlega też obowiązkowo wypadkowemu (art. 12 ust. 1).',
   },
   {
     pytanie: 'A gdy mam etat i zlecenie?',
-    odpowiedz: 'Gdy zlecenie jest u Twojego pracodawcy, traktuje się je jak pracę na etacie (art. 8 ust. 2a ustawy o systemie ubezpieczeń społecznych) i zasiłek liczy się z obu umów, jak u pracownika. Gdy etat z pensją co najmniej minimalną masz gdzie indziej, emerytalne i rentowe ze zlecenia są dobrowolne (art. 9 ust. 1 i 1a), więc chorobowego ze zlecenia nie ma, a zasiłek należy się tylko z etatu.',
+    odpowiedz: 'Gdy zlecenie jest u Twojego pracodawcy, w ubezpieczeniach traktuje się je jak pracę na etacie (art. 8 ust. 2a ustawy o systemie ubezpieczeń społecznych): chorobowe jest obowiązkowe, a przychód ze zlecenia wchodzi do podstawy składek, więc i do podstawy zasiłku (art. 3 pkt 3 ustawy zasiłkowej). Gdy etat z pensją co najmniej minimalną masz gdzie indziej, emerytalne i rentowe ze zlecenia są dobrowolne (art. 9 ust. 1 i 1a), więc chorobowego ze zlecenia nie ma, a zasiłek należy się tylko z etatu.',
   },
   {
     pytanie: 'Czy od zasiłku chorobowego płaci się podatek?',
-    odpowiedz: 'Tak. Płatnik pobiera zaliczkę 12% (art. 34 ust. 3 ustawy o PIT dla zasiłków wypłacanych przez ZUS). Składek ZUS ani zdrowotnej od zasiłku się nie płaci.',
+    odpowiedz: 'Tak. Zasiłek jest przychodem do opodatkowania; ZUS pobiera od niego zaliczkę 12% (art. 34 ust. 1 i 3 ustawy o PIT). Gdy zasiłek wypłaca zleceniodawca, sposób poboru zaliczki może być inny.',
   },
 ];
 ---
@@ -40,7 +40,7 @@ const faq = [
   tytul="Zasiłek chorobowy na zleceniu: kalkulator"
   opis="Ile ZUS płaci za L4 na umowie zlecenia: podstawa z przychodu minus 13,71%, 80 albo 100%, 90 dni czekania, kto wypłaca, student, etat i zlecenie."
   h1="Zasiłek chorobowy na zleceniu: kalkulator"
-  lead="Na zleceniu za chorobę płaci ZUS albo duży zleceniodawca, i to tylko z dobrowolnym chorobowym. Wpisz przeciętny przychód z umowy i dni L4, a policzymy zasiłek i kwotę na rękę."
+  lead="Na zleceniu za chorobę płaci ZUS albo duży zleceniodawca, co do zasady tylko przy dobrowolnym chorobowym; po wypadku przy pracy także bez niego. Wpisz przeciętny przychód z umowy i dni L4, a policzymy zasiłek i kwotę na rękę."
   faq={faq}
 >
   <form class="kalkulator" data-zlecenie-l4 novalidate aria-labelledby="kalkulator-tytul">
@@ -96,22 +96,24 @@ const faq = [
   <Fragment slot="wyjasnienie">
     <h2 id="zasady">Zasady zasiłku na zleceniu</h2>
     <ul>
-      <li>Chorobowe ze zlecenia jest dobrowolne: obejmuje Cię od dnia ze zgłoszenia, gdy z tej umowy masz obowiązkowo emerytalne i rentowe (art. 11 ust. 2 i art. 14 ust. 1 ustawy o systemie ubezpieczeń społecznych).</li>
+      <li>Chorobowe ze zlecenia jest dobrowolne: można je mieć, gdy z tej umowy masz obowiązkowo emerytalne i rentowe, i obejmuje Cię od dnia ze zgłoszenia, jeśli zgłoszenie do emerytalnego i rentowego złożono w terminie (art. 11 ust. 2 i art. 14 ust. 1–1a ustawy o systemie ubezpieczeń społecznych).</li>
       <li>Zasiłek po 90 dniach nieprzerwanego ubezpieczenia chorobowego; wcześniejsze ubezpieczenie z przerwą do 30 dni się wlicza (art. 4 ust. 1–2 ustawy zasiłkowej). Od pierwszego dnia po wypadku w drodze do pracy lub z pracy i dla absolwentów do 90 dni po szkole (art. 4 ust. 3).</li>
       <li>Podstawa: przeciętny miesięczny przychód z 12 miesięcy kalendarzowych przed miesiącem, w którym zaczęła się choroba, albo z pełnych miesięcy, gdy ubezpieczenie trwa krócej (art. 48 ust. 1–2 i art. 36 ust. 2). Przychód to podstawa składki chorobowej minus 13,71% (art. 3 pkt 4). Gdy choroba zaczęła się przed upływem pełnego miesiąca ubezpieczenia, liczy się kwota z umowy za ten miesiąc (art. 49 ust. 1 pkt 2).</li>
       <li>Pomija się miesiące, w których z powodu zasiłku praca trwała mniej niż połowę miesiąca (art. 50 ust. 1); gdy tak było w każdym miesiącu, bierze się wszystkie (ust. 2).</li>
       <li>Wysokość: 80% podstawy, 100% w ciąży, przy badaniach dawcy i po wypadku w drodze; za każdy dzień, także wolny (art. 11 ustawy zasiłkowej). Najwyżej 182 dni, w ciąży i przy gruźlicy 270 (art. 8 ust. 1).</li>
       <li>Wypadek przy pracy: zasiłek z ubezpieczenia wypadkowego 100% od pierwszego dnia, także bez chorobowego; wtedy z podstawy składki wypadkowej odejmuje się 11,26% (art. 8 i art. 9 ust. 1–3 ustawy wypadkowej).</li>
-      <li>Nie ma minimalnej podstawy: przepis o płacy minimalnej (art. 45 ustawy zasiłkowej) dotyczy pracy w pełnym wymiarze, a art. 48 ust. 2 do niego nie odsyła.</li>
+      <li>Nie stosujemy minimalnej podstawy z art. 45 ustawy zasiłkowej: art. 48 ust. 2 wymienia przepisy stosowane do osób, które nie są pracownikami (art. 36 ust. 2–4, 38 ust. 1, 42, 43, 46), i nie ma wśród nich art. 45. To nasza wykładnia.</li>
     </ul>
 
     <h2 id="jak-liczymy">Jak liczymy</h2>
     <p>
       Podstawa = przychód × (1 − 13,71%), zaokrąglona do grosza. Za dzień: podstawa × 80% albo 100% / 30, do grosza.
       Zasiłek: stawka za dzień × dni L4. Zaliczka na podatek: 12% zasiłku, do pełnych złotych (art. 34 ust. 3 ustawy
-      o PIT, art. 63 § 1 Ordynacji podatkowej). Przychód wpisujesz jako średnią z pełnych miesięcy: przepis każe pominąć
+      o PIT dla zasiłków wypłacanych przez ZUS, art. 63 § 1 Ordynacji podatkowej). Przychód wpisujesz jako średnią z pełnych miesięcy: przepis każe pominąć
       miesiące, w których przez ponad połowę miesiąca był zasiłek, więc policz ją bez nich. Gdy zleceniodawca wypłaca
-      zasiłek sam, sposób poboru zaliczki może się różnić o kilka złotych.
+      zasiłek sam, sposób poboru zaliczki może się różnić. Po wypadku przy pracy bez chorobowego odejmujemy 11,26%
+      (art. 9 ust. 3 pkt 3 ustawy wypadkowej); pkt 2 tego przepisu wymienia osoby, które mogą mieć dobrowolne chorobowe,
+      a my stosujemy go tylko, gdy je masz. To nasza interpretacja.
     </p>
     <p>
       Od kiedy L4 jest płatne, policzy <a href="/narzedzia/okres-wyczekiwania">kalkulator okresu wyczekiwania</a>, ile
@@ -135,9 +137,9 @@ const faq = [
     };
     const BRAK: Partial<Record<Status, string>> = {
       'zlecenie-bez-chorobowego': 'Bez dobrowolnego chorobowego zasiłek chorobowy ze zlecenia nie przysługuje (art. 11 ust. 2 ustawy o systemie ubezpieczeń społecznych). Wyjątek: wypadek przy pracy, wtedy zasiłek z ubezpieczenia wypadkowego.',
-      student: 'Uczeń lub student do 26 lat nie podlega ubezpieczeniom ze zlecenia (art. 6 ust. 4 ustawy o systemie ubezpieczeń społecznych), więc zasiłku nie ma.',
+      student: 'Uczeń lub student do 26 lat nie podlega obowiązkowo emerytalnemu i rentowemu ze zlecenia (art. 6 ust. 4 ustawy o systemie ubezpieczeń społecznych), a bez nich nie ma chorobowego (art. 11 ust. 2) ani obowiązkowego wypadkowego (art. 12 ust. 1), więc zasiłku nie ma.',
       'etat-gdzie-indziej': 'Przy etacie z pensją co najmniej minimalną w innej firmie emerytalne i rentowe ze zlecenia są dobrowolne, więc chorobowego ze zlecenia nie ma (art. 9 ust. 1 i 1a, art. 11 ust. 2 ustawy o systemie). Zasiłek należy się z etatu: policzy go kalkulator L4.',
-      'u-pracodawcy': 'Zlecenie u własnego pracodawcy traktuje się jak etat (art. 8 ust. 2a ustawy o systemie): wynagrodzenie chorobowe i zasiłek liczy się z pensji i zlecenia razem, jak w kalkulatorze L4.',
+      'u-pracodawcy': 'Zlecenie u własnego pracodawcy traktuje się w ubezpieczeniach jak etat (art. 8 ust. 2a ustawy o systemie): chorobowe jest obowiązkowe, a przychód ze zlecenia wchodzi do podstawy zasiłku. Orientacyjnie policzy to kalkulator L4, a dokładnie dział kadr.',
     };
     const przelicz = () => {
       const status = el('status').value as Status;

@@ -36,11 +36,11 @@ const faq = [
   },
   {
     pytanie: 'Dlaczego w lutym L4 obniża pensję mniej?',
-    odpowiedz: 'Bo przepis każe zawsze dzielić przez 30, także w lutym, który ma 28 albo 29 dni. Przy 26 dniach L4 w lutym potrąca się 26/30 pensji, więc za 2 dni pracy zostaje 4/30. W miesiącu z 31 dniami przy 30 dniach L4 i jednym dniu pracy zostaje 0 zł. Gdy L4 obejmuje wszystkie dni miesiąca, pensja zasadnicza za ten miesiąc wynosi 0 zł, bo wynagrodzenie należy się za pracę wykonaną (art. 80 Kodeksu pracy).',
+    odpowiedz: 'Bo przepis każe zawsze dzielić przez 30, także w lutym, który ma 28 albo 29 dni. Przy 26 dniach L4 w lutym potrąca się 26/30 pensji, więc za 2 dni pracy zostaje 4/30. W miesiącu z 31 dniami przy 30 dniach L4 i jednym dniu pracy zostaje 0 zł. Gdy L4 obejmuje wszystkie dni miesiąca, przyjmujemy, że pensja zasadnicza za ten miesiąc wynosi 0 zł, bo wynagrodzenie należy się za pracę wykonaną (art. 80 Kodeksu pracy); przepis o 1/30 dotyczy przepracowanej części miesiąca.',
   },
   {
     pytanie: 'Czy za część miesiąca należy się płaca minimalna?',
-    odpowiedz: `Tak, proporcjonalnie: za każdą przepracowaną godzinę co najmniej płaca minimalna podzielona przez godziny do przepracowania w miesiącu przy pełnym etacie (art. 7 ust. 4 i art. 8 ustawy o minimalnym wynagrodzeniu). W ${rok} r. płaca minimalna wynosi ${zl(PLACA_MINIMALNA[rok].miesiecznie)}. Do porównania liczą się też premie i stałe dodatki, ale nie nadgodziny, dodatek nocny, stażowy ani za szczególne warunki pracy (art. 6 ust. 4–5).`,
+    odpowiedz: `Tak, proporcjonalnie: za każdą przepracowaną godzinę co najmniej płaca minimalna podzielona przez godziny do przepracowania w miesiącu przy pełnym etacie (art. 7 ust. 4 i art. 8 ustawy o minimalnym wynagrodzeniu). W ${rok} r. płaca minimalna wynosi ${zl(PLACA_MINIMALNA[rok].miesiecznie)}. Do porównania liczą się składniki zaliczane do wynagrodzeń osobowych, na przykład premie i stałe dodatki, ale nie: nagroda jubileuszowa, odprawa emerytalna lub rentowa, nadgodziny, dodatek nocny, stażowy ani za szczególne warunki pracy (art. 6 ust. 4–5).`,
   },
 ];
 ---
@@ -148,7 +148,7 @@ const faq = [
   <Fragment slot="wyjasnienie">
     <h2 id="wzory">Dwa wzory na niepełny miesiąc</h2>
     <ul>
-      <li>Choroba albo zasiłek (macierzyński, opiekuńczy, wypadkowy): pensja / 30 × dni ze zwolnienia, odjęte od pełnej pensji (§ 11 ust. 1–2 rozporządzenia z 29 maja 1996 r.). Liczą się wszystkie dni kalendarzowe zwolnienia, także weekendy, bo wynagrodzenie chorobowe i zasiłek należą się za każdy dzień (art. 92 § 2 Kodeksu pracy).</li>
+      <li>Choroba albo zasiłek (macierzyński, opiekuńczy, wypadkowy): pensja / 30 × dni ze zwolnienia, odjęte od pełnej pensji (§ 11 ust. 1–2 rozporządzenia z 29 maja 1996 r.). Liczą się dni wskazane w zaświadczeniu lekarskim (§ 11 ust. 1), czyli wszystkie dni kalendarzowe zwolnienia, także weekendy: wynagrodzenie chorobowe i zasiłek należą się za każdy dzień (art. 92 § 2 Kodeksu pracy, art. 11 ust. 4 ustawy zasiłkowej).</li>
       <li>Inna nieobecność bez wynagrodzenia (urlop bezpłatny, nieobecność nieusprawiedliwiona): pensja / godziny do przepracowania w miesiącu × godziny nieobecności (§ 12 ust. 1).</li>
       <li>Umowa od albo do dnia w trakcie miesiąca: ten sam wzór godzinowy dla godzin poza umową (§ 12 ust. 2).</li>
       <li>Wzory dotyczą stałej pensji miesięcznej. Stawki godzinowe, akord i premie za wykonaną pracę liczy się za faktycznie przepracowany czas, bo wynagrodzenie przysługuje za pracę wykonaną (art. 80 Kodeksu pracy).</li>
@@ -166,6 +166,8 @@ const faq = [
       odejmujemy obie kwoty, bo każdy z paragrafów każe odjąć swoją kwotę od wynagrodzenia za cały miesiąc. Gdy wynik
       wyjdzie poniżej zera, pokazujemy 0 zł. Gdy L4 obejmuje wszystkie dni umowy w miesiącu, pensja zasadnicza wynosi
       0 zł: § 11 dotyczy przepracowanej części miesiąca, a za brak pracy wynagrodzenie nie przysługuje (art. 80).
+      L4 bez prawa do wynagrodzenia chorobowego i zasiłku, na przykład w okresie wyczekiwania, nie pasuje do żadnego wzoru:
+      § 11 dotyczy dni, za które je otrzymujesz, a § 12 wyłącza chorobę. Liczymy je jak inne L4, przez 30.
       Wyrównanie do płacy minimalnej liczymy tylko dla miesiąca bez L4, bo nie znamy godzin pracy w dniach zwolnienia:
       płaca minimalna podzielona przez godziny pełnego etatu w miesiącu, razy przepracowane godziny (art. 7 ust. 4 i art. 8
       ustawy o minimalnym wynagrodzeniu).

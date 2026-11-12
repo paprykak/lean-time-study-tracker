@@ -20,6 +20,8 @@
 //    swoją kwotę od wynagrodzenia za cały miesiąc). Wynik ujemny zamieniamy na 0 zł i oznaczamy.
 // 4. L4 albo zasiłek przez wszystkie dni umowy w miesiącu: § 11 dotyczy przepracowanej części miesiąca, więc zostaje art. 80
 //    i wynagrodzenie zasadnicze wynosi 0 zł (wzór dałby w lutym 2/30 stawki, a w miesiącu 31-dniowym −1/30).
+// 4a. L4 bez prawa do wynagrodzenia chorobowego i zasiłku (np. okres wyczekiwania) nie podpada ani pod § 11, ani pod § 12
+//    (ten wyłącza chorobę); liczymy je jak inne L4, przez 30.
 // 5. Potrącenia zaokrąglamy do grosza i odejmujemy od stawki, żeby rozbicie sumowało się do wyniku.
 // 6. Wyrównanie do płacy minimalnej liczymy tylko bez L4 (godzin pracy przypadających w dniach L4 nie znamy) i tylko
 //    ze stawki zasadniczej; do porównania liczą się też inne składniki z art. 6 ust. 4 ustawy.

@@ -22,15 +22,17 @@ const PIT = [
 const start = maksimum(rok, 'zwykle');
 const startNetto = naReke(start.kwota, 12);
 const p = PODSTAWA_ODPISU[rok];
+/** Z którego okresu jest wyższa kwota (art. 5 ust. 2). */
+const okresPodstawy = (r: number) => (PODSTAWA_ODPISU[r].zaPolrocze >= PODSTAWA_ODPISU[r].zaRok ? `z drugiego półrocza ${r - 1} r.` : `z ${r - 1} r.`);
 
 const faq = [
   {
     pytanie: `Ile wynosi świadczenie urlopowe w ${rok} r.?`,
-    odpowiedz: `Najwyżej ${zl(start.kwota)} przy pełnym etacie. Świadczenie nie może przekroczyć odpisu podstawowego na fundusz socjalny: 37,5% przeciętnego wynagrodzenia z drugiego półrocza ${rok - 1} r. (${zl(p.zaPolrocze)}, ${p.publikator}). Dokładnie wychodzi ${zlDokladnie(start.dokladnie)}, więc kwota w groszach nie może przekroczyć ${zl(start.kwota)} (art. 3 ust. 4 i art. 5 ust. 2 ustawy o ZFŚS).`,
+    odpowiedz: `Najwyżej ${zl(start.kwota)} przy pełnym etacie. Świadczenie nie może przekroczyć odpisu podstawowego na fundusz socjalny: 37,5% przeciętnego wynagrodzenia ${okresPodstawy(rok)} (${zl(start.podstawa)}, ${p.publikator}). Dokładnie wychodzi ${zlDokladnie(start.dokladnie)}, więc kwota w groszach nie może przekroczyć ${zl(start.kwota)} (art. 3 ust. 4 i art. 5 ust. 2 ustawy o ZFŚS).`,
   },
   {
     pytanie: 'Czy pracodawca musi wypłacić świadczenie urlopowe?',
-    odpowiedz: 'Nie musi. Pracodawca, który 1 stycznia zatrudnia mniej niż 50 osób w przeliczeniu na pełne etaty, może utworzyć fundusz socjalny, wypłacać świadczenie urlopowe albo nie robić żadnej z tych rzeczy. O tym, że nie tworzy funduszu i nie wypłaca świadczenia, informuje w pierwszym miesiącu roku albo zapisuje to w regulaminie wynagradzania lub układzie zbiorowym (art. 3 ust. 3–3b ustawy o ZFŚS). Pracodawca od 50 etatów tworzy fundusz socjalny i świadczenia urlopowego nie wypłaca.',
+    odpowiedz: 'Nie musi. Pracodawca, który 1 stycznia zatrudnia mniej niż 50 osób w przeliczeniu na pełne etaty, może utworzyć fundusz socjalny, wypłacać świadczenie urlopowe albo nie robić żadnej z tych rzeczy; przy 20–49 etatach fundusz tworzy na wniosek związku zawodowego (art. 3 ust. 1c i 3 ustawy o ZFŚS). Gdy nie tworzy funduszu i nie wypłaca świadczenia, informuje o tym w pierwszym miesiącu roku, a gdy ma układ zbiorowy albo regulamin wynagradzania, zapisuje to w nim (art. 3 ust. 3a–3b). Pracodawca od 50 etatów co do zasady tworzy fundusz socjalny (układ albo regulamin może stanowić inaczej, art. 4 ust. 1–2), a świadczenia urlopowego z art. 3 nie wypłaca.',
   },
   {
     pytanie: 'Ile świadczenia urlopowego zostaje na rękę?',
@@ -46,7 +48,7 @@ const faq = [
   },
   {
     pytanie: 'Czy świadczenie urlopowe należy się na umowie zlecenia?',
-    odpowiedz: 'Nie. Ustawa mówi o pracownikach, a więc o umowie o pracę. Pracownikowi agencji pracy tymczasowej świadczenie wypłaca agencja, bo to ona jest pracodawcą.',
+    odpowiedz: 'Nie. Ustawa mówi o pracownikach, a więc o umowie o pracę. Pracownik agencji pracy tymczasowej jest zatrudniony przez agencję (art. 2 pkt 2 i art. 5 ustawy o zatrudnianiu pracowników tymczasowych), więc świadczenie urlopowe może mu wypłacić agencja, jeśli je wypłaca.',
   },
 ];
 ---
@@ -150,15 +152,15 @@ const faq = [
       </table>
     </div>
     <p>
-      Podstawa: przeciętne wynagrodzenie z drugiego półrocza roku poprzedniego, bo było wyższe niż za cały rok
-      {LATA_ODPISU.map((r, i) => <>{i ? '; ' : ' ('}{r}: {zl(podstawaOdpisu(r))}, {PODSTAWA_ODPISU[r].publikator}</>)}).
+      Podstawa: wyższa z dwóch kwot ogłoszonych przez Prezesa GUS, przeciętne wynagrodzenie za rok poprzedni albo za jego
+      drugie półrocze{LATA_ODPISU.map((r, i) => <>{i ? '; ' : ' ('}{r}: {zl(podstawaOdpisu(r))} {okresPodstawy(r)}, {PODSTAWA_ODPISU[r].publikator}</>)}).
     </p>
 
     <h2 id="zasady">Komu i kiedy</h2>
     <ul>
-      <li>Pracodawca, który 1 stycznia zatrudnia co najmniej 50 osób w przeliczeniu na pełne etaty, tworzy fundusz socjalny (art. 3 ust. 1 ustawy o ZFŚS). Przy 20–49 etatach tworzy go na wniosek związku zawodowego (ust. 1c). Wtedy o świadczeniach decyduje regulamin funduszu.</li>
-      <li>Poniżej 50 etatów pracodawca może utworzyć fundusz, wypłacać świadczenie urlopowe albo nie robić nic i poinformować o tym w pierwszym miesiącu roku (art. 3 ust. 3–3b).</li>
-      <li>Świadczenie nie może przekroczyć odpisu: 37,5% przeciętnego wynagrodzenia, przy pracach w szczególnych warunkach lub o szczególnym charakterze 50%, u młodocianych 5, 6 albo 7% (art. 3 ust. 4, art. 5 ust. 2–3). Przy niepełnym etacie limit maleje proporcjonalnie, poza młodocianymi.</li>
+      <li>Pracodawca, który 1 stycznia zatrudnia co najmniej 50 osób w przeliczeniu na pełne etaty, tworzy fundusz socjalny (art. 3 ust. 1 ustawy o ZFŚS), chyba że układ zbiorowy albo regulamin wynagradzania stanowi inaczej (art. 4 ust. 1–2). Przy 20–49 etatach tworzy go na wniosek związku zawodowego (art. 3 ust. 1c). Wtedy o świadczeniach decyduje regulamin funduszu.</li>
+      <li>Poniżej 50 etatów pracodawca może utworzyć fundusz, wypłacać świadczenie urlopowe albo nie robić nic; informuje o tym w pierwszym miesiącu roku albo zapisuje to w układzie zbiorowym lub regulaminie wynagradzania (art. 3 ust. 3–3b).</li>
+      <li>Świadczenie nie może przekroczyć odpisu: 37,5% przeciętnego wynagrodzenia, przy pracach w szczególnych warunkach lub o szczególnym charakterze w rozumieniu ustawy o emeryturach pomostowych (nie każda ciężka praca) 50%, u młodocianych 5, 6 albo 7% (art. 3 ust. 4, art. 5 ust. 2–3). Przy niepełnym etacie limit maleje proporcjonalnie, poza młodocianymi.</li>
       <li>Należy się raz w roku, gdy korzystasz z urlopu wypoczynkowego przez co najmniej 14 kolejnych dni kalendarzowych, a wypłata jest najpóźniej w dniu przed tym urlopem (art. 3 ust. 5–5a).</li>
       <li>Od świadczenia do wysokości odpisu nie ma składek ZUS ani zdrowotnej (art. 3 ust. 6, § 2 ust. 1 pkt 21 rozporządzenia o podstawie składek, art. 81 ust. 1 ustawy o świadczeniach opieki zdrowotnej). Podatek jest jak od pensji (art. 12 ust. 1 ustawy o PIT): zwolnienie do 1000 zł z art. 21 ust. 1 pkt 67 dotyczy tylko świadczeń z funduszu socjalnego.</li>
     </ul>
@@ -239,6 +241,7 @@ const faq = [
       const uwagi: string[] = [];
       if (el('firma').value === 'duze') uwagi.push('Pracodawca od 50 etatów tworzy fundusz socjalny i świadczenia urlopowego nie wypłaca: o świadczeniach decyduje regulamin funduszu (art. 3 ust. 1 ustawy o ZFŚS).');
       else uwagi.push('Pracodawca poniżej 50 etatów nie musi wypłacać świadczenia. Jeśli je wypłaca, nie może dać więcej niż ta kwota, a mniej może.');
+      if (rodzaj === 'szczegolne') uwagi.push('50% dotyczy tylko prac w szczególnych warunkach lub o szczególnym charakterze z wykazów ustawy o emeryturach pomostowych, a nie każdej ciężkiej pracy (art. 5 ust. 3 ustawy o ZFŚS).');
       if (ponad) uwagi.push(`Podana kwota przekracza limit o ${zl(Math.round((kwota! - m.kwota) * 100) / 100)}. Przepis na to nie pozwala, a od nadwyżki nie ma zwolnienia ze składek, więc na rękę liczymy z maksimum.`);
       if (u.spelnia && u.rok !== rok) uwagi.push(`Urlop zaczyna się w ${u.rok} r., a limit jest na ${rok} r.: wybierz rok pierwszego dnia urlopu.`);
       pisz('uwaga', uwagi.join(' '));

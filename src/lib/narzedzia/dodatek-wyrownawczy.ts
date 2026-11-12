@@ -3,7 +3,8 @@
 // - art. 179 § 4 Kodeksu pracy (t.j. Dz.U. 2026 poz. 1245): pracownica w ciąży lub karmiąca piersią, gdy zmiana warunków
 //   pracy, skrócenie czasu pracy albo przeniesienie obniża wynagrodzenie; bez limitu czasu, do ustania przyczyn (§ 6);
 // - art. 230 § 2 Kp: przeniesienie z powodu objawów choroby zawodowej, przez okres nieprzekraczający 6 miesięcy;
-// - art. 231 Kp: niezdolność do dotychczasowej pracy po wypadku przy pracy lub chorobie zawodowej, art. 230 § 2 odpowiednio;
+// - art. 231 Kp: przeniesienie na podstawie orzeczenia lekarskiego po wypadku przy pracy lub chorobie zawodowej, gdy pracownik
+//   nie został uznany za niezdolnego do pracy w rozumieniu przepisów o emeryturach i rentach; art. 230 § 2 odpowiednio;
 // - art. 5 ust. 5–6 ustawy z 13 marca 2003 r. o zwolnieniach z przyczyn niedotyczących pracowników (t.j. Dz.U. 2026
 //   poz. 1195): chronieni przy zwolnieniu grupowym, którym wypowiedziano warunki pracy i płacy, do końca okresu ochrony;
 // - art. 10 ust. 4 tej ustawy: zwolnienia indywidualne u pracodawcy od 20 pracowników, najwyżej 6 miesięcy; nie przysługuje,
@@ -12,8 +13,8 @@
 // - § 7: różnica między wynagrodzeniem sprzed przeniesienia a wynagrodzeniem po przeniesieniu, liczonymi według zasad
 //   wynagrodzenia za urlop (rozporządzenie z 8 stycznia 1997 r.: składniki stałe w wysokości należnej, zmienne z 3 miesięcy);
 // - § 8: część ze stałych stawek miesięcznych zmniejsza się za każdy dzień pracy bez wynagrodzenia (dzielnik: współczynnik
-//   z § 19 rozporządzenia urlopowego, przy niepełnym etacie proporcjonalnie), a za dni wynagrodzenia chorobowego lub zasiłku
-//   dzieli się przez 30;
+//   z § 19 rozporządzenia urlopowego, § 13 ust. 2; przy niepełnym etacie obniżony proporcjonalnie, § 19 ust. 3), a za dni
+//   wynagrodzenia chorobowego lub zasiłku dzieli się przez 30;
 // - § 9: składniki godzinowe i zmienne: wynagrodzenie za dzień = zmienne sprzed przeniesienia / dni kalendarzowe, za które
 //   przysługiwało wtedy wynagrodzenie; dodatek = za dzień × dni z wynagrodzeniem po przeniesieniu − zmienne po przeniesieniu.
 // Interpretacje (przepisy tego nie mówią):
@@ -22,8 +23,8 @@
 // 2. Okres „nieprzekraczający 6 miesięcy” liczymy od dnia przeniesienia do dnia przed dniem, który datą mu odpowiada
 //    (art. 112 KC); gdy takiego dnia nie ma (np. od 31 sierpnia), do ostatniego dnia miesiąca: wariant dłuższy.
 // 3. Zmienne „z okresu poprzedzającego przeniesienie”: 3 pełne miesiące przed miesiącem przeniesienia (jak przed urlopem).
-// 4. Dni z wynagrodzeniem po przeniesieniu: dni kalendarzowe miesiąca w okresie dodatku minus dni L4 lub zasiłku i dni
-//    bez wynagrodzenia (można wpisać inną liczbę).
+// 4. Dni z wynagrodzeniem (§ 9 mówi o „liczbie dni”): dni kalendarzowe; po przeniesieniu dni miesiąca w okresie dodatku
+//    minus dni L4 lub zasiłku i dni pracy bez wynagrodzenia.
 // 5. Miesiąc tylko częściowo w okresie dodatku: część stałą liczymy proporcjonalnie do dni kalendarzowych w okresie.
 // 6. Składników za okresy dłuższe niż miesiąc (§ 10) nie liczymy.
 import { dniMiedzy, dodajDni } from './terminy';

@@ -16,9 +16,11 @@
 // - wypłaca płatnik zgłaszający do ubezpieczenia chorobowego ponad 20 osób, a pozostałym ZUS (art. 61 ust. 1);
 // - wypadek przy pracy lub choroba zawodowa: zasiłek z ubezpieczenia wypadkowego 100% od pierwszego dnia (art. 8–9 ustawy
 //   wypadkowej, t.j. Dz.U. 2025 poz. 1644); zleceniobiorca z chorobowym — podstawa jak wyżej (art. 9 ust. 3 pkt 2), bez
-//   chorobowego — z podstawy składki wypadkowej minus 11,26% (art. 9 ust. 3 pkt 3);
+//   chorobowego — z podstawy składki wypadkowej minus 11,26% (art. 9 ust. 3 pkt 3, interpretacja niżej);
 // - podatek: ZUS pobiera zaliczkę 12% od zasiłku (art. 34 ust. 1 i 3 ustawy o PIT), do pełnych złotych (art. 63 § 1
-//   Ordynacji podatkowej); od zasiłku nie ma składek.
+//   Ordynacji podatkowej); gdy wypłaca zleceniodawca, pobór zaliczki może wyglądać inaczej.
+// - art. 9 ust. 3 pkt 2 ustawy wypadkowej stosujemy do zleceniobiorców z chorobowym, pkt 3 (11,26%) do tych bez niego
+//   (interpretacja; pkt 2 wymienia osoby z art. 11 ust. 2 ustawy o systemie).
 // Interpretacje: podstawę i stawkę dzienną zaokrąglamy do grosza, zasiłek = stawka dzienna × dni; przychód wpisuje
 // użytkownik jako średnią z pełnych miesięcy (bez miesięcy wyłączonych z art. 50: zasiłek przez ponad połowę miesiąca).
 import { doGrosza } from './dodatek-nocny';
