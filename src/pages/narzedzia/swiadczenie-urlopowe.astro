@@ -1,0 +1,254 @@
+---
+// Świadczenie urlopowe (art. 3 ust. 3–6 i art. 5 ustawy o ZFŚS). Logika: src/lib/narzedzia/swiadczenie-urlopowe.ts.
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { LATA_ODPISU, PODSTAWA_ODPISU, RODZAJE, etat, maksimum, naReke, podstawaOdpisu, zlDokladnie, type RodzajZatrudnienia } from '../../lib/narzedzia/swiadczenie-urlopowe';
+import { zl } from '../../lib/narzedzia/format';
+import { dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+const rokBiezacy = Number(dzisWPolsce().slice(0, 4));
+const rok = LATA_ODPISU.includes(rokBiezacy) ? rokBiezacy : LATA_ODPISU[LATA_ODPISU.length - 1];
+const ETATY = [
+  { wartosc: '1', nazwa: 'pełny etat' },
+  { wartosc: '7/8', nazwa: '7/8 etatu' },
+  { wartosc: '3/4', nazwa: '3/4 etatu' },
+  { wartosc: '1/2', nazwa: '1/2 etatu' },
+  { wartosc: '1/4', nazwa: '1/4 etatu' },
+];
+const PIT = [
+  { wartosc: '12', nazwa: 'Podatek 12%' },
+  { wartosc: '32', nazwa: 'Podatek 32% (ponad 120 tys. zł)' },
+  { wartosc: '0', nazwa: 'Do 26 lat (bez podatku)' },
+];
+const start = maksimum(rok, 'zwykle');
+const startNetto = naReke(start.kwota, 12);
+const p = PODSTAWA_ODPISU[rok];
+/** Z którego okresu jest wyższa kwota (art. 5 ust. 2). */
+const okresPodstawy = (r: number) => (PODSTAWA_ODPISU[r].zaPolrocze >= PODSTAWA_ODPISU[r].zaRok ? `z drugiego półrocza ${r - 1} r.` : `z ${r - 1} r.`);
+
+const faq = [
+  {
+    pytanie: `Ile wynosi świadczenie urlopowe w ${rok} r.?`,
+    odpowiedz: `Najwyżej ${zl(start.kwota)} przy pełnym etacie. Świadczenie nie może przekroczyć odpisu podstawowego na fundusz socjalny: 37,5% przeciętnego wynagrodzenia ${okresPodstawy(rok)} (${zl(start.podstawa)}, ${p.publikator}). Dokładnie wychodzi ${zlDokladnie(start.dokladnie)}, więc kwota w groszach nie może przekroczyć ${zl(start.kwota)} (art. 3 ust. 4 i art. 5 ust. 2 ustawy o ZFŚS).`,
+  },
+  {
+    pytanie: 'Czy pracodawca musi wypłacić świadczenie urlopowe?',
+    odpowiedz: 'Nie musi. Pracodawca, który 1 stycznia zatrudnia mniej niż 50 osób w przeliczeniu na pełne etaty, może utworzyć fundusz socjalny, wypłacać świadczenie urlopowe albo nie robić żadnej z tych rzeczy; przy 20–49 etatach fundusz tworzy na wniosek związku zawodowego (art. 3 ust. 1c i 3 ustawy o ZFŚS). Gdy nie tworzy funduszu i nie wypłaca świadczenia, informuje o tym w pierwszym miesiącu roku, a gdy ma układ zbiorowy albo regulamin wynagradzania, zapisuje to w nim (art. 3 ust. 3a–3b). Pracodawca od 50 etatów co do zasady tworzy fundusz socjalny (układ albo regulamin może stanowić inaczej, art. 4 ust. 1–2), a świadczenia urlopowego z art. 3 nie wypłaca.',
+  },
+  {
+    pytanie: 'Ile świadczenia urlopowego zostaje na rękę?',
+    odpowiedz: `Do wysokości odpisu nie ma od niego składek ZUS ani zdrowotnej (art. 3 ust. 6 ustawy o ZFŚS, § 2 ust. 1 pkt 21 rozporządzenia o podstawie składek). Jest podatek, jak od pensji, zwykle 12%. Przy pełnej kwocie ${zl(start.kwota)} zaliczka wynosi około ${startNetto.zaliczka} zł, a na rękę zostaje około ${zl(startNetto.netto)}. Do 26 lat przychody z pracy do 85 528 zł w roku są wolne od podatku.`,
+  },
+  {
+    pytanie: 'Ile wynosi świadczenie urlopowe przy niepełnym etacie?',
+    odpowiedz: `Proporcjonalnie do etatu (art. 3 ust. 4 ustawy o ZFŚS): w ${rok} r. przy 3/4 etatu najwyżej ${zl(maksimum(rok, 'zwykle', etat('3/4')).kwota)}, przy 1/2 etatu ${zl(maksimum(rok, 'zwykle', etat('1/2')).kwota)}. U młodocianych limit nie zależy od etatu.`,
+  },
+  {
+    pytanie: 'Kiedy wypłaca się świadczenie urlopowe?',
+    odpowiedz: 'Raz w roku, gdy korzystasz z urlopu wypoczynkowego przez co najmniej 14 kolejnych dni kalendarzowych; weekendy i święta w środku urlopu się liczą. Wypłata najpóźniej w ostatnim dniu przed rozpoczęciem tego urlopu (art. 3 ust. 5 i 5a ustawy o ZFŚS). Kilka krótszych urlopów nie spełnia warunku.',
+  },
+  {
+    pytanie: 'Czy świadczenie urlopowe należy się na umowie zlecenia?',
+    odpowiedz: 'Nie. Ustawa mówi o pracownikach, a więc o umowie o pracę. Pracownik agencji pracy tymczasowej jest zatrudniony przez agencję (art. 2 pkt 2 i art. 5 ustawy o zatrudnianiu pracowników tymczasowych), więc świadczenie urlopowe może mu wypłacić agencja, jeśli je wypłaca.',
+  },
+];
+---
+<StronaNarzedzia
+  slug="swiadczenie-urlopowe"
+  tytul={`Świadczenie urlopowe ${rok}: ile i kiedy`}
+  opis={`Ile najwyżej wynosi świadczenie urlopowe w ${rok} r.: ${zl(start.kwota)} przy pełnym etacie, proporcja do etatu, warunek 14 dni urlopu, kwota na rękę.`}
+  h1={`Świadczenie urlopowe ${rok}: kalkulator`}
+  lead="Mały pracodawca bez funduszu socjalnego może raz w roku wypłacić świadczenie urlopowe. Ustawa wyznacza górną granicę i warunek: 14 kolejnych dni urlopu. Wybierz etat i wpisz daty urlopu, a policzymy maksimum, termin wypłaty i kwotę na rękę."
+  faq={faq}
+>
+  <form class="kalkulator" data-urlopowe novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twoje świadczenie</h2>
+      <div class="mt-4 grid gap-4 sm:grid-cols-2">
+        <div>
+          <label for="s-rok" class="etykieta-pola">Rok</label>
+          <select id="s-rok" name="rok" class="pole mt-1">
+            {LATA_ODPISU.map((r) => <option value={r} selected={r === rok}>{r}</option>)}
+          </select>
+        </div>
+        <div>
+          <label for="s-etat" class="etykieta-pola">Wymiar etatu</label>
+          <select id="s-etat" name="etat" class="pole mt-1">
+            {ETATY.map((e) => <option value={e.wartosc}>{e.nazwa}</option>)}
+          </select>
+        </div>
+      </div>
+      <div class="mt-4">
+        <label for="s-rodzaj" class="etykieta-pola">Rodzaj pracy</label>
+        <select id="s-rodzaj" name="rodzaj" class="pole mt-1">
+          {Object.entries(RODZAJE).map(([k, r]) => <option value={k}>{r.nazwa}</option>)}
+        </select>
+      </div>
+      <div class="mt-4">
+        <label for="s-firma" class="etykieta-pola">Pracodawca 1 stycznia</label>
+        <select id="s-firma" name="firma" class="pole mt-1">
+          <option value="male" selected>Mniej niż 50 etatów</option>
+          <option value="duze">50 etatów lub więcej</option>
+        </select>
+      </div>
+      <fieldset class="mt-4">
+        <legend class="etykieta-pola">Urlop wypoczynkowy</legend>
+        <div class="mt-1 grid grid-cols-1 items-end gap-3 min-[360px]:grid-cols-2">
+          <div>
+            <label for="s-od" class="meta">Pierwszy dzień</label>
+            <input id="s-od" name="od" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={`${rok}-07-06`} aria-describedby="s-blad" />
+          </div>
+          <div>
+            <label for="s-do" class="meta">Ostatni dzień</label>
+            <input id="s-do" name="do" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={`${rok}-07-19`} aria-describedby="s-blad" />
+          </div>
+        </div>
+      </fieldset>
+      <div class="mt-4 grid gap-4 sm:grid-cols-2">
+        <div>
+          <label for="s-pit" class="etykieta-pola">Podatek</label>
+          <select id="s-pit" name="pit" class="pole mt-1">
+            {PIT.map((x) => <option value={x.wartosc}>{x.nazwa}</option>)}
+          </select>
+        </div>
+        <div>
+          <label for="s-kwota" class="etykieta-pola">Kwota od pracodawcy (zł)</label>
+          <input id="s-kwota" name="kwota" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" placeholder="maksimum" aria-describedby="s-blad" />
+        </div>
+      </div>
+      <p id="s-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Najwyżej (brutto)</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-kwota" data-w="maksimum">{zl(start.kwota)}</p>
+        <p class="meta" data-w="opis">37,5% z {zl(start.podstawa)}, dokładnie {zlDokladnie(start.dokladnie)}</p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt data-w="netto-etykieta">Na rękę z maksimum</dt><dd data-w="netto">około {zl(startNetto.netto)} (zaliczka {startNetto.zaliczka} zł, bez ZUS)</dd></div>
+        <div><dt>Urlop</dt><dd data-w="urlop">14 dni kalendarzowych: warunek spełniony</dd></div>
+        <div><dt>Wypłata najpóźniej</dt><dd data-w="termin">5 lipca {rok} r.</dd></div>
+      </dl>
+      <p class="wynik-uwaga" data-w="uwaga">Pracodawca poniżej 50 etatów nie musi wypłacać świadczenia. Jeśli je wypłaca, nie może dać więcej niż ta kwota, a mniej może.</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Kwoty są w tabeli poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="kwoty">Maksymalne świadczenie urlopowe</h2>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Najwyższe świadczenie urlopowe według roku, rodzaju pracy i etatu</caption>
+        <thead><tr><th scope="col">Rodzaj pracy i etat</th>{LATA_ODPISU.map((r) => <th scope="col">{r}</th>)}</tr></thead>
+        <tbody>
+          {ETATY.map((e) => (
+            <tr><th scope="row">37,5%, {e.nazwa}</th>{LATA_ODPISU.map((r) => <td>{zl(maksimum(r, 'zwykle', etat(e.wartosc)).kwota)}</td>)}</tr>
+          ))}
+          <tr><th scope="row">50%, pełny etat</th>{LATA_ODPISU.map((r) => <td>{zl(maksimum(r, 'szczegolne').kwota)}</td>)}</tr>
+          {(['mlodociany1', 'mlodociany2', 'mlodociany3'] as RodzajZatrudnienia[]).map((k, i) => (
+            <tr><th scope="row">Młodociany, {i + 1}. rok nauki</th>{LATA_ODPISU.map((r) => <td>{zl(maksimum(r, k).kwota)}</td>)}</tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Podstawa: wyższa z dwóch kwot ogłoszonych przez Prezesa GUS, przeciętne wynagrodzenie za rok poprzedni albo za jego
+      drugie półrocze{LATA_ODPISU.map((r, i) => <>{i ? '; ' : ' ('}{r}: {zl(podstawaOdpisu(r))} {okresPodstawy(r)}, {PODSTAWA_ODPISU[r].publikator}</>)}).
+    </p>
+
+    <h2 id="zasady">Komu i kiedy</h2>
+    <ul>
+      <li>Pracodawca, który 1 stycznia zatrudnia co najmniej 50 osób w przeliczeniu na pełne etaty, tworzy fundusz socjalny (art. 3 ust. 1 ustawy o ZFŚS), chyba że układ zbiorowy albo regulamin wynagradzania stanowi inaczej (art. 4 ust. 1–2). Przy 20–49 etatach tworzy go na wniosek związku zawodowego (art. 3 ust. 1c). Wtedy o świadczeniach decyduje regulamin funduszu.</li>
+      <li>Poniżej 50 etatów pracodawca może utworzyć fundusz, wypłacać świadczenie urlopowe albo nie robić nic; informuje o tym w pierwszym miesiącu roku albo zapisuje to w układzie zbiorowym lub regulaminie wynagradzania (art. 3 ust. 3–3b).</li>
+      <li>Świadczenie nie może przekroczyć odpisu: 37,5% przeciętnego wynagrodzenia, przy pracach w szczególnych warunkach lub o szczególnym charakterze w rozumieniu ustawy o emeryturach pomostowych (nie każda ciężka praca) 50%, u młodocianych 5, 6 albo 7% (art. 3 ust. 4, art. 5 ust. 2–3). Przy niepełnym etacie limit maleje proporcjonalnie, poza młodocianymi.</li>
+      <li>Należy się raz w roku, gdy korzystasz z urlopu wypoczynkowego przez co najmniej 14 kolejnych dni kalendarzowych, a wypłata jest najpóźniej w dniu przed tym urlopem (art. 3 ust. 5–5a).</li>
+      <li>Od świadczenia do wysokości odpisu nie ma składek ZUS ani zdrowotnej (art. 3 ust. 6, § 2 ust. 1 pkt 21 rozporządzenia o podstawie składek, art. 81 ust. 1 ustawy o świadczeniach opieki zdrowotnej). Podatek jest jak od pensji (art. 12 ust. 1 ustawy o PIT): zwolnienie do 1000 zł z art. 21 ust. 1 pkt 67 dotyczy tylko świadczeń z funduszu socjalnego.</li>
+    </ul>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Maksimum to podstawa razy procent razy etat, zaokrąglone w dół do grosza, bo przepis mówi, że świadczenie „nie może
+      przekroczyć” odpisu. Jako podstawę bierzemy kwotę z obwieszczenia Prezesa GUS, wyższą z dwóch: za cały rok
+      poprzedni albo za jego drugie półrocze (art. 5 ust. 2 i 7). Obwieszczenie podaje przeciętne wynagrodzenie
+      pomniejszone o składki; ustawa tego nie definiuje, ale to jedyny akt wydany na jej podstawie. Ustawy
+      okołobudżetowe na lata 2024–2026 nie zmieniają tej podstawy. Kwotę na rękę liczymy tak, jakby świadczenie było
+      wypłacone razem z pensją: koszty uzyskania przychodu i kwotę zmniejszającą podatek wykorzystuje wtedy pensja,
+      więc zaliczka to 12% albo 32% świadczenia, zaokrąglone do pełnych złotych. Przy osobnej wypłacie w miesiącu bez
+      pensji podatek może być niższy.
+    </p>
+    <p>
+      Czego przepisy nie rozstrzygają: proporcji przy pracy przez część roku (ustawa jej nie przewiduje), dnia, według
+      którego ustala się etat, i roku urlopu, który zaczyna się w grudniu, a kończy w styczniu (liczymy rok pierwszego
+      dnia urlopu, bo wypłata jest przed jego rozpoczęciem). Zwiększenie odpisu o 6,25% na osobę z niepełnosprawnością
+      nie podnosi limitu, bo art. 3 ust. 4 odsyła tylko do art. 5 ust. 2, 2a i 3. Kwota na kolejny rok będzie znana
+      po obwieszczeniu GUS do 20 lutego. Ile dni urlopu Ci przysługuje, policzy
+      <a href="/narzedzia/kalkulator-urlopu">kalkulator urlopu</a>, a ile wynosi pensja na rękę,
+      <a href="/narzedzia/brutto-netto">kalkulator brutto netto</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { etat, maksimum, naReke, urlop, zlDokladnie, type RodzajZatrudnienia, type StawkaPit } from '../../lib/narzedzia/swiadczenie-urlopowe';
+  import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
+  import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { odmiana } from '../../lib/redakcja';
+  import { typografia } from '../../lib/typografia.mjs';
+
+  const form = document.querySelector<HTMLFormElement>('[data-urlopowe]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const pisz = (k: string, tekst: string) => {
+      w(k).textContent = typografia(tekst);
+    };
+    const procent = (r: RodzajZatrudnienia) => ({ zwykle: '37,5%', szczegolne: '50%', mlodociany1: '5%', mlodociany2: '6%', mlodociany3: '7%' })[r];
+    const przelicz = () => {
+      const rok = Number(el('rok').value);
+      const rodzaj = el('rodzaj').value as RodzajZatrudnienia;
+      const wymiar = etat(el('etat').value);
+      const od = el('od').value;
+      const do_ = el('do').value;
+      const kwotaTekst = el('kwota').value.trim();
+      const kwota = kwotaTekst ? wpisanaLiczba(kwotaTekst) : null;
+      const blad =
+        !poprawnaData(od) || !poprawnaData(do_) ? 'Wpisz pierwszy i ostatni dzień urlopu.'
+        : do_ < od ? 'Ostatni dzień urlopu jest przed pierwszym.'
+        : kwota !== null && !(kwota > 0 && kwota < 1_000_000) ? 'Kwota od pracodawcy musi być liczbą większą od zera, na przykład 2000.'
+        : null;
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      b.hidden = !blad;
+      b.textContent = blad ? typografia(blad) : '';
+      const m = maksimum(rok, rodzaj, wymiar);
+      pisz('maksimum', zl(m.kwota));
+      pisz(
+        'opis',
+        `${procent(rodzaj)} z ${zl(m.podstawa)}${m.proporcja && wymiar.licznik !== wymiar.mianownik ? ` × ${wymiar.licznik}/${wymiar.mianownik} etatu` : ''}, dokładnie ${zlDokladnie(m.dokladnie)}${!m.proporcja && wymiar.licznik !== wymiar.mianownik ? '; u młodocianych bez proporcji do etatu' : ''}`,
+      );
+      if (blad) {
+        for (const k of ['netto', 'urlop', 'termin']) w(k).textContent = '—';
+        w('uwaga').textContent = '';
+        return;
+      }
+      const u = urlop(od, do_);
+      pisz('urlop', `${odmiana(u.dni, ['dzień kalendarzowy', 'dni kalendarzowe', 'dni kalendarzowych'])}: ${u.spelnia ? 'warunek spełniony' : 'za mało, potrzeba co najmniej 14 kolejnych dni'}`);
+      pisz('termin', u.spelnia ? dataPoPolsku(u.terminWyplaty) : 'świadczenie nie należy się za ten urlop');
+      const ponad = kwota !== null && kwota > m.kwota;
+      const doWyplaty = kwota !== null && !ponad ? kwota : m.kwota;
+      const n = naReke(doWyplaty, Number(el('pit').value) as StawkaPit);
+      pisz('netto-etykieta', kwota !== null && !ponad ? 'Na rękę z podanej kwoty' : 'Na rękę z maksimum');
+      pisz('netto', `około ${zl(n.netto)} (zaliczka ${n.zaliczka} zł, bez ZUS)`);
+      const uwagi: string[] = [];
+      if (el('firma').value === 'duze') uwagi.push('Pracodawca od 50 etatów tworzy fundusz socjalny i świadczenia urlopowego nie wypłaca: o świadczeniach decyduje regulamin funduszu (art. 3 ust. 1 ustawy o ZFŚS).');
+      else uwagi.push('Pracodawca poniżej 50 etatów nie musi wypłacać świadczenia. Jeśli je wypłaca, nie może dać więcej niż ta kwota, a mniej może.');
+      if (rodzaj === 'szczegolne') uwagi.push('50% dotyczy tylko prac w szczególnych warunkach lub o szczególnym charakterze z wykazów ustawy o emeryturach pomostowych, a nie każdej ciężkiej pracy (art. 5 ust. 3 ustawy o ZFŚS).');
+      if (ponad) uwagi.push(`Podana kwota przekracza limit o ${zl(Math.round((kwota! - m.kwota) * 100) / 100)}. Przepis na to nie pozwala, a od nadwyżki nie ma zwolnienia ze składek, więc na rękę liczymy z maksimum.`);
+      if (u.spelnia && u.rok !== rok) uwagi.push(`Urlop zaczyna się w ${u.rok} r., a limit jest na ${rok} r.: wybierz rok pierwszego dnia urlopu.`);
+      pisz('uwaga', uwagi.join(' '));
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>
