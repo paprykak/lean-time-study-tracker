@@ -156,7 +156,7 @@ export const AKTY = {
   ppk: {
     nazwa: 'Ustawa o pracowniczych planach kapitałowych',
     publikator: 'Dz.U. 2026 poz. 192',
-    uwaga: 'tekst jednolity; art. 26 ust. 1 (pracodawca 1,5%), art. 27 ust. 1 (uczestnik 2%)',
+    uwaga: 'tekst jednolity; zmiana Dz.U. 2026 poz. 989 dotyczy art. 8; art. 26–27 (wpłaty), 31–32 (dopłaty państwa), 97, 99 i 105 (wypłata i zwrot)',
     adres: eli(2026, 192),
     sprawdzono: '2026-11-12',
   },

@@ -225,6 +225,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-12',
   },
   {
+    slug: 'kalkulator-ppk',
+    nazwa: 'Kalkulator PPK',
+    krotko: 'Ile PPK zabiera z pensji na rękę, ile dokłada pracodawca i państwo i ile masz na koncie po roku.',
+    kategoria: 'wynagrodzenie',
+    przepisy: ['ppk', 'pit', 'systemUbezpieczen', 'swiadczeniaZdrowotne', 'placa2026'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'koszt-pracodawcy',
     nazwa: 'Koszt pracodawcy 2026',
     krotko: 'Ile kosztuje pracownik na etacie: pensja plus składki emerytalna, rentowa, wypadkowa, FP, FS, FGŚP i PPK.',

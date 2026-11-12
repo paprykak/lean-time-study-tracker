@@ -1,0 +1,162 @@
+---
+// PPK: wpłaty pracownika i pracodawcy, koszt na rękę, dopłaty państwa (ustawa o PPK, art. 26, 27, 31, 32, 105).
+// Logika: src/lib/narzedzia/ppk.ts i netto.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { LATA, PLACA_MINIMALNA } from '../../data/prawo';
+import { liczba, zl } from '../../lib/narzedzia/format';
+import { PPK, kalkulatorPpk, progDoplaty, progObnizenia } from '../../lib/narzedzia/ppk';
+import { dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+const rokBiezacy = Number(dzisWPolsce().slice(0, 4));
+const rok = LATA.includes(rokBiezacy) ? rokBiezacy : LATA[LATA.length - 1];
+const BRUTTO = 6000;
+const r = kalkulatorPpk({ rok, brutto: BRUTTO, pracownik: 2, pracownikDodatkowa: 0, pracodawcaDodatkowa: 0, miesiace: 12 });
+
+const faq = [
+  {
+    pytanie: 'Ile kosztuje mnie PPK?',
+    odpowiedz: `Wpłata podstawowa pracownika to 2% wynagrodzenia brutto (art. 27 ust. 1 ustawy o PPK), a wpłata pracodawcy 1,5% (art. 26 ust. 1) jest Twoim przychodem ze stosunku pracy (art. 12 ust. 1 ustawy o PIT), więc zaliczka na podatek rośnie. Przy pensji ${zl(BRUTTO)} brutto na rękę dostajesz o ${zl(r.kosztMiesiecznie)} mniej, a na konto PPK trafia ${zl(r.pracownikMiesiecznie + r.pracodawcaMiesiecznie)} miesięcznie.`,
+  },
+  {
+    pytanie: 'Ile dopłaca państwo do PPK?',
+    odpowiedz: `Wpłatę powitalną ${PPK.powitalna} zł po 3 pełnych miesiącach uczestnictwa i wpłat (art. 31 ust. 1) i dopłatę roczną ${PPK.doplataRoczna} zł, gdy suma wpłat w roku wyniesie co najmniej ${zl(progDoplaty(rok, false))} w ${rok} r., a przy obniżonej wpłacie ${zl(progDoplaty(rok, true))} (art. 32).`,
+  },
+  {
+    pytanie: 'Czy można płacić mniej niż 2% do PPK?',
+    odpowiedz: `Tak, od 0,5%, jeżeli wynagrodzenie ze wszystkich źródeł w miesiącu nie przekracza 1,2-krotności płacy minimalnej, czyli ${zl(progObnizenia(rok))} w ${rok} r. (art. 27 ust. 2). Trzeba złożyć deklarację u pracodawcy (art. 27 ust. 4).`,
+  },
+  {
+    pytanie: 'Co, gdy wypłacę pieniądze z PPK przed 60. rokiem życia?',
+    odpowiedz: 'Przy zwrocie 30% środków z wpłat pracodawcy trafia do ZUS na Twoje konto emerytalne, 70% dostajesz po potrąceniu podatku, środki z Twoich wpłat dostajesz po potrąceniu podatku, a wpłata powitalna i dopłaty roczne wracają do państwa (art. 105 ust. 2 ustawy o PPK). Bez potrąceń wypłata jest po 60. roku życia (art. 97 ust. 1 i art. 99).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="kalkulator-ppk"
+  tytul="Kalkulator PPK: ile kosztuje i ile odkładasz"
+  opis={`Policz, ile PPK zabiera z pensji na rękę, ile dokłada pracodawca i państwo (250 zł powitalnej i 240 zł rocznie) i ile masz na koncie po roku. Stawki ${rok} r.`}
+  h1="Kalkulator PPK: koszt i wpłaty"
+  lead="W PPK odkładasz 2% pensji, a pracodawca dokłada 1,5%. Wpisz pensję brutto, a pokażemy, o ile mniej dostajesz na rękę, ile co miesiąc trafia na konto i ile będzie na nim po roku razem z dopłatami państwa."
+  faq={faq}
+>
+  <form class="kalkulator" data-ppk novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Pensja i wpłaty</h2>
+      <div class="mt-4">
+        <label for="k-brutto" class="etykieta-pola">Pensja brutto miesięcznie (zł)</label>
+        <input id="k-brutto" name="brutto" class="pole mt-1 max-w-48" type="text" inputmode="decimal" autocomplete="off" value={BRUTTO} aria-describedby="k-blad" />
+      </div>
+      <div class="mt-4">
+        <label for="k-pracownik" class="etykieta-pola">Twoja wpłata podstawowa</label>
+        <select id="k-pracownik" name="pracownik" class="pole mt-1 max-w-48" aria-describedby="k-pracownik-opis">
+          {[2, 1.5, 1, 0.5].map((p) => <option value={p} selected={p === 2}>{liczba(p)}%</option>)}
+        </select>
+        <p id="k-pracownik-opis" class="meta mt-1">Mniej niż 2% tylko przy pensji do {zl(progObnizenia(rok))} (art. 27 ust. 2).</p>
+      </div>
+      <div class="mt-4 grid grid-cols-2 gap-3">
+        <div>
+          <label for="k-dod" class="etykieta-pola">Twoja wpłata dodatkowa</label>
+          <select id="k-dod" name="dodatkowa" class="pole mt-1">
+            {[0, 0.5, 1, 1.5, 2].map((p) => <option value={p} selected={p === 0}>{liczba(p)}%</option>)}
+          </select>
+        </div>
+        <div>
+          <label for="k-pdod" class="etykieta-pola">Dodatkowa od pracodawcy</label>
+          <select id="k-pdod" name="pracodawca" class="pole mt-1">
+            {[0, 0.5, 1, 1.5, 2, 2.5].map((p) => <option value={p} selected={p === 0}>{liczba(p)}%</option>)}
+          </select>
+        </div>
+      </div>
+      <div class="mt-4">
+        <label for="k-miesiace" class="etykieta-pola">Miesięcy wpłat w roku</label>
+        <select id="k-miesiace" name="miesiace" class="pole mt-1 max-w-48">
+          {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => <option value={m} selected={m === 12}>{m}</option>)}
+        </select>
+      </div>
+      <label class="mt-4 flex items-start gap-3 text-[0.9375rem]">
+        <input type="checkbox" name="pit2" checked class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+        <span>Złożony PIT-2 (zaliczka mniejsza o 300 zł)</span>
+      </label>
+      <p id="k-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Na koncie PPK po roku</h2>
+      <p class="wynik-kwota" aria-live="polite" aria-atomic="true"><span data-w="na-koncie">{zl(r.naKoncie)}</span></p>
+      <dl class="wynik-lista">
+        <div><dt>Mniej na rękę miesięcznie</dt><dd data-w="koszt">{zl(r.kosztMiesiecznie)}</dd></div>
+        <div><dt>Twoja wpłata miesięcznie</dt><dd data-w="pracownik">{zl(r.pracownikMiesiecznie)}</dd></div>
+        <div><dt>Wpłata pracodawcy miesięcznie</dt><dd data-w="pracodawca">{zl(r.pracodawcaMiesiecznie)}</dd></div>
+        <div><dt>Dopłata roczna i powitalna</dt><dd data-w="doplaty">{zl(r.doplata + r.powitalna)}</dd></div>
+        <div><dt>Za każdą złotówkę mniej na rękę</dt><dd data-w="mnoznik">{zl(r.mnoznik)} na koncie</dd></div>
+      </dl>
+      <p class="wynik-uwaga">Bez zysków i strat z inwestycji. Wpłata powitalna jest jednorazowa, a dopłata roczna co roku po spełnieniu warunku.</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="zasady">Wpłaty do PPK</h2>
+    <ul>
+      <li>Pracodawca: 1,5% wynagrodzenia, może dodać do 2,5% (art. 26 ust. 1 i 2 ustawy o pracowniczych planach kapitałowych). Ta wpłata nie jest podstawą składek emerytalnej i rentowych (art. 26 ust. 5), ale jest Twoim przychodem ze stosunku pracy, więc zwiększa zaliczkę na podatek (art. 12 ust. 1 ustawy o PIT).</li>
+      <li>Ty: 2% wynagrodzenia, od 0,5% przy pensji do {zl(progObnizenia(rok))}, plus dobrowolnie do 2% (art. 27 ust. 1–3).</li>
+      <li>Państwo: {PPK.powitalna} zł wpłaty powitalnej po 3 pełnych miesiącach uczestnictwa i wpłat (art. 31 ust. 1) i {PPK.doplataRoczna} zł dopłaty rocznej przy wpłatach w roku co najmniej {zl(progDoplaty(rok, false))}, a przy obniżonej wpłacie {zl(progDoplaty(rok, true))} (art. 32 ust. 1–3). Dopłaty są wolne od podatku (art. 21 ust. 1 pkt 47f ustawy o PIT).</li>
+    </ul>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      „Mniej na rękę” to różnica wypłaty netto bez PPK i z PPK: Twoja wpłata plus wyższa zaliczka na podatek od wpłaty
+      pracodawcy, przy kosztach uzyskania przychodu 250 zł i dochodach poniżej progu podatkowego, tak jak w
+      <a href="/narzedzia/brutto-netto">kalkulatorze brutto–netto</a>. Wpłaty liczymy od pensji brutto zaokrąglone do
+      grosza. Płaca minimalna w {rok} r.: {zl(PLACA_MINIMALNA[rok].miesiecznie)}.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
+  import { kalkulatorPpk, progObnizenia } from '../../lib/narzedzia/ppk';
+  import { dzisWPolsce } from '../../lib/narzedzia/terminy';
+  import { LATA } from '../../data/prawo';
+
+  const form = document.querySelector<HTMLFormElement>('[data-ppk]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const przelicz = () => {
+      const rokBiezacy = Number(dzisWPolsce().slice(0, 4));
+      const rok = LATA.includes(rokBiezacy) ? rokBiezacy : LATA[LATA.length - 1];
+      const brutto = wpisanaLiczba(el('brutto').value);
+      const pracownik = Number(el('pracownik').value);
+      let blad: string | null = null;
+      if (!(brutto > 0 && brutto < 1_000_000)) blad = 'Wpisz pensję brutto, na przykład 6000.';
+      else if (pracownik < 2 && brutto > progObnizenia(rok)) blad = `Wpłatę poniżej 2% można wybrać tylko przy pensji do ${zl(progObnizenia(rok))}.`;
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      b.hidden = !blad;
+      b.textContent = blad ?? '';
+      if (blad) {
+        w('na-koncie').textContent = '—';
+        return;
+      }
+      const r = kalkulatorPpk({
+        rok,
+        brutto,
+        pracownik,
+        pracownikDodatkowa: Number(el('dodatkowa').value),
+        pracodawcaDodatkowa: Number(el('pracodawca').value),
+        miesiace: Number(el('miesiace').value),
+        pit2: el('pit2').checked,
+      });
+      w('na-koncie').textContent = zl(r.naKoncie);
+      w('koszt').textContent = zl(r.kosztMiesiecznie);
+      w('pracownik').textContent = zl(r.pracownikMiesiecznie);
+      w('pracodawca').textContent = zl(r.pracodawcaMiesiecznie);
+      w('doplaty').textContent = zl(r.doplata + r.powitalna);
+      w('mnoznik').textContent = `${zl(r.mnoznik)} na koncie`;
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>

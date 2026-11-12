@@ -21,6 +21,11 @@ export interface DaneNetto {
   pit2?: boolean;
   /** Do 26 lat, przychody w roku do 85 528 zł: bez zaliczki (art. 21 ust. 1 pkt 148). */
   ulgaMlodych?: boolean;
+  /**
+   * Wpłaty do PPK w procentach wynagrodzenia: wpłata pracodawcy zwiększa przychód do opodatkowania (nie jest podstawą
+   * składek, art. 26 ust. 5 ustawy o PPK), a wpłata pracownika zmniejsza wypłatę.
+   */
+  ppk?: { pracownik: number; pracodawca: number };
 }
 
 const zl = (x: number) => Math.round(x);
@@ -34,13 +39,15 @@ export function netto(d: DaneNetto) {
   const chorobowa = doGrosza((B * STOPY.chorobowa) / 100);
   const spoleczne = doGrosza(emerytalna + rentowa + chorobowa);
   const zdrowotna = doGrosza(((B - spoleczne) * STOPY.zdrowotna) / 100);
+  const ppkPracodawca = d.ppk ? doGrosza((B * d.ppk.pracodawca) / 100) : 0;
+  const ppkPracownik = d.ppk ? doGrosza((B * d.ppk.pracownik) / 100) : 0;
   const koszty = d.ulgaMlodych ? 0 : d.kosztyPodwyzszone ? 300 : 250;
-  const podstawa = d.ulgaMlodych ? 0 : Math.max(0, zl(B - koszty - spoleczne));
+  const podstawa = d.ulgaMlodych ? 0 : Math.max(0, zl(B + ppkPracodawca - koszty - spoleczne));
   const zaliczka = d.ulgaMlodych ? 0 : Math.max(0, zl((podstawa * STOPY.pit) / 100 - (pit2 ? KWOTA_ZMNIEJSZAJACA / 12 : 0)));
   // Art. 83 ust. 1 i 2a ustawy o świadczeniach: składka nie wyższa niż zaliczka liczona według przepisów o PIT z 2021 r.
   // (17%, kwota zmniejszająca 525,12 zł rocznie). Przy przychodach z tego kalkulatora wiąże tylko przy bardzo niskich
   // kwotach; wtedy pokazujemy ostrzeżenie zamiast pewnego wyniku.
-  const zaliczka2021 = Math.max(0, zl(Math.max(0, zl(B - (d.kosztyPodwyzszone ? 300 : 250) - spoleczne)) * 0.17 - (pit2 ? 43.76 : 0)));
+  const zaliczka2021 = Math.max(0, zl(Math.max(0, zl(B + ppkPracodawca - (d.kosztyPodwyzszone ? 300 : 250) - spoleczne)) * 0.17 - (pit2 ? 43.76 : 0)));
   const mozliweObnizenieZdrowotnej = zdrowotna > zaliczka2021;
   return {
     brutto: B,
@@ -52,7 +59,9 @@ export function netto(d: DaneNetto) {
     koszty,
     podstawa,
     zaliczka,
-    netto: doGrosza(B - spoleczne - zdrowotna - zaliczka),
+    ppkPracownik,
+    ppkPracodawca,
+    netto: doGrosza(B - spoleczne - zdrowotna - zaliczka - ppkPracownik),
     mozliweObnizenieZdrowotnej,
     /** Przy takiej pensji dochód przekroczy w roku próg 120 000 zł: w ostatnich miesiącach zaliczka 32%. */
     progPrzekroczony: !d.ulgaMlodych && podstawa * 12 > PROG_PIT,
