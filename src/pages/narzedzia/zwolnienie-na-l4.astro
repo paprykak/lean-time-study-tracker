@@ -1,0 +1,148 @@
+---
+// Ochrona przed zwolnieniem na długim L4: art. 41, 41^1, 53 i 177 Kp, okres zasiłkowy z art. 8–9 ustawy zasiłkowej
+// i art. 7 ustawy wypadkowej. Logika: src/lib/narzedzia/ochrona-l4.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { ochronaNaL4 } from '../../lib/narzedzia/ochrona-l4';
+import { dataPoPolsku, dodajDni, dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+const START = dodajDni(dzisWPolsce(), -30);
+const r = ochronaNaL4({ poczatek: START, szescMiesiecy: true, przyczyna: 'choroba', rehabilitacyjne: false });
+if (r.ciaza) throw new Error('Wartości domyślne nie dotyczą ciąży');
+
+const faq = [
+  {
+    pytanie: 'Czy pracodawca może zwolnić mnie na L4?',
+    odpowiedz: 'W czasie zwolnienia lekarskiego pracodawca nie może wypowiedzieć umowy, dopóki nie minie okres, po którym wolno ją rozwiązać bez wypowiedzenia (art. 41 Kodeksu pracy). Po tym okresie może rozwiązać umowę bez wypowiedzenia z powodu długiej niezdolności do pracy (art. 53 § 1 pkt 1) albo ją wypowiedzieć. Ochrona nie działa przy upadłości i likwidacji pracodawcy (art. 41¹ § 1).',
+  },
+  {
+    pytanie: 'Po ilu dniach L4 można stracić pracę?',
+    odpowiedz: 'Przy zatrudnieniu u pracodawcy krótszym niż 6 miesięcy po ponad 3 miesiącach niezdolności do pracy. Przy co najmniej 6 miesiącach albo po wypadku przy pracy lub chorobie zawodowej po okresie wynagrodzenia i zasiłku chorobowego, czyli 182 dniach (270 przy gruźlicy), a gdy ZUS przyznał świadczenie rehabilitacyjne, po jego pierwszych 3 miesiącach (art. 53 § 1 pkt 1 Kodeksu pracy, art. 8 ust. 1 ustawy zasiłkowej).',
+  },
+  {
+    pytanie: 'Co, gdy wrócę do pracy po zwolnieniu lekarskim?',
+    odpowiedz: 'Po powrocie do pracy pracodawca nie może już rozwiązać umowy bez wypowiedzenia z powodu tej nieobecności (art. 53 § 3 Kodeksu pracy). Gdy umowę rozwiązano, a w ciągu 6 miesięcy zgłosisz powrót zaraz po wyzdrowieniu, pracodawca powinien w miarę możliwości zatrudnić Cię ponownie (art. 53 § 5).',
+  },
+  {
+    pytanie: 'Czy w ciąży na L4 mogą mnie zwolnić?',
+    odpowiedz: 'Nie. W ciąży pracodawca nie może wypowiedzieć ani rozwiązać umowy, chyba że z winy pracownicy za zgodą reprezentującego ją związku zawodowego (art. 177 § 1 Kodeksu pracy). Wypowiedzenie jest możliwe tylko przy upadłości albo likwidacji pracodawcy (art. 177 § 4). Okres zasiłkowy w ciąży wynosi 270 dni (art. 8 ust. 1 ustawy zasiłkowej).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="zwolnienie-na-l4"
+  tytul="Zwolnienie na L4: do kiedy jesteś chroniony"
+  opis="Czy mogą Cię zwolnić na długim L4: ochrona do 3 miesięcy albo 182 dni zwolnienia i 3 miesięcy świadczenia rehabilitacyjnego, wypadek przy pracy, ciąża."
+  h1="Zwolnienie z pracy na długim L4"
+  lead="Na zwolnieniu lekarskim nie można dostać wypowiedzenia, ale tylko przez określony czas. Wpisz pierwszy dzień L4 i staż u pracodawcy, a policzymy, do kiedy trwa ochrona."
+  faq={faq}
+>
+  <form class="kalkulator" data-l4 novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Zwolnienie lekarskie</h2>
+      <div class="mt-4">
+        <label for="l-poczatek" class="etykieta-pola">Pierwszy dzień niezdolności do pracy</label>
+        <input id="l-poczatek" name="poczatek" type="date" class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" value={START} aria-describedby="l-poczatek-opis l-blad" />
+        <p id="l-poczatek-opis" class="meta mt-1">Pierwszy dzień L4 bez przerwy do dziś. Wcześniejsze zwolnienia z przerwą do 60 dni też wliczają się do okresu zasiłkowego (art. 9 ust. 2 ustawy zasiłkowej), więc wtedy ochrona kończy się wcześniej.</p>
+      </div>
+      <div class="mt-4">
+        <label for="l-przyczyna" class="etykieta-pola">Przyczyna</label>
+        <select id="l-przyczyna" name="przyczyna" class="pole mt-1">
+          <option value="choroba" selected>Choroba</option>
+          <option value="wypadek">Wypadek przy pracy, choroba zawodowa</option>
+          <option value="gruzlica">Gruźlica</option>
+          <option value="ciaza">Ciąża</option>
+        </select>
+      </div>
+      <label class="mt-4 flex items-start gap-3 text-[0.9375rem]">
+        <input type="checkbox" name="szescMiesiecy" checked class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+        <span>Pracuję u tego pracodawcy co najmniej 6 miesięcy</span>
+      </label>
+      <label class="mt-3 flex items-start gap-3 text-[0.9375rem]">
+        <input type="checkbox" name="rehabilitacyjne" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+        <span>Po zasiłku chorobowym ZUS przyznał świadczenie rehabilitacyjne</span>
+      </label>
+      <p id="l-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Ochrona przed zwolnieniem do</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-data" data-w="ostatni">{dataPoPolsku(r.ostatniDzien)}</p>
+        <p class="meta" data-w="odkiedy">Od {dataPoPolsku(r.odKiedy)} pracodawca może rozwiązać umowę, jeśli nadal jesteś niezdolny albo niezdolna do pracy.</p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Podstawa</dt><dd data-w="podstawa">art. 41 i 53 § 1 pkt 1 lit. {r.litera} Kodeksu pracy</dd></div>
+        <div data-wiersz="zasilek"><dt>Koniec okresu zasiłkowego</dt><dd data-w="zasilek">{r.koniecZasilku ? `${dataPoPolsku(r.koniecZasilku)} (${r.dniZasilku} dni)` : ''}</dd></div>
+      </dl>
+      <p class="wynik-uwaga">Po powrocie do pracy pracodawca nie może już rozwiązać umowy z powodu tej nieobecności (art. 53 § 3). Ochrona z art. 41 nie działa przy upadłości i likwidacji pracodawcy (art. 41<sup>1</sup> § 1).</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="zasady">Zasady ochrony na zwolnieniu lekarskim</h2>
+    <ul>
+      <li>W czasie usprawiedliwionej nieobecności pracodawca nie może wypowiedzieć umowy, dopóki nie minie okres, po którym wolno rozwiązać ją bez wypowiedzenia (art. 41 Kodeksu pracy).</li>
+      <li>Zatrudnienie u pracodawcy krótsze niż 6 miesięcy: niezdolność do pracy dłuższa niż 3 miesiące (art. 53 § 1 pkt 1 lit. a).</li>
+      <li>Co najmniej 6 miesięcy albo wypadek przy pracy lub choroba zawodowa: niezdolność dłuższa niż łączny okres wynagrodzenia i zasiłku chorobowego oraz pierwszych 3 miesięcy świadczenia rehabilitacyjnego (lit. b).</li>
+      <li>Okres zasiłkowy: 182 dni, przy gruźlicy i w ciąży 270 (art. 8 ust. 1 ustawy zasiłkowej); po wypadku przy pracy tak samo (art. 7 ustawy wypadkowej). Wlicza się do niego wynagrodzenie chorobowe od pracodawcy, które policzy <a href="/narzedzia/kalkulator-l4">kalkulator L4</a>.</li>
+      <li>Po powrocie do pracy rozwiązanie z tego powodu nie jest już możliwe (art. 53 § 3), a po rozwiązaniu umowy pracodawca powinien w miarę możliwości zatrudnić ponownie osobę, która w ciągu 6 miesięcy zgłosi powrót zaraz po wyzdrowieniu (§ 5).</li>
+      <li>W ciąży: zakaz wypowiedzenia i rozwiązania umowy poza winą pracownicy za zgodą związku oraz upadłością i likwidacją (art. 177 § 1 i 4).</li>
+    </ul>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Okres zasiłkowy liczymy od pierwszego dnia niezdolności do pracy, 182 albo 270 kolejnych dni. Świadczenie
+      rehabilitacyjne zaczyna się po nim, a jego 3 miesiące liczymy kalendarzowo (art. 112 Kodeksu cywilnego), tak jak
+      3 miesiące niezdolności przy krótkim stażu: od 1 stycznia do 31 marca. Ile wynosi i jak długo trwa świadczenie,
+      policzy <a href="/narzedzia/swiadczenie-rehabilitacyjne">kalkulator świadczenia rehabilitacyjnego</a>. Przepis nie
+      wskazuje, na który dzień liczyć 6 miesięcy zatrudnienia, dlatego zaznaczasz to sam.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { ochronaNaL4, type PrzyczynaL4 } from '../../lib/narzedzia/ochrona-l4';
+  import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
+
+  const form = document.querySelector<HTMLFormElement>('[data-l4]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const przelicz = () => {
+      const poczatek = el('poczatek').value;
+      const blad = poprawnaData(poczatek) ? null : 'Wpisz pierwszy dzień zwolnienia lekarskiego.';
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      b.hidden = !blad;
+      b.textContent = blad ?? '';
+      const wiersz = form.querySelector<HTMLElement>('[data-wiersz="zasilek"]')!;
+      if (blad) {
+        w('ostatni').textContent = '—';
+        w('odkiedy').textContent = '';
+        return;
+      }
+      const r = ochronaNaL4({
+        poczatek,
+        szescMiesiecy: el('szescMiesiecy').checked,
+        przyczyna: el('przyczyna').value as PrzyczynaL4,
+        rehabilitacyjne: el('rehabilitacyjne').checked,
+      });
+      if (r.ciaza) {
+        w('ostatni').textContent = 'Przez całą ciążę';
+        w('odkiedy').textContent = 'Pracodawca nie może wypowiedzieć ani rozwiązać umowy, poza winą pracownicy za zgodą związku oraz upadłością i likwidacją (art. 177 § 1 i 4).';
+        w('podstawa').textContent = 'art. 177 Kodeksu pracy';
+        wiersz.hidden = true;
+        return;
+      }
+      w('ostatni').textContent = dataPoPolsku(r.ostatniDzien);
+      w('odkiedy').textContent = `Od ${dataPoPolsku(r.odKiedy)} pracodawca może rozwiązać umowę, jeśli nadal jesteś niezdolny albo niezdolna do pracy.`;
+      w('podstawa').textContent = `art. 41 i 53 § 1 pkt 1 lit. ${r.litera} Kodeksu pracy`;
+      wiersz.hidden = !r.koniecZasilku;
+      w('zasilek').textContent = r.koniecZasilku ? `${dataPoPolsku(r.koniecZasilku)} (${r.dniZasilku} dni)` : '';
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>

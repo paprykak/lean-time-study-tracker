@@ -393,6 +393,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-12',
   },
   {
+    slug: 'zwolnienie-na-l4',
+    nazwa: 'Zwolnienie z pracy na długim L4',
+    krotko: 'Do kiedy na zwolnieniu lekarskim nie można Cię zwolnić: 3 miesiące albo 182 dni i świadczenie rehabilitacyjne.',
+    kategoria: 'umowa',
+    przepisy: ['kodeksPracy', 'zasilkowa', 'wypadkowa', 'kodeksCywilny'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'kara-porzadkowa',
     nazwa: 'Kara porządkowa: terminy i sprzeciw',
     krotko: 'Czy kara porządkowa jest w terminie, do kiedy sprzeciw, kiedy się zatrze i ile może wynosić kara pieniężna.',
