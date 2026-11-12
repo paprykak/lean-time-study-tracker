@@ -51,6 +51,8 @@ export interface Wiersz {
   data: string;
   od: string;
   do: string;
+  /** Numer wiersza w formularzu (gdy puste wiersze pominięto); domyślnie kolejny. */
+  nr?: number;
 }
 
 export interface DaneOdpracowania {
@@ -184,7 +186,7 @@ export function odpracowanie(dane: DaneOdpracowania): WynikOdpracowania {
   // Wiersze odpracowania
   const wiersze: (Odcinek & { data: string; nr: number })[] = [];
   dane.odpracowanie.forEach((r, i) => {
-    const nr = i + 1;
+    const nr = r.nr ?? i + 1;
     if (!poprawnaData(r.data)) throw new RangeError(`Odpracowanie ${nr}: wpisz datę`);
     const od = godzina(r.od, `Odpracowanie ${nr} od`);
     const do_ = godzina(r.do, `Odpracowanie ${nr} do`);
@@ -353,7 +355,7 @@ export function odpracowanie(dane: DaneOdpracowania): WynikOdpracowania {
       id: 'okres',
       stan: 'uwaga',
       tytul: 'Odpracowanie w innym okresie rozliczeniowym',
-      opis: `Wyjście przypada w okresie od ${dataPoPolsku(okresWyjscia.od)} do ${dataPoPolsku(okresWyjscia.do)}. W tym okresie zabraknie godzin do wymiaru, a w okresie odpracowania będzie ich więcej. Przepis nie mówi o terminie odpracowania.`,
+      opis: `Wyjście przypada w okresie od ${dataPoPolsku(okresWyjscia.od)} do ${dataPoPolsku(okresWyjscia.do)}; w tym okresie zabraknie godzin do wymiaru, a w okresie odpracowania będzie ich więcej. Przepis nie mówi o terminie odpracowania.`,
       podstawa: 'art. 151 § 2^1 Kodeksu pracy',
       szczegoly: inneOkresy.map(opisWiersza),
     });

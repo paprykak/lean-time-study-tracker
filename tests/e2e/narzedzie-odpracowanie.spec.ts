@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 // Rozkład 7:00–15:00, okres 1 miesiąc, wyjście 18.11.2026 (środa) 10:00–13:00 = 3 h.
-// Odpracowanie 19.11 15:00–17:00 i 20.11 15:00–16:00: bilans 0, odpoczynek dobowy w porządku.
+// Odpracowanie 19.11 15:00–18:00: bilans 0, wszystkie kontrole w porządku (przerwa 13 h w dobie, 33 h w tygodniu jak w rozkładzie).
 test.beforeEach(async ({ page }) => {
   await page.goto('/narzedzia/odpracowanie-wyjscia-prywatnego');
   await page.locator('[name="start"]').fill('07:00');
@@ -11,16 +11,14 @@ test.beforeEach(async ({ page }) => {
   await page.locator('[name="wdo"]').fill('13:00');
   await page.locator('[name="data1"]').fill('2026-11-19');
   await page.locator('[name="od1"]').fill('15:00');
-  await page.locator('[name="do1"]').fill('17:00');
-  await page.locator('[name="data2"]').fill('2026-11-20');
-  await page.locator('[name="od2"]').fill('15:00');
-  await page.locator('[name="do2"]').fill('16:00');
+  await page.locator('[name="do1"]').fill('18:00');
 });
 
-test('przykład startowy: wszystko odpracowane, odpoczynek dobowy w porządku', async ({ page }) => {
+test('przykład startowy: wszystko odpracowane, wszystkie kontrole w porządku', async ({ page }) => {
   await expect(page.locator('[data-w="zostalo"]')).toHaveText(/^0\smin$/);
   await expect(page.locator('[data-w="opis"]')).toContainText(/Wyjście\s3\sh,\sodpracowane\s3\sh/);
-  await expect(page.locator('[data-w="lista"] li[data-stan="ok"]')).toHaveCount(2);
+  await expect(page.locator('[data-w="lista"] li[data-stan="ok"]')).toHaveCount(3);
+  await expect(page.locator('[data-w="lista"] li[data-stan="uwaga"]')).toHaveCount(0);
   await expect(page.locator('[data-w="lista"] li[data-stan="blad"]')).toHaveCount(0);
 });
 
@@ -59,4 +57,9 @@ test('odpracowanie w godzinach zmiany to błąd danych', async ({ page }) => {
   await expect(page.locator('[data-blad="dane"]')).toBeVisible();
   await expect(page.locator('[data-blad="dane"]')).toContainText(/nachodzi\sna\sgodziny\spracy/);
   await expect(page.locator('[data-w="zostalo"]')).toHaveText('—');
+  await expect(page.locator('[name="od1"]')).toHaveAttribute('aria-invalid', 'true');
+  await expect(page.locator('[name="wod"]')).not.toHaveAttribute('aria-invalid', /.*/);
+  await page.locator('[name="od1"]').fill('15:00');
+  await expect(page.locator('[data-blad="dane"]')).toBeHidden();
+  await expect(page.locator('[name="od1"]')).not.toHaveAttribute('aria-invalid', /.*/);
 });

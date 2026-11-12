@@ -14,7 +14,28 @@ const kontrola = (w: ReturnType<typeof odpracowanie>, id: string) => w.kontrole.
 const doby = (w: ReturnType<typeof odpracowanie>) => w.doby.map((d) => [`${dataZ(d.od)} ${godzinaZ(d.od)}`, d.najdluzsza]);
 
 describe('odpracowanie wyjścia prywatnego', () => {
-  it('przykład startowy: 3 h wyjścia, 2 h + 1 h odpracowania, bilans 0', () => {
+  it('przykład startowy: 3 h wyjścia, odpracowanie 19.11 15:00–18:00, wszystko w porządku', () => {
+    const w = odpracowanie(dane([{ data: '2026-11-19', od: '15:00', do: '18:00' }]));
+    expect([w.wyjscie, w.odpracowane, w.roznica, w.zostalo, w.nadwyzka]).toEqual([180, 180, 0, 0, 0]);
+    expect(doby(w)).toEqual([
+      ['2026-11-18 7:00', 960],
+      ['2026-11-19 7:00', 780],
+    ]);
+    expect(w.tygodnie).toEqual([{ od: '2026-11-15', najdluzsza: 1980, rozklad: 1980 }]);
+    expect(w.kontrole.map((k) => [k.id, k.stan])).toEqual([
+      ['bilans', 'ok'],
+      ['odpoczynek-dobowy', 'ok'],
+      ['odpoczynek-tygodniowy', 'ok'],
+    ]);
+    expect(kontrola(w, 'bilans')?.tytul).toBe('Odpracowane w całości: 3 h');
+    expect(kontrola(w, 'odpoczynek-dobowy')?.szczegoly).toEqual([
+      'Doba od 18 listopada 2026 r., 7:00: najdłuższa przerwa 16 h.',
+      'Doba od 19 listopada 2026 r., 7:00: najdłuższa przerwa 13 h.',
+    ]);
+    expect(kontrola(w, 'odpoczynek-tygodniowy')?.szczegoly).toEqual(['Tydzień od 15 listopada 2026 r.: najdłuższa przerwa 33 h.']);
+  });
+
+  it('dwa wiersze 19.11 i 20.11: tydzień od niedzieli dzieli weekend, uwaga', () => {
     const w = odpracowanie(dane([
       { data: '2026-11-19', od: '15:00', do: '17:00' },
       { data: '2026-11-20', od: '15:00', do: '16:00' },
@@ -111,6 +132,7 @@ describe('odpracowanie wyjścia prywatnego', () => {
   it('wolna sobota: jedna liczba w tytule i uwaga o art. 151^3', () => {
     const k = kontrola(odpracowanie(dane([{ data: '2026-11-21', od: '8:00', do: '11:00' }])), 'dzien-wolny');
     expect(k?.tytul).toBe('Odpracowanie w dzień wolny z rozkładu: 1 dzień');
+    expect(k?.szczegoly).toEqual(['Odpracowanie 1: 21 listopada 2026 r.']);
     expect(k?.opis).toMatch(/151\^3/);
   });
 
@@ -186,5 +208,26 @@ describe('odpracowanie wyjścia prywatnego', () => {
     const w = odpracowanie(dane([], { start: '22:00', koniec: '6:00', wyjscie: { data: '2026-11-18', od: '22:00', do: '6:00' } }));
     expect(w.wyjscie).toBe(480);
     expect([czas(0), czas(45), czas(180), czas(659)]).toEqual(['0 min', '45 min', '3 h', '10 h 59 min']);
+  });
+
+  it('teksty kontroli bez zdublowanych liczb i kropek', () => {
+    const przypadki = [
+      dane([{ data: '2026-11-19', od: '15:00', do: '18:00' }]),
+      dane([{ data: '2026-11-19', od: '15:00', do: '21:00' }]),
+      dane([{ data: '2026-11-21', od: '8:00', do: '11:00' }, { data: '2026-11-28', od: '8:00', do: '9:00' }]),
+      dane([{ data: '2026-11-15', od: '8:00', do: '11:00' }]),
+      dane([{ data: '2026-12-01', od: '15:00', do: '16:00', nr: 3 }]),
+      dane([{ data: '2027-01-01', od: '8:00', do: '10:00' }], { okres: 12, wyjscie: { data: '2026-12-30', od: '12:00', do: '14:00' } }),
+    ];
+    for (const d of przypadki)
+      for (const k of odpracowanie(d).kontrole)
+        for (const t of [k.tytul, k.opis, ...k.szczegoly]) {
+          expect(t).not.toMatch(/\d \d+ (dz|dni|godz|h\b|min)/);
+          expect(t).not.toMatch(/\.\./);
+          expect(t).not.toMatch(/undefined|NaN/);
+        }
+    const dwie = kontrola(odpracowanie(przypadki[2]), 'dzien-wolny');
+    expect(dwie?.tytul).toBe('Odpracowanie w dzień wolny z rozkładu: 2 dni');
+    expect(kontrola(odpracowanie(przypadki[4]), 'okres')?.szczegoly).toEqual(['Odpracowanie 3: 1 grudnia 2026 r.']);
   });
 });

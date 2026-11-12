@@ -10,10 +10,7 @@ const D: DaneOdpracowania = {
   koniec: '15:00',
   okres: 1,
   wyjscie: { data: '2026-11-18', od: '10:00', do: '13:00' },
-  odpracowanie: [
-    { data: '2026-11-19', od: '15:00', do: '17:00' },
-    { data: '2026-11-20', od: '15:00', do: '16:00' },
-  ],
+  odpracowanie: [{ data: '2026-11-19', od: '15:00', do: '18:00' }],
 };
 const r = odpracowanie(D);
 const STAN = { ok: 'W porządku', uwaga: 'Uwaga', blad: 'Naruszenie' } as const;
@@ -219,6 +216,24 @@ const faq = [
       return s;
     };
 
+    // Pola, których dotyczy komunikat błędu (aria-invalid).
+    const polaBledu = (blad: string): string[] => {
+      const wiersz = (n: string) => [`data${n}`, `od${n}`, `do${n}`];
+      const para = /^Odpracowanie (\d) i (\d)/.exec(blad);
+      if (para) return [...wiersz(para[1]), ...wiersz(para[2])];
+      const jeden = /^Odpracowanie (\d)( od| do)?/.exec(blad);
+      if (jeden) return jeden[2] ? [`${jeden[2].trim()}${jeden[1]}`] : / datę$/.test(blad) ? [`data${jeden[1]}`] : wiersz(jeden[1]);
+      if (blad.startsWith('Wyjście od')) return ['wod'];
+      if (blad.startsWith('Wyjście do')) return ['wdo'];
+      if (blad.startsWith('Wyjście: wpisz datę') || blad.includes('jest wolny')) return ['wdata'];
+      if (blad.startsWith('Wyjście')) return ['wod', 'wdo'];
+      if (blad.startsWith('Początek zmiany')) return ['start'];
+      if (blad.startsWith('Koniec zmiany')) return ['koniec'];
+      if (blad.startsWith('Zmiana')) return ['start', 'koniec'];
+      if (blad.startsWith('Okres')) return ['okres'];
+      return [];
+    };
+
     const przelicz = () => {
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
       const wiersze: Wiersz[] = [];
@@ -226,8 +241,8 @@ const faq = [
       for (let i = 1; i <= MAKS_WIERSZY; i++) {
         const r = { data: el(`data${i}`).value, od: el(`od${i}`).value, do: el(`do${i}`).value };
         if (!r.data && !r.od && !r.do) continue;
-        if (!r.data || !r.od || !r.do) blad ??= `Odpracowanie ${i}: uzupełnij dzień i obie godziny.`;
-        else wiersze.push(r);
+        if (!r.data || !r.od || !r.do) blad ??= `Odpracowanie ${i}: uzupełnij dzień i obie godziny`;
+        else wiersze.push({ ...r, nr: i });
       }
       let wynik: ReturnType<typeof odpracowanie> | null = null;
       if (!blad)
@@ -241,10 +256,14 @@ const faq = [
           });
         } catch (e) {
           if (!(e instanceof RangeError)) throw e;
-          blad = `${e.message}.`;
+          blad = e.message;
         }
       b.hidden = !blad;
-      b.textContent = blad ? typografia(blad) : '';
+      b.textContent = blad ? typografia(`${blad}.`) : '';
+      const zle = blad ? polaBledu(blad) : [];
+      for (const pole of form.querySelectorAll<HTMLElement>('input, select'))
+        if (zle.includes(pole.getAttribute('name') ?? '')) pole.setAttribute('aria-invalid', 'true');
+        else pole.removeAttribute('aria-invalid');
       if (!wynik) {
         w('zostalo').textContent = '—';
         w('opis').textContent = '';

@@ -31,18 +31,24 @@ test('święto w sobotę (26 grudnia 2026 r.): inne zasady, odesłanie do kalkul
   await expect(page.locator('[data-w="naglowek"]')).toHaveText('Ten dzień to niedziela albo święto');
   await expect(page.locator('[data-w="uwagi"]')).toContainText(/kalkulator\spracy\sw\sniedzielę\si\sświęto/);
   await expect(page.locator('[data-w="warianty"]')).toBeHidden();
+  await page.getByLabel('Do', { exact: true }).fill('06:00');
+  await expect(page.locator('[data-w="naglowek"]')).toHaveText('Dzień wolny za tę pracę do');
   await expect(page.locator('#jak-liczymy ~ p a[href="/narzedzia/praca-w-niedziele"]')).toBeVisible();
 });
 
 test('błędne dane: koniec równy początkowi, brak godziny, ujemna stawka', async ({ page }) => {
   await page.getByLabel('Do', { exact: true }).fill('06:00');
   await expect(page.locator('[data-blad="godziny"]')).toHaveText('Koniec pracy musi być inny niż początek.');
+  await expect(page.getByLabel('Do', { exact: true })).toHaveAttribute('aria-invalid', 'true');
   await expect(page.locator('[data-w="data"]')).toHaveText('—');
   await page.getByLabel('Od', { exact: true }).fill('');
   await expect(page.locator('[data-blad="godziny"]')).toContainText('Wpisz godziny pracy');
   await page.getByLabel('Od', { exact: true }).fill('07:00');
   await expect(page.locator('[data-blad="godziny"]')).toBeHidden();
+  await expect(page.getByLabel('Od', { exact: true })).not.toHaveAttribute('aria-invalid', 'true');
+  await expect(page.getByLabel('Do', { exact: true })).not.toHaveAttribute('aria-invalid', 'true');
   await page.getByLabel('Stawka za godzinę (zł)').fill('-5');
   await expect(page.locator('[data-blad="stawka"]')).toBeVisible();
+  await expect(page.getByLabel('Stawka za godzinę (zł)')).toHaveAttribute('aria-invalid', 'true');
   await expect(page.locator('[data-w="warianty"]')).toBeHidden();
 });

@@ -82,9 +82,13 @@ export interface WynikPracyWSobote {
   b: { z100: number; z50: number; kwoty: Kwoty | null };
 }
 
-const kwoty = (m100: number, m50: number, mNormalne: number, stawka: number): Kwoty => {
-  const dodatek = doGrosza((m100 / 60) * stawka + (m50 / 60) * stawka * 0.5);
-  const normalne = doGrosza((mNormalne / 60) * stawka);
+/** Kwota jednego wiersza wyniku, zaokrąglona do grosza: minuty × stawka × procent. */
+const kwotaWiersza = (m: number, stawka: number, proc: number) => doGrosza((m * stawka * proc) / 6000);
+
+/** Sumy liczone z kwot już zaokrąglonych w wierszach, żeby wiersze sumowały się do „Razem”. */
+const kwoty = (wiersze: [number, 100 | 50][], mNormalne: number, stawka: number): Kwoty => {
+  const dodatek = doGrosza(wiersze.reduce((s, [m, proc]) => s + kwotaWiersza(m, stawka, proc), 0));
+  const normalne = kwotaWiersza(mNormalne, stawka, 100);
   return { dodatek, normalne, razem: doGrosza(dodatek + normalne) };
 };
 
@@ -125,8 +129,8 @@ export function pracaWSobote({ data, od, do: koniecTxt, okres, poraNocna = '22:0
     poOsmejDzien,
     wNiedzieleSwieto,
     nastepnyDzien: { data: nastepna, rodzaj: nast.rodzaj, nazwa: nast.nazwa },
-    a: { bezDodatku: doOsmej, z100: poOsmejNoc, z50: poOsmejDzien, kwoty: stawka === null ? null : kwoty(poOsmejNoc, poOsmejDzien, poOsmej, stawka) },
-    b: { z100: doOsmej + poOsmejNoc, z50: poOsmejDzien, kwoty: stawka === null ? null : kwoty(doOsmej + poOsmejNoc, poOsmejDzien, razem, stawka) },
+    a: { bezDodatku: doOsmej, z100: poOsmejNoc, z50: poOsmejDzien, kwoty: stawka === null ? null : kwoty([[poOsmejNoc, 100], [poOsmejDzien, 50]], poOsmej, stawka) },
+    b: { z100: doOsmej + poOsmejNoc, z50: poOsmejDzien, kwoty: stawka === null ? null : kwoty([[doOsmej, 100], [poOsmejNoc, 100], [poOsmejDzien, 50]], razem, stawka) },
   };
 }
 
@@ -145,7 +149,8 @@ export interface OpisWyniku {
   uwagi: string[];
 }
 
-const h = (m: number) => godzinyIMinuty(m / 60);
+/** „2 h”, „1 h 30 min”, a poniżej godziny samo „1 min” (nie „0 h 1 min”). */
+const h = (m: number) => (m < 60 ? `${m} min` : godzinyIMinuty(m / 60));
 const DZIEN = ['niedziela', 'poniedziałek', 'wtorek', 'środa', 'czwartek', 'piątek', 'sobota'];
 
 /** Teksty wyniku (te same na serwerze i w przeglądarce). Indeksy przepisów w Unicode (151³). */
@@ -166,7 +171,7 @@ export function opisWyniku(r: WynikPracyWSobote, data: string): OpisWyniku {
     };
   }
   const st = r.stawka;
-  const dodatek = (m: number, proc: 100 | 50) => (st === null ? `${proc}% stawki za godzinę` : zl(doGrosza((m / 60) * st * (proc / 100))));
+  const dodatek = (m: number, proc: 100 | 50) => (st === null ? `${proc}% stawki za godzinę` : zl(kwotaWiersza(m, st, proc)));
   const a: Wiersz[] = [[`Pierwsze ${h(r.doOsmej)}`, 'bez dodatku, rozlicza je dzień wolny']];
   if (r.a.z100) a.push([`${h(r.a.z100)} nadgodzin w porze nocnej, dodatek 100%`, dodatek(r.a.z100, 100)]);
   if (r.a.z50) a.push([`${h(r.a.z50)} nadgodzin, dodatek 50%`, dodatek(r.a.z50, 50)]);
@@ -190,7 +195,7 @@ export function opisWyniku(r: WynikPracyWSobote, data: string): OpisWyniku {
   }
   if (r.wNiedzieleSwieto) {
     const co = r.nastepnyDzien.rodzaj === 'niedziela' ? 'w niedzielę' : 'w święto';
-    uwagi.push(`Zmiana trwa po 6:00 następnego dnia, jeśli pracodawca nie ustalił innej godziny (${dataPoPolsku(r.nastepnyDzien.data)}). Te ${h(r.wNiedzieleSwieto)} to praca ${co} z osobnymi zasadami (art. 151⁹ § 2 i art. 151¹¹ Kodeksu pracy). Tu liczymy je jak resztę zmiany.`);
+    uwagi.push(`Zmiana trwa po 6:00 w dniu ${dataPoPolsku(r.nastepnyDzien.data)} (o ile pracodawca nie ustalił innej godziny). Te ${h(r.wNiedzieleSwieto)} to praca ${co} z osobnymi zasadami (art. 151⁹ § 2 i art. 151¹¹ Kodeksu pracy). Tu liczymy je jak resztę zmiany.`);
   }
   return {
     naglowek: 'Dzień wolny za tę pracę do',

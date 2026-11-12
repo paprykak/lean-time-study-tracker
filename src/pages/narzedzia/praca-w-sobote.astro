@@ -172,10 +172,14 @@ const faq = [
   if (form) {
     const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
     const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
-    const bledy = (k: string, tekst: string | null) => {
+    const bledy = (k: string, tekst: string | null, pola: string[]) => {
       const b = form.querySelector<HTMLElement>(`[data-blad="${k}"]`)!;
       b.hidden = !tekst;
       b.textContent = tekst ?? '';
+      for (const p of pola) {
+        if (tekst) el(p).setAttribute('aria-invalid', 'true');
+        else el(p).removeAttribute('aria-invalid');
+      }
     };
     const lista = (dl: HTMLElement, wiersze: Wiersz[]) => {
       dl.replaceChildren(
@@ -201,10 +205,14 @@ const faq = [
       const mDo = minuty(doG);
       const bladGodzin = mOd === null || mDo === null ? 'Wpisz godziny pracy, np. 6:00 i 16:00.' : mOd === mDo ? 'Koniec pracy musi być inny niż początek.' : null;
       const bladStawki = stawka !== null && Number.isNaN(stawka) ? 'Wpisz stawkę jako liczbę nieujemną, np. 35,50.' : null;
-      bledy('data', bladData);
-      bledy('godziny', bladGodzin);
-      bledy('stawka', bladStawki);
+      const zlaGodzina = [mOd === null ? 'od' : null, mDo === null ? 'do' : null].filter((x): x is string => x !== null);
+      bledy('data', bladData, ['data']);
+      bledy('godziny', bladGodzin, []);
+      for (const p of ['od', 'do']) el(p).removeAttribute('aria-invalid');
+      if (bladGodzin) for (const p of zlaGodzina.length ? zlaGodzina : ['od', 'do']) el(p).setAttribute('aria-invalid', 'true');
+      bledy('stawka', bladStawki, ['stawka']);
       if (bladData || bladGodzin || bladStawki) {
+        w('naglowek').textContent = typografia('Dzień wolny za tę pracę do');
         w('data').textContent = '—';
         w('pod-data').textContent = typografia('Popraw dane w formularzu.');
         w('godziny').textContent = '—';

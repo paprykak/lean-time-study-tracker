@@ -98,4 +98,22 @@ describe('praca w dniu wolnym z pięciodniowego tygodnia (art. 151^3, 151^1 Kp)'
     expect(opisWyniku(pracaWSobote({ ...baza, data: '2026-11-20' }), '2026-11-20').uwagi[0]).toContain('piątek');
     expect(opisWyniku(pracaWSobote({ ...baza, od: '22:00', do: '10:00' }), baza.data).uwagi[0]).toContain('4 h to praca w niedzielę');
   });
+
+  it('sumy z kwot zaokrąglonych w wierszach: 13:10–0:20, 33,33 zł, pora od 21:00', () => {
+    const r = pracaWSobote({ ...baza, od: '13:10', do: '0:20', poraNocna: '21:00', stawka: 33.33 });
+    expect(r).toMatchObject({ razem: 670, poOsmejNoc: 190, poOsmejDzien: 0 });
+    expect(r.a.kwoty).toEqual({ dodatek: 105.55, normalne: 105.55, razem: 211.1 });
+    expect(r.b.kwoty).toEqual({ dodatek: 372.19, normalne: 372.19, razem: 744.38 });
+    const o = opisWyniku(r, baza.data);
+    const zl = (t: string) => Number(t.replace(/\s|zł/g, '').replace(',', '.'));
+    expect(o.b.slice(0, 2).map((w) => zl(w[1]))).toEqual([266.64, 105.55]);
+    expect(o.a[1][1]).toMatch(/^105,55\szł$/);
+  });
+
+  it('poniżej godziny: „1 min”, nie „0 h 1 min”; data przy 6:00 w uwadze', () => {
+    expect(opisWyniku(pracaWSobote({ ...baza, od: '6:00', do: '14:01' }), baza.data).godziny).toBe('8 h 1 min: 8 h + 1 min nadgodzin dobowych');
+    expect(opisWyniku(pracaWSobote({ ...baza, od: '22:00', do: '6:01' }), baza.data).uwagi[0]).toMatch(
+      /^Zmiana trwa po 6:00 w dniu 22 listopada 2026 r\. \(o ile pracodawca nie ustalił innej godziny\)\. Te 1 min to praca w niedzielę/,
+    );
+  });
 });
