@@ -22,6 +22,15 @@ describe('przerwy w pracy (art. 134, 141, 187, 202 Kp)', () => {
     expect(przerwy({ godziny: 5, mlodociany: true }).wliczane).toBe(30);
     expect(przerwy({ godziny: 4.5, mlodociany: true }).wliczane).toBe(0);
   });
+  it('osoba z niepełnosprawnością: dodatkowe 15 minut niezależnie od wymiaru', () => {
+    expect(przerwy({ godziny: 7, niepelnosprawny: true }).wliczane).toBe(30);
+    expect(przerwy({ godziny: 4, niepelnosprawny: true }).wliczane).toBe(15);
+  });
+  it('monitor: 5 minut po każdej pełnej godzinie poza ostatnią', () => {
+    expect(przerwy({ godziny: 8, monitor: true })).toMatchObject({ wliczane: 15 + 35 });
+    expect(przerwy({ godziny: 7.5, monitor: true }).wliczane).toBe(15 + 35);
+    expect(przerwy({ godziny: 1, monitor: true }).lista).toEqual([]);
+  });
   it('błędy', () => {
     expect(() => przerwy({ godziny: 0 })).toThrow(RangeError);
     expect(() => przerwy({ godziny: 8, niewliczana: 90 })).toThrow(RangeError);

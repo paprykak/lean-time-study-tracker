@@ -1,5 +1,6 @@
 ---
-// Przerwy w pracy (art. 134, 141, 187, 202 § 3^1 Kp). Logika: src/lib/narzedzia/przerwy.ts (testy obok).
+// Przerwy w pracy (art. 134, 141, 187, 202 § 3^1 Kp, art. 17 ustawy o rehabilitacji, § 7 rozporządzenia o monitorach
+// ekranowych). Logika: src/lib/narzedzia/przerwy.ts (testy obok).
 import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
 import { przerwy } from '../../lib/narzedzia/przerwy';
 import { godzinyIMinuty } from '../../lib/narzedzia/czas-pracy';
@@ -28,14 +29,22 @@ const faq = [
     pytanie: 'Jaka przerwa dla młodocianego?',
     odpowiedz: 'Gdy dobowy wymiar młodocianego przekracza 4,5 godziny, pracodawca wprowadza przerwę trwającą nieprzerwanie 30 minut, wliczaną do czasu pracy (art. 202 § 3^1 Kodeksu pracy).',
   },
+  {
+    pytanie: 'Ile przerwy przy pracy przy komputerze?',
+    odpowiedz: 'Co najmniej 5 minut po każdej godzinie pracy przy monitorze, wliczane do czasu pracy, gdy przy monitorze pracujesz co najmniej połowę dobowego wymiaru. Zamiast przerw pracodawca może przeplatać pracę przy monitorze z inną, która nie obciąża wzroku, tak żeby nie trwała dłużej niż godzinę bez przerwy (§ 2 pkt 4 i § 7 rozporządzenia w sprawie stanowisk z monitorami ekranowymi). To dodatek do 15 minut z art. 134 Kodeksu pracy.',
+  },
+  {
+    pytanie: 'Czy osoba z niepełnosprawnością ma dłuższą przerwę?',
+    odpowiedz: 'Tak, dodatkowe 15 minut na gimnastykę usprawniającą albo wypoczynek, wliczane do czasu pracy, obok przerw z Kodeksu pracy (art. 17 ustawy o rehabilitacji zawodowej i społecznej).',
+  },
 ];
 ---
 <StronaNarzedzia
   slug="przerwy-w-pracy"
   tytul="Przerwy w pracy: ile przy 8 i 12 godzinach"
-  opis="Ile przerw w pracy należy się przy zmianie 8 i 12 godzin, które są wliczane do czasu pracy, przerwa na posiłek do 60 minut, karmienie piersią i młodociani."
+  opis="Ile przerw w pracy przy zmianie 8 i 12 godzin, które są płatne, przerwa na posiłek do 60 minut, przy komputerze, karmienie piersią, młodociani."
   h1="Przerwy w pracy: kalkulator"
-  lead="Przy zmianie od 6 godzin należy się 15 minut przerwy, przy dłuższej niż 9 godzin kolejne 15. Są też przerwy na karmienie i dla młodocianych. Wpisz długość zmiany, a pokażemy, ile przerw się należy i które są płatne."
+  lead="Przy zmianie od 6 godzin należy się 15 minut przerwy, przy dłuższej niż 9 godzin kolejne 15. Są też przerwy przy monitorze, na karmienie, dla młodocianych i osób z niepełnosprawnością. Wpisz długość zmiany, a pokażemy, ile przerw się należy i które są płatne."
   faq={faq}
 >
   <form class="kalkulator" data-przerwy novalidate aria-labelledby="kalkulator-tytul">
@@ -62,6 +71,14 @@ const faq = [
       <label class="mt-4 flex items-start gap-3 text-[0.9375rem]">
         <input type="checkbox" name="mlodociany" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
         <span>Pracownik młodociany (15–18 lat)</span>
+      </label>
+      <label class="mt-3 flex items-start gap-3 text-[0.9375rem]">
+        <input type="checkbox" name="monitor" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+        <span>Pracuję przy monitorze co najmniej połowę zmiany</span>
+      </label>
+      <label class="mt-3 flex items-start gap-3 text-[0.9375rem]">
+        <input type="checkbox" name="niepelnosprawny" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+        <span>Mam orzeczenie o niepełnosprawności</span>
       </label>
     </div>
 
@@ -98,6 +115,13 @@ const faq = [
       (art. 134 Kodeksu pracy). Pracodawca może wprowadzić jedną przerwę do 60 minut niewliczaną do czasu pracy,
       na posiłek albo sprawy osobiste, ale tylko w układzie zbiorowym, regulaminie pracy albo umowie o pracę (art. 141).
     </p>
+    <p>
+      Przy pracy przy monitorze przez co najmniej połowę zmiany należy się co najmniej 5 minut przerwy po każdej godzinie,
+      chyba że pracodawca przeplata ją z inną pracą (§ 7 rozporządzenia w sprawie stanowisk z monitorami ekranowymi).
+      Liczymy przerwę po każdej pełnej godzinie zmiany poza ostatnią: przy 8 godzinach to 7 przerw po 5 minut. Osoba
+      z niepełnosprawnością ma dodatkowe 15 minut (art. 17 ustawy o rehabilitacji), a jej czas pracy i urlop policzy
+      <a href="/narzedzia/pracownik-niepelnosprawny">kalkulator dla pracownika z niepełnosprawnością</a>.
+    </p>
   </Fragment>
 </StronaNarzedzia>
 
@@ -126,6 +150,8 @@ const faq = [
         godziny: h,
         niewliczana: n,
         mlodociany: pole('mlodociany').checked,
+        monitor: pole('monitor').checked,
+        niepelnosprawny: pole('niepelnosprawny').checked,
         karmienie: (form.elements.namedItem('karmienie') as HTMLSelectElement).value as 'nie' | 'jedno' | 'wiecej',
       });
       w('wliczane').textContent = `${r.wliczane} min`;

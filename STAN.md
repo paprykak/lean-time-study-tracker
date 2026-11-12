@@ -14,7 +14,7 @@ Pamięć robocza projektu. Czyta ją i aktualizuje każda sesja na początku i n
   - `/narzedzia/kalkulator-urlopu`: 20/26 dni, szkoła, staż z art. 302^1 (od 2026 r.), etat, część roku;
   - `/narzedzia/kontrola-grafiku`: grafik miesiąca (12 h, trzyzmianowy), odpoczynki, doba, niedziele, dni wolne;
   - `/narzedzia/okres-wypowiedzenia`: art. 34 i 36, koniec w sobotę albo ostatniego dnia miesiąca, dni na szukanie pracy;
-  - `/narzedzia/przerwy-w-pracy`: art. 134, 141, 187, 202 § 3^1;
+  - `/narzedzia/przerwy-w-pracy`: art. 134, 141, 187, 202 § 3^1; art. 17 ustawy o rehabilitacji (15 minut); § 7 rozporządzenia o monitorach (Dz.U. 2025 poz. 58: 5 minut po każdej pełnej godzinie poza ostatnią);
   - `/narzedzia/badania-udt`: forma dozoru, badanie UDT i przegląd konserwacyjny z załączników rozporządzenia z 2018 r., .ics;
   - `/narzedzia/ekwiwalent-za-urlop`: § 15–19 rozporządzenia z 1997 r., współczynnik liczony z kalendarza (2026: 251/12), termin wypłaty z art. 171 § 4–5;
   - `/narzedzia/kalkulator-l4`: podstawa minus 13,71%, 80/100%, 33 albo 14 dni od pracodawcy, bez obniżki w szpitalu (uchylona od 2022 r.);

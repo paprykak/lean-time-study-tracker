@@ -25,6 +25,14 @@ test('młodociany 5 h: 30 minut', async ({ page }) => {
   await expect(page.locator('[data-w="wliczane"]')).toHaveText('30 min');
 });
 
+test('8 godzin przy monitorze i z orzeczeniem: 15 + 35 + 15 minut', async ({ page }) => {
+  await page.getByLabel('Dobowy wymiar czasu pracy (godziny)').fill('8');
+  await page.getByLabel(/przy monitorze/).check();
+  await expect(page.locator('[data-w="wliczane"]')).toHaveText('50 min');
+  await page.getByLabel(/Mam orzeczenie/).check();
+  await expect(page.locator('[data-w="wliczane"]')).toHaveText('65 min');
+});
+
 test('zły wymiar: komunikat', async ({ page }) => {
   await page.getByLabel('Dobowy wymiar czasu pracy (godziny)').fill('30');
   await expect(page.getByText('Wpisz wymiar od 1 do 24 godzin')).toBeVisible();

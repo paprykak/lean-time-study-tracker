@@ -335,6 +335,13 @@ export const AKTY = {
     adres: eli(2023, 1240),
     sprawdzono: '2026-11-11',
   },
+  monitory: {
+    nazwa: 'Rozporządzenie w sprawie bezpieczeństwa i higieny pracy na stanowiskach wyposażonych w monitory ekranowe',
+    publikator: 'Dz.U. 2025 poz. 58',
+    uwaga: 'tekst jednolity, bez późniejszych zmian; § 2 pkt 4 i § 7',
+    adres: eli(2025, 58),
+    sprawdzono: '2026-11-12',
+  },
   rehabilitacja: {
     nazwa: 'Ustawa o rehabilitacji zawodowej i społecznej oraz zatrudnianiu osób niepełnosprawnych',
     publikator: 'Dz.U. 2026 poz. 884',

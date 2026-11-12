@@ -523,10 +523,10 @@ export const NARZEDZIA: Narzedzie[] = [
   {
     slug: 'przerwy-w-pracy',
     nazwa: 'Przerwy w pracy',
-    krotko: 'Ile przerw przy zmianie 8 i 12 godzin, które są płatne, przerwy na karmienie i dla młodocianych.',
+    krotko: 'Ile przerw przy zmianie 8 i 12 godzin, które są płatne, przy monitorze, na karmienie, dla młodocianych.',
     kategoria: 'czas-pracy',
-    przepisy: ['kodeksPracy'],
-    sprawdzono: '2026-11-11',
+    przepisy: ['kodeksPracy', 'monitory', 'rehabilitacja'],
+    sprawdzono: '2026-11-12',
   },
 ];
 
