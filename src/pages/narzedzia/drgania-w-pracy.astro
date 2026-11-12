@@ -1,0 +1,196 @@
+---
+// Drgania mechaniczne: ekspozycja dzienna A(8), NDN (Dz.U. 2018 poz. 1286), próg działania (Dz.U. 2005 nr 157 poz. 1318),
+// limity dla kobiet w ciąży i młodocianych. Logika: src/lib/narzedzia/drgania.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { dopuszczalnyCzasDrgan, LIMITY_DRGAN, ocenaDrgan, PROG_DZIALANIA_DRGAN } from '../../lib/narzedzia/drgania';
+import { godzinyIMinuty } from '../../lib/narzedzia/halas';
+
+const D = [
+  { a: 5, godziny: 2 },
+  { a: 2, godziny: 3 },
+];
+const r = ocenaDrgan(D, 'miejscowe', 'dorosly');
+const ms = (x: number) => `${x.toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} m/s²`;
+const lm = LIMITY_DRGAN.miejscowe.dorosly;
+const lo = LIMITY_DRGAN.ogolne.dorosly;
+const PRZYSPIESZENIA = [3, 4, 5, 6, 8, 10];
+
+const faq = [
+  {
+    pytanie: 'Jakie są normy drgań w pracy?',
+    odpowiedz: `Dla drgań działających przez ręce (szlifierki, młoty, wkrętarki udarowe) ekspozycja dzienna A(8) nie może przekraczać ${ms(lm.a8!)}, a ekspozycja trwająca do 30 minut ${ms(lm.krotka!)}. Dla drgań o ogólnym działaniu (siedzisko wózka, podest maszyny): ${ms(lo.a8!)} i ${ms(lo.krotka!)} (rozporządzenie w sprawie NDS i NDN, załącznik, część B, pkt B).`,
+  },
+  {
+    pytanie: 'Od kiedy pracodawca musi ograniczać drgania?',
+    odpowiedz: `Od progu działania: ${ms(PROG_DZIALANIA_DRGAN.miejscowe)} dla drgań miejscowych i ${ms(PROG_DZIALANIA_DRGAN.ogolne)} dla ogólnych. Wtedy pracodawca wprowadza program działań organizacyjno-technicznych ograniczających narażenie (§ 5 ust. 2 pkt 2 rozporządzenia w sprawie BHP przy narażeniu na hałas lub drgania), a przy pracy w zimnie i wilgoci daje odzież ochronną albo rękawice (§ 8).`,
+  },
+  {
+    pytanie: 'Ile godzin można pracować szlifierką?',
+    odpowiedz: `To zależy od drgań tej szlifierki z pomiaru albo deklaracji producenta. Przy 5 m/s² ekspozycja dzienna osiąga ${ms(lm.a8!)} po około ${godzinyIMinuty(dopuszczalnyCzasDrgan(5, lm.a8!))}, a przy 8 m/s² po około ${godzinyIMinuty(dopuszczalnyCzasDrgan(8, lm.a8!))}. Dwa razy większe drgania to czterokrotnie krótszy czas.`,
+  },
+  {
+    pytanie: 'Czy kobieta w ciąży może pracować przy drganiach?',
+    odpowiedz: `Przy drganiach o ogólnym działaniu na organizm nie może wcale; przy drganiach działających przez ręce tylko do ekspozycji dziennej 1 m/s² i krótkiej 4 m/s² (rozporządzenie w sprawie prac wzbronionych kobietom w ciąży, załącznik, cz. III pkt 4–5). Młodocianym wolno do 1 i 4 m/s² przy drganiach miejscowych oraz ${ms(LIMITY_DRGAN.ogolne.mlodociany.a8!)} i ${ms(LIMITY_DRGAN.ogolne.mlodociany.krotka!)} przy ogólnych.`,
+  },
+];
+---
+<StronaNarzedzia
+  slug="drgania-w-pracy"
+  tytul="Drgania w pracy: normy i ekspozycja A(8)"
+  opis="Policz ekspozycję dzienną na drgania A(8) przy szlifierce, młocie albo wózku i porównaj z normą: 2,8 m/s² dla rąk, 0,8 m/s² dla całego ciała, próg 2,5 i 0,5 m/s²."
+  h1="Drgania w pracy: ekspozycja i normy"
+  lead="Drgania z narzędzi i maszyn ocenia się dla całej zmiany. Wybierz rodzaj drgań, wpisz przyspieszenia z pomiaru albo z deklaracji producenta i czas pracy, a policzymy ekspozycję dzienną A(8)."
+  faq={faq}
+>
+  <form class="kalkulator" data-drgania novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Drgania w ciągu zmiany</h2>
+      <div class="mt-4">
+        <label for="d-rodzaj" class="etykieta-pola">Rodzaj drgań</label>
+        <select id="d-rodzaj" name="rodzaj" class="pole mt-1">
+          <option value="miejscowe" selected>Przez ręce (narzędzia ręczne)</option>
+          <option value="ogolne">Na całe ciało (siedzisko, podest)</option>
+        </select>
+      </div>
+      <div class="mt-4">
+        <label for="d-grupa" class="etykieta-pola">Kto pracuje</label>
+        <select id="d-grupa" name="grupa" class="pole mt-1">
+          <option value="dorosly" selected>Pracownik</option>
+          <option value="mlodociany">Młodociany (15–18 lat)</option>
+          <option value="ciaza">Kobieta w ciąży</option>
+        </select>
+      </div>
+      {
+        [0, 1, 2, 3].map((i) => (
+          <div class="mt-4 grid grid-cols-2 items-end gap-3">
+            <div>
+              <label for={`d-a-${i}`} class="etykieta-pola">Drgania {i + 1}: m/s²</label>
+              <input id={`d-a-${i}`} name={`a-${i}`} class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value={D[i]?.a ?? ''} aria-describedby="d-opis d-blad" />
+            </div>
+            <div>
+              <label for={`d-czas-${i}`} class="etykieta-pola">Drgania {i + 1}: godziny</label>
+              <input id={`d-czas-${i}`} name={`czas-${i}`} class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value={D[i]?.godziny ?? ''} aria-describedby="d-opis d-blad" />
+            </div>
+          </div>
+        ))
+      }
+      <p id="d-opis" class="meta mt-1">Przyspieszenie z pomiaru albo z instrukcji narzędzia i czas rzeczywistej pracy z nim; puste wiersze pomijamy.</p>
+      <p id="d-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Ekspozycja dzienna A(8)</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-kwota"><span data-w="a8">{ms(r.a8)}</span></p>
+        <p class="status-terminu" data-w="status" data-status="wkrotce">Powyżej progu działania {ms(PROG_DZIALANIA_DRGAN.miejscowe)}</p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Co musi zrobić pracodawca</dt><dd data-w="obowiazki">Wprowadzić program ograniczenia narażenia na drgania (§ 5 ust. 2 pkt 2).</dd></div>
+        <div><dt>Limit dla tej osoby</dt><dd data-w="limit">A(8) {ms(lm.a8!)}, do 30 minut {ms(lm.krotka!)}</dd></div>
+      </dl>
+      <p class="wynik-uwaga">Kalkulator nie zastępuje pomiaru. Krótką ekspozycję (do 30 minut) sprawdzamy dla wierszy z czasem do pół godziny.</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Normy są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="czas">Ile godzin przy danych drganiach przez ręce</h2>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Czas, po którym ekspozycja dzienna na drgania miejscowe osiąga próg działania i NDN</caption>
+        <thead><tr><th scope="col">Drgania narzędzia</th><th scope="col">Do progu 2,5 m/s²</th><th scope="col">Do NDN 2,8 m/s²</th></tr></thead>
+        <tbody>
+          {PRZYSPIESZENIA.map((a) => <tr><th scope="row">{a} m/s²</th><td>{godzinyIMinuty(dopuszczalnyCzasDrgan(a, PROG_DZIALANIA_DRGAN.miejscowe))}</td><td>{godzinyIMinuty(dopuszczalnyCzasDrgan(a, lm.a8!))}</td></tr>)}
+        </tbody>
+      </table>
+    </div>
+    <p>Czas pracy z jednym narzędziem w ciągu dnia, zaokrąglony w dół do pełnej minuty.</p>
+
+    <h2 id="zasady">Normy i obowiązki pracodawcy</h2>
+    <ul>
+      <li>Drgania przez kończyny górne: A(8) do {ms(lm.a8!)}, ekspozycja do 30 minut do {ms(lm.krotka!)}; drgania ogólne: {ms(lo.a8!)} i {ms(lo.krotka!)} (załącznik do rozporządzenia z 12 czerwca 2018 r., część B, pkt B).</li>
+      <li>Próg działania: {ms(PROG_DZIALANIA_DRGAN.miejscowe)} dla drgań miejscowych, {ms(PROG_DZIALANIA_DRGAN.ogolne)} dla ogólnych (załącznik do rozporządzenia z 5 sierpnia 2005 r.). Od progu: program ograniczenia narażenia (§ 5 ust. 2 pkt 2), a przy zimnie i wilgoci odzież ochronna przy drganiach ogólnych i rękawice przy miejscowych (§ 8).</li>
+      <li>Powyżej NDN: niezwłoczne ograniczenie narażenia, ustalenie przyczyn, dobór środków ochronnych i działań zapobiegawczych (§ 9 ust. 2).</li>
+      <li>Kobiety w ciąży: drgania przez ręce do 1 i 4 m/s², drgania ogólne wcale; młodociani: przez ręce do 1 i 4 m/s², ogólne do {ms(LIMITY_DRGAN.ogolne.mlodociany.a8!)} i {ms(LIMITY_DRGAN.ogolne.mlodociany.krotka!)}.</li>
+    </ul>
+    <p>Hałas z tej samej zmiany policzy <a href="/narzedzia/halas-w-pracy">kalkulator hałasu w pracy</a>.</p>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      A(8) to pierwiastek z sumy (przyspieszenie² · czas w godzinach) podzielonej przez 8. Dla drgań przez ręce wpisz
+      sumę wektorową z trzech kierunków (a<sub>hv</sub>), dla drgań ogólnych przyspieszenie dominujące spośród 1,4·a<sub>wx</sub>,
+      1,4·a<sub>wy</sub> i a<sub>wz</sub>, tak jak opisuje je załącznik. Definicje i metody pomiaru określają Polskie Normy.
+      Wynik porównujemy z NDN (nie może być przekroczone) i z progiem działania (obowiązki zaczynają się po jego
+      przekroczeniu).
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { wpisanaLiczba } from '../../lib/narzedzia/format';
+  import { ocenaDrgan, PROG_DZIALANIA_DRGAN, type GrupaDrgan, type OkresDrgan, type RodzajDrgan } from '../../lib/narzedzia/drgania';
+
+  const form = document.querySelector<HTMLFormElement>('[data-drgania]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const ms = (x: number) => `${x.toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} m/s²`;
+    const przelicz = () => {
+      const rodzaj = el('rodzaj').value as RodzajDrgan;
+      const grupa = el('grupa').value as GrupaDrgan;
+      const okresy: OkresDrgan[] = [];
+      let blad: string | null = null;
+      for (let i = 0; i < 4; i++) {
+        const ta = el(`a-${i}`).value.trim();
+        const tc = el(`czas-${i}`).value.trim();
+        if (!ta && !tc) continue;
+        const a = wpisanaLiczba(ta);
+        const godziny = wpisanaLiczba(tc);
+        if (!(a >= 0 && a <= 100) || !(godziny > 0 && godziny <= 24)) {
+          blad = `Drgania ${i + 1}: wpisz przyspieszenie od 0 do 100 m/s² i czas w godzinach, na przykład 5 i 2.`;
+          break;
+        }
+        okresy.push({ a, godziny });
+      }
+      if (!blad && !okresy.length) blad = 'Wpisz co najmniej jedno przyspieszenie drgań i czas.';
+      else if (!blad && okresy.reduce((s, o) => s + o.godziny, 0) > 24) blad = 'Łączny czas nie może przekroczyć 24 godzin.';
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      b.hidden = !blad;
+      b.textContent = blad ?? '';
+      const status = w('status');
+      if (blad) {
+        w('a8').textContent = '—';
+        status.hidden = true;
+        return;
+      }
+      const r = ocenaDrgan(okresy, rodzaj, grupa);
+      const szczegolna = grupa !== 'dorosly';
+      w('a8').textContent = ms(r.a8);
+      status.hidden = false;
+      if (r.wzbronione) {
+        status.dataset.status = 'po-terminie';
+        status.textContent = 'Praca wzbroniona w ciąży';
+        w('obowiazki').textContent = 'Kobiecie w ciąży nie wolno pracować przy drganiach o ogólnym działaniu na organizm (wykaz prac wzbronionych).';
+      } else if (r.przekroczone) {
+        status.dataset.status = 'po-terminie';
+        status.textContent = szczegolna ? 'Praca wzbroniona przy takich drganiach' : r.przekroczoneKrotkie ? 'Przekroczona norma dla ekspozycji do 30 minut' : `Przekroczona norma ${ms(r.limit.a8!)}`;
+        w('obowiazki').textContent = szczegolna
+          ? 'Pracodawca nie może zatrudniać tej osoby przy takich drganiach (wykaz prac wzbronionych).'
+          : 'Niezwłocznie ograniczyć narażenie poniżej NDN, ustalić przyczyny, dobrać środki ochronne i działania zapobiegawcze (§ 9 ust. 2).';
+      } else if (r.powyzejProgu && !szczegolna) {
+        status.dataset.status = 'wkrotce';
+        status.textContent = `Powyżej progu działania ${ms(PROG_DZIALANIA_DRGAN[rodzaj])}`;
+        w('obowiazki').textContent = 'Wprowadzić program ograniczenia narażenia na drgania (§ 5 ust. 2 pkt 2).';
+      } else {
+        status.dataset.status = 'w-terminie';
+        status.textContent = szczegolna ? 'W limicie dla tej osoby' : `Poniżej progu działania ${ms(PROG_DZIALANIA_DRGAN[rodzaj])}`;
+        w('obowiazki').textContent = 'Ograniczać ryzyko do najniższego możliwego poziomu (§ 5 ust. 1).';
+      }
+      w('limit').textContent = r.limit.a8 === null ? 'każda praca wzbroniona' : `A(8) ${ms(r.limit.a8)}, do 30 minut ${ms(r.limit.krotka!)}`;
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>

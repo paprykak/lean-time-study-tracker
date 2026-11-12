@@ -41,6 +41,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-11',
   },
   {
+    slug: 'drgania-w-pracy',
+    nazwa: 'Drgania w pracy: normy A(8)',
+    krotko: 'Ekspozycja na drgania z narzędzi i maszyn: 2,8 m/s² przez ręce, 0,8 m/s² na całe ciało, progi działania.',
+    kategoria: 'bhp',
+    przepisy: ['ndsNdn', 'halasBhp', 'praceKobietCiaza', 'praceMlodocianych'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'halas-w-pracy',
     nazwa: 'Hałas w pracy: normy dB',
     krotko: 'Ekspozycja na hałas w ciągu zmiany i norma: 85 dB, próg 80 dB, ciąża 65 dB, ile godzin przy 90 dB.',

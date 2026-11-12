@@ -261,14 +261,14 @@ export const AKTY = {
   ndsNdn: {
     nazwa: 'Rozporządzenie w sprawie najwyższych dopuszczalnych stężeń i natężeń czynników szkodliwych dla zdrowia w środowisku pracy',
     publikator: 'Dz.U. 2018 poz. 1286',
-    uwaga: 'zmiany: Dz.U. 2020 poz. 61, 2021 poz. 325, 2023 poz. 1661, 2024 poz. 1017, 2026 poz. 447 i 1211, bez zmian części o hałasie (załącznik, część B, pkt A: 85 dB, 115 dB(A), 135 dB(C))',
+    uwaga: 'zmiany: Dz.U. 2020 poz. 61, 2021 poz. 325, 2023 poz. 1661, 2024 poz. 1017, 2026 poz. 447 i 1211, bez zmian części o hałasie i drganiach (załącznik, część B, pkt A: 85 dB, 115 dB(A), 135 dB(C); pkt B: 2,8 i 11,2 m/s², 0,8 i 3,2 m/s²)',
     adres: eli(2018, 1286),
     sprawdzono: '2026-11-12',
   },
   halasBhp: {
     nazwa: 'Rozporządzenie w sprawie bezpieczeństwa i higieny pracy przy pracach związanych z narażeniem na hałas lub drgania mechaniczne',
     publikator: 'Dz.U. 2005 nr 157 poz. 1318',
-    uwaga: 'bez zmian; załącznik: próg działania 80 dB, szczytowy C 135 dB; § 3, 5, 6, 7 i 9',
+    uwaga: 'bez zmian; załącznik: progi działania 80 dB, szczytowy C 135 dB, drgania 2,5 i 0,5 m/s²; § 3, 5–9',
     adres: eli(2005, 1318),
     sprawdzono: '2026-11-12',
   },
