@@ -1,6 +1,6 @@
 // Oczekiwane wartości policzone niezależnie skryptem w Pythonie (dateutil.relativedelta i calendar, bez kodu serwisu).
 import { describe, expect, it } from 'vitest';
-import { przedluzenieDoPorodu, uplywTrzeciegoMiesiaca, wypowiedzenieWCiazy, wypowiedzenieZastepstwa } from './umowa-zastepstwo';
+import { przedluzenieDoPorodu, umowaNaZastepstwo, uplywTrzeciegoMiesiaca, wypowiedzenieWCiazy, wypowiedzenieZastepstwa } from './umowa-zastepstwo';
 
 describe('wypowiedzenie umowy na zastępstwo (art. 36 § 1, art. 30 § 2^1)', () => {
   it.each([
@@ -49,28 +49,31 @@ describe('wypowiedzenie umowy na zastępstwo (art. 36 § 1, art. 30 § 2^1)', ()
 describe('przedłużenie umowy do dnia porodu (art. 177 § 3 i § 3^1)', () => {
   it.each([
     // rodzaj, koniec umowy, początek ciąży, upływ 3. miesiąca, status
-    ['okreslony', '2027-04-11', '2027-01-10', '2027-04-10', 'przedluza'],
-    ['okreslony', '2027-04-10', '2027-01-10', '2027-04-10', 'granica'],
-    ['okreslony', '2027-04-09', '2027-01-10', '2027-04-10', 'przed-uplywem'],
-    ['zastepstwo', '2027-12-31', '2027-01-10', '2027-04-10', 'zastepstwo'],
-    ['probna-ponad-miesiac', '2027-05-31', '2027-01-10', '2027-04-10', 'przedluza'],
-    ['probna-do-miesiaca', '2027-05-31', '2027-01-10', '2027-04-10', 'probna-krotka'],
-    // 29 lutego w roku przestępnym i ostatni dzień miesiąca (art. 112 KC)
-    ['okreslony', '2028-03-01', '2027-11-29', '2028-02-29', 'przedluza'],
-    ['okreslony', '2028-02-29', '2027-11-30', '2028-02-29', 'granica'],
-    ['okreslony', '2027-02-28', '2026-11-30', '2027-02-28', 'granica'],
-    ['okreslony', '2027-03-01', '2026-11-30', '2027-02-28', 'przedluza'],
+    // wariant B: 3. miesiąc od 10 stycznia upływa z końcem 9 kwietnia
+    ['okreslony', '2027-04-08', '2027-01-10', '2027-04-09', 'przed-uplywem'],
+    ['okreslony', '2027-04-09', '2027-01-10', '2027-04-09', 'granica'],
+    ['okreslony', '2027-04-10', '2027-01-10', '2027-04-09', 'przedluza'],
+    ['zastepstwo', '2027-12-31', '2027-01-10', '2027-04-09', 'zastepstwo'],
+    ['probna-ponad-miesiac', '2027-05-31', '2027-01-10', '2027-04-09', 'przedluza'],
+    ['probna-do-miesiaca', '2027-05-31', '2027-01-10', '2027-04-09', 'probna-krotka'],
+    // 29 lutego w roku przestępnym i ostatni dzień miesiąca
+    ['okreslony', '2028-02-28', '2027-11-29', '2028-02-28', 'granica'],
+    ['okreslony', '2028-02-29', '2027-11-29', '2028-02-28', 'przedluza'],
+    ['okreslony', '2028-02-28', '2027-11-30', '2028-02-28', 'granica'],
+    ['okreslony', '2028-02-29', '2027-11-30', '2028-02-28', 'przedluza'],
+    ['okreslony', '2027-02-27', '2026-11-30', '2027-02-27', 'granica'],
+    ['okreslony', '2027-02-28', '2026-11-30', '2027-02-27', 'przedluza'],
     // przez koniec roku
-    ['okreslony', '2027-01-04', '2026-10-31', '2027-01-31', 'przed-uplywem'],
+    ['okreslony', '2027-01-30', '2026-10-31', '2027-01-30', 'granica'],
     // ciąża po końcu umowy
-    ['okreslony', '2026-12-31', '2027-01-02', '2027-04-02', 'po-umowie'],
+    ['okreslony', '2026-12-31', '2027-01-02', '2027-04-01', 'po-umowie'],
   ] as const)('%s do %s, ciąża od %s: upływ %s, %s', (rodzaj, koniec, ciaza, uplyw, status) => {
     expect(przedluzenieDoPorodu(rodzaj, koniec, ciaza)).toEqual({ status, uplyw3Miesiaca: uplyw });
   });
 
-  it('upływ 3. miesiąca liczony kalendarzowo', () => {
-    expect(uplywTrzeciegoMiesiaca('2026-11-30')).toBe('2027-02-28');
-    expect(uplywTrzeciegoMiesiaca('2026-12-15')).toBe('2027-03-15');
+  it('upływ 3. miesiąca: dzień przed dniem odpowiadającym datą początkowi ciąży (wariant B)', () => {
+    expect(uplywTrzeciegoMiesiaca('2026-11-30')).toBe('2027-02-27');
+    expect(uplywTrzeciegoMiesiaca('2026-12-15')).toBe('2027-03-14');
   });
 
   it('błędne dane', () => {
@@ -85,5 +88,33 @@ describe('wypowiedzenie w ciąży (art. 177 § 1)', () => {
     expect(wypowiedzenieWCiazy('2027-03-01', '2027-01-10')).toBe(true);
     expect(wypowiedzenieWCiazy('2027-01-09', '2027-01-10')).toBe(false);
     expect(wypowiedzenieWCiazy('2027-01-09', '')).toBe(false);
+  });
+});
+
+describe('całość: ostatni dzień a przedłużenie do dnia porodu', () => {
+  it('data końca przed końcem okresu i przedłużenie: ostatnim dniem jest dzień porodu, nie data z umowy', () => {
+    const r = umowaNaZastepstwo({ rodzaj: 'okreslony', poczatekPracy: '2026-01-05', doreczenie: '2027-03-20', koniecUmowy: '2027-04-11', poczatekCiazy: '2027-01-10' });
+    expect(r.wypowiedzenie).toMatchObject({ stazMiesiecy: 14, koniecOkresu: '2027-04-30', ostatniDzien: '2027-04-11', powod: 'termin' });
+    expect(r.przedluzenie).toEqual({ status: 'przedluza', uplyw3Miesiaca: '2027-04-09' });
+    expect(r.ostatni).toBe('porod');
+    expect(r.przedluzeniePoWypowiedzeniu).toBe(false);
+    expect(r.wypowiedzenieWCiazy).toBe(true);
+  });
+  it('to samo przy zastępstwie: bez przedłużenia, ostatni dzień z umowy', () => {
+    const r = umowaNaZastepstwo({ rodzaj: 'zastepstwo', poczatekPracy: '2026-01-05', doreczenie: '2027-03-20', koniecUmowy: '2027-04-11', poczatekCiazy: '2027-01-10' });
+    expect(r.przedluzenie?.status).toBe('zastepstwo');
+    expect(r.ostatni).toBe('2027-04-11');
+  });
+  it('wypowiedzenie kończy umowę przed datą z umowy: ostatni dzień z wypowiedzenia i zaznaczona niepewność', () => {
+    const r = umowaNaZastepstwo({ rodzaj: 'okreslony', poczatekPracy: '2026-01-05', doreczenie: '2026-12-20', koniecUmowy: '2027-04-11', poczatekCiazy: '2026-10-01' });
+    expect(r.wypowiedzenie).toMatchObject({ stazMiesiecy: 11, koniecOkresu: '2027-01-31', powod: 'wypowiedzenie' });
+    expect(r.przedluzenie).toEqual({ status: 'przedluza', uplyw3Miesiaca: '2026-12-31' });
+    expect(r.ostatni).toBe('2027-01-31');
+    expect(r.przedluzeniePoWypowiedzeniu).toBe(true);
+  });
+  it('zastępstwo bez dat ciąży i końca: status zastępstwa; inna umowa bez dat: brak oceny', () => {
+    expect(umowaNaZastepstwo({ rodzaj: 'zastepstwo', poczatekPracy: '2026-01-05', doreczenie: '2026-11-30' }).przedluzenie?.status).toBe('zastepstwo');
+    expect(umowaNaZastepstwo({ rodzaj: 'okreslony', poczatekPracy: '2026-01-05', doreczenie: '2026-11-30', poczatekCiazy: '2026-10-01' }).przedluzenie).toBeNull();
+    expect(() => umowaNaZastepstwo({ rodzaj: 'okreslony', poczatekPracy: '2026-01-05', doreczenie: '2026-11-30', poczatekCiazy: '2026-02-30' })).toThrow('początku ciąży');
   });
 });

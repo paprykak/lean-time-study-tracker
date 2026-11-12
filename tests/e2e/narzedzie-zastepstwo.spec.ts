@@ -14,7 +14,7 @@ test('zastępstwo, staż 6 miesięcy: 1 miesiąc do 31 października, bez limitu
   await expect(w(page, 'ostatni')).toHaveText(/^31\spaździernika\s2026\sr\.$/);
   await expect(w(page, 'okres')).toHaveText(/^1\smiesiąc$/);
   await expect(w(page, 'staz')).toHaveText(/^6\spełnych\smiesięcy$/);
-  await expect(w(page, 'limit')).toContainText('nie dotyczy');
+  await expect(w(page, 'limit')).toHaveText(/^nie\sdotyczy,\sjeśli\sspełniony/);
   await expect(w(page, 'porod')).toHaveText(/^nie\s\(art\.\s177\s§\s3¹\)$/);
   await expect(w(page, 'status')).toBeHidden();
 });
@@ -35,10 +35,12 @@ test('inna umowa na czas określony w ciąży: przedłużenie do porodu i granic
   await page.getByLabel('Początek ciąży (jeśli dotyczy)').fill('2027-01-10');
   await expect(w(page, 'porod')).toHaveText(/wpisz\skoniec\sumowy/);
   await page.getByLabel('Koniec umowy (jeśli ma datę)').fill('2027-04-11');
-  await expect(w(page, 'uplyw')).toHaveText(/^10\skwietnia\s2027\sr\.$/);
+  await expect(w(page, 'uplyw')).toHaveText(/^9\skwietnia\s2027\sr\.$/);
   await expect(w(page, 'porod')).toHaveText(/^tak,\sdo\sdnia\sporodu/);
-  await expect(w(page, 'limit')).toContainText('dotyczy');
+  await expect(w(page, 'limit')).toHaveText(/^co\sdo\szasady\sdotyczy/);
   await page.getByLabel('Koniec umowy (jeśli ma datę)').fill('2027-04-10');
+  await expect(w(page, 'porod')).toHaveText(/^tak,/);
+  await page.getByLabel('Koniec umowy (jeśli ma datę)').fill('2027-04-09');
   await expect(w(page, 'porod')).toHaveText(/przepis\snie\srozstrzyga/);
   await page.getByLabel('Rodzaj umowy').selectOption('zastepstwo');
   await expect(w(page, 'porod')).toHaveText(/^nie\s/);
@@ -49,7 +51,20 @@ test('wypowiedzenie doręczone w ciąży: ostrzeżenie o zakazie (art. 177 § 1)
   await page.getByLabel('Dzień doręczenia wypowiedzenia').fill('2026-11-30');
   await page.getByLabel('Początek ciąży (jeśli dotyczy)').fill('2026-10-01');
   await expect(w(page, 'status')).toBeVisible();
-  await expect(w(page, 'status')).toHaveText(/zakazane\s\(art\.\s177\s§\s1\)/);
+  await expect(w(page, 'status')).toHaveText(/zakazane\s\(art\.\s177\s§\s1\spkt\s2\)\.$/);
+});
+
+test('przedłużenie z daty w umowie przed końcem okresu wypowiedzenia: ostatni dzień to dzień porodu', async ({ page }) => {
+  await page.getByLabel('Rodzaj umowy').selectOption('okreslony');
+  await page.getByLabel('Pracujesz u tego pracodawcy od').fill('2026-01-05');
+  await page.getByLabel('Dzień doręczenia wypowiedzenia').fill('2027-03-20');
+  await page.getByLabel('Koniec umowy (jeśli ma datę)').fill('2027-04-11');
+  await page.getByLabel('Początek ciąży (jeśli dotyczy)').fill('2027-01-10');
+  await expect(w(page, 'ostatni')).toHaveText(/^dzień\sporodu\s\(art\.\s177\s§\s3\)$/);
+  await expect(w(page, 'porod')).toHaveText(/^tak,/);
+  await expect(w(page, 'uwaga')).not.toContainText('upływem czasu');
+  await page.getByLabel('Rodzaj umowy').selectOption('zastepstwo');
+  await expect(w(page, 'ostatni')).toHaveText(/^11\skwietnia\s2027\sr\.$/);
 });
 
 test('błędne dane: doręczenie przed początkiem pracy', async ({ page }) => {
