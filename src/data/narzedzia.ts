@@ -249,6 +249,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-12',
   },
   {
+    slug: 'termin-wyplaty-wynagrodzenia',
+    nazwa: 'Terminy wypłaty wynagrodzenia',
+    krotko: 'Kiedy wypłata w każdym miesiącu: dzień z regulaminu przesunięty z soboty, niedzieli i świąt, plik .ics.',
+    kategoria: 'wynagrodzenie',
+    przepisy: ['kodeksPracy', 'dniWolne'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'stawka-godzinowa',
     nazwa: 'Ile to na godzinę: stawka z pensji',
     krotko: 'Przelicz pensję na stawkę za godzinę w każdym miesiącu: godziny do przepracowania, średnia roczna.',

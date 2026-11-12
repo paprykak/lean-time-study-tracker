@@ -1,0 +1,157 @@
+---
+// Terminy wypłaty wynagrodzenia w roku (art. 85 Kp) z przesunięciem z dni wolnych i plikiem .ics.
+// Logika: src/lib/narzedzia/termin-wyplaty.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { dzienMiesiaca, nazwaMiesiaca } from '../../lib/narzedzia/czas-pracy';
+import { terminyWyplaty } from '../../lib/narzedzia/termin-wyplaty';
+import { dataPoPolsku, dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+const DNI = ['niedziela', 'poniedziałek', 'wtorek', 'środa', 'czwartek', 'piątek', 'sobota'];
+const dzien = (d: string) => DNI[new Date(`${d}T00:00:00Z`).getUTCDay()];
+const dzis = dzisWPolsce();
+const rokBiezacy = Number(dzis.slice(0, 4));
+const rok = Number(dzis.slice(5, 7)) >= 12 ? rokBiezacy + 1 : rokBiezacy;
+const LATA = [rokBiezacy, rokBiezacy + 1];
+const DZIEN = 10;
+const lista = terminyWyplaty(rok, DZIEN);
+const najblizsza = lista.find((t) => t.wyplata >= dzis) ?? lista[0];
+const opis = (t: (typeof lista)[number]) =>
+  `${nazwaMiesiaca(t.miesiac)}: ${dzienMiesiaca(t.wyplata)} (${dzien(t.wyplata)})${t.powod.length ? `, zamiast ${dzienMiesiaca(t.ustalony)} (${t.powod[0]})` : ''}`;
+const grudzien25 = terminyWyplaty(rok, 25)[11];
+
+const faq = [
+  {
+    pytanie: 'Do kiedy pracodawca musi wypłacić pensję?',
+    odpowiedz: 'Wynagrodzenie płatne raz w miesiącu wypłaca się z dołu, najpóźniej w ciągu pierwszych 10 dni następnego miesiąca (art. 85 § 2 Kodeksu pracy), w stałym i ustalonym z góry terminie (art. 85 § 1). Konkretny dzień wskazuje regulamin pracy albo umowa (art. 86 § 1).',
+  },
+  {
+    pytanie: 'Co, gdy dzień wypłaty wypada w sobotę, niedzielę albo święto?',
+    odpowiedz: 'Gdy ustalony dzień wypłaty jest dniem wolnym od pracy, wynagrodzenie wypłaca się w dniu poprzedzającym (art. 85 § 3 Kodeksu pracy), czyli wcześniej, a nie później. Gdy i ten dzień jest wolny, kalkulator pokazuje najbliższy wcześniejszy dzień pracy.',
+  },
+  {
+    pytanie: `Kiedy wypłata w grudniu ${rok} r.?`,
+    odpowiedz: `Przy wypłacie 25. dnia miesiąca: ${dzienMiesiaca(grudzien25.wyplata)} (${dzien(grudzien25.wyplata)}), bo 24 i 25 grudnia są dniami wolnymi od pracy (od 2025 r. także Wigilia). Przy wypłacie 10. dnia: ${dzienMiesiaca(lista[11].wyplata)}.`,
+  },
+  {
+    pytanie: 'Co grozi pracodawcy za spóźnioną wypłatę?',
+    odpowiedz: 'Niewypłacenie wynagrodzenia w ustalonym terminie to wykroczenie zagrożone grzywną od 2000 do 60 000 zł (art. 282 § 1 pkt 1 Kodeksu pracy). Sprawę można zgłosić do Państwowej Inspekcji Pracy.',
+  },
+];
+---
+<StronaNarzedzia
+  slug="termin-wyplaty-wynagrodzenia"
+  tytul={`Terminy wypłaty wynagrodzenia ${rok}: kiedy wypłata`}
+  opis={`Kiedy wypłata w każdym miesiącu ${rok} r.: dzień wypłaty z regulaminu przesunięty z soboty, niedzieli i świąt na dzień wcześniej (art. 85 Kodeksu pracy). Plik do kalendarza.`}
+  h1={`Kiedy wypłata: terminy w ${rok} r.`}
+  lead="Gdy dzień wypłaty wypada w dzień wolny, pensja przychodzi wcześniej. Wybierz dzień wypłaty z regulaminu, a pokażemy daty wypłat w każdym miesiącu i dodasz je do kalendarza."
+  faq={faq}
+>
+  <form class="kalkulator" data-wyplata novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twój dzień wypłaty</h2>
+      <div class="mt-4">
+        <label for="p-dzien" class="etykieta-pola">Dzień wypłaty z regulaminu</label>
+        <select id="p-dzien" name="dzien" class="pole mt-1 max-w-56">
+          {Array.from({ length: 28 }, (_, i) => i + 1).map((d) => <option value={d} selected={d === DZIEN}>{d}. dnia miesiąca</option>)}
+          <option value="ostatni">ostatniego dnia miesiąca</option>
+        </select>
+      </div>
+      <div class="mt-4">
+        <label for="p-rok" class="etykieta-pola">Rok</label>
+        <select id="p-rok" name="rok" class="pole mt-1 max-w-56">
+          {LATA.map((r) => <option value={r} selected={r === rok}>{r}</option>)}
+        </select>
+      </div>
+      <label class="mt-4 flex items-start gap-3 text-[0.9375rem]">
+        <input type="checkbox" name="sobota" checked class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+        <span>Sobota jest w zakładzie dniem wolnym od pracy</span>
+      </label>
+      <p class="mt-5">
+        <button type="button" class="przycisk przycisk-grafit" data-ics>Wypłaty do kalendarza (.ics)</button>
+      </p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Najbliższa wypłata</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-data" data-w="najblizsza">{dataPoPolsku(najblizsza.wyplata)}</p>
+        <p class="meta" data-w="dzien-tygodnia">{dzien(najblizsza.wyplata)}</p>
+      </div>
+      <h3 class="etykieta mt-5">Wypłaty w roku</h3>
+      <ul class="mt-2 grid gap-1 text-[0.9375rem]" data-w="lista">
+        {lista.map((t) => <li>{opis(t)}</li>)}
+      </ul>
+      <noscript><p class="wynik-uwaga">Zmiana dnia i roku działa z JavaScriptem. Lista pokazuje wypłatę 10. dnia miesiąca.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="zasady">Zasady wypłaty</h2>
+    <ul>
+      <li>Wynagrodzenie wypłaca się co najmniej raz w miesiącu, w stałym i ustalonym z góry terminie (art. 85 § 1 Kodeksu pracy).</li>
+      <li>Przy wypłacie raz w miesiącu: z dołu, najpóźniej w ciągu pierwszych 10 dni następnego miesiąca (art. 85 § 2).</li>
+      <li>Gdy dzień wypłaty jest dniem wolnym od pracy, wypłata jest w dniu poprzedzającym (art. 85 § 3).</li>
+      <li>Miejsce, termin i czas wypłaty określa regulamin pracy albo inne przepisy prawa pracy (art. 86 § 1).</li>
+      <li>Spóźniona wypłata to wykroczenie: grzywna od 2000 do 60 000 zł (art. 282 § 1 pkt 1).</li>
+    </ul>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Dni wolne od pracy to niedziele, święta z ustawy o dniach wolnych od pracy (od 2025 r. także Wigilia) i soboty, jeśli
+      w zakładzie są wolne. Przepis mówi o „dniu poprzedzającym” i nie rozstrzyga, co zrobić, gdy ten dzień też jest wolny,
+      na przykład gdy wypłata wypada w niedzielę; pokazujemy wtedy najbliższy wcześniejszy dzień pracy. Przy pracy według
+      grafiku dniem wolnym od pracy w rozumieniu przepisu może być inny dzień, więc w razie wątpliwości sprawdź regulamin
+      wynagradzania. Dni 29–31 pomijamy, bo nie ma ich w każdym miesiącu; dla wypłaty na koniec miesiąca wybierz
+      „ostatniego dnia miesiąca”.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { dzienMiesiaca, nazwaMiesiaca } from '../../lib/narzedzia/czas-pracy';
+  import { plikIcs } from '../../lib/narzedzia/kalendarz-ics';
+  import { terminyWyplaty, type DzienWyplaty } from '../../lib/narzedzia/termin-wyplaty';
+  import { dataPoPolsku, dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+  const DNI = ['niedziela', 'poniedziałek', 'wtorek', 'środa', 'czwartek', 'piątek', 'sobota'];
+  const dzien = (d: string) => DNI[new Date(`${d}T00:00:00Z`).getUTCDay()];
+  const form = document.querySelector<HTMLFormElement>('[data-wyplata]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const dane = () => {
+      const d = el('dzien').value;
+      const rok = Number(el('rok').value);
+      return { rok, lista: terminyWyplaty(rok, (d === 'ostatni' ? 'ostatni' : Number(d)) as DzienWyplaty, el('sobota').checked) };
+    };
+    const przelicz = () => {
+      const { lista } = dane();
+      const dzis = dzisWPolsce();
+      const najblizsza = lista.find((t) => t.wyplata >= dzis) ?? lista[0];
+      w('najblizsza').textContent = dataPoPolsku(najblizsza.wyplata);
+      w('dzien-tygodnia').textContent = dzien(najblizsza.wyplata);
+      w('lista').replaceChildren(
+        ...lista.map((t) =>
+          Object.assign(document.createElement('li'), {
+            textContent: `${nazwaMiesiaca(t.miesiac)}: ${dzienMiesiaca(t.wyplata)} (${dzien(t.wyplata)})${t.powod.length ? `, zamiast ${dzienMiesiaca(t.ustalony)} (${t.powod[0]})` : ''}`,
+          }),
+        ),
+      );
+    };
+    form.querySelector<HTMLButtonElement>('[data-ics]')!.addEventListener('click', () => {
+      const { rok, lista } = dane();
+      const wydarzenia = lista.map((t) => ({ data: t.wyplata, tytul: 'Wypłata wynagrodzenia', opis: 'Termin wypłaty według art. 85 Kodeksu pracy.' }));
+      const blob = new Blob([plikIcs(wydarzenia, `termin-wyplaty-${rok}`)], { type: 'text/calendar;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `wyplaty-${rok}.ics`;
+      document.body.append(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    });
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>
