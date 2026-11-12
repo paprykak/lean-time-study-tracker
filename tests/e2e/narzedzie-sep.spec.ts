@@ -1,0 +1,68 @@
+import { readFileSync } from 'node:fs';
+import { expect, test } from '@playwright/test';
+import { adresNarzedzia } from '../../src/data/narzedzia';
+
+// Ważność uprawnień SEP: 5 lat od dnia wydania (art. 54 ust. 1aa PE), stare świadectwa (art. 25 ustawy z 2021 r.),
+// wpis „ważne do”, opłata za egzamin (§ 14), plik .ics. Daty dalekie od dziś, żeby test był stabilny.
+const ADRES = adresNarzedzia('waznosc-uprawnien-sep');
+
+test.beforeEach(async ({ page }) => {
+  await page.goto(ADRES);
+});
+
+test('wydane 29.02.2024: ważne do 27 lutego 2029 r., rocznica 28 lutego', async ({ page }) => {
+  await page.getByLabel('Data wydania świadectwa').fill('2024-02-29');
+  await expect(page.locator('[data-w="termin"]')).toHaveText(/^27\slutego\s2029\sr\.$/);
+  await expect(page.locator('[data-w="podstawa"]')).toContainText(/28\slutego\s2029/);
+  await expect(page.locator('[data-w="status"]')).toHaveAttribute('data-status', 'w-terminie');
+});
+
+test('bezterminowe sprzed 3 lipca 2021 r.: wygasło 2 lipca 2026 r., bez kalendarza', async ({ page }) => {
+  await page.getByLabel('Data wydania świadectwa').fill('2015-06-10');
+  await expect(page.locator('[data-w="termin"]')).toHaveText(/^2\slipca\s2026\sr\.$/);
+  await expect(page.locator('[data-w="status"]')).toContainText('Wygasło');
+  await expect(page.locator('[data-w="uwaga"]')).toContainText(/egzamin\sod\snowa/);
+  await expect(page.getByRole('button', { name: 'Dodaj do kalendarza (.ics)' })).toBeDisabled();
+});
+
+test('wpis niezgodny z wyliczeniem: wynik z wpisu i uwaga', async ({ page }) => {
+  await page.getByLabel('Data wydania świadectwa').fill('2024-03-10');
+  await page.getByLabel('Wpis „ważne do” (jeśli jest)').fill('2029-04-01');
+  await expect(page.locator('[data-w="termin"]')).toHaveText(/^1\skwietnia\s2029\sr\.$/);
+  await expect(page.locator('[data-w="uwaga"]')).toContainText(/9\smarca\s2029/);
+});
+
+test('opłata: wniosek 30.12.2026 → 480,60 zł, 4.01.2027 → 495,00 zł', async ({ page }) => {
+  await page.getByLabel('Data wniosku o egzamin').fill('2026-12-30');
+  await expect(page.locator('[data-w="oplata"]')).toContainText(/480,60\szł/);
+  await page.getByLabel('Data wniosku o egzamin').fill('2027-01-04');
+  await expect(page.locator('[data-w="oplata"]')).toContainText(/495,00\szł/);
+});
+
+test('błędne dane: wpis przed datą wydania', async ({ page }) => {
+  await page.getByLabel('Data wydania świadectwa').fill('2024-03-10');
+  await page.getByLabel('Wpis „ważne do” (jeśli jest)').fill('2023-01-01');
+  await expect(page.locator('[data-blad="wpis"]')).toBeVisible();
+  await expect(page.locator('[data-w="termin"]')).toHaveText('Wpisz datę');
+});
+
+test('plik .ics z przypomnieniami', async ({ page, browserName }) => {
+  test.skip(browserName === 'webkit', 'Pobieranie plików w WebKit Playwright obsługuje inaczej; logikę sprawdzają testy jednostkowe.');
+  await page.getByLabel('Data wydania świadectwa').fill('2024-02-29');
+  const [pobranie] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: 'Dodaj do kalendarza (.ics)' }).click()]);
+  expect(pobranie.suggestedFilename()).toBe('uprawnienia-sep.ics');
+  const tresc = readFileSync((await pobranie.path())!, 'utf8');
+  expect(tresc).toContain('DTSTART;VALUE=DATE:20281127');
+  expect(tresc).toContain('DTSTART;VALUE=DATE:20290127');
+  expect(tresc).toContain('DTSTART;VALUE=DATE:20290227');
+});
+
+test.describe('bez JavaScriptu', () => {
+  test.use({ javaScriptEnabled: false });
+  test('wynik startowy i tabele są w HTML', async ({ page }) => {
+    await page.goto(ADRES);
+    await expect(page.locator('[data-w="termin"]')).toHaveText(/\d{4}\sr\.$/);
+    await expect(page.locator('#oplata ~ .tabela tr', { hasText: '2026' })).toContainText(/480,60\szł/);
+    await expect(page.locator('#grupy ~ .tabela tr', { hasText: 'G2 pkt 16' })).toContainText('sprężarki');
+  });
+});
