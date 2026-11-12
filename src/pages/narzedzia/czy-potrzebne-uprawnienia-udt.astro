@@ -1,0 +1,335 @@
+---
+// Czy do obsługi maszyny potrzebne jest zaświadczenie kwalifikacyjne UDT: § 1 rozporządzenia z 2012 r. (urządzenia
+// techniczne), art. 22–23 ustawy o dozorze technicznym, zał. nr 3 tab. nr 1 do rozporządzenia z 2019 r. z wyłączeniami,
+// § 4 rozporządzenia bhp o wózkach. Logika: src/lib/narzedzia/czy-udt.ts (testy obok). Bez JavaScriptu działa wynik
+// startowy i tabela typowych maszyn.
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { PRZECIETNE_WYNAGRODZENIE } from '../../data/prawo';
+import { czyUdt, RODZAJE, type DaneMaszyny } from '../../lib/narzedzia/czy-udt';
+import { oplataEgzaminu, PROCENT_OPLATY } from '../../lib/narzedzia/uprawnienia-udt';
+import { zl } from '../../lib/narzedzia/format';
+import { odmiana } from '../../lib/redakcja';
+
+const oplata = zl(oplataEgzaminu(PRZECIETNE_WYNAGRODZENIE.kwota));
+const lat = (n: number) => odmiana(n, ['rok', 'lata', 'lat']);
+
+const START: DaneMaszyny = { rodzaj: 'paleciak', jazdaSilnikowa: true, podnoszenieMechaniczne: true };
+const w = czyUdt(START);
+const widoczne = new Set(RODZAJE.find((r) => r.id === START.rodzaj)!.pola);
+const ukryj = (pole: string) => !widoczne.has(pole as never);
+
+const PRZYKLADY: [string, DaneMaszyny][] = [
+  ['Paleciak elektryczny (jazda i unoszenie elektryczne)', START],
+  ['Paleciak z jazdą elektryczną i ręczną pompą', { rodzaj: 'paleciak', jazdaSilnikowa: true, podnoszenieMechaniczne: false }],
+  ['Ręczny paleciak', { rodzaj: 'paleciak', jazdaSilnikowa: false, podnoszenieMechaniczne: false }],
+  ['Ciągnik, wózek platformowy bez podnoszenia', { rodzaj: 'ciagnik' }],
+  ['Wózek widłowy czołowy albo boczny', { rodzaj: 'wozek-widlowy' }],
+  ['Reach truck', { rodzaj: 'reach-truck' }],
+  ['Wózek z podnoszonym operatorem (kompletacyjny)', { rodzaj: 'wozek-kompletacyjny' }],
+  ['Ładowarka teleskopowa', { rodzaj: 'ladowarka-teleskopowa' }],
+  ['Wciągnik elektryczny jednofazowy 500 kg', { rodzaj: 'wciagnik', naped: 'jednofazowy', udzwigKg: 500 }],
+  ['Wciągnik elektryczny trójfazowy 1000 kg', { rodzaj: 'wciagnik', naped: 'mechaniczny', udzwigKg: 1000, przeznaczenie: 'ogolne' }],
+  ['Wciągnik ręczny (łańcuchowy) 3000 kg', { rodzaj: 'wciagnik', naped: 'reczny', udzwigKg: 3000 }],
+  ['Suwnica ogólnego przeznaczenia 5000 kg', { rodzaj: 'suwnica', naped: 'mechaniczny', udzwigKg: 5000, przeznaczenie: 'ogolne' }],
+  ['Żuraw słupowy 500 kg', { rodzaj: 'zuraw', naped: 'mechaniczny', udzwigKg: 500, typZurawia: 'stacjonarny' }],
+  ['Podnośnik nożycowy albo koszowy (zwyżka)', { rodzaj: 'podest', naped: 'mechaniczny', typPodestu: 'przejezdny' }],
+  ['Winda załadowcza (podest załadowczy)', { rodzaj: 'podest', naped: 'mechaniczny', typPodestu: 'zaladowczy' }],
+  ['Stół podnośny nożycowy', { rodzaj: 'dzwignik', typDzwignika: 'staly' }],
+  ['Dźwig towarowy (winda towarowa)', { rodzaj: 'dzwig', typDzwigu: 'towarowy' }],
+  ['Wyciąg towarowy 300 kg', { rodzaj: 'wyciag', naped: 'mechaniczny', udzwigKg: 300 }],
+];
+const tabela = PRZYKLADY.map(([nazwa, d]) => ({ nazwa, w: czyUdt(d) }));
+
+const faq = [
+  {
+    pytanie: 'Czy na paleciak elektryczny trzeba mieć uprawnienia UDT?',
+    odpowiedz: 'Tak, gdy unosi ładunek elektrycznie: to wózek jezdniowy podnośnikowy z mechanicznym napędem podnoszenia, a do jego obsługi potrzebne jest zaświadczenie na 10 lat (zał. nr 3 tab. nr 1 lp. 8 do rozporządzenia z 2019 r.). Gdy jeździ na silniku, ale widły podnosi się ręczną pompą, zaświadczenie UDT nie jest potrzebne. Wtedy wystarczy szkolenie według programu UDT albo prawo jazdy i ukończone 18 lat (§ 4 ust. 2 rozporządzenia bhp o wózkach).',
+  },
+  {
+    pytanie: 'Czy niska wysokość podnoszenia zwalnia z uprawnień?',
+    odpowiedz: 'Nie. Żaden przepis nie podaje progu wysokości podnoszenia. Paleciak, który unosi paletę elektrycznie o kilka centymetrów, wymaga takiego samego zaświadczenia jak wózek widłowy z masztem.',
+  },
+  {
+    pytanie: 'Czy sterowanie z poziomu roboczego zwalnia z uprawnień?',
+    odpowiedz: 'Nie. Podział według sterowania był w przepisach z 2001 r., uchylonych 1 czerwca 2019 r. Dziś sterowanie kasetą, pilotem albo z kabiny nie zmienia ani wymogu, ani kategorii. Jedyny wyjątek to dźwigi towarowo-osobowe: tabela obsługi obejmuje tylko te ze sterowaniem wewnętrznym.',
+  },
+  {
+    pytanie: 'Czy na podnośnik nożycowy trzeba mieć uprawnienia UDT?',
+    odpowiedz: 'Tak. Podnośnik nożycowy i koszowy to podesty ruchome przejezdne, zaświadczenie jest ważne 5 lat (zał. nr 3 tab. nr 1 lp. 7). Wyjątek dla udźwigu do 250 kg ich nie obejmuje, bo przemieszczają osoby. Stół podnośny w linii pakowania to dźwignik: do jego obsługi zaświadczenie nie jest potrzebne.',
+  },
+  {
+    pytanie: 'Od ilu lat można zdobyć uprawnienia na wózek widłowy?',
+    odpowiedz: `Od 18 lat. Do egzaminu UDT podchodzi osoba, która ukończyła 18 lat i zna polski na tyle, żeby zdać egzamin, albo przychodzi z tłumaczem przysięgłym (art. 23 ust. 1c ustawy o dozorze technicznym). Egzamin kosztuje ${oplata} (art. 23 ust. 4). Przepis nie wymaga kursu ani konkretnego wykształcenia.`,
+  },
+  {
+    pytanie: 'Czy suwnica sterowana kasetą wymaga uprawnień?',
+    odpowiedz: 'Tak, chyba że wszystkie mechanizmy mają napęd ręczny, napęd jest elektryczny jednofazowy, a udźwig do 1000 kg, albo udźwig nie przekracza 250 kg (uwagi pod tab. nr 1 zał. nr 3 do rozporządzenia z 2019 r.). Suwnica ogólnego przeznaczenia: 10 lat, specjalnego: 5 lat.',
+  },
+];
+---
+<StronaNarzedzia
+  slug="czy-potrzebne-uprawnienia-udt"
+  tytul="Czy potrzebne uprawnienia UDT na tę maszynę"
+  opis="Czy na paleciak elektryczny, wózek widłowy, suwnicę, wciągnik albo podnośnik trzeba mieć zaświadczenie UDT, jaka kategoria i ile lat ważne. Z przepisami."
+  h1="Czy na tę maszynę potrzebne są uprawnienia UDT"
+  lead="O tym, czy potrzebne jest zaświadczenie UDT, decyduje rodzaj maszyny, napęd i udźwig. Wysokość podnoszenia i sposób sterowania nie mają znaczenia. Wybierz maszynę, a pokażemy wynik z przepisem, kategorię i okres ważności."
+  faq={faq}
+>
+  <form class="kalkulator" data-czy-udt novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twoja maszyna</h2>
+
+      <div class="mt-4">
+        <label for="cu-rodzaj" class="etykieta-pola">Rodzaj maszyny</label>
+        <select id="cu-rodzaj" name="rodzaj" class="pole mt-1">
+          {RODZAJE.map((r) => <option value={r.id} selected={r.id === START.rodzaj}>{r.nazwa}</option>)}
+        </select>
+      </div>
+
+      <fieldset class="mt-5" data-pole="jazda" hidden={ukryj('jazda')}>
+        <legend class="etykieta-pola">Jazda</legend>
+        <div class="opcje-pionowe mt-2">
+          <label><input type="radio" name="jazda" value="silnik" checked /> Na silniku (elektryczna)</label>
+          <label><input type="radio" name="jazda" value="reczna" /> Pchany ręcznie</label>
+        </div>
+      </fieldset>
+
+      <fieldset class="mt-5" data-pole="podnoszenie" hidden={ukryj('podnoszenie')}>
+        <legend class="etykieta-pola">Podnoszenie wideł</legend>
+        <div class="opcje-pionowe mt-2">
+          <label><input type="radio" name="podnoszenie" value="mechaniczne" checked /> Elektryczne, silnikiem</label>
+          <label><input type="radio" name="podnoszenie" value="reczne" /> Ręczną pompą (dyszlem)</label>
+        </div>
+      </fieldset>
+
+      <div class="mt-5" data-pole="typZurawia" hidden={ukryj('typZurawia')}>
+        <label for="cu-zuraw" class="etykieta-pola">Rodzaj żurawia</label>
+        <select id="cu-zuraw" name="typZurawia" class="pole mt-1">
+          <option value="stacjonarny" selected>Stacjonarny (słupowy, przyścienny)</option>
+          <option value="przewozny">Przewoźny, przenośny (HDS)</option>
+          <option value="samojezdny">Samojezdny</option>
+          <option value="wiezowy">Wieżowy, szybkomontujący</option>
+        </select>
+      </div>
+
+      <div class="mt-5" data-pole="typPodestu" hidden={ukryj('typPodestu')}>
+        <label for="cu-podest" class="etykieta-pola">Rodzaj podestu</label>
+        <select id="cu-podest" name="typPodestu" class="pole mt-1">
+          <option value="przejezdny" selected>Przejezdny (nożycowy, koszowy)</option>
+          <option value="stacjonarny">Stacjonarny</option>
+          <option value="wiszacy">Wiszący</option>
+          <option value="masztowy">Masztowy</option>
+          <option value="zaladowczy">Załadowczy (winda załadowcza)</option>
+        </select>
+      </div>
+
+      <div class="mt-5" data-pole="typDzwignika" hidden={ukryj('typDzwignika')}>
+        <label for="cu-dzwignik" class="etykieta-pola">Rodzaj dźwignika</label>
+        <select id="cu-dzwignik" name="typDzwignika" class="pole mt-1">
+          <option value="staly" selected>Stół podnośny, podnośnik stały</option>
+          <option value="przenosny-reczny">Przenośny, ręczny</option>
+          <option value="pojazd">Wyposażenie pojazdu</option>
+          <option value="stol-technologiczny">Do pochylania stołu</option>
+        </select>
+      </div>
+
+      <div class="mt-5" data-pole="typDzwigu" hidden={ukryj('typDzwigu')}>
+        <label for="cu-dzwig" class="etykieta-pola">Rodzaj dźwigu</label>
+        <select id="cu-dzwig" name="typDzwigu" class="pole mt-1">
+          <option value="towarowy" selected>Towarowy</option>
+          <option value="towarowy-maly">Towarowy mały</option>
+          <option value="osobowy">Osobowy</option>
+          <option value="towarowo-osobowy-wewn">Towarowo-osobowy, sterowany z kabiny</option>
+          <option value="towarowo-osobowy-zewn">Towarowo-osobowy, sterowany z przystanków</option>
+          <option value="szpitalny">Szpitalny</option>
+          <option value="budowlany">Budowlany</option>
+        </select>
+      </div>
+
+      <div class="mt-5" data-pole="naped" hidden={ukryj('naped')}>
+        <label for="cu-naped" class="etykieta-pola">Napęd</label>
+        <select id="cu-naped" name="naped" class="pole mt-1" aria-describedby="cu-naped-opis">
+          <option value="mechaniczny" selected>Elektryczny trójfazowy, inny silnik</option>
+          <option value="jednofazowy">Elektryczny jednofazowy (230 V)</option>
+          <option value="reczny">Ręczny, wszystkie mechanizmy</option>
+        </select>
+        <p id="cu-naped-opis" class="meta mt-1">„Ręczny” tylko wtedy, gdy ręczne są podnoszenie i jazda. Jeden silnik wystarczy, żeby napęd był mechaniczny.</p>
+      </div>
+
+      <div class="mt-5" data-pole="udzwig" hidden={ukryj('udzwig')}>
+        <label for="cu-udzwig" class="etykieta-pola">Udźwig z tabliczki (kg)</label>
+        <input id="cu-udzwig" name="udzwig" type="number" inputmode="numeric" min="1" step="1" class="pole mt-1 max-w-40" value="1000" aria-describedby="cu-udzwig-blad" />
+        <p id="cu-udzwig-blad" class="blad-pola" data-blad="udzwig" hidden></p>
+      </div>
+
+      <div class="mt-5" data-pole="przeznaczenie" hidden={ukryj('przeznaczenie')}>
+        <label for="cu-przeznaczenie" class="etykieta-pola">Przeznaczenie</label>
+        <select id="cu-przeznaczenie" name="przeznaczenie" class="pole mt-1">
+          <option value="ogolne" selected>Ogólne (hak)</option>
+          <option value="specjalne">Specjalne (chwytak, magnes)</option>
+          <option value="nie-wiem">Nie wiem</option>
+        </select>
+      </div>
+
+      <div class="mt-5 opcje-pionowe" data-pole="osoby" hidden={ukryj('osoby')}>
+        <label><input type="checkbox" name="osoby" /> Przewozi też ludzi (np. kabina)</label>
+      </div>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Zaświadczenie UDT do obsługi</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-data" data-w="werdykt">{w.potrzebne ? 'Potrzebne' : 'Niepotrzebne'}</p>
+        <p class="status-terminu" data-w="status" data-status={w.potrzebne ? 'pilne' : 'w-terminie'}>{w.kategoria ? `Ważne ${lat(w.kategoria.lata)}` : 'Bez egzaminu UDT'}</p>
+      </div>
+      <dl class="wynik-lista">
+        <div data-wiersz="kategoria" hidden={!w.kategoria}><dt>Rodzaj zaświadczenia</dt><dd data-w="kategoria">{w.kategoria?.nazwa}</dd></div>
+        <div><dt>Dlaczego</dt><dd data-w="powod">{w.powod}</dd></div>
+        <div data-wiersz="zamiast" hidden={!w.zamiast}><dt>Co zamiast</dt><dd data-w="zamiast">{w.zamiast}</dd></div>
+        <div data-wiersz="konserwacja" hidden={!w.konserwacja}><dt>Konserwator</dt><dd data-w="konserwacja">{w.konserwacja ? `potrzebuje zaświadczenia: ${w.konserwacja.nazwa}, ${lat(w.konserwacja.lata)}` : ''}</dd></div>
+        <div data-wiersz="warunki" hidden={!w.potrzebne}><dt>Kto może zdawać</dt><dd>osoba, która ukończyła 18 lat i zna polski albo przyjdzie z tłumaczem przysięgłym (art. 23 ust. 1c ustawy o dozorze technicznym)</dd></div>
+        <div data-wiersz="oplata" hidden={!w.potrzebne}><dt>Egzamin</dt><dd>{oplata} (art. 23 ust. 4), jedno zaświadczenie na jeden rodzaj urządzenia (§ 4 ust. 3 rozporządzenia z 2019 r.)</dd></div>
+      </dl>
+      <ul class="wynik-uwaga" data-w="uwagi" hidden={!w.uwagi.length}>{w.uwagi.map((u) => <li>{u}</li>)}</ul>
+      <noscript><p class="wynik-uwaga">Kalkulator zmienia wynik w przeglądarce i potrzebuje JavaScriptu. Tabela typowych maszyn poniżej działa bez niego.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="typowe-maszyny">Typowe maszyny w hali i magazynie</h2>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Czy do obsługi typowych maszyn potrzebne jest zaświadczenie UDT</caption>
+        <thead><tr><th scope="col">Maszyna</th><th scope="col">Zaświadczenie UDT</th></tr></thead>
+        <tbody>
+          {tabela.map((t) => (
+            <tr><th scope="row">{t.nazwa}</th><td>{t.w.kategoria ? `potrzebne, ${lat(t.w.kategoria.lata)}` : 'niepotrzebne'}</td></tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="trzy-kroki">Trzy pytania, które zadaje przepis</h2>
+    <ol>
+      <li><strong>Czy maszyna jest urządzeniem technicznym?</strong> Listę podaje rozporządzenie z 2012 r. (§ 1 pkt 6–7): wciągniki, suwnice, żurawie, układnice, dźwigniki, wyciągi, podesty ruchome, dźwigi i wózki jezdniowe podnośnikowe z mechanicznym napędem podnoszenia. Wózka bez mechanicznego podnoszenia ani zwykłego przenośnika w hali tam nie ma.</li>
+      <li><strong>Czy przy jej obsłudze potrzebne jest zaświadczenie?</strong> Rozstrzyga tabela nr 1 załącznika nr 3 do rozporządzenia z 2019 r. i wyłączenia pod nią: napęd ręczny wszystkich mechanizmów, udźwig do 250 kg (gdy maszyna nie przemieszcza osób i nie jest dźwigiem), a przy wciągnikach, wciągarkach, suwnicach i żurawiach także napęd elektryczny jednofazowy przy udźwigu do 1000 kg.</li>
+      <li><strong>Jaka kategoria i na ile lat?</strong> Podaje kolumna b i c tej samej tabeli: 5 albo 10 lat (art. 22 ust. 3a ustawy o dozorze technicznym).</li>
+    </ol>
+    <p>
+      Do kiedy ważne jest Twoje zaświadczenie i kiedy złożyć wniosek o przedłużenie, policzy
+      <a href="/narzedzia/waznosc-uprawnien-udt">kalkulator ważności uprawnień UDT</a>. Zaświadczenia bez daty
+      ważności, wydane przed 1 czerwca 2019 r., są nieważne od 1 stycznia 2024 r.: potrzebny jest nowy egzamin.
+      Kiedy UDT bada samą maszynę, pokaże <a href="/narzedzia/badania-udt">kalkulator terminów badań UDT</a>.
+      Forma dozoru maszyny (pełny, ograniczony, uproszczony) to osobna lista: z niej nie wynika, czy operator potrzebuje
+      zaświadczenia.
+    </p>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <ul>
+      <li><strong>Wysokość podnoszenia i sposób sterowania nie są kryterium</strong> w żadnym przepisie, więc o nie nie pytamy. Wyjątek: dźwigi towarowo-osobowe, które tabela obejmuje tylko „ze sterowaniem wewnętrznym”.</li>
+      <li>Progi liczymy włącznie: udźwig 250 kg i 1000 kg mieści się w wyłączeniu, 251 kg i 1001 kg już nie. Bierzemy udźwig nominalny z tabliczki; przepis nie mówi, co z osprzętem.</li>
+      <li><strong>Wózki do 250 kg:</strong> załącznik nr 3 je wyłącza, ale § 4 ust. 1 rozporządzenia bhp o wózkach dopuszcza do obsługi wózków z mechanicznym napędem podnoszenia osobę z zaświadczeniem, bez progu udźwigu. Przyjmujemy wariant bezpieczny: zaświadczenie potrzebne bez względu na udźwig.</li>
+      <li><strong>Reach truck:</strong> przepis nie mówi, czy wysuwany maszt to „wysięgnik”. Wskazujemy kategorię 10-letnią z uwagą; kategoria 5-letnia (wysięgnik i podnoszony operator) obejmuje wszystkie wózki.</li>
+      <li><strong>Specjalne przeznaczenie</strong> suwnic i wciągników nie ma definicji. Przy „nie wiem” wskazujemy kategorię 5-letnią, bo obejmuje ogólne i specjalne.</li>
+      <li><strong>Książka operatora maszyn roboczych</strong> albo uprawnienia maszynisty: rozporządzenie bhp (§ 4 ust. 1 pkt 2) dopuszcza je przy wózkach, ale ustawa wymaga zaświadczenia jednostki dozoru (art. 22 ust. 3). Przyjmujemy, że potrzebne jest zaświadczenie UDT.</li>
+      <li>Przepis nie przewiduje obsługi „pod nadzorem” bez zaświadczenia ani w czasie nauki. Zaświadczenie zagraniczne wymaga decyzji UDT o uznaniu.</li>
+      <li>Narzędzie mówi tylko o zaświadczeniu UDT. Pracodawca i tak musi przeszkolić pracownika z bhp i dopuścić go do pracy (art. 237³ Kodeksu pracy); samo zaświadczenie nie jest dopuszczeniem. Kategorię konkretnej maszyny potwierdzi jej dokumentacja albo UDT.</li>
+    </ul>
+
+    <h2 id="egzamin">Egzamin UDT</h2>
+    <p>
+      Egzamin ma część pisemną i praktyczną (§ 3 ust. 3 rozporządzenia z 2019 r.), a termin wyznacza się w ciągu 30 dni
+      roboczych od złożenia kompletnego wniosku (§ 3 ust. 2). Opłata to {PROCENT_OPLATY.toLocaleString('pl-PL')}%
+      przeciętnego wynagrodzenia ogłoszonego przez Prezesa GUS (art. 23 ust. 4), czyli {oplata}. Po oblanym egzaminie
+      trzeba złożyć nowy wniosek (§ 4 ust. 4).
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { czyUdt, RODZAJE, type DaneMaszyny, type RodzajMaszyny } from '../../lib/narzedzia/czy-udt';
+  import { odmiana } from '../../lib/redakcja';
+  import { typografia } from '../../lib/typografia.mjs';
+
+  const form = document.querySelector<HTMLFormElement>('[data-czy-udt]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const wiersz = (k: string, pokaz: boolean) => {
+      form.querySelector<HTMLElement>(`[data-wiersz="${k}"]`)!.hidden = !pokaz;
+    };
+    const pisz = (k: string, tekst: string) => {
+      w(k).textContent = typografia(tekst);
+    };
+    const wartosc = (n: string) => (form.elements.namedItem(n) as HTMLInputElement | RadioNodeList).value;
+    const udzwigPole = form.elements.namedItem('udzwig') as HTMLInputElement;
+    const blad = form.querySelector<HTMLElement>('[data-blad="udzwig"]')!;
+    const lat = (n: number) => odmiana(n, ['rok', 'lata', 'lat']);
+
+    const przelicz = () => {
+      const rodzaj = wartosc('rodzaj') as RodzajMaszyny;
+      const pola = new Set<string>(RODZAJE.find((r) => r.id === rodzaj)!.pola);
+      form.querySelectorAll<HTMLElement>('[data-pole]').forEach((el) => {
+        el.hidden = !pola.has(el.dataset.pole!);
+      });
+      const udzwig = udzwigPole.value === '' ? undefined : Number(udzwigPole.value);
+      const dane: DaneMaszyny = {
+        rodzaj,
+        jazdaSilnikowa: wartosc('jazda') === 'silnik',
+        podnoszenieMechaniczne: wartosc('podnoszenie') === 'mechaniczne',
+        naped: wartosc('naped') as DaneMaszyny['naped'],
+        udzwigKg: udzwig,
+        przemieszczaOsoby: pola.has('osoby') && (form.elements.namedItem('osoby') as HTMLInputElement).checked,
+        przeznaczenie: wartosc('przeznaczenie') as DaneMaszyny['przeznaczenie'],
+        typZurawia: wartosc('typZurawia') as DaneMaszyny['typZurawia'],
+        typPodestu: wartosc('typPodestu') as DaneMaszyny['typPodestu'],
+        typDzwigu: wartosc('typDzwigu') as DaneMaszyny['typDzwigu'],
+        typDzwignika: wartosc('typDzwignika') as DaneMaszyny['typDzwignika'],
+      };
+      let wynik;
+      try {
+        wynik = czyUdt(dane);
+        blad.hidden = true;
+        udzwigPole.setAttribute('aria-invalid', 'false');
+      } catch (e) {
+        if (!(e instanceof RangeError)) throw e;
+        blad.hidden = false;
+        blad.textContent = typografia('Wpisz udźwig w kilogramach, większy od zera.');
+        udzwigPole.setAttribute('aria-invalid', 'true');
+        w('werdykt').textContent = '—';
+        w('status').hidden = true;
+        ['kategoria', 'zamiast', 'konserwacja', 'warunki', 'oplata'].forEach((k) => wiersz(k, false));
+        pisz('powod', 'Uzupełnij udźwig.');
+        w('uwagi').hidden = true;
+        return;
+      }
+      w('werdykt').textContent = wynik.potrzebne ? 'Potrzebne' : 'Niepotrzebne';
+      const status = w('status');
+      status.hidden = false;
+      status.dataset.status = wynik.potrzebne ? 'pilne' : 'w-terminie';
+      pisz('status', wynik.kategoria ? `Ważne ${lat(wynik.kategoria.lata)}` : 'Bez egzaminu UDT');
+      wiersz('kategoria', !!wynik.kategoria);
+      pisz('kategoria', wynik.kategoria?.nazwa ?? '');
+      pisz('powod', wynik.powod);
+      wiersz('zamiast', !!wynik.zamiast);
+      pisz('zamiast', wynik.zamiast ?? '');
+      wiersz('konserwacja', !!wynik.konserwacja);
+      pisz('konserwacja', wynik.konserwacja ? `potrzebuje zaświadczenia: ${wynik.konserwacja.nazwa}, ${lat(wynik.konserwacja.lata)}` : '');
+      wiersz('warunki', wynik.potrzebne);
+      wiersz('oplata', wynik.potrzebne);
+      const uwagi = w('uwagi');
+      uwagi.hidden = !wynik.uwagi.length;
+      uwagi.replaceChildren(
+        ...wynik.uwagi.map((u) => {
+          const li = document.createElement('li');
+          li.textContent = typografia(u);
+          return li;
+        }),
+      );
+    };
+
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>
