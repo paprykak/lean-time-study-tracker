@@ -497,6 +497,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-12',
   },
   {
+    slug: 'zwolnienia-grupowe',
+    nazwa: 'Zwolnienia grupowe',
+    krotko: 'Czy to zwolnienie grupowe: 10 osób, 10% albo 30 w 30 dni. Terminy, odprawa, ochrona i prawo do powrotu.',
+    kategoria: 'umowa',
+    przepisy: ['zwolnieniaGrupowe', 'kodeksPracy', 'kodeksCywilny'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'przerwy-w-pracy',
     nazwa: 'Przerwy w pracy',
     krotko: 'Ile przerw przy zmianie 8 i 12 godzin, które są płatne, przerwy na karmienie i dla młodocianych.',

@@ -79,7 +79,7 @@ export const AKTY = {
   zwolnieniaGrupowe: {
     nazwa: 'Ustawa o szczególnych zasadach rozwiązywania z pracownikami stosunków pracy z przyczyn niedotyczących pracowników',
     publikator: 'Dz.U. 2026 poz. 1195',
-    uwaga: 'tekst jednolity, bez późniejszych zmian; art. 1, 8 i 10',
+    uwaga: 'tekst jednolity, bez późniejszych zmian; art. 1–10',
     adres: eli(2026, 1195),
     sprawdzono: '2026-11-11',
   },

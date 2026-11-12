@@ -1,0 +1,208 @@
+---
+// Zwolnienia grupowe: próg z art. 1, obowiązki pracodawcy (art. 2–4, 6), ochrona (art. 5), odprawa (art. 8 i 10),
+// ponowne zatrudnienie (art. 9) ustawy o zwolnieniach grupowych. Logika: src/lib/narzedzia/zwolnienia-grupowe.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { zwolnienieGrupowe } from '../../lib/narzedzia/zwolnienia-grupowe';
+import { odmiana } from '../../lib/redakcja';
+
+const D = { zatrudnionych: 150, wypowiedzen: 12, porozumien: 6 };
+const OSOBY: [string, string, string] = ['osoba', 'osoby', 'osób'];
+const WYPOWIEDZENIA: [string, string, string] = ['wypowiedzenie', 'wypowiedzenia', 'wypowiedzeń'];
+const POROZUMIENIA: [string, string, string] = ['porozumienie', 'porozumienia', 'porozumień'];
+const r = zwolnienieGrupowe(D);
+if (r.rodzaj !== 'grupowe') throw new Error('Wartości domyślne powinny dawać zwolnienie grupowe');
+
+const faq = [
+  {
+    pytanie: 'Ile osób to zwolnienie grupowe?',
+    odpowiedz: 'U pracodawcy zatrudniającego co najmniej 20 osób, gdy w ciągu 30 dni z przyczyn niedotyczących pracowników zwalnia co najmniej 10 osób przy zatrudnieniu poniżej 100, 10% załogi przy 100–299 albo 30 osób przy 300 i więcej (art. 1 ust. 1 ustawy o zwolnieniach grupowych). Wliczają się wypowiedzenia, a porozumienia stron z inicjatywy pracodawcy wtedy, gdy dotyczą co najmniej 5 osób (art. 1 ust. 2).',
+  },
+  {
+    pytanie: 'Czy odprawa należy się także przy zwolnieniu jednej osoby?',
+    odpowiedz: 'Tak, jeśli pracodawca zatrudnia co najmniej 20 osób, a przyczyny niedotyczące pracownika są wyłącznym powodem wypowiedzenia albo porozumienia stron (art. 10 ust. 1 ustawy o zwolnieniach grupowych). Odprawa wynosi 1, 2 albo 3 pensje zależnie od stażu u pracodawcy, najwyżej 15-krotność płacy minimalnej (art. 8).',
+  },
+  {
+    pytanie: 'Czy w zwolnieniu grupowym można zwolnić osobę na L4 albo przed emeryturą?',
+    odpowiedz: 'Przy grupowym zwolnieniu nie stosuje się zwykłego zakazu wypowiedzenia w czasie nieobecności z art. 41 Kodeksu pracy. Wypowiedzenie jest dopuszczalne w czasie urlopu trwającego co najmniej 3 miesiące, a w czasie innej usprawiedliwionej nieobecności, na przykład zwolnienia lekarskiego, gdy upłynął już okres, po którym pracodawca może rozwiązać umowę bez wypowiedzenia (art. 5 ust. 3 ustawy o zwolnieniach grupowych). Osobom pod szczególną ochroną, między innymi na 4 lata przed wiekiem emerytalnym, w ciąży, na urlopie macierzyńskim, rodzicielskim, ojcowskim albo opiekuńczym i członkom zarządu zakładowego związku zawodowego, pracodawca może jedynie wypowiedzieć warunki pracy i płacy (art. 5 ust. 5), a przy obniżce płacy należy się dodatek wyrównawczy (art. 5 ust. 6).',
+  },
+  {
+    pytanie: 'Czy po zwolnieniu grupowym pracodawca musi mnie przyjąć z powrotem?',
+    odpowiedz: 'Jeśli w ciągu roku od rozwiązania umowy zgłosisz zamiar powrotu, pracodawca, który ponownie zatrudnia w Twojej grupie zawodowej, powinien zatrudnić Ciebie, w okresie 15 miesięcy od rozwiązania umowy (art. 9 ustawy o zwolnieniach grupowych).',
+  },
+  {
+    pytanie: 'Od kiedy mogą się rozwiązać umowy w zwolnieniu grupowym?',
+    odpowiedz: 'Wypowiedzenia można wręczać dopiero po zawiadomieniu powiatowego urzędu pracy o ustaleniach, a umowy mogą się rozwiązać nie wcześniej niż po upływie 30 dni od tego zawiadomienia (art. 6 ustawy o zwolnieniach grupowych). Wcześniej pracodawca konsultuje zwolnienie ze związkami zawodowymi albo przedstawicielami pracowników, zawiera z nimi porozumienie w ciągu 20 dni od zawiadomienia, a gdy porozumienie nie jest możliwe, ustala zasady w regulaminie (art. 2–4).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="zwolnienia-grupowe"
+  tytul="Zwolnienia grupowe: próg, terminy, odprawa"
+  opis="Czy to zwolnienie grupowe: 10 osób, 10% albo 30 w ciągu 30 dni, porozumienia od 5 osób. Terminy dla urzędu pracy, odprawa, ochrona i powrót do pracy."
+  h1="Zwolnienia grupowe: czy to już grupowe"
+  lead="Wpisz, ile osób pracuje u pracodawcy i ile odchodzi w ciągu 30 dni, a sprawdzimy, czy to zwolnienie grupowe. Podamy też terminy, których pracodawca musi pilnować, i Twoje terminy na powrót do pracy."
+  faq={faq}
+>
+  <form class="kalkulator" data-grupowe novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Zwolnienia w ciągu 30 dni</h2>
+      <div class="mt-4">
+        <label for="g-zatrudnionych" class="etykieta-pola">Ile osób zatrudnia pracodawca</label>
+        <input id="g-zatrudnionych" name="zatrudnionych" class="pole mt-1 max-w-32" type="text" inputmode="numeric" autocomplete="off" value={D.zatrudnionych} aria-describedby="g-blad" />
+      </div>
+      <div class="mt-4 grid grid-cols-2 items-end gap-3">
+        <div>
+          <label for="g-wypowiedzen" class="etykieta-pola">Wypowiedzenia</label>
+          <input id="g-wypowiedzen" name="wypowiedzen" class="pole mt-1" type="text" inputmode="numeric" autocomplete="off" value={D.wypowiedzen} aria-describedby="g-blad" />
+        </div>
+        <div>
+          <label for="g-porozumien" class="etykieta-pola">Porozumienia stron</label>
+          <input id="g-porozumien" name="porozumien" class="pole mt-1" type="text" inputmode="numeric" autocomplete="off" value={D.porozumien} aria-describedby="g-porozumien-opis g-blad" />
+        </div>
+      </div>
+      <p id="g-porozumien-opis" class="meta mt-1">Z przyczyn niedotyczących pracowników; porozumienia z inicjatywy pracodawcy.</p>
+      <div class="mt-4 grid grid-cols-2 items-end gap-3">
+        <div>
+          <label for="g-urzad" class="etykieta-pola">Zawiadomienie urzędu pracy</label>
+          <input id="g-urzad" name="urzad" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" aria-describedby="g-blad" />
+        </div>
+        <div>
+          <label for="g-koniec" class="etykieta-pola">Twój ostatni dzień pracy</label>
+          <input id="g-koniec" name="koniec" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" aria-describedby="g-blad" />
+        </div>
+      </div>
+      <p class="meta mt-1">Daty są nieobowiązkowe.</p>
+      <p id="g-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Wynik</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-data" data-w="rodzaj">Zwolnienie grupowe</p>
+        <p class="meta" data-w="opis">Próg: {odmiana(r.prog!, OSOBY)}. Liczymy {r.liczone}: {odmiana(D.wypowiedzen, WYPOWIEDZENIA)} i {odmiana(r.porozumieniaLiczone, POROZUMIENIA)}.</p>
+      </div>
+      <dl class="wynik-lista">
+        <div data-wiersz="odprawa"><dt>Odprawa</dt><dd data-w="odprawa">1, 2 albo 3 pensje według stażu u pracodawcy, najwyżej 15-krotność płacy minimalnej</dd></div>
+        <div data-wiersz="urzad" hidden><dt>Umowy mogą się rozwiązać</dt><dd data-w="urzad"></dd></div>
+        <div data-wiersz="zgloszenie" hidden><dt>Zgłoś chęć powrotu do</dt><dd data-w="zgloszenie"></dd></div>
+        <div data-wiersz="powrot" hidden><dt>Pracodawca powinien Cię zatrudnić do</dt><dd data-w="powrot"></dd></div>
+      </dl>
+      <p class="wynik-uwaga" data-w="uwaga">Pracodawca konsultuje zwolnienie ze związkami zawodowymi albo przedstawicielami pracowników, zawiera porozumienie w ciągu 20 dni albo, gdy to niemożliwe, ustala regulamin i zawiadamia powiatowy urząd pracy; wypowiedzenia wręcza dopiero potem (art. 2–4 i 6).</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="prog">Próg zwolnienia grupowego</h2>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Ile osób zwalnianych w ciągu 30 dni oznacza zwolnienie grupowe</caption>
+        <thead><tr><th scope="col">Zatrudnionych u pracodawcy</th><th scope="col">Zwolnienie grupowe od</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">poniżej 20</th><td>ustawa nie dotyczy</td></tr>
+          <tr><th scope="row">20–99</th><td>10 osób</td></tr>
+          <tr><th scope="row">100–299</th><td>10% zatrudnionych</td></tr>
+          <tr><th scope="row">300 i więcej</th><td>30 osób</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Liczą się wypowiedzenia z przyczyn niedotyczących pracowników w okresie do 30 dni, a porozumienia stron z inicjatywy
+      pracodawcy, gdy dotyczą co najmniej 5 osób (art. 1 ustawy o zwolnieniach grupowych). Przy 10% zaokrąglamy w górę:
+      przy 155 zatrudnionych próg to 16 osób, bo 15 to mniej niż 10%.
+    </p>
+
+    <h2 id="co-ci-przysluguje">Co Ci przysługuje</h2>
+    <ul>
+      <li>Odprawa: 1 pensja przy pracy u pracodawcy krócej niż 2 lata, 2 przy 2–8 latach, 3 przy ponad 8 latach, liczona jak ekwiwalent za urlop i nie wyższa niż 15-krotność płacy minimalnej (art. 8). Ile wyniesie, policzy <a href="/narzedzia/kalkulator-odprawy">kalkulator odprawy</a>.</li>
+      <li>Ta sama odprawa przy zwolnieniu mniejszej liczby osób, gdy przyczyny niedotyczące pracownika są jedynym powodem, a pracodawca zatrudnia co najmniej 20 osób (art. 10 ust. 1).</li>
+      <li>Ochrona: wypowiedzenie na długim zwolnieniu lekarskim tylko po okresie z art. 53 Kodeksu pracy, a osobom chronionym, na przykład przed emeryturą, w ciąży albo na urlopie rodzicielskim, wyłącznie wypowiedzenie warunków pracy i płacy z dodatkiem wyrównawczym (art. 5). Do kiedy trwa ochrona przed emeryturą, pokaże <a href="/narzedzia/ochrona-przedemerytalna">kalkulator ochrony przedemerytalnej</a>.</li>
+      <li>Pierwszeństwo przy ponownym zatrudnieniu: zgłoś chęć powrotu w ciągu roku od rozwiązania umowy, a pracodawca, który zatrudnia w Twojej grupie zawodowej, powinien Cię przyjąć w ciągu 15 miesięcy (art. 9).</li>
+      <li>Okres wypowiedzenia z Kodeksu pracy: 2 tygodnie, miesiąc albo 3 miesiące; 3-miesięczny pracodawca może skrócić najwyżej do miesiąca, płacąc odszkodowanie za resztę okresu (art. 36<sup>1</sup> Kodeksu pracy). Ostatni dzień umowy policzy <a href="/narzedzia/okres-wypowiedzenia">kalkulator okresu wypowiedzenia</a>, a termin na odwołanie <a href="/narzedzia/odwolanie-do-sadu-pracy">kalkulator odwołania do sądu pracy</a>.</li>
+    </ul>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      30 dni od zawiadomienia urzędu pracy liczymy od następnego dnia (art. 111 § 2 Kodeksu cywilnego w związku z art. 300
+      Kodeksu pracy), a umowa może się rozwiązać najwcześniej dzień po 30. dniu, bo przepis mówi „po upływie”. Rok
+      i 15 miesięcy na powrót liczymy kalendarzowo od dnia rozwiązania umowy (art. 112 Kodeksu cywilnego). Ustawa nie mówi,
+      na który dzień liczyć zatrudnienie u pracodawcy; wpisz liczbę osób z dnia decyzji o zwolnieniach.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { terminyPowrotu, terminyUrzedu, zwolnienieGrupowe } from '../../lib/narzedzia/zwolnienia-grupowe';
+  import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { typografia } from '../../lib/typografia.mjs';
+  import { odmiana } from '../../lib/redakcja';
+
+  const OSOBY: [string, string, string] = ['osoba', 'osoby', 'osób'];
+  const WYPOWIEDZENIA: [string, string, string] = ['wypowiedzenie', 'wypowiedzenia', 'wypowiedzeń'];
+  const POROZUMIENIA: [string, string, string] = ['porozumienie', 'porozumienia', 'porozumień'];
+
+  const form = document.querySelector<HTMLFormElement>('[data-grupowe]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const wiersz = (k: string) => form.querySelector<HTMLElement>(`[data-wiersz="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const pisz = (k: string, tekst: string) => {
+      w(k).textContent = typografia(tekst);
+    };
+    const liczba = (n: string) => {
+      const t = el(n).value.trim();
+      return /^\d{1,6}$/.test(t) ? Number(t) : NaN;
+    };
+    const przelicz = () => {
+      const zatrudnionych = liczba('zatrudnionych');
+      const wypowiedzen = liczba('wypowiedzen');
+      const porozumien = liczba('porozumien');
+      const urzad = el('urzad').value;
+      const koniec = el('koniec').value;
+      let blad: string | null = null;
+      if ([zatrudnionych, wypowiedzen, porozumien].some(Number.isNaN)) blad = 'Wpisz liczby osób, bez przecinków.';
+      else if (wypowiedzen + porozumien > zatrudnionych) blad = 'Zwalnianych nie może być więcej niż zatrudnionych.';
+      else if ((urzad && !poprawnaData(urzad)) || (koniec && !poprawnaData(koniec))) blad = 'Popraw datę.';
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      b.hidden = !blad;
+      b.textContent = blad ?? '';
+      if (blad) {
+        w('rodzaj').textContent = '—';
+        w('opis').textContent = '';
+        return;
+      }
+      const r = zwolnienieGrupowe({ zatrudnionych, wypowiedzen, porozumien });
+      const poPorozumieniach =
+        porozumien > 0 && !r.porozumieniaLiczone ? ` Porozumienia stron (${porozumien}) nie liczą się, bo jest ich mniej niż 5.` : '';
+      if (r.rodzaj === 'nie-dotyczy') {
+        pisz('rodzaj', 'Ustawa nie dotyczy');
+        pisz('opis', 'Pracodawca zatrudnia mniej niż 20 osób, więc nie ma ani zwolnienia grupowego, ani odprawy z ustawy o zwolnieniach grupowych.');
+      } else if (r.rodzaj === 'grupowe') {
+        pisz('rodzaj', 'Zwolnienie grupowe');
+        pisz('opis', `Próg: ${odmiana(r.prog!, OSOBY)}. Liczymy ${r.liczone}: ${odmiana(wypowiedzen, WYPOWIEDZENIA)} i ${odmiana(r.porozumieniaLiczone, POROZUMIENIA)}.${poPorozumieniach}`);
+      } else {
+        pisz('rodzaj', 'Zwolnienie indywidualne');
+        pisz('opis', `Próg: ${odmiana(r.prog!, OSOBY)}, liczymy ${r.liczone}, brakuje ${r.brakuje}.${poPorozumieniach} Odprawa należy się, gdy przyczyny niedotyczące pracownika są jedynym powodem (art. 10).`);
+      }
+      wiersz('odprawa').hidden = r.rodzaj === 'nie-dotyczy';
+      w('uwaga').hidden = r.rodzaj !== 'grupowe';
+      wiersz('urzad').hidden = !(urzad && r.rodzaj === 'grupowe');
+      if (urzad && r.rodzaj === 'grupowe') {
+        const t = terminyUrzedu(urzad);
+        pisz('urzad', `najwcześniej ${dataPoPolsku(t.najwczesniejRozwiazanie)}, po upływie 30 dni od zawiadomienia (art. 6 ust. 2)`);
+      }
+      const powrot = Boolean(koniec) && r.rodzaj === 'grupowe';
+      wiersz('zgloszenie').hidden = !powrot;
+      wiersz('powrot').hidden = !powrot;
+      if (powrot) {
+        const t = terminyPowrotu(koniec);
+        pisz('zgloszenie', `${dataPoPolsku(t.zgloszenieDo)} (rok od rozwiązania umowy, art. 9 ust. 1)`);
+        pisz('powrot', `${dataPoPolsku(t.zatrudnienieDo)}, jeśli zatrudnia w Twojej grupie zawodowej (art. 9 ust. 2)`);
+      }
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>
