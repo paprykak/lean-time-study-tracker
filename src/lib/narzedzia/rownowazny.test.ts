@@ -115,7 +115,7 @@ describe('teksty wyniku', () => {
     const a = opisWyniku(planOkresu('r12', 12, 2026, 11, 1));
     expect(a).toMatchObject({ glowny: '14 dni pracy', opis: '13 zmian po 12 h i 1 zmiana 4 h; wymiar 160 h', odpoczynek: null, dostepne: null });
     expect(a.wolne).toBe('16 dni; minimum z art. 147 Kp: 10');
-    expect(a.przerwy).toBe('na zmianie 12 h: 2 przerwy po 15 min; na zmianie 4 h: bez przerwy');
+    expect(a.przerwy).toBe('na zmianie 12 h: 2 przerwy po co najmniej 15 min; na zmianie 4 h: bez przerwy');
     expect(a.okres).toBe('1 listopada 2026 r. – 30 listopada 2026 r., 30 dni');
     expect(a.wymiar).toBe('160 h: 21 dni od poniedziałku do piątku × 8 h minus 8 h za 1 święto');
     expect(opisWyniku(planOkresu('r12', 12, 2027, 2, 1)).wymiar).toBe('160 h: 20 dni od poniedziałku do piątku × 8 h');
@@ -131,6 +131,6 @@ describe('teksty wyniku', () => {
     expect(opisWyniku(planOkresu('r12', 12, 2027, 1, 4)).status).toBe(
       'Okres 4 miesiące: przy pracach zależnych od pory roku lub pogody (art. 135 § 3 Kp) albo po przedłużeniu z art. 129 § 2',
     );
-    expect(opisWyniku(planOkresu('r12', 12, 2026, 11, 1)).status).toBe('Okres 1 miesiąc: dopuszczalny wprost (art. 135 § 1 Kp)');
+    expect(opisWyniku(planOkresu('r12', 12, 2026, 11, 1)).status).toBe('Okres 1 miesiąc: dopuszczalny bez dodatkowych warunków (art. 135 § 1 Kp)');
   });
 });

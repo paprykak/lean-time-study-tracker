@@ -67,7 +67,7 @@ export interface StatusOkresu {
 /** Czy okres rozliczeniowy danej długości jest dopuszczalny w systemie i na jakiej podstawie. */
 export function statusOkresu(system: SystemRownowazny, miesiecy: number): StatusOkresu {
   if (!Number.isInteger(miesiecy) || miesiecy < 1 || miesiecy > 12) throw new RangeError('Okres rozliczeniowy: od 1 do 12 miesięcy');
-  if (miesiecy === 1) return { rodzaj: 'wprost', opis: `dopuszczalny wprost (${SYSTEMY[system].podstawa})`, podstawa: SYSTEMY[system].podstawa };
+  if (miesiecy === 1) return { rodzaj: 'wprost', opis: `dopuszczalny bez dodatkowych warunków (${SYSTEMY[system].podstawa})`, podstawa: SYSTEMY[system].podstawa };
   const z135 = system === 'r12' || system === 'r24';
   const odpowiednio = system === 'r24' ? ' w związku z art. 137' : '';
   // Art. 129 § 2 pozwala przedłużyć okres w każdym systemie, więc art. 135 § 2–3 nie jest jedyną drogą.
@@ -213,7 +213,7 @@ export function planOkresu(system: SystemRownowazny, zmiana: number, rok: number
 const DNI: [string, string, string] = ['dzień', 'dni', 'dni'];
 const ZMIANY: [string, string, string] = ['zmiana', 'zmiany', 'zmian'];
 const PRZERWY: [string, string, string] = ['przerwa', 'przerwy', 'przerw'];
-const przerwyTekst = (n: number) => (n ? `${odmiana(n, PRZERWY)} po 15 min` : 'bez przerwy');
+const przerwyTekst = (n: number) => (n ? `${odmiana(n, PRZERWY)} po co najmniej 15 min` : 'bez przerwy');
 
 /** Kolor statusu (klasa .status-terminu). */
 export const KOLOR_STATUSU: Record<RodzajStatusu, string> = { wprost: 'w-terminie', szczegolne: 'wkrotce', 'pora-roku': 'wkrotce', przedluzenie: 'pilne' };
