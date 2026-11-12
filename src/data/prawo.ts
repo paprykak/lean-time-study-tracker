@@ -335,6 +335,13 @@ export const AKTY = {
     adres: eli(2023, 1240),
     sprawdzono: '2026-11-11',
   },
+  rehabilitacja: {
+    nazwa: 'Ustawa o rehabilitacji zawodowej i społecznej oraz zatrudnianiu osób niepełnosprawnych',
+    publikator: 'Dz.U. 2026 poz. 884',
+    uwaga: 'tekst jednolity; zmiana Dz.U. 2026 poz. 1102 nie dotyczy art. 2a i 15–20',
+    adres: eli(2026, 884),
+    sprawdzono: '2026-11-12',
+  },
   przygotowanieZawodowe: {
     nazwa: 'Rozporządzenie w sprawie przygotowania zawodowego młodocianych i ich wynagradzania',
     publikator: 'Dz.U. 2018 poz. 2010',

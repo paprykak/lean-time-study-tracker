@@ -1,0 +1,196 @@
+---
+// Pracownik z niepełnosprawnością: norma 7 albo 8 godzin, bez nocy i nadgodzin, przerwa 15 minut, stawka razy 8/7,
+// dodatkowy urlop 10 dni i turnus 21 dni (art. 2a, 15–20 ustawy o rehabilitacji). Logika: src/lib/narzedzia/niepelnosprawny.ts.
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { NORMY, PRZERWA_MIN, TURNUS_DNI, URLOP_DODATKOWY, wymiarNiepelnosprawnego } from '../../lib/narzedzia/niepelnosprawny';
+import { nazwaMiesiaca } from '../../lib/narzedzia/czas-pracy';
+import { dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+const dzis = dzisWPolsce();
+const rok = Number(dzis.slice(0, 4));
+const miesiac = Number(dzis.slice(5, 7));
+const w = wymiarNiepelnosprawnego(rok, miesiac, 'umiarkowany');
+const lata = [rok, rok + 1];
+
+const faq = [
+  {
+    pytanie: 'Ile godzin pracuje osoba z umiarkowanym stopniem niepełnosprawności?',
+    odpowiedz: `Najwyżej ${NORMY.umiarkowany.doba} godzin na dobę i ${NORMY.umiarkowany.tydzien} w tygodniu, tak samo przy znacznym stopniu (art. 15 ust. 2 ustawy o rehabilitacji). Przy lekkim stopniu ${NORMY.lekki.doba} i ${NORMY.lekki.tydzien} godzin (ust. 1). Przy każdym stopniu nie wolno pracować w nocy ani w nadgodzinach (ust. 3). Te ograniczenia nie dotyczą pilnowania i sytuacji, gdy na wniosek pracownika zgodzi się na to lekarz medycyny pracy, a badanie opłaca pracodawca (art. 16).`,
+  },
+  {
+    pytanie: 'Czy przy 7 godzinach pracy dostanę mniej pieniędzy?',
+    odpowiedz: 'Nie. Pensja w stałej miesięcznej kwocie nie może się zmniejszyć, a stawka godzinowa rośnie w takim stosunku, w jakim dotychczasowy czas pracy pozostaje do nowej normy, czyli przy przejściu z 8 na 7 godzin razy 8/7 (art. 18 ustawy o rehabilitacji).',
+  },
+  {
+    pytanie: 'Komu przysługuje dodatkowy urlop 10 dni?',
+    odpowiedz: `Osobie z umiarkowanym albo znacznym stopniem niepełnosprawności: ${URLOP_DODATKOWY} dni roboczych w roku kalendarzowym, pierwszy raz po przepracowaniu roku po dniu zaliczenia do stopnia (art. 19 ust. 1 ustawy o rehabilitacji). Nie przysługuje, gdy zwykły urlop przekracza 26 dni albo gdy należy się inny urlop dodatkowy; jeśli tamten jest krótszy niż 10 dni, zamiast niego przysługuje ten z ustawy o rehabilitacji (art. 19 ust. 2–3).`,
+  },
+  {
+    pytanie: 'Ile dni wolnego na turnus rehabilitacyjny?',
+    odpowiedz: `Do ${TURNUS_DNI} dni roboczych płatnego zwolnienia, nie częściej niż raz w roku, przy umiarkowanym i znacznym stopniu (art. 20 ust. 1 pkt 1 ustawy o rehabilitacji). Razem z dodatkowym urlopem najwyżej ${TURNUS_DNI} dni w roku (ust. 3). Płatne jest też zwolnienie na badania, zabiegi i zaopatrzenie ortopedyczne, gdy nie da się ich załatwić po pracy (ust. 1 pkt 2). Za te dni płaci się jak ekwiwalent za urlop (ust. 2).`,
+  },
+  {
+    pytanie: 'Od kiedy pracodawca musi stosować krótszy czas pracy?',
+    odpowiedz: 'Od dnia, w którym przedstawisz pracodawcy orzeczenie o niepełnosprawności (art. 2a ust. 1 i art. 20c ustawy o rehabilitacji). Przy kolejnym orzeczeniu, gdy wniosek złożono najpóźniej dzień po wygaśnięciu poprzedniego, liczy się dzień złożenia wniosku (art. 2a ust. 2).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="pracownik-niepelnosprawny"
+  tytul="Pracownik z niepełnosprawnością: 7 godzin, urlop"
+  opis="Ile godzin pracuje osoba z orzeczeniem: 7 albo 8 na dobę, wymiar w miesiącu, stawka razy 8/7, przerwa 15 minut, dodatkowy urlop 10 dni i turnus 21 dni."
+  h1="Pracownik z niepełnosprawnością: czas pracy i urlop"
+  lead="Wybierz stopień niepełnosprawności, a policzymy, ile godzin wolno Ci pracować na dobę i w miesiącu, ile wyniesie stawka za godzinę i od kiedy należy się dodatkowy urlop."
+  faq={faq}
+>
+  <form class="kalkulator" data-niepelnosprawny novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Orzeczenie</h2>
+      <div class="mt-4">
+        <label for="n-stopien" class="etykieta-pola">Stopień niepełnosprawności</label>
+        <select id="n-stopien" name="stopien" class="pole mt-1">
+          <option value="lekki">Lekki</option>
+          <option value="umiarkowany" selected>Umiarkowany</option>
+          <option value="znaczny">Znaczny</option>
+        </select>
+      </div>
+      <div class="mt-4 grid grid-cols-2 items-end gap-3">
+        <div>
+          <label for="n-miesiac" class="etykieta-pola">Miesiąc</label>
+          <select id="n-miesiac" name="miesiac" class="pole mt-1">
+            {Array.from({ length: 12 }, (_, i) => <option value={i + 1} selected={i + 1 === miesiac}>{nazwaMiesiaca(i + 1)}</option>)}
+          </select>
+        </div>
+        <div>
+          <label for="n-rok" class="etykieta-pola">Rok</label>
+          <select id="n-rok" name="rok" class="pole mt-1">
+            {lata.map((x) => <option value={x} selected={x === rok}>{x}</option>)}
+          </select>
+        </div>
+      </div>
+      <div class="mt-4">
+        <label for="n-stawka" class="etykieta-pola">Stawka za godzinę przy 8 godzinach (zł)</label>
+        <input id="n-stawka" name="stawka" class="pole mt-1 max-w-32" type="text" inputmode="decimal" autocomplete="off" aria-describedby="n-stawka-opis n-blad" />
+        <p id="n-stawka-opis" class="meta mt-1">Nieobowiązkowe, gdy masz płacone od godziny.</p>
+      </div>
+      <div class="mt-4">
+        <label for="n-zaliczenie" class="etykieta-pola">Dzień zaliczenia do stopnia</label>
+        <input id="n-zaliczenie" name="zaliczenie" type="date" class="pole mt-1 max-w-56" min="1990-01-01" max="2100-12-31" aria-describedby="n-zaliczenie-opis n-blad" />
+        <p id="n-zaliczenie-opis" class="meta mt-1">Nieobowiązkowe, do terminu dodatkowego urlopu.</p>
+      </div>
+      <label class="mt-4 flex items-start gap-3 text-[0.9375rem]">
+        <input type="checkbox" name="zgoda" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+        <span>Lekarz zgodził się na pracę bez tych ograniczeń albo pracuję przy pilnowaniu</span>
+      </label>
+      <p id="n-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Czas pracy</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-kwota" data-w="doba">do {w.doba} godzin</p>
+        <p class="meta" data-w="opis">na dobę i {NORMY.umiarkowany.tydzien} w tygodniu, bez pracy w nocy i nadgodzin (art. 15 ustawy o rehabilitacji)</p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt data-w="wymiar-etykieta">Wymiar: {nazwaMiesiaca(miesiac)} {rok}</dt><dd data-w="wymiar">{w.godziny} godzin ({w.dni} × {w.doba} godzin)</dd></div>
+        <div data-wiersz="przerwa"><dt>Dodatkowa przerwa</dt><dd>{PRZERWA_MIN} minut wliczanych do czasu pracy, obok zwykłych przerw (art. 17)</dd></div>
+        <div data-wiersz="stawka" hidden><dt>Stawka za godzinę</dt><dd data-w="stawka"></dd></div>
+        <div data-wiersz="urlop"><dt>Dodatkowy urlop</dt><dd data-w="urlop">{URLOP_DODATKOWY} dni roboczych w roku (art. 19)</dd></div>
+        <div data-wiersz="turnus"><dt>Turnus rehabilitacyjny</dt><dd>do {TURNUS_DNI} dni płatnego zwolnienia raz w roku, razem z dodatkowym urlopem najwyżej {TURNUS_DNI} dni (art. 20)</dd></div>
+      </dl>
+      <p class="wynik-uwaga">Uprawnienia przysługują od dnia, w którym przedstawisz pracodawcy orzeczenie (art. 2a ust. 1 i art. 20c ustawy o rehabilitacji).</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Wynik pokazuje umiarkowany stopień w bieżącym miesiącu.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="zasady">Zasady w skrócie</h2>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Uprawnienia pracownika według stopnia niepełnosprawności</caption>
+        <thead><tr><th scope="col">Uprawnienie</th><th scope="col">Lekki</th><th scope="col">Umiarkowany i znaczny</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Czas pracy (art. 15)</th><td>8 godzin na dobę, 40 w tygodniu</td><td>7 godzin na dobę, 35 w tygodniu</td></tr>
+          <tr><th scope="row">Noc i nadgodziny (art. 15 ust. 3)</th><td>zakazane</td><td>zakazane</td></tr>
+          <tr><th scope="row">Przerwa (art. 17)</th><td>dodatkowe 15 minut</td><td>dodatkowe 15 minut</td></tr>
+          <tr><th scope="row">Dodatkowy urlop (art. 19)</th><td>nie</td><td>10 dni roboczych</td></tr>
+          <tr><th scope="row">Turnus (art. 20)</th><td>nie</td><td>do 21 dni</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Wymiar w miesiącu liczymy jak w art. 130 Kodeksu pracy, ale z Twoją normą dobową: dni od poniedziałku do piątku razy
+      7 albo 8 godzin, minus tyle samo za każde święto poza niedzielą. Święto w sobotę też obniża wymiar, a pracodawca
+      wyznacza za nie dzień wolny. Pełny etat i okres rozliczeniowy jednego miesiąca; inne okresy pokaże
+      <a href="/narzedzia/wymiar-czasu-pracy">kalkulator wymiaru czasu pracy</a> (dla normy 8 godzin). Stawkę za godzinę
+      mnożymy przez 8/7 i zaokrąglamy do grosza. Rok do pierwszego dodatkowego urlopu liczymy od dnia po zaliczeniu
+      do stopnia, więc prawo powstaje dzień po rocznicy, jeśli przez ten rok pracujesz bez przerwy; przerwy w pracy
+      przesuwają termin. Przepis nie wyjaśnia, czy dniem zaliczenia jest data wydania orzeczenia, czy data, od której orzeczenie
+      zalicza do stopnia, więc liczymy od daty, którą wpiszesz.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { NORMY, URLOP_DODATKOWY, krotszaNorma, pierwszyUrlopDodatkowy, stawkaPoSkroceniu, wymiarNiepelnosprawnego, type Stopien } from '../../lib/narzedzia/niepelnosprawny';
+  import { nazwaMiesiaca } from '../../lib/narzedzia/czas-pracy';
+  import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
+  import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { typografia } from '../../lib/typografia.mjs';
+
+  const form = document.querySelector<HTMLFormElement>('[data-niepelnosprawny]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const wiersz = (k: string) => form.querySelector<HTMLElement>(`[data-wiersz="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const pisz = (k: string, tekst: string) => {
+      w(k).textContent = typografia(tekst);
+    };
+    const przelicz = () => {
+      const stopien = el('stopien').value as Stopien;
+      const zgoda = el('zgoda').checked;
+      const tekstStawki = el('stawka').value.trim();
+      const stawka = tekstStawki ? wpisanaLiczba(tekstStawki) : null;
+      const zaliczenie = el('zaliczenie').value;
+      let blad: string | null = null;
+      if (stawka !== null && !(stawka > 0 && stawka < 10000)) blad = 'Wpisz stawkę za godzinę, np. 31,40.';
+      else if (zaliczenie && !poprawnaData(zaliczenie)) blad = 'Popraw dzień zaliczenia do stopnia.';
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      b.hidden = !blad;
+      b.textContent = blad ?? '';
+      if (blad) return;
+      const rok = Number(el('rok').value);
+      const miesiac = Number(el('miesiac').value);
+      const r = wymiarNiepelnosprawnego(rok, miesiac, stopien, zgoda);
+      const krotsza = krotszaNorma(stopien) && !zgoda;
+      pisz('doba', `do ${r.doba} godzin`);
+      pisz(
+        'opis',
+        zgoda
+          ? 'na dobę jak w Kodeksie pracy: ograniczenia z art. 15 nie obowiązują (art. 16), więc nadgodziny i noc na zasadach ogólnych.'
+          : `na dobę i ${NORMY[stopien].tydzien} w tygodniu, bez pracy w nocy i nadgodzin (art. 15 ustawy o rehabilitacji)`,
+      );
+      pisz('wymiar-etykieta', `Wymiar: ${nazwaMiesiaca(miesiac)} ${rok}`);
+      pisz('wymiar', `${r.godziny} godzin (${r.dni} × ${r.doba} godzin)`);
+      wiersz('stawka').hidden = !(stawka !== null && krotsza);
+      if (stawka !== null && krotsza) pisz('stawka', `${zl(stawkaPoSkroceniu(stawka))} zamiast ${zl(stawka)} (razy 8/7, art. 18 ust. 2)`);
+      const dodatkowe = krotszaNorma(stopien);
+      wiersz('urlop').hidden = !dodatkowe;
+      wiersz('turnus').hidden = !dodatkowe;
+      if (dodatkowe) {
+        pisz(
+          'urlop',
+          zaliczenie
+            ? `${URLOP_DODATKOWY} dni roboczych w roku, pierwszy raz od ${dataPoPolsku(pierwszyUrlopDodatkowy(zaliczenie))}, jeśli pracujesz bez przerwy (art. 19)`
+            : `${URLOP_DODATKOWY} dni roboczych w roku (art. 19)`,
+        );
+      }
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>

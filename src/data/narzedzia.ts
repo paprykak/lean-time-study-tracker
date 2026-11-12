@@ -505,6 +505,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-12',
   },
   {
+    slug: 'pracownik-niepelnosprawny',
+    nazwa: 'Pracownik z niepełnosprawnością',
+    krotko: 'Czas pracy 7 albo 8 godzin, wymiar w miesiącu, stawka razy 8/7, przerwa 15 minut, dodatkowy urlop i turnus.',
+    kategoria: 'czas-pracy',
+    przepisy: ['rehabilitacja', 'kodeksPracy', 'dniWolne'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'przerwy-w-pracy',
     nazwa: 'Przerwy w pracy',
     krotko: 'Ile przerw przy zmianie 8 i 12 godzin, które są płatne, przerwy na karmienie i dla młodocianych.',
