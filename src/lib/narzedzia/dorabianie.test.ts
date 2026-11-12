@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { dorabianie, okresNaDzien, okresyProgow, progiNaDzien } from './dorabianie';
+import { MAKS_ZMNIEJSZENIA, PROGI_PRZYCHODU, dorabianie, okresNaDzien, okresyProgow, opisDorabiania, progiNaDzien } from './dorabianie';
 
 describe('dorabianie do emerytury i renty (art. 103–104 ustawy o emeryturach i rentach z FUS)', () => {
   it('listopad 2026 r.: progi 6463,20 i 12 003,10 zł (M.P. 2026 poz. 839)', () => {
@@ -29,6 +29,23 @@ describe('dorabianie do emerytury i renty (art. 103–104 ustawy o emeryturach i
     expect(okresNaDzien('2026-08-31')).toBe('2026-06-01');
     expect(okresNaDzien('2026-12-15')).toBe('2026-09-01');
     expect(okresNaDzien('2025-01-01')).toBe('2025-12-01');
+  });
+  it('kwoty maksymalnych zmniejszeń z roku waloryzacji najnowszych kwot przychodu (pilnuje aktualizacji od 1 marca)', () => {
+    const [r, m] = PROGI_PRZYCHODU[PROGI_PRZYCHODU.length - 1].od.split('-').map(Number);
+    expect(MAKS_ZMNIEJSZENIA[MAKS_ZMNIEJSZENIA.length - 1].od >= `${m >= 3 ? r : r - 1}-03-01`).toBe(true);
+  });
+  it('teksty wyniku: zapas do zawieszenia, przekroczenie równe kwocie maksymalnej, uwagi o art. 103a i 24a', () => {
+    const dzis = '2026-11-12';
+    expect(opisDorabiania('renta-calkowita', 6800, '2026-09-01', dzis)).toMatchObject({ stan: 'Zmniejszenie o 336,80 zł', zapas: '5203,10 zł' });
+    expect(opisDorabiania('renta-calkowita', 12003.1, '2026-09-01', dzis).zapas).toBe('0,00 zł');
+    expect(opisDorabiania('renta-calkowita', 7452.61, '2026-09-01', dzis).opis).toBe('o tyle przychód przekracza próg 70%');
+    expect(opisDorabiania('renta-calkowita', 7452.62, '2026-09-01', dzis).opis).toMatch(/najwyżej o tę kwotę/);
+    expect(opisDorabiania('renta-calkowita', 7452.62, '2026-09-01', dzis).stan).toBe('Zmniejszenie o 989,41 zł');
+    expect(opisDorabiania('emerytura', 5000, '2026-09-01', dzis).uwagi.join(' ')).toMatch(/art\. 103a/);
+    expect(opisDorabiania('renta-czesciowa', 5000, '2026-09-01', dzis).uwagi.join(' ')).toMatch(/art\. 24a/);
+    expect(opisDorabiania('emerytura-wiek', 50000, '2026-09-01', dzis)).toMatchObject({ stan: 'Bez limitu', zapas: 'nie dotyczy' });
+    expect(opisDorabiania('renta-rodzinna', 12003.11, '2026-09-01', dzis)).toMatchObject({ stan: 'Zawieszenie', zapas: 'próg przekroczony' });
+    expect(opisDorabiania('renta-rodzinna', 1000, '2026-09-01', '2026-12-05').uwagi.join(' ')).toMatch(/nowszego komunikatu/);
   });
   it('błąd przy ujemnym przychodzie', () => {
     expect(() => dorabianie({ swiadczenie: 'emerytura', przychod: -1, data: '2026-11-12' })).toThrow(RangeError);

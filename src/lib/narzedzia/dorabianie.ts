@@ -1,14 +1,20 @@
 // Dorabianie do emerytury i renty (ustawa o emeryturach i rentach z FUS, tekst jednolity Dz.U. 2025 poz. 1749; zmiany
 // Dz.U. 2026 poz. 26 i 425 nie dotyczą art. 103–106):
-// - limity nie dotyczą emerytów w powszechnym wieku emerytalnym 60/65 lat (art. 103 ust. 2), ale emerytura jest zawieszona
-//   przy pracy kontynuowanej bez rozwiązania umowy z tym samym pracodawcą (art. 103a);
+// - limity przychodu nie dotyczą emerytów w powszechnym wieku emerytalnym 60/65 lat (art. 103 ust. 2), ale każda emerytura
+//   jest zawieszona przy pracy kontynuowanej bez rozwiązania umowy z tym samym pracodawcą (art. 103a);
 // - przychód powyżej 70% przeciętnego wynagrodzenia za ostatni ogłoszony kwartał, ale nie wyższy niż 130%: świadczenie
 //   zmniejsza się o kwotę przekroczenia, najwyżej o kwotę maksymalnego zmniejszenia (art. 104 ust. 8–9);
 // - przychód powyżej 130%: prawo do emerytury, renty z tytułu niezdolności i renty rodzinnej jednej osoby jest zawieszone
 //   (art. 104 ust. 7); do przychodu wlicza się też m.in. zasiłki i wynagrodzenie za L4 (ust. 6);
-// - kwoty przychodu ogłasza Prezes ZUS co kwartał (ust. 10 pkt 1), kwoty maksymalnych zmniejszeń od 1 marca (waloryzacja).
+// - kwoty przychodu ogłasza Prezes ZUS co kwartał (ust. 10 pkt 1), kwoty maksymalnych zmniejszeń od 1 marca (waloryzacja,
+//   art. 94 ust. 2 pkt 2 i art. 104 ust. 9);
+// - art. 103a nie ma warunku wieku: dotyczy też emerytury wcześniejszej; nie stosuje się go do emerytur nabytych przed
+//   1 stycznia 2011 r. (wyrok TK z 13 listopada 2012 r., K 2/12, przypis do art. 103a w tekście jednolitym);
+// - rentę z tytułu niezdolności do pracy ZUS zamienia z urzędu na emeryturę po osiągnięciu wieku 60/65 lat (art. 24a ust. 1).
 // Nie liczymy renty rodzinnej dla kilku osób (art. 105), świadczeń wypłacanych w części (art. 104 ust. 8a–8b) ani emerytur
 // pomostowych (osobna ustawa).
+
+import { zl } from './format';
 
 export type Swiadczenie = 'emerytura' | 'renta-calkowita' | 'renta-czesciowa' | 'renta-rodzinna';
 
@@ -93,4 +99,59 @@ export function dorabianie(d: DaneDorabiania) {
     return { stan: 'zmniejszenie' as StanDorabiania, progi, zmniejszenie, maks, zapas: 0 };
   }
   return { stan: 'zawieszenie' as StanDorabiania, progi, zmniejszenie: 0, maks, zapas: 0 };
+}
+
+/** Wybór z listy na stronie: emerytura po 60/65 latach to osobna pozycja. */
+export type WyborSwiadczenia = Swiadczenie | 'emerytura-wiek';
+
+export interface OpisDorabiania {
+  stan: string;
+  opis: string;
+  p70: string;
+  p130: string;
+  maks: string;
+  zapas: string;
+  uwagi: string[];
+}
+
+const ART_103A =
+  'Emerytura jest zawieszona bez względu na przychód, gdy praca trwa dalej u tego samego pracodawcy bez rozwiązania umowy o pracę przed dniem nabycia prawa do emerytury (art. 103a; nie dotyczy emerytur nabytych przed 1 stycznia 2011 r.).';
+
+/** Teksty wyniku: te same w HTML ze strony i w skrypcie przeglądarki. */
+export function opisDorabiania(wybor: WyborSwiadczenia, przychod: number, okres: string, dzis: string): OpisDorabiania {
+  const swiadczenie: Swiadczenie = wybor === 'emerytura-wiek' ? 'emerytura' : wybor;
+  const r = dorabianie({ swiadczenie, przychod, data: okres, wiekEmerytalny: wybor === 'emerytura-wiek' });
+  const koniec = 'Wynik dotyczy jednego miesiąca. Ostatecznie rozlicza ZUS decyzją, także po roku.';
+  if (r.stan === 'bez-limitu') {
+    const nd = 'nie dotyczy';
+    return { stan: 'Bez limitu', opis: 'po 60/65 latach przychód nie zmniejsza emerytury', p70: nd, p130: nd, maks: nd, zapas: nd, uwagi: [ART_103A, koniec] };
+  }
+  if (r.stan === 'brak-danych' || !r.progi || !r.maks) {
+    return { stan: 'Brak kwot', opis: 'nie mamy kwot dla tego okresu', p70: '—', p130: '—', maks: '—', zapas: '—', uwagi: [koniec] };
+  }
+  const gr = (x: number) => Math.round(x * 100);
+  const { progi, maks } = r;
+  const zapas130 = zl((gr(progi.p130) - gr(przychod)) / 100);
+  const wynik: OpisDorabiania = { stan: '', opis: '', p70: zl(progi.p70), p130: zl(progi.p130), maks: zl(maks.kwota), zapas: zapas130, uwagi: [] };
+  if (r.stan === 'bez-zmian') {
+    wynik.stan = 'Bez zmian';
+    wynik.opis = `możesz zarobić jeszcze ${zl(r.zapas ?? 0)} brutto bez zmniejszenia`;
+  } else if (r.stan === 'zmniejszenie') {
+    wynik.stan = `Zmniejszenie o ${zl(r.zmniejszenie)}`;
+    wynik.opis = gr(przychod) - gr(progi.p70) > gr(maks.kwota) ? 'przekroczenie jest większe, ale ZUS zmniejsza najwyżej o tę kwotę' : 'o tyle przychód przekracza próg 70%';
+  } else {
+    wynik.stan = 'Zawieszenie';
+    wynik.opis = 'przychód powyżej progu 130%: za ten miesiąc prawo do świadczenia jest zawieszone';
+    wynik.zapas = 'próg przekroczony';
+  }
+  if (swiadczenie === 'emerytura') wynik.uwagi.push('Limity przestają obowiązywać po osiągnięciu 60 lat (kobiety) albo 65 lat (mężczyźni).', ART_103A);
+  if (swiadczenie === 'renta-calkowita' || swiadczenie === 'renta-czesciowa') {
+    wynik.uwagi.push('Po osiągnięciu 60 lat (kobiety) albo 65 lat (mężczyźni) ZUS przyznaje z urzędu emeryturę zamiast renty, jeśli osoba podlegała ubezpieczeniom (art. 24a ust. 1), a emerytura w tym wieku nie ma limitów przychodu.');
+  }
+  wynik.uwagi.push(koniec);
+  const naDzis = progiNaDzien(dzis);
+  if (naDzis?.mozeNieaktualne && naDzis.od === okres) {
+    wynik.uwagi.push('ZUS ogłasza nowe kwoty co kwartał, a te mogą być już nieaktualne: sprawdź, czy nie ma nowszego komunikatu.');
+  }
+  return wynik;
 }
