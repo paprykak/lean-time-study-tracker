@@ -377,6 +377,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-12',
   },
   {
+    slug: 'odprawa-posmiertna',
+    nazwa: 'Odprawa pośmiertna',
+    krotko: 'Ile odprawy pośmiertnej dla rodziny: 1, 3 albo 6 pensji według stażu, podział po równo, ubezpieczenie.',
+    kategoria: 'umowa',
+    przepisy: ['kodeksPracy', 'wynagrodzenieRozp', 'emerytury', 'pit'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'kara-porzadkowa',
     nazwa: 'Kara porządkowa: terminy i sprzeciw',
     krotko: 'Czy kara porządkowa jest w terminie, do kiedy sprzeciw, kiedy się zatrze i ile może wynosić kara pieniężna.',
