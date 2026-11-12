@@ -1,0 +1,172 @@
+---
+// Limit umów na czas określony (art. 25^1 Kp) i pracy tymczasowej (art. 20–21 ustawy o zatrudnianiu pracowników
+// tymczasowych). Logika: src/lib/narzedzia/umowy-okreslone.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { LIMIT_DNI_PRZY_PRZERWACH } from '../../lib/narzedzia/umowy-okreslone';
+
+const WIERSZE = [
+  { od: '2025-01-01', do: '2025-12-31' },
+  { od: '2026-01-01', do: '2026-12-31' },
+  { od: '', do: '' },
+  { od: '', do: '' },
+];
+
+const faq = [
+  {
+    pytanie: 'Ile umów na czas określony można podpisać?',
+    odpowiedz: 'Z tym samym pracodawcą najwyżej trzy, łącznie na najwyżej 33 miesiące (art. 25^1 § 1 Kodeksu pracy). Czwarta umowa na czas określony jest z mocy prawa umową na czas nieokreślony od dnia jej zawarcia, a po przekroczeniu 33 miesięcy pracownik jest zatrudniony na czas nieokreślony od następnego dnia (art. 25^1 § 3).',
+  },
+  {
+    pytanie: 'Czy aneks przedłużający umowę liczy się jako nowa umowa?',
+    odpowiedz: 'Tak. Uzgodnienie w trakcie umowy na czas określony dłuższego okresu pracy uważa się za zawarcie nowej umowy na czas określony od dnia, w którym miała się skończyć poprzednia (art. 25^1 § 2 Kodeksu pracy).',
+  },
+  {
+    pytanie: 'Czy przerwa między umowami zeruje limit?',
+    odpowiedz: 'Nie. Przepis mówi o łącznym okresie zatrudnienia na podstawie umów na czas określony między tymi samymi stronami i nie przewiduje, że przerwa go zeruje (art. 25^1 § 1). Okresy z przerwami sumujemy, licząc miesiąc za 30 dni (art. 114 Kodeksu cywilnego w związku z art. 300 Kodeksu pracy).',
+  },
+  {
+    pytanie: 'Kiedy limit 33 miesięcy nie obowiązuje?',
+    odpowiedz: 'Przy umowach na zastępstwo nieobecnego pracownika, przy pracy dorywczej lub sezonowej, na okres kadencji i gdy pracodawca wskaże obiektywne przyczyny leżące po jego stronie; o takiej umowie z obiektywnych przyczyn pracodawca zawiadamia okręgowego inspektora pracy w ciągu 5 dni roboczych (art. 25^1 § 4 i 5 Kodeksu pracy).',
+  },
+  {
+    pytanie: 'Jak długo można pracować przez agencję pracy tymczasowej u jednej firmy?',
+    odpowiedz: 'Łącznie najwyżej 18 miesięcy w okresie 36 kolejnych miesięcy u jednego pracodawcy użytkownika, także gdy część pracy była na umowie cywilnoprawnej (art. 20 ust. 1–4 ustawy o zatrudnianiu pracowników tymczasowych). Do umów z agencją nie stosuje się limitu 33 miesięcy z Kodeksu pracy (art. 21 ust. 1).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="umowa-na-czas-okreslony"
+  tytul="Umowa na czas określony: limit 33 miesięcy i 3 umów"
+  opis="Sprawdź, kiedy umowa na czas określony zmienia się w umowę na czas nieokreślony: 33 miesiące, 3 umowy, aneksy, przerwy. Limit pracy przez agencję: 18 miesięcy w 36."
+  h1="Umowa na czas określony: kiedy na stałe"
+  lead="U jednego pracodawcy można mieć najwyżej 3 umowy na czas określony i łącznie 33 miesiące. Potem umowa z mocy prawa jest na czas nieokreślony. Wpisz daty swoich umów, a policzymy, ile zostało albo od kiedy jesteś zatrudniony na stałe."
+  faq={faq}
+>
+  <form class="kalkulator" data-umowy novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twoje umowy z tym pracodawcą</h2>
+      <p class="meta mt-1">Tylko umowy na czas określony, bez umowy na okres próbny. Aneks przedłużający wpisz jako osobną umowę.</p>
+      {WIERSZE.map((w, i) => (
+        <fieldset class="mt-4">
+          <legend class="etykieta">Umowa {i + 1}</legend>
+          <div class="mt-2 grid grid-cols-2 gap-3">
+            <div>
+              <label for={`u-od-${i}`} class="etykieta-pola">Od</label>
+              <input id={`u-od-${i}`} name={`od-${i}`} type="date" class="pole mt-1" min="1990-01-01" max="2100-12-31" value={w.od} aria-describedby="u-blad" />
+            </div>
+            <div>
+              <label for={`u-do-${i}`} class="etykieta-pola">Do</label>
+              <input id={`u-do-${i}`} name={`do-${i}`} type="date" class="pole mt-1" min="1990-01-01" max="2100-12-31" value={w.do} aria-describedby="u-blad" />
+            </div>
+          </div>
+        </fieldset>
+      ))}
+      <p id="u-blad" class="blad-pola mt-3" data-blad="umowy" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta" data-w="naglowek">Limit 33 miesięcy mija</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-data" data-w="data">30 września 2027 r.</p>
+        <p class="status-terminu" data-w="status" data-status="w-terminie">W limicie</p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Liczba umów</dt><dd data-w="liczba">2 z 3</dd></div>
+        <div><dt>Łącznie na tych umowach</dt><dd data-w="razem">730 dni</dd></div>
+        <div><dt>Jak liczymy miesiące</dt><dd data-w="metoda">umowy bez przerw: 33 miesiące kalendarzowe od początku pierwszej (art. 112 KC)</dd></div>
+      </dl>
+      <p class="wynik-uwaga" data-w="uwaga" hidden></p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="zasady">Zasady: 33 miesiące i 3 umowy</h2>
+    <ul>
+      <li>Łączny okres zatrudnienia na umowach na czas określony z tym samym pracodawcą: najwyżej 33 miesiące, a umów najwyżej trzy (art. 25<sup>1</sup> § 1 Kodeksu pracy).</li>
+      <li>Po przekroczeniu 33 miesięcy pracownik jest zatrudniony na czas nieokreślony od następnego dnia, a przy czwartej umowie od dnia jej zawarcia (art. 25<sup>1</sup> § 3).</li>
+      <li>Aneks wydłużający umowę to nowa umowa, od dnia po dacie, w której miała się skończyć poprzednia (art. 25<sup>1</sup> § 2).</li>
+      <li>Wyjątki: zastępstwo, praca dorywcza lub sezonowa, kadencja, obiektywne przyczyny po stronie pracodawcy (art. 25<sup>1</sup> § 4) oraz przedłużenie umowy do dnia porodu (art. 25<sup>1</sup> § 4<sup>1</sup>).</li>
+    </ul>
+    <p>
+      Gdy umowy następują jedna po drugiej, liczymy 33 miesiące kalendarzowe od pierwszego dnia pierwszej umowy (art. 112
+      Kodeksu cywilnego). Gdy są przerwy, sumujemy dni na umowach i przyjmujemy {LIMIT_DNI_PRZY_PRZERWACH} dni, czyli
+      miesiąc za 30 dni (art. 114 Kodeksu cywilnego w związku z art. 300 Kodeksu pracy).
+    </p>
+
+    <h2 id="agencja">Praca przez agencję: 18 miesięcy w 36</h2>
+    <p>
+      Agencja pracy tymczasowej może kierować pracownika do jednego pracodawcy użytkownika łącznie na najwyżej 18 miesięcy
+      w ciągu 36 kolejnych miesięcy, wliczając pracę na umowie cywilnoprawnej (art. 20 ust. 1–4 ustawy o zatrudnianiu
+      pracowników tymczasowych). Przy zastępstwie nieobecnego pracownika użytkownika limit to 36 miesięcy pracy ciągłej,
+      a potem 36 miesięcy przerwy u tego użytkownika (art. 20 ust. 5–8). Limitu 33 miesięcy z Kodeksu pracy nie stosuje
+      się do umów z agencją (art. 21 ust. 1).
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { LIMIT_UMOW, sprawdzUmowy, type Umowa } from '../../lib/narzedzia/umowy-okreslone';
+  import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
+
+  const form = document.querySelector<HTMLFormElement>('[data-umowy]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const przelicz = () => {
+      const umowy: Umowa[] = [];
+      let blad: string | null = null;
+      for (let i = 0; i < 4; i++) {
+        const od = el(`od-${i}`).value;
+        const do_ = el(`do-${i}`).value;
+        if (!od && !do_) continue;
+        if (!poprawnaData(od) || !poprawnaData(do_)) blad = `Umowa ${i + 1}: wpisz obie daty, od i do.`;
+        else umowy.push({ od, do: do_ });
+      }
+      if (!blad && umowy.length === 0) blad = 'Wpisz daty co najmniej jednej umowy.';
+      let r: ReturnType<typeof sprawdzUmowy> | null = null;
+      if (!blad) {
+        try {
+          r = sprawdzUmowy(umowy);
+        } catch (e) {
+          blad = e instanceof RangeError && e.message.includes('zachodzić') ? 'Umowy nie mogą na siebie zachodzić: sprawdź daty.' : 'Koniec umowy nie może być wcześniejszy niż początek.';
+        }
+      }
+      const b = form.querySelector<HTMLElement>('[data-blad="umowy"]')!;
+      b.hidden = !blad;
+      b.textContent = blad ?? '';
+      const status = w('status');
+      if (blad || !r) {
+        w('data').textContent = '—';
+        status.hidden = true;
+        return;
+      }
+      status.hidden = false;
+      w('liczba').textContent = `${r.liczba} z ${LIMIT_UMOW}`;
+      w('razem').textContent = `${r.dniRazem} dni`;
+      w('metoda').textContent = r.ciagle
+        ? 'umowy bez przerw: 33 miesiące kalendarzowe od początku pierwszej (art. 112 KC)'
+        : 'umowy z przerwami: suma dni, miesiąc za 30 dni, razem 990 dni (art. 114 KC)';
+      let uwaga: string | null = null;
+      if (r.wynik.stan === 'nieokreslony') {
+        w('naglowek').textContent = 'Umowa na czas nieokreślony od';
+        w('data').textContent = dataPoPolsku(r.wynik.od);
+        status.dataset.status = 'po-terminie';
+        status.textContent = r.wynik.powod === 'czwarta-umowa' ? 'Czwarta umowa na czas określony' : 'Przekroczone 33 miesiące';
+        uwaga = 'Z mocy prawa pracownik jest od tej daty zatrudniony na czas nieokreślony (art. 25¹ § 3 Kodeksu pracy), chyba że umowy należą do wyjątków z § 4, na przykład zastępstwo albo praca sezonowa.';
+      } else {
+        w('naglowek').textContent = 'Limit 33 miesięcy mija';
+        w('data').textContent = dataPoPolsku(r.wynik.limitDo);
+        status.dataset.status = r.wynik.pozostaloDni <= 60 ? 'wkrotce' : 'w-terminie';
+        status.textContent = `W limicie: zostało ${r.wynik.pozostaloDni} ${r.wynik.pozostaloDni === 1 ? 'dzień' : 'dni'} po ostatniej umowie`;
+        if (r.liczba === LIMIT_UMOW) uwaga = 'To już trzecia umowa: kolejna umowa na czas określony albo aneks przedłużający będzie umową na czas nieokreślony.';
+      }
+      w('uwaga').hidden = !uwaga;
+      w('uwaga').textContent = uwaga ?? '';
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>

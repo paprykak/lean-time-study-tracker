@@ -153,6 +153,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-11',
   },
   {
+    slug: 'umowa-na-czas-okreslony',
+    nazwa: 'Umowa na czas określony: limit',
+    krotko: 'Kiedy umowa na czas określony staje się umową na stałe: 33 miesiące, 3 umowy, aneksy, przerwy, agencja.',
+    kategoria: 'umowa',
+    przepisy: ['kodeksPracy', 'kodeksCywilny', 'pracaTymczasowa'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'kontrola-grafiku',
     nazwa: 'Kontrola grafiku zmian',
     krotko: 'Sprawdź grafik 12 h albo trzyzmianowy: odpoczynek 11 i 35 h, wolne niedziele, dni wolne, godziny a wymiar.',

@@ -104,6 +104,13 @@ export const AKTY = {
     adres: eli(2026, 622),
     sprawdzono: '2026-11-11',
   },
+  pracaTymczasowa: {
+    nazwa: 'Ustawa o zatrudnianiu pracowników tymczasowych',
+    publikator: 'Dz.U. 2025 poz. 236',
+    uwaga: 'tekst jednolity, bez późniejszych zmian; art. 20 i 21',
+    adres: eli(2025, 236),
+    sprawdzono: '2026-11-12',
+  },
   zasilkowa: {
     nazwa: 'Ustawa o świadczeniach pieniężnych z ubezpieczenia społecznego w razie choroby i macierzyństwa',
     publikator: 'Dz.U. 2026 poz. 854',
