@@ -273,6 +273,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-12',
   },
   {
+    slug: 'ochrona-przedemerytalna',
+    nazwa: 'Ochrona przedemerytalna',
+    krotko: 'Od kiedy do kiedy pracodawca nie może wypowiedzieć umowy przed emeryturą; wyjątki i obniżka pensji.',
+    kategoria: 'umowa',
+    przepisy: ['kodeksPracy', 'zwolnieniaGrupowe', 'emerytury', 'kodeksCywilny'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'okres-wypowiedzenia',
     nazwa: 'Okres wypowiedzenia',
     krotko: 'Ile trwa wypowiedzenie i który dzień jest ostatnim dniem umowy: 2 tygodnie, miesiąc albo 3 miesiące.',

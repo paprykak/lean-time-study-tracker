@@ -216,6 +216,13 @@ export const AKTY = {
     adres: 'https://eli.gov.pl/eli/MP/2026/192/ogl',
     sprawdzono: '2026-11-11',
   },
+  emerytury: {
+    nazwa: 'Ustawa o emeryturach i rentach z Funduszu Ubezpieczeń Społecznych',
+    publikator: 'Dz.U. 2025 poz. 1749',
+    uwaga: 'tekst jednolity; zmiany Dz.U. 2026 poz. 26 i 425 nie dotyczą art. 24 i 87; art. 24 ust. 1: wiek emerytalny 60 i 65 lat',
+    adres: eli(2025, 1749),
+    sprawdzono: '2026-11-12',
+  },
   zasilekBezrobotni2026: {
     nazwa: 'Obwieszczenie Ministra Rodziny, Pracy i Polityki Społecznej w sprawie wysokości zasiłku dla bezrobotnych',
     publikator: 'M.P. 2026 poz. 268',

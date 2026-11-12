@@ -1,0 +1,125 @@
+---
+// Ochrona przedemerytalna (art. 39–43 Kp, art. 5 ust. 5–6 i art. 10 ustawy o zwolnieniach z przyczyn niedotyczących
+// pracowników, art. 24 ustawy o emeryturach i rentach z FUS). Logika: src/lib/narzedzia/ochrona-przedemerytalna.ts.
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { ochronaPrzedemerytalna } from '../../lib/narzedzia/ochrona-przedemerytalna';
+import { dataPoPolsku, dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+const URODZENIE = '1964-03-15';
+const r = ochronaPrzedemerytalna(URODZENIE, 65, dzisWPolsce());
+
+const faq = [
+  {
+    pytanie: 'Ile lat przed emeryturą nie można zwolnić pracownika?',
+    odpowiedz: 'Pracodawca nie może wypowiedzieć umowy o pracę, gdy do osiągnięcia wieku emerytalnego brakuje nie więcej niż 4 lata, jeżeli okres zatrudnienia pozwala uzyskać emeryturę z osiągnięciem tego wieku (art. 39 Kodeksu pracy). Przy wieku emerytalnym 65 lat ochrona zaczyna się w 61. urodziny, przy 60 latach w 56. urodziny.',
+  },
+  {
+    pytanie: 'Czy w ochronie przedemerytalnej można zostać zwolnionym?',
+    odpowiedz: 'Wypowiedzieć umowy nie można, ale ochrona nie działa po przyznaniu renty z tytułu całkowitej niezdolności do pracy (art. 40) oraz przy upadłości i likwidacji pracodawcy (art. 41¹). Nie dotyczy też porozumienia stron, rozwiązania umowy bez wypowiedzenia i końca umowy na czas określony, bo żadne z nich nie jest wypowiedzeniem umowy przez pracodawcę.',
+  },
+  {
+    pytanie: 'Czy pracodawca może obniżyć pensję w okresie ochronnym?',
+    odpowiedz: 'Wypowiedzieć warunki pracy lub płacy może tylko przy nowych zasadach wynagradzania dla wszystkich pracowników albo ich grupy oraz przy utracie zdolności do dotychczasowej pracy stwierdzonej przez lekarza lub niezawinionej utracie uprawnień (art. 43). Przy zwolnieniach z przyczyn pracodawcy, który zatrudnia co najmniej 20 osób, może jedynie wypowiedzieć warunki, a jeśli pensja spada, do końca ochrony należy się dodatek wyrównawczy (art. 5 ust. 5 i 6 oraz art. 10 ust. 1 ustawy o zwolnieniach z przyczyn niedotyczących pracowników).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="ochrona-przedemerytalna"
+  tytul="Ochrona przedemerytalna: od kiedy nie można zwolnić"
+  opis="Sprawdź, od kiedy obejmuje Cię ochrona przedemerytalna: 4 lata przed wiekiem emerytalnym pracodawca nie może wypowiedzieć umowy o pracę. Wyjątki, obniżka pensji, zwolnienia grupowe."
+  h1="Ochrona przedemerytalna: od kiedy"
+  lead="Przez 4 lata przed osiągnięciem wieku emerytalnego pracodawca nie może wypowiedzieć umowy o pracę. Wpisz datę urodzenia i swój wiek emerytalny, a pokażemy, od kiedy do kiedy trwa ochrona."
+  faq={faq}
+>
+  <form class="kalkulator" data-ochrona novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twoje dane</h2>
+      <div class="mt-4">
+        <label for="o-urodzenie" class="etykieta-pola">Data urodzenia</label>
+        <input id="o-urodzenie" name="urodzenie" type="date" class="pole mt-1 max-w-56" min="1940-01-01" max="2015-12-31" value={URODZENIE} aria-describedby="o-blad" />
+        <p id="o-blad" class="blad-pola" data-blad="urodzenie" hidden></p>
+      </div>
+      <div class="mt-4">
+        <label for="o-wiek" class="etykieta-pola">Wiek emerytalny</label>
+        <select id="o-wiek" name="wiek" class="pole mt-1 max-w-56" aria-describedby="o-wiek-opis">
+          <option value="65" selected>65 lat</option>
+          <option value="60">60 lat</option>
+        </select>
+        <p id="o-wiek-opis" class="meta mt-1">Ustawa emerytalna: 60 lat dla kobiet, 65 lat dla mężczyzn (art. 24 ust. 1).</p>
+      </div>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Ochrona przed wypowiedzeniem od</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-data" data-w="od">{dataPoPolsku(r.od)}</p>
+        <p class="status-terminu" data-w="status" data-status={r.stan === 'przed' ? 'wkrotce' : r.stan === 'w-ochronie' ? 'w-terminie' : 'po-terminie'}>
+          {r.stan === 'przed' ? `Za ${r.dniDoOchrony} dni` : r.stan === 'w-ochronie' ? 'Ochrona trwa' : 'Wiek emerytalny osiągnięty'}
+        </p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Ostatni dzień ochrony</dt><dd data-w="do">{dataPoPolsku(r.do)}</dd></div>
+        <div><dt>Wiek emerytalny osiągasz</dt><dd data-w="wiek">{dataPoPolsku(r.wiekEmerytalny)}</dd></div>
+      </dl>
+      <p class="wynik-uwaga">Ochrona nie działa przy upadłości i likwidacji pracodawcy oraz po przyznaniu renty z tytułu całkowitej niezdolności do pracy (art. 40 i 41¹ Kodeksu pracy).</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="zasady">Na czym polega ochrona</h2>
+    <ul>
+      <li>Pracodawca nie może wypowiedzieć umowy o pracę, gdy do wieku emerytalnego brakuje nie więcej niż 4 lata, jeżeli okres zatrudnienia pozwala uzyskać emeryturę z osiągnięciem tego wieku (art. 39 Kodeksu pracy).</li>
+      <li>Ochrona kończy się po przyznaniu renty z tytułu całkowitej niezdolności do pracy (art. 40) oraz nie obowiązuje przy upadłości i likwidacji pracodawcy (art. 41<sup>1</sup>).</li>
+      <li>Warunki pracy lub płacy pracodawca może wypowiedzieć tylko w sytuacjach z art. 43: nowe zasady wynagradzania dla wszystkich albo grupy pracowników, utrata zdolności do pracy stwierdzona orzeczeniem lekarskim, niezawiniona utrata uprawnień.</li>
+      <li>Przy zwolnieniach grupowych i indywidualnych z przyczyn pracodawcy, który zatrudnia co najmniej 20 osób, może jedynie wypowiedzieć warunki pracy i płacy; gdy pensja spada, do końca okresu ochrony należy się dodatek wyrównawczy (art. 5 ust. 5 i 6 oraz art. 10 ust. 1 ustawy o zwolnieniach z przyczyn niedotyczących pracowników).</li>
+    </ul>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Wiek emerytalny osiąga się w dniu urodzin, a ochrona trwa od urodzin, po których do wieku emerytalnego zostają
+      4 lata, do dnia przed osiągnięciem wieku emerytalnego. Osobom urodzonym 29 lutego w roku nieprzestępnym liczymy
+      28 lutego (art. 112 Kodeksu cywilnego). Wiek emerytalny osób urodzonych po 1948 r. to 60 lat dla kobiet i 65 lat dla
+      mężczyzn (art. 24 ust. 1 ustawy o emeryturach i rentach z Funduszu Ubezpieczeń Społecznych); prawo do emerytury
+      w tym wieku nie zależy od stażu, a od stażu 20 albo 25 lat zależy podwyższenie do emerytury minimalnej (art. 87
+      ust. 1). Kalkulator zakłada, że warunek okresu zatrudnienia z art. 39 Kodeksu pracy jest spełniony. Okres
+      wypowiedzenia policzy <a href="/narzedzia/okres-wypowiedzenia">kalkulator okresu wypowiedzenia</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { ochronaPrzedemerytalna } from '../../lib/narzedzia/ochrona-przedemerytalna';
+  import { dataPoPolsku, dzisWPolsce, poprawnaData } from '../../lib/narzedzia/terminy';
+
+  const form = document.querySelector<HTMLFormElement>('[data-ochrona]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const przelicz = () => {
+      const urodzenie = el('urodzenie').value;
+      const dzis = dzisWPolsce();
+      const blad = !poprawnaData(urodzenie) || urodzenie > dzis || urodzenie < '1940-01-01' ? 'Wpisz datę urodzenia.' : null;
+      const b = form.querySelector<HTMLElement>('[data-blad="urodzenie"]')!;
+      b.hidden = !blad;
+      b.textContent = blad ?? '';
+      const status = w('status');
+      if (blad) {
+        w('od').textContent = '—';
+        status.hidden = true;
+        return;
+      }
+      const r = ochronaPrzedemerytalna(urodzenie, Number(el('wiek').value) as 60 | 65, dzis);
+      w('od').textContent = dataPoPolsku(r.od);
+      w('do').textContent = dataPoPolsku(r.do);
+      w('wiek').textContent = dataPoPolsku(r.wiekEmerytalny);
+      status.hidden = false;
+      status.dataset.status = r.stan === 'przed' ? 'wkrotce' : r.stan === 'w-ochronie' ? 'w-terminie' : 'po-terminie';
+      status.textContent = r.stan === 'przed' ? `Za ${r.dniDoOchrony} ${r.dniDoOchrony === 1 ? 'dzień' : 'dni'}` : r.stan === 'w-ochronie' ? 'Ochrona trwa' : 'Wiek emerytalny osiągnięty';
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>
