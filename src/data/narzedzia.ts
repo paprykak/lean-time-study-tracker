@@ -305,6 +305,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-12',
   },
   {
+    slug: 'l4-po-zwolnieniu',
+    nazwa: 'L4 po zwolnieniu z pracy',
+    krotko: 'Czy po końcu umowy należy się zasiłek chorobowy i do kiedy: warunek 14 i 30 dni, najwyżej 91 dni, płaci ZUS.',
+    kategoria: 'wynagrodzenie',
+    przepisy: ['zasilkowa', 'kodeksCywilny'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'swiadczenie-rehabilitacyjne',
     nazwa: 'Świadczenie rehabilitacyjne',
     krotko: 'Świadczenie rehabilitacyjne po zasiłku chorobowym: 90%, potem 75%, 100% po wypadku przy pracy, do 12 miesięcy.',

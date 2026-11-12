@@ -1,0 +1,160 @@
+---
+// Zasiłek chorobowy po ustaniu zatrudnienia (art. 7, 8, 13 i 61 ustawy zasiłkowej, t.j. Dz.U. 2026 poz. 854).
+// Logika: src/lib/narzedzia/zasilek-po-ustaniu.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { zasilekPoUstaniu } from '../../lib/narzedzia/zasilek-po-ustaniu';
+import { dataPoPolsku, dodajDni, dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+const dzis = dzisWPolsce();
+const D = { ustanie: dodajDni(dzis, -20), poczatek: dodajDni(dzis, -30), koniec: dodajDni(dzis, 40), przyczyna: 'choroba' as const };
+const r = zasilekPoUstaniu(D);
+if (!r.przysluguje) throw new Error('Wartości domyślne powinny dawać zasiłek');
+
+const faq = [
+  {
+    pytanie: 'Czy po zwolnieniu z pracy należy się zasiłek chorobowy?',
+    odpowiedz: 'Tak, gdy niezdolność do pracy powstała w czasie zatrudnienia i trwa po jego końcu, a także gdy powstała najpóźniej 14 dni po końcu zatrudnienia i trwa bez przerwy co najmniej 30 dni (art. 7 ustawy zasiłkowej). Przy chorobie zakaźnej o okresie wylęgania dłuższym niż 14 dni albo chorobie, której objawy ujawniają się po ponad 14 dniach, niezdolność może powstać do 3 miesięcy po końcu zatrudnienia.',
+  },
+  {
+    pytanie: 'Jak długo płaci się zasiłek chorobowy po ustaniu zatrudnienia?',
+    odpowiedz: 'Najwyżej przez 91 dni po ustaniu ubezpieczenia (art. 8 ust. 2 ustawy zasiłkowej) i nie dłużej niż do końca okresu zasiłkowego: 182 dni od początku niezdolności, przy gruźlicy i w ciąży 270 dni (art. 8 ust. 1). Limit 91 dni nie dotyczy gruźlicy i ciąży.',
+  },
+  {
+    pytanie: 'Kto wypłaca zasiłek chorobowy po końcu umowy?',
+    odpowiedz: 'Zakład Ubezpieczeń Społecznych, nie były pracodawca (art. 61 ust. 1 pkt 2 lit. d ustawy zasiłkowej).',
+  },
+  {
+    pytanie: 'Kiedy zasiłek po ustaniu zatrudnienia nie przysługuje?',
+    odpowiedz: 'Gdy masz ustalone prawo do emerytury albo renty z tytułu niezdolności do pracy, pracujesz albo prowadzisz działalność z ubezpieczeniem chorobowym, masz prawo do zasiłku dla bezrobotnych albo świadczenia przedemerytalnego, podlegasz ubezpieczeniu rolników albo w czasie ubezpieczenia nie nabyłeś lub nie nabyłaś prawa do zasiłku z powodu okresu wyczekiwania (art. 13 ust. 1 i art. 4 ust. 1 ustawy zasiłkowej). Nie przysługuje też, gdy ubezpieczenie ustało po wyczerpaniu prawa do zasiłku (art. 13 ust. 2).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="l4-po-zwolnieniu"
+  tytul="L4 po zwolnieniu z pracy: zasiłek do 91 dni"
+  opis="Czy po końcu umowy należy się zasiłek chorobowy i do kiedy: L4 z czasu pracy albo do 14 dni po nim, co najmniej 30 dni, najwyżej 91 dni, wypłaca ZUS."
+  h1="L4 po zwolnieniu z pracy: zasiłek chorobowy"
+  lead="Zasiłek chorobowy może przysługiwać także po końcu umowy, ale tylko na określonych warunkach i najwyżej przez 91 dni. Wpisz ostatni dzień pracy i daty zwolnienia lekarskiego, a sprawdzimy prawo do zasiłku i jego okres."
+  faq={faq}
+>
+  <form class="kalkulator" data-po-ustaniu novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Koniec pracy i L4</h2>
+      <div class="mt-4">
+        <label for="u-ustanie" class="etykieta-pola">Ostatni dzień zatrudnienia</label>
+        <input id="u-ustanie" name="ustanie" type="date" class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" value={D.ustanie} aria-describedby="u-blad" />
+      </div>
+      <div class="mt-4 grid grid-cols-2 items-end gap-3">
+        <div>
+          <label for="u-poczatek" class="etykieta-pola">L4 od</label>
+          <input id="u-poczatek" name="poczatek" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={D.poczatek} aria-describedby="u-l4-opis u-blad" />
+        </div>
+        <div>
+          <label for="u-koniec" class="etykieta-pola">L4 do</label>
+          <input id="u-koniec" name="koniec" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={D.koniec} aria-describedby="u-l4-opis u-blad" />
+        </div>
+      </div>
+      <p id="u-l4-opis" class="meta mt-1">Pierwszy i ostatni dzień niezdolności do pracy bez przerwy, także gdy zwolnienie zaczęło się jeszcze w czasie pracy.</p>
+      <div class="mt-4">
+        <label for="u-przyczyna" class="etykieta-pola">Przyczyna</label>
+        <select id="u-przyczyna" name="przyczyna" class="pole mt-1">
+          <option value="choroba" selected>Choroba</option>
+          <option value="zakazna">Choroba zakaźna z wylęganiem ponad 14 dni</option>
+          <option value="ciaza">Ciąża</option>
+          <option value="gruzlica">Gruźlica</option>
+        </select>
+      </div>
+      <label class="mt-4 flex items-start gap-3 text-[0.9375rem]">
+        <input type="checkbox" name="wylaczenie" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+        <span>Mam emeryturę albo rentę z tytułu niezdolności do pracy, nową pracę lub działalność z ubezpieczeniem chorobowym, zasiłek dla bezrobotnych albo świadczenie przedemerytalne, albo ubezpieczenie w KRUS</span>
+      </label>
+      <p id="u-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Zasiłek po końcu zatrudnienia</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-kwota"><span data-w="dni">{r.dni} dni</span></p>
+        <p class="status-terminu" data-w="status" data-status="w-terminie">Od {dataPoPolsku(r.od)} do {dataPoPolsku(r.do)}</p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Kto płaci</dt><dd>ZUS (art. 61 ust. 1 pkt 2 lit. d)</dd></div>
+        <div><dt>Podstawa</dt><dd data-w="podstawa">art. 8 ust. 2 ustawy zasiłkowej</dd></div>
+      </dl>
+      <p class="wynik-uwaga">Zasiłek wynosi 80% podstawy, w ciąży 100% (art. 11). Kwotę dzienną policzy <a href="/narzedzia/kalkulator-l4">kalkulator L4</a>.</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="zasady">Zasady zasiłku po ustaniu zatrudnienia</h2>
+    <ul>
+      <li>Niezdolność z czasu zatrudnienia, która trwa dalej: zasiłek za okres po ustaniu, najwyżej przez 91 dni (art. 8 ust. 2 ustawy zasiłkowej).</li>
+      <li>Niezdolność, która zaczęła się po ustaniu: musi trwać bez przerwy co najmniej 30 dni i powstać najpóźniej w ciągu 14 dni od ustania, a przy chorobie zakaźnej o wylęganiu dłuższym niż 14 dni albo chorobie z objawami po ponad 14 dniach w ciągu 3 miesięcy (art. 7).</li>
+      <li>Całość nie może przekroczyć okresu zasiłkowego: 182 dni, przy gruźlicy i w ciąży 270 dni, liczonych od początku niezdolności (art. 8 ust. 1); limit 91 dni nie dotyczy gruźlicy i ciąży (art. 8 ust. 2).</li>
+      <li>Bez zasiłku po ustaniu przy emeryturze albo rencie z tytułu niezdolności, pracy lub działalności z ubezpieczeniem chorobowym, zasiłku dla bezrobotnych, świadczeniach przedemerytalnych, ubezpieczeniu rolników i gdy w czasie ubezpieczenia nie nabyto prawa do zasiłku z powodu okresu wyczekiwania (art. 13 ust. 1 pkt 3).</li>
+      <li>Zasiłek wypłaca ZUS (art. 61 ust. 1 pkt 2 lit. d).</li>
+    </ul>
+    <p>
+      Do kiedy na długim zwolnieniu w czasie pracy pracodawca nie może rozwiązać umowy, policzy
+      <a href="/narzedzia/zwolnienie-na-l4">kalkulator ochrony na L4</a>.
+    </p>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      „W ciągu 14 dni od ustania” liczymy od dnia po ostatnim dniu zatrudnienia, a 3 miesiące kalendarzowo (art. 111 § 2
+      i 112 Kodeksu cywilnego). Okres zasiłkowy liczymy od pierwszego dnia niezdolności, przy jednym zwolnieniu bez przerw;
+      wcześniejsze zwolnienia z przerwą do 60 dni też się do niego wliczają (art. 9 ust. 2), więc wtedy kończy się wcześniej.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { zasilekPoUstaniu, type PrzyczynaPo } from '../../lib/narzedzia/zasilek-po-ustaniu';
+  import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
+
+  const form = document.querySelector<HTMLFormElement>('[data-po-ustaniu]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const przelicz = () => {
+      const ustanie = el('ustanie').value;
+      const poczatek = el('poczatek').value;
+      const koniec = el('koniec').value;
+      let blad: string | null = null;
+      if (![ustanie, poczatek, koniec].every(poprawnaData)) blad = 'Wpisz wszystkie trzy daty.';
+      else if (koniec < poczatek) blad = 'Koniec zwolnienia nie może być przed jego początkiem.';
+      else if (koniec <= ustanie) blad = 'Zwolnienie kończy się w czasie zatrudnienia, więc zasiłek po jego końcu nie przysługuje.';
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      b.hidden = !blad;
+      b.textContent = blad ?? '';
+      const status = w('status');
+      if (blad) {
+        w('dni').textContent = '—';
+        status.hidden = true;
+        return;
+      }
+      const r = zasilekPoUstaniu({ ustanie, poczatek, koniec, przyczyna: el('przyczyna').value as PrzyczynaPo, wylaczenie: el('wylaczenie').checked });
+      status.hidden = false;
+      if (r.przysluguje) {
+        w('dni').textContent = `${r.dni} ${r.dni === 1 ? 'dzień' : 'dni'}`;
+        status.dataset.status = 'w-terminie';
+        status.textContent = `Od ${dataPoPolsku(r.od)} do ${dataPoPolsku(r.do)}`;
+        w('podstawa').textContent = r.powstalaWCzasiePracy ? 'art. 8 ustawy zasiłkowej' : 'art. 7 i 8 ustawy zasiłkowej';
+      } else {
+        w('dni').textContent = 'Nie przysługuje';
+        status.dataset.status = 'po-terminie';
+        status.textContent =
+          r.powod === 'wylaczenie' ? 'Wyłączenie z art. 13 ust. 1 ustawy zasiłkowej.'
+          : r.powod === 'za-pozno' ? `Niezdolność powstała za późno: najpóźniej ${dataPoPolsku(r.ostatniDzienPowstania!)} (art. 7).`
+          : r.powod === 'za-krotko' ? 'Niezdolność po ustaniu musi trwać bez przerwy co najmniej 30 dni (art. 7).'
+          : 'Okres zasiłkowy skończył się przed końcem zatrudnienia (art. 8 ust. 1).';
+        w('podstawa').textContent = r.powod === 'wylaczenie' ? 'art. 13 ust. 1 ustawy zasiłkowej' : 'art. 7 i 8 ustawy zasiłkowej';
+      }
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>
