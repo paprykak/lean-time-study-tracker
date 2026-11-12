@@ -3,7 +3,7 @@
 // z 29 stycznia 2013 r., t.j. Dz.U. 2023 poz. 2190; art. 77^5 Kp). Logika: src/lib/narzedzia/delegacja.ts (testy obok).
 import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
 import { zl } from '../../lib/narzedzia/format';
-import { czasPodrozy, delegacja, DIETA, ileDiet, LIMIT_HOTELU, MAKS_DOB, opisChwili, POSILEK_PROCENT, RYCZALT_KOMUNIKACJA, RYCZALT_NOCLEG } from '../../lib/narzedzia/delegacja';
+import { czasPodrozy, delegacja, DIETA, ileDiet, LIMIT_HOTELU, MAKS_DOB, opisChwili, POSILEK_PROCENT, RYCZALT_KOMUNIKACJA, RYCZALT_NOCLEG, STAWKI_KM } from '../../lib/narzedzia/delegacja';
 import { dodajDni, dzisWPolsce } from '../../lib/narzedzia/terminy';
 
 const dzis = dzisWPolsce();
@@ -33,6 +33,10 @@ const faq = [
   {
     pytanie: 'Czy prywatna firma może płacić dietę niższą niż 45 zł?',
     odpowiedz: `Nie. U pracodawcy spoza sfery budżetowej zasady ustala układ zbiorowy, regulamin wynagradzania albo umowa o pracę, ale dieta za dobę podróży w kraju i za granicą nie może być niższa niż dieta krajowa z rozporządzenia, czyli ${zl(DIETA)} (art. 77⁵ § 3–4 Kodeksu pracy). Gdy takich postanowień nie ma, należności przysługują według rozporządzenia (art. 77⁵ § 5).`,
+  },
+  {
+    pytanie: 'Ile wynosi kilometrówka za delegację własnym autem?',
+    odpowiedz: `Stawkę za kilometr ustala pracodawca, ale nie wyżej niż ${zl(STAWKI_KM['auto-ponad-900'])} dla samochodu z silnikiem ponad 900 cm³, ${zl(STAWKI_KM['auto-do-900'])} do 900 cm³, ${zl(STAWKI_KM.motocykl)} dla motocykla i ${zl(STAWKI_KM.motorower)} dla motoroweru (§ 2 rozporządzenia Ministra Infrastruktury z 25 marca 2002 r. w brzmieniu od 17 stycznia 2023 r.). Przejazd własnym pojazdem wymaga Twojego wniosku i zgody pracodawcy (§ 3 ust. 3–4 rozporządzenia o podróżach służbowych).`,
   },
   {
     pytanie: 'Czy od diety z delegacji płaci się podatek i składki?',
@@ -106,10 +110,28 @@ const faq = [
         <input type="checkbox" name="komunikacja" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
         <span>Płacę za dojazdy komunikacją miejscową na miejscu (ryczałt {zl(RYCZALT_KOMUNIKACJA)} za każdą rozpoczętą dobę, § 9)</span>
       </label>
+      <div class="mt-4 grid grid-cols-2 items-end gap-3">
+        <div>
+          <label for="d-pojazd" class="etykieta-pola">Własny pojazd</label>
+          <select id="d-pojazd" name="pojazd" class="pole mt-1" aria-describedby="d-pojazd-opis">
+            <option value="" selected>Nie</option>
+            <option value="auto-ponad-900">Auto ponad 900 cm³</option>
+            <option value="auto-do-900">Auto do 900 cm³</option>
+            <option value="motocykl">Motocykl</option>
+            <option value="motorower">Motorower</option>
+          </select>
+        </div>
+        <div data-pole="km" hidden>
+          <label for="d-km" class="etykieta-pola">Kilometry</label>
+          <input id="d-km" name="km" class="pole mt-1" type="text" inputmode="numeric" autocomplete="off" value="0" aria-describedby="d-pojazd-opis d-blad-km" />
+        </div>
+      </div>
+      <p id="d-pojazd-opis" class="meta mt-1">Tylko za zgodą pracodawcy. Stawkę za kilometr ustala pracodawca, najwyżej {zl(STAWKI_KM['auto-ponad-900'])} dla auta ponad 900 cm³ (§ 3 ust. 3–4).</p>
+      <p id="d-blad-km" class="blad-pola mt-1" data-blad="km" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
-      <h2 id="wynik-tytul" class="etykieta">Dieta i ryczałty razem</h2>
+      <h2 id="wynik-tytul" class="etykieta">Do zwrotu za delegację</h2>
       <div aria-live="polite" aria-atomic="true">
         <p class="wynik-kwota"><span data-w="razem">{zl(r.razem)}</span></p>
         <p class="meta" data-w="czas">W podróży: {czasPodrozy(r.czas)}</p>
@@ -119,6 +141,7 @@ const faq = [
         <div><dt>Potrącenie za posiłki</dt><dd data-w="potracenie">{zl(r.potracenie)}</dd></div>
         <div><dt>Ryczałt za noclegi</dt><dd data-w="noclegi">{zl(r.ryczaltNoclegi)}</dd></div>
         <div><dt>Ryczałt na komunikację miejscową</dt><dd data-w="komunikacja">{zl(r.komunikacja)}</dd></div>
+        <div data-wiersz="km" hidden><dt>Kilometrówka (najwyższa stawka)</dt><dd data-w="km"></dd></div>
         <div><dt>Hotel z rachunkiem</dt><dd>zwrot do {zl(LIMIT_HOTELU)} za dobę</dd></div>
       </dl>
       <p class="wynik-uwaga">Bilety, hotel, parking i inne wydatki z rachunków pracodawca zwraca osobno (§ 3, 4 i 8 ust. 1). Rozliczenie składasz najpóźniej 14 dni po powrocie (§ 5 ust. 1).</p>
@@ -156,6 +179,8 @@ const faq = [
           <tr><th scope="row">Ryczałt za nocleg bez rachunku (§ 8 ust. 3)</th><td>{zl(RYCZALT_NOCLEG)}</td></tr>
           <tr><th scope="row">Hotel z rachunkiem za dobę (§ 8 ust. 1)</th><td>do {zl(LIMIT_HOTELU)}</td></tr>
           <tr><th scope="row">Komunikacja miejscowa za rozpoczętą dobę (§ 9 ust. 1)</th><td>{zl(RYCZALT_KOMUNIKACJA)}</td></tr>
+          <tr><th scope="row">Kilometr autem ponad 900 cm³ / do 900 cm³ (§ 3 ust. 4)</th><td>do {zl(STAWKI_KM['auto-ponad-900'])} / {zl(STAWKI_KM['auto-do-900'])}</td></tr>
+          <tr><th scope="row">Kilometr motocyklem / motorowerem (§ 3 ust. 4)</th><td>do {zl(STAWKI_KM.motocykl)} / {zl(STAWKI_KM.motorower)}</td></tr>
         </tbody>
       </table>
     </div>
@@ -167,7 +192,7 @@ const faq = [
       <li>Diety nie ma przy delegacji do miejscowości, w której mieszkasz stale albo czasowo, przy całodziennym bezpłatnym wyżywieniu (§ 7 ust. 3) i za czas przejazdu do domu w dniu wolnym, który pracodawca zwraca przy podróży od 10 dni (§ 10).</li>
       <li>Ryczałt na komunikację miejscową nie przysługuje, gdy nie płacisz za dojazdy, albo gdy pracodawca na Twój wniosek zwraca udokumentowane bilety (§ 9 ust. 2–3).</li>
       <li>Na wniosek pracodawca daje zaliczkę na koszty podróży według wstępnego wyliczenia (§ 11).</li>
-      <li>Przejazd własnym samochodem tylko za zgodą pracodawcy, za kilometr według jego stawki, nie wyższej niż w przepisach wydanych na podstawie ustawy o transporcie drogowym (§ 3 ust. 3–4).</li>
+      <li>Przejazd własnym samochodem, motocyklem albo motorowerem tylko na Twój wniosek i za zgodą pracodawcy, za kilometr według jego stawki, nie wyższej niż w rozporządzeniu Ministra Infrastruktury z 25 marca 2002 r. (§ 3 ust. 3–4; stawki od 17 stycznia 2023 r., Dz.U. 2023 poz. 5).</li>
     </ul>
 
     <h2 id="prywatna-firma">Prywatna firma: regulamin i minimum 45 zł</h2>
@@ -209,6 +234,7 @@ const faq = [
     ileDiet,
     ileNoclegow,
     MAKS_DOB,
+    type Pojazd,
     noceWPodrozy,
     opisChwili,
     poprawnaGodzina,
@@ -257,7 +283,7 @@ const faq = [
     };
 
     const pusto = () => {
-      for (const k of ['razem', 'dieta', 'potracenie', 'noclegi', 'komunikacja']) w(k).textContent = '—';
+      for (const k of ['razem', 'dieta', 'potracenie', 'noclegi', 'komunikacja', 'km']) w(k).textContent = '—';
       w('czas').textContent = '';
     };
 
@@ -299,13 +325,26 @@ const faq = [
         return;
       }
 
-      const r = delegacja({ wyjazd, powrot, posilki: posilki(), noclegiRyczalt: noclegi, komunikacja: el('komunikacja').checked });
+      const pojazd = (el('pojazd').value || undefined) as Pojazd | undefined;
+      form.querySelector<HTMLElement>('[data-pole="km"]')!.hidden = !pojazd;
+      const tekstKm = el('km').value.trim() || '0';
+      const kilometry = /^\d{1,6}$/.test(tekstKm) ? Number(tekstKm) : NaN;
+      const bladKm = pojazd && !(kilometry <= 100_000) ? 'Wpisz kilometry, na przykład 250.' : null;
+      blad('km', bladKm);
+      if (bladKm) {
+        pusto();
+        return;
+      }
+
+      const r = delegacja({ wyjazd, powrot, posilki: posilki(), noclegiRyczalt: noclegi, komunikacja: el('komunikacja').checked, pojazd, kilometry });
       w('razem').textContent = zl(r.razem);
       w('czas').textContent = `W podróży: ${czasPodrozy(r.czas)}`;
       w('dieta').textContent = r.liczbaDiet ? `${zl(r.dietaPrzedPotraceniem)} (${ileDiet(r.liczbaDiet)})` : 'nie przysługuje';
       w('potracenie').textContent = zl(r.potracenie);
       w('noclegi').textContent = zl(r.ryczaltNoclegi);
       w('komunikacja').textContent = zl(r.komunikacja);
+      form.querySelector<HTMLElement>('[data-wiersz="km"]')!.hidden = !pojazd;
+      w('km').textContent = pojazd ? `${zl(r.kilometrowka)} (${kilometry} km)` : '';
     };
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);

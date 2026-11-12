@@ -90,6 +90,18 @@ describe('noclegi i komunikacja (§ 8–9)', () => {
   });
 });
 
+describe('kilometrówka (§ 3 ust. 3–4, Dz.U. 2023 poz. 5)', () => {
+  it('najwyższe stawki za km: 1,15 zł, 0,89 zł, 0,69 zł, 0,42 zł', () => {
+    const km = (pojazd: 'auto-ponad-900' | 'auto-do-900' | 'motocykl' | 'motorower') =>
+      podroz('2026-11-12 06:00', '2026-11-12 10:00', { pojazd, kilometry: 250 }).kilometrowka;
+    expect([km('auto-ponad-900'), km('auto-do-900'), km('motocykl'), km('motorower')]).toEqual([287.5, 222.5, 172.5, 105]);
+  });
+  it('wlicza się do sumy, bez pojazdu zero', () => {
+    expect(podroz('2026-11-12 06:00', '2026-11-12 20:00', { pojazd: 'auto-ponad-900', kilometry: 100 })).toMatchObject({ dieta: 45, kilometrowka: 115, razem: 160 });
+    expect(podroz('2026-11-12 06:00', '2026-11-12 20:00', { kilometry: 100 }).kilometrowka).toBe(0);
+  });
+});
+
 describe('błędy', () => {
   it('powrót przed wyjazdem, za długa podróż, za dużo noclegów', () => {
     expect(() => podroz('2026-11-12 10:00', '2026-11-12 10:00')).toThrow(RangeError);

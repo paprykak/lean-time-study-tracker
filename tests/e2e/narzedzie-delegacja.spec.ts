@@ -57,3 +57,11 @@ test('poniżej 8 godzin dieta nie przysługuje, powrót przed wyjazdem to błąd
   await podroz(page, '2026-11-08', '13:00');
   await expect(page.locator('#d-blad')).toHaveText('Powrót musi być po wyjeździe.');
 });
+
+test('własne auto ponad 900 cm³, 250 km: 287,50 zł kilometrówki', async ({ page }) => {
+  await podroz(page);
+  await page.getByLabel('Własny pojazd').selectOption('auto-ponad-900');
+  await page.getByLabel('Kilometry').fill('250');
+  await expect(page.locator('[data-w="km"]')).toHaveText(/^287,50\szł\s\(250\skm\)$/);
+  await expect(page.locator('[data-w="razem"]')).toHaveText(/^377,50\szł$/);
+});

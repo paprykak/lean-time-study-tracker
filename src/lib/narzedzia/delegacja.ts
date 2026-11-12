@@ -23,6 +23,14 @@ export const KOMUNIKACJA_PROCENT = 20;
 /** Najdłuższa podróż, którą liczy kalkulator. */
 export const MAKS_DOB = 31;
 
+/**
+ * Najwyższe stawki za 1 km przejazdu pojazdem niebędącym własnością pracodawcy (§ 3 ust. 3–4 rozporządzenia o podróżach;
+ * § 2 rozporządzenia Ministra Infrastruktury z 25 marca 2002 r., Dz.U. 2002 poz. 271, w brzmieniu z Dz.U. 2023 poz. 5,
+ * od 17 stycznia 2023 r.). Pracodawca ustala stawkę, nie wyższą niż te.
+ */
+export const STAWKI_KM = { 'auto-ponad-900': 1.15, 'auto-do-900': 0.89, motocykl: 0.69, motorower: 0.42 } as const;
+export type Pojazd = keyof typeof STAWKI_KM;
+
 export const RYCZALT_NOCLEG = doGrosza((DIETA * RYCZALT_NOCLEG_PROCENT) / 100);
 export const LIMIT_HOTELU = DIETA * LIMIT_HOTELU_KROTNOSC;
 export const RYCZALT_KOMUNIKACJA = doGrosza((DIETA * KOMUNIKACJA_PROCENT) / 100);
@@ -141,6 +149,9 @@ export interface DaneDelegacji {
   noclegiRyczalt?: number;
   /** Czy pracownik ponosi koszty dojazdów komunikacją miejscową (§ 9 ust. 2). */
   komunikacja?: boolean;
+  /** Przejazd własnym pojazdem za zgodą pracodawcy (§ 3 ust. 3): rodzaj pojazdu i kilometry. */
+  pojazd?: Pojazd;
+  kilometry?: number;
 }
 
 export function delegacja(d: DaneDelegacji) {
@@ -163,6 +174,9 @@ export function delegacja(d: DaneDelegacji) {
   const dieta = suma('naleznosc');
   const ryczaltNoclegi = doGrosza(noclegi * RYCZALT_NOCLEG);
   const komunikacja = d.komunikacja ? doGrosza(rozpoczeteDoby * RYCZALT_KOMUNIKACJA) : 0;
+  const kilometry = d.pojazd ? (d.kilometry ?? 0) : 0;
+  if (!(kilometry >= 0 && kilometry <= 100_000)) throw new RangeError('Kilometry: od 0 do 100 000');
+  const kilometrowka = d.pojazd ? doGrosza(kilometry * STAWKI_KM[d.pojazd]) : 0;
   return {
     start,
     koniec,
@@ -177,7 +191,9 @@ export function delegacja(d: DaneDelegacji) {
     ryczaltNoclegi,
     rozpoczeteDoby,
     komunikacja,
-    razem: doGrosza(dieta + ryczaltNoclegi + komunikacja),
+    /** Zwrot za przejazd własnym pojazdem według najwyższej stawki. */
+    kilometrowka,
+    razem: doGrosza(dieta + ryczaltNoclegi + komunikacja + kilometrowka),
   };
 }
 

@@ -259,9 +259,9 @@ export const NARZEDZIA: Narzedzie[] = [
   {
     slug: 'delegacja-krajowa',
     nazwa: 'Delegacja krajowa: dieta i ryczałty',
-    krotko: 'Ile diety za delegację w kraju: 45 zł za dobę, potrącenie za posiłki, ryczałt za nocleg i komunikację.',
+    krotko: 'Ile za delegację w kraju: dieta 45 zł za dobę, posiłki, ryczałt za nocleg, komunikacja i kilometrówka.',
     kategoria: 'wynagrodzenie',
-    przepisy: ['kodeksPracy', 'podrozeSluzbowe', 'pit', 'podstawaSkladek'],
+    przepisy: ['kodeksPracy', 'podrozeSluzbowe', 'kilometrowka', 'pit', 'podstawaSkladek'],
     sprawdzono: '2026-11-12',
   },
   {

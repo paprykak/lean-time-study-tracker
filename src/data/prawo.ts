@@ -251,6 +251,13 @@ export const AKTY = {
     adres: eli(2023, 2190),
     sprawdzono: '2026-11-12',
   },
+  kilometrowka: {
+    nazwa: 'Rozporządzenie w sprawie warunków ustalania oraz sposobu dokonywania zwrotu kosztów używania do celów służbowych samochodów osobowych, motocykli i motorowerów niebędących własnością pracodawcy',
+    publikator: 'Dz.U. 2002 poz. 271',
+    uwaga: 'zmiany: Dz.U. 2004 poz. 2376, 2007 poz. 1462, 2011 poz. 308, 2023 poz. 5 (§ 2: stawki za 1 km od 17 stycznia 2023 r.)',
+    adres: eli(2002, 271),
+    sprawdzono: '2026-11-12',
+  },
   podstawaSkladek: {
     nazwa: 'Rozporządzenie w sprawie szczegółowych zasad ustalania podstawy wymiaru składek na ubezpieczenia emerytalne i rentowe',
     publikator: 'Dz.U. 2025 poz. 316',
