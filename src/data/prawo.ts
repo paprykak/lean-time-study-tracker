@@ -384,6 +384,27 @@ export const AKTY = {
     adres: eli(1996, 279),
     sprawdzono: '2026-11-11',
   },
+  posilki2019: {
+    nazwa: 'Rozporządzenie z 12 czerwca 2019 r. zmieniające rozporządzenie w sprawie profilaktycznych posiłków i napojów',
+    publikator: 'Dz.U. 2019 poz. 1160',
+    uwaga: 'od 9 lipca 2019 r.; § 2 ust. 2: produkty, bony albo talony zamiast dania gorącego; jedyna zmiana rozporządzenia z 1996 r. (bez tekstu jednolitego)',
+    adres: eli(2019, 1160),
+    sprawdzono: '2026-11-12',
+  },
+  badaniaLekarskie: {
+    nazwa: 'Rozporządzenie w sprawie przeprowadzania badań lekarskich pracowników, zakresu profilaktycznej opieki zdrowotnej nad pracownikami oraz orzeczeń lekarskich wydawanych do celów przewidzianych w Kodeksie pracy',
+    publikator: 'Dz.U. 2023 poz. 607',
+    uwaga: 'tekst jednolity; zmiany Dz.U. 2026 poz. 456 (od 17 kwietnia 2026 r.: orzeczenie z datą następnego badania, odwołanie przez jednostkę medycyny pracy) i poz. 726 (ołów, bez wpływu na narzędzia)',
+    adres: eli(2023, 607),
+    sprawdzono: '2026-11-12',
+  },
+  badaniaLekarskie2026: {
+    nazwa: 'Rozporządzenie z 20 marca 2026 r. zmieniające rozporządzenie w sprawie przeprowadzania badań lekarskich pracowników',
+    publikator: 'Dz.U. 2026 poz. 456',
+    uwaga: 'od 17 kwietnia 2026 r.: orzeczenie elektroniczne, data następnego badania i pouczenie o odwołaniu w orzeczeniu (§ 3 ust. 4a), odwołanie w 7 dni przez jednostkę medycyny pracy (§ 5)',
+    adres: eli(2026, 456),
+    sprawdzono: '2026-11-12',
+  },
   wynagrodzenieRozp: {
     nazwa: 'Rozporządzenie w sprawie sposobu ustalania wynagrodzenia w okresie niewykonywania pracy oraz wynagrodzenia stanowiącego podstawę obliczania odszkodowań i innych należności z Kodeksu pracy',
     publikator: 'Dz.U. 2017 poz. 927',
