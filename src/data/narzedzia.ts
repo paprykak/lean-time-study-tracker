@@ -529,6 +529,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-12',
   },
   {
+    slug: 'kontrola-trzezwosci',
+    nazwa: 'Kontrola trzeźwości w pracy',
+    krotko: 'Co oznacza wynik alkomatu w pracy: progi 0,1 i 0,25 mg/dm³, 0,2 i 0,5‰, niedopuszczenie, policja, kara.',
+    kategoria: 'bhp',
+    przepisy: ['trzezwosc', 'kodeksPracy'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'przerwy-w-pracy',
     nazwa: 'Przerwy w pracy',
     krotko: 'Ile przerw przy zmianie 8 i 12 godzin, które są płatne, przy monitorze, na karmienie, dla młodocianych.',

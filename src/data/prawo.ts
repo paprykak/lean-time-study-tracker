@@ -335,6 +335,13 @@ export const AKTY = {
     adres: eli(2023, 1240),
     sprawdzono: '2026-11-11',
   },
+  trzezwosc: {
+    nazwa: 'Ustawa o wychowaniu w trzeźwości i przeciwdziałaniu alkoholizmowi',
+    publikator: 'Dz.U. 2023 poz. 2151',
+    uwaga: 'tekst jednolity; zmiana Dz.U. 2026 poz. 875 dotyczy tylko art. 18; art. 17 i 46',
+    adres: eli(2023, 2151),
+    sprawdzono: '2026-11-12',
+  },
   monitory: {
     nazwa: 'Rozporządzenie w sprawie bezpieczeństwa i higieny pracy na stanowiskach wyposażonych w monitory ekranowe',
     publikator: 'Dz.U. 2025 poz. 58',

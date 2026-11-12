@@ -1,0 +1,161 @@
+---
+// Kontrola trzeźwości w pracy: progi z art. 46 ust. 2–3 ustawy o wychowaniu w trzeźwości, zasady kontroli i niedopuszczenia
+// do pracy (art. 22^1c, 22^1d Kp), kara pieniężna (art. 108 § 2 Kp), osoby na zleceniu (art. 17 ustawy). Logika:
+// src/lib/narzedzia/trzezwosc.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { PROGI } from '../../lib/narzedzia/trzezwosc';
+
+const liczba = (x: number) => x.toLocaleString('pl-PL');
+const P = PROGI.powietrze;
+const K = PROGI.krew;
+
+const faq = [
+  {
+    pytanie: 'Ile promili można mieć w pracy?',
+    odpowiedz: `Mniej niż ${liczba(K.poUzyciu)}‰ we krwi albo mniej niż ${liczba(P.poUzyciu)} mg alkoholu w 1 dm³ wydychanego powietrza. Od tych wartości zaczyna się stan po użyciu alkoholu, a powyżej ${liczba(K.nietrzezwosc)}‰ albo ${liczba(P.nietrzezwosc)} mg/dm³ stan nietrzeźwości (art. 46 ust. 2–3 ustawy o wychowaniu w trzeźwości). W obu stanach pracodawca nie dopuszcza do pracy (art. 22¹d § 1 Kodeksu pracy).`,
+  },
+  {
+    pytanie: 'Czy pracodawca może zbadać mnie alkomatem?',
+    odpowiedz: 'Tak, jeśli wprowadził kontrolę trzeźwości w regulaminie pracy, układzie zbiorowym albo obwieszczeniu, ze wskazaniem grup pracowników, urządzenia, czasu i częstotliwości, i poinformował o tym co najmniej 2 tygodnie wcześniej (art. 22¹c § 10–11 Kodeksu pracy). Urządzenie musi mieć ważny dokument kalibracji albo wzorcowania (§ 4), a kontrola nie może naruszać godności pracownika (§ 2).',
+  },
+  {
+    pytanie: 'Co, jeśli nie zgadzam się z wynikiem alkomatu?',
+    odpowiedz: 'Możesz zażądać badania przez policję albo inny organ porządku publicznego, a przy odmowie badania alkomatem albo na żądanie także badania krwi (art. 22¹d § 3–5 Kodeksu pracy). Gdy badanie nie potwierdzi stanu po użyciu alkoholu ani nietrzeźwości, czas niedopuszczenia do pracy jest usprawiedliwioną nieobecnością i należy się za niego wynagrodzenie (§ 8).',
+  },
+  {
+    pytanie: 'Jaka kara za przyjście do pracy po alkoholu?',
+    odpowiedz: 'Pracodawca może dać karę porządkową, także pieniężną, za stawienie się do pracy w stanie po użyciu alkoholu albo nietrzeźwości i za picie w pracy (art. 108 § 2 Kodeksu pracy). Kara pieniężna za jedno przewinienie nie może przekroczyć dniówki, a wszystkie razem dziesiątej części wypłaty (§ 3). Ocena, czy to ciężkie naruszenie obowiązków uzasadniające rozwiązanie umowy bez wypowiedzenia (art. 52 § 1 pkt 1), należy do pracodawcy i ewentualnie sądu.',
+  },
+  {
+    pytanie: 'Jak długo pracodawca przechowuje wynik badania?',
+    odpowiedz: 'Wynik wskazujący stan po użyciu alkoholu albo nietrzeźwość pracodawca przechowuje w aktach osobowych najwyżej rok, a przy karze upomnienia, nagany albo pieniężnej do jej zatarcia; dłużej tylko, gdy jest dowodem w toczącym się postępowaniu (art. 22¹c § 6–9 Kodeksu pracy).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="kontrola-trzezwosci"
+  tytul="Kontrola trzeźwości w pracy: wynik alkomatu"
+  opis="Czy wynik alkomatu w pracy to stan po użyciu alkoholu, czy nietrzeźwość: progi 0,1 i 0,25 mg/dm³, 0,2 i 0,5 promila, niedopuszczenie, policja, kara."
+  h1="Kontrola trzeźwości w pracy"
+  lead="Wpisz wynik alkomatu albo badania krwi, a pokażemy, co oznacza według przepisów i co dalej: niedopuszczenie do pracy, badanie przez policję, wynagrodzenie i kara."
+  faq={faq}
+>
+  <form class="kalkulator" data-trzezwosc novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Wynik badania</h2>
+      <div class="mt-4">
+        <label for="t-badanie" class="etykieta-pola">Rodzaj badania</label>
+        <select id="t-badanie" name="badanie" class="pole mt-1">
+          <option value="powietrze" selected>Alkomat (mg/dm³)</option>
+          <option value="krew">Krew (promile)</option>
+        </select>
+      </div>
+      <div class="mt-4">
+        <label for="t-wynik" class="etykieta-pola">Wynik</label>
+        <input id="t-wynik" name="wynik" class="pole mt-1 max-w-32" type="text" inputmode="decimal" autocomplete="off" value="0,12" aria-describedby="t-wynik-opis t-blad" />
+        <p id="t-wynik-opis" class="meta mt-1" data-w="jednostka">mg alkoholu w 1 dm³ wydychanego powietrza</p>
+      </div>
+      <p id="t-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Według przepisów to</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-data" data-w="stan">stan po użyciu alkoholu</p>
+        <p class="status-terminu" data-w="status" data-status="pilne">Pracodawca nie dopuszcza do pracy</p>
+        <p class="meta mt-2" data-w="opis">Od {liczba(P.poUzyciu)} do {liczba(P.nietrzezwosc)} mg/dm³ (art. 46 ust. 2 ustawy o wychowaniu w trzeźwości). Możesz zażądać badania przez policję; gdy nie potwierdzi alkoholu, za czas niedopuszczenia należy się wynagrodzenie (art. 22¹d § 3 i 8 Kodeksu pracy).</p>
+      </div>
+      <p class="wynik-uwaga">Kalkulator nie mówi, kiedy wytrzeźwiejesz: tempo spalania alkoholu zależy od organizmu. Gdy masz wątpliwości, nie siadaj za kierownicę ani na wózek.</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Progi są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="progi">Progi alkoholu</h2>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Stan po użyciu alkoholu i stan nietrzeźwości według rodzaju badania</caption>
+        <thead><tr><th scope="col">Stan</th><th scope="col">Wydychane powietrze</th><th scope="col">Krew</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Brak alkoholu w rozumieniu przepisów</th><td>poniżej {liczba(P.poUzyciu)} mg/dm³</td><td>poniżej {liczba(K.poUzyciu)}‰</td></tr>
+          <tr><th scope="row">Stan po użyciu alkoholu</th><td>{liczba(P.poUzyciu)}–{liczba(P.nietrzezwosc)} mg/dm³</td><td>{liczba(K.poUzyciu)}–{liczba(K.nietrzezwosc)}‰</td></tr>
+          <tr><th scope="row">Stan nietrzeźwości</th><td>powyżej {liczba(P.nietrzezwosc)} mg/dm³</td><td>powyżej {liczba(K.nietrzezwosc)}‰</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Progi pochodzą z art. 46 ust. 2–3 ustawy o wychowaniu w trzeźwości i przeciwdziałaniu alkoholizmowi. Wynik
+      poniżej progu stanu po użyciu alkoholu przepisy traktują jak brak alkoholu (art. 22<sup>1</sup>c § 5 Kodeksu
+      pracy). Przepis nie przelicza wyniku z powietrza na krew: każde badanie ma własne progi.
+    </p>
+
+    <h2 id="zasady">Zasady kontroli w zakładzie</h2>
+    <ul>
+      <li>Kontrolę trzeźwości pracodawca wprowadza w regulaminie pracy, układzie zbiorowym albo obwieszczeniu i ogłasza co najmniej 2 tygodnie wcześniej; nowa osoba dostaje te informacje przed dopuszczeniem do pracy (art. 22<sup>1</sup>c § 10–12 Kodeksu pracy).</li>
+      <li>Badanie urządzeniem z ważną kalibracją albo wzorcowaniem, bez naruszania godności (art. 22<sup>1</sup>c § 2 i 4).</li>
+      <li>Przy stanie po użyciu alkoholu, nietrzeźwości albo uzasadnionym podejrzeniu pracodawca nie dopuszcza do pracy (art. 22<sup>1</sup>d § 1).</li>
+      <li>Na żądanie pracownika albo pracodawcy badanie przeprowadza policja, w razie potrzeby z badaniem krwi (art. 22<sup>1</sup>d § 3–5).</li>
+      <li>Te same zasady pracodawca albo przedsiębiorca może stosować do osób na zleceniu i samozatrudnionych, u których organizuje pracę (art. 17 ustawy o wychowaniu w trzeźwości).</li>
+    </ul>
+    <p>
+      Karę porządkową w terminie i jej zatarcie sprawdzi <a href="/narzedzia/kara-porzadkowa">kalkulator kary porządkowej</a>,
+      a termin odwołania od dyscyplinarki <a href="/narzedzia/odwolanie-do-sadu-pracy">kalkulator odwołania do sądu pracy</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { PROGI, stanTrzezwosci, type Badanie } from '../../lib/narzedzia/trzezwosc';
+  import { wpisanaLiczba } from '../../lib/narzedzia/format';
+  import { typografia } from '../../lib/typografia.mjs';
+
+  const form = document.querySelector<HTMLFormElement>('[data-trzezwosc]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const pisz = (k: string, tekst: string) => {
+      w(k).textContent = typografia(tekst);
+    };
+    const l = (x: number) => x.toLocaleString('pl-PL');
+    const przelicz = () => {
+      const badanie = el('badanie').value as Badanie;
+      const p = PROGI[badanie];
+      pisz('jednostka', badanie === 'krew' ? 'promile alkoholu we krwi' : 'mg alkoholu w 1 dm³ wydychanego powietrza');
+      const wynik = wpisanaLiczba(el('wynik').value);
+      const blad = wynik >= 0 && wynik < 10 ? null : 'Wpisz wynik, np. 0,12.';
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      b.hidden = !blad;
+      b.textContent = blad ?? '';
+      const status = w('status');
+      if (blad) {
+        w('stan').textContent = '—';
+        w('opis').textContent = '';
+        status.hidden = true;
+        return;
+      }
+      const stan = stanTrzezwosci(badanie, wynik);
+      status.hidden = false;
+      const prog = `${l(p.poUzyciu)}–${l(p.nietrzezwosc)} ${p.jednostka}`;
+      if (stan === 'brak') {
+        pisz('stan', 'brak alkoholu w rozumieniu przepisów');
+        status.dataset.status = 'w-terminie';
+        pisz('status', 'Możesz pracować');
+        pisz('opis', `Poniżej ${l(p.poUzyciu)} ${p.jednostka}, czyli poniżej stanu po użyciu alkoholu (art. 22¹c § 5 Kodeksu pracy). Pracodawca może jednak nie dopuścić do pracy przy uzasadnionym podejrzeniu (art. 22¹d § 1).`);
+      } else if (stan === 'po-uzyciu') {
+        pisz('stan', 'stan po użyciu alkoholu');
+        status.dataset.status = 'pilne';
+        pisz('status', 'Pracodawca nie dopuszcza do pracy');
+        pisz('opis', `Od ${prog.replace('–', ' do ')} (art. 46 ust. 2 ustawy o wychowaniu w trzeźwości). Możesz zażądać badania przez policję; gdy nie potwierdzi alkoholu, za czas niedopuszczenia należy się wynagrodzenie (art. 22¹d § 3 i 8 Kodeksu pracy).`);
+      } else {
+        pisz('stan', 'stan nietrzeźwości');
+        status.dataset.status = 'po-terminie';
+        pisz('status', 'Pracodawca nie dopuszcza do pracy');
+        pisz('opis', `Powyżej ${l(p.nietrzezwosc)} ${p.jednostka} (art. 46 ust. 3 ustawy o wychowaniu w trzeźwości). Możesz zażądać badania przez policję albo badania krwi (art. 22¹d § 3–5 Kodeksu pracy).`);
+      }
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>
