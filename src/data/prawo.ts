@@ -394,14 +394,14 @@ export const AKTY = {
   badaniaLekarskie: {
     nazwa: 'Rozporządzenie w sprawie przeprowadzania badań lekarskich pracowników, zakresu profilaktycznej opieki zdrowotnej nad pracownikami oraz orzeczeń lekarskich wydawanych do celów przewidzianych w Kodeksie pracy',
     publikator: 'Dz.U. 2023 poz. 607',
-    uwaga: 'tekst jednolity; zmiany Dz.U. 2026 poz. 456 (od 17 kwietnia 2026 r.: orzeczenie z datą następnego badania, odwołanie przez jednostkę medycyny pracy) i poz. 726 (ołów, bez wpływu na narzędzia)',
+    uwaga: 'tekst jednolity; zmiany Dz.U. 2026 poz. 456 (od 17 kwietnia 2026 r.: nowa treść orzeczenia w § 3 ust. 4a, orzeczenie elektroniczne, odwołanie przez jednostkę medycyny pracy) i poz. 726 (ołów, bez wpływu na narzędzia); § 2, § 5, załącznik nr 1',
     adres: eli(2023, 607),
     sprawdzono: '2026-11-12',
   },
   badaniaLekarskie2026: {
     nazwa: 'Rozporządzenie z 20 marca 2026 r. zmieniające rozporządzenie w sprawie przeprowadzania badań lekarskich pracowników',
     publikator: 'Dz.U. 2026 poz. 456',
-    uwaga: 'od 17 kwietnia 2026 r.: orzeczenie elektroniczne, data następnego badania i pouczenie o odwołaniu w orzeczeniu (§ 3 ust. 4a), odwołanie w 7 dni przez jednostkę medycyny pracy (§ 5)',
+    uwaga: 'od 17 kwietnia 2026 r. (dawne wzory do 6 miesięcy dłużej): treść orzeczenia w § 3 ust. 4a, orzeczenie elektroniczne w IKP, odwołanie w 7 dni przez jednostkę medycyny pracy (§ 5)',
     adres: eli(2026, 456),
     sprawdzono: '2026-11-12',
   },

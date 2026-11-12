@@ -557,7 +557,7 @@ export const NARZEDZIA: Narzedzie[] = [
     nazwa: 'Badania lekarskie w pracy',
     krotko: 'Badanie kontrolne po L4, badania wstępne w nowej pracy, odwołanie od orzeczenia i przypomnienie w kalendarzu.',
     kategoria: 'bhp',
-    przepisy: ['kodeksPracy', 'badaniaLekarskie', 'badaniaLekarskie2026', 'kodeksCywilny', 'ogolneBhp'],
+    przepisy: ['kodeksPracy', 'badaniaLekarskie', 'badaniaLekarskie2026', 'kodeksCywilny', 'dniWolne', 'ogolneBhp'],
     sprawdzono: '2026-11-12',
   },
   {
