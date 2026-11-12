@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { koniecMiesiaca, miesiaceKalendarzowe, proporcjonalny, teksty, urlopWWypowiedzeniu } from './urlop-wypowiedzenie';
+import { BladDanych, etykietaWykorzystanych, koniecMiesiaca, miesiaceKalendarzowe, proporcjonalny, teksty, urlopWWypowiedzeniu } from './urlop-wypowiedzenie';
 
 // Wartości sprawdzone niezależnie w Pythonie (datetime, fractions, własna lista świąt).
 const baza = { wymiar: 26, wykorzystane: 0, zalegly: 0 };
@@ -13,6 +13,7 @@ describe('urlop proporcjonalny w roku ustania (art. 155^1, 155^2a, 155^3 Kp)', (
       dniPracy: 21,
       wWypowiedzeniu: 21,
       ekwiwalent: 5,
+      swieta: ['2026-12-24', '2026-12-25'],
       swietaWSoboty: ['2026-12-26'],
     });
   });
@@ -62,17 +63,20 @@ describe('dni pracy w wypowiedzeniu i ekwiwalent (art. 167^1, 171 § 1 Kp)', () 
   });
   it('soboty jako dni pracy: 24 dni; grafik 10 dni nadpisuje wyliczenie', () => {
     expect(urlopWWypowiedzeniu({ ...listopad, soboty: true })).toMatchObject({ dniPracy: 24, ekwiwalent: 4, swietaWSoboty: [] });
+    expect(teksty(urlopWWypowiedzeniu({ ...listopad, soboty: true })).uwaga).toContain('dniówka bywa krótsza');
     expect(urlopWWypowiedzeniu({ ...listopad, dniPracy: 10 })).toMatchObject({ dniPracy: 10, zGrafiku: true, wWypowiedzeniu: 10, ekwiwalent: 18 });
     expect(urlopWWypowiedzeniu({ ...listopad, dniPracy: 0 })).toMatchObject({ wWypowiedzeniu: 0, ekwiwalent: 28 });
   });
-  it('przełom roku: od 14.12.2026 do 15.01.2027, 21 dni pracy, urlop za 2027 r. 3 dni + 10 zaległego', () => {
+  it('przełom roku: od 14.12.2026 do 15.01.2027, 21 dni pracy (9 w 2027 r.), urlop za 2027 r. 3 dni + 10 zaległego', () => {
     expect(urlopWWypowiedzeniu({ ...baza, koniecUmowy: '2027-01-15', urlopOd: '2026-12-14', zalegly: 10 })).toMatchObject({
       rok: 2027,
       miesiace: 1,
       proporcjonalny: 3,
       razem: 13,
       dniPracy: 21,
-      swieta: ['2026-12-24', '2026-12-25', '2026-12-26', '2027-01-01', '2027-01-06'],
+      dniPracyWRoku: 9,
+      swieta: ['2026-12-24', '2026-12-25', '2027-01-01', '2027-01-06'],
+      swietaWSoboty: ['2026-12-26'],
       wWypowiedzeniu: 13,
       ekwiwalent: 0,
       innyRok: true,
@@ -103,16 +107,46 @@ describe('dni pracy w wypowiedzeniu i ekwiwalent (art. 167^1, 171 § 1 Kp)', () 
     expect(() => urlopWWypowiedzeniu({ ...ok, wykorzystane: 27 })).toThrow(RangeError);
     expect(() => urlopWWypowiedzeniu({ ...ok, wykorzystane: 1.5 })).toThrow(RangeError);
     expect(() => urlopWWypowiedzeniu({ ...ok, zalegly: -1 })).toThrow(RangeError);
-    expect(() => urlopWWypowiedzeniu({ ...ok, dniPracy: 400 })).toThrow(RangeError);
+    expect(() => urlopWWypowiedzeniu({ ...ok, dniPracy: 30 })).toThrow(RangeError);
+    expect(() => urlopWWypowiedzeniu({ ...ok, wykorzystane: 1.5 })).toThrow(BladDanych);
+    try {
+      urlopWWypowiedzeniu({ ...ok, zalegly: -1 });
+    } catch (e) {
+      expect((e as BladDanych).pole).toBe('zalegly');
+    }
   });
   it('teksty wyniku: odmiana, święta, nadwyżka', () => {
     const t = teksty(urlopWWypowiedzeniu(listopad));
     expect(t.wwyp).toBe('20 dni');
-    expect(t.opis).toBe('Za 8 dni urlopu należy się ekwiwalent');
+    expect(t.opis).toBe('Za co najmniej 8 dni urlopu należy się ekwiwalent');
     expect(t.dniPracy).toBe('20 dni od 2 listopada 2026 r., bez 1 święta');
     expect(t.proporcjonalny).toBe('24 dni (11/12 z 26 dni, od 1 stycznia 2026 r.)');
     expect(teksty(urlopWWypowiedzeniu({ ...baza, koniecUmowy: '2026-04-30', urlopOd: '2026-04-01', wykorzystane: 20 })).uwaga).toContain('ponad proporcję: 11 dni');
     expect(teksty(urlopWWypowiedzeniu({ ...baza, koniecUmowy: '2026-12-31', urlopOd: '2026-12-01' })).uwaga).toContain('26 grudnia 2026 r.');
     expect(teksty(urlopWWypowiedzeniu({ ...listopad, wykorzystane: 24, zalegly: 0 })).opis).toBe('Nie zostało urlopu do wykorzystania');
+  });
+  it('przełom roku: urlopu za 2027 r. nie da się udzielić przed 1 stycznia (koniec 5.01.2027: 2 dni pracy w 2027 r.)', () => {
+    const p = { ...baza, koniecUmowy: '2027-01-05', urlopOd: '2026-12-14' };
+    expect(urlopWWypowiedzeniu(p)).toMatchObject({ proporcjonalny: 3, dniPracy: 14, dniPracyWRoku: 2, udzielonyBiezacy: 2, wWypowiedzeniu: 2, ekwiwalent: 1 });
+    expect(urlopWWypowiedzeniu({ ...p, zalegly: 10 })).toMatchObject({ razem: 13, udzielonyZalegly: 10, wWypowiedzeniu: 12, ekwiwalent: 1 });
+    expect(urlopWWypowiedzeniu({ ...baza, koniecUmowy: '2027-01-15', urlopOd: '2026-12-14', zalegly: 10, dniPracy: 15 })).toMatchObject({ dniPracyWRoku: 9, wWypowiedzeniu: 13 });
+    const t = teksty(urlopWWypowiedzeniu(p));
+    expect(t.uwaga).toContain('Pozostały urlop za 2026 r. wpisz w polu zaległy');
+    expect(t.uwaga).toContain('2 dni pracy');
+    expect(t.dniPracy).toBe('14 dni od 14 grudnia 2026 r., bez 3 świąt');
+  });
+  it('święto w sobotę przy pon.–pt. nie jest „odjęte”: sierpień 2026 (15.08 to sobota)', () => {
+    const r = urlopWWypowiedzeniu({ ...baza, koniecUmowy: '2026-08-31', urlopOd: '2026-08-03' });
+    expect(r).toMatchObject({ miesiace: 8, proporcjonalny: 18, dniPracy: 21, swieta: [], swietaWSoboty: ['2026-08-15'] });
+    expect(teksty(r).dniPracy).toBe('21 dni od 3 sierpnia 2026 r.');
+    expect(teksty(r).uwaga).toContain('o jeden mniej');
+  });
+  it('grafik w tym samym roku nadpisuje kalendarz także powyżej wyliczenia: 25 dni', () => {
+    expect(urlopWWypowiedzeniu({ ...listopad, dniPracy: 25 })).toMatchObject({ wWypowiedzeniu: 25, ekwiwalent: 3 });
+  });
+  it('ekwiwalent 0 i etykieta wykorzystanych', () => {
+    expect(teksty(urlopWWypowiedzeniu({ ...baza, koniecUmowy: '2026-03-15', urlopOd: '2026-03-02' })).ekwiwalent).toBe('0 dni, jeśli pracodawca udzieli całego urlopu');
+    expect(etykietaWykorzystanych('2027-01-05')).toBe('Wykorzystane z urlopu za 2027 r.');
+    expect(etykietaWykorzystanych('')).toBe('Wykorzystane z urlopu za rok końca umowy');
   });
 });
