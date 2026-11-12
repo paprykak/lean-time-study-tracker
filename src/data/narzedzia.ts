@@ -353,6 +353,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-12',
   },
   {
+    slug: 'kara-porzadkowa',
+    nazwa: 'Kara porządkowa: terminy i sprzeciw',
+    krotko: 'Czy kara porządkowa jest w terminie, do kiedy sprzeciw, kiedy się zatrze i ile może wynosić kara pieniężna.',
+    kategoria: 'umowa',
+    przepisy: ['kodeksPracy', 'kodeksCywilny', 'dniWolne'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'odwolanie-do-sadu-pracy',
     nazwa: 'Odwołanie do sądu pracy: termin',
     krotko: 'Ostatni dzień na odwołanie od wypowiedzenia lub dyscyplinarki (21 dni) i sprostowanie świadectwa pracy.',

@@ -18,6 +18,10 @@ describe('terminy odwołania do sądu pracy i sprostowania świadectwa (art. 264
   it('przełom roku: koniec 2 stycznia 2027 r. (sobota) przechodzi na 4 stycznia', () => {
     expect(terminCzynnosci('2026-12-12', 'wypowiedzenie').koniec).toBe('2027-01-04');
   });
+  it('kara porządkowa: sprzeciw 7 dni, pozew 14 dni', () => {
+    expect(terminCzynnosci('2026-11-12', 'kara-sprzeciw').koniec).toBe('2026-11-19');
+    expect(terminCzynnosci('2026-11-12', 'kara-sad').koniec).toBe('2026-11-26');
+  });
   it('świadectwo pracy: 14 dni', () => {
     expect(terminCzynnosci('2026-11-12', 'sprostowanie-wniosek').koniec).toBe('2026-11-26');
     expect(terminCzynnosci('2026-11-12', 'sprostowanie-sad').koniec).toBe('2026-11-26');

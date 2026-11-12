@@ -1,0 +1,132 @@
+---
+// Kary porządkowe: terminy nałożenia, sprzeciwu i zatarcia, limit kar pieniężnych (art. 108–113 Kp).
+// Logika: src/lib/narzedzia/kara-porzadkowa.ts (testy obok), przesunięcia terminów: termin-odwolania.ts.
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { karaPorzadkowa } from '../../lib/narzedzia/kara-porzadkowa';
+import { dataPoPolsku, dodajDni, dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+const dzis = dzisWPolsce();
+const D = { naruszenie: dodajDni(dzis, -10), wiadomosc: dodajDni(dzis, -8), ukaranie: dzis };
+const r = karaPorzadkowa(D);
+
+const faq = [
+  {
+    pytanie: 'Jakie kary porządkowe może dać pracodawca?',
+    odpowiedz: 'Upomnienie albo naganę za nieprzestrzeganie organizacji i porządku pracy, przepisów BHP i przeciwpożarowych oraz zasad potwierdzania obecności i usprawiedliwiania nieobecności (art. 108 § 1 Kodeksu pracy). Karę pieniężną tylko za naruszenie przepisów BHP lub przeciwpożarowych, opuszczenie pracy bez usprawiedliwienia, przyjście do pracy po alkoholu albo podobnym środku i ich spożywanie w pracy (art. 108 § 2).',
+  },
+  {
+    pytanie: 'Ile może wynosić kara pieniężna w pracy?',
+    odpowiedz: 'Za jedno przekroczenie albo za każdy dzień nieusprawiedliwionej nieobecności nie więcej niż jednodniowe wynagrodzenie, a łącznie nie więcej niż 1/10 wynagrodzenia do wypłaty po potrąceniu alimentów, innych egzekwowanych należności i zaliczek (art. 108 § 3 Kodeksu pracy). Część wynagrodzenia jest przy tym wolna od potrąceń (art. 87¹ § 1 pkt 3). Pieniądze z kar idą na poprawę BHP (art. 108 § 4).',
+  },
+  {
+    pytanie: 'Jak odwołać się od kary porządkowej?',
+    odpowiedz: 'Wnieś do pracodawcy sprzeciw w ciągu 7 dni od zawiadomienia o karze. Jeśli pracodawca nie odrzuci go w ciągu 14 dni, sprzeciw jest uwzględniony. Po odrzuceniu masz 14 dni od zawiadomienia o odrzuceniu na pozew do sądu pracy o uchylenie kary (art. 112 Kodeksu pracy). Przy uwzględnieniu sprzeciwu albo uchyleniu kary pieniężnej pracodawca zwraca jej równowartość (art. 112 § 3).',
+  },
+  {
+    pytanie: 'Kiedy kara porządkowa się zaciera?',
+    odpowiedz: 'Po roku nienagannej pracy karę uważa się za niebyłą, a zawiadomienie usuwa się z akt osobowych; pracodawca może to zrobić wcześniej (art. 113 § 1 Kodeksu pracy).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="kara-porzadkowa"
+  tytul="Kara porządkowa: terminy, sprzeciw i zatarcie"
+  opis="Sprawdź, czy kara porządkowa (upomnienie, nagana, kara pieniężna) została nałożona w terminie, do kiedy wnieść sprzeciw i kiedy kara się zatrze. Limity kary pieniężnej z Kodeksu pracy."
+  h1="Kara porządkowa: terminy i sprzeciw"
+  lead="Pracodawca ma ograniczony czas na ukaranie, a Ty 7 dni na sprzeciw. Wpisz daty naruszenia, dowiedzenia się o nim przez pracodawcę i zawiadomienia o karze, a policzymy terminy."
+  faq={faq}
+>
+  <form class="kalkulator" data-kara novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Daty</h2>
+      <div class="mt-4">
+        <label for="k-naruszenie" class="etykieta-pola">Dzień naruszenia</label>
+        <input id="k-naruszenie" name="naruszenie" type="date" class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" value={D.naruszenie} aria-describedby="k-blad" />
+      </div>
+      <div class="mt-4">
+        <label for="k-wiadomosc" class="etykieta-pola">Kiedy pracodawca się o nim dowiedział</label>
+        <input id="k-wiadomosc" name="wiadomosc" type="date" class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" value={D.wiadomosc} aria-describedby="k-blad" />
+      </div>
+      <div class="mt-4">
+        <label for="k-ukaranie" class="etykieta-pola">Dzień zawiadomienia o karze</label>
+        <input id="k-ukaranie" name="ukaranie" type="date" class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" value={D.ukaranie} aria-describedby="k-blad" />
+      </div>
+      <p id="k-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Sprzeciw do pracodawcy najpóźniej</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-data" data-w="sprzeciw">{dataPoPolsku(r.sprzeciw.koniec)}</p>
+        <p class="status-terminu" data-w="status" data-status={r.wTerminie ? 'w-terminie' : 'po-terminie'}>{r.wTerminie ? 'Kara nałożona w terminie' : 'Kara nałożona po terminie z art. 109 § 1'}</p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Ostatni dzień na ukaranie</dt><dd data-w="ostatni">{dataPoPolsku(r.ostatniDzienKary)}</dd></div>
+        <div><dt>2 tygodnie od dowiedzenia się</dt><dd data-w="2tyg">{dataPoPolsku(r.do2tygodni)}</dd></div>
+        <div><dt>3 miesiące od naruszenia</dt><dd data-w="3mies">{dataPoPolsku(r.do3miesiecy)}</dd></div>
+        <div><dt>Zatarcie po roku nienagannej pracy</dt><dd data-w="zatarcie">{dataPoPolsku(r.zatarcie)}</dd></div>
+      </dl>
+      <p class="wynik-uwaga">Gdy pracownika nie było w pracy i nie można go było wysłuchać, termin 2 tygodni nie biegnie do dnia jego powrotu (art. 109 § 3); kalkulator tego nie liczy.</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="zasady">Zasady kar porządkowych</h2>
+    <ul>
+      <li>Karę można nałożyć tylko po wysłuchaniu pracownika (art. 109 § 2 Kodeksu pracy), najpóźniej 2 tygodnie od dowiedzenia się o naruszeniu i 3 miesiące od naruszenia (art. 109 § 1).</li>
+      <li>Pracodawca zawiadamia o karze na piśmie, podaje rodzaj i datę naruszenia oraz informuje o prawie do sprzeciwu i terminie (art. 110).</li>
+      <li>Sprzeciw: 7 dni od zawiadomienia; nieodrzucenie w ciągu 14 dni oznacza jego uwzględnienie; pozew do sądu pracy: 14 dni od zawiadomienia o odrzuceniu (art. 112 § 1–2).</li>
+      <li>Kara pieniężna: najwyżej jednodniowe wynagrodzenie za jedno przekroczenie i łącznie 1/10 wypłaty po potrąceniach z art. 87 § 1 pkt 1–3 (art. 108 § 3).</li>
+      <li>Zatarcie: po roku nienagannej pracy (art. 113 § 1).</li>
+    </ul>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Terminy liczymy według Kodeksu cywilnego (art. 300 Kodeksu pracy): 2 tygodnie i 3 miesiące kalendarzowo (art. 112),
+      7 dni na sprzeciw bez dnia zawiadomienia (art. 111 § 2), a gdy koniec wypada w sobotę albo dzień wolny od pracy,
+      przechodzi na najbliższy dzień roboczy (art. 115). Termin na pozew do sądu pracy po odrzuceniu sprzeciwu policzy
+      <a href="/narzedzia/odwolanie-do-sadu-pracy">kalkulator terminów do sądu pracy</a> (sprawa „Uchylenie kary porządkowej w sądzie”).
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { karaPorzadkowa } from '../../lib/narzedzia/kara-porzadkowa';
+  import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
+
+  const form = document.querySelector<HTMLFormElement>('[data-kara]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const przelicz = () => {
+      const d = { naruszenie: el('naruszenie').value, wiadomosc: el('wiadomosc').value, ukaranie: el('ukaranie').value };
+      let blad: string | null = null;
+      if (![d.naruszenie, d.wiadomosc, d.ukaranie].every(poprawnaData)) blad = 'Wpisz wszystkie trzy daty.';
+      else if (d.wiadomosc < d.naruszenie) blad = 'Pracodawca nie mógł się dowiedzieć o naruszeniu przed jego dniem.';
+      else if (d.ukaranie < d.wiadomosc) blad = 'Zawiadomienie o karze nie może być wcześniejsze niż dowiedzenie się o naruszeniu.';
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      b.hidden = !blad;
+      b.textContent = blad ?? '';
+      const status = w('status');
+      if (blad) {
+        w('sprzeciw').textContent = '—';
+        status.hidden = true;
+        return;
+      }
+      const r = karaPorzadkowa(d);
+      w('sprzeciw').textContent = dataPoPolsku(r.sprzeciw.koniec);
+      w('ostatni').textContent = dataPoPolsku(r.ostatniDzienKary);
+      w('2tyg').textContent = dataPoPolsku(r.do2tygodni);
+      w('3mies').textContent = dataPoPolsku(r.do3miesiecy);
+      w('zatarcie').textContent = dataPoPolsku(r.zatarcie);
+      status.hidden = false;
+      status.dataset.status = r.wTerminie ? 'w-terminie' : 'po-terminie';
+      status.textContent = r.wTerminie ? 'Kara nałożona w terminie' : 'Kara nałożona po terminie z art. 109 § 1';
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>
