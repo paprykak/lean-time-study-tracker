@@ -145,6 +145,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-11',
   },
   {
+    slug: 'brutto-netto',
+    nazwa: 'Brutto na netto: umowa o pracę',
+    krotko: 'Ile na rękę z pensji brutto: składki ZUS, zdrowotna i zaliczka na PIT, z PIT-2 i ulgą do 26 lat.',
+    kategoria: 'wynagrodzenie',
+    przepisy: ['pit', 'systemUbezpieczen', 'swiadczeniaZdrowotne', 'ordynacja'],
+    sprawdzono: '2026-11-11',
+  },
+  {
     slug: 'kontrola-grafiku',
     nazwa: 'Kontrola grafiku zmian',
     krotko: 'Sprawdź grafik 12 h albo trzyzmianowy: odpoczynek 11 i 35 h, wolne niedziele, dni wolne, godziny a wymiar.',
@@ -176,7 +184,7 @@ export const W_PRZYGOTOWANIU: { nazwa: string; kategoria: KategoriaNarzedzia }[]
 ];
 
 /** Karty na stronie głównej (wybór redakcji, dopóki nie ma statystyk); pozostałe narzędzia są tam na zwartej liście. */
-export const NA_GLOWNEJ = ['kalkulator-l4', 'dodatek-za-prace-w-nocy', 'kalkulator-nadgodzin', 'kalkulator-urlopu', 'waznosc-uprawnien-udt', 'okres-wypowiedzenia'] as const;
+export const NA_GLOWNEJ = ['brutto-netto', 'kalkulator-l4', 'dodatek-za-prace-w-nocy', 'kalkulator-nadgodzin', 'kalkulator-urlopu', 'waznosc-uprawnien-udt'] as const;
 
 export const adresNarzedzia = (slug: string) => `/narzedzia/${slug}`;
 

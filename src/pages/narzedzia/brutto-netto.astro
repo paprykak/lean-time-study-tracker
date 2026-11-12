@@ -1,0 +1,148 @@
+---
+// Brutto na netto z umowy o pracę: składki pracownika, zdrowotna, zaliczka na PIT. Logika: src/lib/narzedzia/netto.ts.
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { LATA, PLACA_MINIMALNA } from '../../data/prawo';
+import { LIMIT_ULGI_MLODYCH, netto } from '../../lib/narzedzia/netto';
+import { liczba, zl } from '../../lib/narzedzia/format';
+
+const start = netto({ brutto: 6000 });
+const PRZYKLADY = [...new Set([...LATA.map((r) => PLACA_MINIMALNA[r].miesiecznie), 5500, 6000, 7000, 8000])].sort((a, b) => a - b);
+const minimalna2026 = netto({ brutto: PLACA_MINIMALNA[2026].miesiecznie });
+
+const faq = [
+  {
+    pytanie: 'Ile to netto z płacy minimalnej w 2026 r.?',
+    odpowiedz: `Z ${zl(PLACA_MINIMALNA[2026].miesiecznie)} brutto zostaje ${zl(minimalna2026.netto)} netto przy kosztach uzyskania 250 zł i złożonym PIT-2, bez PPK: składki społeczne ${zl(minimalna2026.spoleczne)}, zdrowotna ${zl(minimalna2026.zdrowotna)}, zaliczka na podatek ${zl(minimalna2026.zaliczka)}.`,
+  },
+  {
+    pytanie: 'Jakie składki płaci pracownik?',
+    odpowiedz: 'Z pensji brutto potrąca się emerytalną 9,76%, rentowe 1,5% i chorobową 2,45% (art. 16 i 22 ustawy o systemie ubezpieczeń społecznych), razem 13,71%, a od reszty składkę zdrowotną 9% (art. 79 ust. 1 i art. 81 ust. 6 ustawy o świadczeniach opieki zdrowotnej). Pozostałe składki płaci pracodawca ponad pensję brutto.',
+  },
+  {
+    pytanie: 'Co daje PIT-2?',
+    odpowiedz: 'Pracodawca co miesiąc pomniejsza zaliczkę na podatek o 300 zł, czyli 1/12 kwoty zmniejszającej podatek 3600 zł (art. 27 ust. 1 i art. 31b ustawy o PIT). Bez PIT-2 ulgę dostaniesz dopiero w zeznaniu rocznym. Oświadczenie można złożyć najwyżej trzem płatnikom, dzieląc ulgę na 1/24 albo 1/36.',
+  },
+  {
+    pytanie: 'Kiedy koszty uzyskania przychodu wynoszą 300 zł?',
+    odpowiedz: 'Gdy mieszkasz w innej miejscowości niż ta, w której jest zakład pracy, i nie dostajesz dodatku za rozłąkę; składasz pracodawcy oświadczenie. W innym przypadku koszty wynoszą 250 zł miesięcznie (art. 22 ust. 2 pkt 1 i 3, art. 32 ust. 7 ustawy o PIT).',
+  },
+  {
+    pytanie: 'Czy do 26 lat płaci się podatek od pensji?',
+    odpowiedz: `Nie, do ${liczba(LIMIT_ULGI_MLODYCH)} zł przychodów w roku: pensja osoby przed 26. urodzinami jest zwolniona z podatku (art. 21 ust. 1 pkt 148 ustawy o PIT). Składki ZUS i zdrowotną płaci się normalnie.`,
+  },
+];
+---
+<StronaNarzedzia
+  slug="brutto-netto"
+  tytul="Brutto na netto: ile na rękę z umowy o pracę"
+  opis={`Policz netto z pensji brutto na umowie o pracę: składki ZUS 13,71%, zdrowotna 9%, zaliczka na PIT z PIT-2 i ulgą do 26 lat. Płaca minimalna 2026: ${zl(minimalna2026.netto)} netto.`}
+  h1="Kalkulator brutto–netto: umowa o pracę"
+  lead="Z pensji brutto potrąca się składki ZUS, składkę zdrowotną i zaliczkę na podatek. Wpisz kwotę z umowy, a pokażemy, ile zostanie na rękę, i każdą potrąconą złotówkę z podstawą w przepisach."
+  faq={faq}
+>
+  <form class="kalkulator" data-netto novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twoja pensja</h2>
+      <div class="mt-4">
+        <label for="n-brutto" class="etykieta-pola">Wynagrodzenie brutto w miesiącu (zł)</label>
+        <input id="n-brutto" name="brutto" class="pole mt-1 max-w-48" type="text" inputmode="decimal" autocomplete="off" value="6000" aria-describedby="n-blad" />
+        <p id="n-blad" class="blad-pola" data-blad="brutto" hidden></p>
+      </div>
+      <label class="mt-4 flex items-start gap-3 text-[0.9375rem]">
+        <input type="checkbox" name="pit2" checked class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+        <span>Złożyłem albo złożyłam PIT-2 (zaliczka mniejsza o 300 zł)</span>
+      </label>
+      <label class="mt-3 flex items-start gap-3 text-[0.9375rem]">
+        <input type="checkbox" name="dojazd" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+        <span>Dojeżdżam z innej miejscowości (koszty 300 zł zamiast 250 zł)</span>
+      </label>
+      <label class="mt-3 flex items-start gap-3 text-[0.9375rem]">
+        <input type="checkbox" name="mlody" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+        <span>Mam mniej niż 26 lat (ulga do {liczba(LIMIT_ULGI_MLODYCH)} zł w roku)</span>
+      </label>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Na rękę (netto)</h2>
+      <p class="wynik-kwota" aria-live="polite" aria-atomic="true"><span data-w="netto">{zl(start.netto)}</span></p>
+      <dl class="wynik-lista">
+        <div><dt>Składka emerytalna 9,76%</dt><dd data-w="emerytalna">{zl(start.emerytalna)}</dd></div>
+        <div><dt>Składka rentowa 1,5%</dt><dd data-w="rentowa">{zl(start.rentowa)}</dd></div>
+        <div><dt>Składka chorobowa 2,45%</dt><dd data-w="chorobowa">{zl(start.chorobowa)}</dd></div>
+        <div><dt>Składka zdrowotna 9%</dt><dd data-w="zdrowotna">{zl(start.zdrowotna)}</dd></div>
+        <div><dt>Zaliczka na podatek</dt><dd data-w="zaliczka">{zl(start.zaliczka)}</dd></div>
+      </dl>
+      <p class="wynik-uwaga" data-w="uwaga" hidden></p>
+      <p class="meta mt-4">Bez PPK, potrąceń komorniczych i innych potrąceń. Uczestnik PPK oddaje zwykle 2% pensji (art. 27 ust. 1 ustawy o PPK), więc netto na pasku będzie niższe.</p>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="tabela">Brutto i netto: przykłady</h2>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Wynagrodzenie netto przy różnych kwotach brutto, koszty 250 zł i PIT-2</caption>
+        <thead><tr><th scope="col">Brutto</th><th scope="col">Składki ZUS</th><th scope="col">Zdrowotna</th><th scope="col">Zaliczka PIT</th><th scope="col">Netto</th></tr></thead>
+        <tbody>
+          {PRZYKLADY.map((b) => {
+            const r = netto({ brutto: b });
+            return <tr><th scope="row">{zl(b)}</th><td>{zl(r.spoleczne)}</td><td>{zl(r.zdrowotna)}</td><td>{zl(r.zaliczka)}</td><td>{zl(r.netto)}</td></tr>;
+          })}
+        </tbody>
+      </table>
+    </div>
+    <p>Płaca minimalna: {LATA.map((r, i) => <>{i > 0 && ', '}{zl(PLACA_MINIMALNA[r].miesiecznie)} w {r} r.</>)}</p>
+
+    <h2 id="jak-liczymy">Jak liczymy netto</h2>
+    <ol>
+      <li><strong>Składki społeczne pracownika:</strong> emerytalna 9,76%, rentowe 1,5% i chorobowa 2,45% brutto, każda zaokrąglona do grosza (art. 16 i 22 ustawy o systemie ubezpieczeń społecznych).</li>
+      <li><strong>Składka zdrowotna:</strong> 9% od brutto pomniejszonego o składki społeczne (art. 79 ust. 1 i art. 81 ust. 6 ustawy o świadczeniach opieki zdrowotnej). Od 2022 r. nie odlicza się jej od podatku.</li>
+      <li><strong>Podstawa podatku:</strong> brutto minus koszty uzyskania (250 albo 300 zł) minus składki społeczne, zaokrąglona do pełnych złotych (art. 32 ust. 4 ustawy o PIT, art. 63 § 1 Ordynacji podatkowej).</li>
+      <li><strong>Zaliczka:</strong> {liczba(12)}% podstawy minus 300 zł przy PIT-2, zaokrąglona do pełnych złotych (art. 32 ust. 2 i art. 31b ustawy o PIT).</li>
+      <li><strong>Netto:</strong> brutto minus składki społeczne, składka zdrowotna i zaliczka.</li>
+    </ol>
+    <p>
+      Kalkulator liczy miesiąc, w którym dochód od początku roku nie przekroczył 120 000 zł. Po przekroczeniu tego progu
+      zaliczka wynosi 32% od nadwyżki (art. 32 ust. 2). Przy bardzo wysokich zarobkach, po przekroczeniu w roku limitu
+      składek emerytalnej i rentowych (art. 19 ust. 1 ustawy o systemie ubezpieczeń społecznych), tych dwóch składek się
+      nie potrąca i netto rośnie. Przy bardzo niskim przychodzie składka zdrowotna może zostać obniżona do kwoty zaliczki
+      liczonej według przepisów z 2021 r. (art. 83 ustawy o świadczeniach); kalkulator wtedy to sygnalizuje.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { netto } from '../../lib/narzedzia/netto';
+  import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
+
+  const form = document.querySelector<HTMLFormElement>('[data-netto]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const przelicz = () => {
+      const brutto = wpisanaLiczba(el('brutto').value);
+      const b = form.querySelector<HTMLElement>('[data-blad="brutto"]')!;
+      const blad = !(brutto > 0 && brutto < 1_000_000) ? 'Wpisz wynagrodzenie brutto, na przykład 6000.' : null;
+      b.hidden = !blad;
+      b.textContent = blad ?? '';
+      el('brutto').setAttribute('aria-invalid', blad ? 'true' : 'false');
+      if (blad) {
+        w('netto').textContent = '—';
+        return;
+      }
+      const r = netto({ brutto, pit2: el('pit2').checked, kosztyPodwyzszone: el('dojazd').checked, ulgaMlodych: el('mlody').checked });
+      w('netto').textContent = zl(r.netto);
+      for (const k of ['emerytalna', 'rentowa', 'chorobowa', 'zdrowotna', 'zaliczka'] as const) w(k).textContent = zl(r[k]);
+      const uwagi = [
+        r.mozliweObnizenieZdrowotnej ? 'Przy tak niskim przychodzie składka zdrowotna może zostać obniżona (art. 83 ustawy o świadczeniach opieki zdrowotnej), więc netto może być wyższe.' : null,
+        r.progPrzekroczony ? 'Przy takiej pensji dochód przekroczy w roku 120 000 zł: od nadwyżki zaliczka wyniesie 32%, więc w ostatnich miesiącach roku netto będzie niższe.' : null,
+      ].filter(Boolean);
+      w('uwaga').hidden = uwagi.length === 0;
+      w('uwaga').textContent = uwagi.join(' ');
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>

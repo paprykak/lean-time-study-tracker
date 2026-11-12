@@ -83,6 +83,27 @@ export const AKTY = {
     adres: eli(2026, 1195),
     sprawdzono: '2026-11-11',
   },
+  pit: {
+    nazwa: 'Ustawa o podatku dochodowym od osób fizycznych',
+    publikator: 'Dz.U. 2026 poz. 592',
+    uwaga: 'tekst jednolity; późniejsze zmiany nie dotyczą zaliczek od wynagrodzeń; art. 21 ust. 1 pkt 148, art. 22 ust. 2, art. 27, 31b, 32',
+    adres: eli(2026, 592),
+    sprawdzono: '2026-11-11',
+  },
+  swiadczeniaZdrowotne: {
+    nazwa: 'Ustawa o świadczeniach opieki zdrowotnej finansowanych ze środków publicznych',
+    publikator: 'Dz.U. 2025 poz. 1461',
+    uwaga: 'tekst jednolity; późniejsze zmiany nie dotyczą składki pracownika; art. 79, 81 i 83',
+    adres: eli(2025, 1461),
+    sprawdzono: '2026-11-11',
+  },
+  ordynacja: {
+    nazwa: 'Ustawa – Ordynacja podatkowa',
+    publikator: 'Dz.U. 2026 poz. 622',
+    uwaga: 'tekst jednolity; art. 63 § 1: zaokrąglanie podstawy i podatku do pełnych złotych',
+    adres: eli(2026, 622),
+    sprawdzono: '2026-11-11',
+  },
   zasilkowa: {
     nazwa: 'Ustawa o świadczeniach pieniężnych z ubezpieczenia społecznego w razie choroby i macierzyństwa',
     publikator: 'Dz.U. 2026 poz. 854',
