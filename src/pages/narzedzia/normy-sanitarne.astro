@@ -1,0 +1,150 @@
+---
+// Normy sanitarne: umywalki, ustępy, natryski (załącznik nr 3 do ogólnych przepisów BHP, § 19–29 i § 39).
+// Logika: src/lib/narzedzia/normy-sanitarne.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { normySanitarne } from '../../lib/narzedzia/normy-sanitarne';
+
+const start = normySanitarne({ kobiety: 25, mezczyzni: 45, praca: 'brudzaca', natryski: 'brudzace-cialo' });
+const pokaz = (l: { minimum: number; ostroznie: number }) => (l.minimum === l.ostroznie ? String(l.minimum) : `${l.minimum}, ostrożnie ${l.ostroznie}`);
+
+const faq = [
+  {
+    pytanie: 'Ile toalet na liczbę pracowników?',
+    odpowiedz: 'Na każdych 30 mężczyzn zatrudnionych na jednej zmianie co najmniej jedna miska ustępowa i jeden pisuar, a na każde 20 kobiet jedna miska ustępowa; przy mniejszej liczbie nie mniej niż jedna (§ 28 załącznika nr 3 do rozporządzenia w sprawie ogólnych przepisów BHP).',
+  },
+  {
+    pytanie: 'Ile umywalek na pracowników?',
+    odpowiedz: 'Na każdych 10 pracowników najliczniejszej zmiany co najmniej jedna umywalka, a przy pracach brudzących i w kontakcie z substancjami szkodliwymi lub zakaźnymi na każdych 5. Przy pracach biurowych jedna na 30 mężczyzn albo 20 kobiet (§ 19). W przedsionku ustępu jedna umywalka na 3 miski lub pisuary (§ 26 ust. 2).',
+  },
+  {
+    pytanie: 'Kiedy pracodawca musi zapewnić natryski?',
+    odpowiedz: 'Gdy wymagają tego warunki pracy lub ochrona zdrowia (§ 21 ust. 1). Przy pracach brudzących ciało jedna kabina natryskowa na 8 pracowników najliczniejszej zmiany, a przy pracach z substancjami trującymi, zakaźnymi, pylących, w gorącym i wilgotnym mikroklimacie albo intensywnie brudzących na 5 (§ 22 ust. 1 i § 16 ust. 1).',
+  },
+  {
+    pytanie: 'Od ilu pracowników jadalnia?',
+    odpowiedz: 'Gdy na jednej zmianie pracuje ponad 20 osób, a także przy mniejszej liczbie, jeśli pracownicy mają kontakt ze szkodliwymi środkami chemicznymi, promieniotwórczymi, materiałami zakaźnymi albo wykonują prace szczególnie brudzące (§ 29 ust. 1 i 2).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="normy-sanitarne"
+  tytul="Ile toalet, umywalek i natrysków na pracowników"
+  opis="Policz, ile misek ustępowych, pisuarów, umywalek i natrysków musi być na hali według przepisów BHP: 30 mężczyzn, 20 kobiet, 10 albo 5 osób na umywalkę, 8 albo 5 na natrysk."
+  h1="Normy sanitarne: toalety, umywalki, natryski"
+  lead="Przepisy BHP podają, ile urządzeń sanitarnych musi przypadać na pracowników zmiany: miska ustępowa na 20 kobiet, miska i pisuar na 30 mężczyzn, umywalka na 10 osób, a przy pracach brudzących na 5. Wpisz obsadę zmiany."
+  faq={faq}
+>
+  <form class="kalkulator" data-normy novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Najliczniejsza zmiana</h2>
+      <div class="mt-4 grid grid-cols-2 gap-4">
+        <div>
+          <label for="ns-m" class="etykieta-pola">Mężczyźni</label>
+          <input id="ns-m" name="mezczyzni" class="pole mt-1" type="text" inputmode="numeric" autocomplete="off" value="45" aria-describedby="ns-blad" />
+        </div>
+        <div>
+          <label for="ns-k" class="etykieta-pola">Kobiety</label>
+          <input id="ns-k" name="kobiety" class="pole mt-1" type="text" inputmode="numeric" autocomplete="off" value="25" aria-describedby="ns-blad" />
+        </div>
+      </div>
+      <fieldset class="mt-5">
+        <legend class="etykieta">Rodzaj pracy (umywalki)</legend>
+        <div class="opcje-pionowe mt-2">
+          <label><input type="radio" name="praca" value="zwykla" /> Zwykła praca na hali</label>
+          <label><input type="radio" name="praca" value="brudzaca" checked /> Praca brudząca albo z substancjami szkodliwymi lub zakaźnymi</label>
+          <label><input type="radio" name="praca" value="biurowa" /> Praca biurowa albo zbliżona</label>
+        </div>
+      </fieldset>
+      <fieldset class="mt-5">
+        <legend class="etykieta">Natryski</legend>
+        <div class="opcje-pionowe mt-2">
+          <label><input type="radio" name="natryski" value="brak" /> Nie są wymagane</label>
+          <label><input type="radio" name="natryski" value="brudzace-cialo" checked /> Praca brudząca ciało</label>
+          <label><input type="radio" name="natryski" value="przepustowa" /> Praca z substancjami trującymi, zakaźnymi, pyląca, w gorącym mikroklimacie</label>
+        </div>
+      </fieldset>
+      <p id="ns-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Co najmniej</h2>
+      <dl class="wynik-lista" aria-live="polite">
+        <div><dt>Umywalki w umywalni</dt><dd data-w="umywalki">{pokaz(start.umywalki)}</dd></div>
+        <div><dt>Miski ustępowe dla mężczyzn</dt><dd data-w="miski-m">{pokaz(start.miskiMezczyzni)}</dd></div>
+        <div><dt>Pisuary</dt><dd data-w="pisuary">{pokaz(start.pisuary)}</dd></div>
+        <div><dt>Miski ustępowe dla kobiet</dt><dd data-w="miski-k">{pokaz(start.miskiKobiety)}</dd></div>
+        <div><dt>Umywalki w przedsionkach ustępów</dt><dd data-w="przedsionek">{pokaz(start.umywalkiPrzyUstepach)}</dd></div>
+        <div><dt>Kabiny natryskowe</dt><dd data-w="natryski">{pokaz(start.natryski)}</dd></div>
+        <div><dt>Miski ustępowe przy natryskach</dt><dd data-w="miski-natryski">{pokaz(start.miskiPrzyNatryskach)}</dd></div>
+        <div><dt>Jadalnia</dt><dd data-w="jadalnia">{start.jadalnia ? 'wymagana (ponad 20 osób na zmianie)' : 'niewymagana przy tej liczbie osób'}</dd></div>
+        <div><dt>Miejsca do leżenia dla kobiet w ciąży i karmiących</dt><dd data-w="ciaza">{start.miejscaDlaKobietWCiazy}</dd></div>
+      </dl>
+      <p class="meta mt-4">„Ostrożnie”: każda rozpoczęta grupa osób. Przepis mówi „na każdych 30” i nie rozstrzyga, czy liczyć rozpoczętą grupę; pełne grupy to minimum z jego brzmienia.</p>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="normy">Normy z załącznika nr 3 do ogólnych przepisów BHP</h2>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Normy wyposażenia pomieszczeń higienicznosanitarnych</caption>
+        <thead><tr><th scope="col">Urządzenie</th><th scope="col">Norma</th><th scope="col">Przepis</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Umywalka</th><td>1 na 10 osób najliczniejszej zmiany; przy pracach brudzących i z substancjami szkodliwymi lub zakaźnymi 1 na 5; biuro: 1 na 30 mężczyzn albo 20 kobiet</td><td>§ 19</td></tr>
+          <tr><th scope="row">Brodzik do mycia nóg</th><td>1 na 10 użytkowników narażonych na zabrudzenie nóg</td><td>§ 20</td></tr>
+          <tr><th scope="row">Kabina natryskowa</th><td>1 na 8 osób przy pracach brudzących ciało; 1 na 5 przy pracach z § 16 ust. 1</td><td>§ 22</td></tr>
+          <tr><th scope="row">Miska ustępowa przy natryskach</th><td>1 na 10 natrysków</td><td>§ 23 ust. 4</td></tr>
+          <tr><th scope="row">Ustęp: odległość</th><td>do 75 m od stanowiska pracy (na otwartej przestrzeni do 125 m), na każdej kondygnacji</td><td>§ 25</td></tr>
+          <tr><th scope="row">Umywalka w przedsionku ustępu</th><td>1 na 3 miski lub pisuary</td><td>§ 26 ust. 2</td></tr>
+          <tr><th scope="row">Mężczyźni</th><td>1 miska ustępowa i 1 pisuar na 30 osób na zmianie</td><td>§ 28 ust. 1</td></tr>
+          <tr><th scope="row">Kobiety</th><td>1 miska ustępowa na 20 osób na zmianie</td><td>§ 28 ust. 2</td></tr>
+          <tr><th scope="row">Jadalnia</th><td>ponad 20 osób na zmianie (albo mniej przy pracach brudzących i szkodliwych)</td><td>§ 29</td></tr>
+          <tr><th scope="row">Miejsce do leżenia dla kobiet w ciąży i karmiących</th><td>ponad 20 kobiet na zmianie w budynku: 1 miejsce na 300 kobiet, nie mniej niż jedno</td><td>§ 39</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Normy pochodzą z załącznika nr 3 do rozporządzenia Ministra Pracy i Polityki Socjalnej z 26 września 1997 r.
+      w sprawie ogólnych przepisów bezpieczeństwa i higieny pracy (tekst jednolity Dz.U. 2003 poz. 1650). Późniejsze
+      zmiany załącznika z 2007, 2011 i 2021 r. dotyczyły pomieszczeń do wypoczynku, prania odzieży i neutralizacji
+      substancji, nie tych norm. Do umywalek i natrysków trzeba doprowadzić ciepłą i zimną wodę (§ 18 ust. 2 i § 23 ust. 3).
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { normySanitarne, type Natryski, type RodzajPracy } from '../../lib/narzedzia/normy-sanitarne';
+  import { wpisanaLiczba } from '../../lib/narzedzia/format';
+
+  const form = document.querySelector<HTMLFormElement>('[data-normy]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const pokaz = (l: { minimum: number; ostroznie: number }) => (l.minimum === l.ostroznie ? String(l.minimum) : `${l.minimum}, ostrożnie ${l.ostroznie}`);
+    const przelicz = () => {
+      const m = wpisanaLiczba(el('mezczyzni').value || '0');
+      const k = wpisanaLiczba(el('kobiety').value || '0');
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      const blad = !(Number.isInteger(m) && m >= 0 && Number.isInteger(k) && k >= 0) || m + k === 0 ? 'Wpisz liczbę mężczyzn i kobiet na najliczniejszej zmianie.' : null;
+      b.hidden = !blad;
+      b.textContent = blad ?? '';
+      if (blad) return;
+      const praca = (form.querySelector<HTMLInputElement>('input[name="praca"]:checked')?.value ?? 'zwykla') as RodzajPracy;
+      const natryski = (form.querySelector<HTMLInputElement>('input[name="natryski"]:checked')?.value ?? 'brak') as Natryski;
+      const r = normySanitarne({ kobiety: k, mezczyzni: m, praca, natryski });
+      w('umywalki').textContent = pokaz(r.umywalki);
+      w('miski-m').textContent = pokaz(r.miskiMezczyzni);
+      w('pisuary').textContent = pokaz(r.pisuary);
+      w('miski-k').textContent = pokaz(r.miskiKobiety);
+      w('przedsionek').textContent = pokaz(r.umywalkiPrzyUstepach);
+      w('natryski').textContent = pokaz(r.natryski);
+      w('miski-natryski').textContent = pokaz(r.miskiPrzyNatryskach);
+      w('jadalnia').textContent = r.jadalnia ? 'wymagana (ponad 20 osób na zmianie)' : 'niewymagana przy tej liczbie osób';
+      w('ciaza').textContent = String(r.miejscaDlaKobietWCiazy);
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>

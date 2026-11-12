@@ -58,7 +58,7 @@ export const AKTY = {
   ogolneBhp: {
     nazwa: 'Rozporządzenie w sprawie ogólnych przepisów bezpieczeństwa i higieny pracy',
     publikator: 'Dz.U. 2003 poz. 1650',
-    uwaga: 'tekst jednolity ze zmianami, ostatnia Dz.U. 2026 poz. 927; § 80: prace szczególnie niebezpieczne',
+    uwaga: 'tekst jednolity ze zmianami, ostatnia Dz.U. 2026 poz. 927; § 80: prace szczególnie niebezpieczne; załącznik nr 3 (§ 19–29, 39): pomieszczenia higienicznosanitarne',
     adres: eli(2003, 1650),
     sprawdzono: '2026-11-11',
   },

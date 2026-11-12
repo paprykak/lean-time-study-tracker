@@ -65,6 +65,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-11',
   },
   {
+    slug: 'normy-sanitarne',
+    nazwa: 'Toalety, umywalki, natryski: normy',
+    krotko: 'Ile misek ustępowych, pisuarów, umywalek i natrysków na zmianę według przepisów BHP. Jadalnia od 21 osób.',
+    kategoria: 'bhp',
+    przepisy: ['ogolneBhp'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'ile-kg-wolno-dzwigac',
     nazwa: 'Ile kg wolno dźwigać',
     krotko: 'Ile kilogramów wolno podnosić i przenosić w pracy: kobiety, mężczyźni, ciąża, młodociani. Z mapą regału.',
