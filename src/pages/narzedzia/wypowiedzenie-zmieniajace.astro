@@ -24,15 +24,15 @@ const faq = [
   },
   {
     pytanie: 'Czy po odmowie należy się odprawa?',
-    odpowiedz: 'Odprawa należy się, gdy pracodawca zatrudnia co najmniej 20 pracowników, a umowa rozwiązuje się z przyczyn niedotyczących pracownika, które są wyłącznym powodem wypowiedzenia (art. 8 i art. 10 ust. 1 ustawy o zwolnieniach z przyczyn niedotyczących pracowników). Przepis wprost nie mówi, czy odmowa nowych warunków jest współprzyczyną rozwiązania umowy. W sporze rozstrzyga to sąd pracy.',
+    odpowiedz: 'Odprawa należy się, gdy pracodawca zatrudnia co najmniej 20 pracowników, a umowa rozwiązuje się z przyczyn niedotyczących pracownika: przy zwolnieniu grupowym (art. 1 i 8 ustawy o zwolnieniach z przyczyn niedotyczących pracowników), a poza nim, gdy te przyczyny są wyłącznym powodem wypowiedzenia (art. 10 ust. 1). Przepis wprost nie mówi, czy odmowa nowych warunków jest współprzyczyną rozwiązania umowy. W sporze rozstrzyga to sąd pracy.',
   },
   {
     pytanie: 'Czy mogę odwołać się do sądu pracy od wypowiedzenia zmieniającego?',
-    odpowiedz: 'Tak. Przepisy o wypowiedzeniu umowy stosuje się odpowiednio (art. 42 § 1 Kodeksu pracy), więc odwołanie wnosisz do sądu pracy w ciągu 21 dni od doręczenia pisma (art. 264 § 1). Termin na odwołanie i termin na odmowę biegną niezależnie od siebie.',
+    odpowiedz: 'Tak. Przepisy o wypowiedzeniu umowy stosuje się odpowiednio (art. 42 § 1 Kodeksu pracy), więc odwołanie wnosisz do sądu pracy w ciągu 21 dni od doręczenia pisma (art. 264 § 1). Przepis nie mówi, czy odwołanie zastępuje odmowę, dlatego odmowę złóż osobno w jej terminie.',
   },
   {
     pytanie: 'Czy pracodawca może dać mi inną pracę bez wypowiedzenia?',
-    odpowiedz: 'Tak, ale najwyżej na 3 miesiące w roku kalendarzowym, gdy uzasadniają to potrzeby pracodawcy, praca odpowiada Twoim kwalifikacjom, a wynagrodzenie się nie obniża (art. 42 § 4 Kodeksu pracy). Na dłużej albo za mniejsze pieniądze potrzebne jest wypowiedzenie zmieniające albo Twoja zgoda na piśmie (art. 29 § 4).',
+    odpowiedz: 'Tak, ale najwyżej na 3 miesiące w roku kalendarzowym, gdy uzasadniają to potrzeby pracodawcy, praca odpowiada Twoim kwalifikacjom, a wynagrodzenie się nie obniża (art. 42 § 4 Kodeksu pracy). Gdy któryś z tych warunków nie jest spełniony, potrzebne jest wypowiedzenie zmieniające (art. 42) albo porozumienie na piśmie (art. 29 § 4).',
   },
 ];
 ---
@@ -41,7 +41,7 @@ const faq = [
   tytul="Wypowiedzenie zmieniające: termin na odmowę"
   opis="Do kiedy odmówić nowych warunków pracy lub płacy (połowa okresu wypowiedzenia), kiedy obowiązują, kiedy kończy się umowa po odmowie i termin do sądu."
   h1="Wypowiedzenie zmieniające: do kiedy odmówić"
-  lead="Pracodawca proponuje na piśmie nowe warunki pracy albo płacy. Masz czas do połowy okresu wypowiedzenia, żeby je odrzucić; potem milczenie oznacza zgodę. Wpisz, od kiedy pracujesz i w jakim dniu doręczono Ci pismo, a policzymy wszystkie terminy."
+  lead="Pracodawca proponuje na piśmie nowe warunki pracy albo płacy. Masz czas do połowy okresu wypowiedzenia, żeby je odrzucić (bez pouczenia w piśmie: do końca okresu); potem milczenie oznacza zgodę. Wpisz, od kiedy pracujesz i w jakim dniu doręczono Ci pismo, a policzymy wszystkie terminy."
   faq={faq}
 >
   <form class="kalkulator" data-zmieniajace novalidate aria-labelledby="kalkulator-tytul">
@@ -61,7 +61,7 @@ const faq = [
         <input type="checkbox" name="pouczenie" checked class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
         <span>Pismo zawiera pouczenie, że brak odmowy przed połową okresu oznacza zgodę</span>
       </label>
-      <p id="wz-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+      <p id="wz-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -75,10 +75,10 @@ const faq = [
         <div><dt>Okres kończy się</dt><dd data-w="koniec">{dataPoPolsku(r.koniec)}</dd></div>
         <div><dt>Gdy przyjmiesz: nowe warunki od</dt><dd data-w="nowe">{dataPoPolsku(r.noweWarunkiOd)}</dd></div>
         <div><dt>Gdy odmówisz: ostatni dzień umowy</dt><dd data-w="ostatni">{dataPoPolsku(r.koniec)}</dd></div>
-        <div><dt>Połowa okresu liczona od 1. dnia</dt><dd data-w="wariant-b">{dataPoPolsku(r.odmowaDoWariantB)}</dd></div>
+        <div><dt>Połowa od początku pełnego tygodnia albo miesiąca</dt><dd data-w="wariant-b">{dataPoPolsku(r.odmowaDoWariantB)}</dd></div>
         <div><dt>Odwołanie do sądu pracy do</dt><dd data-w="odwolanie">{dataPoPolsku(r.odwolanieDo)}</dd></div>
       </dl>
-      <p class="wynik-uwaga" data-w="uwaga">Bez odmowy w tym terminie przyjmujesz nowe warunki (art. 42 § 3 Kodeksu pracy). Odmowę złóż na piśmie i zachowaj kopię z datą odbioru.</p>
+      <p class="wynik-uwaga" data-w="uwaga">Odmowa złożona później może zostać uznana za spóźnioną, a wtedy przyjmujesz nowe warunki (art. 42 § 3 Kodeksu pracy). Liczy się dzień, w którym odmowa dotrze do pracodawcy.</p>
       <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
     </div>
   </form>
@@ -103,7 +103,12 @@ const faq = [
     </div>
     <p>
       Okresy i ich koniec wynikają z art. 36 § 1 i art. 30 § 2<sup>1</sup>; liczymy je tak samo jak
-      <a href="/narzedzia/okres-wypowiedzenia">kalkulator okresu wypowiedzenia</a>. Przy stanowisku z odpowiedzialnością
+      <a href="/narzedzia/okres-wypowiedzenia">kalkulator okresu wypowiedzenia</a>. Staż liczymy w pełnych miesiącach do dnia doręczenia. Wpisz początek
+      pracy razem z wcześniejszym zleceniem albo działalnością wykonywaną dla tego pracodawcy (art. 302<sup>1</sup> § 8)
+      i pracą przed przejściem zakładu na nowego pracodawcę (art. 36 § 1<sup>1</sup>); pomoże <a href="/narzedzia/staz-pracy">kalkulator
+      stażu pracy</a>. Gdy próg 6 miesięcy albo 3 lat mija w trakcie okresu wypowiedzenia, przepis nie mówi, który okres
+      stosować; kalkulator podaje krótszy, więc termin na odmowę wychodzi wcześniej. Przy umowie na czas określony, która
+      kończy się przed końcem okresu wypowiedzenia, umowa rozwiązuje się z upływem czasu, na który ją zawarto (art. 30 § 1 pkt 4). Przy stanowisku z odpowiedzialnością
       materialną umowa może przewidywać dłuższe okresy (art. 36 § 5); wtedy kalkulator ich nie zna. Okresu próbnego
       kalkulator nie obejmuje.
     </p>
@@ -112,8 +117,10 @@ const faq = [
       wskazuje, od którego dnia liczyć okres. Liczymy więc dwa warianty: od dnia po doręczeniu pisma oraz od pierwszego dnia
       pełnego tygodnia (niedzieli) albo miesiąca, w którym zaczyna się okres. Jako termin podajemy wcześniejszą datę, bo
       odmowa złożona do tego dnia mieści się w terminie przy obu sposobach liczenia. Gdy połowa wypada w środku dnia
-      (na przykład przy 31 dniach), ten dzień już nie wchodzi do terminu. Najbezpieczniej złożyć odmowę od razu, gdy
-      decyzja jest podjęta.
+      (na przykład przy 31 dniach), ten dzień już nie wchodzi do terminu. Dnia doręczenia nie liczymy (art. 111 § 2
+      Kodeksu cywilnego). Terminu na odmowę nie przesuwamy z soboty ani święta: gdy wypada w dzień wolny, złóż odmowę
+      wcześniej. Przepis nie wymaga pisma, ale pismo z potwierdzeniem odbioru jest dowodem, a liczy się dzień, w którym
+      odmowa dotrze do pracodawcy, a nie dzień wysłania. Najbezpieczniej złożyć odmowę od razu, gdy decyzja jest podjęta.
     </p>
     <p>
       <strong>Odwołanie do sądu pracy.</strong> 21 dni od doręczenia pisma (art. 264 § 1). Gdy ostatni dzień wypada
@@ -123,16 +130,18 @@ const faq = [
 
     <h2 id="kiedy-nie-wolno">Kiedy pracodawca nie może wypowiedzieć warunków</h2>
     <ul>
-      <li>W czasie Twojego urlopu i innej usprawiedliwionej nieobecności, na przykład zwolnienia lekarskiego, zanim minie okres, który pozwala rozwiązać umowę bez wypowiedzenia (art. 41 w związku z art. 42 § 1). Przy zwolnieniach grupowych ten zakaz nie obowiązuje (art. 5 ust. 4 ustawy o zwolnieniach z przyczyn niedotyczących pracowników).</li>
-      <li>Gdy brakuje Ci nie więcej niż 4 lata do wieku emerytalnego: tylko z powodu nowych zasad wynagradzania dla wszystkich albo Twojej grupy pracowników albo utraty zdolności do pracy lub uprawnień (art. 39 i 43). Więcej: <a href="/narzedzia/ochrona-przedemerytalna">ochrona przedemerytalna</a>.</li>
-      <li>Gdy reprezentuje Cię zakładowa organizacja związkowa, pracodawca najpierw zawiadamia ją o zamiarze wypowiedzenia i podaje przyczynę (art. 38 w związku z art. 42 § 1).</li>
+      <li>W czasie Twojego urlopu i innej usprawiedliwionej nieobecności, na przykład zwolnienia lekarskiego, zanim minie okres, który pozwala rozwiązać umowę bez wypowiedzenia (art. 41 w związku z art. 42 § 1). Ten zakaz nie obowiązuje przy zwolnieniach z przyczyn niedotyczących pracowników u pracodawcy zatrudniającego co najmniej 20 osób (art. 5 ust. 4 i art. 10 ust. 1 ustawy o zwolnieniach) ani przy upadłości lub likwidacji pracodawcy (art. 41<sup>1</sup> § 1).</li>
+      <li>Gdy brakuje Ci nie więcej niż 4 lata do wieku emerytalnego, a staż pozwoli uzyskać emeryturę: tylko z powodu nowych zasad wynagradzania dla wszystkich albo Twojej grupy pracowników albo utraty zdolności do pracy lub uprawnień (art. 39, 40 i 43). Przy zwolnieniach z przyczyn niedotyczących pracowników pracodawca może wypowiedzieć warunki także osobom chronionym (art. 5 ust. 5 i art. 10 ust. 3 ustawy o zwolnieniach). Więcej: <a href="/narzedzia/ochrona-przedemerytalna">ochrona przedemerytalna</a>.</li>
+      <li>W ciąży i od złożenia wniosku o urlop macierzyński, ojcowski albo rodzicielski do jego końca pracodawca nie może wypowiedzieć umowy (art. 177 § 1). Przepis nie mówi wprost, czy ten zakaz obejmuje wypowiedzenie zmieniające; przepisy o wypowiedzeniu stosuje się do niego odpowiednio (art. 42 § 1).</li>
+      <li>Gdy reprezentuje Cię zakładowa organizacja związkowa, pracodawca najpierw zawiadamia ją o zamiarze wypowiedzenia i podaje przyczynę (art. 38 w związku z art. 42 § 1). Przy zwolnieniu grupowym obowiązuje to wtedy, gdy nie zawarto porozumienia ze związkami (art. 5 ust. 2 ustawy o zwolnieniach).</li>
     </ul>
 
     <h2 id="po-odmowie">Po odmowie</h2>
     <p>
       Umowa rozwiązuje się z końcem okresu wypowiedzenia (art. 42 § 3). Gdy pracodawca zatrudnia co najmniej 20 osób,
-      a wypowiedzenie ma wyłącznie przyczyny niedotyczące pracownika, odprawa wynosi 1, 2 albo 3 pensje zależnie od stażu
-      (art. 8 i 10 ustawy o zwolnieniach). Kwotę policzy <a href="/narzedzia/kalkulator-odprawy">kalkulator odprawy</a>.
+      a umowa kończy się z przyczyn niedotyczących pracownika (przy zwolnieniu indywidualnym: gdy są one wyłącznym
+      powodem), odprawa wynosi 1, 2 albo 3 miesięczne wynagrodzenia zależnie od stażu, najwyżej 15-krotność płacy
+      minimalnej (art. 1, 8 i 10 ustawy o zwolnieniach). Kwotę policzy <a href="/narzedzia/kalkulator-odprawy">kalkulator odprawy</a>.
       Przepis wprost nie mówi, czy Twoja odmowa jest współprzyczyną rozwiązania umowy; w sporze ocenia to sąd pracy.
     </p>
   </Fragment>
@@ -164,26 +173,28 @@ const faq = [
         w('odmowa').textContent = '—';
         for (const k of POLA) w(k).textContent = '—';
         status.hidden = true;
+        w('uwaga').hidden = true;
         return;
       }
       const r = wypowiedzenieZmieniajace(start, doreczenie, el('pouczenie').checked);
-      w('odmowa').textContent = dataPoPolsku(r.odmowaDo);
-      w('okres').textContent = r.okres.opis;
-      w('koniec').textContent = dataPoPolsku(r.koniec);
-      w('nowe').textContent = dataPoPolsku(r.noweWarunkiOd);
-      w('ostatni').textContent = dataPoPolsku(r.koniec);
-      w('wariant-b').textContent = r.pouczenie ? dataPoPolsku(r.odmowaDoWariantB) : 'nie dotyczy (bez pouczenia)';
-      w('odwolanie').textContent = dataPoPolsku(r.odwolanieDo);
+      w('odmowa').textContent = typografia(dataPoPolsku(r.odmowaDo));
+      w('okres').textContent = typografia(r.okres.opis);
+      w('koniec').textContent = typografia(dataPoPolsku(r.koniec));
+      w('nowe').textContent = typografia(dataPoPolsku(r.noweWarunkiOd));
+      w('ostatni').textContent = typografia(dataPoPolsku(r.koniec));
+      w('wariant-b').textContent = typografia(r.pouczenie ? dataPoPolsku(r.odmowaDoWariantB) : 'nie dotyczy (bez pouczenia)');
+      w('odwolanie').textContent = typografia(dataPoPolsku(r.odwolanieDo));
+      w('uwaga').hidden = false;
       w('uwaga').textContent = typografia(
         r.pouczenie
-          ? 'Bez odmowy w tym terminie przyjmujesz nowe warunki (art. 42 § 3 Kodeksu pracy). Odmowę złóż na piśmie i zachowaj kopię z datą odbioru.'
-          : 'Bez pouczenia możesz odmówić do końca okresu wypowiedzenia (art. 42 § 3 zdanie trzecie Kodeksu pracy). Odmowę złóż na piśmie i zachowaj kopię z datą odbioru.',
+          ? 'Odmowa złożona później może zostać uznana za spóźnioną, a wtedy przyjmujesz nowe warunki (art. 42 § 3 Kodeksu pracy). Liczy się dzień, w którym odmowa dotrze do pracodawcy.'
+          : 'Bez pouczenia możesz odmówić do końca okresu wypowiedzenia (art. 42 § 3 zdanie trzecie Kodeksu pracy). Liczy się dzień, w którym odmowa dotrze do pracodawcy.',
       );
       const zostalo = dniMiedzy(dzisWPolsce(), r.odmowaDo);
       status.hidden = false;
       status.dataset.status = zostalo < 0 ? 'po-terminie' : zostalo <= 3 ? 'wkrotce' : 'w-terminie';
       status.textContent = typografia(
-        zostalo < 0 ? 'Termin na odmowę minął' : zostalo === 0 ? 'To dziś: złóż odmowę dzisiaj' : `Zostało ${odmiana(zostalo, ['dzień', 'dni', 'dni'])}`,
+        zostalo < 0 ? 'Termin na odmowę minął' : zostalo === 0 ? 'To dziś: złóż odmowę dzisiaj' : zostalo === 1 ? 'Został 1 dzień' : `Zostało ${odmiana(zostalo, ['dzień', 'dni', 'dni'])}`,
       );
     };
     form.addEventListener('input', przelicz);

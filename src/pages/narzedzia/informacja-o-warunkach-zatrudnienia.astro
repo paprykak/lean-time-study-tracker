@@ -9,7 +9,7 @@ const START = dzisWPolsce();
 const lista = obowiazkiNaStart({ start: START, regulamin: true, monitoring: true, ppk: true });
 const informacja = lista.find((o) => o.klucz === 'informacja')!;
 const opisTerminu = (o: (typeof lista)[number]) =>
-  o.kiedy === 'przed' ? 'przed rozpoczęciem pracy' : `do ${dataPoPolsku(o.data)}${o.przesunieta ? ` (dzień wolny; po przesunięciu ${dataPoPolsku(o.przesunieta)})` : ''}`;
+  o.kiedy === 'przed' ? 'przed rozpoczęciem pracy' : `do ${dataPoPolsku(o.data)}${o.przesunieta ? ` (sobota albo święto; po przesunięciu ${dataPoPolsku(o.przesunieta)})` : ''}`;
 
 const faq = [
   {
@@ -26,11 +26,11 @@ const faq = [
   },
   {
     pytanie: 'Czy pracodawca może dopuścić mnie do pracy bez badań lekarskich?',
-    odpowiedz: 'Nie. Potrzebne jest aktualne orzeczenie lekarskie o braku przeciwwskazań na tym stanowisku (art. 229 § 4 Kodeksu pracy). Badań wstępnych nie robi się, gdy wracasz do tego samego pracodawcy na to samo stanowisko w ciągu 30 dni od końca poprzedniej umowy, albo gdy w tym czasie przechodzisz do innego pracodawcy z aktualnym orzeczeniem na takie same warunki, poza pracami szczególnie niebezpiecznymi (art. 229 § 1¹).',
+    odpowiedz: 'Nie. Potrzebne jest aktualne orzeczenie lekarskie o braku przeciwwskazań na tym stanowisku (art. 229 § 4 Kodeksu pracy). Badań wstępnych nie robi się, gdy wracasz do tego samego pracodawcy na to samo stanowisko albo stanowisko o takich samych warunkach w ciągu 30 dni od końca poprzedniej umowy, albo gdy w tym czasie przechodzisz do innego pracodawcy z aktualnym orzeczeniem, a ten stwierdzi, że warunki są takie same; nie dotyczy to prac szczególnie niebezpiecznych (art. 229 § 1¹).',
   },
   {
     pytanie: 'Co, gdy warunki zatrudnienia się zmienią?',
-    odpowiedz: 'Pracodawca informuje o zmianie warunków z informacji niezwłocznie, najpóźniej w dniu, w którym zmiana zaczyna Cię dotyczyć, a o zmianie adresu siedziby w ciągu 7 dni (art. 29 § 3² i § 3³ Kodeksu pracy). Zmiana warunków samej umowy wymaga formy pisemnej (art. 29 § 4): aneksu albo wypowiedzenia zmieniającego.',
+    odpowiedz: 'Pracodawca informuje o zmianie warunków z informacji niezwłocznie, najpóźniej w dniu, w którym zmiana zaczyna Cię dotyczyć, a o zmianie adresu siedziby w ciągu 7 dni (art. 29 § 3² i § 3³ Kodeksu pracy). Zmiana warunków samej umowy wymaga formy pisemnej: porozumienia na piśmie (art. 29 § 4) albo wypowiedzenia zmieniającego (art. 42).',
   },
   {
     pytanie: 'Do kiedy pracodawca zgłasza mnie do ZUS?',
@@ -52,7 +52,7 @@ const faq = [
       <div class="mt-4">
         <label for="sp-start" class="etykieta-pola">Pierwszy dzień pracy</label>
         <input id="sp-start" name="start" type="date" class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" value={START} aria-describedby="sp-blad" />
-        <p id="sp-blad" class="blad-pola" data-blad="dane" hidden></p>
+        <p id="sp-blad" class="blad-pola" data-blad="dane" role="alert" hidden></p>
       </div>
       <fieldset class="mt-6">
         <legend class="etykieta">U tego pracodawcy</legend>
@@ -66,15 +66,16 @@ const faq = [
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
       <h2 id="wynik-tytul" class="etykieta">Informacja o warunkach zatrudnienia najpóźniej</h2>
-      <div aria-live="polite" aria-atomic="true">
+      <div aria-live="polite">
         <p class="wynik-data" data-w="informacja">{dataPoPolsku(informacja.data)}</p>
-      </div>
+        <p class="meta mt-1" data-w="informacja-przesuniecie" hidden={!informacja.przesunieta}>{informacja.przesunieta ? `Sobota albo święto; po przesunięciu ${dataPoPolsku(informacja.przesunieta)}` : ''}</p>
       <ul class="lista-obowiazkow mt-4" data-w="lista">
         {lista.map((o) => (
-          <li data-kiedy={o.kiedy}><strong>{o.nazwa}</strong>: {opisTerminu(o)} ({o.podstawa})</li>
+          <li data-kiedy={o.kiedy}><strong>{o.nazwa}</strong>: {opisTerminu(o)}; {o.podstawa}</li>
         ))}
       </ul>
-      <p class="wynik-uwaga">Badania, szkolenie BHP i umowa (albo jej potwierdzenie na piśmie) muszą być przed pierwszą zmianą. Bez nich pracodawca nie może dopuścić Cię do pracy.</p>
+      </div>
+      <p class="wynik-uwaga">Badania, szkolenie BHP i umowa (albo jej potwierdzenie na piśmie) muszą być przed pierwszą zmianą, z wyjątkami opisanymi niżej.</p>
       <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
     </div>
   </form>
@@ -93,11 +94,13 @@ const faq = [
       pracodawcy wobec pracownika, więc wcześniejsza data jest bezpieczna dla obu stron.
     </p>
     <p>
-      <strong>PPK.</strong> Pracodawca zapisuje Cię do PPK najwcześniej po 14 dniach zatrudnienia i najpóźniej do 10. dnia
+      <strong>PPK.</strong> Gdy masz od 18 do 54 lat, pracodawca zapisuje Cię do PPK najwcześniej po 14 dniach zatrudnienia i najpóźniej do 10. dnia
       miesiąca po miesiącu, w którym minęły 3 miesiące zatrudnienia, chyba że wcześniej złożysz deklarację rezygnacji
       (art. 16 ust. 1 ustawy o PPK). Do 3 miesięcy wlicza się zatrudnienie u tego pracodawcy z poprzednich 12 miesięcy
-      (art. 16 ust. 2), więc przy powrocie termin może być wcześniejszy. 3 miesiące liczymy od pierwszego dnia pracy
-      włącznie: przy starcie 1 listopada mijają 31 stycznia, a termin to 10 lutego. Ile kosztuje oszczędzanie w PPK na
+      (art. 16 ust. 2), więc przy powrocie termin może być wcześniejszy. Od 55 do 69 lat pracodawca zapisuje do PPK tylko na Twój wniosek, a po 70. urodzinach wcale (art. 15). Przepis nie mówi, czy pierwszy dzień pracy
+      wlicza się do 3 miesięcy. Liczymy wariant wcześniejszy, z pierwszym dniem: przy starcie 1 listopada 3 miesiące mijają
+      31 stycznia, a termin to 10 lutego; przy drugim sposobie liczenia wyszłoby 10 marca. Deklarację rezygnacji składasz
+      na piśmie (art. 23 ust. 2), najlepiej przed wcześniejszą z tych dat. Ile kosztuje oszczędzanie w PPK na
       rękę, policzy <a href="/narzedzia/kalkulator-ppk">kalkulator PPK</a>.
     </p>
 
@@ -105,7 +108,7 @@ const faq = [
     <ul>
       <li>Umowa o pracę na piśmie albo pisemne potwierdzenie stron, rodzaju umowy i warunków (art. 29 § 2).</li>
       <li>Aktualne orzeczenie lekarskie o braku przeciwwskazań na stanowisku (art. 229 § 4); skierowanie na badania wydaje pracodawca (art. 229 § 4a).</li>
-      <li>Szkolenie BHP przed dopuszczeniem do pracy (art. 237<sup>3</sup> § 2). Nie trzeba go powtarzać przy kolejnej umowie na tym samym stanowisku zajmowanym bezpośrednio wcześniej. Pierwsze szkolenie okresowe policzy <a href="/narzedzia/szkolenie-okresowe-bhp">kalkulator szkolenia BHP</a>.</li>
+      <li>Szkolenie BHP przed dopuszczeniem do pracy (art. 237<sup>3</sup> § 2): instruktaż ogólny i stanowiskowy (§ 8–11 rozporządzenia w sprawie szkolenia BHP). Nie trzeba go powtarzać przy kolejnej umowie na tym samym stanowisku zajmowanym bezpośrednio wcześniej. Pierwsze szkolenie okresowe policzy <a href="/narzedzia/szkolenie-okresowe-bhp">kalkulator szkolenia BHP</a>.</li>
       <li>Zapoznanie z regulaminem pracy, jeśli pracodawca go ma (art. 104<sup>3</sup> § 2).</li>
       <li>Informacja o celach, zakresie i sposobie monitoringu, jeśli jest (art. 22<sup>2</sup> § 8, a dla poczty i innych form art. 22<sup>3</sup> § 3–4).</li>
     </ul>
@@ -139,7 +142,7 @@ const faq = [
     const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
     const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
     const opis = (o: Obowiazek) =>
-      o.kiedy === 'przed' ? 'przed rozpoczęciem pracy' : `do ${dataPoPolsku(o.data)}${o.przesunieta ? ` (dzień wolny; po przesunięciu ${dataPoPolsku(o.przesunieta)})` : ''}`;
+      o.kiedy === 'przed' ? 'przed rozpoczęciem pracy' : `do ${dataPoPolsku(o.data)}${o.przesunieta ? ` (sobota albo święto; po przesunięciu ${dataPoPolsku(o.przesunieta)})` : ''}`;
     const przelicz = () => {
       const start = el('start').value;
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
@@ -149,18 +152,22 @@ const faq = [
       b.textContent = blad ?? '';
       if (blad) {
         w('informacja').textContent = '—';
+        w('informacja-przesuniecie').hidden = true;
         lista.replaceChildren();
         return;
       }
       const obowiazki = obowiazkiNaStart({ start, regulamin: el('regulamin').checked, monitoring: el('monitoring').checked, ppk: el('ppk').checked });
-      w('informacja').textContent = dataPoPolsku(obowiazki.find((o) => o.klucz === 'informacja')!.data);
+      const inf = obowiazki.find((o) => o.klucz === 'informacja')!;
+      w('informacja').textContent = typografia(dataPoPolsku(inf.data));
+      w('informacja-przesuniecie').hidden = !inf.przesunieta;
+      w('informacja-przesuniecie').textContent = inf.przesunieta ? typografia(`Sobota albo święto; po przesunięciu ${dataPoPolsku(inf.przesunieta)}`) : '';
       lista.replaceChildren(
         ...obowiazki.map((o) => {
           const li = document.createElement('li');
           li.dataset.kiedy = o.kiedy;
           const s = document.createElement('strong');
           s.textContent = typografia(o.nazwa);
-          li.append(s, document.createTextNode(typografia(`: ${opis(o)} (${o.podstawa})`)));
+          li.append(s, document.createTextNode(typografia(`: ${opis(o)}; ${o.podstawa}`)));
           return li;
         }),
       );

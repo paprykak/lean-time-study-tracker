@@ -7,7 +7,8 @@
 // - 7 dni od nawiązania stosunku pracy: zgłoszenie do ZUS (art. 13 pkt 1 i art. 36 ust. 2 i 4 ustawy o systemie ubezpieczeń
 //   społecznych, t.j. Dz.U. 2026 poz. 1474); stosunek pracy nawiązuje się w dniu rozpoczęcia pracy z umowy (art. 26 Kp);
 // - PPK: umowa o prowadzenie PPK najpóźniej do 10. dnia miesiąca po miesiącu, w którym upłynęły 3 miesiące zatrudnienia
-//   (art. 16 ust. 1 ustawy o PPK, t.j. Dz.U. 2026 poz. 192); zatrudnienie z 12 poprzednich miesięcy wlicza się (ust. 2).
+//   (art. 16 ust. 1 ustawy o PPK, t.j. Dz.U. 2026 poz. 192); zatrudnienie z 12 poprzednich miesięcy wlicza się (ust. 2);
+//   od 55 do 69 lat tylko na wniosek, od 70 lat wcale (art. 15).
 //
 // Interpretacje: terminy w dniach liczymy od dnia po dopuszczeniu (art. 111 § 2 KC przez art. 300 Kp). Przepisy nie
 // przesądzają, czy art. 115 KC przesuwa koniec z soboty i święta na obowiązki pracodawcy; podajemy datę bez przesunięcia
@@ -63,7 +64,7 @@ export function obowiazkiNaStart(d: DaneStartu): Obowiazek[] {
   const lista: Obowiazek[] = [
     { klucz: 'umowa', nazwa: 'Umowa o pracę na piśmie albo pisemne potwierdzenie ustaleń', kiedy: 'przed', data: s, podstawa: 'art. 29 § 2 Kodeksu pracy' },
     { klucz: 'badania', nazwa: 'Orzeczenie lekarskie z badań wstępnych (skierowanie daje pracodawca)', kiedy: 'przed', data: s, podstawa: 'art. 229 § 1 i 4 Kodeksu pracy' },
-    { klucz: 'bhp', nazwa: 'Szkolenie BHP: instruktaż ogólny i stanowiskowy', kiedy: 'przed', data: s, podstawa: 'art. 237³ § 2 Kodeksu pracy' },
+    { klucz: 'bhp', nazwa: 'Szkolenie BHP (instruktaż ogólny i stanowiskowy)', kiedy: 'przed', data: s, podstawa: 'art. 237³ § 2 Kodeksu pracy, § 8–11 rozporządzenia o szkoleniu BHP' },
   ];
   if (d.regulamin) lista.push({ klucz: 'regulamin', nazwa: 'Zapoznanie z regulaminem pracy', kiedy: 'przed', data: s, podstawa: 'art. 104³ § 2 Kodeksu pracy' });
   if (d.monitoring) lista.push({ klucz: 'monitoring', nazwa: 'Informacja o celach, zakresie i sposobie monitoringu', kiedy: 'przed', data: s, podstawa: 'art. 22² § 8 i art. 22³ § 3–4 Kodeksu pracy' });
@@ -85,11 +86,11 @@ export function obowiazkiNaStart(d: DaneStartu): Obowiazek[] {
     const { koniec } = przesunZDniaWolnego(data);
     lista.push({
       klucz: 'ppk',
-      nazwa: 'Zapis do PPK (chyba że złożysz deklarację rezygnacji)',
+      nazwa: 'Zapis do PPK, chyba że złożysz pisemną deklarację rezygnacji (od 55 lat tylko na wniosek)',
       kiedy: 'data',
       data,
       ...(koniec !== data ? { przesunieta: koniec } : {}),
-      podstawa: 'art. 16 ust. 1 ustawy o PPK',
+      podstawa: 'art. 15 i 16 ust. 1 ustawy o PPK',
     });
   }
   return lista;

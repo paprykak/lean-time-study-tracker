@@ -1,0 +1,210 @@
+---
+// Terminy zgłoszeń przy pracy cudzoziemca: oświadczenie (art. 61, 70, 71), zezwolenie (art. 15, 19–21), ochrona czasowa
+// i obywatele Ukrainy (art. 5a; art. 41 ustawy o wygaszeniu; art. 42x), przechowywanie kopii (art. 4 ust. 4 i 6).
+// Logika: src/lib/narzedzia/cudzoziemiec-terminy.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { terminyOchrony, type Termin } from '../../lib/narzedzia/cudzoziemiec-terminy';
+import { dataPoPolsku, dodajDni, dodajMiesiace, dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+const DZIS = dzisWPolsce();
+const START_EW = dodajDni(DZIS, 14);
+const KONIEC_OSW = dodajDni(dodajMiesiace(START_EW, 12), -1);
+const KONIEC_ZEZW = dodajDni(dodajMiesiace(DZIS, 12), -1);
+const lista = terminyOchrony({ start: DZIS });
+const opis = (t: Termin) =>
+  t.data ? `do ${dataPoPolsku(t.data)}${t.przesunieta ? ` (sobota albo święto; po przesunięciu ${dataPoPolsku(t.przesunieta)})` : ''}` : 'bez terminu w dniach';
+
+const faq = [
+  {
+    pytanie: 'Do kiedy pracodawca zgłasza pracę obywatela Ukrainy?',
+    odpowiedz: 'W ciągu 7 dni od dnia rozpoczęcia pracy powiadamia powiatowy urząd pracy przez praca.gov.pl, a po zmianie rodzaju umowy, stanowiska, obniżeniu wymiaru albo stawki ponownie w ciągu 7 dni (art. 5a ust. 1 i 5 ustawy o powierzaniu pracy cudzoziemcom). Dotyczy to osób z ochroną czasową, a przez 3 lata od 5 marca 2026 r. także obywateli Ukrainy przebywających legalnie bez niej (art. 41 ustawy o wygaszeniu pomocy obywatelom Ukrainy).',
+  },
+  {
+    pytanie: 'Jakie terminy obowiązują przy oświadczeniu o powierzeniu pracy?',
+    odpowiedz: 'Pracodawca powiadamia starostę o podjęciu pracy w ciągu 7 dni od jej rozpoczęcia, a o niepodjęciu w ciągu 14 dni od dnia rozpoczęcia wpisanego do ewidencji (art. 70 ust. 1). O tym, że praca skończyła się wcześniej, też powiadamia, ale przepis nie podaje terminu w dniach (art. 70 ust. 2).',
+  },
+  {
+    pytanie: 'Kiedy pracodawca powiadamia wojewodę przy zezwoleniu na pracę?',
+    odpowiedz: 'W ciągu 7 dni, gdy praca nie zaczęła się w ciągu 2 miesięcy od początku ważności zezwolenia, gdy przerwa w pracy trwa ponad 2 miesiące albo gdy praca skończyła się wcześniej niż 2 miesiące przed końcem ważności zezwolenia (art. 19 i 20 ust. 1 ustawy o powierzaniu pracy cudzoziemcom).',
+  },
+  {
+    pytanie: 'Jak pracować dalej, gdy kończy się zezwolenie albo oświadczenie?',
+    odpowiedz: 'Pracodawca składa wniosek o kolejne zezwolenie w okresie ważności obecnego; wtedy praca na tym samym stanowisku jest legalna do dnia, w którym decyzja stanie się ostateczna (art. 21 ust. 1). Przy oświadczeniu wniosek o zezwolenie trzeba złożyć przed dniem zakończenia pracy z oświadczenia, po co najmniej 3 miesiącach pracy na umowę o pracę (art. 71 ust. 1).',
+  },
+  {
+    pytanie: 'Jak długo pracodawca przechowuje kopię karty pobytu?',
+    odpowiedz: 'Przez cały okres pracy i jeszcze 2 lata, liczone od końca roku, w którym umowa się skończyła (art. 4 ust. 4 i 6 ustawy o powierzaniu pracy cudzoziemcom). Gdy umowa kończy się w 2026 r., kopia może być przechowywana do 31 grudnia 2028 r.',
+  },
+];
+---
+<StronaNarzedzia
+  slug="zgloszenie-pracy-cudzoziemca"
+  tytul="Zgłoszenie pracy cudzoziemca: terminy"
+  opis="Terminy zgłoszeń pracy cudzoziemca: Ukrainiec do urzędu pracy w 7 dni, oświadczenie u starosty (7 i 14 dni), zezwolenie u wojewody, wniosek o kolejne."
+  h1="Praca cudzoziemca: terminy zgłoszeń"
+  lead="Pracodawca zgłasza pracę cudzoziemca w urzędzie pracy, u starosty albo u wojewody w ciągu 7 lub 14 dni. Wybierz podstawę pracy i wpisz daty, a policzymy terminy zgłoszeń i do kiedy można pracować."
+  faq={faq}
+>
+  <form class="kalkulator" data-cudzoziemiec-terminy novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Podstawa pracy</h2>
+      <div class="mt-4">
+        <label for="ct-tryb" class="etykieta-pola">Na jakiej podstawie</label>
+        <select id="ct-tryb" name="tryb" class="pole mt-1">
+          <option value="ochrona" selected>Ukraina, ochrona czasowa</option>
+          <option value="oswiadczenie">Oświadczenie o powierzeniu pracy</option>
+          <option value="zezwolenie">Zezwolenie na pracę</option>
+        </select>
+      </div>
+
+      <div data-tryb="ochrona">
+        <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div>
+            <label for="ct-o-start" class="etykieta-pola">Pierwszy dzień pracy</label>
+            <input id="ct-o-start" name="o-start" type="date" class="pole mt-1" min="2025-06-01" max="2100-12-31" value={DZIS} aria-describedby="ct-blad" />
+          </div>
+          <div>
+            <label for="ct-o-zmiana" class="etykieta-pola">Zmiana umowy lub stawki</label>
+            <input id="ct-o-zmiana" name="o-zmiana" type="date" class="pole mt-1" min="2025-06-01" max="2100-12-31" aria-describedby="ct-blad ct-o-zmiana-opis" />
+            <p id="ct-o-zmiana-opis" class="meta mt-1">Opcjonalnie: rodzaj umowy, stanowisko, mniejszy wymiar albo niższa stawka.</p>
+          </div>
+        </div>
+      </div>
+
+      <div data-tryb="oswiadczenie" hidden>
+        <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div>
+            <label for="ct-s-zlozone" class="etykieta-pola">Złożenie oświadczenia</label>
+            <input id="ct-s-zlozone" name="s-zlozone" type="date" class="pole mt-1" min="2025-06-01" max="2100-12-31" value={DZIS} aria-describedby="ct-blad" />
+          </div>
+          <div>
+            <label for="ct-s-start" class="etykieta-pola">Start pracy z ewidencji</label>
+            <input id="ct-s-start" name="s-start" type="date" class="pole mt-1" min="2025-06-01" max="2100-12-31" value={START_EW} aria-describedby="ct-blad" />
+          </div>
+          <div>
+            <label for="ct-s-koniec" class="etykieta-pola">Koniec pracy z oświadczenia</label>
+            <input id="ct-s-koniec" name="s-koniec" type="date" class="pole mt-1" min="2025-06-01" max="2100-12-31" value={KONIEC_OSW} aria-describedby="ct-blad" />
+          </div>
+          <div>
+            <label for="ct-s-faktyczny" class="etykieta-pola">Faktyczny start pracy</label>
+            <input id="ct-s-faktyczny" name="s-faktyczny" type="date" class="pole mt-1" min="2025-06-01" max="2100-12-31" aria-describedby="ct-blad ct-s-faktyczny-opis" />
+            <p id="ct-s-faktyczny-opis" class="meta mt-1">Puste, gdy praca jeszcze się nie zaczęła.</p>
+          </div>
+        </div>
+      </div>
+
+      <div data-tryb="zezwolenie" hidden>
+        <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div>
+            <label for="ct-z-od" class="etykieta-pola">Zezwolenie ważne od</label>
+            <input id="ct-z-od" name="z-od" type="date" class="pole mt-1" min="2025-06-01" max="2100-12-31" value={DZIS} aria-describedby="ct-blad" />
+          </div>
+          <div>
+            <label for="ct-z-do" class="etykieta-pola">Zezwolenie ważne do</label>
+            <input id="ct-z-do" name="z-do" type="date" class="pole mt-1" min="2025-06-01" max="2100-12-31" value={KONIEC_ZEZW} aria-describedby="ct-blad" />
+          </div>
+          <div>
+            <label for="ct-z-start" class="etykieta-pola">Faktyczny start pracy</label>
+            <input id="ct-z-start" name="z-start" type="date" class="pole mt-1" min="2025-06-01" max="2100-12-31" aria-describedby="ct-blad" />
+          </div>
+          <div>
+            <label for="ct-z-koniec" class="etykieta-pola">Praca kończy się wcześniej</label>
+            <input id="ct-z-koniec" name="z-koniec" type="date" class="pole mt-1" min="2025-06-01" max="2100-12-31" aria-describedby="ct-blad ct-z-koniec-opis" />
+            <p id="ct-z-koniec-opis" class="meta mt-1">Opcjonalnie: ostatni dzień pracy.</p>
+          </div>
+        </div>
+      </div>
+      <p id="ct-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Terminy</h2>
+      <ul class="lista-terminow mt-3" data-w="lista" aria-live="polite">
+        {lista.map((t) => (
+          <li><strong>{t.nazwa}</strong>: {opis(t)}; {t.podstawa}{t.uwaga ? `. ${t.uwaga}` : ''}</li>
+        ))}
+      </ul>
+      <p class="wynik-uwaga">Kopie dokumentu pobytowego pracodawca przechowuje przez cały okres pracy i 2 lata od końca roku, w którym umowa się skończyła (art. 4 ust. 4 i 6).</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Terminy pochodzą z ustawy z 20 marca 2025 r. o warunkach dopuszczalności powierzania pracy cudzoziemcom ze
+      zmianami z 2025 i 2026 r. Terminy w dniach liczymy od dnia po zdarzeniu (art. 111 § 2 Kodeksu cywilnego). Ustawa
+      nie mówi, czy termin kończący się w sobotę albo święto przesuwa się na dzień roboczy, więc podajemy obie daty:
+      wcześniejsza jest bezpieczna.
+    </p>
+    <ul>
+      <li><strong>Oświadczenie:</strong> praca najwyżej 24 miesiące, start najpóźniej 6 miesięcy od złożenia (art. 61 ust. 1 pkt 5–6). 24 miesiące liczymy z dniem startu: od 1 grudnia do 30 listopada dwa lata później. Powiadomienie starosty o podjęciu pracy 7 dni od rozpoczęcia, o niepodjęciu 14 dni od dnia z ewidencji (art. 70 ust. 1).</li>
+      <li><strong>Zezwolenie na pracę:</strong> najwyżej 3 lata (art. 15). Okno 2 miesięcy na rozpoczęcie pracy liczymy z pierwszym dniem ważności, a 7 dni na powiadomienie od ostatniego dnia tego okna: to najwcześniejszy możliwy termin, bo przepis nie wskazuje dnia, w którym okoliczność „wystąpiła”. Zakończenie pracy zgłasza się, gdy następuje wcześniej niż w dniu, który datą odpowiada końcowi ważności 2 miesiące wcześniej (art. 19 pkt 3).</li>
+      <li><strong>Ochrona czasowa:</strong> powiadomienie urzędu pracy 7 dni od rozpoczęcia pracy i 7 dni od zmiany umowy, stanowiska, wymiaru albo stawki (art. 5a). Okres 3 lat z art. 41 ustawy o wygaszeniu liczymy od 5 marca 2026 r. do 4 marca 2029 r.; przepis nie przesądza, czy ostatnim dniem nie jest 5 marca.</li>
+    </ul>
+    <p>
+      Na jakiej podstawie cudzoziemiec może pracować, sprawdzi <a href="/narzedzia/praca-cudzoziemca">kalkulator podstawy
+      pracy cudzoziemca</a>. Agencja pracy tymczasowej ma dodatkowo limit 18 miesięcy u jednego pracodawcy użytkownika:
+      <a href="/narzedzia/limit-pracy-tymczasowej">limit pracy tymczasowej</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { terminyOchrony, terminyOswiadczenia, terminyZezwolenia, type Termin } from '../../lib/narzedzia/cudzoziemiec-terminy';
+  import { dataPoPolsku } from '../../lib/narzedzia/terminy';
+  import { typografia } from '../../lib/typografia.mjs';
+
+  const form = document.querySelector<HTMLFormElement>('[data-cudzoziemiec-terminy]');
+  if (form) {
+    const v = (n: string) => (form.elements.namedItem(n) as HTMLInputElement).value;
+    const lista = form.querySelector<HTMLElement>('[data-w="lista"]')!;
+    const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+    const opis = (t: Termin) =>
+      t.data ? `do ${dataPoPolsku(t.data)}${t.przesunieta ? ` (sobota albo święto; po przesunięciu ${dataPoPolsku(t.przesunieta)})` : ''}` : 'bez terminu w dniach';
+    const przelicz = () => {
+      const tryb = v('tryb');
+      for (const g of form.querySelectorAll<HTMLElement>('[data-tryb]')) g.hidden = g.dataset.tryb !== tryb;
+      let terminy: Termin[] = [];
+      let blad: string | null = null;
+      try {
+        if (tryb === 'ochrona') terminy = terminyOchrony({ start: v('o-start'), zmiana: v('o-zmiana') || null });
+        else if (tryb === 'oswiadczenie')
+          terminy = terminyOswiadczenia({ zlozone: v('s-zlozone') || null, startEwidencja: v('s-start'), startFaktyczny: v('s-faktyczny') || null, koniec: v('s-koniec') });
+        else terminy = terminyZezwolenia({ od: v('z-od'), do: v('z-do'), startFaktyczny: v('z-start') || null, zakonczenie: v('z-koniec') || null });
+      } catch (e) {
+        blad = e instanceof Error ? e.message : 'Popraw dane.';
+      }
+      b.hidden = !blad;
+      b.textContent = blad ?? '';
+      lista.replaceChildren(
+        ...terminy.map((t) => {
+          const li = document.createElement('li');
+          if (t.stan === 'blad') li.dataset.stan = 'blad';
+          const s = document.createElement('strong');
+          s.textContent = typografia(t.nazwa);
+          li.append(s, document.createTextNode(typografia(`: ${opis(t)}; ${t.podstawa}${t.uwaga ? `. ${t.uwaga}` : ''}`)));
+          return li;
+        }),
+      );
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>
+
+<style>
+  .lista-terminow {
+    display: grid;
+    gap: 0.5rem;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    list-style: disc;
+    padding-left: 1.25rem;
+  }
+  .lista-terminow li[data-stan='blad'] {
+    color: var(--color-blad);
+  }
+</style>

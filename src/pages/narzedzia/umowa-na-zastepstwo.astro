@@ -43,7 +43,7 @@ const faq = [
   tytul="Umowa na zastępstwo: wypowiedzenie i ciąża"
   opis="Okres wypowiedzenia i ostatni dzień umowy na zastępstwo, czy przedłuży się do porodu i czy dotyczy jej limit 33 miesięcy. Według Kodeksu pracy."
   h1="Umowa na zastępstwo: wypowiedzenie, ciąża i limit"
-  lead="Umowa na zastępstwo to umowa na czas określony zawarta na czas nieobecności innej osoby. Ma trzy odrębności: nie dotyczy jej limit 33 miesięcy, nie przedłuża się do dnia porodu, a okres wypowiedzenia jest taki jak przy innych umowach. Wpisz daty, a policzymy ostatni dzień umowy i sprawdzimy przedłużenie."
+  lead="Umowa na zastępstwo to umowa na czas określony zawarta na czas nieobecności innej osoby. Nie dotyczy jej limit 33 miesięcy i nie przedłuża się do dnia porodu, a okres wypowiedzenia jest taki jak przy innych umowach. Wpisz daty, a policzymy ostatni dzień umowy i sprawdzimy przedłużenie."
   faq={faq}
 >
   <form class="kalkulator" data-zastepstwo novalidate aria-labelledby="kalkulator-tytul">
@@ -169,7 +169,7 @@ const faq = [
 </StronaNarzedzia>
 
 <script>
-  import { przedluzenieDoPorodu, wypowiedzenieWCiazy, wypowiedzenieZastepstwa, type RodzajUmowyWCiazy } from '../../lib/narzedzia/umowa-zastepstwo';
+  import { przedluzenieDoPorodu, uplywTrzeciegoMiesiaca, wypowiedzenieWCiazy, wypowiedzenieZastepstwa, type RodzajUmowyWCiazy } from '../../lib/narzedzia/umowa-zastepstwo';
   import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
   import { odmiana } from '../../lib/redakcja';
   import { typografia } from '../../lib/typografia.mjs';
@@ -203,30 +203,30 @@ const faq = [
       else if (koniec && koniec < doreczenie) blad = 'Koniec umowy nie może być wcześniejszy niż dzień doręczenia.';
       else if (ciaza && !poprawnaData(ciaza)) blad = 'Wpisz poprawną datę początku ciąży.';
       b.hidden = !blad;
-      b.textContent = blad ?? '';
+      b.textContent = typografia(blad ?? '');
       if (blad) {
         for (const k of POLA) w(k).textContent = '—';
         status.hidden = true;
         return;
       }
       const r = wypowiedzenieZastepstwa(start, doreczenie, koniec);
-      w('ostatni').textContent = dataPoPolsku(r.ostatniDzien);
-      w('staz').textContent = odmiana(r.stazMiesiecy, ['pełny miesiąc', 'pełne miesiące', 'pełnych miesięcy']);
-      w('okres').textContent = r.okres.opis;
-      w('koniec-okresu').textContent = dataPoPolsku(r.koniecOkresu);
+      w('ostatni').textContent = typografia(dataPoPolsku(r.ostatniDzien));
+      w('staz').textContent = typografia(odmiana(r.stazMiesiecy, ['pełny miesiąc', 'pełne miesiące', 'pełnych miesięcy']));
+      w('okres').textContent = typografia(r.okres.opis);
+      w('koniec-okresu').textContent = typografia(dataPoPolsku(r.koniecOkresu));
       w('limit').textContent = typografia(rodzaj === 'zastepstwo' ? 'nie dotyczy (art. 25¹ § 4 pkt 1)' : 'dotyczy (art. 25¹ § 1)');
 
       w('uplyw').textContent = '—';
       if (rodzaj === 'zastepstwo') {
         w('porod').textContent = typografia(STATUS_PORODU.zastepstwo);
-        if (ciaza) w('uplyw').textContent = dataPoPolsku(przedluzenieDoPorodu(rodzaj, koniec || ciaza, ciaza).uplyw3Miesiaca);
+        if (ciaza) w('uplyw').textContent = typografia(dataPoPolsku(uplywTrzeciegoMiesiaca(ciaza)));
       } else if (!ciaza) {
-        w('porod').textContent = 'wpisz początek ciąży, jeśli dotyczy';
+        w('porod').textContent = typografia('wpisz początek ciąży, jeśli dotyczy');
       } else if (!koniec) {
-        w('porod').textContent = 'wpisz koniec umowy';
+        w('porod').textContent = typografia('wpisz koniec umowy');
       } else {
         const p = przedluzenieDoPorodu(rodzaj, koniec, ciaza);
-        w('uplyw').textContent = dataPoPolsku(p.uplyw3Miesiaca);
+        w('uplyw').textContent = typografia(dataPoPolsku(p.uplyw3Miesiaca));
         w('porod').textContent = typografia(STATUS_PORODU[p.status]);
       }
 
