@@ -484,7 +484,7 @@ export const OBJASNIENIA = {
   },
   rodzinaipracaWeekend: {
     nazwa: 'rodzinaipraca.gov.pl (projekt Ministerstwa Rodziny, Pracy i Polityki Społecznej), „Kiedy można wykonywać pracę tylko w weekendy?”',
-    opis: 'w systemie weekendowym bez świąt można przepracować najwyżej 36 godzin w tygodniu, więc pełnego etatu zwykle nie da się wypracować; w praktyce ok. 3/4 etatu',
+    opis: 'w systemie weekendowym bez świąt można przepracować najwyżej 36 godzin w tygodniu, więc pełnego etatu zwykle nie da się wypracować; osoba w tym systemie powinna być zatrudniona na ok. 3/4 etatu',
     adres: 'https://rodzinaipraca.gov.pl/dla-pracownika/masz-prawo/czas-pracy/kiedy-mozna-wykonywac-prace-tylko-w-weekendy/',
     sprawdzono: '2026-11-12',
   },

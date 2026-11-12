@@ -11,6 +11,8 @@ describe('plan okresu w systemie równoważnym (art. 135–137 Kp)', () => {
       od: '2026-11-01',
       do: '2026-11-30',
       wymiar: 160,
+      dniPonPt: 21,
+      swietaObnizajace: 1,
       dniKalendarzowe: 30,
       pelneZmiany: 13,
       reszta: 4,
@@ -116,6 +118,8 @@ describe('teksty wyniku', () => {
     expect(a.wolne).toBe('16 dni; minimum z art. 147 Kp: 10');
     expect(a.przerwy).toBe('na zmianie 12 h: 2 przerwy po 15 min; na zmianie 4 h: bez przerwy');
     expect(a.okres).toBe('1 listopada 2026 r. – 30 listopada 2026 r., 30 dni');
+    expect(a.wymiar).toBe('160 h: 21 dni od poniedziałku do piątku × 8 h minus 8 h za 1 święto');
+    expect(opisWyniku(planOkresu('r12', 12, 2027, 2, 1)).wymiar).toBe('160 h: 20 dni od poniedziałku do piątku × 8 h');
     const b = opisWyniku(planOkresu('r24', 24, 2026, 11, 1));
     expect(b.odpoczynek).toBe('po zmianie 24 h co najmniej 24 h bez pracy, po zmianie 16 h co najmniej 16 h');
     expect(b.glowny).toBe('7 dni pracy');

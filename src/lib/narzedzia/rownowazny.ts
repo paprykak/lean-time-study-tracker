@@ -136,6 +136,9 @@ export interface WynikRownowazny {
   status: StatusOkresu;
   /** Wymiar okresu dla pełnego etatu, h (art. 130). */
   wymiar: number;
+  /** Dni od poniedziałku do piątku i święta obniżające wymiar (art. 130 § 2). */
+  dniPonPt: number;
+  swietaObnizajace: number;
   dniKalendarzowe: number;
   pelneZmiany: number;
   /** Godziny krótszej zmiany; 0, gdy wymiar dzieli się bez reszty. */
@@ -189,6 +192,8 @@ export function planOkresu(system: SystemRownowazny, zmiana: number, rok: number
     miesiecy,
     status,
     wymiar: W,
+    dniPonPt: w.dniPonPt,
+    swietaObnizajace: w.swietaObnizajace.length,
     dniKalendarzowe: D,
     pelneZmiany,
     reszta,
@@ -224,7 +229,7 @@ export function opisWyniku(r: WynikRownowazny): Record<'glowny' | 'opis' | 'stat
       : `${plan}; wymiar ${godz(r.wymiar)}`,
     status: `Okres ${odmiana(r.miesiecy, ['miesiąc', 'miesiące', 'miesięcy'])}: ${r.status.opis}`,
     okres: `${dataPoPolsku(r.od)} – ${dataPoPolsku(r.do)}, ${odmiana(r.dniKalendarzowe, DNI)}`,
-    wymiar: `${godz(r.wymiar)} = 8 h × ${r.wymiar / 8} dni od poniedziałku do piątku bez świąt`,
+    wymiar: `${godz(r.wymiar)}: ${r.dniPonPt} dni od poniedziałku do piątku × 8 h${r.swietaObnizajace ? ` minus 8 h za ${odmiana(r.swietaObnizajace, ['święto', 'święta', 'świąt'])}` : ''}`,
     wolne: `${odmiana(r.dniWolne, DNI)}; minimum z art. 147 Kp: ${r.minimumWolnych}`,
     przerwy: `na zmianie ${godz(r.zmiana)}: ${przerwyTekst(r.przerwy)}${r.reszta ? `; na zmianie ${godz(r.reszta)}: ${przerwyTekst(r.przerwyReszty)}` : ''}`,
     odpoczynek: r.odpoczynek === null ? null : `po zmianie ${godz(r.zmiana)} co najmniej ${godz(r.odpoczynek)} bez pracy${r.reszta > 8 ? `, po zmianie ${godz(r.reszta)} co najmniej ${godz(r.reszta)}` : ''}`,

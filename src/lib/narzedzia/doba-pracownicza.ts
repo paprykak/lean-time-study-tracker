@@ -326,7 +326,7 @@ export function opisWyniku(r: WynikDoby): Opis {
       ? 'brak zmian do sprawdzenia'
       : naruszone.length
         ? `za krótki w ${odmiana(naruszone.length, ['dobie', 'dobach', 'dobach'])}`
-        : 'co najmniej 11 h w każdej sprawdzonej dobie',
+        : `co najmniej 11 h w każdej sprawdzonej dobie${r.dni.some((d) => d.stan === 'inne-zasady') ? '; po zmianie dłuższej niż 12 h inne zasady (art. 136 § 2)' : ''}`,
     wiersze,
     uwagi,
   };
