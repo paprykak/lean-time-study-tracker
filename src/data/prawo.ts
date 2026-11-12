@@ -454,14 +454,14 @@ export const AKTY = {
   transportDrogowy: {
     nazwa: 'Ustawa o transporcie drogowym',
     publikator: 'Dz.U. 2025 poz. 1490',
-    uwaga: 'tekst jednolity; art. 39a–39l (kwalifikacja i szkolenie okresowe kierowców); wiek w art. 39a ust. 1 pkt 1 zmieniony od 3 września 2026 r. (Dz.U. 2025 poz. 1676)',
+    uwaga: 'tekst jednolity; art. 3 ust. 1 (przewozy wyłączone), art. 39a–39m (kwalifikacja, szkolenie okresowe i badania kierowców); wiek w art. 39a ust. 1 pkt 1 zmieniony od 3 września 2026 r. (Dz.U. 2025 poz. 1676)',
     adres: eli(2025, 1490),
     sprawdzono: '2026-11-12',
   },
   kierujacyPojazdami: {
     nazwa: 'Ustawa o kierujących pojazdami',
     publikator: 'Dz.U. 2025 poz. 1226',
-    uwaga: 'tekst jednolity; art. 15 (wpis kodu 95 i jego ważność), art. 75 i 82 (badania); art. 15 bez zmian po tekście jednolitym',
+    uwaga: 'tekst jednolity; art. 15 (wpis kodu 95 i jego ważność), art. 75–84 (badania lekarskie i psychologiczne, opłata z art. 79a), art. 90 ust. 1 pkt 7 lit. a; art. 15 bez zmian po tekście jednolitym',
     adres: eli(2025, 1226),
     sprawdzono: '2026-11-12',
   },

@@ -579,7 +579,7 @@ export const NARZEDZIA: Narzedzie[] = [
   {
     slug: 'badania-kierowcy',
     nazwa: 'Badania kierowcy: lekarskie i psychotesty',
-    krotko: 'Kiedy następne badania kierowcy zawodowego (co 5 lat, po 60. roku co 30 miesięcy), kto płaci i ile najwyżej.',
+    krotko: 'Kiedy następne badania kierowcy zawodowego (co 5 lat, po 60. roku co 30 miesięcy), kto płaci i ile kosztują.',
     kategoria: 'uprawnienia',
     przepisy: ['transportDrogowy', 'kierujacyPojazdami', 'badaniaLekarskieKierowcow', 'badaniaPsychologiczne', 'zmianaPsychotestow2026', 'badaniaProfilaktyczne', 'wozkiBhp', 'kodeksPracy', 'kodeksCywilny'],
     sprawdzono: '2026-11-12',
