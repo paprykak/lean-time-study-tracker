@@ -1,0 +1,5 @@
+# Rejestry dopisywane równolegle przez zespoły fabryki (prompty/02-fabryka.md): scalanie zachowuje wpisy z obu gałęzi.
+# Po scaleniu i tak przechodzi pełny npm run check, który wyłapie zdublowany klucz.
+src/data/narzedzia.ts merge=union
+src/data/prawo.ts merge=union
+STAN.md merge=union

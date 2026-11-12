@@ -1,6 +1,10 @@
 // Lista stron do testów E2E i Lighthouse. Testy działają na buildzie testowym (RH_TESTOWE=1, npm run check):
 // cały portal z fikcyjnymi treściami z src/content/testowe, z zachowaniem produkcji (indeksowanie, kanoniczne).
-// Każdy nowy szablon dopisuje tu swój adres.
+// Każdy nowy szablon dopisuje tu swój adres. Adresy narzędzi idą z rejestru (src/data/narzedzia.ts), więc nowe
+// narzędzie nie wymaga zmian w tym pliku; stała z adresem jest potrzebna tylko wtedy, gdy importuje ją test narzędzia.
+import { NARZEDZIA, adresNarzedzia } from '../../src/data/narzedzia';
+
+const NARZEDZIA_ADRESY = NARZEDZIA.map((n) => adresNarzedzia(n.slug));
 export const ARTYKUL = '/testowy-mikroprzestoje';
 export const NARZEDZIE = '/narzedzia/dodatek-za-prace-w-nocy';
 export const NARZEDZIE_BHP = '/narzedzia/szkolenie-okresowe-bhp';
@@ -69,8 +73,9 @@ export const NARZEDZIE_TRZEZWOSC = '/narzedzia/kontrola-trzezwosci';
 export const NARZEDZIE_CIAZA = '/narzedzia/praca-w-ciazy';
 export const NARZEDZIE_RODZIC = '/narzedzia/rodzic-w-pracy';
 export const STRONY = [
-  '/', ARTYKUL, '/narzedzia', NARZEDZIE, NARZEDZIE_BHP, NARZEDZIE_UDT, NARZEDZIE_KG, NARZEDZIE_TEMP, NARZEDZIE_WYMIAR, NARZEDZIE_NADGODZINY, NARZEDZIE_URLOP, NARZEDZIE_GRAFIK, NARZEDZIE_WYPOWIEDZENIE, NARZEDZIE_PRZERWY, NARZEDZIE_BADANIA_UDT, NARZEDZIE_EKWIWALENT, NARZEDZIE_L4, NARZEDZIE_ODPRAWA, NARZEDZIE_WOLNE, NARZEDZIE_PLACA, NARZEDZIE_NETTO, NARZEDZIE_UMOWY, NARZEDZIE_ZLECENIE, NARZEDZIE_NIEDZIELA, NARZEDZIE_PRZESTOJ, NARZEDZIE_URLOPOWE, NARZEDZIE_KOSZT, NARZEDZIE_OPIEKUNCZY, NARZEDZIE_MACIERZYNSKI, NARZEDZIE_SANITARNE, NARZEDZIE_STAWKA, NARZEDZIE_AGENCJA, NARZEDZIE_WOLNE_DNI, NARZEDZIE_BEZROBOTNY, NARZEDZIE_STAZ, NARZEDZIE_OCHRONA, NARZEDZIE_WYPADEK, NARZEDZIE_WYPLATA, NARZEDZIE_ODWOLANIE, NARZEDZIE_OJCOWSKI, NARZEDZIE_PPK, NARZEDZIE_WYCHOWAWCZY, NARZEDZIE_WYPLATA_DODATKI, NARZEDZIE_OKOLICZNOSCIOWY, NARZEDZIE_REHABILITACYJNE, NARZEDZIE_PROBNY, NARZEDZIE_KARA, NARZEDZIE_ZAKAZ, NARZEDZIE_DELEGACJA, NARZEDZIE_ODSZKODOWANIE, NARZEDZIE_POSMIERTNA, NARZEDZIE_ZAGRANICZNA, NARZEDZIE_L4_OCHRONA, NARZEDZIE_URLOP_AGENCJA, NARZEDZIE_HALAS, NARZEDZIE_DRGANIA, NARZEDZIE_POMIESZCZENIE, NARZEDZIE_DYZUR, NARZEDZIE_L4_PO, NARZEDZIE_ROBOCZE, NARZEDZIE_MLODOCIANY, NARZEDZIE_PRZEDAWNIENIE, NARZEDZIE_GRUPOWE, NARZEDZIE_NIEPELNOSPRAWNY, NARZEDZIE_LOJALKA, NARZEDZIE_OKRES_ZASILKOWY, NARZEDZIE_TRZEZWOSC, NARZEDZIE_CIAZA, NARZEDZIE_RODZIC, '/dzial/produkcja', '/dzial/produkcja/2', '/temat/oee', '/autor/redakcja', '/do-pobrania', '/do-pobrania/testowy-karta-obserwacji',
-  '/szukaj', '/o-nas', '/kontakt', '/polityka-prywatnosci', '/regulamin-newslettera', '/stopka-redakcyjna', '/reklama', '/newsletter', '/newsletter/potwierdz', '/newsletter/blad', '/kontakt/wyslano', '/styleguide', '/404', '/410',
+  '/', ARTYKUL, '/narzedzia', ...NARZEDZIA_ADRESY, '/dzial/produkcja', '/dzial/produkcja/2', '/temat/oee', '/autor/redakcja', '/do-pobrania', '/do-pobrania/testowy-karta-obserwacji', '/szukaj', '/o-nas', '/kontakt', '/polityka-prywatnosci', '/regulamin-newslettera', '/stopka-redakcyjna', '/reklama', '/newsletter', '/newsletter/potwierdz', '/newsletter/blad', '/kontakt/wyslano', '/styleguide', '/404', '/410',
 ] as const;
-export const INDEKSOWANE = ['/', ARTYKUL, '/narzedzia', NARZEDZIE, NARZEDZIE_BHP, NARZEDZIE_UDT, NARZEDZIE_KG, NARZEDZIE_TEMP, NARZEDZIE_WYMIAR, NARZEDZIE_NADGODZINY, NARZEDZIE_URLOP, NARZEDZIE_GRAFIK, NARZEDZIE_WYPOWIEDZENIE, NARZEDZIE_PRZERWY, NARZEDZIE_BADANIA_UDT, NARZEDZIE_EKWIWALENT, NARZEDZIE_L4, NARZEDZIE_ODPRAWA, NARZEDZIE_WOLNE, NARZEDZIE_PLACA, NARZEDZIE_NETTO, NARZEDZIE_UMOWY, NARZEDZIE_ZLECENIE, NARZEDZIE_NIEDZIELA, NARZEDZIE_PRZESTOJ, NARZEDZIE_URLOPOWE, NARZEDZIE_KOSZT, NARZEDZIE_OPIEKUNCZY, NARZEDZIE_MACIERZYNSKI, NARZEDZIE_SANITARNE, NARZEDZIE_STAWKA, NARZEDZIE_AGENCJA, NARZEDZIE_WOLNE_DNI, NARZEDZIE_BEZROBOTNY, NARZEDZIE_STAZ, NARZEDZIE_OCHRONA, NARZEDZIE_WYPADEK, NARZEDZIE_WYPLATA, NARZEDZIE_ODWOLANIE, NARZEDZIE_OJCOWSKI, NARZEDZIE_PPK, NARZEDZIE_WYCHOWAWCZY, NARZEDZIE_WYPLATA_DODATKI, NARZEDZIE_OKOLICZNOSCIOWY, NARZEDZIE_REHABILITACYJNE, NARZEDZIE_PROBNY, NARZEDZIE_KARA, NARZEDZIE_ZAKAZ, NARZEDZIE_DELEGACJA, NARZEDZIE_ODSZKODOWANIE, NARZEDZIE_POSMIERTNA, NARZEDZIE_ZAGRANICZNA, NARZEDZIE_L4_OCHRONA, NARZEDZIE_URLOP_AGENCJA, NARZEDZIE_HALAS, NARZEDZIE_DRGANIA, NARZEDZIE_POMIESZCZENIE, NARZEDZIE_DYZUR, NARZEDZIE_L4_PO, NARZEDZIE_ROBOCZE, NARZEDZIE_MLODOCIANY, NARZEDZIE_PRZEDAWNIENIE, NARZEDZIE_GRUPOWE, NARZEDZIE_NIEPELNOSPRAWNY, NARZEDZIE_LOJALKA, NARZEDZIE_OKRES_ZASILKOWY, NARZEDZIE_TRZEZWOSC, NARZEDZIE_CIAZA, NARZEDZIE_RODZIC, '/dzial/produkcja', '/temat/oee', '/do-pobrania'] as const;
+export const INDEKSOWANE = [
+  '/', ARTYKUL, '/narzedzia', ...NARZEDZIA_ADRESY, '/dzial/produkcja', '/temat/oee', '/do-pobrania',
+] as const;
 export const NIEINDEKSOWANE = ['/styleguide', '/404', '/410', '/szukaj', '/newsletter/potwierdz', '/newsletter/blad', '/kontakt/wyslano', '/kontakt/blad'] as const;
