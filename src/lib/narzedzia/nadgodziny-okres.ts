@@ -25,8 +25,11 @@
 //   to wariant korzystny dla pracownika (niższy próg nadgodzin).
 // - Limit 48 h: liczba tygodni = dni kalendarzowe okresu / 7. Średnia według brzmienia art. 131 § 1: przepracowane / tygodnie.
 //   Kodeks nie mówi, jak liczyć średnią przy urlopie i L4; dyrektywa 2003/88/WE (art. 16 lit. b) każe okresy płatnego
-//   urlopu i zwolnień chorobowych pomijać albo traktować neutralnie, więc liczymy też wariant neutralny:
-//   (przepracowane + nieobecność) / tygodnie. Limit dochowany, gdy oba warianty ≤ 48 (dokładnie 48 to jeszcze w limicie).
+//   urlopu i zwolnień chorobowych nie włączać do średniej (komunikat Komisji 2017/C 165/01: brak pracy w tym czasie nie
+//   może równoważyć tygodni z przekroczeniem), więc liczymy też średnią bez tygodni nieobecności:
+//   przepracowane / (tygodnie − nieobecność / (40 h × etat)); tydzień nieobecności = tygodniowa norma etatu.
+//   Przy pracy średnio ponad 40 h ten wariant jest surowszy niż dopisanie nieobecności jako godzin pracy.
+//   Limit dochowany, gdy oba warianty ≤ 48 (dokładnie 48 to jeszcze w limicie).
 // - Liczby okrągłe do 0,01 h (godziny) i do grosza (kwota).
 import { dniWMiesiacu, opisWymiaru, wymiarOkresu, type WymiarOkresu } from './czas-pracy';
 import { doGrosza } from './dodatek-nocny';
@@ -97,11 +100,11 @@ export interface WynikOkresu {
   dodatek: number | null;
   /** Średni tygodniowy czas pracy według brzmienia art. 131 § 1. */
   sredniaKp: number;
-  /** Średnia z nieobecnością liczoną jak przepracowane godziny z grafiku. */
-  sredniaNeutralna: number;
+  /** Średnia z tygodni bez nieobecności (dyrektywa 2003/88/WE, art. 16 lit. b); null, gdy cały okres to nieobecność. */
+  sredniaBezNieobecnosci: number | null;
   /** Oba warianty średniej najwyżej 48 h. */
   limitDochowany: boolean;
-  /** 48 h × tygodnie − (przepracowane + nieobecność), nie mniej niż 0. */
+  /** 48 h × tygodnie bez nieobecności − przepracowane, nie mniej niż 0. */
   doLimitu: number;
 }
 
@@ -136,10 +139,12 @@ export function nadgodzinyOkresu(d: DaneOkresu): WynikOkresu {
   const brakuje = doSetnej(Math.max(0, wymiarPoObnizeniu - bezDobowych));
 
   const tygodnie = dni / 7;
-  const zNieobecnoscia = d.przepracowane + d.nieobecnosc;
-  // Porównanie bez dzielenia: suma × 7 ≤ 48 × dni (dokładnie 48 h mieści się w limicie).
-  const limit = LIMIT_TYGODNIOWY * dni;
-  const limitDochowany = d.przepracowane * 7 <= limit + 1e-9 && zNieobecnoscia * 7 <= limit + 1e-9;
+  // Tygodnie bez nieobecności: tydzień nieobecności to 40 h × etat z grafiku (nieobecność ≤ wymiar etatu, więc ≥ 0).
+  const tygodniePracy = Math.max(0, tygodnie - d.nieobecnosc / (40 * d.etat));
+  // Porównanie bez dzielenia (dokładnie 48 h mieści się w limicie).
+  const limitKp = d.przepracowane * 7 <= LIMIT_TYGODNIOWY * dni + 1e-9;
+  const limitBez = d.przepracowane <= LIMIT_TYGODNIOWY * tygodniePracy + 1e-9;
+  const limitDochowany = limitKp && limitBez;
 
   return {
     od: iso(d.rok, d.miesiac, 1),
@@ -157,9 +162,9 @@ export function nadgodzinyOkresu(d: DaneOkresu): WynikOkresu {
     brakuje,
     dodatek: d.stawka === undefined ? null : doGrosza(sredniotygodniowe * d.stawka),
     sredniaKp: doSetnej((d.przepracowane * 7) / dni),
-    sredniaNeutralna: doSetnej((zNieobecnoscia * 7) / dni),
+    sredniaBezNieobecnosci: tygodniePracy > 1e-9 ? doSetnej(d.przepracowane / tygodniePracy) : null,
     limitDochowany,
-    doLimitu: doSetnej(Math.max(0, (limit - zNieobecnoscia * 7) / 7)),
+    doLimitu: doSetnej(Math.max(0, LIMIT_TYGODNIOWY * tygodniePracy - d.przepracowane)),
   };
 }
 
@@ -193,7 +198,7 @@ export function tekstyWyniku(r: WynikOkresu, etat: number, nieobecnosc: number) 
     sredniotygodniowe: godz(r.sredniotygodniowe),
     dodatek: r.dodatek === null ? 'wpisz stawkę' : zl(r.dodatek),
     srednia: `${godz(r.sredniaKp)} (${r.dni} dni to ${Number.isInteger(r.tygodnie) ? odmiana(r.tygodnie, ['tydzień', 'tygodnie', 'tygodni']) : `${liczba(doSetnej(r.tygodnie))} tygodnia`})`,
-    neutralna: godz(r.sredniaNeutralna),
+    neutralna: r.sredniaBezNieobecnosci === null ? 'cały okres to nieobecność' : godz(r.sredniaBezNieobecnosci),
     limit: r.limitDochowany ? `dochowany; do limitu zostało ${godz(r.doLimitu)}` : 'przekroczony',
     stan: r.limitDochowany ? 'ok' : 'blad',
     uwaga: uwagi.join(' '),

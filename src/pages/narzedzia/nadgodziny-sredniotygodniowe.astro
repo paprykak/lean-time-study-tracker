@@ -48,6 +48,7 @@ const faq = [
   h1="Nadgodziny średniotygodniowe i limit 48 godzin"
   lead="Nadgodziny średniotygodniowe to godziny ponad wymiar okresu rozliczeniowego, które nie są nadgodzinami dobowymi. Za każdą należy się dodatek 100%. Wpisz godziny z okresu, a policzymy nadgodziny i sprawdzimy limit przeciętnie 48 godzin w tygodniu."
   faq={faq}
+  objasnienia={['mrpipsNadgodziny', 'dyrektywaCzasPracy']}
 >
   <form class="kalkulator" data-nadgodziny-okres novalidate aria-labelledby="kalkulator-tytul">
     <div class="kalkulator-pola">
@@ -121,7 +122,7 @@ const faq = [
         <div><dt>Nadgodziny średniotygodniowe (100%)</dt><dd data-w="sredniotygodniowe">{t.sredniotygodniowe}</dd></div>
         <div><dt>Dodatek 100% za nie</dt><dd data-w="dodatek">{t.dodatek}</dd></div>
         <div><dt>Średnio w tygodniu</dt><dd data-w="srednia">{t.srednia}</dd></div>
-        <div data-wiersz="neutralna" hidden><dt>Średnio z urlopem i L4</dt><dd data-w="neutralna">{t.neutralna}</dd></div>
+        <div data-wiersz="neutralna" hidden><dt>Średnio bez tygodni urlopu i L4</dt><dd data-w="neutralna">{t.neutralna}</dd></div>
         <div><dt>Limit przeciętnie 48 h</dt><dd data-w="limit" data-stan={t.stan}>{t.limit}</dd></div>
       </dl>
       <p class="wynik-uwaga" data-w="uwaga" hidden={!t.uwaga}>{t.uwaga}</p>
@@ -152,7 +153,7 @@ const faq = [
     </ol>
     <p><strong>Czego przepis nie mówi.</strong></p>
     <ul>
-      <li>Kodeks pracy nie mówi, jak liczyć średnią 48 godzin, gdy w okresie był urlop albo L4. Według brzmienia art. 131 § 1 dzielimy przepracowane godziny przez wszystkie tygodnie. Dyrektywa 2003/88/WE (art. 16 lit. b) każe okresy płatnego urlopu i zwolnień chorobowych pomijać albo traktować neutralnie, więc pokazujemy też średnią, w której godziny nieobecności z grafiku liczą się tak, jakby były przepracowane. Limit uznajemy za dochowany, gdy oba warianty wynoszą najwyżej 48 h.</li>
+      <li>Kodeks pracy nie mówi, jak liczyć średnią 48 godzin, gdy w okresie był urlop albo L4. Według brzmienia art. 131 § 1 dzielimy przepracowane godziny przez wszystkie tygodnie okresu. Dyrektywa 2003/88/WE (art. 16 lit. b) mówi, że okresów płatnego urlopu wypoczynkowego i zwolnień lekarskich nie włącza się do średniej albo nie wpływają one na nią. Dlatego pokazujemy też średnią z tygodni bez nieobecności: godziny nieobecności z grafiku dzielimy przez tygodniową normę etatu (40 godzin przy pełnym etacie) i o tyle tygodni zmniejszamy okres. Limit uznajemy za dochowany, gdy oba warianty wynoszą najwyżej 48 h.</li>
       <li>Przy niepełnym etacie godziny ponad wymiar etatu, ale do wymiaru pełnego etatu, pokazujemy jako ponadwymiarowe (art. 151 § 5), a dopiero ponad wymiar pełnego etatu jako nadgodziny średniotygodniowe. Przepis nie mówi, czy nieobecność obniża też ten próg pełnego etatu. Obniżamy go o te same godziny: to wariant korzystny dla Ciebie, bo nadgodziny zaczynają się wcześniej.</li>
     </ul>
     <p>

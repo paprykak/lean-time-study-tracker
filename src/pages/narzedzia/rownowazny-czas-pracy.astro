@@ -50,6 +50,7 @@ const faq = [
   h1="Równoważny czas pracy: ile zmian w okresie"
   lead="Wybierz system, długość zmiany i okres rozliczeniowy. Policzymy, ile zmian wypełni wymiar, ile dni wolnych wyjdzie i czy taki okres jest dopuszczalny według Kodeksu pracy."
   faq={faq}
+  objasnienia={['biznesCzasPracy', 'rodzinaipracaWeekend']}
 >
   <form class="kalkulator" data-rownowazny novalidate aria-labelledby="kalkulator-tytul">
     <div class="kalkulator-pola">
@@ -160,7 +161,9 @@ const faq = [
       Czego przepis nie mówi: Kodeks nie wskazuje, jak rozłożyć resztę godzin, mówi tylko o krótszym wymiarze w niektórych
       dniach albo dniach wolnych (art. 135 § 1); jedna krótsza zmiana to jeden z możliwych rozkładów. Nie mówi też, co
       zrobić, gdy w systemie weekendowym albo w skróconym tygodniu dni dostępnych jest za mało na cały wymiar. Narzędzie
-      pokazuje wtedy tylko rachunek: ile godzin brakuje. Nie liczymy niepełnego etatu, bo wymiar zależy wtedy od umowy.
+      pokazuje wtedy tylko rachunek: ile godzin brakuje. Poradnik ministerstwa pracy (rodzinaipraca.gov.pl) zwraca uwagę,
+      że w systemie weekendowym bez świąt można przepracować najwyżej 36 godzin w tygodniu, więc pełnego etatu zwykle nie
+      da się w nim wypracować, i w praktyce stosuje się go przy około 3/4 etatu. Nie liczymy niepełnego etatu, bo wymiar zależy wtedy od umowy.
     </p>
     <p>
       Wymiar miesięcy i okresów policzy <a href="/narzedzia/wymiar-czasu-pracy">kalkulator wymiaru czasu pracy</a>,

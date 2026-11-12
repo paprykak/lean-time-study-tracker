@@ -452,6 +452,48 @@ export const OBJASNIENIA = {
     adres: 'https://www.gov.pl/web/rodzina/ustanie-stosunku-pracy',
     sprawdzono: '2026-11-11',
   },
+  mrpipsNadgodziny: {
+    nazwa: 'gov.pl (Ministerstwo Rodziny, Pracy i Polityki Społecznej), „Praca nadliczbowa”',
+    opis: 'przekroczenie przeciętnej normy tygodniowej: przepracowane plus nieobecności minus nadgodziny dobowe; jeden dodatek za godzinę; odpracowanie wyjścia prywatnego nie jest nadgodzinami',
+    adres: 'https://www.gov.pl/web/rodzina/praca-nadliczbowa',
+    sprawdzono: '2026-11-12',
+  },
+  mrpipsRozliczanie: {
+    nazwa: 'gov.pl (Ministerstwo Rodziny, Pracy i Polityki Społecznej), „Rozliczanie czasu pracy”',
+    opis: 'praca w dniu wolnym z pięciodniowego tygodnia: dzień wolny pokrywa do 8 godzin, ponad 8 dodatek 50% (w nocy 100%), bez dnia wolnego i przy przekroczeniu normy tygodniowej 100%',
+    adres: 'https://www.gov.pl/web/rodzina/rozliczanie-czasu-pracy',
+    sprawdzono: '2026-11-12',
+  },
+  mrpipsRozklady: {
+    nazwa: 'gov.pl (Ministerstwo Rodziny, Pracy i Polityki Społecznej), „Ustalanie i rozliczanie czasu pracy”',
+    opis: 'w ruchomym rozkładzie ponowna praca w tej samej dobie nie jest nadgodzinami, ale nie może odebrać 11 godzin odpoczynku dobowego',
+    adres: 'https://www.gov.pl/web/rodzina/ustalanie-i-rozliczanie-czasu-pracy',
+    sprawdzono: '2026-11-12',
+  },
+  rodzinaipracaWyjscie: {
+    nazwa: 'rodzinaipraca.gov.pl (projekt Ministerstwa Rodziny, Pracy i Polityki Społecznej), „Wyjście prywatne w ciągu dnia”',
+    opis: 'wyjście prywatne jest nieobecnością niepłatną; przepisy nie określają terminu odpracowania; odpracowanie w wolną sobotę rodziłoby prawo do kolejnego dnia wolnego',
+    adres: 'https://rodzinaipraca.gov.pl/dla-pracownika/masz-prawo/czas-pracy/wyjscie-prywatne-w-ciagu-dnia/',
+    sprawdzono: '2026-11-12',
+  },
+  rodzinaipracaSobota: {
+    nazwa: 'rodzinaipraca.gov.pl (projekt Ministerstwa Rodziny, Pracy i Polityki Społecznej), „Rekompensata za nadgodziny i pracę w dniu wolnym”',
+    opis: 'cały dzień wolny także za 2 godziny pracy w wolną sobotę; pracodawca nie może narzucić terminu odbioru dnia wolnego',
+    adres: 'https://rodzinaipraca.gov.pl/dla-pracownika/masz-prawo/czas-pracy/jaki-wplyw-na-rekompensate-za-nadgodziny-ma-pracownik/',
+    sprawdzono: '2026-11-12',
+  },
+  rodzinaipracaWeekend: {
+    nazwa: 'rodzinaipraca.gov.pl (projekt Ministerstwa Rodziny, Pracy i Polityki Społecznej), „Kiedy można wykonywać pracę tylko w weekendy?”',
+    opis: 'w systemie weekendowym bez świąt można przepracować najwyżej 36 godzin w tygodniu, więc pełnego etatu zwykle nie da się wypracować; w praktyce ok. 3/4 etatu',
+    adres: 'https://rodzinaipraca.gov.pl/dla-pracownika/masz-prawo/czas-pracy/kiedy-mozna-wykonywac-prace-tylko-w-weekendy/',
+    sprawdzono: '2026-11-12',
+  },
+  dyrektywaCzasPracy: {
+    nazwa: 'Dyrektywa 2003/88/WE dotycząca niektórych aspektów organizacji czasu pracy (Dz.Urz. UE L 299 z 18.11.2003)',
+    opis: 'art. 6 lit. b: przeciętnie najwyżej 48 godzin w tygodniu; art. 16 lit. b: urlopu wypoczynkowego i zwolnień lekarskich nie włącza się do średniej albo nie wpływają one na nią',
+    adres: 'https://eur-lex.europa.eu/legal-content/PL/TXT/?uri=CELEX:32003L0088',
+    sprawdzono: '2026-11-12',
+  },
 } as const;
 
 /** Przeciętne wynagrodzenie z komunikatu GUS (art. 20 pkt 1 lit. a ustawy o emeryturach i rentach z FUS): podstawa opłaty za egzamin UDT. */

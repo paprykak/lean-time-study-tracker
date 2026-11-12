@@ -18,7 +18,7 @@ describe('nadgodziny średniotygodniowe (art. 130, 131, 151 i 151¹ § 2 Kp)', (
       brakuje: 0,
       dodatek: 560,
       sredniaKp: 42.93,
-      sredniaNeutralna: 42.93,
+      sredniaBezNieobecnosci: 42.93,
       limitDochowany: true,
       doLimitu: 21.71,
     });
@@ -26,9 +26,9 @@ describe('nadgodziny średniotygodniowe (art. 130, 131, 151 i 151¹ § 2 Kp)', (
     expect(godzinySlownie(r.sredniotygodniowe)).toBe('14 godzin');
   });
 
-  it('4 miesiące od stycznia 2026 z urlopem 40 h: wymiar 664 h, po obniżeniu 624 h, 64 h, średnie 40,83 i 43,17 h', () => {
+  it('4 miesiące od stycznia 2026 z urlopem 40 h: wymiar 664 h, po obniżeniu 624 h, 64 h, średnie 40,83 i 43,36 h', () => {
     const r = nadgodzinyOkresu({ ...PELNY, miesiac: 1, miesiecy: 4, przepracowane: 700, dobowe: 12, nieobecnosc: 40, stawka: 35 });
-    expect(r).toMatchObject({ dni: 120, wymiarPelny: 664, wymiarPoObnizeniu: 624, sredniotygodniowe: 64, dodatek: 2240, sredniaKp: 40.83, sredniaNeutralna: 43.17, doLimitu: 82.86 });
+    expect(r).toMatchObject({ dni: 120, wymiarPelny: 664, wymiarPoObnizeniu: 624, sredniotygodniowe: 64, dodatek: 2240, sredniaKp: 40.83, sredniaBezNieobecnosci: 43.36, doLimitu: 74.86 });
     expect(r.wymiar.swietaObnizajace.map((s) => s.data)).toEqual(['2026-01-01', '2026-01-06', '2026-04-06']);
   });
 
@@ -44,10 +44,10 @@ describe('nadgodziny średniotygodniowe (art. 130, 131, 151 i 151¹ § 2 Kp)', (
     expect(nadgodzinyOkresu({ ...PELNY, miesiac: 2, przepracowane: 192.5, dobowe: 0 })).toMatchObject({ sredniotygodniowe: 32.5, sredniaKp: 48.13, limitDochowany: false });
   });
 
-  it('nieobecność w wariancie neutralnym przekracza 48 h, choć średnia z Kp nie', () => {
+  it('średnia bez tygodni nieobecności przekracza 48 h, choć średnia z Kp nie', () => {
     expect(nadgodzinyOkresu({ ...PELNY, miesiac: 2, przepracowane: 180, dobowe: 0, nieobecnosc: 20 })).toMatchObject({
       sredniaKp: 45,
-      sredniaNeutralna: 50,
+      sredniaBezNieobecnosci: 51.43,
       limitDochowany: false,
       doLimitu: 0,
     });
@@ -62,7 +62,7 @@ describe('nadgodziny średniotygodniowe (art. 130, 131, 151 i 151¹ § 2 Kp)', (
       wymiarPoObnizeniu: 160,
       sredniotygodniowe: 16,
       sredniaKp: 43.45,
-      sredniaNeutralna: 45.38,
+      sredniaBezNieobecnosci: 45.65,
     });
   });
 
@@ -74,8 +74,8 @@ describe('nadgodziny średniotygodniowe (art. 130, 131, 151 i 151¹ § 2 Kp)', (
       sredniotygodniowe: 122,
       dodatek: 3660,
       sredniaKp: 40.27,
-      sredniaNeutralna: 41.81,
-      doLimitu: 322.86,
+      sredniaBezNieobecnosci: 41.88,
+      doLimitu: 306.86,
     });
     expect(nadgodzinyOkresu({ ...PELNY, miesiecy: 3, przepracowane: 500, dobowe: 0 })).toMatchObject({ do: '2027-01-31', dni: 92, wymiarPelny: 472, sredniotygodniowe: 28 });
   });
@@ -95,8 +95,13 @@ describe('nadgodziny średniotygodniowe (art. 130, 131, 151 i 151¹ § 2 Kp)', (
       progNadgodzin: 144,
       ponadwymiarowe: 20,
       sredniotygodniowe: 4,
-      sredniaNeutralna: 38.73,
+      sredniaBezNieobecnosci: 39.18,
+      doLimitu: 33.77,
     });
+  });
+
+  it('luty 2026 cały na L4 (160 h = 4 tygodnie): średniej bez nieobecności nie ma', () => {
+    expect(nadgodzinyOkresu({ ...PELNY, miesiac: 2, przepracowane: 0, dobowe: 0, nieobecnosc: 160 })).toMatchObject({ sredniaBezNieobecnosci: null, limitDochowany: true, doLimitu: 0 });
   });
 
   it('grudzień 2026 (Wigilia i dwa dni świąt): 140 h, brakuje 20 h do wymiaru', () => {

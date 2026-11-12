@@ -3,7 +3,7 @@
 // samej dobie (art. 128 § 3 pkt 1, art. 129 § 1, art. 151 § 1, art. 151^1 § 1 Kp), wyjątek ruchomego rozkładu
 // (art. 140^1 § 4) i odpoczynek 11 h w każdej dobie (art. 132 § 1). Logika: src/lib/narzedzia/doba-pracownicza.ts.
 import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
-import { dobaPracownicza, etykietaDnia, opisWyniku, type Wiersz } from '../../lib/narzedzia/doba-pracownicza';
+import { dobaPracownicza, etykietaDnia, etykietaKrotka, opisWyniku, type Wiersz } from '../../lib/narzedzia/doba-pracownicza';
 import { dodajDni, dzisWPolsce } from '../../lib/narzedzia/terminy';
 
 const dzis = dzisWPolsce();
@@ -60,13 +60,13 @@ const wartosc = (i: number, k: 'od' | 'do') => PRZYKLAD[i][k];
   faq={faq}
 >
   <form class="kalkulator" data-doba novalidate aria-labelledby="kalkulator-tytul">
-    <div class="kalkulator-pola">
+    <div class="kalkulator-pola min-w-0">
       <h2 id="kalkulator-tytul" class="tytul-m">Twój tydzień</h2>
       <div class="mt-4">
         <label for="dp-start" class="etykieta-pola">Pierwszy dzień</label>
         <input id="dp-start" name="start" type="date" class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" value={start} aria-describedby="dp-blad" />
       </div>
-      <fieldset class="mt-5">
+      <fieldset class="mt-5 min-w-0">
         <legend class="etykieta">Godziny pracy z rozkładu</legend>
         <p class="meta mt-1">Puste godziny to dzień wolny. Koniec przed początkiem: zmiana kończy się następnego dnia.</p>
         <div class="dni mt-3">
@@ -75,7 +75,7 @@ const wartosc = (i: number, k: 'od' | 'do') => PRZYKLAD[i][k];
           <span id="dp-do" class="meta">Do</span>
           {PRZYKLAD.map((_, i) => (
             <>
-              <span id={`dp-d${i + 1}`} class="dzien" data-dzien={i}>{etykietaDnia(dodajDni(start, i))}</span>
+              <span id={`dp-d${i + 1}`} class="dzien" data-dzien={i}><span aria-hidden="true" data-krotko>{etykietaKrotka(dodajDni(start, i))}</span><span class="sr-only" data-dlugo>{etykietaDnia(dodajDni(start, i))}</span></span>
               <input name={`od${i + 1}`} type="time" class="pole" value={wartosc(i, 'od')} aria-labelledby={`dp-d${i + 1} dp-od`} aria-describedby="dp-blad" />
               <input name={`do${i + 1}`} type="time" class="pole" value={wartosc(i, 'do')} aria-labelledby={`dp-d${i + 1} dp-do`} aria-describedby="dp-blad" />
             </>
@@ -97,7 +97,7 @@ const wartosc = (i: number, k: 'od' | 'do') => PRZYKLAD[i][k];
       <p id="dp-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
     </div>
 
-    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+    <div class="kalkulator-wynik min-w-0" aria-labelledby="wynik-tytul">
       <h2 id="wynik-tytul" class="etykieta">Nadgodziny z doby pracowniczej</h2>
       <div aria-live="polite" aria-atomic="true">
         <p class="wynik-kwota" data-w="nadgodziny">{o.glowna}</p>
@@ -110,12 +110,12 @@ const wartosc = (i: number, k: 'od' | 'do') => PRZYKLAD[i][k];
         <table class="tabela-dni">
           <caption class="sr-only">Dni tygodnia: praca, nadgodziny z doby i odpoczynek</caption>
           <thead>
-            <tr><th scope="col">Dzień</th><th scope="col">Praca</th><th scope="col">W poprzedniej dobie</th><th scope="col">Nadgodziny</th><th scope="col">Odpoczynek w dobie</th></tr>
+            <tr><th scope="col">Dzień</th><th scope="col">Praca</th><th scope="col">Nadgodziny</th><th scope="col">Odpoczynek w dobie</th><th scope="col">W poprzedniej dobie</th></tr>
           </thead>
           <tbody data-w="dni">
             {o.wiersze.map((w) => (
               <tr data-stan={w.stan}>
-                <th scope="row">{w.dzien}</th><td>{w.praca}</td><td>{w.wPoprzedniej}</td><td>{w.nadgodziny}</td><td>{w.odpoczynek}</td>
+                <th scope="row">{w.dzien}</th><td>{w.praca}</td><td>{w.nadgodziny}</td><td>{w.odpoczynek}</td><td>{w.wPoprzedniej}</td>
               </tr>
             ))}
           </tbody>
@@ -172,7 +172,7 @@ const wartosc = (i: number, k: 'od' | 'do') => PRZYKLAD[i][k];
 </StronaNarzedzia>
 
 <script>
-  import { dobaPracownicza, etykietaDnia, opisWyniku, type Wiersz } from '../../lib/narzedzia/doba-pracownicza';
+  import { dobaPracownicza, etykietaDnia, etykietaKrotka, opisWyniku, type Wiersz } from '../../lib/narzedzia/doba-pracownicza';
   import { minuty } from '../../lib/narzedzia/czas-pracy';
   import { dodajDni, poprawnaData } from '../../lib/narzedzia/terminy';
   import { typografia } from '../../lib/typografia.mjs';
@@ -194,7 +194,9 @@ const wartosc = (i: number, k: 'od' | 'do') => PRZYKLAD[i][k];
       const start = el('start').value;
       if (poprawnaData(start))
         form.querySelectorAll<HTMLElement>('[data-dzien]').forEach((s) => {
-          s.textContent = etykietaDnia(dodajDni(start, Number(s.dataset.dzien)));
+          const data = dodajDni(start, Number(s.dataset.dzien));
+          s.querySelector('[data-krotko]')!.textContent = etykietaKrotka(data);
+          s.querySelector('[data-dlugo]')!.textContent = etykietaDnia(data);
         });
       const wiersze: Wiersz[] = Array.from({ length: 7 }, (_, i) => ({ od: el(`od${i + 1}`).value, do: el(`do${i + 1}`).value }));
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
@@ -210,7 +212,7 @@ const wartosc = (i: number, k: 'od' | 'do') => PRZYKLAD[i][k];
           ...o.wiersze.map((x) => {
             const tr = document.createElement('tr');
             tr.dataset.stan = x.stan;
-            tr.append(komorka('th', x.dzien), komorka('td', x.praca), komorka('td', x.wPoprzedniej), komorka('td', x.nadgodziny), komorka('td', x.odpoczynek));
+            tr.append(komorka('th', x.dzien), komorka('td', x.praca), komorka('td', x.nadgodziny), komorka('td', x.odpoczynek), komorka('td', x.wPoprzedniej));
             return tr;
           }),
         );
@@ -242,7 +244,7 @@ const wartosc = (i: number, k: 'od' | 'do') => PRZYKLAD[i][k];
 <style>
   .dni {
     display: grid;
-    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-columns: auto minmax(0, 1fr) minmax(0, 1fr);
     gap: 0.5rem 0.5rem;
     align-items: center;
   }
@@ -253,8 +255,8 @@ const wartosc = (i: number, k: 'od' | 'do') => PRZYKLAD[i][k];
   }
   .dni :global(input[type='time']) {
     min-width: 0;
-    padding-left: 0.5rem;
-    padding-right: 0.25rem;
+    padding-left: 0.375rem;
+    padding-right: 0.125rem;
   }
   .tabela-dni {
     width: 100%;
@@ -262,18 +264,24 @@ const wartosc = (i: number, k: 'od' | 'do') => PRZYKLAD[i][k];
     font-size: 0.875rem;
     font-variant-numeric: tabular-nums;
   }
-  .tabela-dni th,
-  .tabela-dni td {
+  .tabela-dni :global(th),
+  .tabela-dni :global(td) {
     padding: 0.375rem 0.5rem;
     border-bottom: 1px solid var(--color-linia);
     text-align: left;
     vertical-align: top;
+    white-space: nowrap;
   }
-  .tabela-dni thead th {
+  .tabela-dni :global(td:nth-child(4)),
+  .tabela-dni :global(thead th:nth-child(4)) {
+    min-width: 9rem;
+    white-space: normal;
+  }
+  .tabela-dni :global(thead th) {
     color: var(--color-tekst-drugi);
     font-weight: 600;
   }
-  .tabela-dni :global(tr[data-stan='naruszenie'] td:last-child) {
+  .tabela-dni :global(tr[data-stan='naruszenie'] td:nth-child(4)) {
     color: var(--color-blad);
     font-weight: 700;
   }
