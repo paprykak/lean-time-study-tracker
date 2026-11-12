@@ -353,6 +353,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-12',
   },
   {
+    slug: 'zakaz-konkurencji',
+    nazwa: 'Zakaz konkurencji: odszkodowanie',
+    krotko: 'Ile odszkodowania za zakaz konkurencji po odejściu z pracy: co najmniej 25% pensji za okres zakazu.',
+    kategoria: 'umowa',
+    przepisy: ['kodeksPracy', 'pit'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'kara-porzadkowa',
     nazwa: 'Kara porządkowa: terminy i sprzeciw',
     krotko: 'Czy kara porządkowa jest w terminie, do kiedy sprzeciw, kiedy się zatrze i ile może wynosić kara pieniężna.',

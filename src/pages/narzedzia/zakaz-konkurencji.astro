@@ -1,0 +1,125 @@
+---
+// Odszkodowanie za zakaz konkurencji po ustaniu pracy (art. 101^1–101^4 Kp). Logika: src/lib/narzedzia/zakaz-konkurencji.ts.
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { zl } from '../../lib/narzedzia/format';
+import { odszkodowanieZaZakaz } from '../../lib/narzedzia/zakaz-konkurencji';
+
+const D = { pensja: 6000, miesiace: 12 };
+const r = odszkodowanieZaZakaz(D);
+
+const faq = [
+  {
+    pytanie: 'Ile wynosi odszkodowanie za zakaz konkurencji?',
+    odpowiedz: `Co najmniej 25% wynagrodzenia, które pracownik dostał przed ustaniem pracy, za okres równy okresowi zakazu (art. 101² § 3 Kodeksu pracy). Na przykład przy pensji ${zl(D.pensja)} i zakazie na ${D.miesiace} miesięcy to co najmniej ${zl(r.minimum)}, czyli ${zl(r.minimumMiesiecznie)} miesięcznie, gdy jest płacone w ratach.`,
+  },
+  {
+    pytanie: 'Co, gdy pracodawca nie płaci odszkodowania za zakaz konkurencji?',
+    odpowiedz: 'Zakaz konkurencji przestaje wtedy obowiązywać przed terminem z umowy (art. 101² § 2 Kodeksu pracy). Przestaje też obowiązywać, gdy ustaną przyczyny, które go uzasadniały. W sporze o odszkodowanie orzeka sąd pracy (art. 101² § 3).',
+  },
+  {
+    pytanie: 'Czy umowa o zakazie konkurencji musi być na piśmie?',
+    odpowiedz: 'Tak, pod rygorem nieważności (art. 101³ Kodeksu pracy). Zakaz po ustaniu pracy można zawrzeć tylko z pracownikiem, który ma dostęp do szczególnie ważnych informacji, a umowa musi określać okres zakazu i odszkodowanie (art. 101² § 1).',
+  },
+  {
+    pytanie: 'Czy od odszkodowania za zakaz konkurencji płaci się podatek?',
+    odpowiedz: 'Tak. Odszkodowania przyznane na podstawie przepisów o zakazie konkurencji są wyłączone ze zwolnienia odszkodowań z podatku (art. 21 ust. 1 pkt 3 lit. d ustawy o PIT).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="zakaz-konkurencji"
+  tytul="Zakaz konkurencji: ile odszkodowania po odejściu z pracy"
+  opis="Policz minimalne odszkodowanie za zakaz konkurencji po ustaniu pracy: 25% wynagrodzenia za okres zakazu, raty miesięczne i co, gdy pracodawca nie płaci."
+  h1="Zakaz konkurencji: odszkodowanie"
+  lead="Za zakaz konkurencji po odejściu z pracy należy się odszkodowanie, co najmniej 25% wynagrodzenia za okres zakazu. Wpisz pensję i długość zakazu, a policzymy minimum i raty."
+  faq={faq}
+>
+  <form class="kalkulator" data-zakaz novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Pensja i zakaz</h2>
+      <div class="mt-4">
+        <label for="z-pensja" class="etykieta-pola">Przeciętna pensja brutto przed odejściem (zł)</label>
+        <input id="z-pensja" name="pensja" class="pole mt-1 max-w-48" type="text" inputmode="decimal" autocomplete="off" value={D.pensja} aria-describedby="z-blad" />
+      </div>
+      <div class="mt-4 grid grid-cols-2 items-end gap-3">
+        <div>
+          <label for="z-miesiace" class="etykieta-pola">Zakaz na ile miesięcy</label>
+          <input id="z-miesiace" name="miesiace" class="pole mt-1" type="text" inputmode="numeric" autocomplete="off" value={D.miesiace} aria-describedby="z-blad" />
+        </div>
+        <div>
+          <label for="z-procent" class="etykieta-pola">Procent z umowy</label>
+          <input id="z-procent" name="procent" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="25" aria-describedby="z-blad" />
+        </div>
+      </div>
+      <p id="z-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Odszkodowanie za cały zakaz</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-kwota"><span data-w="razem">{zl(r.razem)}</span></p>
+        <p class="status-terminu" data-w="status" data-status="w-terminie">Zgodne z minimum 25%</p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Miesięcznie, gdy płacone w ratach</dt><dd data-w="miesiecznie">{zl(r.miesiecznie)}</dd></div>
+        <div><dt>Minimum z Kodeksu pracy</dt><dd data-w="minimum">{zl(r.minimum)}</dd></div>
+      </dl>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="zasady">Zasady zakazu konkurencji</h2>
+    <ul>
+      <li>W czasie pracy zakaz konkurencji wynika z odrębnej umowy; za szkodę z jego naruszenia pracownik odpowiada jak za szkodę wyrządzoną pracodawcy (art. 101<sup>1</sup> Kodeksu pracy).</li>
+      <li>Po ustaniu pracy: tylko z pracownikiem mającym dostęp do szczególnie ważnych informacji; umowa określa okres zakazu i odszkodowanie (art. 101<sup>2</sup> § 1).</li>
+      <li>Odszkodowanie: co najmniej 25% wynagrodzenia sprzed ustania pracy za okres równy okresowi zakazu, może być w miesięcznych ratach (art. 101<sup>2</sup> § 3).</li>
+      <li>Zakaz wygasa wcześniej, gdy ustaną jego przyczyny albo pracodawca nie płaci odszkodowania (art. 101<sup>2</sup> § 2).</li>
+      <li>Forma pisemna pod rygorem nieważności (art. 101<sup>3</sup>).</li>
+    </ul>
+    <p>
+      Kalkulator mnoży przeciętną pensję brutto przez liczbę miesięcy zakazu i procent. Przepis mówi o wynagrodzeniu
+      otrzymanym przed ustaniem pracy za okres równy okresowi zakazu, więc przy zmiennej pensji wpisz średnią z tego okresu.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
+  import { MINIMUM_PROCENT, odszkodowanieZaZakaz } from '../../lib/narzedzia/zakaz-konkurencji';
+
+  const form = document.querySelector<HTMLFormElement>('[data-zakaz]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const przelicz = () => {
+      const pensja = wpisanaLiczba(el('pensja').value);
+      const miesiace = /^\d{1,2}$/.test(el('miesiace').value.trim()) ? Number(el('miesiace').value.trim()) : NaN;
+      const procent = wpisanaLiczba(el('procent').value);
+      let blad: string | null = null;
+      if (!(pensja > 0 && pensja < 1_000_000)) blad = 'Wpisz pensję brutto, na przykład 6000.';
+      else if (!(miesiace >= 1 && miesiace <= 60)) blad = 'Okres zakazu: od 1 do 60 miesięcy.';
+      else if (!(procent > 0 && procent <= 100)) blad = 'Procent: od 1 do 100.';
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      b.hidden = !blad;
+      b.textContent = blad ?? '';
+      const status = w('status');
+      if (blad) {
+        w('razem').textContent = '—';
+        status.hidden = true;
+        return;
+      }
+      const r = odszkodowanieZaZakaz({ pensja, miesiace, procent });
+      w('razem').textContent = zl(r.razem);
+      w('miesiecznie').textContent = zl(r.miesiecznie);
+      w('minimum').textContent = zl(r.minimum);
+      status.hidden = false;
+      status.dataset.status = r.zgodne ? 'w-terminie' : 'po-terminie';
+      status.textContent = r.zgodne ? `Zgodne z minimum ${MINIMUM_PROCENT}%` : `Poniżej minimum ${MINIMUM_PROCENT}% (art. 101² § 3 Kodeksu pracy)`;
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>
