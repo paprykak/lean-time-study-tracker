@@ -416,6 +416,13 @@ export const AKTY = {
     adres: eli(2026, 1213),
     sprawdzono: '2026-11-11',
   },
+  ubezpieczeniaZgloszenie: {
+    nazwa: 'Ustawa o systemie ubezpieczeń społecznych',
+    publikator: 'Dz.U. 2026 poz. 1474',
+    uwaga: 'tekst jednolity z 9 października 2026 r.; art. 13 pkt 1 (ubezpieczenie od dnia nawiązania stosunku pracy) i art. 36 ust. 4 (zgłoszenie w 7 dni)',
+    adres: eli(2026, 1474),
+    sprawdzono: '2026-11-12',
+  },
 } as const satisfies Record<string, Akt>;
 
 export type KluczAktu = keyof typeof AKTY;

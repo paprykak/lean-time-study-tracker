@@ -1,0 +1,184 @@
+---
+// Nowa praca: co i do kiedy pracodawca musi dać albo zrobić (art. 29 § 2–3, 229, 237^3, 104^3, 22^2 Kp; art. 36 ustawy
+// o systemie ubezpieczeń społecznych; art. 16 ustawy o PPK). Logika: src/lib/narzedzia/start-w-pracy.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { obowiazkiNaStart } from '../../lib/narzedzia/start-w-pracy';
+import { dataPoPolsku, dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+const START = dzisWPolsce();
+const lista = obowiazkiNaStart({ start: START, regulamin: true, monitoring: true, ppk: true });
+const informacja = lista.find((o) => o.klucz === 'informacja')!;
+const opisTerminu = (o: (typeof lista)[number]) =>
+  o.kiedy === 'przed' ? 'przed rozpoczęciem pracy' : `do ${dataPoPolsku(o.data)}${o.przesunieta ? ` (dzień wolny; po przesunięciu ${dataPoPolsku(o.przesunieta)})` : ''}`;
+
+const faq = [
+  {
+    pytanie: 'Do kiedy pracodawca musi dać informację o warunkach zatrudnienia?',
+    odpowiedz: 'Najpóźniej w ciągu 7 dni od dnia dopuszczenia do pracy, w postaci papierowej albo elektronicznej (art. 29 § 3 pkt 1 Kodeksu pracy). Informację o instytucjach, do których idą składki na ubezpieczenia społeczne, pracodawca przekazuje w ciągu 30 dni (art. 29 § 3 pkt 2).',
+  },
+  {
+    pytanie: 'Co musi być w informacji o warunkach zatrudnienia?',
+    odpowiedz: 'Co najmniej: dobowa i tygodniowa norma oraz wymiar czasu pracy, przerwy, dobowy i tygodniowy odpoczynek, zasady nadgodzin i rekompensaty, zasady przechodzenia ze zmiany na zmianę, przemieszczanie się między miejscami pracy, składniki wynagrodzenia i świadczenia spoza umowy, wymiar urlopu, zasady rozwiązania umowy z okresami wypowiedzenia i terminem odwołania do sądu, szkolenia i układ zbiorowy. Bez regulaminu pracy także termin i miejsce wypłaty, pora nocna i sposób potwierdzania obecności (art. 29 § 3 pkt 1 lit. a–m Kodeksu pracy).',
+  },
+  {
+    pytanie: 'Czy mogę zacząć pracę, zanim podpiszę umowę?',
+    odpowiedz: 'Umowę o pracę zawiera się na piśmie. Gdy nie została tak zawarta, pracodawca przed dopuszczeniem do pracy potwierdza Ci na piśmie strony umowy, jej rodzaj i warunki (art. 29 § 2 Kodeksu pracy). Pierwszy dzień pracy bez umowy i bez takiego potwierdzenia narusza ten przepis.',
+  },
+  {
+    pytanie: 'Czy pracodawca może dopuścić mnie do pracy bez badań lekarskich?',
+    odpowiedz: 'Nie. Potrzebne jest aktualne orzeczenie lekarskie o braku przeciwwskazań na tym stanowisku (art. 229 § 4 Kodeksu pracy). Badań wstępnych nie robi się, gdy wracasz do tego samego pracodawcy na to samo stanowisko w ciągu 30 dni od końca poprzedniej umowy, albo gdy w tym czasie przechodzisz do innego pracodawcy z aktualnym orzeczeniem na takie same warunki, poza pracami szczególnie niebezpiecznymi (art. 229 § 1¹).',
+  },
+  {
+    pytanie: 'Co, gdy warunki zatrudnienia się zmienią?',
+    odpowiedz: 'Pracodawca informuje o zmianie warunków z informacji niezwłocznie, najpóźniej w dniu, w którym zmiana zaczyna Cię dotyczyć, a o zmianie adresu siedziby w ciągu 7 dni (art. 29 § 3² i § 3³ Kodeksu pracy). Zmiana warunków samej umowy wymaga formy pisemnej (art. 29 § 4): aneksu albo wypowiedzenia zmieniającego.',
+  },
+  {
+    pytanie: 'Do kiedy pracodawca zgłasza mnie do ZUS?',
+    odpowiedz: 'W ciągu 7 dni od dnia powstania obowiązku ubezpieczenia (art. 36 ust. 4 ustawy o systemie ubezpieczeń społecznych), a ten powstaje w dniu nawiązania stosunku pracy (art. 13 pkt 1). Stosunek pracy nawiązuje się w dniu rozpoczęcia pracy wpisanym do umowy (art. 26 Kodeksu pracy).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="informacja-o-warunkach-zatrudnienia"
+  tytul="Informacja o warunkach zatrudnienia: termin"
+  opis="Nowa praca: do kiedy pracodawca daje umowę, badania, szkolenie BHP, informację o warunkach zatrudnienia (7 dni), zgłoszenie do ZUS i zapis do PPK."
+  h1="Nowa praca: co i do kiedy musi dać pracodawca"
+  lead="Część rzeczy pracodawca musi załatwić, zanim zaczniesz pracę, a część w ciągu 7 albo 30 dni. Wpisz pierwszy dzień pracy, a policzymy terminy, w tym informację o warunkach zatrudnienia i zgłoszenie do ZUS."
+  faq={faq}
+>
+  <form class="kalkulator" data-start-pracy novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Nowa umowa o pracę</h2>
+      <div class="mt-4">
+        <label for="sp-start" class="etykieta-pola">Pierwszy dzień pracy</label>
+        <input id="sp-start" name="start" type="date" class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" value={START} aria-describedby="sp-blad" />
+        <p id="sp-blad" class="blad-pola" data-blad="dane" hidden></p>
+      </div>
+      <fieldset class="mt-6">
+        <legend class="etykieta">U tego pracodawcy</legend>
+        <div class="opcje-pionowe mt-2">
+          <label><input type="checkbox" name="regulamin" checked /> Jest regulamin pracy</label>
+          <label><input type="checkbox" name="monitoring" checked /> Jest monitoring (kamery, poczta, GPS)</label>
+          <label><input type="checkbox" name="ppk" checked /> Są PPK</label>
+        </div>
+      </fieldset>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Informacja o warunkach zatrudnienia najpóźniej</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-data" data-w="informacja">{dataPoPolsku(informacja.data)}</p>
+      </div>
+      <ul class="lista-obowiazkow mt-4" data-w="lista">
+        {lista.map((o) => (
+          <li data-kiedy={o.kiedy}><strong>{o.nazwa}</strong>: {opisTerminu(o)} ({o.podstawa})</li>
+        ))}
+      </ul>
+      <p class="wynik-uwaga">Badania, szkolenie BHP i umowa (albo jej potwierdzenie na piśmie) muszą być przed pierwszą zmianą. Bez nich pracodawca nie może dopuścić Cię do pracy.</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Terminy w dniach liczymy od dnia po pierwszym dniu pracy (art. 111 § 2 Kodeksu cywilnego, stosowany przez art. 300
+      Kodeksu pracy): przy starcie w poniedziałek 7 dni mija w następny poniedziałek. Przyjmujemy, że pierwszy dzień pracy
+      jest zarazem dniem dopuszczenia do pracy i dniem rozpoczęcia pracy wpisanym do umowy; gdy te dni się różnią, terminy
+      z Kodeksu pracy liczy się od dopuszczenia, a zgłoszenie do ZUS od dnia rozpoczęcia pracy z umowy (art. 26).
+    </p>
+    <p>
+      Gdy ostatni dzień wypada w sobotę albo święto, podajemy obie daty: bez przesunięcia i po przesunięciu na najbliższy
+      dzień roboczy (art. 115 Kodeksu cywilnego). Przepisy nie rozstrzygają wprost, czy to przesunięcie dotyczy obowiązków
+      pracodawcy wobec pracownika, więc wcześniejsza data jest bezpieczna dla obu stron.
+    </p>
+    <p>
+      <strong>PPK.</strong> Pracodawca zapisuje Cię do PPK najwcześniej po 14 dniach zatrudnienia i najpóźniej do 10. dnia
+      miesiąca po miesiącu, w którym minęły 3 miesiące zatrudnienia, chyba że wcześniej złożysz deklarację rezygnacji
+      (art. 16 ust. 1 ustawy o PPK). Do 3 miesięcy wlicza się zatrudnienie u tego pracodawcy z poprzednich 12 miesięcy
+      (art. 16 ust. 2), więc przy powrocie termin może być wcześniejszy. 3 miesiące liczymy od pierwszego dnia pracy
+      włącznie: przy starcie 1 listopada mijają 31 stycznia, a termin to 10 lutego. Ile kosztuje oszczędzanie w PPK na
+      rękę, policzy <a href="/narzedzia/kalkulator-ppk">kalkulator PPK</a>.
+    </p>
+
+    <h2 id="przed-pierwszym-dniem">Przed pierwszym dniem pracy</h2>
+    <ul>
+      <li>Umowa o pracę na piśmie albo pisemne potwierdzenie stron, rodzaju umowy i warunków (art. 29 § 2).</li>
+      <li>Aktualne orzeczenie lekarskie o braku przeciwwskazań na stanowisku (art. 229 § 4); skierowanie na badania wydaje pracodawca (art. 229 § 4a).</li>
+      <li>Szkolenie BHP przed dopuszczeniem do pracy (art. 237<sup>3</sup> § 2). Nie trzeba go powtarzać przy kolejnej umowie na tym samym stanowisku zajmowanym bezpośrednio wcześniej. Pierwsze szkolenie okresowe policzy <a href="/narzedzia/szkolenie-okresowe-bhp">kalkulator szkolenia BHP</a>.</li>
+      <li>Zapoznanie z regulaminem pracy, jeśli pracodawca go ma (art. 104<sup>3</sup> § 2).</li>
+      <li>Informacja o celach, zakresie i sposobie monitoringu, jeśli jest (art. 22<sup>2</sup> § 8, a dla poczty i innych form art. 22<sup>3</sup> § 3–4).</li>
+    </ul>
+
+    <h2 id="co-w-informacji">Co musi być w informacji o warunkach zatrudnienia</h2>
+    <p>
+      Co najmniej: norma i wymiar czasu pracy (dobowy i tygodniowy), przerwy, odpoczynek dobowy i tygodniowy, zasady
+      nadgodzin i rekompensaty, przy pracy zmianowej zasady przechodzenia ze zmiany na zmianę, przy kilku miejscach pracy
+      zasady przemieszczania się, składniki wynagrodzenia i świadczenia spoza umowy, wymiar urlopu, zasady rozwiązania umowy
+      z okresami wypowiedzenia i terminem odwołania do sądu, szkolenia i układ zbiorowy. Gdy nie ma regulaminu pracy,
+      także termin, miejsce, czas i częstotliwość wypłaty, pora nocna i sposób potwierdzania obecności (art. 29 § 3 pkt 1
+      lit. a–m). Większość tych informacji pracodawca może podać, wskazując odpowiednie przepisy (art. 29 § 3<sup>1</sup>).
+    </p>
+    <p>
+      Przed wyjazdem do pracy za granicę na dłużej niż 4 kolejne tygodnie pracodawca podaje dodatkowo kraj, czas pobytu,
+      walutę wynagrodzenia, świadczenia i zasady powrotu (art. 29<sup>1</sup> § 2). O umowie na czas określony zawartej
+      z obiektywnych przyczyn po stronie pracodawcy zawiadamia okręgowego inspektora pracy w ciągu 5 dni roboczych
+      (art. 25<sup>1</sup> § 5); limity takich umów sprawdzi <a href="/narzedzia/umowa-na-czas-okreslony">kalkulator umów
+      na czas określony</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { obowiazkiNaStart, type Obowiazek } from '../../lib/narzedzia/start-w-pracy';
+  import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { typografia } from '../../lib/typografia.mjs';
+
+  const form = document.querySelector<HTMLFormElement>('[data-start-pracy]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const opis = (o: Obowiazek) =>
+      o.kiedy === 'przed' ? 'przed rozpoczęciem pracy' : `do ${dataPoPolsku(o.data)}${o.przesunieta ? ` (dzień wolny; po przesunięciu ${dataPoPolsku(o.przesunieta)})` : ''}`;
+    const przelicz = () => {
+      const start = el('start').value;
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      const lista = w('lista');
+      const blad = poprawnaData(start) ? null : 'Wpisz pierwszy dzień pracy.';
+      b.hidden = !blad;
+      b.textContent = blad ?? '';
+      if (blad) {
+        w('informacja').textContent = '—';
+        lista.replaceChildren();
+        return;
+      }
+      const obowiazki = obowiazkiNaStart({ start, regulamin: el('regulamin').checked, monitoring: el('monitoring').checked, ppk: el('ppk').checked });
+      w('informacja').textContent = dataPoPolsku(obowiazki.find((o) => o.klucz === 'informacja')!.data);
+      lista.replaceChildren(
+        ...obowiazki.map((o) => {
+          const li = document.createElement('li');
+          li.dataset.kiedy = o.kiedy;
+          const s = document.createElement('strong');
+          s.textContent = typografia(o.nazwa);
+          li.append(s, document.createTextNode(typografia(`: ${opis(o)} (${o.podstawa})`)));
+          return li;
+        }),
+      );
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>
+
+<style>
+  .lista-obowiazkow {
+    display: grid;
+    gap: 0.5rem;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    list-style: disc;
+    padding-left: 1.25rem;
+  }
+</style>

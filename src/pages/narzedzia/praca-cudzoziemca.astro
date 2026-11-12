@@ -1,0 +1,170 @@
+---
+// Praca cudzoziemca: bez zezwolenia, oświadczenie czy zezwolenie na pracę i co musi zrobić pracodawca (ustawa z 20 marca
+// 2025 r. o warunkach dopuszczalności powierzania pracy cudzoziemcom ze zm.). Logika: src/lib/narzedzia/cudzoziemiec-podstawa.ts.
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { OBYWATELSTWA, POBYTY, podstawaPracy } from '../../lib/narzedzia/cudzoziemiec-podstawa';
+
+const r = podstawaPracy('ukraina', 'ochrona-czasowa');
+
+const faq = [
+  {
+    pytanie: 'Czy obywatel Ukrainy potrzebuje zezwolenia na pracę?',
+    odpowiedz: 'Nie, gdy korzysta z ochrony czasowej (art. 3 ust. 1 pkt 12 ustawy o powierzaniu pracy cudzoziemcom). Tak samo przez 3 lata od 5 marca 2026 r., gdy przebywa w Polsce legalnie bez ochrony czasowej (art. 41 ustawy o wygaszeniu pomocy obywatelom Ukrainy). Pracodawca powiadamia wtedy powiatowy urząd pracy w ciągu 7 dni od rozpoczęcia pracy (art. 5a). Dawny art. 22 specustawy o pomocy obywatelom Ukrainy nie obowiązuje od 5 marca 2026 r.',
+  },
+  {
+    pytanie: 'Na jak długo jest oświadczenie o powierzeniu pracy?',
+    odpowiedz: 'Najwyżej na 24 miesiące, dla obywateli Armenii, Białorusi, Mołdawii i Ukrainy, do pracy poza działalnością sezonową. Praca musi zacząć się najpóźniej 6 miesięcy od złożenia oświadczenia (art. 61 ust. 1 ustawy o powierzaniu pracy cudzoziemcom, § 2 rozporządzenia Dz.U. 2025 poz. 1617). Obywatele Gruzji nie mogą już pracować na nowe oświadczenie.',
+  },
+  {
+    pytanie: 'Na jak długo wydaje się zezwolenie na pracę?',
+    odpowiedz: 'Najwyżej na 3 lata (art. 15 ustawy o powierzaniu pracy cudzoziemcom). Najwyżej na rok, gdy firma działa krócej niż rok albo praca ma trwać nie więcej niż pół etatu lub 20 godzin w tygodniu (art. 34 ust. 1).',
+  },
+  {
+    pytanie: 'Czy cudzoziemiec może zacząć pracę bez umowy na piśmie?',
+    odpowiedz: 'Nie. Umowę na piśmie zawiera się przed dopuszczeniem do pracy (art. 5 ust. 1 ustawy o powierzaniu pracy cudzoziemcom). Praca bez takiej umowy jest nielegalnym powierzeniem pracy (art. 2 pkt 2 lit. f), za które pracodawcy grozi grzywna (art. 84 ust. 1). Gdy nie znasz polskiego, przed podpisaniem dostajesz treść umowy na piśmie w zrozumiałym języku (art. 5 ust. 2).',
+  },
+  {
+    pytanie: 'Ile musi zarabiać cudzoziemiec z oświadczeniem albo zezwoleniem?',
+    odpowiedz: 'Nie mniej niż płaca minimalna i nie mniej niż pracownicy na porównywalnym stanowisku albo przy porównywalnej pracy (art. 30 ust. 1 pkt 2 i art. 65 ust. 1 pkt 1 ustawy o powierzaniu pracy cudzoziemcom). Gdy płaca minimalna rośnie, pracodawca podnosi wynagrodzenie (art. 17 ust. 1 pkt 3 i art. 68 ust. 1 pkt 3).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="praca-cudzoziemca"
+  tytul="Praca cudzoziemca: zezwolenie czy oświadczenie"
+  opis="Czy cudzoziemiec potrzebuje zezwolenia na pracę, oświadczenia, czy pracuje bez nich: Ukraina, Białoruś, inne państwa, karta pobytu, studenci. Stan na 2026 r."
+  h1="Praca cudzoziemca: na jakiej podstawie"
+  lead="Wybierz obywatelstwo i dokument pobytowy, a sprawdzimy, czy potrzebne jest zezwolenie na pracę, oświadczenie o powierzeniu pracy, czy można pracować bez nich, i co musi zrobić pracodawca."
+  faq={faq}
+>
+  <form class="kalkulator" data-cudzoziemiec novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Kto ma pracować</h2>
+      <div class="mt-4">
+        <label for="c-obywatelstwo" class="etykieta-pola">Obywatelstwo</label>
+        <select id="c-obywatelstwo" name="obywatelstwo" class="pole mt-1">
+          {Object.entries(OBYWATELSTWA).map(([k, n]) => <option value={k} selected={k === 'ukraina'}>{n}</option>)}
+        </select>
+      </div>
+      <div class="mt-4" data-pobyt>
+        <label for="c-pobyt" class="etykieta-pola">Dokument albo status w Polsce</label>
+        <select id="c-pobyt" name="pobyt" class="pole mt-1">
+          {Object.entries(POBYTY).map(([k, n]) => <option value={k} selected={k === 'ochrona-czasowa'}>{n}</option>)}
+        </select>
+      </div>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Podstawa pracy</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-werdykt mt-2" data-w="naglowek" data-werdykt={r.werdykt}>{r.naglowek}</p>
+        <p class="meta mt-2" data-w="podstawa">{r.podstawa}</p>
+        <p class="wynik-uwaga" data-w="uwaga" hidden={!r.uwaga}>{r.uwaga}</p>
+      </div>
+      <h3 class="etykieta mt-5" data-w="obowiazki-tytul">Co musi być przed pracą i po niej</h3>
+      <ul class="lista-obowiazkow mt-2" data-w="obowiazki">
+        {r.obowiazki.map((o) => <li>{o.tekst} ({o.podstawa})</li>)}
+      </ul>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="jak-sprawdzamy">Jak sprawdzamy</h2>
+    <p>
+      Podstawą jest ustawa z 20 marca 2025 r. o warunkach dopuszczalności powierzania pracy cudzoziemcom, w mocy od
+      1 czerwca 2025 r., ze zmianami z 2025 i 2026 r. Nie ma jeszcze jej tekstu jednolitego, więc brzmienie przepisów
+      składamy z ustawy i aktów zmieniających. Dla obywateli Ukrainy uwzględniamy ustawę z 23 stycznia 2026 r.
+      o wygaszeniu rozwiązań specustawy, w mocy od 5 marca 2026 r.
+    </p>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Podstawa pracy cudzoziemca według sytuacji</caption>
+        <thead><tr><th scope="col">Sytuacja</th><th scope="col">Podstawa pracy</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Obywatel UE, Norwegii, Islandii, Liechtensteinu</th><td>jak obywatel Polski, ustawy nie stosuje się (art. 1 ust. 4 pkt 6)</td></tr>
+          <tr><th scope="row">Pobyt stały, rezydent długoterminowy UE, status uchodźcy, ochrona, ochrona czasowa</th><td>bez zezwolenia (art. 3 ust. 1 pkt 6–12)</td></tr>
+          <tr><th scope="row">Karta Polaka, absolwent polskiej szkoły ponadpodstawowej albo uczelni</th><td>bez zezwolenia przy legalnym pobycie (art. 3 ust. 5)</td></tr>
+          <tr><th scope="row">Student studiów stacjonarnych w Polsce</th><td>bez zezwolenia (§ 1 pkt 12 rozporządzenia Dz.U. 2025 poz. 1620)</td></tr>
+          <tr><th scope="row">Karta pobytu „pobyt i praca”</th><td>na warunkach tego zezwolenia (art. 3 ust. 2 pkt 1)</td></tr>
+          <tr><th scope="row">Armenia, Białoruś, Mołdawia, Ukraina na wizie albo bez wizy</th><td>oświadczenie do 24 miesięcy albo zezwolenie (art. 3 ust. 3, art. 61); Ukraina też jak przy ochronie czasowej (art. 41 ustawy o wygaszeniu)</td></tr>
+          <tr><th scope="row">Inne państwa na wizie, bez wizy, na pobyt czasowy</th><td>zezwolenie na pracę do 3 lat (art. 3 ust. 3, art. 15)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Lista nie obejmuje wszystkich przypadków: rozporządzenie o pracy bez zezwolenia wymienia jeszcze ponad 20 sytuacji,
+      na przykład praktyki studenckie i przygotowanie zawodowe młodocianych. Przy karcie pobytu sprawdź jej adnotację
+      „dostęp do rynku pracy” i podstawę wydania.
+    </p>
+
+    <h2 id="obywatele-ukrainy">Obywatele Ukrainy od 5 marca 2026 r.</h2>
+    <ul>
+      <li>Z ochroną czasową (PESEL ze statusem UKR): praca bez zezwolenia, pracodawca powiadamia urząd pracy przez praca.gov.pl w 7 dni od rozpoczęcia pracy i ponownie w 7 dni po zmianie umowy, stanowiska, wymiaru albo stawki (art. 5a). Legalny pobyt trwa, dopóki obowiązuje decyzja Rady UE o ochronie czasowej (art. 106 ust. 1 ustawy o udzielaniu cudzoziemcom ochrony).</li>
+      <li>Bez ochrony czasowej, ale z legalnym pobytem: przez 3 lata od 5 marca 2026 r. te same zasady (art. 41 ustawy o wygaszeniu).</li>
+      <li>Karta pobytu dla byłych beneficjentów ochrony czasowej (potocznie CUKR): to zezwolenie na pobyt czasowy na 3 lata i zwolnienie z zezwolenia na pracę (art. 42p, 42r i 42v ustawy o pomocy obywatelom Ukrainy). Wniosek można złożyć do 4 marca 2027 r. (art. 42x).</li>
+    </ul>
+
+    <h2 id="obowiazki">Obowiązki pracodawcy</h2>
+    <p>
+      Umowa na piśmie przed dopuszczeniem do pracy, a gdy nie znasz polskiego, jej treść na piśmie w zrozumiałym języku
+      przed podpisaniem (art. 5 ust. 1–2). Pisemna informacja o prawie wstępowania do związków zawodowych (art. 5 ust. 4).
+      Przed rozpoczęciem pracy pracodawca żąda ważnego dokumentu pobytowego i przechowuje jego kopię przez cały okres pracy
+      i 2 lata od końca roku, w którym umowa ustała (art. 4 ust. 2–6). Terminy zgłoszeń do urzędu pracy, starosty
+      i wojewody policzy <a href="/narzedzia/zgloszenie-pracy-cudzoziemca">kalkulator terminów zgłoszeń</a>. Pozostałe
+      terminy na start są takie same jak dla każdego pracownika:
+      <a href="/narzedzia/informacja-o-warunkach-zatrudnienia">nowa praca: terminy pracodawcy</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { podstawaPracy, type Obywatelstwo, type Pobyt } from '../../lib/narzedzia/cudzoziemiec-podstawa';
+  import { typografia } from '../../lib/typografia.mjs';
+
+  const form = document.querySelector<HTMLFormElement>('[data-cudzoziemiec]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLSelectElement;
+    const przelicz = () => {
+      const obywatelstwo = el('obywatelstwo').value as Obywatelstwo;
+      const pole = form.querySelector<HTMLElement>('[data-pobyt]')!;
+      pole.hidden = obywatelstwo === 'ue';
+      const r = podstawaPracy(obywatelstwo, el('pobyt').value as Pobyt);
+      w('naglowek').textContent = typografia(r.naglowek);
+      w('naglowek').dataset.werdykt = r.werdykt;
+      w('podstawa').textContent = typografia(r.podstawa);
+      w('uwaga').hidden = !r.uwaga;
+      w('uwaga').textContent = typografia(r.uwaga ?? '');
+      w('obowiazki-tytul').hidden = r.obowiazki.length === 0;
+      w('obowiazki').replaceChildren(
+        ...r.obowiazki.map((o) => {
+          const li = document.createElement('li');
+          li.textContent = typografia(`${o.tekst} (${o.podstawa})`);
+          return li;
+        }),
+      );
+    };
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>
+
+<style>
+  .wynik-werdykt {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    line-height: 1.2;
+    font-weight: 700;
+    color: var(--color-tekst);
+  }
+  .lista-obowiazkow {
+    display: grid;
+    gap: 0.5rem;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    list-style: disc;
+    padding-left: 1.25rem;
+  }
+</style>

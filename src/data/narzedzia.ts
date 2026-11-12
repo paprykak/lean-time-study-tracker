@@ -553,6 +553,22 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-12',
   },
   {
+    slug: 'wypowiedzenie-zmieniajace',
+    nazwa: 'Wypowiedzenie zmieniające: termin odmowy',
+    krotko: 'Do kiedy odmówić nowych warunków pracy lub płacy, od kiedy obowiązują i kiedy kończy się umowa po odmowie.',
+    kategoria: 'umowa',
+    przepisy: ['kodeksPracy', 'kodeksCywilny', 'zwolnieniaGrupowe'],
+    sprawdzono: '2026-11-12',
+  },
+  {
+    slug: 'informacja-o-warunkach-zatrudnienia',
+    nazwa: 'Nowa praca: terminy pracodawcy',
+    krotko: 'Do kiedy umowa, badania, BHP, informacja o warunkach zatrudnienia (7 dni), zgłoszenie do ZUS i zapis do PPK.',
+    kategoria: 'umowa',
+    przepisy: ['kodeksPracy', 'kodeksCywilny', 'ubezpieczeniaZgloszenie', 'ppk'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'przerwy-w-pracy',
     nazwa: 'Przerwy w pracy',
     krotko: 'Ile przerw przy zmianie 8 i 12 godzin, które są płatne, przy monitorze, na karmienie, dla młodocianych.',
