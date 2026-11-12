@@ -416,6 +416,27 @@ export const AKTY = {
     adres: eli(2026, 1213),
     sprawdzono: '2026-11-11',
   },
+  zfss: {
+    nazwa: 'Ustawa o zakładowym funduszu świadczeń socjalnych',
+    publikator: 'Dz.U. 2024 poz. 288',
+    uwaga: 'tekst jednolity; zmiany Dz.U. 2026 poz. 25 (art. 4 ust. 3 i art. 8 ust. 2) i 2026 poz. 1123 (art. 2 pkt 1 od 2028 r.) nie dotyczą art. 3 i 5',
+    adres: eli(2024, 288),
+    sprawdzono: '2026-11-12',
+  },
+  przecietneZfss2026: {
+    nazwa: 'Obwieszczenie Prezesa GUS w sprawie przeciętnego wynagrodzenia w 2025 r. i w drugim półroczu 2025 r. (odpis na ZFŚS)',
+    publikator: 'M.P. 2026 poz. 232',
+    uwaga: '7770,04 zł za 2025 r., 7848,60 zł za drugie półrocze 2025 r.; dla 2025 r. M.P. 2025 poz. 148 (7262,39 zł)',
+    adres: 'https://eli.gov.pl/eli/MP/2026/232/ogl',
+    sprawdzono: '2026-11-12',
+  },
+  okolobudzetowa2026: {
+    nazwa: 'Ustawa o szczególnych rozwiązaniach służących realizacji ustawy budżetowej na rok 2026',
+    publikator: 'Dz.U. 2025 poz. 1840',
+    uwaga: 'zmiana Dz.U. 2026 poz. 1349; bez przepisu o odpisie na ZFŚS (ostatnie zamrożenie podstawy dotyczyło 2023 r.)',
+    adres: eli(2025, 1840),
+    sprawdzono: '2026-11-12',
+  },
 } as const satisfies Record<string, Akt>;
 
 export type KluczAktu = keyof typeof AKTY;

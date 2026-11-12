@@ -553,6 +553,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-12',
   },
   {
+    slug: 'swiadczenie-urlopowe',
+    nazwa: 'Świadczenie urlopowe',
+    krotko: 'Ile najwyżej wynosi świadczenie urlopowe przy Twoim etacie, kiedy się należy i ile zostaje na rękę.',
+    kategoria: 'wynagrodzenie',
+    przepisy: ['zfss', 'przecietneZfss2026', 'okolobudzetowa2026', 'podstawaSkladek', 'swiadczeniaZdrowotne', 'pit', 'ordynacja', 'kodeksPracy', 'pracaTymczasowa'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'przerwy-w-pracy',
     nazwa: 'Przerwy w pracy',
     krotko: 'Ile przerw przy zmianie 8 i 12 godzin, które są płatne, przy monitorze, na karmienie, dla młodocianych.',
