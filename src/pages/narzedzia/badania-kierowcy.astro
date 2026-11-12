@@ -1,0 +1,318 @@
+---
+// Badania lekarskie i psychotesty kierowców: termin następnego badania (art. 39j ust. 4, 39k ust. 3 ustawy o transporcie
+// drogowym), kto płaci i opłaty (art. 79a UKP, § 13 rozp. o badaniach psychologicznych). Logika i teksty wyniku:
+// src/lib/narzedzia/badania-kierowcy.ts (testy obok). Wynik startowy liczony na serwerze, więc strona działa bez JS.
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import {
+  LATA_DO_60,
+  MIESIECY_PO_60,
+  OPLATA_LEKARSKA_MAKS,
+  OPLATA_PSYCH,
+  OPLATA_PSYCH_DAWNA,
+  WIEK_PROGU,
+  ZMIANA_OPLATY_PSYCH,
+  widok,
+} from '../../lib/narzedzia/badania-kierowcy';
+import { dataPoPolsku, dodajDni, dodajLata, dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+const dzis = dzisWPolsce();
+const START = { rola: 'kierowca' as const, urodzenie: dodajLata(dzis, -45), lek: dodajLata(dzis, -2), psy: dodajLata(dzis, -2) };
+const v = widok(START, dzis);
+const zmiana = dataPoPolsku(ZMIANA_OPLATY_PSYCH);
+const dzienPrzed = dataPoPolsku(dodajDni(ZMIANA_OPLATY_PSYCH, -1));
+
+const faq = [
+  {
+    pytanie: 'Co ile psychotesty i badania lekarskie kierowcy zawodowego?',
+    odpowiedz: `Do ukończenia ${WIEK_PROGU} lat co ${LATA_DO_60} lat, a po ukończeniu ${WIEK_PROGU}. roku życia co ${MIESIECY_PO_60} miesięcy (art. 39j ust. 4 i art. 39k ust. 3 ustawy o transporcie drogowym). Lekarz może wpisać w orzeczeniu krótszy termin, na przykład przy cukrzycy, i wtedy obowiązuje ten krótszy.`,
+  },
+  {
+    pytanie: 'Kto płaci za badania i psychotesty kierowcy?',
+    odpowiedz: 'Przewoźnik albo pracodawca: musi skierować kierowcę na badania i pokryć ich koszt (art. 39l ust. 1 pkt 1 i 2 ustawy o transporcie drogowym, art. 229 § 6 Kodeksu pracy). Kto wykonuje przewóz osobiście we własnej firmie, płaci sam (art. 39m). Za czas badań lekarskich pracownik zachowuje prawo do wynagrodzenia (art. 229 § 3 Kodeksu pracy).',
+  },
+  {
+    pytanie: 'Ile kosztują psychotesty dla kierowcy w 2026 roku?',
+    odpowiedz: `Opłata za badanie psychologiczne w zakresie psychologii transportu wynosi ${OPLATA_PSYCH} zł od ${zmiana}, a wcześniej wynosiła ${OPLATA_PSYCH_DAWNA} zł (§ 13 rozporządzenia o badaniach psychologicznych, zmiana z Dz.U. 2026 poz. 1434). Badanie rozpoczęte przed ${zmiana} i zakończone orzeczeniem później kosztuje ${OPLATA_PSYCH_DAWNA} zł. Badanie lekarskie kierowcy kosztuje najwyżej ${OPLATA_LEKARSKA_MAKS} zł (art. 79a ustawy o kierujących pojazdami).`,
+  },
+  {
+    pytanie: 'Czy kierowca z kategorią B potrzebuje psychotestów?',
+    odpowiedz: 'Tak, jeśli wykonuje przewóz drogowy, także przewóz na potrzeby własne firmy. Przy kategorii B ustawa zwalnia z wymagań wieku, kwalifikacji i szkoleń, ale nie z badań lekarskich i psychologicznych (art. 39a ust. 4 ustawy o transporcie drogowym). Bez psychotestów obejdzie się pracownik, który tylko dojeżdża autem służbowym do swojej pracy z potrzebnym sprzętem, a jazda nie jest jego głównym zajęciem (art. 39a ust. 3 pkt 9).',
+  },
+  {
+    pytanie: 'Czy na wózek widłowy trzeba robić psychotesty?',
+    odpowiedz: 'Żaden przepis tego nie wymaga. Operator wózka potrzebuje zaświadczenia kwalifikacyjnego (§ 4 rozporządzenia o wózkach jezdniowych) i aktualnego badania okresowego z Kodeksu pracy. Lekarz medycyny pracy może w ramach tego badania skierować na konsultację psychologiczną, a jej koszt ponosi pracodawca.',
+  },
+  {
+    pytanie: 'Czy badania kierowcy można zrobić online?',
+    odpowiedz: 'Nie. Od 3 czerwca 2026 r. badanie lekarskie kierowcy przeprowadza się w bezpośrednim kontakcie z osobą badaną (§ 4 ust. 2 rozporządzenia o badaniach lekarskich kierowców, zmiana z Dz.U. 2026 poz. 608).',
+  },
+];
+
+---
+<StronaNarzedzia
+  slug="badania-kierowcy"
+  tytul="Badania kierowcy i psychotesty: kiedy następne"
+  opis="Kiedy następne badanie lekarskie i psychotesty kierowcy: co 5 lat, po 60. roku życia co 30 miesięcy. Kto płaci, ile kosztują (200 zł od 14.11.2026)."
+  h1="Badania lekarskie i psychotesty kierowcy: kalkulator terminu"
+  lead={`Kierowca w przewozie drogowym robi badanie lekarskie i psychotesty co ${LATA_DO_60} lat, a po ukończeniu ${WIEK_PROGU} lat co ${MIESIECY_PO_60} miesięcy. Płaci przewoźnik albo pracodawca. Wpisz daty ostatnich orzeczeń, a policzymy następne terminy.`}
+  faq={faq}
+>
+  <form class="kalkulator" data-kierowca novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twoje badania</h2>
+
+      <fieldset class="mt-4">
+        <legend class="etykieta-pola">Kim jesteś</legend>
+        <div class="opcje-pionowe mt-2">
+          <label><input type="radio" name="rola" value="kierowca" checked /> Kierowca w przewozie drogowym</label>
+          <label><input type="radio" name="rola" value="auto-sluzbowe" /> Auto służbowe, bez przewozu</label>
+          <label><input type="radio" name="rola" value="wozek" /> Operator wózka widłowego</label>
+        </div>
+        <p class="meta mt-2" data-w="rola-opis">Wozisz towar albo ludzi zawodowo lub na potrzeby firmy, także autem kategorii B. Przy wątpliwości wybierz tę opcję: terminy są krótsze.</p>
+      </fieldset>
+
+      <div class="mt-4" data-urodzenie>
+        <label for="bk-urodzenie" class="etykieta-pola">Data urodzenia</label>
+        <input id="bk-urodzenie" name="urodzenie" type="date" class="pole mt-1 max-w-56" min="1930-01-01" max="2100-12-31" value={START.urodzenie} aria-describedby="bk-urodzenie-blad" />
+        <p id="bk-urodzenie-blad" class="blad-pola" data-blad="urodzenie" hidden></p>
+      </div>
+
+      <fieldset class="mt-6">
+        <legend class="etykieta" data-w="legenda-lek">Badanie lekarskie</legend>
+        <div class="mt-2">
+          <label for="bk-lek" class="etykieta-pola">Data orzeczenia lekarskiego</label>
+          <input id="bk-lek" name="lek" type="date" class="pole mt-1 max-w-56" min="1950-01-01" max="2100-12-31" value={START.lek} aria-describedby="bk-lek-blad" />
+          <p id="bk-lek-blad" class="blad-pola" data-blad="lek" hidden></p>
+        </div>
+        <div class="mt-3">
+          <label for="bk-lek-termin" class="etykieta-pola">Termin z orzeczenia lekarskiego</label>
+          <input id="bk-lek-termin" name="lekTermin" type="date" class="pole mt-1 max-w-56" min="1950-01-01" max="2100-12-31" aria-describedby="bk-lek-termin-opis bk-lek-termin-blad" />
+          <p id="bk-lek-termin-opis" class="meta mt-1">Pole „Termin następnego badania”. Opcjonalne.</p>
+          <p id="bk-lek-termin-blad" class="blad-pola" data-blad="lekTermin" hidden></p>
+        </div>
+      </fieldset>
+
+      <fieldset class="mt-6" data-psy>
+        <legend class="etykieta">Badanie psychologiczne</legend>
+        <div class="mt-2">
+          <label for="bk-psy" class="etykieta-pola">Data orzeczenia psychologa</label>
+          <input id="bk-psy" name="psy" type="date" class="pole mt-1 max-w-56" min="1950-01-01" max="2100-12-31" value={START.psy} aria-describedby="bk-psy-blad" />
+          <p id="bk-psy-blad" class="blad-pola" data-blad="psy" hidden></p>
+        </div>
+        <div class="mt-3">
+          <label for="bk-psy-termin" class="etykieta-pola">Termin z orzeczenia psychologa</label>
+          <input id="bk-psy-termin" name="psyTermin" type="date" class="pole mt-1 max-w-56" min="1950-01-01" max="2100-12-31" aria-describedby="bk-psy-termin-blad" />
+          <p id="bk-psy-termin-blad" class="blad-pola" data-blad="psyTermin" hidden></p>
+        </div>
+      </fieldset>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <div aria-live="polite" aria-atomic="true">
+        <h2 id="wynik-tytul" class="etykieta" data-w="naglowek-lek">{v.naglowekLek}</h2>
+        <p class="wynik-data" data-w="lek">{v.lek}</p>
+        <p class="status-terminu" data-w="status-lek" data-status={v.statusLek?.status} hidden={!v.statusLek}>{v.statusLek?.tekst}</p>
+        <p class="meta mt-1" data-w="lek-opis">{v.lekOpis}</p>
+        <div class="mt-5" data-w="blok-psy">
+          <h3 class="etykieta">Następne psychotesty najpóźniej</h3>
+          <p class="wynik-data" data-w="psy">{v.psy}</p>
+          <p class="status-terminu" data-w="status-psy" data-status={v.statusPsy?.status} hidden={!v.statusPsy}>{v.statusPsy?.tekst}</p>
+          <p class="meta mt-1" data-w="psy-opis">{v.psyOpis}</p>
+        </div>
+      </div>
+      <dl class="wynik-lista">
+        <div data-w="wiersz-60"><dt>60. urodziny</dt><dd data-w="dzien60">{v.dzien60}</dd></div>
+        <div><dt>Kto płaci</dt><dd data-w="placi">{v.placi}</dd></div>
+        <div><dt>Badanie lekarskie kosztuje</dt><dd data-w="oplata-lek">{v.oplataLek}</dd></div>
+        <div><dt>Psychotesty</dt><dd data-w="oplata-psy">{v.oplataPsy}</dd></div>
+      </dl>
+      <p class="wynik-uwaga" data-w="uwaga" hidden={!v.uwaga}>{v.uwaga}</p>
+      <p class="mt-5">
+        <button type="button" class="przycisk przycisk-grafit" data-ics disabled>Dodaj do kalendarza (.ics)</button>
+      </p>
+      <p class="meta mt-2">Przypomnienia: 30 dni przed terminem i w dniu terminu (tylko te, które jeszcze nie minęły).</p>
+      <noscript><p class="wynik-uwaga">Wynik powyżej to przykład dla kierowcy 45 lat po badaniach sprzed 2 lat. Żeby wpisać swoje daty, włącz JavaScript; zasady i tabela są poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="co-ile">Co ile badania kierowcy: tabela</h2>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Częstotliwość badań kierowców i operatorów według przepisów</caption>
+        <thead><tr><th scope="col">Kto</th><th scope="col">Badanie lekarskie</th><th scope="col">Psychotesty</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Kierowca w przewozie drogowym, do 60 lat</th><td>co {LATA_DO_60} lat (art. 39j ust. 4 pkt 1)</td><td>co {LATA_DO_60} lat (art. 39k ust. 3 pkt 1)</td></tr>
+          <tr><th scope="row">Kierowca w przewozie drogowym, po 60 latach</th><td>co {MIESIECY_PO_60} miesięcy (art. 39j ust. 4 pkt 2)</td><td>co {MIESIECY_PO_60} miesięcy (art. 39k ust. 3 pkt 2)</td></tr>
+          <tr><th scope="row">Pracownik z autem służbowym, bez przewozu drogowego</th><td>co 30 miesięcy – 5 lat, termin wpisuje lekarz</td><td>brak przepisu</td></tr>
+          <tr><th scope="row">Operator wózka widłowego</th><td>co 3–4 lata, po 50 latach co 2–3 lata, termin wpisuje lekarz</td><td>brak przepisu</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Przewóz drogowy obejmuje transport drogowy i przewóz na potrzeby własne firmy (art. 4 pkt 4 i 6a ustawy o transporcie
+      drogowym), także autem kategorii B: przy tej kategorii odpadają wymagania wieku, kwalifikacji i szkoleń, ale badania
+      lekarskie i psychologiczne zostają (art. 39a ust. 4). Wymogu nie ma m.in. przy przewozie niehandlowym i przy wożeniu
+      sprzętu potrzebnego kierowcy do pracy, gdy jazda nie jest jego głównym zajęciem (art. 39a ust. 3 pkt 8 i 9). Widełki
+      dla auta służbowego i wózka podają wskazówki metodyczne (załącznik nr 1 cz. V pkt 11 i 2 do rozporządzenia
+      o badaniach profilaktycznych), a konkretną datę lekarz wpisuje w orzeczeniu.
+    </p>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <ul>
+      <li>Termin liczymy od daty ostatniego orzeczenia, osobno dla badania lekarskiego i psychologicznego. Do daty dodajemy {LATA_DO_60} lat albo {MIESIECY_PO_60} miesięcy jak w art. 112 Kodeksu cywilnego: ten sam dzień miesiąca, a gdy go brak, ostatni dzień miesiąca (31 sierpnia + 30 miesięcy = koniec lutego). Badanie trzeba zrobić najpóźniej w tym dniu.</li>
+      <li>Wiek liczymy według art. 112 Kodeksu cywilnego: 60 lat kończysz z początkiem dnia 60. urodzin. Badanie w dniu urodzin to już badanie po ukończeniu 60 lat.</li>
+      <li>Odstęp wybieramy według wieku w dniu badania, jak we wzorze orzeczenia psychologicznego. Przepis nie mówi, co wtedy, gdy {LATA_DO_60} lat od badania kończy się po 60. urodzinach. Wybieramy wariant ostrożny, czyli wcześniejszy termin: 30 miesięcy od badania, ale nie wcześniej niż w dniu 60. urodzin. Przy takim wyniku pokazujemy też datę według brzmienia przepisu.</li>
+      <li>Termin z orzeczenia ma pierwszeństwo, gdy jest wcześniejszy: lekarz może go skrócić ze względu na stan zdrowia (art. 79 ust. 3 pkt 1 ustawy o kierujących pojazdami, § 2 ust. 2 rozporządzenia o badaniach profilaktycznych). Zawsze pokazujemy najwcześniejszą z dat.</li>
+      <li>Przy aucie służbowym i wózku podajemy tylko widełki: wiąże termin z orzeczenia. „Powyżej 50. roku życia” liczymy jako ukończone 50 lat w dniu badania. Po górnej granicy widełek badanie jest zaległe, bo lekarz może termin skrócić, ale nie wydłużyć.</li>
+      <li>Nie liczymy terminów dla motorniczych tramwajów, instruktorów, egzaminatorów, kierowców pojazdów uprzywilejowanych i przewożących wartości pieniężne: mają osobne zasady.</li>
+    </ul>
+
+    <h2 id="oplaty">Kto płaci i ile kosztują badania kierowcy</h2>
+    <p>
+      Przewoźnik albo pracodawca kieruje kierowcę na badania i pokrywa ich koszt (art. 39l ust. 1 pkt 1 i 2 ustawy
+      o transporcie drogowym), a za czas badań lekarskich pracownik zachowuje wynagrodzenie (art. 229 § 3 Kodeksu pracy).
+      Badanie lekarskie kierowcy kosztuje najwyżej {OPLATA_LEKARSKA_MAKS} zł (art. 79a ustawy o kierujących pojazdami).
+      Opłata za badanie psychologiczne wynosi {OPLATA_PSYCH_DAWNA} zł do {dzienPrzed} i {OPLATA_PSYCH} zł od {zmiana};
+      badanie rozpoczęte przed tym dniem kosztuje {OPLATA_PSYCH_DAWNA} zł, nawet gdy orzeczenie wydano później (§ 2
+      rozporządzenia z Dz.U. 2026 poz. 1434). Badanie okresowe pracownika z autem służbowym i operatora wózka ma cenę
+      rynkową i też płaci za nie pracodawca (art. 229 § 6 Kodeksu pracy).
+    </p>
+    <p>
+      Gdy nie zgadzasz się z orzeczeniem, w ciągu 14 dni od jego otrzymania możesz złożyć wniosek o ponowne badanie, za
+      pośrednictwem lekarza albo psychologa, który je wydał (art. 79 ust. 4 i 6 oraz art. 84 ust. 2 i 3 ustawy
+      o kierujących pojazdami). Przy badaniach z Kodeksu pracy ponowne badanie nie jest na Twój koszt.
+    </p>
+
+    <h2 id="kod-95">Badania a kod 95 i prawo jazdy</h2>
+    <p>
+      Od 5 grudnia 2021 r. termin badań nie zależy od szkolenia okresowego. Działa to jednak w drugą stronę: wpis kodu 95
+      nie może być ważny dłużej niż orzeczenie lekarskie i psychologiczne (art. 15 ust. 4 ustawy o kierujących
+      pojazdami). Do kiedy jest ważny Twój kod 95, policzy <a href="/narzedzia/kod-95">kalkulator kodu 95</a>. Ważne
+      orzeczenia z badań kierowcy wystarczą też przy przedłużaniu prawa jazdy kategorii C i D (art. 75 ust. 3 i art. 82
+      ust. 6). Operator wózka widłowego potrzebuje zaświadczenia kwalifikacyjnego: czy jest wymagane dla Twojego
+      urządzenia, sprawdzisz w narzędziu <a href="/narzedzia/czy-potrzebne-uprawnienia-udt">czy potrzebne uprawnienia UDT</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { widok, type Rola, type StatusWidoku } from '../../lib/narzedzia/badania-kierowcy';
+  import { dzisWPolsce, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { plikIcs } from '../../lib/narzedzia/kalendarz-ics';
+  import { typografia } from '../../lib/typografia.mjs';
+
+  const form = document.querySelector<HTMLFormElement>('[data-kierowca]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const pole = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const pisz = (k: string, t: string) => {
+      w(k).textContent = typografia(t);
+    };
+    const ics = form.querySelector<HTMLButtonElement>('[data-ics]')!;
+    const OPIS_ROLI: Record<Rola, string> = {
+      kierowca: 'Wozisz towar albo ludzi zawodowo lub na potrzeby firmy, także autem kategorii B. Przy wątpliwości wybierz tę opcję: terminy są krótsze.',
+      'auto-sluzbowe': 'Jeździsz autem firmy do swojej pracy, a jazda nie jest Twoim głównym zajęciem. Obowiązuje badanie okresowe z Kodeksu pracy.',
+      wozek: 'Obsługujesz wózek widłowy w zakładzie. Obowiązuje badanie okresowe z Kodeksu pracy, a psychotestów nie wymaga żaden przepis.',
+    };
+    let wydarzenia: ReturnType<typeof widok>['wydarzenia'] = [];
+
+    const ustawStatus = (k: string, s: StatusWidoku | null) => {
+      const el = w(k);
+      el.hidden = !s;
+      if (s) {
+        el.dataset.status = s.status;
+        el.textContent = typografia(s.tekst);
+      }
+    };
+    const blad = (n: string, tekst: string | null) => {
+      const b = form.querySelector<HTMLElement>(`[data-blad="${n}"]`)!;
+      b.hidden = !tekst;
+      b.textContent = tekst ?? '';
+      pole(n).setAttribute('aria-invalid', tekst ? 'true' : 'false');
+      return !tekst;
+    };
+    const pusty = () => {
+      pisz('lek', 'Wpisz daty');
+      ustawStatus('status-lek', null);
+      ustawStatus('status-psy', null);
+      w('lek-opis').textContent = '';
+      w('psy').textContent = '—';
+      w('psy-opis').textContent = '';
+      w('uwaga').hidden = true;
+      wydarzenia = [];
+      ics.disabled = true;
+    };
+
+    const przelicz = () => {
+      const rola = (form.querySelector<HTMLInputElement>('input[name="rola"]:checked')?.value ?? 'kierowca') as Rola;
+      const kierowca = rola === 'kierowca';
+      pisz('rola-opis', OPIS_ROLI[rola]);
+      form.querySelector<HTMLElement>('[data-urodzenie]')!.hidden = rola === 'auto-sluzbowe';
+      form.querySelector<HTMLElement>('[data-psy]')!.hidden = !kierowca;
+      w('blok-psy').hidden = !kierowca;
+      w('wiersz-60').hidden = !kierowca;
+      w('legenda-lek').textContent = kierowca ? 'Badanie lekarskie' : 'Badanie okresowe';
+
+      const v = (n: string) => pole(n).value;
+      const dzis = dzisWPolsce();
+      let ok = true;
+      const data = (n: string, wymagane: boolean, tekst = 'Wpisz pełną datę: dzień, miesiąc i rok.') => {
+        const x = v(n);
+        const dobra = x ? poprawnaData(x) : !wymagane;
+        ok = blad(n, dobra ? null : tekst) && ok;
+        return dobra;
+      };
+      const potrzebneUrodzenie = rola !== 'auto-sluzbowe';
+      if (potrzebneUrodzenie && data('urodzenie', true) && v('urodzenie') > dzis) ok = blad('urodzenie', 'Data urodzenia nie może być z przyszłości.') && ok;
+      if (!potrzebneUrodzenie) blad('urodzenie', null);
+      const sprawdzBadanie = (n: string, t: string) => {
+        if (!data(n, true)) return;
+        if (potrzebneUrodzenie && poprawnaData(v('urodzenie')) && v(n) < v('urodzenie')) ok = blad(n, 'Data badania jest przed datą urodzenia.') && ok;
+        else if (v(n) > dzis) ok = blad(n, 'Data badania nie może być z przyszłości.') && ok;
+        if (data(t, false) && v(t) && poprawnaData(v(n)) && v(t) <= v(n)) ok = blad(t, 'Termin musi być późniejszy niż data badania.') && ok;
+      };
+      sprawdzBadanie('lek', 'lekTermin');
+      if (kierowca) sprawdzBadanie('psy', 'psyTermin');
+      else {
+        blad('psy', null);
+        blad('psyTermin', null);
+      }
+      if (!ok) return pusty();
+
+      const r = widok({ rola, urodzenie: v('urodzenie'), lek: v('lek'), lekTermin: v('lekTermin') || null, psy: v('psy'), psyTermin: v('psyTermin') || null }, dzis);
+      pisz('naglowek-lek', r.naglowekLek);
+      pisz('lek', r.lek);
+      ustawStatus('status-lek', r.statusLek);
+      pisz('lek-opis', r.lekOpis);
+      pisz('psy', r.psy);
+      ustawStatus('status-psy', r.statusPsy);
+      pisz('psy-opis', r.psyOpis);
+      pisz('dzien60', r.dzien60);
+      pisz('placi', r.placi);
+      pisz('oplata-lek', r.oplataLek);
+      pisz('oplata-psy', r.oplataPsy);
+      w('uwaga').hidden = !r.uwaga;
+      pisz('uwaga', r.uwaga ?? '');
+      wydarzenia = r.wydarzenia;
+      ics.disabled = wydarzenia.length === 0;
+    };
+
+    ics.addEventListener('click', () => {
+      if (!wydarzenia.length) return;
+      const blob = new Blob([plikIcs(wydarzenia, 'badania-kierowcy')], { type: 'text/calendar;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'badania-kierowcy.ics';
+      document.body.append(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    });
+
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>

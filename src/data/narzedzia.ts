@@ -581,7 +581,7 @@ export const NARZEDZIA: Narzedzie[] = [
     nazwa: 'Badania kierowcy: lekarskie i psychotesty',
     krotko: 'Kiedy następne badania kierowcy zawodowego (co 5 lat, po 60. roku co 30 miesięcy), kto płaci i ile najwyżej.',
     kategoria: 'uprawnienia',
-    przepisy: ['transportDrogowy', 'kierujacyPojazdami', 'badaniaLekarskieKierowcow', 'badaniaPsychologiczne', 'zmianaPsychotestow2026', 'badaniaProfilaktyczne', 'kodeksPracy', 'kodeksCywilny'],
+    przepisy: ['transportDrogowy', 'kierujacyPojazdami', 'badaniaLekarskieKierowcow', 'badaniaPsychologiczne', 'zmianaPsychotestow2026', 'badaniaProfilaktyczne', 'wozkiBhp', 'kodeksPracy', 'kodeksCywilny'],
     sprawdzono: '2026-11-12',
   },
   {
