@@ -1,0 +1,123 @@
+---
+// Stawka godzinowa z pensji miesięcznej w każdym miesiącu roku: pensja podzielona przez godziny do przepracowania
+// (wymiar z art. 130 Kp; tak samo liczy się godzinę do nadgodzin i przestoju, § 4 ust. 2 pkt 1 i § 4a rozporządzenia z 1996 r.).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { LATA, PLACA_MINIMALNA } from '../../data/prawo';
+import { nazwaMiesiaca, wymiarMiesiaca } from '../../lib/narzedzia/czas-pracy';
+import { liczba, zl } from '../../lib/narzedzia/format';
+import { dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+const rokBiezacy = Number(dzisWPolsce().slice(0, 4));
+const rok = LATA.includes(rokBiezacy) ? rokBiezacy : LATA[LATA.length - 1];
+const PENSJA = 6000;
+const miesiace = Array.from({ length: 12 }, (_, i) => wymiarMiesiaca(rok, i + 1).godziny);
+const rocznie = miesiace.reduce((a, b) => a + b, 0);
+
+const faq = [
+  {
+    pytanie: 'Ile to na godzinę 6000 zł brutto?',
+    odpowiedz: `Zależy od miesiąca, bo liczba godzin do przepracowania się zmienia: w ${rok} r. od ${zl(PENSJA / Math.max(...miesiace))} do ${zl(PENSJA / Math.min(...miesiace))} za godzinę. Średnio w roku ${zl((PENSJA * 12) / rocznie)} (${rocznie} godzin pracy w roku przy pełnym etacie).`,
+  },
+  {
+    pytanie: 'Jak przeliczyć pensję na stawkę godzinową?',
+    odpowiedz: 'Pensję miesięczną dzieli się przez liczbę godzin do przepracowania w danym miesiącu. Tak liczy się godzinę na przykład przy dodatku za nadgodziny i wynagrodzeniu za przestój (§ 4 ust. 2 pkt 1 i § 4a rozporządzenia z 29 maja 1996 r.), a przy dodatku nocnym dzieli się w ten sposób płacę minimalną (§ 4b). Liczba godzin wynika z art. 130 Kodeksu pracy: 8 godzin razy dni od poniedziałku do piątku, minus 8 godzin za każde święto poza niedzielą.',
+  },
+  {
+    pytanie: 'Ile wynosi płaca minimalna za godzinę na etacie?',
+    odpowiedz: `Płaca minimalna ${zl(PLACA_MINIMALNA[rok].miesiecznie)} podzielona przez godziny w miesiącu: w ${rok} r. od ${zl(PLACA_MINIMALNA[rok].miesiecznie / Math.max(...miesiace))} do ${zl(PLACA_MINIMALNA[rok].miesiecznie / Math.min(...miesiace))} za godzinę. Minimalna stawka godzinowa na zleceniu jest stała: ${zl(PLACA_MINIMALNA[rok].stawkaGodzinowa)}.`,
+  },
+];
+---
+<StronaNarzedzia
+  slug="stawka-godzinowa"
+  tytul="Stawka godzinowa z pensji: ile to na godzinę"
+  opis={`Przelicz pensję miesięczną na stawkę za godzinę w każdym miesiącu ${rok} r. Liczba godzin do przepracowania według Kodeksu pracy, średnia roczna, porównanie z płacą minimalną.`}
+  h1="Ile to na godzinę: stawka z pensji"
+  lead="Ta sama pensja daje inną stawkę za godzinę w każdym miesiącu, bo zmienia się liczba godzin do przepracowania. Wpisz pensję brutto, a pokażemy stawkę w każdym miesiącu i średnią w roku."
+  faq={faq}
+>
+  <form class="kalkulator" data-stawka novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twoja pensja</h2>
+      <div class="mt-4">
+        <label for="s-pensja" class="etykieta-pola">Pensja brutto miesięcznie (zł)</label>
+        <input id="s-pensja" name="pensja" class="pole mt-1 max-w-48" type="text" inputmode="decimal" autocomplete="off" value={PENSJA} aria-describedby="s-blad" />
+        <p id="s-blad" class="blad-pola" data-blad="pensja" hidden></p>
+      </div>
+      <div class="mt-4">
+        <label for="s-rok" class="etykieta-pola">Rok</label>
+        <select id="s-rok" name="rok" class="pole mt-1 max-w-48">
+          {LATA.map((r) => <option value={r} selected={r === rok}>{r}</option>)}
+        </select>
+      </div>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Średnio za godzinę w roku</h2>
+      <p class="wynik-kwota" aria-live="polite" aria-atomic="true"><span data-w="srednio">{zl((PENSJA * 12) / rocznie)}</span></p>
+      <dl class="wynik-lista">
+        <div><dt>Najwyżej (miesiąc z najmniejszą liczbą godzin)</dt><dd data-w="max">{zl(PENSJA / Math.min(...miesiace))}</dd></div>
+        <div><dt>Najmniej (miesiąc z największą liczbą godzin)</dt><dd data-w="min">{zl(PENSJA / Math.max(...miesiace))}</dd></div>
+        <div><dt>Godzin pracy w roku</dt><dd data-w="rocznie">{rocznie} h</dd></div>
+      </dl>
+      <ul class="mt-4 grid gap-x-4 gap-y-1 text-[0.9375rem] sm:grid-cols-2" data-w="lista">
+        {miesiace.map((h, i) => <li>{nazwaMiesiaca(i + 1)}: {zl(PENSJA / h)} ({h} h)</li>)}
+      </ul>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="godziny">Godziny do przepracowania w {rok} r.</h2>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Godziny do przepracowania i płaca minimalna za godzinę według miesiąca</caption>
+        <thead><tr><th scope="col">Miesiąc</th><th scope="col">Godziny</th><th scope="col">Płaca minimalna za godzinę</th></tr></thead>
+        <tbody>
+          {miesiace.map((h, i) => <tr><th scope="row">{nazwaMiesiaca(i + 1)}</th><td>{h} h</td><td>{zl(PLACA_MINIMALNA[rok].miesiecznie / h)}</td></tr>)}
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Liczba godzin to wymiar czasu pracy przy pełnym etacie: 8 godzin razy dni od poniedziałku do piątku, minus 8 godzin
+      za każde święto w innym dniu niż niedziela (art. 130 Kodeksu pracy). Średnia roczna to pensja razy 12 podzielona przez
+      {` ${liczba(rocznie)}`} godzin. Szczegóły wymiaru i okresy rozliczeniowe pokazuje
+      <a href="/narzedzia/wymiar-czasu-pracy">kalkulator wymiaru czasu pracy</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { nazwaMiesiaca, wymiarMiesiaca } from '../../lib/narzedzia/czas-pracy';
+  import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
+
+  const form = document.querySelector<HTMLFormElement>('[data-stawka]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const przelicz = () => {
+      const pensja = wpisanaLiczba(el('pensja').value);
+      const b = form.querySelector<HTMLElement>('[data-blad="pensja"]')!;
+      const blad = !(pensja > 0 && pensja < 1_000_000) ? 'Wpisz pensję brutto, na przykład 6000.' : null;
+      b.hidden = !blad;
+      b.textContent = blad ?? '';
+      if (blad) {
+        w('srednio').textContent = '—';
+        return;
+      }
+      const rok = Number(el('rok').value);
+      const godziny = Array.from({ length: 12 }, (_, i) => wymiarMiesiaca(rok, i + 1).godziny);
+      const rocznie = godziny.reduce((a, b) => a + b, 0);
+      w('srednio').textContent = zl((pensja * 12) / rocznie);
+      w('max').textContent = zl(pensja / Math.min(...godziny));
+      w('min').textContent = zl(pensja / Math.max(...godziny));
+      w('rocznie').textContent = `${rocznie} h`;
+      w('lista').replaceChildren(
+        ...godziny.map((h, i) => Object.assign(document.createElement('li'), { textContent: `${nazwaMiesiaca(i + 1)}: ${zl(pensja / h)} (${h}\u00a0h)` })),
+      );
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>

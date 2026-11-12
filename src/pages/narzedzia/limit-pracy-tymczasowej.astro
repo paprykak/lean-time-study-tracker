@@ -1,0 +1,169 @@
+---
+// Limit pracy przez agencję u jednego pracodawcy użytkownika: 18 miesięcy w 36 (art. 20 ustawy o zatrudnianiu
+// pracowników tymczasowych). Logika i metoda liczenia: src/lib/narzedzia/praca-tymczasowa.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { LIMIT_DNI, podsumowanie, sprawdzLimit } from '../../lib/narzedzia/praca-tymczasowa';
+import { dataPoPolsku, dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+const WIERSZE = [
+  { od: '2025-05-01', do: '2025-09-30' },
+  { od: '2026-01-01', do: '2026-12-31' },
+  { od: '', do: '' },
+  { od: '', do: '' },
+];
+const r = sprawdzLimit(WIERSZE.filter((w) => w.od), dzisWPolsce());
+const p = podsumowanie(r);
+
+const faq = [
+  {
+    pytanie: 'Jak długo można pracować przez agencję pracy tymczasowej u jednej firmy?',
+    odpowiedz: 'Łącznie najwyżej 18 miesięcy w okresie obejmującym 36 kolejnych miesięcy u jednego pracodawcy użytkownika (art. 20 ust. 1 i 3 ustawy o zatrudnianiu pracowników tymczasowych). Do limitu wlicza się praca przez agencję na umowie o pracę i na umowie cywilnoprawnej (art. 20 ust. 2 i 4).',
+  },
+  {
+    pytanie: 'Czy po 18 miesiącach można wrócić do tej samej firmy przez agencję?',
+    odpowiedz: 'Tak, gdy w każdym okresie 36 kolejnych miesięcy łączna praca u tego użytkownika nie przekroczy 18 miesięcy. Po 18 miesiącach pracy bez przerwy oznacza to zwykle 18 miesięcy przerwy u tego użytkownika. Praca przez agencję u innego pracodawcy użytkownika do tego limitu się nie wlicza.',
+  },
+  {
+    pytanie: 'Czy zmiana agencji zeruje limit 18 miesięcy?',
+    odpowiedz: 'Nie. Limit dotyczy także pracodawcy użytkownika: może on korzystać z pracy tego samego pracownika tymczasowego najwyżej 18 miesięcy w 36 (art. 20 ust. 3), niezależnie od tego, która agencja go skierowała.',
+  },
+  {
+    pytanie: 'Co grozi za przekroczenie limitu?',
+    odpowiedz: 'Agencji, która kieruje pracownika ponad limit, i pracodawcy użytkownikowi, który korzysta z jego pracy ponad limit, grozi grzywna od 1000 do 30 000 zł (art. 27a pkt 5 i art. 27b ust. 2 pkt 1 ustawy). O ukaraniu orzeka sąd na wniosek inspektora pracy (art. 28).',
+  },
+  {
+    pytanie: 'A gdy zastępuję nieobecnego pracownika?',
+    odpowiedz: 'Przy zastępstwie nieobecnego pracownika pracodawcy użytkownika praca ciągła może trwać do 36 miesięcy, a potem do tego użytkownika można wrócić nie wcześniej niż po 36 miesiącach (art. 20 ust. 5–8). Kalkulator tego wariantu nie liczy.',
+  },
+];
+---
+<StronaNarzedzia
+  slug="limit-pracy-tymczasowej"
+  tytul="Praca przez agencję: limit 18 miesięcy w 36"
+  opis="Sprawdź, jak długo możesz jeszcze pracować przez agencję u jednej firmy i od kiedy wrócić po przerwie. Limit 18 miesięcy w okresie 36 miesięcy z ustawy o pracy tymczasowej."
+  h1="Praca przez agencję: 18 miesięcy w 36"
+  lead="Przez agencję pracy tymczasowej można pracować u jednej firmy łącznie najwyżej 18 miesięcy w ciągu 36 kolejnych miesięcy. Wpisz daty skierowań do tej firmy, a policzymy, do kiedy możesz pracować bez przerwy i od kiedy znów, gdy limit się wyczerpie."
+  faq={faq}
+>
+  <form class="kalkulator" data-agencja novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Skierowania do tej firmy</h2>
+      <p class="meta mt-1">Wszystkie okresy pracy przez agencję u tego samego pracodawcy użytkownika, także z innych agencji i na umowie zlecenia.</p>
+      {WIERSZE.map((w, i) => (
+        <fieldset class="mt-4">
+          <legend class="etykieta">Skierowanie {i + 1}</legend>
+          <div class="mt-2 grid grid-cols-2 gap-3">
+            <div>
+              <label for={`a-od-${i}`} class="etykieta-pola">Od</label>
+              <input id={`a-od-${i}`} name={`od-${i}`} type="date" class="pole mt-1" min="1990-01-01" max="2100-12-31" value={w.od} aria-describedby="a-blad" />
+            </div>
+            <div>
+              <label for={`a-do-${i}`} class="etykieta-pola">Do</label>
+              <input id={`a-do-${i}`} name={`do-${i}`} type="date" class="pole mt-1" min="1990-01-01" max="2100-12-31" value={w.do} aria-describedby="a-blad" />
+            </div>
+          </div>
+        </fieldset>
+      ))}
+      <p id="a-blad" class="blad-pola mt-3" data-blad="skierowania" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta" data-w="naglowek">{p.naglowek}</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-data" data-w="data">{p.data}</p>
+        <p class="status-terminu" data-w="status" data-status={p.status}>{p.opis}</p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Dni na skierowaniach</dt><dd data-w="razem">{r.dniRazem} dni</dd></div>
+        <div><dt data-w="okno-opis">W 36 miesiącach od {dataPoPolsku(r.oknoOd)} do {dataPoPolsku(r.oknoDo)}</dt><dd data-w="okno">{r.dniWOknie} z {LIMIT_DNI} dni</dd></div>
+        <div><dt>Dalej bez przerwy</dt><dd data-w="dalej">od {dataPoPolsku(r.dalejOd)} do {dataPoPolsku(r.dalejDo)}</dd></div>
+        <div><dt>Po tym okresie znów od</dt><dd data-w="potem">{dataPoPolsku(r.potemOd)}</dd></div>
+      </dl>
+      <p class="wynik-uwaga" data-w="uwaga" hidden={!p.uwaga}>{p.uwaga}</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="zasady">Zasady: 18 miesięcy w 36</h2>
+    <ul>
+      <li>Agencja może skierować pracownika do jednego pracodawcy użytkownika łącznie na najwyżej 18 miesięcy w okresie obejmującym 36 kolejnych miesięcy, a pracodawca użytkownik może przez tyle korzystać z jego pracy (art. 20 ust. 1 i 3 ustawy o zatrudnianiu pracowników tymczasowych).</li>
+      <li>Do limitu wlicza się praca przez agencję na umowie o pracę i na umowie cywilnoprawnej (art. 20 ust. 2 i 4).</li>
+      <li>Przy zastępstwie nieobecnego pracownika użytkownika: do 36 miesięcy pracy ciągłej, potem co najmniej 36 miesięcy przerwy u tego użytkownika (art. 20 ust. 5–8). Kalkulator tego nie liczy.</li>
+      <li>Limitu 33 miesięcy i 3 umów na czas określony z Kodeksu pracy nie stosuje się do umów z agencją (art. 21 ust. 1). Ten limit liczy <a href="/narzedzia/umowa-na-czas-okreslony">kalkulator umów na czas określony</a>.</li>
+    </ul>
+
+    <h2 id="metoda">Jak liczymy</h2>
+    <p>
+      Ustawa nie mówi, od którego dnia liczyć 36 miesięcy. Sprawdzamy więc każde okno 36 kolejnych miesięcy, które kończy
+      się w dowolnym dniu, i w żadnym nie może być więcej niż 18 miesięcy pracy. To wariant najostrożniejszy: gdy limit
+      jest zachowany w każdym oknie, jest zachowany przy każdym sposobie wyznaczania okresu. Okno liczymy kalendarzowo
+      (art. 112 Kodeksu cywilnego), a 18 miesięcy pracy z przerwami jako {LIMIT_DNI} dni, miesiąc za 30 dni (art. 114
+      Kodeksu cywilnego). Wliczamy wszystkie dni kalendarzowe skierowania, także wolne od pracy.
+    </p>
+    <p>
+      „Dalej bez przerwy” zaczyna się dzień po ostatnim skierowaniu, a gdy ten dzień już minął, dzisiaj. Gdy limit jest
+      wykorzystany, pokazujemy najbliższy dzień, od którego praca znów się w nim mieści. „Po tym okresie znów od” zakłada,
+      że przepracujesz cały okres „dalej bez przerwy”.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { LIMIT_DNI, podsumowanie, sprawdzLimit, type Skierowanie } from '../../lib/narzedzia/praca-tymczasowa';
+  import { dataPoPolsku, dzisWPolsce, poprawnaData } from '../../lib/narzedzia/terminy';
+
+  const form = document.querySelector<HTMLFormElement>('[data-agencja]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const przelicz = () => {
+      const lista: Skierowanie[] = [];
+      let blad: string | null = null;
+      for (let i = 0; i < 4; i++) {
+        const od = el(`od-${i}`).value;
+        const do_ = el(`do-${i}`).value;
+        if (!od && !do_) continue;
+        if (!poprawnaData(od) || !poprawnaData(do_)) blad = `Skierowanie ${i + 1}: wpisz obie daty, od i do.`;
+        else lista.push({ od, do: do_ });
+      }
+      if (!blad && lista.length === 0) blad = 'Wpisz daty co najmniej jednego skierowania.';
+      const dzis = dzisWPolsce();
+      let r: ReturnType<typeof sprawdzLimit> | null = null;
+      if (!blad) {
+        try {
+          r = sprawdzLimit(lista, dzis);
+        } catch (e) {
+          blad = e instanceof RangeError && e.message.includes('zachodzić') ? 'Skierowania nie mogą na siebie zachodzić: sprawdź daty.' : 'Koniec skierowania nie może być wcześniejszy niż początek.';
+        }
+      }
+      const b = form.querySelector<HTMLElement>('[data-blad="skierowania"]')!;
+      b.hidden = !blad;
+      b.textContent = blad ?? '';
+      const status = w('status');
+      if (blad || !r) {
+        w('data').textContent = '—';
+        status.hidden = true;
+        return;
+      }
+      status.hidden = false;
+      w('razem').textContent = `${r.dniRazem} ${r.dniRazem === 1 ? 'dzień' : 'dni'}`;
+      w('okno').textContent = `${r.dniWOknie} z ${LIMIT_DNI} dni`;
+      w('okno-opis').textContent = `W 36 miesiącach od ${dataPoPolsku(r.oknoOd)} do ${dataPoPolsku(r.oknoDo)}`;
+      w('dalej').textContent = `od ${dataPoPolsku(r.dalejOd)} do ${dataPoPolsku(r.dalejDo)}`;
+      w('potem').textContent = dataPoPolsku(r.potemOd);
+      const p = podsumowanie(r);
+      w('naglowek').textContent = p.naglowek;
+      w('data').textContent = p.data;
+      status.dataset.status = p.status;
+      status.textContent = p.opis;
+      const uwaga = p.uwaga;
+      w('uwaga').hidden = !uwaga;
+      w('uwaga').textContent = uwaga ?? '';
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>

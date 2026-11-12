@@ -169,6 +169,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-12',
   },
   {
+    slug: 'limit-pracy-tymczasowej',
+    nazwa: 'Praca przez agencję: 18 miesięcy w 36',
+    krotko: 'Do kiedy możesz pracować przez agencję u jednej firmy i od kiedy wrócić: limit 18 miesięcy w 36.',
+    kategoria: 'umowa',
+    przepisy: ['pracaTymczasowa', 'kodeksCywilny'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'zlecenie-netto',
     nazwa: 'Umowa zlecenie: netto',
     krotko: 'Ile netto ze zlecenia: student do 26 lat, zlecenie obok etatu albo jako jedyne źródło, chorobowe, PIT-2.',
@@ -222,6 +230,14 @@ export const NARZEDZIA: Narzedzie[] = [
     krotko: 'Ile na urlopie macierzyńskim i rodzicielskim: 100% i 70% albo 81,5% za całość, porównanie obu wariantów.',
     kategoria: 'wynagrodzenie',
     przepisy: ['zasilkowa', 'kodeksPracy', 'swiadczeniaRodzinne', 'systemUbezpieczen', 'minimalneWynagrodzenie', 'placa2025', 'placa2026', 'placa2027'],
+    sprawdzono: '2026-11-12',
+  },
+  {
+    slug: 'stawka-godzinowa',
+    nazwa: 'Ile to na godzinę: stawka z pensji',
+    krotko: 'Przelicz pensję na stawkę za godzinę w każdym miesiącu: godziny do przepracowania, średnia roczna.',
+    kategoria: 'wynagrodzenie',
+    przepisy: ['kodeksPracy', 'wynagrodzenieRozp', 'dniWolne', 'placa2025', 'placa2026', 'placa2027'],
     sprawdzono: '2026-11-12',
   },
   {

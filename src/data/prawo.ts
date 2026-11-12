@@ -107,7 +107,7 @@ export const AKTY = {
   pracaTymczasowa: {
     nazwa: 'Ustawa o zatrudnianiu pracowników tymczasowych',
     publikator: 'Dz.U. 2025 poz. 236',
-    uwaga: 'tekst jednolity, bez późniejszych zmian; art. 20 i 21',
+    uwaga: 'tekst jednolity; zmiana Dz.U. 2024 poz. 1871 (od 19.03.2025) dotyczy tylko art. 21 ust. 4; art. 20, 21, 27a, 27b i 28',
     adres: eli(2025, 236),
     sprawdzono: '2026-11-12',
   },
