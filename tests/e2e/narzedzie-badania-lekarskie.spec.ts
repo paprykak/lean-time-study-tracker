@@ -1,0 +1,55 @@
+import { expect, test } from '@playwright/test';
+
+const ADRES = '/narzedzia/badania-lekarskie-w-pracy';
+
+// Stałe daty (sprawdzone niezależnie w Pythonie): 2–20.11.2026 i 23.11–4.12.2026, przerwa sobota–niedziela,
+// razem z przerwą 33 dni; 1–31.01.2026 to 31 dni; umowa do 31.10.2026, ostatni dzień na start bez badań
+// 30.11.2026; orzeczenie otrzymane 4.11.2026, odwołanie do 11.11.2026 (święto).
+test.beforeEach(async ({ page }) => {
+  await page.goto(ADRES);
+});
+
+test('po L4: przerwa tylko w weekend, przepis nie rozstrzyga; dzień pracy w przerwie rozdziela', async ({ page }) => {
+  await page.locator('[name="od1"]').fill('2026-11-02');
+  await page.locator('[name="do1"]').fill('2026-11-20');
+  await page.locator('[name="od2"]').fill('2026-11-23');
+  await page.locator('[name="do2"]').fill('2026-12-04');
+  await expect(page.locator('[data-w="a-wynik"]')).toHaveText(/przepis\stego\snie\srozstrzyga/);
+  await expect(page.locator('[data-w="a-opis"]')).toContainText(/33\sdni/);
+  await page.getByLabel('Między zwolnieniami był dzień pracy?').selectOption('tak');
+  await expect(page.locator('[data-w="a-wynik"]')).toHaveText(/nie\sjest\swymagane/);
+  await expect(page.locator('[data-w="a-powrot"]')).toContainText(/5\sgrudnia\s2026/);
+});
+
+test('po L4: 31 dni wymaga badania; koniec przed początkiem to błąd danych', async ({ page }) => {
+  await page.locator('[name="od1"]').fill('2026-01-01');
+  await page.locator('[name="do1"]').fill('2026-01-31');
+  await expect(page.locator('[data-w="a-wynik"]')).toHaveText(/^potrzebne$/);
+  await expect(page.locator('[data-w="a-powrot"]')).toContainText(/1\slutego\s2026/);
+  await expect(page.locator('[data-uwaga="czas"]')).toContainText(/godzinach\spracy/);
+  await page.locator('[name="do1"]').fill('2025-12-20');
+  await expect(page.locator('[data-blad="dane"]')).toBeVisible();
+  await expect(page.locator('[data-w="a-wynik"]')).toHaveText('—');
+});
+
+test('nowa praca: 30. dzień po umowie warunkowo bez badań, 31. dzień badania wstępne', async ({ page }) => {
+  await page.getByLabel('Nowa praca').check();
+  await page.locator('[name="koniec"]').fill('2026-10-31');
+  await page.locator('[name="start"]').fill('2026-11-30');
+  await page.locator('[name="nastepne"]').fill('2027-05-01');
+  await expect(page.locator('[data-w="b-wynik"]')).toHaveText(/mogą\snie\sbyć\spotrzebne/);
+  await expect(page.locator('[data-w="b-warunki"]')).toContainText(/30\slistopada\s2026/);
+  await page.locator('[name="start"]').fill('2026-12-01');
+  await expect(page.locator('[data-w="b-wynik"]')).toHaveText(/^potrzebne$/);
+});
+
+test('orzeczenie: odwołanie do 11 listopada (święto) i przypomnienie w kalendarzu', async ({ page }) => {
+  await page.getByLabel('Mam orzeczenie').check();
+  await page.locator('[name="otrzymane"]').fill('2026-11-04');
+  await expect(page.locator('[data-w="c-termin"]')).toHaveText(/11\slistopada\s2026/);
+  await expect(page.locator('[data-w="c-opis"]')).toContainText(/święto/);
+  await expect(page.locator('[data-ics]')).toBeDisabled();
+  await page.locator('[name="nastepneOkresowe"]').fill('2099-05-12');
+  await expect(page.locator('[data-w="c-nastepne"]')).toContainText(/12\smaja\s2099/);
+  await expect(page.locator('[data-ics]')).toBeEnabled();
+});

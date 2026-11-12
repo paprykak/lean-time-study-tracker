@@ -1,0 +1,244 @@
+---
+// Posiłki profilaktyczne: progi wydatku energetycznego, chłodnie, WBGT, okres zimowy na otwartej przestrzeni, praca pod
+// ziemią i klęski żywiołowe (§ 3 rozporządzenia w sprawie profilaktycznych posiłków i napojów, Dz.U. 1996 poz. 279,
+// § 2 ust. 2 w brzmieniu Dz.U. 2019 poz. 1160), forma i czas wydania (§ 1, 2, 6), brak ekwiwalentu (§ 8), napoje (§ 4),
+// PIT i składki. Logika i interpretacje: src/lib/narzedzia/posilki-profilaktyczne.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { MIEJSCA, ocen, opisz, type Dane, type Miejsce } from '../../lib/narzedzia/posilki-profilaktyczne';
+import { dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+const dzis = dzisWPolsce();
+const start: Dane = { data: dzis, miejsce: 'hala', plec: null, wydatek: null, jednostka: 'kcal', kleska: false };
+const w = ocen(start);
+const t = opisz(w, start);
+const miejsca = Object.entries(MIEJSCA) as [Miejsce, string][];
+
+const faq = [
+  {
+    pytanie: 'Kiedy należy się posiłek profilaktyczny?',
+    odpowiedz: 'Gdy praca z wysiłkiem fizycznym powoduje w ciągu zmiany wydatek energetyczny powyżej 2000 kcal (8374 kJ) u mężczyzn albo powyżej 1100 kcal (4605 kJ) u kobiet. Niższe progi, 1500 kcal (6280 kJ) i 1000 kcal (4187 kJ), obowiązują w pomieszczeniach zamkniętych, w których ze względów technologicznych stale jest poniżej 10°C albo WBGT przekracza 25°C, oraz przy pracy na otwartej przestrzeni od 1 listopada do 31 marca. Pod ziemią i przy usuwaniu skutków klęsk żywiołowych posiłek należy się bez progu (§ 3 rozporządzenia w sprawie profilaktycznych posiłków i napojów).',
+  },
+  {
+    pytanie: 'Czy zamiast posiłku można dostać pieniądze?',
+    odpowiedz: 'Nie. Pracownikom nie przysługuje ekwiwalent pieniężny za posiłki i napoje (§ 8). Jeśli ze względu na rodzaj pracy albo organizację nie da się wydać dania gorącego, pracodawca zapewnia posiłek w inny sposób, na przykład produkty do przygotowania posiłku albo bony, talony lub kupony (§ 2 ust. 2).',
+  },
+  {
+    pytanie: 'Jaki ma być posiłek i kiedy się go dostaje?',
+    odpowiedz: 'Jedno danie gorące, za darmo, o wartości około 1000 kcal (około 50–55% węglowodanów, 30–35% tłuszczów, 15% białek). Wydaje się je w czasie regulaminowych przerw, w zasadzie po 3–4 godzinach pracy, w dniach, w których wykonujesz prace uzasadniające posiłek (§ 1, § 2 ust. 1, § 6).',
+  },
+  {
+    pytanie: 'Czy na pół etatu albo krótszej zmianie posiłek też się należy?',
+    odpowiedz: 'Przepis nie przewiduje proporcji ani minimalnej długości zmiany. Liczy się wydatek energetyczny w ciągu zmiany roboczej i to, czy w danym dniu wykonujesz prace uzasadniające posiłek (§ 3 ust. 1, § 6 ust. 1). Na krótszej zmianie trudniej przekroczyć próg, ale jeśli go przekraczasz, zasady są te same.',
+  },
+  {
+    pytanie: 'Skąd wiadomo, ile kcal spalam w pracy, i kto decyduje o posiłkach?',
+    odpowiedz: 'Rozporządzenie nie podaje metody pomiaru. Stanowiska, na których należą się posiłki i napoje, oraz zasady ich wydawania ustala pracodawca w porozumieniu ze związkami zawodowymi, a gdy ich nie ma, po opinii przedstawicieli pracowników (§ 5). O wykaz stanowisk możesz zapytać dział BHP albo kadry.',
+  },
+  {
+    pytanie: 'Czy od posiłku płaci się podatek i składki?',
+    odpowiedz: 'Nie. Świadczenia rzeczowe z przepisów BHP są wolne od podatku dochodowego (art. 21 ust. 1 pkt 11 ustawy o PIT), a bony, talony i kupony wtedy, gdy pracodawca nie ma możliwości wydania posiłków (pkt 11b). Nie wchodzą też do podstawy składek na ubezpieczenia emerytalne i rentowe (§ 2 ust. 1 pkt 6 rozporządzenia o podstawie wymiaru składek).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="posilki-profilaktyczne"
+  tytul="Posiłek profilaktyczny: czy Ci się należy"
+  opis="Sprawdź, czy należy Ci się darmowy posiłek profilaktyczny: progi kcal i kJ, chłodnia, praca na zewnątrz od 1 listopada do 31 marca, bony zamiast dania."
+  h1="Posiłek profilaktyczny w pracy"
+  lead="Ciężka praca fizyczna, chłodnia albo plac zimą? Wpisz wydatek energetyczny ze zmiany i opisz warunki, a pokażemy, czy pracodawca ma Ci zapewnić darmowy gorący posiłek, kiedy go wydać i czy należą Ci się też napoje."
+  faq={faq}
+>
+  <form class="kalkulator" data-posilki novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twoja zmiana</h2>
+      <div class="mt-4">
+        <label for="p-data" class="etykieta-pola">Data zmiany</label>
+        <input id="p-data" name="data" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={dzis} aria-describedby="p-blad" />
+      </div>
+      <div class="mt-4">
+        <label for="p-miejsce" class="etykieta-pola">Miejsce pracy</label>
+        <select id="p-miejsce" name="miejsce" class="pole mt-1">
+          {miejsca.map(([k, nazwa]) => <option value={k} selected={k === start.miejsce}>{nazwa}</option>)}
+        </select>
+      </div>
+      <fieldset class="mt-4">
+        <legend class="etykieta-pola">Progi dla</legend>
+        <div class="przelacznik mt-1">
+          <label><input type="radio" name="plec" value="kobiet" /> kobiet</label>
+          <label><input type="radio" name="plec" value="mezczyzn" /> mężczyzn</label>
+        </div>
+      </fieldset>
+      <div class="mt-4 grid grid-cols-2 items-end gap-3">
+        <div>
+          <label for="p-wydatek" class="etykieta-pola">Wydatek na zmianę</label>
+          <input id="p-wydatek" name="wydatek" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" placeholder="nie znam" aria-describedby="p-wydatek-opis p-blad" />
+        </div>
+        <div>
+          <label for="p-jednostka" class="etykieta-pola">Jednostka</label>
+          <select id="p-jednostka" name="jednostka" class="pole mt-1">
+            <option value="kcal" selected>kcal</option>
+            <option value="kJ">kJ</option>
+          </select>
+        </div>
+      </div>
+      <p id="p-wydatek-opis" class="meta mt-1">Efektywny wydatek energetyczny z oceny ryzyka albo wykazu stanowisk. Puste pole: nie znam.</p>
+      <label class="mt-4 flex items-start gap-3 text-[0.9375rem]">
+        <input type="checkbox" name="kleska" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+        <span>Usuwasz skutki klęski żywiołowej lub innego zdarzenia losowego</span>
+      </label>
+      <fieldset class="mt-6">
+        <legend class="etykieta">Dodatkowo (opcjonalnie)</legend>
+        <div class="mt-2 grid grid-cols-2 items-end gap-3">
+          <div>
+            <label for="p-temp" class="etykieta-pola">Temperatura, °C</label>
+            <input id="p-temp" name="temp" class="pole mt-1" type="text" autocomplete="off" aria-describedby="p-blad" />
+          </div>
+          <div>
+            <label for="p-start" class="etykieta-pola">Początek zmiany</label>
+            <input id="p-start" name="start" class="pole mt-1" type="time" aria-describedby="p-blad" />
+          </div>
+        </div>
+        <label class="mt-3 flex items-start gap-3 text-[0.9375rem]">
+          <input type="checkbox" name="pogoda" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+          <span>Ciepło z powodu pogody, nie od maszyn</span>
+        </label>
+      </fieldset>
+      <p id="p-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Posiłek profilaktyczny</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-data" data-w="naglowek">{t.naglowek}</p>
+        <p class="status-terminu" data-w="status" data-status={t.status.rodzaj}>{t.status.tekst}</p>
+        <p class="meta mt-2" data-w="podstawa">{t.podstawa}</p>
+      </div>
+      <p class="wynik-uwaga" data-w="uwagi" hidden={!t.uwagi.length}>{t.uwagi.join(' ')}</p>
+      <dl class="wynik-lista">
+        <div><dt>Wydatek</dt><dd data-w="przeliczenie">{t.przeliczenie}</dd></div>
+        <div><dt>Okres zimowy</dt><dd data-w="zima">{t.zima}</dd></div>
+      </dl>
+      <dl class="wynik-lista" data-w="szczegoly" hidden={w.status === 'nieNalezy'}>
+        <div><dt>Posiłek</dt><dd>jedno danie gorące, około 1000 kcal (około 4187 kJ), za darmo (§ 1 pkt 1, § 2 ust. 1)</dd></div>
+        <div><dt>Kiedy</dt><dd data-w="kiedy">{t.kiedy}</dd></div>
+        <div><dt>Zamiast dania</dt><dd>produkty albo bony, talony, kupony, tylko gdy danie gorące nie jest możliwe ze względu na rodzaj pracy lub organizację (§ 2 ust. 2)</dd></div>
+        <div><dt>Pieniądze</dt><dd>nie, ekwiwalent pieniężny nie przysługuje (§ 8)</dd></div>
+        <div><dt>Podatek i ZUS</dt><dd>bez podatku i składek (art. 21 ust. 1 pkt 11 i 11b ustawy o PIT, § 2 ust. 1 pkt 6 rozporządzenia o podstawie wymiaru składek)</dd></div>
+      </dl>
+      <dl class="wynik-lista">
+        <div><dt>Napoje</dt><dd data-w="napoje">{t.napoje}</dd></div>
+      </dl>
+      <p class="wynik-uwaga">Stanowiska z posiłkami i napojami oraz zasady ich wydawania ustala pracodawca ze związkami zawodowymi albo po opinii przedstawicieli pracowników (§ 5).</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Progi są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="progi">Progi wydatku energetycznego na zmianę</h2>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Progi efektywnego wydatku energetycznego w ciągu zmiany, powyżej których należy się posiłek</caption>
+        <thead><tr><th scope="col">Warunki</th><th scope="col">Mężczyźni</th><th scope="col">Kobiety</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Praca z wysiłkiem fizycznym (§ 3 ust. 1 pkt 1)</th><td>powyżej 2000 kcal (8374 kJ)</td><td>powyżej 1100 kcal (4605 kJ)</td></tr>
+          <tr><th scope="row">Pomieszczenie zamknięte stale poniżej 10°C ze względów technologicznych albo z WBGT powyżej 25°C (pkt 2)</th><td>powyżej 1500 kcal (6280 kJ)</td><td>powyżej 1000 kcal (4187 kJ)</td></tr>
+          <tr><th scope="row">Otwarta przestrzeń od 1 listopada do 31 marca (pkt 3)</th><td>powyżej 1500 kcal (6280 kJ)</td><td>powyżej 1000 kcal (4187 kJ)</td></tr>
+          <tr><th scope="row">Pod ziemią (pkt 4), usuwanie skutków klęsk żywiołowych i innych zdarzeń losowych (ust. 2)</th><td>bez progu</td><td>bez progu</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Pracodawca zapewnia posiłki i napoje nieodpłatnie pracownikom w warunkach szczególnie uciążliwych (art. 232 Kodeksu
+      pracy), a szczegóły określa rozporządzenie Rady Ministrów z 28 maja 1996 r. w sprawie profilaktycznych posiłków
+      i napojów. Posiłek to jedno danie gorące (§ 1 pkt 1). Od 9 lipca 2019 r., gdy ze względu na rodzaj pracy albo
+      organizację nie da się go wydać, pracodawca zapewnia posiłek w inny sposób, na przykład produkty albo bony, talony
+      i kupony (§ 2 ust. 2). Ekwiwalent pieniężny za posiłki i napoje nie przysługuje (§ 8).
+    </p>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <ul>
+      <li>Przepis mówi „powyżej”, więc wydatek równy progowi go nie przekracza.</li>
+      <li>Rozporządzenie podaje próg w kcal i w nawiasie w kJ, zaokrąglony przy przeliczeniu 1 kcal = 4,1868 kJ. Nie mówi, która liczba rozstrzyga, więc uznajemy próg za przekroczony, gdy wydatek przekracza którąkolwiek z nich. Dlatego u kobiet 1100 kcal (4605,48 kJ) już przekracza próg 4605 kJ, a 8374 kJ u mężczyzn (2000,1 kcal) przekracza próg 2000 kcal.</li>
+      <li>Okres zimowy trwa od 1 listopada do 31 marca, obie daty włącznie. Temperatura na zewnątrz nie ma przy posiłku znaczenia, liczy się data; ma znaczenie przy napojach.</li>
+      <li>Przepis nie mówi, jaką część zmiany trzeba pracować na otwartej przestrzeni. Przy pracy częściowo na zewnątrz pokazujemy niższy próg.</li>
+      <li>Chłodnia to pomieszczenie zamknięte, w którym ze względów technologicznych stale jest poniżej 10°C. Hala zimna z powodu pogody to inny przypadek i ma ogólny próg. Przy WBGT powyżej 25°C nie jest jasne, czy przepis wymaga przyczyny technologicznej; wystarcza nam samo WBGT w pomieszczeniu zamkniętym.</li>
+      <li>Wydatku energetycznego nie szacujemy: wpisz liczbę od pracodawcy albo zostaw puste pole, a pokażemy próg. Przepis nie przewiduje proporcji dla krótszej zmiany ani niepełnego etatu.</li>
+      <li>Rozporządzenie mówi o pracownikach. Przy umowie zlecenia Kodeks pracy nakazuje zapewnić bezpieczne i higieniczne warunki pracy (art. 304 § 1), ale nie mówi wprost o posiłkach.</li>
+    </ul>
+    <p>
+      Napoje (§ 4) liczymy z miejsca pracy, wydatku i temperatury; wskaźnika siły chłodzącej powietrza (WCI) nie liczymy.
+      Napoje przy upale i zimnie oraz najniższą temperaturę w pracy opisuje
+      <a href="/narzedzia/temperatura-w-pracy">kalkulator temperatury w pracy</a>, przerwy, w których wydaje się posiłek,
+      <a href="/narzedzia/przerwy-w-pracy">kalkulator przerw w pracy</a>, a limity ciężarów przy pracy fizycznej
+      <a href="/narzedzia/ile-kg-wolno-dzwigac">kalkulator dźwigania</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { ocen, opisz, wpisanaTemperatura, type Jednostka, type Miejsce, type Plec } from '../../lib/narzedzia/posilki-profilaktyczne';
+  import { wpisanaLiczba } from '../../lib/narzedzia/format';
+  import { typografia } from '../../lib/typografia.mjs';
+
+  const form = document.querySelector<HTMLFormElement>('[data-posilki]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement | HTMLSelectElement;
+    const zaznaczone = (n: string) => (form.elements.namedItem(n) as HTMLInputElement).checked;
+    const pisz = (k: string, tekst: string) => {
+      w(k).textContent = typografia(tekst);
+    };
+    const przelicz = () => {
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      const plec = form.querySelector<HTMLInputElement>('input[name="plec"]:checked')?.value as Plec | undefined;
+      const wydatekTekst = el('wydatek').value.trim();
+      const tempTekst = el('temp').value.trim();
+      const dane = {
+        data: el('data').value,
+        miejsce: el('miejsce').value as Miejsce,
+        plec: plec ?? null,
+        wydatek: wydatekTekst ? wpisanaLiczba(wydatekTekst) : null,
+        jednostka: el('jednostka').value as Jednostka,
+        kleska: zaznaczone('kleska'),
+        temp: tempTekst ? wpisanaTemperatura(tempTekst) : null,
+        tempZPogody: zaznaczone('pogoda'),
+        start: el('start').value || null,
+      };
+      let blad: string | null = null;
+      let wynik: ReturnType<typeof ocen> | null = null;
+      try {
+        wynik = ocen(dane);
+      } catch (e) {
+        if (!(e instanceof RangeError)) throw e;
+        blad = e.message;
+      }
+      b.hidden = !blad;
+      b.textContent = blad ? typografia(blad) : '';
+      const status = w('status');
+      if (!wynik) {
+        w('naglowek').textContent = '—';
+        status.hidden = true;
+        for (const k of ['podstawa', 'przeliczenie', 'zima', 'kiedy', 'napoje', 'uwagi']) w(k).textContent = '';
+        w('uwagi').hidden = true;
+        return;
+      }
+      const t = opisz(wynik, dane);
+      pisz('naglowek', t.naglowek);
+      status.hidden = false;
+      status.dataset.status = t.status.rodzaj;
+      pisz('status', t.status.tekst);
+      pisz('podstawa', t.podstawa);
+      pisz('przeliczenie', t.przeliczenie);
+      pisz('zima', t.zima);
+      pisz('kiedy', t.kiedy);
+      pisz('napoje', t.napoje);
+      pisz('uwagi', t.uwagi.join(' '));
+      w('uwagi').hidden = !t.uwagi.length;
+      w('szczegoly').hidden = wynik.status === 'nieNalezy';
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>
