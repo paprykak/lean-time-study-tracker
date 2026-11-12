@@ -545,6 +545,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-12',
   },
   {
+    slug: 'rodzic-w-pracy',
+    nazwa: 'Rodzic w pracy: uprawnienia i wnioski',
+    krotko: 'Do kiedy urlopy, praca zdalna (4 lata), elastyczny czas (8 lat), wolne (14 lat) i kiedy złożyć wniosek.',
+    kategoria: 'urlopy',
+    przepisy: ['kodeksPracy', 'kodeksCywilny'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'przerwy-w-pracy',
     nazwa: 'Przerwy w pracy',
     krotko: 'Ile przerw przy zmianie 8 i 12 godzin, które są płatne, przy monitorze, na karmienie, dla młodocianych.',
