@@ -465,6 +465,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-11',
   },
   {
+    slug: 'dni-robocze',
+    nazwa: 'Kalkulator dni roboczych',
+    krotko: 'Ile dni roboczych między datami bez weekendów i świąt i jaka data wypada po N dniach roboczych.',
+    kategoria: 'czas-pracy',
+    przepisy: ['dniWolne', 'kodeksCywilny'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'dyzur-w-pracy',
     nazwa: 'Dyżur w pracy: wolne albo wynagrodzenie',
     krotko: 'Ile za dyżur w zakładzie: czas wolny równy dyżurowi albo stawka, bez stawki 60%; dyżur w domu bez zapłaty.',
