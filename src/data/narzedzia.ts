@@ -177,6 +177,22 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-12',
   },
   {
+    slug: 'wynagrodzenie-za-przestoj',
+    nazwa: 'Wynagrodzenie za przestój',
+    krotko: 'Ile za przestój z winy pracodawcy (awaria, brak materiału): stawka z umowy albo 60%, nie mniej niż minimum.',
+    kategoria: 'wynagrodzenie',
+    przepisy: ['kodeksPracy', 'wynagrodzenieRozp', 'minimalneWynagrodzenie', 'placa2025', 'placa2026', 'placa2027', 'dniWolne'],
+    sprawdzono: '2026-11-12',
+  },
+  {
+    slug: 'wynagrodzenie-za-urlop',
+    nazwa: 'Wynagrodzenie za urlop',
+    krotko: 'Ile za urlop przy dodatku nocnym, nadgodzinach i premiach: średnia z 3 miesięcy na godzinę urlopu.',
+    kategoria: 'urlopy',
+    przepisy: ['kodeksPracy', 'urlopowe'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'kontrola-grafiku',
     nazwa: 'Kontrola grafiku zmian',
     krotko: 'Sprawdź grafik 12 h albo trzyzmianowy: odpoczynek 11 i 35 h, wolne niedziele, dni wolne, godziny a wymiar.',

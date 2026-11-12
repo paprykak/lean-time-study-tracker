@@ -1,0 +1,125 @@
+---
+// Wynagrodzenie za czas urlopu: pensja stała plus średnia składników zmiennych z 3 miesięcy na godzinę urlopu
+// (art. 172 Kp, § 6–9 i § 12 rozporządzenia z 8 stycznia 1997 r.). Logika: src/lib/narzedzia/wynagrodzenie-urlopowe.ts.
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { wynagrodzenieUrlopowe } from '../../lib/narzedzia/wynagrodzenie-urlopowe';
+import { zl } from '../../lib/narzedzia/format';
+
+const start = wynagrodzenieUrlopowe({ zmienneSuma: 1800, godzinyPrzepracowane: 480, godzinyUrlopu: 40, stala: 6000 });
+
+const faq = [
+  {
+    pytanie: 'Czy za urlop płaci się dodatek nocny i nadgodziny?',
+    odpowiedz: 'Tak. Dodatki za pracę w nocy, za nadgodziny i premie miesięczne to składniki zmienne: wlicza się je do wynagrodzenia za urlop średnio z 3 miesięcy przed miesiącem urlopu, w przeliczeniu na godzinę pracy (§ 8 i § 9 rozporządzenia w sprawie urlopów z 1997 r.). Za urlop przysługuje wynagrodzenie, jakie pracownik by otrzymał, gdyby w tym czasie pracował (art. 172 Kodeksu pracy).',
+  },
+  {
+    pytanie: 'Czy na urlopie dostaję normalną pensję?',
+    odpowiedz: 'Tak. Składniki w stałej stawce miesięcznej, na przykład pensję zasadniczą i stały dodatek funkcyjny, uwzględnia się w wysokości należnej w miesiącu urlopu (§ 7). Kalkulator liczy, ile do tego dochodzi ze składników zmiennych.',
+  },
+  {
+    pytanie: 'Jak liczy się urlop przy stawce godzinowej?',
+    odpowiedz: 'Przy stawce godzinowej całe wynagrodzenie jest zmienne: sumujesz to, co wypłacono za 3 miesiące przed urlopem, dzielisz przez przepracowane w nich godziny i mnożysz przez godziny urlopu według grafiku (§ 8 i § 9).',
+  },
+  {
+    pytanie: 'Czego nie wlicza się do wynagrodzenia za urlop?',
+    odpowiedz: 'Między innymi jednorazowych nagród za konkretne zadanie, wynagrodzenia za przestój i gotowość do pracy, nagród jubileuszowych, wynagrodzenia chorobowego, „trzynastki” i odpraw (§ 6). Premie kwartalne i roczne wypłaca się w zwykłych terminach, a urlop liczy się wtedy jak czas pracy (§ 12).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="wynagrodzenie-za-urlop"
+  tytul="Wynagrodzenie za urlop: czy dodatek nocny się liczy"
+  opis="Policz wynagrodzenie za urlop: pensja stała plus średnia dodatku nocnego, nadgodzin i premii z 3 miesięcy na godzinę urlopu. Także przy stawce godzinowej."
+  h1="Wynagrodzenie za urlop: kalkulator"
+  lead="Na urlopie należy się tyle, ile by się zarobiło w pracy. Do pensji dochodzi średnia z dodatku nocnego, nadgodzin i premii z ostatnich 3 miesięcy, policzona na godzinę urlopu. Wpisz kwoty z pasków."
+  faq={faq}
+>
+  <form class="kalkulator" data-urlopowe novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twoje paski z 3 miesięcy</h2>
+      <div class="mt-4">
+        <label for="wu-zmienne" class="etykieta-pola">Składniki zmienne z 3 miesięcy przed urlopem, razem (zł)</label>
+        <input id="wu-zmienne" name="zmienne" class="pole mt-1 max-w-48" type="text" inputmode="decimal" autocomplete="off" value="1800" aria-describedby="wu-zmienne-opis wu-blad" />
+        <p id="wu-zmienne-opis" class="meta mt-1">Dodatek nocny, nadgodziny, premie miesięczne. Przy stawce godzinowej także wynagrodzenie zasadnicze.</p>
+      </div>
+      <div class="mt-4 grid grid-cols-2 gap-4">
+        <div>
+          <label for="wu-godziny" class="etykieta-pola">Przepracowane godziny w tych miesiącach</label>
+          <input id="wu-godziny" name="godziny" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="480" aria-describedby="wu-blad" />
+        </div>
+        <div>
+          <label for="wu-urlop" class="etykieta-pola">Godziny urlopu według grafiku</label>
+          <input id="wu-urlop" name="urlop" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="40" aria-describedby="wu-blad" />
+        </div>
+      </div>
+      <div class="mt-4">
+        <label for="wu-stala" class="etykieta-pola">Stała pensja miesięczna (zł, 0 przy stawce godzinowej)</label>
+        <input id="wu-stala" name="stala" class="pole mt-1 max-w-48" type="text" inputmode="decimal" autocomplete="off" value="6000" />
+      </div>
+      <p id="wu-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Za urlop ponad stałą pensję</h2>
+      <p class="wynik-kwota" aria-live="polite" aria-atomic="true"><span data-w="zmienna">{zl(start.zmiennaCzesc)}</span></p>
+      <dl class="wynik-lista">
+        <div><dt>Składniki zmienne za godzinę</dt><dd data-w="za-godzine">{zl(start.zaGodzine)}</dd></div>
+        <div><dt>Stała pensja w miesiącu urlopu</dt><dd data-w="stala">{zl(start.stala)} (bez zmian, § 7)</dd></div>
+      </dl>
+      <p class="meta mt-4">Przy dużych wahaniach składników zmiennych podstawę można liczyć z okresu do 12 miesięcy (§ 8 ust. 2 rozporządzenia).</p>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="jak-liczymy">Jak liczy się wynagrodzenie za urlop</h2>
+    <ol>
+      <li><strong>Składniki stałe</strong> w stawce miesięcznej, na przykład pensja zasadnicza: w wysokości z miesiąca urlopu (§ 7 rozporządzenia z 8 stycznia 1997 r.).</li>
+      <li><strong>Składniki zmienne</strong> za okresy do miesiąca: suma wypłacona w 3 miesiącach przed miesiącem urlopu (§ 8 ust. 1), przy dużych wahaniach z okresu do 12 miesięcy (§ 8 ust. 2).</li>
+      <li><strong>Na godzinę:</strong> suma składników zmiennych podzielona przez godziny przepracowane w tym okresie, razy godziny, które przypadłyby do przepracowania w czasie urlopu (§ 9 ust. 1).</li>
+      <li><strong>Składniki za okresy dłuższe</strong> niż miesiąc, na przykład premia kwartalna: wypłaca się je w zwykłym terminie, a czas urlopu traktuje jak czas pracy (§ 12).</li>
+    </ol>
+    <p>
+      Za urlop przysługuje wynagrodzenie, jakie pracownik by otrzymał, gdyby w tym czasie pracował (art. 172 Kodeksu pracy).
+      Pracodawca na wniosek wypłaca je przed urlopem (§ 13). Ile dni urlopu Ci przysługuje, policzysz w
+      <a href="/narzedzia/kalkulator-urlopu">kalkulatorze urlopu</a>, a za niewykorzystany urlop przy odejściu z pracy
+      w kalkulatorze <a href="/narzedzia/ekwiwalent-za-urlop">ekwiwalentu</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { wynagrodzenieUrlopowe } from '../../lib/narzedzia/wynagrodzenie-urlopowe';
+  import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
+
+  const form = document.querySelector<HTMLFormElement>('[data-urlopowe]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const liczba = (n: string) => wpisanaLiczba(el(n).value || '0');
+    const przelicz = () => {
+      const zmienne = liczba('zmienne');
+      const godziny = liczba('godziny');
+      const urlop = liczba('urlop');
+      const stala = liczba('stala');
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      const blad =
+        !(zmienne >= 0 && stala >= 0) ? 'Kwoty nie mogą być ujemne.'
+        : !(godziny > 0) ? 'Wpisz przepracowane godziny z 3 miesięcy, na przykład 480.'
+        : !(urlop > 0) ? 'Wpisz godziny urlopu, na przykład 40 za 5 dni po 8 godzin.'
+        : null;
+      b.hidden = !blad;
+      b.textContent = blad ?? '';
+      if (blad) {
+        w('zmienna').textContent = '—';
+        return;
+      }
+      const r = wynagrodzenieUrlopowe({ zmienneSuma: zmienne, godzinyPrzepracowane: godziny, godzinyUrlopu: urlop, stala });
+      w('zmienna').textContent = zl(r.zmiennaCzesc);
+      w('za-godzine').textContent = zl(r.zaGodzine);
+      w('stala').textContent = `${zl(r.stala)} (bez zmian, § 7)`;
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>

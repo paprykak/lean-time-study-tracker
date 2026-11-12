@@ -1,0 +1,184 @@
+---
+// Wynagrodzenie za przestój (art. 81 Kp, § 4 i § 4a rozporządzenia z 29 maja 1996 r.). Logika: src/lib/narzedzia/przestoj.ts.
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { LATA, PLACA_MINIMALNA } from '../../data/prawo';
+import { przestoj } from '../../lib/narzedzia/przestoj';
+import { nazwaMiesiaca, wymiarMiesiaca } from '../../lib/narzedzia/czas-pracy';
+import { zl } from '../../lib/narzedzia/format';
+import { dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+const dzis = dzisWPolsce();
+const rokBiezacy = Number(dzis.slice(0, 4));
+const rok = LATA.includes(rokBiezacy) ? rokBiezacy : LATA[LATA.length - 1];
+const miesiac = rok === rokBiezacy ? Number(dzis.slice(5, 7)) : 1;
+const start = przestoj({ rok, miesiac, godziny: 16, rodzaj: 'miesieczna', stawka: 6000 });
+
+const faq = [
+  {
+    pytanie: 'Ile płaci się za przestój w pracy?',
+    odpowiedz: 'Gdy pracownik był gotów do pracy, a nie mógł jej wykonywać z przyczyn dotyczących pracodawcy (na przykład awaria maszyny, brak materiału, brak zamówień), przysługuje mu wynagrodzenie z osobistego zaszeregowania, stawką godzinową albo miesięczną. Gdy takiej stawki nie wyodrębniono, 60% wynagrodzenia. W każdym przypadku nie mniej niż płaca minimalna (art. 81 § 1 Kodeksu pracy).',
+  },
+  {
+    pytanie: 'Czy za przestój z mojej winy coś się należy?',
+    odpowiedz: 'Nie. Jeżeli przestój nastąpił z winy pracownika, wynagrodzenie za przestój nie przysługuje (art. 81 § 2 Kodeksu pracy).',
+  },
+  {
+    pytanie: 'Czy pracodawca może dać inną pracę na czas przestoju?',
+    odpowiedz: 'Tak. Za inną odpowiednią pracę przysługuje wynagrodzenie przewidziane za tę pracę, ale nie niższe niż wynagrodzenie za przestój (art. 81 § 3 Kodeksu pracy).',
+  },
+  {
+    pytanie: 'Jak policzyć godzinę przestoju przy pensji miesięcznej?',
+    odpowiedz: 'Pensję zasadniczą dzieli się przez liczbę godzin do przepracowania w danym miesiącu (§ 4a rozporządzenia z 29 maja 1996 r.), a wynik mnoży przez godziny przestoju. Liczbę godzin w miesiącu pokazuje kalkulator wymiaru czasu pracy.',
+  },
+];
+---
+<StronaNarzedzia
+  slug="wynagrodzenie-za-przestoj"
+  tytul="Wynagrodzenie za przestój: ile za godzinę"
+  opis="Ile płaci pracodawca za przestój (awaria, brak materiału, brak zamówień): stawka z umowy albo 60% wynagrodzenia, nie mniej niż płaca minimalna. Kalkulator na każdy miesiąc."
+  h1="Wynagrodzenie za przestój: kalkulator"
+  lead="Gdy stoisz, bo maszyna się zepsuła albo nie ma materiału, pracodawca płaci za ten czas: stawkę z Twojej umowy, a gdy jej nie wyodrębniono, 60% wynagrodzenia. Nigdy mniej niż płaca minimalna. Wpisz stawkę i godziny przestoju."
+  faq={faq}
+>
+  <form class="kalkulator" data-przestoj novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twój przestój</h2>
+      <fieldset class="mt-4">
+        <legend class="etykieta">Jak jesteś wynagradzany</legend>
+        <div class="opcje-pionowe mt-2">
+          <label><input type="radio" name="rodzaj" value="godzinowa" /> Stawka godzinowa</label>
+          <label><input type="radio" name="rodzaj" value="miesieczna" checked /> Pensja miesięczna (stawka zasadnicza)</label>
+          <label><input type="radio" name="rodzaj" value="bez-stawki" /> Bez wyodrębnionej stawki (60%)</label>
+        </div>
+      </fieldset>
+      <div class="mt-4" data-tylko-stawka>
+        <label for="p-stawka" class="etykieta-pola" data-w="etykieta-stawki">Pensja zasadnicza (zł brutto)</label>
+        <input id="p-stawka" name="stawka" class="pole mt-1 max-w-48" type="text" inputmode="decimal" autocomplete="off" value="6000" aria-describedby="p-blad" />
+      </div>
+      <div data-tylko-60 hidden><div class="mt-4 grid gap-4">
+        <div>
+          <label for="p-stale" class="etykieta-pola">Stałe składniki miesięcznie (zł)</label>
+          <input id="p-stale" name="stale" class="pole mt-1 max-w-48" type="text" inputmode="decimal" autocomplete="off" value="5000" />
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label for="p-zmienne" class="etykieta-pola">Zmienne z 3 miesięcy, razem (zł)</label>
+            <input id="p-zmienne" name="zmienne" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="0" />
+          </div>
+          <div>
+            <label for="p-zgodz" class="etykieta-pola">Przepracowane godziny w tych miesiącach</label>
+            <input id="p-zgodz" name="zgodz" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="480" />
+          </div>
+        </div>
+      </div></div>
+      <div class="mt-4 grid gap-4 sm:grid-cols-3">
+        <div>
+          <label for="p-godziny" class="etykieta-pola">Godziny przestoju</label>
+          <input id="p-godziny" name="godziny" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="16" aria-describedby="p-blad" />
+        </div>
+        <div>
+          <label for="p-miesiac" class="etykieta-pola">Miesiąc</label>
+          <select id="p-miesiac" name="miesiac" class="pole mt-1">
+            {Array.from({ length: 12 }, (_, i) => <option value={i + 1} selected={i + 1 === miesiac}>{nazwaMiesiaca(i + 1)}</option>)}
+          </select>
+        </div>
+        <div>
+          <label for="p-rok" class="etykieta-pola">Rok</label>
+          <select id="p-rok" name="rok" class="pole mt-1">
+            {LATA.map((r) => <option value={r} selected={r === rok}>{r}</option>)}
+          </select>
+        </div>
+      </div>
+      <p id="p-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Za przestój (brutto)</h2>
+      <p class="wynik-kwota" aria-live="polite" aria-atomic="true"><span data-w="kwota">{zl(start.kwota)}</span></p>
+      <dl class="wynik-lista">
+        <div><dt>Za godzinę według umowy</dt><dd data-w="za-godzine">{zl(start.zaGodzine)}</dd></div>
+        <div><dt>Minimum za godzinę (płaca minimalna)</dt><dd data-w="minimum">{zl(start.minimumZaGodzine)}</dd></div>
+        <div><dt>Godzin do przepracowania w miesiącu</dt><dd data-w="wymiar">{start.wymiar} h</dd></div>
+      </dl>
+      <p class="wynik-uwaga" data-w="uwaga" hidden></p>
+      <p class="meta mt-4">Minimum za godzinę: płaca minimalna podzielona przez godziny do przepracowania w miesiącu przy pełnym etacie.</p>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="minimum">Minimum za godzinę przestoju w {rok} r.</h2>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Płaca minimalna za godzinę według miesiąca</caption>
+        <thead><tr><th scope="col">Miesiąc</th><th scope="col">Godziny do przepracowania</th><th scope="col">Minimum za godzinę</th></tr></thead>
+        <tbody>
+          {Array.from({ length: 12 }, (_, i) => {
+            const w = wymiarMiesiaca(rok, i + 1).godziny;
+            return <tr><th scope="row">{nazwaMiesiaca(i + 1)}</th><td>{w} h</td><td>{zl(PLACA_MINIMALNA[rok].miesiecznie / w)}</td></tr>;
+          })}
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Przestój to czas, w którym pracownik jest gotów do pracy, ale nie może jej wykonywać z przyczyn dotyczących
+      pracodawcy (art. 81 § 1 Kodeksu pracy). Przy pensji miesięcznej godzinę liczy się, dzieląc stawkę przez godziny
+      do przepracowania w miesiącu (§ 4a rozporządzenia z 29 maja 1996 r.). Gdy stawki nie wyodrębniono, 60% liczy się
+      według zasad wynagrodzenia urlopowego: stałe składniki dzieli się przez godziny do przepracowania w miesiącu,
+      a zmienne przez godziny przepracowane w okresie, z którego się je bierze (§ 4 ust. 1 i 2). Przestój z winy
+      pracownika nie jest płatny (art. 81 § 2).
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { przestoj, type RodzajStawki } from '../../lib/narzedzia/przestoj';
+  import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
+
+  const form = document.querySelector<HTMLFormElement>('[data-przestoj]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const liczba = (n: string) => wpisanaLiczba(el(n).value || '0');
+    const przelicz = () => {
+      const rodzaj = (form.querySelector<HTMLInputElement>('input[name="rodzaj"]:checked')?.value ?? 'miesieczna') as RodzajStawki;
+      form.querySelector<HTMLElement>('[data-tylko-stawka]')!.hidden = rodzaj === 'bez-stawki';
+      form.querySelector<HTMLElement>('[data-tylko-60]')!.hidden = rodzaj !== 'bez-stawki';
+      w('etykieta-stawki').textContent = rodzaj === 'godzinowa' ? 'Stawka za godzinę (zł brutto)' : 'Pensja zasadnicza (zł brutto)';
+      const godziny = liczba('godziny');
+      const stawka = liczba('stawka');
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      const blad =
+        !(godziny > 0 && godziny <= 744) ? 'Wpisz godziny przestoju, na przykład 16.'
+        : rodzaj !== 'bez-stawki' && !(stawka > 0) ? 'Wpisz stawkę albo pensję.'
+        : rodzaj === 'bez-stawki' && !(liczba('stale') >= 0 && liczba('zmienne') >= 0 && liczba('zgodz') >= 0) ? 'Kwoty i godziny nie mogą być ujemne.'
+        : null;
+      b.hidden = !blad;
+      b.textContent = blad ?? '';
+      if (blad) {
+        w('kwota').textContent = '—';
+        return;
+      }
+      const r = przestoj({
+        rok: Number(el('rok').value),
+        miesiac: Number(el('miesiac').value),
+        godziny,
+        rodzaj,
+        stawka,
+        stale: liczba('stale'),
+        zmienneSuma: liczba('zmienne'),
+        zmienneGodziny: liczba('zgodz'),
+      });
+      w('kwota').textContent = zl(r.kwota);
+      w('za-godzine').textContent = `${zl(r.zaGodzine)}${rodzaj === 'bez-stawki' ? ' (60%)' : ''}`;
+      w('minimum').textContent = zl(r.minimumZaGodzine);
+      w('wymiar').textContent = `${r.wymiar} h`;
+      const uwaga = r.podniesioneDoMinimum ? 'Stawka z umowy jest niższa od płacy minimalnej za godzinę, więc za przestój należy się minimum (art. 81 § 1 Kodeksu pracy).' : null;
+      w('uwaga').hidden = !uwaga;
+      w('uwaga').textContent = uwaga ?? '';
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>
