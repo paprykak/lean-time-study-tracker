@@ -89,6 +89,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-11',
   },
   {
+    slug: 'powierzchnia-na-pracownika',
+    nazwa: 'Ile m² i m³ na pracownika',
+    krotko: 'Ile osób może pracować w pomieszczeniu: 2 m² wolnej podłogi i 13 m³ na osobę, wysokość 3 m albo 3,3 m.',
+    kategoria: 'bhp',
+    przepisy: ['ogolneBhp'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'normy-sanitarne',
     nazwa: 'Toalety, umywalki, natryski: normy',
     krotko: 'Ile misek ustępowych, pisuarów, umywalek i natrysków na zmianę według przepisów BHP. Jadalnia od 21 osób.',

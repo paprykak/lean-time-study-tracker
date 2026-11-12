@@ -1,0 +1,154 @@
+---
+// Ile osób może pracować w pomieszczeniu: 13 m³ wolnej objętości i 2 m² wolnej podłogi na osobę, wysokość 3 m albo 3,3 m
+// (§ 19 ust. 2 i § 20 ogólnych przepisów BHP, t.j. Dz.U. 2003 poz. 1650). Logika: src/lib/narzedzia/pomieszczenie-pracy.ts.
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { OBJETOSC_NA_OSOBE, POWIERZCHNIA_NA_OSOBE, pomieszczeniePracy } from '../../lib/narzedzia/pomieszczenie-pracy';
+
+const D = { powierzchnia: 100, wysokosc: 4, zajetaPowierzchnia: 40, zajetaObjetosc: 60 };
+const r = pomieszczeniePracy(D);
+const m = (x: number, j: string) => `${x.toLocaleString('pl-PL', { maximumFractionDigits: 2 })} ${j}`;
+
+const faq = [
+  {
+    pytanie: 'Ile metrów kwadratowych przypada na pracownika?',
+    odpowiedz: `Co najmniej ${POWIERZCHNIA_NA_OSOBE} m² wolnej powierzchni podłogi, niezajętej przez urządzenia i sprzęt, oraz co najmniej ${OBJETOSC_NA_OSOBE} m³ wolnej objętości pomieszczenia na każdego jednocześnie zatrudnionego w pomieszczeniu stałej pracy (§ 19 ust. 2 rozporządzenia w sprawie ogólnych przepisów bezpieczeństwa i higieny pracy).`,
+  },
+  {
+    pytanie: 'Jaka musi być wysokość pomieszczenia pracy?',
+    odpowiedz: 'Co najmniej 3 m w świetle, a gdy w pomieszczeniu występują czynniki szkodliwe dla zdrowia, 3,3 m (§ 20 ust. 1). Przy klimatyzacji wysokość można obniżyć za zgodą państwowego wojewódzkiego inspektora sanitarnego (§ 20 ust. 2), a do 2,5 m wtedy, gdy pracuje najwyżej 4 osoby i na każdą przypada co najmniej 15 m³ wolnej objętości (§ 20 ust. 3 pkt 1 lit. a).',
+  },
+  {
+    pytanie: 'Ile osób może pracować w pomieszczeniu 50 m²?',
+    odpowiedz: `To zależy od wysokości i wyposażenia. Pusta sala 50 m² o wysokości 3 m ma 150 m³, czyli miejsce dla ${pomieszczeniePracy({ powierzchnia: 50, wysokosc: 3 }).maksOsob} osób według objętości (${OBJETOSC_NA_OSOBE} m³ na osobę); podłoga wystarczyłaby dla 25. Maszyny i regały zmniejszają oba limity.`,
+  },
+];
+---
+<StronaNarzedzia
+  slug="powierzchnia-na-pracownika"
+  tytul="Ile m² i m³ na pracownika: kalkulator BHP"
+  opis="Ile osób może pracować w pomieszczeniu: co najmniej 2 m² wolnej podłogi i 13 m³ wolnej objętości na osobę, wysokość 3 m albo 3,3 m."
+  h1="Powierzchnia i kubatura na pracownika"
+  lead="Na każdego pracownika musi przypadać co najmniej 2 m² wolnej podłogi i 13 m³ wolnej objętości. Wpisz wymiary pomieszczenia i miejsce zajęte przez maszyny, a policzymy, ile osób może tam jednocześnie pracować."
+  faq={faq}
+>
+  <form class="kalkulator" data-pomieszczenie novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Pomieszczenie</h2>
+      <div class="mt-4 grid grid-cols-2 items-end gap-3">
+        <div>
+          <label for="p-powierzchnia" class="etykieta-pola">Powierzchnia podłogi (m²)</label>
+          <input id="p-powierzchnia" name="powierzchnia" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value={D.powierzchnia} aria-describedby="p-blad" />
+        </div>
+        <div>
+          <label for="p-wysokosc" class="etykieta-pola">Wysokość w świetle (m)</label>
+          <input id="p-wysokosc" name="wysokosc" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value={D.wysokosc} aria-describedby="p-blad" />
+        </div>
+      </div>
+      <div class="mt-4 grid grid-cols-2 items-end gap-3">
+        <div>
+          <label for="p-zajeta-p" class="etykieta-pola">Zajęte przez sprzęt (m²)</label>
+          <input id="p-zajeta-p" name="zajetaPowierzchnia" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value={D.zajetaPowierzchnia} aria-describedby="p-zajete-opis p-blad" />
+        </div>
+        <div>
+          <label for="p-zajeta-o" class="etykieta-pola">Zajęte przez sprzęt (m³)</label>
+          <input id="p-zajeta-o" name="zajetaObjetosc" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value={D.zajetaObjetosc} aria-describedby="p-zajete-opis p-blad" />
+        </div>
+      </div>
+      <p id="p-zajete-opis" class="meta mt-1">Maszyny, regały, stoły i inny sprzęt: podłoga pod nimi i ich objętość (na przykład regał 10 m² o wysokości 2 m to 20 m³).</p>
+      <label class="mt-4 flex items-start gap-3 text-[0.9375rem]">
+        <input type="checkbox" name="szkodliwe" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+        <span>W pomieszczeniu występują czynniki szkodliwe dla zdrowia (na przykład hałas powyżej norm, pyły, substancje chemiczne)</span>
+      </label>
+      <p id="p-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Najwięcej osób naraz</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-kwota"><span data-w="osoby">{r.maksOsob}</span></p>
+        <p class="status-terminu" data-w="status" data-status="w-terminie">Wysokość zgodna z § 20 (co najmniej {m(r.wymaganaWysokosc, 'm')})</p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Według wolnej objętości</dt><dd data-w="objetosc">{r.zaObjetosc} osób ({m(r.wolnaObjetosc, 'm³')})</dd></div>
+        <div><dt>Według wolnej podłogi</dt><dd data-w="podloga">{r.zaPowierzchnia} osób ({m(r.wolnaPowierzchnia, 'm²')})</dd></div>
+      </dl>
+      <p class="wynik-uwaga">Liczy się więcej osób jednocześnie, czyli na najliczniejszej zmianie. Do tego dochodzą wymagania dla szatni, umywalni i ustępów.</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="zasady">Wymagania dla pomieszczenia stałej pracy</h2>
+    <ul>
+      <li>Na każdego jednocześnie zatrudnionego co najmniej {OBJETOSC_NA_OSOBE} m³ wolnej objętości i {POWIERZCHNIA_NA_OSOBE} m² wolnej powierzchni podłogi, niezajętej przez urządzenia techniczne i sprzęt (§ 19 ust. 2 ogólnych przepisów BHP).</li>
+      <li>Wysokość w świetle co najmniej 3 m, a przy czynnikach szkodliwych dla zdrowia 3,3 m (§ 20 ust. 1).</li>
+      <li>Obniżenie przy klimatyzacji za zgodą państwowego wojewódzkiego inspektora sanitarnego (§ 20 ust. 2); do 2,5 m przy najwyżej 4 osobach po co najmniej 15 m³ albo w drobnej wytwórczości w budynku mieszkalnym na warunkach z § 20 ust. 3 pkt 1 lit. b; do 2,2 m w dyżurce, portierni, kantorze i na antresoli (§ 20 ust. 3 pkt 2).</li>
+      <li>Przy stropie pochyłym liczy się średnia wysokość, a w najniższym miejscu co najmniej 1,9 m (§ 20 ust. 5).</li>
+    </ul>
+    <p>
+      Ile umywalek, ustępów i natrysków potrzeba dla tej samej załogi, policzy
+      <a href="/narzedzia/normy-sanitarne">kalkulator norm sanitarnych</a>.
+    </p>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Wolna objętość to powierzchnia razy wysokość minus objętość sprzętu, a wolna podłoga to powierzchnia minus podłoga
+      pod sprzętem. Liczbę osób dzielimy w dół do pełnych osób i bierzemy mniejszą z dwóch. Gdy pomieszczenie jest niższe
+      niż 3 m i nie ma w nim czynników szkodliwych, sprawdzamy wyjątek dla najwyżej 4 osób po 15 m³; innych wyjątków
+      z § 20 kalkulator nie liczy.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { wpisanaLiczba } from '../../lib/narzedzia/format';
+  import { pomieszczeniePracy } from '../../lib/narzedzia/pomieszczenie-pracy';
+
+  const form = document.querySelector<HTMLFormElement>('[data-pomieszczenie]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const m = (x: number, j: string) => `${x.toLocaleString('pl-PL', { maximumFractionDigits: 2 })} ${j}`;
+    const osob = (n: number) => `${n} ${n === 1 ? 'osoba' : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? 'osoby' : 'osób'}`;
+    const opcjonalna = (n: string) => (el(n).value.trim() === '' ? 0 : wpisanaLiczba(el(n).value));
+    const przelicz = () => {
+      const powierzchnia = wpisanaLiczba(el('powierzchnia').value);
+      const wysokosc = wpisanaLiczba(el('wysokosc').value);
+      const zajetaPowierzchnia = opcjonalna('zajetaPowierzchnia');
+      const zajetaObjetosc = opcjonalna('zajetaObjetosc');
+      let blad: string | null = null;
+      if (!(powierzchnia > 0 && powierzchnia <= 100_000)) blad = 'Wpisz powierzchnię podłogi w m², na przykład 100.';
+      else if (!(wysokosc > 0 && wysokosc <= 50)) blad = 'Wpisz wysokość w metrach, na przykład 3,5.';
+      else if (!(zajetaPowierzchnia >= 0 && zajetaPowierzchnia <= powierzchnia)) blad = 'Zajęta podłoga nie może być większa niż całe pomieszczenie.';
+      else if (!(zajetaObjetosc >= 0 && zajetaObjetosc <= powierzchnia * wysokosc)) blad = 'Zajęta objętość nie może być większa niż całe pomieszczenie.';
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      b.hidden = !blad;
+      b.textContent = blad ?? '';
+      const status = w('status');
+      if (blad) {
+        w('osoby').textContent = '—';
+        status.hidden = true;
+        return;
+      }
+      const r = pomieszczeniePracy({ powierzchnia, wysokosc, zajetaPowierzchnia, zajetaObjetosc, szkodliwe: el('szkodliwe').checked });
+      w('osoby').textContent = String(r.maksOsob);
+      status.hidden = false;
+      if (r.wysokoscOk) {
+        status.dataset.status = 'w-terminie';
+        status.textContent = `Wysokość zgodna z § 20 (co najmniej ${m(r.wymaganaWysokosc, 'm')})`;
+      } else if (r.niskie) {
+        status.dataset.status = 'wkrotce';
+        status.textContent = 'Poniżej 3 m: najwyżej 4 osoby po 15 m³ (§ 20 ust. 3 pkt 1 lit. a)';
+      } else {
+        status.dataset.status = 'po-terminie';
+        status.textContent = `Za niskie na pomieszczenie stałej pracy: wymagane ${m(r.wymaganaWysokosc, 'm')} (§ 20 ust. 1)`;
+      }
+      w('objetosc').textContent = `${osob(r.zaObjetosc)} (${m(r.wolnaObjetosc, 'm³')})`;
+      w('podloga').textContent = `${osob(r.zaPowierzchnia)} (${m(r.wolnaPowierzchnia, 'm²')})`;
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>
