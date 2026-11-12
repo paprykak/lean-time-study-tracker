@@ -11,39 +11,55 @@
 // - nauka na innych zasadach: zwolnienie bez wynagrodzenia i urlop bezpłatny w wymiarze z porozumienia (art. 103^6).
 // Interpretacje (przepis ich wprost nie rozstrzyga):
 // 1. Każdy punkt art. 103^2 § 1 to osobne uprawnienie „dla pracownika przystępującego do…”, więc przy dwóch różnych
-//    egzaminach w jednym roku dni dodajemy; przepis nie mówi o sumowaniu wprost. Ten sam egzamin liczymy raz.
+//    egzaminach dni dodajemy; przepis nie mówi o sumowaniu wprost. Przepis nie rozstrzyga też, czy każde kolejne
+//    przystąpienie do egzaminu tego samego rodzaju daje nowe 6 dni: liczymy 6 dni do każdego wpisanego egzaminu
+//    (wariant korzystny dla pracownika). Ostatni rok studiów (pkt 4) liczy się raz.
 // 2. Dzień urlopu szkoleniowego to cały dzień pracy z grafiku: art. 103^2 § 2 nie przelicza dni na 8 godzin, tak jak
-//    robi to art. 154^2 § 2 dla urlopu wypoczynkowego. Godziny = dni × długość zmiany (odczytanie brzmienia).
+//    robi to art. 154^2 § 2 dla urlopu wypoczynkowego. Godziny = dni × długość zmiany, liczone w minutach
+//    (zmiana zaokrąglona do pełnej minuty); to odczytanie brzmienia.
 // 3. Narzędzie nie ustala, kiedy urlop wziąć (przepis o tym milczy).
 export type Egzamin = 'eksternistyczny' | 'maturalny' | 'zawodowy' | 'studia';
 
 export const WYMIAR: Record<Egzamin, number> = { eksternistyczny: 6, maturalny: 6, zawodowy: 6, studia: 21 };
 export const EGZAMINY = Object.keys(WYMIAR) as Egzamin[];
 export const MAKS_ZMIANA = 24;
+/** Najwięcej egzaminów jednego rodzaju w formularzu. */
+export const MAKS_EGZAMINOW = 5;
 
 export interface DaneNauki {
   /** Nauka z inicjatywy pracodawcy albo za jego zgodą (art. 103^1 § 1). */
   zaZgoda: boolean;
-  egzaminy: Egzamin[];
-  /** Długość zmiany w godzinach, więcej niż 0 i najwyżej 24. */
+  /** Liczba egzaminów danego rodzaju (pkt 1–3: 0–5); ostatni rok studiów 0 albo 1. Brak klucza = 0. */
+  egzaminy: Partial<Record<Egzamin, number>>;
+  /** Długość zmiany w godzinach, więcej niż 0 i najwyżej 24. Przy nauce bez zgody nie ma znaczenia. */
   zmiana: number;
 }
 
 export interface WynikNauki {
-  /** Urlop szkoleniowy i płatne zwolnienie na zajęcia (art. 103^1 § 2); przy „nie” zostaje art. 103^6. */
+  /** Urlop szkoleniowy i płatne zwolnienie na obowiązkowe zajęcia (art. 103^1 § 2); przy „nie” zostaje art. 103^6. */
   podstawa: 'art. 103^1' | 'art. 103^6';
   dni: number;
+  /** Dni × zmiana, w pełnych minutach. */
+  minuty: number;
   godziny: number;
-  pozycje: { egzamin: Egzamin; dni: number }[];
+  pozycje: { egzamin: Egzamin; liczba: number; dni: number }[];
 }
 
 export function urlopSzkoleniowy({ zaZgoda, egzaminy, zmiana }: DaneNauki): WynikNauki {
+  for (const [e, n] of Object.entries(egzaminy)) {
+    if (!Object.hasOwn(WYMIAR, e)) throw new RangeError(`Nieznany egzamin: ${e}`);
+    const maks = e === 'studia' ? 1 : MAKS_EGZAMINOW;
+    if (!Number.isInteger(n) || (n as number) < 0 || (n as number) > maks) throw new RangeError(`Liczba egzaminów poza zakresem: ${e}`);
+  }
+  if (!zaZgoda) return { podstawa: 'art. 103^6', dni: 0, minuty: 0, godziny: 0, pozycje: [] };
   if (!Number.isFinite(zmiana) || zmiana <= 0 || zmiana > MAKS_ZMIANA) throw new RangeError('Długość zmiany poza zakresem');
-  for (const e of egzaminy) if (!(e in WYMIAR)) throw new RangeError(`Nieznany egzamin: ${e}`);
-  if (!zaZgoda) return { podstawa: 'art. 103^6', dni: 0, godziny: 0, pozycje: [] };
-  const pozycje = EGZAMINY.filter((e) => egzaminy.includes(e)).map((egzamin) => ({ egzamin, dni: WYMIAR[egzamin] }));
+  const pozycje = EGZAMINY.filter((e) => (egzaminy[e] ?? 0) > 0).map((egzamin) => {
+    const liczba = egzaminy[egzamin]!;
+    return { egzamin, liczba, dni: WYMIAR[egzamin] * liczba };
+  });
   const dni = pozycje.reduce((s, p) => s + p.dni, 0);
-  return { podstawa: 'art. 103^1', dni, godziny: Math.round(dni * zmiana * 100) / 100, pozycje };
+  const minuty = dni * Math.round(zmiana * 60);
+  return { podstawa: 'art. 103^1', dni, minuty, godziny: minuty / 60, pozycje };
 }
 
 /** Krótkie nazwy pozycji art. 103^2 § 1 do wyniku. */
