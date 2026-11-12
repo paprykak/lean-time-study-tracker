@@ -1,0 +1,229 @@
+---
+// Równoważny czas pracy: ile zmian 12, 16 albo 24 h wypełni wymiar okresu rozliczeniowego, czy okres jest dopuszczalny
+// dla systemu i ile dni wolnych wyjdzie; też system weekendowy i skrócony tydzień (art. 129, 135–137, 143–144, 147 Kp).
+// Logika: src/lib/narzedzia/rownowazny.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { KOLOR_STATUSU, OKRESY, SYSTEMY, opisWyniku, planOkresu, type SystemRownowazny } from '../../lib/narzedzia/rownowazny';
+import { nazwaMiesiaca } from '../../lib/narzedzia/czas-pracy';
+import { LATA } from '../../data/prawo';
+
+const ROKI = [...LATA, LATA[LATA.length - 1] + 1];
+const teraz = new Date();
+const rok = ROKI.includes(teraz.getUTCFullYear()) ? teraz.getUTCFullYear() : LATA[LATA.length - 1];
+const miesiac = teraz.getUTCMonth() + 1;
+const systemy = Object.keys(SYSTEMY) as SystemRownowazny[];
+const r = planOkresu('r12', 12, rok, miesiac, 1);
+const t = opisWyniku(r);
+const m = nazwaMiesiaca(miesiac, 'miejscownik');
+
+const faq = [
+  {
+    pytanie: 'Na czym polega równoważny czas pracy?',
+    odpowiedz: 'W systemie równoważnym dobowy wymiar można przedłużyć do 12 godzin, a dłuższe dni równoważy się krótszymi dniami albo dniami wolnymi w tym samym okresie rozliczeniowym (art. 135 § 1 Kodeksu pracy). Przy dozorze urządzeń albo częściowym pozostawaniu w pogotowiu zmiana może trwać do 16 godzin (art. 136 § 1), a przy pilnowaniu mienia, ochronie osób, w zakładowych strażach pożarnych i służbach ratowniczych do 24 godzin (art. 137). Łącznie w okresie pracujesz tyle, ile wynosi wymiar.',
+  },
+  {
+    pytanie: 'Jaki okres rozliczeniowy przy zmianach po 12 godzin?',
+    odpowiedz: 'Do 1 miesiąca (art. 135 § 1 Kodeksu pracy). W szczególnie uzasadnionych przypadkach do 3 miesięcy (art. 135 § 2), a przy pracach zależnych od pory roku lub warunków atmosferycznych do 4 miesięcy (art. 135 § 3). Z przyczyn obiektywnych, technicznych lub organizacyjnych okres można przedłużyć do 12 miesięcy (art. 129 § 2), ale tylko w układzie zbiorowym albo porozumieniu ze związkami lub przedstawicielami pracowników (art. 150 § 3).',
+  },
+  {
+    pytanie: 'Ile dni pracy w miesiącu przy zmianach po 12 godzin?',
+    odpowiedz: `Tyle, ile trzeba, żeby wypełnić wymiar miesiąca. W ${m} ${rok} r. wymiar to ${r.wymiar} godzin, więc wychodzi ${t.opis.split(';')[0]}, razem ${r.dniPracy} dni pracy i ${r.dniWolne} dni wolnych. Kodeks pracy nie mówi, jak rozłożyć resztę godzin: może to być jedna krótsza zmiana albo kilka krótszych (art. 135 § 1).`,
+  },
+  {
+    pytanie: 'Czy w systemie równoważnym są nadgodziny?',
+    odpowiedz: 'Tak. Nadgodziny to praca ponad normy czasu pracy, a także ponad przedłużony dobowy wymiar z Twojego systemu i rozkładu (art. 151 § 1 Kodeksu pracy). Jeśli w grafiku masz zmianę 12 godzin, a pracujesz 13, ta trzynasta godzina jest nadliczbowa.',
+  },
+  {
+    pytanie: 'Co to jest system weekendowy?',
+    odpowiedz: 'To system, w którym pracujesz wyłącznie w piątki, soboty, niedziele i święta, do 12 godzin na dobę, w okresie rozliczeniowym do 1 miesiąca (art. 144 Kodeksu pracy). Wprowadza się go na Twój wniosek, w umowie o pracę (art. 150 § 6). W niektórych miesiącach tych dni jest za mało, żeby wypracować cały wymiar.',
+  },
+  {
+    pytanie: 'Kto nie może pracować po 12 godzin?',
+    odpowiedz: 'W systemach równoważnych, weekendowym i skróconego tygodnia czas pracy nie może przekraczać 8 godzin na dobę u osób w ciąży, u osób na stanowiskach, gdzie są przekroczone najwyższe dopuszczalne stężenia lub natężenia czynników szkodliwych, i u osób opiekujących się dzieckiem do 4 lat, jeśli nie zgodzą się na dłuższą pracę (art. 148 Kodeksu pracy). Za godziny, których z tego powodu nie przepracują, zachowują wynagrodzenie.',
+  },
+];
+---
+<StronaNarzedzia
+  slug="rownowazny-czas-pracy"
+  tytul="Równoważny czas pracy: ile zmian w okresie"
+  opis="Ile zmian 12, 16 albo 24 h w okresie rozliczeniowym, ile dni wolnych, jaki okres jest dopuszczalny. Też system weekendowy i skrócony tydzień."
+  h1="Równoważny czas pracy: ile zmian w okresie"
+  lead="Wybierz system, długość zmiany i okres rozliczeniowy. Policzymy, ile zmian wypełni wymiar, ile dni wolnych wyjdzie i czy taki okres jest dopuszczalny według Kodeksu pracy."
+  faq={faq}
+>
+  <form class="kalkulator" data-rownowazny novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">System i okres</h2>
+      <div class="mt-4">
+        <label for="r-system" class="etykieta-pola">System</label>
+        <select id="r-system" name="system" class="pole mt-1">
+          {systemy.map((s) => <option value={s} data-maks={SYSTEMY[s].maks} selected={s === 'r12'}>{SYSTEMY[s].nazwa}</option>)}
+        </select>
+      </div>
+      <div class="mt-4">
+        <label for="r-zmiana" class="etykieta-pola">Długość zmiany, h</label>
+        <input id="r-zmiana" name="zmiana" type="text" inputmode="decimal" class="pole mt-1" value="12" aria-describedby="r-zmiana-opis r-blad" />
+        <p id="r-zmiana-opis" class="meta mt-1" data-w="zmiana-opis">Więcej niż 8 h, najwyżej 12 h; co pół godziny.</p>
+      </div>
+      <fieldset class="mt-4">
+        <legend class="etykieta-pola">Początek okresu</legend>
+        <div class="mt-1 grid grid-cols-[minmax(0,3fr)_minmax(0,2fr)] gap-3">
+          <label class="sr-only" for="r-miesiac">Miesiąc</label>
+          <select id="r-miesiac" name="miesiac" class="pole">
+            {Array.from({ length: 12 }, (_, i) => <option value={i + 1} selected={i + 1 === miesiac}>{nazwaMiesiaca(i + 1)}</option>)}
+          </select>
+          <label class="sr-only" for="r-rok">Rok</label>
+          <select id="r-rok" name="rok" class="pole">
+            {ROKI.map((x) => <option value={x} selected={x === rok}>{x}</option>)}
+          </select>
+        </div>
+      </fieldset>
+      <div class="mt-4">
+        <label for="r-okres" class="etykieta-pola">Okres rozliczeniowy</label>
+        <select id="r-okres" name="okres" class="pole mt-1">
+          {OKRESY.map((k) => <option value={k} selected={k === 1}>{k === 1 ? '1 miesiąc' : k < 5 ? `${k} miesiące` : `${k} miesięcy`}</option>)}
+        </select>
+      </div>
+      <p class="meta mt-3">Pełny etat.</p>
+      <p id="r-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Plan okresu</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-kwota" data-w="glowny">{t.glowny}</p>
+        <p class="meta" data-w="opis">{t.opis}</p>
+        <p class="status-terminu" data-w="status" data-status={KOLOR_STATUSU[r.status.rodzaj]}>{t.status}</p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Okres</dt><dd data-w="okres">{t.okres}</dd></div>
+        <div><dt>Wymiar</dt><dd data-w="wymiar">{t.wymiar}</dd></div>
+        <div data-wiersz="dostepne" hidden><dt>Dni, w które wolno pracować</dt><dd data-w="dostepne"></dd></div>
+        <div><dt>Dni wolne</dt><dd data-w="wolne">{t.wolne}</dd></div>
+        <div><dt>Przerwy</dt><dd data-w="przerwy">{t.przerwy}</dd></div>
+        <div data-wiersz="odpoczynek" hidden><dt>Odpoczynek</dt><dd data-w="odpoczynek"></dd></div>
+        <div data-wiersz="rytm" hidden><dt>Rytm</dt><dd data-w="rytm"></dd></div>
+      </dl>
+      <p class="wynik-uwaga">
+        Najwyżej 8 h na dobę: w ciąży, przy przekroczonych normach czynników szkodliwych i przy opiece nad dzieckiem do 4 lat
+        bez zgody (art. 148 Kp). Praca ponad zaplanowaną zmianę to nadgodziny (art. 151 § 1).
+      </p>
+      <noscript><p class="wynik-uwaga">Bez JavaScriptu widzisz przykład: równoważny do 12 h, 1 miesiąc. Zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="systemy">Systemy i okresy rozliczeniowe</h2>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Długość zmiany i okres rozliczeniowy w systemach</caption>
+        <thead><tr><th scope="col">System</th><th scope="col">Zmiana</th><th scope="col">Okres</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Równoważny (art. 135)</th><td>do 12 h</td><td>1 miesiąc; do 3 w szczególnie uzasadnionych przypadkach; do 4 przy pracach zależnych od pory roku lub pogody</td></tr>
+          <tr><th scope="row">Dozór, pogotowie (art. 136)</th><td>do 16 h</td><td>1 miesiąc</td></tr>
+          <tr><th scope="row">Ochrona, straże (art. 137)</th><td>do 24 h</td><td>1 miesiąc; do 3 albo 4 jak w art. 135</td></tr>
+          <tr><th scope="row">Skrócony tydzień (art. 143)</th><td>do 12 h</td><td>1 miesiąc; mniej niż 5 dni w tygodniu</td></tr>
+          <tr><th scope="row">Weekendowy (art. 144)</th><td>do 12 h</td><td>1 miesiąc; tylko pt, sob, nd i święta</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      W każdym systemie okres można przedłużyć do 12 miesięcy z przyczyn obiektywnych, technicznych lub organizacyjnych
+      (art. 129 § 2 Kodeksu pracy). Takie przedłużenie ustala się w układzie zbiorowym albo w porozumieniu ze związkami
+      zawodowymi, a gdy ich nie ma, z przedstawicielami pracowników; kopię porozumienia pracodawca przekazuje okręgowemu
+      inspektorowi pracy w 5 dni roboczych (art. 150 § 3 i 4). System i okres ustala się w układzie zbiorowym,
+      regulaminie pracy albo obwieszczeniu (art. 150 § 1). Gdy nie działa związek albo nie zgadza się na zmianę, okres
+      z art. 135 § 2 i 3 pracodawca może stosować po zawiadomieniu okręgowego inspektora pracy (art. 150 § 2). Skrócony
+      tydzień i system weekendowy stosuje się na wniosek pracownika, na podstawie umowy o pracę (art. 143, 144, 150 § 6).
+    </p>
+    <p>
+      Po każdej zmianie w systemie 16 i 24 h należy się odpoczynek co najmniej tak długi jak zmiana, niezależnie od
+      odpoczynku tygodniowego (art. 136 § 2, art. 137).
+    </p>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <ul>
+      <li>Wymiar okresu W to 8 h za każdy dzień od poniedziałku do piątku minus 8 h za każde święto poza niedzielą (art. 130 Kp); okres zaczyna się 1. dnia wybranego miesiąca, a tygodnie liczymy od pierwszego dnia okresu (art. 128 § 3 pkt 2).</li>
+      <li>Pełne zmiany: W podzielone przez długość zmiany L, w dół. Reszta godzin to jedna krótsza zmiana. Dni pracy: W / L w górę. Dni wolne: dni okresu minus dni pracy.</li>
+      <li>Minimum dni wolnych z art. 147 (gdy rozkład obejmuje pracę w niedziele i święta): niedziele, święta i dni wolne z przeciętnie pięciodniowego tygodnia, czyli dni okresu minus W / 8. Przy zmianach dłuższych niż 8 h dni wolnych zawsze jest więcej; pokazujemy to jako kontrolę.</li>
+      <li>Przerwy po 15 minut wliczane do czasu pracy: od 6 h jedna, ponad 9 h druga, ponad 16 h trzecia (art. 134 § 1).</li>
+      <li>System 16 i 24 h: zmiana i odpoczynek po niej trwają razem 2L godzin, więc w okresie mieści się najwyżej 24 × dni okresu / 2L takich par. To informacja o najgęstszym możliwym rytmie.</li>
+      <li>Weekendowy: liczymy piątki, soboty, niedziele i święta w okresie (święto w piątek, sobotę albo niedzielę raz). Skrócony tydzień: w każdym tygodniu od 1. dnia okresu najwyżej 4 dni pracy, w ostatnim niepełnym najwyżej tyle, ile ma dni. Dni dostępne razy L to najwięcej godzin, które da się zaplanować.</li>
+    </ul>
+    <p>
+      Przykład: równoważny do 12 h, listopad 2026 r. Wymiar 160 h (20 dni od poniedziałku do piątku, minus 11 listopada).
+      160 / 12 = 13 pełnych zmian i reszta 4 h, czyli 14 dni pracy. Listopad ma 30 dni, więc dni wolnych jest 16, a minimum
+      z art. 147 to 30 − 20 = 10. W systemie 24 h ten sam miesiąc to 6 zmian po 24 h i 1 zmiana 16 h, a po każdej co
+      najmniej tyle odpoczynku, ile trwała.
+    </p>
+    <p>
+      Czego przepis nie mówi: Kodeks nie wskazuje, jak rozłożyć resztę godzin, mówi tylko o krótszym wymiarze w niektórych
+      dniach albo dniach wolnych (art. 135 § 1); jedna krótsza zmiana to jeden z możliwych rozkładów. Nie mówi też, co
+      zrobić, gdy w systemie weekendowym albo w skróconym tygodniu dni dostępnych jest za mało na cały wymiar. Narzędzie
+      pokazuje wtedy tylko rachunek: ile godzin brakuje. Nie liczymy niepełnego etatu, bo wymiar zależy wtedy od umowy.
+    </p>
+    <p>
+      Wymiar miesięcy i okresów policzy <a href="/narzedzia/wymiar-czasu-pracy">kalkulator wymiaru czasu pracy</a>,
+      gotowy grafik miesiąca sprawdzi <a href="/narzedzia/kontrola-grafiku">kontrola grafiku</a>, nakładanie się zmian
+      w jednej dobie <a href="/narzedzia/doba-pracownicza">kalkulator doby pracowniczej</a>, a przerwy na zmianie
+      <a href="/narzedzia/przerwy-w-pracy">kalkulator przerw w pracy</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { KOLOR_STATUSU, SYSTEMY, opisWyniku, planOkresu, type SystemRownowazny } from '../../lib/narzedzia/rownowazny';
+  import { wpisanaLiczba } from '../../lib/narzedzia/format';
+  import { typografia } from '../../lib/typografia.mjs';
+
+  const form = document.querySelector<HTMLFormElement>('[data-rownowazny]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement | HTMLSelectElement;
+    const pisz = (k: string, tekst: string) => {
+      w(k).textContent = typografia(tekst);
+    };
+    const blad = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+
+    const przelicz = () => {
+      const system = el('system').value as SystemRownowazny;
+      const maks = SYSTEMY[system].maks;
+      pisz('zmiana-opis', `Więcej niż 8 h, najwyżej ${maks} h; co pół godziny.`);
+      const L = wpisanaLiczba(el('zmiana').value);
+      let r;
+      try {
+        if (Number.isNaN(L)) throw new RangeError('Wpisz długość zmiany liczbą, np. 12 albo 10,5.');
+        r = planOkresu(system, L, Number(el('rok').value), Number(el('miesiac').value), Number(el('okres').value));
+      } catch (e) {
+        const tekst = e instanceof RangeError ? e.message : 'Nie udało się policzyć.';
+        blad.hidden = false;
+        blad.textContent = typografia(tekst.endsWith('.') ? tekst : `${tekst}.`);
+        el('zmiana').setAttribute('aria-invalid', 'true');
+        w('glowny').textContent = '—';
+        w('opis').textContent = '';
+        w('status').hidden = true;
+        return;
+      }
+      blad.hidden = true;
+      blad.textContent = '';
+      el('zmiana').removeAttribute('aria-invalid');
+      const t = opisWyniku(r);
+      for (const k of ['glowny', 'opis', 'status', 'okres', 'wymiar', 'wolne', 'przerwy'] as const) pisz(k, t[k]);
+      w('status').hidden = false;
+      w('status').dataset.status = KOLOR_STATUSU[r.status.rodzaj];
+      for (const k of ['odpoczynek', 'rytm', 'dostepne'] as const) {
+        const wiersz = form.querySelector<HTMLElement>(`[data-wiersz="${k}"]`)!;
+        wiersz.hidden = t[k] === null;
+        pisz(k, t[k] ?? '');
+      }
+    };
+
+    form.addEventListener('change', (e) => {
+      if ((e.target as HTMLElement).getAttribute('name') === 'system') el('zmiana').value = String(SYSTEMY[el('system').value as SystemRownowazny].maks);
+      przelicz();
+    });
+    form.addEventListener('input', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>

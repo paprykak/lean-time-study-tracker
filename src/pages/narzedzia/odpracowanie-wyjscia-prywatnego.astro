@@ -1,0 +1,320 @@
+---
+// Odpracowanie wyjścia prywatnego: bilans wyjścia i odpracowania, nadgodziny ponad czas wyjścia, odpoczynek dobowy
+// i tygodniowy (art. 151 § 2^1, 132 § 1, 133 § 1, 128 § 3, 151 § 1, 80, 151^10 Kp). Logika:
+// src/lib/narzedzia/odpracowanie.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { MAKS_WIERSZY, OKRESY, czas, odpracowanie, type DaneOdpracowania } from '../../lib/narzedzia/odpracowanie';
+
+const D: DaneOdpracowania = {
+  start: '07:00',
+  koniec: '15:00',
+  okres: 1,
+  wyjscie: { data: '2026-11-18', od: '10:00', do: '13:00' },
+  odpracowanie: [
+    { data: '2026-11-19', od: '15:00', do: '17:00' },
+    { data: '2026-11-20', od: '15:00', do: '16:00' },
+  ],
+};
+const r = odpracowanie(D);
+const STAN = { ok: 'W porządku', uwaga: 'Uwaga', blad: 'Naruszenie' } as const;
+const sup = (t: string) => t.replace(/(\d)\^(\d{1,2})/g, '$1<sup>$2</sup>');
+const opisBilansu = (w: typeof r) => `Wyjście ${czas(w.wyjscie)}, odpracowane ${czas(w.odpracowane)}${w.nadwyzka ? `, ${czas(w.nadwyzka)} ponad wyjście` : ''}`;
+const OKRES = { 1: '1 miesiąc', 2: '2 miesiące', 3: '3 miesiące', 4: '4 miesiące', 6: '6 miesięcy', 12: '12 miesięcy' } as const;
+
+const faq = [
+  {
+    pytanie: 'Czy odpracowanie wyjścia prywatnego to nadgodziny?',
+    odpowiedz: 'Nie. Czas odpracowania zwolnienia od pracy, udzielonego na Twój wniosek w postaci papierowej lub elektronicznej w celu załatwienia spraw osobistych, nie jest pracą w godzinach nadliczbowych (art. 151 § 2^1 Kodeksu pracy). Przepis obejmuje jednak tylko czas odpracowania zwolnienia: praca ponad ten czas i ponad normy czasu pracy to już nadgodziny (art. 151 § 1).',
+  },
+  {
+    pytanie: 'Kiedy trzeba odpracować wyjście prywatne?',
+    odpowiedz: 'Przepis nie wskazuje terminu ani dnia. Jedyny warunek z art. 151 § 2^1 Kodeksu pracy to odpoczynek: co najmniej 11 godzin w każdej dobie (art. 132 § 1) i 35 godzin w każdym tygodniu (art. 133 § 1). Gdy odpracujesz w innym okresie rozliczeniowym, w okresie wyjścia zabraknie godzin do wymiaru, a w okresie odpracowania będzie ich więcej.',
+  },
+  {
+    pytanie: 'Czy można odpracować wyjście prywatne w sobotę?',
+    odpowiedz: 'Art. 151 § 2^1 Kodeksu pracy nie wskazuje dnia odpracowania, więc nie wyłącza dnia wolnego z rozkładu, np. soboty. Warunkiem jest odpoczynek: 11 godzin w dobie i 35 godzin w tygodniu (art. 132 § 1 i art. 133 § 1). Inaczej jest z niedzielą i świętem: praca w te dni jest dozwolona tylko w przypadkach z art. 151^10, np. przy pracy zmianowej albo w ruchu ciągłym.',
+  },
+  {
+    pytanie: 'Czy na wyjście prywatne trzeba złożyć wniosek?',
+    odpowiedz: 'Przepis dotyczy zwolnienia udzielonego na wniosek pracownika złożony w postaci papierowej lub elektronicznej (art. 151 § 2^1 Kodeksu pracy). To właśnie czas odpracowania takiego zwolnienia nie jest nadgodzinami.',
+  },
+  {
+    pytanie: 'Czy za wyjście prywatne przysługuje wynagrodzenie?',
+    odpowiedz: 'Wynagrodzenie przysługuje za pracę wykonaną, a za czas niewykonywania pracy tylko wtedy, gdy przepisy prawa pracy tak stanowią (art. 80 Kodeksu pracy). Art. 151 § 2^1 nie przyznaje wynagrodzenia za czas wyjścia, więc za nieodpracowany czas wynagrodzenie nie przysługuje, chyba że przepisy, umowa lub regulamin stanowią inaczej. Za odpracowany czas dostajesz wynagrodzenie jak za pracę.',
+  },
+  {
+    pytanie: 'Czym wyjście prywatne różni się od zwolnienia z art. 148^1 i 188?',
+    odpowiedz: 'Zwolnienie z powodu siły wyższej to 2 dni albo 16 godzin w roku kalendarzowym w pilnych sprawach rodzinnych spowodowanych chorobą lub wypadkiem, gdy niezbędna jest Twoja natychmiastowa obecność, z połową wynagrodzenia (art. 148^1 § 1 Kodeksu pracy). Gdy wychowujesz dziecko do 14 lat, masz 16 godzin albo 2 dni w roku z zachowaniem wynagrodzenia (art. 188 § 1). Wyjście prywatne z art. 151 § 2^1 nie ma w przepisie wymiaru ani wynagrodzenia: to zwolnienie, które możesz odpracować bez nadgodzin.',
+  },
+];
+---
+<StronaNarzedzia
+  slug="odpracowanie-wyjscia-prywatnego"
+  tytul="Odpracowanie wyjścia prywatnego: kalkulator"
+  opis="Ile godzin odpracować po wyjściu prywatnym, kiedy to już nadgodziny i czy zostaje 11 h odpoczynku w dobie i 35 h w tygodniu. Art. 151 § 2¹ Kodeksu pracy."
+  h1="Odpracowanie wyjścia prywatnego"
+  lead="Wpisz swoje godziny pracy, wyjście w sprawach osobistych i kiedy je odpracujesz. Policzymy, ile zostało do odpracowania, czy coś jest już nadgodzinami i czy zostaje odpoczynek: 11 godzin w dobie i 35 w tygodniu."
+  faq={faq}
+>
+  <form class="kalkulator" data-odpracowanie novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Wyjście i odpracowanie</h2>
+      <fieldset class="mt-4">
+        <legend class="etykieta-pola">Twoja zmiana (pon–pt)</legend>
+        <div class="mt-1 grid grid-cols-2 gap-3">
+          <div>
+            <label for="o-start" class="meta">Od</label>
+            <input id="o-start" name="start" type="time" class="pole mt-1" value={D.start} aria-describedby="o-blad" />
+          </div>
+          <div>
+            <label for="o-koniec" class="meta">Do</label>
+            <input id="o-koniec" name="koniec" type="time" class="pole mt-1" value={D.koniec} aria-describedby="o-blad" />
+          </div>
+        </div>
+      </fieldset>
+      <div class="mt-4">
+        <label for="o-okres" class="etykieta-pola">Okres rozliczeniowy</label>
+        <select id="o-okres" name="okres" class="pole mt-1">
+          {OKRESY.map((m) => <option value={m} selected={m === D.okres}>{OKRES[m]}</option>)}
+        </select>
+      </div>
+
+      <fieldset class="mt-5">
+        <legend class="etykieta-pola">Wyjście</legend>
+        <div class="wiersz mt-1">
+          <div class="wiersz-data">
+            <label for="o-wdata" class="meta">Dzień zmiany</label>
+            <input id="o-wdata" name="wdata" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={D.wyjscie.data} aria-describedby="o-wdata-opis o-blad" />
+          </div>
+          <div>
+            <label for="o-wod" class="meta">Od</label>
+            <input id="o-wod" name="wod" type="time" class="pole mt-1" value={D.wyjscie.od} aria-describedby="o-blad" />
+          </div>
+          <div>
+            <label for="o-wdo" class="meta">Do</label>
+            <input id="o-wdo" name="wdo" type="time" class="pole mt-1" value={D.wyjscie.do} aria-describedby="o-blad" />
+          </div>
+        </div>
+        <p id="o-wdata-opis" class="meta mt-1">Przy zmianie nocnej: dzień, w którym zmiana się zaczyna.</p>
+      </fieldset>
+
+      <h3 class="etykieta-pola mt-5">Odpracowanie</h3>
+      <p class="meta mt-1">Poza godzinami zmiany; puste wiersze pomijamy.</p>
+      {Array.from({ length: MAKS_WIERSZY }, (_, i) => (
+        <fieldset class="mt-3">
+          <legend class="meta">Odpracowanie {i + 1}</legend>
+          <div class="wiersz mt-1">
+            <div class="wiersz-data">
+              <label for={`o-data${i + 1}`} class="sr-only">Odpracowanie {i + 1}: dzień</label>
+              <input id={`o-data${i + 1}`} name={`data${i + 1}`} type="date" class="pole" min="2000-01-01" max="2100-12-31" value={D.odpracowanie[i]?.data} aria-describedby="o-blad" />
+            </div>
+            <div>
+              <label for={`o-od${i + 1}`} class="sr-only">Odpracowanie {i + 1}: od</label>
+              <input id={`o-od${i + 1}`} name={`od${i + 1}`} type="time" class="pole" value={D.odpracowanie[i]?.od} aria-describedby="o-blad" />
+            </div>
+            <div>
+              <label for={`o-do${i + 1}`} class="sr-only">Odpracowanie {i + 1}: do</label>
+              <input id={`o-do${i + 1}`} name={`do${i + 1}`} type="time" class="pole" value={D.odpracowanie[i]?.do} aria-describedby="o-blad" />
+            </div>
+          </div>
+        </fieldset>
+      ))}
+      <p id="o-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Zostało do odpracowania</h2>
+      <div aria-live="polite">
+        <p class="wynik-kwota" data-w="zostalo">{czas(r.zostalo)}</p>
+        <p class="meta" data-w="opis">{opisBilansu(r)}</p>
+        <ul class="lista-kontroli mt-4" data-w="lista">
+          {r.kontrole.map((k) => (
+            <li data-stan={k.stan}>
+              <strong>{STAN[k.stan]}: {k.tytul}</strong>
+              <span class="lista-opis" set:html={sup(k.opis)} />
+              {k.szczegoly.map((s) => <span class="lista-opis">{s}</span>)}
+              <span class="lista-podstawa" set:html={sup(k.podstawa)} />
+            </li>
+          ))}
+        </ul>
+      </div>
+      <p class="wynik-uwaga">Przepis dotyczy wyjścia na Twój wniosek złożony na papierze albo elektronicznie (art. 151 § 2<sup>1</sup> Kodeksu pracy).</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Wynik powyżej dotyczy przykładu, a zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="zasady">Zasady odpracowania</h2>
+    <ul>
+      <li>Czas odpracowania zwolnienia od pracy udzielonego na Twój wniosek, złożony w postaci papierowej lub elektronicznej, w celu załatwienia spraw osobistych nie jest pracą w godzinach nadliczbowych (art. 151 § 2<sup>1</sup> Kodeksu pracy).</li>
+      <li>Odpracowanie nie może naruszać odpoczynku: co najmniej 11 godzin nieprzerwanego odpoczynku w każdej dobie (art. 132 § 1) i 35 godzin w każdym tygodniu, obejmujących te 11 godzin (art. 133 § 1).</li>
+      <li>Praca ponad czas wyjścia i ponad normy czasu pracy to nadgodziny (art. 151 § 1).</li>
+      <li>Wynagrodzenie przysługuje za pracę wykonaną; za czas niewykonywania pracy tylko wtedy, gdy przepisy prawa pracy tak stanowią (art. 80).</li>
+      <li>Praca w niedziele i święta jest dozwolona tylko w przypadkach z art. 151<sup>10</sup>, np. przy pracy zmianowej, w ruchu ciągłym albo przy niezbędnych remontach.</li>
+    </ul>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Przyjmujemy stały rozkład: ta sama zmiana od poniedziałku do piątku, święto w dzień pracy jest wolne. Zmiana może
+      przechodzić przez północ i trwa od 1 do 12 godzin. Od godzin pracy z rozkładu odejmujemy wyjście, a dodajemy
+      odpracowanie. Odpracowanie nie może nachodzić na godziny zmiany, bo wtedy nie jest dodatkowym czasem.
+    </p>
+    <p>
+      <strong>Doba</strong> to 24 godziny od godziny, w której zaczynasz pracę według rozkładu (art. 128 § 3 pkt 1).
+      Dla każdej doby z odpracowaniem i dla doby wyjścia szukamy najdłuższej przerwy bez pracy w tych 24 godzinach;
+      krótsza niż 11 godzin to naruszenie art. 132 § 1. Przy odpracowaniu w dniu wolnym rozkład nie wyznacza początku
+      doby, więc przyjmujemy, że doba zaczyna się z początkiem odpracowania w tym dniu.
+    </p>
+    <p>
+      <strong>Tydzień</strong> to 7 dni od pierwszego dnia okresu rozliczeniowego (art. 128 § 3 pkt 2); okresy liczymy od
+      stycznia. Dla każdego tygodnia z odpracowaniem szukamy najdłuższej przerwy wewnątrz tych 7 dni. Ostatni tydzień
+      okresu może sięgać do następnego okresu: liczymy pełne 7 dni. Krótszy odpoczynek, nie krótszy niż 24 godziny,
+      dopuszcza art. 133 § 2 przy przejściu na inną zmianę, więc przy stałym rozkładzie go nie stosujemy. Gdy okres
+      zaczyna się w niedzielę, weekend dzieli się między dwa tygodnie i już sam rozkład nie daje 35 godzin w jednym
+      tygodniu. Przepis nie mówi, jak wtedy liczyć przerwę na przełomie tygodni, więc odpracowanie, które ją skraca,
+      oznaczamy jako uwagę. Naruszeniem jest odpracowanie wtedy, gdy rozkład daje w tym tygodniu 35 godzin przerwy, a odpracowanie je odbiera.
+    </p>
+    <p>
+      <strong>Czego przepis nie mówi.</strong> Art. 151 § 2<sup>1</sup> nie wskazuje terminu ani dnia odpracowania, nie
+      mówi o okresie rozliczeniowym ani o odpracowaniu z góry, przed wyjściem. Takie przypadki pokazujemy jako uwagi, ale
+      ich nie blokujemy. Gdy odpracujesz w innym okresie rozliczeniowym, w okresie wyjścia zabraknie godzin do wymiaru,
+      a w okresie odpracowania będzie ich więcej.
+    </p>
+    <p>
+      Cały grafik zmian sprawdzisz w <a href="/narzedzia/kontrola-grafiku">kontroli grafiku</a>, dobę pracowniczą
+      w <a href="/narzedzia/doba-pracownicza">kalkulatorze doby pracowniczej</a>, dodatek za godziny ponad wyjście
+      w <a href="/narzedzia/kalkulator-nadgodzin">kalkulatorze nadgodzin</a>, a 16 godzin albo 2 dni na dziecko
+      w <a href="/narzedzia/wolne-na-dziecko">kalkulatorze wolnego na dziecko</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { MAKS_WIERSZY, czas, odpracowanie, type Wiersz } from '../../lib/narzedzia/odpracowanie';
+  import { typografia } from '../../lib/typografia.mjs';
+
+  const form = document.querySelector<HTMLFormElement>('[data-odpracowanie]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const STAN = { ok: 'W porządku', uwaga: 'Uwaga', blad: 'Naruszenie' } as const;
+    // Tekst z indeksem „151^10” jako węzły z <sup> (bez innerHTML).
+    const zIndeksami = (tekst: string) =>
+      typografia(tekst)
+        .split(/(\d\^\d{1,2})/)
+        .map((cz) => {
+          const m = /^(\d)\^(\d{1,2})$/.exec(cz);
+          if (!m) return document.createTextNode(cz);
+          const s = document.createElement('sup');
+          s.textContent = m[2];
+          return [document.createTextNode(m[1]), s];
+        })
+        .flat();
+    const span = (klasa: string, tekst: string) => {
+      const s = document.createElement('span');
+      s.className = klasa;
+      s.append(...zIndeksami(tekst));
+      return s;
+    };
+
+    const przelicz = () => {
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      const wiersze: Wiersz[] = [];
+      let blad: string | null = null;
+      for (let i = 1; i <= MAKS_WIERSZY; i++) {
+        const r = { data: el(`data${i}`).value, od: el(`od${i}`).value, do: el(`do${i}`).value };
+        if (!r.data && !r.od && !r.do) continue;
+        if (!r.data || !r.od || !r.do) blad ??= `Odpracowanie ${i}: uzupełnij dzień i obie godziny.`;
+        else wiersze.push(r);
+      }
+      let wynik: ReturnType<typeof odpracowanie> | null = null;
+      if (!blad)
+        try {
+          wynik = odpracowanie({
+            start: el('start').value,
+            koniec: el('koniec').value,
+            okres: Number((form.elements.namedItem('okres') as HTMLSelectElement).value),
+            wyjscie: { data: el('wdata').value, od: el('wod').value, do: el('wdo').value },
+            odpracowanie: wiersze,
+          });
+        } catch (e) {
+          if (!(e instanceof RangeError)) throw e;
+          blad = `${e.message}.`;
+        }
+      b.hidden = !blad;
+      b.textContent = blad ? typografia(blad) : '';
+      if (!wynik) {
+        w('zostalo').textContent = '—';
+        w('opis').textContent = '';
+        w('lista').replaceChildren();
+        return;
+      }
+      w('zostalo').textContent = typografia(czas(wynik.zostalo));
+      w('opis').textContent = typografia(
+        `Wyjście ${czas(wynik.wyjscie)}, odpracowane ${czas(wynik.odpracowane)}${wynik.nadwyzka ? `, ${czas(wynik.nadwyzka)} ponad wyjście` : ''}`,
+      );
+      w('lista').replaceChildren(
+        ...wynik.kontrole.map((k) => {
+          const li = document.createElement('li');
+          li.dataset.stan = k.stan;
+          const t = document.createElement('strong');
+          t.append(...zIndeksami(`${STAN[k.stan]}: ${k.tytul}`));
+          li.append(t, span('lista-opis', k.opis), ...k.szczegoly.map((s) => span('lista-opis', s)), span('lista-podstawa', k.podstawa));
+          return li;
+        }),
+      );
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>
+
+<style>
+  .wiersz {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+  .wiersz-data {
+    grid-column: 1 / -1;
+  }
+  @media (min-width: 40rem) {
+    .wiersz {
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr);
+    }
+    .wiersz-data {
+      grid-column: auto;
+    }
+  }
+  .lista-kontroli {
+    display: grid;
+    gap: 0.5rem;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+  .lista-kontroli :global(li) {
+    padding: 0.625rem 0.875rem;
+    border-left: 4px solid var(--color-sukces);
+    background: var(--color-tlo);
+  }
+  .lista-kontroli :global(li[data-stan="uwaga"]) {
+    border-color: var(--color-akcent);
+  }
+  .lista-kontroli :global(li[data-stan="blad"]) {
+    border-color: var(--color-blad);
+  }
+  .lista-kontroli :global(li[data-stan="blad"] strong) {
+    color: var(--color-blad);
+  }
+  .lista-kontroli :global(.lista-opis),
+  .lista-kontroli :global(.lista-podstawa) {
+    display: block;
+    margin-top: 0.25rem;
+  }
+  .lista-kontroli :global(.lista-podstawa) {
+    font-size: 0.8125rem;
+    color: var(--color-tekst-drugi);
+  }
+</style>

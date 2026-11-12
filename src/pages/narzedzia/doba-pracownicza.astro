@@ -1,0 +1,294 @@
+---
+// Doba pracownicza i nadgodziny z doby: 7 kolejnych dni z dowolnymi godzinami zmian, nadgodziny z ponownej pracy w tej
+// samej dobie (art. 128 § 3 pkt 1, art. 129 § 1, art. 151 § 1, art. 151^1 § 1 Kp), wyjątek ruchomego rozkładu
+// (art. 140^1 § 4) i odpoczynek 11 h w każdej dobie (art. 132 § 1). Logika: src/lib/narzedzia/doba-pracownicza.ts.
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { dobaPracownicza, etykietaDnia, opisWyniku, type Wiersz } from '../../lib/narzedzia/doba-pracownicza';
+import { dodajDni, dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+const dzis = dzisWPolsce();
+// Najbliższy poniedziałek (dziś, jeśli jest poniedziałek).
+const start = dodajDni(dzis, (8 - new Date(`${dzis}T00:00:00Z`).getUTCDay()) % 7);
+const W: Wiersz = { od: '', do: '' };
+const PRZYKLAD: Wiersz[] = [
+  { od: '14:00', do: '22:00' },
+  { od: '06:00', do: '14:00' },
+  { od: '06:00', do: '14:00' },
+  { od: '06:00', do: '14:00' },
+  { od: '06:00', do: '14:00' },
+  W,
+  W,
+];
+const r = dobaPracownicza(start, PRZYKLAD);
+const o = opisWyniku(r);
+
+const faq = [
+  {
+    pytanie: 'Co to jest doba pracownicza?',
+    odpowiedz: 'To 24 kolejne godziny, licząc od godziny, w której zaczynasz pracę według rozkładu (art. 128 § 3 pkt 1 Kodeksu pracy). Nie pokrywa się z dobą kalendarzową: gdy zaczynasz o 14:00, Twoja doba trwa do 14:00 następnego dnia. W tej dobie czas pracy nie może przekroczyć 8 godzin (art. 129 § 1), a w systemie równoważnym przedłużonego wymiaru z rozkładu, najwyżej 12 godzin (art. 135 § 1).',
+  },
+  {
+    pytanie: 'Czy praca w tej samej dobie to nadgodziny?',
+    odpowiedz: 'Tak, gdy w jednej dobie pracujesz ponad 8 godzin albo ponad przedłużony wymiar z rozkładu. To praca w godzinach nadliczbowych (art. 151 § 1 Kodeksu pracy). Nie są nimi ponowna praca w tej samej dobie w ruchomym rozkładzie (art. 140^1 § 4) i odpracowanie wyjścia w sprawach osobistych, udzielonego na Twój wniosek (art. 151 § 2^1).',
+  },
+  {
+    pytanie: 'Jak liczyć dobę pracowniczą?',
+    odpowiedz: 'Przykład: poniedziałek 8:00–16:00 i wtorek 6:00–14:00. Doba z poniedziałku trwa od 8:00 w poniedziałek do 8:00 we wtorek (art. 128 § 3 pkt 1 Kodeksu pracy). We wtorek od 6:00 do 8:00 pracujesz więc jeszcze w dobie poniedziałkowej, w której masz już 8 godzin. Te 2 godziny to nadgodziny (art. 151 § 1) z dodatkiem 50%, a za godziny w porze nocnej 100% (art. 151^1 § 1).',
+  },
+  {
+    pytanie: 'Ile odpoczynku przysługuje w dobie?',
+    odpowiedz: 'Co najmniej 11 godzin nieprzerwanego odpoczynku w każdej dobie (art. 132 § 1 Kodeksu pracy). Nie dotyczy to pracowników zarządzających zakładem pracy ani akcji ratowniczej i usuwania awarii; wtedy przysługuje równoważny odpoczynek w okresie rozliczeniowym (art. 132 § 2 i 3). Osobne zasady mają systemy z art. 136 i 137.',
+  },
+  {
+    pytanie: 'Czy ruchomy czas pracy usuwa nadgodziny z doby?',
+    odpowiedz: 'Tak. Ruchomy rozkład przewiduje różne godziny rozpoczynania pracy albo przedział, w którym decydujesz, o której zaczynasz (art. 140^1 § 1 i 2 Kodeksu pracy). W takim rozkładzie ponowna praca w tej samej dobie nie jest nadgodzinami (§ 4). Rozkład nie może jednak naruszać odpoczynku dobowego i tygodniowego (§ 3 w związku z art. 132 i 133).',
+  },
+  {
+    pytanie: 'Jak liczy się dobę w systemie równoważnym 12 h?',
+    odpowiedz: 'W systemie równoważnym dobowy wymiar można przedłużyć do 12 godzin (art. 135 § 1 Kodeksu pracy). Nadgodziny z doby liczy się wtedy ponad przedłużony wymiar z rozkładu (art. 151 § 1): po zmianie 12-godzinnej każda godzina kolejnej zmiany, która zaczyna się przed upływem 24 godzin od początku poprzedniej, jest nadgodziną. Odpoczynek 11 godzin w dobie obowiązuje także tu (art. 132 § 1).',
+  },
+];
+
+const wartosc = (i: number, k: 'od' | 'do') => PRZYKLAD[i][k];
+---
+<StronaNarzedzia
+  slug="doba-pracownicza"
+  tytul="Doba pracownicza: nadgodziny i odpoczynek"
+  opis="Wpisz godziny zmian z tygodnia: policzymy nadgodziny z doby pracowniczej, gdy kolejna zmiana zaczyna się wcześniej, i sprawdzimy 11 h odpoczynku w dobie."
+  h1="Doba pracownicza i nadgodziny"
+  lead="Doba pracownicza to 24 godziny od początku Twojej zmiany. Gdy następna zmiana zaczyna się wcześniej, część pracy wpada w poprzednią dobę i może być nadgodzinami. Wpisz godziny pracy z tygodnia, a policzymy nadgodziny z doby i sprawdzimy odpoczynek."
+  faq={faq}
+>
+  <form class="kalkulator" data-doba novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twój tydzień</h2>
+      <div class="mt-4">
+        <label for="dp-start" class="etykieta-pola">Pierwszy dzień</label>
+        <input id="dp-start" name="start" type="date" class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" value={start} aria-describedby="dp-blad" />
+      </div>
+      <fieldset class="mt-5">
+        <legend class="etykieta">Godziny pracy z rozkładu</legend>
+        <p class="meta mt-1">Puste godziny to dzień wolny. Koniec przed początkiem: zmiana kończy się następnego dnia.</p>
+        <div class="dni mt-3">
+          <span class="meta" aria-hidden="true">Dzień</span>
+          <span id="dp-od" class="meta">Od</span>
+          <span id="dp-do" class="meta">Do</span>
+          {PRZYKLAD.map((_, i) => (
+            <>
+              <span id={`dp-d${i + 1}`} class="dzien" data-dzien={i}>{etykietaDnia(dodajDni(start, i))}</span>
+              <input name={`od${i + 1}`} type="time" class="pole" value={wartosc(i, 'od')} aria-labelledby={`dp-d${i + 1} dp-od`} aria-describedby="dp-blad" />
+              <input name={`do${i + 1}`} type="time" class="pole" value={wartosc(i, 'do')} aria-labelledby={`dp-d${i + 1} dp-do`} aria-describedby="dp-blad" />
+            </>
+          ))}
+        </div>
+      </fieldset>
+      <label class="mt-5 flex items-start gap-3 text-[0.9375rem]">
+        <input type="checkbox" name="ruchomy" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+        <span>Ruchomy rozkład (art. 140<sup>1</sup> Kp)</span>
+      </label>
+      <div class="mt-4">
+        <label for="dp-pora" class="etykieta-pola">Pora nocna u pracodawcy</label>
+        <select id="dp-pora" name="pora" class="pole mt-1 max-w-56">
+          <option value="21:00">21:00–5:00</option>
+          <option value="22:00" selected>22:00–6:00</option>
+          <option value="23:00">23:00–7:00</option>
+        </select>
+      </div>
+      <p id="dp-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Nadgodziny z doby pracowniczej</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-kwota" data-w="nadgodziny">{o.glowna}</p>
+        <p class="meta" data-w="dodatki">{o.dodatki}</p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Odpoczynek w dobie</dt><dd data-w="odpoczynek">{o.odpoczynek}</dd></div>
+      </dl>
+      <div class="mt-4 overflow-x-auto" tabindex="0" role="region" aria-label="Tabela dni">
+        <table class="tabela-dni">
+          <caption class="sr-only">Dni tygodnia: praca, nadgodziny z doby i odpoczynek</caption>
+          <thead>
+            <tr><th scope="col">Dzień</th><th scope="col">Praca</th><th scope="col">W poprzedniej dobie</th><th scope="col">Nadgodziny</th><th scope="col">Odpoczynek w dobie</th></tr>
+          </thead>
+          <tbody data-w="dni">
+            {o.wiersze.map((w) => (
+              <tr data-stan={w.stan}>
+                <th scope="row">{w.dzien}</th><td>{w.praca}</td><td>{w.wPoprzedniej}</td><td>{w.nadgodziny}</td><td>{w.odpoczynek}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <ul class="uwagi mt-4" data-w="uwagi">
+        {o.uwagi.map((u) => <li>{u}</li>)}
+      </ul>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Wynik powyżej dotyczy przykładu; zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="zasady">Doba pracownicza w Kodeksie pracy</h2>
+    <ul>
+      <li>Doba to 24 kolejne godziny od godziny, w której zaczynasz pracę według rozkładu (art. 128 § 3 pkt 1 Kp).</li>
+      <li>Czas pracy nie może przekraczać 8 godzin na dobę (art. 129 § 1), a w systemie równoważnym przedłużonego wymiaru, najwyżej 12 godzin (art. 135 § 1); do 16 i 24 godzin tylko przy pracach z art. 136 i 137.</li>
+      <li>Praca ponad normy albo ponad przedłużony dobowy wymiar z rozkładu to praca w godzinach nadliczbowych (art. 151 § 1).</li>
+      <li>Dodatek 100% za nadgodziny w nocy, w niedziele i święta, które nie są dla Ciebie dniami pracy według rozkładu, i w dniu wolnym za pracę w niedzielę lub święto; 50% w każdym innym dniu (art. 151<sup>1</sup> § 1).</li>
+      <li>W każdej dobie co najmniej 11 godzin nieprzerwanego odpoczynku (art. 132 § 1).</li>
+      <li>W ruchomym rozkładzie ponowna praca w tej samej dobie nie jest nadgodzinami, ale rozkład nie może naruszać odpoczynku z art. 132 i 133 (art. 140<sup>1</sup> § 3 i 4). Nadgodzinami nie jest też odpracowanie wyjścia w sprawach osobistych na Twój wniosek (art. 151 § 2<sup>1</sup>).</li>
+    </ul>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Każdy wiersz to zmiana z rozkładu. Gdy koniec jest wcześniej niż początek, zmiana kończy się następnego dnia, a ta sama
+      godzina oznacza 24 godziny. Doba każdego dnia pracy trwa od początku zmiany przez 24 godziny. Normą tej doby jest
+      8 godzin, a gdy zmiana jest dłuższa, jej długość: traktujemy ją jak przedłużony wymiar z systemu równoważnego.
+      W systemie podstawowym godziny ponad 8 na takiej zmianie też są nadgodzinami; tych tu nie liczymy.
+    </p>
+    <p>
+      Nadgodziny z doby to godziny następnej zmiany, które wypadają w dobie poprzedniego dnia, gdy razem z poprzednią
+      zmianą przekraczają normę tej doby. Liczymy je przy dniu, w którym je przepracujesz. Przepis nie mówi, które godziny
+      w dobie są „ponad normę”; liczymy według kolejności pracy, więc nadgodziny to ostatnie godziny w dobie, po
+      wyczerpaniu normy. To decyduje o podziale na porę nocną i dzień. Każdą godzinę liczymy raz, w dobie wcześniejszej
+      zmiany; przy jednej zmianie dziennie w dobę poprzedniego dnia może wejść tylko zmiana następnego dnia.
+    </p>
+    <p>
+      Odpoczynek w dobie to najdłuższa przerwa bez pracy w jej 24 godzinach. Grafiku sprzed pierwszego i po ostatnim dniu
+      nie znamy: gdy przerwa w dobie ostatniego dnia sięga poza tydzień, piszemy „bez danych o następnym dniu”, a gdy
+      pracujesz w dniu przed pierwszym, sprawdź jego dobę osobno. Pora nocna to 8 godzin między 21:00 a 7:00
+      (art. 151<sup>7</sup> § 1); wybierz tę, którą ma Twój pracodawca. Nadgodziny przypadają w dniach pracy z rozkładu, więc niedziela i święto same nie dają
+      dodatku 100%; podajemy jednak, ile godzin wypada w niedzielę lub święto, liczone od 6:00 do 6:00
+      (art. 151<sup>9</sup> § 2).
+    </p>
+    <p>
+      Grafik całego miesiąca z gotowych zmian sprawdzi <a href="/narzedzia/kontrola-grafiku">kontrola grafiku</a>,
+      a dodatek za nadgodziny w złotych <a href="/narzedzia/kalkulator-nadgodzin">kalkulator nadgodzin</a>. Odpracowanie
+      wyjścia w sprawach osobistych policzy <a href="/narzedzia/odpracowanie-wyjscia-prywatnego">kalkulator odpracowania
+      wyjścia prywatnego</a>, a zmiany po 12, 16 i 24 godziny <a href="/narzedzia/rownowazny-czas-pracy">kalkulator
+      równoważnego czasu pracy</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { dobaPracownicza, etykietaDnia, opisWyniku, type Wiersz } from '../../lib/narzedzia/doba-pracownicza';
+  import { minuty } from '../../lib/narzedzia/czas-pracy';
+  import { dodajDni, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { typografia } from '../../lib/typografia.mjs';
+
+  const form = document.querySelector<HTMLFormElement>('[data-doba]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const pisz = (k: string, tekst: string) => {
+      w(k).textContent = typografia(tekst);
+    };
+    const komorka = (tag: 'th' | 'td', tekst: string) => {
+      const c = document.createElement(tag);
+      if (tag === 'th') c.scope = 'row';
+      c.textContent = typografia(tekst);
+      return c;
+    };
+    const przelicz = () => {
+      const start = el('start').value;
+      if (poprawnaData(start))
+        form.querySelectorAll<HTMLElement>('[data-dzien]').forEach((s) => {
+          s.textContent = etykietaDnia(dodajDni(start, Number(s.dataset.dzien)));
+        });
+      const wiersze: Wiersz[] = Array.from({ length: 7 }, (_, i) => ({ od: el(`od${i + 1}`).value, do: el(`do${i + 1}`).value }));
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      try {
+        const r = dobaPracownicza(start, wiersze, { ruchomy: el('ruchomy').checked, poraNocnaOd: minuty((form.elements.namedItem('pora') as HTMLSelectElement).value) ?? 22 * 60 });
+        const o = opisWyniku(r);
+        b.hidden = true;
+        b.textContent = '';
+        pisz('nadgodziny', o.glowna);
+        pisz('dodatki', o.dodatki);
+        pisz('odpoczynek', o.odpoczynek);
+        w('dni').replaceChildren(
+          ...o.wiersze.map((x) => {
+            const tr = document.createElement('tr');
+            tr.dataset.stan = x.stan;
+            tr.append(komorka('th', x.dzien), komorka('td', x.praca), komorka('td', x.wPoprzedniej), komorka('td', x.nadgodziny), komorka('td', x.odpoczynek));
+            return tr;
+          }),
+        );
+        w('uwagi').replaceChildren(
+          ...o.uwagi.map((u) => {
+            const li = document.createElement('li');
+            li.textContent = typografia(u);
+            return li;
+          }),
+        );
+      } catch (e) {
+        if (!(e instanceof RangeError)) throw e;
+        b.hidden = false;
+        b.textContent = typografia(e.message);
+        w('nadgodziny').textContent = '—';
+        w('dodatki').textContent = '';
+        w('odpoczynek').textContent = '—';
+        w('dni').replaceChildren();
+        w('uwagi').replaceChildren();
+      }
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>
+
+<style>
+  .dni {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr) minmax(0, 1fr);
+    gap: 0.5rem 0.5rem;
+    align-items: center;
+  }
+  .dzien {
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.25;
+  }
+  .dni :global(input[type='time']) {
+    min-width: 0;
+    padding-left: 0.5rem;
+    padding-right: 0.25rem;
+  }
+  .tabela-dni {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .tabela-dni th,
+  .tabela-dni td {
+    padding: 0.375rem 0.5rem;
+    border-bottom: 1px solid var(--color-linia);
+    text-align: left;
+    vertical-align: top;
+  }
+  .tabela-dni thead th {
+    color: var(--color-tekst-drugi);
+    font-weight: 600;
+  }
+  .tabela-dni :global(tr[data-stan='naruszenie'] td:last-child) {
+    color: var(--color-blad);
+    font-weight: 700;
+  }
+  .tabela-dni :global(tr[data-stan='wolne']) {
+    color: var(--color-tekst-drugi);
+  }
+  .uwagi {
+    display: grid;
+    gap: 0.5rem;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+  .uwagi :global(li) {
+    padding: 0.5rem 0.75rem;
+    border-left: 4px solid var(--color-akcent);
+    background: var(--color-tlo);
+  }
+</style>
