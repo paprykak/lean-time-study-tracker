@@ -39,22 +39,22 @@ export const OBYWATELSTWA: Record<Obywatelstwo, string> = {
   ue: 'Państwo UE albo EOG',
   szwajcaria: 'Szwajcaria',
   ukraina: 'Ukraina',
-  oswiadczenie: 'Armenia, Białoruś, Mołdawia',
+  oswiadczenie: 'Armenia/Białoruś/Mołdawia',
   inne: 'Inne państwo',
 };
 
 export const POBYTY: Record<Pobyt, string> = {
   inny: 'Wiza, bez wizy, inna karta',
-  'ochrona-czasowa': 'Ochrona czasowa (PESEL UKR)',
-  'karta-ukr': 'Karta pobytu dla Ukraińców (CUKR)',
+  'ochrona-czasowa': 'Ochrona czasowa (UKR)',
+  'karta-ukr': 'Karta pobytu CUKR',
   'karta-praca': 'Karta pobytu i pracy',
   staly: 'Pobyt stały albo rezydent UE',
-  rodzina: 'Rodzina obywatela Polski lub UE',
-  ochrona: 'Status uchodźcy, inna ochrona',
+  rodzina: 'Rodzina obywatela PL lub UE',
+  ochrona: 'Uchodźca, inna ochrona',
   'studia-pobyt': 'Karta pobytu na studia',
-  student: 'Student studiów stacjonarnych',
+  student: 'Studia stacjonarne',
   'karta-polaka': 'Karta Polaka',
-  absolwent: 'Absolwent polskiej szkoły lub uczelni',
+  absolwent: 'Absolwent szkoły/uczelni w PL',
 };
 
 export interface Obowiazek {
@@ -134,11 +134,11 @@ export function podstawaPracy(obywatelstwo: Obywatelstwo, pobyt: Pobyt): Wynik {
 
   const obowiazki: Obowiazek[] = [
     { tekst: 'Umowa na piśmie przed dopuszczeniem do pracy', podstawa: `art. 5 ust. 1 ${U}` },
-    { tekst: 'Gdy nie znasz polskiego: treść umowy na piśmie w zrozumiałym języku przed podpisaniem', podstawa: `art. 5 ust. 2 ${U}` },
+    { tekst: 'Gdy cudzoziemiec nie zna polskiego: treść umowy na piśmie w zrozumiałym języku przed podpisaniem', podstawa: `art. 5 ust. 2 ${U}` },
     { tekst: 'Pisemna informacja o prawie wstępowania do związków zawodowych, w zrozumiałym języku', podstawa: `art. 5 ust. 4 ${U}` },
   ];
   const bezKopii = obywatelstwo === 'szwajcaria' || pobyt === 'rodzina';
-  if (!bezKopii) obowiazki.push({ tekst: 'Przed rozpoczęciem pracy pokazujesz ważny dokument pobytowy; pracodawca przechowuje jego kopię', podstawa: `art. 4 ust. 2–4 ${U}` });
+  if (!bezKopii) obowiazki.push({ tekst: 'Przed rozpoczęciem pracy pracodawca żąda ważnego dokumentu pobytowego i przechowuje jego kopię', podstawa: `art. 4 ust. 2–4 ${U}` });
   if (w.werdykt === 'oswiadczenie-lub-zezwolenie' || w.werdykt === 'zezwolenie') {
     obowiazki.push(
       { tekst: 'Pracodawca przekazuje umowę do urzędu przed powierzeniem pracy', podstawa: `art. 17 ust. 1 pkt 2 i art. 68 ust. 1 pkt 2 ${U}` },

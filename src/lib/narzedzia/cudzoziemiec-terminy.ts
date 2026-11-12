@@ -50,8 +50,21 @@ function wDniach(od: string, dni: number) {
   return { data, ...(koniec !== data ? { przesunieta: koniec } : {}) };
 }
 
-/** Ostatni dzień okresu N miesięcy liczonego z dniem początku włącznie. */
+/** Ostatni dzień okresu N miesięcy liczonego z dniem początku włącznie (wariant najwcześniejszy: okno na podjęcie pracy). */
 export const ostatniDzienMiesiecy = (od: string, miesiace: number) => dodajDni(dodajMiesiace(od, miesiace), -1);
+
+/**
+ * Najdłuższy dopuszczalny okres N miesięcy (limity 24 miesięcy i 3 lat): dzień przed dniem, który datą odpowiada
+ * początkowi; gdy takiego dnia w miesiącu końcowym nie ma (start 29 lutego, 31 stycznia), ostatni dzień tego miesiąca
+ * (art. 112 KC). Nie zaniżamy limitu, żeby nie oznaczać jako błąd okresu zgodnego z przepisem.
+ */
+export function koniecLimitu(od: string, miesiace: number): string {
+  const koniec = dodajMiesiace(od, miesiace);
+  return Number(od.slice(8)) > Number(koniec.slice(8)) ? koniec : dodajDni(koniec, -1);
+}
+
+const OD_USTAWY = '2025-06-01';
+const OD_ART_5A = '2026-03-05';
 
 /** Do kiedy pracodawca przechowuje kopie dokumentów pobytowych i dane (art. 4 ust. 4 i 6). */
 export const przechowywanieDo = (koniecUmowy: string) => `${Number(koniecUmowy.slice(0, 4)) + 2}-12-31`;
@@ -75,6 +88,7 @@ export function terminyOswiadczenia(d: DaneOswiadczenia): Termin[] {
   sprawdz(d.zlozone, d.startEwidencja, d.startFaktyczny, d.koniec);
   if (!d.startEwidencja || !d.koniec) throw new Error('Wpisz dzień rozpoczęcia i zakończenia pracy z oświadczenia.');
   if (d.koniec < d.startEwidencja) throw new Error('Koniec pracy nie może być przed jej rozpoczęciem.');
+  if (d.startEwidencja < OD_USTAWY) throw new Error('Kalkulator liczy według ustawy w mocy od 1 czerwca 2025 r.');
   const lista: Termin[] = [];
   if (d.zlozone) {
     const najpozniej = dodajMiesiace(d.zlozone, 6);
@@ -87,10 +101,10 @@ export function terminyOswiadczenia(d: DaneOswiadczenia): Termin[] {
       ...(d.startEwidencja > najpozniej ? { uwaga: 'Start później niż 6 miesięcy od złożenia: takie oświadczenie urząd pozostawia bez rozpoznania (art. 61 ust. 2).' } : {}),
     });
   }
-  const maks = ostatniDzienMiesiecy(d.startEwidencja, 24);
+  const maks = koniecLimitu(d.startEwidencja, 24);
   lista.push({
     klucz: 'limit-24m',
-    nazwa: 'Praca z oświadczenia najdłużej do',
+    nazwa: 'Praca z oświadczenia najdłużej',
     data: maks,
     podstawa: `art. 61 ust. 1 pkt 5 ${U}`,
     stan: d.koniec <= maks ? 'ok' : 'blad',
@@ -126,11 +140,12 @@ export function terminyZezwolenia(d: DaneZezwolenia): Termin[] {
   sprawdz(d.od, d.do, d.startFaktyczny, d.zakonczenie);
   if (!d.od || !d.do) throw new Error('Wpisz okres ważności zezwolenia.');
   if (d.do < d.od) throw new Error('Koniec ważności nie może być przed początkiem.');
+  if (d.od < OD_USTAWY) throw new Error('Kalkulator liczy według ustawy w mocy od 1 czerwca 2025 r.');
   const lista: Termin[] = [];
-  const maks = ostatniDzienMiesiecy(d.od, 36);
+  const maks = koniecLimitu(d.od, 36);
   lista.push({
     klucz: 'limit-3l',
-    nazwa: 'Zezwolenie najdłużej do',
+    nazwa: 'Zezwolenie najdłużej',
     data: maks,
     podstawa: `art. 15 ${U}`,
     stan: d.do <= maks ? 'ok' : 'blad',
@@ -174,14 +189,18 @@ export interface DaneOchrony {
 export function terminyOchrony(d: DaneOchrony): Termin[] {
   sprawdz(d.start, d.zmiana);
   if (!d.start) throw new Error('Wpisz dzień rozpoczęcia pracy.');
+  if (d.start < OD_ART_5A) throw new Error('Art. 5a obowiązuje od 5 marca 2026 r.; wcześniej zgłoszenia regulował art. 22 specustawy.');
   const lista: Termin[] = [{ klucz: 'pup', nazwa: 'Powiadomienie powiatowego urzędu pracy przez praca.gov.pl', ...wDniach(d.start, 7), podstawa: `art. 5a ust. 1 ${U}` }];
   if (d.zmiana) {
     if (d.zmiana < d.start) throw new Error('Zmiana nie może być przed rozpoczęciem pracy.');
     lista.push({ klucz: 'pup-zmiana', nazwa: 'Ponowne powiadomienie urzędu pracy po zmianie', ...wDniach(d.zmiana, 7), podstawa: `art. 5a ust. 5 ${U}` });
   }
-  lista.push(
+  const karta: Termin[] = [
     { klucz: 'karta', nazwa: 'Wniosek o kartę pobytu dla obywateli Ukrainy (CUKR)', data: KARTA_UKR_WNIOSEK_DO, podstawa: 'art. 42c i 42x ustawy o pomocy obywatelom Ukrainy', uwaga: 'Dla osób ze statusem UKR 4 czerwca 2025 r., w dniu wniosku i nieprzerwanie co najmniej 365 dni.' },
-    { klucz: 'art41', nazwa: 'Bez ochrony czasowej (legalny pobyt) zasady z art. 5a obowiązują do', data: ART_41_DO, podstawa: 'art. 41 ustawy o wygaszeniu pomocy obywatelom Ukrainy' },
+  ];
+  if (d.start <= KARTA_UKR_WNIOSEK_DO) lista.push(...karta);
+  lista.push(
+    { klucz: 'art41', nazwa: 'Obywatele Ukrainy bez ochrony czasowej: zasady z art. 5a', data: ART_41_DO, podstawa: 'art. 41 ustawy o wygaszeniu pomocy obywatelom Ukrainy' },
   );
   return lista;
 }

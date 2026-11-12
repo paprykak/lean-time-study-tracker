@@ -17,7 +17,7 @@ describe('podstawa pracy cudzoziemca', () => {
     expect(w.werdykt).toBe('bez-zezwolenia');
     expect(w.podstawa).toMatch(/art\. 3 ust\. 1 pkt 12/);
     expect(tekst('ukraina', 'ochrona-czasowa')).toMatch(/urząd pracy .* 7 dni/);
-    expect(tekst('ukraina', 'ochrona-czasowa')).toMatch(/dokument pobytowy/);
+    expect(tekst('ukraina', 'ochrona-czasowa')).toMatch(/dokumentu pobytowego/);
   });
   it('Ukraina na wizie albo bez wizy: art. 41 ustawy o wygaszeniu, też zgłoszenie z art. 5a', () => {
     const w = podstawaPracy('ukraina', 'inny');
@@ -60,9 +60,9 @@ describe('podstawa pracy cudzoziemca', () => {
   });
   it('Szwajcaria i rodzina obywatela Polski: bez kopii dokumentu pobytowego (art. 4 ust. 5)', () => {
     expect(podstawaPracy('szwajcaria', 'inny').podstawa).toMatch(/pkt 4/);
-    expect(tekst('szwajcaria', 'inny')).not.toMatch(/dokument pobytowy/);
-    expect(tekst('inne', 'rodzina')).not.toMatch(/dokument pobytowy/);
-    expect(tekst('inne', 'staly')).toMatch(/dokument pobytowy/);
+    expect(tekst('szwajcaria', 'inny')).not.toMatch(/dokumentu pobytowego/);
+    expect(tekst('inne', 'rodzina')).not.toMatch(/dokumentu pobytowego/);
+    expect(tekst('inne', 'staly')).toMatch(/dokumentu pobytowego/);
   });
   it('każda kombinacja daje wynik z podstawą, a etykiety list są krótkie (telefon)', () => {
     for (const o of Object.keys(OBYWATELSTWA) as Obywatelstwo[])

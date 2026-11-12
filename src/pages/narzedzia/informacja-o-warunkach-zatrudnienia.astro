@@ -9,7 +9,7 @@ const START = dzisWPolsce();
 const lista = obowiazkiNaStart({ start: START, regulamin: true, monitoring: true, ppk: true });
 const informacja = lista.find((o) => o.klucz === 'informacja')!;
 const opisTerminu = (o: (typeof lista)[number]) =>
-  o.kiedy === 'przed' ? 'przed rozpoczęciem pracy' : `do ${dataPoPolsku(o.data)}${o.przesunieta ? ` (sobota albo święto; po przesunięciu ${dataPoPolsku(o.przesunieta)})` : ''}`;
+  o.kiedy === 'przed' ? 'przed rozpoczęciem pracy' : `do ${dataPoPolsku(o.data)}${o.przesunieta ? ` (weekend albo święto; po przesunięciu ${dataPoPolsku(o.przesunieta)})` : ''}`;
 
 const faq = [
   {
@@ -68,7 +68,7 @@ const faq = [
       <h2 id="wynik-tytul" class="etykieta">Informacja o warunkach zatrudnienia najpóźniej</h2>
       <div aria-live="polite">
         <p class="wynik-data" data-w="informacja">{dataPoPolsku(informacja.data)}</p>
-        <p class="meta mt-1" data-w="informacja-przesuniecie" hidden={!informacja.przesunieta}>{informacja.przesunieta ? `Sobota albo święto; po przesunięciu ${dataPoPolsku(informacja.przesunieta)}` : ''}</p>
+        <p class="meta mt-1" data-w="informacja-przesuniecie" hidden={!informacja.przesunieta}>{informacja.przesunieta ? `Weekend albo święto; po przesunięciu ${dataPoPolsku(informacja.przesunieta)}` : ''}</p>
       <ul class="lista-obowiazkow mt-4" data-w="lista">
         {lista.map((o) => (
           <li data-kiedy={o.kiedy}><strong>{o.nazwa}</strong>: {opisTerminu(o)}; {o.podstawa}</li>
@@ -142,7 +142,7 @@ const faq = [
     const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
     const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
     const opis = (o: Obowiazek) =>
-      o.kiedy === 'przed' ? 'przed rozpoczęciem pracy' : `do ${dataPoPolsku(o.data)}${o.przesunieta ? ` (sobota albo święto; po przesunięciu ${dataPoPolsku(o.przesunieta)})` : ''}`;
+      o.kiedy === 'przed' ? 'przed rozpoczęciem pracy' : `do ${dataPoPolsku(o.data)}${o.przesunieta ? ` (weekend albo święto; po przesunięciu ${dataPoPolsku(o.przesunieta)})` : ''}`;
     const przelicz = () => {
       const start = el('start').value;
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
@@ -160,7 +160,7 @@ const faq = [
       const inf = obowiazki.find((o) => o.klucz === 'informacja')!;
       w('informacja').textContent = typografia(dataPoPolsku(inf.data));
       w('informacja-przesuniecie').hidden = !inf.przesunieta;
-      w('informacja-przesuniecie').textContent = inf.przesunieta ? typografia(`Sobota albo święto; po przesunięciu ${dataPoPolsku(inf.przesunieta)}`) : '';
+      w('informacja-przesuniecie').textContent = inf.przesunieta ? typografia(`Weekend albo święto; po przesunięciu ${dataPoPolsku(inf.przesunieta)}`) : '';
       lista.replaceChildren(
         ...obowiazki.map((o) => {
           const li = document.createElement('li');

@@ -1,6 +1,6 @@
 // Oczekiwane daty policzone niezależnie skryptem w Pythonie (datetime, własne dodawanie miesięcy i kalendarz świąt).
 import { describe, expect, it } from 'vitest';
-import { ART_41_DO, KARTA_UKR_WNIOSEK_DO, ostatniDzienMiesiecy, przechowywanieDo, terminyOchrony, terminyOswiadczenia, terminyZezwolenia } from './cudzoziemiec-terminy';
+import { ART_41_DO, KARTA_UKR_WNIOSEK_DO, koniecLimitu, ostatniDzienMiesiecy, przechowywanieDo, terminyOchrony, terminyOswiadczenia, terminyZezwolenia } from './cudzoziemiec-terminy';
 
 const mapa = <T extends { klucz: string }>(l: T[]) => Object.fromEntries(l.map((t) => [t.klucz, t]));
 
@@ -54,7 +54,16 @@ describe('zezwolenie na pracę (art. 15, 19–21)', () => {
     expect(wGranicy.data).toBeNull();
     expect(wGranicy.uwaga).toMatch(/Niepotrzebne/);
   });
+  it('limity od 29 lutego i 31 stycznia: ostatni dzień miesiąca (art. 112 KC), bez fałszywego błędu', () => {
+    expect(koniecLimitu('2028-02-29', 24)).toBe('2030-02-28');
+    expect(koniecLimitu('2028-02-29', 36)).toBe('2031-02-28');
+    expect(koniecLimitu('2027-01-31', 1)).toBe('2027-02-28');
+    expect(koniecLimitu('2026-03-01', 36)).toBe('2029-02-28');
+    expect(mapa(terminyOswiadczenia({ startEwidencja: '2028-02-29', koniec: '2030-02-28' }))['limit-24m'].stan).toBe('ok');
+    expect(mapa(terminyZezwolenia({ od: '2028-02-29', do: '2031-02-28' }))['limit-3l'].stan).toBe('ok');
+  });
   it('błędne dane', () => {
+    expect(() => terminyZezwolenia({ od: '2025-05-31', do: '2026-12-31' })).toThrow(/1 czerwca 2025/);
     expect(() => terminyZezwolenia({ od: '2027-01-01', do: '2026-12-31' })).toThrow(/przed początkiem/);
     expect(() => terminyZezwolenia({ od: '', do: '2026-12-31' })).toThrow();
   });
@@ -67,6 +76,12 @@ describe('ochrona czasowa i obywatele Ukrainy (art. 5a, art. 41 ustawy o wygasze
     expect(m['pup-zmiana'].data).toBe('2027-01-07');
     expect(m.karta.data).toBe(KARTA_UKR_WNIOSEK_DO);
     expect(m.art41.data).toBe(ART_41_DO);
+  });
+  it('start przed 5 marca 2026 r.: art. 5a jeszcze nie obowiązywał; start po 4 marca 2027 r.: bez pozycji o karcie', () => {
+    expect(() => terminyOchrony({ start: '2026-03-04' })).toThrow(/od 5 marca 2026/);
+    expect(mapa(terminyOchrony({ start: '2026-03-05' })).pup.data).toBe('2026-03-12');
+    expect(mapa(terminyOchrony({ start: '2027-03-05' })).karta).toBeUndefined();
+    expect(mapa(terminyOchrony({ start: '2027-03-04' })).karta).toBeDefined();
   });
   it('błędne dane', () => {
     expect(() => terminyOchrony({ start: '2026-11-12', zmiana: '2026-11-11' })).toThrow(/przed rozpoczęciem/);

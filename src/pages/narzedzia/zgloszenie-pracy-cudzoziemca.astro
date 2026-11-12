@@ -12,7 +12,7 @@ const KONIEC_OSW = dodajDni(dodajMiesiace(START_EW, 12), -1);
 const KONIEC_ZEZW = dodajDni(dodajMiesiace(DZIS, 12), -1);
 const lista = terminyOchrony({ start: DZIS });
 const opis = (t: Termin) =>
-  t.data ? `do ${dataPoPolsku(t.data)}${t.przesunieta ? ` (sobota albo święto; po przesunięciu ${dataPoPolsku(t.przesunieta)})` : ''}` : 'bez terminu w dniach';
+  t.data ? `do ${dataPoPolsku(t.data)}${t.przesunieta ? ` (weekend albo święto; po przesunięciu ${dataPoPolsku(t.przesunieta)})` : ''}` : 'bez terminu w dniach';
 
 const faq = [
   {
@@ -40,7 +40,7 @@ const faq = [
 <StronaNarzedzia
   slug="zgloszenie-pracy-cudzoziemca"
   tytul="Zgłoszenie pracy cudzoziemca: terminy"
-  opis="Terminy zgłoszeń pracy cudzoziemca: Ukrainiec do urzędu pracy w 7 dni, oświadczenie u starosty (7 i 14 dni), zezwolenie u wojewody, wniosek o kolejne."
+  opis="Terminy zgłoszeń pracy cudzoziemca: obywatele Ukrainy do urzędu pracy w 7 dni, oświadczenie u starosty (7 i 14 dni), zezwolenie u wojewody."
   h1="Praca cudzoziemca: terminy zgłoszeń"
   lead="Pracodawca zgłasza pracę cudzoziemca w urzędzie pracy, u starosty albo u wojewody w ciągu 7 lub 14 dni. Wybierz podstawę pracy i wpisz daty, a policzymy terminy zgłoszeń i do kiedy można pracować."
   faq={faq}
@@ -52,7 +52,7 @@ const faq = [
         <label for="ct-tryb" class="etykieta-pola">Na jakiej podstawie</label>
         <select id="ct-tryb" name="tryb" class="pole mt-1">
           <option value="ochrona" selected>Ukraina, ochrona czasowa</option>
-          <option value="oswiadczenie">Oświadczenie o powierzeniu pracy</option>
+          <option value="oswiadczenie">Oświadczenie</option>
           <option value="zezwolenie">Zezwolenie na pracę</option>
         </select>
       </div>
@@ -104,7 +104,7 @@ const faq = [
             <input id="ct-z-do" name="z-do" type="date" class="pole mt-1" min="2025-06-01" max="2100-12-31" value={KONIEC_ZEZW} aria-describedby="ct-blad" />
           </div>
           <div>
-            <label for="ct-z-start" class="etykieta-pola">Faktyczny start pracy</label>
+            <label for="ct-z-start" class="etykieta-pola">Dzień rozpoczęcia pracy</label>
             <input id="ct-z-start" name="z-start" type="date" class="pole mt-1" min="2025-06-01" max="2100-12-31" aria-describedby="ct-blad" />
           </div>
           <div>
@@ -161,7 +161,7 @@ const faq = [
     const lista = form.querySelector<HTMLElement>('[data-w="lista"]')!;
     const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
     const opis = (t: Termin) =>
-      t.data ? `do ${dataPoPolsku(t.data)}${t.przesunieta ? ` (sobota albo święto; po przesunięciu ${dataPoPolsku(t.przesunieta)})` : ''}` : 'bez terminu w dniach';
+      t.data ? `do ${dataPoPolsku(t.data)}${t.przesunieta ? ` (weekend albo święto; po przesunięciu ${dataPoPolsku(t.przesunieta)})` : ''}` : 'bez terminu w dniach';
     const przelicz = () => {
       const tryb = v('tryb');
       for (const g of form.querySelectorAll<HTMLElement>('[data-tryb]')) g.hidden = g.dataset.tryb !== tryb;

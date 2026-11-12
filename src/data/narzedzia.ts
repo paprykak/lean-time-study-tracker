@@ -587,7 +587,7 @@ export const NARZEDZIA: Narzedzie[] = [
   {
     slug: 'zgloszenie-pracy-cudzoziemca',
     nazwa: 'Zgłoszenie pracy cudzoziemca: terminy',
-    krotko: 'Terminy zgłoszeń: Ukrainiec do urzędu pracy w 7 dni, oświadczenie u starosty, zezwolenie u wojewody.',
+    krotko: 'Terminy zgłoszeń: obywatele Ukrainy do urzędu pracy w 7 dni, oświadczenie u starosty, zezwolenie u wojewody.',
     kategoria: 'umowa',
     przepisy: ['powierzanieCudzoziemcom', 'wygaszenieSpecustawy', 'pomocUkrainie', 'kodeksCywilny'],
     sprawdzono: '2026-11-12',
