@@ -30,9 +30,10 @@ Nie pasuje: artykuły i materiały o wydajności, działy i tematy z czasów mag
 - *redaktor*: prosty język, zdania krótkie, forma neutralna płciowo, bez porad prawnych.
 
 Wszystkie sesje dzielą jeden limit API konta (okno 5-godzinne). W pierwszej rundzie 8 zespołów z wieloma podagentami
-wyczerpało go w 20 minut, więc: najwyżej 3 podagentów naraz na zespół, zespoły startują falami, a przy błędzie limitu zespół
-zatwierdza stan pośredni na swojej gałęzi (commit z dopiskiem WIP, push), planuje sobie wznowienie przez `send_later` po czasie
-resetu i kończy turę. Weryfikatorzy dostają pliki, a nie wnioski budowniczego. Każda uwaga o błędzie jest poprawiana; ulepszenia tylko wtedy,
+wyczerpało go w 20 minut, więc: najwyżej 3 podagentów naraz na zespół, a zespoły startują falami (jedno okno limitu mieści
+około 4 zespołów). Sesja zatrzymana limitem nie może już nic zrobić, więc zespół zatwierdza i wypycha swoją gałąź po każdym
+kroku (narzędzie gotowe, poprawki po weryfikacji; commit z dopiskiem WIP, dopóki check nie jest zielony). Wznowienie po limicie
+planuje orkiestrator. Weryfikatorzy dostają pliki, a nie wnioski budowniczego. Każda uwaga o błędzie jest poprawiana; ulepszenia tylko wtedy,
 gdy kosztują mniej niż akapit.
 
 ## 3. Pakiet roboczy

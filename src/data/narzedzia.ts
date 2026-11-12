@@ -590,6 +590,9 @@ export const NARZEDZIA: Narzedzie[] = [
     krotko: 'Ile najwyżej wynosi świadczenie urlopowe przy Twoim etacie, kiedy się należy i ile zostaje na rękę.',
     kategoria: 'wynagrodzenie',
     przepisy: ['zfss', 'przecietneZfss2026', 'okolobudzetowa2026', 'podstawaSkladek', 'swiadczeniaZdrowotne', 'pit', 'ordynacja', 'kodeksPracy', 'pracaTymczasowa'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'urlop-w-godzinach',
     nazwa: 'Urlop w godzinach przy zmianach 12 h',
     krotko: 'Ile godzin urlopu masz przy zmianach 12 h, ile zmian się zmieści, reszta na część dnia i urlop na żądanie.',
