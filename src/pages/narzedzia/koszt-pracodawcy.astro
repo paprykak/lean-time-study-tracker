@@ -1,0 +1,134 @@
+---
+// Koszt zatrudnienia na umowę o pracę w 2026 r. Logika: src/lib/narzedzia/koszt-pracodawcy.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { PLACA_MINIMALNA } from '../../data/prawo';
+import { LIMIT_ROCZNY_2026, WYPADKOWA_DOMYSLNA, kosztPracodawcy } from '../../lib/narzedzia/koszt-pracodawcy';
+import { liczba, zl } from '../../lib/narzedzia/format';
+
+const start = kosztPracodawcy({ brutto: 6000 });
+const minimalna = kosztPracodawcy({ brutto: PLACA_MINIMALNA[2026].miesiecznie });
+const PRZYKLADY = [PLACA_MINIMALNA[2026].miesiecznie, 6000, 7000, 8000, 10000];
+
+const faq = [
+  {
+    pytanie: 'Ile kosztuje pracodawcę płaca minimalna w 2026 r.?',
+    odpowiedz: `${zl(minimalna.koszt)} przy stopie wypadkowej ${liczba(WYPADKOWA_DOMYSLNA)}% i bez PPK: ${zl(PLACA_MINIMALNA[2026].miesiecznie)} brutto plus ${zl(minimalna.skladki)} składek pracodawcy.`,
+  },
+  {
+    pytanie: 'Jakie składki płaci pracodawca za pracownika?',
+    odpowiedz: 'Emerytalną 9,76% i rentową 6,5% (art. 16 ustawy o systemie ubezpieczeń społecznych), wypadkową według swojej stopy, a w 2026 r. także 1,0% na Fundusz Pracy, 1,45% na Fundusz Solidarnościowy i 0,10% na Fundusz Gwarantowanych Świadczeń Pracowniczych (art. 25–27 ustawy budżetowej na 2026 r.). Przy PPK dochodzi wpłata podstawowa pracodawcy 1,5%.',
+  },
+  {
+    pytanie: 'Ile wynosi składka wypadkowa?',
+    odpowiedz: 'Płatnik zgłaszający do 9 ubezpieczonych płaci 50% najwyższej stopy ustalonej dla grup działalności (art. 28 ust. 1 ustawy o ubezpieczeniu społecznym z tytułu wypadków przy pracy): najwyższa wynosi 3,33%, więc 1,67% po zaokrągleniu. Większy płatnik ma stopę dla swojej grupy działalności skorygowaną o wskaźnik ustalony przez ZUS (art. 28 ust. 2).',
+  },
+  {
+    pytanie: 'Kiedy pracodawca nie płaci Funduszu Pracy?',
+    odpowiedz: 'Gdy podstawa w miesiącu jest niższa od płacy minimalnej, na przykład przy niepełnym etacie (art. 259 ust. 1 ustawy o rynku pracy i służbach zatrudnienia), oraz za kobiety od 55 lat i mężczyzn od 60 lat (art. 261). Za te osoby nie płaci też Funduszu Solidarnościowego, a FGŚP nie płaci za nie niezależnie od wysokości pensji (art. 9b ust. 2 ustawy o ochronie roszczeń pracowniczych).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="koszt-pracodawcy"
+  tytul="Koszt pracodawcy 2026: ile kosztuje pracownik"
+  opis={`Policz pełny koszt zatrudnienia na umowę o pracę w 2026 r.: składki emerytalna, rentowa, wypadkowa, FP, FS, FGŚP i PPK. Płaca minimalna kosztuje ${zl(minimalna.koszt)}.`}
+  h1="Koszt pracodawcy: kalkulator 2026"
+  lead={`Pracodawca płaci więcej niż pensja brutto: dochodzą składki ZUS i fundusze. Przy płacy minimalnej ${zl(PLACA_MINIMALNA[2026].miesiecznie)} to ${zl(minimalna.koszt)} miesięcznie. Wpisz pensję brutto, a pokażemy każdą składkę ze źródłem.`}
+  faq={faq}
+>
+  <form class="kalkulator" data-koszt novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Pensja pracownika</h2>
+      <div class="mt-4">
+        <label for="k-brutto" class="etykieta-pola">Wynagrodzenie brutto w miesiącu (zł)</label>
+        <input id="k-brutto" name="brutto" class="pole mt-1 max-w-48" type="text" inputmode="decimal" autocomplete="off" value="6000" aria-describedby="k-blad" />
+      </div>
+      <div class="mt-4">
+        <label for="k-wypadkowa" class="etykieta-pola">Stopa składki wypadkowej (%)</label>
+        <input id="k-wypadkowa" name="wypadkowa" class="pole mt-1 max-w-32" type="text" inputmode="decimal" autocomplete="off" value={liczba(WYPADKOWA_DOMYSLNA)} aria-describedby="k-wyp-opis k-blad" />
+        <p id="k-wyp-opis" class="meta mt-1">{liczba(WYPADKOWA_DOMYSLNA)}% przy do 9 ubezpieczonych; większy płatnik ma stopę z zawiadomienia ZUS.</p>
+      </div>
+      <label class="mt-4 flex items-start gap-3 text-[0.9375rem]">
+        <input type="checkbox" name="ppk" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+        <span>Pracownik uczestniczy w PPK (wpłata pracodawcy 1,5%)</span>
+      </label>
+      <label class="mt-3 flex items-start gap-3 text-[0.9375rem]">
+        <input type="checkbox" name="wiek" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+        <span>Kobieta od 55 lat albo mężczyzna od 60 lat (bez FP, FS i FGŚP)</span>
+      </label>
+      <p id="k-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Koszt pracodawcy w miesiącu</h2>
+      <p class="wynik-kwota" aria-live="polite" aria-atomic="true"><span data-w="koszt">{zl(start.koszt)}</span></p>
+      <dl class="wynik-lista">
+        <div><dt>Emerytalna 9,76%</dt><dd data-w="emerytalna">{zl(start.emerytalna)}</dd></div>
+        <div><dt>Rentowa 6,5%</dt><dd data-w="rentowa">{zl(start.rentowa)}</dd></div>
+        <div><dt>Wypadkowa</dt><dd data-w="wypadkowa">{zl(start.wypadkowa)}</dd></div>
+        <div><dt>Fundusz Pracy 1,0% i Solidarnościowy 1,45%</dt><dd data-w="fp">{zl(start.fp + start.fs)}</dd></div>
+        <div><dt>FGŚP 0,10%</dt><dd data-w="fgsp">{zl(start.fgsp)}</dd></div>
+        <div><dt>PPK 1,5%</dt><dd data-w="ppk">{zl(start.ppk)}</dd></div>
+      </dl>
+      <p class="meta mt-4">Stopy FP, FS i FGŚP z ustawy budżetowej na 2026 r. Składki emerytalną i rentowe płaci się do rocznego limitu {liczba(LIMIT_ROCZNY_2026)} zł podstawy (30-krotność prognozowanego przeciętnego wynagrodzenia, art. 19 ust. 1 ustawy systemowej).</p>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="tabela">Koszt pracodawcy w 2026 r.: przykłady</h2>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Koszt pracodawcy przy wypadkowej 1,67% i bez PPK</caption>
+        <thead><tr><th scope="col">Brutto</th><th scope="col">Składki pracodawcy</th><th scope="col">Koszt razem</th></tr></thead>
+        <tbody>
+          {PRZYKLADY.map((b) => {
+            const r = kosztPracodawcy({ brutto: b });
+            return <tr><th scope="row">{zl(b)}</th><td>{zl(r.skladki)}</td><td>{zl(r.koszt)}</td></tr>;
+          })}
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Na fundusze w 2026 r. składa się Fundusz Pracy 1,0% i Fundusz Solidarnościowy 1,45%, razem 2,45% (art. 25 i 26
+      ustawy budżetowej na 2026 r.); część kalkulatorów podaje je łącznie jako „Fundusz Pracy 2,45%”. Fundusz
+      Gwarantowanych Świadczeń Pracowniczych to 0,10% (art. 27). Kalkulator nie liczy składki na Fundusz Emerytur
+      Pomostowych, którą płaci się tylko za prace w szczególnych warunkach lub o szczególnym charakterze, ani zwolnień
+      czasowych, na przykład po powrocie z urlopu rodzicielskiego (art. 9a ustawy o ochronie roszczeń pracowniczych).
+      Ile z pensji zostaje pracownikowi, policzysz w <a href="/narzedzia/brutto-netto">kalkulatorze brutto–netto</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { kosztPracodawcy } from '../../lib/narzedzia/koszt-pracodawcy';
+  import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
+
+  const form = document.querySelector<HTMLFormElement>('[data-koszt]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const przelicz = () => {
+      const brutto = wpisanaLiczba(el('brutto').value);
+      const wypadkowa = wpisanaLiczba(el('wypadkowa').value);
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      const blad =
+        !(brutto > 0 && brutto < 1_000_000) ? 'Wpisz wynagrodzenie brutto, na przykład 6000.'
+        : !(wypadkowa >= 0.4 && wypadkowa <= 8.12) ? 'Stopa wypadkowa wynosi od 0,40% do 8,12%.'
+        : null;
+      b.hidden = !blad;
+      b.textContent = blad ?? '';
+      if (blad) {
+        w('koszt').textContent = '—';
+        return;
+      }
+      const r = kosztPracodawcy({ brutto, wypadkowa, ppk: el('ppk').checked, wiekZwolniony: el('wiek').checked });
+      w('koszt').textContent = zl(r.koszt);
+      for (const k of ['emerytalna', 'rentowa', 'wypadkowa', 'fgsp', 'ppk'] as const) w(k).textContent = zl(r[k]);
+      w('fp').textContent = zl(r.fp + r.fs);
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>

@@ -193,6 +193,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-12',
   },
   {
+    slug: 'koszt-pracodawcy',
+    nazwa: 'Koszt pracodawcy 2026',
+    krotko: 'Ile kosztuje pracownik na etacie: pensja plus składki emerytalna, rentowa, wypadkowa, FP, FS, FGŚP i PPK.',
+    kategoria: 'wynagrodzenie',
+    przepisy: ['systemUbezpieczen', 'budzet2026', 'rynekPracy', 'funduszSolidarnosciowy', 'roszczeniaPracownicze', 'wypadkowa', 'wypadkowaStopy', 'ppk', 'placa2026'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'kontrola-grafiku',
     nazwa: 'Kontrola grafiku zmian',
     krotko: 'Sprawdź grafik 12 h albo trzyzmianowy: odpoczynek 11 i 35 h, wolne niedziele, dni wolne, godziny a wymiar.',
