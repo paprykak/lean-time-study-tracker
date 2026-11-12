@@ -257,6 +257,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-12',
   },
   {
+    slug: 'delegacja-krajowa',
+    nazwa: 'Delegacja krajowa: dieta i ryczałty',
+    krotko: 'Ile diety za delegację w kraju: 45 zł za dobę, potrącenie za posiłki, ryczałt za nocleg i komunikację.',
+    kategoria: 'wynagrodzenie',
+    przepisy: ['kodeksPracy', 'podrozeSluzbowe', 'pit', 'podstawaSkladek'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'swiadczenie-rehabilitacyjne',
     nazwa: 'Świadczenie rehabilitacyjne',
     krotko: 'Świadczenie rehabilitacyjne po zasiłku chorobowym: 90%, potem 75%, 100% po wypadku przy pracy, do 12 miesięcy.',

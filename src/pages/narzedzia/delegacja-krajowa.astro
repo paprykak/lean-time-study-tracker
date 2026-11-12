@@ -1,0 +1,315 @@
+---
+// Delegacja krajowa: dieta, potrącenie za posiłki, ryczałty za nocleg i komunikację miejscową (§ 7–9 rozporządzenia
+// z 29 stycznia 2013 r., t.j. Dz.U. 2023 poz. 2190; art. 77^5 Kp). Logika: src/lib/narzedzia/delegacja.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { zl } from '../../lib/narzedzia/format';
+import { czasPodrozy, delegacja, DIETA, ileDiet, LIMIT_HOTELU, MAKS_DOB, opisChwili, POSILEK_PROCENT, RYCZALT_KOMUNIKACJA, RYCZALT_NOCLEG } from '../../lib/narzedzia/delegacja';
+import { dodajDni, dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+const dzis = dzisWPolsce();
+const D = { wyjazd: { data: dzis, godzina: '06:00' }, powrot: { data: dodajDni(dzis, 1), godzina: '18:30' } };
+const r = delegacja(D);
+const POSILKI = [
+  ['sniadanie', 'Śniadanie'],
+  ['obiad', 'Obiad'],
+  ['kolacja', 'Kolacja'],
+] as const;
+const zaPosilek = (k: keyof typeof POSILEK_PROCENT) => zl((DIETA * POSILEK_PROCENT[k]) / 100);
+const opisDiety = (x: typeof r) => (x.liczbaDiet ? `${zl(x.dietaPrzedPotraceniem)} (${ileDiet(x.liczbaDiet)})` : 'nie przysługuje');
+
+const faq = [
+  {
+    pytanie: 'Ile wynosi dieta z delegacji krajowej w 2026 roku?',
+    odpowiedz: `${zl(DIETA)} za dobę podróży, bez zmian od 1 stycznia 2023 r. (§ 7 ust. 1 rozporządzenia w sprawie należności z tytułu podróży służbowej). Przy podróży do doby: poniżej 8 godzin dieta nie przysługuje, od 8 do 12 godzin przysługuje połowa, czyli ${zl(DIETA / 2)}, a ponad 12 godzin cała. Przy dłuższej podróży za każdą pełną dobę ${zl(DIETA)}, a za rozpoczętą dobę do 8 godzin ${zl(DIETA / 2)}, ponad 8 godzin ${zl(DIETA)} (§ 7 ust. 2).`,
+  },
+  {
+    pytanie: 'Czy dieta przysługuje, gdy pracodawca zapewnia posiłki?',
+    odpowiedz: `Dietę zmniejsza się o bezpłatne posiłki: śniadanie i kolacja to po 25% diety (${zaPosilek('sniadanie')}), obiad 50% (${zaPosilek('obiad')}). Tak samo liczy się wyżywienie w cenie hotelu. Przy całodziennym bezpłatnym wyżywieniu dieta nie przysługuje (§ 7 ust. 3–5).`,
+  },
+  {
+    pytanie: 'Ile wynosi ryczałt za nocleg w delegacji?',
+    odpowiedz: `${zl(RYCZALT_NOCLEG)}, czyli 150% diety, gdy nie masz rachunku za hotel, a pracodawca nie zapewnił bezpłatnego noclegu. Nocleg musi trwać co najmniej 6 godzin między 21:00 a 7:00 (§ 8 ust. 3–4). Za hotel z rachunkiem pracodawca zwraca koszt do ${zl(LIMIT_HOTELU)} za dobę hotelową, a więcej tylko za swoją zgodą (§ 8 ust. 1–2). Nic z tego nie przysługuje za czas przejazdu ani wtedy, gdy pracodawca uzna, że możesz codziennie wracać do domu (§ 8 ust. 5).`,
+  },
+  {
+    pytanie: 'Czy prywatna firma może płacić dietę niższą niż 45 zł?',
+    odpowiedz: `Nie. U pracodawcy spoza sfery budżetowej zasady ustala układ zbiorowy, regulamin wynagradzania albo umowa o pracę, ale dieta za dobę podróży w kraju i za granicą nie może być niższa niż dieta krajowa z rozporządzenia, czyli ${zl(DIETA)} (art. 77⁵ § 3–4 Kodeksu pracy). Gdy takich postanowień nie ma, należności przysługują według rozporządzenia (art. 77⁵ § 5).`,
+  },
+  {
+    pytanie: 'Czy od diety z delegacji płaci się podatek i składki?',
+    odpowiedz: 'Do wysokości z rozporządzenia nie. Diety i inne należności za czas podróży służbowej pracownika są do tej wysokości zwolnione z PIT (art. 21 ust. 1 pkt 16 lit. a ustawy o PIT) i nie wchodzą do podstawy składek na ubezpieczenia społeczne (§ 2 ust. 1 pkt 15 rozporządzenia w sprawie podstawy wymiaru składek). Nadwyżka ponad te kwoty nie jest zwolniona.',
+  },
+];
+---
+<StronaNarzedzia
+  slug="delegacja-krajowa"
+  tytul="Delegacja krajowa 2026: dieta 45 zł i ryczałty"
+  opis="Policz dietę z delegacji w kraju: 45 zł za dobę, połowa za 8–12 godzin, potrącenie za śniadanie, obiad i kolację, ryczałt za nocleg 67,50 zł i komunikację 9 zł."
+  h1="Delegacja krajowa: dieta i ryczałty"
+  lead="Za delegację w kraju należy się dieta 45 zł za dobę, a do tego ryczałty za nocleg i dojazdy na miejscu. Wpisz wyjazd i powrót, zaznacz posiłki, które dostałeś albo dostałaś za darmo, a policzymy, ile się należy."
+  faq={faq}
+>
+  <form class="kalkulator" data-delegacja novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Podróż</h2>
+      <div class="mt-4 grid grid-cols-2 items-end gap-3">
+        <div>
+          <label for="d-wyjazd" class="etykieta-pola">Wyjazd: dzień</label>
+          <input id="d-wyjazd" name="wyjazd" type="date" class="pole mt-1" min="2023-01-01" max="2100-12-31" value={D.wyjazd.data} aria-describedby="d-blad" />
+        </div>
+        <div>
+          <label for="d-wyjazd-g" class="etykieta-pola">Godzina wyjazdu</label>
+          <input id="d-wyjazd-g" name="wyjazdGodzina" type="time" class="pole mt-1" value={D.wyjazd.godzina} aria-describedby="d-blad" />
+        </div>
+      </div>
+      <div class="mt-4 grid grid-cols-2 items-end gap-3">
+        <div>
+          <label for="d-powrot" class="etykieta-pola">Powrót: dzień</label>
+          <input id="d-powrot" name="powrot" type="date" class="pole mt-1" min="2023-01-01" max="2100-12-31" value={D.powrot.data} aria-describedby="d-blad" />
+        </div>
+        <div>
+          <label for="d-powrot-g" class="etykieta-pola">Godzina powrotu</label>
+          <input id="d-powrot-g" name="powrotGodzina" type="time" class="pole mt-1" value={D.powrot.godzina} aria-describedby="d-blad" />
+        </div>
+      </div>
+      <p class="meta mt-1">Od wyjazdu do powrotu po wykonaniu zadania, razem z dojazdem (§ 7 ust. 2 rozporządzenia).</p>
+      <p id="d-blad" class="blad-pola mt-3" data-blad="czas" hidden></p>
+
+      <fieldset class="mt-5">
+        <legend class="etykieta">Posiłki za darmo</legend>
+        <p class="meta mt-1">Zapewnione bezpłatnie, także w cenie hotelu. Śniadanie i kolacja zmniejszają dietę o {zaPosilek('sniadanie')}, obiad o {zaPosilek('obiad')} (§ 7 ust. 4–5).</p>
+        <div data-doby>
+          {
+            r.doby.map((d, i) => (
+              <fieldset class="mt-3" data-doba={i}>
+                <legend class="text-[0.9375rem]"><strong data-nr>Doba {d.nr}</strong>: <span data-zakres>{opisChwili(d.od)} – {opisChwili(d.do)}</span></legend>
+                <div class="mt-1 flex flex-wrap gap-x-5 gap-y-2">
+                  {POSILKI.map(([k, nazwa]) => (
+                    <label class="flex items-center gap-2 text-[0.9375rem]">
+                      <input type="checkbox" name={`posilek-${i}-${k}`} data-posilek={k} class="size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+                      <span>{nazwa}</span>
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
+            ))
+          }
+        </div>
+      </fieldset>
+
+      <div class="mt-5">
+        <label for="d-noclegi" class="etykieta-pola">Noclegi bez rachunku</label>
+        <input id="d-noclegi" name="noclegi" class="pole mt-1 max-w-24" type="text" inputmode="numeric" autocomplete="off" value="0" aria-describedby="d-noclegi-opis d-blad-noclegi" />
+        <p id="d-noclegi-opis" class="meta mt-1">Ryczałt {zl(RYCZALT_NOCLEG)} za noc, gdy nocleg nie był zapewniony za darmo i trwał co najmniej 6 godzin między 21 a 7 (§ 8 ust. 3–4).</p>
+        <p id="d-blad-noclegi" class="blad-pola mt-1" data-blad="noclegi" hidden></p>
+      </div>
+      <label class="mt-4 flex items-start gap-3 text-[0.9375rem]">
+        <input type="checkbox" name="komunikacja" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+        <span>Płacę za dojazdy komunikacją miejscową na miejscu (ryczałt {zl(RYCZALT_KOMUNIKACJA)} za każdą rozpoczętą dobę, § 9)</span>
+      </label>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Dieta i ryczałty razem</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-kwota"><span data-w="razem">{zl(r.razem)}</span></p>
+        <p class="meta" data-w="czas">W podróży: {czasPodrozy(r.czas)}</p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Dieta</dt><dd data-w="dieta">{opisDiety(r)}</dd></div>
+        <div><dt>Potrącenie za posiłki</dt><dd data-w="potracenie">{zl(r.potracenie)}</dd></div>
+        <div><dt>Ryczałt za noclegi</dt><dd data-w="noclegi">{zl(r.ryczaltNoclegi)}</dd></div>
+        <div><dt>Ryczałt na komunikację miejscową</dt><dd data-w="komunikacja">{zl(r.komunikacja)}</dd></div>
+        <div><dt>Hotel z rachunkiem</dt><dd>zwrot do {zl(LIMIT_HOTELU)} za dobę</dd></div>
+      </dl>
+      <p class="wynik-uwaga">Bilety, hotel, parking i inne wydatki z rachunków pracodawca zwraca osobno (§ 3, 4 i 8 ust. 1). Rozliczenie składasz najpóźniej 14 dni po powrocie (§ 5 ust. 1).</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Stawki są w tabeli poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <template data-wzor-doby>
+    <fieldset class="mt-3">
+      <legend class="text-[0.9375rem]"><strong data-nr></strong>: <span data-zakres></span></legend>
+      <div class="mt-1 flex flex-wrap gap-x-5 gap-y-2">
+        {
+          POSILKI.map(([k, nazwa]) => (
+            <label class="flex items-center gap-2 text-[0.9375rem]">
+              <input type="checkbox" data-posilek={k} class="size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+              <span>{nazwa}</span>
+            </label>
+          ))
+        }
+      </div>
+    </fieldset>
+  </template>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="stawki">Stawki delegacji krajowej</h2>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Dieta, potrącenia i ryczałty w podróży służbowej w kraju</caption>
+        <thead><tr><th scope="col">Należność</th><th scope="col">Kwota</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Dieta za dobę (§ 7 ust. 1)</th><td>{zl(DIETA)}</td></tr>
+          <tr><th scope="row">Podróż od 8 do 12 godzin albo reszta do 8 godzin (§ 7 ust. 2)</th><td>{zl(DIETA / 2)}</td></tr>
+          <tr><th scope="row">Śniadanie albo kolacja za darmo (§ 7 ust. 4)</th><td>−{zaPosilek('sniadanie')}</td></tr>
+          <tr><th scope="row">Obiad za darmo (§ 7 ust. 4)</th><td>−{zaPosilek('obiad')}</td></tr>
+          <tr><th scope="row">Ryczałt za nocleg bez rachunku (§ 8 ust. 3)</th><td>{zl(RYCZALT_NOCLEG)}</td></tr>
+          <tr><th scope="row">Hotel z rachunkiem za dobę (§ 8 ust. 1)</th><td>do {zl(LIMIT_HOTELU)}</td></tr>
+          <tr><th scope="row">Komunikacja miejscowa za rozpoczętą dobę (§ 9 ust. 1)</th><td>{zl(RYCZALT_KOMUNIKACJA)}</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="zasady">Kiedy dieta przysługuje</h2>
+    <ul>
+      <li>Podróż do doby: poniżej 8 godzin nic, od 8 do 12 godzin połowa diety, ponad 12 godzin cała (§ 7 ust. 2 pkt 1).</li>
+      <li>Podróż dłuższa: za każdą pełną dobę cała dieta, za rozpoczętą dobę do 8 godzin połowa, ponad 8 godzin cała (§ 7 ust. 2 pkt 2).</li>
+      <li>Diety nie ma przy delegacji do miejscowości, w której mieszkasz stale albo czasowo, przy całodziennym bezpłatnym wyżywieniu (§ 7 ust. 3) i za czas przejazdu do domu w dniu wolnym, który pracodawca zwraca przy podróży od 10 dni (§ 10).</li>
+      <li>Ryczałt na komunikację miejscową nie przysługuje, gdy nie płacisz za dojazdy, albo gdy pracodawca na Twój wniosek zwraca udokumentowane bilety (§ 9 ust. 2–3).</li>
+      <li>Na wniosek pracodawca daje zaliczkę na koszty podróży według wstępnego wyliczenia (§ 11).</li>
+      <li>Przejazd własnym samochodem tylko za zgodą pracodawcy, za kilometr według jego stawki, nie wyższej niż w przepisach wydanych na podstawie ustawy o transporcie drogowym (§ 3 ust. 3–4).</li>
+    </ul>
+
+    <h2 id="prywatna-firma">Prywatna firma: regulamin i minimum 45 zł</h2>
+    <p>
+      Rozporządzenie dotyczy wprost pracowników sfery budżetowej. U innych pracodawców warunki podróży służbowych
+      ustala układ zbiorowy pracy, regulamin wynagradzania albo umowa o pracę (art. 77<sup>5</sup> § 3 Kodeksu pracy).
+      Dieta za dobę podróży w kraju i za granicą nie może być jednak niższa niż dieta krajowa z rozporządzenia, czyli
+      {zl(DIETA)} (§ 4). Gdy firma nie ma takich zasad, należności przysługują według rozporządzenia (§ 5).
+      Sprawdź więc regulamin: kalkulator liczy według rozporządzenia.
+    </p>
+
+    <h2 id="podatek">Podatek i składki</h2>
+    <p>
+      Diety i inne należności za czas podróży służbowej pracownika są zwolnione z PIT do wysokości z rozporządzenia
+      (art. 21 ust. 1 pkt 16 lit. a ustawy o PIT) i do tej samej wysokości nie wchodzą do podstawy składek na
+      ubezpieczenia społeczne (§ 2 ust. 1 pkt 15 rozporządzenia w sprawie podstawy wymiaru składek). Zwolnienie z PIT nie
+      dotyczy kierowców w międzynarodowym transporcie drogowym (art. 21 ust. 15c ustawy o PIT).
+    </p>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Czas liczymy od wyjazdu do powrotu w rzeczywistych godzinach czasu polskiego, więc noc zmiany czasu wydłuża albo
+      skraca podróż o godzinę. Doby liczymy po 24 godziny od chwili wyjazdu, a podróż może trwać do {MAKS_DOB} dób.
+      Posiłki odejmujemy od diety za dobę, w której je zapewniono, najwyżej do wysokości diety za tę dobę. Rozporządzenie
+      nie mówi wprost, czy potrącenie liczyć dla każdej doby osobno, czy od diety za całą podróż; przy rozliczeniu od całej
+      podróży wynik może być niższy, gdy posiłki z jednej doby przekraczają dietę za nią. Kalkulator sprawdza też, ile
+      nocy w podróży trwa co najmniej 6 godzin między 21 a 7, i nie pozwala wpisać więcej noclegów do ryczałtu.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { zl } from '../../lib/narzedzia/format';
+  import {
+    chwilaWPolsce,
+    czasPodrozy,
+    delegacja,
+    dobyPodrozy,
+    ileDiet,
+    ileNoclegow,
+    MAKS_DOB,
+    noceWPodrozy,
+    opisChwili,
+    poprawnaGodzina,
+    type Posilek,
+    type PosilkiDoby,
+  } from '../../lib/narzedzia/delegacja';
+  import { poprawnaData } from '../../lib/narzedzia/terminy';
+
+  const form = document.querySelector<HTMLFormElement>('[data-delegacja]');
+  const wzor = document.querySelector<HTMLTemplateElement>('[data-wzor-doby]');
+  if (form && wzor) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const kontener = form.querySelector<HTMLElement>('[data-doby]')!;
+    const blad = (k: string, tekst: string | null) => {
+      const b = form.querySelector<HTMLElement>(`[data-blad="${k}"]`)!;
+      b.hidden = !tekst;
+      b.textContent = tekst ?? '';
+    };
+
+    const posilki = (): PosilkiDoby[] =>
+      [...kontener.querySelectorAll<HTMLElement>('[data-doba]')].map((f) =>
+        Object.fromEntries([...f.querySelectorAll<HTMLInputElement>('[data-posilek]')].map((x) => [x.dataset.posilek as Posilek, x.checked])),
+      );
+
+    // Wiersze dób: przebudowa tylko wtedy, gdy zmienia się podział podróży; zaznaczenia zostają według numeru doby.
+    let podzial = '';
+    const ustawDoby = (doby: { od: number; do: number }[]) => {
+      const klucz = doby.map((d) => `${d.od}-${d.do}`).join('|');
+      if (klucz === podzial) return;
+      podzial = klucz;
+      const stare = posilki();
+      kontener.replaceChildren(
+        ...doby.map((d, i) => {
+          const f = (wzor.content.firstElementChild as HTMLFieldSetElement).cloneNode(true) as HTMLFieldSetElement;
+          f.dataset.doba = String(i);
+          f.querySelector('[data-nr]')!.textContent = `Doba ${i + 1}`;
+          f.querySelector('[data-zakres]')!.textContent = `${opisChwili(d.od)} – ${opisChwili(d.do)}`;
+          f.querySelectorAll<HTMLInputElement>('[data-posilek]').forEach((x) => {
+            x.name = `posilek-${i}-${x.dataset.posilek}`;
+            x.checked = Boolean(stare[i]?.[x.dataset.posilek as Posilek]);
+          });
+          return f;
+        }),
+      );
+    };
+
+    const pusto = () => {
+      for (const k of ['razem', 'dieta', 'potracenie', 'noclegi', 'komunikacja']) w(k).textContent = '—';
+      w('czas').textContent = '';
+    };
+
+    const przelicz = () => {
+      const wyjazd = { data: el('wyjazd').value, godzina: el('wyjazdGodzina').value };
+      const powrot = { data: el('powrot').value, godzina: el('powrotGodzina').value };
+      let bladCzasu: string | null = null;
+      let start = 0;
+      let koniec = 0;
+      if (![wyjazd.data, powrot.data].every(poprawnaData) || ![wyjazd.godzina, powrot.godzina].every(poprawnaGodzina)) {
+        bladCzasu = 'Wpisz dzień i godzinę wyjazdu oraz powrotu.';
+      } else {
+        start = chwilaWPolsce(wyjazd.data, wyjazd.godzina);
+        koniec = chwilaWPolsce(powrot.data, powrot.godzina);
+        if (koniec <= start) bladCzasu = 'Powrót musi być po wyjeździe.';
+        else if (koniec - start > MAKS_DOB * 86_400_000) bladCzasu = `Kalkulator liczy podróże do ${MAKS_DOB} dób.`;
+      }
+      blad('czas', bladCzasu);
+      if (bladCzasu) {
+        blad('noclegi', null);
+        pusto();
+        return;
+      }
+      ustawDoby(dobyPodrozy(start, koniec));
+
+      const tekstNoclegow = el('noclegi').value.trim() || '0';
+      const noclegi = /^\d{1,2}$/.test(tekstNoclegow) ? Number(tekstNoclegow) : NaN;
+      const mozliwe = noceWPodrozy(start, koniec).doRyczaltu;
+      const bladNoclegow = Number.isNaN(noclegi)
+        ? 'Wpisz liczbę noclegów, na przykład 0 albo 2.'
+        : noclegi > mozliwe
+          ? mozliwe
+            ? `W tej podróży mieści się najwyżej ${ileNoclegow(mozliwe)} po co najmniej 6 godzin między 21 a 7.`
+            : 'W tej podróży nie ma nocy z co najmniej 6 godzinami między 21 a 7, więc ryczałt za nocleg nie przysługuje.'
+          : null;
+      blad('noclegi', bladNoclegow);
+      if (bladNoclegow) {
+        pusto();
+        return;
+      }
+
+      const r = delegacja({ wyjazd, powrot, posilki: posilki(), noclegiRyczalt: noclegi, komunikacja: el('komunikacja').checked });
+      w('razem').textContent = zl(r.razem);
+      w('czas').textContent = `W podróży: ${czasPodrozy(r.czas)}`;
+      w('dieta').textContent = r.liczbaDiet ? `${zl(r.dietaPrzedPotraceniem)} (${ileDiet(r.liczbaDiet)})` : 'nie przysługuje';
+      w('potracenie').textContent = zl(r.potracenie);
+      w('noclegi').textContent = zl(r.ryczaltNoclegi);
+      w('komunikacja').textContent = zl(r.komunikacja);
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>

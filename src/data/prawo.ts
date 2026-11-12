@@ -86,7 +86,7 @@ export const AKTY = {
   pit: {
     nazwa: 'Ustawa o podatku dochodowym od osób fizycznych',
     publikator: 'Dz.U. 2026 poz. 592',
-    uwaga: 'tekst jednolity; późniejsze zmiany nie dotyczą zaliczek od wynagrodzeń; art. 21 ust. 1 pkt 148, art. 22 ust. 2, art. 27, 31b, 32',
+    uwaga: 'tekst jednolity; późniejsze zmiany nie dotyczą zaliczek od wynagrodzeń ani zwolnienia diet; art. 21 ust. 1 pkt 16 i 148, art. 22 ust. 2, art. 27, 31b, 32',
     adres: eli(2026, 592),
     sprawdzono: '2026-11-11',
   },
@@ -242,6 +242,20 @@ export const AKTY = {
     publikator: 'Dz.U. 2024 poz. 1782',
     uwaga: 'tekst jednolity, bez późniejszych zmian; art. 9 ust. 1: zwolnienie w dniu oddania krwi i w dniu następnym',
     adres: eli(2024, 1782),
+    sprawdzono: '2026-11-12',
+  },
+  podrozeSluzbowe: {
+    nazwa: 'Rozporządzenie w sprawie należności przysługujących pracownikowi zatrudnionemu w państwowej lub samorządowej jednostce sfery budżetowej z tytułu podróży służbowej',
+    publikator: 'Dz.U. 2023 poz. 2190',
+    uwaga: 'tekst jednolity, bez późniejszych zmian; § 7: dieta krajowa 45 zł od 1 stycznia 2023 r., § 8: nocleg, § 9: komunikacja miejscowa',
+    adres: eli(2023, 2190),
+    sprawdzono: '2026-11-12',
+  },
+  podstawaSkladek: {
+    nazwa: 'Rozporządzenie w sprawie szczegółowych zasad ustalania podstawy wymiaru składek na ubezpieczenia emerytalne i rentowe',
+    publikator: 'Dz.U. 2025 poz. 316',
+    uwaga: 'tekst jednolity, bez późniejszych zmian; § 2 ust. 1 pkt 15: diety i należności z podróży służbowej do limitów z przepisów o podróżach w sferze budżetowej',
+    adres: eli(2025, 316),
     sprawdzono: '2026-11-12',
   },
   waloryzacjaRehabilitacyjnego2026: {
