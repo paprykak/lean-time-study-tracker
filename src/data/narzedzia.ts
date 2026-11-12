@@ -113,6 +113,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-11',
   },
   {
+    slug: 'urlop-w-agencji-pracy',
+    nazwa: 'Urlop w agencji pracy tymczasowej',
+    krotko: 'Ile urlopu i ile pieniędzy za urlop ma pracownik z agencji: 2 dni za miesiąc, stawka z 3 miesięcy.',
+    kategoria: 'urlopy',
+    przepisy: ['pracaTymczasowa'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'dni-wolne-od-pracy',
     nazwa: 'Dni wolne od pracy i długie weekendy',
     krotko: 'Święta w wybranym roku, długie weekendy i kiedy wziąć urlop, żeby mieć najwięcej wolnego. Plik do kalendarza.',

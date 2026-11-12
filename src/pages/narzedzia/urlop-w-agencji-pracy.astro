@@ -1,0 +1,142 @@
+---
+// Urlop, wynagrodzenie urlopowe i wypowiedzenie pracownika tymczasowego (art. 13 ust. 2 i art. 17 ustawy o zatrudnianiu
+// pracowników tymczasowych, t.j. Dz.U. 2025 poz. 236). Logika: src/lib/narzedzia/urlop-agencja.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { zl } from '../../lib/narzedzia/format';
+import { urlopTymczasowy, wynagrodzenieZaUrlopTymczasowy } from '../../lib/narzedzia/urlop-agencja';
+
+const D = { miesiace: 6, wynagrodzenie3m: 15000, godziny3m: 500, godzinDziennie: 8 };
+const dni = urlopTymczasowy(D.miesiace);
+const r = wynagrodzenieZaUrlopTymczasowy({ wynagrodzenie3m: D.wynagrodzenie3m, godziny3m: D.godziny3m, dniUrlopu: dni, godzinDziennie: D.godzinDziennie });
+
+const faq = [
+  {
+    pytanie: 'Ile urlopu ma pracownik z agencji pracy tymczasowej?',
+    odpowiedz: '2 dni za każdy miesiąc pozostawania w dyspozycji pracodawcy użytkownika, jednego albo kilku. Urlop nie przysługuje za okres, za który wykorzystałeś albo wykorzystałaś urlop u poprzedniego pracodawcy (art. 17 ust. 1 ustawy o zatrudnianiu pracowników tymczasowych). Urlop dostajesz w dni, które byłyby dniami pracy (ust. 2).',
+  },
+  {
+    pytanie: 'Jak agencja liczy wynagrodzenie za urlop?',
+    odpowiedz: 'Dzieli wynagrodzenie wypłacone za 3 miesiące pracy u tego samego pracodawcy użytkownika przed miesiącem urlopu przez liczbę przepracowanych w tym czasie godzin, a wynik mnoży przez godziny, które przepracowałbyś albo przepracowałabyś w dniach urlopu (art. 17 ust. 4).',
+  },
+  {
+    pytanie: 'Co z niewykorzystanym urlopem w agencji?',
+    odpowiedz: 'Agencja wypłaca ekwiwalent pieniężny (art. 17 ust. 3). Nie musi go wypłacać, gdy strony ustalą, że urlop wykorzystasz w czasie kolejnej umowy z tą samą agencją u tego samego użytkownika, zawartej zaraz po poprzedniej (ust. 3a).',
+  },
+  {
+    pytanie: 'Jaki jest okres wypowiedzenia w agencji pracy tymczasowej?',
+    odpowiedz: 'Gdy umowa przewiduje wcześniejsze rozwiązanie: 3 dni przy umowie zawartej na okres do 2 tygodni i tydzień przy umowie na dłuższy okres, dla każdej ze stron (art. 13 ust. 2 ustawy o zatrudnianiu pracowników tymczasowych).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="urlop-w-agencji-pracy"
+  tytul="Urlop w agencji pracy: 2 dni za miesiąc"
+  opis="Ile urlopu i ile pieniędzy za urlop ma pracownik z agencji pracy tymczasowej: 2 dni za każdy miesiąc, stawka z 3 miesięcy, ekwiwalent i okres wypowiedzenia."
+  h1="Urlop w agencji pracy tymczasowej"
+  lead="Pracownik tymczasowy ma 2 dni urlopu za każdy miesiąc pracy u użytkownika, a wynagrodzenie za urlop liczy się ze stawki z ostatnich 3 miesięcy. Wpisz miesiące i zarobki, a policzymy dni i kwotę."
+  faq={faq}
+>
+  <form class="kalkulator" data-agencja novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Praca przez agencję</h2>
+      <div class="mt-4">
+        <label for="a-miesiace" class="etykieta-pola">Pełne miesiące w dyspozycji użytkownika</label>
+        <input id="a-miesiace" name="miesiace" class="pole mt-1 max-w-24" type="text" inputmode="numeric" autocomplete="off" value={D.miesiace} aria-describedby="a-blad" />
+      </div>
+      <div class="mt-4">
+        <label for="a-wynagrodzenie" class="etykieta-pola">Wynagrodzenie brutto za ostatnie 3 miesiące razem (zł)</label>
+        <input id="a-wynagrodzenie" name="wynagrodzenie" class="pole mt-1 max-w-48" type="text" inputmode="decimal" autocomplete="off" value={D.wynagrodzenie3m} aria-describedby="a-wynagrodzenie-opis a-blad" />
+        <p id="a-wynagrodzenie-opis" class="meta mt-1">Za pracę u tego samego użytkownika w 3 miesiącach przed miesiącem urlopu (art. 17 ust. 4).</p>
+      </div>
+      <div class="mt-4 grid grid-cols-2 items-end gap-3">
+        <div>
+          <label for="a-godziny" class="etykieta-pola">Godziny pracy w tych 3 miesiącach</label>
+          <input id="a-godziny" name="godziny" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value={D.godziny3m} aria-describedby="a-blad" />
+        </div>
+        <div>
+          <label for="a-dziennie" class="etykieta-pola">Godzin w dniu pracy</label>
+          <input id="a-dziennie" name="dziennie" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value={D.godzinDziennie} aria-describedby="a-blad" />
+        </div>
+      </div>
+      <p id="a-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Urlop do wykorzystania</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-kwota"><span data-w="dni">{dni} dni</span></p>
+        <p class="meta" data-w="opis">Wynagrodzenie za cały urlop: {zl(r.razem)} brutto</p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Stawka za godzinę urlopu</dt><dd data-w="godzina">{zl(r.zaGodzine)}</dd></div>
+        <div><dt>Godziny urlopu</dt><dd data-w="godziny">{r.godziny} h</dd></div>
+        <div><dt>Wypowiedzenie, gdy przewiduje je umowa</dt><dd>3 dni przy umowie do 2 tygodni, tydzień przy dłuższej</dd></div>
+      </dl>
+      <p class="wynik-uwaga">Niewykorzystany urlop agencja wypłaca jako ekwiwalent, chyba że ustalicie jego wykorzystanie w kolejnej umowie u tego samego użytkownika (art. 17 ust. 3–3a).</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="zasady">Zasady dla pracownika tymczasowego</h2>
+    <ul>
+      <li>Urlop: 2 dni za każdy miesiąc w dyspozycji jednego albo kilku pracodawców użytkowników, bez okresu, za który wykorzystano urlop u poprzedniego pracodawcy (art. 17 ust. 1 ustawy o zatrudnianiu pracowników tymczasowych).</li>
+      <li>Urlop w dniach, które byłyby dniami pracy (art. 17 ust. 2); wynagrodzenie ze stawki godzinowej z 3 miesięcy pracy u tego samego użytkownika (ust. 4).</li>
+      <li>Niewykorzystany urlop: ekwiwalent od agencji (ust. 3), chyba że strony ustalą wykorzystanie urlopu w kolejnej umowie z tą samą agencją u tego samego użytkownika, zawartej bezpośrednio po poprzedniej (ust. 3a).</li>
+      <li>Wypowiedzenie: tylko gdy przewiduje je umowa, 3 dni przy umowie na okres do 2 tygodni i tydzień przy dłuższej (art. 13 ust. 2).</li>
+    </ul>
+    <p>
+      Jak długo możesz pracować przez agencję u jednego użytkownika, sprawdzi
+      <a href="/narzedzia/limit-pracy-tymczasowej">kalkulator limitu 18 miesięcy w 36</a>.
+    </p>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Dni urlopu to 2 razy liczba pełnych miesięcy, które wpiszesz; przepis mówi o każdym miesiącu pozostawania
+      w dyspozycji. Stawkę za godzinę liczymy jako wynagrodzenie z 3 miesięcy podzielone przez godziny pracy w tych
+      miesiącach, a wynagrodzenie za urlop jako stawkę razy dni urlopu razy godziny w dniu pracy, z zaokrągleniem do grosza
+      na końcu.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
+  import { urlopTymczasowy, wynagrodzenieZaUrlopTymczasowy } from '../../lib/narzedzia/urlop-agencja';
+
+  const form = document.querySelector<HTMLFormElement>('[data-agencja]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const przelicz = () => {
+      const tekst = el('miesiace').value.trim();
+      const miesiace = /^\d{1,2}$/.test(tekst) ? Number(tekst) : NaN;
+      const wynagrodzenie = wpisanaLiczba(el('wynagrodzenie').value);
+      const godziny = wpisanaLiczba(el('godziny').value);
+      const dziennie = wpisanaLiczba(el('dziennie').value);
+      let blad: string | null = null;
+      if (!(miesiace >= 0 && miesiace <= 18)) blad = 'Wpisz pełne miesiące, od 0 do 18.';
+      else if (!(wynagrodzenie > 0 && wynagrodzenie < 1_000_000)) blad = 'Wpisz wynagrodzenie z 3 miesięcy, na przykład 15000.';
+      else if (!(godziny > 0 && godziny <= 2200)) blad = 'Wpisz godziny pracy z 3 miesięcy, na przykład 500.';
+      else if (!(dziennie > 0 && dziennie <= 24)) blad = 'Wpisz godziny w dniu pracy, na przykład 8.';
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      b.hidden = !blad;
+      b.textContent = blad ?? '';
+      if (blad) {
+        w('dni').textContent = '—';
+        w('opis').textContent = '';
+        return;
+      }
+      const dni = urlopTymczasowy(miesiace);
+      const r = wynagrodzenieZaUrlopTymczasowy({ wynagrodzenie3m: wynagrodzenie, godziny3m: godziny, dniUrlopu: dni, godzinDziennie: dziennie });
+      w('dni').textContent = `${dni} ${dni === 1 ? 'dzień' : 'dni'}`;
+      w('opis').textContent = `Wynagrodzenie za cały urlop: ${zl(r.razem)} brutto`;
+      w('godzina').textContent = zl(r.zaGodzine);
+      w('godziny').textContent = `${String(r.godziny).replace('.', ',')} h`;
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>
