@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { czyUdt, RODZAJE, type DaneMaszyny } from './czy-udt';
+import { czyUdt, KONSERWATOR, polaRodzaju, RODZAJE, tylkoPola, type DaneMaszyny } from './czy-udt';
 import { OBSLUGA } from './uprawnienia-udt';
 
 // Oczekiwane gałęzie, kategorie i lata sprawdzone niezależnie w Pythonie (osobna implementacja drzewa z badania, R0–R3, R6).
@@ -86,10 +86,68 @@ describe('czy potrzebne zaświadczenie UDT (zał. 3 tab. 1 do rozp. z 2019 r., �
     expect(czyUdt({ rodzaj: 'wciagnik', naped: 'mechaniczny', udzwigKg: 200, przemieszczaOsoby: true, przeznaczenie: 'ogolne' }).uwagi[0]).toContain('przemieszczają osoby');
   });
 
-  it('konserwacja: urządzenia spoza tabeli obsługi mają zaświadczenie konserwatora', () => {
-    expect(czyUdt({ rodzaj: 'dzwignik', typDzwignika: 'staly' }).konserwacja?.id).toBe('k-dzwigniki');
-    expect(czyUdt({ rodzaj: 'podest', typPodestu: 'zaladowczy' }).konserwacja?.id).toBe('k-podesty');
-    expect(czyUdt({ rodzaj: 'dzwig', typDzwigu: 'towarowy' }).konserwacja?.id).toBe('k-dzwigi');
+  it('konserwacja: jeden rodzaj z tab. nr 2 (§ 4 ust. 3), także gdy obsługa nie wymaga zaświadczenia', () => {
+    // [dane, id, lata] sprawdzone w Pythonie (słownik tab. nr 2).
+    const K: [DaneMaszyny, string, number][] = [
+      [{ rodzaj: 'wciagnik', naped: 'reczny', przeznaczenie: 'ogolne' }, 'k-wciagniki-ogolne', 10],
+      [{ rodzaj: 'wciagnik', naped: 'reczny', przeznaczenie: 'nie-wiem' }, 'k-wciagniki-specjalne', 10],
+      [{ rodzaj: 'suwnica', naped: 'jednofazowy', udzwigKg: 500, przeznaczenie: 'ogolne' }, 'k-suwnice-ogolne', 5],
+      [{ rodzaj: 'suwnica', naped: 'reczny', przeznaczenie: 'specjalne' }, 'k-suwnice-specjalne', 5],
+      [{ rodzaj: 'zuraw', naped: 'reczny', typZurawia: 'stacjonarny' }, 'k-zurawie-stacjonarne', 10],
+      [{ rodzaj: 'zuraw', naped: 'reczny', typZurawia: 'przewozny' }, 'k-zurawie-samojezdne', 5],
+      [{ rodzaj: 'zuraw', naped: 'reczny', typZurawia: 'samojezdny' }, 'k-zurawie-samojezdne', 5],
+      [{ rodzaj: 'zuraw', naped: 'reczny', typZurawia: 'wiezowy' }, 'k-zurawie-wiezowe', 5],
+      [{ rodzaj: 'podest', typPodestu: 'zaladowczy' }, 'k-podesty-pz', 5],
+      [{ rodzaj: 'podest', naped: 'reczny', typPodestu: 'przejezdny' }, 'k-podesty-pz', 5],
+      [{ rodzaj: 'podest', naped: 'reczny', typPodestu: 'stacjonarny' }, 'k-podesty-swm', 5],
+      [{ rodzaj: 'podest', naped: 'reczny', typPodestu: 'wiszacy' }, 'k-podesty-swm', 5],
+      [{ rodzaj: 'podest', naped: 'reczny', typPodestu: 'masztowy' }, 'k-podesty-swm', 5],
+      [{ rodzaj: 'dzwig', typDzwigu: 'towarowy', napedDzwigu: 'elektryczny' }, 'k-dzwigi-elektryczne', 5],
+      [{ rodzaj: 'dzwig', typDzwigu: 'osobowy', napedDzwigu: 'hydrauliczny' }, 'k-dzwigi-hydrauliczne', 5],
+      [{ rodzaj: 'dzwignik', typDzwignika: 'staly' }, 'k-dzwigniki', 10],
+      [{ rodzaj: 'ukladnica', naped: 'mechaniczny', udzwigKg: 100 }, 'k-ukladnice', 10],
+      [{ rodzaj: 'wyciag', naped: 'reczny' }, 'k-wyciagi', 10],
+    ];
+    for (const [dane, id, lata] of K) {
+      const k = czyUdt(dane).konserwacja;
+      expect([dane, k?.id, k?.lata]).toEqual([dane, id, lata]);
+    }
+    expect(KONSERWATOR.find((k) => k.id === 'k-zurawie-wiezowe')?.nazwa).toBe('Żurawie wieżowe, szybkomontujące, szynowe i stacjonarne');
+  });
+
+  it('pola ukryte dla rodzaju nie zmieniają wyniku (napęd „ręczny” z wciągnika przy dźwigu)', () => {
+    expect(czyUdt({ rodzaj: 'dzwig', typDzwigu: 'budowlany', naped: 'reczny' })).toMatchObject({ potrzebne: true, galaz: 'wymagane' });
+    expect(czyUdt({ rodzaj: 'dzwig', typDzwigu: 'towarowo-osobowy-wewn', naped: 'reczny', udzwigKg: 100 }).kategoria?.id).toBe('o-dzwigi-towarowo-osobowe');
+    expect(czyUdt({ rodzaj: 'wozek-widlowy', naped: 'reczny', przemieszczaOsoby: true, udzwigKg: 2000 }).kategoria?.id).toBe('o-wozki');
+    expect(czyUdt({ rodzaj: 'ciagnik', podnoszenieMechaniczne: true }).galaz).toBe('wozek-bez-podnoszenia');
+    expect(tylkoPola({ rodzaj: 'dzwig', typDzwigu: 'osobowy', naped: 'reczny', udzwigKg: 5 })).toEqual({ rodzaj: 'dzwig', typDzwigu: 'osobowy' });
+    expect(polaRodzaju({ rodzaj: 'paleciak', podnoszenieMechaniczne: false })).toEqual(['jazda', 'podnoszenie']);
+    expect(polaRodzaju({ rodzaj: 'paleciak', podnoszenieMechaniczne: true })).toEqual(['jazda', 'podnoszenie', 'udzwig']);
+  });
+
+  it('wózki: § 4 ust. 1 pkt 2 w uwagach; do 250 kg obowiązek tylko z rozporządzenia bhp; pchany do 250 kg niejasny', () => {
+    expect(czyUdt({ rodzaj: 'wozek-widlowy', udzwigKg: 1600 }).uwagi.join(' ')).toContain('książką operatora maszyn roboczych');
+    const lekki = czyUdt({ rodzaj: 'wozek-widlowy', udzwigKg: 250 });
+    expect(lekki).toMatchObject({ potrzebne: true, galaz: 'wymagane' });
+    expect(lekki.uwagi.join(' ')).toContain('wymóg z ustawy nie działa');
+    expect(czyUdt({ rodzaj: 'wozek-widlowy', udzwigKg: 251 }).uwagi.join(' ')).not.toContain('wymóg z ustawy nie działa');
+    const pchany = czyUdt({ rodzaj: 'paleciak', jazdaSilnikowa: false, podnoszenieMechaniczne: true, udzwigKg: 200 });
+    expect(pchany.potrzebne).toBe(true);
+    expect(pchany.uwagi.join(' ')).toContain('„wózek z napędem silnikowym”');
+    expect(czyUdt({ rodzaj: 'paleciak', jazdaSilnikowa: true, podnoszenieMechaniczne: true, udzwigKg: 200 }).uwagi.join(' ')).not.toContain('„wózek z napędem silnikowym”');
+    expect(() => czyUdt({ rodzaj: 'reach-truck', udzwigKg: -5 })).toThrow(RangeError);
+  });
+
+  it('§ 4 ust. 2: program opracowany lub zatwierdzony przez UDT, pkt 3 i przepis przejściowy z 2019 r.', () => {
+    const z = czyUdt({ rodzaj: 'ciagnik' }).zamiast!;
+    expect(z).toContain('opracowanego lub zatwierdzonego przez UDT');
+    expect(z).toContain('§ 4 ust. 2 pkt 1–3');
+    expect(z).toContain('Dz.U. 2019 poz. 1948');
+    expect(z).toContain('art. 237³ § 2');
+  });
+
+  it('dźwig szpitalny: uwaga o zakresie dopisku', () => {
+    expect(czyUdt({ rodzaj: 'dzwig', typDzwigu: 'szpitalny' }).uwagi[0]).toContain('nieposiadających kontroli obciążenia kabiny');
   });
 
   it('błędny udźwig: RangeError', () => {

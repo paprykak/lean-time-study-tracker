@@ -16,7 +16,9 @@ test('świadectwo 29.02.2032: kod do 28 lutego 2037 r., szkolenie najpóźniej 2
   await expect(page.locator('[data-w="termin"]')).toHaveText(/28\slutego\s2037\sr\./);
   await expect(page.locator('[data-w="ograniczenie"]')).toContainText('5 lat od wydania świadectwa');
   // 28.02.2037 to sobota: ostatni dzień roboczy 27.02, szkolenie najpóźniej 26.02.
-  await expect(page.locator('[data-w="najpozniej"]')).toHaveText(/26\slutego\s2037\sr\./);
+  await expect(page.locator('[data-w="najpozniej"]')).toContainText(/26\slutego\s2037\sr\./);
+  await expect(page.locator('[data-w="najpozniej"]')).toContainText(/nie\stermin\sz\sustawy/);
+  await expect(page.locator('[data-w="zapas"]')).toContainText(/27\sstycznia\s2037\sr\.\s\(szacunek\sredakcji/);
   await expect(page.locator('[data-w="status"]')).toHaveAttribute('data-status', 'w-terminie');
   await expect(page.locator('[data-w="plan"]')).toHaveText('—');
 });

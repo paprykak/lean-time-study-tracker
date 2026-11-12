@@ -82,9 +82,14 @@ describe('czy potrzebujesz kodu 95 (art. 39a ust. 3 i 4 utd)', () => {
   it('wyjątek bez warunków ocennych: nie', () => {
     expect(czyPotrzebny('C', ['w2']).potrzeba).toBe('nie');
     expect(czyPotrzebny('D', ['ratownictwo']).potrzeba).toBe('nie');
+    // Ratownictwo medyczne to art. 3 ust. 1 pkt 3 utd, nie punkt art. 39a ust. 3.
+    expect(czyPotrzebny('D', ['ratownictwo']).wyjatki[0].pkt).toBe('art. 3 ust. 1 pkt 3');
   });
   it('tylko wyjątki ocenne: raczej nie', () => {
     expect(czyPotrzebny('C', ['w9', 'w11']).potrzeba).toBe('raczej-nie');
+    // pkt 6 i 7 opierają się na pojęciu przewozu handlowego/niehandlowego (niezdefiniowanego w ustawie).
+    expect(czyPotrzebny('C', ['w6']).potrzeba).toBe('raczej-nie');
+    expect(czyPotrzebny('D', ['w7']).potrzeba).toBe('raczej-nie');
   });
   it('pkt 5 tylko dla D i D1', () => {
     expect(czyPotrzebny('D1', ['w5']).potrzeba).toBe('raczej-nie');

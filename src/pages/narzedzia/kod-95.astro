@@ -3,7 +3,7 @@
 // strata przy szkoleniu wcześniej i sprawdzenie, czy praca wymaga kodu 95 (art. 39a ust. 3 i 4 ustawy o transporcie
 // drogowym). Logika: src/lib/narzedzia/kod-95.ts (testy obok). Bez JavaScriptu: wynik startowy i tabela wyjątków.
 import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
-import { GODZINY_SZKOLENIA, KATEGORIE, LATA_WPISU, OPLATA_PRAWO_JAZDY, WYJATKI, ZAPAS_DNI, czyPotrzebny, kod95 } from '../../lib/narzedzia/kod-95';
+import { GODZINY_SZKOLENIA, KATEGORIE, LATA_WPISU, OPLATA_PRAWO_JAZDY, WSZYSTKIE_WYJATKI, ZAPAS_DNI, czyPotrzebny, kod95 } from '../../lib/narzedzia/kod-95';
 import { dataPoPolsku, dodajDni, dodajMiesiace, dzisWPolsce, ileDni } from '../../lib/narzedzia/terminy';
 import { odmiana } from '../../lib/redakcja';
 
@@ -17,7 +17,7 @@ const KLASA_START = r.status === 'wygaslo' ? 'po-terminie' : r.status;
 const faq = [
   {
     pytanie: 'Na ile lat jest ważny kod 95?',
-    odpowiedz: `Na ${LATA_WPISU} lat od dnia wydania świadectwa kwalifikacji zawodowej, ale nie dłużej niż orzeczenie lekarskie i psychologiczne (art. 15 ust. 4 ustawy o kierujących pojazdami). Po 60. roku życia badania są co 30 miesięcy, więc kod bywa krótszy. Wiążąca jest data wpisana przy kodzie 95 w prawie jazdy.`,
+    odpowiedz: `Na ${LATA_WPISU} lat od dnia wydania świadectwa kwalifikacji zawodowej, ale nie dłużej niż orzeczenie lekarskie i psychologiczne (art. 15 ust. 4 ustawy o kierujących pojazdami). Po 60. roku życia badania są co 30 miesięcy (art. 39j ust. 4 i art. 39k ust. 3 ustawy o transporcie drogowym), więc kod bywa krótszy. Wiąże data wpisana przy kodzie 95 w prawie jazdy.`,
   },
   {
     pytanie: 'Czy szkolenie zrobione wcześniej przedłuża kod 95 od starej daty?',
@@ -25,15 +25,15 @@ const faq = [
   },
   {
     pytanie: 'Co zrobić, gdy kod 95 stracił ważność?',
-    odpowiedz: 'Wystarczy szkolenie okresowe (art. 39d ust. 5 ustawy o transporcie drogowym). Nie trzeba ponownej kwalifikacji ani testu. Do czasu nowego wpisu w prawie jazdy nie wolno wykonywać przewozu drogowego (art. 39a ust. 1 pkt 6 i art. 39f ust. 1). Samo prawo jazdy kategorii C albo D pozostaje ważne.',
+    odpowiedz: 'Wystarczy szkolenie okresowe, bez ponownej kwalifikacji i testu (art. 39d ust. 5 ustawy o transporcie drogowym), a potem wniosek o wpis z aktualnymi orzeczeniami (art. 15 ust. 2 ustawy o kierujących pojazdami). Do czasu nowego wpisu w prawie jazdy nie wolno wykonywać przewozu drogowego (art. 39a ust. 1 pkt 6 i art. 39f ust. 1). Wygaśnięcie kodu 95 nie odbiera samego uprawnienia do kierowania.',
   },
   {
     pytanie: 'Ile trwa szkolenie okresowe i ile kosztuje wymiana prawa jazdy?',
-    odpowiedz: `Kurs okresowy trwa ${GODZINY_SZKOLENIA} godzin: 5 modułów po 7 godzin, najwyżej 7 godzin dziennie (§ 13 ust. 1 i § 18 ust. 7 rozporządzenia z 2026 r.). Wymiana prawa jazdy z wpisem kosztuje ${OPLATA_PRAWO_JAZDY} zł (art. 15 ust. 5 ustawy o kierujących pojazdami). Ceny kursu przepisy nie ustalają.`,
+    odpowiedz: `Kurs okresowy trwa ${GODZINY_SZKOLENIA} godzin: 5 modułów po 7 godzin, najwyżej 7 godzin zajęć teoretycznych i ćwiczeń dziennie (§ 13 ust. 1 i § 18 ust. 7 rozporządzenia z 2026 r.). Wymiana prawa jazdy z wpisem kosztuje ${OPLATA_PRAWO_JAZDY} zł (rozporządzenie o opłatach, Dz.U. 2025 poz. 953, § 1 pkt 1). Ceny kursu przepisy nie ustalają.`,
   },
   {
     pytanie: 'Kto płaci za szkolenie okresowe kod 95?',
-    odpowiedz: 'Przepis mówi, że pracodawca może pokryć koszty szkolenia okresowego (art. 39l ust. 2 ustawy o transporcie drogowym), ale nie każe mu tego robić. Nie przesądza też, że płaci kierowca. Pracodawca musi skierować na szkolenie i stworzyć warunki, żeby je ukończyć (art. 39l ust. 1), a badania lekarskie i psychologiczne zawsze opłaca on.',
+    odpowiedz: 'Przepis mówi, że pracodawca może pokryć koszty szkolenia okresowego (art. 39l ust. 2 ustawy o transporcie drogowym), ale nie każe mu tego robić. Nie przesądza też, że płaci kierowca. Pracodawca musi skierować na szkolenie i stworzyć warunki, żeby je ukończyć (art. 39l ust. 1). Badania kierowcy zatrudnionego przy przewozie opłaca firma wykonująca przewóz (art. 39l ust. 1 pkt 2), a kto sam wykonuje przewóz, płaci sam (art. 39m).',
   },
   {
     pytanie: 'Kierowca jeździ kategorią C i D. Czy robi dwa szkolenia?',
@@ -98,15 +98,15 @@ const faq = [
       </div>
       <dl class="wynik-lista">
         <div><dt>Skąd ta data</dt><dd data-w="ograniczenie">5 lat od wydania świadectwa (art. 15 ust. 4 ukp)</dd></div>
-        <div><dt>Szkolenie skończ najpóźniej</dt><dd data-w="najpozniej">{dataPoPolsku(r.szkolenieNajpozniej)}</dd></div>
-        <div><dt>Z zapasem na wymianę prawa jazdy</dt><dd data-w="zapas">{dataPoPolsku(r.zZapasem)} (szacunek: {ZAPAS_DNI} dni)</dd></div>
+        <div><dt>Szkolenie skończ do (z zapasem na wymianę prawa jazdy)</dt><dd data-w="zapas">{dataPoPolsku(r.zZapasem)} (szacunek redakcji: {ZAPAS_DNI} dni)</dd></div>
+        <div><dt>Ostatni dzień, w którym świadectwo na pewno przyjdzie przed końcem ważności</dt><dd data-w="najpozniej">{dataPoPolsku(r.szkolenieNajpozniej)}<span class="wynik-opis">nasz rachunek z § 21 ust. 5, nie termin z ustawy; bez czasu na wymianę prawa jazdy</span></dd></div>
         <div><dt>Po szkoleniu w wybranym dniu</dt><dd data-w="plan">{r.plan ? `nowy kod do ${dataPoPolsku(r.plan.nowyKoniec)}; przepada ${odmiana(r.plan.strata, ['dzień', 'dni', 'dni'])} obecnego` : '—'}</dd></div>
       </dl>
-      <p class="wynik-uwaga" data-w="uwaga">Wiążąca jest data przy kodzie 95 w prawie jazdy. Do pracy potrzebne jest prawo jazdy z aktualnym wpisem (art. 39f ust. 1 utd), a ile trwa wymiana u starosty, przepisy nie podają.</p>
+      <p class="wynik-uwaga" data-w="uwaga">Wiąże data przy kodzie 95 w prawie jazdy. Do jazdy potrzebne jest prawo jazdy z aktualnym wpisem (art. 39f ust. 1 i 3 utd), a ile trwa wymiana u starosty, przepisy nie podają.</p>
       <p class="mt-5">
         <button type="button" class="przycisk przycisk-grafit" data-ics disabled>Dodaj do kalendarza (.ics)</button>
       </p>
-      <p class="meta mt-2">Przypomnienia: 180 dni przed końcem, termin z zapasem, ostatni dzień na szkolenie i koniec ważności (tylko te, które jeszcze nie minęły).</p>
+      <p class="meta mt-2">Przypomnienia: 180 dni przed końcem, szkolenie z zapasem na wymianę, ostatni dzień, w którym świadectwo zdąży, i koniec ważności (tylko te, które jeszcze nie minęły).</p>
       <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Powyżej przykład, zasady i tabela wyjątków poniżej.</p></noscript>
     </div>
   </form>
@@ -122,9 +122,9 @@ const faq = [
       </div>
       <fieldset class="mt-6" data-wyjatki>
         <legend class="etykieta-pola">Twoja jazda to (zaznacz, jeśli pasuje)</legend>
-        <p class="meta mt-1">Wyjątki z art. 39a ust. 3 utd; pełne warunki w tabeli niżej.</p>
+        <p class="meta mt-1">Wyjątki z art. 39a ust. 3 i art. 3 ust. 1 pkt 3 utd; pełne warunki w tabeli niżej.</p>
         <div class="opcje-pionowe mt-2">
-          {WYJATKI.map((w) => <label><input type="checkbox" name="wyjatek" value={w.id} /> {w.krotko}</label>)}
+          {WSZYSTKIE_WYJATKI.map((w) => <label><input type="checkbox" name="wyjatek" value={w.id} /> {w.krotko}</label>)}
         </div>
       </fieldset>
     </div>
@@ -145,29 +145,30 @@ const faq = [
       Kod 95 potwierdza kwalifikację wstępną i szkolenie okresowe kierowcy. Bez nich przedsiębiorca nie może zatrudnić
       kierowcy do przewozu drogowego (art. 39a ust. 1 pkt 5 i 6 ustawy o transporcie drogowym), a to samo dotyczy osoby,
       która sama wykonuje przewóz (art. 39m). Kierowców pojazdów kategorii AM, A1, A2, A, B1, B i B+E wymóg nie obejmuje
-      (art. 39a ust. 4). Dla kategorii C1, C1+E, C, C+E, D1, D1+E, D i D+E przepis wymienia zamkniętą listę wyjątków
-      (art. 39a ust. 3):
+      (art. 39a ust. 4). Dla kategorii C1, C1+E, C, C+E, D1, D1+E, D i D+E przepis wymienia wyjątki (art. 39a ust. 3).
+      Osobno przewozu pojazdami zespołów ratownictwa medycznego i w ramach usług transportu sanitarnego ustawa w ogóle
+      nie obejmuje (art. 3 ust. 1 pkt 3):
     </p>
     <div class="tabela">
       <table>
-        <caption class="sr-only">Wyjątki od obowiązku kodu 95 z art. 39a ust. 3 ustawy o transporcie drogowym</caption>
-        <thead><tr><th scope="col">Pkt</th><th scope="col">Kierowca pojazdu</th></tr></thead>
+        <caption class="sr-only">Wyjątki od obowiązku kodu 95: art. 39a ust. 3 i art. 3 ust. 1 pkt 3 ustawy o transporcie drogowym</caption>
+        <thead><tr><th scope="col">Przepis</th><th scope="col">Kierowca pojazdu</th></tr></thead>
         <tbody>
-          {WYJATKI.map((w) => (<tr><th scope="row">{w.pkt}</th><td>{w.tresc}</td></tr>))}
+          {WSZYSTKIE_WYJATKI.map((w) => (<tr><th scope="row">{w.pkt.startsWith('art.') ? w.pkt : `art. 39a ust. 3 pkt ${w.pkt}`}</th><td>{w.tresc}</td></tr>))}
         </tbody>
       </table>
     </div>
     <p>
-      Wyjątki z warunkiem „prowadzenie pojazdu nie jest głównym zajęciem”, „sporadyczny” czy „niehandlowy” są ocenne,
-      a pojęcia „niehandlowy przewóz” ustawa nie definiuje. Gdy nie wiesz, czy spełniasz wszystkie warunki, bezpieczniej
+      Wyjątki z warunkiem „prowadzenie pojazdu nie jest głównym zajęciem”, „sporadyczny”, „handlowy” czy „niehandlowy”
+      są ocenne, a pojęć handlowego i niehandlowego przewozu ustawa nie definiuje. Gdy nie wiesz, czy spełniasz wszystkie warunki, bezpieczniej
       mieć kod 95.
     </p>
 
     <h2 id="jak-przedluzyc">Jak przedłużyć kod 95</h2>
     <ol>
-      <li><strong>Szkolenie okresowe:</strong> kurs {GODZINY_SZKOLENIA} godzin, 5 wybranych modułów po 7 godzin, najwyżej 7 godzin zajęć dziennie (§ 13 ust. 1 i § 18 ust. 7 rozporządzenia z 7 października 2026 r.), albo cykl zajęć rozłożony na 5 lat (§ 15). Do 12 godzin może być online (§ 18 ust. 6 pkt 2). Z ważnym zaświadczeniem ADR kurs jest krótszy o 14 godzin, a ze szkoleniem z transportu zwierząt o 7 (§ 17 ust. 4 pkt 5).</li>
+      <li><strong>Szkolenie okresowe:</strong> kurs {GODZINY_SZKOLENIA} godzin, 5 wybranych modułów po 7 godzin, najwyżej 7 godzin zajęć teoretycznych i ćwiczeń dziennie (§ 13 ust. 1 i § 18 ust. 7 rozporządzenia z 7 października 2026 r.), albo cykl zajęć rozłożony na 5 lat (§ 15). Do 12 godzin może być online (§ 18 ust. 6 pkt 2). W bloku C (ciężarówki) kurs można skrócić o 14 godzin przy zaświadczeniu ADR ważnym w dniu rozpoczęcia szkolenia albo o 7 godzin przy szkoleniu z transportu zwierząt (§ 17 ust. 4 pkt 5 i ust. 5).</li>
       <li><strong>Świadectwo:</strong> ośrodek wydaje je najpóźniej następnego dnia roboczego po ostatnim module (§ 21 ust. 5).</li>
-      <li><strong>Wniosek do starosty</strong> o wpis, na podstawie świadectwa i orzeczeń (art. 15 ust. 2 ustawy o kierujących pojazdami). Wpis jest robiony w formie wymiany prawa jazdy (art. 15 ust. 4), za {OPLATA_PRAWO_JAZDY} zł (art. 15 ust. 5 i rozporządzenie o opłatach z 2025 r., § 1 pkt 1).</li>
+      <li><strong>Wniosek do starosty</strong> o wpis, na podstawie świadectwa i orzeczeń (art. 15 ust. 2 ustawy o kierujących pojazdami). Wpis jest robiony w formie wymiany prawa jazdy (art. 15 ust. 4), za {OPLATA_PRAWO_JAZDY} zł (art. 15 ust. 5 odsyła do opłaty za prawo jazdy; kwota: rozporządzenie o opłatach, Dz.U. 2025 poz. 953, § 1 pkt 1).</li>
     </ol>
     <p>
       Kierowca, który jeździ pojazdami kategorii C i D, robi jedno szkolenie okresowe w zakresie jednego bloku
@@ -179,32 +180,34 @@ const faq = [
     <h2 id="po-terminie">Kod 95 po terminie</h2>
     <p>
       Gdy kod wygasł, nie wolno wykonywać przewozu drogowego (art. 39a ust. 1 pkt 6 i art. 39f ust. 1). Żeby wrócić,
-      wystarczy szkolenie okresowe (art. 39d ust. 5), bez ponownej kwalifikacji i testu. Samo prawo jazdy pozostaje
-      ważne. Za przewóz bez okazania dokumentu z wpisem grozi kierowcy grzywna 150 zł (załącznik nr 1 do ustawy,
+      wystarczy szkolenie okresowe, bez ponownej kwalifikacji i testu (art. 39d ust. 5), a potem wniosek o wpis
+      z aktualnymi orzeczeniami (art. 15 ust. 2 ustawy o kierujących pojazdami). Wygaśnięcie kodu 95 nie odbiera
+      samego uprawnienia do kierowania. Za przewóz bez okazania dokumentu z wpisem grozi kierowcy grzywna 150 zł (załącznik nr 1 do ustawy,
       lp. 3), a podmiotowi, który wykonuje przewóz bez obowiązkowego szkolenia okresowego kierowcy, kara 1500 zł
       (załącznik nr 3, lp. 1.15).
     </p>
 
     <h2 id="kto-placi">Kto płaci</h2>
     <p>
-      Badania lekarskie i psychologiczne zawsze opłaca pracodawca (art. 39l ust. 1 pkt 2 ustawy o transporcie
-      drogowym). Za szkolenie okresowe pracodawca „może” zapłacić (art. 39l ust. 2): przepis tego nie nakazuje,
+      Badania kierowcy zatrudnionego przy przewozie opłaca firma wykonująca przewóz (art. 39l ust. 1 pkt 2 ustawy
+      o transporcie drogowym), a kto sam wykonuje przewóz, płaci sam (art. 39m). Za szkolenie okresowe pracodawca „może” zapłacić (art. 39l ust. 2): przepis tego nie nakazuje,
       ale też nie przesądza, że płaci kierowca. Pracodawca musi skierować kierowcę na szkolenie i stworzyć warunki
       organizacyjne, żeby je ukończył (art. 39l ust. 1 pkt 1 lit. a i pkt 6). Gdy szkolenie jest z inicjatywy
-      pracodawcy albo za jego zgodą, stosuje się przepisy Kodeksu pracy o podnoszeniu kwalifikacji, w tym umowę
-      na piśmie (art. 103<sup>1</sup> i 103<sup>4</sup>). Czy przy kosztach pracodawcy możesz musieć je oddać po odejściu,
+      pracodawcy albo za jego zgodą, stosuje się przepisy Kodeksu pracy o podnoszeniu kwalifikacji: przysługuje
+      zwolnienie z pracy z zachowaniem wynagrodzenia na czas zajęć (art. 103<sup>1</sup> § 2 i 3). Umowę na piśmie
+      pracodawca musi zawrzeć, gdy chce Cię zobowiązać do pozostania w pracy (art. 103<sup>4</sup>). Czy przy kosztach pracodawcy możesz musieć je oddać po odejściu,
       policzy <a href="/narzedzia/zwrot-kosztow-szkolenia">kalkulator lojalki</a>. Terminy badań kierowcy policzy
       <a href="/narzedzia/badania-kierowcy">kalkulator badań kierowcy</a>.
     </p>
 
     <h2 id="jak-liczymy">Jak liczymy</h2>
     <ul>
-      <li><strong>Ważność:</strong> {LATA_WPISU} lat od dnia wydania świadectwa według art. 112 Kodeksu cywilnego (ten sam dzień i miesiąc, a po 29 lutego 28 lutego), przycięte do wcześniejszej z dat ważności orzeczeń (art. 15 ust. 4 ustawy o kierujących pojazdami). Data wpisana przy kodzie 95 w prawie jazdy ma pierwszeństwo: w trybie „z prawa jazdy” bierzemy ją wprost.</li>
-      <li><strong>Od którego świadectwa:</strong> art. 39d ust. 2 ustawy o transporcie drogowym mówi o szkoleniu „co pięć lat” od kwalifikacji, a art. 15 ust. 4 liczy 5 lat od każdego świadectwa. Liczymy od ostatniego świadectwa, bo to ono wyznacza datę w prawie jazdy; gdyby obie daty się rozjechały, obowiązuje wcześniejsza.</li>
-      <li><strong>Najpóźniej szkolenie:</strong> świadectwo może przyjść dopiero następnego dnia roboczego, więc szkolenie kończymy najpóźniej w przeddzień ostatniego dnia roboczego ważności. Dzień roboczy to poniedziałek–piątek bez świąt; sobotę liczymy jako wolną, co daje wcześniejszy termin.</li>
-      <li><strong>Zapas na wymianę:</strong> przepisy nie podają, ile trwa wymiana prawa jazdy. {ZAPAS_DNI} dni to nasz szacunek, nie przepis. Samo świadectwo nie zastępuje wpisu w prawie jazdy (art. 39f ust. 1).</li>
+      <li><strong>Ważność:</strong> {LATA_WPISU} lat od dnia wydania świadectwa, liczone jak w art. 112 Kodeksu cywilnego (stosowanym odpowiednio): ten sam dzień i miesiąc, a po 29 lutego 28 lutego. Wynik przycinamy do wcześniejszej z dat ważności orzeczeń (art. 15 ust. 4 ustawy o kierujących pojazdami). Wiąże data wpisana przy kodzie 95 w prawie jazdy, bo CEPiK może wydrukować inną: w trybie „z prawa jazdy” bierzemy ją wprost.</li>
+      <li><strong>Od którego świadectwa:</strong> art. 39d ust. 2 ustawy o transporcie drogowym można czytać jako stały cykl od kwalifikacji wstępnej. Przepisy nie rozstrzygają, jak pogodzić go z art. 15 ust. 4 ustawy o kierujących pojazdami, który liczy 5 lat od każdego świadectwa. Liczymy z ustawy o kierujących pojazdami, a wiąże data w prawie jazdy.</li>
+      <li><strong>Kiedy skończyć szkolenie:</strong> do jazdy potrzebne jest prawo jazdy z aktualnym wpisem (art. 39f ust. 1 i 3 ustawy o transporcie drogowym); samo świadectwo go nie zastępuje. Przepisy nie podają, ile trwa wymiana prawa jazdy, więc główny termin to data z zapasem {ZAPAS_DNI} dni: to szacunek redakcji, nie przepis.</li>
+      <li><strong>Ostatni dzień, w którym świadectwo zdąży:</strong> ośrodek wydaje świadectwo najpóźniej następnego dnia roboczego po ostatnim module (§ 21 ust. 5), więc liczymy przeddzień ostatniego dnia roboczego ważności. To nasz rachunek, nie termin z ustawy: kto skończy szkolenie wtedy, zostanie bez ważnego wpisu w prawie jazdy do czasu wymiany. Dzień roboczy to poniedziałek–piątek bez świąt; sobotę liczymy jako wolną, co daje wcześniejszy termin.</li>
       <li><strong>Szkolenie wcześniej:</strong> nowy kod liczymy {LATA_WPISU} lat od dnia ukończenia szkolenia (jeśli świadectwo przyjdzie dzień później, kod skończy się dzień później). Dni od tego dnia do końca obecnego kodu przepadają: żaden przepis ich nie dolicza.</li>
-      <li><strong>Czy potrzebujesz:</strong> wyjątek z pkt 5 stosujemy tylko do kategorii D i D1, jak w brzmieniu przepisu. Przy wyjątkach ocennych piszemy „nie potrzebujesz, jeśli spełniasz wszystkie warunki”.</li>
+      <li><strong>Czy potrzebujesz:</strong> wyjątek z art. 39a ust. 3 pkt 5 stosujemy tylko do kategorii D i D1, jak w brzmieniu przepisu. Przy wyjątkach ocennych (pkt 5–11) piszemy „nie potrzebujesz, jeśli spełniasz wszystkie warunki”, a przy wątpliwości bezpieczniej mieć kod 95.</li>
     </ul>
   </Fragment>
 </StronaNarzedzia>
@@ -271,8 +274,11 @@ const faq = [
       s.dataset.status = KLASA[r.status];
       pisz('status', `${STATUS[r.status]}: ${ileDni(r.dniDoKonca)}`);
       pisz('ograniczenie', SKAD[r.ograniczenie]);
-      pisz('najpozniej', r.status === 'wygaslo' ? 'termin minął' : dataPoPolsku(r.szkolenieNajpozniej));
-      pisz('zapas', r.status === 'wygaslo' ? 'termin minął' : `${dataPoPolsku(r.zZapasem)} (szacunek: ${ZAPAS_DNI} dni)`);
+      const opisNajpozniej = document.createElement('span');
+      opisNajpozniej.className = 'wynik-opis';
+      opisNajpozniej.textContent = typografia('nasz rachunek z § 21 ust. 5, nie termin z ustawy; bez czasu na wymianę prawa jazdy');
+      w('najpozniej').replaceChildren(typografia(r.status === 'wygaslo' ? 'termin minął' : dataPoPolsku(r.szkolenieNajpozniej)), ...(r.status === 'wygaslo' ? [] : [opisNajpozniej]));
+      pisz('zapas', r.status === 'wygaslo' ? 'termin minął' : `${dataPoPolsku(r.zZapasem)} (szacunek redakcji: ${ZAPAS_DNI} dni)`);
       pisz(
         'plan',
         !r.plan
@@ -283,7 +289,7 @@ const faq = [
       );
       const uwagi: string[] = [];
       if (r.status === 'wygaslo') uwagi.push('Bez aktualnego kodu 95 nie wolno wykonywać przewozu drogowego (art. 39a ust. 1 pkt 6 i art. 39f ust. 1 utd). Wystarczy szkolenie okresowe, bez ponownej kwalifikacji i testu (art. 39d ust. 5 utd).');
-      else uwagi.push('Wiążąca jest data przy kodzie 95 w prawie jazdy. Do pracy potrzebne jest prawo jazdy z aktualnym wpisem (art. 39f ust. 1 utd), a ile trwa wymiana u starosty, przepisy nie podają.');
+      else uwagi.push('Wiąże data przy kodzie 95 w prawie jazdy. Do jazdy potrzebne jest prawo jazdy z aktualnym wpisem (art. 39f ust. 1 i 3 utd), a ile trwa wymiana u starosty, przepisy nie podają.');
       if (r.orzeczenieWczesniej) uwagi.push('Orzeczenie kończy się przed datą z prawa jazdy, choć wpis nie powinien trwać dłużej niż orzeczenia (art. 15 ust. 4 ukp). Sprawdź daty.');
       w('uwaga').hidden = false;
       pisz('uwaga', uwagi.join(' '));
@@ -318,7 +324,7 @@ const faq = [
       const r = czyPotrzebny(kategoria, zaznaczone);
       const bez = r.potrzeba === 'nie' && r.wyjatki.length === 0;
       fp.querySelector<HTMLElement>('[data-wyjatki]')!.hidden = bez;
-      const pkt = r.wyjatki.map((x) => (x.pkt === 'art. 3' ? 'art. 3 ust. 1 pkt 3' : `art. 39a ust. 3 pkt ${x.pkt}`)).join(', ');
+      const pkt = r.wyjatki.map((x) => (x.pkt.startsWith('art.') ? x.pkt : `art. 39a ust. 3 pkt ${x.pkt}`)).join(', ');
       if (bez) {
         pisz('werdykt', 'Nie potrzebujesz');
         pisz('opis', `Kategoria ${kategoria}: wymogu kwalifikacji i szkolenia okresowego nie stosuje się (art. 39a ust. 4 utd).`);

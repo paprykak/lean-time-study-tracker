@@ -557,7 +557,7 @@ export const NARZEDZIA: Narzedzie[] = [
     nazwa: 'Ważność uprawnień SEP (G1, G2, G3)',
     krotko: 'Do kiedy ważne świadectwo kwalifikacyjne E albo D, czy stare jeszcze działa, ile kosztuje egzamin.',
     kategoria: 'uprawnienia',
-    przepisy: ['prawoEnergetyczne', 'kwalifikacjeSep', 'zmianaPe2021', 'placa2026', 'placa2027', 'kodeksCywilny'],
+    przepisy: ['prawoEnergetyczne', 'kwalifikacjeSep', 'zmianaPe2021', 'placa2026', 'placa2027', 'kodeksCywilny', 'kodeksPracy'],
     sprawdzono: '2026-11-12',
   },
   {

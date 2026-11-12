@@ -13,22 +13,27 @@
 // - rozporządzenie w sprawie szkolenia i egzaminowania kierowców wykonujących przewóz drogowy (Dz.U. 2026 poz. 1355,
 //   od 3 listopada 2026 r.): § 13 ust. 1 (35 godzin), § 21 ust. 5 (świadectwo najpóźniej następnego dnia roboczego
 //   po ukończeniu ostatniego modułu);
-// - art. 112 Kodeksu cywilnego: 5 lat kończy się w dniu, który datą odpowiada dniowi wydania świadectwa, a gdy go nie ma
-//   (29 lutego), w ostatnim dniu miesiąca.
+// - art. 112 Kodeksu cywilnego (stosowany odpowiednio): 5 lat kończy się w dniu, który datą odpowiada dniowi wydania
+//   świadectwa, a gdy go nie ma (29 lutego), w ostatnim dniu miesiąca. Wiąże data w prawie jazdy (CEPiK może wydrukować
+//   inną niż ten rachunek).
 //
 // Interpretacje (wariant bezpieczny dla pracownika: najwcześniejszy termin):
 // 1. Kod jest ważny do końca dnia „świadectwo + 5 lat” (art. 112 KC), przycięty do wcześniejszej z dat ważności orzeczeń.
 // 2. Data przy kodzie 95 w prawie jazdy (rubryka 12) ma pierwszeństwo przed obliczeniem; w trybie „z prawa jazdy” bierzemy
-//    ją wprost. Orzeczenia ograniczają wtedy tylko nowy wpis po szkoleniu.
-// 3. Najpóźniejszy dzień ukończenia szkolenia: świadectwo może przyjść dopiero następnego dnia roboczego (§ 21 ust. 5),
-//    więc szkolenie kończy się najpóźniej w przeddzień ostatniego dnia roboczego ważności kodu. Dzień roboczy: poniedziałek–
-//    piątek bez świąt (sobota jako wolna daje wcześniejszy termin). Czasu wymiany prawa jazdy przepisy nie podają:
-//    zapas to tylko uwaga, nie przepis.
+//    ją wprost. Orzeczenia ograniczają wtedy tylko nowy wpis po szkoleniu. Art. 39d ust. 2 utd można czytać jako stały
+//    cykl od kwalifikacji wstępnej; przepisy nie rozstrzygają, jak pogodzić go z art. 15 ust. 4 ukp. Liczymy z ukp.
+// 3. Do jazdy potrzebne jest prawo jazdy z aktualnym wpisem (art. 39f ust. 1 i 3 utd), więc głównym terminem jest data
+//    z zapasem na wymianę prawa jazdy (szacunek redakcji, ZAPAS_DNI). Osobno: ostatni dzień ukończenia szkolenia, po którym
+//    świadectwo na pewno przyjdzie przed końcem ważności (§ 21 ust. 5: najpóźniej następnego dnia roboczego), czyli
+//    przeddzień ostatniego dnia roboczego ważności kodu. To nasz rachunek, nie termin z ustawy; bez czasu na wymianę. Dzień roboczy: poniedziałek–
+//    piątek bez świąt (sobota jako wolna daje wcześniejszy termin). Czasu wymiany prawa jazdy przepisy nie podają.
 // 4. Szkolenie wcześniej: nowe 5 lat liczy się od nowego świadectwa; reszta starego wpisu przepada (żaden przepis jej
 //    nie dolicza). Przyjmujemy świadectwo z dniem ukończenia szkolenia (najwcześniejsza możliwa data, więc i najwcześniejszy
 //    koniec nowego wpisu).
 // 5. Wyjątki z art. 39a ust. 3: pkt 5 tylko dla kategorii D i D1 (brzmienie przepisu). Wyjątki z warunkami ocennymi
-//    (pkt 5, 9, 10, 11 i „niehandlowy” w pkt 8) dają wynik „nie potrzebujesz, jeśli spełniasz wszystkie warunki”.
+//    (pkt 5, 9, 10, 11 i „handlowy”/„niehandlowy” w pkt 6, 7 i 8) dają wynik „nie potrzebujesz, jeśli spełniasz wszystkie
+//    warunki”. Osobno art. 3 ust. 1 pkt 3 utd: ustawy nie stosuje się do zespołów ratownictwa medycznego i transportu
+//    sanitarnego (to nie jest punkt art. 39a ust. 3).
 import { czyRoboczy } from './dni-robocze';
 import { swieta } from './czas-pracy';
 import { dataPoPolsku, dniMiedzy, dodajDni, dodajLata, poprawnaData } from './terminy';
@@ -123,11 +128,11 @@ export function kod95({ tryb, data, lekarskieDo, psychologiczneDo, szkolenie, dz
     plan = { nowyKoniec, nowyOgraniczony: nowyKoniec !== piec, strata: Math.max(0, roznica), przerwa: Math.max(0, -roznica) };
   }
 
-  const opis = `Kod 95 ważny do ${dataPoPolsku(waznyDo)} Szkolenie okresowe (${GODZINY_SZKOLENIA} h) ukończ najpóźniej ${dataPoPolsku(najpozniej)} i zostaw czas na wymianę prawa jazdy u starosty. Policzone na rytmhali.pl/narzedzia/kod-95.`;
+  const opis = `Kod 95 ważny do ${dataPoPolsku(waznyDo)} Szkolenie okresowe (${GODZINY_SZKOLENIA} h) z zapasem na wymianę prawa jazdy: do ${dataPoPolsku(zZapasem)} (szacunek redakcji: ${ZAPAS_DNI} dni). Ostatni dzień, w którym świadectwo na pewno przyjdzie przed końcem ważności: ${dataPoPolsku(najpozniej)} (rachunek z § 21 ust. 5 rozporządzenia, nie termin z ustawy). Wiąże data w prawie jazdy. Policzone na rytmhali.pl/narzedzia/kod-95.`;
   const kandydaci: Wydarzenie[] = [
     { data: dodajDni(waznyDo, -180), tytul: 'Zapisz się na szkolenie okresowe (kod 95)', opis },
-    { data: zZapasem, tytul: 'Kod 95: ukończ szkolenie okresowe (zapas na wymianę prawa jazdy)', opis },
-    { data: najpozniej, tytul: 'Kod 95: ostatni dzień na ukończenie szkolenia okresowego', opis },
+    { data: zZapasem, tytul: 'Kod 95: ukończ szkolenie okresowe (z zapasem na wymianę prawa jazdy)', opis },
+    { data: najpozniej, tytul: 'Kod 95: świadectwo zdąży przed końcem ważności (bez wymiany prawa jazdy)', opis },
     { data: waznyDo, tytul: 'Koniec ważności kodu 95', opis },
   ];
 
@@ -153,7 +158,7 @@ export type Kategoria = (typeof KATEGORIE)[number];
 
 export interface Wyjatek {
   id: string;
-  /** Punkt art. 39a ust. 3 albo „art. 3”. */
+  /** Punkt art. 39a ust. 3 albo „art. 3 ust. 1 pkt 3”. */
   pkt: string;
   /** Krótka etykieta pola wyboru. */
   krotko: string;
@@ -169,16 +174,21 @@ export const WYJATKI: Wyjatek[] = [
   { id: 'w1', pkt: '1', krotko: 'Pojazd do 45 km/h z konstrukcji', tresc: 'pojazd, którego konstrukcja ogranicza prędkość jazdy do 45 km/h' },
   { id: 'w2', pkt: '2', krotko: 'Siły zbrojne', tresc: 'pojazd sił zbrojnych albo w ich dyspozycji, przy przewozie w związku z zadaniami sił zbrojnych' },
   { id: 'w3', pkt: '3', krotko: 'Straż, policja, obrona cywilna', tresc: 'pojazd formacji obrony cywilnej, jednostek ochrony przeciwpożarowej albo odpowiedzialnych za bezpieczeństwo lub porządek publiczny, przy ich zadaniach' },
-  { id: 'w4', pkt: '4', krotko: 'Testy, naprawa, pojazd nowy', tresc: 'pojazd w testach drogowych (rozwój techniczny, naprawa, konserwacja) albo nowy lub odremontowany, jeszcze niewprowadzony do użytku' },
+  { id: 'w4', pkt: '4', krotko: 'Testy, naprawa, pojazd nowy', tresc: 'pojazd w testach drogowych do celów rozwoju technicznego prowadzonych przez producentów, instytuty badawcze, uczelnie lub Sieć Badawczą Łukasiewicz, w testach do celów naprawy lub konserwacji albo nowy lub odremontowany, jeszcze niewprowadzony do użytku' },
   { id: 'w5', pkt: '5', krotko: 'Autobus bez pasażerów do serwisu', tresc: 'pojazd kategorii D lub D1 prowadzony bez pasażerów przez personel techniczny do lub z pobliskiego centrum obsługi, gdy prowadzenie nie jest głównym zajęciem', ocenny: true, tylko: ['D', 'D1'] },
-  { id: 'w6', pkt: '6', krotko: 'Ratunek, pomoc humanitarna', tresc: 'pojazd w sytuacjach zagrożenia, do akcji ratunkowych albo do niehandlowego przewozu pomocy humanitarnej' },
-  { id: 'w7', pkt: '7', krotko: 'Nauka jazdy, egzamin', tresc: 'pojazd do nauki jazdy, szkolenia, egzaminu państwowego albo praktycznego szkolenia w miejscu pracy (z osobą z kwalifikacją lub instruktorem), gdy nie jest wtedy w przewozie handlowym' },
+  { id: 'w6', pkt: '6', krotko: 'Ratunek, pomoc humanitarna', tresc: 'pojazd w sytuacjach zagrożenia, do akcji ratunkowych albo do niehandlowego przewozu pomocy humanitarnej', ocenny: true },
+  { id: 'w7', pkt: '7', krotko: 'Nauka jazdy, egzamin', tresc: 'pojazd do nauki jazdy, szkolenia, egzaminu państwowego albo praktycznego szkolenia w miejscu pracy (z osobą z kwalifikacją lub instruktorem), gdy nie jest wtedy w przewozie handlowym', ocenny: true },
   { id: 'w8', pkt: '8', krotko: 'Przewóz niehandlowy', tresc: 'pojazd do niehandlowego przewozu drogowego osób lub rzeczy', ocenny: true },
   { id: 'w9', pkt: '9', krotko: 'Wożę sprzęt do swojej pracy', tresc: 'przewóz materiałów, urządzeń lub sprzętu potrzebnych kierowcy do jego pracy, gdy prowadzenie nie jest głównym zajęciem', ocenny: true },
   { id: 'w10', pkt: '10', krotko: 'Własna firma na wsi, sporadycznie', tresc: 'obszary wiejskie, własna działalność kierowcy, który nie oferuje usług przewozowych; przewóz sporadyczny i bez wpływu na bezpieczeństwo ruchu', ocenny: true },
-  { id: 'w11', pkt: '11', krotko: 'Rolnictwo, las, rybactwo do 100 km', tresc: 'pojazd przedsiębiorstwa rolniczego, ogrodniczego, leśnego, gospodarstwa rolnego lub rybackiego do przewozu rzeczy w ramach własnej działalności, chyba że jazda to część głównego zajęcia albo ponad 100 km od siedziby', ocenny: true },
-  { id: 'ratownictwo', pkt: 'art. 3', krotko: 'Ratownictwo medyczne, transport sanitarny', tresc: 'zespoły ratownictwa medycznego i usługi transportu sanitarnego: ustawy o transporcie drogowym nie stosuje się (art. 3 ust. 1 pkt 3)' },
+  { id: 'w11', pkt: '11', krotko: 'Rolnictwo, las, rybactwo do 100 km', tresc: 'pojazd wykorzystywany lub wynajęty bez kierowcy przez przedsiębiorstwo rolnicze, ogrodnicze, leśne, gospodarstwo rolne lub rybackie do przewozu rzeczy w ramach własnej działalności, chyba że jazda to część głównego zajęcia albo ponad 100 km od siedziby', ocenny: true },
 ];
+
+/** Osobne wyłączenie: art. 3 ust. 1 pkt 3 utd (ustawy nie stosuje się), nie punkt art. 39a ust. 3. */
+export const RATOWNICTWO: Wyjatek = { id: 'ratownictwo', pkt: 'art. 3 ust. 1 pkt 3', krotko: 'Ratownictwo medyczne, transport sanitarny', tresc: 'przewóz pojazdami zespołów ratownictwa medycznego oraz w ramach usług transportu sanitarnego: ustawy o transporcie drogowym nie stosuje się' };
+
+/** Wszystkie pola wyboru: wyjątki z art. 39a ust. 3 i wyłączenie z art. 3 ust. 1 pkt 3. */
+export const WSZYSTKIE_WYJATKI: Wyjatek[] = [...WYJATKI, RATOWNICTWO];
 
 export type Potrzeba = 'nie' | 'raczej-nie' | 'tak';
 
@@ -193,7 +203,7 @@ export interface WynikPotrzeby {
 export function czyPotrzebny(kategoria: Kategoria, zaznaczone: string[]): WynikPotrzeby {
   if (!KATEGORIE.includes(kategoria)) throw new RangeError(`Nieznana kategoria: ${kategoria}`);
   const wybrane = zaznaczone.map((id) => {
-    const w = WYJATKI.find((x) => x.id === id);
+    const w = WSZYSTKIE_WYJATKI.find((x) => x.id === id);
     if (!w) throw new RangeError(`Nieznany wyjątek: ${id}`);
     return w;
   });

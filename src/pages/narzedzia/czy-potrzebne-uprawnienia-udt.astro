@@ -5,7 +5,7 @@
 // startowy i tabela typowych maszyn.
 import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
 import { PRZECIETNE_WYNAGRODZENIE } from '../../data/prawo';
-import { czyUdt, RODZAJE, type DaneMaszyny } from '../../lib/narzedzia/czy-udt';
+import { czyUdt, polaRodzaju, RODZAJE, type DaneMaszyny } from '../../lib/narzedzia/czy-udt';
 import { oplataEgzaminu, PROCENT_OPLATY } from '../../lib/narzedzia/uprawnienia-udt';
 import { zl } from '../../lib/narzedzia/format';
 import { odmiana } from '../../lib/redakcja';
@@ -15,8 +15,8 @@ const lat = (n: number) => odmiana(n, ['rok', 'lata', 'lat']);
 
 const START: DaneMaszyny = { rodzaj: 'paleciak', jazdaSilnikowa: true, podnoszenieMechaniczne: true };
 const w = czyUdt(START);
-const widoczne = new Set(RODZAJE.find((r) => r.id === START.rodzaj)!.pola);
-const ukryj = (pole: string) => !widoczne.has(pole as never);
+const widoczne = new Set<string>(polaRodzaju(START));
+const ukryj = (pole: string) => !widoczne.has(pole);
 
 const PRZYKLADY: [string, DaneMaszyny][] = [
   ['Paleciak elektryczny (jazda i unoszenie elektryczne)', START],
@@ -43,7 +43,7 @@ const tabela = PRZYKLADY.map(([nazwa, d]) => ({ nazwa, w: czyUdt(d) }));
 const faq = [
   {
     pytanie: 'Czy na paleciak elektryczny trzeba mieć uprawnienia UDT?',
-    odpowiedz: 'Tak, gdy unosi ładunek elektrycznie: to wózek jezdniowy podnośnikowy z mechanicznym napędem podnoszenia, a do jego obsługi potrzebne jest zaświadczenie na 10 lat (zał. nr 3 tab. nr 1 lp. 8 do rozporządzenia z 2019 r.). Gdy jeździ na silniku, ale widły podnosi się ręczną pompą, zaświadczenie UDT nie jest potrzebne. Wtedy wystarczy szkolenie według programu UDT albo prawo jazdy i ukończone 18 lat (§ 4 ust. 2 rozporządzenia bhp o wózkach).',
+    odpowiedz: 'Tak, gdy unosi ładunek elektrycznie: to wózek jezdniowy podnośnikowy z mechanicznym napędem podnoszenia, a do jego obsługi potrzebne jest zaświadczenie na 10 lat (zał. nr 3 tab. nr 1 lp. 8 do rozporządzenia z 2019 r.). Gdy jeździ na silniku, ale widły podnosi się ręczną pompą, zaświadczenie UDT nie jest potrzebne. Wtedy wystarczy ukończone 18 lat i szkolenie według programu opracowanego lub zatwierdzonego przez UDT, prawo jazdy albo zaświadczenie UDT (§ 4 ust. 2 rozporządzenia bhp o wózkach). Kto był dopuszczony do obsługi takiego wózka według dawnych przepisów, może go obsługiwać dalej (§ 2 rozporządzenia z 2019 r., Dz.U. 2019 poz. 1948).',
   },
   {
     pytanie: 'Czy niska wysokość podnoszenia zwalnia z uprawnień?',
@@ -51,7 +51,7 @@ const faq = [
   },
   {
     pytanie: 'Czy sterowanie z poziomu roboczego zwalnia z uprawnień?',
-    odpowiedz: 'Nie. Podział według sterowania był w przepisach z 2001 r., uchylonych 1 czerwca 2019 r. Dziś sterowanie kasetą, pilotem albo z kabiny nie zmienia ani wymogu, ani kategorii. Jedyny wyjątek to dźwigi towarowo-osobowe: tabela obsługi obejmuje tylko te ze sterowaniem wewnętrznym.',
+    odpowiedz: 'Nie. Przepisy o zaświadczeniach (załącznik nr 3 do rozporządzenia z 2019 r.) nie dzielą maszyn według sposobu sterowania. Sterowanie kasetą, pilotem albo z kabiny nie zmienia ani wymogu, ani kategorii. Jedyny wyjątek to dźwigi towarowo-osobowe: tabela obsługi obejmuje tylko te ze sterowaniem wewnętrznym.',
   },
   {
     pytanie: 'Czy na podnośnik nożycowy trzeba mieć uprawnienia UDT?',
@@ -63,7 +63,7 @@ const faq = [
   },
   {
     pytanie: 'Czy suwnica sterowana kasetą wymaga uprawnień?',
-    odpowiedz: 'Tak, chyba że wszystkie mechanizmy mają napęd ręczny, napęd jest elektryczny jednofazowy, a udźwig do 1000 kg, albo udźwig nie przekracza 250 kg (uwagi pod tab. nr 1 zał. nr 3 do rozporządzenia z 2019 r.). Suwnica ogólnego przeznaczenia: 10 lat, specjalnego: 5 lat.',
+    odpowiedz: 'Tak, chyba że wszystkie mechanizmy mają napęd ręczny, napęd jest elektryczny jednofazowy, a udźwig do 1000 kg, albo udźwig nie przekracza 250 kg i suwnica nie przemieszcza osób (uwagi pod tab. nr 1 zał. nr 3 do rozporządzenia z 2019 r.). Suwnica ogólnego przeznaczenia: 10 lat, specjalnego: 5 lat.',
   },
 ];
 ---
@@ -72,7 +72,7 @@ const faq = [
   tytul="Czy potrzebne uprawnienia UDT na tę maszynę"
   opis="Czy na paleciak elektryczny, wózek widłowy, suwnicę, wciągnik albo podnośnik trzeba mieć zaświadczenie UDT, jaka kategoria i ile lat ważne. Z przepisami."
   h1="Czy na tę maszynę potrzebne są uprawnienia UDT"
-  lead="O tym, czy potrzebne jest zaświadczenie UDT, decyduje rodzaj maszyny, napęd i udźwig. Wysokość podnoszenia i sposób sterowania nie mają znaczenia. Wybierz maszynę, a pokażemy wynik z przepisem, kategorię i okres ważności."
+  lead="O tym, czy potrzebne jest zaświadczenie UDT, decyduje rodzaj maszyny, napęd i udźwig. Wysokość podnoszenia nie ma znaczenia, a sposób sterowania tylko przy dźwigach towarowo-osobowych. Wybierz maszynę, a pokażemy wynik z przepisem, kategorię i okres ważności."
   faq={faq}
 >
   <form class="kalkulator" data-czy-udt novalidate aria-labelledby="kalkulator-tytul">
@@ -146,6 +146,15 @@ const faq = [
         </select>
       </div>
 
+      <div class="mt-5" data-pole="napedDzwigu" hidden={ukryj('napedDzwigu')}>
+        <label for="cu-naped-dzwigu" class="etykieta-pola">Napęd dźwigu</label>
+        <select id="cu-naped-dzwigu" name="napedDzwigu" class="pole mt-1" aria-describedby="cu-naped-dzwigu-opis">
+          <option value="elektryczny" selected>Elektryczny (liny)</option>
+          <option value="hydrauliczny">Hydrauliczny, pneumatyczny</option>
+        </select>
+        <p id="cu-naped-dzwigu-opis" class="meta mt-1">Zmienia tylko rodzaj zaświadczenia konserwatora.</p>
+      </div>
+
       <div class="mt-5" data-pole="naped" hidden={ukryj('naped')}>
         <label for="cu-naped" class="etykieta-pola">Napęd</label>
         <select id="cu-naped" name="naped" class="pole mt-1" aria-describedby="cu-naped-opis">
@@ -190,7 +199,7 @@ const faq = [
         <div data-wiersz="warunki" hidden={!w.potrzebne}><dt>Kto może zdawać</dt><dd>osoba, która ukończyła 18 lat i zna polski albo przyjdzie z tłumaczem przysięgłym (art. 23 ust. 1c ustawy o dozorze technicznym)</dd></div>
         <div data-wiersz="oplata" hidden={!w.potrzebne}><dt>Egzamin</dt><dd>{oplata} (art. 23 ust. 4), jedno zaświadczenie na jeden rodzaj urządzenia (§ 4 ust. 3 rozporządzenia z 2019 r.)</dd></div>
       </dl>
-      <ul class="wynik-uwaga" data-w="uwagi" hidden={!w.uwagi.length}>{w.uwagi.map((u) => <li>{u}</li>)}</ul>
+      <ul class="wynik-uwaga grid gap-2" data-w="uwagi" hidden={!w.uwagi.length}>{w.uwagi.map((u) => <li>{u}</li>)}</ul>
       <noscript><p class="wynik-uwaga">Kalkulator zmienia wynik w przeglądarce i potrzebuje JavaScriptu. Tabela typowych maszyn poniżej działa bez niego.</p></noscript>
     </div>
   </form>
@@ -217,29 +226,34 @@ const faq = [
     </ol>
     <p>
       Do kiedy ważne jest Twoje zaświadczenie i kiedy złożyć wniosek o przedłużenie, policzy
-      <a href="/narzedzia/waznosc-uprawnien-udt">kalkulator ważności uprawnień UDT</a>. Zaświadczenia bez daty
-      ważności, wydane przed 1 czerwca 2019 r., są nieważne od 1 stycznia 2024 r.: potrzebny jest nowy egzamin.
+      <a href="/narzedzia/waznosc-uprawnien-udt">kalkulator ważności uprawnień UDT</a>. Zaświadczenia wydane przed 1 czerwca 2019 r.
+      (i wydane później w postępowaniach wszczętych przed tym dniem) zachowały ważność przez 5 lat (art. 3 ust. 1–2
+      ustawy z 9 listopada 2018 r. o zmianie ustawy o dozorze technicznym, Dz.U. 2018 poz. 2518). Według UDT te bez
+      daty ważności są nieważne od 1 stycznia 2024 r.: potrzebny jest nowy egzamin.
       Kiedy UDT bada samą maszynę, pokaże <a href="/narzedzia/badania-udt">kalkulator terminów badań UDT</a>.
       Forma dozoru maszyny (pełny, ograniczony, uproszczony) to osobna lista: z niej nie wynika, czy operator potrzebuje
-      zaświadczenia.
+      zaświadczenia. Tam sterowanie ma znaczenie: wózek z siedziskiem albo podestem operatora ma dozór pełny, a prowadzony
+      i zdalnie sterowany ograniczony (zał. nr 1 lp. 38–39 rozporządzenia z 2018 r. o warunkach technicznych dozoru UTB).
     </p>
 
     <h2 id="jak-liczymy">Jak liczymy</h2>
     <ul>
-      <li><strong>Wysokość podnoszenia i sposób sterowania nie są kryterium</strong> w żadnym przepisie, więc o nie nie pytamy. Wyjątek: dźwigi towarowo-osobowe, które tabela obejmuje tylko „ze sterowaniem wewnętrznym”.</li>
+      <li><strong>Wysokość podnoszenia i sposób sterowania nie są kryterium</strong> w przepisach o zaświadczeniach (zał. nr 3 do rozporządzenia z 2019 r.), więc o nie nie pytamy. Wyjątek: dźwigi towarowo-osobowe, które tabela obejmuje tylko „ze sterowaniem wewnętrznym”.</li>
       <li>Progi liczymy włącznie: udźwig 250 kg i 1000 kg mieści się w wyłączeniu, 251 kg i 1001 kg już nie. Bierzemy udźwig nominalny z tabliczki; przepis nie mówi, co z osprzętem.</li>
-      <li><strong>Wózki do 250 kg:</strong> załącznik nr 3 je wyłącza, ale § 4 ust. 1 rozporządzenia bhp o wózkach dopuszcza do obsługi wózków z mechanicznym napędem podnoszenia osobę z zaświadczeniem, bez progu udźwigu. Przyjmujemy wariant bezpieczny: zaświadczenie potrzebne bez względu na udźwig.</li>
+      <li><strong>Wózki do 250 kg:</strong> załącznik nr 3 je wyłącza, więc wymóg z ustawy (art. 22 ust. 3) nie działa. Obowiązek wynika wtedy tylko z § 4 ust. 1 rozporządzenia bhp o wózkach z napędem silnikowym, który nie ma progu udźwigu i dopuszcza zaświadczenie UDT albo uprawnienia z pkt 2 (maszynista, książka operatora). Przepis nie rozstrzyga, czy wózek pchany ręcznie z elektrycznym podnoszeniem to „wózek z napędem silnikowym” (§ 1). Przyjmujemy wariant bezpieczny: zaświadczenie potrzebne, z uwagą w wyniku.</li>
+      <li><strong>Podest ruchomy</strong> traktujemy jako urządzenie do przemieszczania osób, bo do tego służy, więc wyjątek 250 kg go nie obejmuje. Przepis tego wprost nie definiuje.</li>
+      <li><strong>Dźwig szpitalny:</strong> dopisek w tabeli mówi o dźwigach szpitalnych „nieposiadających kontroli obciążenia kabiny”. Przyjmujemy, że zaświadczenie jest potrzebne przy każdym dźwigu szpitalnym.</li>
       <li><strong>Reach truck:</strong> przepis nie mówi, czy wysuwany maszt to „wysięgnik”. Wskazujemy kategorię 10-letnią z uwagą; kategoria 5-letnia (wysięgnik i podnoszony operator) obejmuje wszystkie wózki.</li>
       <li><strong>Specjalne przeznaczenie</strong> suwnic i wciągników nie ma definicji. Przy „nie wiem” wskazujemy kategorię 5-letnią, bo obejmuje ogólne i specjalne.</li>
       <li><strong>Książka operatora maszyn roboczych</strong> albo uprawnienia maszynisty: rozporządzenie bhp (§ 4 ust. 1 pkt 2) dopuszcza je przy wózkach, ale ustawa wymaga zaświadczenia jednostki dozoru (art. 22 ust. 3). Przyjmujemy, że potrzebne jest zaświadczenie UDT.</li>
-      <li>Przepis nie przewiduje obsługi „pod nadzorem” bez zaświadczenia ani w czasie nauki. Zaświadczenie zagraniczne wymaga decyzji UDT o uznaniu.</li>
-      <li>Narzędzie mówi tylko o zaświadczeniu UDT. Pracodawca i tak musi przeszkolić pracownika z bhp i dopuścić go do pracy (art. 237³ Kodeksu pracy); samo zaświadczenie nie jest dopuszczeniem. Kategorię konkretnej maszyny potwierdzi jej dokumentacja albo UDT.</li>
+      <li>Przepis nie przewiduje obsługi „pod nadzorem” bez zaświadczenia ani w czasie nauki. Kwalifikacje z innego kraju UE trzeba uznać; zapytaj UDT.</li>
+      <li>Narzędzie mówi tylko o zaświadczeniu UDT. Pracodawca i tak musi przeszkolić pracownika z bhp przed dopuszczeniem do pracy (art. 237³ § 2 Kodeksu pracy), w tym instruktażem stanowiskowym (rozporządzenie o szkoleniu bhp); samo zaświadczenie nie jest dopuszczeniem. Kategorię konkretnej maszyny potwierdzi jej dokumentacja albo UDT.</li>
     </ul>
 
     <h2 id="egzamin">Egzamin UDT</h2>
     <p>
-      Egzamin ma część pisemną i praktyczną (§ 3 ust. 3 rozporządzenia z 2019 r.), a termin wyznacza się w ciągu 30 dni
-      roboczych od złożenia kompletnego wniosku (§ 3 ust. 2). Opłata to {PROCENT_OPLATY.toLocaleString('pl-PL')}%
+      Egzamin ma część pisemną i praktyczną (§ 3 ust. 3 rozporządzenia z 2019 r.), a odbywa się najpóźniej 30 dni roboczych od
+      złożenia kompletnego wniosku, chyba że poprosisz o późniejszy termin (§ 3 ust. 2 rozporządzenia z 2019 r.). Opłata to {PROCENT_OPLATY.toLocaleString('pl-PL')}%
       przeciętnego wynagrodzenia ogłoszonego przez Prezesa GUS (art. 23 ust. 4), czyli {oplata}. Po oblanym egzaminie
       trzeba złożyć nowy wniosek (§ 4 ust. 4).
     </p>
@@ -247,7 +261,7 @@ const faq = [
 </StronaNarzedzia>
 
 <script>
-  import { czyUdt, RODZAJE, type DaneMaszyny, type RodzajMaszyny } from '../../lib/narzedzia/czy-udt';
+  import { czyUdt, polaRodzaju, tylkoPola, type DaneMaszyny, type RodzajMaszyny } from '../../lib/narzedzia/czy-udt';
   import { odmiana } from '../../lib/redakcja';
   import { typografia } from '../../lib/typografia.mjs';
 
@@ -267,12 +281,13 @@ const faq = [
 
     const przelicz = () => {
       const rodzaj = wartosc('rodzaj') as RodzajMaszyny;
-      const pola = new Set<string>(RODZAJE.find((r) => r.id === rodzaj)!.pola);
+      const pola = new Set<string>(polaRodzaju({ rodzaj, podnoszenieMechaniczne: wartosc('podnoszenie') === 'mechaniczne' }));
       form.querySelectorAll<HTMLElement>('[data-pole]').forEach((el) => {
         el.hidden = !pola.has(el.dataset.pole!);
       });
       const udzwig = udzwigPole.value === '' ? undefined : Number(udzwigPole.value);
-      const dane: DaneMaszyny = {
+      // Do obliczeń idą tylko pola widoczne dla rodzaju; ukryte (np. napęd z wciągnika) nie zmieniają wyniku.
+      const dane: DaneMaszyny = tylkoPola({
         rodzaj,
         jazdaSilnikowa: wartosc('jazda') === 'silnik',
         podnoszenieMechaniczne: wartosc('podnoszenie') === 'mechaniczne',
@@ -283,8 +298,9 @@ const faq = [
         typZurawia: wartosc('typZurawia') as DaneMaszyny['typZurawia'],
         typPodestu: wartosc('typPodestu') as DaneMaszyny['typPodestu'],
         typDzwigu: wartosc('typDzwigu') as DaneMaszyny['typDzwigu'],
+        napedDzwigu: wartosc('napedDzwigu') as DaneMaszyny['napedDzwigu'],
         typDzwignika: wartosc('typDzwignika') as DaneMaszyny['typDzwignika'],
-      };
+      });
       let wynik;
       try {
         wynik = czyUdt(dane);
