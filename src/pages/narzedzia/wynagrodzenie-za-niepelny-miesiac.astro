@@ -204,23 +204,24 @@ const faq = [
       const czesc = form.querySelector<HTMLInputElement>('input[name="umowa"]:checked')?.value === 'czesc';
       form.querySelector<HTMLElement>('[data-czesc]')!.hidden = !czesc;
       const dniMies = dniWMiesiacu(rok, miesiac);
+      if (!czesc) el('do').value = String(dniMies);
       const od = czesc ? calkowita('od') : 1;
       const do_ = czesc ? calkowita('do') : dniMies;
       const stawka = wpisanaLiczba(el('stawka').value);
       const dniL4 = calkowita('l4');
       const nieob = wpisanaLiczba(el('nieobecnosc').value || '0');
       const hm = opcjonalna('hm');
-      const hu = opcjonalna('hu');
+      const hu = czesc ? opcjonalna('hu') : undefined;
       el('hm').placeholder = liczba(wymiarMiesiaca(rok, miesiac).godziny * etat);
       el('hu').placeholder = od >= 1 && do_ <= dniMies && od <= do_ ? liczba(wymiarCzesci(rok, miesiac, od, do_) * etat) : '';
       el('hu').disabled = !czesc;
       const blad =
-        !(stawka > 0) ? 'Wpisz pensję miesięczną, na przykład 6000.'
+        !(stawka > 0 && stawka < 1_000_000) ? 'Wpisz pensję miesięczną, na przykład 6000.'
         : !(od >= 1 && do_ <= dniMies && od <= do_) ? `Dni umowy wpisz od 1 do ${dniMies}, pierwszy nie później niż ostatni.`
         : !(dniL4 >= 0) ? 'Dni L4 wpisz jako liczbę całkowitą.'
         : dniL4 > do_ - od + 1 ? `W tym miesiącu umowa trwa ${odmiana(do_ - od + 1, ['dzień', 'dni', 'dni'])}: tyle najwyżej może mieć L4.`
         : !(nieob >= 0) ? 'Godziny nieobecności wpisz jako liczbę, na przykład 16.'
-        : (hm !== undefined && !(hm > 0)) || (hu !== undefined && !(hu >= 0)) ? 'Godziny z grafiku wpisz jako liczbę większą od zera.'
+        : (hm !== undefined && !(hm > 0 && hm <= 744)) || (hu !== undefined && !(hu >= 0 && hu <= 744)) ? 'Godziny z grafiku wpisz jako liczbę od 1 do 744.'
         : null;
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
       let r: ReturnType<typeof niepelnyMiesiac> | null = null;
@@ -233,10 +234,11 @@ const faq = [
         }
       }
       b.hidden = !komunikat;
-      b.textContent = komunikat ?? '';
+      b.textContent = komunikat ? typografia(komunikat) : '';
       if (!r) {
-        for (const k of ['kwota', 'l4', 'nieobecnosc', 'poza']) w(k).textContent = '—';
+        for (const k of ['kwota', 'l4', 'nieobecnosc', 'poza', 'godziny']) w(k).textContent = '—';
         w('opis').textContent = '';
+        w('uwaga').textContent = '';
         return;
       }
       pisz('kwota', zl(r.wynagrodzenie));

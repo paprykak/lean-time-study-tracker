@@ -80,7 +80,7 @@ const faq = [
         <legend class="etykieta-pola">Przed przeniesieniem</legend>
         <div class="mt-1 grid items-end gap-4 sm:grid-cols-2">
           <div>
-            <label for="d-sprzed" class="meta">Stała pensja i dodatki (zł)</label>
+            <label for="d-sprzed" class="meta">Stała pensja przed (zł)</label>
             <input id="d-sprzed" name="stalePrzed" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="6000" aria-describedby="d-blad" />
           </div>
           <div>
@@ -97,7 +97,7 @@ const faq = [
         <legend class="etykieta-pola">Po przeniesieniu</legend>
         <div class="mt-1 grid items-end gap-4 sm:grid-cols-2">
           <div>
-            <label for="d-spo" class="meta">Stała pensja i dodatki (zł)</label>
+            <label for="d-spo" class="meta">Stała pensja po (zł)</label>
             <input id="d-spo" name="stalePo" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="5200" aria-describedby="d-blad" />
           </div>
           <div>
@@ -249,7 +249,7 @@ const faq = [
         !poprawnaData(od) ? 'Wpisz dzień przeniesienia.'
         : ochrona && !poprawnaData(ochrona) ? 'Wpisz poprawny dzień końca ochrony.'
         : ochrona && ochrona < od ? 'Koniec ochrony jest przed dniem przeniesienia.'
-        : [dane.stalePrzed, dane.stalePo, dane.zmiennePrzed, dane.zmiennePo].some((x) => !(x >= 0)) ? 'Kwoty wpisz jako liczby, na przykład 6000.'
+        : [dane.stalePrzed, dane.stalePo, dane.zmiennePrzed, dane.zmiennePo].some((x) => !(x >= 0 && x < 1_000_000)) ? 'Kwoty wpisz jako liczby, na przykład 6000.'
         : dane.dniPrzed !== undefined && !(dane.dniPrzed >= 1 && dane.dniPrzed <= 92) ? 'Dni z wynagrodzeniem w 3 miesiącach: od 1 do 92.'
         : !(dane.dniL4 >= 0) || !(dane.dniBezPlacy >= 0) ? 'Dni L4 i bez wynagrodzenia wpisz jako liczby całkowite.'
         : null;
@@ -263,10 +263,11 @@ const faq = [
       }
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
       b.hidden = !blad;
-      b.textContent = blad ?? '';
+      b.textContent = blad ? typografia(blad) : '';
       if (!r) {
         for (const k of ['kwota', 'okres', 'stala', 'zmienna', 'za-dzien']) w(k).textContent = '—';
         w('opis').textContent = '';
+        w('uwaga').textContent = '';
         return;
       }
       const koniec = r.okres.koniec
@@ -284,6 +285,7 @@ const faq = [
         pisz('stala', r.zmniejszenie ? `${zl(r.stala)} (po zmniejszeniu o ${zl(r.zmniejszenie)})` : zl(r.stala));
         pisz('zmienna', zl(r.zmienna));
         pisz('za-dzien', `${zl(r.zaDzien)} × ${odmiana(r.dniPo, ['dzień', 'dni', 'dni'])}`);
+        if (r.przysluguje && (r.stala < 0 || r.zmienna < 0)) uwagi.push('Część z minusem zmniejsza dodatek: po przeniesieniu ten składnik jest wyższy niż przed albo zmienne za dni pracy po przeniesieniu przekraczają średnią sprzed.');
         if (!r.przysluguje) uwagi.push('Po przeniesieniu zarabiasz tyle samo albo więcej, więc dodatek się nie należy: przepisy dają go tylko przy obniżeniu wynagrodzenia.');
         else uwagi.push('Dodatek to część wynagrodzenia: pobiera się od niego składki i zaliczkę na podatek.');
         if (r.dniWOkresie < new Date(Date.UTC(dane.rok, dane.miesiac, 0)).getUTCDate()) uwagi.push(`W okresie dodatku jest ${odmiana(r.dniWOkresie, ['dzień', 'dni', 'dni'])} tego miesiąca, więc część ze stałej pensji liczymy proporcjonalnie.`);

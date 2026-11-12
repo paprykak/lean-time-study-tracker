@@ -19,7 +19,7 @@ const faq = [
   },
   {
     pytanie: 'Kto wypłaca zasiłek chorobowy zleceniobiorcy?',
-    odpowiedz: 'Zleceniodawca, który zgłasza do ubezpieczenia chorobowego ponad 20 osób, a w pozostałych przypadkach ZUS (art. 61 ust. 1 ustawy zasiłkowej). Zleceniobiorca nie dostaje wynagrodzenia chorobowego za pierwsze 33 dni, jak pracownik na etacie: zasiłek należy się od pierwszego dnia zwolnienia, gdy minął okres wyczekiwania.',
+    odpowiedz: 'Zleceniodawca, który zgłasza do ubezpieczenia chorobowego ponad 20 osób, a w pozostałych przypadkach ZUS (art. 61 ust. 1 ustawy zasiłkowej). Na zleceniu nie ma wynagrodzenia chorobowego od pracodawcy, które na etacie przysługuje za pierwsze 33 dni L4 w roku: od pierwszego dnia zwolnienia płaci się zasiłek, gdy minął okres wyczekiwania.',
   },
   {
     pytanie: 'Czy student na zleceniu dostanie zasiłek chorobowy?',
@@ -145,15 +145,16 @@ const faq = [
       const przychod = wpisanaLiczba(el('przychod').value);
       const dni = wpisanaLiczba(el('dni').value);
       const blad =
-        !(przychod > 0) ? 'Wpisz przeciętny miesięczny przychód, na przykład 4000.'
+        !(przychod > 0 && przychod < 1_000_000) ? 'Wpisz przeciętny miesięczny przychód, na przykład 4000.'
         : !(Number.isInteger(dni) && dni >= 1 && dni <= 270) ? 'Dni L4 wpisz jako liczbę całkowitą od 1 do 270.'
         : null;
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
       b.hidden = !blad;
-      b.textContent = blad ?? '';
+      b.textContent = blad ? typografia(blad) : '';
       if (blad) {
         for (const k of ['kwota', 'netto', 'podstawa', 'okres']) w(k).textContent = '—';
         w('opis').textContent = '';
+        w('uwaga').textContent = '';
         return;
       }
       const r = zasilekZlecenie({ status, przyczyna, przychod, dni });

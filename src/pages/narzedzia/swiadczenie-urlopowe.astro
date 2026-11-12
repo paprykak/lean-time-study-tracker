@@ -90,7 +90,7 @@ const faq = [
       </div>
       <fieldset class="mt-4">
         <legend class="etykieta-pola">Urlop wypoczynkowy</legend>
-        <div class="mt-1 grid grid-cols-2 items-end gap-3">
+        <div class="mt-1 grid grid-cols-1 items-end gap-3 min-[360px]:grid-cols-2">
           <div>
             <label for="s-od" class="meta">Pierwszy dzień</label>
             <input id="s-od" name="od" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={`${rok}-07-06`} aria-describedby="s-blad" />
@@ -212,11 +212,11 @@ const faq = [
       const blad =
         !poprawnaData(od) || !poprawnaData(do_) ? 'Wpisz pierwszy i ostatni dzień urlopu.'
         : do_ < od ? 'Ostatni dzień urlopu jest przed pierwszym.'
-        : kwota !== null && !(kwota > 0) ? 'Kwota od pracodawcy musi być liczbą większą od zera.'
+        : kwota !== null && !(kwota > 0 && kwota < 1_000_000) ? 'Kwota od pracodawcy musi być liczbą większą od zera, na przykład 2000.'
         : null;
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
       b.hidden = !blad;
-      b.textContent = blad ?? '';
+      b.textContent = blad ? typografia(blad) : '';
       const m = maksimum(rok, rodzaj, wymiar);
       pisz('maksimum', zl(m.kwota));
       pisz(
@@ -225,6 +225,7 @@ const faq = [
       );
       if (blad) {
         for (const k of ['netto', 'urlop', 'termin']) w(k).textContent = '—';
+        w('uwaga').textContent = '';
         return;
       }
       const u = urlop(od, do_);
