@@ -105,6 +105,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-11',
   },
   {
+    slug: 'dni-wolne-od-pracy',
+    nazwa: 'Dni wolne od pracy i długie weekendy',
+    krotko: 'Święta w wybranym roku, długie weekendy i kiedy wziąć urlop, żeby mieć najwięcej wolnego. Plik do kalendarza.',
+    kategoria: 'urlopy',
+    przepisy: ['dniWolne', 'kodeksPracy'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'kalkulator-urlopu',
     nazwa: 'Kalkulator urlopu wypoczynkowego',
     krotko: 'Ile dni urlopu: 20 czy 26, ze szkołą i stażem z umów zlecenia od 2026 r., na niepełny etat i część roku.',

@@ -1,0 +1,188 @@
+---
+// Dni wolne od pracy, długie weekendy i okazje urlopowe (praca od poniedziałku do piątku) z plikiem .ics świąt.
+// Logika: src/lib/narzedzia/dni-wolne.ts (testy obok), święta: czas-pracy.ts (ustawa o dniach wolnych od pracy).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { wymiarMiesiaca } from '../../lib/narzedzia/czas-pracy';
+import { dlugieWeekendy, dzienTygodnia, najlepsza, okazje, podsumowanieRoku, zakres } from '../../lib/narzedzia/dni-wolne';
+import { dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+const DNI = ['niedziela', 'poniedziałek', 'wtorek', 'środa', 'czwartek', 'piątek', 'sobota'];
+const W_DNIU = ['w niedzielę', 'w poniedziałek', 'we wtorek', 'w środę', 'w czwartek', 'w piątek', 'w sobotę'];
+const dzis = dzisWPolsce();
+const rokBiezacy = Number(dzis.slice(0, 4));
+// Od października pokazujemy najpierw następny rok: wtedy ludzie planują urlopy.
+const rok = Number(dzis.slice(5, 7)) >= 10 ? rokBiezacy + 1 : rokBiezacy;
+const LATA = [rokBiezacy, rokBiezacy + 1, rokBiezacy + 2];
+const MAX_URLOPU = 4;
+const dniPracy = (r: number) => Array.from({ length: 12 }, (_, i) => wymiarMiesiaca(r, i + 1).godziny).reduce((a, b) => a + b, 0) / 8;
+const lista = (s: { data: string }[]) => s.map((x) => zakres(x.data, x.data)).join(', ');
+const ileDniUrlopu = (n: number) => `${n}\u00a0${n === 1 ? 'dzień' : 'dni'} urlopu`;
+
+const p = podsumowanieRoku(rok);
+const weekendy = dlugieWeekendy(rok);
+const ok = okazje(rok, MAX_URLOPU);
+const naj = najlepsza(ok);
+const najlepsze = [...okazje(rok, 5)].sort((a, b) => b.dniWolnego / b.dniUrlopu - a.dniWolnego / a.dniUrlopu || a.urlopOd.localeCompare(b.urlopOd)).slice(0, 3);
+
+const faq = [
+  {
+    pytanie: `Ile jest dni wolnych od pracy w ${rok} r.?`,
+    odpowiedz: `Ustawa o dniach wolnych od pracy wymienia ${p.swieta.length} świąt. W ${rok} r. ${p.wDniRobocze.length} z nich wypada od poniedziałku do piątku, ${p.wSobote.length ? `w sobotę: ${lista(p.wSobote)}` : 'żadne w sobotę'}, a w niedzielę: ${lista(p.wNiedziele)}. Przy pracy na pełny etat od poniedziałku do piątku w ${rok} r. jest ${dniPracy(rok)} dni pracy.`,
+  },
+  {
+    pytanie: 'Czy za święto w sobotę przysługuje dzień wolny?',
+    odpowiedz: `Tak. Każde święto, które nie wypada w niedzielę, obniża wymiar czasu pracy w okresie rozliczeniowym o 8 godzin (art. 130 § 2 Kodeksu pracy), więc w tym okresie pracuje się o jeden dzień mniej. Termin tego dnia wolnego wynika z rozkładu czasu pracy u pracodawcy. ${p.wSobote.length ? `W ${rok} r. w sobotę wypada: ${lista(p.wSobote)}.` : `W ${rok} r. żadne święto nie wypada w sobotę.`} Za święto w niedzielę dodatkowego dnia wolnego nie ma.`,
+  },
+  {
+    pytanie: `Kiedy wziąć urlop w ${rok} r., żeby mieć najwięcej wolnego?`,
+    odpowiedz: `Najwięcej dni wolnego za każdy dzień urlopu dają: ${najlepsze.map((o) => `urlop ${zakres(o.urlopOd, o.urlopDo)} (${ileDniUrlopu(o.dniUrlopu)}) i wolne ${zakres(o.wolneOd, o.wolneDo)} (${o.dniWolnego} dni)`).join('; ')}. Liczymy dla pracy od poniedziałku do piątku; przy pracy według grafiku liczą się Twoje dni pracy.`,
+  },
+  {
+    pytanie: 'Czy Wigilia jest dniem wolnym od pracy?',
+    odpowiedz: `Tak, od 2025 r. 24 grudnia jest dniem wolnym od pracy (ustawa z 2024 r., Dz.U. 2024 poz. 1965). W ${rok} r. Wigilia wypada ${W_DNIU[dzienTygodnia(`${rok}-12-24`)]}.`,
+  },
+  {
+    pytanie: 'Czy krótki urlop przy długim weekendzie to problem z 14 dniami wypoczynku?',
+    odpowiedz: 'Urlop można podzielić na części na wniosek pracownika, ale wtedy co najmniej jedna część powinna trwać co najmniej 14 kolejnych dni kalendarzowych (art. 162 Kodeksu pracy). Termin urlopu ustala się w planie urlopów albo w porozumieniu z pracodawcą (art. 163).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="dni-wolne-od-pracy"
+  tytul={`Dni wolne od pracy ${rok}: długie weekendy i urlop`}
+  opis={`Wszystkie dni wolne od pracy w ${rok} r., długie weekendy i kiedy wziąć urlop, żeby mieć najwięcej wolnego. Święta w sobotę, dzień wolny za nie i plik do kalendarza.`}
+  h1={`Dni wolne od pracy ${rok} i długie weekendy`}
+  lead="Sprawdź święta w wybranym roku, długie weekendy bez urlopu i dni, w które warto wziąć urlop, żeby mieć najwięcej wolnego. Liczymy dla pracy od poniedziałku do piątku. Święta możesz dodać do kalendarza w telefonie."
+  faq={faq}
+>
+  <form class="kalkulator" data-wolne novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twój plan</h2>
+      <div class="mt-4">
+        <label for="w-rok" class="etykieta-pola">Rok</label>
+        <select id="w-rok" name="rok" class="pole mt-1 max-w-48">
+          {LATA.map((r) => <option value={r} selected={r === rok}>{r}</option>)}
+        </select>
+      </div>
+      <div class="mt-4">
+        <label for="w-urlop" class="etykieta-pola">Najwyżej dni urlopu naraz</label>
+        <select id="w-urlop" name="urlop" class="pole mt-1 max-w-48">
+          {[1, 2, 3, 4, 5].map((n) => <option value={n} selected={n === MAX_URLOPU}>{n}</option>)}
+        </select>
+      </div>
+      <p class="mt-5">
+        <button type="button" class="przycisk przycisk-grafit" data-ics>Święta do kalendarza (.ics)</button>
+      </p>
+      <p class="meta mt-2">Plik ze świętami z wybranego roku otworzy kalendarz w telefonie, Outlook i Kalendarz Google.</p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Najwięcej wolnego naraz</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-kwota"><span data-w="najwiecej">{naj ? `${naj.dniWolnego}\u00a0dni` : '—'}</span></p>
+        <p class="meta" data-w="najlepsza">{naj ? `urlop ${zakres(naj.urlopOd, naj.urlopDo)} (${ileDniUrlopu(naj.dniUrlopu)}), wolne ${zakres(naj.wolneOd, naj.wolneDo)}` : ''}</p>
+      </div>
+      <h3 class="etykieta mt-5">Kiedy wziąć urlop</h3>
+      <ul class="mt-2 grid gap-1 text-[0.9375rem]" data-w="okazje">
+        {ok.map((o) => <li>{zakres(o.urlopOd, o.urlopDo)} ({ileDniUrlopu(o.dniUrlopu)}): {o.dniWolnego} dni wolnego, {zakres(o.wolneOd, o.wolneDo)}</li>)}
+      </ul>
+      <h3 class="etykieta mt-5">Długie weekendy bez urlopu</h3>
+      <ul class="mt-2 grid gap-1 text-[0.9375rem]" data-w="weekendy">
+        {weekendy.map((w) => <li>{zakres(w.od, w.do)}: {w.dni} dni</li>)}
+      </ul>
+      <dl class="wynik-lista">
+        <div><dt>Święta od poniedziałku do piątku</dt><dd data-w="robocze">{p.wDniRobocze.length}</dd></div>
+        <div><dt>Święta w sobotę (za każde inny dzień wolny)</dt><dd data-w="sobota">{p.wSobote.length ? lista(p.wSobote) : 'brak'}</dd></div>
+        <div><dt>Dni pracy w roku (pon.–pt., pełny etat)</dt><dd data-w="dni-pracy">{dniPracy(rok)}</dd></div>
+      </dl>
+      <noscript><p class="wynik-uwaga">Zmiana roku i pliku kalendarza działa z JavaScriptem. Listy świąt są poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    {[rok, rok + 1].map((r) => (
+      <>
+        <h2 id={`swieta-${r}`}>Dni wolne od pracy {r}</h2>
+        <div class="tabela">
+          <table>
+            <caption class="sr-only">Dni wolne od pracy w {r} r. z dniem tygodnia</caption>
+            <thead><tr><th scope="col">Data</th><th scope="col">Święto</th><th scope="col">Uwagi</th></tr></thead>
+            <tbody>
+              {podsumowanieRoku(r).swieta.map((s) => (
+                <tr>
+                  <th scope="row">{zakres(s.data, s.data)}<span class="meta block font-normal">{DNI[dzienTygodnia(s.data)]}</span></th>
+                  <td>{s.nazwa}</td>
+                  <td>{dzienTygodnia(s.data) === 6 ? 'inny dzień wolny' : dzienTygodnia(s.data) === 0 ? 'bez dodatkowego dnia' : '—'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </>
+    ))}
+
+    <h2 id="sobota">Święto w sobotę</h2>
+    <p>
+      Każde święto, które nie wypada w niedzielę, obniża wymiar czasu pracy w okresie rozliczeniowym o 8 godzin
+      (art. 130 § 2 Kodeksu pracy). Gdy święto wypada w sobotę, w tym okresie pracuje się więc o jeden dzień mniej,
+      a termin tego dnia wolnego wynika z rozkładu czasu pracy. Dlatego takiego dnia nie wliczamy do długich weekendów.
+      Wymiar w każdym miesiącu pokazuje <a href="/narzedzia/wymiar-czasu-pracy">kalkulator wymiaru czasu pracy</a>.
+    </p>
+
+    <h2 id="jak-liczymy">Jak liczymy okazje urlopowe</h2>
+    <p>
+      Dni wolne to soboty, niedziele i święta z ustawy o dniach wolnych od pracy (od 2025 r. także Wigilia). Urlop to dni
+      od poniedziałku do piątku, które nie są świętem: tyle dni urlopu zużywasz przy pracy po 8 godzin (art. 154<sup>2</sup>
+      Kodeksu pracy). Pokazujemy terminy, w których jest święto w dzień roboczy, a każdy dzień urlopu daje co najmniej dwa
+      dni wolnego. Przy pracy według grafiku, na przykład w systemie zmianowym, liczą się Twoje dni pracy z grafiku.
+      Ile dni urlopu Ci przysługuje, policzy <a href="/narzedzia/kalkulator-urlopu">kalkulator urlopu</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { wymiarMiesiaca } from '../../lib/narzedzia/czas-pracy';
+  import { dlugieWeekendy, najlepsza, okazje, podsumowanieRoku, zakres } from '../../lib/narzedzia/dni-wolne';
+  import { plikIcs } from '../../lib/narzedzia/kalendarz-ics';
+
+  const form = document.querySelector<HTMLFormElement>('[data-wolne]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLSelectElement;
+    const li = (t: string) => Object.assign(document.createElement('li'), { textContent: t });
+    const dniUrlopu = (n: number) => `${n}\u00a0${n === 1 ? 'dzień' : 'dni'} urlopu`;
+    const rok = () => Number(el('rok').value);
+    const przelicz = () => {
+      const r = rok();
+      const ok = okazje(r, Number(el('urlop').value));
+      const naj = najlepsza(ok);
+      const p = podsumowanieRoku(r);
+      w('najwiecej').textContent = naj ? `${naj.dniWolnego}\u00a0dni` : '—';
+      w('najlepsza').textContent = naj ? `urlop ${zakres(naj.urlopOd, naj.urlopDo)} (${dniUrlopu(naj.dniUrlopu)}), wolne ${zakres(naj.wolneOd, naj.wolneDo)}` : '';
+      w('okazje').replaceChildren(...ok.map((o) => li(`${zakres(o.urlopOd, o.urlopDo)} (${dniUrlopu(o.dniUrlopu)}): ${o.dniWolnego}\u00a0dni wolnego, ${zakres(o.wolneOd, o.wolneDo)}`)));
+      w('weekendy').replaceChildren(...dlugieWeekendy(r).map((d) => li(`${zakres(d.od, d.do)}: ${d.dni}\u00a0dni`)));
+      w('robocze').textContent = String(p.wDniRobocze.length);
+      w('sobota').textContent = p.wSobote.length ? p.wSobote.map((s) => zakres(s.data, s.data)).join(', ') : 'brak';
+      w('dni-pracy').textContent = String(Array.from({ length: 12 }, (_, i) => wymiarMiesiaca(r, i + 1).godziny).reduce((a, b) => a + b, 0) / 8);
+    };
+    form.querySelector<HTMLButtonElement>('[data-ics]')!.addEventListener('click', () => {
+      const r = rok();
+      const wydarzenia = podsumowanieRoku(r).swieta.map((s) => ({
+        data: s.data,
+        tytul: s.nazwa,
+        opis: new Date(`${s.data}T00:00:00Z`).getUTCDay() === 6 ? 'Dzień wolny od pracy w sobotę: obniża wymiar czasu pracy o 8 godzin (art. 130 § 2 Kodeksu pracy).' : 'Dzień wolny od pracy (ustawa o dniach wolnych od pracy).',
+      }));
+      const blob = new Blob([plikIcs(wydarzenia, `dni-wolne-od-pracy-${r}`)], { type: 'text/calendar;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `dni-wolne-od-pracy-${r}.ics`;
+      document.body.append(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    });
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>
