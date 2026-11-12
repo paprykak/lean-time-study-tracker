@@ -28,7 +28,7 @@ const jsonLd = [
 ---
 <Uklad
   tytul={`Narzędzia dla produkcji i magazynu: kalkulatory | ${ustawienia.nazwa}`}
-  opis="Bezpłatne kalkulatory i ściągi z przepisów dla produkcji, magazynów i logistyki: czas pracy, BHP, uprawnienia UDT. Każda liczba ze źródłem w Dzienniku Ustaw."
+  opis="Bezpłatne kalkulatory dla ludzi z hali: wypłata na rękę, nadgodziny, urlopy, zasiłki, umowy, BHP i uprawnienia UDT. Każda liczba ze źródłem w przepisach."
   jsonLd={jsonLd}
   aktywny="narzedzia"
 >
@@ -40,6 +40,11 @@ const jsonLd = [
       <p class="lead mt-3 max-w-3xl">
         <Tekst t="Kalkulatory i ściągi z przepisów dla ludzi z hali: ile się należy, czy wolno, kiedy mija termin. Liczymy według przepisów, przy każdym narzędziu podajemy źródło i datę sprawdzenia, a dane zostają w Twojej przeglądarce." />
       </p>
+      <nav aria-label="Kategorie narzędzi" class="mt-5">
+        <ul class="flex flex-wrap gap-2">
+          {kategorie.map((k) => <li><a href={`#kategoria-${k.klucz}`} class="przycisk przycisk-obrys">{k.nazwa} ({k.narzedzia.length})</a></li>)}
+        </ul>
+      </nav>
     </header>
 
     {kategorie.map((k) => (
