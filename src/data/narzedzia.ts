@@ -481,6 +481,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-12',
   },
   {
+    slug: 'pracownik-mlodociany',
+    nazwa: 'Pracownik młodociany',
+    krotko: 'Ile godzin może pracować osoba od 15 do 18 lat, kiedy dostaje urlop 12, 26 i 20 dni, płaca w nauce zawodu.',
+    kategoria: 'czas-pracy',
+    przepisy: ['kodeksPracy', 'kodeksCywilny', 'praceMlodocianych', 'przygotowanieZawodowe', 'przecietneKwartalne'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'przerwy-w-pracy',
     nazwa: 'Przerwy w pracy',
     krotko: 'Ile przerw przy zmianie 8 i 12 godzin, które są płatne, przerwy na karmienie i dla młodocianych.',

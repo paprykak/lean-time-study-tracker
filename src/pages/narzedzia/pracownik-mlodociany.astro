@@ -1,0 +1,263 @@
+---
+// Pracownik młodociany: czas pracy (art. 200^2, 202), pora nocna i odpoczynek (art. 203), urlop (art. 205), płaca
+// w przygotowaniu zawodowym (§ 19–20 rozporządzenia, kwota GUS z poprzedniego kwartału). Logika:
+// src/lib/narzedzia/mlodociany.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { PROCENT_NAUKI, PROCENT_PRZYUCZENIA, mlodociany, placaMlodocianego, podstawaNaDzien } from '../../lib/narzedzia/mlodociany';
+import { dataPoPolsku, dodajMiesiace, dzisWPolsce } from '../../lib/narzedzia/terminy';
+import { zl } from '../../lib/narzedzia/format';
+
+const dzis = dzisWPolsce();
+const D = {
+  urodzenie: dodajMiesiace(dzis, -(15 * 12 + 6)),
+  poczatekPracy: dodajMiesiace(dzis, -2),
+  naDzien: dzis,
+  cel: 'nauka-zawodu' as const,
+  rokNauki: 1 as const,
+  bezSzkolyPodstawowej: false,
+};
+const r = mlodociany(D);
+if (r.status !== 'mlodociany' || !r.placa) throw new Error('Wartości domyślne powinny dotyczyć młodocianego w nauce zawodu');
+const podstawa = podstawaNaDzien(dzis);
+if (!podstawa) throw new Error('Brak kwoty GUS na dziś: dopisz komunikat do PRZECIETNE_KWARTALNE');
+const stawki = [1, 2, 3].map((rok) => placaMlodocianego('nauka-zawodu', rok as 1 | 2 | 3, dzis)!.kwota);
+const przyuczenie = placaMlodocianego('przyuczenie', 1, dzis)!.kwota;
+
+const faq = [
+  {
+    pytanie: 'Ile godzin może pracować 16-latek?',
+    odpowiedz: 'Od 16. urodzin do 8 godzin na dobę, wcześniej do 6 (art. 202 § 1–2 Kodeksu pracy). Do czasu pracy wlicza się obowiązkowa nauka w szkole (§ 3). Przy lekkich pracach w roku szkolnym limit to 12 godzin w tygodniu i 2 godziny w dniu zajęć, a w ferie 7 godzin na dobę, do 16. urodzin 6, i 35 godzin w tygodniu (art. 200² § 2–3).',
+  },
+  {
+    pytanie: 'Ile urlopu ma młodociany pracownik?',
+    odpowiedz: '12 dni roboczych po 6 miesiącach od rozpoczęcia pierwszej pracy i 26 dni po roku pracy (art. 205 § 1–2 Kodeksu pracy). Przepis nie każe odliczać 12 dni od 26, więc w pierwszym roku pracy może to być razem 38 dni. W roku 18. urodzin wymiar wynosi 20 dni, jeśli prawo do urlopu powstało przed 18. urodzinami. Uczniowi urlopu udziela się w czasie ferii (§ 3).',
+  },
+  {
+    pytanie: `Ile zarabia uczeń w nauce zawodu w ${dzis.slice(0, 4)} r.?`,
+    odpowiedz: `Od ${dataPoPolsku(podstawa.od)} co najmniej ${zl(stawki[0])} brutto miesięcznie w pierwszym roku nauki, ${zl(stawki[1])} w drugim i ${zl(stawki[2])} w trzecim, a przy przyuczeniu do pracy ${zl(przyuczenie)}. To ${PROCENT_NAUKI.join(', ')} i ${PROCENT_PRZYUCZENIA}% przeciętnego wynagrodzenia za ${podstawa.kwartal} (${zl(podstawa.kwota)}, ${podstawa.publikator}), zgodnie z § 19–20 rozporządzenia w sprawie przygotowania zawodowego młodocianych. Kwota zmienia się co kwartał.`,
+  },
+  {
+    pytanie: 'Czy młodociany może pracować w nocy i w nadgodzinach?',
+    odpowiedz: 'Nie. Młodocianego nie wolno zatrudniać w godzinach nadliczbowych ani w porze nocnej, która przypada między 22:00 a 6:00, a dla osób zatrudnionych przed 15. urodzinami albo bez ukończonej szkoły podstawowej między 20:00 a 6:00 (art. 203 § 1–1¹ Kodeksu pracy). Przerwa obejmująca porę nocną trwa co najmniej 14 godzin, a w tygodniu przysługuje 48 godzin odpoczynku z niedzielą (§ 2–3).',
+  },
+  {
+    pytanie: 'Czy 15-latek może pracować w wakacje?',
+    odpowiedz: 'Tak, na umowę o pracę przy lekkich pracach, jeśli ukończył szkołę podstawową i ma świadectwo lekarskie, że praca mu nie zagraża (art. 191 § 1 i art. 200¹ Kodeksu pracy). W ferie może pracować do 6 godzin na dobę i 35 godzin w tygodniu, bez nocy i nadgodzin (art. 200² § 3, art. 203). Wykaz lekkich prac ustala pracodawca za zgodą lekarza medycyny pracy, a zatwierdza go inspektor pracy (art. 200¹ § 3).',
+  },
+  {
+    pytanie: 'Czy młodociany może pracować w akordzie albo na wysokości?',
+    odpowiedz: 'Nie. Wykaz prac wzbronionych młodocianym obejmuje między innymi pracę w tempie wymuszonym przez maszyny albo wynagradzaną od wyników, pracę na wysokości powyżej 3 m i obsługę dźwignic (rozporządzenie w sprawie prac wzbronionych młodocianym, załącznik nr 1). Od 16 lat, gdy wymaga tego przygotowanie zawodowe, część tych prac jest dozwolona, na przykład praca na wysokości do 2 godzin na dobę z pełnym zabezpieczeniem przed upadkiem (załącznik nr 2).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="pracownik-mlodociany"
+  tytul="Pracownik młodociany: urlop, czas pracy, płaca"
+  opis="Ile godzin może pracować młodociany, kiedy dostanie urlop 12, 26 albo 20 dni i ile zarabia uczeń w nauce zawodu. Zakaz nocy, nadgodzin i prac wzbronionych."
+  h1="Pracownik młodociany: kalkulator"
+  lead="Wpisz datę urodzenia i początek pierwszej pracy, a pokażemy, ile godzin dziennie wolno pracować, kiedy powstaje prawo do urlopu i ile co najmniej zarabia się w nauce zawodu."
+  faq={faq}
+>
+  <form class="kalkulator" data-mlodociany novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Pracownik</h2>
+      <div class="mt-4 grid grid-cols-2 items-end gap-3">
+        <div>
+          <label for="m-urodzenie" class="etykieta-pola">Data urodzenia</label>
+          <input id="m-urodzenie" name="urodzenie" type="date" class="pole mt-1" min="1990-01-01" max="2100-12-31" value={D.urodzenie} aria-describedby="m-blad" />
+        </div>
+        <div>
+          <label for="m-poczatek" class="etykieta-pola">Początek pierwszej pracy</label>
+          <input id="m-poczatek" name="poczatek" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={D.poczatekPracy} aria-describedby="m-blad" />
+        </div>
+      </div>
+      <div class="mt-4">
+        <label for="m-cel" class="etykieta-pola">Rodzaj zatrudnienia</label>
+        <select id="m-cel" name="cel" class="pole mt-1">
+          <option value="nauka-zawodu" selected>Nauka zawodu</option>
+          <option value="przyuczenie">Przyuczenie do pracy</option>
+          <option value="lekkie-prace">Lekkie prace, np. w wakacje</option>
+        </select>
+      </div>
+      <div class="mt-4" data-pole="rok">
+        <label for="m-rok" class="etykieta-pola">Rok nauki zawodu</label>
+        <select id="m-rok" name="rok" class="pole mt-1 max-w-40">
+          <option value="1" selected>Pierwszy</option>
+          <option value="2">Drugi</option>
+          <option value="3">Trzeci</option>
+        </select>
+      </div>
+      <div class="mt-4">
+        <label for="m-dzien" class="etykieta-pola">Sprawdź na dzień</label>
+        <input id="m-dzien" name="naDzien" type="date" class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" value={D.naDzien} aria-describedby="m-blad" />
+      </div>
+      <label class="mt-4 flex items-start gap-3 text-[0.9375rem]">
+        <input type="checkbox" name="bezSzkoly" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+        <span>Nie mam ukończonej szkoły podstawowej</span>
+      </label>
+      <p id="m-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Czas pracy na dobę</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-kwota" data-w="doba">do {r.limitDoby} godzin</p>
+        <p class="meta" data-w="opis">Masz {r.lata} lat. Od 16. urodzin, {dataPoPolsku(r.szesnascie)}, do 8 godzin.</p>
+      </div>
+      <p class="wynik-uwaga" data-w="uwaga" hidden></p>
+      <dl class="wynik-lista">
+        <div data-wiersz="lekkie" hidden><dt>Lekkie prace</dt><dd data-w="lekkie"></dd></div>
+        <div data-wiersz="przerwa"><dt>Przerwa</dt><dd>30 minut wliczanych do czasu pracy, gdy pracujesz dłużej niż 4,5 godziny</dd></div>
+        <div data-wiersz="noc"><dt>Zakaz pracy w nocy</dt><dd data-w="noc">{r.poraNocna}, nadgodziny też są zakazane</dd></div>
+        <div data-wiersz="odpoczynek"><dt>Odpoczynek</dt><dd>14 godzin bez przerwy na dobę, 48 godzin w tygodniu z niedzielą</dd></div>
+        <div data-wiersz="placa"><dt>Najniższa płaca miesięcznie</dt><dd data-w="placa">{zl(r.placa.kwota)} brutto: {r.placa.procent}% z {zl(r.placa.podstawa.kwota)} ({r.placa.podstawa.kwartal})</dd></div>
+      </dl>
+      <h3 class="etykieta mt-5">Urlop wypoczynkowy</h3>
+      <ul class="mt-2 grid gap-1 text-[0.9375rem]" data-w="urlop">
+        {r.urlop.lista.map((u) => <li>{dataPoPolsku(u.data)}: {u.dni} dni ({u.opis})</li>)}
+      </ul>
+      <p class="meta mt-2" data-w="urlop-ogolne">Od {dataPoPolsku(r.urlop.zasadyOgolneOd)} urlop według zasad ogólnych: zwykle 20 dni, a przy stażu z nauką co najmniej 10 lat 26 dni (art. 154 i 155 Kodeksu pracy).</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="zasady">Zasady w skrócie</h2>
+    <ul>
+      <li>Młodociany to osoba, która ukończyła 15 lat, a nie ma jeszcze 18 (art. 190 § 1 Kodeksu pracy). Pracować może po ukończeniu szkoły podstawowej i z zaświadczeniem lekarskim, że praca nie zagraża jej zdrowiu (art. 191 § 1). Bez kwalifikacji zawodowych tylko w celu przygotowania zawodowego, czyli nauki zawodu albo przyuczenia (art. 191 § 2), albo przy lekkich pracach (art. 200<sup>1</sup>).</li>
+      <li>Czas pracy: do 16. urodzin najwyżej 6 godzin na dobę, potem 8; nauka w szkole wlicza się do czasu pracy (art. 202 § 1–3). Przy dobie dłuższej niż 4,5 godziny przerwa 30 minut bez przerwy, wliczana do czasu pracy (§ 3<sup>1</sup>).</li>
+      <li>Lekkie prace: w roku szkolnym do 12 godzin w tygodniu i 2 godzin w dniu zajęć, w ferie do 7 godzin na dobę (do 16. urodzin 6) i 35 w tygodniu, także łącznie u kilku pracodawców (art. 200<sup>2</sup> § 2–4). Wykaz lekkich prac pracodawca ustala za zgodą lekarza medycyny pracy, a zatwierdza go inspektor pracy (art. 200<sup>1</sup> § 3).</li>
+      <li>Bez nadgodzin i pracy w porze nocnej: 22:00–6:00, a przy zatrudnieniu przed 15. urodzinami i bez szkoły podstawowej 20:00–6:00; odpoczynek 14 godzin na dobę i 48 w tygodniu z niedzielą (art. 203).</li>
+      <li>Badania lekarskie przed pracą, okresowe i kontrolne. Gdy lekarz orzeknie, że praca zagraża zdrowiu, pracodawca zmienia rodzaj pracy, a gdy nie może, rozwiązuje umowę i wypłaca odszkodowanie w wysokości wynagrodzenia za okres wypowiedzenia (art. 201).</li>
+      <li>Młodociany dokształca się do 18 lat, a pracodawca zwalnia go od pracy na zajęcia (art. 197–198). Umowę w celu przygotowania zawodowego wolno wypowiedzieć tylko z przyczyn wymienionych w art. 196.</li>
+    </ul>
+
+    <h2 id="prace-wzbronione">Prace wzbronione młodocianym na hali</h2>
+    <p>Pełny wykaz jest w rozporządzeniu w sprawie prac wzbronionych młodocianym (załącznik nr 1). W zakładzie najczęściej chodzi o:</p>
+    <ul>
+      <li>pracę w tempie wymuszonym przez maszyny albo wynagradzaną od wyników, czyli w akordzie (cz. I ust. 3 pkt 2 lit. b);</li>
+      <li>dźwiganie i przenoszenie ponad limity dla młodocianych (cz. I ust. 1), które policzy <a href="/narzedzia/ile-kg-wolno-dzwigac">kalkulator dźwigania</a>;</li>
+      <li>hałas powyżej 80 dB i drgania ponad niższe limity, które sprawdzą <a href="/narzedzia/halas-w-pracy">kalkulator hałasu</a> i <a href="/narzedzia/drgania-w-pracy">kalkulator drgań</a>;</li>
+      <li>uruchamianie maszyn zaraz po naprawie i obsługę dźwignic (cz. III pkt 1 lit. b i f);</li>
+      <li>prowadzenie pojazdów silnikowych (cz. III pkt 7 lit. a) i pracę na wysokości powyżej 3 m (cz. III pkt 11).</li>
+    </ul>
+    <p>Od 16 lat część tych prac jest dozwolona, gdy wymaga tego przygotowanie zawodowe: na przykład praca na wysokości do 2 godzin na dobę z pełnym zabezpieczeniem przed upadkiem albo kierowanie pojazdem, gdy program nauki zawodu to przewiduje (załącznik nr 2, cz. III pkt 4 i 9 lit. d). Taka praca nie może być stała, a pracodawca zapewnia stały nadzór (§ 3 i 4 rozporządzenia).</p>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Kolejne lata życia kończą się z początkiem dnia urodzin (art. 112 Kodeksu cywilnego), więc limit 8 godzin
+      obowiązuje od dnia 16. urodzin. Pół roku i rok pracy liczymy kalendarzowo od pierwszego dnia pierwszej pracy.
+      Urlop 12 dni i 26 dni to osobne uprawnienia; kolejne urlopy powstają 1 stycznia (art. 205 § 5 i art. 153 § 2).
+      Wymiar 20 dni w roku 18. urodzin traktujemy jak zmniejszony wymiar 26 dni: należy się 1 stycznia tego roku albo
+      po roku pracy, gdy rok mija w tym roku kalendarzowym. Przy zatrudnieniu przed 15. urodzinami przepis nie mówi
+      wprost, czy pora nocna 20:00–6:00 trwa po 15. urodzinach; pokazujemy wtedy 22:00–6:00. Ile urlopu przysługuje
+      po 18. urodzinach, policzy <a href="/narzedzia/kalkulator-urlopu">kalkulator urlopu</a>.
+    </p>
+    <p>
+      Płaca w nauce zawodu to co najmniej 8% przeciętnego wynagrodzenia w pierwszym roku, 9% w drugim i 10%
+      w trzecim, a przy przyuczeniu 7% (§ 19 ust. 2 i § 20 rozporządzenia, stawki od 1 września 2023 r.). Bierzemy
+      przeciętne wynagrodzenie z poprzedniego kwartału, ogłoszone przez Prezesa GUS, od pierwszego dnia miesiąca po
+      ogłoszeniu w Monitorze Polskim. Teraz to {zl(podstawa.kwota)} za {podstawa.kwartal} ({podstawa.publikator}),
+      od {dataPoPolsku(podstawa.od)}. Kwotę zaokrąglamy w górę do grosza, bo przepis mówi „nie mniej niż”. Przy lekkich
+      pracach wynagrodzenie ustala umowa o pracę.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { mlodociany, type CelZatrudnienia } from '../../lib/narzedzia/mlodociany';
+  import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { zl } from '../../lib/narzedzia/format';
+  import { typografia } from '../../lib/typografia.mjs';
+
+  const form = document.querySelector<HTMLFormElement>('[data-mlodociany]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const wiersz = (k: string) => form.querySelector<HTMLElement>(`[data-wiersz="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const pisz = (k: string, tekst: string) => {
+      w(k).textContent = typografia(tekst);
+    };
+    const przelicz = () => {
+      const urodzenie = el('urodzenie').value;
+      const poczatek = el('poczatek').value;
+      const naDzien = el('naDzien').value;
+      const cel = el('cel').value as CelZatrudnienia;
+      form.querySelector<HTMLElement>('[data-pole="rok"]')!.hidden = cel !== 'nauka-zawodu';
+      let blad: string | null = null;
+      if (!poprawnaData(urodzenie) || !poprawnaData(poczatek) || !poprawnaData(naDzien)) blad = 'Wpisz datę urodzenia, początek pracy i dzień do sprawdzenia.';
+      else if (poczatek < urodzenie || naDzien < urodzenie) blad = 'Daty pracy nie mogą być przed datą urodzenia.';
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      b.hidden = !blad;
+      b.textContent = blad ?? '';
+      if (blad) {
+        w('doba').textContent = '—';
+        w('opis').textContent = '';
+        return;
+      }
+      const r = mlodociany({
+        urodzenie,
+        poczatekPracy: poczatek,
+        naDzien,
+        cel,
+        rokNauki: Number(el('rok').value) as 1 | 2 | 3,
+        bezSzkolyPodstawowej: el('bezSzkoly').checked,
+      });
+      const dorosly = r.status === 'pelnoletni';
+      for (const k of ['przerwa', 'noc', 'odpoczynek', 'placa']) wiersz(k).hidden = dorosly;
+      wiersz('lekkie').hidden = !r.lekkie;
+      const uwaga = w('uwaga');
+      uwaga.hidden = r.status !== 'ponizej-15';
+      if (dorosly) {
+        pisz('doba', 'zasady ogólne');
+        pisz('opis', `Masz ${r.lata} lat. Od ${dataPoPolsku(r.osiemnascie)} przepisy o młodocianych już Cię nie dotyczą.`);
+      } else {
+        pisz('doba', `do ${r.limitDoby} godzin`);
+        pisz(
+          'opis',
+          r.limitDoby === 6
+            ? `Masz ${r.lata} lat. Od 16. urodzin, ${dataPoPolsku(r.szesnascie)}, do 8 godzin.`
+            : `Masz ${r.lata} lat. Pełnoletność: ${dataPoPolsku(r.osiemnascie)}.`,
+        );
+        if (r.status === 'ponizej-15') {
+          pisz(
+            'uwaga',
+            Number(naDzien.slice(0, 4)) === r.rokPietnastu
+              ? 'W roku 15. urodzin możesz pracować na zasadach dla młodocianych, jeśli masz ukończoną szkołę podstawową (art. 191 § 2¹). Bez niej tylko przyuczenie do pracy, za zgodą rodzica lub opiekuna i z pozytywną opinią poradni psychologiczno-pedagogicznej (§ 2³–2⁴).'
+              : 'Przed rokiem 15. urodzin wolno pracować tylko w celu przygotowania zawodowego: nauki zawodu po szkole podstawowej albo przyuczenia bez niej, za zgodą rodzica lub opiekuna i z pozytywną opinią poradni psychologiczno-pedagogicznej (art. 191 § 2²–2⁴).',
+          );
+        }
+        if (r.lekkie) {
+          pisz('lekkie', `W roku szkolnym do ${r.lekkie.tydzienSzkola} godzin w tygodniu i ${r.lekkie.dzienZajec} w dniu zajęć, w ferie do ${r.lekkie.dobaFerie} godzin na dobę i ${r.lekkie.tydzienFerie} w tygodniu`);
+        }
+        pisz('noc', `${r.poraNocna}, nadgodziny też są zakazane`);
+        pisz(
+          'placa',
+          cel === 'lekkie-prace'
+            ? 'Ustala umowa o pracę; stawki procentowe dotyczą nauki zawodu i przyuczenia'
+            : r.placa
+              ? `${zl(r.placa.kwota)} brutto: ${r.placa.procent}% z ${zl(r.placa.podstawa.kwota)} (${r.placa.podstawa.kwartal})${r.placa.podstawa.mozeNieaktualna ? '; GUS mógł już ogłosić nowszą kwotę' : ''}`
+              : 'Brak kwoty GUS dla tej daty w kalkulatorze',
+        );
+      }
+      const lista = w('urlop');
+      lista.replaceChildren(
+        ...r.urlop.lista.map((u) => {
+          const li = document.createElement('li');
+          li.textContent = typografia(`${dataPoPolsku(u.data)}: ${u.dni} dni (${u.opis})`);
+          return li;
+        }),
+      );
+      pisz(
+        'urlop-ogolne',
+        r.urlop.przedOsiemnastka
+          ? `Od ${dataPoPolsku(r.urlop.zasadyOgolneOd)} urlop według zasad ogólnych: zwykle 20 dni, a przy stażu z nauką co najmniej 10 lat 26 dni (art. 154 i 155 Kodeksu pracy).`
+          : 'Pół roku pracy mija w dniu 18. urodzin albo później, więc urlop powstaje według zasad ogólnych dla pierwszej pracy (art. 153 Kodeksu pracy).',
+      );
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>

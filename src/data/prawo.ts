@@ -331,9 +331,23 @@ export const AKTY = {
   praceMlodocianych: {
     nazwa: 'Rozporządzenie w sprawie wykazu prac wzbronionych młodocianym i warunków ich zatrudniania przy niektórych z tych prac',
     publikator: 'Dz.U. 2023 poz. 1240',
-    uwaga: 'załącznik nr 1, cz. I ust. 1',
+    uwaga: 'załącznik nr 1: prace wzbronione; nr 2: prace dozwolone od 16 lat w przygotowaniu zawodowym',
     adres: eli(2023, 1240),
     sprawdzono: '2026-11-11',
+  },
+  przygotowanieZawodowe: {
+    nazwa: 'Rozporządzenie w sprawie przygotowania zawodowego młodocianych i ich wynagradzania',
+    publikator: 'Dz.U. 2018 poz. 2010',
+    uwaga: 'tekst jednolity; zmiany Dz.U. 2019 poz. 1636, 2023 poz. 1348 (§ 19–20: 8, 9, 10 i 7% od 1 września 2023 r.) i 2024 poz. 322',
+    adres: eli(2018, 2010),
+    sprawdzono: '2026-11-12',
+  },
+  przecietneKwartalne: {
+    nazwa: 'Komunikat Prezesa GUS w sprawie przeciętnego wynagrodzenia w drugim kwartale 2026 r.',
+    publikator: 'M.P. 2026 poz. 779',
+    uwaga: '9233,13 zł, dla płac młodocianych od 1 września 2026 r.; wcześniej M.P. 2026 poz. 457 (9562,88 zł), M.P. 2026 poz. 194 (9197,79 zł) i M.P. 2025 poz. 1148 (8771,70 zł)',
+    adres: 'https://eli.gov.pl/eli/MP/2026/779/ogl',
+    sprawdzono: '2026-11-12',
   },
   temperatura2026: {
     nazwa: 'Rozporządzenie z 9 lipca 2026 r. zmieniające rozporządzenie w sprawie ogólnych przepisów BHP (§ 30a: temperatura)',
