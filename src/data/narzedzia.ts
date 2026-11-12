@@ -265,6 +265,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-12',
   },
   {
+    slug: 'delegacja-zagraniczna',
+    nazwa: 'Delegacja zagraniczna: dieta i nocleg',
+    krotko: 'Dieta i limit na nocleg za granicą dla 119 państw, 1/3 i 1/2 diety, posiłki 15/30/30%, ryczałty.',
+    kategoria: 'wynagrodzenie',
+    przepisy: ['kodeksPracy', 'podrozeSluzbowe', 'pit', 'podstawaSkladek'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'swiadczenie-rehabilitacyjne',
     nazwa: 'Świadczenie rehabilitacyjne',
     krotko: 'Świadczenie rehabilitacyjne po zasiłku chorobowym: 90%, potem 75%, 100% po wypadku przy pracy, do 12 miesięcy.',
@@ -381,7 +389,7 @@ export const NARZEDZIA: Narzedzie[] = [
     nazwa: 'Odprawa pośmiertna',
     krotko: 'Ile odprawy pośmiertnej dla rodziny: 1, 3 albo 6 pensji według stażu, podział po równo, ubezpieczenie.',
     kategoria: 'umowa',
-    przepisy: ['kodeksPracy', 'wynagrodzenieRozp', 'emerytury', 'pit'],
+    przepisy: ['kodeksPracy', 'wynagrodzenieRozp', 'emerytury', 'zasilekPogrzebowy2026', 'pit'],
     sprawdzono: '2026-11-12',
   },
   {

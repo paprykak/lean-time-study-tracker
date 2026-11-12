@@ -1,0 +1,333 @@
+---
+// Delegacja zagraniczna: dieta, posiłki, nocleg, ryczałty (§ 12–21 rozporządzenia z 29 stycznia 2013 r., t.j. Dz.U. 2023
+// poz. 2190, stawki z załącznika: src/data/diety-zagraniczne.ts). Logika: src/lib/narzedzia/delegacja-zagraniczna.ts.
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { DIETY_ZAGRANICZNE, INNE_PANSTWA } from '../../data/diety-zagraniczne';
+import { chwilaWPolsce, czasPodrozy, opisChwili } from '../../lib/narzedzia/delegacja';
+import { czesciDiety, delegacjaZagraniczna, ileDietZagranicznych, wWalucie } from '../../lib/narzedzia/delegacja-zagraniczna';
+import { dodajDni, dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+const dzis = dzisWPolsce();
+const D = { panstwo: 'Niemcy', wyjazd: { data: dzis, godzina: '06:00' }, powrot: { data: dodajDni(dzis, 2), godzina: '10:00' } };
+const r = delegacjaZagraniczna(D);
+const s = r.stawki;
+const start = chwilaWPolsce(D.wyjazd.data, D.wyjazd.godzina);
+const doby = czesciDiety(start, start + r.czas).map((_, i) => ({ od: start + i * 86_400_000, do: Math.min(start + (i + 1) * 86_400_000, start + r.czas) }));
+const POSILKI = [
+  ['sniadanie', 'Śniadanie'],
+  ['obiad', 'Obiad'],
+  ['kolacja', 'Kolacja'],
+] as const;
+const PANSTWA = [...DIETY_ZAGRANICZNE, INNE_PANSTWA];
+const niemcy = DIETY_ZAGRANICZNE.find((x) => x.panstwo === 'Niemcy')!;
+
+const faq = [
+  {
+    pytanie: 'Ile wynosi dieta za granicą, na przykład w Niemczech?',
+    odpowiedz: `Dietę i limit na nocleg dla każdego państwa podaje załącznik do rozporządzenia w sprawie należności z tytułu podróży służbowej. W Niemczech dieta wynosi ${wWalucie(niemcy.dieta, niemcy.waluta)} za dobę, a limit na nocleg ${wWalucie(niemcy.nocleg, niemcy.waluta)}. Dla państw spoza tabeli: ${wWalucie(INNE_PANSTWA.dieta, INNE_PANSTWA.waluta)} i ${wWalucie(INNE_PANSTWA.nocleg, INNE_PANSTWA.waluta)}. Pełna tabela jest poniżej.`,
+  },
+  {
+    pytanie: 'Jak liczyć dietę za niepełną dobę za granicą?',
+    odpowiedz: 'Za każdą pełną dobę przysługuje cała dieta, a za niepełną dobę: do 8 godzin 1/3 diety, ponad 8 do 12 godzin połowa, ponad 12 godzin cała dieta (§ 13 ust. 3 rozporządzenia). Czas liczy się od przekroczenia granicy, startu samolotu z ostatniego lotniska w kraju albo wyjścia statku z ostatniego polskiego portu do powrotu (§ 12).',
+  },
+  {
+    pytanie: 'Ile odejmuje się od diety zagranicznej za posiłki?',
+    odpowiedz: 'Śniadanie to 15% diety, obiad 30%, kolacja 30%; także posiłki w cenie hotelu. Przy całodziennym bezpłatnym wyżywieniu zostaje 25% diety (§ 14 ust. 1–3 rozporządzenia).',
+  },
+  {
+    pytanie: 'Czy prywatna firma może płacić niższą dietę za granicą?',
+    odpowiedz: 'Może ustalić w regulaminie wynagradzania, układzie zbiorowym albo umowie o pracę inne stawki niż w tabeli, ale dieta za dobę podróży za granicą nie może być niższa niż dieta krajowa, czyli 45 zł (art. 77⁵ § 3–4 Kodeksu pracy). Gdy firma nie ma takich zasad, stosuje się rozporządzenie (art. 77⁵ § 5).',
+  },
+  {
+    pytanie: 'Ile wynosi ryczałt za nocleg za granicą?',
+    odpowiedz: 'Gdy nie masz rachunku za hotel, a nocleg nie był zapewniony za darmo, przysługuje ryczałt 25% limitu na nocleg w danym państwie; nie przysługuje za czas przejazdu (§ 16 ust. 2 i 4 rozporządzenia). Za hotel z rachunkiem pracodawca zwraca koszt do limitu, a więcej tylko za swoją zgodą (§ 16 ust. 1 i 3).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="delegacja-zagraniczna"
+  tytul="Dieta zagraniczna 2026: delegacja i tabela"
+  opis="Policz dietę z delegacji za granicą: stawki dla 119 państw, 1/3 i 1/2 diety za niepełną dobę, posiłki 15/30/30%, ryczałt za nocleg 25% limitu i dojazdy."
+  h1="Delegacja zagraniczna: dieta i nocleg"
+  lead="Dieta za granicą zależy od państwa i czasu od przekroczenia granicy. Wybierz państwo, wpisz godziny wyjazdu i powrotu, zaznacz posiłki, a policzymy dietę i ryczałty w walucie."
+  faq={faq}
+>
+  <form class="kalkulator" data-zagraniczna novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Podróż</h2>
+      <div class="mt-4">
+        <label for="z-panstwo" class="etykieta-pola">Państwo docelowe</label>
+        <select id="z-panstwo" name="panstwo" class="pole mt-1">
+          {PANSTWA.map((x) => <option value={x.panstwo} selected={x.panstwo === D.panstwo}>{x.panstwo}</option>)}
+        </select>
+      </div>
+      <div class="mt-4 grid grid-cols-2 items-end gap-3">
+        <div>
+          <label for="z-wyjazd" class="etykieta-pola">Wyjazd za granicę: dzień</label>
+          <input id="z-wyjazd" name="wyjazd" type="date" class="pole mt-1" min="2023-01-01" max="2100-12-31" value={D.wyjazd.data} aria-describedby="z-czas-opis z-blad" />
+        </div>
+        <div>
+          <label for="z-wyjazd-g" class="etykieta-pola">Godzina wyjazdu</label>
+          <input id="z-wyjazd-g" name="wyjazdGodzina" type="time" class="pole mt-1" value={D.wyjazd.godzina} aria-describedby="z-czas-opis z-blad" />
+        </div>
+      </div>
+      <div class="mt-4 grid grid-cols-2 items-end gap-3">
+        <div>
+          <label for="z-powrot" class="etykieta-pola">Powrót do Polski: dzień</label>
+          <input id="z-powrot" name="powrot" type="date" class="pole mt-1" min="2023-01-01" max="2100-12-31" value={D.powrot.data} aria-describedby="z-czas-opis z-blad" />
+        </div>
+        <div>
+          <label for="z-powrot-g" class="etykieta-pola">Godzina powrotu</label>
+          <input id="z-powrot-g" name="powrotGodzina" type="time" class="pole mt-1" value={D.powrot.godzina} aria-describedby="z-czas-opis z-blad" />
+        </div>
+      </div>
+      <p id="z-czas-opis" class="meta mt-1">Przekroczenie granicy, start samolotu z ostatniego lotniska w Polsce albo wyjście statku z ostatniego polskiego portu, w czasie polskim (§ 12). Czas w kraju policzy <a href="/narzedzia/delegacja-krajowa">kalkulator delegacji krajowej</a> (§ 21).</p>
+      <p id="z-blad" class="blad-pola mt-3" data-blad="czas" hidden></p>
+
+      <fieldset class="mt-5">
+        <legend class="etykieta">Posiłki za darmo</legend>
+        <p class="meta mt-1">Także w cenie hotelu. Śniadanie zmniejsza dietę o 15%, obiad i kolacja o 30%, a przy wszystkich trzech zostaje 25% diety (§ 14).</p>
+        <div data-doby>
+          {
+            doby.map((d, i) => (
+              <fieldset class="mt-3" data-doba={i}>
+                <legend class="text-[0.9375rem]"><strong data-nr>Doba {i + 1}</strong>: <span data-zakres>{opisChwili(d.od)} – {opisChwili(d.do)}</span></legend>
+                <div class="mt-1 flex flex-wrap gap-x-5 gap-y-2">
+                  {POSILKI.map(([k, nazwa]) => (
+                    <label class="flex items-center gap-2 text-[0.9375rem]">
+                      <input type="checkbox" name={`posilek-${i}-${k}`} data-posilek={k} class="size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+                      <span>{nazwa}</span>
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
+            ))
+          }
+        </div>
+      </fieldset>
+
+      <div class="mt-5">
+        <label for="z-noclegi" class="etykieta-pola">Noclegi bez rachunku</label>
+        <input id="z-noclegi" name="noclegi" class="pole mt-1 max-w-24" type="text" inputmode="numeric" autocomplete="off" value="0" aria-describedby="z-noclegi-opis z-blad-noclegi" />
+        <p id="z-noclegi-opis" class="meta mt-1">Ryczałt 25% limitu na nocleg za noc, gdy nocleg nie był zapewniony za darmo (§ 16 ust. 2).</p>
+        <p id="z-blad-noclegi" class="blad-pola mt-1" data-blad="noclegi" hidden></p>
+      </div>
+      <div class="mt-4">
+        <label for="z-dojazd" class="etykieta-pola">Dojazd z i na dworzec albo lotnisko za granicą</label>
+        <select id="z-dojazd" name="dojazd" class="pole mt-1" aria-describedby="z-dojazd-opis">
+          <option value="brak" selected>Nie płacę</option>
+          <option value="oba">Płacę w obie strony</option>
+          <option value="jeden">Płacę w jedną stronę</option>
+        </select>
+        <p id="z-dojazd-opis" class="meta mt-1">Ryczałt: jedna dieta, w jedną stronę połowa (§ 17 ust. 1–2). Ryczałty nie przysługują przy podróży samochodem, motocyklem albo motorowerem (§ 17 ust. 4).</p>
+      </div>
+      <label class="mt-4 flex items-start gap-3 text-[0.9375rem]">
+        <input type="checkbox" name="komunikacja" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+        <span>Płacę za komunikację miejscową na miejscu (ryczałt 10% diety za każdą rozpoczętą dobę, § 17 ust. 3)</span>
+      </label>
+      <div class="mt-4">
+        <label for="z-kurs" class="etykieta-pola">Kurs <span data-waluta>{s.waluta}</span> w złotych (nieobowiązkowo)</label>
+        <input id="z-kurs" name="kurs" class="pole mt-1 max-w-32" type="text" inputmode="decimal" autocomplete="off" value="" aria-describedby="z-kurs-opis" />
+        <p id="z-kurs-opis" class="meta mt-1">Średni kurs NBP z dnia wypłaty zaliczki, gdy rozliczasz się w złotych (§ 20 ust. 2–3).</p>
+      </div>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Do zwrotu za delegację</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-kwota"><span data-w="razem">{wWalucie(r.razem, s.waluta)}</span></p>
+        <p class="meta" data-w="czas">Za granicą: {czasPodrozy(r.czas)}</p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Dieta</dt><dd data-w="dieta">{wWalucie(r.dietaPrzedPotraceniem, s.waluta)} ({ileDietZagranicznych(r.liczbaDiet)} po {wWalucie(s.dieta, s.waluta)})</dd></div>
+        <div><dt>Potrącenie za posiłki</dt><dd data-w="potracenie">{wWalucie(r.potracenie, s.waluta)}</dd></div>
+        <div><dt>Ryczałt za noclegi</dt><dd data-w="noclegi">{wWalucie(r.ryczaltNoclegi, s.waluta)}</dd></div>
+        <div><dt>Dojazd na dworzec albo lotnisko</dt><dd data-w="dojazd">{wWalucie(r.dojazd, s.waluta)}</dd></div>
+        <div><dt>Komunikacja miejscowa</dt><dd data-w="komunikacja">{wWalucie(r.komunikacja, s.waluta)}</dd></div>
+        <div><dt>Hotel z rachunkiem</dt><dd data-w="limit">zwrot do {wWalucie(s.nocleg, s.waluta)} za dobę</dd></div>
+        <div data-wiersz="pln" hidden><dt>W złotych</dt><dd data-w="pln"></dd></div>
+      </dl>
+      <p class="wynik-uwaga">Bilety, hotel z rachunkiem i inne wydatki pracodawca zwraca osobno. Zaliczkę dostajesz w walucie albo, za Twoją zgodą, w złotych (§ 20).</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Stawki są w tabeli poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <template data-wzor-doby>
+    <fieldset class="mt-3">
+      <legend class="text-[0.9375rem]"><strong data-nr></strong>: <span data-zakres></span></legend>
+      <div class="mt-1 flex flex-wrap gap-x-5 gap-y-2">
+        {
+          POSILKI.map(([k, nazwa]) => (
+            <label class="flex items-center gap-2 text-[0.9375rem]">
+              <input type="checkbox" data-posilek={k} class="size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+              <span>{nazwa}</span>
+            </label>
+          ))
+        }
+      </div>
+    </fieldset>
+  </template>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="zasady">Zasady diety zagranicznej</h2>
+    <ul>
+      <li>Dieta w wysokości dla państwa docelowego; przy podróży do kilku państw pracodawca może ustalić więcej niż jedno państwo docelowe (§ 13 ust. 2).</li>
+      <li>Za każdą dobę cała dieta, za niepełną dobę do 8 godzin 1/3, ponad 8 do 12 godzin połowa, ponad 12 godzin cała (§ 13 ust. 3).</li>
+      <li>Posiłki za darmo: śniadanie 15%, obiad 30%, kolacja 30% diety; przy całodziennym wyżywieniu 25% diety; za dzień w szpitalu 25% diety (§ 14–15).</li>
+      <li>Nocleg: zwrot z rachunku do limitu dla państwa, bez rachunku ryczałt 25% limitu, nic przy darmowym noclegu (§ 16).</li>
+      <li>Ryczałty: dojazd z i na dworzec albo lotnisko jedna dieta w miejscowości docelowej i w każdej innej z noclegiem (w jedną stronę połowa), komunikacja miejscowa 10% diety za rozpoczętą dobę (§ 17).</li>
+      <li>Czas w Polsce przed przekroczeniem granicy i po powrocie rozlicza się jak <a href="/narzedzia/delegacja-krajowa">delegację krajową</a> (§ 21).</li>
+    </ul>
+
+    <h2 id="prywatna-firma">Prywatna firma i podatek</h2>
+    <p>
+      U pracodawcy spoza sfery budżetowej zasady ustala regulamin wynagradzania, układ zbiorowy albo umowa o pracę.
+      Dieta za dobę podróży za granicą nie może być jednak niższa niż dieta krajowa, czyli 45 zł (art. 77<sup>5</sup> § 3–4
+      Kodeksu pracy), a gdy firma nie ma takich zasad, stosuje się rozporządzenie (§ 5). Diety i inne należności za
+      podróż służbową są wolne od PIT do wysokości z rozporządzenia (art. 21 ust. 1 pkt 16 lit. a ustawy o PIT), z wyjątkiem
+      kierowców w międzynarodowym transporcie drogowym (art. 21 ust. 15c).
+    </p>
+
+    <h2 id="tabela">Diety i limity na nocleg we wszystkich państwach</h2>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Dieta za dobę i limit na nocleg w podróży zagranicznej według państwa</caption>
+        <thead><tr><th scope="col">Państwo</th><th scope="col">Dieta</th><th scope="col">Nocleg</th></tr></thead>
+        <tbody>
+          {PANSTWA.map((x) => <tr><th scope="row">{x.panstwo}</th><td>{x.dieta} {x.waluta}</td><td>{x.nocleg} {x.waluta}</td></tr>)}
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Stawki przepisaliśmy z załącznika do tekstu jednolitego rozporządzenia (Dz.U. 2023 poz. 2190), z uwagami pod tabelą
+      (Nowy Jork, Waszyngton, Gibraltar, Hongkong, Tajwan). Czas liczymy w rzeczywistych godzinach od wyjazdu do powrotu,
+      doby po 24 godziny. Posiłki odejmujemy od diety za dobę, w której je zapewniono, nie więcej niż wynosi dieta za tę
+      dobę; gdy w niepełnej dobie zapewniono wszystkie trzy posiłki, liczymy 25% diety za tę dobę. Rozporządzenie nie
+      rozstrzyga wprost tych dwóch przypadków, więc pracodawca może je liczyć inaczej. Kurs przeliczamy tylko wtedy, gdy go
+      wpiszesz; kalkulator nie pobiera kursów z zewnątrz.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { zl, wpisanaLiczba } from '../../lib/narzedzia/format';
+  import { chwilaWPolsce, czasPodrozy, MAKS_DOB, opisChwili, poprawnaGodzina, type Posilek, type PosilkiDoby } from '../../lib/narzedzia/delegacja';
+  import { delegacjaZagraniczna, ileDietZagranicznych, stawki, wWalucie, type Dojazd } from '../../lib/narzedzia/delegacja-zagraniczna';
+  import { dniMiedzy, poprawnaData } from '../../lib/narzedzia/terminy';
+
+  const form = document.querySelector<HTMLFormElement>('[data-zagraniczna]');
+  const wzor = document.querySelector<HTMLTemplateElement>('[data-wzor-doby]');
+  if (form && wzor) {
+    const DOBA = 86_400_000;
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const kontener = form.querySelector<HTMLElement>('[data-doby]')!;
+    const blad = (k: string, tekst: string | null) => {
+      const b = form.querySelector<HTMLElement>(`[data-blad="${k}"]`)!;
+      b.hidden = !tekst;
+      b.textContent = tekst ?? '';
+    };
+    const posilki = (): PosilkiDoby[] =>
+      [...kontener.querySelectorAll<HTMLElement>('[data-doba]')].map((f) =>
+        Object.fromEntries([...f.querySelectorAll<HTMLInputElement>('[data-posilek]')].map((x) => [x.dataset.posilek as Posilek, x.checked])),
+      );
+
+    let podzial = '';
+    const ustawDoby = (start: number, koniec: number) => {
+      const liczba = Math.ceil((koniec - start) / DOBA);
+      const klucz = `${start}-${koniec}`;
+      if (klucz === podzial) return;
+      podzial = klucz;
+      const stare = posilki();
+      kontener.replaceChildren(
+        ...Array.from({ length: liczba }, (_, i) => {
+          const od = start + i * DOBA;
+          const do_ = Math.min(od + DOBA, koniec);
+          const f = (wzor.content.firstElementChild as HTMLFieldSetElement).cloneNode(true) as HTMLFieldSetElement;
+          f.dataset.doba = String(i);
+          f.querySelector('[data-nr]')!.textContent = `Doba ${i + 1}`;
+          f.querySelector('[data-zakres]')!.textContent = `${opisChwili(od)} – ${opisChwili(do_)}`;
+          f.querySelectorAll<HTMLInputElement>('[data-posilek]').forEach((x) => {
+            x.name = `posilek-${i}-${x.dataset.posilek}`;
+            x.checked = Boolean(stare[i]?.[x.dataset.posilek as Posilek]);
+          });
+          return f;
+        }),
+      );
+    };
+
+    const pusto = () => {
+      for (const k of ['razem', 'dieta', 'potracenie', 'noclegi', 'dojazd', 'komunikacja']) w(k).textContent = '—';
+      w('czas').textContent = '';
+      form.querySelector<HTMLElement>('[data-wiersz="pln"]')!.hidden = true;
+    };
+
+    const przelicz = () => {
+      const panstwo = el('panstwo').value;
+      const s = stawki(panstwo);
+      form.querySelector<HTMLElement>('[data-waluta]')!.textContent = s.waluta;
+      w('limit').textContent = `zwrot do ${wWalucie(s.nocleg, s.waluta)} za dobę`;
+      const wyjazd = { data: el('wyjazd').value, godzina: el('wyjazdGodzina').value };
+      const powrot = { data: el('powrot').value, godzina: el('powrotGodzina').value };
+      let bladCzasu: string | null = null;
+      let start = 0;
+      let koniec = 0;
+      if (![wyjazd.data, powrot.data].every(poprawnaData) || ![wyjazd.godzina, powrot.godzina].every(poprawnaGodzina)) {
+        bladCzasu = 'Wpisz dzień i godzinę wyjazdu oraz powrotu.';
+      } else {
+        start = chwilaWPolsce(wyjazd.data, wyjazd.godzina);
+        koniec = chwilaWPolsce(powrot.data, powrot.godzina);
+        if (koniec <= start) bladCzasu = 'Powrót musi być po wyjeździe.';
+        else if (koniec - start > MAKS_DOB * DOBA) bladCzasu = `Kalkulator liczy podróże do ${MAKS_DOB} dób.`;
+      }
+      blad('czas', bladCzasu);
+      if (bladCzasu) {
+        blad('noclegi', null);
+        pusto();
+        return;
+      }
+      ustawDoby(start, koniec);
+
+      const tekstNoclegow = el('noclegi').value.trim() || '0';
+      const noclegi = /^\d{1,2}$/.test(tekstNoclegow) ? Number(tekstNoclegow) : NaN;
+      const noce = dniMiedzy(wyjazd.data, powrot.data);
+      const bladNoclegow = Number.isNaN(noclegi)
+        ? 'Wpisz liczbę noclegów, na przykład 0 albo 2.'
+        : noclegi > noce
+          ? `W tej podróży są najwyżej ${noce} ${noce === 1 ? 'noc' : noce > 1 && noce < 5 ? 'noce' : 'nocy'}.`
+          : null;
+      blad('noclegi', bladNoclegow);
+      if (bladNoclegow) {
+        pusto();
+        return;
+      }
+
+      const r = delegacjaZagraniczna({
+        panstwo,
+        wyjazd,
+        powrot,
+        posilki: posilki(),
+        noclegiRyczalt: noclegi,
+        dojazd: el('dojazd').value as Dojazd,
+        komunikacja: el('komunikacja').checked,
+      });
+      w('razem').textContent = wWalucie(r.razem, s.waluta);
+      w('czas').textContent = `Za granicą: ${czasPodrozy(r.czas)}`;
+      w('dieta').textContent = `${wWalucie(r.dietaPrzedPotraceniem, s.waluta)} (${ileDietZagranicznych(r.liczbaDiet)} po ${wWalucie(s.dieta, s.waluta)})`;
+      w('potracenie').textContent = wWalucie(r.potracenie, s.waluta);
+      w('noclegi').textContent = wWalucie(r.ryczaltNoclegi, s.waluta);
+      w('dojazd').textContent = wWalucie(r.dojazd, s.waluta);
+      w('komunikacja').textContent = wWalucie(r.komunikacja, s.waluta);
+      const kurs = wpisanaLiczba(el('kurs').value);
+      const pln = form.querySelector<HTMLElement>('[data-wiersz="pln"]')!;
+      pln.hidden = !(kurs > 0);
+      w('pln').textContent = kurs > 0 ? zl(Math.round(r.razem * kurs * 100) / 100) : '';
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>

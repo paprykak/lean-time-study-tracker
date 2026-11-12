@@ -272,10 +272,17 @@ export const AKTY = {
     adres: 'https://eli.gov.pl/eli/MP/2026/858/ogl',
     sprawdzono: '2026-11-12',
   },
+  zasilekPogrzebowy2026: {
+    nazwa: 'Komunikat Prezesa ZUS w sprawie kwoty zasiłku pogrzebowego',
+    publikator: 'M.P. 2026 poz. 150',
+    uwaga: 'od 1 marca 2026 r.: 7000 zł (art. 80 ust. 1 i 6 ustawy o emeryturach i rentach z FUS)',
+    adres: 'https://eli.gov.pl/eli/MP/2026/150/ogl',
+    sprawdzono: '2026-11-12',
+  },
   emerytury: {
     nazwa: 'Ustawa o emeryturach i rentach z Funduszu Ubezpieczeń Społecznych',
     publikator: 'Dz.U. 2025 poz. 1749',
-    uwaga: 'tekst jednolity; zmiany Dz.U. 2026 poz. 26 i 425 nie dotyczą art. 24 i 87; art. 24 ust. 1: wiek emerytalny 60 i 65 lat',
+    uwaga: 'tekst jednolity; zmiany Dz.U. 2026 poz. 26 i 425 nie dotyczą art. 24, 67–81 i 87; art. 24 ust. 1: wiek emerytalny 60 i 65 lat; art. 80: zasiłek pogrzebowy 7000 zł od 1 stycznia 2026 r. (Dz.U. 2025 poz. 718)',
     adres: eli(2025, 1749),
     sprawdzono: '2026-11-12',
   },
