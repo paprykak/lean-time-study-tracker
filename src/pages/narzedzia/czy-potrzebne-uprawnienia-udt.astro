@@ -63,7 +63,7 @@ const faq = [
   },
   {
     pytanie: 'Czy suwnica sterowana kasetą wymaga uprawnień?',
-    odpowiedz: 'Tak, chyba że wszystkie mechanizmy mają napęd ręczny, napęd jest elektryczny jednofazowy, a udźwig do 1000 kg, albo udźwig nie przekracza 250 kg i suwnica nie przemieszcza osób (uwagi pod tab. nr 1 zał. nr 3 do rozporządzenia z 2019 r.). Suwnica ogólnego przeznaczenia: 10 lat, specjalnego: 5 lat.',
+    odpowiedz: 'Tak, chyba że: 1) wszystkie mechanizmy mają napęd ręczny, albo 2) napęd jest elektryczny jednofazowy, a udźwig do 1000 kg, albo 3) udźwig nie przekracza 250 kg i suwnica nie przemieszcza osób (uwagi pod tab. nr 1 zał. nr 3 do rozporządzenia z 2019 r.). Suwnica ogólnego przeznaczenia: 10 lat, specjalnego: 5 lat.',
   },
 ];
 ---
@@ -105,8 +105,8 @@ const faq = [
       <div class="mt-5" data-pole="typZurawia" hidden={ukryj('typZurawia')}>
         <label for="cu-zuraw" class="etykieta-pola">Rodzaj żurawia</label>
         <select id="cu-zuraw" name="typZurawia" class="pole mt-1">
-          <option value="stacjonarny" selected>Stacjonarny (słupowy, przyścienny)</option>
-          <option value="przewozny">Przewoźny, przenośny (HDS)</option>
+          <option value="stacjonarny" selected>Stacjonarny, słupowy</option>
+          <option value="przewozny">Przewoźny, przenośny</option>
           <option value="samojezdny">Samojezdny</option>
           <option value="wiezowy">Wieżowy, szybkomontujący</option>
         </select>
@@ -115,18 +115,18 @@ const faq = [
       <div class="mt-5" data-pole="typPodestu" hidden={ukryj('typPodestu')}>
         <label for="cu-podest" class="etykieta-pola">Rodzaj podestu</label>
         <select id="cu-podest" name="typPodestu" class="pole mt-1">
-          <option value="przejezdny" selected>Przejezdny (nożycowy, koszowy)</option>
+          <option value="przejezdny" selected>Przejezdny, nożycowy</option>
           <option value="stacjonarny">Stacjonarny</option>
           <option value="wiszacy">Wiszący</option>
           <option value="masztowy">Masztowy</option>
-          <option value="zaladowczy">Załadowczy (winda załadowcza)</option>
+          <option value="zaladowczy">Załadowczy</option>
         </select>
       </div>
 
       <div class="mt-5" data-pole="typDzwignika" hidden={ukryj('typDzwignika')}>
         <label for="cu-dzwignik" class="etykieta-pola">Rodzaj dźwignika</label>
         <select id="cu-dzwignik" name="typDzwignika" class="pole mt-1">
-          <option value="staly" selected>Stół podnośny, podnośnik stały</option>
+          <option value="staly" selected>Stół podnośny, stały</option>
           <option value="przenosny-reczny">Przenośny, ręczny</option>
           <option value="pojazd">Wyposażenie pojazdu</option>
           <option value="stol-technologiczny">Do pochylania stołu</option>
@@ -139,8 +139,8 @@ const faq = [
           <option value="towarowy" selected>Towarowy</option>
           <option value="towarowy-maly">Towarowy mały</option>
           <option value="osobowy">Osobowy</option>
-          <option value="towarowo-osobowy-wewn">Towarowo-osobowy, sterowany z kabiny</option>
-          <option value="towarowo-osobowy-zewn">Towarowo-osobowy, sterowany z przystanków</option>
+          <option value="towarowo-osobowy-wewn">Tow.-osobowy, z kabiny</option>
+          <option value="towarowo-osobowy-zewn">Tow.-osobowy, z przystanków</option>
           <option value="szpitalny">Szpitalny</option>
           <option value="budowlany">Budowlany</option>
         </select>
@@ -158,9 +158,9 @@ const faq = [
       <div class="mt-5" data-pole="naped" hidden={ukryj('naped')}>
         <label for="cu-naped" class="etykieta-pola">Napęd</label>
         <select id="cu-naped" name="naped" class="pole mt-1" aria-describedby="cu-naped-opis">
-          <option value="mechaniczny" selected>Elektryczny trójfazowy, inny silnik</option>
-          <option value="jednofazowy">Elektryczny jednofazowy (230 V)</option>
-          <option value="reczny">Ręczny, wszystkie mechanizmy</option>
+          <option value="mechaniczny" selected>Silnik trójfazowy, inny</option>
+          <option value="jednofazowy">Jednofazowy 230 V</option>
+          <option value="reczny">Wszystko ręczne</option>
         </select>
         <p id="cu-naped-opis" class="meta mt-1">„Ręczny” tylko wtedy, gdy ręczne są podnoszenie i jazda. Jeden silnik wystarczy, żeby napęd był mechaniczny.</p>
       </div>
@@ -195,7 +195,7 @@ const faq = [
         <div data-wiersz="kategoria" hidden={!w.kategoria}><dt>Rodzaj zaświadczenia</dt><dd data-w="kategoria">{w.kategoria?.nazwa}</dd></div>
         <div><dt>Dlaczego</dt><dd data-w="powod">{w.powod}</dd></div>
         <div data-wiersz="zamiast" hidden={!w.zamiast}><dt>Co zamiast</dt><dd data-w="zamiast">{w.zamiast}</dd></div>
-        <div data-wiersz="konserwacja" hidden={!w.konserwacja}><dt>Konserwator</dt><dd data-w="konserwacja">{w.konserwacja ? `potrzebuje zaświadczenia: ${w.konserwacja.nazwa}, ${lat(w.konserwacja.lata)}` : ''}</dd></div>
+        <div data-wiersz="konserwacja" hidden={!w.konserwacja}><dt>Konserwator</dt><dd data-w="konserwacja">{w.konserwacja ? `potrzebuje zaświadczenia „${w.konserwacja.nazwa}”, ${lat(w.konserwacja.lata)}` : ''}</dd></div>
         <div data-wiersz="warunki" hidden={!w.potrzebne}><dt>Kto może zdawać</dt><dd>osoba, która ukończyła 18 lat i zna polski albo przyjdzie z tłumaczem przysięgłym (art. 23 ust. 1c ustawy o dozorze technicznym)</dd></div>
         <div data-wiersz="oplata" hidden={!w.potrzebne}><dt>Egzamin</dt><dd>{oplata} (art. 23 ust. 4), jedno zaświadczenie na jeden rodzaj urządzenia (§ 4 ust. 3 rozporządzenia z 2019 r.)</dd></div>
       </dl>
@@ -329,7 +329,7 @@ const faq = [
       wiersz('zamiast', !!wynik.zamiast);
       pisz('zamiast', wynik.zamiast ?? '');
       wiersz('konserwacja', !!wynik.konserwacja);
-      pisz('konserwacja', wynik.konserwacja ? `potrzebuje zaświadczenia: ${wynik.konserwacja.nazwa}, ${lat(wynik.konserwacja.lata)}` : '');
+      pisz('konserwacja', wynik.konserwacja ? `potrzebuje zaświadczenia „${wynik.konserwacja.nazwa}”, ${lat(wynik.konserwacja.lata)}` : '');
       wiersz('warunki', wynik.potrzebne);
       wiersz('oplata', wynik.potrzebne);
       const uwagi = w('uwagi');

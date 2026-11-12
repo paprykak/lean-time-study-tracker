@@ -32,6 +32,15 @@ test('ukryty napęd „ręczny” z wciągnika nie zmienia wyniku dźwigu', asyn
   await expect(page.locator('[data-w="werdykt"]')).toHaveText('Potrzebne');
 });
 
+test('ukryte „przewozi ludzi” z wciągnika nie zmienia wyniku wyciągu', async ({ page }) => {
+  await page.getByLabel('Rodzaj maszyny').selectOption('wciagnik');
+  await page.getByLabel('Udźwig z tabliczki (kg)').fill('200');
+  await page.getByLabel('Przewozi też ludzi (np. kabina)').check();
+  await expect(page.locator('[data-w="werdykt"]')).toHaveText('Potrzebne');
+  await page.getByLabel('Rodzaj maszyny').selectOption('wyciag');
+  await expect(page.locator('[data-w="werdykt"]')).toHaveText('Niepotrzebne');
+});
+
 test('paleciak z ręczną pompą: niepotrzebne, § 4 ust. 2 i 18 lat', async ({ page }) => {
   await page.getByLabel('Ręczną pompą (dyszlem)').check();
   await expect(page.locator('[data-w="werdykt"]')).toHaveText('Niepotrzebne');
