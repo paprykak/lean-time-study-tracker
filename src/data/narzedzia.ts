@@ -561,6 +561,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-12',
   },
   {
+    slug: 'dodatek-wyrownawczy',
+    nazwa: 'Dodatek wyrównawczy',
+    krotko: 'Ile dodatku po przeniesieniu do gorzej płatnej pracy: w ciąży, po wypadku, przy chorobie zawodowej.',
+    kategoria: 'wynagrodzenie',
+    przepisy: ['kodeksPracy', 'wynagrodzenieRozp', 'urlopowe', 'zwolnieniaGrupowe', 'podstawaSkladek', 'pit', 'kodeksCywilny'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'swiadczenie-urlopowe',
     nazwa: 'Świadczenie urlopowe',
     krotko: 'Ile najwyżej wynosi świadczenie urlopowe przy Twoim etacie, kiedy się należy i ile zostaje na rękę.',
