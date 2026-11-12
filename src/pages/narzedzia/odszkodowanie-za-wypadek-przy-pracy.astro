@@ -1,0 +1,156 @@
+---
+// Jednorazowe odszkodowanie z ZUS za wypadek przy pracy (art. 11–15 ustawy wypadkowej, kwoty z obwieszczeń ministra).
+// Logika: src/lib/narzedzia/odszkodowanie-wypadek.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { liczba } from '../../lib/narzedzia/format';
+import { KWOTY_ODSZKODOWAN, kwotyNaDzien, odszkodowanie } from '../../lib/narzedzia/odszkodowanie-wypadek';
+import { dataPoPolsku, dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+const dzis = dzisWPolsce();
+const k = kwotyNaDzien(dzis) ?? KWOTY_ODSZKODOWAN[KWOTY_ODSZKODOWAN.length - 1];
+const data = kwotyNaDzien(dzis) ? dzis : k.od;
+const PROCENT = 8;
+const r = odszkodowanie({ dataDecyzji: data, procent: PROCENT, poprzedni: 0, niezdolnosc: false });
+const zl0 = (n: number) => `${liczba(n)} zł`;
+const okres = `od ${dataPoPolsku(k.od)} do ${dataPoPolsku(k.do)}`;
+
+const faq = [
+  {
+    pytanie: 'Ile wynosi odszkodowanie za 1% uszczerbku na zdrowiu?',
+    odpowiedz: `${zl0(k.zaProcent)} za każdy procent stałego lub długotrwałego uszczerbku na zdrowiu w decyzjach ZUS wydanych ${okres} (obwieszczenie ministra, ${k.zrodlo}). To 20% przeciętnego wynagrodzenia (art. 12 ust. 1 ustawy o ubezpieczeniu społecznym z tytułu wypadków przy pracy i chorób zawodowych).`,
+  },
+  {
+    pytanie: 'Kto wypłaca odszkodowanie za wypadek przy pracy?',
+    odpowiedz: 'ZUS, na podstawie orzeczenia lekarza orzecznika o stopniu uszczerbku, wydanego po zakończeniu leczenia i rehabilitacji (art. 11 ust. 4). Decyzję ZUS wydaje w ciągu 14 dni od otrzymania orzeczenia albo wyjaśnienia ostatniej okoliczności (art. 15 ust. 2). Kwotę liczy się według stawki z dnia decyzji (art. 12 ust. 5).',
+  },
+  {
+    pytanie: 'Czy od odszkodowania z ZUS płaci się podatek?',
+    odpowiedz: 'Nie. Odszkodowania, których wysokość wynika wprost z ustawy, są zwolnione z podatku dochodowego (art. 21 ust. 1 pkt 3 ustawy o PIT).',
+  },
+  {
+    pytanie: 'Co, gdy stan zdrowia się pogorszy?',
+    odpowiedz: `Gdy uszczerbek wzrośnie co najmniej o 10 punktów procentowych, odszkodowanie zwiększa się o ${zl0(k.zaProcent)} za każdy procent ponad ten, według którego je przyznano (art. 12 ust. 2). Przy orzeczeniu całkowitej niezdolności do pracy i niezdolności do samodzielnej egzystencji wskutek wypadku przysługuje dodatkowo ${zl0(k.niezdolnosc)} (art. 12 ust. 3).`,
+  },
+];
+---
+<StronaNarzedzia
+  slug="odszkodowanie-za-wypadek-przy-pracy"
+  tytul="Odszkodowanie za wypadek przy pracy z ZUS: ile za 1%"
+  opis={`Jednorazowe odszkodowanie z ZUS za wypadek przy pracy: ${zl0(k.zaProcent)} za każdy procent uszczerbku na zdrowiu, ${okres}. Policz kwotę, zwiększenie uszczerbku i dodatek przy niezdolności do pracy.`}
+  h1="Odszkodowanie za wypadek przy pracy"
+  lead="Po wypadku przy pracy ZUS wypłaca jednorazowe odszkodowanie za każdy procent stałego lub długotrwałego uszczerbku na zdrowiu. Wpisz procent z orzeczenia, a policzymy kwotę według stawki z dnia decyzji."
+  faq={faq}
+>
+  <form class="kalkulator" data-odszkodowanie novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Orzeczenie i decyzja</h2>
+      <div class="mt-4">
+        <label for="w-procent" class="etykieta-pola">Uszczerbek na zdrowiu (%)</label>
+        <input id="w-procent" name="procent" class="pole mt-1 max-w-48" type="text" inputmode="numeric" autocomplete="off" value={PROCENT} aria-describedby="w-blad" />
+      </div>
+      <div class="mt-4">
+        <label for="w-poprzedni" class="etykieta-pola">Procent z wcześniejszego odszkodowania</label>
+        <input id="w-poprzedni" name="poprzedni" class="pole mt-1 max-w-48" type="text" inputmode="numeric" autocomplete="off" value="0" aria-describedby="w-poprzedni-opis w-blad" />
+        <p id="w-poprzedni-opis" class="meta mt-1">0, jeśli to pierwsze odszkodowanie za ten wypadek.</p>
+      </div>
+      <div class="mt-4">
+        <label for="w-data" class="etykieta-pola">Data decyzji ZUS</label>
+        <input id="w-data" name="data" type="date" class="pole mt-1 max-w-56" min={KWOTY_ODSZKODOWAN[0].od} max={KWOTY_ODSZKODOWAN[KWOTY_ODSZKODOWAN.length - 1].do} value={data} aria-describedby="w-blad" />
+      </div>
+      <label class="mt-4 flex items-start gap-3 text-[0.9375rem]">
+        <input type="checkbox" name="niezdolnosc" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+        <span>Orzeczono całkowitą niezdolność do pracy i niezdolność do samodzielnej egzystencji wskutek wypadku</span>
+      </label>
+      <p id="w-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Jednorazowe odszkodowanie</h2>
+      <p class="wynik-kwota" aria-live="polite" aria-atomic="true"><span data-w="razem">{zl0(r.razem)}</span></p>
+      <dl class="wynik-lista">
+        <div><dt>Za uszczerbek na zdrowiu</dt><dd data-w="uszczerbek">{zl0(r.zaUszczerbek)}</dd></div>
+        <div><dt>Za niezdolność do pracy i samodzielnej egzystencji</dt><dd data-w="niezdolnosc">{zl0(r.zaNiezdolnosc)}</dd></div>
+        <div><dt>Stawka za 1% w dniu decyzji</dt><dd data-w="stawka">{zl0(k.zaProcent)} ({k.zrodlo})</dd></div>
+      </dl>
+      <p class="wynik-uwaga" data-w="uwaga" hidden></p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Kwoty są w tabeli poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="kwoty">Kwoty odszkodowań</h2>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Kwoty jednorazowych odszkodowań z tytułu wypadku przy pracy według okresu decyzji</caption>
+        <thead><tr><th scope="col">Świadczenie</th>{KWOTY_ODSZKODOWAN.map((x) => <th scope="col">{dataPoPolsku(x.od)} – {dataPoPolsku(x.do)}</th>)}</tr></thead>
+        <tbody>
+          <tr><th scope="row">Za każdy 1% uszczerbku</th>{KWOTY_ODSZKODOWAN.map((x) => <td>{zl0(x.zaProcent)}</td>)}</tr>
+          <tr><th scope="row">Całkowita niezdolność do pracy i samodzielnej egzystencji</th>{KWOTY_ODSZKODOWAN.map((x) => <td>{zl0(x.niezdolnosc)}</td>)}</tr>
+          <tr><th scope="row">Śmierć: małżonek lub dziecko</th>{KWOTY_ODSZKODOWAN.map((x) => <td>{zl0(x.malzonekLubDziecko)}</td>)}</tr>
+          <tr><th scope="row">Śmierć: inny członek rodziny</th>{KWOTY_ODSZKODOWAN.map((x) => <td>{zl0(x.innyCzlonek)}</td>)}</tr>
+          <tr><th scope="row">Śmierć: zwiększenie na każdą kolejną uprawnioną osobę</th>{KWOTY_ODSZKODOWAN.map((x) => <td>{zl0(x.zwiekszenie)}</td>)}</tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Źródła: obwieszczenia ministra ({KWOTY_ODSZKODOWAN.map((x) => x.zrodlo).join(', ')}) na podstawie art. 14 ust. 9 ustawy
+      o ubezpieczeniu społecznym z tytułu wypadków przy pracy i chorób zawodowych. Przy śmierci ubezpieczonego zasady
+      podziału między członków rodziny opisują art. 13 i 14 ustawy; kwotę dzieli się po równo między uprawnionych
+      (art. 14 ust. 5) i pomniejsza o odszkodowanie wypłacone wcześniej zmarłemu za uszczerbek (art. 14 ust. 7).
+    </p>
+
+    <h2 id="zasady">Zasady</h2>
+    <ul>
+      <li>Stały uszczerbek to upośledzenie czynności organizmu nierokujące poprawy, a długotrwały to upośledzenie na ponad 6 miesięcy, które może się poprawić (art. 11 ust. 2 i 3).</li>
+      <li>Stopień uszczerbku ocenia lekarz orzecznik ZUS po zakończeniu leczenia i rehabilitacji (art. 11 ust. 4).</li>
+      <li>Kwota zależy od dnia decyzji ZUS, a nie dnia wypadku (art. 12 ust. 5), i jest zaokrąglana do pełnych złotych (art. 12 ust. 6).</li>
+      <li>Odszkodowanie jest zwolnione z podatku (art. 21 ust. 1 pkt 3 ustawy o PIT).</li>
+    </ul>
+    <p>
+      Wynagrodzenie i zasiłek za czas zwolnienia lekarskiego po wypadku policzy <a href="/narzedzia/kalkulator-l4">kalkulator L4</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { liczba } from '../../lib/narzedzia/format';
+  import { kwotyNaDzien, odszkodowanie } from '../../lib/narzedzia/odszkodowanie-wypadek';
+  import { poprawnaData } from '../../lib/narzedzia/terminy';
+
+  const form = document.querySelector<HTMLFormElement>('[data-odszkodowanie]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const zl0 = (n: number) => `${liczba(n)} zł`;
+    const calkowita = (s: string) => (/^\d{1,3}$/.test(s.trim()) ? Number(s.trim()) : NaN);
+    const przelicz = () => {
+      const procent = calkowita(el('procent').value);
+      const poprzedni = el('poprzedni').value.trim() === '' ? 0 : calkowita(el('poprzedni').value);
+      const data = el('data').value;
+      let blad: string | null = null;
+      if (!(procent >= 1 && procent <= 100)) blad = 'Wpisz procent uszczerbku z orzeczenia, od 1 do 100.';
+      else if (!(poprzedni >= 0 && poprzedni < procent)) blad = 'Wcześniejszy procent musi być mniejszy niż obecny (0, jeśli to pierwsze odszkodowanie).';
+      else if (!poprawnaData(data) || !kwotyNaDzien(data)) blad = 'Kwoty są ogłoszone dla decyzji od 1 kwietnia 2025 r. do 31 marca 2027 r.';
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      b.hidden = !blad;
+      b.textContent = blad ?? '';
+      const uwaga = w('uwaga');
+      if (blad) {
+        w('razem').textContent = '—';
+        uwaga.hidden = true;
+        return;
+      }
+      const r = odszkodowanie({ dataDecyzji: data, procent, poprzedni, niezdolnosc: el('niezdolnosc').checked });
+      w('razem').textContent = zl0(r.razem);
+      w('uszczerbek').textContent = zl0(r.zaUszczerbek);
+      w('niezdolnosc').textContent = zl0(r.zaNiezdolnosc);
+      w('stawka').textContent = `${zl0(r.kwoty.zaProcent)} (${r.kwoty.zrodlo})`;
+      uwaga.hidden = !r.zaMaleZwiekszenie;
+      uwaga.textContent = r.zaMaleZwiekszenie ? 'Zwiększenie odszkodowania przysługuje, gdy uszczerbek wzrósł co najmniej o 10 punktów procentowych (art. 12 ust. 2).' : '';
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>

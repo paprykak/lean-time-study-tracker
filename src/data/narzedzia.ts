@@ -41,6 +41,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-11',
   },
   {
+    slug: 'odszkodowanie-za-wypadek-przy-pracy',
+    nazwa: 'Odszkodowanie za wypadek przy pracy',
+    krotko: 'Ile ZUS płaci za każdy procent uszczerbku na zdrowiu po wypadku przy pracy, zwiększenie i dodatek.',
+    kategoria: 'bhp',
+    przepisy: ['wypadkowa', 'odszkodowaniaWypadkowe2026', 'pit'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'szkolenie-okresowe-bhp',
     nazwa: 'Termin szkolenia okresowego BHP',
     krotko: 'Co ile szkolenie okresowe na Twoim stanowisku i do kiedy masz je zrobić. Z przypomnieniem w kalendarzu.',

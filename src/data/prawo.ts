@@ -142,7 +142,7 @@ export const AKTY = {
   wypadkowa: {
     nazwa: 'Ustawa o ubezpieczeniu społecznym z tytułu wypadków przy pracy i chorób zawodowych',
     publikator: 'Dz.U. 2025 poz. 1644',
-    uwaga: 'tekst jednolity, bez późniejszych zmian; art. 28: stopa dla płatnika do 9 ubezpieczonych',
+    uwaga: 'tekst jednolity; zmiana Dz.U. 2026 poz. 26 dotyczy art. 2, 15 i 16 (orzekanie); art. 11–14: jednorazowe odszkodowanie, art. 28: stopa dla płatnika do 9 ubezpieczonych',
     adres: eli(2025, 1644),
     sprawdzono: '2026-11-12',
   },
@@ -215,6 +215,13 @@ export const AKTY = {
     uwaga: '8903,56 zł',
     adres: 'https://eli.gov.pl/eli/MP/2026/192/ogl',
     sprawdzono: '2026-11-11',
+  },
+  odszkodowaniaWypadkowe2026: {
+    nazwa: 'Obwieszczenie Ministra Rodziny, Pracy i Polityki Społecznej w sprawie wysokości kwot jednorazowych odszkodowań z tytułu wypadku przy pracy lub choroby zawodowej',
+    publikator: 'M.P. 2026 poz. 292',
+    uwaga: 'od 1 kwietnia 2026 r. do 31 marca 2027 r.: 1781 zł za 1% uszczerbku; poprzednio M.P. 2025 poz. 222 (1636 zł)',
+    adres: 'https://eli.gov.pl/eli/MP/2026/292/ogl',
+    sprawdzono: '2026-11-12',
   },
   emerytury: {
     nazwa: 'Ustawa o emeryturach i rentach z Funduszu Ubezpieczeń Społecznych',
