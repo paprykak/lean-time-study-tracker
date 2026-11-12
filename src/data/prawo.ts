@@ -160,6 +160,13 @@ export const AKTY = {
     adres: eli(2026, 192),
     sprawdzono: '2026-11-12',
   },
+  swiadczeniaRodzinne: {
+    nazwa: 'Ustawa o świadczeniach rodzinnych',
+    publikator: 'Dz.U. 2025 poz. 1208',
+    uwaga: 'tekst jednolity; art. 17c ust. 5: świadczenie rodzicielskie 1000 zł miesięcznie',
+    adres: eli(2025, 1208),
+    sprawdzono: '2026-11-12',
+  },
   zasilkowa: {
     nazwa: 'Ustawa o świadczeniach pieniężnych z ubezpieczenia społecznego w razie choroby i macierzyństwa',
     publikator: 'Dz.U. 2026 poz. 854',

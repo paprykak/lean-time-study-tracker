@@ -209,6 +209,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-12',
   },
   {
+    slug: 'zasilek-macierzynski',
+    nazwa: 'Zasiłek macierzyński: 100/70 czy 81,5%',
+    krotko: 'Ile na urlopie macierzyńskim i rodzicielskim: 100% i 70% albo 81,5% za całość, porównanie obu wariantów.',
+    kategoria: 'wynagrodzenie',
+    przepisy: ['zasilkowa', 'kodeksPracy', 'swiadczeniaRodzinne', 'systemUbezpieczen', 'minimalneWynagrodzenie', 'placa2025', 'placa2026', 'placa2027'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'kontrola-grafiku',
     nazwa: 'Kontrola grafiku zmian',
     krotko: 'Sprawdź grafik 12 h albo trzyzmianowy: odpoczynek 11 i 35 h, wolne niedziele, dni wolne, godziny a wymiar.',

@@ -1,0 +1,160 @@
+---
+// Zasiłek macierzyński: 100% + 70% albo 81,5% (art. 31, 30a i 47 ustawy zasiłkowej, art. 180 i 182^1a Kp).
+// Logika: src/lib/narzedzia/macierzynski.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { LATA } from '../../data/prawo';
+import { SWIADCZENIE_RODZICIELSKIE, TYGODNIE_MACIERZYNSKIEGO, TYGODNIE_WYLACZNE, tygodnieRodzicielskiego, zasilekMacierzynski } from '../../lib/narzedzia/macierzynski';
+import { liczba, zl } from '../../lib/narzedzia/format';
+import { dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+const rokBiezacy = Number(dzisWPolsce().slice(0, 4));
+const rok = LATA.includes(rokBiezacy) ? rokBiezacy : LATA[LATA.length - 1];
+const a = zasilekMacierzynski({ rok, brutto: 6000, wariant: '100-70' });
+const b = zasilekMacierzynski({ rok, brutto: 6000, wariant: '81,5' });
+
+const faq = [
+  {
+    pytanie: 'Ile wynosi zasiłek macierzyński?',
+    odpowiedz: 'Za urlop macierzyński 100% podstawy, a za urlop rodzicielski 70%. Jeśli matka złoży wniosek najpóźniej 21 dni po porodzie, dostaje 81,5% za cały urlop macierzyński i rodzicielski, poza 9 tygodniami przysługującymi ojcu, które są płatne 70% (art. 30a ust. 1, art. 31 ust. 1–3f ustawy zasiłkowej).',
+  },
+  {
+    pytanie: 'Ile trwa urlop macierzyński i rodzicielski?',
+    odpowiedz: 'Macierzyński 20 tygodni przy jednym dziecku (31–37 tygodni przy kilkorgu z jednego porodu), rodzicielski 41 tygodni (43 przy kilkorgu) łącznie dla obojga rodziców, z czego 9 tygodni przysługuje wyłącznie każdemu z nich i nie można ich przenieść (art. 180 § 1 i art. 182^1a § 1, 3 i 4 Kodeksu pracy).',
+  },
+  {
+    pytanie: 'Co się bardziej opłaca: 100% i 70% czy 81,5%?',
+    odpowiedz: 'Przy jednym dziecku i całym urlopie matki sumy są niemal równe (przy kilkorgu dzieci wariant 100% i 70% daje więcej); 81,5% daje mniej na początku i więcej później. Gdy po wybraniu 81,5% matka nie wykorzysta w pierwszym roku życia dziecka ani dnia urlopu rodzicielskiego, dostaje wyrównanie zasiłku za urlop macierzyński do 100% (art. 31 ust. 4).',
+  },
+  {
+    pytanie: 'Czy zasiłek macierzyński może być niższy niż 1000 zł?',
+    odpowiedz: `Nie. Gdy miesięczny zasiłek wyszedłby niższy niż świadczenie rodzicielskie (${zl(SWIADCZENIE_RODZICIELSKIE)}), podwyższa się go do tej kwoty (art. 31 ust. 3a ustawy zasiłkowej, art. 17c ust. 5 ustawy o świadczeniach rodzinnych).`,
+  },
+];
+---
+<StronaNarzedzia
+  slug="zasilek-macierzynski"
+  tytul="Zasiłek macierzyński: 100% i 70% czy 81,5%"
+  opis="Policz zasiłek macierzyński i rodzicielski: 100% i 70% albo 81,5% za cały okres, 20 tygodni macierzyńskiego, 32 tygodnie rodzicielskiego matki. Porównanie obu wariantów."
+  h1="Zasiłek macierzyński: kalkulator i porównanie wariantów"
+  lead="Za urlop macierzyński należy się 100% podstawy, za rodzicielski 70%. Albo, po wniosku do 21 dni od porodu, 81,5% za całość. Wpisz wynagrodzenie, a pokażemy obie wersje miesiąc po miesiącu i w sumie."
+  faq={faq}
+>
+  <form class="kalkulator" data-macierzynski novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twoje dane</h2>
+      <div class="mt-4">
+        <label for="m-brutto" class="etykieta-pola">Przeciętne wynagrodzenie brutto z 12 miesięcy (zł)</label>
+        <input id="m-brutto" name="brutto" class="pole mt-1 max-w-48" type="text" inputmode="decimal" autocomplete="off" value="6000" aria-describedby="m-blad" />
+      </div>
+      <div class="mt-4 grid gap-4 sm:grid-cols-3">
+        <div>
+          <label for="m-dzieci" class="etykieta-pola">Dzieci z jednego porodu</label>
+          <select id="m-dzieci" name="dzieci" class="pole mt-1">
+            <option value="1" selected>1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5 i więcej</option>
+          </select>
+        </div>
+        <div>
+          <label for="m-tyg" class="etykieta-pola">Tygodnie rodzicielskiego matki</label>
+          <input id="m-tyg" name="tygodnie" class="pole mt-1" type="text" inputmode="numeric" autocomplete="off" value="32" aria-describedby="m-tyg-opis m-blad" />
+        </div>
+        <div>
+          <label for="m-rok" class="etykieta-pola">Rok</label>
+          <select id="m-rok" name="rok" class="pole mt-1">
+            {LATA.map((r) => <option value={r} selected={r === rok}>{r}</option>)}
+          </select>
+        </div>
+      </div>
+      <p id="m-tyg-opis" class="meta mt-1" data-w="tyg-opis">Najwyżej 32 tygodnie: z 41 tygodni 9 przysługuje wyłącznie ojcu.</p>
+      <label class="mt-4 flex items-start gap-3 text-[0.9375rem]">
+        <input type="checkbox" name="pelnyEtat" checked class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+        <span>Pracuję na pełny etat (minimum podstawy z płacy minimalnej)</span>
+      </label>
+      <p id="m-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Miesięcznie na urlopie macierzyńskim</h2>
+      <p class="wynik-kwota" aria-live="polite" aria-atomic="true"><span data-w="mac-a">{zl(a.miesiecznieMacierzynski)}</span></p>
+      <dl class="wynik-lista">
+        <div><dt>Wariant 100% i 70%: na rodzicielskim</dt><dd data-w="rodz-a">{zl(a.miesiecznieRodzicielski)} miesięcznie</dd></div>
+        <div><dt>Wariant 100% i 70%: razem</dt><dd data-w="razem-a">{zl(a.razem)}</dd></div>
+        <div><dt>Wariant 81,5%: miesięcznie przez cały czas</dt><dd data-w="mac-b">{zl(b.miesiecznieMacierzynski)}</dd></div>
+        <div><dt>Wariant 81,5%: razem</dt><dd data-w="razem-b">{zl(b.razem)}</dd></div>
+        <div><dt>Podstawa miesięczna</dt><dd data-w="podstawa">{zl(a.podstawa)}</dd></div>
+      </dl>
+      <p class="meta mt-4">Kwoty brutto, za każdy dzień urlopu (jedna trzydziesta miesięcznej kwoty). Bez 9 tygodni ojca.</p>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="wymiar">Ile tygodni urlopu</h2>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Wymiar urlopu macierzyńskiego i rodzicielskiego</caption>
+        <thead><tr><th scope="col">Dzieci z jednego porodu</th><th scope="col">Macierzyński</th><th scope="col">Rodzicielski (oboje)</th><th scope="col">Rodzicielski matki</th></tr></thead>
+        <tbody>
+          {[1, 2, 3, 4, 5].map((n) => <tr><th scope="row">{n === 5 ? '5 i więcej' : n}</th><td>{TYGODNIE_MACIERZYNSKIEGO[n]} tyg.</td><td>{tygodnieRodzicielskiego(n)} tyg.</td><td>{tygodnieRodzicielskiego(n) - TYGODNIE_WYLACZNE} tyg.</td></tr>)}
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Podstawa zasiłku to przeciętne wynagrodzenie z 12 miesięcy przed miesiącem rozpoczęcia urlopu po odjęciu 13,71%
+      składek pracownika, przy pełnym etacie nie niższa niż płaca minimalna po tym odliczeniu (art. 36, 45 i 47 ustawy
+      zasiłkowej). Przy łączeniu urlopu rodzicielskiego z pracą u tego samego pracodawcy zasiłek zmniejsza się
+      proporcjonalnie do wymiaru pracy (art. 31 ust. 4a). Dziewięć tygodni rodzicielskiego przysługujących ojcu jest płatne {liczba(70)}% także w wariancie 81,5% (art. 31 ust. 3f).
+      Więcej o krótszych świadczeniach w kalkulatorach <a href="/narzedzia/kalkulator-l4">L4</a> i
+      <a href="/narzedzia/zasilek-opiekunczy">zasiłku opiekuńczego</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { TYGODNIE_WYLACZNE, tygodnieRodzicielskiego, zasilekMacierzynski } from '../../lib/narzedzia/macierzynski';
+  import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
+
+  const form = document.querySelector<HTMLFormElement>('[data-macierzynski]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    let poprzednieDzieci = 1;
+    const przelicz = () => {
+      const dzieci = Number(el('dzieci').value);
+      const maks = tygodnieRodzicielskiego(dzieci) - TYGODNIE_WYLACZNE;
+      if (dzieci !== poprzednieDzieci) {
+        el('tygodnie').value = String(maks);
+        poprzednieDzieci = dzieci;
+      }
+      w('tyg-opis').textContent = `Najwyżej ${maks} tygodni: z ${tygodnieRodzicielskiego(dzieci)} tygodni 9 przysługuje wyłącznie ojcu.`;
+      const brutto = wpisanaLiczba(el('brutto').value);
+      const tygodnie = wpisanaLiczba(el('tygodnie').value || '0');
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      const blad =
+        !(brutto > 0) ? 'Wpisz przeciętne wynagrodzenie brutto, na przykład 6000.'
+        : !(Number.isInteger(tygodnie) && tygodnie >= 0 && tygodnie <= maks) ? `Tygodnie rodzicielskiego matki: od 0 do ${maks}.`
+        : null;
+      b.hidden = !blad;
+      b.textContent = blad ?? '';
+      if (blad) {
+        w('mac-a').textContent = '—';
+        return;
+      }
+      const wspolne = { rok: Number(el('rok').value), brutto, pelnyEtat: el('pelnyEtat').checked, dzieci, tygodnieRodzicielskiego: tygodnie };
+      const ra = zasilekMacierzynski({ ...wspolne, wariant: '100-70' });
+      const rb = zasilekMacierzynski({ ...wspolne, wariant: '81,5' });
+      w('mac-a').textContent = zl(ra.miesiecznieMacierzynski);
+      w('rodz-a').textContent = `${zl(ra.miesiecznieRodzicielski)} miesięcznie`;
+      w('razem-a').textContent = zl(ra.razem);
+      w('mac-b').textContent = zl(rb.miesiecznieMacierzynski);
+      w('razem-b').textContent = zl(rb.razem);
+      w('podstawa').textContent = zl(ra.podstawa);
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>
