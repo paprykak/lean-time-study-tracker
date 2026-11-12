@@ -1,0 +1,196 @@
+---
+// Odszkodowanie za rozwiązanie umowy o pracę z naruszeniem prawa: art. 45–61² Kp, kwoty według § 2 i 2a rozporządzenia
+// z 29 maja 1996 r. (t.j. Dz.U. 2017 poz. 927). Logika: src/lib/narzedzia/odszkodowanie-zwolnienie.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { zl } from '../../lib/narzedzia/format';
+import { dniPracyWRoku, wspolczynnik } from '../../lib/narzedzia/ekwiwalent';
+import { NAZWA_OKRESU, odszkodowanieZaZwolnienie, SYTUACJE, zaCzasBezPracy, type Sytuacja } from '../../lib/narzedzia/odszkodowanie-zwolnienie';
+import { dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+const ROK = Number(dzisWPolsce().slice(0, 4));
+const D = { sytuacja: 'wypowiedzenie' as Sytuacja, pensja: 6000, okres: '1m' as const, rok: ROK };
+const r = odszkodowanieZaZwolnienie(D);
+const kwota = (x: { od: number; do: number }) => (x.od === x.do ? zl(x.od) : `od ${zl(x.od)} do ${zl(x.do)}`);
+const wsp = wspolczynnik(ROK).toLocaleString('pl-PL', { maximumFractionDigits: 2 });
+
+const faq = [
+  {
+    pytanie: 'Ile odszkodowania za niezgodne z prawem wypowiedzenie?',
+    odpowiedz: 'Wynagrodzenie za okres od 2 tygodni do 3 miesięcy, ale nie mniej niż za okres wypowiedzenia (art. 47¹ Kodeksu pracy). Przy umowie na czas określony, która skończyła się przed wyrokiem albo zaraz się skończy, za czas do końca umowy, najwyżej za 3 miesiące. Konkretną kwotę w tych granicach ustala sąd pracy.',
+  },
+  {
+    pytanie: 'Ile odszkodowania za niesłuszną dyscyplinarkę?',
+    odpowiedz: 'Wynagrodzenie za okres wypowiedzenia, a przy umowie na czas określony za czas do końca umowy, nie więcej niż za okres wypowiedzenia (art. 58 Kodeksu pracy). Zamiast odszkodowania możesz żądać przywrócenia do pracy (art. 56 § 1). Gdy dyscyplinarka przyszła w trakcie okresu wypowiedzenia, należy się wyłącznie odszkodowanie za czas do końca wypowiedzenia (art. 60).',
+  },
+  {
+    pytanie: 'Co mi się należy, gdy odchodzę z pracy z winy pracodawcy?',
+    odpowiedz: 'Gdy pracodawca ciężko naruszył podstawowe obowiązki wobec Ciebie, możesz rozwiązać umowę bez wypowiedzenia i dostajesz odszkodowanie w wysokości wynagrodzenia za okres wypowiedzenia, przy umowie na czas określony za czas do końca umowy, nie więcej niż za okres wypowiedzenia (art. 55 § 1¹ Kodeksu pracy). Oświadczenie składasz na piśmie z przyczyną, w ciągu miesiąca od dowiedzenia się o naruszeniu (art. 55 § 2 w związku z art. 52 § 2). Skutki są takie jak przy wypowiedzeniu przez pracodawcę (art. 55 § 3).',
+  },
+  {
+    pytanie: 'Ile mam czasu na pozew o odszkodowanie za zwolnienie?',
+    odpowiedz: '21 dni od doręczenia wypowiedzenia albo zawiadomienia o rozwiązaniu umowy bez wypowiedzenia (art. 264 § 1–2 Kodeksu pracy). Gdy nie zdążysz bez swojej winy, możesz w ciągu 7 dni od ustania przyczyny wnieść o przywrócenie terminu (art. 265).',
+  },
+  {
+    pytanie: 'Czy pracodawca może żądać odszkodowania od pracownika?',
+    odpowiedz: 'Tak, gdy pracownik rozwiązał umowę bez wypowiedzenia z powodu rzekomego ciężkiego naruszenia obowiązków przez pracodawcę, a sąd uzna to za nieuzasadnione (art. 61¹ Kodeksu pracy). Odszkodowanie wynosi wtedy wynagrodzenie za okres wypowiedzenia, a przy umowie na czas określony za czas do końca umowy, nie więcej niż za okres wypowiedzenia (art. 61² § 1).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="odszkodowanie-za-zwolnienie"
+  tytul="Odszkodowanie za zwolnienie z pracy: ile się należy"
+  opis="Ile odszkodowania za bezprawne wypowiedzenie (od 2 tygodni do 3 miesięcy pensji), niesłuszną dyscyplinarkę, okres próbny i odejście z winy pracodawcy."
+  h1="Odszkodowanie za zwolnienie z pracy"
+  lead="Za wypowiedzenie albo dyscyplinarkę niezgodne z prawem sąd pracy może zasądzić odszkodowanie. Wybierz, co się stało, wpisz pensję i okres wypowiedzenia, a pokażemy granice z Kodeksu pracy w złotówkach."
+  faq={faq}
+>
+  <form class="kalkulator" data-odszkodowanie novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twoja sprawa</h2>
+      <div class="mt-4">
+        <label for="o-sytuacja" class="etykieta-pola">Co się stało</label>
+        <select id="o-sytuacja" name="sytuacja" class="pole mt-1">
+          {(Object.keys(SYTUACJE) as Sytuacja[]).map((k) => <option value={k} selected={k === D.sytuacja}>{SYTUACJE[k].nazwa}</option>)}
+        </select>
+      </div>
+      <div class="mt-4">
+        <label for="o-pensja" class="etykieta-pola">Pensja brutto miesięcznie (zł)</label>
+        <input id="o-pensja" name="pensja" class="pole mt-1 max-w-48" type="text" inputmode="decimal" autocomplete="off" value={D.pensja} aria-describedby="o-pensja-opis o-blad" />
+        <p id="o-pensja-opis" class="meta mt-1">Stała pensja plus średnia zmiennych składników, na przykład nadgodzin i premii, jak przy ekwiwalencie za urlop.</p>
+      </div>
+      <div class="mt-4 grid grid-cols-2 items-end gap-3">
+        <div data-pole="umowa">
+          <label for="o-umowa" class="etykieta-pola">Umowa na czas</label>
+          <select id="o-umowa" name="umowa" class="pole mt-1">
+            <option value="nieokreslona" selected>Nieokreślony</option>
+            <option value="okreslona">Określony</option>
+          </select>
+        </div>
+        <div data-pole="okres">
+          <label for="o-okres" class="etykieta-pola">Okres wypowiedzenia</label>
+          <select id="o-okres" name="okres" class="pole mt-1">
+            {Object.entries(NAZWA_OKRESU).map(([k, n]) => <option value={k} selected={k === D.okres}>{n}</option>)}
+          </select>
+        </div>
+      </div>
+      <div class="mt-4" data-pole="dni" hidden>
+        <label for="o-dni" class="etykieta-pola" data-etykieta-dni>Dni pracy do końca umowy</label>
+        <input id="o-dni" name="dni" class="pole mt-1 max-w-24" type="text" inputmode="numeric" autocomplete="off" value="10" aria-describedby="o-dni-opis o-blad" />
+        <p id="o-dni-opis" class="meta mt-1">Dni, w które według grafiku byłaby praca, licząc od dnia po rozwiązaniu umowy.</p>
+      </div>
+      <p id="o-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Odszkodowanie z Kodeksu pracy</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-kwota"><span data-w="kwota">{kwota(r)}</span></p>
+        <p class="meta" data-w="miara">{r.miara}</p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Podstawa</dt><dd data-w="podstawa">{SYTUACJE[D.sytuacja].podstawa}</dd></div>
+        <div data-wiersz="koniec" hidden><dt>Gdy umowa minęła przed wyrokiem albo zaraz minie</dt><dd data-w="koniec"></dd></div>
+        <div data-wiersz="przywrocenie"><dt>Gdy sąd przywróci Cię do pracy</dt><dd data-w="przywrocenie">wynagrodzenie za czas bez pracy {zaCzasBezPracy(D.sytuacja, D.okres)}</dd></div>
+        <div><dt>Za dzień pracy</dt><dd data-w="dzien">{zl(r.zaDzien)}</dd></div>
+      </dl>
+      <p class="wynik-uwaga" data-w="polowa" hidden>Przy 2 tygodniach liczymy połowę miesięcznej kwoty. Rozporządzenie mówi to wprost przy odejściu z winy pracodawcy i roszczeniu pracodawcy (§ 2 ust. 2), a przy wypowiedzeniu i dyscyplinarce tego nie rozstrzyga.</p>
+      <p class="wynik-uwaga">Kwotę w tych granicach ustala sąd pracy. Pozew: 21 dni od doręczenia pisma (art. 264), termin policzy <a href="/narzedzia/odwolanie-do-sadu-pracy">kalkulator odwołania do sądu pracy</a>.</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są w tabeli poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="sytuacje">Odszkodowanie w każdej sytuacji</h2>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Odszkodowanie za rozwiązanie umowy o pracę z naruszeniem prawa według Kodeksu pracy</caption>
+        <thead><tr><th scope="col">Sytuacja</th><th scope="col">Odszkodowanie</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Wypowiedzenie niezgodne z prawem albo nieuzasadnione (art. 45 i 47<sup>1</sup>)</th><td>od 2 tygodni do 3 miesięcy wynagrodzenia, nie mniej niż za okres wypowiedzenia; przy umowie na czas określony, która minęła przed wyrokiem albo zaraz minie, za czas do jej końca, najwyżej 3 miesiące</td></tr>
+          <tr><th scope="row">Dyscyplinarka niezgodna z prawem (art. 56 i 58)</th><td>za okres wypowiedzenia; przy umowie na czas określony za czas do jej końca, nie więcej niż za okres wypowiedzenia</td></tr>
+          <tr><th scope="row">Dyscyplinarka w trakcie wypowiedzenia (art. 60)</th><td>tylko odszkodowanie, za czas do końca okresu wypowiedzenia</td></tr>
+          <tr><th scope="row">Okres próbny wypowiedziany z naruszeniem przepisów (art. 50 § 1)</th><td>tylko odszkodowanie, za czas do końca okresu próbnego</td></tr>
+          <tr><th scope="row">Odejście bez wypowiedzenia z winy pracodawcy (art. 55 § 1<sup>1</sup>)</th><td>za okres wypowiedzenia; przy umowie na czas określony za czas do jej końca, nie więcej niż za okres wypowiedzenia</td></tr>
+          <tr><th scope="row">Odejście bez podstawy, roszczenie pracodawcy (art. 61<sup>1</sup> i 61<sup>2</sup>)</th><td>tak samo jak wyżej, tylko płaci pracownik</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="przywrocenie">Odszkodowanie albo powrót do pracy</h2>
+    <ul>
+      <li>Sąd orzeka według Twojego żądania: o bezskuteczności wypowiedzenia, przywróceniu do pracy albo odszkodowaniu (art. 45 § 1 Kodeksu pracy). Gdy powrót jest niemożliwy albo niecelowy, może zasądzić odszkodowanie zamiast przywrócenia (§ 2).</li>
+      <li>Nie dotyczy to osób w wieku przedemerytalnym (art. 39), w ciąży i na urlopach związanych z rodzicielstwem (art. 177) i innych chronionych przez przepisy szczególne, chyba że pracodawca ogłosił upadłość albo jest likwidowany (art. 45 § 3 i 41<sup>1</sup>).</li>
+      <li>Po powrocie do pracy należy się wynagrodzenie za czas bez pracy: po wypowiedzeniu najwyżej za 2 miesiące, a przy 3-miesięcznym wypowiedzeniu za 1 miesiąc (art. 47); po dyscyplinarce od 1 do 3 miesięcy (art. 57 § 1). Osoby chronione dostają je za cały czas bez pracy.</li>
+      <li>Po wyroku zgłaszasz gotowość powrotu w ciągu 7 dni, inaczej pracodawca może odmówić zatrudnienia (art. 48 § 1 i art. 57 § 4).</li>
+    </ul>
+    <p>
+      Okres wypowiedzenia zależy od stażu u pracodawcy: policzysz go w <a href="/narzedzia/okres-wypowiedzenia">kalkulatorze okresu wypowiedzenia</a>.
+    </p>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Odszkodowania liczy się jak ekwiwalent za urlop (§ 2 ust. 1 rozporządzenia z 29 maja 1996 r. w sprawie sposobu
+      ustalania wynagrodzenia w okresie niewykonywania pracy), więc wpisz pensję ze średnią składników zmiennych, tak jak
+      w <a href="/narzedzia/ekwiwalent-za-urlop">kalkulatorze ekwiwalentu</a>. Miesiąc to cała ta kwota, a 2 tygodnie
+      połowa. Gdy odszkodowanie należy się za czas do końca umowy albo okresu, mnożymy kwotę za dzień pracy przez liczbę
+      dni pracy (§ 2a): kwota za dzień to pensja podzielona przez współczynnik dni pracy w {ROK} r., czyli
+      {dniPracyWRoku(ROK)} dni przez 12 = {wsp} (§ 19 rozporządzenia urlopowego).
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { zl, wpisanaLiczba } from '../../lib/narzedzia/format';
+  import { odszkodowanieZaZwolnienie, SYTUACJE, zaCzasBezPracy, type OkresWypowiedzenia, type Sytuacja } from '../../lib/narzedzia/odszkodowanie-zwolnienie';
+  import { dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+  const form = document.querySelector<HTMLFormElement>('[data-odszkodowanie]');
+  if (form) {
+    const ROK = Number(dzisWPolsce().slice(0, 4));
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const pole = (k: string) => form.querySelector<HTMLElement>(`[data-pole="${k}"]`)!;
+    const wiersz = (k: string) => form.querySelector<HTMLElement>(`[data-wiersz="${k}"]`)!;
+    const przelicz = () => {
+      const sytuacja = el('sytuacja').value as Sytuacja;
+      const s = SYTUACJE[sytuacja];
+      const okreslona = el('umowa').value === 'okreslona';
+      const okres = el('okres').value as OkresWypowiedzenia;
+      const potrzebaDni = s.dni === 'zawsze' || (s.dni === 'okreslona' && okreslona);
+      pole('umowa').hidden = !s.umowa;
+      pole('okres').hidden = !s.okres;
+      pole('dni').hidden = !potrzebaDni;
+      form.querySelector<HTMLElement>('[data-etykieta-dni]')!.textContent = s.etykietaDni;
+
+      const pensja = wpisanaLiczba(el('pensja').value);
+      const tekstDni = el('dni').value.trim();
+      const dni = /^\d{1,3}$/.test(tekstDni) ? Number(tekstDni) : NaN;
+      let blad: string | null = null;
+      if (!(pensja > 0 && pensja < 1_000_000)) blad = 'Wpisz pensję brutto, na przykład 6000.';
+      else if (potrzebaDni && !(dni >= 0 && dni <= 400)) blad = 'Wpisz liczbę dni pracy, na przykład 10.';
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      b.hidden = !blad;
+      b.textContent = blad ?? '';
+      if (blad) {
+        w('kwota').textContent = '—';
+        w('miara').textContent = '';
+        return;
+      }
+      const r = odszkodowanieZaZwolnienie({ sytuacja, pensja, okres, okreslona, dniPracy: potrzebaDni ? dni : undefined, rok: ROK });
+      w('kwota').textContent = r.od === r.do ? zl(r.od) : `od ${zl(r.od)} do ${zl(r.do)}`;
+      w('miara').textContent = r.miara;
+      w('podstawa').textContent = s.podstawa;
+      w('dzien').textContent = zl(r.zaDzien);
+      wiersz('koniec').hidden = r.doKoncaUmowy === undefined;
+      w('koniec').textContent = r.doKoncaUmowy === undefined ? '' : `${zl(r.doKoncaUmowy)} (za czas do końca umowy, najwyżej 3 miesiące)`;
+      const bezPracy = zaCzasBezPracy(sytuacja, okres);
+      wiersz('przywrocenie').hidden = !bezPracy;
+      w('przywrocenie').textContent = bezPracy ? `wynagrodzenie za czas bez pracy ${bezPracy}` : '';
+      w('polowa').hidden = r.polowaWprost;
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>

@@ -369,6 +369,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-12',
   },
   {
+    slug: 'odszkodowanie-za-zwolnienie',
+    nazwa: 'Odszkodowanie za zwolnienie z pracy',
+    krotko: 'Ile odszkodowania za bezprawne wypowiedzenie, dyscyplinarkę albo odejście z winy pracodawcy.',
+    kategoria: 'umowa',
+    przepisy: ['kodeksPracy', 'wynagrodzenieRozp', 'urlopowe', 'dniWolne'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'kara-porzadkowa',
     nazwa: 'Kara porządkowa: terminy i sprzeciw',
     krotko: 'Czy kara porządkowa jest w terminie, do kiedy sprzeciw, kiedy się zatrze i ile może wynosić kara pieniężna.',
