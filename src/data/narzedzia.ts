@@ -561,6 +561,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-12',
   },
   {
+    slug: 'urlop-w-okresie-wypowiedzenia',
+    nazwa: 'Urlop w okresie wypowiedzenia',
+    krotko: 'Ile urlopu wykorzystasz w wypowiedzeniu, a za ile dni dostaniesz ekwiwalent. Proporcja, zaległy, dni pracy.',
+    kategoria: 'urlopy',
+    przepisy: ['kodeksPracy', 'dniWolne'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'urlop-szkoleniowy',
     nazwa: 'Urlop szkoleniowy i zwolnienia na naukę',
     krotko: 'Ile dni i godzin urlopu szkoleniowego masz przed egzaminem i w ostatnim roku studiów, co przy nauce bez zgody.',

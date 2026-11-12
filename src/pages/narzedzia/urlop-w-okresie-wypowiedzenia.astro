@@ -1,0 +1,242 @@
+---
+// Urlop w okresie wypowiedzenia: ile dni pracodawca może udzielić do końca umowy (art. 167^1 i 155^1 Kp), a za ile
+// należy się ekwiwalent (art. 171 § 1). Logika: src/lib/narzedzia/urlop-wypowiedzenie.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { koniecMiesiaca, MAKS_WYMIAR, teksty, urlopWWypowiedzeniu } from '../../lib/narzedzia/urlop-wypowiedzenie';
+import { dodajMiesiace, dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+const dzis = dzisWPolsce();
+const domyslne = { koniecUmowy: koniecMiesiaca(dodajMiesiace(dzis, 1)), urlopOd: dzis, wymiar: 26, wykorzystane: 10, zalegly: 0 };
+const t = teksty(urlopWWypowiedzeniu(domyslne));
+
+const faq = [
+  {
+    pytanie: 'Czy pracodawca może wysłać mnie na urlop w okresie wypowiedzenia?',
+    odpowiedz: 'Kodeks pracy mówi: w okresie wypowiedzenia umowy o pracę pracownik jest obowiązany wykorzystać przysługujący mu urlop, jeżeli w tym okresie pracodawca udzieli mu urlopu (art. 167^1). Przepis nie rozróżnia, kto wypowiedział umowę. Urlopu za bieżący rok pracodawca może w ten sposób udzielić najwyżej w wymiarze proporcjonalnym z art. 155^1, a limit ten nie obejmuje urlopu zaległego. Urlopu udziela się w dni, które są dniami pracy według rozkładu czasu pracy (art. 154^2 § 1).',
+  },
+  {
+    pytanie: 'Ile urlopu przysługuje przy odejściu z pracy w trakcie roku?',
+    odpowiedz: 'U dotychczasowego pracodawcy urlop proporcjonalny do okresu przepracowanego u niego w roku ustania umowy (art. 155^1 § 1 pkt 1 Kodeksu pracy). Kalendarzowy miesiąc pracy to 1/12 rocznego wymiaru, a niepełny miesiąc zaokrągla się w górę (art. 155^2a § 1 i 2). Niepełny dzień urlopu też zaokrągla się w górę, ale nie więcej niż roczny wymiar (art. 155^3). Przy 26 dniach i końcu umowy 15 marca to 3 miesiące, czyli 7 dni.',
+  },
+  {
+    pytanie: 'Czy zaległy urlop też trzeba wykorzystać w wypowiedzeniu?',
+    odpowiedz: 'Obowiązek z art. 167^1 Kodeksu pracy dotyczy przysługującego urlopu, jeśli pracodawca go udzieli, a ograniczenie do wymiaru proporcjonalnego obejmuje urlop „z wyłączeniem urlopu zaległego”. Zaległego urlopu pracodawca może więc udzielić w wypowiedzeniu w całości. Niezależnie od wypowiedzenia urlop niewykorzystany w terminie z planu należy udzielić najpóźniej do 30 września następnego roku (art. 168).',
+  },
+  {
+    pytanie: 'Co z urlopem, którego nie zdążę wykorzystać?',
+    odpowiedz: 'Za urlop niewykorzystany w całości lub w części z powodu rozwiązania albo wygaśnięcia stosunku pracy przysługuje ekwiwalent pieniężny (art. 171 § 1 Kodeksu pracy). Pracodawca nie musi go wypłacić, gdy strony postanowią, że urlop wykorzystasz w kolejnej umowie z tym samym pracodawcą, zawartej bezpośrednio po poprzedniej (art. 171 § 3). Ekwiwalent wypłaca się w terminie wypłaty wynagrodzenia, a gdy ten termin przypada przed końcem umowy, w ciągu 10 dni od jej rozwiązania (art. 171 § 4 i 5, od 27 stycznia 2026 r.).',
+  },
+  {
+    pytanie: 'Urlop wykorzystany ponad proporcję: co dalej?',
+    odpowiedz: 'U dotychczasowego pracodawcy urlop proporcjonalny nie przysługuje, jeśli przed końcem umowy wykorzystano go już w tym lub wyższym wymiarze (art. 155^1 § 1 pkt 1 Kodeksu pracy). U kolejnego pracodawcy urlop w tym roku jest wtedy odpowiednio niższy, ale łącznie nie niższy niż wynikający z okresu przepracowanego w tym roku u wszystkich pracodawców (art. 155^1 § 2). O zwrocie wynagrodzenia za te dni przepis nie mówi.',
+  },
+  {
+    pytanie: 'Czy w wypowiedzeniu można wziąć urlop na żądanie?',
+    odpowiedz: 'Pracodawca jest obowiązany udzielić na żądanie pracownika i w terminie przez niego wskazanym nie więcej niż 4 dni urlopu w roku kalendarzowym; żądanie zgłasza się najpóźniej w dniu rozpoczęcia urlopu (art. 167^2 Kodeksu pracy). Przepis nie wyłącza okresu wypowiedzenia. Limit 4 dni obowiązuje łącznie u wszystkich pracodawców w danym roku (art. 167^3), a urlop na żądanie to część urlopu wypoczynkowego (art. 163 § 1), więc mieści się w dniach policzonych w kalkulatorze.',
+  },
+];
+---
+<StronaNarzedzia
+  slug="urlop-w-okresie-wypowiedzenia"
+  tytul="Urlop w okresie wypowiedzenia: ile dni"
+  opis="Ile dni urlopu wykorzystasz w okresie wypowiedzenia, a za ile dostaniesz ekwiwalent: urlop proporcjonalny, zaległy i dni pracy do końca umowy."
+  h1="Urlop w okresie wypowiedzenia: ile wykorzystasz, a ile w ekwiwalencie"
+  lead="W okresie wypowiedzenia pracodawca może udzielić urlopu proporcjonalnego za rok, w którym kończy się umowa, i urlopu zaległego. Za dni, które nie zmieszczą się w dniach pracy do końca umowy, należy się ekwiwalent. Wpisz daty i swój urlop."
+  faq={faq}
+>
+  <form class="kalkulator" data-urlop-wypowiedzenie novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Umowa i urlop</h2>
+      <div class="mt-4 grid gap-4 sm:grid-cols-2">
+        <div>
+          <label for="uw-koniec" class="etykieta-pola">Ostatni dzień umowy</label>
+          <input id="uw-koniec" name="koniec" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={domyslne.koniecUmowy} aria-describedby="uw-blad" />
+        </div>
+        <div>
+          <label for="uw-od" class="etykieta-pola">Urlop możesz dostać od</label>
+          <input id="uw-od" name="od" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={domyslne.urlopOd} aria-describedby="uw-od-opis uw-blad" />
+          <p id="uw-od-opis" class="meta mt-1">Od tego dnia liczymy dni pracy do końca umowy.</p>
+        </div>
+      </div>
+      <div class="mt-4">
+        <label for="uw-poczatek" class="etykieta-pola">Początek pracy u tego pracodawcy, jeśli w tym roku</label>
+        <input id="uw-poczatek" name="poczatek" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" aria-describedby="uw-poczatek-opis uw-blad" />
+        <p id="uw-poczatek-opis" class="meta mt-1">Puste pole: liczymy od 1 stycznia.</p>
+      </div>
+      <div class="mt-4 grid gap-4 sm:grid-cols-3">
+        <div>
+          <label for="uw-wymiar" class="etykieta-pola">Roczny wymiar urlopu</label>
+          <input id="uw-wymiar" name="wymiar" class="pole mt-1" type="text" inputmode="numeric" autocomplete="off" value={domyslne.wymiar} aria-describedby="uw-wymiar-opis uw-blad" />
+          <p id="uw-wymiar-opis" class="meta mt-1">Dni; przy niepełnym etacie już przeliczony (<a href="#jak-liczymy">Jak liczymy</a>).</p>
+        </div>
+        <div>
+          <label for="uw-wykorzystane" class="etykieta-pola">Wykorzystane w tym roku</label>
+          <input id="uw-wykorzystane" name="wykorzystane" class="pole mt-1" type="text" inputmode="numeric" autocomplete="off" value={domyslne.wykorzystane} aria-describedby="uw-wykorzystane-opis uw-blad" />
+          <p id="uw-wykorzystane-opis" class="meta mt-1">Dni urlopu za rok końca umowy.</p>
+        </div>
+        <div>
+          <label for="uw-zalegly" class="etykieta-pola">Zaległy z poprzedniego roku</label>
+          <input id="uw-zalegly" name="zalegly" class="pole mt-1" type="text" inputmode="numeric" autocomplete="off" value={domyslne.zalegly} aria-describedby="uw-zalegly-opis uw-blad" />
+          <p id="uw-zalegly-opis" class="meta mt-1">Dni jeszcze niewykorzystane.</p>
+        </div>
+      </div>
+      <div class="mt-4 grid gap-4 sm:grid-cols-2">
+        <div>
+          <label for="uw-dni" class="etykieta-pola">Dni pracy</label>
+          <select id="uw-dni" name="dni" class="pole mt-1" aria-describedby="uw-dni-opis">
+            <option value="pn-pt" selected>pon.–pt.</option>
+            <option value="pn-sb">pon.–sob.</option>
+          </select>
+          <p id="uw-dni-opis" class="meta mt-1">Bez świąt ustawowych.</p>
+        </div>
+        <div>
+          <label for="uw-grafik" class="etykieta-pola">albo dni pracy z grafiku do końca umowy</label>
+          <input id="uw-grafik" name="grafik" class="pole mt-1" type="text" inputmode="numeric" autocomplete="off" aria-describedby="uw-grafik-opis uw-blad" />
+          <p id="uw-grafik-opis" class="meta mt-1">Nadpisuje wyliczenie.</p>
+        </div>
+      </div>
+      <p id="uw-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Urlop do wykorzystania w wypowiedzeniu</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-kwota" data-w="wwyp">{t.wwyp}</p>
+        <p class="meta" data-w="opis">{t.opis}</p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Urlop proporcjonalny</dt><dd data-w="proporcjonalny">{t.proporcjonalny}</dd></div>
+        <div><dt data-w="biezacy-etykieta">{t.biezacyEtykieta}</dt><dd data-w="biezacy">{t.biezacy}</dd></div>
+        <div><dt>Urlop zaległy</dt><dd data-w="zalegly">{t.zalegly}</dd></div>
+        <div><dt>Dni pracy do końca umowy</dt><dd data-w="dni-pracy">{t.dniPracy}</dd></div>
+        <div><dt>Ekwiwalent za</dt><dd data-w="ekwiwalent">{t.ekwiwalent}</dd></div>
+      </dl>
+      <p class="wynik-uwaga" data-w="uwaga" hidden={!t.uwaga}>{t.uwaga}</p>
+      <p class="wynik-uwaga">To najwięcej, ile pracodawca może udzielić w wypowiedzeniu; obowiązek wykorzystania urlopu powstaje, jeżeli pracodawca go udzieli (art. 167<sup>1</sup> Kp).</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="zasady">Urlop w okresie wypowiedzenia: przepisy</h2>
+    <ul>
+      <li>W okresie wypowiedzenia umowy o pracę pracownik jest obowiązany wykorzystać przysługujący mu urlop, jeżeli w tym okresie pracodawca udzieli mu urlopu; wymiar udzielonego urlopu, z wyłączeniem zaległego, nie może przekraczać wymiaru z art. 155<sup>1</sup> (art. 167<sup>1</sup> Kodeksu pracy).</li>
+      <li>W roku ustania umowy urlop u dotychczasowego pracodawcy jest proporcjonalny do okresu przepracowanego u niego w tym roku, chyba że wykorzystano go już w tym lub wyższym wymiarze (art. 155<sup>1</sup> § 1 pkt 1). Nadwyżka obniża urlop u kolejnego pracodawcy (art. 155<sup>1</sup> § 2).</li>
+      <li>Kalendarzowy miesiąc pracy to 1/12 rocznego wymiaru, a niepełny miesiąc zaokrągla się w górę (art. 155<sup>2a</sup> § 1 i 2). Niepełny dzień urlopu zaokrągla się w górę, ale nie więcej niż roczny wymiar z art. 154 § 1 i 2 (art. 155<sup>3</sup>).</li>
+      <li>Urlopu udziela się w dni pracy według rozkładu czasu pracy, w godzinach odpowiadających wymiarowi czasu pracy w danym dniu (art. 154<sup>2</sup> § 1).</li>
+      <li>Za urlop niewykorzystany z powodu rozwiązania lub wygaśnięcia stosunku pracy przysługuje ekwiwalent pieniężny (art. 171 § 1), chyba że strony postanowią o wykorzystaniu urlopu w kolejnej umowie z tym samym pracodawcą zawartej bezpośrednio po poprzedniej (art. 171 § 3).</li>
+      <li>Część urlopu niewykorzystaną z powodu choroby pracodawca jest obowiązany udzielić w terminie późniejszym (art. 166 pkt 1), a gdy choroba nie pozwala rozpocząć urlopu w ustalonym terminie, jest obowiązany przesunąć urlop (art. 165 pkt 1).</li>
+    </ul>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Okres przepracowany w roku ustania umowy liczymy w miesiącach kalendarzowych od 1 stycznia albo od początku pracy,
+      jeśli zaczęła się w tym roku, do ostatniego dnia umowy. Każdy rozpoczęty miesiąc kalendarzowy liczymy jak pełny:
+      praca od 20 maja do 10 sierpnia to 4 miesiące. Urlop proporcjonalny to roczny wymiar razy liczba miesięcy przez 12,
+      w górę do pełnego dnia, nie więcej niż roczny wymiar. Odejmujemy dni już wykorzystane i dodajemy urlop zaległy.
+    </p>
+    <p>
+      Dni pracy liczymy od dnia „urlop od” do ostatniego dnia umowy: od poniedziałku do piątku albo do soboty, bez świąt
+      z ustawy o dniach wolnych od pracy. Pracodawca może udzielić najwyżej tylu dni urlopu, ile zostało dni pracy;
+      reszta to ekwiwalent. Święto w sobotę obniża wymiar czasu pracy o 8 godzin (art. 130 § 2), a dzień wolny za nie
+      wyznacza pracodawca, więc dni pracy może być o tyle mniej. Gdy znasz grafik, wpisz liczbę dni pracy z grafiku.
+      Przepisy nie mówią, które dni pracodawca wybierze; liczymy, ile urlopu zmieści się najwyżej.
+    </p>
+    <p>
+      Gdy umowa kończy się w następnym roku, liczymy urlop proporcjonalny za rok końca umowy, a niewykorzystany urlop
+      za bieżący rok wpisz jako zaległy. Roczny wymiar to 20 albo 26 dni (art. 154 § 1); przy niepełnym etacie wpisz
+      wymiar przeliczony, który poda <a href="/narzedzia/kalkulator-urlopu">kalkulator urlopu</a>.
+    </p>
+    <p>
+      Urlop proporcjonalny z art. 155<sup>1</sup> dotyczy pracownika „uprawnionego do kolejnego urlopu”. W pierwszej
+      pracy w życiu prawo do urlopu przybywa z upływem każdego miesiąca pracy, po 1/12 rocznego wymiaru
+      (art. 153 § 1); tego narzędzie nie liczy, policzy to kalkulator urlopu. Urlopu udziela się w godzinach z grafiku
+      (art. 154<sup>2</sup> § 1), a dzień urlopu odpowiada 8 godzinom (§ 2), więc przy zmianach 12-godzinnych liczba dni
+      pracy nie równa się liczbie dni urlopu. Przeliczy to <a href="/narzedzia/urlop-w-godzinach">urlop w godzinach</a>.
+    </p>
+    <p>
+      Ile trwa wypowiedzenie i kiedy kończy się umowa, policzy <a href="/narzedzia/okres-wypowiedzenia">kalkulator
+      okresu wypowiedzenia</a>, a ile wyniesie ekwiwalent za niewykorzystane dni,
+      <a href="/narzedzia/ekwiwalent-za-urlop">kalkulator ekwiwalentu za urlop</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { teksty, urlopWWypowiedzeniu } from '../../lib/narzedzia/urlop-wypowiedzenie';
+  import { poprawnaData } from '../../lib/narzedzia/terminy';
+  import { typografia } from '../../lib/typografia.mjs';
+
+  const form = document.querySelector<HTMLFormElement>('[data-urlop-wypowiedzenie]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const pisz = (k: string, tekst: string) => {
+      w(k).textContent = typografia(tekst);
+    };
+    const liczbaDni = (t: string, pusty: number | undefined) => {
+      const s = t.trim();
+      if (!s) return pusty;
+      return /^\d{1,3}$/.test(s) ? Number(s) : Number.NaN;
+    };
+    const przelicz = () => {
+      const koniec = el('koniec').value;
+      const od = el('od').value;
+      const poczatek = el('poczatek').value;
+      const wymiar = liczbaDni(el('wymiar').value, undefined);
+      const wykorzystane = liczbaDni(el('wykorzystane').value, 0);
+      const zalegly = liczbaDni(el('zalegly').value, 0);
+      const grafik = liczbaDni(el('grafik').value, undefined);
+      let blad: string | null = null;
+      let r: ReturnType<typeof urlopWWypowiedzeniu> | null = null;
+      if (!poprawnaData(koniec)) blad = 'Wpisz ostatni dzień umowy.';
+      else if (!poprawnaData(od)) blad = 'Wpisz, od kiedy możesz dostać urlop.';
+      else if (poczatek && !poprawnaData(poczatek)) blad = 'Popraw datę początku pracy albo zostaw pole puste.';
+      else if (wymiar === undefined || Number.isNaN(wymiar)) blad = 'Wpisz roczny wymiar urlopu w pełnych dniach, na przykład 26.';
+      else if (Number.isNaN(wykorzystane!) || Number.isNaN(zalegly!) || Number.isNaN(grafik ?? 0)) blad = 'Wpisz pełne dni, na przykład 4.';
+      else {
+        try {
+          r = urlopWWypowiedzeniu({
+            koniecUmowy: koniec,
+            urlopOd: od,
+            poczatekPracy: poczatek || undefined,
+            wymiar,
+            wykorzystane: wykorzystane!,
+            zalegly: zalegly!,
+            soboty: (form.elements.namedItem('dni') as HTMLSelectElement).value === 'pn-sb',
+            dniPracy: grafik,
+          });
+        } catch (e) {
+          if (!(e instanceof RangeError)) throw e;
+          blad = `${e.message}.`;
+        }
+      }
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      b.hidden = !blad;
+      b.textContent = blad ? typografia(blad) : '';
+      for (const n of ['koniec', 'od', 'poczatek', 'wymiar', 'wykorzystane', 'zalegly', 'grafik']) el(n).setAttribute('aria-invalid', blad ? 'true' : 'false');
+      if (!r) {
+        w('wwyp').textContent = '—';
+        w('opis').textContent = '';
+        for (const k of ['proporcjonalny', 'biezacy', 'zalegly', 'dni-pracy', 'ekwiwalent']) w(k).textContent = '—';
+        w('uwaga').hidden = true;
+        return;
+      }
+      const t = teksty(r);
+      pisz('wwyp', t.wwyp);
+      pisz('opis', t.opis);
+      pisz('proporcjonalny', t.proporcjonalny);
+      pisz('biezacy-etykieta', t.biezacyEtykieta);
+      pisz('biezacy', t.biezacy);
+      pisz('zalegly', t.zalegly);
+      pisz('dni-pracy', t.dniPracy);
+      pisz('ekwiwalent', t.ekwiwalent);
+      pisz('uwaga', t.uwaga);
+      w('uwaga').hidden = !t.uwaga;
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>
