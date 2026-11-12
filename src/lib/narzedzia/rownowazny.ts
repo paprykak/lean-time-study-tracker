@@ -165,9 +165,9 @@ export function planOkresu(system: SystemRownowazny, zmiana: number, rok: number
   const s = SYSTEMY[system];
   if (!s) throw new RangeError(`Nieznany system: ${system}`);
   if (!Number.isFinite(zmiana) || zmiana <= 0) throw new RangeError('Długość zmiany musi być dodatnia');
-  if (zmiana <= 8) throw new RangeError('Zmiana do 8 h to system podstawowy');
+  if (zmiana <= 8) throw new RangeError('Zmiana do 8 h to podstawowy system czasu pracy: wpisz więcej niż 8 h');
   if (zmiana > s.maks) throw new RangeError(`W tym systemie zmiana najwyżej ${s.maks} h`);
-  if (!Number.isInteger(zmiana * 2)) throw new RangeError('Długość zmiany co pół godziny');
+  if (!Number.isInteger(zmiana * 2)) throw new RangeError('Długość zmiany: pełne godziny albo z połową, np. 10,5');
   if (!Number.isInteger(rok) || rok < 2000 || rok > 2100) throw new RangeError('Rok spoza zakresu');
   if (!Number.isInteger(miesiacStart) || miesiacStart < 1 || miesiacStart > 12) throw new RangeError('Miesiąc spoza zakresu');
   if (!(OKRESY as readonly number[]).includes(miesiecy)) throw new RangeError('Okres: 1, 2, 3, 4, 6 albo 12 miesięcy');

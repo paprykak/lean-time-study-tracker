@@ -6,6 +6,7 @@ import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
 import { KOLOR_STATUSU, OKRESY, SYSTEMY, opisWyniku, planOkresu, type SystemRownowazny } from '../../lib/narzedzia/rownowazny';
 import { dzienMiesiaca, nazwaMiesiaca, wymiarMiesiaca } from '../../lib/narzedzia/czas-pracy';
 import { LATA } from '../../data/prawo';
+import { odmiana } from '../../lib/redakcja';
 
 const ROKI = [...LATA, LATA[LATA.length - 1] + 1];
 // Stały przykład startowy (FAQ i dane strukturalne nie zmieniają się przy każdym buildzie).
@@ -34,7 +35,7 @@ const faq = [
   },
   {
     pytanie: 'Ile dni pracy w miesiącu przy zmianach po 12 godzin?',
-    odpowiedz: `Tyle, ile trzeba, żeby wypełnić wymiar miesiąca. W ${m} ${rok} r. wymiar to ${r.wymiar} godzin, więc wychodzi ${t.opis.split(';')[0]}, razem ${r.dniPracy} dni pracy i ${r.dniWolne} dni wolnych. Kodeks pracy nie mówi, jak rozłożyć resztę godzin: może to być jedna krótsza zmiana albo kilka krótszych (art. 135 § 1).`,
+    odpowiedz: `Tyle, ile trzeba, żeby wypełnić wymiar miesiąca. W ${m} ${rok} r. wymiar to ${odmiana(r.wymiar, ['godzina', 'godziny', 'godzin'])}, więc wychodzi ${t.opis.split(';')[0]}, razem ${r.dniPracy} dni pracy i ${r.dniWolne} dni wolnych. Kodeks pracy nie mówi, jak rozłożyć resztę godzin: może to być jedna krótsza zmiana albo kilka krótszych (art. 135 § 1).`,
   },
   {
     pytanie: 'Czy w systemie równoważnym są nadgodziny?',
@@ -46,7 +47,7 @@ const faq = [
   },
   {
     pytanie: 'Kto nie może pracować po 12 godzin?',
-    odpowiedz: 'W systemach równoważnych, weekendowym i skróconego tygodnia czas pracy nie może przekraczać 8 godzin na dobę u osób w ciąży, u osób na stanowiskach, gdzie są przekroczone najwyższe dopuszczalne stężenia lub natężenia czynników szkodliwych, i u osób opiekujących się dzieckiem do 4 lat, jeśli nie zgodzą się na dłuższą pracę (art. 148 Kodeksu pracy). Za godziny, których z tego powodu nie przepracują, zachowują wynagrodzenie.',
+    odpowiedz: 'W systemach równoważnych, weekendowym i skróconego tygodnia czas pracy nie może przekraczać 8 godzin na dobę (art. 148 Kodeksu pracy). Dotyczy to osób w ciąży i osób na stanowiskach, na których przekroczone są najwyższe dopuszczalne stężenia lub natężenia czynników szkodliwych. Dotyczy też osób opiekujących się dzieckiem do 4 lat, jeśli nie zgodzą się na dłuższą pracę. Za godziny, których z tego powodu nie przepracują, zachowują wynagrodzenie.',
   },
 ];
 ---
@@ -92,7 +93,7 @@ const faq = [
           {OKRESY.map((k) => <option value={k} selected={k === 1}>{k === 1 ? '1 miesiąc' : k < 5 ? `${k} miesiące` : `${k} miesięcy`}</option>)}
         </select>
       </div>
-      <p class="meta mt-3">Pełny etat.</p>
+      <p class="meta mt-3">Liczymy dla pełnego etatu.</p>
       <p id="r-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
     </div>
 
@@ -138,7 +139,7 @@ const faq = [
     <p>
       W każdym systemie okres można przedłużyć do 12 miesięcy z przyczyn obiektywnych, technicznych lub organizacyjnych
       (art. 129 § 2 Kodeksu pracy). Takie przedłużenie ustala się w układzie zbiorowym albo w porozumieniu ze związkami
-      zawodowymi, a gdy ich nie ma, z przedstawicielami pracowników; kopię porozumienia pracodawca przekazuje okręgowemu
+      zawodowymi, a gdy ich nie ma, z przedstawicielami pracowników. Kopię porozumienia pracodawca przekazuje okręgowemu
       inspektorowi pracy w 5 dni roboczych (art. 150 § 3 i 4). System i okres ustala się w układzie zbiorowym,
       regulaminie pracy albo obwieszczeniu (art. 150 § 1). Gdy nie działa związek albo nie zgadza się na zmianę, okres
       z art. 135 § 2 i 3 pracodawca może stosować po zawiadomieniu okręgowego inspektora pracy (art. 150 § 2). Skrócony
@@ -176,7 +177,7 @@ const faq = [
       zrobić, gdy w systemie weekendowym albo w skróconym tygodniu dni dostępnych jest za mało na cały wymiar. Narzędzie
       pokazuje wtedy tylko rachunek: ile godzin brakuje. Poradnik ministerstwa pracy (rodzinaipraca.gov.pl) zwraca uwagę,
       że w systemie weekendowym bez świąt można przepracować najwyżej 36 godzin w tygodniu, więc pełnego etatu zwykle nie
-      da się w nim wypracować, i że osoba w tym systemie powinna być zatrudniona na około 3/4 etatu. Nie liczymy niepełnego etatu, bo wymiar zależy wtedy od umowy.
+      da się w nim wypracować. Według poradnika osoba w tym systemie powinna być zatrudniona na około 3/4 etatu. Nie liczymy niepełnego etatu, bo wymiar zależy wtedy od umowy.
     </p>
     <p>
       Wymiar miesięcy i okresów policzy <a href="/narzedzia/wymiar-czasu-pracy">kalkulator wymiaru czasu pracy</a>,

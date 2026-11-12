@@ -109,7 +109,7 @@ describe('dobaPracownicza', () => {
     const r = dobaPracownicza('2026-11-16', tydzien(z('6:00', '22:00'), z('8:00', '16:00')));
     expect(r.dni[0]).toMatchObject({ odpoczynek: 480, stan: 'inne-zasady' });
     expect(r.naruszenia).toBe(0);
-    expect(opisWyniku(r).wiersze[0].odpoczynek).toMatch(/^Praca dłuższa niż 12 h: .*art\. 136 § 2/);
+    expect(opisWyniku(r).wiersze[0].odpoczynek).toMatch(/^zmiana ponad 12 h: inne zasady \(art\. 136 § 2\)$/);
     const doba = dobaPracownicza('2026-11-16', tydzien(z('8:00', '8:00')));
     expect([doba.dni[0].dlugosc, doba.dni[0].stan, doba.naruszenia]).toEqual([1440, 'inne-zasady', 0]);
   });
@@ -141,7 +141,7 @@ describe('opisWyniku', () => {
     const r = dobaPracownicza('2026-11-16', [z('14:00', '22:00'), z('6:00', '14:00'), W, W, W, W, z('6:00', '14:00')]);
     const o = opisWyniku(r);
     expect(o.glowna).toBe('8 h');
-    expect(o.dodatki).toBe('W porze nocnej 0 h (dodatek 100%), w pozostałych godzinach 8 h (dodatek 50%). Dni: wtorek 17.11.');
+    expect(o.dodatki).toBe('W pozostałych godzinach 8 h (dodatek 50%). Dni: wtorek 17.11.');
     expect(o.odpoczynek).toBe('za krótki w 1 dobie');
     expect(o.wiersze[0]).toEqual({ dzien: 'pn 16.11', praca: '14:00–22:00', wPoprzedniej: '', nadgodziny: '—', odpoczynek: '8 h, za krótki', stan: 'naruszenie' });
     expect(o.wiersze[1]).toMatchObject({ wPoprzedniej: 'w poprzedniej dobie 8 h', nadgodziny: '8 h', odpoczynek: '16 h', stan: 'ok' });

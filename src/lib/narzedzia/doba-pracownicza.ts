@@ -248,7 +248,7 @@ export const etykietaKrotka = (data: string) => {
   return `${KROTKO[new Date(`${data}T00:00:00Z`).getUTCDay()]} ${d}.${String(m).padStart(2, '0')}`;
 };
 /** Minuty → „8 h”, „5 h 1 min”. */
-export const czas = (min: number) => godzinyIMinuty(min / 60);
+export const czas = (min: number) => (min > 0 && min < 60 ? `${min} min` : godzinyIMinuty(min / 60));
 
 export interface WierszTabeli {
   dzien: string;
@@ -285,7 +285,7 @@ export function opisWyniku(r: WynikDoby): Opis {
           : d.stan === 'naruszenie'
             ? `${czas(odp)}, za krótki`
             : d.stan === 'inne-zasady'
-              ? 'Praca dłuższa niż 12 h: w systemach z art. 136–137 odpoczynek po zmianie co najmniej tak długi jak przepracowany czas (art. 136 § 2)'
+              ? 'zmiana ponad 12 h: inne zasady (art. 136 § 2)'
               : odp
                 ? `co najmniej ${czas(odp)}, bez danych o następnym dniu`
                 : 'bez danych o następnym dniu',
@@ -310,7 +310,7 @@ export function opisWyniku(r: WynikDoby): Opis {
     );
   if (r.wNiedzieleSwieta)
     uwagi.push(
-      `${czas(r.wNiedzieleSwieta)} nadgodzin przypada w niedzielę lub święto (od 6:00 do 6:00, chyba że pracodawca ustalił inną godzinę, art. 151⁹ § 2). W Twoim grafiku to dzień pracy, więc dodatek wynosi 50% (w porze nocnej 100%). 100% przysługuje, gdy niedziela lub święto nie jest dniem pracy według rozkładu (art. 151¹ § 1 pkt 1 lit. b).`,
+      `${czas(r.wNiedzieleSwieta)} nadgodzin przypada w niedzielę lub święto (od 6:00 do 6:00, chyba że pracodawca ustalił inną godzinę, art. 151⁹ § 2). W Twoim grafiku to dzień pracy, więc dodatek wynosi 50% (w porze nocnej 100%). Dodatek 100% przysługuje, gdy niedziela lub święto nie jest dniem pracy według rozkładu (art. 151¹ § 1 pkt 1 lit. b).`,
     );
   if (r.dni[6].od !== null) uwagi.push(`Doby ostatniego dnia (${etykietaDnia(r.dni[6].data)}) nie sprawdzimy do końca: nie znamy grafiku na następny dzień.`);
 
@@ -318,7 +318,7 @@ export function opisWyniku(r: WynikDoby): Opis {
   return {
     glowna: czas(r.nadgodziny),
     dodatki: r.nadgodziny
-      ? `W porze nocnej ${czas(r.nocne)} (dodatek 100%), w pozostałych godzinach ${czas(r.dzienne)} (dodatek 50%). Dni: ${lista(r, zDoby)}.`
+      ? `${[r.nocne ? `W porze nocnej ${czas(r.nocne)} (dodatek 100%)` : '', r.dzienne ? `${r.nocne ? 'w' : 'W'} pozostałych godzinach ${czas(r.dzienne)} (dodatek 50%)` : ''].filter(Boolean).join(', ')}. Dni: ${lista(r, zDoby)}.`
       : r.ruchomy && r.bezRuchomego
         ? 'Ruchomy rozkład: praca w tej samej dobie nie daje nadgodzin.'
         : 'Żadna zmiana nie wchodzi w dobę poprzedniego dnia ponad jej normę.',

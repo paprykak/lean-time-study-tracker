@@ -166,7 +166,7 @@ export function opisWyniku(r: WynikPracyWSobote, data: string): OpisWyniku {
       b: [],
       bTytul: '',
       uwagi: [
-        'Za pracę w niedzielę i święto są inne zasady niż za wolną sobotę (art. 151⁹–151¹¹ Kodeksu pracy). Zasady dla niedziel i świąt opisuje kalkulator pracy w niedzielę i święto (link niżej).',
+        'Praca w niedzielę i święto ma inne zasady niż praca w wolną sobotę (art. 151⁹–151¹¹ Kodeksu pracy). Opisuje je kalkulator pracy w niedzielę i święto (link niżej).',
       ],
     };
   }

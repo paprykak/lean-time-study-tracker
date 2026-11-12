@@ -41,7 +41,7 @@ const faq = [
   },
   {
     pytanie: 'Czy ruchomy czas pracy usuwa nadgodziny z doby?',
-    odpowiedz: 'Tak. Ruchomy rozkład przewiduje różne godziny rozpoczynania pracy albo przedział, w którym decydujesz, o której zaczynasz (art. 140^1 § 1 i 2 Kodeksu pracy). W takim rozkładzie ponowna praca w tej samej dobie nie jest nadgodzinami (§ 4), ale tylko wtedy, gdy różne godziny zaplanowano w rozkładzie. Gdy w tej samej dobie pracujesz poza rozkładem, na przykład na polecenie przełożonego, to praca ponad normę doby jest nadgodzinami (art. 151 § 1). Rozkład nie może jednak naruszać odpoczynku dobowego i tygodniowego (§ 3 w związku z art. 132 i 133).',
+    odpowiedz: 'Tak. Ruchomy rozkład przewiduje różne godziny rozpoczynania pracy albo przedział, w którym decydujesz, o której zaczynasz (art. 140^1 § 1 i 2 Kodeksu pracy). W takim rozkładzie ponowna praca w tej samej dobie nie jest nadgodzinami (§ 4), ale tylko wtedy, gdy różne godziny zaplanowano w rozkładzie. Gdy w tej samej dobie pracujesz poza rozkładem, na przykład na polecenie przełożonego, praca ponad normę doby jest nadgodzinami (art. 151 § 1). Rozkład nie może jednak naruszać odpoczynku dobowego i tygodniowego (§ 3 w związku z art. 132 i 133).',
   },
   {
     pytanie: 'Jak liczy się dobę w systemie równoważnym 12 h?',
@@ -139,7 +139,7 @@ const wartosc = (i: number, k: 'od' | 'do') => PRZYKLAD[i][k];
       <li>Czas pracy nie może przekraczać 8 godzin na dobę, z wyjątkami z art. 135–138, 143 i 144 (art. 129 § 1).</li>
       <li>Praca ponad normy albo ponad przedłużony dobowy wymiar z rozkładu to praca w godzinach nadliczbowych (art. 151 § 1).</li>
       <li>Dodatek 100% za nadgodziny w nocy, w niedziele i święta, które nie są dla Ciebie dniami pracy według rozkładu, i w dniu wolnym za pracę w niedzielę lub święto; 50% w każdym innym dniu (art. 151<sup>1</sup> § 1).</li>
-      <li>W każdej dobie co najmniej 11 godzin nieprzerwanego odpoczynku (art. 132 § 1). W systemach równoważnych z art. 136 i 137 (do 16 i 24 godzin) po zmianie w przedłużonym wymiarze odpoczynek trwa co najmniej tyle, ile przepracowane godziny (art. 136 § 2).</li>
+      <li>W każdej dobie co najmniej 11 godzin nieprzerwanego odpoczynku (art. 132 § 1). W systemach równoważnych z art. 136 i 137 (do 16 i 24 godzin) po zmianie w przedłużonym wymiarze odpoczynek trwa co najmniej tyle, ile trwała praca (art. 136 § 2).</li>
       <li>W ruchomym rozkładzie ponowna praca w tej samej dobie nie jest nadgodzinami, ale rozkład nie może naruszać odpoczynku z art. 132 i 133 (art. 140<sup>1</sup> § 3 i 4). Nadgodzinami nie jest też odpracowanie wyjścia w sprawach osobistych na Twój wniosek (art. 151 § 2<sup>1</sup>).</li>
     </ul>
 
@@ -166,7 +166,7 @@ const wartosc = (i: number, k: 'od' | 'do') => PRZYKLAD[i][k];
       pracujesz w dniu przed pierwszym, sprawdź jego dobę osobno. Pora nocna to 8 godzin między 21:00 a 7:00
       (art. 151<sup>7</sup> § 1); wybierz tę, którą ma Twój pracodawca. Nadgodziny przypadają w dniach pracy z rozkładu, więc niedziela i święto same nie dają
       dodatku 100%; podajemy jednak, ile godzin wypada w niedzielę lub święto, liczone od 6:00 do 6:00,
-      chyba że pracodawca ustalił inną godzinę (art. 151<sup>9</sup> § 2); liczymy od 6:00. Nie uwzględniamy zmiany
+      chyba że pracodawca ustalił inną godzinę (art. 151<sup>9</sup> § 2). Nie uwzględniamy zmiany
       czasu: noc ze zmianą czasu liczymy jak zwykłą.
     </p>
     <p>
