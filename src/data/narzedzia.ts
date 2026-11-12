@@ -249,6 +249,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-12',
   },
   {
+    slug: 'swiadczenie-rehabilitacyjne',
+    nazwa: 'Świadczenie rehabilitacyjne',
+    krotko: 'Świadczenie rehabilitacyjne po zasiłku chorobowym: 90%, potem 75%, 100% po wypadku przy pracy, do 12 miesięcy.',
+    kategoria: 'wynagrodzenie',
+    przepisy: ['zasilkowa', 'wypadkowa', 'waloryzacjaRehabilitacyjnego2026', 'kodeksPracy'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'zasilek-opiekunczy',
     nazwa: 'Zasiłek opiekuńczy',
     krotko: 'Ile za opiekę nad chorym dzieckiem albo członkiem rodziny: 80% podstawy, limity 60, 30 i 14 dni w roku.',

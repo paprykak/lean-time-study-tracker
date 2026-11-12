@@ -244,6 +244,13 @@ export const AKTY = {
     adres: eli(2024, 1782),
     sprawdzono: '2026-11-12',
   },
+  waloryzacjaRehabilitacyjnego2026: {
+    nazwa: 'Obwieszczenia Prezesa ZUS w sprawie wskaźnika waloryzacji podstawy wymiaru zasiłku chorobowego przyjętej do obliczenia świadczenia rehabilitacyjnego',
+    publikator: 'M.P. 2026 poz. 858',
+    uwaga: 'IV kwartał 2026 r.: 100,4%; III kwartał: 109,0% (M.P. 2026 poz. 495); II kwartał: 105,1% (M.P. 2026 poz. 210); I kwartał bez waloryzacji (M.P. 2025 poz. 1205)',
+    adres: 'https://eli.gov.pl/eli/MP/2026/858/ogl',
+    sprawdzono: '2026-11-12',
+  },
   emerytury: {
     nazwa: 'Ustawa o emeryturach i rentach z Funduszu Ubezpieczeń Społecznych',
     publikator: 'Dz.U. 2025 poz. 1749',
