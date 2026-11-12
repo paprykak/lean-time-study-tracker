@@ -1,0 +1,139 @@
+---
+// Urlop ojcowski: do kiedy, wniosek, zasiłek 100% (art. 182^3 Kp, art. 31 ustawy zasiłkowej, art. 112 KC).
+// Logika: src/lib/narzedzia/urlop-ojcowski.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { LATA } from '../../data/prawo';
+import { zl } from '../../lib/narzedzia/format';
+import { dataPoPolsku, dodajMiesiace, dzisWPolsce } from '../../lib/narzedzia/terminy';
+import { urlopOjcowski, zasilekOjcowski } from '../../lib/narzedzia/urlop-ojcowski';
+
+const dzis = dzisWPolsce();
+const rokBiezacy = Number(dzis.slice(0, 4));
+const rok = LATA.includes(rokBiezacy) ? rokBiezacy : LATA[LATA.length - 1];
+const URODZENIE = dodajMiesiace(dzis, -2);
+const BRUTTO = 6000;
+const u = urlopOjcowski(URODZENIE, dzis);
+const z = zasilekOjcowski(rok, BRUTTO);
+
+const faq = [
+  {
+    pytanie: 'Do kiedy można wykorzystać urlop ojcowski?',
+    odpowiedz: 'Do ukończenia przez dziecko 12 miesięcy życia (art. 182³ § 1 pkt 1 Kodeksu pracy). Wiek liczy się tak, że ten termin upływa z początkiem dnia pierwszych urodzin (art. 112 Kodeksu cywilnego), więc ostatni dzień urlopu to dzień przed pierwszymi urodzinami dziecka. Przy przysposobieniu: 12 miesięcy od uprawomocnienia się postanowienia, nie dłużej niż do 14. urodzin dziecka (art. 182³ § 1 pkt 2).',
+  },
+  {
+    pytanie: 'Ile płatny jest urlop ojcowski?',
+    odpowiedz: `100% podstawy zasiłku (art. 31 ust. 1 ustawy zasiłkowej), nie mniej niż 1000 zł miesięcznie (art. 31 ust. 3a). Przy pensji ${zl(BRUTTO)} brutto to około ${zl(z.razem)} za 2 tygodnie. Podstawą jest przeciętne wynagrodzenie z 12 miesięcy po odliczeniu 13,71% składek.`,
+  },
+  {
+    pytanie: 'Czy urlop ojcowski można podzielić?',
+    odpowiedz: 'Tak, najwyżej na 2 części, z których żadna nie może być krótsza niż tydzień (art. 182³ § 1¹ Kodeksu pracy). Wniosek składa się co najmniej 7 dni przed rozpoczęciem urlopu, a pracodawca musi go uwzględnić (art. 182³ § 2).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="urlop-ojcowski"
+  tytul="Urlop ojcowski: do kiedy wykorzystać i ile płatny"
+  opis="Policz, do kiedy możesz wykorzystać urlop ojcowski (2 tygodnie do 12 miesięcy życia dziecka), kiedy złożyć wniosek i ile wyniesie zasiłek 100% za 14 dni."
+  h1="Urlop ojcowski: do kiedy i ile"
+  lead="Ojciec dziecka ma 2 tygodnie urlopu ojcowskiego płatne 100%, do ukończenia przez dziecko 12 miesięcy. Wpisz datę urodzenia dziecka i pensję, a policzymy ostatni dzień urlopu, termin wniosku i zasiłek."
+  faq={faq}
+>
+  <form class="kalkulator" data-ojcowski novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Dziecko i pensja</h2>
+      <div class="mt-4">
+        <label for="j-urodzenie" class="etykieta-pola">Data urodzenia dziecka</label>
+        <input id="j-urodzenie" name="urodzenie" type="date" class="pole mt-1 max-w-56" min="2015-01-01" max="2100-12-31" value={URODZENIE} aria-describedby="j-blad" />
+      </div>
+      <div class="mt-4">
+        <label for="j-brutto" class="etykieta-pola">Przeciętna pensja brutto z 12 miesięcy (zł)</label>
+        <input id="j-brutto" name="brutto" class="pole mt-1 max-w-48" type="text" inputmode="decimal" autocomplete="off" value={BRUTTO} aria-describedby="j-blad" />
+      </div>
+      <label class="mt-4 flex items-start gap-3 text-[0.9375rem]">
+        <input type="checkbox" name="pelnyEtat" checked class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+        <span>Pełny etat (podstawa nie niższa niż z płacy minimalnej)</span>
+      </label>
+      <p id="j-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Ostatni dzień urlopu ojcowskiego</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-data" data-w="koniec">{dataPoPolsku(u.koniec)}</p>
+        <p class="status-terminu" data-w="status" data-status="w-terminie">Zostało {u.dniDoKonca} dni</p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Cały urlop naraz: rozpocznij najpóźniej</dt><dd data-w="start">{dataPoPolsku(u.ostatniStart)}</dd></div>
+        <div><dt>Wniosek do pracodawcy najpóźniej</dt><dd data-w="wniosek">{dataPoPolsku(u.wniosekDo)}</dd></div>
+        <div><dt>Zasiłek za 14 dni (100%, brutto)</dt><dd data-w="zasilek">{zl(z.razem)}</dd></div>
+        <div><dt>Zasiłek za dzień</dt><dd data-w="dziennie">{zl(z.dziennie)}</dd></div>
+      </dl>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="zasady">Zasady urlopu ojcowskiego</h2>
+    <ul>
+      <li>Do 2 tygodni, najpóźniej do ukończenia przez dziecko 12 miesięcy życia (art. 182<sup>3</sup> § 1 pkt 1 Kodeksu pracy).</li>
+      <li>Jednorazowo albo w 2 częściach, każda co najmniej tydzień (art. 182<sup>3</sup> § 1<sup>1</sup>).</li>
+      <li>Wniosek co najmniej 7 dni przed rozpoczęciem; pracodawca musi go uwzględnić (art. 182<sup>3</sup> § 2).</li>
+      <li>Zasiłek macierzyński za ten czas: 100% podstawy, nie mniej niż 1000 zł miesięcznie (art. 31 ust. 1 i 3a ustawy o świadczeniach pieniężnych z ubezpieczenia społecznego w razie choroby i macierzyństwa).</li>
+    </ul>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Ostatni dzień urlopu to dzień przed pierwszymi urodzinami dziecka, bo przy obliczaniu wieku termin upływa z początkiem
+      ostatniego dnia (art. 112 Kodeksu cywilnego). Zasiłek: przeciętna pensja brutto z 12 miesięcy minus 13,71% składek
+      to podstawa (przy pełnym etacie nie niższa niż z płacy minimalnej), 100% podstawy to kwota miesięczna, a za dzień
+      1/30 tej kwoty. Od zasiłku pobiera się zaliczkę na podatek. Urlop macierzyński i rodzicielski policzy
+      <a href="/narzedzia/zasilek-macierzynski">kalkulator zasiłku macierzyńskiego</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { zl, wpisanaLiczba } from '../../lib/narzedzia/format';
+  import { dataPoPolsku, dzisWPolsce, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { urlopOjcowski, zasilekOjcowski } from '../../lib/narzedzia/urlop-ojcowski';
+  import { LATA } from '../../data/prawo';
+
+  const form = document.querySelector<HTMLFormElement>('[data-ojcowski]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const przelicz = () => {
+      const dzis = dzisWPolsce();
+      const urodzenie = el('urodzenie').value;
+      const brutto = wpisanaLiczba(el('brutto').value);
+      let blad: string | null = null;
+      if (!poprawnaData(urodzenie) || urodzenie > dzis) blad = 'Wpisz datę urodzenia dziecka.';
+      else if (!(brutto > 0 && brutto < 1_000_000)) blad = 'Wpisz pensję brutto, na przykład 6000.';
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      b.hidden = !blad;
+      b.textContent = blad ?? '';
+      const status = w('status');
+      if (blad) {
+        w('koniec').textContent = '—';
+        status.hidden = true;
+        return;
+      }
+      const rokBiezacy = Number(dzis.slice(0, 4));
+      const rok = LATA.includes(rokBiezacy) ? rokBiezacy : LATA[LATA.length - 1];
+      const u = urlopOjcowski(urodzenie, dzis);
+      const z = zasilekOjcowski(rok, brutto, 14, el('pelnyEtat').checked);
+      w('koniec').textContent = dataPoPolsku(u.koniec);
+      w('start').textContent = dataPoPolsku(u.ostatniStart);
+      w('wniosek').textContent = dataPoPolsku(u.wniosekDo);
+      w('zasilek').textContent = zl(z.razem);
+      w('dziennie').textContent = zl(z.dziennie);
+      status.hidden = false;
+      status.dataset.status = u.minal ? 'po-terminie' : u.dniDoKonca <= 30 ? 'wkrotce' : 'w-terminie';
+      status.textContent = u.minal ? 'Termin minął' : `Zostało ${u.dniDoKonca} ${u.dniDoKonca === 1 ? 'dzień' : 'dni'}`;
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>

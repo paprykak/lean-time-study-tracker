@@ -249,6 +249,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-12',
   },
   {
+    slug: 'urlop-ojcowski',
+    nazwa: 'Urlop ojcowski',
+    krotko: 'Do kiedy wykorzystać 2 tygodnie urlopu ojcowskiego, kiedy złożyć wniosek i ile wyniesie zasiłek 100%.',
+    kategoria: 'urlopy',
+    przepisy: ['kodeksPracy', 'kodeksCywilny', 'zasilkowa', 'swiadczeniaRodzinne'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'termin-wyplaty-wynagrodzenia',
     nazwa: 'Terminy wypłaty wynagrodzenia',
     krotko: 'Kiedy wypłata w każdym miesiącu: dzień z regulaminu przesunięty z soboty, niedzieli i świąt, plik .ics.',
