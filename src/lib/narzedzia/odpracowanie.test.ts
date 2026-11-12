@@ -43,7 +43,7 @@ describe('odpracowanie wyjścia prywatnego', () => {
     expect(kontrola(w, 'odpoczynek-dobowy')?.stan).toBe('blad');
     expect(kontrola(w, 'odpoczynek-dobowy')?.szczegoly).toEqual(['Doba od 19 listopada 2026 r., 7:00: najdłuższa przerwa 10 h.']);
     expect(kontrola(w, 'bilans')).toMatchObject({ stan: 'uwaga', tytul: '3 h ponad czas wyjścia' });
-    expect(kontrola(w, 'bilans')?.opis).toMatch(/nadgodziny/);
+    expect(kontrola(w, 'bilans')?.opis).toMatch(/nadgodzinami/);
     // Odpracowanie nie dotyka przerwy weekendowej: tyle samo co w rozkładzie.
     expect(w.tygodnie).toEqual([{ od: '2026-11-15', najdluzsza: 1980, rozklad: 1980 }]);
     expect(kontrola(w, 'odpoczynek-tygodniowy')?.stan).toBe('ok');
@@ -93,9 +93,25 @@ describe('odpracowanie wyjścia prywatnego', () => {
       ['2026-11-18 7:00', 960],
     ]);
     expect(w.tygodnie).toEqual([{ od: '2026-11-15', najdluzsza: 1980, rozklad: 1980 }]);
-    expect(kontrola(w, 'niedziela-swieto')?.podstawa).toBe('art. 151^10 Kodeksu pracy');
+    expect(kontrola(w, 'niedziela-swieto')?.podstawa).toBe('art. 151^10 i art. 151^11 § 1 Kodeksu pracy');
     expect(kontrola(w, 'przed-wyjsciem')?.stan).toBe('uwaga');
     expect(kontrola(w, 'dzien-wolny')).toBeUndefined();
+  });
+
+  it('godziny przed wyjściem nie wchodzą do bilansu (zwolnienie „udzielone”, art. 151 § 2^1)', () => {
+    const w = odpracowanie(dane([
+      { data: '2026-11-16', od: '15:00', do: '17:00' },
+      { data: '2026-11-19', od: '15:00', do: '16:00' },
+    ]));
+    expect([w.wyjscie, w.odpracowane, w.roznica, w.zostalo]).toEqual([180, 60, -120, 120]);
+    expect(kontrola(w, 'bilans')?.stan).toBe('uwaga');
+    expect(kontrola(w, 'przed-wyjsciem')?.opis).toMatch(/nie liczymy/);
+  });
+
+  it('wolna sobota: jedna liczba w tytule i uwaga o art. 151^3', () => {
+    const k = kontrola(odpracowanie(dane([{ data: '2026-11-21', od: '8:00', do: '11:00' }])), 'dzien-wolny');
+    expect(k?.tytul).toBe('Odpracowanie w dzień wolny z rozkładu: 1 dzień');
+    expect(k?.opis).toMatch(/151\^3/);
   });
 
   it('zmiana nocna 22:00–6:00, wyjście 2:00–4:00 i odpracowanie 6:00–8:00 po zmianie', () => {

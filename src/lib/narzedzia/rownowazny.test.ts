@@ -70,6 +70,11 @@ describe('weekendowy i skrócony tydzień (art. 143–144 Kp)', () => {
     expect(dniWeekendowe(2028, 2, 1)).toBe(12);
     expect(dniWeekendowe(2027, 1, 3)).toBe(41);
   });
+  it('weekendowy przy 12 h: wymiaru brakuje w 8 z 12 miesięcy 2026 i 2027 r.', () => {
+    const braki = (rok: number) => Array.from({ length: 12 }, (_, i) => i + 1).filter((m) => planOkresu('weekendowy', 12, rok, m, 1).brakuje > 0);
+    expect(braki(2026)).toEqual([2, 3, 4, 6, 7, 9, 10, 12]);
+    expect(braki(2027)).toEqual([2, 3, 4, 6, 7, 8, 9, 12]);
+  });
   it('skrócony tydzień: listopad 2026 18 dni, luty 2027 16 dni, luty 2028 17 dni', () => {
     expect(dniSkroconegoTygodnia(2026, 11, 1)).toBe(18);
     expect(dniSkroconegoTygodnia(2027, 2, 1)).toBe(16);
@@ -82,7 +87,7 @@ describe('weekendowy i skrócony tydzień (art. 143–144 Kp)', () => {
 
 describe('status okresu, przerwy i błędy', () => {
   it('status: 24 h ma 3 i 4 miesiące przez art. 137; weekendowy ponad miesiąc tylko z art. 129 § 2', () => {
-    expect(statusOkresu('r24', 3)).toMatchObject({ rodzaj: 'szczegolne', podstawa: 'art. 135 § 2 w związku z art. 137 Kp' });
+    expect(statusOkresu('r24', 3)).toMatchObject({ rodzaj: 'szczegolne', podstawa: 'art. 135 § 2 w związku z art. 137 albo art. 129 § 2 Kp' });
     expect(statusOkresu('r24', 4).rodzaj).toBe('pora-roku');
     expect(statusOkresu('r12', 6).rodzaj).toBe('przedluzenie');
     expect(statusOkresu('weekendowy', 2).rodzaj).toBe('przedluzenie');
@@ -117,6 +122,12 @@ describe('teksty wyniku', () => {
     const c = opisWyniku(planOkresu('weekendowy', 12, 2027, 2, 1));
     expect(c.glowny).toBe('Brakuje 16 h');
     expect(c.opis).toBe('Wymiaru 160 h nie da się zaplanować w tym okresie: 12 dni po 12 h to 144 h.');
-    expect(opisWyniku(planOkresu('r12', 12, 2027, 1, 3)).status).toBe('Okres 3 miesiące: tylko w szczególnie uzasadnionych przypadkach (art. 135 § 2 Kp)');
+    expect(opisWyniku(planOkresu('r12', 12, 2027, 1, 3)).status).toBe(
+      'Okres 3 miesiące: w szczególnie uzasadnionych przypadkach (art. 135 § 2 Kp) albo po przedłużeniu z art. 129 § 2',
+    );
+    expect(opisWyniku(planOkresu('r12', 12, 2027, 1, 4)).status).toBe(
+      'Okres 4 miesiące: przy pracach zależnych od pory roku lub pogody (art. 135 § 3 Kp) albo po przedłużeniu z art. 129 § 2',
+    );
+    expect(opisWyniku(planOkresu('r12', 12, 2026, 11, 1)).status).toBe('Okres 1 miesiąc: dopuszczalny wprost (art. 135 § 1 Kp)');
   });
 });

@@ -32,7 +32,7 @@ test('odpracowanie do 21:00: 10 h przerwy w dobie i 3 h nadgodzin', async ({ pag
   await expect(page.locator('[data-w="opis"]')).toContainText(/3\sh\sponad\swyjście/);
   const blad = page.locator('[data-w="lista"] li[data-stan="blad"]');
   await expect(blad).toContainText(/najdłuższa\sprzerwa\s10\sh/);
-  await expect(page.locator('[data-w="lista"]')).toContainText(/nadgodziny/);
+  await expect(page.locator('[data-w="lista"]')).toContainText(/Są\snadgodzinami,\sjeśli\sprzekraczają\s8\sgodzin/);
 });
 
 test('niedziela: uwaga o art. 151¹⁰; zmiana nocna z wyjściem 2:00–4:00', async ({ page }) => {

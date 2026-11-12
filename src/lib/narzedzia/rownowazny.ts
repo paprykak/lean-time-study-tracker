@@ -28,9 +28,9 @@
 // - Minimum dni wolnych z art. 147 = dni kalendarzowe − W / 8: W / 8 to dni od poniedziałku do piątku bez świąt
 //   obniżających wymiar, czyli dni pracy w przeciętnie pięciodniowym tygodniu; reszta to niedziele, święta i dni
 //   wolne z pięciodniowego tygodnia.
-// - Status okresu: 1 miesiąc wprost; równoważny 12 h i 24 h: 2–3 miesiące z art. 135 § 2, 4 miesiące z art. 135 § 3;
-//   16 h, weekendowy i skrócony tydzień ponad 1 miesiąc oraz każdy system ponad 4 miesiące tylko po przedłużeniu
-//   z art. 129 § 2.
+// - Status okresu: 1 miesiąc wprost; równoważny 12 h i 24 h: 2–3 miesiące z art. 135 § 2, 4 miesiące z art. 135 § 3,
+//   a w obu przypadkach także po przedłużeniu z art. 129 § 2 (dotyczy każdego systemu); 16 h, weekendowy i skrócony
+//   tydzień ponad 1 miesiąc oraz każdy system ponad 4 miesiące tylko po przedłużeniu z art. 129 § 2.
 // - 16 h i 24 h: odpoczynek po zmianie co najmniej L h (art. 136 § 2, art. 137). Rytm najgęstszy: zmiana i odpoczynek
 //   po niej, czyli 2L h; w okresie D dni mieści się najwyżej floor(24·D / (2L)) takich par (informacja, bez reszty
 //   zmian po ostatniej).
@@ -67,16 +67,25 @@ export interface StatusOkresu {
 /** Czy okres rozliczeniowy danej długości jest dopuszczalny w systemie i na jakiej podstawie. */
 export function statusOkresu(system: SystemRownowazny, miesiecy: number): StatusOkresu {
   if (!Number.isInteger(miesiecy) || miesiecy < 1 || miesiecy > 12) throw new RangeError('Okres rozliczeniowy: od 1 do 12 miesięcy');
-  if (miesiecy === 1) return { rodzaj: 'wprost', opis: 'dopuszczalny wprost', podstawa: SYSTEMY[system].podstawa };
+  if (miesiecy === 1) return { rodzaj: 'wprost', opis: `dopuszczalny wprost (${SYSTEMY[system].podstawa})`, podstawa: SYSTEMY[system].podstawa };
   const z135 = system === 'r12' || system === 'r24';
   const odpowiednio = system === 'r24' ? ' w związku z art. 137' : '';
+  // Art. 129 § 2 pozwala przedłużyć okres w każdym systemie, więc art. 135 § 2–3 nie jest jedyną drogą.
   if (z135 && miesiecy <= 3)
-    return { rodzaj: 'szczegolne', opis: 'tylko w szczególnie uzasadnionych przypadkach', podstawa: `art. 135 § 2${odpowiednio} Kp` };
+    return {
+      rodzaj: 'szczegolne',
+      opis: `w szczególnie uzasadnionych przypadkach (art. 135 § 2${odpowiednio} Kp) albo po przedłużeniu z art. 129 § 2`,
+      podstawa: `art. 135 § 2${odpowiednio} albo art. 129 § 2 Kp`,
+    };
   if (z135 && miesiecy === 4)
-    return { rodzaj: 'pora-roku', opis: 'tylko przy pracach zależnych od pory roku lub pogody', podstawa: `art. 135 § 3${odpowiednio} Kp` };
+    return {
+      rodzaj: 'pora-roku',
+      opis: `przy pracach zależnych od pory roku lub pogody (art. 135 § 3${odpowiednio} Kp) albo po przedłużeniu z art. 129 § 2`,
+      podstawa: `art. 135 § 3${odpowiednio} albo art. 129 § 2 Kp`,
+    };
   return {
     rodzaj: 'przedluzenie',
-    opis: 'tylko po przedłużeniu okresu z przyczyn obiektywnych, technicznych lub organizacyjnych, w układzie zbiorowym albo porozumieniu',
+    opis: 'tylko po przedłużeniu z przyczyn obiektywnych, technicznych lub organizacyjnych (art. 129 § 2 Kp), w układzie zbiorowym albo porozumieniu (art. 150 § 3)',
     podstawa: 'art. 129 § 2 i art. 150 § 3 Kp',
   };
 }
@@ -213,7 +222,7 @@ export function opisWyniku(r: WynikRownowazny): Record<'glowny' | 'opis' | 'stat
     opis: r.brakuje
       ? `Wymiaru ${godz(r.wymiar)} nie da się zaplanować w tym okresie: ${odmiana(r.dostepneDni ?? 0, DNI)} po ${godz(r.zmiana)} to ${godz(r.dostepneGodziny ?? 0)}.`
       : `${plan}; wymiar ${godz(r.wymiar)}`,
-    status: `Okres ${odmiana(r.miesiecy, ['miesiąc', 'miesiące', 'miesięcy'])}: ${r.status.opis} (${r.status.podstawa})`,
+    status: `Okres ${odmiana(r.miesiecy, ['miesiąc', 'miesiące', 'miesięcy'])}: ${r.status.opis}`,
     okres: `${dataPoPolsku(r.od)} – ${dataPoPolsku(r.do)}, ${odmiana(r.dniKalendarzowe, DNI)}`,
     wymiar: `${godz(r.wymiar)} = 8 h × ${r.wymiar / 8} dni od poniedziałku do piątku bez świąt`,
     wolne: `${odmiana(r.dniWolne, DNI)}; minimum z art. 147 Kp: ${r.minimumWolnych}`,

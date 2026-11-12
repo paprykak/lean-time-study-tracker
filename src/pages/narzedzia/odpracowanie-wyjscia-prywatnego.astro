@@ -28,11 +28,11 @@ const faq = [
   },
   {
     pytanie: 'Kiedy trzeba odpracować wyjście prywatne?',
-    odpowiedz: 'Przepis nie wskazuje terminu ani dnia. Jedyny warunek z art. 151 § 2^1 Kodeksu pracy to odpoczynek: co najmniej 11 godzin w każdej dobie (art. 132 § 1) i 35 godzin w każdym tygodniu (art. 133 § 1). Gdy odpracujesz w innym okresie rozliczeniowym, w okresie wyjścia zabraknie godzin do wymiaru, a w okresie odpracowania będzie ich więcej.',
+    odpowiedz: 'Przepis nie każe odpracować wyjścia; bez odpracowania za czas wyjścia wynagrodzenie nie przysługuje (art. 80 Kodeksu pracy). Nie wskazuje też terminu ani dnia. Jedyny warunek z art. 151 § 2^1 to odpoczynek: co najmniej 11 godzin w każdej dobie (art. 132 § 1) i 35 godzin w każdym tygodniu (art. 133 § 1). Gdy odpracujesz w innym okresie rozliczeniowym, w okresie wyjścia zabraknie godzin do wymiaru, a w okresie odpracowania będzie ich więcej.',
   },
   {
     pytanie: 'Czy można odpracować wyjście prywatne w sobotę?',
-    odpowiedz: 'Art. 151 § 2^1 Kodeksu pracy nie wskazuje dnia odpracowania, więc nie wyłącza dnia wolnego z rozkładu, np. soboty. Warunkiem jest odpoczynek: 11 godzin w dobie i 35 godzin w tygodniu (art. 132 § 1 i art. 133 § 1). Inaczej jest z niedzielą i świętem: praca w te dni jest dozwolona tylko w przypadkach z art. 151^10, np. przy pracy zmianowej albo w ruchu ciągłym.',
+    odpowiedz: 'Art. 151 § 2^1 Kodeksu pracy nie wskazuje dnia odpracowania. Poradnik ministerstwa pracy (rodzinaipraca.gov.pl) odradza jednak odpracowanie w wolną sobotę, bo praca w dniu wolnym z pięciodniowego tygodnia daje prawo do innego dnia wolnego (art. 151^3). Zawsze obowiązuje odpoczynek: 11 godzin w dobie i 35 godzin w tygodniu (art. 132 § 1 i art. 133 § 1). Inaczej jest z niedzielą i świętem: praca w te dni jest dozwolona tylko w przypadkach z art. 151^10, np. przy pracy zmianowej albo w ruchu ciągłym.',
   },
   {
     pytanie: 'Czy na wyjście prywatne trzeba złożyć wniosek?',
@@ -40,7 +40,7 @@ const faq = [
   },
   {
     pytanie: 'Czy za wyjście prywatne przysługuje wynagrodzenie?',
-    odpowiedz: 'Wynagrodzenie przysługuje za pracę wykonaną, a za czas niewykonywania pracy tylko wtedy, gdy przepisy prawa pracy tak stanowią (art. 80 Kodeksu pracy). Art. 151 § 2^1 nie przyznaje wynagrodzenia za czas wyjścia, więc za nieodpracowany czas wynagrodzenie nie przysługuje, chyba że przepisy, umowa lub regulamin stanowią inaczej. Za odpracowany czas dostajesz wynagrodzenie jak za pracę.',
+    odpowiedz: 'Wynagrodzenie przysługuje za pracę wykonaną, a za czas niewykonywania pracy tylko wtedy, gdy przepisy prawa pracy tak stanowią (art. 80 Kodeksu pracy). Art. 151 § 2^1 nie przyznaje wynagrodzenia za czas wyjścia, więc za nieodpracowany czas wynagrodzenie nie przysługuje, chyba że przepisy prawa pracy, w tym układ zbiorowy albo regulamin, tak stanowią. Za odpracowany czas dostajesz wynagrodzenie jak za pracę.',
   },
   {
     pytanie: 'Czym wyjście prywatne różni się od zwolnienia z art. 148^1 i 188?',
@@ -170,15 +170,16 @@ const faq = [
       <strong>Tydzień</strong> to 7 dni od pierwszego dnia okresu rozliczeniowego (art. 128 § 3 pkt 2); okresy liczymy od
       stycznia. Dla każdego tygodnia z odpracowaniem szukamy najdłuższej przerwy wewnątrz tych 7 dni. Ostatni tydzień
       okresu może sięgać do następnego okresu: liczymy pełne 7 dni. Krótszy odpoczynek, nie krótszy niż 24 godziny,
-      dopuszcza art. 133 § 2 przy przejściu na inną zmianę, więc przy stałym rozkładzie go nie stosujemy. Gdy okres
+      dopuszcza art. 133 § 2 przy przejściu na inną zmianę oraz w przypadkach z art. 132 § 2 (zarządzający zakładem, akcja ratownicza, usuwanie awarii), więc przy stałym rozkładzie go nie stosujemy. Gdy okres
       zaczyna się w niedzielę, weekend dzieli się między dwa tygodnie i już sam rozkład nie daje 35 godzin w jednym
       tygodniu. Przepis nie mówi, jak wtedy liczyć przerwę na przełomie tygodni, więc odpracowanie, które ją skraca,
       oznaczamy jako uwagę. Naruszeniem jest odpracowanie wtedy, gdy rozkład daje w tym tygodniu 35 godzin przerwy, a odpracowanie je odbiera.
     </p>
     <p>
       <strong>Czego przepis nie mówi.</strong> Art. 151 § 2<sup>1</sup> nie wskazuje terminu ani dnia odpracowania, nie
-      mówi o okresie rozliczeniowym ani o odpracowaniu z góry, przed wyjściem. Takie przypadki pokazujemy jako uwagi, ale
-      ich nie blokujemy. Gdy odpracujesz w innym okresie rozliczeniowym, w okresie wyjścia zabraknie godzin do wymiaru,
+      mówi o okresie rozliczeniowym. Mówi za to o odpracowaniu zwolnienia „udzielonego”, więc godzin przepracowanych przed
+      wyjściem nie liczymy do bilansu. Odpracowanie w wolną sobotę, w niedzielę, w święto i w innym okresie pokazujemy
+      jako uwagi, ale ich nie blokujemy. Gdy odpracujesz w innym okresie rozliczeniowym, w okresie wyjścia zabraknie godzin do wymiaru,
       a w okresie odpracowania będzie ich więcej.
     </p>
     <p>

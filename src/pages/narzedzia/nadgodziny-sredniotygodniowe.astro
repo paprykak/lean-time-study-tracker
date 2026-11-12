@@ -21,7 +21,7 @@ const faq = [
   },
   {
     pytanie: 'Nadgodziny średniotygodniowe: 50 czy 100%?',
-    odpowiedz: 'Zawsze 100%. Dodatek w tej wysokości przysługuje za każdą godzinę z przekroczenia przeciętnej tygodniowej normy, chyba że przekroczenie wynika z nadgodzin, za które dodatek już przysługuje, na przykład dobowych (art. 151¹ § 2 Kodeksu pracy). Za nadgodziny dobowe jest 100% w nocy, w niedziele i święta wolne z grafiku i w dniu wolnym za niedzielę lub święto, a w pozostałe dni 50% (art. 151¹ § 1).',
+    odpowiedz: 'Zawsze 100%. Dodatek w tej wysokości przysługuje za każdą godzinę z przekroczenia przeciętnej tygodniowej normy, chyba że przekroczenie wynika z nadgodzin, za które dodatek już przysługuje, na przykład dobowych (art. 151^1 § 2 Kodeksu pracy). Za nadgodziny dobowe jest 100% w nocy, w niedziele i święta wolne z grafiku i w dniu wolnym za niedzielę lub święto, a w pozostałe dni 50% (art. 151^1 § 1).',
   },
   {
     pytanie: 'Jak policzyć nadgodziny średniotygodniowe?',
@@ -29,7 +29,7 @@ const faq = [
   },
   {
     pytanie: 'Czy można pracować więcej niż 48 godzin tygodniowo?',
-    odpowiedz: 'Limit dotyczy przeciętnej: tygodniowy czas pracy z nadgodzinami nie może przekraczać przeciętnie 48 godzin w okresie rozliczeniowym (art. 131 § 1 Kodeksu pracy). Nie dotyczy to pracowników zarządzających zakładem pracy (§ 2). Nadgodzin ze szczególnych potrzeb pracodawcy może być najwyżej 150 w roku kalendarzowym, chyba że układ zbiorowy, regulamin pracy albo umowa ustala inną liczbę (art. 151 § 3 i 4).',
+    odpowiedz: 'Limit dotyczy przeciętnej: tygodniowy czas pracy z nadgodzinami nie może przekraczać przeciętnie 48 godzin w okresie rozliczeniowym (art. 131 § 1 Kodeksu pracy). Nie dotyczy to pracowników zarządzających zakładem pracy (§ 2). Nadgodzin ze szczególnych potrzeb pracodawcy może być najwyżej 150 w roku kalendarzowym, chyba że układ zbiorowy albo regulamin pracy ustala inną liczbę, a gdy pracodawca nie ma układu ani obowiązku regulaminu, umowa o pracę (art. 151 § 3 i 4).',
   },
   {
     pytanie: 'Czy urlop i L4 zmniejszają wymiar czasu pracy?',
@@ -37,7 +37,7 @@ const faq = [
   },
   {
     pytanie: 'Czy zamiast dodatku można dostać wolne?',
-    odpowiedz: 'Tak. Na Twój wniosek pracodawca może dać czas wolny w tym samym wymiarze (art. 151² § 1 Kodeksu pracy). Bez wniosku daje o połowę więcej czasu wolnego, najpóźniej do końca okresu rozliczeniowego, i nie może przez to obniżyć wynagrodzenia za pełny miesięczny wymiar (§ 2). Wtedy dodatek nie przysługuje (§ 3).',
+    odpowiedz: 'Tak. Na Twój wniosek pracodawca może dać czas wolny w tym samym wymiarze (art. 151^2 § 1 Kodeksu pracy). Bez wniosku daje o połowę więcej czasu wolnego, najpóźniej do końca okresu rozliczeniowego, i nie może przez to obniżyć wynagrodzenia za pełny miesięczny wymiar (§ 2). Wtedy dodatek nie przysługuje (§ 3).',
   },
 ];
 ---
@@ -141,7 +141,7 @@ const faq = [
       <li>Nadgodziny to praca ponad normy albo ponad przedłużony dobowy wymiar z Twojego grafiku (art. 151 § 1).</li>
       <li>Za nadgodziny z przekroczenia przeciętnej tygodniowej normy dodatek wynosi 100% (art. 151<sup>1</sup> § 2).</li>
       <li>Tygodniowy czas pracy z nadgodzinami: przeciętnie najwyżej 48 godzin w okresie (art. 131 § 1); tydzień to 7 dni od pierwszego dnia okresu (art. 128 § 3 pkt 2).</li>
-      <li>Nadgodzin ze szczególnych potrzeb pracodawcy najwyżej {LIMIT_ROCZNY} w roku kalendarzowym, chyba że układ zbiorowy, regulamin pracy albo umowa ustala inną liczbę (art. 151 § 3 i 4). Kalkulator widzi jeden okres, więc tego limitu nie sprawdza.</li>
+      <li>Nadgodzin ze szczególnych potrzeb pracodawcy najwyżej {LIMIT_ROCZNY} w roku kalendarzowym, chyba że układ zbiorowy albo regulamin pracy ustala inną liczbę, a gdy pracodawca nie ma układu ani obowiązku regulaminu, umowa o pracę (art. 151 § 3 i 4). Kalkulator widzi jeden okres, więc tego limitu nie sprawdza.</li>
     </ul>
 
     <h2 id="jak-liczymy">Jak liczymy</h2>
@@ -149,7 +149,7 @@ const faq = [
       <li>Wymiar okresu dla pełnego etatu: 8 godzin za każdy dzień od poniedziałku do piątku minus 8 godzin za każde święto poza niedzielą (art. 130 § 1 i 2). W listopadzie 2026 r.: 21 dni × 8 h − 8 h za 11 listopada = 160 h. Przy niepełnym etacie mnożymy go przez ułamek etatu.</li>
       <li>Odejmujemy godziny urlopu, L4 i innej usprawiedliwionej nieobecności, które były w grafiku (art. 130 § 3).</li>
       <li>Od przepracowanych godzin odejmujemy nadgodziny dobowe, bo za nie dodatek już przysługuje (art. 151<sup>1</sup> § 2). Reszta ponad wymiar to nadgodziny średniotygodniowe: 184 − 10 − 160 = 14 h, a przy stawce 40 zł dodatek 100% to 14 × 40 zł = 560,00 zł.</li>
-      <li>Średnia tygodniowa: przepracowane godziny przez liczbę tygodni, czyli dni okresu podzielone przez 7. W listopadzie: 184 h ÷ (30 ÷ 7) = 42,93 h. Do limitu zostaje 48 h × liczba tygodni minus godziny przepracowane i nieobecności.</li>
+      <li>Średnia tygodniowa: przepracowane godziny przez liczbę tygodni, czyli dni okresu podzielone przez 7. W listopadzie: 184 h ÷ (30 ÷ 7) = 42,93 h. Do limitu zostaje 48 h × liczba tygodni bez nieobecności minus godziny przepracowane.</li>
     </ol>
     <p><strong>Czego przepis nie mówi.</strong></p>
     <ul>

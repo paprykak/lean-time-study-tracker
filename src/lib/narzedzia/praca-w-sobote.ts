@@ -190,7 +190,7 @@ export function opisWyniku(r: WynikPracyWSobote, data: string): OpisWyniku {
   }
   if (r.wNiedzieleSwieto) {
     const co = r.nastepnyDzien.rodzaj === 'niedziela' ? 'w niedzielę' : 'w święto';
-    uwagi.push(`Zmiana trwa po 6:00 następnego dnia (${dataPoPolsku(r.nastepnyDzien.data)}). Te ${h(r.wNiedzieleSwieto)} to praca ${co} z osobnymi zasadami (art. 151⁹ § 2 i art. 151¹¹ Kodeksu pracy). Tu liczymy je jak resztę zmiany.`);
+    uwagi.push(`Zmiana trwa po 6:00 następnego dnia, jeśli pracodawca nie ustalił innej godziny (${dataPoPolsku(r.nastepnyDzien.data)}). Te ${h(r.wNiedzieleSwieto)} to praca ${co} z osobnymi zasadami (art. 151⁹ § 2 i art. 151¹¹ Kodeksu pracy). Tu liczymy je jak resztę zmiany.`);
   }
   return {
     naglowek: 'Dzień wolny za tę pracę do',
@@ -199,7 +199,7 @@ export function opisWyniku(r: WynikPracyWSobote, data: string): OpisWyniku {
     godziny: r.poOsmej ? `${h(r.razem)}: ${h(r.doOsmej)} + ${h(r.poOsmej)} nadgodzin dobowych` : h(r.razem),
     a,
     b,
-    bTytul: `Gdy dnia wolnego nie dostaniesz do ${dataPoPolsku(r.dzienWolnyDo)}`,
+    bTytul: `Gdy dnia wolnego nie dostaniesz do ${dataPoPolsku(r.dzienWolnyDo)} i przekroczysz przez to normę tygodniową`,
     uwagi,
   };
 }

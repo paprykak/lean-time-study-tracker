@@ -4,8 +4,11 @@
 //   wymiar wynikający z systemu i rozkładu to praca w godzinach nadliczbowych (art. 151 § 1);
 // - dodatek 100% za nadgodziny w nocy, w niedziele i święta niebędące dniami pracy według rozkładu i w dniu wolnym
 //   za niedzielę albo święto; 50% w każdym innym dniu (art. 151^1 § 1); pora nocna to 8 godzin między 21:00 a 7:00
-//   (art. 151^7 § 1), niedziela i święto liczą się od 6:00 do 6:00 (art. 151^9 § 2);
-// - w każdej dobie co najmniej 11 godzin nieprzerwanego odpoczynku (art. 132 § 1);
+//   (art. 151^7 § 1), niedziela i święto liczą się od 6:00 do 6:00, chyba że pracodawca ustalił inną godzinę
+//   (art. 151^9 § 2; liczymy od 6:00);
+// - w każdej dobie co najmniej 11 godzin nieprzerwanego odpoczynku (art. 132 § 1), z zastrzeżeniem art. 136 § 2 i 137:
+//   w systemach do 16 i 24 h odpoczynek po zmianie co najmniej tak długi jak przepracowany czas. Dla zmiany dłuższej
+//   niż 12 h (więcej nie pozwala art. 135 § 1) stan odpoczynku to „inne-zasady” i nie liczymy go jako naruszenia;
 // - ruchomy rozkład (art. 140^1 § 1–2): ponowna praca w tej samej dobie nie jest nadgodzinami (§ 4), ale rozkład nie może
 //   naruszać odpoczynku z art. 132 i 133 (§ 3); odpracowanie wyjścia w sprawach osobistych też nie jest nadgodzinami
 //   (art. 151 § 2^1) — tylko wzmianka na stronie;
@@ -28,10 +31,11 @@
 // - Ruchomy rozkład: nadgodziny z doby = 0 (art. 140^1 § 4); podajemy, ile byłoby bez niego. Odpoczynek sprawdzamy dalej.
 // - Odpoczynek w dobie k: najdłuższa przerwa bez pracy wewnątrz okna doby (części przerw na krawędziach okna też się
 //   liczą). Za 7. dniem grafiku nie znamy: gdy przerwa sięga poza znane dni, a mogłaby mieć co najmniej 11 h, stan to
-//   „bez-danych” zamiast naruszenia; podajemy jej znaną część.
+//   „bez-danych” zamiast naruszenia; podajemy jej znaną część. Zmiany czasu (marzec, październik) nie uwzględniamy.
 // - Pora nocna: domyślnie 22:00–6:00, początek 21:00–23:00. Nadgodziny z doby to godziny zmian z rozkładu, więc dzień,
 //   w którym przypadają, jest dniem pracy według rozkładu: niedziela i święto nie dają same 100% (art. 151^1 § 1 pkt 1
 //   lit. b), ale podajemy, ile nadgodzin przypada w niedzielę lub święto (6:00–6:00, art. 151^9 § 2), z uwagą na stronie.
+// - Przepis nie rozstrzyga, czy nadgodziny z doby wliczają się też do wymiaru dnia, w którym przypadają; nie liczymy tego.
 import { godzinyIMinuty, minuty, minutyNocneZmiany } from './czas-pracy';
 import { odmiana } from '../redakcja';
 import { rodzajDnia } from './niedziela-swieto';
@@ -55,7 +59,7 @@ export interface Opcje {
   poraNocnaOd?: number;
 }
 
-export type StanOdpoczynku = 'ok' | 'naruszenie' | 'bez-danych';
+export type StanOdpoczynku = 'ok' | 'naruszenie' | 'bez-danych' | 'inne-zasady';
 
 export interface DzienDoby {
   data: string;
@@ -99,6 +103,16 @@ export const etykietaDnia = (data: string) => {
 /** Długość zmiany: koniec ≤ początek = przez północ, ta sama godzina = 24 h. */
 export const dlugoscZmiany = (od: number, do_: number) => (do_ > od ? do_ - od : do_ - od + DOBA_MIN);
 
+/** Błąd danych w konkretnym dniu (indeks 0–6), żeby oznaczyć pola. */
+export class BladDnia extends RangeError {
+  constructor(
+    message: string,
+    public dzien: number,
+  ) {
+    super(message);
+  }
+}
+
 const przeciecie = (a0: number, a1: number, b0: number, b1: number) => Math.max(0, Math.min(a1, b1) - Math.max(a0, b0));
 
 export function dobaPracownicza(start: string, wiersze: Wiersz[], opcje: Opcje = {}): WynikDoby {
@@ -112,10 +126,10 @@ export function dobaPracownicza(start: string, wiersze: Wiersz[], opcje: Opcje =
     const od = w.od.trim();
     const do_ = w.do.trim();
     if (!od && !do_) return null;
-    if (!od || !do_) throw new RangeError(`${etykietaDnia(daty[i])}: wpisz obie godziny albo żadnej.`);
+    if (!od || !do_) throw new BladDnia(`${etykietaDnia(daty[i])}: wpisz obie godziny albo żadnej.`, i);
     const a = minuty(od);
     const b = minuty(do_);
-    if (a === null || b === null) throw new RangeError(`${etykietaDnia(daty[i])}: zły zapis godziny (np. 6:00).`);
+    if (a === null || b === null) throw new BladDnia(`${etykietaDnia(daty[i])}: zły zapis godziny (np. 6:00).`, i);
     const s = i * DOBA_MIN + a;
     return { od: a, do: b, s, e: s + dlugoscZmiany(a, b) };
   });
@@ -123,7 +137,7 @@ export function dobaPracownicza(start: string, wiersze: Wiersz[], opcje: Opcje =
   let poprzednia: { e: number; i: number } | null = null;
   zmiany.forEach((z, i) => {
     if (!z) return;
-    if (poprzednia && z.s < poprzednia.e) throw new RangeError(`${etykietaDnia(daty[i])}: zmiana zaczyna się, zanim skończy się zmiana z ${etykietaDnia(daty[poprzednia.i])}.`);
+    if (poprzednia && z.s < poprzednia.e) throw new BladDnia(`${etykietaDnia(daty[i])}: zmiana zaczyna się, zanim skończy się zmiana z ${etykietaDnia(daty[poprzednia.i])}.`, i);
     poprzednia = { e: z.e, i };
   });
   // Sprawdza też porę nocną (RangeError poza 21:00–23:00).
@@ -181,13 +195,14 @@ export function dobaPracownicza(start: string, wiersze: Wiersz[], opcje: Opcje =
       }
       kursor = Math.max(kursor, p.b);
     }
-    const stan: StanOdpoczynku = znana >= ODPOCZYNEK_MIN ? 'ok' : koncowa >= ODPOCZYNEK_MIN ? 'bez-danych' : 'naruszenie';
+    const stan: StanOdpoczynku =
+      z.e - z.s > ROWNOWAZNY_MAKS_MIN ? 'inne-zasady' : znana >= ODPOCZYNEK_MIN ? 'ok' : koncowa >= ODPOCZYNEK_MIN ? 'bez-danych' : 'naruszenie';
     odpoczynki.push({ odp: znana, stan });
   });
 
   const suma = nad.reduce((s, p) => s + p.b - p.a, 0);
   const nocne = nad.reduce((s, p) => s + minutyNocneZmiany(p.a % DOBA_MIN, p.b % DOBA_MIN, poraOd), 0);
-  // Niedziela i święto: od 6:00 danego dnia do 6:00 następnego (art. 151^9 § 2). Sprawdzamy dni od dnia przed tygodniem.
+  // Niedziela i święto: od 6:00 danego dnia do 6:00 następnego (art. 151^9 § 2, gdy pracodawca nie ustalił innej godziny). Sprawdzamy dni od dnia przed tygodniem.
   let wNiedzieleSwieta = 0;
   for (let d = -1; d <= 7; d++) {
     if (rodzajDnia(dodajDni(start, d)).rodzaj === 'zwykly') continue;
@@ -257,14 +272,23 @@ const lista = (r: WynikDoby, i: number[]) => i.map((x) => etykietaDnia(r.dni[x].
 /** Teksty wyniku (wspólne dla serwera i przeglądarki). */
 export function opisWyniku(r: WynikDoby): Opis {
   const wiersze: WierszTabeli[] = r.dni.map((d) => {
-    if (d.od === null || d.do === null) return { dzien: etykietaKrotka(d.data), praca: 'wolne', wPoprzedniej: '—', nadgodziny: '—', odpoczynek: '—', stan: 'wolne' };
+    if (d.od === null || d.do === null) return { dzien: etykietaKrotka(d.data), praca: 'wolne', wPoprzedniej: '', nadgodziny: '—', odpoczynek: '—', stan: 'wolne' };
     const odp = d.odpoczynek ?? 0;
     return {
       dzien: etykietaKrotka(d.data),
       praca: `${zapisGodziny(d.od)}–${zapisGodziny(d.do)}`,
-      wPoprzedniej: d.wPoprzedniejDobie ? czas(d.wPoprzedniejDobie) : '—',
+      wPoprzedniej: d.wPoprzedniejDobie ? `w poprzedniej dobie ${czas(d.wPoprzedniejDobie)}` : '',
       nadgodziny: d.nadgodziny ? czas(d.nadgodziny) : '—',
-      odpoczynek: d.stan === 'ok' ? czas(odp) : d.stan === 'naruszenie' ? `${czas(odp)}, za krótki` : `co najmniej ${czas(odp)}, bez danych o następnym dniu`,
+      odpoczynek:
+        d.stan === 'ok'
+          ? czas(odp)
+          : d.stan === 'naruszenie'
+            ? `${czas(odp)}, za krótki`
+            : d.stan === 'inne-zasady'
+              ? 'Praca dłuższa niż 12 h: w systemach z art. 136–137 odpoczynek po zmianie co najmniej tak długi jak przepracowany czas (art. 136 § 2)'
+              : odp
+                ? `co najmniej ${czas(odp)}, bez danych o następnym dniu`
+                : 'bez danych o następnym dniu',
       stan: d.stan ?? 'ok',
     };
   });
@@ -286,7 +310,7 @@ export function opisWyniku(r: WynikDoby): Opis {
     );
   if (r.wNiedzieleSwieta)
     uwagi.push(
-      `${czas(r.wNiedzieleSwieta)} nadgodzin przypada w niedzielę lub święto (od 6:00 do 6:00, art. 151⁹ § 2). Gdy ten dzień nie był dla Ciebie dniem pracy według rozkładu, dodatek wynosi 100% (art. 151¹ § 1 pkt 1 lit. b).`,
+      `${czas(r.wNiedzieleSwieta)} nadgodzin przypada w niedzielę lub święto (od 6:00 do 6:00, chyba że pracodawca ustalił inną godzinę, art. 151⁹ § 2). W Twoim grafiku to dzień pracy, więc dodatek wynosi 50% (w porze nocnej 100%). 100% przysługuje, gdy niedziela lub święto nie jest dniem pracy według rozkładu (art. 151¹ § 1 pkt 1 lit. b).`,
     );
   if (r.dni[6].od !== null) uwagi.push(`Doby ostatniego dnia (${etykietaDnia(r.dni[6].data)}) nie sprawdzimy do końca: nie znamy grafiku na następny dzień.`);
 
@@ -298,7 +322,11 @@ export function opisWyniku(r: WynikDoby): Opis {
       : r.ruchomy && r.bezRuchomego
         ? 'Ruchomy rozkład: praca w tej samej dobie nie daje nadgodzin.'
         : 'Żadna zmiana nie wchodzi w dobę poprzedniego dnia ponad jej normę.',
-    odpoczynek: naruszone.length ? `za krótki w ${odmiana(naruszone.length, ['dobie', 'dobach', 'dobach'])}` : 'co najmniej 11 h w każdej sprawdzonej dobie',
+    odpoczynek: r.dni.every((d) => d.od === null)
+      ? 'brak zmian do sprawdzenia'
+      : naruszone.length
+        ? `za krótki w ${odmiana(naruszone.length, ['dobie', 'dobach', 'dobach'])}`
+        : 'co najmniej 11 h w każdej sprawdzonej dobie',
     wiersze,
     uwagi,
   };

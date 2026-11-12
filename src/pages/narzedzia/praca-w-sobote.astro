@@ -14,7 +14,7 @@ const faq = [
   },
   {
     pytanie: 'Praca w sobotę: 50 czy 100%?',
-    odpowiedz: 'Gdy dostaniesz dzień wolny, pierwsze 8 godzin rozlicza ten dzień, a za godziny po 8. godzinie przysługuje dodatek 50%, w porze nocnej 100% (art. 151^1 § 1 Kodeksu pracy). Gdy dnia wolnego nie dostaniesz do końca okresu rozliczeniowego, godziny przekraczają przeciętną normę tygodniową i za nie przysługuje dodatek 100% (art. 151^1 § 2).',
+    odpowiedz: 'Gdy dostaniesz dzień wolny, pierwsze 8 godzin rozlicza ten dzień, a za godziny po 8. godzinie przysługuje dodatek 50%, w porze nocnej 100% (art. 151^1 § 1 Kodeksu pracy). Gdy dnia wolnego nie dostaniesz do końca okresu rozliczeniowego i przez to przekroczysz przeciętnie 40 godzin w tygodniu w okresie, te godziny są nadgodzinami z dodatkiem 100% (art. 151^1 § 2). Jeśli przez nieobecności normy nie przekroczysz, należy się tylko normalne wynagrodzenie.',
   },
   {
     pytanie: 'Do kiedy odebrać dzień wolny za sobotę?',
@@ -26,7 +26,7 @@ const faq = [
   },
   {
     pytanie: 'Czy zamiast dnia wolnego można dostać pieniądze?',
-    odpowiedz: 'Przepis przewiduje za pracę w dniu wolnym inny dzień wolny (art. 151^3 Kodeksu pracy). Gdy pracodawca go nie udzieli do końca okresu rozliczeniowego, te godziny są nadgodzinami z przekroczenia przeciętnej normy tygodniowej i należy się za nie normalne wynagrodzenie oraz dodatek 100% (art. 151^1 § 1 i 2).',
+    odpowiedz: 'Przepis przewiduje za pracę w dniu wolnym inny dzień wolny (art. 151^3 Kodeksu pracy). Pracodawca nie może zamiast niego po prostu zapłacić. Gdy go nie udzieli do końca okresu rozliczeniowego, a przez to przekroczysz przeciętną normę tygodniową, te godziny są nadgodzinami i należy się za nie normalne wynagrodzenie oraz dodatek 100% (art. 151^1 § 1 i 2). Bez przekroczenia normy, np. przez nieobecności, należy się tylko normalne wynagrodzenie.',
   },
   {
     pytanie: 'Czym to się różni od dnia wolnego za święto w sobotę?',
@@ -39,7 +39,7 @@ const faq = [
   tytul="Praca w sobotę: dzień wolny czy 50 i 100%"
   opis="Praca w wolną sobotę: do kiedy dzień wolny w zamian, kiedy dodatek 50%, a kiedy 100%, i ile to złotych, gdy dnia wolnego nie dostaniesz."
   h1="Praca w wolną sobotę: dzień wolny i dodatki"
-  lead="Za pracę w dzień wolny z grafiku, zwykle w sobotę, należy się inny dzień wolny do końca okresu rozliczeniowego. Godziny po 8. godzinie to nadgodziny z dodatkiem. Wpisz datę i godziny, a pokażemy termin i dodatki w obu wariantach."
+  lead="Za pracę w dzień wolny z pięciodniowego tygodnia, zwykle w sobotę, zleconą jako nadgodziny, należy się inny dzień wolny do końca okresu rozliczeniowego. Godziny po 8. godzinie to nadgodziny z dodatkiem. Wpisz datę i godziny, a pokażemy termin i dodatki w obu wariantach."
   faq={faq}
   objasnienia={['mrpipsRozliczanie', 'rodzinaipracaSobota']}
 >
@@ -123,8 +123,9 @@ const faq = [
       Za pracę w dniu wolnym z rozkładu czasu pracy w przeciętnie pięciodniowym tygodniu pracy, wykonywaną z powodu akcji
       ratowniczej, awarii albo szczególnych potrzeb pracodawcy, przysługuje inny dzień wolny od pracy udzielony do końca okresu
       rozliczeniowego, w terminie uzgodnionym z pracownikiem (art. 151<sup>3</sup> w związku z art. 151 § 1 Kodeksu pracy).
-      Przy szczególnych potrzebach pracodawcy nadgodzin może być najwyżej 150 w roku kalendarzowym, chyba że układ zbiorowy,
-      regulamin pracy albo umowa ustala inną liczbę (art. 151 § 3 i 4).
+      Przy szczególnych potrzebach pracodawcy nadgodzin może być najwyżej 150 w roku kalendarzowym, chyba że układ zbiorowy
+      albo regulamin pracy ustala inną liczbę, a gdy pracodawca nie ma układu ani obowiązku regulaminu, umowa o pracę
+      (art. 151 § 3 i 4).
     </p>
     <p>
       <strong>Termin.</strong> Pokazujemy ostatni dzień okresu rozliczeniowego liczonego od stycznia. Przepis wskazuje tylko

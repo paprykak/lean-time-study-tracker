@@ -4,7 +4,7 @@
 // Logika: src/lib/narzedzia/rownowazny.ts (testy obok).
 import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
 import { KOLOR_STATUSU, OKRESY, SYSTEMY, opisWyniku, planOkresu, type SystemRownowazny } from '../../lib/narzedzia/rownowazny';
-import { nazwaMiesiaca } from '../../lib/narzedzia/czas-pracy';
+import { dzienMiesiaca, nazwaMiesiaca, wymiarMiesiaca } from '../../lib/narzedzia/czas-pracy';
 import { LATA } from '../../data/prawo';
 
 const ROKI = [...LATA, LATA[LATA.length - 1] + 1];
@@ -15,6 +15,13 @@ const systemy = Object.keys(SYSTEMY) as SystemRownowazny[];
 const r = planOkresu('r12', 12, rok, miesiac, 1);
 const t = opisWyniku(r);
 const m = nazwaMiesiaca(miesiac, 'miejscownik');
+// Przykład w „Jak liczymy”: listopad 2026 r., liczony tą samą logiką co kalkulator.
+const p12 = planOkresu('r12', 12, 2026, 11, 1);
+const p24 = planOkresu('r24', 24, 2026, 11, 1);
+const wLis = wymiarMiesiaca(2026, 11);
+const swietaLis = wLis.swietaObnizajace.map((x) => dzienMiesiaca(x.data)).join(', ');
+// Miesiące 2026 r., w których przy zmianach 12 h w systemie weekendowym brakuje godzin (test: 8 z 12).
+const brakiWeekend = Array.from({ length: 12 }, (_, i) => planOkresu('weekendowy', 12, 2026, i + 1, 1)).filter((x) => x.brakuje > 0).length;
 
 const faq = [
   {
@@ -35,7 +42,7 @@ const faq = [
   },
   {
     pytanie: 'Co to jest system weekendowy?',
-    odpowiedz: 'To system, w którym pracujesz wyłącznie w piątki, soboty, niedziele i święta, do 12 godzin na dobę, w okresie rozliczeniowym do 1 miesiąca (art. 144 Kodeksu pracy). Wprowadza się go na Twój wniosek, w umowie o pracę (art. 150 § 6). W niektórych miesiącach tych dni jest za mało, żeby wypracować cały wymiar.',
+    odpowiedz: `To system, w którym pracujesz wyłącznie w piątki, soboty, niedziele i święta, do 12 godzin na dobę, w okresie rozliczeniowym do 1 miesiąca (art. 144 Kodeksu pracy). Wprowadza się go na Twój wniosek, w umowie o pracę (art. 150 § 6). W większości miesięcy tych dni jest za mało, żeby wypracować cały wymiar: w 2026 r. przy zmianach po 12 godzin brakuje godzin w ${brakiWeekend} z 12 miesięcy.`,
   },
   {
     pytanie: 'Kto nie może pracować po 12 godzin?',
@@ -122,7 +129,7 @@ const faq = [
         <tbody>
           <tr><th scope="row">Równoważny (art. 135)</th><td>do 12 h</td><td>1 miesiąc; do 3 w szczególnie uzasadnionych przypadkach; do 4 przy pracach zależnych od pory roku lub pogody</td></tr>
           <tr><th scope="row">Dozór, pogotowie (art. 136)</th><td>do 16 h</td><td>1 miesiąc</td></tr>
-          <tr><th scope="row">Ochrona, straże (art. 137)</th><td>do 24 h</td><td>1 miesiąc; do 3 albo 4 jak w art. 135</td></tr>
+          <tr><th scope="row">Ochrona, straże (art. 137)</th><td>do 24 h</td><td>1 miesiąc; do 3 albo 4 jak w art. 135 (art. 137 odsyła do art. 135 § 2 i 3)</td></tr>
           <tr><th scope="row">Skrócony tydzień (art. 143)</th><td>do 12 h</td><td>1 miesiąc; mniej niż 5 dni w tygodniu</td></tr>
           <tr><th scope="row">Weekendowy (art. 144)</th><td>do 12 h</td><td>1 miesiąc; tylko pt, sob, nd i święta</td></tr>
         </tbody>
@@ -147,15 +154,21 @@ const faq = [
       <li>Wymiar okresu W to 8 h za każdy dzień od poniedziałku do piątku minus 8 h za każde święto poza niedzielą (art. 130 Kp); okres zaczyna się 1. dnia wybranego miesiąca, a tygodnie liczymy od pierwszego dnia okresu (art. 128 § 3 pkt 2).</li>
       <li>Pełne zmiany: W podzielone przez długość zmiany L, w dół. Reszta godzin to jedna krótsza zmiana. Dni pracy: W / L w górę. Dni wolne: dni okresu minus dni pracy.</li>
       <li>Minimum dni wolnych z art. 147 (gdy rozkład obejmuje pracę w niedziele i święta): niedziele, święta i dni wolne z przeciętnie pięciodniowego tygodnia, czyli dni okresu minus W / 8. Przy zmianach dłuższych niż 8 h dni wolnych zawsze jest więcej; pokazujemy to jako kontrolę.</li>
-      <li>Przerwy po 15 minut wliczane do czasu pracy: od 6 h jedna, ponad 9 h druga, ponad 16 h trzecia (art. 134 § 1).</li>
+      <li>Przerwy co najmniej 15 minut, wliczane do czasu pracy: od 6 h jedna, ponad 9 h druga, ponad 16 h trzecia (art. 134 § 1).</li>
       <li>System 16 i 24 h: zmiana i odpoczynek po niej trwają razem 2L godzin, więc w okresie mieści się najwyżej 24 × dni okresu / 2L takich par. To informacja o najgęstszym możliwym rytmie.</li>
       <li>Weekendowy: liczymy piątki, soboty, niedziele i święta w okresie (święto w piątek, sobotę albo niedzielę raz). Skrócony tydzień: w każdym tygodniu od 1. dnia okresu najwyżej 4 dni pracy, w ostatnim niepełnym najwyżej tyle, ile ma dni. Dni dostępne razy L to najwięcej godzin, które da się zaplanować.</li>
     </ul>
     <p>
-      Przykład: równoważny do 12 h, listopad 2026 r. Wymiar 160 h (20 dni od poniedziałku do piątku, minus 11 listopada).
-      160 / 12 = 13 pełnych zmian i reszta 4 h, czyli 14 dni pracy. Listopad ma 30 dni, więc dni wolnych jest 16, a minimum
-      z art. 147 to 30 − 20 = 10. W systemie 24 h ten sam miesiąc to 6 zmian po 24 h i 1 zmiana 16 h, a po każdej co
-      najmniej tyle odpoczynku, ile trwała.
+      Przykład: równoważny do 12 h, listopad 2026 r. Wymiar {p12.wymiar} h ({wLis.dniPonPt} dni od poniedziałku do piątku
+      minus 8 h za {swietaLis}). {p12.wymiar} / 12 = {p12.pelneZmiany} pełnych zmian i reszta {p12.reszta} h, czyli
+      {p12.dniPracy} dni pracy. Listopad ma {p12.dniKalendarzowe} dni, więc dni wolnych jest {p12.dniWolne}, a minimum
+      z art. 147 to {p12.dniKalendarzowe} − {p12.wymiar / 8} = {p12.minimumWolnych}. W systemie 24 h ten sam miesiąc to
+      {p24.pelneZmiany} zmian po 24 h i 1 zmiana {p24.reszta} h, a po każdej co najmniej tyle odpoczynku, ile trwała.
+    </p>
+    <p>
+      Strona ministerstwa „Ustalanie i rozliczanie czasu pracy” podaje dla systemu 24 h okres rozliczeniowy do 1 miesiąca,
+      ale art. 137 odsyła do art. 135 § 2 i 3, więc liczymy według przepisu: do 3 albo 4 miesięcy w tych samych
+      przypadkach co przy 12 h.
     </p>
     <p>
       Czego przepis nie mówi: Kodeks nie wskazuje, jak rozłożyć resztę godzin, mówi tylko o krótszym wymiarze w niektórych
@@ -163,7 +176,7 @@ const faq = [
       zrobić, gdy w systemie weekendowym albo w skróconym tygodniu dni dostępnych jest za mało na cały wymiar. Narzędzie
       pokazuje wtedy tylko rachunek: ile godzin brakuje. Poradnik ministerstwa pracy (rodzinaipraca.gov.pl) zwraca uwagę,
       że w systemie weekendowym bez świąt można przepracować najwyżej 36 godzin w tygodniu, więc pełnego etatu zwykle nie
-      da się w nim wypracować, i w praktyce stosuje się go przy około 3/4 etatu. Nie liczymy niepełnego etatu, bo wymiar zależy wtedy od umowy.
+      da się w nim wypracować, i że osoba w tym systemie powinna być zatrudniona na około 3/4 etatu. Nie liczymy niepełnego etatu, bo wymiar zależy wtedy od umowy.
     </p>
     <p>
       Wymiar miesięcy i okresów policzy <a href="/narzedzia/wymiar-czasu-pracy">kalkulator wymiaru czasu pracy</a>,

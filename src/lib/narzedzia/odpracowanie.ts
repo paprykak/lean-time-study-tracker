@@ -30,7 +30,11 @@
 //   „uwaga”, a nie „błąd”: przepis nie mówi, jak liczyć przerwę na przełomie tygodni, a art. 151 § 2^1 zakazuje
 //   naruszenia odpoczynku przez odpracowanie; błąd = odpracowanie odbiera 35 h, które rozkład w tym tygodniu daje;
 // - informacje (stan „uwaga”, nie blokują): odpracowanie w dzień wolny z rozkładu, w niedzielę albo święto
-//   (art. 151^10), w innym okresie rozliczeniowym niż wyjście, przed wyjściem (przepis nie wskazuje dnia ani terminu).
+//   (art. 151^10 i 151^11), w innym okresie rozliczeniowym niż wyjście; w wolną sobotę dodatkowo stanowisko poradnika
+//   ministerstwa pracy (rodzinaipraca.gov.pl): praca w dniu wolnym z pięciodniowego tygodnia daje prawo do innego dnia
+//   wolnego (art. 151^3), więc odpracowania w ten dzień się odradza;
+// - wiersze przed wyjściem: art. 151 § 2^1 mówi o odpracowaniu zwolnienia „udzielonego”, więc ich nie liczymy do bilansu
+//   (wariant bezpieczny dla pracownika: praca ponad normy może być wtedy nadgodzinami, art. 151 § 1).
 import { minuty, swieta } from './czas-pracy';
 import { dataPoPolsku, dniMiedzy, dodajDni, poprawnaData } from './terminy';
 import { okresZawierajacy, rodzajDnia } from './niedziela-swieto';
@@ -212,7 +216,9 @@ export function odpracowanie(dane: DaneOdpracowania): WynikOdpracowania {
   praca.push(...wiersze);
 
   const minWyjscia = wyjscie.b - wyjscie.a;
-  const odpracowane = wiersze.reduce((s, r) => s + r.b - r.a, 0);
+  // Przepis mówi o odpracowaniu zwolnienia już udzielonego: godzin przed wyjściem nie liczymy do bilansu
+  // (zostają na osi czasu, więc odpoczynek sprawdzamy z nimi).
+  const odpracowane = wiersze.filter((r) => r.a >= wyjscie.a).reduce((s, r) => s + r.b - r.a, 0);
   const roznica = odpracowane - minWyjscia;
 
   // Odpoczynek dobowy
@@ -241,7 +247,6 @@ export function odpracowanie(dane: DaneOdpracowania): WynikOdpracowania {
   });
 
   const kontrole: Kontrola[] = [];
-  const ile = (n: number, formy: [string, string, string]) => `${n} ${odmiana(n, formy)}`;
 
   kontrole.push(
     roznica === 0
@@ -258,7 +263,7 @@ export function odpracowanie(dane: DaneOdpracowania): WynikOdpracowania {
             id: 'bilans',
             stan: 'uwaga',
             tytul: `${czas(roznica)} ponad czas wyjścia`,
-            opis: 'To już nadgodziny, bo art. 151 § 2^1 obejmuje tylko czas odpracowania zwolnienia. Praca ponad normy czasu pracy to praca w godzinach nadliczbowych.',
+            opis: 'Te godziny nie są odpracowaniem wyjścia, bo art. 151 § 2^1 obejmuje tylko czas odpracowania zwolnienia. Są nadgodzinami, jeśli przekraczają 8 godzin w dobie albo przeciętnie 40 godzin w tygodniu w okresie rozliczeniowym.',
             podstawa: 'art. 151 § 1 i § 2^1 Kodeksu pracy',
             szczegoly: [],
           }
@@ -266,7 +271,7 @@ export function odpracowanie(dane: DaneOdpracowania): WynikOdpracowania {
             id: 'bilans',
             stan: 'uwaga',
             tytul: `Zostało do odpracowania: ${czas(-roznica)}`,
-            opis: 'Za nieodpracowany czas wynagrodzenie nie przysługuje, chyba że przepisy, umowa lub regulamin stanowią inaczej. Wynagrodzenie przysługuje za pracę wykonaną.',
+            opis: 'Wynagrodzenie przysługuje za pracę wykonaną, a za czas niewykonywania pracy tylko wtedy, gdy przepisy prawa pracy (w tym układ zbiorowy albo regulamin) tak stanowią. Odpracowanie nie jest obowiązkowe, ale bez niego za ten czas wynagrodzenie nie przysługuje.',
             podstawa: 'art. 80 Kodeksu pracy',
             szczegoly: [],
           },
@@ -323,9 +328,9 @@ export function odpracowanie(dane: DaneOdpracowania): WynikOdpracowania {
     kontrole.push({
       id: 'dzien-wolny',
       stan: 'uwaga',
-      tytul: `Odpracowanie w dzień wolny z rozkładu: ${ile(sobota.length, ['dzień', 'dni', 'dni'])}`,
-      opis: 'Art. 151 § 2^1 nie wskazuje dnia ani terminu odpracowania; jedynym warunkiem w przepisie jest odpoczynek z art. 132 i 133. Dobę w dniu wolnym liczymy od początku odpracowania.',
-      podstawa: 'art. 151 § 2^1 Kodeksu pracy',
+      tytul: `Odpracowanie w dzień wolny z rozkładu: ${odmiana(sobota.length, ['dzień', 'dni', 'dni'])}`,
+      opis: 'Art. 151 § 2^1 nie wskazuje dnia odpracowania. Poradnik ministerstwa pracy (rodzinaipraca.gov.pl) odradza odpracowanie w wolną sobotę, bo praca w dniu wolnym z pięciodniowego tygodnia daje prawo do innego dnia wolnego (art. 151^3). Dobę w dniu wolnym liczymy od początku odpracowania.',
+      podstawa: 'art. 151 § 2^1 i art. 151^3 Kodeksu pracy',
       szczegoly: sobota.map(opisWiersza),
     });
   if (niedzielaSwieto.length)
@@ -333,8 +338,8 @@ export function odpracowanie(dane: DaneOdpracowania): WynikOdpracowania {
       id: 'niedziela-swieto',
       stan: 'uwaga',
       tytul: 'Odpracowanie w niedzielę albo święto',
-      opis: 'Praca w niedziele i święta jest dozwolona tylko w przypadkach wymienionych w przepisie, np. przy pracy zmianowej, w ruchu ciągłym albo przy niezbędnych remontach.',
-      podstawa: 'art. 151^10 Kodeksu pracy',
+      opis: 'Praca w niedziele i święta jest dozwolona tylko w przypadkach wymienionych w przepisie, np. przy pracy zmianowej, w ruchu ciągłym albo przy niezbędnych remontach. Za taką pracę pracodawca zapewnia inny dzień wolny.',
+      podstawa: 'art. 151^10 i art. 151^11 § 1 Kodeksu pracy',
       szczegoly: niedzielaSwieto.map((r) => {
         const d = rodzajDnia(r.data);
         return `Odpracowanie ${r.nr}: ${dataPoPolsku(r.data)}, ${d.nazwa ?? 'niedziela'}.`;
@@ -359,8 +364,8 @@ export function odpracowanie(dane: DaneOdpracowania): WynikOdpracowania {
       id: 'przed-wyjsciem',
       stan: 'uwaga',
       tytul: 'Odpracowanie przed wyjściem',
-      opis: 'Przepis mówi o odpracowaniu zwolnienia, ale nie o tym, czy można je odpracować z góry.',
-      podstawa: 'art. 151 § 2^1 Kodeksu pracy',
+      opis: 'Przepis mówi o odpracowaniu zwolnienia już udzielonego. Godzin przed wyjściem nie liczymy jako odpracowania: ponad normy czasu pracy mogą być nadgodzinami.',
+      podstawa: 'art. 151 § 1 i § 2^1 Kodeksu pracy',
       szczegoly: wczesniej.map(opisWiersza),
     });
 
