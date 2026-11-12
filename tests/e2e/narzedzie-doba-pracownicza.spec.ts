@@ -56,7 +56,9 @@ test('błędne dane: tylko jedna godzina, zmiany na siebie nachodzą', async ({ 
   await expect(page.locator('[data-blad="dane"]')).toBeVisible();
   await expect(page.locator('[data-blad="dane"]')).toContainText(/środa\s18\.11:\swpisz\sobie\sgodziny/);
   await expect(page.locator('[data-w="nadgodziny"]')).toHaveText('—');
+  await expect(page.locator('[name="od3"]')).toHaveAttribute('aria-invalid', 'true');
   await page.locator('[name="do3"]').fill('14:00');
+  await expect(page.locator('[name="od3"]')).not.toHaveAttribute('aria-invalid', 'true');
   await page.locator('[name="do1"]').fill('08:00');
   await expect(page.locator('[data-blad="dane"]')).toContainText(/wtorek\s17\.11:\szmiana\szaczyna\ssię/);
 });

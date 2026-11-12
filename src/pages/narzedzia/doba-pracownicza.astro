@@ -112,7 +112,7 @@ const wartosc = (i: number, k: 'od' | 'do') => PRZYKLAD[i][k];
         <table class="tabela-dni">
           <caption class="sr-only">Dni tygodnia: praca, nadgodziny z doby i odpoczynek</caption>
           <thead>
-            <tr><th scope="col">Dzień</th><th scope="col">Nadgodziny</th><th scope="col">Odpoczynek w dobie</th></tr>
+            <tr><th scope="col">Dzień</th><th scope="col">Nadgodziny</th><th scope="col">Odpoczynek</th></tr>
           </thead>
           <tbody data-w="dni">
             {o.wiersze.map((w) => (
@@ -292,13 +292,10 @@ const wartosc = (i: number, k: 'od' | 'do') => PRZYKLAD[i][k];
   }
   .tabela-dni :global(th),
   .tabela-dni :global(td) {
-    padding: 0.375rem 0.5rem;
+    padding: 0.375rem 0.375rem;
     border-bottom: 1px solid var(--color-linia);
     text-align: left;
     vertical-align: top;
-  }
-  .tabela-dni :global(th[scope='row']) {
-    white-space: nowrap;
   }
   .tabela-dni :global(.dopisek) {
     display: block;

@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest';
-import { wymiarOkresu } from './czas-pracy';
 import { dniSkroconegoTygodnia, dniWeekendowe, opisWyniku, planOkresu, przerwy, statusOkresu } from './rownowazny';
 
 // Wymiary, dni wolne z art. 147, dni dostępne w systemie weekendowym i skróconym tygodniu sprawdzone niezależnie
@@ -49,11 +48,11 @@ describe('plan okresu w systemie równoważnym (art. 135–137 Kp)', () => {
   it('zmiana 10,5 h: 15 pełnych zmian i jedna 2,5 h', () => {
     expect(planOkresu('r12', 10.5, 2026, 11, 1)).toMatchObject({ pelneZmiany: 15, reszta: 2.5, dniPracy: 16, przerwy: 2, przerwyReszty: 0 });
   });
-  it('minimum z art. 147 = niedziele + święta poza niedzielą + soboty (= dni − dni pon–pt bez świąt)', () => {
-    for (const [rok, m, k] of [[2026, 11, 1], [2027, 1, 4], [2028, 1, 12], [2026, 12, 2]]) {
-      const w = wymiarOkresu(rok, m, k);
+  it('minimum z art. 147 = niedziele + święta poza niedzielą + soboty (liczone w Pythonie wprost z kalendarza)', () => {
+    const OCZEKIWANE: [number, number, number, number][] = [[2026, 11, 1, 10], [2027, 1, 4, 37], [2028, 1, 12, 117], [2026, 12, 2, 23]];
+    for (const [rok, m, k, minimum] of OCZEKIWANE) {
       const p = planOkresu('r12', 12, rok, m, k);
-      expect(p.minimumWolnych).toBe(p.dniKalendarzowe - (w.dniPonPt - w.swietaObnizajace.length));
+      expect(p.minimumWolnych).toBe(minimum);
       expect(p.dniWolne).toBeGreaterThanOrEqual(p.minimumWolnych);
     }
   });

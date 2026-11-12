@@ -320,7 +320,7 @@ export function odpracowanie(dane: DaneOdpracowania): WynikOdpracowania {
       szczegoly: [],
     });
 
-  const opisWiersza = (r: (typeof wiersze)[number]) => `Odpracowanie ${r.nr}: ${dataPoPolsku(r.data)}.`;
+  const opisWiersza = (r: (typeof wiersze)[number]) => `Odpracowanie ${r.nr}: ${dataPoPolsku(r.data)}`;
   const wolne = wiersze.filter((r) => !dzienPracy(r.data));
   const sobota = wolne.filter((r) => rodzajDnia(r.data).rodzaj === 'zwykly');
   const niedzielaSwieto = wolne.filter((r) => rodzajDnia(r.data).rodzaj !== 'zwykly');

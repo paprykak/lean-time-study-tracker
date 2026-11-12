@@ -47,9 +47,9 @@ import { odmiana } from '../redakcja';
 export type SystemRownowazny = 'r12' | 'r16' | 'r24' | 'weekendowy' | 'skrocony';
 
 export const SYSTEMY: Record<SystemRownowazny, { nazwa: string; maks: number; podstawa: string }> = {
-  r12: { nazwa: 'Równoważny do 12 h', maks: 12, podstawa: 'art. 135 § 1 Kp' },
-  r16: { nazwa: 'Równoważny do 16 h (dozór)', maks: 16, podstawa: 'art. 136 § 1 Kp' },
-  r24: { nazwa: 'Równoważny do 24 h (ochrona)', maks: 24, podstawa: 'art. 137 Kp' },
+  r12: { nazwa: 'Do 12 h', maks: 12, podstawa: 'art. 135 § 1 Kp' },
+  r16: { nazwa: 'Do 16 h (dozór)', maks: 16, podstawa: 'art. 136 § 1 Kp' },
+  r24: { nazwa: 'Do 24 h (ochrona)', maks: 24, podstawa: 'art. 137 Kp' },
   weekendowy: { nazwa: 'Weekendowy', maks: 12, podstawa: 'art. 144 Kp' },
   skrocony: { nazwa: 'Skrócony tydzień', maks: 12, podstawa: 'art. 143 Kp' },
 };

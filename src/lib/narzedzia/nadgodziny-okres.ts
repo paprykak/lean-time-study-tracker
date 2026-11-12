@@ -29,6 +29,7 @@
 //   może równoważyć tygodni z przekroczeniem), więc liczymy też średnią bez tygodni nieobecności:
 //   przepracowane / (tygodnie − nieobecność / (40 h × etat)); tydzień nieobecności = tygodniowa norma etatu.
 //   Przy pracy średnio ponad 40 h ten wariant jest surowszy niż dopisanie nieobecności jako godzin pracy.
+//   Gdy nieobecność obejmuje cały wymiar, tygodni pracy nie ma (święta obniżają wymiar, a nie liczbę dni).
 //   Limit dochowany, gdy oba warianty ≤ 48 (dokładnie 48 to jeszcze w limicie).
 // - Liczby okrągłe do 0,01 h (godziny) i do grosza (kwota).
 import { dniWMiesiacu, opisWymiaru, wymiarOkresu, type WymiarOkresu } from './czas-pracy';
@@ -140,7 +141,7 @@ export function nadgodzinyOkresu(d: DaneOkresu): WynikOkresu {
 
   const tygodnie = dni / 7;
   // Tygodnie bez nieobecności: tydzień nieobecności to 40 h × etat z grafiku (nieobecność ≤ wymiar etatu, więc ≥ 0).
-  const tygodniePracy = Math.max(0, tygodnie - d.nieobecnosc / (40 * d.etat));
+  const tygodniePracy = d.nieobecnosc >= wymiarEtatu ? 0 : Math.max(0, tygodnie - d.nieobecnosc / (40 * d.etat));
   // Porównanie bez dzielenia (dokładnie 48 h mieści się w limicie).
   const limitKp = d.przepracowane * 7 <= LIMIT_TYGODNIOWY * dni + 1e-9;
   const limitBez = d.przepracowane <= LIMIT_TYGODNIOWY * tygodniePracy + 1e-9;

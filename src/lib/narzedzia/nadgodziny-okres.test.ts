@@ -104,6 +104,10 @@ describe('nadgodziny średniotygodniowe (art. 130, 131, 151 i 151¹ § 2 Kp)', (
     expect(nadgodzinyOkresu({ ...PELNY, miesiac: 2, przepracowane: 0, dobowe: 0, nieobecnosc: 160 })).toMatchObject({ sredniaBezNieobecnosci: null, limitDochowany: true, doLimitu: 0 });
   });
 
+  it('listopad 2026 cały na urlopie (160 h, święto 11.11): średniej bez nieobecności nie ma, 0 h do limitu', () => {
+    expect(nadgodzinyOkresu({ ...PELNY, przepracowane: 0, dobowe: 0, nieobecnosc: 160 })).toMatchObject({ sredniaBezNieobecnosci: null, limitDochowany: true, doLimitu: 0 });
+  });
+
   it('grudzień 2026 (Wigilia i dwa dni świąt): 140 h, brakuje 20 h do wymiaru', () => {
     expect(nadgodzinyOkresu({ ...PELNY, miesiac: 12, przepracowane: 140, dobowe: 0 })).toMatchObject({ wymiarPelny: 160, sredniotygodniowe: 0, brakuje: 20, dodatek: 0 });
   });

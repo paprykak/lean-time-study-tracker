@@ -8,9 +8,9 @@ import { dzienMiesiaca, nazwaMiesiaca, wymiarMiesiaca } from '../../lib/narzedzi
 import { LATA } from '../../data/prawo';
 
 const ROKI = [...LATA, LATA[LATA.length - 1] + 1];
-const teraz = new Date();
-const rok = ROKI.includes(teraz.getUTCFullYear()) ? teraz.getUTCFullYear() : LATA[LATA.length - 1];
-const miesiac = teraz.getUTCMonth() + 1;
+// Stały przykład startowy (FAQ i dane strukturalne nie zmieniają się przy każdym buildzie).
+const START = { rok: 2026, miesiac: 11 };
+const { rok, miesiac } = START;
 const systemy = Object.keys(SYSTEMY) as SystemRownowazny[];
 const r = planOkresu('r12', 12, rok, miesiac, 1);
 const t = opisWyniku(r);
@@ -63,7 +63,7 @@ const faq = [
     <div class="kalkulator-pola">
       <h2 id="kalkulator-tytul" class="tytul-m">System i okres</h2>
       <div class="mt-4">
-        <label for="r-system" class="etykieta-pola">System</label>
+        <label for="r-system" class="etykieta-pola">System czasu pracy</label>
         <select id="r-system" name="system" class="pole mt-1">
           {systemy.map((s) => <option value={s} data-maks={SYSTEMY[s].maks} selected={s === 'r12'}>{SYSTEMY[s].nazwa}</option>)}
         </select>
@@ -181,8 +181,8 @@ const faq = [
     <p>
       Wymiar miesięcy i okresów policzy <a href="/narzedzia/wymiar-czasu-pracy">kalkulator wymiaru czasu pracy</a>,
       gotowy grafik miesiąca sprawdzi <a href="/narzedzia/kontrola-grafiku">kontrola grafiku</a>, nakładanie się zmian
-      w jednej dobie <a href="/narzedzia/doba-pracownicza">kalkulator doby pracowniczej</a>, a przerwy na zmianie
-      <a href="/narzedzia/przerwy-w-pracy">kalkulator przerw w pracy</a>.
+      w jednej dobie <a href="/narzedzia/doba-pracownicza">kalkulator doby pracowniczej</a>, a przerwy
+      na zmianie <a href="/narzedzia/przerwy-w-pracy">kalkulator przerw w pracy</a>.
     </p>
   </Fragment>
 </StronaNarzedzia>
@@ -218,6 +218,8 @@ const faq = [
         w('glowny').textContent = '—';
         w('opis').textContent = '';
         w('status').hidden = true;
+        for (const k of ['okres', 'wymiar', 'wolne', 'przerwy']) w(k).textContent = '—';
+        for (const k of ['odpoczynek', 'rytm', 'dostepne']) form.querySelector<HTMLElement>(`[data-wiersz="${k}"]`)!.hidden = true;
         return;
       }
       blad.hidden = true;
@@ -235,7 +237,12 @@ const faq = [
     };
 
     form.addEventListener('change', (e) => {
-      if ((e.target as HTMLElement).getAttribute('name') === 'system') el('zmiana').value = String(SYSTEMY[el('system').value as SystemRownowazny].maks);
+      // Nowy system: wpisaną długość zmieniamy tylko, gdy pole jest puste albo przekracza nowe maksimum.
+      if ((e.target as HTMLElement).getAttribute('name') === 'system') {
+        const maks = SYSTEMY[el('system').value as SystemRownowazny].maks;
+        const L = wpisanaLiczba(el('zmiana').value);
+        if (!el('zmiana').value.trim() || L > maks) el('zmiana').value = String(maks);
+      }
       przelicz();
     });
     form.addEventListener('input', przelicz);

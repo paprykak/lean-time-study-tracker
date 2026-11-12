@@ -23,12 +23,14 @@ test('12 h, listopad 2026: 14 dni pracy, 16 dni wolnych; 3 miesiące tylko w szc
 
 test('24 h (ochrona): 6 zmian po 24 h i 1 zmiana 16 h, odpoczynek co najmniej 24 h', async ({ page }) => {
   await page.locator('[name="system"]').selectOption('r24');
-  await expect(page.locator('[name="zmiana"]')).toHaveValue('24');
+  await expect(page.locator('[name="zmiana"]')).toHaveValue('12');
+  await page.locator('[name="zmiana"]').fill('24');
   await expect(page.locator('[data-w="opis"]')).toHaveText(/6\szmian\spo\s24\sh\si\s1\szmiana\s16\sh/);
   await expect(page.locator('[data-w="odpoczynek"]')).toBeVisible();
   await expect(page.locator('[data-w="odpoczynek"]')).toContainText(/co\snajmniej\s24\sh/);
   await page.locator('[name="system"]').selectOption('r16');
   await page.locator('[name="okres"]').selectOption('3');
+  await expect(page.locator('[name="zmiana"]')).toHaveValue('16');
   await expect(page.locator('[data-w="status"]')).toContainText(/art\.\s129\s§\s2/);
 });
 
@@ -44,6 +46,8 @@ test('zmiana ponad maksimum i zły zapis to błąd', async ({ page }) => {
   await page.locator('[name="zmiana"]').fill('13');
   await expect(page.locator('[data-blad="dane"]')).toBeVisible();
   await expect(page.locator('[data-blad="dane"]')).toContainText(/najwyżej\s12\sh/);
+  await expect(page.locator('[data-w="wymiar"]')).toHaveText('—');
+  await expect(page.locator('[data-w="wolne"]')).toHaveText('—');
   await page.locator('[name="zmiana"]').fill('abc');
   await expect(page.locator('[data-blad="dane"]')).toContainText(/liczbą/);
   await page.locator('[name="zmiana"]').fill('10,5');

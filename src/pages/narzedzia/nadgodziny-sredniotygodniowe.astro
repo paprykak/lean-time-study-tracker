@@ -66,7 +66,7 @@ const faq = [
           </select>
         </div>
       </fieldset>
-      <div class="mt-4 grid grid-cols-2 gap-4">
+      <div class="mt-4 grid grid-cols-1 gap-4 min-[360px]:grid-cols-2">
         <div>
           <label for="no-dlugosc" class="etykieta-pola">Długość okresu</label>
           <select id="no-dlugosc" name="dlugosc" class="pole mt-1">
@@ -80,7 +80,7 @@ const faq = [
           </select>
         </div>
       </div>
-      <div class="mt-4 grid grid-cols-2 gap-4">
+      <div class="mt-4 grid grid-cols-1 gap-4 min-[360px]:grid-cols-2">
         <div>
           <label for="no-przepracowane" class="etykieta-pola">Przepracowane godziny</label>
           <input id="no-przepracowane" name="przepracowane" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value={String(START.przepracowane)} aria-describedby="no-przepracowane-opis no-blad" />
@@ -92,7 +92,7 @@ const faq = [
           <p id="no-dobowe-opis" class="meta mt-1">Ponad 8 h albo ponad plan dnia</p>
         </div>
       </div>
-      <div class="mt-4 grid grid-cols-2 gap-4">
+      <div class="mt-4 grid grid-cols-1 gap-4 min-[360px]:grid-cols-2">
         <div>
           <label for="no-nieobecnosc" class="etykieta-pola">Urlop, L4 (godziny)</label>
           <input id="no-nieobecnosc" name="nieobecnosc" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value={String(START.nieobecnosc)} aria-describedby="no-nieobecnosc-opis no-blad" />
@@ -181,13 +181,20 @@ const faq = [
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
       const liczby: Record<string, number> = {};
       let blad: string | null = null;
+      for (const n of ['przepracowane', 'dobowe', 'nieobecnosc', 'stawka']) el(n).removeAttribute('aria-invalid');
       for (const n of ['przepracowane', 'dobowe', 'nieobecnosc']) {
         liczby[n] = wpisanaLiczba(el(n).value || '0');
-        if (Number.isNaN(liczby[n])) blad ??= `Pole „${NAZWY[n]}”: wpisz liczbę, np. 7,5.`;
+        if (Number.isNaN(liczby[n])) {
+          blad ??= `Pole „${NAZWY[n]}”: wpisz liczbę, np. 7,5.`;
+          el(n).setAttribute('aria-invalid', 'true');
+        }
       }
       const stawkaTekst = el('stawka').value.trim();
       const stawka = stawkaTekst ? wpisanaLiczba(stawkaTekst) : undefined;
-      if (Number.isNaN(stawka)) blad ??= 'Stawka: wpisz liczbę, np. 32,50.';
+      if (Number.isNaN(stawka)) {
+        blad ??= 'Stawka: wpisz liczbę, np. 32,50.';
+        el('stawka').setAttribute('aria-invalid', 'true');
+      }
       const etat = ulamekEtatu(el('etat').value);
       let r: ReturnType<typeof nadgodzinyOkresu> | null = null;
       if (!blad) {
@@ -210,8 +217,10 @@ const faq = [
       b.hidden = !blad;
       b.textContent = blad ? typografia(blad) : '';
       if (!r) {
-        w('glowna').textContent = '—';
+        for (const k of POLA) w(k).textContent = k === 'glowna' ? '—' : k === 'uwaga' ? '' : '—';
         w('opis').textContent = '';
+        w('uwaga').hidden = true;
+        delete w('limit').dataset.stan;
         return;
       }
       const t = tekstyWyniku(r, etat, liczby.nieobecnosc);
