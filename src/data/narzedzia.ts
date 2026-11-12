@@ -573,7 +573,7 @@ export const NARZEDZIA: Narzedzie[] = [
     nazwa: 'Kod 95: ważność i szkolenie okresowe',
     krotko: 'Do kiedy ważny kod 95 w prawie jazdy, kiedy najpóźniej szkolenie okresowe i czy Twoja praca go wymaga.',
     kategoria: 'uprawnienia',
-    przepisy: ['transportDrogowy', 'kierujacyPojazdami', 'szkolenieKierowcow', 'oplatyPrawoJazdy', 'kodeksCywilny', 'kodeksPracy'],
+    przepisy: ['transportDrogowy', 'kierujacyPojazdami', 'szkolenieKierowcow', 'oplatyPrawoJazdy', 'dniWolne', 'kodeksCywilny', 'kodeksPracy'],
     sprawdzono: '2026-11-12',
   },
   {
