@@ -28,6 +28,10 @@ const faq = [
     odpowiedz: 'Nie. Odszkodowania, których wysokość wynika wprost z ustawy, są zwolnione z podatku dochodowego (art. 21 ust. 1 pkt 3 ustawy o PIT).',
   },
   {
+    pytanie: 'Ile czasu ma pracodawca na protokół powypadkowy?',
+    odpowiedz: 'Zespół powypadkowy sporządza protokół najpóźniej w ciągu 14 dni od dnia uzyskania zawiadomienia o wypadku, a pracodawca zatwierdza go w ciągu 5 dni od sporządzenia (§ 9 ust. 1 i § 13 ust. 1 rozporządzenia w sprawie ustalania okoliczności i przyczyn wypadków przy pracy). Przed zatwierdzeniem możesz zgłosić uwagi i zastrzeżenia (§ 11 ust. 2).',
+  },
+  {
     pytanie: 'Co, gdy stan zdrowia się pogorszy?',
     odpowiedz: `Gdy uszczerbek wzrośnie co najmniej o 10 punktów procentowych, odszkodowanie zwiększa się o ${zl0(k.zaProcent)} za każdy procent ponad ten, według którego je przyznano (art. 12 ust. 2). Przy orzeczeniu całkowitej niezdolności do pracy i niezdolności do samodzielnej egzystencji wskutek wypadku przysługuje dodatkowo ${zl0(k.niezdolnosc)} (art. 12 ust. 3).`,
   },
@@ -109,6 +113,15 @@ const faq = [
     <p>
       Wynagrodzenie i zasiłek za czas zwolnienia lekarskiego po wypadku policzy <a href="/narzedzia/kalkulator-l4">kalkulator L4</a>.
     </p>
+
+    <h2 id="protokol">Protokół powypadkowy: terminy</h2>
+    <ul>
+      <li>Pracodawca zapewnia pierwszą pomoc, ustala okoliczności i przyczyny wypadku, a o wypadku śmiertelnym, ciężkim lub zbiorowym niezwłocznie zawiadamia okręgowego inspektora pracy i prokuratora (art. 234 § 1–2 Kodeksu pracy).</li>
+      <li>Zespół powypadkowy sporządza protokół najpóźniej w ciągu 14 dni od dnia uzyskania zawiadomienia o wypadku; późniejszy termin wymaga podania przyczyn w protokole (§ 9 rozporządzenia Rady Ministrów z 1 lipca 2009 r. w sprawie ustalania okoliczności i przyczyn wypadków przy pracy).</li>
+      <li>Przed zatwierdzeniem zespół zapoznaje Cię z protokołem; możesz zgłosić uwagi i zastrzeżenia, zajrzeć do akt i robić z nich notatki, odpisy i kopie (§ 11 ust. 1–3).</li>
+      <li>Pracodawca zatwierdza protokół najpóźniej w ciągu 5 dni od jego sporządzenia; po Twoich zastrzeżeniach zwraca go zespołowi, który w ciągu 5 dni sporządza nowy (§ 13). Zatwierdzony protokół dostajesz niezwłocznie (§ 14 ust. 1).</li>
+      <li>Pracodawca przechowuje protokół z dokumentacją powypadkową przez 10 lat (art. 234 § 3<sup>1</sup> Kodeksu pracy).</li>
+    </ul>
   </Fragment>
 </StronaNarzedzia>
 

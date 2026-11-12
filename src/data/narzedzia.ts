@@ -61,7 +61,7 @@ export const NARZEDZIA: Narzedzie[] = [
     nazwa: 'Odszkodowanie za wypadek przy pracy',
     krotko: 'Ile ZUS płaci za każdy procent uszczerbku na zdrowiu po wypadku przy pracy, zwiększenie i dodatek.',
     kategoria: 'bhp',
-    przepisy: ['wypadkowa', 'odszkodowaniaWypadkowe2026', 'pit'],
+    przepisy: ['wypadkowa', 'odszkodowaniaWypadkowe2026', 'pit', 'kodeksPracy', 'wypadkiUstalanie'],
     sprawdzono: '2026-11-12',
   },
   {

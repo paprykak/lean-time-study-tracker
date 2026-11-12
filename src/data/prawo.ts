@@ -272,6 +272,13 @@ export const AKTY = {
     adres: eli(2005, 1318),
     sprawdzono: '2026-11-12',
   },
+  wypadkiUstalanie: {
+    nazwa: 'Rozporządzenie w sprawie ustalania okoliczności i przyczyn wypadków przy pracy',
+    publikator: 'Dz.U. 2009 nr 105 poz. 870',
+    uwaga: 'bez zmian; § 9: protokół w 14 dni, § 11: zastrzeżenia, § 13: zatwierdzenie w 5 dni',
+    adres: eli(2009, 870),
+    sprawdzono: '2026-11-12',
+  },
   podstawaSkladek: {
     nazwa: 'Rozporządzenie w sprawie szczegółowych zasad ustalania podstawy wymiaru składek na ubezpieczenia emerytalne i rentowe',
     publikator: 'Dz.U. 2025 poz. 316',
