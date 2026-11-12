@@ -265,6 +265,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-12',
   },
   {
+    slug: 'urlop-wychowawczy',
+    nazwa: 'Urlop wychowawczy',
+    krotko: 'Ile miesięcy urlopu wychowawczego zostało, do kiedy potrwa i kiedy złożyć wniosek (21 dni).',
+    kategoria: 'urlopy',
+    przepisy: ['kodeksPracy', 'kodeksCywilny'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'termin-wyplaty-wynagrodzenia',
     nazwa: 'Terminy wypłaty wynagrodzenia',
     krotko: 'Kiedy wypłata w każdym miesiącu: dzień z regulaminu przesunięty z soboty, niedzieli i świąt, plik .ics.',

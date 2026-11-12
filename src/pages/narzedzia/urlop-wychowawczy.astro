@@ -1,0 +1,155 @@
+---
+// Urlop wychowawczy (art. 186 Kp): wymiar, miesiąc wyłączny, koniec roku 6. urodzin, wniosek 21 dni.
+// Logika: src/lib/narzedzia/urlop-wychowawczy.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { dataPoPolsku, dodajMiesiace, dzisWPolsce } from '../../lib/narzedzia/terminy';
+import { urlopWychowawczy } from '../../lib/narzedzia/urlop-wychowawczy';
+
+const dzis = dzisWPolsce();
+const URODZENIE = dodajMiesiace(dzis, -12);
+const START = `${dodajMiesiace(dzis, 2).slice(0, 7)}-01`;
+const MIESIACE = 12;
+const r = urlopWychowawczy({ urodzenie: URODZENIE, start: START, miesiace: MIESIACE, wykorzystaneJa: 0, wykorzystaneDrugi: 0, jedyny: false });
+
+const faq = [
+  {
+    pytanie: 'Ile trwa urlop wychowawczy?',
+    odpowiedz: 'Do 36 miesięcy łącznie dla obojga rodziców, najpóźniej do końca roku kalendarzowego, w którym dziecko kończy 6 lat (art. 186 § 2 i § 3¹ Kodeksu pracy). Każdy z rodziców ma wyłączne prawo do 1 miesiąca, którego nie może przenieść na drugiego (§ 4), więc jeden rodzic może wziąć najwyżej 35 miesięcy, chyba że jest jedynym uprawnionym (§ 9 i 10).',
+  },
+  {
+    pytanie: 'Kiedy złożyć wniosek o urlop wychowawczy?',
+    odpowiedz: 'Co najmniej 21 dni przed rozpoczęciem urlopu; pracodawca musi go uwzględnić. Wniosek można wycofać najpóźniej 7 dni przed rozpoczęciem urlopu (art. 186 § 7). Gdy wniosek złożono później, pracodawca udziela urlopu najpóźniej po 21 dniach od jego złożenia (§ 7¹).',
+  },
+  {
+    pytanie: 'Kto ma prawo do urlopu wychowawczego?',
+    odpowiedz: 'Pracownik zatrudniony co najmniej 6 miesięcy; do tego okresu wlicza się poprzednie zatrudnienie (art. 186 § 1). Urlop można podzielić najwyżej na 5 części (§ 8), a oboje rodzice mogą z niego korzystać w tym samym czasie, w granicach łącznego wymiaru (§ 6).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="urlop-wychowawczy"
+  tytul="Urlop wychowawczy: ile miesięcy i do kiedy"
+  opis="Policz urlop wychowawczy: do 36 miesięcy dla obojga rodziców, miesiąc wyłączny dla każdego, do końca roku, w którym dziecko kończy 6 lat, i termin wniosku 21 dni."
+  h1="Urlop wychowawczy: ile i do kiedy"
+  lead="Wpisz datę urodzenia dziecka, kiedy chcesz zacząć urlop i na ile miesięcy. Policzymy, do kiedy potrwa, ile miesięcy jeszcze zostało i do kiedy złożyć wniosek."
+  faq={faq}
+>
+  <form class="kalkulator" data-wychowawczy novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Dziecko i plan urlopu</h2>
+      <div class="mt-4">
+        <label for="h-urodzenie" class="etykieta-pola">Data urodzenia dziecka</label>
+        <input id="h-urodzenie" name="urodzenie" type="date" class="pole mt-1 max-w-56" min="2015-01-01" max="2100-12-31" value={URODZENIE} aria-describedby="h-blad" />
+      </div>
+      <div class="mt-4">
+        <label for="h-start" class="etykieta-pola">Początek urlopu</label>
+        <input id="h-start" name="start" type="date" class="pole mt-1 max-w-56" min="2015-01-01" max="2100-12-31" value={START} aria-describedby="h-blad" />
+      </div>
+      <div class="mt-4 grid grid-cols-2 items-end gap-3">
+        <div>
+          <label for="h-miesiace" class="etykieta-pola">Na ile miesięcy</label>
+          <input id="h-miesiace" name="miesiace" class="pole mt-1" type="text" inputmode="numeric" autocomplete="off" value={MIESIACE} aria-describedby="h-blad" />
+        </div>
+        <div>
+          <label for="h-ja" class="etykieta-pola">Już wykorzystane przez Ciebie (miesiące)</label>
+          <input id="h-ja" name="ja" class="pole mt-1" type="text" inputmode="numeric" autocomplete="off" value="0" aria-describedby="h-blad" />
+        </div>
+      </div>
+      <div class="mt-4">
+        <label for="h-drugi" class="etykieta-pola">Już wykorzystane przez drugiego rodzica (miesiące)</label>
+        <input id="h-drugi" name="drugi" class="pole mt-1 max-w-48" type="text" inputmode="numeric" autocomplete="off" value="0" aria-describedby="h-blad" />
+      </div>
+      <label class="mt-4 flex items-start gap-3 text-[0.9375rem]">
+        <input type="checkbox" name="jedyny" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+        <span>Jestem jedynym uprawnionym rodzicem albo opiekunem (art. 186 § 9 i 10)</span>
+      </label>
+      <p id="h-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Urlop potrwa do</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-data" data-w="koniec">{dataPoPolsku(r.koniec)}</p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Wniosek do pracodawcy najpóźniej</dt><dd data-w="wniosek">{dataPoPolsku(r.wniosekDo)}</dd></div>
+        <div><dt>Miesięcy dostępnych dla Ciebie</dt><dd data-w="dostepne">{r.dostepne}</dd></div>
+        <div><dt>Urlop najpóźniej do</dt><dd data-w="limit">{dataPoPolsku(r.limitDo)}</dd></div>
+      </dl>
+      <p class="wynik-uwaga" data-w="uwaga" hidden></p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="zasady">Zasady urlopu wychowawczego</h2>
+    <ul>
+      <li>Prawo ma pracownik zatrudniony co najmniej 6 miesięcy, licząc też poprzednie zatrudnienie (art. 186 § 1 Kodeksu pracy).</li>
+      <li>Do 36 miesięcy łącznie dla obojga rodziców, najpóźniej do końca roku, w którym dziecko kończy 6 lat (§ 2 i § 3<sup>1</sup>).</li>
+      <li>Przy dziecku z orzeczeniem o niepełnosprawności, które wymaga osobistej opieki: dodatkowo do 36 miesięcy, najdłużej do 18. urodzin dziecka (§ 3). Kalkulator tego nie liczy.</li>
+      <li>Każdy z rodziców ma wyłączne prawo do 1 miesiąca (§ 4); wykorzystuje je, biorąc co najmniej miesiąc urlopu (§ 5).</li>
+      <li>Wniosek co najmniej 21 dni przed, wycofanie najpóźniej 7 dni przed (§ 7); najwyżej 5 części (§ 8).</li>
+    </ul>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Miesiące urlopu liczymy kalendarzowo: urlop od 1 stycznia na 12 miesięcy trwa do 31 grudnia (art. 112 Kodeksu
+      cywilnego). Gdy plan wykracza poza koniec roku, w którym dziecko kończy 6 lat, skracamy go do 31 grudnia tego roku.
+      Dla Ciebie odejmujemy miesiąc wyłączny drugiego rodzica, dopóki go nie wykorzysta, chyba że jesteś jedynym
+      uprawnionym. Urlop rodzicielski policzy <a href="/narzedzia/zasilek-macierzynski">kalkulator zasiłku macierzyńskiego</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { urlopWychowawczy } from '../../lib/narzedzia/urlop-wychowawczy';
+
+  const form = document.querySelector<HTMLFormElement>('[data-wychowawczy]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const calkowita = (s: string) => (/^\d{1,2}$/.test(s.trim()) ? Number(s.trim()) : NaN);
+    const przelicz = () => {
+      const urodzenie = el('urodzenie').value;
+      const start = el('start').value;
+      const miesiace = calkowita(el('miesiace').value);
+      const ja = calkowita(el('ja').value || '0');
+      const drugi = calkowita(el('drugi').value || '0');
+      let blad: string | null = null;
+      if (!poprawnaData(urodzenie) || !poprawnaData(start)) blad = 'Wpisz datę urodzenia dziecka i początek urlopu.';
+      else if (![miesiace, ja, drugi].every((n) => n >= 0 && n <= 36) || miesiace < 1) blad = 'Miesiące: liczby całkowite od 0 do 36 (urlop co najmniej 1 miesiąc).';
+      let r: ReturnType<typeof urlopWychowawczy> | null = null;
+      if (!blad) {
+        try {
+          r = urlopWychowawczy({ urodzenie, start, miesiace, wykorzystaneJa: ja, wykorzystaneDrugi: drugi, jedyny: el('jedyny').checked });
+        } catch (e) {
+          blad = e instanceof RangeError && e.message.includes('6 lat') ? 'Urlop musi zacząć się najpóźniej w roku, w którym dziecko kończy 6 lat.' : 'Urlop nie może zacząć się przed urodzeniem dziecka.';
+        }
+      }
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      b.hidden = !blad;
+      b.textContent = blad ?? '';
+      const uwaga = w('uwaga');
+      if (blad || !r) {
+        w('koniec').textContent = '—';
+        uwaga.hidden = true;
+        return;
+      }
+      w('koniec').textContent = r.miesiace > 0 ? dataPoPolsku(r.koniec) : '—';
+      w('wniosek').textContent = dataPoPolsku(r.wniosekDo);
+      w('dostepne').textContent = String(r.dostepne);
+      w('limit').textContent = dataPoPolsku(r.limitDo);
+      const uwagi = [
+        r.skroconyWymiarem ? `Masz do wykorzystania ${r.dostepne} mies.${r.zarezerwowane ? ', bo 1 miesiąc jest zarezerwowany dla drugiego rodzica (art. 186 § 4)' : ''}.` : '',
+        r.skroconyLimitem ? 'Urlop kończy się 31 grudnia roku, w którym dziecko kończy 6 lat (art. 186 § 2).' : '',
+      ].filter(Boolean);
+      uwaga.hidden = uwagi.length === 0;
+      uwaga.textContent = uwagi.join(' ');
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>
