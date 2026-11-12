@@ -537,6 +537,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-12',
   },
   {
+    slug: 'praca-w-ciazy',
+    nazwa: 'Praca w ciąży: monitor i stanie',
+    krotko: 'Ile godzin w ciąży przy monitorze (8 h, przerwa co 50 minut) i na stojąco (3 h), zakaz nocy i nadgodzin.',
+    kategoria: 'bhp',
+    przepisy: ['kodeksPracy', 'praceKobietCiaza'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'przerwy-w-pracy',
     nazwa: 'Przerwy w pracy',
     krotko: 'Ile przerw przy zmianie 8 i 12 godzin, które są płatne, przy monitorze, na karmienie, dla młodocianych.',

@@ -1,0 +1,170 @@
+---
+// Praca w ciąży: monitor i praca na stojąco (Dz.U. 2017 poz. 796, załącznik cz. I ust. 1 pkt 2, 11 i 12), zakazy z art. 178
+// Kodeksu pracy, obowiązki pracodawcy z art. 178^1, 179 i 185. Logika: src/lib/narzedzia/praca-w-ciazy.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { DZWIGANIE_MAKS_KG, MONITOR, STANIE, pracaWCiazy } from '../../lib/narzedzia/praca-w-ciazy';
+
+const D = { monitorMin: 6 * 60, stanieMin: 60 };
+const r = pracaWCiazy(D);
+
+const faq = [
+  {
+    pytanie: 'Ile godzin w ciąży można pracować przy komputerze?',
+    odpowiedz: `Łącznie najwyżej ${MONITOR.maksMin / 60} godzin na dobę. Bez przerwy przy monitorze najwyżej ${MONITOR.blokMin} minut, potem co najmniej ${MONITOR.przerwaMin} minut przerwy wliczanej do czasu pracy (rozporządzenie w sprawie prac wzbronionych kobietom w ciąży, załącznik, cz. I ust. 1 pkt 12).`,
+  },
+  {
+    pytanie: 'Ile godzin w ciąży można stać w pracy?',
+    odpowiedz: `Łącznie najwyżej ${STANIE.maksMin / 60} godziny na zmianie, a jednorazowo najwyżej ${STANIE.blokMin} minut, po których należy się ${STANIE.przerwaMin} minut przerwy (załącznik, cz. I ust. 1 pkt 11).`,
+  },
+  {
+    pytanie: 'Czy w ciąży można pracować na nocną zmianę albo w nadgodzinach?',
+    odpowiedz: 'Nie. Pracownicy w ciąży nie wolno zatrudniać w nadgodzinach ani w porze nocnej, a bez jej zgody nie wolno jej delegować ani zatrudniać w przerywanym czasie pracy (art. 178 § 1 Kodeksu pracy). Gdy pracowała w nocy, pracodawca zmienia jej grafik, a gdy to niemożliwe, przenosi do innej pracy albo zwalnia z obowiązku świadczenia pracy (art. 178¹).',
+  },
+  {
+    pytanie: 'Ile kilogramów może dźwigać kobieta w ciąży?',
+    odpowiedz: `W ciąży nie wolno ręcznie podnosić i przenosić przedmiotów cięższych niż ${DZWIGANIE_MAKS_KG} kg (załącznik, cz. I ust. 1 pkt 2). Wzbronione jest też między innymi przewożenie ładunków na taczce i na wózku poruszanym ręcznie (pkt 9).`,
+  },
+  {
+    pytanie: 'Czy po przeniesieniu do innej pracy w ciąży dostanę mniej pieniędzy?',
+    odpowiedz: 'Gdy zmiana warunków pracy, krótszy czas pracy albo przeniesienie obniża wynagrodzenie, należy się dodatek wyrównawczy, a w czasie zwolnienia z obowiązku świadczenia pracy dotychczasowe wynagrodzenie (art. 179 § 4–5 Kodeksu pracy). Po ustaniu przyczyn pracodawca zatrudnia pracownicę na dawnych warunkach z umowy (§ 6).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="praca-w-ciazy"
+  tytul="Praca w ciąży: monitor, stanie, zakazy"
+  opis="Ile godzin w ciąży przy komputerze i na stojąco: 8 h z przerwą 10 minut co 50 minut, 3 h stania po 15 minut. Zakaz nocy, nadgodzin, dźwigania ponad 3 kg."
+  h1="Praca w ciąży: ile przy monitorze i na stojąco"
+  lead="Wpisz, ile godzin na zmianie pracujesz przy monitorze i na stojąco, a policzymy przerwy, które się należą, i sprawdzimy, czy grafik nie łamie zakazów dla kobiet w ciąży."
+  faq={faq}
+>
+  <form class="kalkulator" data-ciaza novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twoja zmiana</h2>
+      <div class="mt-4 grid grid-cols-2 items-end gap-3">
+        <div>
+          <label for="c-monitor" class="etykieta-pola">Przy monitorze (godziny)</label>
+          <input id="c-monitor" name="monitor" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="6" aria-describedby="c-blad" />
+        </div>
+        <div>
+          <label for="c-stanie" class="etykieta-pola">Na stojąco (godziny)</label>
+          <input id="c-stanie" name="stanie" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="1" aria-describedby="c-blad" />
+        </div>
+      </div>
+      <label class="mt-4 flex items-start gap-3 text-[0.9375rem]">
+        <input type="checkbox" name="nocna" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+        <span>Pracuję w porze nocnej</span>
+      </label>
+      <label class="mt-3 flex items-start gap-3 text-[0.9375rem]">
+        <input type="checkbox" name="nadgodziny" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+        <span>Mam nadgodziny</span>
+      </label>
+      <label class="mt-3 flex items-start gap-3 text-[0.9375rem]">
+        <input type="checkbox" name="dzwiganie" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+        <span>Podnoszę albo przenoszę rzeczy cięższe niż {DZWIGANIE_MAKS_KG} kg</span>
+      </label>
+      <p id="c-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Twój grafik w ciąży</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-data" data-w="wynik">bez naruszeń</p>
+        <p class="status-terminu" data-w="status" data-status="w-terminie">Zgodnie z przepisami</p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Przerwy przy monitorze</dt><dd data-w="monitor">{r.monitor.przerw} po {MONITOR.przerwaMin} minut, razem {r.monitor.minutPrzerw} minut w czasie pracy</dd></div>
+        <div><dt>Przerwy przy pracy na stojąco</dt><dd data-w="stanie">{r.stanie.przerw} po {STANIE.przerwaMin} minut, razem {r.stanie.minutPrzerw} minut</dd></div>
+        <div data-wiersz="naruszenia" hidden><dt>Do zmiany</dt><dd data-w="naruszenia"></dd></div>
+      </dl>
+      <p class="wynik-uwaga">Gdy praca łamie te zasady, pracodawca dostosowuje warunki albo skraca czas pracy, a gdy to niemożliwe, przenosi do innej pracy albo zwalnia z obowiązku świadczenia pracy z zachowaniem wynagrodzenia (art. 178<sup>1</sup> i 179 Kodeksu pracy).</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="zasady">Co wolno w ciąży na hali i w biurze</h2>
+    <ul>
+      <li>Monitor: łącznie do {MONITOR.maksMin / 60} godzin na dobę, bez przerwy najwyżej {MONITOR.blokMin} minut, potem co najmniej {MONITOR.przerwaMin} minut przerwy wliczanej do czasu pracy (rozporządzenie w sprawie prac wzbronionych kobietom w ciąży, załącznik, cz. I ust. 1 pkt 12).</li>
+      <li>Praca na stojąco: łącznie do {STANIE.maksMin / 60} godzin na zmianie, po {STANIE.blokMin} minutach {STANIE.przerwaMin} minut przerwy (pkt 11). Wzbroniona jest też praca w pozycji wymuszonej (pkt 10).</li>
+      <li>Dźwiganie: ręcznie nie więcej niż {DZWIGANIE_MAKS_KG} kg, bez taczek i wózków pchanych ręcznie (pkt 2 i 9); szczegóły pokaże <a href="/narzedzia/ile-kg-wolno-dzwigac">kalkulator dźwigania</a>.</li>
+      <li>Hałas i drgania: niższe limity niż dla innych pracowników; sprawdzą je <a href="/narzedzia/halas-w-pracy">kalkulator hałasu</a> i <a href="/narzedzia/drgania-w-pracy">kalkulator drgań</a>.</li>
+      <li>Bez nadgodzin i pracy w nocy, a bez zgody pracownicy bez delegacji i przerywanego czasu pracy (art. 178 § 1 Kodeksu pracy).</li>
+      <li>Płatne zwolnienie na badania zalecone przez lekarza w związku z ciążą, gdy nie da się ich zrobić po pracy (art. 185 § 2).</li>
+      <li>Ochrona przed wypowiedzeniem i rozwiązaniem umowy przez całą ciążę, z wyjątkami z art. 177 Kodeksu pracy; pokaże ją też <a href="/narzedzia/zwolnienie-na-l4">kalkulator ochrony na L4</a>.</li>
+    </ul>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Przerwy liczymy między kolejnymi blokami pracy: przy monitorze co {MONITOR.blokMin} minut, na stojąco co
+      {STANIE.blokMin} minut. Przy 6 godzinach przy monitorze to 8 bloków i 7 przerw po {MONITOR.przerwaMin} minut.
+      Przerwy przy monitorze są wliczane do czasu pracy; przy pracy na stojąco przepis tego nie mówi. Przerwy z Kodeksu
+      pracy, na przykład 15 minut przy zmianie od 6 godzin, należą się niezależnie od tych; policzy je
+      <a href="/narzedzia/przerwy-w-pracy">kalkulator przerw w pracy</a>. Ile wyniesie zasiłek macierzyński, pokaże
+      <a href="/narzedzia/zasilek-macierzynski">kalkulator urlopu macierzyńskiego</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { MONITOR, STANIE, pracaWCiazy } from '../../lib/narzedzia/praca-w-ciazy';
+  import { wpisanaLiczba } from '../../lib/narzedzia/format';
+  import { odmiana } from '../../lib/redakcja';
+  import { typografia } from '../../lib/typografia.mjs';
+
+  const OPISY: Record<string, string> = {
+    monitor: `ponad ${MONITOR.maksMin / 60} godzin przy monitorze (załącznik, cz. I ust. 1 pkt 12)`,
+    stanie: `ponad ${STANIE.maksMin / 60} godziny na stojąco (pkt 11)`,
+    nocna: 'praca w porze nocnej (art. 178 § 1 Kodeksu pracy)',
+    nadgodziny: 'nadgodziny (art. 178 § 1 Kodeksu pracy)',
+    dzwiganie: 'dźwiganie ponad 3 kg (pkt 2)',
+  };
+
+  const form = document.querySelector<HTMLFormElement>('[data-ciaza]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const pisz = (k: string, tekst: string) => {
+      w(k).textContent = typografia(tekst);
+    };
+    const godziny = (n: string) => {
+      const t = el(n).value.trim();
+      return t === '' ? 0 : wpisanaLiczba(t);
+    };
+    const przelicz = () => {
+      const monitor = godziny('monitor');
+      const stanie = godziny('stanie');
+      const blad = monitor >= 0 && monitor <= 24 && stanie >= 0 && stanie <= 24 ? null : 'Wpisz godziny od 0 do 24, np. 6 albo 1,5.';
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      b.hidden = !blad;
+      b.textContent = blad ?? '';
+      const status = w('status');
+      if (blad) {
+        w('wynik').textContent = '—';
+        status.hidden = true;
+        return;
+      }
+      const r = pracaWCiazy({
+        monitorMin: Math.round(monitor * 60),
+        stanieMin: Math.round(stanie * 60),
+        nocna: el('nocna').checked,
+        nadgodziny: el('nadgodziny').checked,
+        dzwiganie: el('dzwiganie').checked,
+      });
+      status.hidden = false;
+      const ile = r.naruszenia.length;
+      pisz('wynik', ile ? odmiana(ile, ['naruszenie', 'naruszenia', 'naruszeń']) : 'bez naruszeń');
+      status.dataset.status = ile ? 'po-terminie' : 'w-terminie';
+      pisz('status', ile ? 'Pracodawca musi zmienić grafik albo warunki' : 'Zgodnie z przepisami');
+      pisz('monitor', r.monitor.przekroczone ? `limit przekroczony; w ${MONITOR.maksMin / 60} godzinach ${r.monitor.przerw} przerw po ${MONITOR.przerwaMin} minut` : `${r.monitor.przerw} po ${MONITOR.przerwaMin} minut, razem ${r.monitor.minutPrzerw} minut w czasie pracy`);
+      pisz('stanie', r.stanie.przekroczone ? `limit przekroczony; w ${STANIE.maksMin / 60} godzinach ${r.stanie.przerw} przerw po ${STANIE.przerwaMin} minut` : `${r.stanie.przerw} po ${STANIE.przerwaMin} minut, razem ${r.stanie.minutPrzerw} minut`);
+      const wiersz = form.querySelector<HTMLElement>('[data-wiersz="naruszenia"]')!;
+      wiersz.hidden = !ile;
+      if (ile) pisz('naruszenia', r.naruszenia.map((n) => OPISY[n]).join('; '));
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>
