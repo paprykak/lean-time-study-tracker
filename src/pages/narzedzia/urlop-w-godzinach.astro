@@ -2,7 +2,7 @@
 // Urlop w godzinach przy grafiku zmianowym (art. 154^2 § 1–4 Kp) i urlop na żądanie (art. 167^2–167^3, art. 168).
 // Logika: src/lib/narzedzia/urlop-godzinowy.ts (testy obok).
 import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
-import { NA_ZADANIE, opisWyniku, pelneZmiany, urlopGodzinowy } from '../../lib/narzedzia/urlop-godzinowy';
+import { MAKS_ZMIANA, MIN_ZMIANA, NA_ZADANIE, opisWyniku, pelneZmiany, urlopGodzinowy } from '../../lib/narzedzia/urlop-godzinowy';
 
 const WIERSZE = 3;
 const r = urlopGodzinowy({ dni: 26, godziny: 0, dzien: 8, plan: [{ dlugosc: 12, liczba: 4 }], naZadanieWykorzystane: 0 });
@@ -11,8 +11,6 @@ const o = opisWyniku(r);
 const TABELA = [
   { nazwa: '20 dni', godziny: 160 },
   { nazwa: '26 dni', godziny: 208 },
-  { nazwa: '20 dni, norma 7 h', godziny: 140 },
-  { nazwa: '26 dni, norma 7 h', godziny: 182 },
 ];
 const komorka = (g: number, d: number) => {
   const { pelne, reszta } = pelneZmiany(g, d);
@@ -26,7 +24,7 @@ const faq = [
   },
   {
     pytanie: 'Czy urlop na żądanie przy 12 godzinach to 1,5 dnia?',
-    odpowiedz: 'Przepis mówi o 4 dniach urlopu na żądanie w roku kalendarzowym (art. 167^2 Kodeksu pracy) i nie rozstrzyga wprost, ile godzin zużywa taki dzień przy zmianie 12 h. Narzędzie liczy jeden dzień na żądanie jako jedną zmianę z grafiku, czyli 12 h z puli urlopu, bo urlopu udziela się w dni pracy w godzinach dobowego wymiaru czasu pracy (art. 154^2 § 1). W tym odczytaniu cztery zmiany na żądanie po 12 h zużywają 48 h urlopu.',
+    odpowiedz: 'Przepis mówi o 4 dniach urlopu na żądanie w roku kalendarzowym (art. 167^2 Kodeksu pracy) i nie rozstrzyga wprost, ile godzin zużywa taki dzień przy zmianie 12 h. Narzędzie liczy jeden dzień na żądanie jako jedną zmianę z grafiku, czyli 12 h z puli urlopu, bo urlopu udziela się w dni pracy w godzinach dobowego wymiaru czasu pracy (art. 154^2 § 1). W tym odczytaniu, korzystniejszym dla pracownika, cztery zmiany na żądanie po 12 h zużywają 48 h urlopu. Inny odczyt liczy limit jako 4 × 8 h = 32 h, czyli przy zmianach 12 h 2 zmiany i 8 h.',
   },
   {
     pytanie: 'Co z resztą 4 godzin urlopu?',
@@ -65,7 +63,7 @@ const faq = [
             <input id="ug-godziny" name="godziny" class="pole mt-1" type="text" inputmode="numeric" autocomplete="off" value="0" aria-describedby="ug-godziny-opis ug-blad" />
           </div>
         </div>
-        <p id="ug-godziny-opis" class="meta mt-1">Na przykład resztka z poprzedniego rozliczenia (0–7 h).</p>
+        <p id="ug-godziny-opis" class="meta mt-1">Mniej niż jeden dzień urlopu, na przykład resztka z poprzedniego rozliczenia.</p>
       </fieldset>
       <div class="mt-4">
         <label for="ug-dzien" class="etykieta-pola">Dzień urlopu</label>
@@ -76,26 +74,29 @@ const faq = [
       </div>
       <fieldset class="mt-4">
         <legend class="etykieta">Planowany urlop</legend>
-        <p class="meta mt-1">Zmiany w kolejności; puste wiersze pomijamy.</p>
+        <p id="ug-plan-opis" class="meta mt-1">Zmiany w kolejności, w jakiej je weźmiesz; długość od {MIN_ZMIANA} do {MAKS_ZMIANA} h. Puste wiersze pomijamy.</p>
         {Array.from({ length: WIERSZE }, (_, i) => (
-          <div class="mt-3 grid grid-cols-2 items-end gap-3">
-            <div>
-              <label for={`ug-dl${i + 1}`} class="etykieta-pola">Zmiana {i + 1}: długość (h)</label>
-              <input id={`ug-dl${i + 1}`} name={`dlugosc${i + 1}`} class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value={i === 0 ? '12' : ''} aria-describedby="ug-blad" />
+          <fieldset class="mt-3">
+            <legend class="etykieta-pola">Wiersz {i + 1}</legend>
+            <div class="mt-1 grid grid-cols-2 items-end gap-3">
+              <div>
+                <label for={`ug-dl${i + 1}`} class="meta">Długość zmiany (h)</label>
+                <input id={`ug-dl${i + 1}`} name={`dlugosc${i + 1}`} class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value={i === 0 ? '12' : ''} aria-describedby="ug-plan-opis ug-blad" />
+              </div>
+              <div>
+                <label for={`ug-ile${i + 1}`} class="meta">Liczba zmian</label>
+                <input id={`ug-ile${i + 1}`} name={`liczba${i + 1}`} class="pole mt-1" type="text" inputmode="numeric" autocomplete="off" value={i === 0 ? '4' : ''} aria-describedby="ug-plan-opis ug-blad" />
+              </div>
             </div>
-            <div>
-              <label for={`ug-ile${i + 1}`} class="etykieta-pola">Liczba zmian</label>
-              <input id={`ug-ile${i + 1}`} name={`liczba${i + 1}`} class="pole mt-1" type="text" inputmode="numeric" autocomplete="off" value={i === 0 ? '4' : ''} aria-describedby="ug-blad" />
-            </div>
-          </div>
+          </fieldset>
         ))}
       </fieldset>
       <div class="mt-4">
         <label for="ug-zadanie" class="etykieta-pola">Urlop na żądanie wykorzystany w tym roku (dni)</label>
         <input id="ug-zadanie" name="zadanie" class="pole mt-1 max-w-32" type="text" inputmode="numeric" autocomplete="off" value="0" aria-describedby="ug-zadanie-opis ug-blad" />
-        <p id="ug-zadanie-opis" class="meta mt-1">Od 0 do {NA_ZADANIE}, łącznie u wszystkich pracodawców w tym roku.</p>
+        <p id="ug-zadanie-opis" class="meta mt-1">Od 0 do {NA_ZADANIE}, łącznie u kolejnych pracodawców w tym roku. Zmiany na żądanie, które są już w planie, wpisz tu jako wykorzystane: z puli urlopu liczymy je raz, w planie.</p>
       </div>
-      <p id="ug-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+      <p id="ug-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -108,8 +109,8 @@ const faq = [
         <div><dt>Masz</dt><dd data-w="masz">{o.masz}</dd></div>
         <div><dt>Plan zużyje</dt><dd data-w="plan">{o.plan}</dd></div>
         <div><dt>Plan w całości</dt><dd data-w="pokrycie">{o.pokrycie}</dd></div>
-        <div><dt>Jeszcze po 12 h</dt><dd data-w="po12">{o.po12}</dd></div>
-        <div><dt>Jeszcze po 8 h</dt><dd data-w="po8">{o.po8}</dd></div>
+        <div><dt data-w="dalej1-etykieta">{o.dalej[0].etykieta}</dt><dd data-w="dalej1">{o.dalej[0].tekst}</dd></div>
+        <div data-wiersz-dalej2 hidden={!o.dalej[1]}><dt data-w="dalej2-etykieta">{o.dalej[1]?.etykieta}</dt><dd data-w="dalej2">{o.dalej[1]?.tekst}</dd></div>
         <div><dt>Na żądanie zostało</dt><dd data-w="na-zadanie">{o.naZadanie}</dd></div>
       </dl>
       <p class="wynik-uwaga">Na część zmiany urlop wolno wziąć tylko wtedy, gdy zostało go mniej, niż trwa ta zmiana (art. 154<sup>2</sup> § 4 Kodeksu pracy).</p>
@@ -131,7 +132,9 @@ const faq = [
       </table>
     </div>
     <p>
-      Zapis „13 i 4 h” oznacza 13 pełnych zmian i 4 h, które wykorzystasz jako część kolejnej zmiany.
+      Zapis „13 i 4 h” oznacza 13 pełnych zmian i 4 h, które wykorzystasz jako część kolejnej zmiany. Przy niższej
+      dobowej normie, np. 7 h, 20 dni to 140 h, a 26 dni to 182 h; narzędzie obsługuje normę 7 h (pole „Dzień urlopu”)
+      i wtedy pokazuje pozostały urlop w dniach po 7 h.
     </p>
 
     <h2 id="zasady">Zasady urlopu w godzinach</h2>
@@ -140,7 +143,7 @@ const faq = [
       <li>Urlopu udziela się w dni, które są dla Ciebie dniami pracy według rozkładu, w wymiarze godzinowym odpowiadającym dobowemu wymiarowi czasu pracy w danym dniu (art. 154<sup>2</sup> § 1). Jeden dzień urlopu odpowiada 8 godzinom pracy (§ 2).</li>
       <li>Gdy dobowa norma czasu pracy z odrębnych przepisów jest niższa niż 8 godzin, te zasady stosuje się odpowiednio (art. 154<sup>2</sup> § 3).</li>
       <li>Urlop na część dnia pracy jest dopuszczalny tylko wtedy, gdy pozostała część urlopu jest niższa niż pełny dobowy wymiar czasu pracy w dniu, na który ma być udzielony (art. 154<sup>2</sup> § 4).</li>
-      <li>Na żądanie pracodawca udziela najwyżej 4 dni urlopu w roku kalendarzowym, w terminie wskazanym przez pracownika; żądanie zgłasza się najpóźniej w dniu rozpoczęcia urlopu (art. 167<sup>2</sup>). Limit obowiązuje łącznie u wszystkich kolejnych pracodawców w roku (art. 167<sup>3</sup>).</li>
+      <li>Pracodawca musi udzielić na żądanie pracownika, w terminie przez niego wskazanym, nie więcej niż 4 dni urlopu w roku kalendarzowym; żądanie zgłasza się najpóźniej w dniu rozpoczęcia urlopu (art. 167<sup>2</sup>). Limit obowiązuje łącznie u kolejnych pracodawców w tym roku (art. 167<sup>3</sup>); przy dwóch etatach naraz przepis tego nie rozstrzyga.</li>
       <li>Termin 30 września następnego roku na zaległy urlop nie dotyczy części udzielanej na żądanie (art. 168).</li>
       <li>Gdy urlop jest dzielony na części na wniosek pracownika, co najmniej jedna część powinna trwać nie mniej niż 14 kolejnych dni kalendarzowych (art. 162).</li>
     </ul>
@@ -150,7 +153,9 @@ const faq = [
       Urlop do wykorzystania przeliczamy na godziny: dni razy 8 h (albo razy niższa norma, np. 7 h) plus dodatkowe godziny. Plan sumujemy zmiana po zmianie
       w kolejności wierszy. Zmiana jest w całości urlopem, dopóki zostaje co najmniej tyle godzin, ile ona trwa; resztę,
       krótszą niż zmiana, pokazujemy jako część jednej zmiany, bo tylko wtedy przepis pozwala na urlop w części dnia
-      (art. 154<sup>2</sup> § 4). Pozostałe godziny pokazujemy w dniach po 8 h i w pełnych zmianach po 12 i 8 h z resztą.
+      (art. 154<sup>2</sup> § 4). Dlatego kolejność wierszy planu decyduje, która zmiana będzie częściowa. Pozostałe
+      godziny pokazujemy w dniach po 8 h (albo po niższej normie) i w pełnych zmianach po 12 i 8 h (przy normie 7 h po
+      7 h) z resztą.
     </p>
     <p>
       Przy niższej dobowej normie przepis każe stosować zasady „odpowiednio” (art. 154<sup>2</sup> § 3) i nie podaje
@@ -160,8 +165,11 @@ const faq = [
       Przepis o urlopie na żądanie mówi o 4 dniach urlopu (art. 167<sup>2</sup>) i nie rozstrzyga, czy dzień na żądanie
       przy zmianie 12 h to 8 czy 12 godzin. Liczymy go jako jeden dzień pracy z grafiku, czyli całą zmianę, bo urlopu
       udziela się w dni pracy w godzinach dobowego wymiaru czasu pracy (art. 154<sup>2</sup> § 1). Długość tej zmiany
-      bierzemy z pierwszego wypełnionego wiersza planu. Urlop na żądanie to część urlopu wypoczynkowego (art. 168),
-      więc te godziny pochodzą z tej samej puli.
+      bierzemy z pierwszego wypełnionego wiersza planu; bez planu podajemy same dni. To wariant korzystniejszy dla
+      pracownika. Inny odczyt liczy limit jako 4 × 8 h = 32 h, wtedy przy zmianach 12 h to 2 zmiany i 8 h. Urlop na
+      żądanie to część urlopu (art. 168 mówi o „części urlopu udzielanego zgodnie z art. 167<sup>2</sup>”), więc
+      pokazujemy mniej z dwóch liczb: 4 dni minus wykorzystane albo tyle pełnych zmian, ile mieści się w urlopie
+      pozostałym po planie. Zmian na żądanie wpisanych do planu nie odejmujemy z puli drugi raz.
     </p>
     <p>
       Czy grafik mieści się w normach czasu pracy, sprawdzi <a href="/narzedzia/kontrola-grafiku">kontrola grafiku</a>,
@@ -171,7 +179,7 @@ const faq = [
 </StronaNarzedzia>
 
 <script>
-  import { opisWyniku, urlopGodzinowy, type DzienUrlopu, type Zmiana } from '../../lib/narzedzia/urlop-godzinowy';
+  import { BladDanych, opisWyniku, urlopGodzinowy, type DzienUrlopu, type Zmiana } from '../../lib/narzedzia/urlop-godzinowy';
   import { wpisanaLiczba } from '../../lib/narzedzia/format';
   import { typografia } from '../../lib/typografia.mjs';
 
@@ -182,21 +190,29 @@ const faq = [
     const pisz = (k: string, tekst: string) => {
       w(k).textContent = typografia(tekst);
     };
-    const POLA = ['zostalo', 'opis', 'masz', 'plan', 'pokrycie', 'po12', 'po8', 'na-zadanie'];
+    const WIERSZE = 3;
+    const WSZYSTKIE = ['dni', 'godziny', 'zadanie', ...Array.from({ length: WIERSZE }, (_, i) => [`dlugosc${i + 1}`, `liczba${i + 1}`]).flat()];
+    const POLA = ['zostalo', 'opis', 'masz', 'plan', 'pokrycie', 'dalej1', 'dalej2', 'dalej1-etykieta', 'dalej2-etykieta', 'na-zadanie'];
     const przelicz = () => {
-      let blad: string | null = null;
+      const stan: { blad: string | null; pole: string | null } = { blad: null, pole: null };
+      const zly = (tekst: string, pole: string) => {
+        if (stan.blad) return;
+        stan.blad = tekst;
+        stan.pole = pole;
+      };
       const plan: Zmiana[] = [];
-      for (let i = 1; i <= 3; i++) {
+      for (let i = 1; i <= WIERSZE; i++) {
         const dl = el(`dlugosc${i}`).value.trim();
         const ile = el(`liczba${i}`).value.trim();
         if (!dl && !ile) continue;
-        if (!dl || !ile) blad ??= `Zmiana ${i}: uzupełnij długość i liczbę zmian.`;
-        else plan.push({ dlugosc: wpisanaLiczba(dl), liczba: wpisanaLiczba(ile) });
+        if (!dl) zly(`Wiersz ${i}: uzupełnij długość zmiany.`, `dlugosc${i}`);
+        else if (!ile) zly(`Wiersz ${i}: uzupełnij liczbę zmian.`, `liczba${i}`);
+        else plan.push({ dlugosc: wpisanaLiczba(dl), liczba: wpisanaLiczba(ile), wiersz: i });
       }
       const dniTekst = el('dni').value.trim();
-      if (!dniTekst) blad ??= 'Wpisz liczbę dni urlopu do wykorzystania.';
+      if (!dniTekst) zly('Wpisz liczbę dni urlopu do wykorzystania.', 'dni');
       let r: ReturnType<typeof urlopGodzinowy> | null = null;
-      if (!blad) {
+      if (!stan.blad) {
         try {
           r = urlopGodzinowy({
             dni: wpisanaLiczba(dniTekst),
@@ -206,13 +222,17 @@ const faq = [
             naZadanieWykorzystane: wpisanaLiczba(el('zadanie').value || '0'),
           });
         } catch (e) {
-          if (!(e instanceof RangeError)) throw e;
-          blad = e.message;
+          if (!(e instanceof BladDanych)) throw e;
+          zly(e.message, e.pole);
         }
       }
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
-      b.hidden = !blad;
-      b.textContent = blad ? typografia(blad) : '';
+      b.hidden = !stan.blad;
+      b.textContent = stan.blad ? typografia(stan.blad) : '';
+      for (const n of WSZYSTKIE) {
+        if (n === stan.pole) el(n).setAttribute('aria-invalid', 'true');
+        else el(n).removeAttribute('aria-invalid');
+      }
       if (!r) {
         w('zostalo').textContent = '—';
         for (const k of POLA.slice(1)) w(k).textContent = '';
@@ -224,8 +244,11 @@ const faq = [
       pisz('masz', o.masz);
       pisz('plan', o.plan);
       pisz('pokrycie', o.pokrycie);
-      pisz('po12', o.po12);
-      pisz('po8', o.po8);
+      pisz('dalej1-etykieta', o.dalej[0].etykieta);
+      pisz('dalej1', o.dalej[0].tekst);
+      form.querySelector<HTMLElement>('[data-wiersz-dalej2]')!.hidden = !o.dalej[1];
+      pisz('dalej2-etykieta', o.dalej[1]?.etykieta ?? '');
+      pisz('dalej2', o.dalej[1]?.tekst ?? '');
       pisz('na-zadanie', o.naZadanie);
     };
     form.addEventListener('input', przelicz);
