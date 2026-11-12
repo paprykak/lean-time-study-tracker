@@ -177,6 +177,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-11',
   },
   {
+    slug: 'okres-probny',
+    nazwa: 'Okres próbny',
+    krotko: 'Ile może trwać okres próbny przed kolejną umową, do kiedy trwa i jakie ma wypowiedzenie.',
+    kategoria: 'umowa',
+    przepisy: ['kodeksPracy', 'kodeksCywilny'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'umowa-na-czas-okreslony',
     nazwa: 'Umowa na czas określony: limit',
     krotko: 'Kiedy umowa na czas określony staje się umową na stałe: 33 miesiące, 3 umowy, aneksy, przerwy, agencja.',

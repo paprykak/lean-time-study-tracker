@@ -1,0 +1,139 @@
+---
+// Okres próbny: ile może trwać (art. 25 § 2–3 Kp), do kiedy i jakie wypowiedzenie (art. 34).
+// Logika: src/lib/narzedzia/okres-probny.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { okresProbny } from '../../lib/narzedzia/okres-probny';
+import { dataPoPolsku, dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+const START = dzisWPolsce();
+const r = okresProbny(START, 'nieokreslony', '3m');
+
+const faq = [
+  {
+    pytanie: 'Ile może trwać okres próbny?',
+    odpowiedz: 'Najwyżej 3 miesiące (art. 25 § 2 Kodeksu pracy). Gdy po okresie próbnym ma być umowa na czas określony krótsza niż 6 miesięcy, najwyżej 1 miesiąc, a gdy umowa od 6 do 12 miesięcy, najwyżej 2 miesiące (§ 2²). Te dwa okresy można raz wydłużyć o 1 miesiąc, gdy uzasadnia to rodzaj pracy (§ 2³).',
+  },
+  {
+    pytanie: 'Jakie jest wypowiedzenie na okresie próbnym?',
+    odpowiedz: '3 dni robocze, gdy okres próbny nie przekracza 2 tygodni, 1 tydzień, gdy jest dłuższy niż 2 tygodnie, i 2 tygodnie, gdy wynosi 3 miesiące (art. 34 Kodeksu pracy).',
+  },
+  {
+    pytanie: 'Czy można drugi raz podpisać okres próbny u tego samego pracodawcy?',
+    odpowiedz: 'Tylko wtedy, gdy masz wykonywać inny rodzaj pracy (art. 25 § 3 Kodeksu pracy). Strony mogą też uzgodnić w umowie, że okres próbny wydłuża się o czas urlopu i innej usprawiedliwionej nieobecności (§ 2¹).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="okres-probny"
+  tytul="Okres próbny: ile może trwać i jakie wypowiedzenie"
+  opis="Sprawdź, ile może trwać umowa na okres próbny (1, 2 albo 3 miesiące zależnie od kolejnej umowy), do kiedy trwa i jaki jest okres wypowiedzenia: 3 dni robocze, tydzień albo 2 tygodnie."
+  h1="Okres próbny: ile i do kiedy"
+  lead="Długość okresu próbnego zależy od tego, jaka umowa ma być potem. Wybierz planowaną umowę i długość okresu próbnego, a sprawdzimy, czy jest zgodna z Kodeksem pracy, do kiedy trwa i jakie ma wypowiedzenie."
+  faq={faq}
+>
+  <form class="kalkulator" data-probny novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twoja umowa</h2>
+      <div class="mt-4">
+        <label for="p-plan" class="etykieta-pola">Jaka umowa ma być po okresie próbnym</label>
+        <select id="p-plan" name="plan" class="pole mt-1">
+          <option value="nieokreslony" selected>Na czas nieokreślony</option>
+          <option value="okreslony-12">Na czas określony, 12 miesięcy lub dłużej</option>
+          <option value="okreslony-6-12">Na czas określony, od 6 do mniej niż 12 miesięcy</option>
+          <option value="okreslony-ponizej-6">Na czas określony, krócej niż 6 miesięcy</option>
+        </select>
+      </div>
+      <div class="mt-4 grid grid-cols-2 items-end gap-3">
+        <div>
+          <label for="p-dlugosc" class="etykieta-pola">Okres próbny</label>
+          <select id="p-dlugosc" name="dlugosc" class="pole mt-1">
+            <option value="2t">2 tygodnie</option>
+            <option value="1m">1 miesiąc</option>
+            <option value="2m">2 miesiące</option>
+            <option value="3m" selected>3 miesiące</option>
+          </select>
+        </div>
+        <div>
+          <label for="p-start" class="etykieta-pola">Od</label>
+          <input id="p-start" name="start" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={START} aria-describedby="p-blad" />
+        </div>
+      </div>
+      <label class="mt-4 flex items-start gap-3 text-[0.9375rem]">
+        <input type="checkbox" name="wydluzenie" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+        <span>Wydłużenie o 1 miesiąc uzasadnione rodzajem pracy (art. 25 § 2³)</span>
+      </label>
+      <p id="p-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Okres próbny trwa do</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-data" data-w="koniec">{dataPoPolsku(r.koniec)}</p>
+        <p class="status-terminu" data-w="status" data-status="w-terminie">Zgodny z Kodeksem pracy</p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Najdłużej przy tej umowie</dt><dd data-w="maks">{r.maks} miesiące</dd></div>
+        <div><dt>Okres wypowiedzenia</dt><dd data-w="wypowiedzenie">{r.wypowiedzenie}</dd></div>
+      </dl>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="zasady">Zasady okresu próbnego</h2>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Najdłuższy okres próbny i wypowiedzenie</caption>
+        <thead><tr><th scope="col">Umowa po okresie próbnym</th><th scope="col">Okres próbny najdłużej</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Na czas nieokreślony albo określony co najmniej 12 miesięcy</th><td>3 miesiące (art. 25 § 2)</td></tr>
+          <tr><th scope="row">Na czas określony od 6 do mniej niż 12 miesięcy</th><td>2 miesiące, raz wydłużone do 3 (§ 2² pkt 2, § 2³)</td></tr>
+          <tr><th scope="row">Na czas określony krócej niż 6 miesięcy</th><td>1 miesiąc, raz wydłużony do 2 (§ 2² pkt 1, § 2³)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Wypowiedzenie: 3 dni robocze przy okresie próbnym do 2 tygodni, 1 tydzień przy dłuższym, 2 tygodnie przy
+      3 miesiącach (art. 34 Kodeksu pracy). Do kiedy trwa wypowiedzenie, policzy
+      <a href="/narzedzia/okres-wypowiedzenia">kalkulator okresu wypowiedzenia</a>. Okres próbny liczymy kalendarzowo:
+      umowa od 1 marca na 3 miesiące trwa do 31 maja (art. 112 Kodeksu cywilnego). Gdy w umowie uzgodniono wydłużenie
+      o czas urlopu albo innej usprawiedliwionej nieobecności (art. 25 § 2¹), koniec przesuwa się o te dni.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { okresProbny, type DlugoscProby, type PlanowanaUmowa } from '../../lib/narzedzia/okres-probny';
+  import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
+
+  const form = document.querySelector<HTMLFormElement>('[data-probny]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const miesiace = (m: number) => `${m} ${m === 1 ? 'miesiąc' : m < 5 ? 'miesiące' : 'miesięcy'}`;
+    const przelicz = () => {
+      const start = el('start').value;
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      const blad = poprawnaData(start) ? null : 'Wpisz datę początku umowy.';
+      b.hidden = !blad;
+      b.textContent = blad ?? '';
+      const status = w('status');
+      if (blad) {
+        w('koniec').textContent = '—';
+        status.hidden = true;
+        return;
+      }
+      const r = okresProbny(start, el('plan').value as PlanowanaUmowa, el('dlugosc').value as DlugoscProby, el('wydluzenie').checked);
+      w('koniec').textContent = dataPoPolsku(r.koniec);
+      w('maks').textContent = miesiace(r.maks);
+      w('wypowiedzenie').textContent = r.wypowiedzenie;
+      status.hidden = false;
+      status.dataset.status = r.dozwolony ? 'w-terminie' : 'po-terminie';
+      status.textContent = r.dozwolony ? 'Zgodny z Kodeksem pracy' : `Za długi: przy tej umowie najwyżej ${miesiace(r.maks)} (art. 25 § 2–2³)`;
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>
