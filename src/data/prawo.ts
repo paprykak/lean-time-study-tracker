@@ -440,7 +440,7 @@ export const AKTY = {
   rodzajeUdt: {
     nazwa: 'Rozporządzenie w sprawie rodzajów urządzeń technicznych podlegających dozorowi technicznemu',
     publikator: 'Dz.U. 2012 poz. 1468',
-    uwaga: 'bez zmian; § 1 pkt 6: urządzenia transportu bliskiego',
+    uwaga: 'bez zmian; § 1 pkt 6–7: urządzenia transportu bliskiego i dźwigi',
     adres: eli(2012, 1468),
     sprawdzono: '2026-11-12',
   },

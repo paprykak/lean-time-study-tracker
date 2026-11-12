@@ -565,7 +565,7 @@ export const NARZEDZIA: Narzedzie[] = [
     nazwa: 'Czy potrzebne uprawnienia UDT',
     krotko: 'Czy na paleciak elektryczny, wózek, suwnicę albo podest trzeba mieć zaświadczenie UDT i na ile lat.',
     kategoria: 'uprawnienia',
-    przepisy: ['rodzajeUdt', 'dozorTechniczny', 'kwalifikacjeUdt', 'wozkiBhp', 'kodeksPracy'],
+    przepisy: ['rodzajeUdt', 'dozorTechniczny', 'kwalifikacjeUdt', 'zmianaUdt2018', 'wozkiBhp', 'warunkiUtb', 'szkoleniaBhp', 'przecietneWynagrodzenie2025', 'kodeksPracy'],
     sprawdzono: '2026-11-12',
   },
   {
