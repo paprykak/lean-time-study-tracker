@@ -29,11 +29,11 @@ const faq = [
   },
   {
     pytanie: 'Jak pracować dalej, gdy kończy się zezwolenie albo oświadczenie?',
-    odpowiedz: 'Pracodawca składa wniosek o kolejne zezwolenie w okresie ważności obecnego; wtedy praca na tym samym stanowisku jest legalna do dnia, w którym decyzja stanie się ostateczna (art. 21 ust. 1). Przy oświadczeniu wniosek o zezwolenie trzeba złożyć przed dniem zakończenia pracy z oświadczenia, po co najmniej 3 miesiącach pracy na umowę o pracę (art. 71 ust. 1).',
+    odpowiedz: 'Pracodawca składa wniosek o kolejne zezwolenie w okresie ważności obecnego; gdy wniosek nie ma braków formalnych albo zostaną one uzupełnione w terminie, praca na tym samym stanowisku jest legalna do dnia, w którym decyzja stanie się ostateczna (art. 21 ust. 1). Przy oświadczeniu wniosek o zezwolenie na to samo stanowisko i na umowę o pracę trzeba złożyć przed dniem zakończenia pracy z oświadczenia, po co najmniej 3 miesiącach pracy na umowę o pracę (art. 71 ust. 1).',
   },
   {
     pytanie: 'Jak długo pracodawca przechowuje kopię karty pobytu?',
-    odpowiedz: 'Przez cały okres pracy i jeszcze 2 lata, liczone od końca roku, w którym umowa się skończyła (art. 4 ust. 4 i 6 ustawy o powierzaniu pracy cudzoziemcom). Gdy umowa kończy się w 2026 r., kopia może być przechowywana do 31 grudnia 2028 r.',
+    odpowiedz: 'Przez cały okres pracy i jeszcze 2 lata, liczone od końca roku, w którym umowa się skończyła (art. 4 ust. 4 i 6 ustawy o powierzaniu pracy cudzoziemcom). Gdy umowa kończy się w 2026 r., pracodawca przechowuje kopię co najmniej do 31 grudnia 2028 r., chyba że inne przepisy wymagają dłużej.',
   },
 ];
 ---
@@ -66,7 +66,7 @@ const faq = [
           <div>
             <label for="ct-o-zmiana" class="etykieta-pola">Zmiana umowy lub stawki</label>
             <input id="ct-o-zmiana" name="o-zmiana" type="date" class="pole mt-1" min="2025-06-01" max="2100-12-31" aria-describedby="ct-blad ct-o-zmiana-opis" />
-            <p id="ct-o-zmiana-opis" class="meta mt-1">Opcjonalnie: rodzaj umowy, stanowisko, mniejszy wymiar albo niższa stawka.</p>
+            <p id="ct-o-zmiana-opis" class="meta mt-1">Opcjonalnie: inny rodzaj umowy lub stanowisko, mniejszy wymiar, niższa stawka. Wpisz wcześniejszą z dat: aneksu albo wejścia zmiany.</p>
           </div>
         </div>
       </div>
@@ -138,9 +138,9 @@ const faq = [
       wcześniejsza jest bezpieczna.
     </p>
     <ul>
-      <li><strong>Oświadczenie:</strong> praca najwyżej 24 miesiące, start najpóźniej 6 miesięcy od złożenia (art. 61 ust. 1 pkt 5–6). 24 miesiące liczymy z dniem startu: od 1 grudnia do 30 listopada dwa lata później. Powiadomienie starosty o podjęciu pracy 7 dni od rozpoczęcia, o niepodjęciu 14 dni od dnia z ewidencji (art. 70 ust. 1).</li>
-      <li><strong>Zezwolenie na pracę:</strong> najwyżej 3 lata (art. 15). Okno 2 miesięcy na rozpoczęcie pracy liczymy z pierwszym dniem ważności, a 7 dni na powiadomienie od ostatniego dnia tego okna: to najwcześniejszy możliwy termin, bo przepis nie wskazuje dnia, w którym okoliczność „wystąpiła”. Zakończenie pracy zgłasza się, gdy następuje wcześniej niż w dniu, który datą odpowiada końcowi ważności 2 miesiące wcześniej (art. 19 pkt 3).</li>
-      <li><strong>Ochrona czasowa:</strong> powiadomienie urzędu pracy 7 dni od rozpoczęcia pracy i 7 dni od zmiany umowy, stanowiska, wymiaru albo stawki (art. 5a). Okres 3 lat z art. 41 ustawy o wygaszeniu liczymy od 5 marca 2026 r. do 4 marca 2029 r.; przepis nie przesądza, czy ostatnim dniem nie jest 5 marca.</li>
+      <li><strong>Oświadczenie:</strong> praca najwyżej 24 miesiące, start najpóźniej 6 miesięcy od złożenia (art. 61 ust. 1 pkt 5–6). 6 miesięcy liczymy od dnia po złożeniu do dnia, który datą odpowiada dniowi złożenia (art. 111 § 2 i 112 Kodeksu cywilnego). 24 miesiące liczymy z dniem startu: od 1 grudnia do 30 listopada dwa lata później. Powiadomienie starosty o podjęciu pracy 7 dni od rozpoczęcia, o niepodjęciu 14 dni od dnia z ewidencji (art. 70 ust. 1).</li>
+      <li><strong>Zezwolenie na pracę:</strong> najwyżej 3 lata (art. 15). Okno 2 miesięcy na rozpoczęcie pracy liczymy z pierwszym dniem ważności, a 7 dni na powiadomienie od ostatniego dnia tego okna: to najwcześniejszy możliwy termin, bo przepis nie wskazuje dnia, w którym okoliczność „wystąpiła”. Zakończenie pracy zgłasza się, gdy następuje wcześniej niż 2 miesiące przed końcem ważności (art. 19 pkt 3). Granicą jest dzień, który datą odpowiada końcowi ważności 2 miesiące wcześniej; przepis nie rozstrzyga, czy zakończenie w tym dniu trzeba zgłosić, więc kalkulator każe je zgłosić. Wojewodę powiadamia się też w 7 dni o zmianie siedziby, nazwy lub formy prawnej pracodawcy, przejściu zakładu pracy i zmianie nazwy stanowiska (art. 18 i 20 ust. 1).</li>
+      <li><strong>Ochrona czasowa:</strong> powiadomienie urzędu pracy 7 dni od rozpoczęcia pracy i 7 dni od zmiany rodzaju umowy lub stanowiska, zmniejszenia wymiaru albo obniżenia stawki (art. 5a). Przepis nie mówi, czy 7 dni liczyć od podpisania aneksu, czy od wejścia zmiany; liczymy od daty, którą wpiszesz, więc wpisz wcześniejszą. Okres 3 lat z art. 41 ustawy o wygaszeniu liczymy od 5 marca 2026 r. do 4 marca 2029 r.; przepis nie przesądza, czy ostatnim dniem nie jest 5 marca.</li>
     </ul>
     <p>
       Na jakiej podstawie cudzoziemiec może pracować, sprawdzi <a href="/narzedzia/praca-cudzoziemca">kalkulator podstawy

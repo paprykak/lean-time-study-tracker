@@ -28,8 +28,7 @@ describe('podstawa pracy cudzoziemca', () => {
   it('karta CUKR: bez zezwolenia (art. 42v), zgłoszenie nierozstrzygnięte; dla innych obywatelstw nie dotyczy', () => {
     const w = podstawaPracy('ukraina', 'karta-ukr');
     expect(w.werdykt).toBe('bez-zezwolenia');
-    expect(w.uwaga).toMatch(/Przepis nie mówi/);
-    expect(w.obowiazki.some((o) => o.podstawa.includes('art. 5a'))).toBe(false);
+    expect(w.obowiazki.some((o) => o.podstawa.includes('art. 41'))).toBe(true);
     expect(podstawaPracy('inne', 'karta-ukr').werdykt).toBe('nie-dotyczy');
   });
   it('Armenia, Białoruś, Mołdawia na wizie: oświadczenie (24 miesiące) albo zezwolenie, umowa do urzędu, płaca minimalna', () => {

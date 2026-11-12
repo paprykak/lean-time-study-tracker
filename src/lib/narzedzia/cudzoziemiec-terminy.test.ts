@@ -48,11 +48,12 @@ describe('zezwolenie na pracę (art. 15, 19–21)', () => {
     expect(ostatniDzienMiesiecy('2026-12-31', 2)).toBe('2027-02-27');
     expect(mapa(terminyZezwolenia({ od: '2026-12-31', do: '2027-12-30' })).niepodjecie).toMatchObject({ data: '2027-03-06', przesunieta: '2027-03-08' });
   });
-  it('zakończenie: dzień przed granicą 2 miesięcy wymaga powiadomienia w 7 dni, w dniu granicy nie', () => {
+  it('zakończenie: w dniu granicy 2 miesięcy i wcześniej powiadomienie w 7 dni, dzień po granicy nie', () => {
     expect(mapa(terminyZezwolenia({ od: '2026-03-01', do: '2029-02-28', startFaktyczny: '2026-03-02', zakonczenie: '2028-12-27' })).zakonczenie).toMatchObject({ data: '2029-01-03' });
-    const wGranicy = mapa(terminyZezwolenia({ od: '2026-03-01', do: '2029-02-28', startFaktyczny: '2026-03-02', zakonczenie: '2028-12-28' })).zakonczenie;
-    expect(wGranicy.data).toBeNull();
-    expect(wGranicy.uwaga).toMatch(/Niepotrzebne/);
+    expect(mapa(terminyZezwolenia({ od: '2026-03-01', do: '2029-02-28', startFaktyczny: '2026-03-02', zakonczenie: '2028-12-28' })).zakonczenie.data).toBe('2029-01-04');
+    const poGranicy = mapa(terminyZezwolenia({ od: '2026-03-01', do: '2029-02-28', startFaktyczny: '2026-03-02', zakonczenie: '2028-12-29' })).zakonczenie;
+    expect(poGranicy.data).toBeNull();
+    expect(poGranicy.uwaga).toMatch(/Niepotrzebne/);
   });
   it('limity od 29 lutego i 31 stycznia: ostatni dzień miesiąca (art. 112 KC), bez fałszywego błędu', () => {
     expect(koniecLimitu('2028-02-29', 24)).toBe('2030-02-28');

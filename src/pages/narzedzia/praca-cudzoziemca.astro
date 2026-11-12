@@ -9,7 +9,7 @@ const r = podstawaPracy('ukraina', 'ochrona-czasowa');
 const faq = [
   {
     pytanie: 'Czy obywatel Ukrainy potrzebuje zezwolenia na pracę?',
-    odpowiedz: 'Nie, gdy korzysta z ochrony czasowej (art. 3 ust. 1 pkt 12 ustawy o powierzaniu pracy cudzoziemcom). Tak samo przez 3 lata od 5 marca 2026 r., gdy przebywa w Polsce legalnie bez ochrony czasowej (art. 41 ustawy o wygaszeniu pomocy obywatelom Ukrainy). Pracodawca powiadamia wtedy powiatowy urząd pracy w ciągu 7 dni od rozpoczęcia pracy (art. 5a). Dawny art. 22 specustawy o pomocy obywatelom Ukrainy nie obowiązuje od 5 marca 2026 r.',
+    odpowiedz: 'Nie, gdy korzysta z ochrony czasowej (art. 3 ust. 1 pkt 12 ustawy o powierzaniu pracy cudzoziemcom). Tak samo przez 3 lata od 5 marca 2026 r., gdy przebywa w Polsce legalnie bez ochrony czasowej (art. 41 ustawy o wygaszeniu pomocy obywatelom Ukrainy). Pracodawca powiadamia wtedy powiatowy urząd pracy w ciągu 7 dni od rozpoczęcia pracy (art. 5a). Dawny art. 22 specustawy o pomocy obywatelom Ukrainy nie obowiązuje od 5 marca 2026 r.; stosuje się go tylko do powiadomień złożonych przed tym dniem (art. 40 ustawy o wygaszeniu).',
   },
   {
     pytanie: 'Na jak długo jest oświadczenie o powierzeniu pracy?',
@@ -17,7 +17,7 @@ const faq = [
   },
   {
     pytanie: 'Na jak długo wydaje się zezwolenie na pracę?',
-    odpowiedz: 'Najwyżej na 3 lata (art. 15 ustawy o powierzaniu pracy cudzoziemcom). Najwyżej na rok, gdy firma działa krócej niż rok albo praca ma trwać nie więcej niż pół etatu lub 20 godzin w tygodniu (art. 34 ust. 1).',
+    odpowiedz: 'Najwyżej na 3 lata (art. 15 ustawy o powierzaniu pracy cudzoziemcom). Najwyżej na rok, gdy firma działa krócej niż rok albo praca ma trwać nie więcej niż pół etatu lub 20 godzin w tygodniu (art. 34 ust. 1). Pracownikowi tymczasowemu z agencji najwyżej na okres dozwolony w art. 20 ustawy o zatrudnianiu pracowników tymczasowych (art. 34 ust. 2).',
   },
   {
     pytanie: 'Czy cudzoziemiec może zacząć pracę bez umowy na piśmie?',
@@ -88,7 +88,7 @@ const faq = [
           <tr><th scope="row">Student studiów stacjonarnych w Polsce</th><td>bez zezwolenia (§ 1 pkt 12 rozporządzenia Dz.U. 2025 poz. 1620)</td></tr>
           <tr><th scope="row">Karta pobytu „pobyt i praca”</th><td>na warunkach tego zezwolenia (art. 3 ust. 2 pkt 1)</td></tr>
           <tr><th scope="row">Armenia, Białoruś, Mołdawia, Ukraina na wizie albo bez wizy</th><td>oświadczenie do 24 miesięcy albo zezwolenie (art. 3 ust. 3, art. 61); Ukraina też jak przy ochronie czasowej (art. 41 ustawy o wygaszeniu)</td></tr>
-          <tr><th scope="row">Inne państwa na wizie, bez wizy, na pobyt czasowy</th><td>zezwolenie na pracę do 3 lat (art. 3 ust. 3, art. 15)</td></tr>
+          <tr><th scope="row">Inne państwa na wizie, bez wizy, na pobyt czasowy</th><td>zezwolenie na pracę do 3 lat (art. 3 ust. 3, art. 15); wiza turystyczna i w celu odwiedzin nie pozwalają pracować</td></tr>
         </tbody>
       </table>
     </div>
@@ -100,9 +100,9 @@ const faq = [
 
     <h2 id="obywatele-ukrainy">Obywatele Ukrainy od 5 marca 2026 r.</h2>
     <ul>
-      <li>Z ochroną czasową (PESEL ze statusem UKR): praca bez zezwolenia, pracodawca powiadamia urząd pracy przez praca.gov.pl w 7 dni od rozpoczęcia pracy i ponownie w 7 dni po zmianie umowy, stanowiska, wymiaru albo stawki (art. 5a). Legalny pobyt trwa, dopóki obowiązuje decyzja Rady UE o ochronie czasowej (art. 106 ust. 1 ustawy o udzielaniu cudzoziemcom ochrony).</li>
-      <li>Bez ochrony czasowej, ale z legalnym pobytem: przez 3 lata od 5 marca 2026 r. te same zasady (art. 41 ustawy o wygaszeniu).</li>
-      <li>Karta pobytu dla byłych beneficjentów ochrony czasowej (potocznie CUKR): to zezwolenie na pobyt czasowy na 3 lata i zwolnienie z zezwolenia na pracę (art. 42p, 42r i 42v ustawy o pomocy obywatelom Ukrainy). Wniosek można złożyć do 4 marca 2027 r. (art. 42x).</li>
+      <li>Z ochroną czasową (PESEL ze statusem UKR): praca bez zezwolenia, pracodawca powiadamia urząd pracy przez praca.gov.pl w 7 dni od rozpoczęcia pracy i ponownie w 7 dni po zmianie umowy, stanowiska, wymiaru albo stawki (art. 5a). Legalny pobyt trwa, dopóki obowiązuje decyzja Rady UE o ochronie czasowej, chyba że ustawa stanowi inaczej, na przykład po utracie statusu UKR (art. 106 ust. 1 ustawy o udzielaniu cudzoziemcom ochrony).</li>
+      <li>Bez ochrony czasowej, ale z legalnym pobytem: przez 3 lata od 5 marca 2026 r. te same zasady (art. 41 ustawy o wygaszeniu). Przepis nie rozstrzyga, czy powiadomienie z art. 5a jest potrzebne, gdy praca ma inną podstawę (np. kartę pobytu); bezpieczniej je złożyć.</li>
+      <li>Karta pobytu dla byłych beneficjentów ochrony czasowej (potocznie CUKR): to zezwolenie na pobyt czasowy na 3 lata i zwolnienie z zezwolenia na pracę (art. 42p, 42r i 42v ustawy o pomocy obywatelom Ukrainy). Wniosek złożony do 4 marca 2027 r. zapewnia legalny pobyt do odbioru karty albo ostatecznej decyzji (art. 42x); w dniu wniosku trzeba mieć status UKR (art. 42c).</li>
     </ul>
 
     <h2 id="obowiazki">Obowiązki pracodawcy</h2>

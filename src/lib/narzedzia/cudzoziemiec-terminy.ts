@@ -20,7 +20,8 @@
 //   ostatniego lutego dwa lata później; 6 miesięcy od złożenia oświadczenia jak art. 112 KC (dzień odpowiadający datą);
 // - niepodjęcie pracy przy zezwoleniu: okoliczność zachodzi z ostatnim dniem 2 miesięcy od początku ważności (liczonych
 //   z tym dniem), a 7 dni liczymy od tego ostatniego dnia; zakończenie „wcześniej niż 2 miesiące przed upływem” ważności:
-//   przed dniem, który datą odpowiada dniowi końca ważności 2 miesiące wcześniej (art. 112 KC wstecz);
+//   w dniu, który datą odpowiada dniowi końca ważności 2 miesiące wcześniej, albo przed nim (wariant bezpieczny: powiadomić
+//   także w dniu granicy, bo przepis go nie rozstrzyga);
 // - 3 lata z art. 41 kończą się 4 marca 2029 r. (dzień przed rocznicą wejścia w życie); możliwe też liczenie do 5 marca.
 import { przesunZDniaWolnego } from './termin-odwolania';
 import { dataPoPolsku, dodajDni, dodajMiesiace, poprawnaData } from './terminy';
@@ -108,7 +109,7 @@ export function terminyOswiadczenia(d: DaneOswiadczenia): Termin[] {
     data: maks,
     podstawa: `art. 61 ust. 1 pkt 5 ${U}`,
     stan: d.koniec <= maks ? 'ok' : 'blad',
-    ...(d.koniec > maks ? { uwaga: 'Okres w oświadczeniu przekracza 24 miesiące.' } : {}),
+    ...(d.koniec > maks ? { uwaga: 'Okres w oświadczeniu wygląda na dłuższy niż 24 miesiące (liczymy z dniem startu): sprawdź daty.' } : {}),
   });
   if (d.startFaktyczny) lista.push({ klucz: 'podjecie', nazwa: 'Powiadomienie starosty o podjęciu pracy', ...wDniach(d.startFaktyczny, 7), podstawa: `art. 70 ust. 1 pkt 1 ${U}` });
   else lista.push({ klucz: 'niepodjecie', nazwa: 'Powiadomienie starosty o niepodjęciu pracy', ...wDniach(d.startEwidencja, 14), podstawa: `art. 70 ust. 1 pkt 2 ${U}` });
@@ -119,7 +120,7 @@ export function terminyOswiadczenia(d: DaneOswiadczenia): Termin[] {
       nazwa: 'Wniosek o zezwolenie na pracę, żeby pracować dalej bez przerwy',
       data: dodajDni(d.koniec, -1),
       podstawa: `art. 71 ust. 1 ${U}`,
-      uwaga: 'Wymaga co najmniej 3 miesięcy pracy na umowę o pracę z tego oświadczenia; wtedy praca jest legalna do decyzji.',
+      uwaga: 'Wymaga co najmniej 3 miesięcy pracy na umowę o pracę z tego oświadczenia, wniosku na to samo stanowisko i na umowę o pracę, bez braków formalnych albo z brakami uzupełnionymi w terminie; wtedy praca jest legalna do decyzji.',
     },
   );
   return lista;
@@ -169,13 +170,13 @@ export function terminyZezwolenia(d: DaneZezwolenia): Termin[] {
   });
   if (d.zakonczenie) {
     const granica = dodajMiesiace(d.do, -2);
-    if (d.zakonczenie < granica) {
+    if (d.zakonczenie <= granica) {
       lista.push({ klucz: 'zakonczenie', nazwa: 'Powiadomienie wojewody o wcześniejszym zakończeniu pracy', ...wDniach(d.zakonczenie, 7), podstawa: `art. 19 pkt 3 i art. 20 ust. 1 ${U}` });
     } else {
-      lista.push({ klucz: 'zakonczenie', nazwa: 'Powiadomienie o zakończeniu pracy', data: null, podstawa: `art. 19 pkt 3 ${U}`, uwaga: 'Niepotrzebne: praca kończy się nie wcześniej niż 2 miesiące przed końcem zezwolenia.' });
+      lista.push({ klucz: 'zakonczenie', nazwa: 'Powiadomienie o zakończeniu pracy', data: null, podstawa: `art. 19 pkt 3 ${U}`, uwaga: 'Niepotrzebne: praca kończy się później niż 2 miesiące przed końcem zezwolenia.' });
     }
   }
-  lista.push({ klucz: 'kolejne', nazwa: 'Wniosek o kolejne zezwolenie, żeby pracować dalej bez przerwy', data: d.do, podstawa: `art. 21 ust. 1 ${U}`, uwaga: 'Wniosek musi wpłynąć w okresie ważności obecnego zezwolenia.' });
+  lista.push({ klucz: 'kolejne', nazwa: 'Wniosek o kolejne zezwolenie, żeby pracować dalej bez przerwy', data: d.do, podstawa: `art. 21 ust. 1 ${U}`, uwaga: 'Wniosek musi wpłynąć w okresie ważności obecnego zezwolenia, bez braków formalnych albo z brakami uzupełnionymi w terminie.' });
   return lista;
 }
 
@@ -196,7 +197,7 @@ export function terminyOchrony(d: DaneOchrony): Termin[] {
     lista.push({ klucz: 'pup-zmiana', nazwa: 'Ponowne powiadomienie urzędu pracy po zmianie', ...wDniach(d.zmiana, 7), podstawa: `art. 5a ust. 5 ${U}` });
   }
   const karta: Termin[] = [
-    { klucz: 'karta', nazwa: 'Wniosek o kartę pobytu dla obywateli Ukrainy (CUKR)', data: KARTA_UKR_WNIOSEK_DO, podstawa: 'art. 42c i 42x ustawy o pomocy obywatelom Ukrainy', uwaga: 'Dla osób ze statusem UKR 4 czerwca 2025 r., w dniu wniosku i nieprzerwanie co najmniej 365 dni.' },
+    { klucz: 'karta', nazwa: 'Wniosek o kartę pobytu CUKR, który zapewnia legalny pobyt do decyzji', data: KARTA_UKR_WNIOSEK_DO, podstawa: 'art. 42c i 42x ustawy o pomocy obywatelom Ukrainy', uwaga: 'Dla osób ze statusem UKR 4 czerwca 2025 r., w dniu wniosku i nieprzerwanie co najmniej 365 dni (art. 42c).' },
   ];
   if (d.start <= KARTA_UKR_WNIOSEK_DO) lista.push(...karta);
   lista.push(

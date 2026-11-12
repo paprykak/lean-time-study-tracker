@@ -13,17 +13,25 @@
 //   ciąży, przedłuża się do dnia porodu; § 3^1: nie dotyczy umowy na zastępstwo.
 //
 // Interpretacje:
-// 1. Upływ trzeciego miesiąca ciąży: Kodeks pracy nie mówi, jak go liczyć. Liczymy 3 miesiące kalendarzowe od dnia
-//    początku ciąży, który wpisuje użytkownik, według art. 112 Kodeksu cywilnego (przez art. 300 Kp): koniec w dniu, który
-//    datą odpowiada dniowi początkowemu, a gdy go nie ma, w ostatnim dniu miesiąca (dodajMiesiace z terminy.ts).
-// 2. Umowa kończąca się dokładnie w dniu upływu 3. miesiąca: przepis nie rozstrzyga, czy kończy się „po upływie”.
-//    Zwracamy osobny status „granica” i nie zgadujemy.
+// 1. Upływ trzeciego miesiąca ciąży: Kodeks pracy nie mówi, jak go liczyć ani od której daty. Liczymy od początku ciąży
+//    z zaświadczenia lekarskiego. Są dwa warianty: (A) art. 112 KC (przez art. 300 Kp): koniec w dniu, który datą
+//    odpowiada dniowi początkowemu (od 10 stycznia: 10 kwietnia); (B) dzień początku ciąży jest pierwszym dniem
+//    pierwszego miesiąca, więc 3. miesiąc upływa z końcem dnia poprzedzającego (9 kwietnia). Bierzemy wcześniejszy
+//    wariant B, bezpieczny dla pracownicy: przy nim przedłużenie obejmuje więcej umów. Gdy w ostatnim miesiącu nie ma
+//    dnia o tej dacie, punktem odniesienia jest ostatni dzień miesiąca (od 30 listopada: 28 lutego, upływ 27 lutego).
+// 2. Umowa kończąca się dokładnie w dniu upływu (wariant B): kończy się razem z 3. miesiącem, a nie „po upływie”;
+//    w wariancie A kończy się przed upływem. Przepis tego nie rozstrzyga wprost, więc zwracamy status „granica”.
 // 3. Gdy umowa ma datę końca wcześniejszą niż koniec okresu wypowiedzenia, ostatnim dniem jest data z umowy
 //    (art. 30 § 1 pkt 4). Gdy koniec zależy od powrotu osoby zastępowanej, daty nie znamy i jej nie liczymy.
 // 4. Staż do okresu wypowiedzenia: pełne miesiące od początku pracy do dnia doręczenia (pelneMiesiace, jak w kalkulatorze
-//    okresu wypowiedzenia).
+//    okresu wypowiedzenia). Do stażu wlicza się pracę u poprzedniego pracodawcy przy przejściu zakładu (art. 36 § 1^1)
+//    oraz zlecenie i działalność na rzecz tego pracodawcy (art. 302^1 § 8): użytkownik wpisuje najwcześniejszą datę.
+//    Gdy próg 6 miesięcy albo 3 lat mija w trakcie wypowiedzenia, przepis nie mówi, który okres stosować.
+// 5. Przedłużenie oceniamy od daty końca wpisanej w umowie. Gdy ta data wypada przed końcem okresu wypowiedzenia,
+//    a umowa się przedłuża, ostatnim dniem jest dzień porodu. Gdy wypowiedzenie kończy umowę przed tą datą, przepis
+//    nie mówi wprost, czy przedłużenie obejmuje taką umowę: zaznaczamy to (przedluzeniePoWypowiedzeniu).
 import { koniecWypowiedzenia, okresWypowiedzenia, pelneMiesiace, type Okres } from './wypowiedzenie';
-import { dodajMiesiace, poprawnaData } from './terminy';
+import { dodajDni, dodajMiesiace, poprawnaData } from './terminy';
 
 export interface WypowiedzenieZastepstwa {
   stazMiesiecy: number;
@@ -69,12 +77,12 @@ export type StatusPrzedluzenia =
 
 export interface PrzedluzenieDoPorodu {
   status: StatusPrzedluzenia;
-  /** Dzień, w którym upływa 3. miesiąc ciąży (art. 112 KC). */
+  /** Dzień, z którego końcem upływa 3. miesiąc ciąży (wariant B). */
   uplyw3Miesiaca: string;
 }
 
-/** Upływ trzeciego miesiąca ciąży: 3 miesiące kalendarzowe od początku ciąży (art. 112 KC). */
-export const uplywTrzeciegoMiesiaca = (poczatekCiazy: string) => dodajMiesiace(poczatekCiazy, 3);
+/** Upływ trzeciego miesiąca ciąży (wariant B, wcześniejszy): dzień przed dniem, który datą odpowiada początkowi ciąży. */
+export const uplywTrzeciegoMiesiaca = (poczatekCiazy: string) => dodajDni(dodajMiesiace(poczatekCiazy, 3), -1);
 
 export function przedluzenieDoPorodu(rodzaj: RodzajUmowyWCiazy, koniecUmowy: string, poczatekCiazy: string): PrzedluzenieDoPorodu {
   if (!poprawnaData(koniecUmowy)) throw new Error('Wpisz datę końca umowy.');
@@ -93,3 +101,40 @@ export function przedluzenieDoPorodu(rodzaj: RodzajUmowyWCiazy, koniecUmowy: str
 /** Czy wypowiedzenie doręczono w ciąży (art. 177 § 1: zakaz także przy zastępstwie, z wyjątkami z § 1 pkt 2 i § 4). */
 export const wypowiedzenieWCiazy = (doreczenie: string, poczatekCiazy: string) =>
   poprawnaData(doreczenie) && poprawnaData(poczatekCiazy) && doreczenie >= poczatekCiazy;
+
+export interface DaneUmowy {
+  rodzaj: RodzajUmowyWCiazy;
+  poczatekPracy: string;
+  doreczenie: string;
+  koniecUmowy?: string;
+  poczatekCiazy?: string;
+}
+
+export interface WynikUmowy {
+  wypowiedzenie: WypowiedzenieZastepstwa;
+  /** Ocena przedłużenia: null, gdy brak daty końca umowy albo początku ciąży (dla zastępstwa zawsze „zastepstwo”). */
+  przedluzenie: PrzedluzenieDoPorodu | null;
+  /** Ostatni dzień umowy albo „porod”, gdy umowa z datą końca przed końcem okresu przedłuża się do dnia porodu. */
+  ostatni: string | 'porod';
+  /** Przedłużenie z daty w umowie, ale wypowiedzenie kończy umowę wcześniej: przepis nie mówi wprost, co wtedy. */
+  przedluzeniePoWypowiedzeniu: boolean;
+  wypowiedzenieWCiazy: boolean;
+}
+
+/** Całość: ostatni dzień przy wypowiedzeniu, przedłużenie do dnia porodu i zakaz wypowiedzenia w ciąży. */
+export function umowaNaZastepstwo(d: DaneUmowy): WynikUmowy {
+  const wyp = wypowiedzenieZastepstwa(d.poczatekPracy, d.doreczenie, d.koniecUmowy);
+  const ciaza = d.poczatekCiazy || '';
+  if (ciaza && !poprawnaData(ciaza)) throw new Error('Wpisz poprawną datę początku ciąży.');
+  let przedluzenie: PrzedluzenieDoPorodu | null = null;
+  if (d.koniecUmowy && ciaza) przedluzenie = przedluzenieDoPorodu(d.rodzaj, d.koniecUmowy, ciaza);
+  else if (d.rodzaj === 'zastepstwo') przedluzenie = { status: 'zastepstwo', uplyw3Miesiaca: ciaza ? uplywTrzeciegoMiesiaca(ciaza) : '' };
+  const przedluza = przedluzenie?.status === 'przedluza';
+  return {
+    wypowiedzenie: wyp,
+    przedluzenie,
+    ostatni: przedluza && wyp.powod === 'termin' ? 'porod' : wyp.ostatniDzien,
+    przedluzeniePoWypowiedzeniu: przedluza && wyp.powod === 'wypowiedzenie',
+    wypowiedzenieWCiazy: wypowiedzenieWCiazy(d.doreczenie, ciaza),
+  };
+}

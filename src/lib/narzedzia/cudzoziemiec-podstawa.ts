@@ -45,7 +45,7 @@ export const OBYWATELSTWA: Record<Obywatelstwo, string> = {
 
 export const POBYTY: Record<Pobyt, string> = {
   inny: 'Wiza, bez wizy, inna karta',
-  'ochrona-czasowa': 'Ochrona czasowa (UKR)',
+  'ochrona-czasowa': 'Ochrona czasowa (status UKR)',
   'karta-ukr': 'Karta pobytu CUKR',
   'karta-praca': 'Karta pobytu i pracy',
   staly: 'Pobyt stały albo rezydent UE',
@@ -89,7 +89,7 @@ export function podstawaPracy(obywatelstwo: Obywatelstwo, pobyt: Pobyt): Wynik {
 
   let w: Pick<Wynik, 'werdykt' | 'naglowek' | 'podstawa' | 'uwaga'>;
   let zgloszenie: Obowiazek | null = null;
-  const pup5a: Obowiazek = { tekst: 'Pracodawca powiadamia powiatowy urząd pracy przez praca.gov.pl w ciągu 7 dni od rozpoczęcia pracy i ponownie w 7 dni po zmianie umowy, stanowiska, obniżeniu wymiaru albo stawki', podstawa: `art. 5a ust. 1–5 ${U}` };
+  const pup5a: Obowiazek = { tekst: 'Pracodawca powiadamia powiatowy urząd pracy przez praca.gov.pl w ciągu 7 dni od rozpoczęcia pracy i ponownie w 7 dni po zmianie rodzaju umowy lub stanowiska, zmniejszeniu wymiaru albo obniżeniu stawki', podstawa: `art. 5a ust. 1–5 ${U}` };
 
   if (obywatelstwo === 'szwajcaria') w = bez(`art. 3 ust. 1 pkt 4 ${U}`, 'Dotyczy obywateli Szwajcarii z prawem pobytu w Polsce i członków ich rodzin.');
   else if (pobyt === 'staly') w = bez(`art. 3 ust. 1 pkt 6–7 ${U}`);
@@ -99,7 +99,7 @@ export function podstawaPracy(obywatelstwo: Obywatelstwo, pobyt: Pobyt): Wynik {
     w = bez(`art. 3 ust. 1 pkt 12 ${U}`);
     zgloszenie = pup5a;
   } else if (pobyt === 'karta-ukr') {
-    w = bez('art. 42v ustawy o pomocy obywatelom Ukrainy', 'Karta z art. 42c to zezwolenie na pobyt czasowy na 3 lata (art. 42p i 42r). Przepis nie mówi, czy pracodawca zgłasza taką pracę do urzędu pracy jak przy ochronie czasowej.');
+    w = bez('art. 42v ustawy o pomocy obywatelom Ukrainy', 'Karta z art. 42c to zezwolenie na pobyt czasowy na 3 lata (art. 42p i 42r).');
   } else if (pobyt === 'karta-praca') {
     w = {
       werdykt: 'na-warunkach-karty',
@@ -107,10 +107,10 @@ export function podstawaPracy(obywatelstwo: Obywatelstwo, pobyt: Pobyt): Wynik {
       podstawa: `art. 3 ust. 2 pkt 1 ${U}`,
       uwaga: 'Praca na innych warunkach albo na innym stanowisku niż w tym zezwoleniu jest nielegalna, chyba że przepisy dopuszczają zmianę albo masz inną podstawę do pracy (art. 2 pkt 2 lit. e).',
     };
-  } else if (pobyt === 'studia-pobyt') w = bez(`art. 3 ust. 1 pkt 14 ${U}`, 'Dotyczy zezwolenia na pobyt czasowy w celu studiów (art. 144 ustawy o cudzoziemcach), także na studiach niestacjonarnych.');
+  } else if (pobyt === 'studia-pobyt') w = bez(`art. 3 ust. 1 pkt 14 ${U}`, 'Dotyczy zezwolenia na pobyt czasowy w celu studiów (art. 144 ustawy o cudzoziemcach): wydaje się je na studia stacjonarne albo kształcenie w szkole doktorskiej.');
   else if (pobyt === 'student') w = bez('§ 1 pkt 12 rozporządzenia w sprawie pracy cudzoziemców bez zezwolenia', 'Tylko studia stacjonarne w Polsce, w uczelni zatwierdzonej do przyjmowania cudzoziemców albo niepodlegającej zatwierdzeniu. Okres przejściowy dla innych uczelni skończył się 30 czerwca 2026 r.');
-  else if (pobyt === 'karta-polaka') w = bez(`art. 3 ust. 5 pkt 1 ${U}`, 'Potrzebny jest też legalny pobyt: na wizie, karcie pobytu albo w ruchu bezwizowym.');
-  else if (pobyt === 'absolwent') w = bez(`art. 3 ust. 5 pkt 2–3 ${U}`, 'Absolwent polskiej szkoły ponadpodstawowej z polskim dokumentem kwalifikacji zawodowych albo polskiej uczelni; potrzebny jest legalny pobyt.');
+  else if (pobyt === 'karta-polaka') w = bez(`art. 3 ust. 5 pkt 1 ${U}`, 'Potrzebny jest też legalny pobyt z art. 3 ust. 3 (np. wiza w celu pracy, karta pobytu; nie wiza turystyczna ani w celu odwiedzin) albo w ruchu bezwizowym.');
+  else if (pobyt === 'absolwent') w = bez(`art. 3 ust. 5 pkt 2–3 ${U}`, 'Absolwent polskiej szkoły ponadpodstawowej z polskim dokumentem kwalifikacji zawodowych albo polskiej uczelni; potrzebny jest legalny pobyt z art. 3 ust. 3 (nie wiza turystyczna ani w celu odwiedzin) albo w ruchu bezwizowym.');
   else if (obywatelstwo === 'ukraina') {
     w = bez('art. 41 ustawy o wygaszeniu pomocy obywatelom Ukrainy', 'Przez 3 lata od 5 marca 2026 r. obywatel Ukrainy przebywający legalnie bez ochrony czasowej ma dostęp do rynku pracy jak przy ochronie czasowej. Możliwe są też oświadczenie albo zezwolenie.');
     zgloszenie = pup5a;
@@ -119,7 +119,7 @@ export function podstawaPracy(obywatelstwo: Obywatelstwo, pobyt: Pobyt): Wynik {
       werdykt: 'oswiadczenie-lub-zezwolenie',
       naglowek: 'Potrzebne oświadczenie o powierzeniu pracy albo zezwolenie',
       podstawa: `art. 3 ust. 3, art. 15 i art. 61 ${U}`,
-      uwaga: 'Oświadczenie: najwyżej 24 miesiące, praca poza działalnością sezonową, start najpóźniej 6 miesięcy od złożenia. Zezwolenie na pracę: najwyżej 3 lata. Gruzji nie ma już na liście państw z oświadczeniem.',
+      uwaga: 'Oświadczenie: najwyżej 24 miesiące, praca poza działalnością sezonową, start najpóźniej 6 miesięcy od złożenia. Zezwolenie na pracę: najwyżej 3 lata. Wiza turystyczna albo w celu odwiedzin nie pozwala pracować nawet z oświadczeniem albo zezwoleniem (art. 3 ust. 3 pkt 1).',
     };
     zgloszenie = { tekst: 'Przy oświadczeniu pracodawca powiadamia starostę o podjęciu pracy w 7 dni, a o niepodjęciu w 14 dni; przy zezwoleniu wojewodę w przypadkach z art. 19', podstawa: `art. 19–20 i art. 70 ${U}` };
   } else {
@@ -127,11 +127,17 @@ export function podstawaPracy(obywatelstwo: Obywatelstwo, pobyt: Pobyt): Wynik {
       werdykt: 'zezwolenie',
       naglowek: 'Potrzebne zezwolenie na pracę',
       podstawa: `art. 3 ust. 3 i art. 15 ${U}`,
-      uwaga: 'Zezwolenie wydaje wojewoda, najwyżej na 3 lata. Obywatele Wenezueli, Gruzji i Kolumbii nie mogą pracować na zezwoleniu podczas pobytu bez wizy (rozporządzenie Dz.U. 2026 poz. 1072).',
+      uwaga: 'Zezwolenie wydaje wojewoda, najwyżej na 3 lata. Wiza turystyczna albo w celu odwiedzin nie pozwala pracować nawet z zezwoleniem (art. 3 ust. 3 pkt 1). Obywatele Wenezueli, Gruzji i Kolumbii nie mogą pracować na zezwoleniu podczas pobytu bez wizy (rozporządzenie Dz.U. 2026 poz. 1072). Obywatel Gruzji z oświadczeniem wpisanym przed 1 grudnia 2025 r. pracuje na nim do końca jego ważności (§ 3 rozporządzenia Dz.U. 2025 poz. 1617).',
     };
     zgloszenie = { tekst: 'Pracodawca powiadamia wojewodę w 7 dni, gdy praca nie zaczęła się w 2 miesiące od początku ważności zezwolenia, gdy przerwa trwa ponad 2 miesiące albo gdy praca kończy się wcześniej niż 2 miesiące przed końcem zezwolenia', podstawa: `art. 19–20 ${U}` };
   }
 
+  if (obywatelstwo === 'ukraina' && !zgloszenie && w.werdykt !== 'nie-dotyczy') {
+    zgloszenie = {
+      tekst: 'Bezpieczniej: pracodawca powiadamia urząd pracy w 7 dni od rozpoczęcia pracy. Art. 5a stosuje się do obywateli Ukrainy przebywających legalnie bez ochrony czasowej przez 3 lata od 5 marca 2026 r.; przepis nie rozstrzyga, czy także wtedy, gdy praca ma inną podstawę',
+      podstawa: `art. 5a ${U} i art. 41 ustawy o wygaszeniu`,
+    };
+  }
   const obowiazki: Obowiazek[] = [
     { tekst: 'Umowa na piśmie przed dopuszczeniem do pracy', podstawa: `art. 5 ust. 1 ${U}` },
     { tekst: 'Gdy cudzoziemiec nie zna polskiego: treść umowy na piśmie w zrozumiałym języku przed podpisaniem', podstawa: `art. 5 ust. 2 ${U}` },
