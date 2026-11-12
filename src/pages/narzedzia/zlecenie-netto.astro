@@ -1,0 +1,157 @@
+---
+// Netto z umowy zlecenia: składki według statusu zleceniobiorcy, zdrowotna, koszty 20%, zaliczka. Logika: src/lib/narzedzia/zlecenie.ts.
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { LIMIT_ULGI_MLODYCH } from '../../lib/narzedzia/netto';
+import { nettoZlecenie } from '../../lib/narzedzia/zlecenie';
+import { liczba, zl } from '../../lib/narzedzia/format';
+
+const start = nettoZlecenie({ brutto: 3000, chorobowe: true, pit2: false });
+const PRZYKLADY = [2000, 3000, 4000, 5000];
+
+const faq = [
+  {
+    pytanie: 'Ile to netto z 3000 zł brutto na zleceniu?',
+    odpowiedz: `Gdy zlecenie jest jedynym źródłem, z dobrowolnym chorobowym i bez PIT-2: ${zl(nettoZlecenie({ brutto: 3000, chorobowe: true }).netto)}. Z PIT-2: ${zl(nettoZlecenie({ brutto: 3000, chorobowe: true, pit2: true }).netto)}. Student do 26 lat dostaje całe ${zl(3000)}.`,
+  },
+  {
+    pytanie: 'Czy student na zleceniu płaci składki?',
+    odpowiedz: `Nie. Uczniowie szkół ponadpodstawowych i studenci do 26 lat nie podlegają ubezpieczeniom emerytalnemu i rentowym ze zlecenia (art. 6 ust. 4 ustawy o systemie ubezpieczeń społecznych), więc nie płacą też składki zdrowotnej z tej umowy. Ich przychody ze zlecenia do ${liczba(LIMIT_ULGI_MLODYCH)} zł w roku są zwolnione z podatku (art. 21 ust. 1 pkt 148 ustawy o PIT).`,
+  },
+  {
+    pytanie: 'Czy pracując na etacie płacę ZUS od zlecenia?',
+    odpowiedz: 'Jeśli na etacie u innego pracodawcy zarabiasz co najmniej płacę minimalną, składki emerytalna i rentowe od zlecenia są dobrowolne (art. 9 ust. 1 i 1a ustawy o systemie ubezpieczeń społecznych). Składkę zdrowotną płaci się od każdej umowy osobno (art. 82 ust. 1 ustawy o świadczeniach opieki zdrowotnej). Przy zleceniu u własnego pracodawcy albo na jego rzecz jesteś do składek traktowany jak pracownik (art. 8 ust. 2a ustawy o systemie ubezpieczeń społecznych).',
+  },
+  {
+    pytanie: 'Ile wynoszą koszty uzyskania przychodu na zleceniu?',
+    odpowiedz: '20% przychodu pomniejszonego o składki emerytalną, rentowe i chorobową (art. 22 ust. 9 pkt 4 ustawy o PIT). Zaliczka to 12% podstawy, a z PIT-2 mniej o 300 zł (art. 41 ust. 1 i art. 31b).',
+  },
+  {
+    pytanie: 'Czy na zleceniu jest minimalna stawka godzinowa?',
+    odpowiedz: 'Tak, w 2026 r. 31,40 zł brutto za każdą godzinę wykonywania zlecenia (art. 8a ustawy o minimalnym wynagrodzeniu za pracę). Więcej w narzędziu „Płaca minimalna: sprawdź pasek”.',
+  },
+];
+---
+<StronaNarzedzia
+  slug="zlecenie-netto"
+  tytul="Umowa zlecenie: ile netto z brutto"
+  opis="Policz netto z umowy zlecenia: student do 26 lat, zlecenie jako jedyne źródło albo obok etatu, dobrowolne chorobowe, koszty 20%, PIT-2. Każda kwota z podstawą w przepisach."
+  h1="Kalkulator netto: umowa zlecenie"
+  lead="Ile zostanie z umowy zlecenia, zależy od tego, kim jesteś: student do 26 lat dostaje całą kwotę, osoba na etacie płaci zwykle tylko zdrowotną i podatek, a gdy zlecenie jest jedynym źródłem, dochodzą składki ZUS. Wybierz swoją sytuację i wpisz kwotę."
+  faq={faq}
+>
+  <form class="kalkulator" data-zlecenie novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twoje zlecenie</h2>
+      <div class="mt-4">
+        <label for="z-brutto" class="etykieta-pola">Kwota brutto z umowy w miesiącu (zł)</label>
+        <input id="z-brutto" name="brutto" class="pole mt-1 max-w-48" type="text" inputmode="decimal" autocomplete="off" value="3000" aria-describedby="z-blad" />
+        <p id="z-blad" class="blad-pola" data-blad="brutto" hidden></p>
+      </div>
+      <fieldset class="mt-5">
+        <legend class="etykieta">Twoja sytuacja</legend>
+        <div class="opcje-pionowe mt-2">
+          <label><input type="radio" name="status" value="jedyne" checked /> Zlecenie to moje jedyne źródło (albo etat poniżej płacy minimalnej)</label>
+          <label><input type="radio" name="status" value="etat" /> Mam etat u innego pracodawcy z pensją co najmniej minimalną</label>
+          <label><input type="radio" name="status" value="student" /> Uczę się albo studiuję i mam mniej niż 26 lat</label>
+        </div>
+      </fieldset>
+      <div data-tylko-jedyne>
+        <label class="mt-4 flex items-start gap-3 text-[0.9375rem]">
+          <input type="checkbox" name="chorobowe" checked class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+          <span>Dobrowolne ubezpieczenie chorobowe (prawo do L4)</span>
+        </label>
+      </div>
+      <div data-bez-studenta>
+        <label class="mt-3 flex items-start gap-3 text-[0.9375rem]">
+          <input type="checkbox" name="pit2" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+          <span>Złożony PIT-2 (zaliczka mniejsza o 300 zł)</span>
+        </label>
+        <label class="mt-3 flex items-start gap-3 text-[0.9375rem]">
+          <input type="checkbox" name="mlody" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+          <span>Mam mniej niż 26 lat, ale się nie uczę (bez podatku)</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Na rękę (netto)</h2>
+      <p class="wynik-kwota" aria-live="polite" aria-atomic="true"><span data-w="netto">{zl(start.netto)}</span></p>
+      <dl class="wynik-lista">
+        <div><dt>Składki ZUS (emerytalna, rentowa, chorobowa)</dt><dd data-w="spoleczne">{zl(start.spoleczne)}</dd></div>
+        <div><dt>Składka zdrowotna 9%</dt><dd data-w="zdrowotna">{zl(start.zdrowotna)}</dd></div>
+        <div><dt>Koszty uzyskania 20%</dt><dd data-w="koszty">{zl(start.koszty)}</dd></div>
+        <div><dt>Zaliczka na podatek</dt><dd data-w="zaliczka">{zl(start.zaliczka)}</dd></div>
+      </dl>
+      <p class="wynik-uwaga" data-w="uwaga" hidden></p>
+      <p class="meta mt-4">Zlecenie z własnym pracodawcą albo wykonywane na jego rzecz: do składek jesteś traktowany jak pracownik (art. 8 ust. 2a ustawy o systemie ubezpieczeń społecznych), więc ten kalkulator go nie liczy.</p>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="tabela">Zlecenie netto: przykłady</h2>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Netto z umowy zlecenia według sytuacji, bez PIT-2</caption>
+        <thead><tr><th scope="col">Brutto</th><th scope="col">Jedyne źródło, z chorobowym</th><th scope="col">Obok etatu</th><th scope="col">Student do 26 lat</th></tr></thead>
+        <tbody>
+          {PRZYKLADY.map((b) => (
+            <tr>
+              <th scope="row">{zl(b)}</th>
+              <td>{zl(nettoZlecenie({ brutto: b, chorobowe: true }).netto)}</td>
+              <td>{zl(nettoZlecenie({ brutto: b, status: 'etat' }).netto)}</td>
+              <td>{zl(nettoZlecenie({ brutto: b, status: 'student' }).netto)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <ol>
+      <li><strong>Składki społeczne:</strong> emerytalna 9,76% i rentowe 1,5% obowiązkowo, gdy zlecenie jest jedynym tytułem, chorobowa 2,45% dobrowolnie (art. 6 ust. 1 pkt 4, art. 11 ust. 2, art. 16 i 22 ustawy o systemie ubezpieczeń społecznych). Przy etacie u innego pracodawcy z co najmniej płacą minimalną składki ze zlecenia są dobrowolne (art. 9 ust. 1 i 1a).</li>
+      <li><strong>Składka zdrowotna:</strong> 9% od kwoty pomniejszonej o składki społeczne (art. 79 ust. 1 i art. 81 ust. 6 ustawy o świadczeniach opieki zdrowotnej), z każdej umowy osobno (art. 82 ust. 1).</li>
+      <li><strong>Koszty i podatek:</strong> koszty 20% kwoty po składkach (art. 22 ust. 9 pkt 4 ustawy o PIT), zaliczka 12% podstawy zaokrąglonej do pełnych złotych, z PIT-2 mniej o 300 zł (art. 41 ust. 1, art. 31b, art. 63 § 1 Ordynacji podatkowej).</li>
+    </ol>
+    <p>
+      Przy umowie do 200 zł z osobą, która nie jest pracownikiem płatnika, pobiera się podatek zryczałtowany 12% przychodu
+      (art. 30 ust. 1 pkt 5a ustawy o PIT). Składki od zlecenia płaci też zleceniodawca; tu liczymy tylko to, co potrąca się
+      zleceniobiorcy.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { nettoZlecenie, type StatusZleceniobiorcy } from '../../lib/narzedzia/zlecenie';
+  import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
+
+  const form = document.querySelector<HTMLFormElement>('[data-zlecenie]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const przelicz = () => {
+      const status = (form.querySelector<HTMLInputElement>('input[name="status"]:checked')?.value ?? 'jedyne') as StatusZleceniobiorcy;
+      form.querySelector<HTMLElement>('[data-tylko-jedyne]')!.hidden = status !== 'jedyne';
+      form.querySelector<HTMLElement>('[data-bez-studenta]')!.hidden = status === 'student';
+      const brutto = wpisanaLiczba(el('brutto').value);
+      const b = form.querySelector<HTMLElement>('[data-blad="brutto"]')!;
+      const blad = !(brutto > 0 && brutto < 1_000_000) ? 'Wpisz kwotę brutto z umowy, na przykład 3000.' : null;
+      b.hidden = !blad;
+      b.textContent = blad ?? '';
+      el('brutto').setAttribute('aria-invalid', blad ? 'true' : 'false');
+      if (blad) {
+        w('netto').textContent = '—';
+        return;
+      }
+      const r = nettoZlecenie({ brutto, status, chorobowe: el('chorobowe').checked, pit2: el('pit2').checked, ulgaMlodych: el('mlody').checked });
+      w('netto').textContent = zl(r.netto);
+      for (const k of ['spoleczne', 'zdrowotna', 'koszty', 'zaliczka'] as const) w(k).textContent = zl(r[k]);
+      const uwaga = r.malaUmowa ? 'Umowa do 200 zł z osobą, która nie jest pracownikiem płatnika: zamiast zaliczki pobiera się podatek zryczałtowany 12% całej kwoty (art. 30 ust. 1 pkt 5a ustawy o PIT).' : null;
+      w('uwaga').hidden = !uwaga;
+      w('uwaga').textContent = uwaga ?? '';
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>

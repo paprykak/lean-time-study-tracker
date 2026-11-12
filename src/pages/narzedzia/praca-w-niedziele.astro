@@ -1,0 +1,144 @@
+---
+// Praca w niedzielę i święto: dzień wolny albo dodatek 100% (art. 151^9–151^12 Kp). Logika: src/lib/narzedzia/niedziela-swieto.ts.
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+
+const faq = [
+  {
+    pytanie: 'Co się należy za pracę w niedzielę?',
+    odpowiedz: 'Inny dzień wolny w ciągu 6 dni kalendarzowych przed albo po tej niedzieli. Gdy to niemożliwe, dzień wolny do końca okresu rozliczeniowego, a gdy i to niemożliwe, dodatek 100% wynagrodzenia za każdą godzinę pracy w niedzielę (art. 151^11 § 1 pkt 1 i § 2 Kodeksu pracy).',
+  },
+  {
+    pytanie: 'Co się należy za pracę w święto?',
+    odpowiedz: 'Inny dzień wolny w ciągu okresu rozliczeniowego, a gdy to niemożliwe, dodatek 100% za każdą godzinę pracy w święto (art. 151^11 § 1 pkt 2 i § 3). Do pracy w święto przypadające w niedzielę stosuje się przepisy o niedzieli (§ 4).',
+  },
+  {
+    pytanie: 'Od której godziny liczy się niedziela w pracy?',
+    odpowiedz: 'Od 6:00 w niedzielę do 6:00 w poniedziałek, chyba że pracodawca ustalił inną godzinę (art. 151^9 § 2 Kodeksu pracy). Nocna zmiana z soboty na niedzielę do 6:00 nie jest więc pracą w niedzielę.',
+  },
+  {
+    pytanie: 'Kiedy wolno pracować w niedzielę?',
+    odpowiedz: 'Między innymi w ruchu ciągłym, przy pracy zmianowej, przy niezbędnych remontach, w transporcie, przy pilnowaniu mienia i przy akcjach ratowniczych (art. 151^10 Kodeksu pracy). Pracujący w niedziele powinien mieć co najmniej raz na 4 tygodnie wolną niedzielę (art. 151^12).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="praca-w-niedziele"
+  tytul="Praca w niedzielę i święto: dzień wolny czy dodatek 100%"
+  opis="Co się należy za pracę w niedzielę i święto: dzień wolny w ciągu 6 dni albo do końca okresu rozliczeniowego, a gdy się nie da, dodatek 100% za każdą godzinę."
+  h1="Praca w niedzielę i święto: co się należy"
+  lead="Za pracę w niedzielę pracodawca daje inny dzień wolny w ciągu 6 dni przed albo po niej, za święto w okresie rozliczeniowym. Dopiero gdy to niemożliwe, płaci dodatek 100% za każdą godzinę. Wpisz datę, a pokażemy terminy."
+  faq={faq}
+>
+  <form class="kalkulator" data-niedziela novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twój dzień pracy</h2>
+      <div class="mt-4">
+        <label for="ns-data" class="etykieta-pola">Data pracy (niedziela albo święto)</label>
+        <input id="ns-data" name="data" type="date" class="pole mt-1 max-w-56" min="2025-01-01" max="2027-12-31" value="2026-11-15" aria-describedby="ns-blad" />
+        <p id="ns-blad" class="blad-pola" data-blad="data" hidden></p>
+      </div>
+      <div class="mt-4">
+        <label for="ns-okres" class="etykieta-pola">Okres rozliczeniowy (liczony od stycznia)</label>
+        <select id="ns-okres" name="okres" class="pole mt-1">
+          <option value="1" selected>1 miesiąc</option>
+          <option value="2">2 miesiące</option>
+          <option value="3">3 miesiące</option>
+          <option value="4">4 miesiące</option>
+          <option value="6">6 miesięcy</option>
+          <option value="12">12 miesięcy</option>
+        </select>
+      </div>
+      <div class="mt-4 grid grid-cols-2 gap-4">
+        <div>
+          <label for="ns-godziny" class="etykieta-pola">Godziny pracy</label>
+          <input id="ns-godziny" name="godziny" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="12" />
+        </div>
+        <div>
+          <label for="ns-stawka" class="etykieta-pola">Stawka za godzinę (zł)</label>
+          <input id="ns-stawka" name="stawka" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="35" />
+        </div>
+      </div>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta" data-w="naglowek">Dzień wolny za niedzielę najpierw</h2>
+      <p class="wynik-data" aria-live="polite" aria-atomic="true" data-w="okno">9–21 listopada 2026 r.</p>
+      <dl class="wynik-lista">
+        <div><dt>Rodzaj dnia</dt><dd data-w="rodzaj">niedziela</dd></div>
+        <div><dt data-w="koniec-etykieta">Gdy się nie da: dzień wolny do</dt><dd data-w="koniec">30 listopada 2026 r. (koniec okresu rozliczeniowego)</dd></div>
+        <div><dt>Gdy i to się nie da: dodatek 100%</dt><dd data-w="dodatek">420,00 zł</dd></div>
+      </dl>
+      <p class="wynik-uwaga" data-w="uwaga" hidden></p>
+      <p class="meta mt-4">Dotyczy pracy dozwolonej w niedziele i święta (art. 151<sup>10</sup> pkt 1–9 i 11), m.in. zmianowej i w ruchu ciągłym. Okres liczymy od stycznia; jeśli Twój zaczyna się w innym miesiącu, sprawdź jego koniec w regulaminie pracy.</p>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="zasady">Niedziela i święto: kolejność rekompensaty</h2>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Co należy się za pracę w niedzielę i w święto</caption>
+        <thead><tr><th scope="col">Praca w</th><th scope="col">Najpierw</th><th scope="col">Potem</th><th scope="col">Na końcu</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">niedzielę (też święto w niedzielę)</th><td>dzień wolny w ciągu 6 dni przed albo po</td><td>dzień wolny do końca okresu rozliczeniowego</td><td>dodatek 100% za każdą godzinę</td></tr>
+          <tr><th scope="row">święto</th><td>dzień wolny w okresie rozliczeniowym</td><td>—</td><td>dodatek 100% za każdą godzinę</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Podstawa: art. 151<sup>11</sup> § 1–4 Kodeksu pracy, dodatek w wysokości z art. 151<sup>1</sup> § 1 pkt 1. Pracą
+      w niedzielę i święto jest praca od 6:00 w tym dniu do 6:00 w następnym, chyba że pracodawca ustalił inną godzinę
+      (art. 151<sup>9</sup> § 2). Kto pracuje w niedziele, powinien mieć wolną co najmniej jedną niedzielę na 4 tygodnie
+      (art. 151<sup>12</sup>); sprawdzisz to w <a href="/narzedzia/kontrola-grafiku">kontroli grafiku zmian</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { dodatekZaNiedziele, wolneZaNiedzieleSwieto } from '../../lib/narzedzia/niedziela-swieto';
+  import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
+
+  const form = document.querySelector<HTMLFormElement>('[data-niedziela]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const RODZAJ = { niedziela: 'niedziela', swieto: 'święto', 'swieto-w-niedziele': 'święto w niedzielę (zasady jak dla niedzieli)', zwykly: 'zwykły dzień' } as const;
+    const przelicz = () => {
+      const data = el('data').value;
+      const b = form.querySelector<HTMLElement>('[data-blad="data"]')!;
+      const blad = !poprawnaData(data) || data < '2025-01-01' || data > '2027-12-31' ? 'Wpisz datę z lat 2025–2027.' : null;
+      b.hidden = !blad;
+      b.textContent = blad ?? '';
+      if (blad) {
+        w('okno').textContent = '—';
+        return;
+      }
+      const r = wolneZaNiedzieleSwieto(data, Number(el('okres').value));
+      const godziny = wpisanaLiczba(el('godziny').value || '0');
+      const stawka = wpisanaLiczba(el('stawka').value || '0');
+      w('rodzaj').textContent = `${RODZAJ[r.rodzaj]}${r.nazwa ? `: ${r.nazwa}` : ''}`;
+      w('koniec-etykieta').textContent = r.okno ? 'Gdy się nie da: dzień wolny do' : 'Koniec okresu rozliczeniowego';
+      w('koniec').textContent = `${dataPoPolsku(r.okres.do)}${r.okno ? ' (koniec okresu rozliczeniowego)' : ''}`;
+      w('dodatek').textContent = godziny >= 0 && stawka >= 0 ? zl(dodatekZaNiedziele(godziny, stawka)) : '—';
+      let uwaga: string | null = null;
+      if (r.rodzaj === 'zwykly') {
+        w('naglowek').textContent = 'To nie jest niedziela ani święto';
+        w('okno').textContent = dataPoPolsku(data);
+        uwaga = 'Za pracę w zwykły dzień nie przysługuje dzień wolny z art. 151¹¹. Jeśli był to Twój dzień wolny z pięciodniowego tygodnia, a była to praca w nadgodzinach, przysługuje inny dzień wolny do końca okresu rozliczeniowego (art. 151³ Kodeksu pracy).';
+      } else if (r.okno) {
+        w('naglowek').textContent = 'Dzień wolny za niedzielę najpierw';
+        w('okno').textContent = `${dataPoPolsku(r.okno.od)} – ${dataPoPolsku(r.okno.do)}`;
+      } else {
+        w('naglowek').textContent = 'Dzień wolny za święto do';
+        w('okno').textContent = dataPoPolsku(r.okres.do);
+      }
+      w('uwaga').hidden = !uwaga;
+      w('uwaga').textContent = uwaga ?? '';
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>

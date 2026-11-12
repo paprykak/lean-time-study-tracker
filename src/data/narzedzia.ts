@@ -161,6 +161,22 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-12',
   },
   {
+    slug: 'zlecenie-netto',
+    nazwa: 'Umowa zlecenie: netto',
+    krotko: 'Ile netto ze zlecenia: student do 26 lat, zlecenie obok etatu albo jako jedyne źródło, chorobowe, PIT-2.',
+    kategoria: 'wynagrodzenie',
+    przepisy: ['pit', 'systemUbezpieczen', 'swiadczeniaZdrowotne', 'ordynacja', 'minimalneWynagrodzenie'],
+    sprawdzono: '2026-11-12',
+  },
+  {
+    slug: 'praca-w-niedziele',
+    nazwa: 'Praca w niedzielę i święto',
+    krotko: 'Dzień wolny za niedzielę w ciągu 6 dni, za święto w okresie rozliczeniowym, a gdy się nie da: dodatek 100%.',
+    kategoria: 'czas-pracy',
+    przepisy: ['kodeksPracy', 'dniWolne'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'kontrola-grafiku',
     nazwa: 'Kontrola grafiku zmian',
     krotko: 'Sprawdź grafik 12 h albo trzyzmianowy: odpoczynek 11 i 35 h, wolne niedziele, dni wolne, godziny a wymiar.',
