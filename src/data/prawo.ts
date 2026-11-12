@@ -230,6 +230,20 @@ export const AKTY = {
     adres: eli(2026, 468),
     sprawdzono: '2026-11-12',
   },
+  zwolnieniaOdPracy: {
+    nazwa: 'Rozporządzenie w sprawie sposobu usprawiedliwiania nieobecności w pracy oraz udzielania pracownikom zwolnień od pracy',
+    publikator: 'Dz.U. 2014 poz. 1632',
+    uwaga: 'tekst jednolity, bez późniejszych zmian; § 15: 2 dni albo 1 dzień, § 16: wynagrodzenie albo rekompensata',
+    adres: eli(2014, 1632),
+    sprawdzono: '2026-11-12',
+  },
+  sluzbaKrwi: {
+    nazwa: 'Ustawa o publicznej służbie krwi',
+    publikator: 'Dz.U. 2024 poz. 1782',
+    uwaga: 'tekst jednolity, bez późniejszych zmian; art. 9 ust. 1: zwolnienie w dniu oddania krwi i w dniu następnym',
+    adres: eli(2024, 1782),
+    sprawdzono: '2026-11-12',
+  },
   emerytury: {
     nazwa: 'Ustawa o emeryturach i rentach z Funduszu Ubezpieczeń Społecznych',
     publikator: 'Dz.U. 2025 poz. 1749',

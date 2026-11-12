@@ -1,0 +1,110 @@
+---
+// Urlop okolicznościowy i inne zwolnienia od pracy (§ 6, 9, 11, 15 i 16 rozporządzenia z 15 maja 1996 r., art. 9 ustawy
+// o publicznej służbie krwi). Dane: src/lib/narzedzia/zwolnienia.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { OPIS_PLATNOSCI, ZWOLNIENIA, zwolnienie } from '../../lib/narzedzia/zwolnienia';
+
+const START = 'slub';
+const z = zwolnienie(START);
+
+const faq = [
+  {
+    pytanie: 'Ile dni urlopu okolicznościowego na ślub i pogrzeb?',
+    odpowiedz: '2 dni na własny ślub, narodziny dziecka oraz zgon i pogrzeb małżonka, dziecka, ojca, matki, ojczyma lub macochy. 1 dzień na ślub dziecka oraz zgon i pogrzeb siostry, brata, teściowej, teścia, babci, dziadka albo innej osoby na Twoim utrzymaniu lub pod Twoją opieką (§ 15 rozporządzenia w sprawie sposobu usprawiedliwiania nieobecności w pracy oraz udzielania pracownikom zwolnień od pracy).',
+  },
+  {
+    pytanie: 'Czy urlop okolicznościowy jest płatny?',
+    odpowiedz: 'Tak. Za czas zwolnienia z § 15 zachowujesz prawo do wynagrodzenia (§ 16 ust. 1 rozporządzenia), liczonego według zasad jak za urlop wypoczynkowy (§ 5 rozporządzenia z 29 maja 1996 r. w sprawie sposobu ustalania wynagrodzenia w okresie niewykonywania pracy).',
+  },
+  {
+    pytanie: 'Ile dni wolnego za oddanie krwi?',
+    odpowiedz: 'Honorowemu dawcy krwi przysługuje zwolnienie od pracy w dniu oddania krwi i w dniu następnym oraz na czas okresowego badania lekarskiego, ze zwrotem utraconego zarobku (art. 9 ust. 1 pkt 1 i 2 ustawy o publicznej służbie krwi). Potwierdza to zaświadczenie z centrum krwiodawstwa (art. 9 ust. 1a).',
+  },
+  {
+    pytanie: 'Czy na pogrzeb wujka albo cioci przysługuje wolne?',
+    odpowiedz: 'Rozporządzenie nie wymienia wujka ani cioci, chyba że ta osoba była na Twoim utrzymaniu albo pod Twoją bezpośrednią opieką (§ 15). W innym wypadku zostaje urlop wypoczynkowy, urlop na żądanie albo zgoda pracodawcy na wolne.',
+  },
+];
+---
+<StronaNarzedzia
+  slug="urlop-okolicznosciowy"
+  tytul="Urlop okolicznościowy: ile dni na ślub, pogrzeb i krew"
+  opis="Ile dni wolnego przysługuje na ślub, narodziny dziecka, pogrzeb, oddanie krwi i wezwanie do sądu, czy są płatne i na jakiej podstawie. Lista z rozporządzenia i ustawy o publicznej służbie krwi."
+  h1="Urlop okolicznościowy i inne zwolnienia"
+  lead="Ślub, narodziny dziecka, pogrzeb w rodzinie, oddanie krwi albo wezwanie do sądu dają prawo do wolnego. Wybierz sytuację, a pokażemy, ile dni przysługuje, czy są płatne i na jakiej podstawie."
+  faq={faq}
+>
+  <form class="kalkulator" data-okolicznosciowy novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twoja sytuacja</h2>
+      <div class="mt-4">
+        <label for="z-sytuacja" class="etykieta-pola">Co się wydarzyło</label>
+        <select id="z-sytuacja" name="sytuacja" class="pole mt-1">
+          {ZWOLNIENIA.map((x) => <option value={x.klucz} selected={x.klucz === START}>{x.nazwa}</option>)}
+        </select>
+      </div>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Przysługuje</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-data" data-w="wymiar">{z.wymiar}</p>
+        <p class="meta" data-w="platnosc">{OPIS_PLATNOSCI[z.platnosc]}</p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Podstawa</dt><dd data-w="podstawa">{z.podstawa}</dd></div>
+      </dl>
+      <noscript><p class="wynik-uwaga">Wybór działa z JavaScriptem. Pełna lista jest w tabeli poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="lista">Wszystkie zwolnienia w tabeli</h2>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Zwolnienia od pracy: wymiar, wynagrodzenie i podstawa prawna</caption>
+        <thead><tr><th scope="col">Sytuacja</th><th scope="col">Ile i czy płatne</th></tr></thead>
+        <tbody>
+          {ZWOLNIENIA.map((x) => (
+            <tr>
+              <th scope="row">{x.nazwa}</th>
+              <td>{x.wymiar}, {x.platnosc === 'platne' ? 'płatne' : 'bez wynagrodzenia od pracodawcy, z rekompensatą'}<span class="meta block">{x.podstawa}</span></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Chodzi o rozporządzenie Ministra Pracy i Polityki Socjalnej z 15 maja 1996 r. w sprawie sposobu
+      usprawiedliwiania nieobecności w pracy oraz udzielania pracownikom zwolnień od pracy (tekst jednolity Dz.U. 2014
+      poz. 1632). Rozporządzenie nie określa terminu wykorzystania dni z § 15; przysługują w związku z danym wydarzeniem.
+      Zwolnienie jest „od pracy”, więc obejmuje dni, w które według grafiku pracujesz.
+    </p>
+
+    <h2 id="inne">Inne wolne z Kodeksu pracy</h2>
+    <ul>
+      <li>2 dni albo 16 godzin w roku na opiekę nad dzieckiem do 14 lat i 2 dni albo 16 godzin z powodu siły wyższej: <a href="/narzedzia/wolne-na-dziecko">kalkulator wolnego na dziecko</a> (art. 188 i 148<sup>1</sup> Kodeksu pracy).</li>
+      <li>Wolne na szukanie pracy w okresie wypowiedzenia, 2 albo 3 dni: <a href="/narzedzia/okres-wypowiedzenia">kalkulator okresu wypowiedzenia</a> (art. 37 Kodeksu pracy).</li>
+      <li>2 tygodnie urlopu ojcowskiego: <a href="/narzedzia/urlop-ojcowski">kalkulator urlopu ojcowskiego</a> (art. 182<sup>3</sup> Kodeksu pracy).</li>
+    </ul>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { OPIS_PLATNOSCI, zwolnienie } from '../../lib/narzedzia/zwolnienia';
+
+  const form = document.querySelector<HTMLFormElement>('[data-okolicznosciowy]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = form.elements.namedItem('sytuacja') as HTMLSelectElement;
+    const pokaz = () => {
+      const z = zwolnienie(el.value);
+      w('wymiar').textContent = z.wymiar;
+      w('platnosc').textContent = OPIS_PLATNOSCI[z.platnosc];
+      w('podstawa').textContent = z.podstawa;
+    };
+    form.addEventListener('change', pokaz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    pokaz();
+  }
+</script>

@@ -265,6 +265,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-12',
   },
   {
+    slug: 'urlop-okolicznosciowy',
+    nazwa: 'Urlop okolicznościowy i zwolnienia od pracy',
+    krotko: 'Ile dni wolnego na ślub, narodziny dziecka, pogrzeb, oddanie krwi i wezwanie do sądu, i czy są płatne.',
+    kategoria: 'urlopy',
+    przepisy: ['zwolnieniaOdPracy', 'sluzbaKrwi', 'wynagrodzenieRozp', 'kodeksPracy'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'urlop-ojcowski',
     nazwa: 'Urlop ojcowski',
     krotko: 'Do kiedy wykorzystać 2 tygodnie urlopu ojcowskiego, kiedy złożyć wniosek i ile wyniesie zasiłek 100%.',
