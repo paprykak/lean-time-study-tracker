@@ -21,8 +21,8 @@ const dzis = dzisWPolsce();
 const startWydano = dodajLata(dzis, -4);
 const start = waznoscSep({ wydano: startWydano, dzis });
 const startOplata = oplataSep(dzis);
-const KLASA: Record<StatusSep, string> = { wazne: 'w-terminie', wkrotce: 'wkrotce', wygaslo: 'po-terminie' };
-const STATUS: Record<StatusSep, string> = { wazne: 'Ważne', wkrotce: 'Wkrótce koniec', wygaslo: 'Wygasło' };
+const KLASA: Record<StatusSep, string> = { wazne: 'w-terminie', wkrotce: 'wkrotce', 'ostatni-dzien-kc': 'pilne', wygaslo: 'po-terminie' };
+const STATUS: Record<StatusSep, string> = { wazne: 'Ważne', wkrotce: 'Wkrótce koniec', 'ostatni-dzien-kc': 'Ostatni dzień', wygaslo: 'Wygasło' };
 // Lata z aktami w podstawie prawnej tego narzędzia (placa2026, placa2027).
 const lataPlacy = Object.keys(PLACA_MINIMALNA).map(Number).filter((r) => r >= 2026).sort((a, b) => a - b);
 const oplatyLat = lataPlacy.map((rok) => oplataSep(`${rok}-01-01`));
@@ -30,6 +30,7 @@ const oplataRok = (rok: number) => oplatyLat.find((o) => o.rok === rok);
 const o2026 = oplataRok(2026)!;
 const o2027 = oplataRok(2027);
 const koniecStarych = dataPoPolsku(KONIEC_STARYCH);
+const DZIS_KC = 'Dziś ostatni dzień ważności według art. 112 KC; nasz bezpieczny termin minął wczoraj';
 
 const faq = [
   {
@@ -38,7 +39,7 @@ const faq = [
   },
   {
     pytanie: 'Czy uprawnienia SEP są bezterminowe?',
-    odpowiedz: `Nie. Świadectwa wydane przed 3 lipca 2021 r., także te bez terminu, zachowały ważność najdłużej przez 5 lat od tego dnia (art. 25 ustawy z 20 maja 2021 r.). Wygasły najpóźniej 2 albo 3 lipca 2026 r. Żeby dalej pracować przy urządzeniach, trzeba zdać egzamin od nowa.`,
+    odpowiedz: `Nie. Świadectwa wydane przed 3 lipca 2021 r., także te bez terminu, zachowały ważność przez okres, na jaki je wydano, ale najdłużej przez 5 lat od tego dnia (art. 25 pkt 2 ustawy z 20 maja 2021 r.). Bez tego limitu, przez okres z wpisu, zostały tylko świadectwa osób świadczących usługi konsumentom i mikro-, małym i średnim przedsiębiorcom (art. 25 pkt 1); ich kwalifikacje sprawdzano co pięć lat. Bezterminowe wygasły najpóźniej 2 albo 3 lipca 2026 r. Żeby dalej samodzielnie zajmować się eksploatacją (poza samą obsługą z § 5), trzeba zdać egzamin od nowa.`,
   },
   {
     pytanie: 'Jak przedłużyć uprawnienia SEP?',
@@ -63,7 +64,7 @@ const faq = [
   tytul="Uprawnienia SEP: ważność i koszt egzaminu"
   opis="Do kiedy ważne są uprawnienia SEP (świadectwo E lub D, G1, G2, G3), czy stare bezterminowe jeszcze działają i ile kosztuje egzamin w 2026 i 2027 r."
   h1="Do kiedy ważne są uprawnienia SEP i ile kosztuje egzamin"
-  lead="Świadectwo kwalifikacyjne, potocznie „uprawnienia SEP”, jest ważne 5 lat od dnia wydania. Dawne bezterminowe już wygasły. Wpisz datę ze świadectwa, a policzymy, do kiedy możesz pracować i ile kosztuje nowy egzamin."
+  lead="Świadectwo kwalifikacyjne, potocznie „uprawnienia SEP”, jest ważne 5 lat od dnia wydania. Dawne bezterminowe już wygasły. Wpisz datę ze świadectwa, a policzymy, do kiedy świadectwo jest ważne i ile kosztuje nowy egzamin."
   faq={faq}
 >
   <form class="kalkulator" data-sep novalidate aria-labelledby="kalkulator-tytul">
@@ -96,13 +97,14 @@ const faq = [
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
-      <h2 id="wynik-tytul" class="etykieta" data-w="naglowek">Świadectwo ważne do</h2>
+      <h2 id="wynik-tytul" class="etykieta" data-w="naglowek">Ważne (z zapasem) do</h2>
       <div aria-live="polite" aria-atomic="true">
         <p class="wynik-data" data-w="termin">{dataPoPolsku(start.waznoDo)}</p>
-        <p class="status-terminu" data-w="status" data-status={KLASA[start.status]}>{STATUS[start.status]}: {ileDni(start.dniDoKonca)}</p>
+        <p class="status-terminu" data-w="status" data-status={KLASA[start.status]}>{start.status === 'ostatni-dzien-kc' ? DZIS_KC : `${STATUS[start.status]}: ${ileDni(start.dniDoKonca)}`}</p>
       </div>
       <dl class="wynik-lista">
-        <div><dt>Podstawa</dt><dd data-w="podstawa">5 lat od dnia wydania (art. 54 ust. 1aa); według art. 112 KC termin mija z końcem {dataPoPolsku(start.wedlugKc!)}</dd></div>
+        <div><dt>Według Kodeksu cywilnego</dt><dd data-w="kc">do końca {dataPoPolsku(start.wedlugKc!)} (rocznica wydania, art. 110–112 KC)</dd></div>
+        <div><dt>Podstawa</dt><dd data-w="podstawa">5 lat od dnia wydania (art. 54 ust. 1aa); dzień przed rocznicą to nasz zapas</dd></div>
         <div><dt>Nowe świadectwo</dt><dd data-w="nowe">po nowym egzaminie; wydane dziś byłoby ważne do {dataPoPolsku(start.noweOdDzis)}</dd></div>
         <div><dt>Opłata za egzamin</dt><dd data-w="oplata">{zl(startOplata.kwota)} (10% z {zl(startOplata.placa)}, płaca minimalna w {startOplata.rok} r.)</dd></div>
       </dl>
@@ -110,7 +112,7 @@ const faq = [
       <p class="mt-5">
         <button type="button" class="przycisk przycisk-grafit" data-ics disabled={start.wydarzenia.length === 0}>Dodaj do kalendarza (.ics)</button>
       </p>
-      <p class="meta mt-2">Przypomnienia 3 miesiące i miesiąc przed końcem oraz w ostatnim dniu ważności. Wyprzedzenie to nasza propozycja, nie termin z przepisu.</p>
+      <p class="meta mt-2">Przypomnienia 3 miesiące i miesiąc przed końcem oraz w ostatnim dniu ważności z zapasem. Wyprzedzenie to nasza propozycja, nie termin z przepisu.</p>
       <noscript><p class="wynik-uwaga">Wynik powyżej to przykład. Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu; zasady i tabele są opisane poniżej.</p></noscript>
     </div>
   </form>
@@ -121,27 +123,31 @@ const faq = [
       Świadectwa kwalifikacyjne tracą ważność po upływie 5 lat od dnia wydania (art. 54 ust. 1aa Prawa
       energetycznego). Ta zasada obowiązuje od 3 lipca 2021 r. dla wszystkich grup i obu stanowisk. „SEP” to nazwa
       potoczna: świadectwo wydaje komisja kwalifikacyjna powołana na 5 lat, np. przy stowarzyszeniu takim jak SEP albo
-      w przedsiębiorstwie energetycznym, a świadectwo każdej takiej komisji ma tę samą moc (art. 54 ust. 1 i 3).
+      w przedsiębiorstwie energetycznym (art. 54 ust. 1 i 3). Przepis nie różnicuje świadectw według komisji, która je
+      wydała; każda komisja sprawdza kwalifikacje w swoim zakresie (art. 54 ust. 3¹).
     </p>
     <ul>
-      <li><strong>Wydane od {dataPoPolsku(NOWE_ZASADY_OD)}:</strong> ważne 5 lat od dnia wydania; datę końca komisja wpisuje na świadectwie („ważne do dnia”, wzór w załączniku nr 3 do rozporządzenia z 2022 r.).</li>
-      <li><strong>Wydane wcześniej, także bezterminowe:</strong> zachowały ważność przez okres, na jaki je wydano, ale najdłużej 5 lat od 3 lipca 2021 r. (art. 25 ustawy z 20 maja 2021 r.). Dziś żadne z nich nie jest ważne.</li>
+      <li><strong>Wydane od {dataPoPolsku(NOWE_ZASADY_OD)}:</strong> ważne 5 lat od dnia wydania; datę końca komisja wpisuje na świadectwie (na świadectwach z wzoru z 2022 r. i wcześniejszego wzoru – rubryka „ważne do dnia”).</li>
+      <li><strong>Wydane wcześniej, także bezterminowe:</strong> zachowały ważność przez okres, na jaki je wydano, ale najdłużej 5 lat od 3 lipca 2021 r. (art. 25 pkt 2 ustawy z 20 maja 2021 r.). Wyjątek bez tego limitu: osoby świadczące usługi konsumentom oraz mikro-, małym i średnim przedsiębiorcom (dawny art. 54 ust. 1c pkt 2), których świadectwa zachowały ważność przez okres, na jaki je wydano (art. 25 pkt 1). Ich kwalifikacje sprawdzano co pięć lat, więc zakładamy, że świadectwa wydawano na 5 lat; przepis tego wprost nie przesądza.</li>
       <li><strong>Przedłużenia nie ma:</strong> trzeba ponownie zdać egzamin, a nowe świadectwo liczy 5 lat od swojej daty wydania. Komisja wydaje je do 14 dni po egzaminie (§ 13 rozporządzenia).</li>
-      <li><strong>Ważne świadectwo nie wyklucza ponownego sprawdzenia:</strong> przy eksploatacji niezgodnej z przepisami powtarza się je na wniosek pracodawcy, inspektora pracy albo Prezesa URE (art. 54 ust. 1b).</li>
+      <li><strong>Ważne świadectwo nie wyklucza ponownego sprawdzenia:</strong> przy eksploatacji niezgodnej z przepisami powtarza się je na wniosek pracodawcy, inspektora pracy, Prezesa URE albo innego właściwego organu (art. 54 ust. 1b).</li>
     </ul>
 
     <h2 id="jak-liczymy">Jak liczymy</h2>
     <p>
-      Rocznicę daty wydania liczymy jak w art. 112 Kodeksu cywilnego: ta sama data 5 lat później, a dla 29 lutego
-      28 lutego. Przepis nie mówi wprost, czy ostatnim dniem ważności jest rocznica, czy dzień przed nią. Przyjmujemy
-      wariant bezpieczny: <strong>ważne do dnia przed rocznicą włącznie</strong>, a rocznicę podajemy obok. Rozstrzyga
+      Prawo energetyczne nie mówi, jak liczyć termin, więc stosuje się Kodeks cywilny (art. 110–112): świadectwo jest
+      ważne do końca dnia rocznicy wydania, czyli tej samej daty 5 lat później (dla 29 lutego: 28 lutego). Dla zapasu
+      przyjmujemy dzień wcześniej: <strong>ważne z zapasem do dnia przed rocznicą</strong>, a datę według Kodeksu
+      cywilnego podajemy obok. W dniu rocznicy piszemy, że to ostatni dzień ważności według Kodeksu cywilnego. Rozstrzyga
       wpis „ważne do dnia” na świadectwie: gdy go podasz, wynik pochodzi z wpisu, a przy rozbieżności z naszym
       wyliczeniem pokażemy obie daty.
     </p>
     <p>
       Świadectwa sprzed 3 lipca 2021 r. bez terminu traktujemy jako ważne do {koniecStarych} (według art. 112 KC
       do końca 3 lipca 2026 r.). Gdy na starym świadectwie jest termin, bierzemy go, a gdy wypada
-      po {koniecStarych}, przyjmujemy tę datę. Gdy znasz tylko datę egzaminu, liczymy od niej: świadectwo mogło zostać wydane do 14 dni
+      po {koniecStarych}, przyjmujemy tę datę. Osób z wyjątku z art. 25 pkt 1 ten limit nie dotyczy, ale nie wiemy,
+      czy to Ty, więc stosujemy go zawsze; zakładamy, że ich świadectwa wydawano na 5 lat, czego przepis nie
+      przesądza. Gdy znasz tylko datę egzaminu, liczymy od niej: świadectwo mogło zostać wydane do 14 dni
       później, więc wynik wyjdzie najwyżej o tyle za wcześnie. Status „wkrótce koniec” pokazujemy
       na {WKROTCE_DNI} dni przed ostatnim dniem. Przepis nie podaje, kiedy złożyć wniosek przed końcem ważności;
       zawiadomienie o egzaminie przychodzi co najmniej 14 dni wcześniej (§ 10 ust. 2), dlatego przypomnienia
@@ -167,8 +173,8 @@ const faq = [
     </div>
     <ul>
       <li>Wniosek złożony w grudniu, a egzamin w styczniu: płacisz według stawki z grudnia.</li>
-      <li>Opłatę zwraca się, gdy egzaminu nie przeprowadzono z powodu wadliwego wniosku (§ 7 ust. 6) albo gdy nie przystąpiono do niego z przyczyn niezależnych (§ 12 ust. 3).</li>
-      <li>Bez opłaty: w komisjach Ministra Obrony Narodowej i Ministra Sprawiedliwości na wniosek kierownika podległej jednostki (art. 54 ust. 4a i 4b).</li>
+      <li>Opłatę zwraca się, gdy wniosek złożył ktoś nieuprawniony albo nie spełnia on wymagań (§ 7 ust. 6) albo gdy nie przystąpiono do niego z przyczyn niezależnych (§ 12 ust. 3).</li>
+      <li>Bez opłaty: w komisjach Ministra Obrony Narodowej i Ministra Sprawiedliwości na wniosek kierownika podległej lub nadzorowanej jednostki (art. 54 ust. 4a i 4b).</li>
       <li>Przepis nie mówi, czy osobne świadectwa E i D albo kilka grup to jeden wniosek, czy kilka. Podajemy kwotę za jeden egzamin; o resztę zapytaj komisję.</li>
       <li>Kurs przygotowawczy to cena rynkowa, której przepisy nie regulują.</li>
     </ul>
@@ -179,19 +185,20 @@ const faq = [
       a wniosek składa sam pracownik albo jego pracodawca (§ 7 ust. 1 rozporządzenia). Kodeks pracy każe pracodawcy
       ułatwiać podnoszenie kwalifikacji (art. 94 pkt 6), ale nie nakłada wprost obowiązku zapłaty za egzamin. Warto to
       ustalić przed egzaminem. Gdy pracodawca opłacił kurs i egzamin, a umowa zobowiązuje Cię do pracy po nich, przy
-      wcześniejszym odejściu możesz musieć oddać część kosztów: policzy to <a href="/narzedzia/zwrot-kosztow-szkolenia">kalkulator lojalki</a>.
+      wcześniejszym odejściu możesz musieć oddać część kosztów (art. 103⁴–103⁵ Kodeksu pracy, gdy jest umowa): policzy to <a href="/narzedzia/zwrot-kosztow-szkolenia">kalkulator lojalki</a>.
     </p>
 
     <h2 id="e-i-d">Stanowisko E i D</h2>
     <ul>
       <li><strong>E (eksploatacja):</strong> obsługa, konserwacja, remont, naprawa, montaż, demontaż i czynności kontrolno-pomiarowe (§ 4 ust. 1 pkt 1 rozporządzenia).</li>
-      <li><strong>D (dozór):</strong> kierowanie pracą osób z grupy E albo nadzór nad eksploatacją urządzeń (§ 4 ust. 1 pkt 2).</li>
+      <li><strong>D (dozór):</strong> kierowanie pracą osób na stanowisku eksploatacji (E) albo nadzór nad eksploatacją urządzeń (§ 4 ust. 1 pkt 2).</li>
     </ul>
-    <p>To dwa osobne świadectwa, każde z własnym wzorem (załącznik nr 3) i własnym egzaminem ustnym (§ 10 ust. 1).</p>
+    <p>To dwa osobne świadectwa, każde z własnym wzorem (załącznik nr 3). Egzamin jest ustny (§ 10 ust. 1).</p>
 
     <h2 id="grupy">Grupy G1, G2 i G3: najczęstsze punkty na hali</h2>
     <p>
-      Na świadectwie jest grupa i numer punktu z załącznika nr 1 do rozporządzenia z 2022 r. Progi są ostre:
+      Na świadectwie komisja wyszczególnia rodzaje urządzeń z załącznika nr 1 do rozporządzenia z 2022 r. (zwykle jako
+      grupa i numer punktu; grupę i punkt podaje się też we wniosku). Progi są ostre:
       „wyższej niż 50 kW” znaczy, że urządzenie o mocy dokładnie 50 kW do punktu nie wpada.
     </p>
     <div class="tabela">
@@ -208,9 +215,11 @@ const faq = [
         </ol>
       </details>
     ))}
+    <p class="meta">Brzmienie punktów za załącznikiem nr 1 do rozporządzenia (Dz.U. 2022 poz. 1392).</p>
     <p>
-      Komisje powołane przed 2 lipca 2022 r., których skład nie spełnia nowych wymagań, wydają świadectwa według
-      krótszej listy z załącznika nr 2 (§ 16), a numery punktów różnią się tam od załącznika nr 1. Sprawdź, który
+      Komisje powołane przed 2 lipca 2022 r., których skład nie spełnia nowych wymagań, mogą wydawać świadectwa tylko
+      według krótszej listy z załącznika nr 2 (§ 16). Część punktów ma tam inny numer albo szerszy zakres (np. G1 pkt 3,
+      G2 pkt 7). Sprawdź, który
       załącznik wskazuje Twoje świadectwo.
     </p>
 
@@ -218,8 +227,8 @@ const faq = [
     <ul>
       <li><strong>Sama obsługa urządzenia elektrycznego</strong> o napięciu do 1 kV i mocy do 20 kW, jeśli dokumentacja opisuje zasady obsługi (§ 5 pkt 1). Wszystkie trzy warunki naraz; konserwacja i naprawa tego samego urządzenia wymagają świadectwa.</li>
       <li><strong>Sama obsługa urządzenia lub instalacji cieplnej</strong> o mocy zainstalowanej do 50 kW (§ 5 pkt 2).</li>
-      <li><strong>Praca pod nadzorem osoby uprawnionej:</strong> pracodawca może do niej dopuścić osoby bez świadectwa w ramach przygotowania zawodowego, uczniów szkół branżowych, przedstawicieli organów nadzoru i osoby prowadzące specjalistyczne prace serwisowe (art. 54 ust. 2). Samodzielnej eksploatacji bez świadectwa przepis zabrania.</li>
-      <li><strong>Poza systemem:</strong> górnictwo podziemne, prawo atomowe, ruch drogowy, żegluga oraz osoby, którym kwalifikacje z innego państwa UE lub EFTA uznał Prezes URE (§ 2).</li>
+      <li><strong>Praca pod nadzorem osoby uprawnionej:</strong> pracodawca może do niej dopuścić osoby bez świadectwa w ramach przygotowania zawodowego, uczniów szkół ponadpodstawowych kształcących w zawodzie, który obejmuje takie prace, przedstawicieli organów nadzoru i osoby prowadzące specjalistyczne prace serwisowe (art. 54 ust. 2). Samodzielnej eksploatacji bez świadectwa przepis zabrania.</li>
+      <li><strong>Poza rozporządzeniem:</strong> rozporządzenia nie stosuje się w zakresie uregulowanym przepisami o górnictwie (zakłady podziemne), prawie atomowym, ruchu drogowym, żegludze śródlądowej i bezpieczeństwie morskim oraz do osób, którym kwalifikacje uznał Prezes URE (§ 2).</li>
     </ul>
   </Fragment>
 </StronaNarzedzia>
@@ -239,8 +248,9 @@ const faq = [
     };
     const pole = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
     const ics = form.querySelector<HTMLButtonElement>('[data-ics]')!;
-    const KLASA: Record<StatusSep, string> = { wazne: 'w-terminie', wkrotce: 'wkrotce', wygaslo: 'po-terminie' };
-    const STATUS: Record<StatusSep, string> = { wazne: 'Ważne', wkrotce: 'Wkrótce koniec', wygaslo: 'Wygasło' };
+    const KLASA: Record<StatusSep, string> = { wazne: 'w-terminie', wkrotce: 'wkrotce', 'ostatni-dzien-kc': 'pilne', wygaslo: 'po-terminie' };
+    const STATUS: Record<StatusSep, string> = { wazne: 'Ważne', wkrotce: 'Wkrótce koniec', 'ostatni-dzien-kc': 'Ostatni dzień', wygaslo: 'Wygasło' };
+    const DZIS_KC = 'Dziś ostatni dzień ważności według art. 112 KC; nasz bezpieczny termin minął wczoraj';
     let wydarzenia: WynikSep['wydarzenia'] = [];
 
     const blad = (k: string, tekst: string | null) => {
@@ -294,6 +304,7 @@ const faq = [
         pisz('termin', 'Wpisz datę');
         status.hidden = true;
         pisz('podstawa', '—');
+        pisz('kc', '—');
         uwaga(null);
         return;
       }
@@ -302,7 +313,9 @@ const faq = [
       pisz('termin', dataPoPolsku(r.waznoDo));
       status.hidden = false;
       status.dataset.status = KLASA[r.status];
-      pisz('status', `${STATUS[r.status]}: ${ileDni(r.dniDoKonca)}`);
+      pisz('status', r.status === 'ostatni-dzien-kc' ? DZIS_KC : `${STATUS[r.status]}: ${ileDni(r.dniDoKonca)}`);
+      pisz('naglowek', r.wedlugKc ? 'Ważne (z zapasem) do' : 'Ważne do');
+      pisz('kc', r.wedlugKc ? `do końca ${dataPoPolsku(r.wedlugKc)} (rocznica wydania, art. 110–112 KC)` : 'rozstrzyga wpis albo limit z art. 25');
       pisz('nowe', `po nowym egzaminie; wydane dziś byłoby ważne do ${dataPoPolsku(r.noweOdDzis)}`);
 
       const uwagi: string[] = [];
@@ -311,17 +324,18 @@ const faq = [
           'podstawa',
           wpis
             ? `wpis na świadectwie; z daty ${zDatyEgzaminu ? 'egzaminu' : 'wydania'} wychodzi ${dataPoPolsku(r.wyliczone!)}`
-            : `5 lat od dnia wydania (art. 54 ust. 1aa); według art. 112 KC termin mija z końcem ${dataPoPolsku(r.wedlugKc!)}`,
+            : '5 lat od dnia wydania (art. 54 ust. 1aa); dzień przed rocznicą to nasz zapas',
         );
         if (r.rozbieznosc) uwagi.push(`Wpis różni się od wyliczenia (${dataPoPolsku(r.wyliczone!)}). Sprawdź daty na świadectwie albo zapytaj komisję, która je wydała.`);
       } else if (r.podstawa === 'stare-bez-terminu') {
-        pisz('podstawa', `wydane przed 3 lipca 2021 r. bez terminu: ważne najdłużej do ${dataPoPolsku(r.waznoDo)} (art. 25 ustawy z 2021 r.; według art. 112 KC do końca ${dataPoPolsku(r.wedlugKc!)})`);
+        pisz('podstawa', 'wydane przed 3 lipca 2021 r. bez terminu: limit 5 lat od 3 lipca 2021 r. (art. 25 pkt 2 ustawy z 2021 r.)');
       } else {
-        pisz('podstawa', `wydane przed 3 lipca 2021 r.: termin z wpisu, ale nie dłużej niż do ${dataPoPolsku(KONIEC_STARYCH)} (art. 25 ustawy z 2021 r.)`);
-        if (r.rozbieznosc) uwagi.push('Termin na świadectwie jest późniejszy niż limit z art. 25 ustawy z 2021 r., więc przyjmujemy limit.');
+        pisz('podstawa', `wydane przed 3 lipca 2021 r.: termin z wpisu, ale nie dłużej niż do ${dataPoPolsku(KONIEC_STARYCH)} (art. 25 pkt 2 ustawy z 2021 r.; wyjątek z pkt 1 pomijamy, bo nie wiemy, czy Cię dotyczy)`);
+        if (r.rozbieznosc) uwagi.push('Termin na świadectwie jest późniejszy niż limit z art. 25 pkt 2 ustawy z 2021 r., więc przyjmujemy limit. Nie dotyczy on osób świadczących usługi konsumentom i mikro-, małym i średnim przedsiębiorcom (art. 25 pkt 1); w razie wątpliwości zapytaj komisję.');
       }
       if (zDatyEgzaminu) uwagi.push('Liczymy od daty egzaminu. Świadectwo wydaje się do 14 dni później (§ 13), więc faktyczny koniec może być do 14 dni dalej.');
-      if (r.status === 'wygaslo') uwagi.push('Świadectwo straciło ważność. Przedłużenia nie ma: żeby dalej samodzielnie pracować przy urządzeniach, trzeba zdać egzamin od nowa.');
+      if (r.status === 'wygaslo') uwagi.push('Świadectwo straciło ważność. Przedłużenia nie ma: żeby dalej samodzielnie zajmować się eksploatacją (poza samą obsługą z § 5), trzeba zdać egzamin od nowa.');
+      else if (r.status === 'ostatni-dzien-kc') uwagi.push('Od jutra świadectwo nie jest ważne. Przedłużenia nie ma: żeby dalej samodzielnie zajmować się eksploatacją (poza samą obsługą z § 5), trzeba zdać egzamin od nowa.');
       else if (r.status === 'wkrotce') uwagi.push('Zostało niewiele czasu: zawiadomienie o egzaminie przychodzi co najmniej 14 dni przed nim, a świadectwo do 14 dni po nim.');
       uwaga(uwagi.length ? uwagi.join(' ') : null);
 

@@ -13,8 +13,18 @@ test.beforeEach(async ({ page }) => {
 test('wydane 29.02.2024: ważne do 27 lutego 2029 r., rocznica 28 lutego', async ({ page }) => {
   await page.getByLabel('Data wydania świadectwa').fill('2024-02-29');
   await expect(page.locator('[data-w="termin"]')).toHaveText(/^27\slutego\s2029\sr\.$/);
-  await expect(page.locator('[data-w="podstawa"]')).toContainText(/28\slutego\s2029/);
+  await expect(page.locator('[data-w="kc"]')).toContainText(/28\slutego\s2029/);
   await expect(page.locator('[data-w="status"]')).toHaveAttribute('data-status', 'w-terminie');
+});
+
+test('dzień rocznicy: ostatni dzień według art. 112 KC, nie „wygasło”', async ({ page }) => {
+  await page.clock.setFixedTime(new Date('2031-03-14T10:00:00+01:00'));
+  await page.reload();
+  await page.getByLabel('Data wydania świadectwa').fill('2026-03-14');
+  await expect(page.locator('[data-w="termin"]')).toHaveText(/^13\smarca\s2031\sr\.$/);
+  await expect(page.locator('[data-w="status"]')).toContainText(/Dziś\sostatni\sdzień\sważności\swedług\sart\.\s112\sKC/);
+  await expect(page.locator('[data-w="status"]')).not.toContainText('Wygasło');
+  await expect(page.locator('[data-w="uwaga"]')).toContainText(/Od\sjutra/);
 });
 
 test('bezterminowe sprzed 3 lipca 2021 r.: wygasło 2 lipca 2026 r., bez kalendarza', async ({ page }) => {

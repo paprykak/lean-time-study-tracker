@@ -114,6 +114,8 @@ export function waznoscSep({ wydano, wpis, zDatyEgzaminu = false, dzis }: DaneSe
       wedlugKc = rocznica;
     }
   } else if (maWpis) {
+    // Art. 25: termin z wpisu; limit 5 lat od 3.07.2021 (pkt 2) stosujemy zawsze, bo nie wiemy, czy osoba należy
+    // do wyjątku z pkt 1 (bez limitu, zakładamy świadectwa 5-letnie; przepis tego nie przesądza – wariant bezpieczny).
     podstawa = 'stare-z-terminem';
     rozbieznosc = wpis! > KONIEC_STARYCH;
     waznoDo = rozbieznosc ? KONIEC_STARYCH : wpis!;
