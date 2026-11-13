@@ -74,7 +74,7 @@ const faq = [
           <option value="ciaza">W trakcie ciąży</option>
         </select>
       </div>
-      <p id="z-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+      <p id="z-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -118,6 +118,7 @@ const faq = [
   import { typografia } from '../../lib/typografia.mjs';
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
   import { odmiana } from '../../lib/redakcja';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-zasilkowy]');
   if (form) {
@@ -129,18 +130,24 @@ const faq = [
     const przelicz = () => {
       const lista: Zwolnienie[] = [];
       let blad: string | null = null;
+      let zlePola: HTMLInputElement[] = [];
       for (let i = 1; i <= 5; i++) {
         const od = el(`od${i}`).value;
         const do_ = el(`do${i}`).value;
         if (!od && !do_) continue;
-        if (!poprawnaData(od) || !poprawnaData(do_)) blad = `Uzupełnij obie daty zwolnienia ${i}.`;
-        else if (do_ < od) blad = `Zwolnienie ${i}: koniec przed początkiem.`;
-        else lista.push({ od, do: do_ });
+        if (!poprawnaData(od) || !poprawnaData(do_)) {
+          blad = `Uzupełnij obie daty zwolnienia ${i}.`;
+          zlePola = [el(`od${i}`), el(`do${i}`)].filter((p) => !poprawnaData(p.value));
+        } else if (do_ < od) {
+          blad = `Zwolnienie ${i}: koniec przed początkiem.`;
+          zlePola = [el(`do${i}`)];
+        } else lista.push({ od, do: do_ });
       }
-      if (!blad && !lista.length) blad = 'Wpisz co najmniej jedno zwolnienie.';
-      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
-      b.hidden = !blad;
-      b.textContent = typografia(blad ?? '');
+      if (!blad && !lista.length) {
+        blad = 'Wpisz co najmniej jedno zwolnienie.';
+        zlePola = [el('od1'), el('do1')];
+      }
+      pokazBlad(form.querySelector<HTMLElement>('[data-blad="dane"]')!, blad, zlePola);
       if (blad) {
         w('zostalo').textContent = '—';
         w('opis').textContent = '';
@@ -165,6 +172,7 @@ const faq = [
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
     ustawDzisiejszeWartosci(form);
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>
