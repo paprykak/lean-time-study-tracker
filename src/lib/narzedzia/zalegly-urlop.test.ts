@@ -47,18 +47,34 @@ describe('zaległy urlop (art. 168, 291 § 1, 293¹ Kp; art. 112 KC)', () => {
     expect(s('2026-10-01')).toBe('po-terminie');
   });
 
-  it('urlop wychowawczy (art. 293¹) zawiesza bieg', () => {
-    // 1.03–31.08.2026 = 184 dni po wymagalności 31.12.2025: koniec 3.07.2029; wariant od 30.09.2026 bez zmian.
+  it('urlop wychowawczy (art. 293¹): wcześniejsza z metod w dniach i w miesiącach', () => {
+    // 1.03–31.08.2026 po wymagalności 31.12.2025: w dniach 3.07.2029, w miesiącach 30.06.2029 → 30.06.2029.
     const [r] = zaleglyUrlop({ urlopy: [{ rok: 2025, dni: 6 }], naDzien: NA, wychowawczy: { od: '2026-03-01', do: '2026-08-31' } }).lata;
-    expect(r.przedawnienie.data).toBe('2029-07-03');
+    expect(r.przedawnienie.data).toBe('2029-06-30');
     expect(r.zawieszenie).toBe(184);
+    // wychowawczy skończył się przed 30.09.2026: wariant późniejszy bez zmian
     expect(r.przedawnieniePozniej.data).toBe('2029-09-30');
-    // obejmuje dzień wymagalności: liczy się 151 dni od 1.01 do 31.05.2026
+    // na przełomie końca terminu: w dniach 31.03.2029, w miesiącach 28.03.2029
+    expect(koniecPrzedawnienia('2025-12-31', { od: '2028-12-01', do: '2029-02-28' }).koniec).toBe('2029-03-28');
+    // 10.05–20.08.2027: w dniach 13.04.2029, w miesiącach 11.04.2029
+    expect(koniecPrzedawnienia('2025-12-31', { od: '2027-05-10', do: '2027-08-20' }).koniec).toBe('2029-04-11');
+  });
+
+  it('urlop wychowawczy obejmujący dzień wymagalności: bieg od końca wychowawczego (31.05.2029)', () => {
     expect(koniecPrzedawnienia('2025-12-31', { od: '2025-06-01', do: '2026-05-31' })).toEqual({ koniec: '2029-05-31', zawieszenie: 151 });
-    // po upływie terminu: bez wpływu
+  });
+
+  it('urlop wychowawczy przez kilka lat (2026–2029): 31.12.2032', () => {
+    expect(koniecPrzedawnienia('2025-12-31', { od: '2026-01-01', do: '2029-12-31' }).koniec).toBe('2032-12-31');
+  });
+
+  it('urlop wychowawczy od ostatniego dnia terminu (31.12.2028–31.03.2029): 1.04.2029', () => {
+    expect(koniecPrzedawnienia('2025-12-31', { od: '2028-12-31', do: '2029-03-31' }).koniec).toBe('2029-04-01');
+  });
+
+  it('urlop wychowawczy po upływie terminu albo przed wymagalnością: bez wpływu', () => {
     expect(koniecPrzedawnienia('2025-12-31', { od: '2029-01-01', do: '2029-06-30' })).toEqual({ koniec: '2028-12-31', zawieszenie: 0 });
-    // na przełomie końca terminu: przedłużenie wciąga kolejne dni wychowawczego, razem 90
-    expect(koniecPrzedawnienia('2025-12-31', { od: '2028-12-01', do: '2029-02-28' })).toEqual({ koniec: '2029-03-31', zawieszenie: 90 });
+    expect(koniecPrzedawnienia('2025-12-31', { od: '2025-01-01', do: '2025-12-31' })).toEqual({ koniec: '2028-12-31', zawieszenie: 0 });
   });
 
   it('koniec umowy 15.03.2026: ekwiwalent za wszystkie dni, przedawnienie najwcześniej 15.03.2029 (854 dni)', () => {
@@ -77,6 +93,21 @@ describe('zaległy urlop (art. 168, 291 § 1, 293¹ Kp; art. 112 KC)', () => {
     expect(w.ekwiwalent?.przedawnienie.data).toBe('2031-02-28');
     // 2023: najwcześniej 31.12.2026, przed końcem umowy
     expect(w.lata[0].przedawnionyPrzedKoncemUmowy).toBe(true);
+    expect(opis(w).opis).toContain('w tym 3 dni z lat, w których roszczenie o urlop mogło się przedawnić');
+    expect(opis(w).lata[0].wiersze[0].dt).toBe('Urlop');
+  });
+
+  it('przedawnienie w dniu końca umowy (31.12.2028) też oznaczamy', () => {
+    const w = zaleglyUrlop({ urlopy: [{ rok: 2025, dni: 3 }], naDzien: '2029-01-05', koniecUmowy: '2028-12-31' });
+    expect(w.lata[0].przedawnionyPrzedKoncemUmowy).toBe(true);
+    expect(zaleglyUrlop({ urlopy: [{ rok: 2025, dni: 3 }], naDzien: '2029-01-05', koniecUmowy: '2028-12-30' }).lata[0].przedawnionyPrzedKoncemUmowy).toBe(false);
+  });
+
+  it('po najwcześniejszym terminie: komunikat bez pewnej utraty (art. 292, TSUE C-120/21)', () => {
+    const o = opis(zaleglyUrlop({ urlopy: [{ rok: 2022, dni: 4 }], naDzien: NA }));
+    expect(o.status).toBe('po-terminie');
+    expect(o.statusTekst).toBe('Najwcześniejszy termin przedawnienia minął 316 dni temu; roszczenie nie musi być stracone (art. 292, wyrok TSUE C-120/21)');
+    expect(o.lata[0].wiersze[1].dd).toContain('pracodawca może powołać się na przedawnienie (art. 292)');
   });
 
   it('błędne dane: RangeError', () => {
@@ -98,7 +129,7 @@ describe('zaległy urlop (art. 168, 291 § 1, 293¹ Kp; art. 112 KC)', () => {
   it('teksty wyniku: najbliższe przedawnienie i wiersze roku', () => {
     const o = opis(zaleglyUrlop({ urlopy: [{ rok: 2025, dni: 6 }, { rok: 2024, dni: 2 }], naDzien: NA }));
     expect(o.glowny).toBe('8 dni');
-    expect(o.opis).toBe('Najwcześniej może się przedawnić urlop za 2024 r.: 31 grudnia 2027 r.');
+    expect(o.opis).toBe('Pierwszy termin przedawnienia (wariant wcześniejszy): urlop za 2024 r., 31 grudnia 2027 r.');
     expect(o.statusTekst).toBe('Zostało: 414 dni');
     expect(o.lata[1].tytul).toBe('Urlop za 2025 r.: 6 dni');
     expect(o.lata[1].wiersze[0]).toEqual({ dt: 'Udzielić najpóźniej', dd: '30 września 2026 r. (43 dni temu)' });

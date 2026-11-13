@@ -15,23 +15,30 @@
 //   a gdy takiego dnia w ostatnim miesiącu nie ma, w ostatnim dniu miesiąca (dodajLata z ./terminy).
 //
 // Przyjęte interpretacje (przepis ich nie rozstrzyga):
-// 1. Kodeks pracy nie mówi, kiedy roszczenie o urlop staje się wymagalne. Główny wynik to wariant najwcześniejszy
-//    (bezpieczny dla pracownika): wymagalność 31 grudnia roku, w którym trzeba było udzielić urlopu (art. 161), więc
+// 1. Kodeks pracy nie mówi, kiedy roszczenie o urlop staje się wymagalne. Rozważamy dwa warianty; główny wynik to
+//    wcześniejszy z nich: wymagalność 31 grudnia roku, w którym trzeba było udzielić urlopu (art. 161), więc
 //    przedawnienie z upływem 31 grudnia trzy lata później. Wariant późniejszy: od 30 września następnego roku (art. 168).
-//    Orzecznictwa SN nie sprawdzaliśmy (sn.pl blokuje automaty), urzędowego źródła o wymagalności nie znaleźliśmy.
-// 2. Zawieszenie z art. 293¹: do końca terminu dodajemy liczbę dni urlopu wychowawczego przypadających po dniu
-//    wymagalności i nie później niż w (przedłużonym) końcu terminu. Przepis nie mówi, jak liczyć termin w latach po
-//    zawieszeniu; liczenie w dniach daje ten sam albo bardzo zbliżony wynik.
+//    Przepis nie wyklucza innej daty. Orzecznictwa SN nie sprawdzaliśmy (sn.pl blokuje automaty), urzędowego źródła
+//    o wymagalności nie znaleźliśmy. Data przedawnienia to dzień, po którym pracodawca może uchylić się od zaspokojenia
+//    roszczenia (art. 292), a nie pewna utrata urlopu; TSUE w wyroku z 22.09.2022 r., C-120/21, uznał, że art. 7
+//    dyrektywy 2003/88/WE i art. 31 ust. 2 Karty stoją na przeszkodzie przedawnieniu po 3 latach od końca roku, gdy
+//    pracodawca nie umożliwił rzeczywistego skorzystania z urlopu.
+// 2. Zawieszenie z art. 293¹: przepis nie mówi, jak liczyć termin w latach po zawieszeniu. Liczymy dwiema metodami
+//    (w dniach: dodajemy dni wychowawczego w trakcie biegu; w miesiącach: upływ przed zawieszeniem, reszta od końca
+//    wychowawczego, art. 112 KC) i bierzemy wcześniejszą datę.
 // 3. Ekwiwalent: przepis nie wskazuje dnia wymagalności. Wariant najwcześniejszy: dzień rozwiązania umowy; od niego
-//    3 lata (art. 291 § 1, art. 112 KC). Art. 293¹ dotyczy roszczenia o urlop, więc do ekwiwalentu go nie stosujemy.
+//    3 lata (art. 291 § 1, art. 112 KC). Art. 293¹ dotyczy roszczenia o urlop, więc urlopu
+//    wychowawczego przy ekwiwalencie nie uwzględniamy.
 // 4. Nie przesuwamy końca terminu na koniec roku (art. 118 KC) ani na dzień roboczy (art. 115 KC): Kodeks pracy ma
 //    własne przepisy o przedawnieniu, a gdyby sąd przyjął dłuższy termin, nasza data i tak jest bezpieczna.
 import { odmiana } from '../redakcja';
-import { dataPoPolsku, dniMiedzy, dodajDni, dodajLata, ileDni, poprawnaData } from './terminy';
+import { dataPoPolsku, dniMiedzy, dodajDni, dodajLata, dodajMiesiace, ileDni, poprawnaData } from './terminy';
 
 export const LATA_PRZEDAWNIENIA = 3;
 export const MIN_ROK = 2000;
 export const MAKS_DNI = 100;
+/** Liczba wierszy „Rok + dni” w formularzu. */
+export const WIERSZE = 4;
 
 export type Status = 'po-terminie' | 'pilne' | 'wkrotce' | 'w-terminie';
 
@@ -58,13 +65,13 @@ export interface WynikRoku {
   biezacy: boolean;
   /** 30 września następnego roku (art. 168). */
   udzielenie: Termin;
-  /** Wariant najwcześniejszy: 3 lata od 31 grudnia roku urlopu (+ zawieszenie z art. 293¹). */
+  /** Wariant wcześniejszy: 3 lata od 31 grudnia roku urlopu (+ zawieszenie z art. 293¹). */
   przedawnienie: Termin;
   /** Wariant późniejszy: 3 lata od 30 września następnego roku (+ zawieszenie). */
   przedawnieniePozniej: Termin;
-  /** Dni zawieszenia biegu (urlop wychowawczy) w wariancie najwcześniejszym. */
+  /** Dni urlopu wychowawczego w trakcie biegu (wariant wcześniejszy). */
   zawieszenie: number;
-  /** Tryb ekwiwalentu: roszczenie o urlop mogło się przedawnić przed końcem umowy (wariant najwcześniejszy). */
+  /** Tryb ekwiwalentu: roszczenie o urlop mogło się przedawnić najpóźniej w dniu końca umowy (wariant wcześniejszy). */
   przedawnionyPrzedKoncemUmowy: boolean;
 }
 
@@ -95,18 +102,45 @@ function dniWPrzedziale(o: Okres, po: string, doDnia: string): number {
   return koniec >= od ? dniMiedzy(od, koniec) + 1 : 0;
 }
 
-/**
- * Koniec przedawnienia od dnia wymagalności, przedłużony o dni urlopu wychowawczego w trakcie biegu (art. 293¹).
- */
-export function koniecPrzedawnienia(wymagalne: string, wychowawczy: Okres | null = null): { koniec: string; zawieszenie: number } {
-  const bazowy = dodajLata(wymagalne, LATA_PRZEDAWNIENIA);
-  if (!wychowawczy) return { koniec: bazowy, zawieszenie: 0 };
+/** Zawieszenie liczone w dniach: do końca terminu dodajemy dni wychowawczego przypadające w trakcie biegu. */
+function wDniach(wymagalne: string, bazowy: string, o: Okres): { koniec: string; zawieszenie: number } {
   let dni = 0;
   for (;;) {
-    const n = dniWPrzedziale(wychowawczy, wymagalne, dodajDni(bazowy, dni));
+    const n = dniWPrzedziale(o, wymagalne, dodajDni(bazowy, dni));
     if (n === dni) return { koniec: dodajDni(bazowy, dni), zawieszenie: dni };
     dni = n;
   }
+}
+
+/**
+ * Zawieszenie liczone w miesiącach (art. 112 KC): część terminu, która upłynęła przed urlopem wychowawczym
+ * (pełne miesiące i dni), odejmujemy od 3 lat, a resztę liczymy od ostatniego dnia urlopu wychowawczego.
+ * Gdy wychowawczy trwa już w dniu po wymagalności, bieg się nie rozpoczyna: 3 lata od końca wychowawczego.
+ */
+function wMiesiacach(wymagalne: string, bazowy: string, o: Okres): string {
+  const ostatniPrzed = dodajDni(o.od, -1);
+  let m = 0;
+  let d = 0;
+  if (ostatniPrzed > wymagalne) {
+    while (dodajMiesiace(wymagalne, m + 1) <= ostatniPrzed) m++;
+    d = dniMiedzy(dodajMiesiace(wymagalne, m), ostatniPrzed);
+  }
+  const koniec = dodajDni(dodajMiesiace(o.do, LATA_PRZEDAWNIENIA * 12 - m), -d);
+  const poWychowawczym = dodajDni(o.do, 1);
+  return koniec > poWychowawczym ? koniec : poWychowawczym;
+}
+
+/**
+ * Koniec przedawnienia od dnia wymagalności, z zawieszeniem na czas urlopu wychowawczego (art. 293¹).
+ * Przepis nie mówi, jak liczyć termin w latach po zawieszeniu: bierzemy wcześniejszą datę z dwóch metod
+ * (w dniach i w miesiącach). `zawieszenie`: dni wychowawczego w trakcie biegu (0, gdy nie wpływa na termin).
+ */
+export function koniecPrzedawnienia(wymagalne: string, wychowawczy: Okres | null = null): { koniec: string; zawieszenie: number } {
+  const bazowy = dodajLata(wymagalne, LATA_PRZEDAWNIENIA);
+  if (!wychowawczy || wychowawczy.do <= wymagalne || wychowawczy.od > bazowy) return { koniec: bazowy, zawieszenie: 0 };
+  const dni = wDniach(wymagalne, bazowy, wychowawczy);
+  const mies = wMiesiacach(wymagalne, bazowy, wychowawczy);
+  return { koniec: mies < dni.koniec ? mies : dni.koniec, zawieszenie: dni.zawieszenie };
 }
 
 export const terminUdzielenia = (rok: number) => `${rok + 1}-09-30`;
@@ -148,7 +182,7 @@ export function zaleglyUrlop({ urlopy, naDzien, koniecUmowy = null, wychowawczy 
         przedawnienie: termin(p1.koniec, naDzien),
         przedawnieniePozniej: termin(p2.koniec, naDzien),
         zawieszenie: p1.zawieszenie,
-        przedawnionyPrzedKoncemUmowy: !!koniecUmowy && p1.koniec < koniecUmowy,
+        przedawnionyPrzedKoncemUmowy: !!koniecUmowy && p1.koniec <= koniecUmowy,
       };
     });
   const razem = lata.reduce((s, r) => s + r.dni, 0);
@@ -164,10 +198,19 @@ export function zaleglyUrlop({ urlopy, naDzien, koniecUmowy = null, wychowawczy 
 }
 
 // Teksty wyniku: te same na serwerze i w przeglądarce (skrypt przepuszcza je jeszcze przez typografia()).
+// Data przedawnienia to dzień, po którym pracodawca może uchylić się od zaspokojenia roszczenia (art. 292);
+// komunikaty nie sugerują pewnej utraty urlopu (zob. wyrok TSUE C-120/21 w komentarzu na górze).
 const DNI: [string, string, string] = ['dzień', 'dni', 'dni'];
 const kiedy = (t: Termin) => `${dataPoPolsku(t.data)} (${ileDni(t.zostalo)})`;
+export const NIE_STRACONE = 'roszczenie nie musi być stracone (art. 292, wyrok TSUE C-120/21)';
 const stan = (t: Termin) =>
-  t.zostalo < 0 ? `Termin minął ${ileDni(t.zostalo)}` : t.zostalo === 0 ? 'Ostatni dzień: dziś' : `Zostało: ${odmiana(t.zostalo, DNI)}`;
+  t.zostalo < 0
+    ? `Najwcześniejszy termin przedawnienia minął ${ileDni(t.zostalo)}; ${NIE_STRACONE}`
+    : t.zostalo === 0
+      ? 'Ostatni dzień: dziś'
+      : `Zostało: ${odmiana(t.zostalo, DNI)}`;
+const przedawnienieRoku = (t: Termin) =>
+  t.zostalo < 0 ? `${kiedy(t)}; po tej dacie pracodawca może powołać się na przedawnienie (art. 292)` : kiedy(t);
 
 export interface OpisRoku {
   rok: number;
@@ -189,21 +232,21 @@ export function opis(w: Wynik): Opis {
     const wiersze: { dt: string; dd: string }[] = [];
     if (w.ekwiwalent) {
       wiersze.push({
-        dt: 'Roszczenie o urlop',
+        dt: 'Urlop',
         dd: r.przedawnionyPrzedKoncemUmowy
-          ? `mogło się przedawnić przed końcem umowy, najwcześniej ${dataPoPolsku(r.przedawnienie.data)}`
-          : `do ekwiwalentu (art. 171 § 1); przedawnienie roszczenia o urlop najwcześniej ${dataPoPolsku(r.przedawnienie.data)}`,
+          ? `wchodzi do ekwiwalentu (art. 171 § 1); roszczenie o urlop mogło się przedawnić do dnia końca umowy, najwcześniej ${dataPoPolsku(r.przedawnienie.data)}, ale ${NIE_STRACONE}`
+          : `wchodzi do ekwiwalentu (art. 171 § 1); roszczenie o urlop przedawnia się najwcześniej ${dataPoPolsku(r.przedawnienie.data)}`,
       });
     } else {
       wiersze.push({
         dt: r.biezacy ? 'Udzielić' : 'Udzielić najpóźniej',
         dd: r.biezacy
           ? `w ${r.rok} r. (art. 161), a urlop niewykorzystany w terminie z planu do ${kiedy(r.udzielenie)}`
-          : `${kiedy(r.udzielenie)}`,
+          : kiedy(r.udzielenie),
       });
       wiersze.push({
-        dt: 'Przedawnienie najwcześniej',
-        dd: `${kiedy(r.przedawnienie)}${r.zawieszenie ? `, z doliczonym urlopem wychowawczym: ${odmiana(r.zawieszenie, DNI)}` : ''}`,
+        dt: 'Przedawnienie, wariant wcześniejszy',
+        dd: `${przedawnienieRoku(r.przedawnienie)}${r.zawieszenie ? '; z uwzględnieniem urlopu wychowawczego (art. 293¹)' : ''}`,
       });
       wiersze.push({ dt: 'Wariant późniejszy', dd: dataPoPolsku(r.przedawnieniePozniej.data) });
     }
@@ -211,10 +254,11 @@ export function opis(w: Wynik): Opis {
   });
   if (w.ekwiwalent) {
     const e = w.ekwiwalent;
+    const zagrozone = w.lata.filter((r) => r.przedawnionyPrzedKoncemUmowy).reduce((s, r) => s + r.dni, 0);
     return {
       etykieta: 'Ekwiwalent za niewykorzystany urlop',
       glowny: odmiana(e.dni, DNI),
-      opis: `Koniec umowy ${dataPoPolsku(e.koniecUmowy)}: za urlop niewykorzystany z powodu rozwiązania umowy przysługuje ekwiwalent (art. 171 § 1). Przedawnienie najwcześniej ${dataPoPolsku(e.przedawnienie.data)}`,
+      opis: `Koniec umowy ${dataPoPolsku(e.koniecUmowy)}: za urlop niewykorzystany z powodu rozwiązania umowy przysługuje ekwiwalent (art. 171 § 1)${zagrozone ? `; w tym ${odmiana(zagrozone, DNI)} z lat, w których roszczenie o urlop mogło się przedawnić` : ''}. Przedawnienie ekwiwalentu najwcześniej ${dataPoPolsku(e.przedawnienie.data)}`,
       status: e.przedawnienie.status,
       statusTekst: stan(e.przedawnienie),
       lata,
@@ -225,7 +269,7 @@ export function opis(w: Wynik): Opis {
   return {
     etykieta: 'Niewykorzystany urlop',
     glowny: odmiana(w.razem, DNI),
-    opis: `Najwcześniej może się przedawnić urlop za ${najblizszy.rok} r.: ${dataPoPolsku(p.data)}`,
+    opis: `Pierwszy termin przedawnienia (wariant wcześniejszy): urlop za ${najblizszy.rok} r., ${dataPoPolsku(p.data)}`,
     status: p.status,
     statusTekst: stan(p),
     lata,
