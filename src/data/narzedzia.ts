@@ -801,6 +801,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-13',
   },
   {
+    slug: 'zaswiadczenie-adr',
+    nazwa: 'Zaświadczenie ADR: ważność i kurs',
+    krotko: 'Do kiedy ważne ADR, kiedy kurs doskonalący, żeby nic nie przepadło, i kto płaci za kurs i egzamin.',
+    kategoria: 'uprawnienia',
+    przepisy: ['przewozTowarowNiebezpiecznych', 'egzaminyAdr', 'kodeksCywilny'],
+    sprawdzono: '2026-11-13',
+  },
+  {
     slug: 'przerwy-w-pracy',
     nazwa: 'Przerwy w pracy',
     krotko: 'Ile przerw przy zmianie 8 i 12 godzin, które są płatne, przy monitorze, na karmienie, dla młodocianych.',
