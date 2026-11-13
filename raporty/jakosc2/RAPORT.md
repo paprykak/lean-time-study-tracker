@@ -3,7 +3,7 @@
 Niezależny audyt 41 narzędzi dodanych po pierwszym audycie. 9 partii (A–I), w każdej audytor dostał pliki narzędzia
 i teksty przepisów z API Sejmu (bez wniosków zespołu), a każde znalezisko sprawdził drugi podagent (weryfikator).
 Poprawione są tylko znaleziska potwierdzone albo częściowo potwierdzone, w wersji weryfikatora, każde z testem.
-Zasady: `WSPOLNE.md`, `WERYFIKATOR.md`. Surowe raporty: `<partia>.json` (audytor) i `<partia>-wer.json` (weryfikator).
+Zasady: `WSPOLNE.md`, `WERYFIKATOR.md`. Wynik: `npm run -s check:szybki` i `BEZ_WEBKIT=1 npm run check` EXIT 0 (E2E: 1893 zaliczone, 7 pominiętych; testy jednostkowe zielone). Surowe raporty: `<partia>.json` (audytor) i `<partia>-wer.json` (weryfikator).
 
 Wynik weryfikacji 73 znalezisk audytorów: potwierdzone 58, częściowo 12, odrzucone 3. Do tego 6 nowych znalezisk
 weryfikatorów, poprawionych w narzędziach partii (D-9 i I-N1 dotyczą też reszty serwisu, patrz niżej).
