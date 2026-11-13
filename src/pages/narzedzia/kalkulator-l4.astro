@@ -5,6 +5,7 @@ import { LATA, PLACA_MINIMALNA } from '../../data/prawo';
 import { POWODY, SKLADKI_PRACOWNIKA, chorobowe, minimalnaPodstawa, type Powod } from '../../lib/narzedzia/chorobowe';
 import { liczba, zl } from '../../lib/narzedzia/format';
 import { dzisWPolsce } from '../../lib/narzedzia/terminy';
+import { odmiana } from '../../lib/redakcja';
 
 const rokBiezacy = Number(dzisWPolsce().slice(0, 4));
 const rok = LATA.includes(rokBiezacy) ? rokBiezacy : LATA[LATA.length - 1];
@@ -53,23 +54,25 @@ const faq = [
       <div class="mt-4 grid gap-4 sm:grid-cols-2">
         <div>
           <label for="l4-dni" class="etykieta-pola">Dni zwolnienia</label>
-          <input id="l4-dni" name="dni" class="pole mt-1" type="text" inputmode="numeric" autocomplete="off" value="10" aria-describedby="l4-blad" />
+          <input id="l4-dni" name="dni" class="pole mt-1" type="text" inputmode="numeric" autocomplete="off" value="10" aria-describedby="l4-dni-opis l4-blad" />
         </div>
         <div>
           <label for="l4-wykorzystane" class="etykieta-pola">Dni L4 w tym roku przed tym zwolnieniem</label>
           <input id="l4-wykorzystane" name="wykorzystane" class="pole mt-1" type="text" inputmode="numeric" autocomplete="off" value="0" aria-describedby="l4-blad" />
         </div>
       </div>
+      <p id="l4-dni-opis" class="meta mt-1">Zwolnienie przez Nowy Rok policz osobno dla każdego roku: limit 33 albo 14 dni od pracodawcy liczy się od 1 stycznia (art. 92 § 1).</p>
       <div class="mt-4 grid gap-4 sm:grid-cols-2">
         <div>
           <label for="l4-powod" class="etykieta-pola">Powód niezdolności do pracy</label>
-          <select id="l4-powod" name="powod" class="pole mt-1">
+          <select id="l4-powod" name="powod" class="pole mt-1" aria-describedby="l4-powod-opis">
             {(Object.keys(POWODY) as Powod[]).map((p) => <option value={p}>{POWODY[p].nazwa} ({POWODY[p].procent}%)</option>)}
           </select>
+          <p id="l4-powod-opis" class="meta mt-1">Ciąża: niezdolność w czasie ciąży. Wypadek w drodze do pracy lub z pracy. Dawca: badania i zabieg dawcy komórek, tkanek i narządów. Pobyt w szpitalu jak choroba.</p>
         </div>
         <div>
           <label for="l4-rok" class="etykieta-pola">Rok zwolnienia</label>
-          <select id="l4-rok" name="rok" class="pole mt-1">
+          <select id="l4-rok" name="rok" class="pole mt-1" data-rok-biezacy>
             {LATA.map((r) => <option value={r} selected={r === rok}>{r}</option>)}
           </select>
         </div>
@@ -90,8 +93,8 @@ const faq = [
       <p class="wynik-kwota" aria-live="polite" aria-atomic="true"><span data-w="razem">{zl(start.razem)}</span></p>
       <dl class="wynik-lista">
         <div><dt>Za jeden dzień</dt><dd data-w="za-dzien">{zl(start.zaDzien)} ({start.procent}%)</dd></div>
-        <div><dt>Od pracodawcy (wynagrodzenie chorobowe)</dt><dd data-w="pracodawca">{start.dniPracodawca} dni: {zl(start.wynagrodzenieChorobowe)}</dd></div>
-        <div><dt>Z ZUS (zasiłek chorobowy)</dt><dd data-w="zus">{start.dniZus} dni: {zl(start.zasilek)}</dd></div>
+        <div><dt>Od pracodawcy (wynagrodzenie chorobowe)</dt><dd data-w="pracodawca">{odmiana(start.dniPracodawca, ['dzień', 'dni', 'dni'])}: {zl(start.wynagrodzenieChorobowe)}</dd></div>
+        <div><dt>Z ZUS (zasiłek chorobowy)</dt><dd data-w="zus">{odmiana(start.dniZus, ['dzień', 'dni', 'dni'])}: {zl(start.zasilek)}</dd></div>
         <div><dt>Podstawa miesięczna</dt><dd data-w="podstawa">{zl(start.podstawa)}</dd></div>
       </dl>
       <p class="wynik-uwaga" data-w="uwaga" hidden></p>
@@ -144,45 +147,53 @@ const faq = [
 <script>
   import { chorobowe, okresZasilkowy, type Powod } from '../../lib/narzedzia/chorobowe';
   import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
+  import { typografia } from '../../lib/typografia.mjs';
+  import { odmiana } from '../../lib/redakcja';
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
 
   const form = document.querySelector<HTMLFormElement>('[data-l4]');
   if (form) {
     const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
     const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
     const pola = ['brutto', 'dni', 'wykorzystane'];
+    const pisz = (k: string, tekst: string) => {
+      w(k).textContent = typografia(tekst);
+    };
+    const dni = (n: number) => odmiana(n, ['dzień', 'dni', 'dni']);
 
     const przelicz = () => {
       const powod = (form.elements.namedItem('powod') as HTMLSelectElement).value as Powod;
       const brutto = wpisanaLiczba(el('brutto').value);
-      const dni = wpisanaLiczba(el('dni').value);
+      const ileDni = wpisanaLiczba(el('dni').value);
       const wykorzystane = wpisanaLiczba(el('wykorzystane').value || '0');
       const maks = okresZasilkowy(powod);
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
       const blad =
         !(brutto > 0) ? 'Wpisz przeciętne wynagrodzenie brutto, na przykład 6000.'
-        : !(Number.isInteger(dni) && dni >= 1 && dni <= maks) ? `Wpisz liczbę dni zwolnienia od 1 do ${maks}.`
+        : !(Number.isInteger(ileDni) && ileDni >= 1 && ileDni <= maks) ? `Wpisz liczbę dni zwolnienia od 1 do ${maks}.`
         : !(Number.isInteger(wykorzystane) && wykorzystane >= 0 && wykorzystane <= 366) ? 'Dni L4 w tym roku: liczba całkowita od 0.'
         : null;
       b.hidden = !blad;
-      b.textContent = blad ?? '';
+      b.textContent = typografia(blad ?? '');
       for (const n of pola) el(n).setAttribute('aria-invalid', blad ? 'true' : 'false');
       if (blad) {
         w('razem').textContent = '—';
         return;
       }
-      const r = chorobowe({ rok: Number((form.elements.namedItem('rok') as HTMLSelectElement).value), brutto, dni, wykorzystane, powod, pelnyEtat: el('pelnyEtat').checked, po50: el('po50').checked });
-      w('razem').textContent = zl(r.razem);
-      w('za-dzien').textContent = `${zl(r.zaDzien)} (${r.procent}%)`;
-      w('pracodawca').textContent = `${r.dniPracodawca} dni: ${zl(r.wynagrodzenieChorobowe)}`;
-      w('zus').textContent = `${r.dniZus} dni: ${zl(r.zasilek)}`;
-      w('podstawa').textContent = `${zl(r.podstawa)}${r.podstawaPodniesiona ? ' (minimum z płacy minimalnej)' : ''}`;
-      const uwaga = r.dniZus > 0 ? `Limit ${r.limitPracodawcy} dni wynagrodzenia od pracodawcy w\u00a0tym roku się wyczerpuje; za ${r.dniZus} dni przysługuje zasiłek chorobowy (art.\u00a092 §\u00a04 Kodeksu pracy).` : null;
+      const r = chorobowe({ rok: Number((form.elements.namedItem('rok') as HTMLSelectElement).value), brutto, dni: ileDni, wykorzystane, powod, pelnyEtat: el('pelnyEtat').checked, po50: el('po50').checked });
+      pisz('razem', zl(r.razem));
+      pisz('za-dzien', `${zl(r.zaDzien)} (${r.procent}%)`);
+      pisz('pracodawca', `${dni(r.dniPracodawca)}: ${zl(r.wynagrodzenieChorobowe)}`);
+      pisz('zus', `${dni(r.dniZus)}: ${zl(r.zasilek)}`);
+      pisz('podstawa', `${zl(r.podstawa)}${r.podstawaPodniesiona ? ' (minimum z płacy minimalnej)' : ''}`);
+      const uwaga = r.dniZus > 0 ? `Limit ${r.limitPracodawcy} dni wynagrodzenia od pracodawcy w tym roku się wyczerpuje; za ${dni(r.dniZus)} przysługuje zasiłek chorobowy (art. 92 § 4 Kodeksu pracy).` : null;
       w('uwaga').hidden = !uwaga;
-      w('uwaga').textContent = uwaga ?? '';
+      pisz('uwaga', uwaga ?? '');
     };
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    ustawDzisiejszeWartosci(form);
     przelicz();
   }
 </script>

@@ -23,7 +23,8 @@ export interface DanePrzestoju {
   zmienneSuma?: number;
   /** Godziny przepracowane w okresie, z którego liczymy zmienne składniki. */
   zmienneGodziny?: number;
-  /** Wymiar etatu dla minimum (płaca minimalna proporcjonalnie). */
+  /** Wymiar etatu (1 = pełny): pensję i stałe składniki dzielimy przez godziny do przepracowania przy tym etacie.
+   *  Minimum za godzinę zostaje płacą minimalną podzieloną przez wymiar pełnego etatu. */
   etat?: number;
 }
 
@@ -32,6 +33,7 @@ export function przestoj(d: DanePrzestoju) {
   if (!placa) throw new RangeError(`Brak płacy minimalnej na ${d.rok} r.`);
   if (!(d.godziny > 0 && d.godziny <= 744)) throw new RangeError('Godziny przestoju od 0 do 744');
   const etat = d.etat ?? 1;
+  if (!(etat > 0 && etat <= 1)) throw new RangeError('Wymiar etatu od 0 do 1');
   const wymiar = wymiarMiesiaca(d.rok, d.miesiac).godziny;
   let zaGodzine: number;
   if (d.rodzaj === 'godzinowa') zaGodzine = d.stawka ?? NaN;
@@ -46,6 +48,8 @@ export function przestoj(d: DanePrzestoju) {
   const stawkaPrzestoju = Math.max(zaGodzine, minimumZaGodzine);
   return {
     wymiar,
+    /** Godziny do przepracowania w miesiącu przy tym etacie. */
+    wymiarEtatu: wymiar * etat,
     zaGodzine: doGrosza(zaGodzine),
     minimumZaGodzine: doGrosza(minimumZaGodzine),
     podniesioneDoMinimum: zaGodzine < minimumZaGodzine,

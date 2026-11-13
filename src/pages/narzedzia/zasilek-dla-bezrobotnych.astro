@@ -4,6 +4,7 @@
 import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
 import { zl } from '../../lib/narzedzia/format';
 import { dataPoPolsku, dzisWPolsce } from '../../lib/narzedzia/terminy';
+import { odmiana } from '../../lib/redakcja';
 import { KWOTY_ZASILKU, kwotyNa, naReke, zasilekDlaBezrobotnych } from '../../lib/narzedzia/zasilek-bezrobotny';
 
 const dzis = dzisWPolsce();
@@ -51,7 +52,7 @@ const faq = [
       <h2 id="kalkulator-tytul" class="tytul-m">Twoja sytuacja</h2>
       <div class="mt-4">
         <label for="b-data" class="etykieta-pola">Data rejestracji w urzędzie pracy</label>
-        <input id="b-data" name="rejestracja" type="date" class="pole mt-1 max-w-56" min={KWOTY_ZASILKU[0].od} value={rejestracja} aria-describedby="b-blad" />
+        <input id="b-data" name="rejestracja" type="date" class="pole mt-1 max-w-56" min={KWOTY_ZASILKU[0].od} value={rejestracja} data-dzis={rejestracja === dzis ? '0' : undefined} aria-describedby="b-blad" />
         <p id="b-blad" class="blad-pola" data-blad="data" hidden></p>
       </div>
       <div class="mt-4">
@@ -88,7 +89,7 @@ const faq = [
       <dl class="wynik-lista" data-w="szczegoly">
         <div><dt>Zasiłek od</dt><dd data-w="od">{r.prawo ? dataPoPolsku(r.wyplataOd) : '—'}</dd></div>
         <div><dt>Ostatni dzień zasiłku</dt><dd data-w="do">{r.prawo ? dataPoPolsku(r.koniec) : '—'}</dd></div>
-        <div><dt>Dni z zasiłkiem</dt><dd data-w="dni">{r.prawo ? `${r.dniWyplaty} dni` : '—'}</dd></div>
+        <div><dt>Dni z zasiłkiem</dt><dd data-w="dni">{r.prawo ? odmiana(r.dniWyplaty, ['dzień', 'dni', 'dni']) : '—'}</dd></div>
       </dl>
       <h3 class="etykieta mt-5">Miesięcznie w kolejnych okresach</h3>
       <ul class="mt-2 grid gap-2 text-[0.9375rem]" data-w="odcinki">
@@ -149,6 +150,9 @@ const faq = [
   import { zl } from '../../lib/narzedzia/format';
   import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
   import { KWOTY_ZASILKU, kwotyNa, zasilekDlaBezrobotnych, type KoniecPracy } from '../../lib/narzedzia/zasilek-bezrobotny';
+  import { typografia } from '../../lib/typografia.mjs';
+  import { odmiana } from '../../lib/redakcja';
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
 
   const POWODY = {
     staz: 'Zasiłek wymaga co najmniej 365 dni pracy od płacy minimalnej w 18 miesiącach przed rejestracją (art. 218 ust. 1). Do tych dni wlicza się też m.in. urlop wychowawczy i zasiłek chorobowy po ustaniu pracy (art. 218 ust. 2). Rejestracja w urzędzie pracy daje jednak ubezpieczenie zdrowotne, jeśli nie masz go z innego tytułu (art. 66 ust. 1 pkt 24 ustawy o świadczeniach opieki zdrowotnej).',
@@ -160,6 +164,9 @@ const faq = [
   if (form) {
     const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
     const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const pisz = (k: string, tekst: string) => {
+      w(k).textContent = typografia(tekst);
+    };
     const przelicz = () => {
       const rejestracja = el('rejestracja').value;
       const b = form.querySelector<HTMLElement>('[data-blad="data"]')!;
@@ -168,7 +175,7 @@ const faq = [
       else if (rejestracja < KWOTY_ZASILKU[0].od) blad = 'Kalkulator liczy zasiłek według ustawy w mocy od 1 czerwca 2025 r.';
       else if (!kwotyNa(rejestracja)) blad = 'Kwoty zasiłku na ten dzień nie są jeszcze ogłoszone (waloryzacja co roku od 1 czerwca).';
       b.hidden = !blad;
-      b.textContent = blad ?? '';
+      b.textContent = typografia(blad ?? '');
       const uwaga = w('uwaga');
       if (blad) {
         w('kwota').textContent = '—';
@@ -190,31 +197,32 @@ const faq = [
         for (const k of ['od', 'do', 'dni']) w(k).textContent = '—';
         w('odcinki').replaceChildren();
         uwaga.hidden = false;
-        uwaga.textContent = POWODY[r.powod];
+        uwaga.textContent = typografia(POWODY[r.powod]);
         return;
       }
       const pierwszy = r.odcinki[0];
       w('naglowek').textContent = 'Na rękę miesięcznie, pierwsze 90 dni';
-      w('kwota').textContent = pierwszy.netto === null ? '—' : zl(pierwszy.netto);
-      w('podpis').textContent = pierwszy.brutto === null ? '' : `${zl(pierwszy.brutto)} brutto${r.procent === 120 ? ' (120%)' : ''}`;
-      w('od').textContent = dataPoPolsku(r.wyplataOd);
-      w('do').textContent = dataPoPolsku(r.koniec);
-      w('dni').textContent = `${r.dniWyplaty} dni`;
+      pisz('kwota', pierwszy.netto === null ? '—' : zl(pierwszy.netto));
+      pisz('podpis', pierwszy.brutto === null ? '' : `${zl(pierwszy.brutto)} brutto${r.procent === 120 ? ' (120%)' : ''}`);
+      pisz('od', dataPoPolsku(r.wyplataOd));
+      pisz('do', dataPoPolsku(r.koniec));
+      pisz('dni', odmiana(r.dniWyplaty, ['dzień', 'dni', 'dni']));
       w('odcinki').replaceChildren(
         ...r.odcinki.map((o) =>
           Object.assign(document.createElement('li'), {
-            textContent: `${dataPoPolsku(o.od)} – ${dataPoPolsku(o.do)}: ${o.brutto === null ? 'kwota po waloryzacji z 1 czerwca, jeszcze nieogłoszona' : `${zl(o.brutto)} brutto, ${zl(o.netto!)} na rękę`}`,
+            textContent: typografia(`${dataPoPolsku(o.od)} – ${dataPoPolsku(o.do)}: ${o.brutto === null ? 'kwota po waloryzacji z 1 czerwca, jeszcze nieogłoszona' : `${zl(o.brutto)} brutto, ${zl(o.netto!)} na rękę`}`),
           }),
         ),
       );
       uwaga.hidden = !r.karencja;
       uwaga.textContent = r.karencja
-        ? 'Po porozumieniu stron z innego powodu niż likwidacja, upadłość, redukcja albo przeprowadzka zasiłek przysługuje po 90 dniach od rejestracji, a okres pobierania jest krótszy o te dni (art. 220 i art. 225 ust. 3).'
+        ? typografia('Po porozumieniu stron z innego powodu niż likwidacja, upadłość, redukcja albo przeprowadzka zasiłek przysługuje po 90 dniach od rejestracji, a okres pobierania jest krótszy o te dni (art. 220 i art. 225 ust. 3).')
         : '';
     };
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    ustawDzisiejszeWartosci(form);
     przelicz();
   }
 </script>

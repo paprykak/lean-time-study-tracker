@@ -4,7 +4,7 @@ import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
 import { LATA, PLACA_MINIMALNA } from '../../data/prawo';
 import { przestoj } from '../../lib/narzedzia/przestoj';
 import { nazwaMiesiaca, wymiarMiesiaca } from '../../lib/narzedzia/czas-pracy';
-import { zl } from '../../lib/narzedzia/format';
+import { godz, zl } from '../../lib/narzedzia/format';
 import { dzisWPolsce } from '../../lib/narzedzia/terminy';
 
 const dzis = dzisWPolsce();
@@ -28,7 +28,7 @@ const faq = [
   },
   {
     pytanie: 'Jak policzyć godzinę przestoju przy pensji miesięcznej?',
-    odpowiedz: 'Pensję zasadniczą dzieli się przez liczbę godzin do przepracowania w danym miesiącu (§ 4a rozporządzenia z 29 maja 1996 r.), a wynik mnoży przez godziny przestoju. Liczbę godzin w miesiącu pokazuje kalkulator wymiaru czasu pracy.',
+    odpowiedz: 'Pensję zasadniczą dzieli się przez liczbę godzin do przepracowania w danym miesiącu (§ 4a rozporządzenia z 29 maja 1996 r.), a wynik mnoży przez godziny przestoju. Przy niepełnym etacie dzieli się przez godziny do przepracowania przy tym etacie. Liczbę godzin w miesiącu pokazuje kalkulator wymiaru czasu pracy.',
   },
 ];
 ---
@@ -44,7 +44,7 @@ const faq = [
     <div class="kalkulator-pola">
       <h2 id="kalkulator-tytul" class="tytul-m">Twój przestój</h2>
       <fieldset class="mt-4">
-        <legend class="etykieta">Jak jesteś wynagradzany</legend>
+        <legend class="etykieta">Forma wynagrodzenia</legend>
         <div class="opcje-pionowe mt-2">
           <label><input type="radio" name="rodzaj" value="godzinowa" /> Stawka godzinowa</label>
           <label><input type="radio" name="rodzaj" value="miesieczna" checked /> Pensja miesięczna (stawka zasadnicza)</label>
@@ -55,19 +55,29 @@ const faq = [
         <label for="p-stawka" class="etykieta-pola" data-w="etykieta-stawki">Pensja zasadnicza (zł brutto)</label>
         <input id="p-stawka" name="stawka" class="pole mt-1 max-w-48" type="text" inputmode="decimal" autocomplete="off" value="6000" aria-describedby="p-blad" />
       </div>
+      <div class="mt-4" data-tylko-etat>
+        <label for="p-etat" class="etykieta-pola">Wymiar etatu</label>
+        <select id="p-etat" name="etat" class="pole mt-1 max-w-48" aria-describedby="p-etat-opis">
+          <option value="1" selected>Pełny etat</option>
+          <option value="0.75">3/4 etatu</option>
+          <option value="0.5">1/2 etatu</option>
+          <option value="0.25">1/4 etatu</option>
+        </select>
+        <p id="p-etat-opis" class="meta mt-1">Pensję dzielimy przez godziny do przepracowania przy Twoim etacie.</p>
+      </div>
       <div data-tylko-60 hidden><div class="mt-4 grid gap-4">
         <div>
           <label for="p-stale" class="etykieta-pola">Stałe składniki miesięcznie (zł)</label>
-          <input id="p-stale" name="stale" class="pole mt-1 max-w-48" type="text" inputmode="decimal" autocomplete="off" value="5000" />
+          <input id="p-stale" name="stale" class="pole mt-1 max-w-48" type="text" inputmode="decimal" autocomplete="off" value="5000" aria-describedby="p-blad" />
         </div>
         <div class="grid grid-cols-2 gap-4">
           <div>
             <label for="p-zmienne" class="etykieta-pola">Zmienne z 3 miesięcy, razem (zł)</label>
-            <input id="p-zmienne" name="zmienne" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="0" />
+            <input id="p-zmienne" name="zmienne" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="0" aria-describedby="p-blad" />
           </div>
           <div>
             <label for="p-zgodz" class="etykieta-pola">Przepracowane godziny w tych miesiącach</label>
-            <input id="p-zgodz" name="zgodz" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="480" />
+            <input id="p-zgodz" name="zgodz" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="480" aria-describedby="p-blad" />
           </div>
         </div>
       </div></div>
@@ -78,13 +88,13 @@ const faq = [
         </div>
         <div>
           <label for="p-miesiac" class="etykieta-pola">Miesiąc</label>
-          <select id="p-miesiac" name="miesiac" class="pole mt-1">
+          <select id="p-miesiac" name="miesiac" class="pole mt-1" data-miesiac-biezacy>
             {Array.from({ length: 12 }, (_, i) => <option value={i + 1} selected={i + 1 === miesiac}>{nazwaMiesiaca(i + 1)}</option>)}
           </select>
         </div>
         <div>
           <label for="p-rok" class="etykieta-pola">Rok</label>
-          <select id="p-rok" name="rok" class="pole mt-1">
+          <select id="p-rok" name="rok" class="pole mt-1" data-rok-biezacy>
             {LATA.map((r) => <option value={r} selected={r === rok}>{r}</option>)}
           </select>
         </div>
@@ -98,7 +108,7 @@ const faq = [
       <dl class="wynik-lista">
         <div><dt>Za godzinę według umowy</dt><dd data-w="za-godzine">{zl(start.zaGodzine)}</dd></div>
         <div><dt>Minimum za godzinę (płaca minimalna)</dt><dd data-w="minimum">{zl(start.minimumZaGodzine)}</dd></div>
-        <div><dt>Godzin do przepracowania w miesiącu</dt><dd data-w="wymiar">{start.wymiar} h</dd></div>
+        <div><dt>Godzin do przepracowania w miesiącu</dt><dd data-w="wymiar">{godz(start.wymiarEtatu)}</dd></div>
       </dl>
       <p class="wynik-uwaga" data-w="uwaga" hidden></p>
       <p class="meta mt-4">Minimum za godzinę: płaca minimalna podzielona przez godziny do przepracowania w miesiącu przy pełnym etacie.</p>
@@ -127,22 +137,33 @@ const faq = [
       a zmienne przez godziny przepracowane w okresie, z którego się je bierze (§ 4 ust. 1 i 2). Przestój z winy
       pracownika nie jest płatny (art. 81 § 2).
     </p>
+    <p>
+      Przy niepełnym etacie pensję i stałe składniki dzielimy przez godziny do przepracowania przy tym etacie, a minimum
+      za godzinę liczymy z płacy minimalnej i godzin pełnego etatu. Ile godzin do przepracowania ma miesiąc, pokaże
+      <a href="/narzedzia/wymiar-czasu-pracy">kalkulator wymiaru czasu pracy</a>.
+    </p>
   </Fragment>
 </StronaNarzedzia>
 
 <script>
   import { przestoj, type RodzajStawki } from '../../lib/narzedzia/przestoj';
-  import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
+  import { godz, wpisanaLiczba, zl } from '../../lib/narzedzia/format';
+  import { typografia } from '../../lib/typografia.mjs';
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
 
   const form = document.querySelector<HTMLFormElement>('[data-przestoj]');
   if (form) {
     const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
     const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
     const liczba = (n: string) => wpisanaLiczba(el(n).value || '0');
+    const pisz = (k: string, tekst: string) => {
+      w(k).textContent = typografia(tekst);
+    };
     const przelicz = () => {
       const rodzaj = (form.querySelector<HTMLInputElement>('input[name="rodzaj"]:checked')?.value ?? 'miesieczna') as RodzajStawki;
       form.querySelector<HTMLElement>('[data-tylko-stawka]')!.hidden = rodzaj === 'bez-stawki';
       form.querySelector<HTMLElement>('[data-tylko-60]')!.hidden = rodzaj !== 'bez-stawki';
+      form.querySelector<HTMLElement>('[data-tylko-etat]')!.hidden = rodzaj === 'godzinowa';
       w('etykieta-stawki').textContent = rodzaj === 'godzinowa' ? 'Stawka za godzinę (zł brutto)' : 'Pensja zasadnicza (zł brutto)';
       const godziny = liczba('godziny');
       const stawka = liczba('stawka');
@@ -153,7 +174,7 @@ const faq = [
         : rodzaj === 'bez-stawki' && !(liczba('stale') >= 0 && liczba('zmienne') >= 0 && liczba('zgodz') >= 0) ? 'Kwoty i godziny nie mogą być ujemne.'
         : null;
       b.hidden = !blad;
-      b.textContent = blad ?? '';
+      b.textContent = typografia(blad ?? '');
       if (blad) {
         w('kwota').textContent = '—';
         return;
@@ -167,18 +188,20 @@ const faq = [
         stale: liczba('stale'),
         zmienneSuma: liczba('zmienne'),
         zmienneGodziny: liczba('zgodz'),
+        etat: rodzaj === 'godzinowa' ? 1 : Number(el('etat').value),
       });
-      w('kwota').textContent = zl(r.kwota);
-      w('za-godzine').textContent = `${zl(r.zaGodzine)}${rodzaj === 'bez-stawki' ? ' (60%)' : ''}`;
-      w('minimum').textContent = zl(r.minimumZaGodzine);
-      w('wymiar').textContent = `${r.wymiar} h`;
+      pisz('kwota', zl(r.kwota));
+      pisz('za-godzine', `${zl(r.zaGodzine)}${rodzaj === 'bez-stawki' ? ' (60%)' : ''}`);
+      pisz('minimum', zl(r.minimumZaGodzine));
+      pisz('wymiar', godz(r.wymiarEtatu));
       const uwaga = r.podniesioneDoMinimum ? 'Stawka z umowy jest niższa od płacy minimalnej za godzinę, więc za przestój należy się minimum (art. 81 § 1 Kodeksu pracy).' : null;
       w('uwaga').hidden = !uwaga;
-      w('uwaga').textContent = uwaga ?? '';
+      pisz('uwaga', uwaga ?? '');
     };
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    ustawDzisiejszeWartosci(form);
     przelicz();
   }
 </script>

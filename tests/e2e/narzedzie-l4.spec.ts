@@ -34,3 +34,14 @@ test('ponad 182 dni: komunikat', async ({ page }) => {
   await page.getByLabel('Dni zwolnienia').fill('200');
   await expect(page.getByText('Wpisz liczbę dni zwolnienia od 1 do 182.')).toBeVisible();
 });
+
+test('krótkie nazwy powodów i uwaga o zwolnieniu przez Nowy Rok', async ({ page }) => {
+  for (const tekst of await page.getByLabel('Powód niezdolności do pracy').locator('option').allTextContents()) expect(tekst.length).toBeLessThanOrEqual(28);
+  await expect(page.locator('#l4-dni-opis')).toContainText(/Nowy\sRok/);
+});
+
+test('strona sprzed Nowego Roku otwarta 5 stycznia 2027 r.: rok 2027', async ({ page }) => {
+  await page.clock.setFixedTime(new Date('2027-01-05T10:00:00+01:00'));
+  await page.goto(NARZEDZIE_L4);
+  await expect(page.getByLabel('Rok zwolnienia')).toHaveValue('2027');
+});

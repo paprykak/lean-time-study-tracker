@@ -7,6 +7,7 @@ describe('zasiłek opiekuńczy (art. 32–35 ustawy zasiłkowej)', () => {
     expect(zasilekOpiekunczy({ rok: 2026, brutto: 6000, rodzaj: 'dziecko', dni: 5 })).toEqual({
       podstawa: 5177.4,
       zaDzien: 138.06,
+      limitLaczny: 60,
       pozostalo: 60,
       dniPlatne: 5,
       dniPonadLimit: 0,
@@ -16,9 +17,15 @@ describe('zasiłek opiekuńczy (art. 32–35 ustawy zasiłkowej)', () => {
   it('limit 60 dni: po 57 dniach płatne tylko 3', () => {
     expect(zasilekOpiekunczy({ rok: 2026, brutto: 6000, rodzaj: 'dziecko', dni: 7, wykorzystaneTenRodzaj: 57 })).toMatchObject({ dniPlatne: 3, dniPonadLimit: 4 });
   });
-  it('inny członek rodziny: 14 dni, ale łącznie nie więcej niż 60', () => {
+  it('inny członek rodziny: 14 dni, ale łącznie nie więcej niż 60, gdy w roku była opieka nad dzieckiem do 14 lat', () => {
     expect(zasilekOpiekunczy({ rok: 2026, brutto: 6000, rodzaj: 'czlonek-rodziny', dni: 14 }).dniPlatne).toBe(14);
-    expect(zasilekOpiekunczy({ rok: 2026, brutto: 6000, rodzaj: 'czlonek-rodziny', dni: 14, wykorzystaneLacznie: 55 }).dniPlatne).toBe(5);
+    expect(zasilekOpiekunczy({ rok: 2026, brutto: 6000, rodzaj: 'czlonek-rodziny', dni: 14, wykorzystaneLacznie: 55, bylaOpiekaNadDzieckiem60: true }).dniPlatne).toBe(5);
+    expect(zasilekOpiekunczy({ rok: 2026, brutto: 6000, rodzaj: 'czlonek-rodziny', dni: 14, wykorzystaneLacznie: 20, bylaOpiekaNadDzieckiem60: true }).dniPlatne).toBe(14);
+  });
+  it('opieka tylko nad dzieckiem z orzeczeniem i członkiem rodziny: łącznie 30 dni (art. 33 ust. 2 zd. 2)', () => {
+    // wartości z C-fix/opiekunczy.py: 30 − 20 = 10 dni × 138,06 zł = 1380,60 zł; 30 − 14 = 16 dni
+    expect(zasilekOpiekunczy({ rok: 2026, brutto: 6000, rodzaj: 'czlonek-rodziny', dni: 14, wykorzystaneLacznie: 20 })).toMatchObject({ limitLaczny: 30, dniPlatne: 10, kwota: 1380.6 });
+    expect(zasilekOpiekunczy({ rok: 2026, brutto: 6000, rodzaj: 'dziecko-orzeczenie', dni: 30, wykorzystaneLacznie: 14 })).toMatchObject({ dniPlatne: 16, kwota: 2208.96 });
   });
   it('minimum przy pełnym etacie', () => {
     expect(zasilekOpiekunczy({ rok: 2026, brutto: 3000, rodzaj: 'dziecko', dni: 1 }).podstawa).toBe(4147.1);

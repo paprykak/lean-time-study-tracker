@@ -14,6 +14,12 @@ describe('wynagrodzenie za przestój (art. 81 Kp)', () => {
     const r = przestoj({ rok: 2026, miesiac: 11, godziny: 10, rodzaj: 'bez-stawki', stale: 5000, zmienneSuma: 3000, zmienneGodziny: 480 });
     expect(r).toMatchObject({ zaGodzine: 22.5, minimumZaGodzine: 30.04, podniesioneDoMinimum: true, kwota: 300.38 });
   });
+  it('pół etatu: pensja przez 80 h, a minimum dalej z pełnego etatu (C-fix/przestoj.py)', () => {
+    expect(przestoj({ rok: 2026, miesiac: 11, godziny: 8, rodzaj: 'miesieczna', stawka: 3000, etat: 0.5 })).toMatchObject({ wymiarEtatu: 80, zaGodzine: 37.5, podniesioneDoMinimum: false, kwota: 300 });
+    // 60%: 0,6 × 2500 / 80 = 18,75 zł < 4806 / 160 = 30,0375 zł, więc 8 h × minimum = 240,30 zł
+    expect(przestoj({ rok: 2026, miesiac: 11, godziny: 8, rodzaj: 'bez-stawki', stale: 2500, etat: 0.5 })).toMatchObject({ zaGodzine: 18.75, podniesioneDoMinimum: true, kwota: 240.3 });
+    expect(() => przestoj({ rok: 2026, miesiac: 11, godziny: 8, rodzaj: 'miesieczna', stawka: 3000, etat: 0 })).toThrow(RangeError);
+  });
   it('niska stawka godzinowa: podniesiona do płacy minimalnej', () => {
     expect(przestoj({ rok: 2026, miesiac: 11, godziny: 1, rodzaj: 'godzinowa', stawka: 25 }).podniesioneDoMinimum).toBe(true);
   });

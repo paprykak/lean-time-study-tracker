@@ -10,7 +10,8 @@ import { dataPoPolsku, dzisWPolsce } from '../../lib/narzedzia/terminy';
 const dzis = dzisWPolsce();
 const BRUTTO = 6000;
 // Rok bez płacy minimalnej w rejestrze (np. przed jej ogłoszeniem) liczymy od grudnia ostatniego znanego roku.
-const start = LATA.includes(Number(dzis.slice(0, 4))) ? dzis : `${LATA[LATA.length - 1]}-12-01`;
+const startDzis = LATA.includes(Number(dzis.slice(0, 4)));
+const start = startDzis ? dzis : `${LATA[LATA.length - 1]}-12-01`;
 const r = swiadczenieRehabilitacyjne({ start, brutto: BRUTTO, przyczyna: 'choroba', miesiace: 12 });
 
 const faq = [
@@ -45,7 +46,7 @@ const faq = [
       </div>
       <div class="mt-4">
         <label for="r-start" class="etykieta-pola">Początek świadczenia</label>
-        <input id="r-start" name="start" type="date" class="pole mt-1 max-w-56" min="2026-01-01" max="2100-12-31" value={start} aria-describedby="r-blad" />
+        <input id="r-start" name="start" type="date" class="pole mt-1 max-w-56" min="2026-01-01" max="2100-12-31" value={start} data-dzis={startDzis ? '0' : undefined} aria-describedby="r-blad" />
       </div>
       <div class="mt-4">
         <label for="r-przyczyna" class="etykieta-pola">Przyczyna niezdolności do pracy</label>
@@ -110,6 +111,9 @@ const faq = [
       Podstawa: przeciętna pensja brutto z 12 miesięcy przed zwolnieniem minus 13,71% składek, przy pełnym etacie nie
       mniej niż z płacy minimalnej, tak jak przy <a href="/narzedzia/kalkulator-l4">zasiłku chorobowym</a>. Dla kwartału,
       dla którego wskaźnika jeszcze nie ogłoszono, liczymy bez waloryzacji. Kwoty miesięczne to podstawa razy 90%, 75% albo 100%; „razem” to suma pełnych miesięcy.
+      Miesiąc to 30 dni (art. 22 w związku z art. 11 ust. 5 ustawy zasiłkowej): 90% przez pierwsze 90 dni, najwyżej
+      360 dni. Kalkulator ochrony na L4 liczy 3 miesiące z art. 53 Kodeksu pracy kalendarzowo, więc jego data może wypaść
+      o 1–2 dni później.
     </p>
   </Fragment>
 </StronaNarzedzia>
@@ -118,11 +122,16 @@ const faq = [
   import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
   import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
   import { swiadczenieRehabilitacyjne, type Przyczyna } from '../../lib/narzedzia/swiadczenie-rehabilitacyjne';
+  import { typografia } from '../../lib/typografia.mjs';
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
 
   const form = document.querySelector<HTMLFormElement>('[data-rehabilitacyjne]');
   if (form) {
     const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
     const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const pisz = (k: string, tekst: string) => {
+      w(k).textContent = typografia(tekst);
+    };
     const przelicz = () => {
       const brutto = wpisanaLiczba(el('brutto').value);
       const start = el('start').value;
@@ -131,7 +140,7 @@ const faq = [
       else if (!poprawnaData(start) || start < '2026-01-01') blad = 'Wpisz początek świadczenia od 2026 r.';
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
       b.hidden = !blad;
-      b.textContent = blad ?? '';
+      b.textContent = typografia(blad ?? '');
       if (blad) {
         w('pierwsze').textContent = '—';
         return;
@@ -141,23 +150,24 @@ const faq = [
         r = swiadczenieRehabilitacyjne({ start, brutto, przyczyna: el('przyczyna').value as Przyczyna, miesiace: Number(el('miesiace').value), pelnyEtat: el('pelnyEtat').checked });
       } catch {
         b.hidden = false;
-        b.textContent = 'Brak płacy minimalnej dla tego roku. Wybierz wcześniejszą datę.';
+        b.textContent = typografia('Brak płacy minimalnej dla tego roku. Wybierz wcześniejszą datę.');
         w('pierwsze').textContent = '—';
         return;
       }
       const stale = r.procentPierwsze === r.procentDalej;
-      w('naglowek').textContent = stale ? 'Miesięcznie brutto (100%)' : 'Pierwsze 3 miesiące, miesięcznie brutto';
-      w('pierwsze').textContent = zl(r.pierwsze);
-      w('dalej-opis').textContent = stale ? 'Przez cały okres, miesięcznie' : `Od ${dataPoPolsku(r.od75)}, miesięcznie (75%)`;
-      w('dalej').textContent = zl(r.dalej);
-      w('podstawa').textContent = zl(r.podstawaPoWaloryzacji);
-      w('wskaznik').textContent = r.wskaznik ? `${String(r.wskaznik.wskaznik).replace('.', ',')}% (${r.wskaznik.zrodlo})` : 'jeszcze nieogłoszony';
-      w('razem').textContent = zl(r.razem);
-      w('koniec').textContent = dataPoPolsku(r.koniecNajpozniej);
+      pisz('naglowek', stale ? 'Miesięcznie brutto (100%)' : 'Pierwsze 3 miesiące, miesięcznie brutto');
+      pisz('pierwsze', zl(r.pierwsze));
+      pisz('dalej-opis', stale ? 'Przez cały okres, miesięcznie' : `Od ${dataPoPolsku(r.od75)}, miesięcznie (75%)`);
+      pisz('dalej', zl(r.dalej));
+      pisz('podstawa', zl(r.podstawaPoWaloryzacji));
+      pisz('wskaznik', r.wskaznik ? `${String(r.wskaznik.wskaznik).replace('.', ',')}% (${r.wskaznik.zrodlo})` : 'jeszcze nieogłoszony');
+      pisz('razem', zl(r.razem));
+      pisz('koniec', dataPoPolsku(r.koniecNajpozniej));
     };
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    ustawDzisiejszeWartosci(form);
     przelicz();
   }
 </script>
