@@ -17,8 +17,9 @@
 //   w godzinach dobowego wymiaru (art. 154^2 § 1). To wariant korzystniejszy dla pracownika; inny odczyt liczy limit
 //   jako 4 × 8 h = 32 h (przy zmianach 12 h: 2 zmiany i 8 h). Dni na żądanie dostępne teraz = mniej z dwóch liczb:
 //   4 − wykorzystane i liczba pełnych zmian mieszczących się w urlopie pozostałym po planie (zmiany na żądanie
-//   wpisane do planu liczymy z puli tylko raz, w planie). Bez planu nie znamy długości zmiany: same dni.
-// - długość zmiany od 1 do 24 h.
+//   wpisane do planu liczymy z puli tylko raz, w planie). Bez planu nie znamy długości zmiany: limit dni i pełne dni
+//   po 8 h (albo po niższej normie) w pozostałym urlopie, bo dzień na żądanie też zużywa urlop (art. 163 § 1, 168).
+// - długość zmiany od 1 do 24 h; dodatkowe godziny (resztka urlopu) mogą być ułamkowe, np. 4,5 h po zmianach 7,5 h.
 // - podział urlopu: co najmniej jedna część 14 kolejnych dni kalendarzowych (art. 162) — tylko informacja na stronie.
 // Liczymy w minutach, żeby zmiany po 7,5 h nie dawały błędów zaokrągleń.
 import { odmiana } from '../redakcja';
@@ -83,7 +84,8 @@ export function urlopGodzinowy(dane: DaneUrlopu) {
   const { dni, godziny, dzien, plan, naZadanieWykorzystane } = dane;
   if (dzien !== 8 && dzien !== 7) throw new BladDanych('Dzień urlopu: 8 albo 7 godzin.', 'dzien');
   if (!calkowita(dni, 0, MAKS_DNI)) throw new BladDanych(`Urlop do wykorzystania: pełne dni od 0 do ${MAKS_DNI}.`, 'dni');
-  if (!calkowita(godziny, 0, dzien - 1)) throw new BladDanych(`Dodatkowe godziny: pełne godziny od 0 do ${dzien - 1}.`, 'godziny');
+  if (!(Number.isFinite(godziny) && godziny >= 0 && min(godziny) < dzien * 60))
+    throw new BladDanych(`Dodatkowe godziny: od 0 do mniej niż ${dzien} (np. 4,5).`, 'godziny');
   if (!calkowita(naZadanieWykorzystane, 0, NA_ZADANIE)) throw new BladDanych(`Urlop na żądanie: od 0 do ${NA_ZADANIE} dni.`, 'zadanie');
   plan.forEach((z, i) => {
     const n = z.wiersz ?? i + 1;
@@ -92,7 +94,7 @@ export function urlopGodzinowy(dane: DaneUrlopu) {
     if (!calkowita(z.liczba, 0, 366)) throw new BladDanych(`Wiersz ${n}: liczba zmian od 0 do 366.`, `liczba${n}`);
   });
 
-  const masz = min(dni * dzien + godziny);
+  const masz = dni * dzien * 60 + min(godziny);
   const zmianPlanu = plan.reduce((s, z) => s + z.liczba, 0);
   const planMin = plan.reduce((s, z) => s + min(z.dlugosc) * z.liczba, 0);
 
@@ -120,7 +122,7 @@ export function urlopGodzinowy(dane: DaneUrlopu) {
   const dlugoscNaZadanie = plan.find((z) => z.liczba > 0)?.dlugosc ?? null;
   const limitNaZadanie = NA_ZADANIE - naZadanieWykorzystane;
   const naZadanie =
-    zostalo === 0 ? 0 : dlugoscNaZadanie === null ? limitNaZadanie : Math.min(limitNaZadanie, pelneZmiany(h(zostalo), dlugoscNaZadanie).pelne);
+    zostalo === 0 ? 0 : Math.min(limitNaZadanie, pelneZmiany(h(zostalo), dlugoscNaZadanie ?? dzien).pelne);
   return {
     dzien,
     masz: h(masz),
@@ -161,7 +163,9 @@ export function opisWyniku(r: WynikUrlopu) {
   if (!r.limitNaZadanie) naZadanie = 'wykorzystany w tym roku';
   else if (!r.zostalo) naZadanie = `0 dni: plan wykorzystuje cały urlop (limit w tym roku: ${dniN(r.limitNaZadanie)})`;
   else if (r.dlugoscNaZadanie === null)
-    naZadanie = `do ${dniN(r.naZadanie)} w ramach pozostałego urlopu; godziny zależą od długości zmiany w grafiku`;
+    naZadanie = r.naZadanie
+      ? `do ${odmiana(r.naZadanie, ['dnia', 'dni', 'dni'])} w ramach pozostałego urlopu; godziny zależą od długości zmiany w grafiku`
+      : `0 dni: zostało mniej niż jeden dzień urlopu (${godz(r.dzien)})`;
   else if (!r.naZadanie) naZadanie = `0 dni: w pozostałym urlopie nie mieści się cała zmiana ${godz(r.dlugoscNaZadanie)}`;
   else
     naZadanie = `${dniN(r.naZadanie)} w ramach pozostałego urlopu; przy zmianie ${godz(r.dlugoscNaZadanie)} to ${godz(r.naZadanieGodziny ?? 0)}${
@@ -172,9 +176,11 @@ export function opisWyniku(r: WynikUrlopu) {
     opis: r.brakuje
       ? `Na cały plan brakuje ${godz(r.brakuje)} urlopu`
       : r.zostalo
-        ? `To ${dniIGodziny(r.zostalo, r.dzien)} urlopu po ${r.dzien} h`
+        ? pelneZmiany(r.zostalo, r.dzien).pelne
+          ? `To ${dniIGodziny(r.zostalo, r.dzien)} urlopu po ${r.dzien} h`
+          : `To mniej niż jeden dzień urlopu (dzień = ${r.dzien} h)`
         : 'Plan wykorzystuje cały urlop',
-    masz: r.masz ? `${godz(r.masz)} (${dniIGodziny(r.masz, r.dzien)} po ${r.dzien} h)` : godz(0),
+    masz: pelneZmiany(r.masz, r.dzien).pelne ? `${godz(r.masz)} (${dniIGodziny(r.masz, r.dzien)} po ${r.dzien} h)` : godz(r.masz),
     plan: `${godz(r.plan)} (${zmiany(r.zmianPlanu)})`,
     pokrycie: r.brakuje
       ? `${r.pokryte} z ${r.zmianPlanu} ${r.zmianPlanu === 1 ? 'zmiany' : 'zmian'} w całości${r.czesc ? `, na ${r.numerCzesci}. zmianie tylko ${godz(r.czesc)} urlopu` : ''}; brakuje ${godz(r.brakuje)}`

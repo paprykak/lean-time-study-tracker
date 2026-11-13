@@ -30,7 +30,7 @@ test('15.03–14.05: 24 dni; urlop wychowawczy bez obniżenia; art. 174¹ z drug
   await expect(page.locator('[data-w="lista"]')).toContainText(/bez\szmian:\s15\sczerwca\s2027/);
   await page.getByLabel('Rodzaj').selectOption('inny-pracodawca');
   await expect(page.locator('[data-w="glowna"]')).toHaveText(/^24\sdni$/);
-  await expect(page.locator('[data-w="lista"]')).toContainText(/Drugie\sodczytanie\sza\s2026/);
+  await expect(page.locator('[data-w="lista"]')).toContainText(/Drugie\sodczytanie\sza\s2026\sr\./);
   await expect(page.locator('[data-w="lista"]')).toContainText('174¹');
 });
 
@@ -39,7 +39,7 @@ test('przełom roku: 26 dni za 2026 (brak powrotu w tym roku), 22 za 2027', asyn
   await page.getByLabel('Do', { exact: true }).fill('2027-02-28');
   await expect(page.locator('[data-w="glowna"]')).toHaveText(/^26\sdni$/);
   await expect(page.locator('[data-w="lista"]')).toContainText(/brak\spowrotu\sw\stym\ssamym\sroku/);
-  await expect(page.locator('[data-w="lista"]')).toContainText(/za\s2027\s*22\sdni/);
+  await expect(page.locator('[data-w="lista"]')).toContainText(/za\s2027\sr\.\s*22\sdni/);
 });
 
 test('błędne dane: koniec przed początkiem i zły wymiar, komunikat role="alert" i aria-invalid', async ({ page }) => {

@@ -255,7 +255,7 @@ export function tekstyWyniku(d: DaneUrlopuBezplatnego) {
     };
     const wiersze = [
       {
-        etykieta: `Urlop wypoczynkowy za ${x.rok}`,
+        etykieta: `Urlop wypoczynkowy za ${x.rok} r.`,
         wartosc: `${dniTekst(x.dni)}, ${opis[x.podstawa]}`,
       },
     ];
@@ -272,7 +272,7 @@ export function tekstyWyniku(d: DaneUrlopuBezplatnego) {
           "przy liczeniu miesiąca z dniem rozpoczęcia urlopu; przepis tego nie rozstrzyga",
       };
       wiersze.push({
-        etykieta: `Drugie odczytanie za ${x.rok}`,
+        etykieta: `Drugie odczytanie za ${x.rok} r.`,
         wartosc: `${dniTekst(o.dni)}, ${powod[o.powod]}`,
       });
     }
@@ -281,13 +281,13 @@ export function tekstyWyniku(d: DaneUrlopuBezplatnego) {
   const pierwszy = r.lata[0];
   const glowna = dniTekst(pierwszy.dni);
   const opis = r.coNajmniejMiesiac
-    ? `Urlop wypoczynkowy za ${pierwszy.rok}; nieobecność ${dniTekst(r.dni)}, co najmniej miesiąc`
+    ? `Urlop wypoczynkowy za ${pierwszy.rok} r.; nieobecność ${dniTekst(r.dni)}, co najmniej miesiąc`
     : `Nieobecność ${dniTekst(r.dni)}, krócej niż miesiąc: wymiar się nie zmienia (art. 155^2 § 1)`;
 
   const pozycje: { etykieta: string; wartosc: string }[] = [];
   if (r.zostalo && wyk > 0) {
     pozycje.push({
-      etykieta: `Zostało do wykorzystania za ${pierwszy.rok}`,
+      etykieta: `Zostało do wykorzystania za ${pierwszy.rok} r.`,
       wartosc: `${dniTekst(r.zostalo.dni)} po odjęciu ${dniDopelniacz(wyk)} wykorzystanego urlopu`,
     });
     if (r.zostalo.drugieOdczytanie !== null)

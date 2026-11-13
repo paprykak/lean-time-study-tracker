@@ -60,3 +60,13 @@ test('błąd w wierszu 2 przy pustym wierszu 1 podaje numer 2', async ({ page })
   await expect(page.locator('[name="dlugosc2"]')).toHaveAttribute('aria-invalid', 'true');
   await expect(page.locator('[data-w="zostalo"]')).toHaveText('—');
 });
+
+test('resztka 4,5 h bez planu: mniej niż dzień urlopu, 0 dni na żądanie', async ({ page }) => {
+  await page.locator('[name="dni"]').fill('0');
+  await page.locator('[name="godziny"]').fill('4,5');
+  await page.locator('[name="liczba1"]').fill('');
+  await page.locator('[name="dlugosc1"]').fill('');
+  await expect(page.locator('[data-w="masz"]')).toHaveText(/^4,5\sh$/);
+  await expect(page.locator('[data-w="opis"]')).toHaveText(/^To\smniej\sniż\sjeden\sdzień\surlopu\s\(dzień\s=\s8\sh\)$/);
+  await expect(page.locator('[data-w="na-zadanie"]')).toContainText(/^0\sdni:\szostało\smniej\sniż\sjeden\sdzień\surlopu/);
+});

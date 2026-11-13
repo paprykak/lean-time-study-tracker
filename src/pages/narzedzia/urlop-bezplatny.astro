@@ -51,7 +51,7 @@ const faq = [
   <form class="kalkulator" data-bezplatny novalidate aria-labelledby="kalkulator-tytul">
     <div class="kalkulator-pola">
       <h2 id="kalkulator-tytul" class="tytul-m">Twój urlop bezpłatny</h2>
-      <div class="mt-4 grid grid-cols-2 items-end gap-3">
+      <div class="mt-4 grid grid-cols-1 min-[380px]:grid-cols-2 items-end gap-3">
         <div>
           <label for="b-od" class="etykieta-pola">Od</label>
           <input id="b-od" name="od" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={OD} aria-describedby="b-blad" />

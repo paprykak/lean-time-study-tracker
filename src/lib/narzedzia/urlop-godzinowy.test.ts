@@ -58,11 +58,43 @@ describe('urlop w godzinach (art. 154^2 Kp)', () => {
     expect(pelneZmiany(0, 12)).toEqual({ pelne: 0, reszta: 0 });
   });
 
+  it('bez planu: dni na żądanie najwyżej tyle, ile pełnych dni urlopu zostało (art. 163 § 1, 167^2, 168)', () => {
+    const nz = (x: Partial<DaneUrlopu>) => urlopGodzinowy(D({ plan: [], ...x })).naZadanie;
+    expect(nz({ dni: 0, godziny: 3 })).toBe(0);
+    expect(nz({ dni: 1 })).toBe(1);
+    expect(nz({ dni: 2, godziny: 7 })).toBe(2);
+    expect(nz({ dni: 20 })).toBe(4);
+    expect(nz({ dni: 20, naZadanieWykorzystane: 2 })).toBe(2);
+    expect(nz({ dni: 3, dzien: 7 })).toBe(3);
+    expect(bez(opisWyniku(urlopGodzinowy(D({ plan: [], dni: 0, godziny: 3 }))).naZadanie)).toBe('0 dni: zostało mniej niż jeden dzień urlopu (8 h)');
+    expect(bez(opisWyniku(urlopGodzinowy(D({ plan: [], dni: 20, naZadanieWykorzystane: 3 }))).naZadanie)).toBe(
+      'do 1 dnia w ramach pozostałego urlopu; godziny zależą od długości zmiany w grafiku',
+    );
+  });
+
+  it('mniej niż dzień urlopu: bez „po 8 h” przy samych godzinach; ułamkowa resztka 4,5 h', () => {
+    const o = opisWyniku(urlopGodzinowy(D({ plan: [], dni: 0, godziny: 3 })));
+    expect(bez(o.masz)).toBe('3 h');
+    expect(bez(o.opis)).toBe('To mniej niż jeden dzień urlopu (dzień = 8 h)');
+    const z = opisWyniku(urlopGodzinowy(D({ dni: 1, godziny: 3, plan: [{ dlugosc: 8, liczba: 1 }] })));
+    expect(bez(z.masz)).toBe('11 h (1 dzień i 3 h po 8 h)');
+    expect(bez(z.opis)).toBe('To mniej niż jeden dzień urlopu (dzień = 8 h)');
+    expect(bez(opisWyniku(urlopGodzinowy(D({ plan: [], dni: 0, godziny: 4.5 }))).masz)).toBe('4,5 h');
+    // 20 dni i 2,5 h przy planie 21 zmian po 7,5 h: 162,5 − 157,5 = 5 h.
+    const p = urlopGodzinowy(D({ dni: 20, godziny: 2.5, plan: [{ dlugosc: 7.5, liczba: 21 }] }));
+    expect([p.masz, p.plan, p.zostalo]).toEqual([162.5, 157.5, 5]);
+  });
+
   it('błędne dane: RangeError', () => {
     expect(() => urlopGodzinowy(D({ dni: -1 }))).toThrow(RangeError);
     expect(() => urlopGodzinowy(D({ dni: 2.5 }))).toThrow(RangeError);
-    expect(() => urlopGodzinowy(D({ godziny: 8 }))).toThrow('Dodatkowe godziny: pełne godziny od 0 do 7.');
-    expect(() => urlopGodzinowy(D({ dzien: 7, godziny: 7 }))).toThrow('Dodatkowe godziny: pełne godziny od 0 do 6.');
+    expect(() => urlopGodzinowy(D({ godziny: 8 }))).toThrow('Dodatkowe godziny: od 0 do mniej niż 8 (np. 4,5).');
+    expect(() => urlopGodzinowy(D({ dzien: 7, godziny: 7 }))).toThrow('Dodatkowe godziny: od 0 do mniej niż 7 (np. 4,5).');
+    expect(() => urlopGodzinowy(D({ godziny: -0.5 }))).toThrow(RangeError);
+    expect(() => urlopGodzinowy(D({ godziny: Number.NaN }))).toThrow(RangeError);
+    expect(urlopGodzinowy(D({ godziny: 7.75 })).masz).toBe(215.75);
+    expect(() => urlopGodzinowy(D({ godziny: 7.995 }))).toThrow(RangeError); // po zaokrągleniu do minuty to 8 h
+    expect(urlopGodzinowy(D({ dzien: 7, godziny: 6.5 })).masz).toBe(188.5);
     expect(() => urlopGodzinowy(D({ plan: [{ dlugosc: 0, liczba: 1 }] }))).toThrow('Wiersz 1: długość zmiany od 1 do 24 h.');
     expect(() => urlopGodzinowy(D({ plan: [{ dlugosc: 0.005, liczba: 1 }] }))).toThrow(RangeError);
     expect(() => urlopGodzinowy(D({ plan: [{ dlugosc: 0.9, liczba: 1 }] }))).toThrow(RangeError);

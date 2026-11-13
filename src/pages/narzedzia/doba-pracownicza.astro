@@ -182,7 +182,7 @@ const wartosc = (i: number, k: 'od' | 'do') => PRZYKLAD[i][k];
 <script>
   import { BladDnia, dobaPracownicza, etykietaDnia, etykietaKrotka, opisWyniku, type Wiersz } from '../../lib/narzedzia/doba-pracownicza';
   import { minuty } from '../../lib/narzedzia/czas-pracy';
-  import { dodajDni, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { dodajDni, dzisWPolsce, poprawnaData } from '../../lib/narzedzia/terminy';
   import { typografia } from '../../lib/typografia.mjs';
 
   const form = document.querySelector<HTMLFormElement>('[data-doba]');
@@ -263,6 +263,12 @@ const wartosc = (i: number, k: 'od' | 'do') => PRZYKLAD[i][k];
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    // Strona jest budowana raz: domyślny „najbliższy poniedziałek” liczymy od dziś w przeglądarce (pole zmienione zostaje).
+    const poleStart = el('start');
+    if (poleStart.value === poleStart.defaultValue) {
+      const dzis = dzisWPolsce();
+      poleStart.value = dodajDni(dzis, (8 - new Date(`${dzis}T00:00:00Z`).getUTCDay()) % 7);
+    }
     przelicz();
   }
 </script>

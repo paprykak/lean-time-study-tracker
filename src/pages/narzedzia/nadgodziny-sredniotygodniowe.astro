@@ -5,11 +5,12 @@ import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
 import { nazwaMiesiaca } from '../../lib/narzedzia/czas-pracy';
 import { ETATY, LIMIT_ROCZNY, nadgodzinyOkresu, OKRESY, tekstyWyniku, type DaneOkresu } from '../../lib/narzedzia/nadgodziny-okres';
 import { typografia } from '../../lib/typografia.mjs';
-import { LATA } from '../../data/prawo';
+import { lataKalendarza } from '../../lib/narzedzia/dzis-w-formularzu';
+import { dzisWPolsce } from '../../lib/narzedzia/terminy';
 
-const rokBudowy = new Date().getUTCFullYear();
-const latDoWyboru = [...new Set([...LATA, rokBudowy, rokBudowy + 1])].sort((a, b) => a - b);
 const START: DaneOkresu = { rok: 2026, miesiac: 11, miesiecy: 1, etat: 1, przepracowane: 184, dobowe: 10, nieobecnosc: 0, stawka: 40 };
+// Lata z kalendarza (poprzedni, bieżący, następny) i rok przykładu; wymiar nie zależy od kwot z prawo.ts.
+const latDoWyboru = [...new Set([...lataKalendarza(dzisWPolsce()), START.rok])].sort((a, b) => a - b);
 const r = nadgodzinyOkresu(START);
 const t = Object.fromEntries(Object.entries(tekstyWyniku(r, START.etat, START.nieobecnosc)).map(([k, v]) => [k, typografia(v)])) as Record<string, string>;
 const okres = (n: number) => (n === 1 ? '1 miesiąc' : n < 5 ? `${n} miesiące` : `${n} miesięcy`);
@@ -182,6 +183,10 @@ const faq = [
       const liczby: Record<string, number> = {};
       let blad: string | null = null;
       for (const n of ['przepracowane', 'dobowe', 'nieobecnosc', 'stawka']) el(n).removeAttribute('aria-invalid');
+      if (!el('przepracowane').value.trim()) {
+        blad = 'Wpisz przepracowane godziny.';
+        el('przepracowane').setAttribute('aria-invalid', 'true');
+      }
       for (const n of ['przepracowane', 'dobowe', 'nieobecnosc']) {
         liczby[n] = wpisanaLiczba(el(n).value || '0');
         if (Number.isNaN(liczby[n])) {
@@ -212,6 +217,9 @@ const faq = [
         } catch (e) {
           if (!(e instanceof RangeError)) throw e;
           blad = `${e.message}.`;
+          // Komunikat z logiki dotyczy konkretnych pól: oznaczamy je dla czytnika ekranu.
+          const pola = e.message.startsWith('Nadgodziny dobowe') ? ['dobowe', 'przepracowane'] : e.message.startsWith('W okresie jest') ? ['przepracowane'] : e.message.startsWith('Nieobecność') ? ['nieobecnosc'] : e.message.startsWith('Stawka') ? ['stawka'] : [];
+          for (const n of pola) el(n).setAttribute('aria-invalid', 'true');
         }
       }
       b.hidden = !blad;

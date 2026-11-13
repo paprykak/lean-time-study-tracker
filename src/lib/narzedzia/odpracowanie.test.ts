@@ -32,7 +32,21 @@ describe('odpracowanie wyjścia prywatnego', () => {
       'Doba od 18 listopada 2026 r., 7:00: najdłuższa przerwa 16 h.',
       'Doba od 19 listopada 2026 r., 7:00: najdłuższa przerwa 13 h.',
     ]);
-    expect(kontrola(w, 'odpoczynek-tygodniowy')?.szczegoly).toEqual(['Tydzień od 15 listopada 2026 r.: najdłuższa przerwa 33 h.']);
+    expect(kontrola(w, 'odpoczynek-tygodniowy')?.szczegoly).toEqual(['Tydzień od 15 listopada 2026 r.: najdłuższa przerwa 33 h; tyle daje już sam rozkład, bo weekend przypada na przełomie tygodni okresu rozliczeniowego.']);
+  });
+
+  it('niedobór: 2 h z 3 h, opis bez twierdzenia o obowiązku (art. 151 § 2^1 go nie rozstrzyga)', () => {
+    const w = odpracowanie(dane([{ data: '2026-11-19', od: '15:00', do: '17:00' }]));
+    const b = kontrola(w, 'bilans');
+    expect(b?.tytul).toBe('Zostało do odpracowania: 1 h');
+    expect(b?.opis).toContain('Przepis nie nakazuje odpracowania i nie wskazuje terminu');
+    expect(b?.opis).not.toContain('nie jest obowiązkowe');
+  });
+
+  it('okres od poniedziałku: tydzień z pełnym weekendem bez dopisku o rozkładzie', () => {
+    const w = odpracowanie(dane([{ data: '2026-06-03', od: '15:00', do: '18:00' }], { wyjscie: { data: '2026-06-02', od: '10:00', do: '13:00' } }));
+    expect(w.tygodnie).toEqual([{ od: '2026-06-01', najdluzsza: 57 * 60, rozklad: 57 * 60 }]); // pt 15:00 – nd 24:00
+    expect(kontrola(w, 'odpoczynek-tygodniowy')?.szczegoly.join(' ')).not.toContain('sam rozkład');
   });
 
   it('dwa wiersze 19.11 i 20.11: tydzień od niedzieli dzieli weekend, uwaga', () => {

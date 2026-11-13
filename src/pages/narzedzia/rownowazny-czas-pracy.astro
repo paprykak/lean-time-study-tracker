@@ -5,12 +5,14 @@
 import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
 import { KOLOR_STATUSU, OKRESY, SYSTEMY, opisWyniku, planOkresu, type SystemRownowazny } from '../../lib/narzedzia/rownowazny';
 import { dzienMiesiaca, nazwaMiesiaca, wymiarMiesiaca } from '../../lib/narzedzia/czas-pracy';
-import { LATA } from '../../data/prawo';
+import { lataKalendarza } from '../../lib/narzedzia/dzis-w-formularzu';
+import { dzisWPolsce } from '../../lib/narzedzia/terminy';
 import { odmiana } from '../../lib/redakcja';
 
-const ROKI = [...LATA, LATA[LATA.length - 1] + 1];
 // Stały przykład startowy (FAQ i dane strukturalne nie zmieniają się przy każdym buildzie).
 const START = { rok: 2026, miesiac: 11 };
+// Lata z kalendarza (poprzedni, bieżący, następny) i rok przykładu; wymiar nie zależy od kwot z prawo.ts.
+const ROKI = [...new Set([...lataKalendarza(dzisWPolsce()), START.rok])].sort((a, b) => a - b);
 const { rok, miesiac } = START;
 const systemy = Object.keys(SYSTEMY) as SystemRownowazny[];
 const r = planOkresu('r12', 12, rok, miesiac, 1);

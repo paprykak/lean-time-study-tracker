@@ -8,7 +8,7 @@ export const POLSKIE = 'ĄąĆćĘęŁłŃńÓóŚśŹźŻż';
 const REGION = 'ČčĎďĚěŇňŘřŠšŤťŮůŽžŐőŰűĹĺĽľŔŕ';
 // Myślniki, cudzysłowy polskie i angielskie, wielokropek, punktor, promil, prim, cudzysłowy ostrokątne, euro, numer, znak towarowy.
 // Strzałek i znaków matematycznych (≤ ≥ ≈ ≠ −) Noto Sans nie ma: biorą je fonty systemowe, a strzałki w interfejsie to ikony SVG.
-const TYPOGRAFIA = '\u2009\u200A\u2011\u202F\u2013\u2014\u2018\u2019\u201A\u201C\u201D\u201E\u2026\u2022\u2030\u2032\u2033\u2039\u203A\u20AC\u2116\u2122';
+const TYPOGRAFIA = '\u2070\u2074\u2075\u2076\u2077\u2078\u2079\u2009\u200A\u2011\u202F\u2013\u2014\u2018\u2019\u201A\u201C\u201D\u201E\u2026\u2022\u2030\u2032\u2033\u2039\u203A\u20AC\u2116\u2122';
 
 export const ZNAKI = [zakres(0x20, 0x7e), zakres(0xa0, 0xff), POLSKIE, REGION, TYPOGRAFIA].join('');
 

@@ -45,3 +45,24 @@ test('błędne dane: nadgodziny dobowe większe niż przepracowane i tekst zamia
   await page.getByLabel('Przepracowane godziny').fill('dużo');
   await expect(page.locator('[data-blad="dane"]')).toContainText('wpisz liczbę');
 });
+
+test('błędy zakresu oznaczają pola (aria-invalid), puste pole to brak danych', async ({ page }) => {
+  const przepracowane = page.getByLabel('Przepracowane godziny');
+  const dobowe = page.getByLabel('W tym nadgodziny dobowe');
+  const blad = page.locator('[data-blad="dane"]');
+  await przepracowane.fill('');
+  await expect(blad).toHaveText('Wpisz przepracowane godziny.');
+  await expect(przepracowane).toHaveAttribute('aria-invalid', 'true');
+  await przepracowane.fill('800');
+  await expect(blad).toHaveText(/najwyżej\s720\sgodzin/);
+  await expect(przepracowane).toHaveAttribute('aria-invalid', 'true');
+  await przepracowane.fill('184');
+  await dobowe.fill('200');
+  await expect(dobowe).toHaveAttribute('aria-invalid', 'true');
+  await dobowe.fill('10');
+  await page.getByLabel('Urlop, L4 (godziny)').fill('500');
+  await expect(page.getByLabel('Urlop, L4 (godziny)')).toHaveAttribute('aria-invalid', 'true');
+  await page.getByLabel('Urlop, L4 (godziny)').fill('0');
+  await expect(blad).toBeHidden();
+  await expect(przepracowane).not.toHaveAttribute('aria-invalid');
+});

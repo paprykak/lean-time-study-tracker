@@ -757,7 +757,7 @@ export const NARZEDZIA: Narzedzie[] = [
     nazwa: 'Doba pracownicza i nadgodziny',
     krotko: 'Czy wcześniejszy start zmiany daje nadgodziny w tej samej dobie i czy masz 11 godzin odpoczynku.',
     kategoria: 'czas-pracy',
-    przepisy: ['kodeksPracy'],
+    przepisy: ['kodeksPracy', 'dniWolne'],
     sprawdzono: '2026-11-12',
   },
   {

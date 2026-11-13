@@ -273,7 +273,7 @@ export function odpracowanie(dane: DaneOdpracowania): WynikOdpracowania {
             id: 'bilans',
             stan: 'uwaga',
             tytul: `Zostało do odpracowania: ${czas(-roznica)}`,
-            opis: 'Wynagrodzenie przysługuje za pracę wykonaną, a za czas niewykonywania pracy tylko wtedy, gdy przepisy prawa pracy (w tym układ zbiorowy albo regulamin) tak stanowią. Odpracowanie nie jest obowiązkowe, ale bez niego za ten czas wynagrodzenie nie przysługuje.',
+            opis: 'Wynagrodzenie przysługuje za pracę wykonaną, a za czas niewykonywania pracy tylko wtedy, gdy przepisy prawa pracy (w tym układ zbiorowy albo regulamin) tak stanowią. Przepis nie nakazuje odpracowania i nie wskazuje terminu; bez odpracowania za ten czas wynagrodzenie nie przysługuje.',
             podstawa: 'art. 80 Kodeksu pracy',
             szczegoly: [],
           },
@@ -295,7 +295,13 @@ export function odpracowanie(dane: DaneOdpracowania): WynikOdpracowania {
     const bledy = tygodnie.filter((t) => t.najdluzsza < ODPOCZYNEK_TYGODNIOWY && t.rozklad >= ODPOCZYNEK_TYGODNIOWY);
     const uwagi = tygodnie.filter((t) => t.najdluzsza < ODPOCZYNEK_TYGODNIOWY && t.rozklad < ODPOCZYNEK_TYGODNIOWY && t.najdluzsza < t.rozklad);
     const opisTygodnia = (t: Tydzien) =>
-      `Tydzień od ${dataPoPolsku(t.od)}: najdłuższa przerwa ${czas(t.najdluzsza)}${t.najdluzsza !== t.rozklad ? `, według samego rozkładu ${czas(t.rozklad)}` : ''}.`;
+      `Tydzień od ${dataPoPolsku(t.od)}: najdłuższa przerwa ${czas(t.najdluzsza)}${
+        t.najdluzsza !== t.rozklad
+          ? `, według samego rozkładu ${czas(t.rozklad)}`
+          : t.rozklad < ODPOCZYNEK_TYGODNIOWY
+            ? '; tyle daje już sam rozkład, bo weekend przypada na przełomie tygodni okresu rozliczeniowego'
+            : ''
+      }.`;
     kontrole.push({
       id: 'odpoczynek-tygodniowy',
       stan: bledy.length ? 'blad' : uwagi.length ? 'uwaga' : 'ok',

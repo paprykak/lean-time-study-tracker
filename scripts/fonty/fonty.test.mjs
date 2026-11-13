@@ -36,6 +36,10 @@ describe('fonty Noto', () => {
     expect([...css.matchAll(/font-display: (\w+);/g)].map((m) => m[1])).toEqual(['optional', 'optional', 'optional']);
   });
 
+  it('zestaw ma cyfry indeksu górnego (numery jednostek „art. 151⁹”, „§ 2¹” w tekstach narzędzi)', () => {
+    for (const z of '¹²³⁰⁴⁵⁶⁷⁸⁹') expect(ZNAKI).toContain(z);
+  });
+
   it('licencja OFL jest publikowana razem z fontami', () => {
     expect(readFileSync(new URL('../../public/fonty/OFL.txt', import.meta.url), 'utf8')).toContain('SIL OPEN FONT LICENSE');
   });

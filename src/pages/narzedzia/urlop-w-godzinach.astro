@@ -60,10 +60,10 @@ const faq = [
           </div>
           <div>
             <label for="ug-godziny" class="etykieta-pola">Dodatkowe godziny</label>
-            <input id="ug-godziny" name="godziny" class="pole mt-1" type="text" inputmode="numeric" autocomplete="off" value="0" aria-describedby="ug-godziny-opis ug-blad" />
+            <input id="ug-godziny" name="godziny" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="0" aria-describedby="ug-godziny-opis ug-blad" />
           </div>
         </div>
-        <p id="ug-godziny-opis" class="meta mt-1">Mniej niż jeden dzień urlopu, na przykład resztka z poprzedniego rozliczenia.</p>
+        <p id="ug-godziny-opis" class="meta mt-1">Mniej niż jeden dzień urlopu, np. 4,5 h resztki z poprzedniego rozliczenia.</p>
       </fieldset>
       <div class="mt-4">
         <label for="ug-dzien" class="etykieta-pola">Dzień urlopu</label>
@@ -165,7 +165,7 @@ const faq = [
       Przepis o urlopie na żądanie mówi o 4 dniach urlopu (art. 167<sup>2</sup>) i nie rozstrzyga, czy dzień na żądanie
       przy zmianie 12 h to 8 czy 12 godzin. Liczymy go jako jeden dzień pracy z grafiku, czyli całą zmianę, bo urlopu
       udziela się w dni pracy w godzinach dobowego wymiaru czasu pracy (art. 154<sup>2</sup> § 1). Długość tej zmiany
-      bierzemy z pierwszego wypełnionego wiersza planu; bez planu podajemy same dni. To wariant korzystniejszy dla
+      bierzemy z pierwszego wypełnionego wiersza planu; bez planu podajemy same dni, najwyżej tyle, ile pełnych dni po 8 h (albo po niższej normie) zostało z urlopu. To wariant korzystniejszy dla
       pracownika. Inny odczyt liczy limit jako 4 × 8 h = 32 h, wtedy przy zmianach 12 h to 2 zmiany i 8 h. Urlop na
       żądanie to część urlopu (art. 168 mówi o „części urlopu udzielanego zgodnie z art. 167<sup>2</sup>”), więc
       pokazujemy mniej z dwóch liczb: 4 dni minus wykorzystane albo tyle pełnych zmian, ile mieści się w urlopie

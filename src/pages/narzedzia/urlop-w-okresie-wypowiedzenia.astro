@@ -55,7 +55,7 @@ const faq = [
         </div>
         <div>
           <label for="uw-od" class="etykieta-pola">Urlop możesz dostać od</label>
-          <input id="uw-od" name="od" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={domyslne.urlopOd} aria-describedby="uw-od-opis uw-blad" />
+          <input id="uw-od" name="od" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={domyslne.urlopOd} data-dzis aria-describedby="uw-od-opis uw-blad" />
           <p id="uw-od-opis" class="meta mt-1">Od tego dnia liczymy dni pracy do końca umowy.</p>
         </div>
       </div>
@@ -171,7 +171,9 @@ const faq = [
 </StronaNarzedzia>
 
 <script>
-  import { BladDanych, etykietaWykorzystanych, teksty, urlopWWypowiedzeniu, type PoleUrlopu } from '../../lib/narzedzia/urlop-wypowiedzenie';
+  import { BladDanych, etykietaWykorzystanych, koniecMiesiaca, teksty, urlopWWypowiedzeniu, type PoleUrlopu } from '../../lib/narzedzia/urlop-wypowiedzenie';
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
+  import { dzisWPolsce } from '../../lib/narzedzia/terminy';
   import { typografia } from '../../lib/typografia.mjs';
 
   const form = document.querySelector<HTMLFormElement>('[data-urlop-wypowiedzenie]');
@@ -250,6 +252,10 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    // Strona jest budowana raz: „od” to dziś, a koniec umowy to koniec bieżącego miesiąca w przeglądarce
+    // (pola zmienione przez użytkownika zostają).
+    if (el('koniec').value === el('koniec').defaultValue) el('koniec').value = koniecMiesiaca(dzisWPolsce());
+    ustawDzisiejszeWartosci(form);
     przelicz();
   }
 </script>

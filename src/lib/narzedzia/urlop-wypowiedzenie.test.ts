@@ -135,6 +135,13 @@ describe('dni pracy w wypowiedzeniu i ekwiwalent (art. 167^1, 171 § 1 Kp)', () 
     expect(t.uwaga).toContain('2 dni pracy');
     expect(t.dniPracy).toBe('14 dni od 14 grudnia 2026 r., bez 3 świąt');
   });
+  it('przełom 2027/2028: Wigilia w piątek, 1.01.2028 w sobotę, Trzech Króli w czwartek (od 20.12.2027 do 14.01.2028)', () => {
+    // Niezależnie: dni pon.–pt. 20–23.12 (4, bez 24.12), 27–31.12 (5), 3–7.01 (4, bez 6.01), 10–14.01 (5) = 18; w 2028 r. 9.
+    const r = urlopWWypowiedzeniu({ ...baza, wymiar: 26, wykorzystane: 0, zalegly: 10, koniecUmowy: '2028-01-14', urlopOd: '2027-12-20' });
+    expect(r).toMatchObject({ rok: 2028, miesiace: 1, proporcjonalny: 3, razem: 13, dniPracy: 18, dniPracyWRoku: 9, wWypowiedzeniu: 13, ekwiwalent: 0 });
+    expect(r.swieta).toEqual(['2027-12-24', '2028-01-06']);
+    expect(r.swietaWSoboty).toEqual(['2027-12-25', '2028-01-01']);
+  });
   it('święto w sobotę przy pon.–pt. nie jest „odjęte”: sierpień 2026 (15.08 to sobota)', () => {
     const r = urlopWWypowiedzeniu({ ...baza, koniecUmowy: '2026-08-31', urlopOd: '2026-08-03' });
     expect(r).toMatchObject({ miesiace: 8, proporcjonalny: 18, dniPracy: 21, swieta: [], swietaWSoboty: ['2026-08-15'] });

@@ -115,7 +115,7 @@ describe('urlop bezpłatny a urlop wypoczynkowy (art. 155^2, 155^2a, 155^3 Kp)',
     const t = tekstyWyniku({ od: '2026-03-01', do: '2026-05-31', rodzaj: 'bezplatny', wymiar: 26, wykorzystanePrzed: 1 });
     expect(t.pozycje[0].wartosc).toBe('19 dni po odjęciu 1 dnia wykorzystanego urlopu');
     const u = tekstyWyniku({ od: '2026-03-01', do: '2026-05-31', rodzaj: 'bezplatny', wymiar: 26, wykorzystanePrzed: 20 });
-    expect(u.lata.map((x) => x.etykieta)).toEqual(['Urlop wypoczynkowy za 2026', 'Drugie odczytanie za 2026']);
+    expect(u.lata.map((x) => x.etykieta)).toEqual(['Urlop wypoczynkowy za 2026 r.', 'Drugie odczytanie za 2026 r.']);
     expect(u.pozycje.slice(0, 2).map((x) => x.wartosc)).toEqual(['0 dni po odjęciu 20 dni wykorzystanego urlopu', '6 dni']);
     expect(tekstyWyniku({ od: '2026-03-01', do: '2026-05-31', rodzaj: 'nieobecnosc', wymiar: 26 }).ochrona).toContain('nie obejmuje');
   });

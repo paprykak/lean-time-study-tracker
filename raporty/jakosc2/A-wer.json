@@ -1,0 +1,78 @@
+{
+  "partia": "A",
+  "werdykty": [
+    {
+      "id": "A-1",
+      "werdykt": "potwierdzone",
+      "uzasadnienie": "Strona liczy domyślne daty (koniec miesiąca i dziś) przy budowaniu, a skrypt ich nie przestawia. Nie ma `data-dzis`, `ustawDzisiejszeWartosci` ani innego przestawienia. To łamie zasadę 11 z sekcji 4 `prompty/02-fabryka.md` („Datę domyślną formularza ustawiasz w przeglądarce (dzis-w-formularzu.ts)”). Po 1.01.2027 r. przykład pokazuje urlop za 2026 r. i dni pracy z listopada 2026 r.",
+      "dowod": "src/pages/narzedzia/urlop-w-okresie-wypowiedzenia.astro, linie 8–10 (`const dzis = dzisWPolsce(); ... koniecUmowy: koniecMiesiaca(dzis), urlopOd: dzis`); w <script> (linie 173–255) nie ma przestawienia. Playwright na podglądzie z `page.clock.setFixedTime('2027-02-10T10:00+01:00')`, gdzie `new Date()` w stronie = 2027-02-10: uw-koniec = 2026-11-30, uw-od = 2026-11-13, etykieta „Wykorzystane z urlopu za 2026 r.”, wynik „12 dni”, dni pracy „12 dni od 13 listopada 2026 r.”. Dla porównania zalegly-urlop przy tym samym zegarze ma naDzien = 2027-02-10.",
+      "poprawka": "W urlop-w-okresie-wypowiedzenia.astro dodaj do `#uw-od` atrybut `data-dzis`. W <script> przed pierwszym `przelicz()`: `const koniecDomyslny = el('koniec').value === el('koniec').defaultValue; ustawDzisiejszeWartosci(form); if (koniecDomyslny) el('koniec').value = koniecMiesiaca(dzisWPolsce());` (importy z '../../lib/narzedzia/dzis-w-formularzu', '../../lib/narzedzia/terminy' i koniecMiesiaca z urlop-wypowiedzenie). Etykietę przestawia już `przelicz()`. Uwaga: przy domyślnym „wykorzystane 10” i dacie w styczniu–kwietniu przykład pokaże „Wykorzystane ponad proporcję” (luty: proporcja 5 dni). To poprawny wynik, ale warto rozważyć domyślne 0 albo 2.",
+      "testy": "E2E z `page.clock.setFixedTime(new Date('2027-02-10T10:00:00+01:00'))` przed `goto`, bez wypełniania pól: uw-od = '2027-02-10', uw-koniec = '2027-02-28', etykieta /Wykorzystane\\sz\\surlopu\\sza\\s2027\\sr\\./, dni pracy „13 dni od 10 lutego 2027 r.”, proporcjonalny „5 dni (2/12 z 26 dni, od 1 stycznia 2027 r.)”, wwyp „0 dni”. Drugi przypadek 2027-06-15: koniec 2027-06-30, 12 dni pracy, proporcja 13, wynik „3 dni” (oba policzone przez urlopWWypowiedzeniu i ręcznie: luty 2027 od 10.02 to 13 dni pon.–pt. bez świąt)."
+    },
+    {
+      "id": "A-2",
+      "werdykt": "potwierdzone",
+      "uzasadnienie": "Problem jest na 320 i 360 px, niezależnie od locale (pl-PL i en-US dają identyczne pomiary, bo to zwykła etykieta, nie natywne pole). Tekst „Eksternistyczny” (94 px przy klasie .meta) nie mieści się w kolumnie i zachodzi na „Maturalny”.",
+      "dowod": "Własny pomiar: Playwright, Chromium, deviceScaleFactor 1, locale pl-PL (i dla porównania en-US), zakres tekstu etykiety (Range) wobec kolumny. 320 px: tekst „Eksternistyczny” 37–131 px, kolumna kończy się na 111 px, „Maturalny” zaczyna się na 123 px (8 px nakładki). 360 px: 131 vs 124. 412 px: 131 vs 142, mieści się. scrollWidth = szerokość okna. Zrzut 320 px pl-PL: …/scratchpad/audyt/A-wer/szk-pl-PL-320.png pokazuje „EksternistycznyMaturalny”.",
+      "poprawka": "src/pages/narzedzia/urlop-szkoleniowy.astro, linia 71: `grid grid-cols-3` zamień na `grid grid-cols-1 min-[400px]:grid-cols-3` (na 412 px kolumna ma ~105 px na tekst 94 px, pomiar ok). Alternatywa `grid-cols-2 min-[400px]:grid-cols-3`. Skracanie etykiety odradzam, bo „Ekstern.” jest niejasne.",
+      "testy": "E2E na 320×640 i 360×640: dla każdej `label[for^=s-]` w siatce egzaminów prawa krawędź Range(selectNodeContents(label)).getBoundingClientRect() ≤ prawej krawędzi jej pola `#s-<e>` + 1 px; na 412 px te same asercje."
+    },
+    {
+      "id": "A-3",
+      "werdykt": "czesciowo",
+      "uzasadnienie": "Problem jest realny. Art. 167^2 Kp: „nie więcej niż 4 dni urlopu”. Art. 168: „nie dotyczy to części urlopu udzielanego zgodnie z art. 167^2”. Art. 163 § 1: „Planem urlopów nie obejmuje się części urlopu udzielanego … zgodnie z art. 167^2”. Urlop na żądanie jest więc częścią rocznego wymiaru i nie może przekroczyć pozostałego urlopu. Bez planu (albo z planem, w którym każdy wiersz ma liczbę 0) kod zwraca `limitNaZadanie` niezależnie od `zostalo`. Poprawka audytora (`Math.max(1, Math.ceil(zostalo / dzien))`) nie pasuje: dla 3 h daje „do 1 dnia”, a wariant z planem przy zmianie 8 h daje 0 („nie mieści się cała zmiana”), bo kod liczy dzień na żądanie jako całą zmianę. Bez planu trzeba to liczyć tak samo, przyjmując zmianę o długości dnia urlopu (8 albo 7 h).",
+      "dowod": ".cache/narzedzia/prawo/DU_2026_1245.txt: art. 167^2 (l. 2969), 167^3, 168 (l. 2975), 163 § 1 (l. 2932), 154^2 § 4 (l. 2860). jiti, urlop-godzinowy.ts l. 122–123: {dni:0,godziny:3,plan:[]} → „do 4 dni w ramach pozostałego urlopu…”; {dni:1,godziny:0,plan:[]} → „do 4 dni…”; {dni:1,godziny:3,plan:[8 h×1]} → zostało 3 h → „0 dni: w pozostałym urlopie nie mieści się cała zmiana 8 h”; {dni:2,plan:[8 h×1]} → „1 dzień…”. Plan z liczbą 0 też daje dlugoscNaZadanie = null, czyli „do 4 dni”.",
+      "poprawka": "urlop-godzinowy.ts, linia 122–123: dla `dlugoscNaZadanie === null` użyj `Math.min(limitNaZadanie, pelneZmiany(h(zostalo), dzien).pelne)` zamiast `limitNaZadanie`. W `opisWyniku` (linia 163–164) dla gałęzi bez planu: przy `naZadanie === 0` pisz „0 dni: zostało mniej niż jeden dzień urlopu (${dzien} h)”, w innym razie „do ${n} dni …”. Przy n = 1 forma „do 1 dnia” (patrz nowe A-W1). Komentarz w nagłówku pliku (l. 20 „Bez planu nie znamy długości zmiany: same dni”) uzupełnij: bez planu przyjmujemy zmianę równą dniowi urlopu. Dodaj zdanie w „Jak liczymy”.",
+      "testy": "Bez planu, dzien 8: {dni:0,godziny:3} → naZadanie 0; {dni:1,godziny:0} → 1 („do 1 dnia …”); {dni:2,godziny:7} → 2; {dni:20} → 4; {dni:20,naZadanieWykorzystane:2} → 2 (istniejący test l. 102–103 bez zmian); dzien 7: {dni:3,godziny:0} → 3. Plan z liczbą 0 zachowuje się jak brak planu."
+    },
+    {
+      "id": "A-4",
+      "werdykt": "potwierdzone",
+      "uzasadnienie": "`dniIGodziny` dla mniej niż jednego dnia zwraca samo „3 h”, a szablony w opisWyniku (l. 175 i 177) zawsze doklejają „po 8 h”. To samo dzieje się przy planie, gdy zostaje reszta poniżej dnia.",
+      "dowod": "jiti: {dni:0,godziny:3,plan:[]} → masz „3 h (3 h po 8 h)”, opis „To 3 h urlopu po 8 h”; {dni:1,godziny:3,plan:[8 h×1]} → opis „To 3 h urlopu po 8 h”; {dni:0,godziny:7,plan:[7,5 h×1]} → masz „7 h (7 h po 8 h)”.",
+      "poprawka": "urlop-godzinowy.ts, opisWyniku: `const wDniach = (x) => pelneZmiany(x, r.dzien).pelne > 0;`. opis: `r.zostalo ? (wDniach(r.zostalo) ? `To ${dniIGodziny(r.zostalo, r.dzien)} urlopu po ${r.dzien} h` : `To mniej niż jeden dzień urlopu (dzień = ${r.dzien} h)`) : …`. masz: `wDniach(r.masz) ? `${godz(r.masz)} (${dniIGodziny(r.masz, r.dzien)} po ${r.dzien} h)` : godz(r.masz)`.",
+      "testy": "{dni:0,godziny:3,plan:[]}: masz „3 h”, opis „To mniej niż jeden dzień urlopu (dzień = 8 h)”; {dni:1,godziny:3,plan:[{dlugosc:8,liczba:1}]}: masz „11 h (1 dzień i 3 h po 8 h)”, opis „To mniej niż jeden dzień urlopu (dzień = 8 h)”; {dni:1,godziny:0,plan:[]}: masz „8 h (1 dzień po 8 h)”, opis „To 1 dzień urlopu po 8 h” (bez zmian)."
+    },
+    {
+      "id": "A-5",
+      "werdykt": "potwierdzone",
+      "uzasadnienie": "Wymiar urlopu w dniach jest całkowity (art. 154 § 2, 155^3: niepełny dzień w górę), więc pula w godzinach na starcie jest całkowita. Urlopu udziela się jednak w godzinach dobowego wymiaru w danym dniu (art. 154^2 § 1), a rozkład może mieć dni po 7,5 h albo 10,5 h. Wtedy reszta jest ułamkowa (np. 160 h − 21 × 7,5 h = 2,5 h), a art. 154^2 § 4 pozwala jej udzielić na część dnia. Rozporządzenie urlopowe (Dz.U. 1997 nr 2 poz. 14) nie zaokrągla godzin. Pole „Dodatkowe godziny” jest opisane jako „resztka z poprzedniego rozliczenia”, a narzędzie samo pokazuje reszty ułamkowe (np. „brakuje 0,5 h”), których potem nie da się wpisać. Skrypt już parsuje przecinek (`wpisanaLiczba`), blokuje dopiero `calkowita` w logice.",
+      "dowod": "DU_2026_1245.txt art. 154^2 § 1 i § 4 (l. 2854–2862); DU_1997_14.txt: zaokrąglenia dotyczą tylko miesięcy (§ 2 ust. 2), nie godzin. jiti: urlopGodzinowy({dni:0,godziny:4.5,…}) → „Dodatkowe godziny: pełne godziny od 0 do 7.”; {dni:0,godziny:7,plan:[7,5 h]} → „Na cały plan brakuje 0,5 h urlopu”.",
+      "poprawka": "urlop-godzinowy.ts l. 86: `if (!(Number.isFinite(godziny) && godziny >= 0 && min(godziny) < dzien * 60)) throw new BladDanych(`Dodatkowe godziny: od 0 do mniej niż ${dzien} (np. 4,5).`, 'godziny');`. W urlop-w-godzinach.astro l. 63 zmień `inputmode=\"numeric\"` na `\"decimal\"`, a w opisie l. 66 dopisz „np. 4,5”. Popraw oczekiwania w urlop-godzinowy.test.ts l. 64–65 (nowy komunikat).",
+      "testy": "{dni:0,godziny:4.5,plan:[]} → masz 4,5 (godz „4,5 h”); {dni:20,godziny:2.5,plan:[{dlugosc:7.5,liczba:21}]} → masz 162,5, plan 157,5, zostało 5; godziny 7,99 przy dzien 8 dozwolone, 8 → błąd; dzien 7: 6,5 ok, 7 → błąd; godziny -0,5 i NaN → błąd."
+    },
+    {
+      "id": "A-6",
+      "werdykt": "potwierdzone",
+      "uzasadnienie": "Cztery szablony w urlop-bezplatny.ts piszą rok bez „r.”. urlop-wypowiedzenie i zalegly-urlop piszą „za 2026 r.”. Waga niska, ale to niespójność widoczna w wyniku.",
+      "dowod": "grep: urlop-bezplatny.ts l. 258 `Urlop wypoczynkowy za ${x.rok}`, l. 275 `Drugie odczytanie za ${x.rok}`, l. 284 `Urlop wypoczynkowy za ${pierwszy.rok}; …`, l. 290 `Zostało do wykorzystania za ${pierwszy.rok}`; test l. 118 oczekuje „…za 2026”. W pozostałych src/lib/narzedzia/*.ts nie ma innych „za ${rok}” bez „r.”.",
+      "poprawka": "Dopisz „ r.” w 4 miejscach (l. 284: `za ${pierwszy.rok} r.; nieobecność …`). Zmień urlop-bezplatny.test.ts l. 118 na ['Urlop wypoczynkowy za 2026 r.', 'Drugie odczytanie za 2026 r.'] i przejrzyj e2e narzedzie-urlop-bezplatny.spec.ts (dziś nie ma asercji na „za 2026”, są tylko komentarz i tytuł testu).",
+      "testy": "Jednostkowy l. 118 jak wyżej; e2e: wiersz wyniku zawiera /za\\s2026\\sr\\./."
+    },
+    {
+      "id": "A-7",
+      "werdykt": "potwierdzone",
+      "uzasadnienie": "Problem jest też przy polskim formacie daty. Chromium headless ignoruje `locale` kontekstu dla <input type=date> i pokazuje mm/dd/yyyy zarówno dla pl-PL, jak i en-US. Dopiero po uruchomieniu z `--lang=pl-PL` (LANG=pl_PL.UTF-8) pole ma format „01.03.2026” i na 320 px nadal ucina rok: „01.03.202”. W zalegly-urlop pole przewija się i pokazuje „.03.2024”. Pole o szerokości auto potrzebuje 147 px, a na 320 px ma 117 px.",
+      "dowod": "Własny pomiar: Chromium, deviceScaleFactor 1, locale pl-PL: szerokość #b-od 117 px (320), 137 (360), 147 (380), 163 (412); szerokość auto 147 px. Zrzuty: …/scratchpad/audyt/A-wer/bez-pl-PL-320.png (locale pl-PL bez --lang: „03/01/20”), bez-lang-320.png (pl-PL z --lang: „01.03.202” i „31.05.202”), bez-lang-360.png (pełne „01.03.2026”), zal-lang-320.png (zalegly-urlop: „.03.2024”, „.05.2025”). Prawdziwe Android i iOS rysują pole natywnie, czego nie sprawdzono.",
+      "poprawka": "urlop-bezplatny.astro l. 54 i zalegly-urlop.astro l. 84: `grid grid-cols-2 items-end gap-3` zamień na `grid grid-cols-1 min-[380px]:grid-cols-2 items-end gap-3` (przy 380 px pole ma 147 px, czyli tyle, ile szerokość auto; 360 px też wyświetla pełną datę, ale bez zapasu). Sprawdź też drugą siatkę `grid-cols-2` w urlop-bezplatny.astro l. 70 (pola liczbowe, nie daty: nie ucina).",
+      "testy": "E2E na 320 px: pola #b-od, #b-do, #u-wod, #u-wdo mają szerokość ≥ 147 px (albo stoją jedno pod drugim: różne `top`); na 412 px obok siebie."
+    },
+    {
+      "id": "A-8",
+      "werdykt": "potwierdzone",
+      "uzasadnienie": "To luka w testach, bez błędu w kodzie. Testy e2e zawsze wypełniają daty, więc nie łapią A-1. Testy jednostkowe mają przełom 2026/2027 i 29.02.2028, ale nie przełom 2027/2028 (Wigilia w piątek, Nowy Rok w sobotę). Niezależny rachunek zgadza się z kodem.",
+      "dowod": "urlopWWypowiedzeniu({wymiar:26,wykorzystane:0,zalegly:10,koniecUmowy:'2028-01-14',urlopOd:'2027-12-20'}) → rok 2028, miesiace 1, proporcjonalny 3, razem 13, dniPracy 18, dniPracyWRoku 9, swieta ['2027-12-24','2028-01-06'], swietaWSoboty ['2027-12-25','2028-01-01'], wWypowiedzeniu 13, ekwiwalent 0, innyRok true. Python (własne święta z Wielkanocą i Wigilią): 18 dni pon.–pt., 9 w 2028 r., ceil(26/12) = 3, te same listy świąt.",
+      "poprawka": "urlop-wypowiedzenie.test.ts: dodaj przypadek 20.12.2027–14.01.2028 z powyższymi wartościami. Test e2e z page.clock jak w A-1.",
+      "testy": "Jak w dowodzie (toMatchObject z 11 polami); e2e z A-1."
+    }
+  ],
+  "nowe": [
+    {
+      "id": "A-W1", "slug": "urlop-w-godzinach", "wymiar": "tresc-ux", "waga": "niska",
+      "plik": "src/lib/narzedzia/urlop-godzinowy.ts", "linia": 164,
+      "problem": "Bez planu, gdy limit na żądanie wynosi 1 dzień (wykorzystane 3), wynik brzmi „do 1 dzień w ramach pozostałego urlopu”. Po „do” potrzebny jest dopełniacz: „do 1 dnia”.",
+      "dowod": "jiti: opisWyniku(urlopGodzinowy({dni:20,godziny:0,dzien:8,plan:[],naZadanieWykorzystane:3})).naZadanie → „do 1 dzień w ramach pozostałego urlopu; godziny zależą od długości zmiany w grafiku”. Szablon `do ${dniN(r.naZadanie)}`, gdzie dniN = odmiana(n, ['dzień','dni','dni']).",
+      "poprawka": "W gałęzi bez planu użyj `odmiana(r.naZadanie, ['dnia', 'dni', 'dni'])` (do 1 dnia, do 2 dni, do 5 dni). Dodaj test z naZadanieWykorzystane: 3 → „do 1 dnia w ramach pozostałego urlopu; …”."
+    }
+  ]
+}

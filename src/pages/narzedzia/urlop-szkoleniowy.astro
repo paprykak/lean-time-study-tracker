@@ -68,7 +68,7 @@ const faq = [
       <fieldset class="mt-5">
         <legend class="etykieta-pola">Do jakich egzaminów przystępujesz?</legend>
         <p id="s-egz-opis" class="meta mt-1">Liczba egzaminów każdego rodzaju, od 0 do {MAKS_EGZAMINOW}; po {WYMIAR.zawodowy} dni do każdego. Zawodowy obejmuje też egzamin potwierdzający kwalifikacje w zawodzie.</p>
-        <div class="mt-2 grid grid-cols-3 items-end gap-3">
+        <div class="mt-2 grid grid-cols-1 min-[400px]:grid-cols-3 items-end gap-3">
           {EGZ.map(({ e, etykieta }) => (
             <div>
               <label for={`s-${e}`} class="meta">{etykieta}</label>

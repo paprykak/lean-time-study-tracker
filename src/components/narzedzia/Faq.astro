@@ -3,7 +3,7 @@ import { typografiaHtml } from '../../lib/typografia.mjs';
 import { indeksyUnicode } from '../../lib/narzedzia/format';
 // Pytania i odpowiedzi pod narzędziem (details: działa bez JavaScriptu, klawiaturą i czytnikiem ekranu)
 // oraz dane strukturalne FAQPage z tymi samymi pytaniami, które widać na stronie. Numer przepisu z indeksem
-// zapisujesz „art. 151^8”: na stronie to <sup> (podzbiór fontu nie ma cyfr indeksu), w danych strukturalnych „151⁸”.
+// zapisujesz „art. 151^8”: na stronie to <sup>, w danych strukturalnych „151⁸” (podzbiór fontu ma też cyfry indeksu ⁰–⁹ od 2026-11-13).
 interface Props {
   id: string;
   tytul?: string;
