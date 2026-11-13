@@ -39,7 +39,7 @@ export const OBSLUGA: RodzajUrzadzenia[] = [
   { id: 'o-podesty-masztowe', krotko: 'Podesty masztowe', grupa: 'Podesty ruchome', nazwa: 'Podesty ruchome masztowe (także stacjonarne)', lata: 10 },
   { id: 'o-podesty-przejezdne', krotko: 'Podesty przejezdne', grupa: 'Podesty ruchome', nazwa: 'Podesty ruchome przejezdne', lata: 5 },
   { id: 'o-dzwigi-budowlane', krotko: 'Dźwigi budowlane', grupa: 'Dźwigi', nazwa: 'Dźwigi budowlane (także wyciągi towarowe)', lata: 10 },
-  { id: 'o-dzwigi-towarowo-osobowe', krotko: 'Dźwigi towarowo-osobowe', grupa: 'Dźwigi', nazwa: 'Dźwigi towarowo-osobowe ze sterowaniem wewnętrznym i szpitalne', lata: 10 },
+  { id: 'o-dzwigi-towarowo-osobowe', krotko: 'Towarowo-osobowe', grupa: 'Dźwigi', nazwa: 'Dźwigi towarowo-osobowe ze sterowaniem wewnętrznym i szpitalne', lata: 10 },
   { id: 'o-kontenery', krotko: 'Przeładunek kontenerów', grupa: 'Urządzenia do manipulacji kontenerami', nazwa: 'Urządzenia do przemieszczania kontenerów przy pracach przeładunkowych', lata: 10 },
   { id: 'o-zbiorniki-przenosne', krotko: 'Zbiorniki przenośne', grupa: 'Zbiorniki przenośne', nazwa: 'Napełnianie zbiorników przenośnych (naczyń ciśnieniowych) powyżej 350 cm³', lata: 10 },
   { id: 'o-lpg', krotko: 'Zbiorniki LPG i CNG', grupa: 'Zbiorniki na gaz w pojazdach', nazwa: 'Napełnianie zbiorników LPG, CNG, LNG albo wodoru w pojazdach', lata: 10 },

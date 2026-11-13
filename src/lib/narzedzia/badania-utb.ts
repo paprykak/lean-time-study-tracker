@@ -45,7 +45,7 @@ export const URZADZENIA: UrzadzenieUtb[] = [
   { id: 'wyciag', grupa: 'Podesty, dźwigi i układnice', nazwa: 'Wyciąg towarowy', krotko: 'Wyciąg towarowy', forma: 'ograniczony', badanieLat: 2, przegladDni: 90, lp: [17, 13] },
   { id: 'dzwig', grupa: 'Podesty, dźwigi i układnice', nazwa: 'Dźwig (winda) do transportu osób lub ładunków', krotko: 'Dźwig (winda)', forma: 'pelny', badanieLat: 1, przegladDni: 30, lp: [26, 22] },
   { id: 'dzwig-towarowy-maly', grupa: 'Podesty, dźwigi i układnice', nazwa: 'Dźwig towarowy mały albo bez wstępu osób do kabiny', krotko: 'Dźwig towarowy mały', forma: 'pelny', badanieLat: 3, przegladDni: 60, lp: [27, 23] },
-  { id: 'atex', grupa: 'Inne', nazwa: 'UTB w wersji przeciwwybuchowej (całość lub część)', krotko: 'Wersja przeciwwybuchowa', forma: 'pelny', badanieLat: 1, przegladDni: 30, lp: [1, 1] },
+  { id: 'atex', grupa: 'Inne', nazwa: 'UTB w wersji przeciwwybuchowej (całość lub część)', krotko: 'UTB przeciwwybuchowe', forma: 'pelny', badanieLat: 1, przegladDni: 30, lp: [1, 1] },
   { id: 'jednofazowy', grupa: 'Inne', nazwa: 'Wciągnik albo wciągarka elektryczna jednofazowa do 1000 kg', krotko: 'Wciągnik jednofazowy', forma: 'uproszczony', badanieLat: null, przegladDni: 30, lp: [6, 3] },
   { id: 'wciagnik-reczny-maly', grupa: 'Inne', nazwa: 'Wciągnik albo wciągarka ręczna do 2000 kg', krotko: 'Wciągnik ręczny do 2 t', forma: 'uproszczony', badanieLat: null, przegladDni: 90, lp: [3, 2] },
   { id: 'do-250', grupa: 'Inne', nazwa: 'UTB o udźwigu do 250 kg (bez dźwigów i urządzeń dla osób)', krotko: 'Udźwig do 250 kg', forma: 'uproszczony', badanieLat: null, przegladDni: null, lp: [2, null] },
