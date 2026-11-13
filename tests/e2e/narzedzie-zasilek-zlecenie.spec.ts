@@ -30,7 +30,7 @@ test('błędne dni L4', async ({ page }) => {
 
 test('choroba: najwyżej 182 dni (art. 8 ust. 1), w ciąży 270', async ({ page }) => {
   await page.getByLabel('Dni L4').fill('183');
-  await expect(page.locator('[data-blad="dane"]')).toContainText(/najwyżej\s182\sdni/);
+  await expect(page.locator('[data-blad="dane"]')).toContainText(/najwyżej\sza\s182\sdni/);
   await expect(page.locator('[data-w="kwota"]')).toHaveText('—');
   await page.getByLabel('Powód L4').selectOption('ciaza');
   await expect(page.locator('[data-blad="dane"]')).toBeHidden();

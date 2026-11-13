@@ -1,0 +1,104 @@
+{
+  "partia": "G",
+  "sprawdzone": [
+    {"slug": "badania-kierowcy", "pliki": ["src/pages/narzedzia/badania-kierowcy.astro", "src/lib/narzedzia/badania-kierowcy.ts", "src/lib/narzedzia/badania-kierowcy.test.ts", "tests/e2e/narzedzie-badania-kierowcy.spec.ts"], "wynik": "problemy: 1 niska (pytanie FAQ z rokiem 2026). Sprawdzone: art. 39j ust. 4 i 39k ust. 3 UTD (DU_2025_1490), nowelizacje UTD po t.j. (2025/1676, 1795, 1843, 2026/875 od 1.01.2027 i 982) nie ruszają art. 39j–39m; art. 79a, 82, 75 ust. 3, 82 ust. 6 UKP; opłata 150/200 zł i przepis przejściowy z Dz.U. 2026 poz. 1434 (wejście 14.11.2026); Dz.U. 2026 poz. 608 (3.06.2026). Rachunek dla 29 lutego, 31 sierpnia + 30 miesięcy, badania w dniu 60. urodzin i na przełomie 2026/2027 zgodny z art. 112 KC. SSR = skrypt (różnią się tylko status i noscript). Zegar 14.11.2026, 4.01.2027 i 10.01.2028: dobre wartości startowe; .ics zgodny z opisem; 320 i 412 px bez przewijania w bok."},
+    {"slug": "czas-jazdy-kierowcy", "pliki": ["src/pages/narzedzia/czas-jazdy-kierowcy.astro", "src/lib/narzedzia/czas-jazdy.ts", "src/lib/narzedzia/czas-jazdy.test.ts", "tests/e2e/narzedzie-czas-jazdy.spec.ts"], "wynik": "problemy: 1 średnia (zły ustęp art. 8 rozporządzenia 561/2006), 1 średnia (link do dyżuru z Kodeksu pracy), 1 niska (ucięta opcja na 320 px). Sprawdzone: art. 6 ust. 3, 9, 10, 13, 14, 21, 22, 27, 31a–31c ustawy o czasie pracy kierowców (DU_2026_477, bez zmian po t.j.); limity 4,5 h, 15+30 min (kolejność), 9/10 h, 56/90 h, 11/9 h, 3+9 h, 6×24 h. Przeliczone przypadki: przerwa w złej kolejności 30+15, odpoczynek dzielony 3 h + 9 h przy 3 skróconych, praca w porze nocnej. SSR = skrypt."},
+    {"slug": "dyzur-kierowcy", "pliki": ["src/pages/narzedzia/dyzur-kierowcy.astro", "src/lib/narzedzia/dyzur-kierowcy.ts", "src/lib/narzedzia/dyzur-kierowcy.test.ts", "tests/e2e/narzedzie-dyzur-kierowcy.spec.ts"], "wynik": "ok: art. 9 ust. 1–6 (pełna stawka, 60%, dyżur w domu), art. 10 ust. 2, art. 16 ust. 1–2, art. 27 ust. 1 i 3 zgodne z DU_2026_477; § 4a rozporządzenia z 29.05.1996 (DU_2017_927); wymiar listopad 2026 = 160 h, styczeń 2027 = 152 h, maj 2027 = 144 h; błędy danych z aria-invalid i aria-describedby; SSR = skrypt; zegar 2027: miesiąc i rok przestawione na styczeń 2027."},
+    {"slug": "kod-95", "pliki": ["src/pages/narzedzia/kod-95.astro", "src/lib/narzedzia/kod-95.ts", "src/lib/narzedzia/kod-95.test.ts", "tests/e2e/narzedzie-kod-95.spec.ts"], "wynik": "ok: art. 15 ust. 2–5 UKP (DU_2025_1226; nowelizacje 2025/1676, 1872, 2026/180, 982, 1466 od 21.11.2026 i 187 od 19.05.2028 nie zmieniają art. 15, 75, 79a, 82–84), art. 39a ust. 3–4, 39d ust. 2, 5, 6, 39f, 39l UTD; § 13 ust. 1, § 15, § 17 ust. 4–5, § 18 ust. 6–7, § 21 ust. 5 rozporządzenia Dz.U. 2026 poz. 1355; grzywna 150 zł (zał. 1 lp. 3) i kara 1500 zł (zał. 3 lp. 1.15). Ostatni dzień roboczy przy 1–2 stycznia 2027 i Wielkanocy liczony dobrze; .ics zgodny z opisem; SSR = skrypt."},
+    {"slug": "zaswiadczenie-adr", "pliki": ["src/pages/narzedzia/zaswiadczenie-adr.astro", "src/lib/narzedzia/zaswiadczenie-adr.ts", "src/lib/narzedzia/zaswiadczenie-adr.test.ts", "tests/e2e/narzedzie-zaswiadczenie-adr.spec.ts"], "wynik": "problemy: 1 średnia (opis .ics „bez powiadomień”, a plik ma przypomnienia), 1 niska (brak testu treści .ics), 1 niska (wpis w rejestrze: „kto płaci za egzamin”). Sprawdzone: art. 20, 21 ust. 5, 9, 10, art. 23 ust. 3–4, art. 24 ust. 6, art. 39, zał. 1 lp. 2.8 (DU_2024_643; ustawa bez zmian po t.j. według API Sejmu); Dz.U. 2026 poz. 1491 (od 1.01.2027) zmienia tylko § 17 (wynagrodzenie komisji). Okres 12 miesięcy dla 29.02.2028, 31.03.2027, 1.01.2027 zgodny z opisaną interpretacją."}
+  ],
+  "znaleziska": [
+    {
+      "id": "G-1",
+      "slug": "czas-jazdy-kierowcy",
+      "wymiar": "prawo",
+      "waga": "srednia",
+      "plik": "src/pages/narzedzia/czas-jazdy-kierowcy.astro",
+      "linia": 37,
+      "problem": "Zakaz spędzania regularnego odpoczynku tygodniowego w kabinie i obowiązek pokrycia kosztów noclegu przez pracodawcę strona przypisuje art. 8 ust. 8 rozporządzenia 561/2006. To art. 8 ust. 8a (dodany rozporządzeniem 2020/1054). Ust. 8 mówi o czymś odwrotnym: dzienne i skrócone tygodniowe odpoczynki wolno spędzać w pojeździe z miejscem do spania. Ten sam błąd jest w wyjaśnieniu (linia 189).",
+      "dowod": "FAQ (linia 37): „Regularnego odpoczynku tygodniowego nie wolno spędzać w kabinie; koszty noclegu poza pojazdem pokrywa pracodawca (art. 8 ust. 8).” Wyjaśnienie (linia 189): „…koszty pokrywa pracodawca (art. 8 ust. 8).” Rozporządzenie 561/2006 w brzmieniu z 2020/1054: art. 8 ust. 8: dzienne okresy odpoczynku i skrócone tygodniowe okresy odpoczynku poza bazą mogą być wykorzystywane w pojeździe z odpowiednim miejscem do spania. Art. 8 ust. 8a: regularnych tygodniowych okresów odpoczynku i tygodniowych ponad 45 h jako rekompensaty nie wykorzystuje się w pojeździe, a koszty zakwaterowania poza pojazdem pokrywa pracodawca. Ocena według ogólnie znanego brzmienia, bo tekstu UE nie ma w .cache.",
+      "poprawka": "W linii 37 i w linii 189 zamienić „(art. 8 ust. 8)” na „(art. 8 ust. 8a)”. Przy okazji sprawdzić w EUR-Lex numer „art. 8 ust. 6b” (rekompensata skrócenia)."
+    },
+    {
+      "id": "G-2",
+      "slug": "czas-jazdy-kierowcy",
+      "wymiar": "spojnosc",
+      "waga": "srednia",
+      "plik": "src/pages/narzedzia/czas-jazdy-kierowcy.astro",
+      "linia": 211,
+      "problem": "Na stronie dla kierowców „Ile się należy za dyżur” prowadzi do kalkulatora dyżuru z Kodeksu pracy (/narzedzia/dyzur-w-pracy), a nie do narzędzia dla kierowców /narzedzia/dyzur-kierowcy. Dyżur kierowcy ma inne zasady: art. 9 ust. 5 i 6 oraz art. 27 ust. 1 ustawy o czasie pracy kierowców (60% bez wyodrębnionej stawki, połowa stawki za przerwy i jazdę w załodze). Kierowca dostaje więc zły rachunek. Ta sama strona w FAQ (linia 41) mówi o przerwach jako dyżurze z art. 9 ust. 5 i 6.",
+      "dowod": "Linia 211: „Ile się należy za dyżur, policzy <a href=\"/narzedzia/dyzur-w-pracy\">kalkulator dyżuru</a>.” DU_2026_477, art. 9 ust. 5: „…a jeżeli taki składnik wynagrodzenia nie został wyodrębniony przy określaniu warunków wynagradzania – 60 % wynagrodzenia”; art. 9 ust. 6: „…nieniższe jednak niż w wysokości połowy wynagrodzenia określonego w ust. 5”. Narzędzie dyzur-kierowcy istnieje w rejestrze (src/data/narzedzia.ts:852) i odsyła z powrotem do czas-jazdy-kierowcy.",
+      "poprawka": "Zmienić link na <a href=\"/narzedzia/dyzur-kierowcy\">kalkulator dyżuru i przerw kierowcy</a>, w tym samym wierszu co tekst przed nim (zasada 11)."
+    },
+    {
+      "id": "G-3",
+      "slug": "zaswiadczenie-adr",
+      "wymiar": "tresc-ux",
+      "waga": "srednia",
+      "plik": "src/pages/narzedzia/zaswiadczenie-adr.astro",
+      "linia": 90,
+      "problem": "Opis przycisku mówi „Terminy do kalendarza (bez powiadomień)”. Wydarzenia ADR nie mają jednak pola `przypomnienia`, więc plikIcs dodaje domyślne VALARM-y: 7 dni i 1 dzień przed każdym terminem. Tekst nie zgadza się z plikiem.",
+      "dowod": "src/lib/narzedzia/zaswiadczenie-adr.ts:137–142: wydarzenia bez `przypomnienia`. src/lib/narzedzia/kalendarz-ics.ts:77: `w.przypomnienia ?? PRZYPOMNIENIA_DOMYSLNE` ([7, 1]). Na podglądzie (Playwright, kliknięcie „Dodaj do kalendarza”) plik zaswiadczenie-adr.ics ma 6 bloków BEGIN:VALARM: TRIGGER -P6DT15H i -PT15H przy 27.06.2027, 10.07.2027 i 11.07.2027.",
+      "poprawka": "Wybrać jedno i ujednolicić. Albo dać przypomnienia jak w kod-95 i zmienić opis na „Przypomnienia o 9:00: tydzień i dzień wcześniej. Część kalendarzy pomija przypomnienia z pliku i ustawia własne.”, albo zostawić „bez powiadomień” i ustawić `przypomnienia: []` we wszystkich czterech wydarzeniach."
+    },
+    {
+      "id": "G-4",
+      "slug": "zaswiadczenie-adr",
+      "wymiar": "testy",
+      "waga": "niska",
+      "plik": "tests/e2e/narzedzie-zaswiadczenie-adr.spec.ts",
+      "linia": 12,
+      "problem": "Żaden test nie sprawdza treści pliku .ics ADR (wydarzenia, alarmy), w przeciwieństwie do badania-kierowcy i kod-95, które pobierają plik. Dlatego niezgodność z G-3 przeszła.",
+      "dowod": "grep „download|VALARM|plikIcs” w tests/e2e/narzedzie-zaswiadczenie-adr.spec.ts i src/lib/narzedzia/zaswiadczenie-adr.test.ts: tylko toBeEnabled/toBeDisabled przycisku, bez pobrania pliku.",
+      "poprawka": "Dodać test, który dla stałej daty (np. ważne do 20.05.2041) pobiera zaswiadczenie-adr.ics i sprawdza DTSTART czterech terminów oraz obecność albo brak BEGIN:VALARM zgodnie z decyzją z G-3."
+    },
+    {
+      "id": "G-5",
+      "slug": "czas-jazdy-kierowcy",
+      "wymiar": "tresc-ux",
+      "waga": "niska",
+      "plik": "src/lib/narzedzia/czas-jazdy.ts",
+      "linia": 62,
+      "problem": "Opcja „Dostawczy 2,5–3,5 t za granicą” na liście „Pojazd” jest ucięta na telefonie 320 px (zasada 7): widać „Dostawczy 2,5–3,5 t za gra”.",
+      "dowod": "Playwright, viewport 320×640: szerokość tekstu opcji 227,6 px, a miejsca w polu #cj-pojazd 220 px; zrzut scratchpad/audyt/G/cj-bus-320.png pokazuje „Dostawczy 2,5–3,5 t za grai”. Pozostałe opcje mieszczą się (208,6 px i mniej).",
+      "poprawka": "Skrócić etykietę, np. „Bus 2,5–3,5 t za granicą” albo „2,5–3,5 t za granicą”. Inna droga: przy szerokości poniżej ok. 400 px dać polu „Pojazd” pełny wiersz (siatka min-[360px]:grid-cols-[3fr_2fr] zaczyna się już od 360 px)."
+    },
+    {
+      "id": "G-6",
+      "slug": "badania-kierowcy",
+      "wymiar": "tresc-ux",
+      "waga": "niska",
+      "plik": "src/pages/narzedzia/badania-kierowcy.astro",
+      "linia": 39,
+      "problem": "Pytanie FAQ „Ile kosztują psychotesty dla kierowcy w 2026 roku?” trafia do danych strukturalnych FAQ i od 1 stycznia 2027 r. będzie nieaktualne, choć odpowiedź (200 zł od 14.11.2026) obowiązuje dalej.",
+      "dowod": "Linia 39: pytanie: 'Ile kosztują psychotesty dla kierowcy w 2026 roku?'. Opłata 200 zł obowiązuje bezterminowo (§ 13 pkt 1–2 rozporządzenia, t.j. Dz.U. 2022 poz. 165 ze zmianą Dz.U. 2026 poz. 1434). Kolejnych zmian nie ma według API Sejmu: akty zmieniające DU/2014/937 to tylko 2019/1294 i 2026/1434.",
+      "poprawka": "Usunąć rok: „Ile kosztują psychotesty dla kierowcy?” albo wyliczać rok z daty buildu."
+    },
+    {
+      "id": "G-7",
+      "slug": "zaswiadczenie-adr",
+      "wymiar": "spojnosc",
+      "waga": "niska",
+      "plik": "src/data/narzedzia.ts",
+      "linia": 862,
+      "problem": "Wpis w rejestrze obiecuje „kto płaci za kurs i egzamin”, a strona i logika mówią, że osobnej opłaty za egzamin ADR nie ma, bo komisję opłaca ośrodek (art. 21 ust. 5). Wpis sugeruje, że egzamin jest płatny osobno.",
+      "dowod": "src/data/narzedzia.ts:862: krotko „…i kto płaci za kurs i egzamin.” src/lib/narzedzia/zaswiadczenie-adr.ts:165: „Osobnej opłaty za egzamin ADR nie ma: komisję opłaca ośrodek szkolenia (art. 21 ust. 5).” DU_2024_643, art. 21 ust. 5: wynagrodzenie komisji pokrywa podmiot prowadzący kurs; art. 25 ust. 1 pkt 2 (opłata egzaminacyjna) uchylony.",
+      "poprawka": "krotko np. „Do kiedy ważne ADR, kiedy kurs doskonalący, żeby nic nie przepadło, i kto płaci za kurs i zaświadczenie.” (101 znaków)."
+    }
+  ],
+  "do_stanu": [
+    {"sprawa": "Rozporządzenie (WE) 561/2006: nowe zmiany po tekście skonsolidowanym z 31.12.2024 (np. akt delegowany albo pakiet o tachografach), poza API Sejmu", "kiedy_sprawdzic": "2027-01-04", "gdzie_w_kodzie": "src/data/prawo.ts (rozporzadzenie561), src/lib/narzedzia/czas-jazdy.ts (LIMITY)"},
+    {"sprawa": "Ustawa o transporcie drogowym: komunikat o wdrożeniu CEPiK dla profilu kierowcy zawodowego (odnośniki 31–41 w t.j. Dz.U. 2025 poz. 1490) zmieni brzmienie art. 39e i 39j ust. 7, czyli sposób wydania świadectwa i orzeczeń, ale nie terminy", "kiedy_sprawdzic": "2027-03-01", "gdzie_w_kodzie": "src/lib/narzedzia/kod-95.ts (komentarz o § 21 ust. 5 i art. 39f), src/data/prawo.ts (transportDrogowy)"}
+  ],
+  "poza_zakresem": [
+    "src/lib/narzedzia/dzis-w-formularzu.ts: lataKalendarza() liczy lata do wyboru z daty buildu ([rok-1, rok, rok+1]). Przy buildzie z 2026 r. i zegarze 10.01.2028 (Playwright) kalkulator dyzur-kierowcy po cichu liczy listopad 2026 (rok 2028 nie jest na liście, więc ustawDzisiejszeWartosci nie przestawia roku ani miesiąca). Dotyczy każdego narzędzia z data-rok-biezacy, jeśli strony nie przebuduje się co najmniej raz w roku. Do rozważenia: dopisać bieżący rok w przeglądarce albo pokazać komunikat."
+  ],
+  "nie_sprawdzono": [
+    "Tekst rozporządzenia (WE) 561/2006 (art. 4, 6, 7, 8 ust. 2, 4, 6, 6b, 8, 8a): nie ma go w API Sejmu, a EUR-Lex nie był pobierany. Ocena według ogólnie znanego brzmienia po zmianie 2020/1054. G-1 (ust. 8 a 8a) i numer ust. 6b dla rekompensaty warto potwierdzić ręcznie w EUR-Lex.",
+    "Załącznik nr 1 (wskazówki metodyczne, cz. V pkt 2, 4, 11) do rozporządzenia o badaniach profilaktycznych (Dz.U. 2023 poz. 607): plik .cache/narzedzia/prawo/DU_2023_607.txt nie zawiera tekstu załącznika. Widełek 30 miesięcy – 5 lat, 3–4 lata i 2–3 lata po 50. roku życia nie potwierdzono.",
+    "Tekst umowy ADR (Dz.U. 2025 poz. 642, skan bez warstwy tekstowej) i rozdział 8.2.2.8: nie sprawdzono, czy przedłużenie w ostatnich 12 miesiącach liczy się tak samo jak w art. 24 ust. 6 ustawy.",
+    "Kodeks pracy art. 103^1, 103^4, 229 § 3, 4 i 6 cytowane na stronach kod-95 i badania-kierowcy: nie sprawdzono ponownie w t.j. Dz.U. 2026 poz. 1245.",
+    "Czytnik ekranu: sprawdzono tylko atrybuty (aria-live, aria-invalid, aria-describedby z widocznym komunikatem błędu), bez odsłuchu w NVDA/VoiceOver.",
+    "Zmiana czasu (marzec/październik) w czas-jazdy-kierowcy: narzędzie świadomie liczy godziny zegarowe (opisane w „Jak liczymy”). Nie sprawdzono, o ile przesuwa to termin odpoczynku tygodniowego w nocy zmiany czasu."
+  ]
+}

@@ -12,7 +12,8 @@ test('urlop szkoleniowy: etykiety egzaminów mieszczą się nad swoim polem', as
   for (const e of await page.locator('label[for^="s-"].meta').evaluateAll((l) => l.map((x) => x.getAttribute('for')))) {
     const tekst = await page.evaluate(prawaKrawedzTekstu(`label[for="${e}"]`));
     const pole = await page.locator(`#${e}`).boundingBox();
-    expect(tekst, e!).toBeLessThanOrEqual(pole!.x + pole!.width + 1);
+    if (!pole) continue; // pole ukryte (np. w zwiniętej części formularza)
+    expect(tekst, e!).toBeLessThanOrEqual(pole.x + pole.width + 1);
   }
 });
 

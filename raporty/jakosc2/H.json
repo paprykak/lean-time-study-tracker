@@ -1,0 +1,57 @@
+{
+  "partia": "H",
+  "sprawdzone": [
+    {"slug": "badania-lekarskie-w-pracy", "pliki": ["src/pages/narzedzia/badania-lekarskie-w-pracy.astro", "src/lib/narzedzia/badania-lekarskie.ts", "src/lib/narzedzia/badania-lekarskie.test.ts", "tests/e2e/narzedzie-badania-lekarskie.spec.ts", "src/lib/narzedzia/kalendarz-ics.ts"], "wynik": "problemy: art. 229 § 1–4a, 201 § 1, 211 pkt 5 Kp (DU_2026_1245) i § 3 ust. 4a, § 5 rozporządzenia (DU_2023_607 + zmiany 2026 poz. 456 i 726, pobrane PDF) zgodne; 30/31 dni, 29.02.2028, przełom 2026/2027, Wigilia w przerwie, odwołanie w święto sprawdzone Playwrightem; SSR = skrypt; .ics poprawny. Pierwsza praca bez poprzedniej umowy daje tylko błąd; data następnego badania raz „nieaktualna”, raz „termin badania”"},
+    {"slug": "choroba-zawodowa", "pliki": ["src/pages/narzedzia/choroba-zawodowa.astro", "src/lib/narzedzia/choroba-zawodowa.ts", "src/lib/narzedzia/choroba-zawodowa.test.ts", "src/lib/narzedzia/odszkodowanie-wypadek.ts", "tests/e2e/narzedzie-choroba-zawodowa.spec.ts"], "wynik": "ok: wykaz (wszystkie pozycje i okresy) porównany z załącznikiem DU_2026_1297; § 3–9 rozporządzenia, art. 235–235² Kp, art. 8, 15, 18 ustawy wypadkowej, § 7 rozp. Dz.U. 2020 poz. 233 zgodne; kwoty M.P. 2026 poz. 292 zgodne; dodajMiesiace (29.02, koniec miesiąca, przełom roku) zgodny z art. 112 KC; Dz.U. 2026 poz. 26 nie zmienia art. 11–12 ani 15 ust. 3; SSR = skrypt"},
+    {"slug": "odziez-robocza", "pliki": ["src/pages/narzedzia/odziez-robocza.astro", "src/lib/narzedzia/odziez-robocza.ts", "src/lib/narzedzia/odziez-robocza.test.ts", "tests/e2e/narzedzie-odziez-robocza.spec.ts"], "wynik": "ok: art. 124, 207 § 2¹, 237⁶–237¹⁰, 304, 304⁴ Kp, art. 9 ust. 2a i 27 ust. 2 ustawy o pracy tymczasowej, art. 21 ust. 1 pkt 11 PIT, § 2 ust. 1 pkt 6 i § 5 ust. 2 pkt 2 rozp. o składkach, zał. 3 § 43 ogólnych BHP zgodne; rachunki (1/2/5/22/0 prań, 3 rzeczy 32,62 zł / 391,43 zł) i błędy danych sprawdzone; SSR = skrypt"},
+    {"slug": "posilki-profilaktyczne", "pliki": ["src/pages/narzedzia/posilki-profilaktyczne.astro", "src/lib/narzedzia/posilki-profilaktyczne.ts", "src/lib/narzedzia/posilki-profilaktyczne.test.ts", "tests/e2e/narzedzie-posilki-profilaktyczne.spec.ts"], "wynik": "ok: § 1–8 rozporządzenia (DU_1996_279) i § 2 ust. 2 w brzmieniu DU_2019_1160 zgodne; okres zimowy 1.XI–31.III bez warunku temperatury (temperatura tylko przy napojach § 4 ust. 1 pkt 3) poprawnie; progi kcal/kJ, 31.03/1.04.2027, 29.02.2028, temperatura „−5”, błędy danych sprawdzone; SSR = skrypt; nowy § 30a ogólnych BHP (DU_2026_927, od 11.01.2027) nie zmienia posiłków ani napojów"},
+    {"slug": "praca-na-wysokosci", "pliki": ["src/pages/narzedzia/praca-na-wysokosci.astro", "src/lib/narzedzia/praca-na-wysokosci.ts", "src/lib/narzedzia/praca-na-wysokosci.test.ts", "tests/e2e/narzedzie-praca-na-wysokosci.spec.ts"], "wynik": "problemy: § 80, 105–110 (DU_2003_1650; § 81 i § 110 ust. 1 pkt 3 według DU 2007 poz. 330), zał. 1 cz. V lp. 5 rozp. o badaniach, cz. VIII ust. 2 (DU_2017_796), zał. 1 cz. III pkt 11 i zał. 2 (DU_2023_1240), § 15 rozp. szkoleniowego zgodne; § 30a z DU_2026_927 nie dotyczy pracy na wysokości. Słup/maszt/konstrukcja 1–2 m: balustrada zamiast szelek; zmiana miejsca ustawia osłonę na balustradę"}
+  ],
+  "znaleziska": [
+    {
+      "id": "H-1", "slug": "praca-na-wysokosci", "wymiar": "prawo", "waga": "srednia",
+      "plik": "src/lib/narzedzia/praca-na-wysokosci.ts", "linia": 127,
+      "problem": "Przy słupie, maszcie lub konstrukcji między 1,0 a 2,0 m wynik podaje „Balustrada: poręcz 1,1 m, krawężnik 0,15 m” zamiast szelek i hełmu. Teksty (ZABEZPIECZENIA.szelki, FAQ „Kiedy trzeba mieć szelki”, tabela progów „powyżej 2 m”) mówią, że próg 2 m dotyczy też słupów, masztów, konstrukcji bez stropów i ustawiania rusztowań. W § 110 ust. 1 wysokość stoi tylko przy drabinach i klamrach, więc to interpretacja podana jako brzmienie przepisu (zasada 2).",
+      "dowod": ".cache/narzedzia/prawo/DU_2003_1650.txt, § 110 ust. 1: „Przy pracach na: słupach, masztach, konstrukcjach wieżowych, kominach, konstrukcjach budowlanych bez stropów, a także przy ustawianiu lub rozbiórce rusztowań oraz przy pracach na drabinach i klamrach na wysokości powyżej 2 m nad poziomem terenu zewnętrznego lub podłogi należy…”. Playwright: miejsce „Słup, maszt, konstrukcja”, 1,5 m → „Zabezpieczenie: Balustrada: poręcz 1,1 m, krawężnik 0,15 m”. W praca-na-wysokosci.test.ts konstrukcja jest tylko na 250 cm (linie 23–25, 134).",
+      "poprawka": "Wariant bezpieczny: dla miejsce === 'konstrukcja' przy cm >= 100 zabezpieczenie = 'szelki' (linia 127 bez warunku cm > 200). W ZABEZPIECZENIA.szelki, FAQ i tabeli progów napisać, że „powyżej 2 m” w § 110 ust. 1 stoi przy drabinach i klamrach, a przy słupach, masztach, kominach, konstrukcjach bez stropów i przy ustawianiu rusztowań przepis nie podaje wysokości, więc wymagania stosujemy od 1,0 m. To samo dopisać w interpretacji 7 i w „Jak liczymy”. Test: konstrukcja 150 i 200 cm daje szelki."
+    },
+    {
+      "id": "H-2", "slug": "badania-lekarskie-w-pracy", "wymiar": "tresc-ux", "waga": "srednia",
+      "plik": "src/pages/narzedzia/badania-lekarskie-w-pracy.astro", "linia": 404,
+      "problem": "W „Nowa praca” przy „Nowy pracodawca” pole „Koniec umowy” jest obowiązkowe, więc przy pierwszej pracy (albo bez poprzedniej umowy o pracę) narzędzie nie daje wyniku, tylko błąd „Wpisz ostatni dzień poprzedniej umowy.”, także przy „Nie mam” orzeczenia i u młodocianego. A wtedy badania wstępne są zawsze potrzebne (art. 229 § 1 pkt 1, bez wyjątku z § 1¹).",
+      "dowod": "Playwright: sytuacja „Nowa praca”, orzeczenie „Nie mam”, puste „Koniec umowy” → wynik „—”, „BLAD: Wpisz ostatni dzień poprzedniej umowy.” DU_2026_1245, art. 229 § 1 pkt 1: wstępnym badaniom podlegają „osoby przyjmowane do pracy”; § 1¹ wymaga „poprzedniego stosunku pracy” zakończonego w ciągu 30 dni.",
+      "poprawka": "Dodać do „Rodzaj zmiany” krótką opcję, np. „Pierwsza praca”, albo dopuścić puste „Koniec umowy” przy rodzaju 'nowy'. W badaniaWstepne() przy braku końca wynik 'potrzebne' z warunkiem „Poprzednia umowa w ciągu 30 dni: nie” (art. 229 § 1 pkt 1 i § 1¹). Test jednostkowy i E2E dla tego przypadku."
+    },
+    {
+      "id": "H-3", "slug": "badania-lekarskie-w-pracy", "wymiar": "spojnosc", "waga": "niska",
+      "plik": "src/lib/narzedzia/badania-lekarskie.ts", "linia": 437,
+      "problem": "Narzędzie traktuje datę następnego badania na dwa sposoby. W „Nowa praca” (interpretacja 6, linia 300) orzeczenie jest już nieaktualne w dniu tej daty („przypada najpóźniej w pierwszym dniu pracy” → badania). W „Mam orzeczenie” wydarzenie .ics „Termin badania okresowego (z orzeczenia)” leży właśnie w tym dniu, a FAQ mówi, że badanie robi się „W dniu wpisanym w orzeczeniu”. Kto zrobi badanie w tym dniu, ma według tego samego narzędzia nieaktualne orzeczenie, a bez aktualnego orzeczenia pracodawca nie dopuści go do pracy (art. 229 § 4).",
+      "dowod": "badania-lekarskie.ts:300 `d.start! < d.nastepne! ? 'tak' : 'nie'` (test „aktualność: data badania równa startowi to orzeczenie nieaktualne”); :437 wydarzenie w dniu `nastepne`; .astro:61 FAQ. Plik .ics z Playwrighta: DTSTART 20270115 „Termin badania okresowego (z orzeczenia)” dla daty 15.01.2027.",
+      "poprawka": "Ujednolicić w wariancie bezpiecznym: tytuł wydarzenia „Ostatni dzień orzeczenia: badanie okresowe zrób przed tą datą” albo wydarzenie dzień wcześniej. FAQ: „najpóźniej przed dniem wpisanym w orzeczeniu…”. W „Jak liczymy” jedno zdanie, że przepis nie mówi, czy orzeczenie obowiązuje jeszcze w tym dniu."
+    },
+    {
+      "id": "H-4", "slug": "praca-na-wysokosci", "wymiar": "tresc-ux", "waga": "niska",
+      "plik": "src/pages/narzedzia/praca-na-wysokosci.astro", "linia": 204,
+      "problem": "Gdy po zmianie miejsca wybrana osłona nie jest dozwolona (np. „Ściany min. 1,5 m dookoła”, potem „Rusztowanie”), skrypt po cichu ustawia „Stała balustrada”, czyli zakłada zabezpieczenie, którego osoba nie podała. Znika wtedy uwaga „Otwarta krawędź powyżej 1,0 m: powinna być balustrada…” (brakBalustrady). Wariant bezpieczny to „Nic, otwarta krawędź”.",
+      "dowod": "Playwright: pomost + „Ściany…”, potem „Rusztowanie” → wartość #pw-oslona = 'balustrada'. Kod: `if (!dozwolone.includes(lista.value as Oslona)) lista.value = 'balustrada';`.",
+      "poprawka": "Ustawiać `lista.value = 'brak'` (jest dozwolone dla każdego miejsca). Dopisać przypadek do E2E „rusztowanie: bez opcji ścian”."
+    },
+    {
+      "id": "H-5", "slug": "praca-na-wysokosci", "wymiar": "spojnosc", "waga": "niska",
+      "plik": "src/data/prawo.ts", "linia": 338,
+      "problem": "Wpis praceKobietCiaza ma uwagę „załącznik, cz. I” i tak pokazuje go lista przepisów na stronie praca-na-wysokosci, choć narzędzie opiera się na cz. VIII ust. 2. Akt Dz.U. 2023 poz. 607 jest w prawo.ts dwa razy (badaniaLekarskie, linia 415, i badaniaProfilaktyczne, linia 545), z różnymi uwagami: praca-na-wysokosci i badania-lekarskie-w-pracy pokazują ten sam akt pod różnymi opisami.",
+      "dowod": "StronaNarzedzia.astro:86 wypisuje `publikator, uwaga`; src/data/narzedzia.ts:816 dla praca-na-wysokosci ma 'praceKobietCiaza' i 'badaniaProfilaktyczne'. W praca-na-wysokosci.ts przy ciąży: „załącznik cz. VIII ust. 2”.",
+      "poprawka": "Uwagę praceKobietCiaza zmienić na neutralną albo „załącznik, m.in. cz. I i cz. VIII ust. 2 (praca na wysokości)” (dotyka innych narzędzi, tylko dopisać). W rejestrze praca-na-wysokosci zamienić 'badaniaProfilaktyczne' na 'badaniaLekarskie' albo scalić oba wpisy."
+    }
+  ],
+  "do_stanu": [
+    {"sprawa": "Obwieszczenie MRPiPS o kwotach jednorazowych odszkodowań od 1.04.2027 do 31.03.2028 (M.P., art. 14 ust. 9 ustawy wypadkowej), jeszcze nieogłoszone. Bez wpisu choroba-zawodowa od 1.04.2027 po cichu pomija w wyniku skryptu kwotę za 1% uszczerbku (kwotyNaDzien zwraca null); FAQ i sekcja świadczeń z buildu sprzed 1.04.2027 pokazują 1781 zł z datami obowiązywania. Jest już w STAN.md (2027-03-20).", "kiedy_sprawdzic": "2027-03-20", "gdzie_w_kodzie": "src/lib/narzedzia/odszkodowanie-wypadek.ts KWOTY_ODSZKODOWAN; src/data/prawo.ts odszkodowaniaWypadkowe2026; używa src/lib/narzedzia/choroba-zawodowa.ts wierszSwiadczen i FAQ choroba-zawodowa.astro"}
+  ],
+  "poza_zakresem": [],
+  "nie_sprawdzono": [
+    "Czytnik ekranu na żywo (sprawdzone tylko atrybuty: etykiety, aria-live, role=alert, aria-describedby; badania, posiłki i odzież nie ustawiają aria-invalid na błędnym polu, choroba-zawodowa i praca-na-wysokości tak).",
+    "Testy E2E nie uruchomione (zakaz w WSPOLNE.md); scenariusze zrobione osobnymi skryptami Playwright na podglądzie 4322.",
+    "Rozporządzenie o BHP przy robotach budowlanych (Dz.U. 2003 poz. 401), przywołane na stronie praca-na-wysokości: brzmienia § 6, 15 i 133 ani braku zmian nie sprawdzono.",
+    "Orzecznictwo i stanowiska PIP lub GIS o „dacie następnego badania” i o § 110 ust. 1 (sn.pl i podobne serwisy blokują automaty): do ręcznego sprawdzenia przy H-1 i H-3."
+  ]
+}
