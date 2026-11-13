@@ -1,0 +1,370 @@
+---
+// Kod 95: ważność wpisu (art. 15 ust. 4 ustawy o kierujących pojazdami), najpóźniejszy dzień szkolenia okresowego,
+// strata przy szkoleniu wcześniej i sprawdzenie, czy praca wymaga kodu 95 (art. 39a ust. 3 i 4 ustawy o transporcie
+// drogowym). Logika: src/lib/narzedzia/kod-95.ts (testy obok). Bez JavaScriptu: wynik startowy i tabela wyjątków.
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { GODZINY_SZKOLENIA, KATEGORIE, LATA_WPISU, OPLATA_PRAWO_JAZDY, PRZYKLAD_DNI, WSZYSTKIE_WYJATKI, ZAPAS_DNI, czyPotrzebny, kod95, przykladStartowy } from '../../lib/narzedzia/kod-95';
+import { dataPoPolsku, dzisWPolsce } from '../../lib/narzedzia/terminy';
+import { odmiana } from '../../lib/redakcja';
+
+const dzis = dzisWPolsce();
+// Przykład z dnia budowania; skrypt przestawia go na prawdziwe dziś (data-dzis). Bez JavaScriptu: daty bez statusu „za N dni”.
+const START = przykladStartowy(dzis);
+const r = kod95({ tryb: 'swiadectwo', data: START.data, szkolenie: START.szkolenie, dzis });
+const p = czyPotrzebny('C+E', []);
+
+const faq = [
+  {
+    pytanie: 'Na ile lat jest ważny kod 95?',
+    odpowiedz: `Na ${LATA_WPISU} lat od dnia wydania świadectwa kwalifikacji zawodowej, ale nie dłużej niż orzeczenie lekarskie i psychologiczne (art. 15 ust. 4 ustawy o kierujących pojazdami). Po 60. roku życia badania są co 30 miesięcy (art. 39j ust. 4 i art. 39k ust. 3 ustawy o transporcie drogowym), więc kod bywa krótszy. Wiąże data wpisana przy kodzie 95 w prawie jazdy.`,
+  },
+  {
+    pytanie: 'Czy szkolenie zrobione wcześniej przedłuża kod 95 od starej daty?',
+    odpowiedz: 'Nie. Nowy wpis liczy się 5 lat od dnia wydania nowego świadectwa (art. 15 ust. 4 ustawy o kierujących pojazdami). Reszta starego okresu przepada. Polskie przepisy nie mają reguły, że szkolenie w ostatnim roku zachowuje dotychczasową datę.',
+  },
+  {
+    pytanie: 'Co zrobić, gdy kod 95 stracił ważność?',
+    odpowiedz: 'Wystarczy szkolenie okresowe, bez ponownej kwalifikacji i testu (art. 39d ust. 5 ustawy o transporcie drogowym), a potem wniosek o wpis z aktualnymi orzeczeniami (art. 15 ust. 2 ustawy o kierujących pojazdami). Do czasu nowego wpisu w prawie jazdy nie wolno wykonywać przewozu drogowego (art. 39a ust. 1 pkt 6 i art. 39f ust. 1). Wygaśnięcie kodu 95 nie odbiera samego uprawnienia do kierowania.',
+  },
+  {
+    pytanie: 'Ile trwa szkolenie okresowe i ile kosztuje wymiana prawa jazdy?',
+    odpowiedz: `Kurs okresowy trwa ${GODZINY_SZKOLENIA} godzin: 5 modułów po 7 godzin, najwyżej 7 godzin zajęć teoretycznych i ćwiczeń dziennie (§ 13 ust. 1 i § 18 ust. 7 rozporządzenia z 2026 r.). Wymiana prawa jazdy z wpisem kosztuje ${OPLATA_PRAWO_JAZDY} zł (rozporządzenie o opłatach, Dz.U. 2025 poz. 953, § 1 pkt 1). Ceny kursu przepisy nie ustalają.`,
+  },
+  {
+    pytanie: 'Kto płaci za szkolenie okresowe kod 95?',
+    odpowiedz: 'Przepis mówi, że pracodawca może pokryć koszty szkolenia okresowego (art. 39l ust. 2 ustawy o transporcie drogowym), ale nie każe mu tego robić. Nie przesądza też, że płaci kierowca. Pracodawca musi skierować na szkolenie i stworzyć warunki, żeby je ukończyć (art. 39l ust. 1). Badania kierowcy zatrudnionego przy przewozie opłaca firma wykonująca przewóz (art. 39l ust. 1 pkt 2), a kto sam wykonuje przewóz, płaci sam (art. 39m).',
+  },
+  {
+    pytanie: 'Kierowca jeździ kategorią C i D. Czy robi dwa szkolenia?',
+    odpowiedz: 'Nie. Wystarczy jedno szkolenie okresowe w zakresie jednego bloku (art. 39d ust. 6 ustawy o transporcie drogowym), a świadectwo daje wpis dla wszystkich posiadanych kategorii od C1 do D+E (art. 15 ust. 3 ustawy o kierujących pojazdami).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="kod-95"
+  tytul="Kod 95: ważność i termin szkolenia okresowego"
+  opis="Do kiedy ważny jest kod 95, kiedy najpóźniej skończyć szkolenie okresowe, ile ważności tracisz przy szkoleniu wcześniej i czy Twoja praca wymaga kodu 95."
+  h1="Kod 95: do kiedy jest ważny i kiedy najpóźniej szkolenie okresowe"
+  lead={`Wpis kodu 95 w prawie jazdy jest ważny ${LATA_WPISU} lat od wydania świadectwa, ale nie dłużej niż badania lekarskie i psychologiczne. Wpisz daty, a policzymy, do kiedy możesz jeździć, kiedy najpóźniej skończyć ${GODZINY_SZKOLENIA}-godzinne szkolenie i ile ważności przepadnie, jeśli zrobisz je wcześniej.`}
+  faq={faq}
+>
+  <form class="kalkulator" data-kod95 novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twój kod 95</h2>
+
+      <fieldset class="mt-4">
+        <legend class="etykieta">Jaką datę masz</legend>
+        <div class="opcje-pionowe mt-2">
+          <label><input type="radio" name="tryb" value="swiadectwo" checked /> Datę wydania świadectwa</label>
+          <label><input type="radio" name="tryb" value="prawo-jazdy" /> Datę kodu 95 z prawa jazdy</label>
+        </div>
+      </fieldset>
+
+      <div class="mt-4">
+        <label for="k95-data" class="etykieta-pola" data-w="data-etykieta">Świadectwo wydane</label>
+        <input id="k95-data" name="data" type="date" class="pole mt-1 max-w-56" min="2008-01-01" max="2100-12-31" value={START.data} data-dzis={String(PRZYKLAD_DNI.data)} aria-describedby="k95-data-opis k95-data-blad" />
+        <p id="k95-data-opis" class="meta mt-1" data-w="data-opis">Świadectwo kwalifikacji zawodowej z ostatniego szkolenia albo kwalifikacji.</p>
+        <p id="k95-data-blad" class="blad-pola" data-blad="data" hidden></p>
+      </div>
+
+      <fieldset class="mt-6">
+        <legend class="etykieta-pola">Orzeczenia ważne do (jeśli znasz)</legend>
+        <div class="mt-1 grid grid-cols-1 items-end gap-3 min-[360px]:grid-cols-2">
+          <div>
+            <label for="k95-lek" class="meta">Lekarskie</label>
+            <input id="k95-lek" name="lekarskie" type="date" class="pole mt-1" min="2008-01-01" max="2100-12-31" aria-describedby="k95-orz-blad" />
+          </div>
+          <div>
+            <label for="k95-psych" class="meta">Psychologiczne</label>
+            <input id="k95-psych" name="psychologiczne" type="date" class="pole mt-1" min="2008-01-01" max="2100-12-31" aria-describedby="k95-orz-blad" />
+          </div>
+        </div>
+        <p id="k95-orz-blad" class="blad-pola" data-blad="orzeczenia" hidden></p>
+      </fieldset>
+
+      <div class="mt-6">
+        <label for="k95-szkolenie" class="etykieta-pola">Szkolenie skończysz (opcjonalnie)</label>
+        <input id="k95-szkolenie" name="szkolenie" type="date" class="pole mt-1 max-w-56" min="2008-01-01" max="2100-12-31" value={START.szkolenie} data-dzis={String(PRZYKLAD_DNI.szkolenie)} aria-describedby="k95-szkolenie-opis k95-szkolenie-blad" />
+        <p id="k95-szkolenie-opis" class="meta mt-1">Pokażemy, do kiedy będzie nowy kod i ile dni obecnego kodu przepadnie.</p>
+        <p id="k95-szkolenie-blad" class="blad-pola" data-blad="szkolenie" hidden></p>
+      </div>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Kod 95 ważny do</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-data" data-w="termin">{dataPoPolsku(r.waznyDo)}</p>
+        <p class="status-terminu" data-w="status" hidden></p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Skąd ta data</dt><dd data-w="ograniczenie">5 lat od wydania świadectwa (art. 15 ust. 4 ustawy o kierujących pojazdami)</dd></div>
+        <div><dt>Szkolenie skończ do (z zapasem na wymianę prawa jazdy)</dt><dd data-w="zapas">{dataPoPolsku(r.zZapasem)} (szacunek redakcji: {ZAPAS_DNI} dni)</dd></div>
+        <div><dt>Ostatni dzień na ukończenie szkolenia (świadectwo zdąży)</dt><dd data-w="najpozniej">{dataPoPolsku(r.szkolenieNajpozniej)}<span class="wynik-opis">nasz rachunek z § 21 ust. 5, nie termin z ustawy; bez czasu na wymianę prawa jazdy</span></dd></div>
+        <div><dt>Po szkoleniu w wybranym dniu</dt><dd data-w="plan">{r.plan ? `nowy kod do ${dataPoPolsku(r.plan.nowyKoniec)}; przepada ${odmiana(r.plan.strata, ['dzień', 'dni', 'dni'])} obecnego kodu` : '—'}</dd></div>
+      </dl>
+      <p class="wynik-uwaga" data-w="uwaga">Wiąże data przy kodzie 95 w prawie jazdy. Do jazdy potrzebne jest prawo jazdy z aktualnym wpisem (art. 39f ust. 1 i 3 ustawy o transporcie drogowym), a ile trwa wymiana u starosty, przepisy nie podają.</p>
+      <p class="mt-5">
+        <button type="button" class="przycisk przycisk-grafit" data-ics disabled>Dodaj do kalendarza (.ics)</button>
+      </p>
+      <p class="meta mt-2">Terminy do kalendarza (bez powiadomień): 180 dni przed końcem (gdy zostało mniej, dziś), szkolenie z zapasem na wymianę, ostatni dzień, w którym świadectwo zdąży, i koniec ważności (tylko te, które jeszcze nie minęły).</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Powyżej przykład, zasady i tabela wyjątków poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <form class="kalkulator mt-8" data-potrzeba novalidate aria-labelledby="potrzeba-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="potrzeba-tytul" class="tytul-m">Czy potrzebujesz kodu 95</h2>
+      <div class="mt-4">
+        <label for="k95-kategoria" class="etykieta-pola">Kategoria pojazdu w pracy</label>
+        <select id="k95-kategoria" name="kategoria" class="pole mt-1 max-w-56">
+          {KATEGORIE.map((k) => <option value={k} selected={k === 'C+E'}>{k}</option>)}
+        </select>
+      </div>
+      <fieldset class="mt-6" data-wyjatki>
+        <legend class="etykieta-pola">Twoja jazda to (zaznacz, jeśli pasuje)</legend>
+        <p class="meta mt-1">Wyjątki z art. 39a ust. 3 i art. 3 ust. 1 pkt 3 ustawy o transporcie drogowym; pełne warunki w tabeli niżej.</p>
+        <div class="opcje-pionowe mt-2">
+          {WSZYSTKIE_WYJATKI.map((w) => <label><input type="checkbox" name="wyjatek" value={w.id} /> {w.krotko}</label>)}
+        </div>
+      </fieldset>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="potrzeba-wynik-tytul">
+      <h2 id="potrzeba-wynik-tytul" class="etykieta">Kod 95 w Twojej pracy</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-data" data-p="werdykt">{p.potrzeba === 'tak' ? 'Potrzebujesz' : 'Nie potrzebujesz'}</p>
+        <p class="mt-3" data-p="opis">Przewóz drogowy pojazdem tej kategorii wymaga kwalifikacji i szkolenia okresowego, czyli aktualnego kodu 95 w prawie jazdy (art. 39a ust. 1 pkt 5 i 6, art. 39f ust. 1 ustawy o transporcie drogowym). Dotyczy to też przewozu na potrzeby własne firmy (art. 4 pkt 4 i 6a).</p>
+      </div>
+      <p class="wynik-uwaga" data-p="uwaga" hidden></p>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="kiedy-potrzebny">Kiedy potrzebny jest kod 95</h2>
+    <p>
+      Kod 95 potwierdza kwalifikację wstępną i szkolenie okresowe kierowcy. Bez nich przedsiębiorca nie może zatrudnić
+      kierowcy do przewozu drogowego (art. 39a ust. 1 pkt 5 i 6 ustawy o transporcie drogowym), a to samo dotyczy osoby,
+      która sama wykonuje przewóz (art. 39m). Kierowców pojazdów kategorii AM, A1, A2, A, B1, B i B+E wymóg nie obejmuje
+      (art. 39a ust. 4). Dla kategorii C1, C1+E, C, C+E, D1, D1+E, D i D+E przepis wymienia wyjątki (art. 39a ust. 3).
+      Osobno przewozu pojazdami zespołów ratownictwa medycznego i w ramach usług transportu sanitarnego ustawa w ogóle
+      nie obejmuje (art. 3 ust. 1 pkt 3):
+    </p>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Wyjątki od obowiązku kodu 95: art. 39a ust. 3 i art. 3 ust. 1 pkt 3 ustawy o transporcie drogowym</caption>
+        <thead><tr><th scope="col">Przepis</th><th scope="col">Kierowca pojazdu</th></tr></thead>
+        <tbody>
+          {WSZYSTKIE_WYJATKI.map((w) => (<tr><th scope="row">{w.pkt.startsWith('art.') ? w.pkt : `art. 39a ust. 3 pkt ${w.pkt}`}</th><td>{w.tresc}</td></tr>))}
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Wyjątki z warunkiem „prowadzenie pojazdu nie jest głównym zajęciem”, „sporadyczny”, „handlowy” czy „niehandlowy”
+      są ocenne, a pojęć handlowego i niehandlowego przewozu ustawa nie definiuje. Gdy nie wiesz, czy spełniasz wszystkie warunki, bezpieczniej
+      mieć kod 95.
+    </p>
+
+    <h2 id="jak-przedluzyc">Jak przedłużyć kod 95</h2>
+    <ol>
+      <li><strong>Szkolenie okresowe:</strong> kurs {GODZINY_SZKOLENIA} godzin, 5 wybranych modułów po 7 godzin, najwyżej 7 godzin zajęć teoretycznych i ćwiczeń dziennie (§ 13 ust. 1 i § 18 ust. 7 rozporządzenia z 7 października 2026 r.), albo cykl zajęć rozłożony na 5 lat (§ 15). Do 12 godzin może być online (§ 18 ust. 6 pkt 2). W bloku C (ciężarówki) kurs można skrócić o 14 godzin przy zaświadczeniu ADR ważnym w dniu rozpoczęcia szkolenia albo o 7 godzin przy szkoleniu z transportu zwierząt (§ 17 ust. 4 pkt 5 i ust. 5).</li>
+      <li><strong>Świadectwo:</strong> ośrodek wydaje je najpóźniej następnego dnia roboczego po ostatnim module (§ 21 ust. 5).</li>
+      <li><strong>Wniosek do starosty</strong> o wpis, na podstawie świadectwa i orzeczeń (art. 15 ust. 2 ustawy o kierujących pojazdami). Wpis jest robiony w formie wymiany prawa jazdy (art. 15 ust. 4), za {OPLATA_PRAWO_JAZDY} zł (art. 15 ust. 5 odsyła do opłaty za prawo jazdy; kwota: rozporządzenie o opłatach, Dz.U. 2025 poz. 953, § 1 pkt 1).</li>
+    </ol>
+    <p>
+      Kierowca, który jeździ pojazdami kategorii C i D, robi jedno szkolenie okresowe w zakresie jednego bloku
+      (art. 39d ust. 6 ustawy o transporcie drogowym), a świadectwo daje wpis dla wszystkich posiadanych kategorii
+      od C1 do D+E (art. 15 ust. 3 ustawy o kierujących pojazdami). Przejście na nowy zakres, np. z ciężarówek na
+      autobusy, to kwalifikacja uzupełniająca, nie szkolenie okresowe (art. 39b2 ust. 1).
+    </p>
+
+    <h2 id="po-terminie">Kod 95 po terminie</h2>
+    <p>
+      Gdy kod wygasł, nie wolno wykonywać przewozu drogowego (art. 39a ust. 1 pkt 6 i art. 39f ust. 1). Żeby wrócić,
+      wystarczy szkolenie okresowe, bez ponownej kwalifikacji i testu (art. 39d ust. 5), a potem wniosek o wpis
+      z aktualnymi orzeczeniami (art. 15 ust. 2 ustawy o kierujących pojazdami). Wygaśnięcie kodu 95 nie odbiera
+      samego uprawnienia do kierowania. Za przewóz bez okazania dokumentu z wpisem grozi kierowcy grzywna 150 zł (załącznik nr 1 do ustawy,
+      lp. 3), a podmiotowi, który wykonuje przewóz bez obowiązkowego szkolenia okresowego kierowcy, kara 1500 zł
+      (załącznik nr 3, lp. 1.15).
+    </p>
+
+    <h2 id="kto-placi">Kto płaci</h2>
+    <p>
+      Badania kierowcy zatrudnionego przy przewozie opłaca firma wykonująca przewóz (art. 39l ust. 1 pkt 2 ustawy
+      o transporcie drogowym), a kto sam wykonuje przewóz, płaci sam (art. 39m). Za szkolenie okresowe pracodawca „może” zapłacić (art. 39l ust. 2): przepis tego nie nakazuje,
+      ale też nie przesądza, że płaci kierowca. Pracodawca musi skierować kierowcę na szkolenie i stworzyć warunki
+      organizacyjne, żeby je ukończył (art. 39l ust. 1 pkt 1 lit. a i pkt 6). Gdy szkolenie jest z inicjatywy
+      pracodawcy albo za jego zgodą, stosuje się przepisy Kodeksu pracy o podnoszeniu kwalifikacji: przysługuje
+      zwolnienie z pracy z zachowaniem wynagrodzenia na czas zajęć (art. 103<sup>1</sup> § 2 i 3). Umowę na piśmie
+      pracodawca musi zawrzeć, gdy chce Cię zobowiązać do pozostania w pracy (art. 103<sup>4</sup>). Czy przy kosztach pracodawcy będziesz musieć je oddać po odejściu,
+      policzy <a href="/narzedzia/zwrot-kosztow-szkolenia">kalkulator lojalki</a>. Terminy badań kierowcy policzy <a href="/narzedzia/badania-kierowcy">kalkulator badań kierowcy</a>.
+    </p>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <ul>
+      <li><strong>Ważność:</strong> {LATA_WPISU} lat od dnia wydania świadectwa, liczone jak w art. 112 Kodeksu cywilnego (stosowanym odpowiednio): ten sam dzień i miesiąc, a po 29 lutego 28 lutego. Wynik przycinamy do wcześniejszej z dat ważności orzeczeń (art. 15 ust. 4 ustawy o kierujących pojazdami). Wiąże data wpisana przy kodzie 95 w prawie jazdy, bo CEPiK może wydrukować inną: w trybie „z prawa jazdy” bierzemy ją wprost.</li>
+      <li><strong>Od którego świadectwa:</strong> art. 39d ust. 2 ustawy o transporcie drogowym można czytać jako stały cykl od kwalifikacji wstępnej. Przepisy nie rozstrzygają, jak pogodzić go z art. 15 ust. 4 ustawy o kierujących pojazdami, który liczy 5 lat od każdego świadectwa. Liczymy z ustawy o kierujących pojazdami, a wiąże data w prawie jazdy.</li>
+      <li><strong>Kiedy skończyć szkolenie:</strong> do jazdy potrzebne jest prawo jazdy z aktualnym wpisem (art. 39f ust. 1 i 3 ustawy o transporcie drogowym); samo świadectwo go nie zastępuje. Przepisy nie podają, ile trwa wymiana prawa jazdy, więc główny termin to data z zapasem {ZAPAS_DNI} dni: to szacunek redakcji, nie przepis.</li>
+      <li><strong>Ostatni dzień, w którym świadectwo zdąży:</strong> ośrodek wydaje świadectwo najpóźniej następnego dnia roboczego po ostatnim module (§ 21 ust. 5), więc liczymy przeddzień ostatniego dnia roboczego ważności. To nasz rachunek, nie termin z ustawy: kto skończy szkolenie wtedy, zostanie bez ważnego wpisu w prawie jazdy do czasu wymiany. Dzień roboczy to poniedziałek–piątek bez świąt; sobotę liczymy jako wolną, co daje wcześniejszy termin.</li>
+      <li><strong>Szkolenie wcześniej:</strong> nowy kod liczymy {LATA_WPISU} lat od dnia ukończenia szkolenia (jeśli świadectwo przyjdzie dzień później, kod skończy się dzień później). Dni od tego dnia do końca obecnego kodu przepadają: żaden przepis ich nie dolicza.</li>
+      <li><strong>Czy potrzebujesz:</strong> wyjątek z art. 39a ust. 3 pkt 5 stosujemy tylko do kategorii D i D1, jak w brzmieniu przepisu. Przy wyjątkach ocennych (pkt 5–11) piszemy „nie potrzebujesz, jeśli spełniasz wszystkie warunki”, a przy wątpliwości bezpieczniej mieć kod 95.</li>
+    </ul>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { czyPotrzebny, kod95, ZAPAS_DNI, type Kategoria, type Ograniczenie, type StatusKodu } from '../../lib/narzedzia/kod-95';
+  import { dataPoPolsku, dniMiedzy, dzisWPolsce, ileDni, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { plikIcs, type Wydarzenie } from '../../lib/narzedzia/kalendarz-ics';
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
+  import { odmiana } from '../../lib/redakcja';
+  import { typografia } from '../../lib/typografia.mjs';
+
+  const form = document.querySelector<HTMLFormElement>('[data-kod95]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const pisz = (k: string, t: string) => (w(k).textContent = typografia(t));
+    const pole = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const ics = form.querySelector<HTMLButtonElement>('[data-ics]')!;
+    const bladData = form.querySelector<HTMLElement>('[data-blad="data"]')!;
+    const bladOrz = form.querySelector<HTMLElement>('[data-blad="orzeczenia"]')!;
+    const bladSzk = form.querySelector<HTMLElement>('[data-blad="szkolenie"]')!;
+    const STATUS: Record<StatusKodu, string> = { wygaslo: 'Wygasł', pilne: 'Pilne', wkrotce: 'Wkrótce', 'w-terminie': 'W terminie' };
+    const KLASA: Record<StatusKodu, string> = { wygaslo: 'po-terminie', pilne: 'pilne', wkrotce: 'wkrotce', 'w-terminie': 'w-terminie' };
+    const SKAD: Record<Ograniczenie, string> = {
+      'piec-lat': '5 lat od wydania świadectwa (art. 15 ust. 4 ustawy o kierujących pojazdami)',
+      'prawo-jazdy': 'data z prawa jazdy (wiążąca)',
+      lekarskie: 'koniec orzeczenia lekarskiego (art. 15 ust. 4 ustawy o kierujących pojazdami)',
+      psychologiczne: 'koniec orzeczenia psychologicznego (art. 15 ust. 4 ustawy o kierujących pojazdami)',
+    };
+    const NIEPELNA = 'Wpisz pełną datę: dzień, miesiąc i rok.';
+    let wydarzenia: Wydarzenie[] = [];
+
+    const blad = (el: HTMLElement, t: string | null) => {
+      el.hidden = !t;
+      el.textContent = t ?? '';
+    };
+    const nieprawidlowe = (p: HTMLInputElement, zle: boolean) => p.setAttribute('aria-invalid', zle ? 'true' : 'false');
+    /** Niepełna data (przeglądarka zwraca wtedy pusty tekst) albo data spoza kalendarza. */
+    const niepelna = (p: HTMLInputElement) => p.validity.badInput || (!!p.value && !poprawnaData(p.value));
+    const pusto = (t: string) => {
+      pisz('termin', t);
+      w('status').hidden = true;
+      for (const k of ['ograniczenie', 'najpozniej', 'zapas', 'plan']) w(k).textContent = '—';
+      w('uwaga').hidden = true;
+      ics.disabled = true;
+      wydarzenia = [];
+    };
+
+    const przelicz = () => {
+      const dzis = dzisWPolsce();
+      const tryb = form.querySelector<HTMLInputElement>('input[name="tryb"]:checked')?.value === 'prawo-jazdy' ? 'prawo-jazdy' : 'swiadectwo';
+      pisz('data-etykieta', tryb === 'swiadectwo' ? 'Świadectwo wydane' : 'Kod 95 ważny do');
+      pisz('data-opis', tryb === 'swiadectwo' ? 'Świadectwo kwalifikacji zawodowej z ostatniego szkolenia albo kwalifikacji.' : 'Data przy kodzie 95 w rubryce 12 prawa jazdy (przy kategorii, którą jeździsz; przy kilku datach najwcześniejsza).');
+      const [pData, pLek, pPsych, pSzk] = ['data', 'lekarskie', 'psychologiczne', 'szkolenie'].map(pole);
+      const data = pData.value;
+      const lek = pLek.value;
+      const psych = pPsych.value;
+      const szk = pSzk.value;
+
+      const bD = niepelna(pData) ? NIEPELNA : !data ? (tryb === 'swiadectwo' ? 'Wpisz datę wydania świadectwa.' : 'Wpisz datę ważności kodu 95 z prawa jazdy.') : null;
+      const zlyLek = niepelna(pLek) || (!bD && tryb === 'swiadectwo' && !!lek && lek < data);
+      const zlyPsych = niepelna(pPsych) || (!bD && tryb === 'swiadectwo' && !!psych && psych < data);
+      const bO = niepelna(pLek) || niepelna(pPsych) ? NIEPELNA : zlyLek || zlyPsych ? 'Orzeczenie kończy się przed wydaniem świadectwa. Sprawdź daty.' : null;
+      const bS = niepelna(pSzk) ? NIEPELNA : !bD && tryb === 'swiadectwo' && !!szk && szk < data ? 'Szkolenie nie może skończyć się przed wydaniem obecnego świadectwa.' : null;
+      blad(bladData, bD);
+      blad(bladOrz, bO);
+      blad(bladSzk, bS);
+      nieprawidlowe(pData, !!bD);
+      nieprawidlowe(pLek, zlyLek);
+      nieprawidlowe(pPsych, zlyPsych);
+      nieprawidlowe(pSzk, !!bS);
+      if (bD || bO) return pusto('Wpisz datę');
+
+      // Przy błędzie w dacie szkolenia liczymy bez planu.
+      const r = kod95({ tryb, data, lekarskieDo: lek || undefined, psychologiczneDo: psych || undefined, szkolenie: (!bS && szk) || undefined, dzis });
+      pisz('termin', dataPoPolsku(r.waznyDo));
+      const s = w('status');
+      s.hidden = false;
+      s.dataset.status = KLASA[r.status];
+      pisz('status', `${STATUS[r.status]}: ${ileDni(r.dniDoKonca)}`);
+      pisz('ograniczenie', SKAD[r.ograniczenie]);
+      const minal = (d: string) => dniMiedzy(dzis, d) < 0;
+      const opisNajpozniej = document.createElement('span');
+      opisNajpozniej.className = 'wynik-opis';
+      opisNajpozniej.textContent = typografia('nasz rachunek z § 21 ust. 5, nie termin z ustawy; bez czasu na wymianę prawa jazdy');
+      w('najpozniej').replaceChildren(
+        typografia(r.status === 'wygaslo' ? 'termin minął' : `${dataPoPolsku(r.szkolenieNajpozniej)}${minal(r.szkolenieNajpozniej) ? ' (termin minął)' : ''}`),
+        ...(r.status === 'wygaslo' ? [] : [opisNajpozniej]),
+      );
+      pisz('zapas', r.status === 'wygaslo' ? 'termin minął' : `${dataPoPolsku(r.zZapasem)} (${minal(r.zZapasem) ? 'termin minął; ' : ''}szacunek redakcji: ${ZAPAS_DNI} dni)`);
+      pisz(
+        'plan',
+        !r.plan
+          ? '—'
+          : r.plan.przerwa > 0
+            ? `nowy kod do ${dataPoPolsku(r.plan.nowyKoniec)}; wcześniej ${odmiana(r.plan.przerwa, ['dzień', 'dni', 'dni'])} bez kodu 95`
+            : `nowy kod do ${dataPoPolsku(r.plan.nowyKoniec)}${r.plan.nowyOgraniczony ? ' (do końca orzeczenia)' : ''}; przepada ${odmiana(r.plan.strata, ['dzień', 'dni', 'dni'])} obecnego kodu`,
+      );
+      const uwagi: string[] = [];
+      if (r.status === 'wygaslo') uwagi.push('Bez aktualnego kodu 95 nie wolno wykonywać przewozu drogowego (art. 39a ust. 1 pkt 6 i art. 39f ust. 1 ustawy o transporcie drogowym). Wystarczy szkolenie okresowe, bez ponownej kwalifikacji i testu (art. 39d ust. 5).');
+      else uwagi.push('Wiąże data przy kodzie 95 w prawie jazdy. Do jazdy potrzebne jest prawo jazdy z aktualnym wpisem (art. 39f ust. 1 i 3 ustawy o transporcie drogowym), a ile trwa wymiana u starosty, przepisy nie podają.');
+      if (r.orzeczenieWczesniej) uwagi.push('Orzeczenie kończy się przed datą z prawa jazdy, choć wpis nie powinien trwać dłużej niż orzeczenia (art. 15 ust. 4 ustawy o kierujących pojazdami). Sprawdź daty.');
+      if (r.plan?.noweOrzeczenie) uwagi.push('Orzeczenie wygaśnie przed dniem szkolenia: przed wpisem potrzebne nowe orzeczenie (art. 15 ust. 2 ustawy o kierujących pojazdami).');
+      w('uwaga').hidden = false;
+      pisz('uwaga', uwagi.join(' '));
+      wydarzenia = r.wydarzenia;
+      ics.disabled = wydarzenia.length === 0;
+    };
+
+    ics.addEventListener('click', () => {
+      if (!wydarzenia.length) return;
+      const blob = new Blob([plikIcs(wydarzenia, 'kod-95')], { type: 'text/calendar;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'kod-95.ics';
+      document.body.append(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    });
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    ustawDzisiejszeWartosci(form);
+    przelicz();
+  }
+
+  const fp = document.querySelector<HTMLFormElement>('[data-potrzeba]');
+  if (fp) {
+    const el = (k: string) => fp.querySelector<HTMLElement>(`[data-p="${k}"]`)!;
+    const pisz = (k: string, t: string) => (el(k).textContent = typografia(t));
+    const przelicz = () => {
+      const kategoria = (fp.elements.namedItem('kategoria') as HTMLSelectElement).value as Kategoria;
+      const zaznaczone = [...fp.querySelectorAll<HTMLInputElement>('input[name="wyjatek"]:checked')].map((x) => x.value);
+      const r = czyPotrzebny(kategoria, zaznaczone);
+      const bez = r.potrzeba === 'nie' && r.wyjatki.length === 0;
+      fp.querySelector<HTMLElement>('[data-wyjatki]')!.hidden = bez;
+      const pkt = r.wyjatki.map((x) => (x.pkt.startsWith('art.') ? x.pkt : `art. 39a ust. 3 pkt ${x.pkt}`)).join(', ');
+      if (bez) {
+        pisz('werdykt', 'Nie potrzebujesz');
+        pisz('opis', `Kategoria ${kategoria}: wymogu kwalifikacji i szkolenia okresowego nie stosuje się (art. 39a ust. 4 ustawy o transporcie drogowym).`);
+      } else if (r.potrzeba === 'tak') {
+        pisz('werdykt', 'Potrzebujesz');
+        pisz('opis', 'Przewóz drogowy pojazdem tej kategorii wymaga kwalifikacji i szkolenia okresowego, czyli aktualnego kodu 95 w prawie jazdy (art. 39a ust. 1 pkt 5 i 6, art. 39f ust. 1 ustawy o transporcie drogowym). Dotyczy to też przewozu na potrzeby własne firmy (art. 4 pkt 4 i 6a).');
+      } else if (r.potrzeba === 'nie') {
+        pisz('werdykt', 'Nie potrzebujesz');
+        pisz('opis', `Ten przewóz jest wyłączony z obowiązku (${pkt} ustawy o transporcie drogowym), o ile spełniasz wszystkie warunki z tabeli niżej.`);
+      } else {
+        pisz('werdykt', 'Nie potrzebujesz, jeśli…');
+        pisz('opis', `Wyjątek (${pkt} ustawy o transporcie drogowym) działa tylko wtedy, gdy spełniasz wszystkie jego warunki z tabeli niżej. Warunki są ocenne: przy wątpliwości bezpieczniej mieć kod 95.`);
+      }
+      const u = el('uwaga');
+      u.hidden = r.niedotyczace.length === 0;
+      pisz('uwaga', r.niedotyczace.length ? 'Wyjątek o przejeździe bez pasażerów do serwisu dotyczy tylko kategorii D i D1 (art. 39a ust. 3 pkt 5 ustawy o transporcie drogowym).' : '');
+    };
+    fp.addEventListener('input', przelicz);
+    fp.addEventListener('change', przelicz);
+    fp.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>
