@@ -865,6 +865,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-13',
   },
   {
+    slug: 'mobbing-i-dyskryminacja',
+    nazwa: 'Mobbing i dyskryminacja: zadośćuczynienie',
+    krotko: 'Najniższe zadośćuczynienie za mobbing (6 płac minimalnych) i dyskryminację, ciężar dowodu, przedawnienie.',
+    kategoria: 'umowa',
+    przepisy: ['kodeksPracy', 'zmianaMobbing2026', 'kpc', 'kodeksCywilny', 'minimalneWynagrodzenie', 'placa2025', 'placa2026', 'placa2027'],
+    sprawdzono: '2026-11-13',
+  },
+  {
     slug: 'przerwy-w-pracy',
     nazwa: 'Przerwy w pracy',
     krotko: 'Ile przerw przy zmianie 8 i 12 godzin, które są płatne, przy monitorze, na karmienie, dla młodocianych.',

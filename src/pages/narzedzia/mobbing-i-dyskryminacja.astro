@@ -1,0 +1,179 @@
+---
+// Mobbing i dyskryminacja: najniższe zadośćuczynienie albo odszkodowanie (art. 18³a–18³g i 94³ Kodeksu pracy, zmiany
+// z Dz.U. 2026 poz. 1046 od 5 listopada 2026 r.), ciężar dowodu i przedawnienie (art. 291 § 1). Logika i teksty wyniku:
+// src/lib/narzedzia/mobbing.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { LATA, PLACA_MINIMALNA } from '../../data/prawo';
+import { NARUSZENIA, opisMobbingu, type Naruszenie } from '../../lib/narzedzia/mobbing';
+import { zl } from '../../lib/narzedzia/format';
+import { dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+const dzis = dzisWPolsce();
+const rokDzis = Number(dzis.slice(0, 4));
+const rok = LATA.includes(rokDzis) ? rokDzis : LATA[LATA.length - 1];
+const NARUSZENIE: Naruszenie = 'mobbing';
+const start = opisMobbingu(NARUSZENIE, dzis, rok, dzis);
+const placa = PLACA_MINIMALNA[rok].miesiecznie;
+
+const faq = [
+  {
+    pytanie: 'Ile wynosi najniższe zadośćuczynienie za mobbing?',
+    odpowiedz: `Od 5 listopada 2026 r. pracownik, który doznał mobbingu, może żądać od pracodawcy zadośćuczynienia nie niższego niż sześciokrotność minimalnego wynagrodzenia albo odszkodowania (art. 94³ § 11 Kodeksu pracy). Przy płacy minimalnej z ${rok} r. to ${zl(6 * placa)}. Wcześniej najniższa kwota dotyczyła odszkodowania i wynosiła jedną płacę minimalną.`,
+  },
+  {
+    pytanie: 'Czym jest mobbing według Kodeksu pracy?',
+    odpowiedz: 'Od 5 listopada 2026 r. mobbing to uporczywe nękanie pracownika, czyli powtarzalne, nawracające albo stałe. Przejawami są w szczególności upokarzanie, zastraszanie, zaniżanie oceny przydatności zawodowej, nieuzasadniona krytyka, utrudnianie pracy i izolowanie z zespołu. Mobbingiem nie są zachowania jednorazowe ani uzasadniona krytyka wyrażona we właściwej formie (art. 94³ § 2–4 i 9). Nękać może przełożony, współpracownik, podwładny albo grupa osób (§ 8).',
+  },
+  {
+    pytanie: 'Co to jest dyskryminacja w pracy?',
+    odpowiedz: 'Gorsze traktowanie pracownika z powodu płci, wieku, niepełnosprawności, rasy, religii, narodowości, przekonań politycznych, przynależności związkowej, pochodzenia etnicznego, wyznania, orientacji seksualnej, umowy na czas określony albo nieokreślony, pełnego albo niepełnego etatu (art. 18³a § 1 Kodeksu pracy). Dyskryminacją jest też molestowanie, molestowanie seksualne i nakłanianie innych do dyskryminacji (§ 5–6), a od 5 listopada 2026 r. także dyskryminacja przez założenie i przez skojarzenie (§ 4¹).',
+  },
+  {
+    pytanie: 'Kto musi udowodnić dyskryminację?',
+    odpowiedz: 'Od 5 listopada 2026 r. osoba, która zarzuca naruszenie równego traktowania, uprawdopodabnia je, a pracodawca musi wykazać, że zasady nie naruszył (art. 18³f Kodeksu pracy). Przy różnicowaniu sytuacji pracownika z przyczyn z art. 18³a § 1 pracodawca musi udowodnić, że kierował się obiektywnymi powodami (art. 18³b § 1).',
+  },
+  {
+    pytanie: 'Do kiedy można żądać zadośćuczynienia za mobbing albo dyskryminację?',
+    odpowiedz: 'Roszczenia ze stosunku pracy przedawniają się z upływem 3 lat od dnia, w którym stały się wymagalne (art. 291 § 1 Kodeksu pracy). Bieg przedawnienia przerywa między innymi pozew do sądu pracy i uznanie roszczenia przez pracodawcę (art. 295 § 1).',
+  },
+  {
+    pytanie: 'Czy pracodawca może zwolnić za skargę na mobbing?',
+    odpowiedz: 'Korzystanie z uprawnień z powodu naruszenia prawa pracy, w tym równego traktowania, nie może być powodem niekorzystnego traktowania ani wypowiedzenia. Pracownik potraktowany tak w odwecie, a także osoba, która go wspierała, ma prawo do zadośćuczynienia nie niższego niż minimalne wynagrodzenie albo do odszkodowania (art. 18³e § 1–3 Kodeksu pracy).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="mobbing-i-dyskryminacja"
+  tytul="Mobbing i dyskryminacja: ile zadośćuczynienia"
+  opis={`Najniższe zadośćuczynienie za mobbing (6 × płaca minimalna, ${zl(6 * placa)}) i dyskryminację po zmianie od 5.11.2026 r., ciężar dowodu i przedawnienie.`}
+  h1="Mobbing i dyskryminacja: ile zadośćuczynienia"
+  lead="Wybierz sprawę i wpisz dzień ostatniego zachowania, a pokażemy najniższą kwotę, której możesz żądać od pracodawcy, kto co musi udowodnić i do kiedy roszczenie się nie przedawni."
+  faq={faq}
+>
+  <form class="kalkulator" data-mobbing novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twoja sprawa</h2>
+      <div class="mt-4">
+        <label for="m-naruszenie" class="etykieta-pola">Sprawa</label>
+        <select id="m-naruszenie" name="naruszenie" class="pole mt-1" aria-describedby="m-naruszenie-opis">
+          {Object.entries(NARUSZENIA).map(([k, n]) => <option value={k} selected={k === NARUSZENIE}>{n.krotko}</option>)}
+        </select>
+        <p id="m-naruszenie-opis" class="meta mt-1" data-w="naruszenie-opis">{NARUSZENIA[NARUSZENIE].nazwa}</p>
+      </div>
+      <div class="mt-4 grid grid-cols-1 gap-4">
+        <div>
+          <label for="m-data" class="etykieta-pola">Dzień ostatniego zachowania</label>
+          <input id="m-data" name="data" type="date" data-dzis class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" value={dzis} aria-describedby="m-blad" />
+          <p id="m-blad" class="blad-pola" data-blad="data" hidden></p>
+        </div>
+        <div>
+          <label for="m-rok" class="etykieta-pola">Płaca minimalna z roku</label>
+          <select id="m-rok" name="rok" class="pole mt-1 max-w-56" data-rok-biezacy>
+            {LATA.map((r) => <option value={r} selected={r === rok}>{r} ({zl(PLACA_MINIMALNA[r].miesiecznie)})</option>)}
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Najniższa kwota</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-data" data-w="kwota">{start.kwota}</p>
+        <p class="meta" data-w="opis">{start.opis}</p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Przepis</dt><dd data-w="przepisy">{start.przepisy}</dd></div>
+        <div><dt>Przedawnienie</dt><dd data-w="przedawnienie">{start.przedawnienie}</dd></div>
+      </dl>
+      <p class="status-terminu" data-w="status" data-status={start.statusKlasa}>{start.status}</p>
+      <p class="wynik-uwaga" data-w="dowod">{start.dowod}</p>
+      <p class="wynik-uwaga" data-w="uwaga">{start.uwagi.join(' ')}</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady i kwoty są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="kwoty">Najniższe kwoty od 5 listopada 2026 r.</h2>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Najniższe zadośćuczynienie według rodzaju naruszenia i roku płacy minimalnej</caption>
+        <thead><tr><th scope="col">Sprawa</th><th scope="col">Najmniej</th>{LATA.map((r) => <th scope="col">{r}</th>)}<th scope="col">Przepis</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Dyskryminacja</th><td>1 × płaca</td>{LATA.map((r) => <td>{zl(PLACA_MINIMALNA[r].miesiecznie)}</td>)}<td>art. 18³d § 1</td></tr>
+          <tr><th scope="row">Dyskryminacja wielokrotna</th><td>3 × płaca</td>{LATA.map((r) => <td>{zl(3 * PLACA_MINIMALNA[r].miesiecznie)}</td>)}<td>art. 18³d § 2</td></tr>
+          <tr><th scope="row">Kara za upominanie się o prawa</th><td>1 × płaca</td>{LATA.map((r) => <td>{zl(PLACA_MINIMALNA[r].miesiecznie)}</td>)}<td>art. 18³e § 2</td></tr>
+          <tr><th scope="row">Mobbing</th><td>6 × płaca</td>{LATA.map((r) => <td>{zl(6 * PLACA_MINIMALNA[r].miesiecznie)}</td>)}<td>art. 94³ § 11</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <ul>
+      <li>Kwoty dotyczą zadośćuczynienia za krzywdę. Zamiast niego można żądać odszkodowania za szkodę, na przykład utracony zarobek; przepis nie podaje wtedy kwoty najniższej (art. 18³d § 1, 18³e § 2 i 94³ § 11 Kodeksu pracy).</li>
+      <li>Wielokrotne naruszenie to naruszenia powtarzalne z tej samej przyczyny, z wielu przyczyn albo jednorazowe z wielu przyczyn naraz (art. 18³d § 3).</li>
+      <li>Przed 5 listopada 2026 r. za dyskryminację, odwet i mobbing przysługiwało odszkodowanie nie niższe niż płaca minimalna, a przy mobbingu, który wywołał rozstrój zdrowia, także zadośćuczynienie w „odpowiedniej sumie” (dawne art. 18³d, 18³e § 3 i 94³ § 3–4). Nowe przepisy stosuje się też do wielokrotnej dyskryminacji i nękania, które zaczęły się wcześniej i trwały po tym dniu (art. 3 ustawy z 19 czerwca 2026 r., Dz.U. 2026 poz. 1046).</li>
+      <li>Pracodawca, który zapłacił za mobbing, może żądać zwrotu od osoby, która nękała, według stopnia winy jej i pracodawcy (art. 94³ § 12).</li>
+      <li>Od 5 listopada 2026 r. sprawy o mobbing, równe traktowanie i dobra osobiste rozpoznaje sąd rejonowy bez względu na kwotę (art. 461 § 1¹ Kodeksu postępowania cywilnego), a sąd nie może oddalić pozwu tylko dlatego, że zasadny jest z innej z tych podstaw niż wskazana przez pracownika (art. 477⁶a).</li>
+    </ul>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Najniższa kwota to wielokrotność minimalnego wynagrodzenia za pracę z wybranego roku: 1, 3 albo 6 według rodzaju
+      naruszenia, gdy ostatnie zachowanie było 5 listopada 2026 r. albo później, a jedna płaca minimalna, gdy wcześniej.
+      Kodeks pracy mówi o minimalnym wynagrodzeniu „ustalanym na podstawie odrębnych przepisów” i nie wskazuje, z którego
+      dnia je brać, więc pokazujemy kwotę z wybranego roku i, gdy jest już ogłoszona, z następnego. Ustawa zmieniająca
+      stosuje nowe przepisy do zachowań, które trwały „po dniu” jej wejścia w życie; zachowanie z samego 5 listopada
+      2026 r. liczymy według nowych przepisów, bo tego dnia już obowiązywały.
+    </p>
+    <p>
+      Przedawnienie to 3 lata od dnia, w którym roszczenie stało się wymagalne (art. 291 § 1 Kodeksu pracy). Kodeks nie
+      mówi, kiedy wymagalne jest roszczenie o zadośćuczynienie za mobbing albo dyskryminację, więc liczymy od wpisanego dnia
+      zachowania; zachowania wcześniejsze przedawniają się wcześniej. Kalkulator nie ocenia, czy w Twojej sprawie doszło
+      do mobbingu albo dyskryminacji: rozstrzyga o tym sąd pracy, a ocena zależy od okoliczności konkretnej sprawy (art. 94³ § 10). Jak wygląda sprawa w sądzie pracy i czy
+      zapłacisz opłatę, pokaże <a href="/narzedzia/sad-pracy-czy-pip">strona o sądzie pracy i PIP</a>, a gdy pracodawca w odwecie wypowiedział umowę, termin
+      na odwołanie policzy <a href="/narzedzia/odwolanie-do-sadu-pracy">kalkulator odwołania do sądu pracy</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { NARUSZENIA, opisMobbingu, type Naruszenie } from '../../lib/narzedzia/mobbing';
+  import { dzisWPolsce, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
+  import { typografia } from '../../lib/typografia.mjs';
+
+  const form = document.querySelector<HTMLFormElement>('[data-mobbing]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const pisz = (k: string, tekst: string) => {
+      w(k).textContent = typografia(tekst);
+    };
+    const przelicz = () => {
+      const naruszenie = el('naruszenie').value as Naruszenie;
+      pisz('naruszenie-opis', NARUSZENIA[naruszenie].nazwa);
+      const dzis = dzisWPolsce();
+      const data = el('data').value;
+      const blad = !poprawnaData(data) ? 'Wpisz datę.' : data > dzis ? 'Wpisz datę, która już minęła albo jest dzisiaj.' : null;
+      const b = form.querySelector<HTMLElement>('[data-blad="data"]')!;
+      b.hidden = !blad;
+      b.textContent = blad ? typografia(blad) : '';
+      const status = w('status');
+      if (blad) {
+        for (const k of ['kwota', 'przepisy', 'przedawnienie']) w(k).textContent = '—';
+        for (const k of ['opis', 'dowod', 'uwaga']) w(k).textContent = '';
+        status.hidden = true;
+        return;
+      }
+      const o = opisMobbingu(naruszenie, data, Number(el('rok').value), dzis);
+      for (const k of ['kwota', 'opis', 'przepisy', 'przedawnienie', 'dowod'] as const) pisz(k, o[k]);
+      pisz('uwaga', o.uwagi.join(' '));
+      status.hidden = false;
+      status.dataset.status = o.statusKlasa;
+      pisz('status', o.status);
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    ustawDzisiejszeWartosci(form);
+    przelicz();
+  }
+</script>
