@@ -9,6 +9,7 @@ import { ROKI_KOSZTU } from './koszt-pracodawcy';
 import { PRZECIETNE_KWARTALNE } from './mlodociany';
 import { KWOTY_ODSZKODOWAN } from './odszkodowanie-wypadek';
 import { WSKAZNIKI } from './swiadczenie-rehabilitacyjne';
+import { LATA_ODPISU } from './swiadczenie-urlopowe';
 import { dodajMiesiace } from './terminy';
 import { KWOTY_ZASILKU } from './zasilek-bezrobotny';
 
@@ -81,6 +82,11 @@ describe('kwoty ogłaszane okresowo są aktualne', () => {
   it('przeciętne wynagrodzenie roczne (GUS, luty; opłata UDT)', () => {
     const od = dodajMiesiace(PRZECIETNE_WYNAGRODZENIE.ogloszono, 12);
     expect(przeterminowane(od), `dopisz komunikat Prezesa GUS o przeciętnym wynagrodzeniu za ${PRZECIETNE_WYNAGRODZENIE.zaRok + 1} r. (PRZECIETNE_WYNAGRODZENIE w prawo.ts)`).toBe(false);
+  });
+  it('podstawa odpisu na ZFŚS (GUS do 20 lutego; świadczenie urlopowe)', () => {
+    const rok = Number(dzisIso.slice(0, 4));
+    if (przeterminowane(`${rok}-02-20`))
+      expect(LATA_ODPISU, `dopisz obwieszczenie Prezesa GUS (art. 5 ust. 7 ustawy o ZFŚS) na ${rok} r. do PODSTAWA_ODPISU (swiadczenie-urlopowe.ts)`).toContain(rok);
   });
   it('koszt pracodawcy ma parametry na bieżący rok (limit 30-krotności, stopy funduszy)', () => {
     expect(Object.keys(ROKI_KOSZTU), `dopisz rok ${dzisIso.slice(0, 4)} do ROKI_KOSZTU (koszt-pracodawcy.ts)`).toContain(dzisIso.slice(0, 4));

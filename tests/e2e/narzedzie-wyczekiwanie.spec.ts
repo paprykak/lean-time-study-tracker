@@ -30,3 +30,14 @@ test('wypadek w drodze bez czekania; okres po początku ubezpieczenia to błąd'
   await page.locator('[name="do1"]').fill('2026-03-05');
   await expect(page.locator('[data-blad="dane"]')).toBeVisible();
 });
+
+test('absolwent: uwaga o terminie bez „r..”; przy wypadku i spełnionym warunku absolwenta bez tej uwagi', async ({ page }) => {
+  await page.getByLabel('Początek ubezpieczenia').fill('2026-12-16');
+  await page.locator('#w-szkola').fill('2026-09-16');
+  await expect(page.locator('[data-w="uwaga"]')).toContainText(/najpóźniej\s15\sgrudnia\s2026\sr\.$/);
+  await expect(page.locator('[data-w="uwaga"]')).not.toContainText('r..');
+  await page.getByLabel('Początek ubezpieczenia').fill('2028-03-01');
+  await page.locator('#w-szkola').fill('2028-01-15');
+  await page.locator('[name="wypadekPraca"]').check();
+  await expect(page.locator('[data-w="uwaga"]')).not.toContainText('Wyjątek dla absolwenta działa');
+});

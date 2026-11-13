@@ -36,7 +36,7 @@ export type PowodDodatku = 'ciaza' | 'choroba-zawodowa' | 'wypadek' | 'choroba-s
 
 export const POWODY: Record<PowodDodatku, { nazwa: string; podstawa: string; miesiace: number | null }> = {
   ciaza: { nazwa: 'Ciąża, karmienie piersią', podstawa: 'art. 179 § 4 Kodeksu pracy', miesiace: null },
-  'choroba-zawodowa': { nazwa: 'Objawy choroby zawodowej', podstawa: 'art. 230 § 2 Kodeksu pracy', miesiace: 6 },
+  'choroba-zawodowa': { nazwa: 'Objawy ch. zawodowej', podstawa: 'art. 230 § 2 Kodeksu pracy', miesiace: 6 },
   wypadek: { nazwa: 'Wypadek przy pracy', podstawa: 'art. 231 i 230 § 2 Kodeksu pracy', miesiace: 6 },
   'choroba-stwierdzona': { nazwa: 'Choroba zawodowa', podstawa: 'art. 231 i 230 § 2 Kodeksu pracy', miesiace: 6 },
   grupowe: { nazwa: 'Zwolnienie grupowe', podstawa: 'art. 5 ust. 6 ustawy o zwolnieniach grupowych', miesiace: null },

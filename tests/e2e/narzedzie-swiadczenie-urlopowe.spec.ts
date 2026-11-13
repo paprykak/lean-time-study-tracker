@@ -30,3 +30,10 @@ test('13 dni urlopu: warunek niespełniony; koniec przed początkiem to błąd',
   await page.getByLabel('Ostatni dzień').fill('2026-07-01');
   await expect(page.locator('[data-blad="dane"]')).toBeVisible();
 });
+
+test('urlop w roku bez ogłoszonej kwoty: informacja zamiast polecenia wyboru roku, którego nie ma', async ({ page }) => {
+  await page.getByLabel('Pierwszy dzień').fill('2027-07-05');
+  await page.getByLabel('Ostatni dzień').fill('2027-07-18');
+  await expect(page.locator('[data-w="uwaga"]')).toContainText(/Kwoty\sna\s2027\sr\.\sjeszcze\snie\sogłoszono/);
+  await expect(page.locator('[data-w="uwaga"]')).not.toContainText('wybierz rok');
+});

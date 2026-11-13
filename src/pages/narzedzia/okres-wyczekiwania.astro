@@ -4,6 +4,7 @@
 import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
 import { DNI_ABSOLWENTA, DNI_WYCZEKIWANIA, MAKS_PRZERWA, okresWyczekiwania } from '../../lib/narzedzia/okres-wyczekiwania';
 import { dataPoPolsku, dodajDni, dzisWPolsce } from '../../lib/narzedzia/terminy';
+import { odmiana } from '../../lib/redakcja';
 
 const dzis = dzisWPolsce();
 const start = dodajDni(dzis, -10);
@@ -54,7 +55,7 @@ const faq = [
       <div class="mt-4 grid items-end gap-4 sm:grid-cols-2">
         <div>
           <label for="w-start" class="etykieta-pola">Początek ubezpieczenia</label>
-          <input id="w-start" name="start" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={start} aria-describedby="w-blad w-start-opis" />
+          <input id="w-start" name="start" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={start} data-dzis="-10" aria-describedby="w-blad w-start-opis" />
         </div>
         <div>
           <label for="w-l4" class="etykieta-pola">Pierwszy dzień L4</label>
@@ -105,7 +106,7 @@ const faq = [
       </div>
       <dl class="wynik-lista">
         <div><dt>Wliczone z wcześniejszych umów</dt><dd data-w="wliczone">0 dni</dd></div>
-        <div><dt>Bez prawa do zasiłku</dt><dd data-w="bez">do {r.ostatniBezPrawa ? dataPoPolsku(r.ostatniBezPrawa) : '—'}</dd></div>
+        <div><dt>Bez prawa do zasiłku</dt><dd data-w="bez">{r.ostatniBezPrawa ? `od ${dataPoPolsku(start)} do ${dataPoPolsku(r.ostatniBezPrawa)} (${odmiana(r.brakuje, ['dzień', 'dni', 'dni'])})` : 'brak, prawo od pierwszego dnia'}</dd></div>
         <div><dt>L4</dt><dd data-w="l4">wpisz pierwszy dzień L4, a policzymy dni bez zasiłku</dd></div>
       </dl>
       <p class="wynik-uwaga" data-w="uwaga">Zwolnienie lekarskie w okresie wyczekiwania usprawiedliwia nieobecność, ale za te dni nie ma wynagrodzenia chorobowego ani zasiłku.</p>
@@ -144,7 +145,8 @@ const faq = [
 
 <script>
   import { okresWyczekiwania, type OkresUbezpieczenia, type RodzajUbezpieczenia } from '../../lib/narzedzia/okres-wyczekiwania';
-  import { dataPoPolsku, dodajDni, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { dataPoPolsku, dniMiedzy, dodajDni, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
   import { odmiana } from '../../lib/redakcja';
   import { typografia } from '../../lib/typografia.mjs';
 
@@ -217,12 +219,13 @@ const faq = [
       else uwagi.push('Zwolnienie lekarskie w okresie wyczekiwania usprawiedliwia nieobecność, ale za te dni nie ma wynagrodzenia chorobowego ani zasiłku.');
       if (el('dziesiec').checked && rodzaj === 'dobrowolne') uwagi.push('Wyjątek 10 lat dotyczy tylko ubezpieczenia obowiązkowego, czyli na przykład umowy o pracę.');
       if (szkola && szkola > start) uwagi.push('Wyjątek dla absolwenta dotyczy ubezpieczenia, które zaczyna się po ukończeniu szkoły lub studiów.');
-      if (szkola && r.wyjatek !== 'absolwent' && szkola <= start) uwagi.push(`Wyjątek dla absolwenta działa, gdy ubezpieczenie zaczyna się najpóźniej ${dataPoPolsku(dodajDni(szkola, 90))}.`);
+      if (szkola && szkola <= start && dniMiedzy(szkola, start) > 90) uwagi.push(`Wyjątek dla absolwenta działa, gdy ubezpieczenie zaczyna się najpóźniej ${dataPoPolsku(dodajDni(szkola, 90))}`);
       pisz('uwaga', uwagi.join(' '));
     };
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    ustawDzisiejszeWartosci(form);
     przelicz();
   }
 </script>

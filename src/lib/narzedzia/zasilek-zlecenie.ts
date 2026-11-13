@@ -35,7 +35,7 @@ export type Przyczyna = 'choroba' | 'ciaza' | 'wypadek-w-drodze' | 'dawca' | 'wy
 export const PRZYCZYNY: Record<Przyczyna, { nazwa: string; procent: number; podstawa: string; dni: number }> = {
   choroba: { nazwa: 'Choroba', procent: 80, podstawa: 'art. 11 ust. 1 ustawy zasiłkowej', dni: 182 },
   ciaza: { nazwa: 'Choroba w ciąży', procent: 100, podstawa: 'art. 11 ust. 2 pkt 1 ustawy zasiłkowej', dni: 270 },
-  'wypadek-w-drodze': { nazwa: 'Wypadek w drodze do pracy', procent: 100, podstawa: 'art. 11 ust. 2 pkt 3 ustawy zasiłkowej', dni: 182 },
+  'wypadek-w-drodze': { nazwa: 'Wypadek w drodze', procent: 100, podstawa: 'art. 11 ust. 2 pkt 3 ustawy zasiłkowej', dni: 182 },
   dawca: { nazwa: 'Badania lub zabieg dawcy', procent: 100, podstawa: 'art. 11 ust. 2 pkt 2 ustawy zasiłkowej', dni: 182 },
   'wypadek-przy-pracy': { nazwa: 'Wypadek przy pracy', procent: 100, podstawa: 'art. 9 ust. 1 ustawy wypadkowej', dni: 182 },
 };
@@ -53,7 +53,8 @@ export function zasilekZlecenie(d: DaneZasilku) {
   const p = PRZYCZYNY[d.przyczyna];
   if (!p) throw new RangeError('Nieznana przyczyna');
   if (!(d.przychod > 0 && d.przychod < 1_000_000)) throw new RangeError('Przychód musi być dodatni');
-  if (!(Number.isInteger(d.dni) && d.dni >= 1 && d.dni <= 270)) throw new RangeError('Dni L4 od 1 do 270');
+  // Zasiłek najwyżej za okres zasiłkowy: 182 dni, w ciąży 270 (art. 8 ust. 1 ustawy zasiłkowej).
+  if (!(Number.isInteger(d.dni) && d.dni >= 1 && d.dni <= p.dni)) throw new RangeError(`Dni L4 od 1 do ${p.dni}`);
   const wypadek = d.przyczyna === 'wypadek-przy-pracy';
   // Kto w ogóle ma zasiłek z tego tytułu.
   let przysluguje = d.status === 'zlecenie-chorobowe' || (wypadek && d.status === 'zlecenie-bez-chorobowego');

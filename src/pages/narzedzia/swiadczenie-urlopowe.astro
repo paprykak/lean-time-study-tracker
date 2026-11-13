@@ -16,7 +16,7 @@ const ETATY = [
 ];
 const PIT = [
   { wartosc: '12', nazwa: 'Podatek 12%' },
-  { wartosc: '32', nazwa: 'Podatek 32% (ponad 120 tys. zł)' },
+  { wartosc: '32', nazwa: 'Podatek 32% (ponad 120 tys.)' },
   { wartosc: '0', nazwa: 'Do 26 lat (bez podatku)' },
 ];
 const start = maksimum(rok, 'zwykle');
@@ -187,7 +187,7 @@ const faq = [
 </StronaNarzedzia>
 
 <script>
-  import { etat, maksimum, naReke, urlop, zlDokladnie, type RodzajZatrudnienia, type StawkaPit } from '../../lib/narzedzia/swiadczenie-urlopowe';
+  import { LATA_ODPISU, etat, maksimum, naReke, urlop, zlDokladnie, type RodzajZatrudnienia, type StawkaPit } from '../../lib/narzedzia/swiadczenie-urlopowe';
   import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
   import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
   import { odmiana } from '../../lib/redakcja';
@@ -241,7 +241,12 @@ const faq = [
       else uwagi.push('Pracodawca poniżej 50 etatów nie musi wypłacać świadczenia. Jeśli je wypłaca, nie może dać więcej niż ta kwota, a mniej może.');
       if (rodzaj === 'szczegolne') uwagi.push('50% dotyczy tylko prac w szczególnych warunkach lub o szczególnym charakterze z wykazów ustawy o emeryturach pomostowych, a nie każdej ciężkiej pracy (art. 5 ust. 3 ustawy o ZFŚS).');
       if (ponad) uwagi.push(`Podana kwota przekracza limit o ${zl(Math.round((kwota! - m.kwota) * 100) / 100)}. Przepis na to nie pozwala, a od nadwyżki nie ma zwolnienia ze składek, więc na rękę liczymy z maksimum.`);
-      if (u.spelnia && u.rok !== rok) uwagi.push(`Urlop zaczyna się w ${u.rok} r., a limit jest na ${rok} r.: wybierz rok pierwszego dnia urlopu.`);
+      if (u.spelnia && u.rok !== rok)
+        uwagi.push(
+          LATA_ODPISU.includes(u.rok)
+            ? `Urlop zaczyna się w ${u.rok} r., a limit jest na ${rok} r.: wybierz rok pierwszego dnia urlopu.`
+            : `Kwoty na ${u.rok} r. jeszcze nie ogłoszono (Prezes GUS ogłasza ją do 20 lutego); pokazujemy limit na ${rok} r.`,
+        );
       pisz('uwaga', uwagi.join(' '));
     };
     form.addEventListener('input', przelicz);

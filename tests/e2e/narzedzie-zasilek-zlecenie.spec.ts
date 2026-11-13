@@ -27,3 +27,20 @@ test('błędne dni L4', async ({ page }) => {
   await page.getByLabel('Dni L4').fill('2,5');
   await expect(page.locator('[data-blad="dane"]')).toBeVisible();
 });
+
+test('choroba: najwyżej 182 dni (art. 8 ust. 1), w ciąży 270', async ({ page }) => {
+  await page.getByLabel('Dni L4').fill('183');
+  await expect(page.locator('[data-blad="dane"]')).toContainText(/najwyżej\s182\sdni/);
+  await expect(page.locator('[data-w="kwota"]')).toHaveText('—');
+  await page.getByLabel('Powód L4').selectOption('ciaza');
+  await expect(page.locator('[data-blad="dane"]')).toBeHidden();
+});
+
+test('zlecenie u pracodawcy: bez mylącego 0 zł; etat z niską pensją: podpowiedź o chorobowym', async ({ page }) => {
+  await page.getByLabel('Twoja sytuacja').selectOption('u-pracodawcy');
+  await expect(page.locator('[data-w="kwota"]')).toHaveText('—');
+  await expect(page.locator('[data-w="opis"]')).not.toContainText('nie przysługuje');
+  await page.getByLabel('Twoja sytuacja').selectOption('etat-gdzie-indziej');
+  await expect(page.locator('[data-w="uwaga"]')).toContainText(/niższa\sod\sminimalnej/);
+  await expect(page.locator('[data-w="uwaga"]')).toContainText('Zlecenie z chorobowym');
+});

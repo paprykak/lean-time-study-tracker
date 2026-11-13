@@ -115,16 +115,16 @@ const faq = [
       </fieldset>
       <fieldset class="mt-4">
         <legend class="etykieta-pola">Miesiąc rozliczenia</legend>
-        <div class="mt-1 grid grid-cols-2 gap-4">
+        <div class="mt-1 grid grid-cols-[minmax(0,3fr)_minmax(0,2fr)] gap-4">
           <div>
             <label for="d-miesiac" class="meta">Miesiąc</label>
-            <select id="d-miesiac" name="miesiac" class="pole mt-1">
+            <select id="d-miesiac" name="miesiac" class="pole mt-1" data-miesiac-biezacy>
               {Array.from({ length: 12 }, (_, i) => <option value={i + 1} selected={i + 1 === miesiac}>{nazwaMiesiaca(i + 1)}</option>)}
             </select>
           </div>
           <div>
             <label for="d-rok" class="meta">Rok</label>
-            <select id="d-rok" name="rok" class="pole mt-1">
+            <select id="d-rok" name="rok" class="pole mt-1" data-rok-biezacy>
               {LATA.map((r) => <option value={r} selected={r === rok}>{r}</option>)}
             </select>
           </div>
@@ -211,6 +211,7 @@ const faq = [
   import { POWODY, dodatekWyrownawczy, dniTrzechMiesiecyPrzed, type PowodDodatku } from '../../lib/narzedzia/dodatek-wyrownawczy';
   import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
   import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
   import { odmiana } from '../../lib/redakcja';
   import { typografia } from '../../lib/typografia.mjs';
 
@@ -299,6 +300,14 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    // Strona jest budowana raz: miesiąc i rok rozliczenia to dziś w przeglądarce, a przykładowe przeniesienie
+    // pierwszego dnia poprzedniego miesiąca (pola zmienione przez użytkownika zostają).
+    const odDomyslne = el('od').value === el('od').defaultValue;
+    ustawDzisiejszeWartosci(form);
+    if (odDomyslne) {
+      const i = Number(el('rok').value) * 12 + Number(el('miesiac').value) - 2;
+      el('od').value = `${Math.floor(i / 12)}-${String((i % 12) + 1).padStart(2, '0')}-01`;
+    }
     przelicz();
   }
 </script>

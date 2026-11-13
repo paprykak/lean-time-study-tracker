@@ -54,9 +54,9 @@ export type RodzajZatrudnienia = 'zwykle' | 'szczegolne' | 'mlodociany1' | 'mlod
 export const RODZAJE: Record<RodzajZatrudnienia, { promile: number; proporcja: boolean; nazwa: string }> = {
   zwykle: { promile: 375, proporcja: true, nazwa: 'Zwykłe warunki (37,5%)' },
   szczegolne: { promile: 500, proporcja: true, nazwa: 'Szczególne warunki (50%)' },
-  mlodociany1: { promile: 50, proporcja: false, nazwa: 'Młodociany, 1. rok nauki (5%)' },
-  mlodociany2: { promile: 60, proporcja: false, nazwa: 'Młodociany, 2. rok nauki (6%)' },
-  mlodociany3: { promile: 70, proporcja: false, nazwa: 'Młodociany, 3. rok nauki (7%)' },
+  mlodociany1: { promile: 50, proporcja: false, nazwa: 'Młodociany, 1. rok (5%)' },
+  mlodociany2: { promile: 60, proporcja: false, nazwa: 'Młodociany, 2. rok (6%)' },
+  mlodociany3: { promile: 70, proporcja: false, nazwa: 'Młodociany, 3. rok (7%)' },
 };
 
 /** Wymiar etatu jako ułamek (licznik/mianownik), żeby liczyć bez błędów zaokrągleń. */

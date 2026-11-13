@@ -5,6 +5,7 @@
 import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
 import { ODLICZENIE_CHOROBOWE, PRZYCZYNY, zasilekZlecenie } from '../../lib/narzedzia/zasilek-zlecenie';
 import { liczba, zl } from '../../lib/narzedzia/format';
+import { typografia } from '../../lib/typografia.mjs';
 
 const start = zasilekZlecenie({ status: 'zlecenie-chorobowe', przyczyna: 'choroba', przychod: 4000, dni: 10 });
 
@@ -27,7 +28,7 @@ const faq = [
   },
   {
     pytanie: 'A gdy mam etat i zlecenie?',
-    odpowiedz: 'Gdy zlecenie jest u Twojego pracodawcy, w ubezpieczeniach traktuje się je jak pracę na etacie (art. 8 ust. 2a ustawy o systemie ubezpieczeń społecznych): chorobowe jest obowiązkowe, a przychód ze zlecenia wchodzi do podstawy składek, więc i do podstawy zasiłku (art. 3 pkt 3 ustawy zasiłkowej). Gdy etat z pensją co najmniej minimalną masz gdzie indziej, emerytalne i rentowe ze zlecenia są dobrowolne (art. 9 ust. 1 i 1a), więc chorobowego ze zlecenia nie ma, a zasiłek należy się tylko z etatu.',
+    odpowiedz: 'Gdy zlecenie jest u Twojego pracodawcy, w ubezpieczeniach traktuje się je jak pracę na etacie (art. 8 ust. 2a ustawy o systemie ubezpieczeń społecznych): chorobowe jest obowiązkowe, a przychód ze zlecenia wchodzi do podstawy składek, więc i do podstawy zasiłku (art. 3 pkt 3 ustawy zasiłkowej). Gdy etat z pensją co najmniej minimalną masz gdzie indziej, emerytalne i rentowe ze zlecenia są dobrowolne (art. 9 ust. 1 i 1a), więc chorobowego ze zlecenia nie ma, a zasiłek należy się tylko z etatu. Gdy pensja z etatu jest niższa od minimalnej, emerytalne i rentowe ze zlecenia są obowiązkowe (art. 9 ust. 1a), więc możesz przystąpić do chorobowego ze zlecenia i mieć z niego zasiłek.',
   },
   {
     pytanie: 'Czy od zasiłku chorobowego płaci się podatek?',
@@ -52,7 +53,7 @@ const faq = [
           <option value="zlecenie-chorobowe" selected>Zlecenie z chorobowym</option>
           <option value="zlecenie-bez-chorobowego">Zlecenie bez chorobowego</option>
           <option value="student">Student, uczeń do 26 lat</option>
-          <option value="etat-gdzie-indziej">Etat w innej firmie</option>
+          <option value="etat-gdzie-indziej">Etat gdzie indziej, min. pensja</option>
           <option value="u-pracodawcy">Zlecenie u pracodawcy</option>
         </select>
       </div>
@@ -80,7 +81,7 @@ const faq = [
       <h2 id="wynik-tytul" class="etykieta">Zasiłek za te dni (brutto)</h2>
       <div aria-live="polite" aria-atomic="true">
         <p class="wynik-kwota" data-w="kwota">{zl(start.brutto)}</p>
-        <p class="meta" data-w="opis">{start.procent}% podstawy, {zl(start.zaDzien)} za dzień</p>
+        <p class="meta" data-w="opis">{typografia(`${start.procent}% podstawy, ${zl(start.zaDzien)} za dzień (${PRZYCZYNY.choroba.podstawa})`)}</p>
       </div>
       <dl class="wynik-lista">
         <div><dt>Na rękę</dt><dd data-w="netto">{zl(start.netto)} (zaliczka {start.zaliczka} zł)</dd></div>
@@ -138,7 +139,7 @@ const faq = [
     const BRAK: Partial<Record<Status, string>> = {
       'zlecenie-bez-chorobowego': 'Bez dobrowolnego chorobowego zasiłek chorobowy ze zlecenia nie przysługuje (art. 11 ust. 2 ustawy o systemie ubezpieczeń społecznych). Wyjątek: wypadek przy pracy, wtedy zasiłek z ubezpieczenia wypadkowego.',
       student: 'Uczeń lub student do 26 lat nie podlega obowiązkowo emerytalnemu i rentowemu ze zlecenia (art. 6 ust. 4 ustawy o systemie ubezpieczeń społecznych), a bez nich nie ma chorobowego (art. 11 ust. 2) ani obowiązkowego wypadkowego (art. 12 ust. 1), więc zasiłku nie ma.',
-      'etat-gdzie-indziej': 'Przy etacie z pensją co najmniej minimalną w innej firmie emerytalne i rentowe ze zlecenia są dobrowolne, więc chorobowego ze zlecenia nie ma (art. 9 ust. 1 i 1a, art. 11 ust. 2 ustawy o systemie). Zasiłek należy się z etatu: policzy go kalkulator L4.',
+      'etat-gdzie-indziej': 'Przy etacie z pensją co najmniej minimalną w innej firmie emerytalne i rentowe ze zlecenia są dobrowolne, więc chorobowego ze zlecenia nie ma (art. 9 ust. 1 i 1a, art. 11 ust. 2 ustawy o systemie). Zasiłek należy się z etatu: policzy go kalkulator L4. Gdy pensja z etatu jest niższa od minimalnej, emerytalne i rentowe ze zlecenia są obowiązkowe (art. 9 ust. 1a) i możesz mieć chorobowe ze zlecenia: wybierz „Zlecenie z chorobowym”.',
       'u-pracodawcy': 'Zlecenie u własnego pracodawcy traktuje się w ubezpieczeniach jak etat (art. 8 ust. 2a ustawy o systemie): chorobowe jest obowiązkowe, a przychód ze zlecenia wchodzi do podstawy zasiłku. Orientacyjnie policzy to kalkulator L4, a dokładnie dział kadr.',
     };
     const przelicz = () => {
@@ -148,7 +149,8 @@ const faq = [
       const dni = wpisanaLiczba(el('dni').value);
       const blad =
         !(przychod > 0 && przychod < 1_000_000) ? 'Wpisz przeciętny miesięczny przychód, na przykład 4000.'
-        : !(Number.isInteger(dni) && dni >= 1 && dni <= 270) ? 'Dni L4 wpisz jako liczbę całkowitą od 1 do 270.'
+        : !(Number.isInteger(dni) && dni >= 1 && dni <= PRZYCZYNY[przyczyna].dni)
+          ? `Przy tym powodzie zasiłek najwyżej za ${PRZYCZYNY[przyczyna].dni} dni (art. 8 ust. 1 ustawy zasiłkowej). Wpisz od 1 do ${PRZYCZYNY[przyczyna].dni}.`
         : null;
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
       b.hidden = !blad;
@@ -161,7 +163,13 @@ const faq = [
       }
       const r = zasilekZlecenie({ status, przyczyna, przychod, dni });
       const uwagi: string[] = [];
-      if (!r.przysluguje) {
+      if (status === 'u-pracodawcy') {
+        // Zasiłek jest, ale liczy się go jak na etacie, razem z pensją: kwoty 0 zł byłyby mylące.
+        w('kwota').textContent = '—';
+        pisz('opis', 'liczy się jak zasiłek na etacie');
+        for (const k of ['netto', 'podstawa', 'okres']) w(k).textContent = '—';
+        uwagi.push(BRAK[status] ?? '');
+      } else if (!r.przysluguje) {
         pisz('kwota', zl(0));
         pisz('opis', 'zasiłek ze zlecenia nie przysługuje');
         for (const k of ['netto', 'podstawa', 'okres']) w(k).textContent = '—';

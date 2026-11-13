@@ -3,7 +3,8 @@
 // wynagrodzeniu). Logika: src/lib/narzedzia/niepelny-miesiac.ts (testy obok).
 import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
 import { LATA, PLACA_MINIMALNA } from '../../data/prawo';
-import { niepelnyMiesiac } from '../../lib/narzedzia/niepelny-miesiac';
+import { niepelnyMiesiac, tekstyWyniku } from '../../lib/narzedzia/niepelny-miesiac';
+import { typografia } from '../../lib/typografia.mjs';
 import { nazwaMiesiaca } from '../../lib/narzedzia/czas-pracy';
 import { zl } from '../../lib/narzedzia/format';
 import { dzisWPolsce } from '../../lib/narzedzia/terminy';
@@ -13,6 +14,7 @@ const rokBiezacy = Number(dzis.slice(0, 4));
 const rok = LATA.includes(rokBiezacy) ? rokBiezacy : LATA[LATA.length - 1];
 const miesiac = rok === rokBiezacy ? Number(dzis.slice(5, 7)) : 1;
 const start = niepelnyMiesiac({ rok, miesiac, stawka: 6000, dniL4: 10 });
+const tStart = tekstyWyniku(start, 10);
 const ETATY = [
   { wartosc: '1', nazwa: 'pełny etat' },
   { wartosc: '0.875', nazwa: '7/8 etatu' },
@@ -67,16 +69,16 @@ const faq = [
           </select>
         </div>
       </div>
-      <div class="mt-4 grid grid-cols-2 gap-4">
+      <div class="mt-4 grid grid-cols-[minmax(0,3fr)_minmax(0,2fr)] gap-4">
         <div>
           <label for="n-miesiac" class="etykieta-pola">Miesiąc</label>
-          <select id="n-miesiac" name="miesiac" class="pole mt-1">
+          <select id="n-miesiac" name="miesiac" class="pole mt-1" data-miesiac-biezacy>
             {Array.from({ length: 12 }, (_, i) => <option value={i + 1} selected={i + 1 === miesiac}>{nazwaMiesiaca(i + 1)}</option>)}
           </select>
         </div>
         <div>
           <label for="n-rok" class="etykieta-pola">Rok</label>
-          <select id="n-rok" name="rok" class="pole mt-1">
+          <select id="n-rok" name="rok" class="pole mt-1" data-rok-biezacy>
             {LATA.map((r) => <option value={r} selected={r === rok}>{r}</option>)}
           </select>
         </div>
@@ -135,12 +137,12 @@ const faq = [
       </div>
       <dl class="wynik-lista">
         <div><dt>Pełna pensja</dt><dd data-w="stawka">{zl(6000)}</dd></div>
-        <div><dt data-w="l4-etykieta">Minus L4 (1/30 za dzień)</dt><dd data-w="l4">{zl(start.potracenieL4)}</dd></div>
+        <div><dt data-w="l4-etykieta">{typografia(tStart.l4Etykieta)}</dt><dd data-w="l4">{zl(start.potracenieL4)}</dd></div>
         <div><dt>Minus nieobecność bez płacy</dt><dd data-w="nieobecnosc">{zl(start.potracenieNieobecnosci)}</dd></div>
         <div><dt>Minus dni poza umową</dt><dd data-w="poza">{zl(start.potraceniePozaUmowa)}</dd></div>
         <div><dt>Godzin do przepracowania</dt><dd data-w="godziny">{start.godzinyMiesiaca} h, za godzinę {zl(start.zaGodzine)}</dd></div>
       </dl>
-      <p class="wynik-uwaga" data-w="uwaga">Za dni L4 dostajesz osobno wynagrodzenie chorobowe albo zasiłek. Płacę minimalną sprawdzisz przy miesiącu bez L4.</p>
+      <p class="wynik-uwaga" data-w="uwaga">{typografia(tStart.uwaga)}</p>
       <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Wzory są opisane poniżej.</p></noscript>
     </div>
   </form>
@@ -181,7 +183,8 @@ const faq = [
 </StronaNarzedzia>
 
 <script>
-  import { niepelnyMiesiac, wymiarCzesci } from '../../lib/narzedzia/niepelny-miesiac';
+  import { niepelnyMiesiac, tekstyWyniku, wymiarCzesci } from '../../lib/narzedzia/niepelny-miesiac';
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
   import { dniWMiesiacu, wymiarMiesiaca } from '../../lib/narzedzia/czas-pracy';
   import { liczba, wpisanaLiczba, zl } from '../../lib/narzedzia/format';
   import { odmiana } from '../../lib/redakcja';
@@ -244,24 +247,20 @@ const faq = [
         return;
       }
       pisz('kwota', zl(r.wynagrodzenie));
-      pisz('opis', dniL4 ? 'Bez wynagrodzenia chorobowego lub zasiłku za dni L4' : 'Za stałą pensję, bez dodatków za wykonaną pracę');
+      const t = tekstyWyniku(r, dniL4);
+      pisz('opis', t.opis);
       pisz('stawka', zl(stawka));
-      pisz('l4-etykieta', `Minus L4 (${zl(r.zaDzienL4)} za dzień)`);
+      pisz('l4-etykieta', t.l4Etykieta);
       pisz('l4', zl(r.potracenieL4));
       pisz('nieobecnosc', zl(r.potracenieNieobecnosci));
       pisz('poza', r.godzinyPoza ? `${zl(r.potraceniePozaUmowa)} (${liczba(r.godzinyPoza)} h)` : zl(0));
       pisz('godziny', `${liczba(r.godzinyMiesiaca)} h, za godzinę ${zl(r.zaGodzine)}`);
-      const uwagi: string[] = [];
-      if (r.calyMiesiacL4) uwagi.push('L4 obejmuje wszystkie dni umowy w tym miesiącu, więc pensja zasadnicza wynosi 0 zł: wynagrodzenie należy się za pracę wykonaną (art. 80 Kodeksu pracy). Za te dni należy się wynagrodzenie chorobowe albo zasiłek.');
-      else if (r.ujemne) uwagi.push('Potrącenia przekraczają pensję, więc pokazujemy 0 zł. Przepis nie mówi, co wtedy: zapytaj dział kadr o sposób rozliczenia.');
-      else if (dniL4) uwagi.push(`Za ${odmiana(dniL4, ['dzień', 'dni', 'dni'])} L4 dostajesz osobno wynagrodzenie chorobowe albo zasiłek. Pensję dzieli się zawsze przez 30, bez względu na liczbę dni w miesiącu.`);
-      if (r.wyrownanie > 0) uwagi.push(`Za przepracowane godziny należy się co najmniej ${zl(r.minimum!)} (płaca minimalna za godzinę), czyli wyrównanie ${zl(r.wyrownanie)}, jeśli pensja to jedyny składnik wliczany do płacy minimalnej.`);
-      else if (!dniL4 && r.minimum !== null) uwagi.push(`Płaca minimalna za przepracowane godziny: ${zl(r.minimum)}. Pensja nie jest od niej niższa.`);
-      pisz('uwaga', uwagi.join(' '));
+      pisz('uwaga', t.uwaga);
     };
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    ustawDzisiejszeWartosci(form);
     przelicz();
   }
 </script>

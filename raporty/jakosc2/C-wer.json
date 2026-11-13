@@ -1,0 +1,139 @@
+{
+  "partia": "C",
+  "werdykty": [
+    {
+      "id": "C-1",
+      "werdykt": "potwierdzone",
+      "uzasadnienie": "Art. 8 ust. 1 ustawy zasiłkowej (DU_2026_854) ogranicza zasiłek do 182 dni, a w ciąży i przy gruźlicy do 270. Art. 9 nie zmienia tej oceny, tylko ją wzmacnia. Art. 9 ust. 1–2 wlicza do okresu zasiłkowego poprzednie niezdolności z przerwą do 60 dni, więc 182 to górna granica, a nie liczba gwarantowana. Art. 9 ust. 3 wyłącza z okresu dni z okresu wyczekiwania, ale za te dni zasiłek się nie należy, więc nie da się zapłacić za więcej niż 182 dni. Pozostałe narzędzia serwisu ograniczają dni do okresu zasiłkowego: chorobowe.ts:54 przyjmuje `d.dni <= okresZasilkowy(powod)`, a kalkulator-l4.astro:167 bierze `maks = okresZasilkowy(powod)`. Ograniczają też okres-zasilkowy.ts (LIMIT) i zasilek-po-ustaniu.ts:44. Tylko zasilek-zlecenie.ts:56 ma stałe 270 dla każdej przyczyny.",
+      "dowod": "DU_2026_854 art. 8 ust. 1: „niedłużej jednak niż przez 182 dni, a jeżeli niezdolność do pracy została spowodowana gruźlicą lub występuje w trakcie ciąży – niedłużej niż przez 270 dni”. Art. 9 ust. 2: wlicza się poprzednie niezdolności przy przerwie do 60 dni. Na podglądzie przy polu „Dni L4” = 250 i przyczynie choroba strona pokazuje „23 010,00 zł”, a obok „najwyżej 182 dni”.",
+      "poprawka": "src/lib/narzedzia/zasilek-zlecenie.ts:56: warunek zmienić na `d.dni >= 1 && d.dni <= p.dni` z komunikatem `Dni L4 od 1 do ${p.dni}`. Strona zasilek-chorobowy-na-zleceniu.astro: w przelicz() ustawić `const maks = PRZYCZYNY[przyczyna].dni` i komunikat `Przy tej przyczynie zasiłek najwyżej za ${maks} dni (art. 8 ust. 1 ustawy zasiłkowej). Wpisz od 1 do ${maks}.`, tak jak w kalkulatorze L4. W uwadze wyniku albo w „Zasady” dopisać: „Do 182 dni wlicza się wcześniejsze L4, jeśli przerwa nie przekroczyła 60 dni (art. 9 ust. 2)”.",
+      "testy": "zasilek-zlecenie.test.ts: choroba, 4000 zł, 182 dni → zaDzien 92,04, brutto 16 751,28 zł, zaliczka 2010 zł. Choroba 183 dni → RangeError. Ciąża 270 dni → zaDzien 115,05, brutto 31 063,50 zł, zaliczka 3728 zł. Ciąża 271 dni → RangeError. Wypadek w drodze 183 dni → RangeError. E2E: przyczyna choroba, 183 dni → komunikat błędu, kwota „—”."
+    },
+    {
+      "id": "C-2",
+      "werdykt": "potwierdzone",
+      "uzasadnienie": "Art. 9 ust. 1a ustawy o systemie (DU_2026_1474): pracownik, którego podstawa składek z etatu „w przeliczeniu na okres miesiąca jest niższa od określonej w art. 18 ust. 4 pkt 5a” (płaca minimalna), podlega „również obowiązkowo ubezpieczeniom emerytalnemu i rentowym z innych tytułów”. Wtedy art. 11 ust. 2 („Dobrowolnie ubezpieczeniu chorobowemu podlegają na swój wniosek osoby objęte obowiązkowo ubezpieczeniami emerytalnym i rentowymi, wymienione w art. 6 ust. 1 pkt 2, 4–5a…”) pozwala mieć chorobowe ze zlecenia. Opcja „Etat w innej firmie” zawsze daje 0 zł. Komunikat i FAQ wspominają „pensję co najmniej minimalną”, ale nigdzie nie piszą, co wybrać, gdy pensja jest niższa. Osoba na 1/2 etatu dostaje więc 0 zł i błędny wniosek.",
+      "dowod": "Na podglądzie przy statusie „Etat w innej firmie” wynik to „0,00 zł”, a uwaga brzmi: „Przy etacie z pensją co najmniej minimalną w innej firmie… chorobowego ze zlecenia nie ma… Zasiłek należy się z etatu”. Kod zasilek-zlecenie.ts:61 ustawia przysluguje=false bez względu na pensję.",
+      "poprawka": "Bez nowej logiki. (1) Opcję w zasilek-chorobowy-na-zleceniu.astro:55 zmienić na „Etat gdzie indziej, min. pensja” (mieści się w 320 px, ok. 180 px). (2) W BRAK['etat-gdzie-indziej'] dopisać: „Gdy pensja z etatu jest niższa od minimalnej, emerytalne i rentowe ze zlecenia są obowiązkowe (art. 9 ust. 1a) i możesz mieć chorobowe ze zlecenia: wybierz „Zlecenie z chorobowym”.” (3) W FAQ „A gdy mam etat i zlecenie?” dopisać to samo zdanie, czysty tekst.",
+      "testy": "E2E: status etat-gdzie-indziej → uwaga zawiera „niższa od minimalnej” i „Zlecenie z chorobowym”. Test jednostkowy bez zmian (logika ta sama)."
+    },
+    {
+      "id": "C-3",
+      "werdykt": "odrzucone",
+      "uzasadnienie": "Brzmienie art. 9 ust. 3 pkt 2 ustawy wypadkowej (DU_2025_1644) każe stosować do osób z art. 11 ust. 2 ustawy o systemie „zasady określone w rozdziale 9” ustawy zasiłkowej. Rozdział 9 (art. 48 ust. 1) liczy podstawę z „przychodu”. Według art. 3 pkt 4 DU_2026_854 przychód to „kwota stanowiąca podstawę wymiaru składek na ubezpieczenie chorobowe ubezpieczonego niebędącego pracownikiem, po odliczeniu kwoty odpowiadającej 13,71 %”. Zleceniobiorca bez chorobowego nie ma podstawy składek chorobowych, więc rozdziału 9 nie da się do niego zastosować. Pkt 3 ma na tę sytuację własny mechanizm: podstawa składek wypadkowych minus 11,26%. Art. 11 ust. 2 mówi też „podlegają”, czyli chodzi o objętych ubezpieczeniem, a nie o samą kategorię uprawnionych. Wykładnia zespołu ma więc oparcie w tekście. Daje też wyższą kwotę (1183,20 zł wobec 1150,50 zł), czyli wariant korzystny dla pracownika. „Jak liczymy” opisuje ją wprost jako interpretację („pkt 2 tego przepisu wymienia osoby, które mogą mieć dobrowolne chorobowe, a my stosujemy go tylko, gdy je masz. To nasza interpretacja.”). Zasada 2 z prompty/02-fabryka.md jest spełniona.",
+      "dowod": "DU_2025_1644 art. 9 ust. 3 pkt 2–3. DU_2026_1474 art. 11 ust. 2. DU_2026_854 art. 3 pkt 4 i art. 48 ust. 1. Na podglądzie: bez chorobowego, wypadek przy pracy, 4000 zł → 1183,20 zł, podstawa 3549,60 zł (przychód minus 11,26%).",
+      "poprawka": "Bez zmian w rachunku. Opcjonalnie dopisać w „Jak liczymy” argument: „rozdział 9 liczy podstawę z przychodu, czyli podstawy składki chorobowej (art. 3 pkt 4 ustawy zasiłkowej), której bez chorobowego nie ma”. Praktykę ZUS sprawdzić ręcznie na zus.pl.",
+      "testy": "Bez nowych (istniejący test: 4000 zł, 5 dni, odliczenie 11,26%, brutto 591,60 zł)."
+    },
+    {
+      "id": "C-4",
+      "werdykt": "potwierdzone",
+      "uzasadnienie": "Przy statusie „Zlecenie u pracodawcy” wynik to 0,00 zł i „zasiłek ze zlecenia nie przysługuje”. Uwaga pod wynikiem mówi zaś, że chorobowe jest obowiązkowe, a przychód ze zlecenia wchodzi do podstawy zasiłku (art. 8 ust. 2a ustawy o systemie). Kwota 0 zł wprowadza w błąd: zasiłek jest, tylko liczy się go jak na etacie.",
+      "dowod": "Na podglądzie przy statusie u-pracodawcy: „0,00 zł | zasiłek ze zlecenia nie przysługuje | Zlecenie u własnego pracodawcy traktuje się w ubezpieczeniach jak etat… przychód ze zlecenia wchodzi do podstawy zasiłku”.",
+      "poprawka": "W skrypcie zasilek-chorobowy-na-zleceniu.astro, gdy status === 'u-pracodawcy': kwota „—”, opis „liczy się jak zasiłek na etacie”, pozostałe pola „—”, uwaga bez zmian.",
+      "testy": "E2E: status u-pracodawcy → kwota „—”, opis nie zawiera „nie przysługuje”."
+    },
+    {
+      "id": "C-5",
+      "werdykt": "potwierdzone",
+      "uzasadnienie": "dataPoPolsku kończy się na „r.” (terminy.ts:92), a szablon w okres-wyczekiwania.astro:220 dopisuje po niej kropkę. Zasada 4 z prompty/02-fabryka.md mówi wprost: „bez drugiej kropki”. Warunek `r.wyjatek !== 'absolwent'` sprawia, że przy zaznaczonym wypadku (ma pierwszeństwo, l. 74 lib) komunikat pojawia się także wtedy, gdy warunek absolwenta jest spełniony. Sugeruje to, że wyjątek dla absolwenta nie działa. Wariant poprawki audytora odpowiada warunkowi w lib (l. 76: `dniMiedzy(szkola, start) <= 90`).",
+      "dowod": "Na podglądzie: start 2028-03-01, ukończenie szkoły 2028-01-15 (46 dni), wypadek przy pracy → „…najpóźniej 14 kwietnia 2028 r..”. Start 2026-12-16, ukończenie 2026-09-16 (91 dni) → „…najpóźniej 15 grudnia 2026 r..”, prawo od 15 stycznia 2027 r.",
+      "poprawka": "okres-wyczekiwania.astro:220: warunek `if (szkola && szkola <= start && dniMiedzy(szkola, start) > 90)` (dniMiedzy dodać do importu z terminy) i szablon `…najpóźniej ${dataPoPolsku(dodajDni(szkola, 90))}` bez kropki na końcu.",
+      "testy": "E2E: ukończenie 2026-09-16, start 2026-12-16 → uwaga kończy się na „15 grudnia 2026 r.”, bez „r..”. Ukończenie 2028-01-15, start 2028-03-01, wypadek przy pracy → uwaga nie zawiera „Wyjątek dla absolwenta działa”. Ukończenie 2026-09-16, start 2026-12-15 → wyjątek absolwenta, bez tej uwagi."
+    },
+    {
+      "id": "C-6",
+      "werdykt": "potwierdzone",
+      "uzasadnienie": "Zasada 11 z prompty/02-fabryka.md mówi: „Datę domyślną formularza ustawiasz w przeglądarce (src/lib/narzedzia/dzis-w-formularzu.ts)”. Znaczniki data-dzis i ustawDzisiejszeWartosci ma 48 stron narzędzi, a żadna z 5 stron partii C. Na okres-wyczekiwania.astro:9 start = data buildu − 10 dni.",
+      "dowod": "grep na 5 stronach partii C: 0 wyników. Podgląd: w-start = 2026-11-03, wynik „2 grudnia 2026 r.”.",
+      "poprawka": "Na #w-start dodać `value={start} data-dzis=\"-10\"`, w skrypcie zaimportować ustawDzisiejszeWartosci z ../../lib/narzedzia/dzis-w-formularzu i wywołać ustawDzisiejszeWartosci(form) przed pierwszym przelicz().",
+      "testy": "E2E z page.clock.setFixedTime('2027-01-20T10:00:00+01:00'): w-start = 2027-01-10, wynik „9 lutego 2027 r.” (umowa o pracę: 30 dni)."
+    },
+    {
+      "id": "C-7",
+      "werdykt": "potwierdzone",
+      "uzasadnienie": "W wynagrodzenie-za-niepelny-miesiac.astro:10–14 rok i miesiąc ustala build. Selekty #n-rok i #n-miesiac nie mają znaczników, a skrypt nie przestawia wartości. Strona zbudowana w grudniu 2026 r. pokaże w styczniu 2027 r. grudzień 2026 r. LATA zawiera 2027, więc znacznik zadziała.",
+      "dowod": "Linie 12–14 i 73/79 strony. grep data-rok-biezacy/ustawDzisiejszeWartosci: 0 wyników.",
+      "poprawka": "`data-rok-biezacy` na #n-rok, `data-miesiac-biezacy` na #n-miesiac i ustawDzisiejszeWartosci(form) przed przelicz().",
+      "testy": "E2E z zegarem 2027-02-10: n-rok = 2027, n-miesiac = 2. Dla 6000 zł i 10 dni L4 wynik 4000,00 zł (1/30 jest niezależna od miesiąca)."
+    },
+    {
+      "id": "C-8",
+      "werdykt": "potwierdzone",
+      "uzasadnienie": "Jak w C-7. Dodatkowo #d-od (pierwszy dzień poprzedniego miesiąca) nie da się wyrazić przez data-dzis, bo ten znacznik przesuwa tylko o dni. Same znaczniki na roku i miesiącu dałyby w styczniu 2027 r. przeniesienie 2026-11-01 i rozliczenie za styczeń 2027 r. Wynik nadal jest poprawny (mieści się w 6 miesiącach), ale przykład przestaje być „miesiąc po przeniesieniu”. Waga niska.",
+      "dowod": "dodatek-wyrownawczy.astro:11–19 (od, rok, miesiac z dzisWPolsce() przy buildzie), l. 72, 121 i 127 bez znaczników, l. 302 przelicz() bez ustawDzisiejszeWartosci.",
+      "poprawka": "data-rok-biezacy na #d-rok i data-miesiac-biezacy na #d-miesiac oraz ustawDzisiejszeWartosci(form). Po nim w skrypcie: jeśli `el('od').value === el('od').defaultValue`, ustawić #d-od na pierwszy dzień miesiąca przed wybranym (rok·12 + miesiąc − 2 → RRRR-MM-01), potem przelicz().",
+      "testy": "E2E z zegarem 2027-01-15: d-rok = 2027, d-miesiac = 1, d-od = 2026-12-01."
+    },
+    {
+      "id": "C-9",
+      "werdykt": "potwierdzone",
+      "uzasadnienie": "PODSTAWA_ODPISU ma lata 2025–2026. Nazwę tabeli zawiera tylko swiadczenie-urlopowe.ts i strona narzędzia. Opis bloku testów w rejestr.test.ts („build się zatrzymuje, żeby narzędzie nie liczyło po cichu starą kwotą”) obejmuje inne tabele, ale tej nie. Art. 5 ust. 7 ustawy o ZFŚS każe Prezesowi GUS ogłosić kwotę do 20 lutego.",
+      "dowod": "grep PODSTAWA_ODPISU w src: tylko swiadczenie-urlopowe.ts i swiadczenie-urlopowe.astro. rejestr.test.ts l. 59–90: brak takiego testu.",
+      "poprawka": "W rejestr.test.ts, w describe 'kwoty ogłaszane okresowo są aktualne', dodać test: `const rok = Number(dzisIso.slice(0, 4)); if (przeterminowane(`${rok}-02-20`)) expect(LATA_ODPISU, `dopisz obwieszczenie Prezesa GUS (art. 5 ust. 7 ustawy o ZFŚS) na ${rok} r. do PODSTAWA_ODPISU (swiadczenie-urlopowe.ts)`).toContain(rok);` z importem LATA_ODPISU.",
+      "testy": "Dziś (2026-11-13) przechodzi. Od 2027-03-13 (20 lutego + 20 dni zapasu) bez wpisu 2027 test nie przejdzie."
+    },
+    {
+      "id": "C-10",
+      "werdykt": "potwierdzone",
+      "uzasadnienie": "Dla urlopu w 2027 r. uwaga każe wybrać rok, którego nie ma na liście. Do ogłoszenia GUS polecenia nie da się wykonać.",
+      "dowod": "Na podglądzie przy urlopie 2027-07-05 – 2027-07-18: „Urlop zaczyna się w 2027 r., a limit jest na 2026 r.: wybierz rok pierwszego dnia urlopu.” Opcje #s-rok: 2025, 2026.",
+      "poprawka": "swiadczenie-urlopowe.astro:244: gdy `!LATA_ODPISU.includes(u.rok)`, wstawić tekst „Kwoty na ${u.rok} r. jeszcze nie ogłoszono (Prezes GUS ogłasza ją do 20 lutego); pokazujemy limit na ${rok} r.”. W przeciwnym razie zostaje obecny komunikat.",
+      "testy": "E2E: urlop 2027-07-05 – 2027-07-18 → uwaga zawiera „jeszcze nie ogłoszono”. Urlop 2025-07-07 – 2025-07-20 przy roku 2026 → „wybierz rok pierwszego dnia urlopu”."
+    },
+    {
+      "id": "C-11",
+      "werdykt": "potwierdzone",
+      "uzasadnienie": "Na 320 px (Chromium, pl-PL) select ma 244 px szerokości. Przy strzałce mieści się tekst do ok. 200 px: „Zlecenie bez chorobowego” (200 px) jest widoczny w całości. „Podatek 32% (ponad 120 tys. zł)” ma 237 px, a „Młodociany, 1. rok nauki (5%)” 218 px, więc oba są ucięte i procent znika.",
+      "dowod": "Zrzuty: …/scratchpad/audyt/C-wer/s-pit.png („Podatek 32% (ponad 120 ty”) i s-rodzaj.png („Młodociany, 1. rok nauki (5”). Szerokości proponowanych etykiet: „Młodociany, 1. rok (5%)” 173 px, „32% (ponad 120 tys.)” 155 px.",
+      "poprawka": "swiadczenie-urlopowe.ts:57–59: nazwy „Młodociany, 1. rok (5%)”, „Młodociany, 2. rok (6%)”, „Młodociany, 3. rok (7%)”. swiadczenie-urlopowe.astro:19: „Podatek 32% (ponad 120 tys.)” albo „32% (ponad 120 tys.)”. Pozostałe opcje się mieszczą.",
+      "testy": "Zrzut 320 px po zmianie, bez nowych testów logiki."
+    },
+    {
+      "id": "C-12",
+      "werdykt": "potwierdzone",
+      "uzasadnienie": "„Objawy choroby zawodowej” (209 px) jest ucięte do „Objawy choroby zawodowe”.",
+      "dowod": "Zrzut …/scratchpad/audyt/C-wer/d-powod.png. „Objawy ch. zawodowej” ma 170 px.",
+      "poprawka": "dodatek-wyrownawczy.ts:39: nazwa „Objawy ch. zawodowej” (nazwa występuje tylko w <option>).",
+      "testy": "Zrzut 320 px."
+    },
+    {
+      "id": "C-13",
+      "werdykt": "potwierdzone",
+      "uzasadnienie": "„Wypadek w drodze do pracy” (211 px) jest ucięte do „Wypadek w drodze do prac”.",
+      "dowod": "Zrzut …/scratchpad/audyt/C-wer/z-przyczyna.png. „Wypadek w drodze” ma 142 px.",
+      "poprawka": "zasilek-zlecenie.ts:38: nazwa „Wypadek w drodze” (nazwa występuje tylko w <option>; opis w wyniku podaje art. 11 ust. 2 pkt 3).",
+      "testy": "Zrzut 320 px."
+    },
+    {
+      "id": "C-14",
+      "werdykt": "potwierdzone",
+      "uzasadnienie": "Sprawdziłem po pełnym załadowaniu z JS i z wyłączonym JS (Playwright, pl-PL). Różnice są realne i widoczne na wszystkich trzech stronach, a w niepelny-miesiac uwaga ma zupełnie inną treść. Zasada 11 z prompty/02-fabryka.md: „teksty wyniku generuje jedna funkcja dla HTML i skryptu (wzór: dorabianie-do-renty)”. Waga niska, bo liczby się zgadzają.",
+      "dowod": "okres-wyczekiwania [data-w=bez]: SSR „do 2 grudnia 2026 r.”, z JS „od 3 listopada 2026 r. do 2 grudnia 2026 r. (30 dni)”. wynagrodzenie-za-niepelny-miesiac [l4-etykieta]: „Minus L4 (1/30 za dzień)” → „Minus L4 (200,00 zł za dzień)”; [uwaga]: „Za dni L4 dostajesz osobno… Płacę minimalną sprawdzisz przy miesiącu bez L4.” → „Za 10 dni L4 dostajesz osobno… Pensję dzieli się zawsze przez 30, bez względu na liczbę dni w miesiącu.” zasilek-chorobowy-na-zleceniu [opis]: „80% podstawy, 92,04 zł za dzień” → „… (art. 11 ust. 1 ustawy zasiłkowej)”. Pozostałe pola są takie same.",
+      "poprawka": "W lib każdego z trzech narzędzi dodać funkcję teksty(wynik, dane) zwracającą słownik {klucz: tekst}, użyć jej w SSR (z typografia()) i w skrypcie, wzorem dorabianie-do-renty. Minimum: w SSR wypisać te same teksty co skrypt dla przykładu startowego.",
+      "testy": "Test jednostkowy funkcji tekstów dla przykładu startowego: zasilek „80% podstawy, 92,04 zł za dzień (art. 11 ust. 1 ustawy zasiłkowej)”, niepelny „Minus L4 (200,00 zł za dzień)”. E2E: tekst [data-w] bez JS = z JS."
+    },
+    {
+      "id": "C-15",
+      "werdykt": "potwierdzone",
+      "uzasadnienie": "Test „przez koniec roku i luty przestępny” sprawdza tylko liczenie 30/90 dni od startu. Przerwy między okresami przez 29 lutego nie sprawdza żaden test. Wynik jest dziś poprawny, ale nikt go nie pilnuje.",
+      "dowod": "okres-wyczekiwania.test.ts:36–39. Na podglądzie: okres 2027-12-01 – 2028-01-29, start 2028-03-01 → przerwa 31 dni (2 dni w styczniu + 29 w lutym), prawo od 31 marca 2028 r., wliczone 0. Koniec 2028-01-30 → przerwa 30 dni, prawo od 1 marca 2028 r., wliczone 61 dni z 1 okresu.",
+      "poprawka": "Dodać oba przypadki do testu „przez koniec roku i luty przestępny”.",
+      "testy": "okresWyczekiwania({rodzaj:'obowiazkowe', start:'2028-03-01', poprzednie:[{od:'2027-12-01', do:'2028-01-29'}]}) → wliczone 0, prawoOd '2028-03-31'. To samo z do:'2028-01-30' → wliczone 61, brakuje 0, prawoOd '2028-03-01'."
+    }
+  ],
+  "nowe": [
+    {
+      "id": "C-16",
+      "slug": "wynagrodzenie-za-niepelny-miesiac",
+      "wymiar": "tresc-ux",
+      "waga": "niska",
+      "plik": "src/pages/narzedzia/wynagrodzenie-za-niepelny-miesiac.astro",
+      "linia": 70,
+      "problem": "Na 320 px lista miesięcy ma 113 px (grid-cols-2 z polem roku), więc „październik” jest ucięty do „październ”. To samo dotyczy dodatek-wyrownawczy.astro:118 (#d-miesiac, 113 px). Pozostałe miesiące się mieszczą (najdłuższy „grudzień” ma 67 px, „październik” 86 px).",
+      "dowod": "Zrzuty …/scratchpad/audyt/C-wer/combo2.png (wrzesień, listopad, kwiecień, czerwiec całe; październik cały dopiero na 412 px, gdzie select ma 159 px) i combo.png (październik ucięty na 320 px w obu narzędziach). wymiar-czasu-pracy ma układ `grid-cols-[minmax(0,3fr)_minmax(0,2fr)]` i select 138 px, w którym „październik” mieści się w całości (combo3.png).",
+      "poprawka": "W obu stronach zmienić `grid grid-cols-2 gap-4` dla pary miesiąc/rok na `grid grid-cols-[minmax(0,3fr)_minmax(0,2fr)] gap-4`, jak w wymiar-czasu-pracy.astro:70. W dodatku wyrównawczym ta siatka obejmuje też pole „Dni L4 lub zasiłku”, więc pole dni przenieść do osobnego wiersza albo dać mu col-span-2.",
+      "poza_partia": "Ten sam problem ma wyplata-z-nadgodzinami (#x-miesiac, 115 px, zrzut combo3.png: „październ”) i prawdopodobnie pracownik-niepelnosprawny (#n-miesiac, 115 px, bez zrzutu)."
+    }
+  ]
+}

@@ -36,6 +36,9 @@ describe('okres wyczekiwania (art. 4 ustawy zasiłkowej)', () => {
   it('przez koniec roku i luty przestępny', () => {
     expect(okresWyczekiwania({ rodzaj: 'dobrowolne', start: '2027-12-15' }).prawoOd).toBe('2028-03-14');
     expect(okresWyczekiwania({ rodzaj: 'obowiazkowe', start: '2028-02-01' }).prawoOd).toBe('2028-03-02');
+    // Przerwa przez 29 lutego 2028 r.: od 30.01 do 29.02 to 31 dni (nie wlicza się), od 31.01 to 30 dni (wlicza się).
+    expect(okresWyczekiwania({ rodzaj: 'obowiazkowe', start: '2028-03-01', poprzednie: [{ od: '2027-12-01', do: '2028-01-29' }] })).toMatchObject({ wliczone: 0, prawoOd: '2028-03-31' });
+    expect(okresWyczekiwania({ rodzaj: 'obowiazkowe', start: '2028-03-01', poprzednie: [{ od: '2027-12-01', do: '2028-01-30' }] })).toMatchObject({ wliczone: 61, brakuje: 0, prawoOd: '2028-03-01' });
   });
   it('błędne dane', () => {
     expect(() => okresWyczekiwania({ rodzaj: 'obowiazkowe', start: '2026-03-01', poprzednie: [{ od: '2026-02-10', do: '2026-02-01' }] })).toThrow(RangeError);

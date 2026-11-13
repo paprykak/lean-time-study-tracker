@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { wymiarMiesiaca } from './czas-pracy';
-import { niepelnyMiesiac, wymiarCzesci } from './niepelny-miesiac';
+import { tekstyWyniku, niepelnyMiesiac, wymiarCzesci } from './niepelny-miesiac';
 
 // Wartości sprawdzone niezależnie w Pythonie (datetime, Decimal, własny kalendarz świąt).
 const LISTOPAD = { rok: 2026, miesiac: 11, stawka: 6000 };
@@ -62,5 +62,11 @@ describe('wynagrodzenie za niepełny miesiąc (§ 11–12 rozporządzenia z 1996
     expect(() => niepelnyMiesiac({ ...LISTOPAD, stawka: 0 })).toThrow(RangeError);
     expect(() => niepelnyMiesiac({ ...LISTOPAD, etat: 1.5 })).toThrow(RangeError);
     expect(() => niepelnyMiesiac({ ...LISTOPAD, rok: 2030 })).toThrow(RangeError);
+  });
+  it('teksty wyniku wspólne dla HTML i skryptu: 6000 zł, 10 dni L4', () => {
+    const t = tekstyWyniku(niepelnyMiesiac({ rok: 2026, miesiac: 11, stawka: 6000, dniL4: 10 }), 10);
+    expect(t.l4Etykieta.replace(/\s/g, ' ')).toBe('Minus L4 (200,00 zł za dzień)');
+    expect(t.uwaga.replace(/\s/g, ' ')).toBe('Za 10 dni L4 dostajesz osobno wynagrodzenie chorobowe albo zasiłek. Pensję dzieli się zawsze przez 30, bez względu na liczbę dni w miesiącu.');
+    expect(t.opis).toBe('Bez wynagrodzenia chorobowego lub zasiłku za dni L4');
   });
 });

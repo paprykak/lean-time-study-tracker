@@ -28,6 +28,8 @@
 import { PLACA_MINIMALNA } from '../../data/prawo';
 import { dniWMiesiacu, swieta, wymiarMiesiaca } from './czas-pracy';
 import { doGrosza } from './dodatek-nocny';
+import { zl } from './format';
+import { odmiana } from '../redakcja';
 
 export interface DaneMiesiaca {
   rok: number;
@@ -131,5 +133,20 @@ export function niepelnyMiesiac(d: DaneMiesiaca) {
     wynagrodzenie,
     minimum,
     wyrownanie,
+  };
+}
+
+/** Teksty wyniku zależne od rachunku, te same w HTML i w skrypcie (przeglądarka przepuszcza je przez typografię). */
+export function tekstyWyniku(r: ReturnType<typeof niepelnyMiesiac>, dniL4: number) {
+  const uwagi: string[] = [];
+  if (r.calyMiesiacL4) uwagi.push('L4 obejmuje wszystkie dni umowy w tym miesiącu, więc pensja zasadnicza wynosi 0 zł: wynagrodzenie należy się za pracę wykonaną (art. 80 Kodeksu pracy). Za te dni należy się wynagrodzenie chorobowe albo zasiłek.');
+  else if (r.ujemne) uwagi.push('Potrącenia przekraczają pensję, więc pokazujemy 0 zł. Przepis nie mówi, co wtedy: zapytaj dział kadr o sposób rozliczenia.');
+  else if (dniL4) uwagi.push(`Za ${odmiana(dniL4, ['dzień', 'dni', 'dni'])} L4 dostajesz osobno wynagrodzenie chorobowe albo zasiłek. Pensję dzieli się zawsze przez 30, bez względu na liczbę dni w miesiącu.`);
+  if (r.wyrownanie > 0) uwagi.push(`Za przepracowane godziny należy się co najmniej ${zl(r.minimum!)} (płaca minimalna za godzinę), czyli wyrównanie ${zl(r.wyrownanie)}, jeśli pensja to jedyny składnik wliczany do płacy minimalnej.`);
+  else if (!dniL4 && r.minimum !== null) uwagi.push(`Płaca minimalna za przepracowane godziny: ${zl(r.minimum)}. Pensja nie jest od niej niższa.`);
+  return {
+    opis: dniL4 ? 'Bez wynagrodzenia chorobowego lub zasiłku za dni L4' : 'Za stałą pensję, bez dodatków za wykonaną pracę',
+    l4Etykieta: `Minus L4 (${zl(r.zaDzienL4)} za dzień)`,
+    uwaga: uwagi.join(' '),
   };
 }

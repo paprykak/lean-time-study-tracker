@@ -30,4 +30,11 @@ describe('zasiłek chorobowy na zleceniu (art. 3 pkt 4, 11, 48–49 ustawy zasi�
     expect(() => zasilekZlecenie({ ...ZLECENIE, dni: 2.5 })).toThrow(RangeError);
     expect(() => zasilekZlecenie({ ...ZLECENIE, dni: 271 })).toThrow(RangeError);
   });
+  it('dni najwyżej w okresie zasiłkowym (art. 8 ust. 1): choroba 182, ciąża 270', () => {
+    expect(zasilekZlecenie({ ...ZLECENIE, dni: 182 })).toMatchObject({ zaDzien: 92.04, brutto: 16751.28, zaliczka: 2010 });
+    expect(() => zasilekZlecenie({ ...ZLECENIE, dni: 183 })).toThrow('Dni L4 od 1 do 182');
+    expect(zasilekZlecenie({ ...ZLECENIE, przyczyna: 'ciaza', dni: 270 })).toMatchObject({ zaDzien: 115.05, brutto: 31063.5, zaliczka: 3728 });
+    expect(() => zasilekZlecenie({ ...ZLECENIE, przyczyna: 'ciaza', dni: 271 })).toThrow(RangeError);
+    expect(() => zasilekZlecenie({ ...ZLECENIE, przyczyna: 'wypadek-w-drodze', dni: 183 })).toThrow(RangeError);
+  });
 });
