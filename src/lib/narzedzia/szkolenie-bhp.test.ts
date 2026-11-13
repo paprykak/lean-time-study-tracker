@@ -21,6 +21,9 @@ describe('terminSzkolenia', () => {
   it('pierwsze szkolenie kierownika: 6 miesięcy od rozpoczęcia pracy', () => {
     const w = terminSzkolenia({ grupa: 'kierujacy', ostatnie: null, poczatekPracy: '2026-08-31', dzis: '2026-11-11' });
     expect(w).toMatchObject({ rodzaj: 'pierwsze', termin: '2027-02-28' });
+    // Pierwszy dzień pracy się wlicza: od 15 sierpnia 6 miesięcy trwa do 14 lutego (konwencja terminy.ts, Python).
+    expect(terminSzkolenia({ grupa: 'kierujacy', ostatnie: null, poczatekPracy: '2026-08-15', dzis: '2026-11-11' }).termin).toBe('2027-02-14');
+    expect(terminSzkolenia({ grupa: 'robotnicze', ostatnie: null, poczatekPracy: '2026-03-01', dzis: '2026-11-11' }).termin).toBe('2027-02-28');
   });
   it('po terminie: bez przypomnienia z przeszłości', () => {
     const w = terminSzkolenia({ grupa: 'robotnicze-szczegolnie-niebezpieczne', ostatnie: '2025-10-01', poczatekPracy: null, dzis: '2026-11-11' });

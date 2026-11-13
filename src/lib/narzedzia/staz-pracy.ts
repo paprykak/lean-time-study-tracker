@@ -2,9 +2,10 @@
 // (art. 302^1 § 1–7 Kp, dodany ustawą z 26 września 2025 r., Dz.U. 2025 poz. 1423). Okresy, które się nakładają,
 // liczymy raz (art. 302^1 § 10: wlicza się okres najkorzystniejszy, więc przy samej długości stażu to suma bez
 // powtórzeń). Przepisy nie mówią, jak sumować okresy z przerwami: każdy ciągły okres liczymy w pełnych miesiącach
-// kalendarzowych (art. 112 KC), a pozostałe dni sumujemy i zamieniamy na miesiące po 30 dni (art. 114 KC).
+// kalendarzowych (art. 112 KC, konwencja z terminy.ts: od 31 sierpnia 6 miesięcy mija z końcem 28 lutego), a pozostałe
+// dni sumujemy i zamieniamy na miesiące po 30 dni (art. 114 KC).
 import { SZKOLY, type Szkola } from './urlop';
-import { dniMiedzy, dodajDni, dodajMiesiace } from './terminy';
+import { dniMiedzy, dodajDni, koniecOkresu, pelneMiesiace } from './terminy';
 
 export type RodzajOkresu = 'umowa' | 'zlecenie' | 'dzialalnosc';
 
@@ -42,10 +43,8 @@ export function polacz(okresy: { od: string; do: string }[]): { od: string; do: 
 
 /** Pełne miesiące kalendarzowe i pozostałe dni jednego ciągłego okresu (oba dni włącznie). */
 export function miesiaceIDni(od: string, do_: string): { miesiace: number; dni: number } {
-  const poKoncu = dodajDni(do_, 1);
-  let m = 0;
-  while (dodajMiesiace(od, m + 1) <= poKoncu) m++;
-  return { miesiace: m, dni: dniMiedzy(dodajMiesiace(od, m), poKoncu) };
+  const m = pelneMiesiace(od, do_);
+  return { miesiace: m, dni: dniMiedzy(koniecOkresu(od, m), do_) };
 }
 
 /** Suma okresów bez powtórzeń w latach, miesiącach i dniach (30 dni = miesiąc, 12 miesięcy = rok). */

@@ -23,7 +23,7 @@
 //    w wariancie A kończy się przed upływem. Przepis tego nie rozstrzyga wprost, więc zwracamy status „granica”.
 // 3. Gdy umowa ma datę końca wcześniejszą niż koniec okresu wypowiedzenia, ostatnim dniem jest data z umowy
 //    (art. 30 § 1 pkt 4). Gdy koniec zależy od powrotu osoby zastępowanej, daty nie znamy i jej nie liczymy.
-// 4. Staż do okresu wypowiedzenia: pełne miesiące od początku pracy do dnia doręczenia (pelneMiesiace, jak w kalkulatorze
+// 4. Staż do okresu wypowiedzenia: pełne miesiące od początku pracy do dnia przed doręczeniem (stazWDniu, jak w kalkulatorze
 //    okresu wypowiedzenia). Do stażu wlicza się pracę u poprzedniego pracodawcy przy przejściu zakładu (art. 36 § 1^1)
 //    oraz zlecenie i działalność na rzecz tego pracodawcy (art. 302^1 § 8): użytkownik wpisuje najwcześniejszą datę.
 //    Gdy próg 6 miesięcy albo 3 lat mija w trakcie wypowiedzenia, przepis nie mówi wprost, co wtedy; jak w kalkulatorze
@@ -83,7 +83,11 @@ export interface PrzedluzenieDoPorodu {
   uplyw3Miesiaca: string;
 }
 
-/** Upływ trzeciego miesiąca ciąży (wariant B, wcześniejszy): dzień przed dniem, który datą odpowiada początkowi ciąży. */
+/**
+ * Upływ trzeciego miesiąca ciąży (wariant B, wcześniejszy): dzień przed dniem, który datą odpowiada początkowi ciąży.
+ * Świadome odstępstwo od `koniecOkresu` (terminy.ts) przy starcie 29.–31. dnia: wcześniejszy upływ obejmuje
+ * przedłużeniem więcej umów (wariant bezpieczny dla pracownicy, interpretacja 1 wyżej).
+ */
 export const uplywTrzeciegoMiesiaca = (poczatekCiazy: string) => dodajDni(dodajMiesiace(poczatekCiazy, 3), -1);
 
 export function przedluzenieDoPorodu(rodzaj: RodzajUmowyWCiazy, koniecUmowy: string, poczatekCiazy: string): PrzedluzenieDoPorodu {

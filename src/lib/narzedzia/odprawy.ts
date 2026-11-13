@@ -5,14 +5,15 @@
 // z 3 miesięcy i jedna dwunasta składników za okresy dłuższe niż miesiąc z 12 miesięcy (§ 15–17 rozporządzenia urlopowego).
 import { PLACA_MINIMALNA } from '../../data/prawo';
 import { doGrosza } from './dodatek-nocny';
-import { dodajDni, dodajLata } from './terminy';
+import { koniecOkresu } from './terminy';
 
 export type RodzajOdprawy = 'zwolnienie' | 'emerytalna';
 
 /** Ile miesięcznych wynagrodzeń (art. 8 ust. 1): krócej niż 2 lata 1, od 2 do 8 lat 2, ponad 8 lat 3. */
 export function miesiecyOdprawy(zatrudnienieOd: string, rozwiazanie: string): 1 | 2 | 3 {
-  const dwaLata = dodajDni(dodajLata(zatrudnienieOd, 2), -1);
-  const osiemLat = dodajDni(dodajLata(zatrudnienieOd, 8), -1);
+  // Ostatni dzień 2 i 8 lat zatrudnienia liczonych z pierwszym dniem (`koniecOkresu`, terminy.ts).
+  const dwaLata = koniecOkresu(zatrudnienieOd, 24);
+  const osiemLat = koniecOkresu(zatrudnienieOd, 96);
   if (rozwiazanie < dwaLata) return 1;
   if (rozwiazanie <= osiemLat) return 2;
   return 3;

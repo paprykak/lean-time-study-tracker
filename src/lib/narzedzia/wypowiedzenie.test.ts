@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { dniNaPoszukiwanie, koniecWypowiedzenia, okresWypowiedzenia, pelneMiesiace, wypowiedzenieStalej } from './wypowiedzenie';
+import { dniNaPoszukiwanie, koniecWypowiedzenia, okresWypowiedzenia, stazWDniu, wypowiedzenieStalej } from './wypowiedzenie';
 
 describe('okres wypowiedzenia (art. 34 i 36 Kp)', () => {
   it('według stażu u pracodawcy', () => {
@@ -10,17 +10,20 @@ describe('okres wypowiedzenia (art. 34 i 36 Kp)', () => {
     expect(okresWypowiedzenia('probna-2tyg', 0).opis).toBe('3 dni robocze');
     expect(okresWypowiedzenia('probna-3mies', 2).opis).toBe('2 tygodnie');
   });
-  it('pełne miesiące stażu', () => {
-    expect(pelneMiesiace('2026-05-15', '2026-11-14')).toBe(5);
-    expect(pelneMiesiace('2026-05-15', '2026-11-15')).toBe(6);
-    expect(pelneMiesiace('2023-11-11', '2026-11-11')).toBe(36);
+  it('pełne miesiące stażu w dniu doręczenia (bez tego dnia)', () => {
+    expect(stazWDniu('2026-05-15', '2026-11-14')).toBe(5);
+    expect(stazWDniu('2026-05-15', '2026-11-15')).toBe(6);
+    expect(stazWDniu('2023-11-11', '2026-11-11')).toBe(36);
   });
   it('pełne miesiące na końcu miesiąca według art. 112 KC (6 miesięcy od 31 marca mija z końcem 30 września)', () => {
-    expect(pelneMiesiace('2026-03-31', '2026-09-30')).toBe(5);
-    expect(pelneMiesiace('2026-03-31', '2026-10-01')).toBe(6);
-    expect(pelneMiesiace('2024-02-29', '2027-02-28')).toBe(35);
-    expect(pelneMiesiace('2024-02-29', '2027-03-01')).toBe(36);
-    expect(pelneMiesiace('2026-08-31', '2027-03-01')).toBe(6);
+    expect(stazWDniu('2026-03-31', '2026-09-30')).toBe(5);
+    expect(stazWDniu('2026-03-31', '2026-10-01')).toBe(6);
+    expect(stazWDniu('2024-02-29', '2027-02-28')).toBe(35);
+    expect(stazWDniu('2024-02-29', '2027-03-01')).toBe(36);
+    expect(stazWDniu('2026-08-31', '2027-03-01')).toBe(6);
+    // Od 31 sierpnia 6 miesięcy mija z końcem 28 lutego: doręczenie 28 lutego to jeszcze 5 pełnych miesięcy.
+    expect(stazWDniu('2026-08-31', '2027-02-28')).toBe(5);
+    expect(stazWDniu('2026-01-01', '2026-02-01')).toBe(1);
   });
 });
 

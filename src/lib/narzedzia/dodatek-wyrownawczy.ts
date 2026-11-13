@@ -27,7 +27,7 @@
 //    minus dni L4 lub zasiłku i dni pracy bez wynagrodzenia.
 // 5. Miesiąc tylko częściowo w okresie dodatku: część stałą liczymy proporcjonalnie do dni kalendarzowych w okresie.
 // 6. Składników za okresy dłuższe niż miesiąc (§ 10) nie liczymy.
-import { dniMiedzy, dodajDni } from './terminy';
+import { dniMiedzy, koniecOkresu } from './terminy';
 import { dniWMiesiacu } from './czas-pracy';
 import { doGrosza } from './dodatek-nocny';
 import { wspolczynnik } from './ekwiwalent';
@@ -43,16 +43,8 @@ export const POWODY: Record<PowodDodatku, { nazwa: string; podstawa: string; mie
   indywidualne: { nazwa: 'Zwolnienie indywidualne', podstawa: 'art. 10 ust. 4 ustawy o zwolnieniach grupowych', miesiace: 6 },
 };
 
-/** Ostatni dzień okresu N miesięcy od dnia `od` włącznie (interpretacja 2). */
-export function koniecMiesiecy(od: string, miesiace: number): string {
-  const [r, m, d] = od.split('-').map(Number);
-  const indeks = r * 12 + (m - 1) + miesiace;
-  const rok = Math.floor(indeks / 12);
-  const mies = indeks - rok * 12 + 1;
-  const ostatni = dniWMiesiacu(rok, mies);
-  const iso = (dzien: number) => `${rok}-${String(mies).padStart(2, '0')}-${String(dzien).padStart(2, '0')}`;
-  return d > ostatni ? iso(ostatni) : dodajDni(iso(d), -1);
-}
+/** Ostatni dzień okresu N miesięcy od dnia `od` włącznie (interpretacja 2, `koniecOkresu` z terminy.ts). */
+export const koniecMiesiecy = (od: string, miesiace: number) => koniecOkresu(od, miesiace);
 
 /** Okres dodatku: od dnia przeniesienia do końca (null = bez z góry znanego końca). */
 export function okresDodatku(powod: PowodDodatku, od: string, koniecOchrony?: string): { od: string; koniec: string | null } {

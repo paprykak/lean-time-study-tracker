@@ -147,7 +147,7 @@ export function kod95({ tryb, data, lekarskieDo, psychologiczneDo, szkolenie, dz
   const opis = `Kod 95 ważny do ${dataPoPolsku(waznyDo)} Szkolenie okresowe (${GODZINY_SZKOLENIA} h) z zapasem na wymianę prawa jazdy: do ${dataPoPolsku(zZapasem)} (szacunek redakcji: ${ZAPAS_DNI} dni). Ostatni dzień, w którym świadectwo na pewno przyjdzie przed końcem ważności: ${dataPoPolsku(najpozniej)} (rachunek z § 21 ust. 5 rozporządzenia, nie termin z ustawy). Wiąże data w prawie jazdy. Policzone na rytmhali.pl/narzedzia/kod-95.`;
   const kandydaci: Wydarzenie[] = [
     // Gdy do końca zostało mniej niż 180 dni, przypomnienie o zapisie dostaje dzisiejszą datę.
-    { data: dniDoKonca >= 0 && dniDoKonca < 180 ? dzis : dodajDni(waznyDo, -180), tytul: 'Zapisz się na szkolenie okresowe (kod 95)', opis },
+    { data: dniDoKonca >= 0 && dniDoKonca < 180 ? dzis : dodajDni(waznyDo, -180), tytul: 'Zapisz się na szkolenie okresowe (kod 95)', opis, przypomnienia: [0] },
     { data: zZapasem, tytul: 'Kod 95: ukończ szkolenie okresowe (z zapasem na wymianę prawa jazdy)', opis },
     { data: najpozniej, tytul: 'Kod 95: ostatni dzień na ukończenie szkolenia (świadectwo zdąży, bez wymiany prawa jazdy)', opis },
     { data: waznyDo, tytul: 'Koniec ważności kodu 95', opis },

@@ -62,6 +62,8 @@
   Włączenie: atrybut data-motyw="ciemny" na <html> po decyzji i testach kontrastu w obu motywach.
 */
 :root[data-motyw="ciemny"] {
+  /* Kontrolki przeglądarki (ikony pól daty i godziny, paski przewijania, listy wyboru) w ciemnej wersji. */
+  color-scheme: dark;
   --color-tlo: #11161d;
   --color-tlo-szare: #1a212b;
   --color-tekst: #f3f5f7;

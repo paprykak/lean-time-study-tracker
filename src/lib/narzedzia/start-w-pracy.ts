@@ -13,10 +13,11 @@
 // Interpretacje: terminy w dniach liczymy od dnia po dopuszczeniu (art. 111 § 2 KC przez art. 300 Kp). Przepisy nie
 // przesądzają, czy art. 115 KC przesuwa koniec z soboty i święta na obowiązki pracodawcy; podajemy datę bez przesunięcia
 // (najwcześniejszą) i osobno datę po przesunięciu. 3 miesiące zatrudnienia przy PPK upływają z końcem dnia poprzedzającego
-// dzień, który datą odpowiada pierwszemu dniowi pracy (pierwszy dzień pracy wlicza się do zatrudnienia): to wariant
-// wcześniejszy niż liczenie z art. 112 KC od dnia po zdarzeniu.
+// dzień, który datą odpowiada pierwszemu dniowi pracy (pierwszy dzień pracy wlicza się do zatrudnienia), a gdy takiego
+// dnia nie ma, z końcem ostatniego dnia miesiąca (`koniecOkresu`, konwencja z terminy.ts): to wariant wcześniejszy niż
+// liczenie z art. 112 KC od dnia po zdarzeniu.
 import { przesunZDniaWolnego } from './termin-odwolania';
-import { dodajDni, dodajMiesiace, poprawnaData } from './terminy';
+import { dodajDni, koniecOkresu, poprawnaData } from './terminy';
 
 export type Termin = 'przed' | 'data';
 
@@ -44,7 +45,7 @@ export interface DaneStartu {
 }
 
 /** Ostatni dzień 3 miesięcy zatrudnienia liczonych od pierwszego dnia pracy włącznie. */
-export const koniecTrzechMiesiecy = (start: string) => dodajDni(dodajMiesiace(start, 3), -1);
+export const koniecTrzechMiesiecy = (start: string) => koniecOkresu(start, 3);
 
 /** Termin zawarcia umowy o prowadzenie PPK (art. 16 ust. 1): 10. dzień miesiąca po miesiącu, w którym minęły 3 miesiące. */
 export function terminPpk(start: string): string {

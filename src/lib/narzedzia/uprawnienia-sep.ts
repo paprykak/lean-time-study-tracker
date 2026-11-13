@@ -30,7 +30,7 @@
 // 4. Liczy się data wydania, nie egzaminu (§ 13: do 14 dni później). Gdy znana jest tylko data egzaminu, liczymy od niej:
 //    wynik wychodzi najwyżej 14 dni za wcześnie, czyli bezpiecznie.
 // 5. Przedłużenia przepis nie zna: po nowym egzaminie nowe 5 lat biegnie od nowej daty wydania.
-// 6. Terminy w pliku .ics (3 miesiące i 1 miesiąc przed końcem; bez alarmów) to propozycja redakcji, nie termin z przepisu:
+// 6. Terminy w pliku .ics (3 miesiące i 1 miesiąc przed końcem, z alarmem w ich dniu; koniec ważności z alarmami 7 dni i 1 dzień wcześniej) to propozycja redakcji, nie termin z przepisu:
 //    zawiadomienie o egzaminie przychodzi co najmniej 14 dni wcześniej (§ 10 ust. 2), a świadectwo do 14 dni po nim (§ 13).
 // 7. Opłata: dokładnie 10% (rozporządzenie, nie „do 10%” z ustawy), z płacy minimalnej z dnia złożenia wniosku,
 //    za jeden egzamin (wniosek). Liczby wniosków przy E i D albo kilku grupach przepis nie ustala, więc nie mnożymy.
@@ -143,6 +143,7 @@ export function waznoscSep({ wydano, wpis, zDatyEgzaminu = false, dzis }: DaneSe
       data: dodajMiesiace(waznoDo, -m),
       tytul: `Uprawnienia SEP: ${m === 1 ? 'za miesiąc' : `za ${m} miesiące`} koniec ważności, umów egzamin`,
       opis,
+      przypomnienia: [0],
     })),
     { data: waznoDo, tytul: wedlugKc ? 'Uprawnienia SEP: ostatni dzień ważności z zapasem (według KC jutro)' : 'Uprawnienia SEP: ostatni dzień ważności świadectwa', opis },
   ];

@@ -86,7 +86,7 @@ export const AKTY = {
   pit: {
     nazwa: 'Ustawa o podatku dochodowym od osób fizycznych',
     publikator: 'Dz.U. 2026 poz. 592',
-    uwaga: 'tekst jednolity; późniejsze zmiany nie dotyczą zaliczek od wynagrodzeń ani zwolnienia diet; art. 21 ust. 1 pkt 16 i 148, art. 22 ust. 2, art. 27, 31b, 32',
+    uwaga: 'tekst jednolity; późniejsze zmiany nie dotyczą zaliczek od wynagrodzeń ani zwolnienia diet; art. 21 ust. 1 pkt 11, 11b, 16 i 148, art. 22 ust. 2, art. 27, 31b, 32',
     adres: eli(2026, 592),
     sprawdzono: '2026-11-11',
   },
@@ -107,7 +107,7 @@ export const AKTY = {
   pracaTymczasowa: {
     nazwa: 'Ustawa o zatrudnianiu pracowników tymczasowych',
     publikator: 'Dz.U. 2025 poz. 236',
-    uwaga: 'tekst jednolity; zmiana Dz.U. 2024 poz. 1871 (od 19.03.2025) dotyczy tylko art. 21 ust. 4; art. 20, 21, 27a, 27b i 28',
+    uwaga: 'tekst jednolity; zmiana Dz.U. 2024 poz. 1871 (od 19.03.2025) dotyczy tylko art. 21 ust. 4; art. 9 ust. 2a, art. 20, 21, 27, 27a, 27b i 28',
     adres: eli(2025, 236),
     sprawdzono: '2026-11-12',
   },
@@ -184,14 +184,14 @@ export const AKTY = {
   zasilkowa: {
     nazwa: 'Ustawa o świadczeniach pieniężnych z ubezpieczenia społecznego w razie choroby i macierzyństwa',
     publikator: 'Dz.U. 2026 poz. 854',
-    uwaga: 'tekst jednolity; art. 3 pkt 3, art. 4, 8, 11, 36–38, 42 i 45; art. 9 ust. 4 i art. 17 ust. 1d–1e w mocy od 1 stycznia 2027 r.; zmiana Dz.U. 2026 poz. 1123 (od 1 stycznia 2028 r.) dotyczy tylko art. 32 ust. 1 pkt 1 lit. a',
+    uwaga: 'tekst jednolity (stan prawny na 17 czerwca 2026 r.); art. 3 pkt 3, art. 4, 8, 11, 36–38, 42 i 45; od 1 stycznia 2027 r. dochodzą art. 9 ust. 4, art. 17 ust. 1d–1e i art. 59 ust. 4a, nowe brzmienie dostają art. 18 ust. 3 i art. 23 ust. 6, a art. 18 ust. 4–6 zostają uchylone (zmiana Dz.U. 2026 poz. 26); późniejsza zmiana Dz.U. 2026 poz. 1123 (od 1 stycznia 2028 r.) dotyczy tylko art. 32 ust. 1 pkt 1 lit. a',
     adres: eli(2026, 854),
     sprawdzono: '2026-11-13',
   },
   systemUbezpieczen: {
     nazwa: 'Ustawa o systemie ubezpieczeń społecznych',
     publikator: 'Dz.U. 2026 poz. 1474',
-    uwaga: 'tekst jednolity (obwieszczenie z 9 października 2026 r.); stopy składek bez zmian: art. 16 i 22',
+    uwaga: 'tekst jednolity (obwieszczenie z 9 października 2026 r.), bez późniejszych zmian do 13 listopada 2026 r.; stopy składek bez zmian: art. 16 i 22; art. 13 pkt 1 (ubezpieczenie od dnia nawiązania stosunku pracy) i art. 36 ust. 2 i 4 (płatnik zgłasza w 7 dni); art. 6 ust. 1 pkt 19 i art. 9 ust. 6 (urlop wychowawczy; o urlopie bezpłatnym ustawa nie wspomina)',
     adres: eli(2026, 1474),
     sprawdzono: '2026-11-13',
   },
@@ -296,7 +296,7 @@ export const AKTY = {
   podstawaSkladek: {
     nazwa: 'Rozporządzenie w sprawie szczegółowych zasad ustalania podstawy wymiaru składek na ubezpieczenia emerytalne i rentowe',
     publikator: 'Dz.U. 2025 poz. 316',
-    uwaga: 'tekst jednolity, bez późniejszych zmian; § 2 ust. 1 pkt 15: diety i należności z podróży służbowej do limitów z przepisów o podróżach w sferze budżetowej',
+    uwaga: 'tekst jednolity, bez późniejszych zmian; § 2 ust. 1 pkt 6: świadczenia i ekwiwalenty z przepisów BHP, pranie odzieży, bony na posiłki i napoje; § 2 ust. 1 pkt 15: diety i należności z podróży służbowej do limitów z przepisów o podróżach w sferze budżetowej',
     adres: eli(2025, 316),
     sprawdzono: '2026-11-12',
   },
@@ -549,13 +549,6 @@ export const AKTY = {
     adres: eli(2023, 607),
     sprawdzono: '2026-11-12',
   },
-  ubezpieczeniaZgloszenie: {
-    nazwa: 'Ustawa o systemie ubezpieczeń społecznych',
-    publikator: 'Dz.U. 2026 poz. 1474',
-    uwaga: 'tekst jednolity (obwieszczenie z 9 października 2026 r.); art. 13 pkt 1 (ubezpieczenie od dnia nawiązania stosunku pracy) i art. 36 ust. 2 i 4 (płatnik zgłasza w 7 dni)',
-    adres: eli(2026, 1474),
-    sprawdzono: '2026-11-12',
-  },
   powierzanieCudzoziemcom: {
     nazwa: 'Ustawa o warunkach dopuszczalności powierzania pracy cudzoziemcom na terytorium Rzeczypospolitej Polskiej',
     publikator: 'Dz.U. 2025 poz. 621',
@@ -632,13 +625,6 @@ export const AKTY = {
     uwaga: 'od 1 marca 2026 r.: 989,41 zł (emerytura, renta z tytułu całkowitej niezdolności), 742,10 zł (częściowej), 841,05 zł (renta rodzinna dla jednej osoby); wcześniej M.P. 2025 poz. 152',
     adres: 'https://eli.gov.pl/eli/MP/2026/220/ogl',
     sprawdzono: '2026-11-12',
-  },
-  systemUbezpieczen2026: {
-    nazwa: 'Ustawa o systemie ubezpieczeń społecznych',
-    publikator: 'Dz.U. 2026 poz. 1474',
-    uwaga: 'tekst jednolity, bez późniejszych zmian do 12 listopada 2026 r.; art. 6 ust. 1 pkt 19 i art. 9 ust. 6 (urlop wychowawczy); o urlopie bezpłatnym nie wspomina',
-    adres: eli(2026, 1474),
-    sprawdzono: '2026-11-13',
   },
   pit2025: {
     nazwa: 'Ustawa o podatku dochodowym od osób fizycznych (brzmienie na 2025 r.)',

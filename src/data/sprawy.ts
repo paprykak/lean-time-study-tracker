@@ -75,7 +75,7 @@ export const HASLA: Record<string, string[]> = {
 
 /**
  * Najczęstsze sprawy z hali na stronie głównej: pytanie w języku ludzi → narzędzie. Wybór redakcji, dopóki nie ma
- * statystyk; potem kolejność według odsłon, a brzmienie pytań zostaje ręczne. Zastępuje karty NA_GLOWNEJ.
+ * statystyk; potem kolejność według odsłon, a brzmienie pytań zostaje ręczne. Zastąpiła dawne karty wyboru redakcji.
  */
 export const NAJCZESTSZE: { pytanie: string; slug: string }[] = [
   { pytanie: 'Ile dostanę za dni na L4?', slug: 'kalkulator-l4' },

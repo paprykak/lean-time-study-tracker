@@ -28,6 +28,14 @@ describe('typografia: twarde spacje', () => {
     expect(pokaz(typografia('(§ 15), zgodnie z § 9 ust. 3'))).toBe('(§~15), zgodnie z~§~9 ust.~3');
     expect(pokaz(typografia('Przezbrojenie – czas od ostatniej sztuki'))).toBe('Przezbrojenie~– czas od ostatniej sztuki');
   });
+
+  it('„lp.” z numerem pozycji i dzień z nazwą miesiąca', () => {
+    expect(pokaz(typografia('Lp. 12 i lp. 3a w tabeli; help. 5'))).toBe('Lp.~12 i~lp.~3a w~tabeli; help. 5');
+    expect(pokaz(typografia('od 13 listopada 2026 r. do 1 stycznia, 31 grudnia i 9 maja'))).toBe('od 13~listopada 2026~r. do 1~stycznia, 31~grudnia i~9~maja');
+    expect(pokaz(typografia('5 września, 22 października, 28 lutego'))).toBe('5~września, 22~października, 28~lutego');
+    // Nie wiąże: liczba trzycyfrowa albo część większej liczby, miesiąc w mianowniku, słowo dłuższe niż nazwa miesiąca.
+    expect(pokaz(typografia('120 maja, 1.5 marca, 13 listopad, 3 majami'))).toBe('120 maja, 1.5 marca, 13 listopad, 3 majami');
+  });
 });
 
 describe('typografia: dywiz i HTML', () => {

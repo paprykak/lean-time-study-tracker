@@ -69,6 +69,7 @@ const faq = [
       <p class="mt-5">
         <button type="button" class="przycisk przycisk-grafit" data-ics>Wypłaty do kalendarza (.ics)</button>
       </p>
+      <p class="meta mt-2">Plik z datami wypłat z wybranego roku otworzy kalendarz w telefonie, Outlook i Kalendarz Google. Wypłaty są w nim bez przypomnień.</p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -147,7 +148,7 @@ const faq = [
     };
     form.querySelector<HTMLButtonElement>('[data-ics]')!.addEventListener('click', () => {
       const { rok, lista } = dane();
-      const wydarzenia = lista.map((t) => ({ data: t.wyplata, tytul: 'Wypłata wynagrodzenia', opis: 'Termin wypłaty według art. 85 Kodeksu pracy.' }));
+      const wydarzenia = lista.map((t) => ({ data: t.wyplata, tytul: 'Wypłata wynagrodzenia', opis: 'Termin wypłaty według art. 85 Kodeksu pracy.', przypomnienia: [] }));
       const blob = new Blob([plikIcs(wydarzenia, `termin-wyplaty-${rok}`)], { type: 'text/calendar;charset=utf-8' });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);

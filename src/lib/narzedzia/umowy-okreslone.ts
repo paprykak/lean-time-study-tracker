@@ -1,8 +1,8 @@
 // Limit umów o pracę na czas określony (art. 25^1 Kp): łącznie najwyżej 33 miesiące i 3 umowy między tymi samymi stronami;
 // po przekroczeniu umowa na czas nieokreślony od dnia po upływie 33 miesięcy albo od dnia zawarcia czwartej umowy (§ 3).
-// Aneks przedłużający to nowa umowa (§ 2). Miesiące: przy umowach następujących bez przerwy termin ciągły (art. 112 KC),
+// Aneks przedłużający to nowa umowa (§ 2). Miesiące: przy umowach następujących bez przerwy termin ciągły (art. 112 KC, `koniecOkresu`: od 31 maja 33 miesiące do 28 lutego),
 // przy przerwach okresy się sumuje, a miesiąc liczy za 30 dni (art. 114 KC w związku z art. 300 Kp).
-import { dniMiedzy, dodajDni, dodajMiesiace } from './terminy';
+import { dniMiedzy, dodajDni, koniecOkresu } from './terminy';
 
 export interface Umowa {
   od: string;
@@ -37,7 +37,7 @@ export function sprawdzUmowy(umowy: Umowa[]): AnalizaUmow {
   // Ostatni dzień dozwolonych 33 miesięcy.
   let limitDo: string;
   if (ciagle) {
-    limitDo = dodajDni(dodajMiesiace(lista[0].od, LIMIT_MIESIECY), -1);
+    limitDo = koniecOkresu(lista[0].od, LIMIT_MIESIECY);
   } else {
     let przed = 0;
     limitDo = '';

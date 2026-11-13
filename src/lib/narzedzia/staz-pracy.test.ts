@@ -6,6 +6,13 @@ describe('staż pracy (art. 302^1 Kp, okresy bez powtórzeń)', () => {
   it('jeden okres: pełne miesiące kalendarzowe i dni', () => {
     expect(staz([{ od: '2015-09-01', do: '2026-11-12' }])).toEqual({ lata: 11, miesiace: 2, dni: 12 });
     expect(miesiaceIDni('2019-01-15', '2019-03-10')).toEqual({ miesiace: 1, dni: 24 });
+    // Koniec miesiąca (konwencja terminy.ts, wartości z niezależnego rachunku w Pythonie): od 31 sierpnia 6 miesięcy
+    // mija z końcem 28 lutego, od 31 marca z końcem 30 września.
+    expect(miesiaceIDni('2026-08-31', '2027-02-27')).toEqual({ miesiace: 5, dni: 28 });
+    expect(miesiaceIDni('2026-08-31', '2027-02-28')).toEqual({ miesiace: 6, dni: 0 });
+    expect(miesiaceIDni('2026-01-31', '2026-02-27')).toEqual({ miesiace: 0, dni: 28 });
+    expect(miesiaceIDni('2026-03-31', '2026-09-29')).toEqual({ miesiace: 5, dni: 30 });
+    expect(miesiaceIDni('2024-02-29', '2025-02-28')).toEqual({ miesiace: 12, dni: 0 });
   });
   it('nakładające się okresy liczymy raz (art. 302^1 § 10), stykające się łączymy', () => {
     const naklad = [

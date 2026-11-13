@@ -38,6 +38,7 @@ import {
   dniMiedzy,
   dodajDni,
   dodajMiesiace,
+  koniecOkresu,
   poprawnaData,
 } from "./terminy";
 
@@ -89,10 +90,7 @@ export interface RokUrlopu {
 export const koniecMiesiecy = (od: string, n: number) => dodajMiesiace(od, n);
 
 /** To samo przy liczeniu z dniem rozpoczęcia: dzień przed tą samą datą (gdy jej brak, ostatni dzień miesiąca). */
-export function koniecMiesiecyZDniem(od: string, n: number): string {
-  const k = dodajMiesiace(od, n);
-  return k.slice(8) === od.slice(8) ? dodajDni(k, -1) : k;
-}
+export const koniecMiesiecyZDniem = (od: string, n: number) => koniecOkresu(od, n);
 
 /** Miesiące kalendarzowe roku, w których jest choć jeden dzień poza okresem [od, do]. */
 export function miesiacePracy(rok: number, od: string, do_: string): number {

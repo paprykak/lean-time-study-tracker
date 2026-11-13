@@ -621,7 +621,7 @@ export const NARZEDZIA: Narzedzie[] = [
     nazwa: 'Nowa praca: terminy pracodawcy',
     krotko: 'Do kiedy umowa, badania, BHP, informacja o warunkach zatrudnienia (7 dni), zgłoszenie do ZUS i zapis do PPK.',
     kategoria: 'umowa',
-    przepisy: ['kodeksPracy', 'kodeksCywilny', 'ubezpieczeniaZgloszenie', 'ppk', 'szkoleniaBhp'],
+    przepisy: ['kodeksPracy', 'kodeksCywilny', 'systemUbezpieczen', 'ppk', 'szkoleniaBhp'],
     sprawdzono: '2026-11-12',
   },
   {
@@ -701,7 +701,7 @@ export const NARZEDZIA: Narzedzie[] = [
     nazwa: 'Urlop bezpłatny: skutki',
     krotko: 'Ile urlopu wypoczynkowego zostaje po urlopie bezpłatnym, o ile przesuwa się staż, co z zasiłkiem i NFZ.',
     kategoria: 'urlopy',
-    przepisy: ['kodeksPracy', 'kodeksCywilny', 'zasilkowa', 'swiadczeniaZdrowotne', 'emerytury', 'systemUbezpieczen2026'],
+    przepisy: ['kodeksPracy', 'kodeksCywilny', 'zasilkowa', 'swiadczeniaZdrowotne', 'emerytury', 'systemUbezpieczen'],
     sprawdzono: '2026-11-12',
   },
   {
@@ -854,9 +854,6 @@ export const NARZEDZIA: Narzedzie[] = [
 export const W_PRZYGOTOWANIU: { nazwa: string; kategoria: KategoriaNarzedzia }[] = [
   { nazwa: 'Testy UDT na wózki widłowe', kategoria: 'uprawnienia' },
 ];
-
-/** Karty na stronie głównej (wybór redakcji, dopóki nie ma statystyk); pozostałe narzędzia są tam na zwartej liście. */
-export const NA_GLOWNEJ = ['brutto-netto', 'kalkulator-l4', 'dodatek-za-prace-w-nocy', 'kalkulator-nadgodzin', 'kalkulator-urlopu', 'waznosc-uprawnien-udt'] as const;
 
 export const adresNarzedzia = (slug: string) => `/narzedzia/${slug}`;
 

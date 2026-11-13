@@ -1,5 +1,6 @@
 // Polska typografia tekstu widocznego na stronie: jednoliterowe słowa (a, i, o, u, w, z) nie zostają na końcu wiersza,
-// liczba nie odrywa się od jednostki ani skrót od tego, co po nim („2017 r.”, „47 min”, „12 500 zł”, „art. 14”, „§ 15”),
+// liczba nie odrywa się od jednostki ani skrót od tego, co po nim („2017 r.”, „47 min”, „12 500 zł”, „art. 14”, „§ 15”, „lp. 12”),
+// dzień nie odrywa się od nazwy miesiąca („13 listopada”),
 // półpauza nie zaczyna wiersza, a krótki człon przed dywizem („e-commerce”, „50-osobowy”) nie zostaje sam.
 // Tylko w treści strony: <title>, opisy i dane strukturalne zostają bez twardych spacji.
 
@@ -10,10 +11,15 @@ export const NIEROZDZIELNIE = 'nierozdzielnie';
 const ODSTEP = '[ \\t\\n\\u00A0]+';
 const JEDNOLITEROWE = new RegExp(`(?<=^|[\\s(„"'‚])([aiouwzAIOUWZ])${ODSTEP}(?=\\S)`, 'g');
 const JEDNOLITEROWE_NA_KONCU = new RegExp(`(?<=^|[\\s(„"'‚])([aiouwzAIOUWZ])${ODSTEP}$`);
-const SKROTY = new RegExp(`(?<=(?:^|[\\s(])(?:np\\.|tzw\\.|m\\.in\\.|nr|art\\.|ust\\.|pkt|poz\\.|prof\\.|dr|mgr|inż\\.|§))${ODSTEP}(?=\\S)`, 'g');
+const SKROTY = new RegExp(`(?<=(?:^|[\\s(„])(?:np\\.|tzw\\.|m\\.in\\.|[Ll]p\\.|nr|art\\.|ust\\.|pkt|poz\\.|prof\\.|dr|mgr|inż\\.|§))${ODSTEP}(?=\\S)`, 'g');
 const TYSIACE = /(?<=(?<![\d.,])\d{1,3}(?:[  ]\d{3})*) (?=\d{3}(?!\d))/g;
 const JEDNOSTKI = new RegExp(
   `(?<=\\d)${ODSTEP}(?=(?:r\\.|zł|gr|min|godz\\.|h|s|kg|t|m|mm|cm|km|m²|m³|°C|%|‰|proc\\.|tys\\.|mln|mld|szt\\.|pkt|osób|osoby|dni|lat|zmian|palet|tygodni|tygodnie|miesięcy|miesiące|godzin|godziny|sztuk|sztuki|okresów|okresy|EUR|USD|PLN)(?![\\p{L}]))`,
+  'gu',
+);
+/** Dzień miesiąca z nazwą miesiąca: „13 listopada”, „1 stycznia 2027 r.”. */
+const DZIEN_MIESIACA = new RegExp(
+  `(?<=(?<![\\d.,])\\d{1,2})${ODSTEP}(?=(?:stycznia|lutego|marca|kwietnia|maja|czerwca|lipca|sierpnia|września|października|listopada|grudnia)(?![\\p{L}]))`,
   'gu',
 );
 const PAUZA = new RegExp(`${ODSTEP}(?=[–—](?:\\s|$))`, 'g');
@@ -32,6 +38,7 @@ export function typografia(tekst, { ciagDalszy = false } = {}) {
     .replace(SKROTY, NBSP)
     .replace(TYSIACE, NBSP)
     .replace(JEDNOSTKI, NBSP)
+    .replace(DZIEN_MIESIACA, NBSP)
     .replace(PAUZA, NBSP);
   // Dwa jednoliterowe słowa z rzędu („a w Faraone”): drugi przebieg łapie to, co pierwszy pominął.
   t = t.replace(JEDNOLITEROWE, `$1${NBSP}`);

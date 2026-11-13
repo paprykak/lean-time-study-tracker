@@ -4,7 +4,7 @@
 // Święto w niedzielę: zasady jak dla niedzieli (§ 4). Niedziela i święto liczą się od 6:00 do 6:00 następnego dnia
 // (art. 151^9 § 2), chyba że pracodawca ustalił inną godzinę.
 import { swieta } from './czas-pracy';
-import { dodajDni, dodajMiesiace } from './terminy';
+import { dodajDni, koniecOkresu as koniecOkresuOd } from './terminy';
 import { doGrosza } from './dodatek-nocny';
 
 export type RodzajDnia = 'niedziela' | 'swieto' | 'swieto-w-niedziele' | 'zwykly';
@@ -18,7 +18,7 @@ export function rodzajDnia(data: string): { rodzaj: RodzajDnia; nazwa: string | 
 }
 
 /** Ostatni dzień okresu rozliczeniowego, który zaczyna się 1. dnia miesiąca `poczatek` (RRRR-MM) i trwa `miesiecy`. */
-export const koniecOkresu = (poczatek: string, miesiecy: number) => dodajDni(dodajMiesiace(`${poczatek}-01`, miesiecy), -1);
+export const koniecOkresu = (poczatek: string, miesiecy: number) => koniecOkresuOd(`${poczatek}-01`, miesiecy);
 
 /** Okres rozliczeniowy zawierający datę, gdy okresy liczy się od stycznia (1, 2, 3, 4, 6 albo 12 miesięcy). */
 export function okresZawierajacy(data: string, miesiecy: number): { od: string; do: string } {

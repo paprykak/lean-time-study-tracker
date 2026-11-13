@@ -433,7 +433,7 @@ export function przypomnienie(nastepne: string, dzis: string): Przypomnienie {
   const opis = 'Data następnego badania okresowego z orzeczenia lekarskiego. Badanie na skierowanie od pracodawcy, w miarę możliwości w godzinach pracy, z zachowaniem wynagrodzenia (art. 229 § 3 i 4a Kodeksu pracy).';
   const wczesniej = dodajDni(nastepne, -PRZYPOMNIENIE_DNI);
   const wydarzenia: Wydarzenie[] = [
-    ...(wczesniej >= dzis ? [{ data: wczesniej, tytul: `Za ${PRZYPOMNIENIE_DNI} dni badanie okresowe: poproś o skierowanie`, opis }] : []),
+    ...(wczesniej >= dzis ? [{ data: wczesniej, tytul: `Za ${PRZYPOMNIENIE_DNI} dni badanie okresowe: poproś o skierowanie`, opis, przypomnienia: [0] }] : []),
     ...(nastepne >= dzis ? [{ data: nastepne, tytul: 'Termin badania okresowego (z orzeczenia)', opis }] : []),
   ];
   return { dniDo, wydarzenia };
