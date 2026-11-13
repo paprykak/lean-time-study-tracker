@@ -23,8 +23,29 @@ describe('podobne narzędzia', () => {
     ['waznosc-uprawnien-udt', 'badania-udt'],
     ['halas-w-pracy', 'drgania-w-pracy'],
     ['kalkulator-nadgodzin', 'wyplata-z-nadgodzinami'],
+    ['zwrot-podatku-pit-37', 'ulga-na-dzieci'],
+    ['czas-jazdy-kierowcy', 'dyzur-kierowcy'],
+    ['kod-95', 'badania-kierowcy'],
+    ['praca-w-sobote', 'praca-w-niedziele'],
+    ['renta-z-tytulu-niezdolnosci-do-pracy', 'dorabianie-do-renty'],
+    ['urlop-w-godzinach', 'rownowazny-czas-pracy'],
+    ['praca-cudzoziemca', 'zgloszenie-pracy-cudzoziemca'],
   ])('%s → %s wśród podobnych', (a, b) => {
     expect(podobne(a, NARZEDZIA)).toContain(b);
+  });
+
+  // Fałszywe powiązania przez wspólny początek słowa albo przymiotnik (powierzchnia ~ powierzenie, kierowca zawodowy ~
+  // choroba zawodowa, świadectwo pracy ~ świadectwo kwalifikacji, limit dorabiania ~ limit pracy tymczasowej).
+  it.each([
+    ['powierzchnia-na-pracownika', 'praca-cudzoziemca'],
+    ['choroba-zawodowa', 'kod-95'],
+    ['staz-pracy', 'kod-95'],
+    ['limit-pracy-tymczasowej', 'dorabianie-do-renty'],
+    ['urlop-szkoleniowy', 'dni-wolne-od-pracy'],
+    ['emerytura-pomostowa', 'doba-pracownicza'],
+    ['odziez-robocza', 'dni-robocze'],
+  ])('%s ≁ %s', (a, b) => {
+    expect(podobne(a, NARZEDZIA)).not.toContain(b);
   });
 
   it('nieznany slug: pusta lista', () => {

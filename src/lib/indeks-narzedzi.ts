@@ -19,7 +19,8 @@ const napis = (surowy: string, rok: number) =>
 /** Pytania z FAQ (`pytanie: '…'`, "…" albo `…`) i tytuł strony (atrybut tytul albo h1 przekazany jako tekst). */
 export function zKoduStrony(kod: string, rok = new Date().getFullYear()): { pytania: string[]; tytul: string } {
   const pytania = [...kod.matchAll(/pytanie:\s*(['"`])((?:\\.|(?!\1)[^\\])*)\1/g)].map((m) => napis(m[2], rok));
-  const tytul = [...kod.matchAll(/\s(?:tytul|h1)="([^"]+)"/g)].map((m) => m[1]).join(' ');
+  // Tytuł jako zwykły atrybut (tytul="…") albo szablon z rokiem (tytul={`Płaca minimalna ${rok}: …`}).
+  const tytul = [...kod.matchAll(/\s(?:tytul|h1)=(?:"([^"]+)"|\{`((?:\\.|[^`\\])*)`\})/g)].map((m) => m[1] ?? napis(m[2], rok)).join(' ');
   return { pytania: [...new Set(pytania)], tytul };
 }
 
