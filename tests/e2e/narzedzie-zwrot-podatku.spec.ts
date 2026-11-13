@@ -10,6 +10,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('płaca minimalna 2025 r.: dopłata 2 zł; dwoje dzieci: zwrot', async ({ page }) => {
+  await page.getByLabel('Dzieci przez cały rok').selectOption('0');
   await expect(page.locator('[data-w="wynik"]')).toHaveText(/^Dopłata\s2,00\szł$/);
   await expect(page.locator('[data-w="podstawa"]')).toHaveText(/^45\s?315,00\szł$/);
   await page.getByLabel('Dzieci przez cały rok').selectOption('2');
@@ -18,9 +19,10 @@ test('płaca minimalna 2025 r.: dopłata 2 zł; dwoje dzieci: zwrot', async ({ p
 });
 
 test('małżeństwo: porównanie i rozliczenie wspólne', async ({ page }) => {
+  await page.getByLabel('Dzieci przez cały rok').selectOption('0');
   await page.getByLabel('Sytuacja w roku').selectOption('malzenstwo');
   await page.getByLabel('Przychód z umowy o pracę (zł)', { exact: true }).fill('150000');
-  await page.getByLabel('Składki społeczne (do odliczenia) (zł)', { exact: true }).fill('20565');
+  await page.getByLabel('Składki społeczne do odliczenia (zł)', { exact: true }).fill('20565');
   await page.getByLabel('Składka zdrowotna (zł)', { exact: true }).fill('11648,66');
   await page.getByLabel('Zaliczki pobrane przez płatnika (zł)', { exact: true }).fill('17000');
   await expect(page.locator('[data-w="porownanie"]')).toContainText('Wpisz dane małżonka');
@@ -35,4 +37,14 @@ test('błędna kwota', async ({ page }) => {
   await page.getByLabel('Zaliczki pobrane przez płatnika (zł)', { exact: true }).fill('dużo');
   await expect(page.locator('[data-blad="dane"]')).toBeVisible();
   await expect(page.locator('[data-w="wynik"]')).toHaveText('—');
+  await expect(page.getByLabel('Zaliczki pobrane przez płatnika (zł)', { exact: true })).toHaveAttribute('aria-invalid', 'true');
+});
+
+test('rozliczenie wspólne: bez fałszywej uwagi o 32%, część ulgi ukryta', async ({ page }) => {
+  await page.getByLabel('Sytuacja w roku').selectOption('malzenstwo');
+  await page.getByLabel('Przychód z umowy o pracę (zł)', { exact: true }).fill('150000');
+  await page.getByLabel('Małżonek: przychód z umowy o pracę (zł)').fill('0');
+  await page.getByLabel('Sposób rozliczenia').selectOption('wspolnie');
+  await expect(page.locator('[data-w="uwaga"]')).not.toContainText('32%');
+  await expect(page.getByLabel('Twoja część ulgi')).toBeHidden();
 });

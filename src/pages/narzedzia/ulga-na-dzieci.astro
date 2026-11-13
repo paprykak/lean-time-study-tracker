@@ -34,7 +34,7 @@ const faq = [
   },
   {
     pytanie: 'Jak podzielić ulgę z drugim rodzicem?',
-    odpowiedz: 'Rodzice mogą podzielić ulgę w dowolnej proporcji. Gdy się nie porozumieją, a mają wspólną władzę rodzicielską po rozwodzie albo w separacji albo mieszkają razem z dzieckiem, każdy odlicza połowę. W innych przypadkach całą ulgę odlicza rodzic, u którego dziecko mieszka (art. 27f ust. 4). Gdy w tym samym miesiącu pieczę sprawują różne osoby, każda odlicza 1/30 kwoty miesięcznej za każdy dzień opieki (ust. 3).',
+    odpowiedz: 'Rodzice mogą podzielić ulgę w dowolnej proporcji. Gdy się nie porozumieją, po połowie odliczają ją rodzice, którzy po rozwodzie albo w separacji sprawują pieczę naprzemienną z rozstrzygnięcia sądu, i rodzice mieszkający razem z dzieckiem. W innych przypadkach całą ulgę odlicza rodzic, u którego dziecko ma miejsce zamieszkania (art. 27f ust. 4). Gdy w tym samym miesiącu pieczę sprawują różne osoby, każda odlicza 1/30 kwoty miesięcznej za każdy dzień opieki (ust. 3).',
   },
 ];
 ---
@@ -156,11 +156,11 @@ const faq = [
     <h2 id="jak-liczymy">Jak liczymy</h2>
     <ul>
       <li>Ulga przysługuje za każdy miesiąc, w którym wykonujesz władzę rodzicielską, jesteś opiekunem prawnym dziecka, które z Tobą mieszka, albo rodziną zastępczą (art. 27f ust. 1–2 ustawy o PIT). Kwota w miesiącu zależy od liczby dzieci w tym miesiącu: dziecko urodzone w czerwcu podnosi ulgę od czerwca. Przepisy na {LATA_PIT.join(' i ')} r. są takie same.</li>
-      <li>Przy jednym dziecku sprawdzamy limit dochodów: {zl(LIMIT_MALZENSTWO)} łącznie z małżonkiem przy małżeństwie przez cały rok i u samotnego rodzica, {zl(LIMIT_INNY)} w innych przypadkach (art. 27f ust. 2 pkt 1). Dochody to dochody opodatkowane według skali, liniowo i z kapitałów, po odjęciu składek społecznych (ust. 2a). Dochód równy limitowi się w nim mieści.</li>
+      <li>Przy jednym dziecku sprawdzamy limit dochodów: {zl(LIMIT_MALZENSTWO)} łącznie z małżonkiem przy małżeństwie przez cały rok i u samotnego rodzica, {zl(LIMIT_INNY)} w innych przypadkach (art. 27f ust. 2 pkt 1). Dochody to dochody opodatkowane według skali, podatkiem liniowym i ze zbycia papierów wartościowych i udziałów (art. 30b), po odjęciu składek społecznych (ust. 2a); dywidend i odsetek się nie liczy. Dochód równy limitowi się w nim mieści. Za osobę w małżeństwie nie uważa się osoby w separacji ani tej, której małżonek jest pozbawiony praw rodzicielskich lub odbywa karę pozbawienia wolności (ust. 2d).</li>
       <li>Jeśli choć przez jeden dzień roku ulga przysługiwała na więcej niż jedno dziecko, limitu nie ma (ust. 2b). Kalkulator liczy pełne miesiące, więc gdy w tym samym miesiącu wpiszesz dwoje dzieci, przyjmujemy, że przez część tego miesiąca było ich dwoje. Ulgi za dni (1/30 kwoty miesięcznej przy zmianie opieki w trakcie miesiąca, ust. 3) nie liczymy.</li>
       <li>Twoja część to procent ulgi, który odliczasz; resztę odlicza drugi rodzic (ust. 4). Kwotę po podziale zaokrąglamy do grosza.</li>
       <li>Ulgę odliczasz od podatku według skali. Część, która się nie zmieści, wraca jako zwrot, najwyżej do sumy składek społecznych odliczonych od dochodu, składek zdrowotnych i składek społecznych od przychodów zwolnionych z art. 21 ust. 1 pkt 148 i 152–154; resztę tracisz (ust. 8–9). Małżonkowie przez cały rok liczą składki obojga (ust. 10).</li>
-      <li>Pełnoletnie dziecko uczące się do 25 lat liczy się, gdy jego dochody i przychody z ulgi dla młodych i na powrót nie przekroczyły dwunastokrotności renty socjalnej z grudnia roku podatkowego (art. 6 ust. 4e). Renta socjalna jest równa najniższej rencie z tytułu całkowitej niezdolności do pracy (art. 6 ust. 1 ustawy o rencie socjalnej): od 1 marca 2025 r. {zl(RENTA_SOCJALNA_GRUDZIEN[2025].kwota)} ({RENTA_SOCJALNA_GRUDZIEN[2025].publikator}), od 1 marca 2026 r. {zl(RENTA_SOCJALNA_GRUDZIEN[2026].kwota)} ({RENTA_SOCJALNA_GRUDZIEN[2026].publikator}), więc limit to {zl(limitDochoduDziecka(2025) ?? 0)} za 2025 r. i {zl(limitDochoduDziecka(2026) ?? 0)} za 2026 r.</li>
+      <li>Pełnoletnie dziecko uczące się do 25 lat liczy się, gdy jego dochody i przychody z ulgi dla młodych i na powrót nie przekroczyły dwunastokrotności renty socjalnej z grudnia roku podatkowego (art. 6 ust. 4e). Renta socjalna jest równa najniższej rencie z tytułu całkowitej niezdolności do pracy (art. 6 ust. 1 ustawy o rencie socjalnej): od 1 marca 2025 r. {zl(RENTA_SOCJALNA_GRUDZIEN[2025].kwota)} ({RENTA_SOCJALNA_GRUDZIEN[2025].publikator}), od 1 marca 2026 r. {zl(RENTA_SOCJALNA_GRUDZIEN[2026].kwota)} ({RENTA_SOCJALNA_GRUDZIEN[2026].publikator}), więc limit to {zl(limitDochoduDziecka(2025) ?? 0)} za 2025 r. i {zl(limitDochoduDziecka(2026) ?? 0)} za 2026 r. Ulga za pełnoletnie dziecko kończy się, gdy przestaje się uczyć albo kończy 25 lat (art. 6 ust. 4c pkt 3): wtedy ustaw odpowiedni miesiąc „do”.</li>
       <li>Ulga nie przysługuje od miesiąca, w którym dziecko trafiło na podstawie orzeczenia sądu do instytucji zapewniającej całodobowe utrzymanie albo zawarło związek małżeński (ust. 2c).</li>
     </ul>
     <p>
@@ -199,7 +199,7 @@ const faq = [
       const wiersze = [...form.querySelectorAll<HTMLElement>('[data-dziecko]')];
       wiersze.forEach((x, i) => (x.hidden = i >= liczba));
       const dzieci = wiersze.slice(0, liczba).map((_, i) => ({ od: Number(el(`od-${i}`).value), do: Number(el(`do-${i}`).value) }));
-      const czesc = kwota('czesc');
+      const czesc = el('czesc').value.trim() ? kwota('czesc') : Number.NaN;
       const dochod = kwota('dochod');
       const podatek = kwota('podatek');
       const skladki = kwota('skladki');
@@ -208,10 +208,12 @@ const faq = [
         zleMiesiace >= 0
           ? `Dziecko ${zleMiesiace + 1}: miesiąc „od” nie może być później niż „do”.`
           : !(czesc >= 0 && czesc <= 100)
-            ? 'Twoja część ulgi: liczba od 0 do 100.'
+            ? 'Twoja część ulgi: wpisz liczbę od 0 do 100.'
             : [dochod, podatek, skladki].some((x) => Number.isNaN(x))
               ? 'Wpisz kwoty w złotych, na przykład 90000 albo 1234,56. Puste pole liczymy jako 0.'
               : null;
+      el('czesc').setAttribute('aria-invalid', String(!(czesc >= 0 && czesc <= 100)));
+      for (const [n, x] of [['dochod', dochod], ['podatek', podatek], ['skladki', skladki]] as const) el(n).setAttribute('aria-invalid', String(Number.isNaN(x)));
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
       b.hidden = !blad;
       b.textContent = blad ? typografia(blad) : '';

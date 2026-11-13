@@ -61,6 +61,11 @@ export interface Pit11 {
   kilkaUmowNaraz?: boolean;
   /** Miejsce zamieszkania poza miejscowością zakładu pracy, bez dodatku za rozłąkę (art. 22 ust. 2 pkt 3 i 4). */
   dojazd?: boolean;
+  /**
+   * Koszty 50% z praw autorskich (art. 22 ust. 9 pkt 3) albo udokumentowane wyższe (art. 22 ust. 11): bierzemy koszty
+   * z PIT-11 bez limitu z art. 22 ust. 2 (płatnik pilnuje limitu 120 000 zł z ust. 9a).
+   */
+  kosztySzczegolne?: boolean;
 }
 
 /** Roczny limit kosztów z umowy o pracę (art. 22 ust. 2 pkt 1–4). */
@@ -71,7 +76,7 @@ const POLA = ['przychodPraca', 'kosztyPraca', 'przychodZlecenie', 'kosztyZleceni
 export function dochodOsoby(o: Pit11) {
   for (const k of POLA) if (!((o[k] ?? 0) >= 0)) throw new RangeError(`${k} nie może być ujemne`);
   const limit = limitKosztowPracy(o.kilkaUmowNaraz, o.dojazd);
-  const kosztyPraca = Math.min(o.kosztyPraca, limit, o.przychodPraca);
+  const kosztyPraca = Math.min(o.kosztyPraca, o.kosztySzczegolne ? Number.POSITIVE_INFINITY : limit, o.przychodPraca);
   const przychodZlecenie = o.przychodZlecenie ?? 0;
   const kosztyZlecenie = Math.min(o.kosztyZlecenie ?? 0, przychodZlecenie);
   const dochod = doGrosza(o.przychodPraca - kosztyPraca + przychodZlecenie - kosztyZlecenie);
@@ -88,8 +93,8 @@ export function dochodOsoby(o: Pit11) {
     poOdliczeniach: doGrosza(dochod - skladki - odliczenia),
     /** Dochody do limitu ulgi na jedno dziecko (art. 27f ust. 2a): dochód minus składki społeczne. */
     dochodDoLimitu: doGrosza(dochod - skladki),
-    /** Składki, do których wraca niewykorzystana ulga na dzieci (art. 27f ust. 9). */
-    skladkiDoZwrotu: doGrosza(skladki + (o.zdrowotna ?? 0) + (o.skladkiZwolnione ?? 0)),
+    /** Składki, do których wraca niewykorzystana ulga na dzieci: wszystkie podlegające odliczeniu, nie tylko odliczone (art. 27f ust. 9). */
+    skladkiDoZwrotu: doGrosza(o.skladki + (o.zdrowotna ?? 0) + (o.skladkiZwolnione ?? 0)),
   };
 }
 
@@ -144,20 +149,22 @@ export interface WynikPit {
 
 export function pitRoczny(d: DanePit): WynikPit {
   const malzenstwo = d.sytuacja === 'malzenstwo' || d.sytuacja === 'slub';
+  const calyRok = d.sytuacja === 'malzenstwo';
   const a = dochodOsoby(d.ty);
   const b = malzenstwo && d.malzonek ? dochodOsoby(d.malzonek) : null;
-  // Limit ulgi przy jednym dziecku: małżeństwo przez cały rok — dochody obojga (art. 27f ust. 2 pkt 1 lit. a).
-  const dochodLimitu = d.sytuacja === 'malzenstwo' ? doGrosza(a.dochodDoLimitu + (b?.dochodDoLimitu ?? 0)) : a.dochodDoLimitu;
-  // Zwrot ulgi: małżonkowie przez cały rok liczą składki obojga (art. 27f ust. 10).
-  const skladkiRodziny = d.sytuacja === 'malzenstwo' ? doGrosza(a.skladkiDoZwrotu + (b?.skladkiDoZwrotu ?? 0)) : a.skladkiDoZwrotu;
+  // Limit ulgi przy jednym dziecku: małżeństwo przez cały rok — dochody obojga (art. 27f ust. 2 pkt 1 lit. a);
+  // inaczej każdy rodzic ze swoim dochodem (lit. b).
+  const dochodRodziny = doGrosza(a.dochodDoLimitu + (b?.dochodDoLimitu ?? 0));
+  // Zwrot ulgi: małżonkowie przez cały rok liczą składki obojga (art. 27f ust. 10), inni tylko swoje.
+  const skladkiRodziny = doGrosza(a.skladkiDoZwrotu + (b?.skladkiDoZwrotu ?? 0));
   const czesc = d.dzieci.length ? d.czescUlgi : 0;
-  const ulga = (czescUlgi: number, podatek: number, skladki: number) =>
-    ulgaNaDzieci({ dzieci: d.dzieci, sytuacja: d.sytuacja, dochod: dochodLimitu, orzeczenie: d.orzeczenie, czesc: czescUlgi, podatek, skladki });
+  const ulga = (czescUlgi: number, podatek: number, skladki: number, dochod: number) =>
+    ulgaNaDzieci({ dzieci: d.dzieci, sytuacja: d.sytuacja, dochod, orzeczenie: d.orzeczenie, czesc: czescUlgi, podatek, skladki });
 
   const podstawaTy = doZlotego(a.poOdliczeniach);
   // Preferencja z art. 6 ust. 4c wymaga dziecka: bez wpisanego dziecka liczymy zwykłą skalę.
   const podatekTy = d.sytuacja === 'samotny' && d.dzieci.length ? dwukrotnosc(podstawaTy) : podatekSkala(podstawaTy);
-  const ulgaTy = ulga(czesc, podatekTy, skladkiRodziny);
+  const ulgaTy = ulga(czesc, podatekTy, calyRok ? skladkiRodziny : a.skladkiDoZwrotu, calyRok ? dochodRodziny : a.dochodDoLimitu);
   const ty = rozlicz(podstawaTy, podatekTy, d.ty.zaliczki, ulgaTy);
 
   let malzonek: Rozliczenie | null = null;
@@ -165,12 +172,23 @@ export function pitRoczny(d: DanePit): WynikPit {
   if (b && d.malzonek) {
     const podstawaM = doZlotego(b.poOdliczeniach);
     const podatekM = podatekSkala(podstawaM);
-    const skladkiM = d.sytuacja === 'malzenstwo' ? doGrosza(skladkiRodziny - ulgaTy.zwrot) : b.skladkiDoZwrotu;
-    malzonek = rozlicz(podstawaM, podatekM, d.malzonek.zaliczki, ulga(d.dzieci.length ? 100 - czesc : 0, podatekM, skladkiM));
+    // Przy łącznym limicie składek (ust. 10) małżonek dostaje to, co zostało po zwrocie u Ciebie.
+    const skladkiM = calyRok ? doGrosza(skladkiRodziny - ulgaTy.zwrot) : b.skladkiDoZwrotu;
+    malzonek = rozlicz(podstawaM, podatekM, d.malzonek.zaliczki, ulga(d.dzieci.length ? 100 - czesc : 0, podatekM, skladkiM, calyRok ? dochodRodziny : b.dochodDoLimitu));
     const podstawaW = doZlotego(a.poOdliczeniach + b.poOdliczeniach);
     const podatekW = dwukrotnosc(podstawaW);
-    const skladkiW = doGrosza(a.skladkiDoZwrotu + b.skladkiDoZwrotu);
-    wspolnie = rozlicz(podstawaW, podatekW, doGrosza(d.ty.zaliczki + d.malzonek.zaliczki), ulga(d.dzieci.length ? 100 : 0, podatekW, skladkiW));
+    // Ślub w trakcie roku: każdy rodzic ma własny limit dochodów i własne składki. Ulgę odlicza ten, któremu przysługuje;
+    // gdy obojgu, wybieramy rodzica z wyższymi składkami (wynik nie zależy od kolejności wpisania małżonków).
+    let dochodW = dochodRodziny;
+    let skladkiW = skladkiRodziny;
+    if (!calyRok) {
+      const kandydaci = [a, b].sort((x, y) => y.skladkiDoZwrotu - x.skladkiDoZwrotu);
+      const limitInny = ulga(100, 0, 0, 0).limit;
+      const uprawniony = kandydaci.find((x) => limitInny === null || x.dochodDoLimitu <= limitInny) ?? kandydaci[0];
+      dochodW = uprawniony.dochodDoLimitu;
+      skladkiW = uprawniony.skladkiDoZwrotu;
+    }
+    wspolnie = rozlicz(podstawaW, podatekW, doGrosza(d.ty.zaliczki + d.malzonek.zaliczki), ulga(d.dzieci.length ? 100 : 0, podatekW, skladkiW, dochodW));
   }
   const zyskWspolnego = wspolnie && malzonek ? doGrosza(saldo(wspolnie) - saldo(ty) - saldo(malzonek)) : null;
   return {
@@ -210,11 +228,15 @@ export function opisPit(d: DanePit, wspolnieWybrane: boolean): OpisPit {
   if (w.wspolnie && w.malzonek && w.zyskWspolnego !== null) {
     const osobno = doGrosza(saldo(w.ty) + saldo(w.malzonek));
     const zysk = w.zyskWspolnego;
-    porownanie = `Osobno: Ty ${opisSalda(saldo(w.ty)).toLowerCase()}, małżonek ${opisSalda(saldo(w.malzonek)).toLowerCase()}, razem ${zl(osobno)}. Wspólnie: ${opisSalda(saldo(w.wspolnie)).toLowerCase()}. ${
+    porownanie = `Osobno: Ty ${opisSalda(saldo(w.ty)).toLowerCase()}, małżonek ${opisSalda(saldo(w.malzonek)).toLowerCase()}, razem ${opisSalda(osobno).toLowerCase()}. Wspólnie: ${opisSalda(saldo(w.wspolnie)).toLowerCase()}. ${
       zysk > 0 ? `Rozliczenie wspólne daje rodzinie ${zl(zysk)} więcej.` : zysk < 0 ? `Rozliczenie osobno daje rodzinie ${zl(-zysk)} więcej.` : 'Oba sposoby dają tyle samo.'
     }`;
+    if (d.dzieci.length) porownanie += ` Osobno liczymy z Twoją częścią ulgi ${d.czescUlgi}%, resztę ma małżonek; inny podział może dać inny wynik.`;
   } else if ((d.sytuacja === 'malzenstwo' || d.sytuacja === 'slub') && !d.malzonek) {
     porownanie = 'Wpisz dane małżonka z jego PIT-11, a porównamy rozliczenie osobno i wspólne.';
+    if (d.sytuacja === 'malzenstwo' && d.dzieci.length === 1 && !d.orzeczenie) {
+      porownanie += ' Limit 112 000 zł przy jednym dziecku liczy się z dochodów obojga; bez danych małżonka przyjęliśmy jego dochód 0 zł.';
+    }
   }
   if (w.kosztyUciete.ty) uwagi.push(`Koszty z umowy o pracę w zeznaniu nie mogą przekroczyć ${zl(w.kosztyUciete.limitTy)} za rok, więc liczymy tyle (art. 22 ust. 2).`);
   if (w.kosztyUciete.malzonek) uwagi.push(`Koszty małżonka z umowy o pracę ucięliśmy do limitu ${zl(w.kosztyUciete.limitMalzonek)} (art. 22 ust. 2).`);
@@ -222,7 +244,8 @@ export function opisPit(d: DanePit, wspolnieWybrane: boolean): OpisPit {
   if (d.sytuacja === 'samotny' && d.dzieci.length && r === w.ty) uwagi.push('Jako osoba samotnie wychowująca dziecko płacisz dwukrotność podatku od połowy dochodu (art. 6 ust. 4c–4d).');
   if (r.ulga.ponadLimit && r.ulga.limit !== null) uwagi.push(`Ulga na jedno dziecko nie przysługuje: dochody przekraczają ${zl(r.ulga.limit)} (art. 27f ust. 2 pkt 1).`);
   if (r.ulga.przepada > 0) uwagi.push(`${zl(r.ulga.przepada)} ulgi na dzieci przepada: zwrot nie może przekroczyć sumy składek (art. 27f ust. 9).`);
-  if (r.podstawa > PROG_SKALI || (r === w.wspolnie && r.podstawa / 2 > PROG_SKALI)) uwagi.push('Część dochodu jest powyżej progu 120 000 zł i ma podatek 32%.');
+  const polowa = r === w.wspolnie || (r === w.ty && d.sytuacja === 'samotny' && d.dzieci.length > 0);
+  if ((polowa ? r.podstawa / 2 : r.podstawa) > PROG_SKALI) uwagi.push('Część dochodu jest powyżej progu 120 000 zł i ma podatek 32%.');
   return {
     wynik: opisSalda(s),
     opis,

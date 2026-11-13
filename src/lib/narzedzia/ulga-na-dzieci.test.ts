@@ -66,6 +66,9 @@ describe('ulga na dzieci (art. 27f ustawy o PIT)', () => {
     expect(opisUlgi({ ...baza, dzieci: [caly], dochod: 60_000 }, 2025).opis).toMatch(/^bez ulgi/);
     expect(opisUlgi({ ...baza, dzieci: [caly, caly], podatek: 0, skladki: 5000 }, 2026).uwagi.join(' ')).toMatch(/23\s741,88/);
     expect(opisUlgi(baza, 2025).opis).toBe('dodaj dziecko, na które przysługuje ulga');
+    const osobno = opisUlgi({ ...baza, dzieci: [{ od: 1, do: 3 }, { od: 10, do: 12 }], dochod: 60_000 }, 2025);
+    expect(osobno.uwagi[0]).toContain('nie były z Tobą w tym samym miesiącu');
+    expect(opisUlgi({ ...baza, dzieci: [caly], podatek: 0 }, 2025).uwagi.join(' ')).toContain('Wpisz składki');
   });
 });
 

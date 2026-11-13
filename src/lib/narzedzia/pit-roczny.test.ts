@@ -75,6 +75,36 @@ describe('PIT-37 wspólnie z małżonkiem (art. 6 ust. 2)', () => {
   });
 });
 
+describe('poprawki po weryfikacji', () => {
+  const os = (przychod: number): Pit11 => ({ przychodPraca: przychod, kosztyPraca: 0, skladki: 0, zdrowotna: 1000, zaliczki: 0 });
+  it('ślub w trakcie roku: każdy rodzic liczy swój limit 56 000 zł, wspólne niezależne od kolejności', () => {
+    const r1 = pitRoczny(dane({ ty: os(40_000), malzonek: os(100_000), sytuacja: 'slub', dzieci: [caly], czescUlgi: 0 }));
+    expect(r1.malzonek!.ulga.ponadLimit).toBe(true);
+    const r2 = pitRoczny(dane({ ty: os(100_000), malzonek: os(40_000), sytuacja: 'slub', dzieci: [caly], czescUlgi: 0 }));
+    expect(r2.malzonek!.ulga.przysluguje).toBe(1112.04);
+    expect(r1.wspolnie!.ulga.przysluguje).toBe(1112.04);
+    expect(r2.wspolnie!.ulga.przysluguje).toBe(1112.04);
+    expect(saldo(r1.wspolnie!)).toBe(saldo(r2.wspolnie!));
+  });
+  it('koszty autorskie 50% bez limitu 3000 zł', () => {
+    const r = dochodOsoby({ przychodPraca: 60_000, kosztyPraca: 27_996, skladki: 0, zaliczki: 0, kosztySzczegolne: true });
+    expect(r).toMatchObject({ kosztyPraca: 27_996, kosztyUciete: false });
+  });
+  it('uwaga o 32% tylko, gdy stawka 32% rzeczywiście działa', () => {
+    const ty: Pit11 = { przychodPraca: 150_000, kosztyPraca: 3000, skladki: 20_565, zaliczki: 17_000 };
+    const malzonek = os(0);
+    expect(opisPit(dane({ ty, malzonek, sytuacja: 'malzenstwo' }), true).uwagi.join(' ')).not.toContain('32%');
+    expect(opisPit(dane({ ty, malzonek, sytuacja: 'malzenstwo' }), false).uwagi.join(' ')).toContain('32%');
+  });
+  it('porównanie: suma osobno jako dopłata, nie liczba ujemna', () => {
+    const o = opisPit(dane({ malzonek: os(0), sytuacja: 'malzenstwo' }), false);
+    expect(o.porownanie).toMatch(/razem dopłata 2,00\szł/);
+  });
+  it('małżeństwo bez danych małżonka i jedno dziecko: ostrzeżenie o limicie', () => {
+    expect(opisPit(dane({ sytuacja: 'malzenstwo', dzieci: [caly] }), false).porownanie).toContain('przyjęliśmy jego dochód 0 zł');
+  });
+});
+
 describe('błędne dane', () => {
   it('ujemne kwoty', () => {
     expect(() => pitRoczny(dane({ ty: { ...minimalna, zaliczki: -1 } }))).toThrow(RangeError);

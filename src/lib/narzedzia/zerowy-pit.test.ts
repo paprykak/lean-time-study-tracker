@@ -61,6 +61,11 @@ describe('opis i błędne dane', () => {
     expect(opisZwolnienia(d({ dataUrodzenia: '1999-12-31' })).opis).toBe('26 lat skończone 31 grudnia 2025 r.');
     expect(opisZwolnienia(d({ zwolnienie: 'powrot', rokPrzeniesienia: 2024 })).okres).toBe('2024–2027');
   });
+  it('limit wykorzystany przez inną ulgę; urodziny 1 stycznia: jedna data', () => {
+    expect(opisZwolnienia(d({ dataUrodzenia: '2003-01-01', inneZwolnione: 85_528 }))).toMatchObject({ stan: 'Limit wykorzystany', opis: expect.stringContaining('cały limit') });
+    expect(opisZwolnienia(d({ dataUrodzenia: '2000-01-01' })).okres).toBe('1 stycznia 2026 r.');
+    expect(opisZwolnienia(d({ dataUrodzenia: '1990-01-01' })).limit).toBe('—');
+  });
   it('brak daty, ujemne przychody', () => {
     expect(() => zwolnienie(d({}))).toThrow(RangeError);
     expect(() => zwolnienie(d({ dataUrodzenia: '2000-01-01', przychody: -1 }))).toThrow(RangeError);

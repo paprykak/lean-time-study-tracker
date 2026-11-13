@@ -11,7 +11,11 @@
 // - limit nie dotyczy jednego dziecka z orzeczeniem albo decyzją z art. 26 ust. 7d (ust. 2e), a jeśli choć przez jeden dzień
 //   roku było więcej niż jedno dziecko, odliczenie przysługuje według pkt 2 albo 3 bez limitu (ust. 2b);
 // - kwotę dzielą rodzice w dowolnej proporcji, bez porozumienia po równo albo w całości u rodzica, z którym dziecko mieszka
-//   (ust. 4); przy pieczy części miesiąca 1/30 za dzień (ust. 3: nie liczymy dni, tylko pełne miesiące);
+//   (ust. 4; po równo bez porozumienia tylko przy pieczy naprzemiennej z rozstrzygnięcia sądu po rozwodzie albo w separacji
+//   i gdy dziecko mieszka z obojgiem rodziców); przy pieczy części miesiąca 1/30 za dzień (ust. 3: liczymy pełne miesiące);
+// - za małżonka nie uważa się osoby w separacji ani tej, której małżonek jest pozbawiony praw rodzicielskich albo odbywa
+//   karę pozbawienia wolności (ust. 2d); limit 112 000 zł dla samotnego rodzica dotyczy samotnego wychowywania małoletniego
+//   dziecka (ust. 2 pkt 1 lit. b w zw. z art. 6 ust. 4c, 4f: nie przy wychowywaniu z drugim rodzicem);
 // - pełnoletnie dzieci (ust. 6): z zasiłkiem pielęgnacyjnym albo rentą socjalną albo uczące się do 25 lat, jeśli ich dochody
 //   (art. 27 i 30b, poza rentą rodzinną) i przychody z art. 21 ust. 1 pkt 148 i 152 nie przekroczyły dwunastokrotności renty
 //   socjalnej z grudnia roku podatkowego (art. 6 ust. 4e); renta socjalna = 100% najniższej renty z tytułu całkowitej
@@ -138,7 +142,7 @@ export interface OpisUlgi {
 const NAZWY_LIMITU: Record<Sytuacja, string> = {
   malzenstwo: 'Twoje i małżonka razem',
   samotny: 'przy samotnym wychowywaniu dziecka',
-  slub: 'Twoje; małżeństwo przez część roku liczy się jak brak małżeństwa',
+  slub: 'Twoje; przy małżeństwie przez część roku każdy rodzic liczy swoje',
   inna: 'Twoje',
 };
 
@@ -166,13 +170,25 @@ export function opisUlgi(d: DaneUlgi, rok: number): OpisUlgi {
   } else {
     const czesc = d.czesc === 100 ? '' : `, Twoja część ${d.czesc}%`;
     wynik.opis = `za ${odmiana(miesiecy, ['miesiąc', 'miesiące', 'miesięcy'])} z ulgą${czesc}`;
-    if (r.limit !== null) uwagi.push(`Przy jednym dziecku dochody (${NAZWY_LIMITU[d.sytuacja]}) nie mogą przekroczyć ${zl(r.limit)}; Twoje mieszczą się w limicie.`);
+    if (r.limit !== null) uwagi.push(`Przy jednym dziecku dochody (${NAZWY_LIMITU[d.sytuacja]}) nie mogą przekroczyć ${zl(r.limit)}; wpisane dochody mieszczą się w limicie.`);
+  }
+  if (d.dzieci.length > 1 && r.miesiace.every((n) => n <= 1)) {
+    uwagi.unshift('Dzieci nie były z Tobą w tym samym miesiącu, więc w każdym miesiącu ulga dotyczy jednego dziecka i liczy się limit dochodów jak przy jednym dziecku (art. 27f ust. 2 pkt 1 i ust. 2b).');
+  }
+  if (d.sytuacja === 'samotny') {
+    uwagi.push('Limit 112 000 zł dla samotnego rodzica dotyczy osoby niezamężnej albo nieżonatej, rozwiedzionej, owdowiałej, w separacji (albo której małżonek jest pozbawiony praw rodzicielskich lub w więzieniu), samotnie wychowującej małoletnie dziecko; nie dotyczy wychowywania dziecka razem z drugim rodzicem, także w pieczy naprzemiennej (art. 6 ust. 4c i 4f).');
   }
   if (r.zwrot > 0) uwagi.push(`Podatek jest niższy niż ulga, więc urząd skarbowy zwróci ${zl(r.zwrot)} z niewykorzystanej części (do wysokości składek, art. 27f ust. 8–9).`);
-  if (r.przepada > 0) uwagi.push(`${zl(r.przepada)} ulgi przepada: zwrot nie może przekroczyć sumy składek.`);
+  if (r.przepada > 0) {
+    uwagi.push(
+      d.skladki > 0
+        ? `${zl(r.przepada)} ulgi przepada: zwrot nie może przekroczyć sumy składek.`
+        : 'Wpisz składki społeczne i zdrowotne z PIT-11: bez nich nie policzymy zwrotu ulgi ponad podatek.',
+    );
+  }
   const limitDziecka = limitDochoduDziecka(rok);
   if (limitDziecka !== null) {
-    uwagi.push(`Pełnoletnie uczące się dziecko do 25 lat liczy się, gdy jego dochody w ${rok} r. nie przekroczyły ${zl(limitDziecka)} (12 × renta socjalna z grudnia, ${RENTA_SOCJALNA_GRUDZIEN[rok].publikator}).`);
+    uwagi.push(`Pełnoletnie dziecko liczy się, gdy uczy się i nie skończyło 25 lat, a jego dochody w ${rok} r. nie przekroczyły ${zl(limitDziecka)} (12 × renta socjalna z grudnia, ${RENTA_SOCJALNA_GRUDZIEN[rok].publikator}).`);
   }
   return wynik;
 }

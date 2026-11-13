@@ -26,7 +26,7 @@ const faq = [
   },
   {
     pytanie: 'Jakie przychody są zwolnione?',
-    odpowiedz: 'Przychody z umowy o pracę, umowy zlecenia i zasiłek macierzyński. Ulga dla młodych obejmuje też praktyki absolwenckie i staż uczniowski, a ulgi na powrót, dla rodzin 4+ i dla seniorów także działalność na skali, podatku liniowym albo ryczałcie. Nie są zwolnione na przykład umowy o dzieło, najem ani emerytura (art. 21 ust. 1 pkt 148 i 152–154).',
+    odpowiedz: 'Przychody z umowy o pracę, umowy zlecenia zawartej z firmą albo instytucją (art. 13 pkt 8) i zasiłek macierzyński. Ulga dla młodych obejmuje też praktyki absolwenckie i staż uczniowski, a ulgi na powrót, dla rodzin 4+ i dla seniorów także działalność na skali, podatku liniowym albo ryczałcie. Nie są zwolnione na przykład umowy o dzieło, najem ani emerytura (art. 21 ust. 1 pkt 148 i 152–154).',
   },
   {
     pytanie: 'Kto może skorzystać z ulgi dla pracujących seniorów?',
@@ -34,7 +34,7 @@ const faq = [
   },
   {
     pytanie: 'Czy przy zerowym PIT trzeba złożyć zeznanie?',
-    odpowiedz: 'Zeznanie składasz, gdy masz też przychody opodatkowane. Przy uldze dla rodzin 4+ składasz w terminie zeznania informację o dzieciach z numerami PESEL, chyba że podasz je w zeznaniu (art. 21 ust. 46 i 48). Składki społeczne od przychodu zwolnionego nie zmniejszają dochodu (art. 26 ust. 1 pkt 2), ale zwiększają kwotę, do której urząd zwraca niewykorzystaną ulgę na dzieci (art. 27f ust. 9).',
+    odpowiedz: 'Zeznanie składasz, gdy masz też przychody opodatkowane, a także gdy chcesz odzyskać zaliczki pobrane mimo prawa do ulgi albo skorzystać z ulgi na dzieci: jej niewykorzystana część wraca do wysokości składek (objaśnienia MF z 30 grudnia 2022 r.). Przy uldze dla rodzin 4+ składasz w terminie zeznania informację o dzieciach z numerami PESEL, chyba że podasz je w zeznaniu (art. 21 ust. 46 i 48). Składki społeczne od przychodu zwolnionego nie zmniejszają dochodu (art. 26 ust. 1 pkt 2), ale zwiększają kwotę, do której urząd zwraca niewykorzystaną ulgę na dzieci (art. 27f ust. 9).',
   },
 ];
 ---
@@ -103,12 +103,12 @@ const faq = [
         <div>
           <label for="z-przychody" class="etykieta-pola">Przychody w okresie ulgi (zł)</label>
           <input id="z-przychody" name="przychody" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="60000" aria-describedby="z-przychody-opis z-blad" />
-          <p id="z-przychody-opis" class="meta mt-1">Brutto, z pracy, zlecenia, zasiłku macierzyńskiego.</p>
+          <p id="z-przychody-opis" class="meta mt-1">Brutto: praca, zlecenie, zasiłek macierzyński, przy 3 ulgach też firma.</p>
         </div>
         <div>
           <label for="z-inne" class="etykieta-pola">Zwolnione z innej ulgi (zł)</label>
           <input id="z-inne" name="inne" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="" aria-describedby="z-inne-opis z-blad" />
-          <p id="z-inne-opis" class="meta mt-1">W tym roku, z jednej z pozostałych trzech ulg.</p>
+          <p id="z-inne-opis" class="meta mt-1">W tym roku, z pozostałych ulg z tej listy.</p>
         </div>
       </div>
       <p id="z-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
@@ -140,8 +140,8 @@ const faq = [
         <tbody>
           <tr><th scope="row">Dla młodych (pkt 148)</th><td>Osoby przed ukończeniem 26 lat</td><td>Do dnia 26. urodzin włącznie</td></tr>
           <tr><th scope="row">Na powrót (pkt 152)</th><td>Osoby, które przeniosły miejsce zamieszkania do Polski po 2021 r.</td><td>4 kolejne lata od roku przeprowadzki albo od następnego</td></tr>
-          <tr><th scope="row">Rodziny 4+ (pkt 153)</th><td>Rodzice i rodziny zastępcze co najmniej czworga dzieci</td><td>Każdy rok, w którym warunek jest spełniony</td></tr>
-          <tr><th scope="row">Seniorzy (pkt 154)</th><td>Kobiety po 60 i mężczyźni po 65 latach bez emerytury i renty rodzinnej, ze składkami społecznymi</td><td>Dopóki nie pobierają emerytury</td></tr>
+          <tr><th scope="row">Rodziny 4+ (pkt 153)</th><td>Rodzice, opiekunowie prawni i rodziny zastępcze co najmniej czworga dzieci</td><td>Każdy rok, w którym warunek jest spełniony</td></tr>
+          <tr><th scope="row">Seniorzy (pkt 154)</th><td>Kobiety po 60 i mężczyźni po 65 latach ze składkami społecznymi, którzy mimo prawa nie pobierają emerytury, renty rodzinnej ani uposażenia w stanie spoczynku</td><td>Dopóki nie pobierają tych świadczeń</td></tr>
         </tbody>
       </table>
     </div>
@@ -150,8 +150,8 @@ const faq = [
     <ul>
       <li>Ulga dla młodych obejmuje przychody otrzymane do ukończenia 26 lat (art. 21 ust. 1 pkt 148 ustawy o PIT). Według objaśnień Ministra Finansów z 30 grudnia 2022 r. wiek liczy się jak termin w latach z art. 12 § 4 Ordynacji podatkowej, więc ulga obejmuje dzień 26. urodzin, a osoba urodzona 29 lutego kończy 26 lat 28 lutego w roku bez 29 lutego. Data nie przesuwa się na dzień roboczy.</li>
       <li>Przy uldze dla seniorów przepis mówi o przychodach „po ukończeniu” 60 albo 65 lat (pkt 154). Liczymy według tej samej zasady co przy wieku 26 lat, więc ulga zaczyna się w dniu po urodzinach. Ministerstwo Finansów w komunikacie dla mediów podaje, że zwolnione są też przychody z dnia urodzin; komunikat nie ma mocy objaśnień, więc jako wariant bezpieczny pokazujemy dzień następny.</li>
-      <li>Ulga na powrót trwa 4 kolejne lata od roku przeprowadzki albo od roku następnego, do wyboru (pkt 152), i dotyczy osób, które przeniosły miejsce zamieszkania do Polski po 31 grudnia 2021 r. (art. 53 ustawy z 29 października 2021 r.). Warunki z art. 21 ust. 43: przez 3 lata przed rokiem przeprowadzki i do jej dnia bez miejsca zamieszkania w Polsce; obywatelstwo polskie, innego państwa UE, EOG lub Szwajcarii albo Karta Polaka, albo zamieszkanie w krajach wymienionych w przepisie; certyfikat rezydencji; ulga po raz pierwszy. Spełnienia warunków nie sprawdzamy.</li>
-      <li>Ulga dla rodzin 4+ wymaga, by w roku podatkowym podatnik wykonywał władzę rodzicielską, był opiekunem prawnym albo rodziną zastępczą co najmniej czworga dzieci; liczą się dzieci małoletnie, pełnoletnie z zasiłkiem pielęgnacyjnym albo rentą socjalną i uczące się do 25 lat z dochodem w limicie (pkt 153 w zw. z art. 6 ust. 4c i 4e), bez dzieci umieszczonych przez sąd w instytucji całodobowej (ust. 45). Przepis nie mówi, przez jaką część roku dzieci ma być czworo; liczymy cały rok, w którym warunek był spełniony.</li>
+      <li>Ulga na powrót trwa 4 kolejne lata od roku przeprowadzki albo od roku następnego, do wyboru (pkt 152), i dotyczy osób, które przeniosły miejsce zamieszkania do Polski po 31 grudnia 2021 r. (art. 53 ustawy z 29 października 2021 r.). Warunki z art. 21 ust. 43: po przeprowadzce nieograniczony obowiązek podatkowy w Polsce; przez 3 lata przed rokiem przeprowadzki i do jej dnia bez miejsca zamieszkania w Polsce; obywatelstwo polskie, innego państwa UE, EOG lub Szwajcarii albo Karta Polaka, albo zamieszkanie w krajach wymienionych w przepisie lub wcześniej co najmniej 5 lat w Polsce; certyfikat rezydencji lub inny dowód miejsca zamieszkania; ulga po raz pierwszy. Spełnienia warunków nie sprawdzamy.</li>
+      <li>Ulga dla rodzin 4+ wymaga, by w roku podatkowym podatnik wykonywał władzę rodzicielską, był opiekunem prawnym albo rodziną zastępczą co najmniej czworga dzieci; liczą się dzieci małoletnie, pełnoletnie z zasiłkiem pielęgnacyjnym albo rentą socjalną i uczące się do 25 lat z dochodem w limicie (pkt 153 w zw. z art. 6 ust. 4c i 4e), bez dzieci umieszczonych przez sąd w instytucji całodobowej (ust. 45) i bez dzieci rozliczających się podatkiem liniowym albo ryczałtem (art. 6 ust. 8). Przepis nie mówi, przez jaką część roku dzieci ma być czworo; liczymy cały rok, w którym warunek był spełniony. To odczytanie korzystne dla podatnika, więc gdy czworo dzieci było tylko przez część roku, sprawdź je w urzędzie skarbowym.</li>
       <li>Do wspólnego limitu {limit} (ust. 44) nie wliczają się przychody z ryczałtem, zwolnione na innej podstawie i z zaniechanym poborem podatku (ust. 39). Gdy w tym samym roku masz dwie z tych ulg, na przykład najpierw dla młodych, a potem dla rodzin 4+, wpisz przychody zwolnione z pierwszej w polu „Zwolnione z innej ulgi”.</li>
       <li>Przy zwolnieniu koszty uzyskania przychodów z pracy i zlecenia odlicza się najwyżej do części opodatkowanej (art. 22 ust. 3b), a składek społecznych od przychodu zwolnionego nie odlicza się od dochodu (art. 26 ust. 1 pkt 2).</li>
       <li>Pracodawca stosuje ulgę dla młodych w zaliczkach sam, chyba że złożysz wniosek o jej niestosowanie (art. 32 ust. 6); ZUS od zasiłku macierzyńskiego na Twój wniosek (art. 34 ust. 4b). Ulgi na powrót, dla rodzin 4+ i dla seniorów płatnik stosuje po Twoim oświadczeniu, przy uldze na powrót z rokiem początku i końca (art. 31a ust. 8). Przy kilku płatnikach limit pilnujesz sam: przekroczenie oznacza dopłatę w zeznaniu.</li>
@@ -180,6 +180,9 @@ const faq = [
       w(k).textContent = typografia(tekst);
     };
     ustawDzisiejszeWartosci(form);
+    // Domyślny rok przeprowadzki z budowania strony: przestawiamy na zeszły rok według dzisiejszej daty.
+    const przeniesienie = el('przeniesienie');
+    if (przeniesienie.value === przeniesienie.defaultValue) przeniesienie.value = String(Number(el('rok').value) - 1);
     const kwota = (n: string) => {
       const t = el(n).value.trim();
       if (!t) return 0;
@@ -201,6 +204,10 @@ const faq = [
             : Number.isNaN(przychody) || Number.isNaN(inne)
               ? 'Wpisz przychody w złotych, na przykład 60000. Puste pole liczymy jako 0.'
               : null;
+      el('urodzenie').setAttribute('aria-invalid', String(blad === 'Wpisz datę urodzenia.'));
+      el('przeniesienie').setAttribute('aria-invalid', String(ulga === 'powrot' && blad?.startsWith('Wpisz rok') === true));
+      el('przychody').setAttribute('aria-invalid', String(Number.isNaN(przychody)));
+      el('inne').setAttribute('aria-invalid', String(Number.isNaN(inne)));
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
       b.hidden = !blad;
       b.textContent = blad ? typografia(blad) : '';

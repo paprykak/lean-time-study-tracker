@@ -61,7 +61,7 @@ export interface DaneZwolnienia {
   inneZwolnione?: number;
 }
 
-export type StanZwolnienia = 'caly-rok' | 'czesc-roku' | 'nie';
+export type StanZwolnienia = 'caly-rok' | 'czesc-roku' | 'nie' | 'limit';
 
 export interface WynikZwolnienia {
   stan: StanZwolnienia;
@@ -111,6 +111,7 @@ export function zwolnienie(d: DaneZwolnienia): WynikZwolnienia {
   } else if ((d.dzieci ?? 0) < 4) {
     return nie('ulga wymaga co najmniej czworga dzieci');
   }
+  if (limit === 0) return { ...nie('inna ulga wykorzystała cały limit 85 528 zł'), lata, stan: 'limit' };
   const zwolnione = Math.min(d.przychody, limit);
   return {
     stan: od === poczatek && do_ === koniec ? 'caly-rok' : 'czesc-roku',
@@ -134,10 +135,10 @@ export interface OpisZwolnienia {
 }
 
 const KTO: Record<Zwolnienie, string> = {
-  mlodzi: 'Przychody z pracy, zlecenia, praktyk absolwenckich, stażu uczniowskiego i zasiłku macierzyńskiego (art. 21 ust. 1 pkt 148).',
-  powrot: 'Przychody z pracy, zlecenia, działalności (skala, liniowy, ryczałt) i zasiłku macierzyńskiego (art. 21 ust. 1 pkt 152).',
-  rodzina4: 'Przychody z pracy, zlecenia, działalności (skala, liniowy, ryczałt) i zasiłku macierzyńskiego (art. 21 ust. 1 pkt 153).',
-  senior: 'Przychody z pracy, zlecenia, działalności (skala, liniowy, ryczałt) i zasiłku macierzyńskiego, od których płacisz składki społeczne (art. 21 ust. 1 pkt 154).',
+  mlodzi: 'Przychody z pracy, zlecenia od firmy (art. 13 pkt 8), praktyk absolwenckich, stażu uczniowskiego i zasiłku macierzyńskiego (art. 21 ust. 1 pkt 148).',
+  powrot: 'Przychody z pracy, zlecenia od firmy (art. 13 pkt 8), działalności (skala, liniowy, ryczałt) i zasiłku macierzyńskiego (art. 21 ust. 1 pkt 152).',
+  rodzina4: 'Przychody z pracy, zlecenia od firmy (art. 13 pkt 8), działalności (skala, liniowy, ryczałt) i zasiłku macierzyńskiego (art. 21 ust. 1 pkt 153).',
+  senior: 'Przychody z pracy, zlecenia od firmy (art. 13 pkt 8), działalności (skala, liniowy, ryczałt) i zasiłku macierzyńskiego, od których płacisz składki społeczne, gdy mimo prawa nie pobierasz emerytury, renty rodzinnej ani uposażenia w stanie spoczynku (art. 21 ust. 1 pkt 154).',
 };
 
 /** Teksty wyniku: te same w HTML ze strony i w skrypcie przeglądarki. */
@@ -153,15 +154,16 @@ export function opisZwolnienia(d: DaneZwolnienia): OpisZwolnienia {
     opodatkowane: zl(r.opodatkowane),
     uwagi,
   };
-  if (r.stan === 'nie') {
-    o.stan = 'Nie przysługuje';
+  if (r.stan === 'nie' || r.stan === 'limit') {
+    o.stan = r.stan === 'limit' ? 'Limit wykorzystany' : 'Nie przysługuje';
     o.opis = r.powod ?? '';
+    if (r.stan === 'nie') o.limit = '—';
     if (r.lata) o.okres = `${r.lata[0]}–${r.lata[1]}`;
     return o;
   }
   o.stan = r.stan === 'caly-rok' ? `Cały ${d.rok} r.` : r.od !== `${d.rok}-01-01` ? `Od ${dataPoPolsku(r.od!)}` : `Do ${dataPoPolsku(r.do!)}`;
-  o.okres = r.lata ? `${r.lata[0]}–${r.lata[1]}` : `${dataPoPolsku(r.od!)}–${dataPoPolsku(r.do!)}`;
-  o.opis = r.opodatkowane > 0 ? `ponad limit ${zl(r.opodatkowane)} przychodu jest opodatkowane według skali` : 'cały wpisany przychód mieści się w limicie';
+  o.okres = r.lata ? `${r.lata[0]}–${r.lata[1]}` : r.od === r.do ? dataPoPolsku(r.od!) : `${dataPoPolsku(r.od!)}–${dataPoPolsku(r.do!)}`;
+  o.opis = r.opodatkowane > 0 ? `${zl(r.opodatkowane)} ponad limit podlega podatkowi według skali` : 'cały wpisany przychód mieści się w limicie';
   if (d.zwolnienie === 'mlodzi' && r.stan === 'czesc-roku') {
     uwagi.push('Liczy się dzień otrzymania pieniędzy: pensja za pracę przed urodzinami wypłacona po nich nie jest już zwolniona (objaśnienia MF z 30 grudnia 2022 r.).');
   }
@@ -169,9 +171,9 @@ export function opisZwolnienia(d: DaneZwolnienia): OpisZwolnienia {
     uwagi.push('Przepis mówi „po ukończeniu” 60 albo 65 lat, więc liczymy od dnia po urodzinach. Ministerstwo Finansów w komunikacie podaje, że zwolnione są też przychody z dnia urodzin.');
   }
   if (d.zwolnienie === 'rodzina4') {
-    uwagi.push('Przepis wymaga czworga dzieci w roku podatkowym i nie mówi, przez jaką część roku. Informację o dzieciach składasz w terminie zeznania (PIT/DZ), chyba że podasz je w zeznaniu (art. 21 ust. 46 i 48).');
+    uwagi.push('Przepis wymaga czworga dzieci w roku podatkowym i nie mówi, przez jaką część roku; gdy czworo dzieci było tylko przez część roku, sprawdź stanowisko urzędu skarbowego. Informację o dzieciach składasz w terminie zeznania (PIT/DZ), chyba że podasz je w zeznaniu (art. 21 ust. 46 i 48).');
   }
-  if (d.zwolnienie === 'powrot') uwagi.push('Warunki: przez 3 lata przed rokiem przeprowadzki i do jej dnia bez miejsca zamieszkania w Polsce, obywatelstwo polskie albo innego państwa UE, EOG lub Szwajcarii, Karta Polaka albo zamieszkanie w krajach wymienionych w przepisie, certyfikat rezydencji, ulga wykorzystana pierwszy raz (art. 21 ust. 43).');
+  if (d.zwolnienie === 'powrot') uwagi.push('Warunki (art. 21 ust. 43): po przeprowadzce nieograniczony obowiązek podatkowy w Polsce; przez 3 lata przed rokiem przeprowadzki i do jej dnia bez miejsca zamieszkania w Polsce; obywatelstwo polskie albo innego państwa UE, EOG lub Szwajcarii, Karta Polaka, albo zamieszkanie w krajach wymienionych w przepisie lub wcześniej co najmniej 5 lat w Polsce; certyfikat rezydencji lub inny dowód; ulga po raz pierwszy.');
   uwagi.push('Limit 85 528 zł jest wspólny dla ulgi dla młodych, na powrót, dla rodzin 4+ i dla seniorów (art. 21 ust. 44).');
   return o;
 }
