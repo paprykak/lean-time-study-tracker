@@ -36,7 +36,7 @@
 //    sanitarnego (to nie jest punkt art. 39a ust. 3).
 import { czyRoboczy } from './dni-robocze';
 import { swieta } from './czas-pracy';
-import { dataPoPolsku, dniMiedzy, dodajDni, dodajLata, poprawnaData } from './terminy';
+import { dataPoPolsku, dniMiedzy, dodajDni, dodajLata, dodajMiesiace, poprawnaData } from './terminy';
 import type { Wydarzenie } from './kalendarz-ics';
 
 /** Wpis na 5 lat (art. 15 ust. 4 ukp). */
@@ -82,6 +82,8 @@ export interface WynikKodu {
     strata: number;
     /** Dni bez ważnego kodu między końcem a nowym świadectwem (0, gdy szkolenie przed końcem). */
     przerwa: number;
+    /** Wpisane orzeczenie kończy się przed dniem szkolenia: przed wpisem potrzebne nowe (art. 15 ust. 2 ukp). */
+    noweOrzeczenie: boolean;
   };
   wydarzenia: Wydarzenie[];
 }
@@ -98,6 +100,9 @@ export function ostatniRoboczy(data: string): string {
 
 /** Najpóźniejszy dzień ukończenia szkolenia: przeddzień ostatniego dnia roboczego ważności (§ 21 ust. 5). */
 export const szkolenieNajpozniej = (waznyDo: string) => dodajDni(ostatniRoboczy(waznyDo), -1);
+
+/** Przykład startowy formularza liczony od dzisiejszej daty: świadectwo sprzed 4,5 roku, szkolenie za 60 dni. */
+export const przykladStartowy = (dzis: string) => ({ data: dodajMiesiace(dzis, -54), szkolenie: dodajDni(dzis, 60) });
 
 export function kod95({ tryb, data, lekarskieDo, psychologiczneDo, szkolenie, dzis }: DaneKodu): WynikKodu {
   for (const d of [data, dzis, lekarskieDo, psychologiczneDo, szkolenie]) {
@@ -122,17 +127,27 @@ export function kod95({ tryb, data, lekarskieDo, psychologiczneDo, szkolenie, dz
 
   let plan: WynikKodu['plan'] = null;
   if (szkolenie) {
+    if (tryb === 'swiadectwo' && szkolenie < data) throw new RangeError('Szkolenie kończy się przed wydaniem obecnego świadectwa.');
     const piec = dodajLata(szkolenie, LATA_WPISU);
-    const nowyKoniec = najwczesniejsza([piec, lekarskieDo, psychologiczneDo]);
+    // Orzeczenie, które wygaśnie przed dniem szkolenia, nie ogranicza nowego wpisu: do wpisu potrzebne będzie nowe.
+    const aktualne = [lekarskieDo, psychologiczneDo].filter((d): d is string => !!d && d >= szkolenie);
+    const nowyKoniec = najwczesniejsza([piec, ...aktualne]);
     const roznica = dniMiedzy(szkolenie, waznyDo);
-    plan = { nowyKoniec, nowyOgraniczony: nowyKoniec !== piec, strata: Math.max(0, roznica), przerwa: Math.max(0, -roznica) };
+    plan = {
+      nowyKoniec,
+      nowyOgraniczony: nowyKoniec !== piec,
+      strata: Math.max(0, roznica),
+      przerwa: Math.max(0, -roznica),
+      noweOrzeczenie: [lekarskieDo, psychologiczneDo].some((d) => !!d && d < szkolenie),
+    };
   }
 
   const opis = `Kod 95 ważny do ${dataPoPolsku(waznyDo)} Szkolenie okresowe (${GODZINY_SZKOLENIA} h) z zapasem na wymianę prawa jazdy: do ${dataPoPolsku(zZapasem)} (szacunek redakcji: ${ZAPAS_DNI} dni). Ostatni dzień, w którym świadectwo na pewno przyjdzie przed końcem ważności: ${dataPoPolsku(najpozniej)} (rachunek z § 21 ust. 5 rozporządzenia, nie termin z ustawy). Wiąże data w prawie jazdy. Policzone na rytmhali.pl/narzedzia/kod-95.`;
   const kandydaci: Wydarzenie[] = [
-    { data: dodajDni(waznyDo, -180), tytul: 'Zapisz się na szkolenie okresowe (kod 95)', opis },
+    // Gdy do końca zostało mniej niż 180 dni, przypomnienie o zapisie dostaje dzisiejszą datę.
+    { data: dniDoKonca >= 0 && dniDoKonca < 180 ? dzis : dodajDni(waznyDo, -180), tytul: 'Zapisz się na szkolenie okresowe (kod 95)', opis },
     { data: zZapasem, tytul: 'Kod 95: ukończ szkolenie okresowe (z zapasem na wymianę prawa jazdy)', opis },
-    { data: najpozniej, tytul: 'Kod 95: świadectwo zdąży przed końcem ważności (bez wymiany prawa jazdy)', opis },
+    { data: najpozniej, tytul: 'Kod 95: ostatni dzień na ukończenie szkolenia (świadectwo zdąży, bez wymiany prawa jazdy)', opis },
     { data: waznyDo, tytul: 'Koniec ważności kodu 95', opis },
   ];
 

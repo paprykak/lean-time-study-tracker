@@ -20,12 +20,14 @@ test('kierowca do 60 lat: co 5 lat, osobno lekarskie i psychotesty', async ({ pa
   await expect(page.locator('[data-w="psy"]')).toHaveText(/^28\slutego\s2029\sr\.$/);
   await expect(page.locator('[data-w="status-lek"]')).toHaveAttribute('data-status', 'w-terminie');
   await expect(page.locator('[data-w="lek-opis"]')).toContainText('art. 39j ust. 4 pkt 1');
+  await expect(page.locator('[data-w="lek-ostroznie"]')).toBeHidden();
 });
 
-test('5 lat wypada po 60. urodzinach: wariant ostrożny', async ({ page }) => {
+test('5 lat wypada po 60. urodzinach: wiąże termin ustawowy, ostrożny osobno', async ({ page }) => {
   await wpisz(page, { 'Data urodzenia': '1968-03-15', 'Data orzeczenia lekarskiego': '2026-01-20', 'Data orzeczenia psychologa': '2026-01-20' });
-  await expect(page.locator('[data-w="lek"]')).toHaveText(/^20\slipca\s2028\sr\.$/);
-  await expect(page.locator('[data-w="lek-opis"]')).toContainText(/Ostrożnie.*20\sstycznia\s2031\sr\./);
+  await expect(page.locator('[data-w="lek"]')).toHaveText(/^20\sstycznia\s2031\sr\.$/);
+  await expect(page.locator('[data-w="lek-ostroznie"]')).toBeVisible();
+  await expect(page.locator('[data-w="lek-ostroznie"]')).toContainText(/Bezpieczniej\swcześniej:\s20\slipca\s2028\sr\..*przepis\stego\snie\swymaga/);
 });
 
 test('wcześniejszy termin z orzeczenia ma pierwszeństwo', async ({ page }) => {
@@ -40,7 +42,7 @@ test('wózek widłowy: widełki, bez psychotestów z przepisu, zaległe po górn
   await wpisz(page, { 'Data urodzenia': '1980-01-01', 'Data orzeczenia lekarskiego': '2020-01-10' });
   await expect(page.locator('[data-w="lek"]')).toHaveText(/między\s10\sstycznia\s2023\sr\.\sa\s10\sstycznia\s2024\sr\./);
   await expect(page.locator('[data-w="status-lek"]')).toHaveAttribute('data-status', 'po-terminie');
-  await expect(page.locator('[data-w="oplata-psy"]')).toContainText('żaden przepis ich nie wymaga');
+  await expect(page.locator('[data-w="oplata-psy"]')).toContainText('stałego obowiązku nie ma');
   await expect(page.locator('[data-w="uwaga"]')).toContainText('art. 229 § 4');
 });
 

@@ -19,6 +19,8 @@ const dzis = dzisWPolsce();
 const START = { rola: 'kierowca' as const, urodzenie: dodajLata(dzis, -45), lek: dodajLata(dzis, -2), psy: dodajLata(dzis, -2) };
 const v = widok(START, dzis);
 const zmiana = dataPoPolsku(ZMIANA_OPLATY_PSYCH);
+const OPIS_KIEROWCY =
+  'Wozisz zawodowo towar albo ludzi, w tym autem kategorii B w zarobkowym przewozie osób albo rzeczy (art. 3 ust. 1 ustawy o transporcie drogowym wyłącza część takich przewozów). Gdy nie masz pewności, ostrożniej przyjąć tę opcję.';
 const dzienPrzed = dataPoPolsku(dodajDni(ZMIANA_OPLATY_PSYCH, -1));
 
 const faq = [
@@ -28,23 +30,23 @@ const faq = [
   },
   {
     pytanie: 'Kto płaci za badania i psychotesty kierowcy?',
-    odpowiedz: 'Przewoźnik albo pracodawca: musi skierować kierowcę na badania i pokryć ich koszt (art. 39l ust. 1 pkt 1 i 2 ustawy o transporcie drogowym, art. 229 § 6 Kodeksu pracy). Kto wykonuje przewóz osobiście we własnej firmie, płaci sam (art. 39m). Za czas badań lekarskich pracownik zachowuje prawo do wynagrodzenia (art. 229 § 3 Kodeksu pracy).',
+    odpowiedz: 'Przewoźnik albo pracodawca: musi skierować kierowcę na badania i pokryć ich koszt (art. 39l ust. 1 pkt 1 i 2 ustawy o transporcie drogowym, art. 229 § 6 Kodeksu pracy). Gdy jako przedsiębiorca sam wykonujesz przewóz, płacisz sam (art. 39m). Za czas badań okresowych i kontrolnych pracownik zachowuje prawo do wynagrodzenia (art. 229 § 3 Kodeksu pracy).',
   },
   {
     pytanie: 'Ile kosztują psychotesty dla kierowcy w 2026 roku?',
-    odpowiedz: `Opłata za badanie psychologiczne w zakresie psychologii transportu wynosi ${OPLATA_PSYCH} zł od ${zmiana}, a wcześniej wynosiła ${OPLATA_PSYCH_DAWNA} zł (§ 13 rozporządzenia o badaniach psychologicznych, zmiana z Dz.U. 2026 poz. 1434). Badanie rozpoczęte przed ${zmiana} i zakończone orzeczeniem później kosztuje ${OPLATA_PSYCH_DAWNA} zł. Badanie lekarskie kierowcy kosztuje najwyżej ${OPLATA_LEKARSKA_MAKS} zł (art. 79a ustawy o kierujących pojazdami).`,
+    odpowiedz: `Opłata za badanie psychologiczne w zakresie psychologii transportu wynosi ${OPLATA_PSYCH} zł od ${zmiana}, a wcześniej wynosiła ${OPLATA_PSYCH_DAWNA} zł (§ 13 rozporządzenia o badaniach psychologicznych, zmiana z Dz.U. 2026 poz. 1434). Badanie rozpoczęte przed ${zmiana} i zakończone orzeczeniem później kosztuje ${OPLATA_PSYCH_DAWNA} zł. Za badanie lekarskie z ustawy o kierujących pojazdami opłata nie może przekroczyć ${OPLATA_LEKARSKA_MAKS} zł (art. 79a); przepis nie przesądza, czy ten limit obejmuje całe badanie kierowcy zawodowego. Pracownik i tak nie płaci: koszt ponosi pracodawca.`,
   },
   {
     pytanie: 'Czy kierowca z kategorią B potrzebuje psychotestów?',
-    odpowiedz: 'Tak, jeśli wykonuje przewóz drogowy, także przewóz na potrzeby własne firmy. Przy kategorii B ustawa zwalnia z wymagań wieku, kwalifikacji i szkoleń, ale nie z badań lekarskich i psychologicznych (art. 39a ust. 4 ustawy o transporcie drogowym). Bez psychotestów obejdzie się pracownik, który tylko dojeżdża autem służbowym do swojej pracy z potrzebnym sprzętem, a jazda nie jest jego głównym zajęciem (art. 39a ust. 3 pkt 9).',
+    odpowiedz: 'Zwykle nie, ale są wyjątki. Ustawy o transporcie drogowym nie stosuje się do niezarobkowego przewozu osób autem do 9 miejsc, do przewozu rzeczy autem do 2,5 tony, a autem do 3,5 tony, gdy przewóz jest niezarobkowy albo firma wozi rzeczy wyłącznie w kraju (art. 3 ust. 1 pkt 1, 2 i 2a). Badania lekarskie i psychotesty kierowcy z kategorią B obowiązują więc głównie w zarobkowym przewozie osób, na przykład w taksówce, i w zarobkowym przewozie rzeczy autem od 2,5 do 3,5 tony przez firmę, która nie wozi wyłącznie w kraju. Kategoria B zwalnia wtedy z wymagań wieku, kwalifikacji i szkoleń, ale nie z badań (art. 39a ust. 4).',
   },
   {
     pytanie: 'Czy na wózek widłowy trzeba robić psychotesty?',
-    odpowiedz: 'Żaden przepis tego nie wymaga. Operator wózka potrzebuje zaświadczenia kwalifikacyjnego (§ 4 rozporządzenia o wózkach jezdniowych) i aktualnego badania okresowego z Kodeksu pracy. Lekarz medycyny pracy może w ramach tego badania skierować na konsultację psychologiczną, a jej koszt ponosi pracodawca.',
+    odpowiedz: 'Żaden przepis nie nakłada osobnego obowiązku psychotestów na operatora wózka. Wymagane jest aktualne badanie okresowe z Kodeksu pracy. Gdy skierowanie wskazuje pracę wymagającą sprawności psychoruchowej, badanie obejmuje w zależności od wskazań testy sprawności psychoruchowej, co 1–2 lata, a po 50. roku życia co rok (załącznik nr 1 cz. V pkt 4 do rozporządzenia o badaniach profilaktycznych). Lekarz może też skierować na konsultację psychologiczną. Koszt ponosi pracodawca. Do wózka podnośnikowego z mechanicznym napędem podnoszenia potrzebne jest zaświadczenie kwalifikacyjne albo uprawnienia maszynisty ciężkich maszyn budowlanych i drogowych lub książka operatora z wpisem (§ 4 ust. 1 rozporządzenia o wózkach jezdniowych), a do innych wózków szkolenie (§ 4 ust. 2).',
   },
   {
     pytanie: 'Czy badania kierowcy można zrobić online?',
-    odpowiedz: 'Nie. Od 3 czerwca 2026 r. badanie lekarskie kierowcy przeprowadza się w bezpośrednim kontakcie z osobą badaną (§ 4 ust. 2 rozporządzenia o badaniach lekarskich kierowców, zmiana z Dz.U. 2026 poz. 608).',
+    odpowiedz: 'Nie. Od 3 czerwca 2026 r. badanie lekarskie kierowcy przeprowadza się w bezpośrednim kontakcie z osobą badaną (§ 4 ust. 2 rozporządzenia o badaniach lekarskich kierowców, zmiana z Dz.U. 2026 poz. 608). Badanie psychologiczne obejmuje wywiad bezpośredni i obserwację osoby badanej (§ 4 ust. 1 pkt 1 rozporządzenia o badaniach psychologicznych).',
   },
 ];
 
@@ -68,7 +70,7 @@ const faq = [
           <label><input type="radio" name="rola" value="auto-sluzbowe" /> Auto służbowe, bez przewozu</label>
           <label><input type="radio" name="rola" value="wozek" /> Operator wózka widłowego</label>
         </div>
-        <p class="meta mt-2" data-w="rola-opis">Wozisz towar albo ludzi zawodowo lub na potrzeby firmy, także autem kategorii B. Przy wątpliwości wybierz tę opcję: terminy są krótsze.</p>
+        <p class="meta mt-2" data-w="rola-opis">{OPIS_KIEROWCY}</p>
       </fieldset>
 
       <div class="mt-4" data-urodzenie>
@@ -113,24 +115,26 @@ const faq = [
         <p class="wynik-data" data-w="lek">{v.lek}</p>
         <p class="status-terminu" data-w="status-lek" data-status={v.statusLek?.status} hidden={!v.statusLek}>{v.statusLek?.tekst}</p>
         <p class="meta mt-1" data-w="lek-opis">{v.lekOpis}</p>
+        <p class="meta mt-1" data-w="lek-ostroznie" hidden={!v.lekOstroznie}>{v.lekOstroznie}</p>
         <div class="mt-5" data-w="blok-psy">
           <h3 class="etykieta">Następne psychotesty najpóźniej</h3>
           <p class="wynik-data" data-w="psy">{v.psy}</p>
           <p class="status-terminu" data-w="status-psy" data-status={v.statusPsy?.status} hidden={!v.statusPsy}>{v.statusPsy?.tekst}</p>
           <p class="meta mt-1" data-w="psy-opis">{v.psyOpis}</p>
+          <p class="meta mt-1" data-w="psy-ostroznie" hidden={!v.psyOstroznie}>{v.psyOstroznie}</p>
         </div>
       </div>
       <dl class="wynik-lista">
         <div data-w="wiersz-60"><dt>60. urodziny</dt><dd data-w="dzien60">{v.dzien60}</dd></div>
         <div><dt>Kto płaci</dt><dd data-w="placi">{v.placi}</dd></div>
-        <div><dt>Badanie lekarskie kosztuje</dt><dd data-w="oplata-lek">{v.oplataLek}</dd></div>
+        <div><dt>Opłata za badanie lekarskie</dt><dd data-w="oplata-lek">{v.oplataLek}</dd></div>
         <div><dt>Psychotesty</dt><dd data-w="oplata-psy">{v.oplataPsy}</dd></div>
       </dl>
       <p class="wynik-uwaga" data-w="uwaga" hidden={!v.uwaga}>{v.uwaga}</p>
       <p class="mt-5">
         <button type="button" class="przycisk przycisk-grafit" data-ics disabled>Dodaj do kalendarza (.ics)</button>
       </p>
-      <p class="meta mt-2">Przypomnienia: 30 dni przed terminem i w dniu terminu (tylko te, które jeszcze nie minęły).</p>
+      <p class="meta mt-2">Przypomnienia: 30 dni przed terminem i w dniu terminu, a przy 60. urodzinach także w dniu terminu ostrożnego (tylko te, które jeszcze nie minęły).</p>
       <noscript><p class="wynik-uwaga">Wynik powyżej to przykład dla kierowcy 45 lat po badaniach sprzed 2 lat. Żeby wpisać swoje daty, włącz JavaScript; zasady i tabela są poniżej.</p></noscript>
     </div>
   </form>
@@ -144,44 +148,58 @@ const faq = [
         <tbody>
           <tr><th scope="row">Kierowca w przewozie drogowym, do 60 lat</th><td>co {LATA_DO_60} lat (art. 39j ust. 4 pkt 1)</td><td>co {LATA_DO_60} lat (art. 39k ust. 3 pkt 1)</td></tr>
           <tr><th scope="row">Kierowca w przewozie drogowym, po 60 latach</th><td>co {MIESIECY_PO_60} miesięcy (art. 39j ust. 4 pkt 2)</td><td>co {MIESIECY_PO_60} miesięcy (art. 39k ust. 3 pkt 2)</td></tr>
-          <tr><th scope="row">Pracownik z autem służbowym, bez przewozu drogowego</th><td>co 30 miesięcy – 5 lat, termin wpisuje lekarz</td><td>brak przepisu</td></tr>
-          <tr><th scope="row">Operator wózka widłowego</th><td>co 3–4 lata, po 50 latach co 2–3 lata, termin wpisuje lekarz</td><td>brak przepisu</td></tr>
+          <tr><th scope="row">Pracownik z autem służbowym, bez przewozu drogowego</th><td>co 30 miesięcy – 5 lat, jeśli kierowanie pojazdem jest w skierowaniu; termin wpisuje lekarz</td><td>bez stałego obowiązku</td></tr>
+          <tr><th scope="row">Operator wózka widłowego</th><td>co 3–4 lata, po 50 latach co 2–3 lata; inne czynniki ze skierowania mogą skrócić; termin wpisuje lekarz</td><td>bez stałego obowiązku; testy sprawności psychoruchowej, gdy są w skierowaniu</td></tr>
         </tbody>
       </table>
     </div>
     <p>
       Przewóz drogowy obejmuje transport drogowy i przewóz na potrzeby własne firmy (art. 4 pkt 4 i 6a ustawy o transporcie
-      drogowym), także autem kategorii B: przy tej kategorii odpadają wymagania wieku, kwalifikacji i szkoleń, ale badania
-      lekarskie i psychologiczne zostają (art. 39a ust. 4). Wymogu nie ma m.in. przy przewozie niehandlowym i przy wożeniu
-      sprzętu potrzebnego kierowcy do pracy, gdy jazda nie jest jego głównym zajęciem (art. 39a ust. 3 pkt 8 i 9). Widełki
-      dla auta służbowego i wózka podają wskazówki metodyczne (załącznik nr 1 cz. V pkt 11 i 2 do rozporządzenia
-      o badaniach profilaktycznych), a konkretną datę lekarz wpisuje w orzeczeniu.
+      drogowym). Ustawy nie stosuje się jednak do przewozu autem do 9 osób z kierowcą w niezarobkowym przewozie osób, autem
+      do 3,5 tony w niezarobkowym przewozie rzeczy albo gdy firma wykonuje wyłącznie krajowy transport rzeczy, i autem do
+      2,5 tony w transporcie rzeczy (art. 3 ust. 1 pkt 1, 2 i 2a). To główna podstawa, dla której pracownik jeżdżący autem
+      służbowym nie podlega badaniom z art. 39j i 39k. Przy kategorii B zostają więc głównie zarobkowy przewóz osób, na
+      przykład taksówką, i zarobkowy przewóz rzeczy autem od 2,5 do 3,5 tony przez firmę, która nie wozi wyłącznie w kraju:
+      wtedy odpadają wymagania wieku, kwalifikacji i szkoleń, ale badania zostają (art. 39a ust. 4). Powszechnie przyjmuje
+      się też, że badań nie wymaga się od kierowców zwolnionych z wymagań art. 39a ust. 1, m.in. przy przewozie
+      niehandlowym i przy wożeniu sprzętu potrzebnego kierowcy do pracy, gdy jazda nie jest jego głównym zajęciem (art. 39a
+      ust. 3 pkt 8 i 9); art. 39j i 39k nie odsyłają do tych wyjątków wprost. Widełki dla auta służbowego i wózka podają
+      wskazówki metodyczne (załącznik nr 1 cz. V pkt 11 i 2 do rozporządzenia o badaniach profilaktycznych), a konkretną
+      datę lekarz wpisuje w orzeczeniu.
     </p>
 
     <h2 id="jak-liczymy">Jak liczymy</h2>
     <ul>
       <li>Termin liczymy od daty ostatniego orzeczenia, osobno dla badania lekarskiego i psychologicznego. Do daty dodajemy {LATA_DO_60} lat albo {MIESIECY_PO_60} miesięcy jak w art. 112 Kodeksu cywilnego: ten sam dzień miesiąca, a gdy go brak, ostatni dzień miesiąca (31 sierpnia + 30 miesięcy = koniec lutego). Badanie trzeba zrobić najpóźniej w tym dniu.</li>
       <li>Wiek liczymy według art. 112 Kodeksu cywilnego: 60 lat kończysz z początkiem dnia 60. urodzin. Badanie w dniu urodzin to już badanie po ukończeniu 60 lat.</li>
-      <li>Odstęp wybieramy według wieku w dniu badania, jak we wzorze orzeczenia psychologicznego. Przepis nie mówi, co wtedy, gdy {LATA_DO_60} lat od badania kończy się po 60. urodzinach. Wybieramy wariant ostrożny, czyli wcześniejszy termin: 30 miesięcy od badania, ale nie wcześniej niż w dniu 60. urodzin. Przy takim wyniku pokazujemy też datę według brzmienia przepisu.</li>
-      <li>Termin z orzeczenia ma pierwszeństwo, gdy jest wcześniejszy: lekarz może go skrócić ze względu na stan zdrowia (art. 79 ust. 3 pkt 1 ustawy o kierujących pojazdami, § 2 ust. 2 rozporządzenia o badaniach profilaktycznych). Zawsze pokazujemy najwcześniejszą z dat.</li>
-      <li>Przy aucie służbowym i wózku podajemy tylko widełki: wiąże termin z orzeczenia. „Powyżej 50. roku życia” liczymy jako ukończone 50 lat w dniu badania. Po górnej granicy widełek badanie jest zaległe, bo lekarz może termin skrócić, ale nie wydłużyć.</li>
+      <li>Odstęp wybieramy według wieku w dniu badania, jak we wzorze orzeczenia psychologicznego. Przepis nie mówi, co wtedy, gdy {LATA_DO_60} lat od badania kończy się po 60. urodzinach. Jako wiążący pokazujemy termin według brzmienia przepisu. Osobno podajemy termin ostrożny, wcześniejszy: 30 miesięcy od badania, ale nie wcześniej niż w dniu 60. urodzin. To nasza interpretacja, przepis tego nie wymaga, więc nie wpływa na status ani na ostrzeżenie o zaległym badaniu; w pliku .ics jest osobnym, opisanym przypomnieniem.</li>
+      <li>Termin z orzeczenia ma pierwszeństwo, gdy jest wcześniejszy: lekarz może go skrócić ze względu na stan zdrowia (art. 79 ust. 3 pkt 1 ustawy o kierujących pojazdami, § 2 ust. 2 rozporządzenia o badaniach profilaktycznych). Gdy podasz termin z orzeczenia, wiąże wcześniejsza z dat: z orzeczenia albo z ustawy.</li>
+      <li>Przy aucie służbowym i wózku podajemy tylko widełki: wiąże termin z orzeczenia. „Powyżej 50. roku życia” liczymy jako ukończone 50 lat w dniu badania. Po górnej granicy widełek badanie jest zaległe, bo lekarz może termin skrócić, ale nie wydłużyć. Widełki dla auta dotyczą sytuacji, gdy kierowanie pojazdem jest w skierowaniu (pkt 11), a dla wózka tylko czynnika z pkt 2: inne czynniki ze skierowania, na przykład praca wymagająca sprawności psychoruchowej (pkt 4: co 1–2 lata, po 50 latach co rok), mogą termin skrócić.</li>
       <li>Nie liczymy terminów dla motorniczych tramwajów, instruktorów, egzaminatorów, kierowców pojazdów uprzywilejowanych i przewożących wartości pieniężne: mają osobne zasady.</li>
     </ul>
 
     <h2 id="oplaty">Kto płaci i ile kosztują badania kierowcy</h2>
     <p>
       Przewoźnik albo pracodawca kieruje kierowcę na badania i pokrywa ich koszt (art. 39l ust. 1 pkt 1 i 2 ustawy
-      o transporcie drogowym), a za czas badań lekarskich pracownik zachowuje wynagrodzenie (art. 229 § 3 Kodeksu pracy).
-      Badanie lekarskie kierowcy kosztuje najwyżej {OPLATA_LEKARSKA_MAKS} zł (art. 79a ustawy o kierujących pojazdami).
+      o transporcie drogowym), a za czas badań okresowych i kontrolnych pracownik zachowuje wynagrodzenie (art. 229 § 3
+      Kodeksu pracy). Gdy jako przedsiębiorca sam wykonujesz przewóz, koszt ponosisz Ty (art. 39m). Za badanie lekarskie
+      z ustawy o kierujących pojazdami (art. 75 ust. 1) opłata nie może przekroczyć {OPLATA_LEKARSKA_MAKS} zł (art. 79a);
+      przepis nie przesądza, czy limit obejmuje całe badanie kierowcy z art. 39j, które jest badaniem z Kodeksu pracy
+      poszerzonym o zakres tej ustawy. Pracownik i tak nie płaci.
       Opłata za badanie psychologiczne wynosi {OPLATA_PSYCH_DAWNA} zł do {dzienPrzed} i {OPLATA_PSYCH} zł od {zmiana};
       badanie rozpoczęte przed tym dniem kosztuje {OPLATA_PSYCH_DAWNA} zł, nawet gdy orzeczenie wydano później (§ 2
       rozporządzenia z Dz.U. 2026 poz. 1434). Badanie okresowe pracownika z autem służbowym i operatora wózka ma cenę
       rynkową i też płaci za nie pracodawca (art. 229 § 6 Kodeksu pracy).
     </p>
     <p>
-      Gdy nie zgadzasz się z orzeczeniem, w ciągu 14 dni od jego otrzymania możesz złożyć wniosek o ponowne badanie, za
-      pośrednictwem lekarza albo psychologa, który je wydał (art. 79 ust. 4 i 6 oraz art. 84 ust. 2 i 3 ustawy
-      o kierujących pojazdami). Przy badaniach z Kodeksu pracy ponowne badanie nie jest na Twój koszt.
+      Badanie lekarskie kierowcy z art. 39j przeprowadza się na zasadach Kodeksu pracy (art. 39j ust. 2), więc od
+      orzeczenia lekarskiego, także z badania okresowego przy aucie służbowym i wózku, odwołanie wnosi się na piśmie
+      w terminie 7 dni od otrzymania orzeczenia, za pośrednictwem podstawowej jednostki służby medycyny pracy, w której
+      orzeczenie wydano (§ 5 ust. 1–3 rozporządzenia o badaniach profilaktycznych, w brzmieniu z Dz.U. 2026 poz. 456).
+      Termin i tryb sprawdź w pouczeniu na orzeczeniu. Od orzeczenia psychologicznego wniosek o ponowne badanie składa się
+      pisemnie w terminie 14 dni od otrzymania orzeczenia, za pośrednictwem psychologa, który je wydał (art. 84 ust. 2
+      i 3 ustawy o kierujących pojazdami); przy badaniach z art. 229 Kodeksu pracy ponowne badanie nie jest na koszt
+      osoby badanej.
     </p>
 
     <h2 id="kod-95">Badania a kod 95 i prawo jazdy</h2>
@@ -211,9 +229,10 @@ const faq = [
     };
     const ics = form.querySelector<HTMLButtonElement>('[data-ics]')!;
     const OPIS_ROLI: Record<Rola, string> = {
-      kierowca: 'Wozisz towar albo ludzi zawodowo lub na potrzeby firmy, także autem kategorii B. Przy wątpliwości wybierz tę opcję: terminy są krótsze.',
-      'auto-sluzbowe': 'Jeździsz autem firmy do swojej pracy, a jazda nie jest Twoim głównym zajęciem. Obowiązuje badanie okresowe z Kodeksu pracy.',
-      wozek: 'Obsługujesz wózek widłowy w zakładzie. Obowiązuje badanie okresowe z Kodeksu pracy, a psychotestów nie wymaga żaden przepis.',
+      kierowca: w('rola-opis').textContent ?? '',
+      'auto-sluzbowe':
+        'Jeździsz autem firmy, ale nie w przewozie objętym ustawą o transporcie drogowym (wyłączenia z art. 3 ust. 1, np. niezarobkowy przewóz osób albo rzeczy). Obowiązuje badanie okresowe z Kodeksu pracy.',
+      wozek: 'Obsługujesz wózek widłowy w zakładzie. Obowiązuje badanie okresowe z Kodeksu pracy; stałego obowiązku psychotestów nie ma.',
     };
     let wydarzenia: ReturnType<typeof widok>['wydarzenia'] = [];
 
@@ -237,6 +256,8 @@ const faq = [
       ustawStatus('status-lek', null);
       ustawStatus('status-psy', null);
       w('lek-opis').textContent = '';
+      w('lek-ostroznie').hidden = true;
+      w('psy-ostroznie').hidden = true;
       w('psy').textContent = '—';
       w('psy-opis').textContent = '';
       w('uwaga').hidden = true;
@@ -285,9 +306,13 @@ const faq = [
       pisz('lek', r.lek);
       ustawStatus('status-lek', r.statusLek);
       pisz('lek-opis', r.lekOpis);
+      w('lek-ostroznie').hidden = !r.lekOstroznie;
+      pisz('lek-ostroznie', r.lekOstroznie ?? '');
       pisz('psy', r.psy);
       ustawStatus('status-psy', r.statusPsy);
       pisz('psy-opis', r.psyOpis);
+      w('psy-ostroznie').hidden = !r.psyOstroznie;
+      pisz('psy-ostroznie', r.psyOstroznie ?? '');
       pisz('dzien60', r.dzien60);
       pisz('placi', r.placi);
       pisz('oplata-lek', r.oplataLek);

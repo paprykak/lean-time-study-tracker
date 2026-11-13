@@ -4,8 +4,12 @@
 //   lekarskie i psychologiczne kierowcy wykonującego przewóz drogowy: do ukończenia 60 lat co 5 lat, po ukończeniu
 //   60. roku życia co 30 miesięcy), art. 39l ust. 1 pkt 2 (koszt ponosi przewoźnik), art. 39m (osobisty przewóz:
 //   wymagania stosuje się odpowiednio), art. 39a ust. 3–4 (wyjątki; kat. B nie zwalnia z badań);
-// - ustawa o kierujących pojazdami (UKP), t.j. Dz.U. 2025 poz. 1226: art. 79a (opłata za badanie lekarskie najwyżej
-//   200 zł), art. 90 ust. 1 pkt 7 lit. a (sufit opłaty za badanie psychologiczne 200 zł), art. 79 ust. 3 pkt 1
+// - art. 3 ust. 1 UTD: ustawy nie stosuje się m.in. do niezarobkowego przewozu osób autem do 9 osób (pkt 1), do
+//   aut do 3,5 t w niezarobkowym przewozie rzeczy albo gdy firma wykonuje wyłącznie krajowy transport rzeczy (pkt 2),
+//   i do aut do 2,5 t w transporcie rzeczy (pkt 2a); przy kat. B badania z art. 39j–39k obejmują więc w praktyce
+//   zarobkowy przewóz osób i zarobkowy przewóz rzeczy autem 2,5–3,5 t przez firmę, która nie wozi wyłącznie w kraju;
+// - ustawa o kierujących pojazdami (UKP), t.j. Dz.U. 2025 poz. 1226: art. 79a (opłata za badanie lekarskie z art. 75
+//   ust. 1 najwyżej 200 zł; przepis nie przesądza, czy limit obejmuje całe badanie kierowcy z art. 39j UTD), art. 90 ust. 1 pkt 7 lit. a (sufit opłaty za badanie psychologiczne 200 zł), art. 79 ust. 3 pkt 1
 //   (lekarz może ograniczyć termin), art. 15 ust. 4 (kod 95 nie dłużej niż ważność orzeczeń);
 // - rozporządzenie MZ w sprawie badań psychologicznych, t.j. Dz.U. 2022 poz. 165, § 13 pkt 1–2: opłata 150 zł,
 //   od 14.11.2026 200 zł (Dz.U. 2026 poz. 1434, § 1 i § 3); § 2 tego rozporządzenia: badania rozpoczęte
@@ -19,12 +23,14 @@
 // Przyjęte interpretacje:
 // 1. Termin liczymy od daty ostatniego orzeczenia; punkt (5 lat albo 30 miesięcy) wybieramy według wieku w dniu
 //    badania (wzór orzeczenia psychologicznego, zał. nr 4: „zgodnie z art. 39k ust. 3 pkt 1/pkt 2”).
-// 2. Przepis nie mówi, co gdy 5-letni termin kończy się po 60. urodzinach. Wariant ostrożny (najwcześniejszy):
-//    min(badanie + 5 lat, max(badanie + 30 miesięcy, 60. urodziny)).
-// 3. Termin z orzeczenia ma pierwszeństwo, gdy jest wcześniejszy (lekarz może skrócić); pokazujemy zawsze
-//    najwcześniejszą z dat: ustawowej, ostrożnej i z orzeczenia.
+// 2. Przepis nie mówi, co gdy 5-letni termin kończy się po 60. urodzinach. Wiąże termin ustawowy; osobno, jako naszą
+//    interpretację, pokazujemy wcześniejszy termin ostrożny: min(badanie + 5 lat, max(badanie + 30 miesięcy,
+//    60. urodziny)). Ostrożny termin nie wpływa na status ani na ostrzeżenie o zaległym badaniu.
+// 3. Termin z orzeczenia ma pierwszeństwo, gdy jest wcześniejszy (lekarz może skrócić); wiążąca data to
+//    wcześniejsza z: ustawowej i z orzeczenia.
 // 4. Badanie z Kodeksu pracy (auto służbowe bez przewozu drogowego, wózek widłowy): narzędzie podaje tylko widełki ze
-//    wskazówek metodycznych; wiąże data od lekarza. „Powyżej 50. r.ż.” liczymy jako ukończone 50 lat w dniu badania.
+//    wskazówek metodycznych (auto: pkt 11, gdy kierowanie pojazdem jest w skierowaniu; wózek: pkt 2, a inne czynniki
+//    ze skierowania, np. pkt 4 „prace wymagające sprawności psychoruchowej”, mogą skrócić termin); wiąże data od lekarza. „Powyżej 50. r.ż.” liczymy jako ukończone 50 lat w dniu badania.
 //    Lekarz może wyznaczyć krótszy termin (§ 2 ust. 2), więc po górnej granicy widełek badanie jest na pewno zaległe.
 import { dataPoPolsku, ileDni, dniMiedzy, dodajDni, dodajLata, dodajMiesiace, poprawnaData } from './terminy';
 import type { Wydarzenie } from './kalendarz-ics';
@@ -38,7 +44,8 @@ export const LATA_DO_60 = 5;
 /** Odstęp po ukończeniu 60 lat. */
 export const MIESIECY_PO_60 = 30;
 
-/** Najwyższa opłata za badanie lekarskie kierowcy i ponowne badanie (art. 79a UKP). */
+/** Najwyższa opłata za badanie lekarskie z art. 75 ust. 1 UKP i ponowne badanie (art. 79a UKP); nie przesądza, czy
+ *  limit obejmuje całe badanie kierowcy z art. 39j UTD (badanie z Kodeksu pracy poszerzone o zakres UKP). */
 export const OPLATA_LEKARSKA_MAKS = 200;
 /** Opłata za badanie psychologiczne do 13.11.2026 (§ 13 pkt 1–2 rozp., t.j. Dz.U. 2022 poz. 165). */
 export const OPLATA_PSYCH_DAWNA = 150;
@@ -49,7 +56,7 @@ export const ZMIANA_OPLATY_PSYCH = '2026-11-14';
 
 /** Widełki z załącznika nr 1 cz. V rozporządzenia o badaniach profilaktycznych (w miesiącach). */
 export const WIDELKI = {
-  'auto-sluzbowe': { od: 30, do: 60 }, // pkt 11: co 30 miesięcy – 5 lat
+  'auto-sluzbowe': { od: 30, do: 60 }, // pkt 11 (kierowanie pojazdem w skierowaniu): co 30 miesięcy – 5 lat
   wozek: { od: 36, do: 48 }, // pkt 2: co 3–4 lata
   'wozek-po-50': { od: 24, do: 36 }, // pkt 2: powyżej 50. r.ż. co 2–3 lata
 } as const;
@@ -59,7 +66,7 @@ export const WIEK_WOZEK = 50;
 export const DNI_PRZYPOMNIENIA = 30;
 
 export type Status = 'po-terminie' | 'pilne' | 'wkrotce' | 'w-terminie';
-export type Zrodlo = 'ustawa' | 'ostroznie' | 'orzeczenie';
+export type Zrodlo = 'ustawa' | 'orzeczenie';
 
 function sprawdz(nazwa: string, data: string) {
   if (!poprawnaData(data)) throw new RangeError(`${nazwa}: niepoprawna data ${data}`);
@@ -74,10 +81,10 @@ export interface TerminKierowcy {
   po60: boolean;
   /** Termin według brzmienia art. 39j ust. 4 / 39k ust. 3. */
   ustawowy: string;
-  /** Wariant ostrożny, gdy 5-letni termin wypada po 60. urodzinach; inaczej null. */
+  /** Wariant ostrożny (nasza interpretacja, nie wiąże), gdy 5-letni termin wypada po 60. urodzinach; inaczej null. */
   ostroznie: string | null;
   zOrzeczenia: string | null;
-  /** Najwcześniejsza z dat: obowiązuje. */
+  /** Wiążąca data: wcześniejsza z ustawowej i z orzeczenia. */
   termin: string;
   zrodlo: Zrodlo;
 }
@@ -100,16 +107,8 @@ export function terminKierowcy({ urodzenie, badanie, zOrzeczenia }: { urodzenie:
     const kandydat = poPrzerwie > dzien60 ? poPrzerwie : dzien60;
     ostroznie = kandydat < ustawowy ? kandydat : ustawowy;
   }
-  let termin = ustawowy;
-  let zrodlo: Zrodlo = 'ustawa';
-  if (ostroznie && ostroznie < termin) {
-    termin = ostroznie;
-    zrodlo = 'ostroznie';
-  }
-  if (zOrzeczenia && zOrzeczenia <= termin) {
-    termin = zOrzeczenia;
-    zrodlo = 'orzeczenie';
-  }
+  const zrodlo: Zrodlo = zOrzeczenia && zOrzeczenia <= ustawowy ? 'orzeczenie' : 'ustawa';
+  const termin = zrodlo === 'orzeczenie' ? zOrzeczenia! : ustawowy;
   return { dzien60, po60, ustawowy, ostroznie, zOrzeczenia: zOrzeczenia ?? null, termin, zrodlo };
 }
 
@@ -154,19 +153,30 @@ export function oplataPsychotestu(rozpoczete: string, zakonczone?: string): numb
   return rozpoczete < ZMIANA_OPLATY_PSYCH ? OPLATA_PSYCH_DAWNA : OPLATA_PSYCH;
 }
 
+const PLACI_KIEROWCA = 'Skierowanie wydaje i koszt ponosi przewoźnik albo pracodawca; gdy jako przedsiębiorca sam wykonujesz przewóz, Ty (art. 39m ustawy o transporcie drogowym).';
+const PLACI_KP = 'Skierowanie wydaje i koszt ponosi pracodawca.';
 const NAZWA = { lekarskie: 'badanie lekarskie kierowcy', psychologiczne: 'badanie psychologiczne kierowcy (psychotesty)', okresowe: 'okresowe badanie lekarskie' } as const;
 export type RodzajBadania = keyof typeof NAZWA;
 
 /** Wydarzenia do pliku .ics: 30 dni przed terminem i w dniu terminu, tylko te, które jeszcze nie minęły. */
-export function wydarzenia(terminy: { rodzaj: RodzajBadania; termin: string }[], dzis: string): Wydarzenie[] {
+/** Wydarzenia do pliku .ics od daty wiążącej: 30 dni przed i w dniu terminu, tylko te, które jeszcze nie minęły.
+ *  Termin ostrożny (gdy jest) to osobne, wyraźnie opisane przypomnienie. */
+export function wydarzenia(terminy: { rodzaj: RodzajBadania; termin: string; ostroznie?: string | null }[], dzis: string): Wydarzenie[] {
   return terminy
-    .flatMap(({ rodzaj, termin }) => {
-      const opis = `Następne ${NAZWA[rodzaj]} najpóźniej ${dataPoPolsku(termin)} Skierowanie wydaje pracodawca, a koszt ponosi pracodawca albo przewoźnik. Policzone na rytmhali.pl/narzedzia/badania-kierowcy.`;
+    .flatMap(({ rodzaj, termin, ostroznie }) => {
+      const opis = `Następne ${NAZWA[rodzaj]} najpóźniej ${dataPoPolsku(termin)} ${rodzaj === 'okresowe' ? PLACI_KP : PLACI_KIEROWCA} Policzone na rytmhali.pl/narzedzia/badania-kierowcy.`;
       const duze = NAZWA[rodzaj][0].toUpperCase() + NAZWA[rodzaj].slice(1);
-      return [
+      const lista: Wydarzenie[] = [
         { data: dodajDni(termin, -DNI_PRZYPOMNIENIA), tytul: `Umów: ${NAZWA[rodzaj]}`, opis },
         { data: termin, tytul: `${duze}: ostatni dzień`, opis },
       ];
+      if (ostroznie && ostroznie < termin)
+        lista.push({
+          data: ostroznie,
+          tytul: `Bezpieczniej wcześniej: ${NAZWA[rodzaj]}`,
+          opis: `Termin ostrożny po 60. urodzinach: nasza interpretacja, przepis tego nie wymaga. Według ustawy termin to ${dataPoPolsku(termin)} Policzone na rytmhali.pl/narzedzia/badania-kierowcy.`,
+        });
+      return lista;
     })
     .filter((w) => dniMiedzy(dzis, w.data) >= 0)
     .sort((a, b) => a.data.localeCompare(b.data));
@@ -190,10 +200,12 @@ export interface Widok {
   lek: string;
   statusLek: StatusWidoku | null;
   lekOpis: string;
+  lekOstroznie: string | null;
   pokazPsy: boolean;
   psy: string;
   statusPsy: StatusWidoku | null;
   psyOpis: string;
+  psyOstroznie: string | null;
   dzien60: string;
   placi: string;
   oplataLek: string;
@@ -215,15 +227,24 @@ export const opisOplatyPsych = (dzis: string) =>
     : `${OPLATA_PSYCH} zł (§ 13 rozporządzenia o badaniach psychologicznych; ${OPLATA_PSYCH_DAWNA} zł tylko za badanie rozpoczęte przed ${dataPoPolsku(ZMIANA_OPLATY_PSYCH)})`;
 
 function opisKierowcy(t: TerminKierowcy, art: string) {
-  if (t.zrodlo === 'orzeczenie') return `Termin z orzeczenia, wcześniejszy niż z ustawy (${dataPoPolsku(t.ustawowy)}).`;
-  if (t.zrodlo === 'ostroznie')
-    return `Ostrożnie: 60. urodziny wypadają przed upływem 5 lat. Według brzmienia przepisu (${art} pkt 1) termin to ${dataPoPolsku(t.ustawowy)}`;
-  return t.po60 ? `30 miesięcy od badania po ukończeniu 60 lat (${art} pkt 2).` : `5 lat od badania (${art} pkt 1).`;
+  const ustawa = t.po60 ? `30 miesięcy od badania po ukończeniu 60 lat (${art} pkt 2)` : `5 lat od badania (${art} pkt 1)`;
+  if (t.zrodlo === 'orzeczenie')
+    return t.zOrzeczenia === t.ustawowy
+      ? `Termin z orzeczenia, taki sam jak z ustawy: ${ustawa}.`
+      : `Termin z orzeczenia, wcześniejszy niż z ustawy (${dataPoPolsku(t.ustawowy)}).`;
+  if (t.zOrzeczenia) return `${ustawa[0].toUpperCase()}${ustawa.slice(1)}. Termin wpisany w orzeczeniu jest późniejszy; pokazujemy wcześniejszy, ustawowy.`;
+  return `${ustawa[0].toUpperCase()}${ustawa.slice(1)}.`;
 }
+const opisOstroznie = (t: TerminKierowcy) =>
+  t.ostroznie && t.ostroznie < t.termin
+    ? `Bezpieczniej wcześniej: ${dataPoPolsku(t.ostroznie)}, bo 60. urodziny wypadają przed upływem 5 lat (nasza interpretacja, przepis tego nie wymaga).`
+    : null;
 
 /** Wszystkie teksty wyniku. Rzuca RangeError przy błędnych danych (sprawdza je wcześniej formularz). */
 export function widok(we: Wejscie, dzis: string): Widok {
-  const ZALEGLE = 'Bez aktualnego orzeczenia pracodawca nie może dopuścić do pracy (art. 229 § 4 Kodeksu pracy).';
+  const ZALEGLE = 'Bez aktualnego orzeczenia lekarskiego pracodawca nie może dopuścić do pracy (art. 229 § 4 Kodeksu pracy).';
+  const ZALEGLE_PSY =
+    'Bez aktualnego orzeczenia psychologicznego kierowca nie spełnia warunku zatrudnienia z art. 39a ust. 1 pkt 4 ustawy o transporcie drogowym, a przewoźnik ma obowiązek kierować na badania (art. 39l ust. 1 pkt 1 lit. b).';
   if (we.rola === 'kierowca') {
     const l = terminKierowcy({ urodzenie: we.urodzenie, badanie: we.lek, zOrzeczenia: we.lekTermin });
     const p = terminKierowcy({ urodzenie: we.urodzenie, badanie: we.psy, zOrzeczenia: we.psyTermin });
@@ -234,19 +255,21 @@ export function widok(we: Wejscie, dzis: string): Widok {
       lek: dataPoPolsku(l.termin),
       statusLek: sl,
       lekOpis: opisKierowcy(l, 'art. 39j ust. 4'),
+      lekOstroznie: opisOstroznie(l),
       pokazPsy: true,
       psy: dataPoPolsku(p.termin),
       statusPsy: sp,
       psyOpis: opisKierowcy(p, 'art. 39k ust. 3'),
+      psyOstroznie: opisOstroznie(p),
       dzien60: `${dataPoPolsku(l.dzien60)}; od tego dnia badania co ${MIESIECY_PO_60} miesięcy`,
-      placi: 'przewoźnik albo pracodawca (art. 39l ust. 1 pkt 2 ustawy o transporcie drogowym); przy przewozie we własnej firmie Ty (art. 39m)',
-      oplataLek: `najwyżej ${OPLATA_LEKARSKA_MAKS} zł (art. 79a ustawy o kierujących pojazdami)`,
+      placi: 'przewoźnik albo pracodawca (art. 39l ust. 1 pkt 2 ustawy o transporcie drogowym); gdy jako przedsiębiorca sam wykonujesz przewóz, Ty (art. 39m)',
+      oplataLek: `limit ${OPLATA_LEKARSKA_MAKS} zł dotyczy badania z ustawy o kierujących pojazdami (art. 79a); przepis nie przesądza, czy obejmuje całe badanie kierowcy z art. 39j. Na etacie i tak płaci pracodawca`,
       oplataPsy: opisOplatyPsych(dzis),
-      uwaga: sl.status === 'po-terminie' || sp.status === 'po-terminie' ? ZALEGLE : null,
+      uwaga: [sl.status === 'po-terminie' ? ZALEGLE : '', sp.status === 'po-terminie' ? ZALEGLE_PSY : ''].filter(Boolean).join(' ') || null,
       wydarzenia: wydarzenia(
         [
-          { rodzaj: 'lekarskie', termin: l.termin },
-          { rodzaj: 'psychologiczne', termin: p.termin },
+          { rodzaj: 'lekarskie', termin: l.termin, ostroznie: l.ostroznie },
+          { rodzaj: 'psychologiczne', termin: p.termin, ostroznie: p.ostroznie },
         ],
         dzis,
       ),
@@ -258,7 +281,10 @@ export function widok(we: Wejscie, dzis: string): Widok {
     if (we.lekTermin <= we.lek) throw new RangeError('termin z orzeczenia nie później niż badanie');
   }
   const st = we.lekTermin ? statusWidoku(we.lekTermin, dzis) : dniMiedzy(dzis, w.do) < 0 ? statusWidoku(w.do, dzis) : null;
-  const zakres = we.rola === 'wozek' ? `co ${w.miesiaceOd / 12}–${w.miesiaceDo / 12} lata${w.po50 ? ' po ukończeniu 50 lat' : ''}, zał. nr 1 cz. V pkt 2` : 'co 30 miesięcy – 5 lat, zał. nr 1 cz. V pkt 11';
+  const zakres =
+    we.rola === 'wozek'
+      ? `co ${w.miesiaceOd / 12}–${w.miesiaceDo / 12} lata${w.po50 ? ' po ukończeniu 50 lat' : ''}, zał. nr 1 cz. V pkt 2; inne czynniki ze skierowania, np. praca wymagająca sprawności psychoruchowej (pkt 4: co 1–2 lata, po 50 latach co rok), mogą skrócić termin`
+      : 'co 30 miesięcy – 5 lat, zał. nr 1 cz. V pkt 11, jeśli kierowanie pojazdem jest w skierowaniu';
   return {
     naglowekLek: we.lekTermin ? 'Następne badanie okresowe najpóźniej' : 'Następne badanie okresowe',
     lek: we.lekTermin ? dataPoPolsku(we.lekTermin) : `między ${dataPoPolsku(w.od)} a ${dataPoPolsku(w.do)}`,
@@ -266,17 +292,20 @@ export function widok(we: Wejscie, dzis: string): Widok {
     lekOpis: we.lekTermin
       ? `Wiąże termin z orzeczenia. Widełki ze wskazówek metodycznych: ${zakres}.`
       : `Widełki ze wskazówek metodycznych (${zakres}). Wiąże termin, który lekarz wpisze w orzeczeniu.`,
+    lekOstroznie: null,
     pokazPsy: false,
     psy: '',
     statusPsy: null,
     psyOpis: '',
+    psyOstroznie: null,
     dzien60: '',
     placi: 'pracodawca (art. 229 § 6 Kodeksu pracy)',
     oplataLek: 'cena rynkowa, przepisy jej nie ustalają; płaci pracodawca',
     oplataPsy:
-      we.rola === 'wozek'
-        ? 'żaden przepis ich nie wymaga; lekarz może skierować na konsultację psychologiczną w ramach badania (§ 2 ust. 2 rozporządzenia o badaniach profilaktycznych)'
-        : 'żaden przepis ich nie wymaga, chyba że lekarz skieruje na konsultację (§ 2 ust. 2 rozporządzenia o badaniach profilaktycznych)',
+      (we.rola === 'wozek'
+        ? 'stałego obowiązku nie ma. Testy sprawności psychoruchowej mogą być częścią badania okresowego, gdy skierowanie wskazuje pracę wymagającą sprawności psychoruchowej (zał. nr 1 cz. V pkt 4), a lekarz może skierować na konsultację psychologiczną (§ 2 ust. 2 rozporządzenia o badaniach profilaktycznych); płaci pracodawca'
+        : 'stałego obowiązku nie ma; lekarz może skierować na konsultację psychologiczną (§ 2 ust. 2 rozporządzenia o badaniach profilaktycznych)') +
+      '. Psychotesty z ustawy o kierujących pojazdami obowiązują też m.in. po spowodowaniu wypadku z ofiarami, jeździe po alkoholu, przekroczeniu 24 punktów albo na skierowanie lekarza (art. 82 ust. 1 pkt 3–5)',
     uwaga: st?.status === 'po-terminie' ? ZALEGLE : null,
     wydarzenia: we.lekTermin ? wydarzenia([{ rodzaj: 'okresowe', termin: we.lekTermin }], dzis) : [],
   };

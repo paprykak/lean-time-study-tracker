@@ -5,7 +5,7 @@ import { oplataPsychotestu, status, terminKierowcy, widelkiKP, widok, wydarzenia
 
 describe('terminKierowcy (art. 39j ust. 4, 39k ust. 3 UTD)', () => {
   it.each([
-    // nazwa, urodzenie, badanie, dzien60, po60, ustawowy, ostroznie, termin
+    // nazwa, urodzenie, badanie, dzien60, po60, ustawowy (= wiążący termin), ostroznie (nasza interpretacja), [termin z Pythona]
     ['A: 45 lat, co 5 lat', '1981-05-10', '2026-11-12', '2041-05-10', false, '2031-11-12', null, '2031-11-12'],
     ['B: 5 lat przekracza 60. urodziny', '1968-03-15', '2026-01-20', '2028-03-15', false, '2031-01-20', '2028-07-20', '2028-07-20'],
     ['C: badanie w dniu 60. urodzin = po 60 (KC 112 zd. 2)', '1966-07-01', '2026-07-01', '2026-07-01', true, '2029-01-01', null, '2029-01-01'],
@@ -18,8 +18,9 @@ describe('terminKierowcy (art. 39j ust. 4, 39k ust. 3 UTD)', () => {
     ['L: badanie 29.02, przed 60', '1968-03-01', '2028-02-29', '2028-03-01', false, '2033-02-28', '2030-08-29', '2030-08-29'],
   ] as const)('%s', (_, urodzenie, badanie, dzien60, po60, ustawowy, ostroznie, termin) => {
     const r = terminKierowcy({ urodzenie, badanie });
-    expect(r).toMatchObject({ dzien60, po60, ustawowy, ostroznie, termin });
-    expect(r.zrodlo).toBe(ostroznie && ostroznie < ustawowy ? 'ostroznie' : 'ustawa');
+    expect(r).toMatchObject({ dzien60, po60, ustawowy, ostroznie, termin: ustawowy, zrodlo: 'ustawa' });
+    // Ostatnia kolumna to najwcześniejsza data z Pythona: równa ostrożnej, gdy ta istnieje.
+    expect(ostroznie ?? ustawowy).toBe(termin);
   });
 
   it('wcześniejszy termin z orzeczenia ma pierwszeństwo', () => {
@@ -27,10 +28,13 @@ describe('terminKierowcy (art. 39j ust. 4, 39k ust. 3 UTD)', () => {
     expect(r.termin).toBe('2029-11-12');
     expect(r.zrodlo).toBe('orzeczenie');
   });
-  it('późniejszy termin z orzeczenia nie wypiera wariantu ostrożnego', () => {
+  it('wariant ostrożny nie zmienia wiążącego terminu; orzeczenie równe ustawowemu', () => {
     const r = terminKierowcy({ urodzenie: '1968-03-15', badanie: '2026-01-20', zOrzeczenia: '2031-01-20' });
-    expect(r.termin).toBe('2028-07-20');
-    expect(r.zrodlo).toBe('ostroznie');
+    expect(r).toMatchObject({ termin: '2031-01-20', zrodlo: 'orzeczenie', ostroznie: '2028-07-20' });
+  });
+  it('późniejszy termin z orzeczenia: wiąże wcześniejszy ustawowy', () => {
+    const r = terminKierowcy({ urodzenie: '1981-05-10', badanie: '2026-11-12', zOrzeczenia: '2032-01-01' });
+    expect(r).toMatchObject({ termin: '2031-11-12', zrodlo: 'ustawa' });
   });
   it('błędne dane: RangeError', () => {
     expect(() => terminKierowcy({ urodzenie: '1981-02-30', badanie: '2026-11-12' })).toThrow(RangeError);
@@ -104,13 +108,31 @@ describe('widok', () => {
   it('kierowca: daty, statusy, opłata przed i po 14.11.2026', () => {
     const we = { rola: 'kierowca', urodzenie: '1968-03-15', lek: '2026-01-20', psy: '2024-02-29' } as const;
     const v = widok(we, '2026-11-12');
-    expect(v.lek).toBe('20 lipca 2028 r.');
-    expect(v.lekOpis).toContain('Ostrożnie');
-    expect(v.psy).toBe('15 marca 2028 r.'); // 2024-02-29 + 5 lat = 2029-02-28 > 60. urodziny; max(2026-08-29, 2028-03-15)
+    expect(v.lek).toBe('20 stycznia 2031 r.');
+    expect(v.lekOstroznie).toContain('Bezpieczniej wcześniej: 20 lipca 2028 r.');
+    expect(v.lekOstroznie).toContain('przepis tego nie wymaga');
+    expect(v.psy).toBe('28 lutego 2029 r.'); // Python: 2024-02-29 + 5 lat = 2029-02-28
+    expect(v.psyOstroznie).toContain('15 marca 2028 r.'); // max(2026-08-29, 2028-03-15)
     expect(v.statusLek?.status).toBe('w-terminie');
     expect(v.oplataPsy).toMatch(/^150 zł .* 200 zł od 14 listopada 2026 r\./);
     expect(widok(we, '2026-11-14').oplataPsy).toMatch(/^200 zł/);
-    expect(v.wydarzenia).toHaveLength(4);
+    expect(v.wydarzenia).toHaveLength(6);
+    expect(v.wydarzenia.filter((w) => w.tytul.startsWith('Bezpieczniej')).map((w) => w.data)).toEqual(['2028-03-15', '2028-07-20']);
+  });
+  it('kierowca: zaległe badanie ze statusu daty wiążącej, nie ostrożnej; osobne podstawy dla lekarskiego i psychotestów', () => {
+    // 60. urodziny 2028-03-15; dziś 2029-01-01: ostrożny termin minął, ustawowy (2031-01-20) nie
+    const v = widok({ rola: 'kierowca', urodzenie: '1968-03-15', lek: '2026-01-20', psy: '2026-01-20' }, '2029-01-01');
+    expect(v.statusLek?.status).toBe('w-terminie');
+    expect(v.uwaga).toBeNull();
+    const z = widok({ rola: 'kierowca', urodzenie: '1981-05-10', lek: '2026-01-10', psy: '2020-01-10' }, '2026-11-12');
+    expect(z.statusPsy?.status).toBe('po-terminie');
+    expect(z.uwaga).toContain('art. 39a ust. 1 pkt 4');
+    expect(z.uwaga).not.toContain('229');
+  });
+  it('orzeczenie równe ustawowemu: bez słowa „wcześniejszy”', () => {
+    const v = widok({ rola: 'kierowca', urodzenie: '1981-05-10', lek: '2026-11-12', lekTermin: '2031-11-12', psy: '2026-11-12' }, '2026-11-12');
+    expect(v.lekOpis).toContain('taki sam jak z ustawy');
+    expect(v.lekOpis).not.toContain('wcześniejszy');
   });
   it('wózek: widełki bez orzeczenia, po górnej granicy zaległe', () => {
     const v = widok({ rola: 'wozek', urodzenie: '1980-01-01', lek: '2020-01-10', psy: '' }, '2026-11-12');

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { czyPotrzebny, kod95, szkolenieNajpozniej } from './kod-95';
+import { czyPotrzebny, kod95, przykladStartowy, szkolenieNajpozniej } from './kod-95';
 
 // Oczekiwane daty sprawdzone niezależnie w Pythonie (datetime, art. 112 KC, święta liczone od Wielkanocy,
 // Wigilia wolna od 2025 r.): scratchpad/python/kod-95.py.
@@ -41,7 +41,10 @@ describe('ważność kodu 95 (art. 15 ust. 4 ukp, art. 112 KC)', () => {
   });
   it('plik kalendarza: tylko przyszłe przypomnienia', () => {
     const w = kod95({ tryb: 'prawo-jazdy', data: '2027-03-15', dzis: DZIS });
-    expect(w.wydarzenia.map((x) => x.data)).toEqual(['2027-02-12', '2027-03-14', '2027-03-15']);
+    // Do końca 123 dni (< 180): przypomnienie o zapisie z dzisiejszą datą.
+    expect(w.wydarzenia.map((x) => x.data)).toEqual(['2026-11-12', '2027-02-12', '2027-03-14', '2027-03-15']);
+    expect(kod95({ tryb: 'prawo-jazdy', data: '2027-05-12', dzis: DZIS }).wydarzenia[0].data).toBe('2026-11-13');
+    expect(kod95({ tryb: 'prawo-jazdy', data: '2027-05-10', dzis: DZIS }).wydarzenia[0].data).toBe(DZIS);
     expect(kod95({ tryb: 'prawo-jazdy', data: '2031-11-12', dzis: DZIS }).wydarzenia.map((x) => x.data)).toEqual(['2031-05-16', '2031-10-12', '2031-11-11', '2031-11-12']);
   });
   it('błędne dane: RangeError', () => {
@@ -50,12 +53,30 @@ describe('ważność kodu 95 (art. 15 ust. 4 ukp, art. 112 KC)', () => {
   });
 });
 
+describe('przykład startowy (liczony od dzisiejszej daty w przeglądarce)', () => {
+  it('1 czerwca 2027: świadectwo 1.12.2022, szkolenie 31.07.2027, kod do 1.12.2027 (183 dni)', () => {
+    const s = przykladStartowy('2027-06-01');
+    expect(s).toEqual({ data: '2022-12-01', szkolenie: '2027-07-31' });
+    expect(kod95({ tryb: 'swiadectwo', ...s, dzis: '2027-06-01' })).toMatchObject({ waznyDo: '2027-12-01', dniDoKonca: 183, status: 'w-terminie', plan: { strata: 123 } });
+  });
+});
+
 describe('szkolenie wcześniej (nowe 5 lat od nowego świadectwa)', () => {
   it('kod do 15.03.2027, świadectwo 20.11.2026: nowy kod do 20.11.2031, przepada 115 dni', () => {
-    expect(kod95({ tryb: 'prawo-jazdy', data: '2027-03-15', szkolenie: '2026-11-20', dzis: DZIS }).plan).toEqual({ nowyKoniec: '2031-11-20', nowyOgraniczony: false, strata: 115, przerwa: 0 });
+    expect(kod95({ tryb: 'prawo-jazdy', data: '2027-03-15', szkolenie: '2026-11-20', dzis: DZIS }).plan).toEqual({ nowyKoniec: '2031-11-20', nowyOgraniczony: false, strata: 115, przerwa: 0, noweOrzeczenie: false });
   });
   it('szkolenie po końcu ważności: 17 dni bez kodu', () => {
-    expect(kod95({ tryb: 'prawo-jazdy', data: '2027-03-15', szkolenie: '2027-04-01', dzis: DZIS }).plan).toEqual({ nowyKoniec: '2032-04-01', nowyOgraniczony: false, strata: 0, przerwa: 17 });
+    expect(kod95({ tryb: 'prawo-jazdy', data: '2027-03-15', szkolenie: '2027-04-01', dzis: DZIS }).plan).toEqual({ nowyKoniec: '2032-04-01', nowyOgraniczony: false, strata: 0, przerwa: 17, noweOrzeczenie: false });
+  });
+  it('orzeczenie kończy się przed szkoleniem: nie przycina nowego wpisu, potrzebne nowe orzeczenie', () => {
+    expect(kod95({ tryb: 'swiadectwo', data: '2024-01-01', lekarskieDo: '2026-12-01', szkolenie: '2027-03-01', dzis: DZIS })).toMatchObject({
+      waznyDo: '2026-12-01',
+      plan: { nowyKoniec: '2032-03-01', nowyOgraniczony: false, strata: 0, przerwa: 90, noweOrzeczenie: true },
+    });
+  });
+  it('szkolenie przed wydaniem obecnego świadectwa: RangeError', () => {
+    expect(() => kod95({ tryb: 'swiadectwo', data: '2026-06-15', szkolenie: '2026-06-14', dzis: DZIS })).toThrow(RangeError);
+    expect(kod95({ tryb: 'swiadectwo', data: '2026-06-15', szkolenie: '2026-06-15', dzis: DZIS }).plan?.strata).toBe(1826);
   });
   it('nowy wpis przycięty do orzeczenia', () => {
     expect(kod95({ tryb: 'prawo-jazdy', data: '2027-03-15', szkolenie: '2027-03-01', psychologiczneDo: '2030-05-31', dzis: DZIS }).plan).toMatchObject({ nowyKoniec: '2030-05-31', nowyOgraniczony: true, strata: 14 });
