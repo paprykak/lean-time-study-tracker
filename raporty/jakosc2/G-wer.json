@@ -1,0 +1,75 @@
+{
+  "partia": "G",
+  "werdykty": [
+    {
+      "id": "G-1",
+      "werdykt": "potwierdzone",
+      "uzasadnienie": "EUR-Lex był niedostępny dla automatu (curl: certyfikat nie pasuje do eur-lex.europa.eu przez proxy; WebFetch: HTTP 503); blokady nie obchodziłem. Znalezisko potwierdza jednak polskie prawo w .cache: ustawa o transporcie drogowym nazywa obowiązek pracodawcy dotyczący zakwaterowania „obowiązkiem, o którym mowa w art. 8 ust. 8a rozporządzenia (WE) nr 561/2006”, a zakaz odpoczynku regularnego tygodniowego i ponad 45 h w pojeździe karze osobno (lp. 5.7 i 5.10a). Strona wskazuje ust. 8, który dotyczy odpoczynków dziennych i skróconych tygodniowych w pojeździe z miejscem do spania. Uwaga: art. 26f pkt 2 lit. a ustawy o czasie pracy kierowców (DU_2026_477, linia 381) mówi o „noclegu, o którym mowa w art. 8 ust. 8” (stare odesłanie do noclegu w kabinie). To nie zmienia oceny, bo strona pisze o zakazie spędzania odpoczynku w kabinie i o kosztach zakwaterowania, a to jest ust. 8a. Numer ust. 6b (rekompensata skróconego odpoczynku tygodniowego w całości przed końcem trzeciego tygodnia, ust. dodany rozporządzeniem 2020/1054) zgadza się z tym, co pamiętam z brzmienia, ale w .cache nie ma żadnego polskiego odesłania do ust. 6b, więc trzeba to sprawdzić ręcznie.",
+      "dowod": ".cache/narzedzia/prawo/DU_2025_1490.txt, zał. 3 lp. 1.7a (linia 5117): „Niedokumentowanie, nieprzechowywanie w lokalu przedsiębiorstwa lub nieokazanie do kontroli dokumentów potwierdzających spełnienie obowiązku, o którym mowa w art. 8 ust. 8a rozporządzenia (WE) nr 561/2006 – za każdego kierowcę” 150 zł; lp. 20 (linia 5843), to samo, 50 zł; lp. 5.7 i 5.10a (linie 4882, 5392): „Wykorzystywanie w pojeździe lub w miejscu zakwaterowania niewyposażonym w odpowiednią infrastrukturę noclegową i sanitarną regularnego tygodniowego okresu odpoczynku lub dowolnego tygodniowego okresu odpoczynku trwającego ponad 45 godzin…”. Strona: src/pages/narzedzia/czas-jazdy-kierowcy.astro:37 i :189 „(art. 8 ust. 8)”. Próba EUR-Lex: CELEX 02006R0561-20240522, -20240101, -20200820, bez skutku.",
+      "poprawka": "src/pages/narzedzia/czas-jazdy-kierowcy.astro, linia 37 (FAQ) i linia 189 (wyjaśnienie): „(art. 8 ust. 8)” zamienić na „(art. 8 ust. 8a)”. Odesłań do „art. 8 ust. 6 i 6b” (linie 37 i 181, czas-jazdy.ts:14 i :506) nie zmieniać bez ręcznego sprawdzenia. Ręcznie w przeglądarce: EUR-Lex, CELEX 02006R0561 w najnowszej wersji skonsolidowanej po polsku, art. 8 ust. 6, 6a, 6b, 8 i 8a.",
+      "testy": "Brak testu wartości. Opcjonalnie e2e: FAQ zawiera „art. 8 ust. 8a”."
+    },
+    {
+      "id": "G-2",
+      "werdykt": "potwierdzone",
+      "uzasadnienie": "Link w wyjaśnieniu prowadzi do /narzedzia/dyzur-w-pracy, czyli do dyżuru z Kodeksu pracy. Dla kierowców jest osobne narzędzie dyzur-kierowcy (rejestr src/data/narzedzia.ts:852), które samo odsyła do czas-jazdy-kierowcy i do dyzur-w-pracy jako narzędzia dla „pracowników z Kodeksu pracy”. Art. 9 ust. 5–6 i art. 27 ust. 1 ustawy o czasie pracy kierowców (60% przy braku wyodrębnionego składnika i co najmniej połowa tej kwoty za przerwy) nie ma w kalkulatorze z Kodeksu pracy, więc kierowca dostałby zły rachunek.",
+      "dowod": "src/pages/narzedzia/czas-jazdy-kierowcy.astro:211: „Ile się należy za dyżur, policzy <a href=\"/narzedzia/dyzur-w-pracy\">kalkulator dyżuru</a>.” src/pages/narzedzia/dyzur-kierowcy.astro:155 rozdziela te narzędzia. Plik src/pages/narzedzia/dyzur-kierowcy.astro istnieje.",
+      "poprawka": "Linia 211: „Ile płatne są dyżur i przerwy w jeździe, policzy <a href=\"/narzedzia/dyzur-kierowcy\">kalkulator dyżuru i przerw kierowcy</a>.” Słowo przed linkiem zostaje w tym samym wierszu.",
+      "testy": "E2E w tests/e2e/narzedzie-czas-jazdy.spec.ts: link „kalkulator dyżuru i przerw kierowcy” ma href /narzedzia/dyzur-kierowcy."
+    },
+    {
+      "id": "G-3",
+      "werdykt": "potwierdzone",
+      "uzasadnienie": "Wydarzenia ADR nie mają pola przypomnienia, więc plikIcs dodaje do każdego domyślne alarmy [7, 1]. Opis pod przyciskiem mówi „bez powiadomień”. DECYZJE.md:270 ustala, że „Pliki kalendarza .ics mają przypomnienia (tydzień i dzień przed terminem, o 9:00…)”. Błędny jest więc opis, nie plik. Z dwóch wariantów audytora właściwy jest pierwszy (zmiana opisu). Wariant z przypomnienia: [] byłby niezgodny z decyzją.",
+      "dowod": "Playwright na podglądzie, przykład domyślny: pobrany zaswiadczenie-adr.ics ma 3 VEVENT i 6 VALARM. DTSTART 20270627, 20270710 i 20270711, każdy z TRIGGER;RELATED=START:-P6DT15H i -PT15H. Pierwszy termin (początek okresu) już minął, więc go nie ma. Kod: src/lib/narzedzia/zaswiadczenie-adr.ts:137-142 (bez przypomnienia), src/lib/narzedzia/kalendarz-ics.ts:22 i :77. Strona: src/pages/narzedzia/zaswiadczenie-adr.astro:90.",
+      "poprawka": "src/pages/narzedzia/zaswiadczenie-adr.astro:90: „Terminy do kalendarza: początek okresu na kurs doskonalący, egzamin z zapasem, ostatni dzień na egzamin i koniec ważności (tylko te, które jeszcze nie minęły). Przypomnienia o 9:00: tydzień i dzień wcześniej. Część kalendarzy pomija przypomnienia z pliku i ustawia własne.” Logiki nie zmieniać.",
+      "testy": "Zob. G-4."
+    },
+    {
+      "id": "G-4",
+      "werdykt": "potwierdzone",
+      "uzasadnienie": "W e2e i w testach jednostkowych ADR nie ma pobrania pliku ani sprawdzenia jego treści: jest tylko toBeEnabled/toBeDisabled przycisku (spec:21, :50). W kod-95 pobranie jest (spec:67).",
+      "dowod": "grep „download|VALARM” w tests/e2e/narzedzie-zaswiadczenie-adr.spec.ts i src/lib/narzedzia/zaswiadczenie-adr.test.ts: brak trafień.",
+      "poprawka": "W tests/e2e/narzedzie-zaswiadczenie-adr.spec.ts dodać do testu „ważne do 20.05.2041” (egzamin pusty) pobranie pliku jak w narzedzie-kod-95.spec.ts:67. Opcjonalnie test jednostkowy plikIcs(zaswiadczenieAdr(...).wydarzenia) ze stałym `teraz`.",
+      "testy": "Ważne do 2041-05-20, bez egzaminu: 4 VEVENT, DTSTART;VALUE=DATE: 20400521 (od dnia po 20.05.2040, art. 24 ust. 6), 20410506 (20.05.2041 − 14 dni), 20410519 (dzień przed końcem), 20410520 (koniec ważności). 8 bloków BEGIN:VALARM (po dwa na termin, wszystkie w przyszłości), TRIGGER -P6DT15H i -PT15H."
+    },
+    {
+      "id": "G-5",
+      "werdykt": "czesciowo",
+      "uzasadnienie": "Problem jest większy, niż opisał audytor, a proponowana zmiana etykiety nie wystarcza. Pole „Pojazd” stoi w siatce min-[360px]:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] obok pola godziny. Od 360 px ma tylko 160 px (przy 412 px: 191 px), więc ucięta jest nawet opcja domyślna „Ciężarówka ponad 3,5 t”: przy 360 px widać „Ciężarówka por”, przy 412 px „Ciężarówka ponad 3”. 412 px to jeden z dwóch telefonów ze standardu. Przy 320 px pole ma 244 px, a za długie są dwie opcje: „Dostawczy 2,5–3,5 t za granicą” i „Do 3,5 t (za granicą do 2,5 t)”. Przy 320 px w listach rodzaju okresu (#cj-r0…r9, 124 px) ucina się też „Odpoczynek”: widać „Odpoczyne”. Audytor podał szerokość pola 220 px, a ja zmierzyłem clientWidth 244 px.",
+      "dowod": "Metoda z tests/e2e/narzedzie-probny.spec.ts (measureText fontem strony > clientWidth − 40), deviceScaleFactor 1. 320 px: cj-pojazd 244 px, za długie „Dostawczy 2,5–3,5 t za granicą” 227,6 i „Do 3,5 t (za granicą do 2,5 t)” 208,6; cj-r0…r9 124 px, za długie „Odpoczynek” 92,7. 360 px: cj-pojazd 160 px, za długie wszystkie 5 opcji. 412 px: cj-pojazd 191 px, za długie 4 opcje. Zrzuty w scratchpad/audyt/G-wer/: pojazd-360-ciezarowy.png, pojazd-412-ciezarowy.png, pojazd-412-do-35t.png, pojazd-320-bus-miedzynarodowy.png, r0-320.png. Przewijania w bok nie ma (scrollWidth = szerokość). Próba z kolumną czasu 6rem: „Odpoczynek” się mieści (select 140 px), ale ucina się godzina „10:0” (row-6rem-320.png), więc tak nie poprawiać.",
+      "poprawka": "1) src/pages/narzedzia/czas-jazdy-kierowcy.astro:60: siatkę „grid grid-cols-1 gap-4 min-[360px]:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]” zmienić na „grid grid-cols-1 gap-4 sm:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]” (dwie kolumny od 640 px), żeby „Pojazd” miał na telefonie pełny wiersz (284 px przy 360, 335 px przy 412). 2) src/lib/narzedzia/czas-jazdy.ts:62-63: „Dostawczy 2,5–3,5 t za granicą” → „Bus 2,5–3,5 t za granicą” (175,8 px), „Do 3,5 t (za granicą do 2,5 t)” → „Do 3,5 t (za granicą 2,5 t)” (184,9 px); obie mieszczą się przy 320 px (próg 204). Zaktualizować tests/e2e/narzedzie-czas-jazdy.spec.ts:38 (selectOption label). 3) Wiersze okresów przy 320 px: kolumna czasu 6rem jest za wąska. Trzeba ją zawęzić najwyżej do ok. 6,5rem albo zmniejszyć poziomy padding pól w wierszu i sprawdzić zrzutem, czy mieści się i „Odpoczynek”, i „10:00” z ikoną. Inaczej ten jeden przypadek opisać jako znany.",
+      "testy": "Dodać w tests/e2e/narzedzie-czas-jazdy.spec.ts test w stylu narzedzie-probny.spec.ts dla #cj-pojazd przy 320 i 412 px (oczekiwane []), a po poprawce 3 także dla #cj-r0 przy 320 px."
+    },
+    {
+      "id": "G-6",
+      "werdykt": "potwierdzone",
+      "uzasadnienie": "Pytanie FAQ z rokiem trafia do danych strukturalnych FAQPage. Od 1.01.2027 będzie nieaktualne, a odpowiedź (200 zł od 14.11.2026, wcześniej 150 zł) obowiązuje dalej bez zmian. Żaden test nie opiera się na tym tekście.",
+      "dowod": "src/pages/narzedzia/badania-kierowcy.astro:39: „Ile kosztują psychotesty dla kierowcy w 2026 roku?”. grep „w 2026 roku” w tests/ i src/lib: brak trafień.",
+      "poprawka": "Linia 39: „Ile kosztują psychotesty dla kierowcy?”",
+      "testy": "Brak potrzeby."
+    },
+    {
+      "id": "G-7",
+      "werdykt": "odrzucone",
+      "uzasadnienie": "Wpis obiecuje odpowiedź na pytanie, kto płaci za kurs i egzamin, a strona jej udziela: w wyniku („Osobnej opłaty za egzamin ADR nie ma: komisję opłaca ośrodek szkolenia (art. 21 ust. 5)”) i w FAQ. To zgodne z art. 21 ust. 5 (koszt wynagrodzenia komisji ponosi podmiot prowadzący kurs). Wpis nie twierdzi, że egzamin jest płatny osobno, więc nie ma tu nieścisłości. Zmiana byłaby kwestią stylu.",
+      "dowod": ".cache/narzedzia/prawo/DU_2024_643.txt:541-542: „Za przeprowadzenie egzaminu osobom wchodzącym w skład komisji przysługuje wynagrodzenie, którego koszt ponosi podmiot prowadzący kurs…”. src/lib/narzedzia/zaswiadczenie-adr.ts:165, src/pages/narzedzia/zaswiadczenie-adr.astro:25.",
+      "poprawka": "Brak (opcjonalnie, dla spójności z leadem: „…i kto płaci za kurs i zaświadczenie”).",
+      "testy": "Brak."
+    }
+  ],
+  "nowe": [
+    {
+      "id": "G-8",
+      "slug": "dyzur-kierowcy",
+      "wymiar": "tresc-ux",
+      "waga": "niska",
+      "plik": "src/pages/narzedzia/dyzur-kierowcy.astro",
+      "linia": 63,
+      "problem": "Przy 320 px lista „Miesiąc” (siatka grid-cols-2 bez progu) ma 113 px i ucina opcję „październik”: widać „październ”. Na 412 px wszystko się mieści.",
+      "dowod": "Playwright 320×800, metoda z narzedzie-probny.spec.ts: dk-miesiac clientWidth 113, „październik” 86 px > 73. Zrzut scratchpad/audyt/G-wer/dk-paz-320.png. Pozostałe narzędzia partii (badania-kierowcy, kod-95, zaswiadczenie-adr) bez uciętych opcji przy 320 i 412 px.",
+      "poprawka": "Linia 63: „mt-4 grid grid-cols-2 gap-4” → „mt-4 grid grid-cols-1 gap-4 min-[360px]:grid-cols-2” (jak w linii 80). Przy 360 px kolumna ma ok. 134 px, próg 94 > 86.",
+      "testy": "E2E 320 px: żadna opcja #dk-miesiac nie jest szersza niż clientWidth − 40 (oczekiwane [])."
+    }
+  ]
+}
