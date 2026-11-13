@@ -120,6 +120,7 @@ const faq = [
 <script>
   import { podstawaPracy, type Obywatelstwo, type Pobyt } from '../../lib/narzedzia/cudzoziemiec-podstawa';
   import { typografia } from '../../lib/typografia.mjs';
+  import { liczPoPowrocie } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-cudzoziemiec]');
   if (form) {
@@ -146,6 +147,7 @@ const faq = [
     };
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

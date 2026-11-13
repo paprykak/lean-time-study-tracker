@@ -42,7 +42,7 @@ const faq = [
       <div class="mt-4">
         <label for="ns-data" class="etykieta-pola">Data pracy (niedziela albo święto)</label>
         <input id="ns-data" name="data" type="date" class="pole mt-1 max-w-56" min="2025-01-01" max="2100-12-31" value={D.data} aria-describedby="ns-blad" />
-        <p id="ns-blad" class="blad-pola" data-blad="data" hidden></p>
+        <p id="ns-blad" class="blad-pola" data-blad="data" role="alert" hidden></p>
       </div>
       <div class="mt-4">
         <label for="ns-okres" class="etykieta-pola">Okres rozliczeniowy (liczony od stycznia)</label>
@@ -65,7 +65,7 @@ const faq = [
           <input id="ns-stawka" name="stawka" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value={D.stawka} aria-describedby="ns-liczby-blad" />
         </div>
       </div>
-      <p id="ns-liczby-blad" class="blad-pola mt-2" data-blad="liczby" hidden></p>
+      <p id="ns-liczby-blad" class="blad-pola mt-2" data-blad="liczby" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -115,6 +115,7 @@ const faq = [
   import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
   import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
   import { typografia } from '../../lib/typografia.mjs';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-niedziela]');
   if (form) {
@@ -125,10 +126,8 @@ const faq = [
       const data = el('data').value;
       const b = form.querySelector<HTMLElement>('[data-blad="data"]')!;
       // Od 2025 r., bo od tego roku Wigilia jest dniem wolnym (lista świąt liczona dla każdego roku).
-      const blad = !poprawnaData(data) || data < '2025-01-01' || data > '2100-12-31' ? typografia('Wpisz datę od 1 stycznia 2025 r.') : null;
-      b.hidden = !blad;
-      b.textContent = blad ?? '';
-      el('data').setAttribute('aria-invalid', blad ? 'true' : 'false');
+      const blad = !poprawnaData(data) || data < '2025-01-01' || data > '2100-12-31' ? 'Wpisz datę od 1 stycznia 2025 r.' : null;
+      pokazBlad(b, blad, el('data'));
       if (blad) {
         w('okno').textContent = '—';
         return;
@@ -139,10 +138,7 @@ const faq = [
       const zleGodziny = !(godziny >= 0 && godziny <= 24);
       const zlaStawka = !(stawka >= 0);
       const bl = form.querySelector<HTMLElement>('[data-blad="liczby"]')!;
-      bl.hidden = !(zleGodziny || zlaStawka);
-      bl.textContent = zleGodziny || zlaStawka ? typografia('Wpisz liczbę godzin (od 0 do 24) i stawkę, na przykład 12 i 35.') : '';
-      el('godziny').setAttribute('aria-invalid', zleGodziny ? 'true' : 'false');
-      el('stawka').setAttribute('aria-invalid', zlaStawka ? 'true' : 'false');
+      pokazBlad(bl, zleGodziny || zlaStawka ? 'Wpisz liczbę godzin (od 0 do 24) i stawkę, na przykład 12 i 35.' : null, [zleGodziny ? el('godziny') : null, zlaStawka ? el('stawka') : null]);
       w('rodzaj').textContent = typografia(`${RODZAJ[r.rodzaj]}${r.nazwa ? `: ${r.nazwa}` : ''}`);
       w('koniec-etykieta').textContent = r.okno ? 'Gdy się nie da: dzień wolny do' : 'Koniec okresu rozliczeniowego';
       w('koniec').textContent = typografia(`${dataPoPolsku(r.okres.do)}${r.okno ? ' (koniec okresu rozliczeniowego)' : ''}`);
@@ -165,6 +161,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

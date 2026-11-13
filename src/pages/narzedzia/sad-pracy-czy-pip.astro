@@ -112,6 +112,7 @@ const faq = [
   import { opisSadu, type SprawaPracownicza } from '../../lib/narzedzia/sad-pracy';
   import { wpisanaLiczba } from '../../lib/narzedzia/format';
   import { typografia } from '../../lib/typografia.mjs';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-sad-pracy]');
   if (form) {
@@ -124,10 +125,7 @@ const faq = [
       const tekst = el('wartosc').value.trim().replace(/\s*zł\.?$/i, '');
       const wartosc = tekst === '' ? 0 : wpisanaLiczba(tekst);
       const blad = !(wartosc >= 0 && wartosc < 1_000_000_000) ? 'Wpisz kwotę w złotych, na przykład 12000, albo 0.' : null;
-      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
-      b.hidden = !blad;
-      b.textContent = blad ? typografia(blad) : '';
-      el('wartosc').setAttribute('aria-invalid', String(!!blad));
+      pokazBlad(form.querySelector<HTMLElement>('[data-blad="dane"]')!, blad, el('wartosc'));
       if (blad) {
         for (const k of ['sad', 'pozew', 'apelacja']) w(k).textContent = '—';
         for (const k of ['pip', 'droga', 'uwaga']) w(k).textContent = '';
@@ -140,6 +138,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

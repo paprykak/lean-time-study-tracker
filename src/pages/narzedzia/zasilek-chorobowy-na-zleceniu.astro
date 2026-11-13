@@ -74,7 +74,7 @@ const faq = [
         </div>
       </div>
       <p id="z-przychod-opis" class="meta mt-1">Średnia z pełnych miesięcy umowy, najwyżej z 12 przed miesiącem L4. Gdy chorujesz w pierwszym miesiącu: kwota z umowy za miesiąc.</p>
-      <p id="z-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+      <p id="z-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -128,6 +128,7 @@ const faq = [
   import { PRZYCZYNY, zasilekZlecenie, type Przyczyna, type Status } from '../../lib/narzedzia/zasilek-zlecenie';
   import { liczba, wpisanaLiczba, zl } from '../../lib/narzedzia/format';
   import { typografia } from '../../lib/typografia.mjs';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-zlecenie-l4]');
   if (form) {
@@ -147,14 +148,13 @@ const faq = [
       const przyczyna = el('przyczyna').value as Przyczyna;
       const przychod = wpisanaLiczba(el('przychod').value);
       const dni = wpisanaLiczba(el('dni').value);
+      const zlyPrzychod = !(przychod > 0 && przychod < 1_000_000);
       const blad =
-        !(przychod > 0 && przychod < 1_000_000) ? 'Wpisz przeciętny miesięczny przychód, na przykład 4000.'
+        zlyPrzychod ? 'Wpisz przeciętny miesięczny przychód, na przykład 4000.'
         : !(Number.isInteger(dni) && dni >= 1 && dni <= PRZYCZYNY[przyczyna].dni)
           ? `Przy tym powodzie zasiłek najwyżej za ${PRZYCZYNY[przyczyna].dni} dni (art. 8 ust. 1 ustawy zasiłkowej). Wpisz od 1 do ${PRZYCZYNY[przyczyna].dni}.`
         : null;
-      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
-      b.hidden = !blad;
-      b.textContent = blad ? typografia(blad) : '';
+      pokazBlad(form.querySelector<HTMLElement>('[data-blad="dane"]')!, blad, zlyPrzychod ? el('przychod') : el('dni'));
       if (blad) {
         for (const k of ['kwota', 'netto', 'podstawa', 'okres']) w(k).textContent = '—';
         w('opis').textContent = '';
@@ -188,6 +188,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

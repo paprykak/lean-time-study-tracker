@@ -78,7 +78,7 @@ const faq = [
           {Array.from({ length: WIERSZE }, (_, i) => {
             const w = PRZYKLAD.wiersze[i];
             return (
-              <li class="grid grid-cols-[minmax(0,1fr)_7rem] items-center gap-2">
+              <li class="grid grid-cols-1 gap-1 min-[360px]:grid-cols-[minmax(0,1fr)_7rem] min-[360px]:items-center min-[360px]:gap-2">
                 <label class="sr-only" for={`cj-r${i}`}>Okres {i + 1}: rodzaj</label>
                 <select id={`cj-r${i}`} name={`r${i}`} class="pole">
                   {RODZAJE.map((x) => <option value={x.id} selected={x.id === (w?.rodzaj ?? 'jazda')}>{x.nazwa}</option>)}
@@ -90,7 +90,7 @@ const faq = [
           })}
         </ol>
         <p class="mt-2"><button type="button" class="przycisk przycisk-grafit" data-wyczysc>Wyczyść okresy</button></p>
-        <p id="cj-blad" class="blad-pola mt-2" data-blad="okresy" hidden></p>
+        <p id="cj-blad" class="blad-pola mt-2" data-blad="okresy" role="alert" hidden></p>
       </fieldset>
 
       <fieldset class="mt-6">
@@ -118,7 +118,7 @@ const faq = [
           </div>
         </div>
         <p id="cj-tydzien-opis" class="meta mt-1">Jazdę i dni ponad 9 h liczysz od poniedziałku, a skrócone odpoczynki od ostatniego odpoczynku tygodniowego, zawsze bez dziś. Godziny wpisz jako 32, 32,5 albo 32:30.</p>
-        <p id="cj-tydzien-blad" class="blad-pola mt-2" data-blad="tydzien" hidden></p>
+        <p id="cj-tydzien-blad" class="blad-pola mt-2" data-blad="tydzien" role="alert" hidden></p>
       </fieldset>
 
       <fieldset class="mt-6">
@@ -214,9 +214,16 @@ const faq = [
 </StronaNarzedzia>
 
 <style>
+  /* Wąski ekran (poniżej 360 px): rodzaj w pełnym wierszu, godzina pod nim, żeby nie ucinać ani „Odpoczynek”, ani
+     godziny z ikoną; większy odstęp oddziela wtedy okresy. */
   .okresy {
     display: grid;
-    gap: 0.5rem;
+    gap: 0.875rem;
+  }
+  @media (min-width: 360px) {
+    .okresy {
+      gap: 0.5rem;
+    }
   }
   .lista-naruszen {
     display: grid;
@@ -236,6 +243,7 @@ const faq = [
   import { poprawnaData } from '../../lib/narzedzia/terminy';
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
   import { typografia } from '../../lib/typografia.mjs';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-jazda]');
   if (form) {
@@ -247,10 +255,6 @@ const faq = [
     const lista = w('naruszenia');
     const WIERSZE = form.querySelectorAll('.okresy li').length;
 
-    const blad = (el: HTMLElement, t: string | null) => {
-      el.hidden = !t;
-      el.textContent = t ? typografia(t) : '';
-    };
     const pusto = () => {
       pisz('werdykt', 'Wpisz okresy');
       lista.hidden = true;
@@ -263,43 +267,44 @@ const faq = [
       const start = minutyZGodziny(pole('start').value);
       const wiersze: { rodzaj: Rodzaj; do: number }[] = [];
       const indeksy: number[] = [];
-      pole('start').setAttribute('aria-invalid', Number.isNaN(start) ? 'true' : 'false');
       for (let i = 0; i < WIERSZE; i++) {
         const p = pole(`d${i}`);
-        p.setAttribute('aria-invalid', 'false');
         if (!p.value) continue;
         indeksy.push(i);
         wiersze.push({ rodzaj: (form.elements.namedItem(`r${i}`) as HTMLSelectElement).value as Rodzaj, do: minutyZGodziny(p.value) });
       }
       let okresy;
       let bO: string | null = null;
-      if (Number.isNaN(start)) bO = 'Wpisz godzinę początku pracy.';
-      else if (!wiersze.length) bO = 'Wpisz co najmniej jeden okres z godziną końca.';
-      else {
+      let zleO: HTMLInputElement[] = [];
+      if (Number.isNaN(start)) {
+        bO = 'Wpisz godzinę początku pracy.';
+        zleO = [pole('start')];
+      } else if (!wiersze.length) {
+        bO = 'Wpisz co najmniej jeden okres z godziną końca.';
+        zleO = [pole('d0')];
+      } else {
         try {
           okresy = okresyZGodzin(start, wiersze);
         } catch (e) {
           const wiersz = e instanceof BladOkresu ? e.wiersz : 0;
-          pole(`d${indeksy[wiersz]}`).setAttribute('aria-invalid', 'true');
+          zleO = [pole(`d${indeksy[wiersz]}`)];
           bO = e instanceof BladOkresu && e.message.startsWith('Odpoczynek') ? 'Odpoczynek dobowy wpisz jako ostatni okres.' : 'Każdy okres musi kończyć się o innej godzinie niż poprzedni. Sprawdź godziny.';
         }
       }
       // Ponad 24 h pracy od startu (bez odpoczynku na końcu) to już nie jeden dzień jazdy.
       const praca = okresy?.filter((o) => o.rodzaj !== 'odpoczynek');
       if (!bO && praca?.length && praca[praca.length - 1].do - start > 1440) {
-        pole(`d${indeksy[praca.length - 1]}`).setAttribute('aria-invalid', 'true');
+        zleO = [pole(`d${indeksy[praca.length - 1]}`)];
         bO = 'Wpisane okresy trwają ponad 24 h. Wpisz tylko czas od końca ostatniego odpoczynku.';
       }
-      blad(bladOkresy, bO);
+      pokazBlad(bladOkresy, bO, zleO);
       const tydzienT = pole('tydzien').value;
       const poprzedniT = pole('poprzedni').value;
       const tydzien = tydzienT.trim() ? wpisaneGodziny(tydzienT) : undefined;
       const poprzedni = poprzedniT.trim() ? wpisaneGodziny(poprzedniT) : undefined;
       const zle = (x: number | undefined) => x !== undefined && !(x >= 0 && x <= 168 * 60);
       const bT = zle(tydzien) || zle(poprzedni) ? 'Wpisz godziny jazdy w tygodniu, na przykład 32 albo 32,5 (najwyżej 168).' : null;
-      blad(bladTydzien, bT);
-      pole('tydzien').setAttribute('aria-invalid', zle(tydzien) ? 'true' : 'false');
-      pole('poprzedni').setAttribute('aria-invalid', zle(poprzedni) ? 'true' : 'false');
+      pokazBlad(bladTydzien, bT, [zle(tydzien) ? pole('tydzien') : null, zle(poprzedni) ? pole('poprzedni') : null]);
       if (bO || !okresy) return pusto();
 
       const noc = (form.elements.namedItem('noc') as HTMLSelectElement).value;
@@ -338,6 +343,7 @@ const faq = [
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
     ustawDzisiejszeWartosci(form);
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

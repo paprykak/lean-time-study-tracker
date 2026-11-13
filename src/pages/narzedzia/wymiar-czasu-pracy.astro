@@ -167,6 +167,7 @@ const faq = [
 <script>
   import { dzienMiesiaca, godzinyIMinuty, nazwaMiesiaca, wymiarOkresu } from '../../lib/narzedzia/czas-pracy';
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
+  import { liczPoPowrocie } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-wymiar]');
   if (form) {
@@ -207,6 +208,7 @@ const faq = [
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
     ustawDzisiejszeWartosci(form);
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

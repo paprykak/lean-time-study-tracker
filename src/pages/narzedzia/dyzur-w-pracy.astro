@@ -47,7 +47,7 @@ const faq = [
       <div class="mt-4">
         <label for="d-miejsce" class="etykieta-pola">Gdzie pełnisz dyżur</label>
         <select id="d-miejsce" name="miejsce" class="pole mt-1">
-          <option value="zaklad" selected>W zakładzie lub wskazanym miejscu</option>
+          <option value="zaklad" selected>Gdzie wskaże pracodawca</option>
           <option value="dom">W domu (pod telefonem)</option>
         </select>
       </div>
@@ -77,20 +77,20 @@ const faq = [
       <div data-tylko-60 hidden><div class="mt-4 grid gap-4">
         <div>
           <label for="d-stale" class="etykieta-pola">Stałe składniki miesięcznie (zł)</label>
-          <input id="d-stale" name="stale" class="pole mt-1 max-w-48" type="text" inputmode="decimal" autocomplete="off" value="5000" />
+          <input id="d-stale" name="stale" aria-describedby="d-blad" class="pole mt-1 max-w-48" type="text" inputmode="decimal" autocomplete="off" value="5000" />
         </div>
         <div class="grid grid-cols-2 gap-4">
           <div>
             <label for="d-zmienne" class="etykieta-pola">Zmienne z 3 miesięcy, razem (zł)</label>
-            <input id="d-zmienne" name="zmienne" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="0" />
+            <input id="d-zmienne" name="zmienne" aria-describedby="d-blad" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="0" />
           </div>
           <div>
             <label for="d-zgodz" class="etykieta-pola">Przepracowane godziny w tych miesiącach</label>
-            <input id="d-zgodz" name="zgodz" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="480" />
+            <input id="d-zgodz" name="zgodz" aria-describedby="d-blad" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="480" />
           </div>
         </div>
       </div></div>
-      <div class="mt-4 grid grid-cols-2 gap-4" data-tylko-zaklad-czas>
+      <div class="mt-4 grid grid-cols-[minmax(0,3fr)_minmax(0,2fr)] gap-4" data-tylko-zaklad-czas>
         <div>
           <label for="d-miesiac" class="etykieta-pola">Miesiąc dyżuru</label>
           <select id="d-miesiac" name="miesiac" class="pole mt-1" data-miesiac-biezacy>
@@ -104,7 +104,7 @@ const faq = [
           </select>
         </div>
       </div>
-      <p id="d-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+      <p id="d-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -150,6 +150,7 @@ const faq = [
   import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
   import { typografia } from '../../lib/typografia.mjs';
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-dyzur]');
   if (form) {
@@ -169,16 +170,15 @@ const faq = [
       const godziny = liczba('godziny');
       const praca = liczba('praca');
       const stawka = liczba('stawka');
-      const blad =
-        !(godziny > 0 && godziny <= 744) ? 'Wpisz godziny dyżuru, na przykład 12.'
-        : !(praca >= 0 && praca <= godziny) ? 'Godziny pracy nie mogą przekraczać godzin dyżuru.'
-        : zaklad && rodzaj !== 'bez-stawki' && !(stawka > 0) ? 'Wpisz stawkę albo pensję.'
-        : zaklad && rodzaj === 'bez-stawki' && !(liczba('stale') >= 0 && liczba('zmienne') >= 0 && liczba('zgodz') >= 0) ? 'Kwoty i godziny nie mogą być ujemne.'
-        : zaklad && rodzaj === 'bez-stawki' && liczba('zmienne') > 0 && !(liczba('zgodz') > 0) ? 'Wpisz godziny przepracowane w miesiącach, z których są zmienne składniki.'
-        : null;
-      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
-      b.hidden = !blad;
-      b.textContent = typografia(blad ?? '');
+      const ujemne = (['stale', 'zmienne', 'zgodz'] as const).filter((n) => !(liczba(n) >= 0));
+      const [blad, zle]: [string | null, Element[]] =
+        !(godziny > 0 && godziny <= 744) ? ['Wpisz godziny dyżuru, na przykład 12.', [el('godziny')]]
+        : !(praca >= 0 && praca <= godziny) ? ['Godziny pracy nie mogą przekraczać godzin dyżuru.', [el('praca')]]
+        : zaklad && rodzaj !== 'bez-stawki' && !(stawka > 0) ? ['Wpisz stawkę albo pensję.', [el('stawka')]]
+        : zaklad && rodzaj === 'bez-stawki' && ujemne.length ? ['Kwoty i godziny nie mogą być ujemne.', ujemne.map((n) => el(n))]
+        : zaklad && rodzaj === 'bez-stawki' && liczba('zmienne') > 0 && !(liczba('zgodz') > 0) ? ['Wpisz godziny przepracowane w miesiącach, z których są zmienne składniki.', [el('zgodz')]]
+        : [null, []];
+      pokazBlad(form.querySelector<HTMLElement>('[data-blad="dane"]')!, blad, zle);
       if (blad) {
         w('wolne').textContent = '—';
         w('albo').textContent = '';
@@ -212,6 +212,7 @@ const faq = [
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
     ustawDzisiejszeWartosci(form);
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

@@ -62,7 +62,7 @@ const faq = [
   <form class="kalkulator" data-mlodociany novalidate aria-labelledby="kalkulator-tytul">
     <div class="kalkulator-pola">
       <h2 id="kalkulator-tytul" class="tytul-m">Pracownik</h2>
-      <div class="mt-4 grid grid-cols-2 items-end gap-3">
+      <div class="mt-4 grid grid-cols-1 items-end gap-3 min-[380px]:grid-cols-2">
         <div>
           <label for="m-urodzenie" class="etykieta-pola">Data urodzenia</label>
           <input id="m-urodzenie" name="urodzenie" type="date" class="pole mt-1" min="1990-01-01" max="2100-12-31" value={D.urodzenie} aria-describedby="m-blad" />
@@ -77,7 +77,7 @@ const faq = [
         <select id="m-cel" name="cel" class="pole mt-1">
           <option value="nauka-zawodu" selected>Nauka zawodu</option>
           <option value="przyuczenie">Przyuczenie do pracy</option>
-          <option value="lekkie-prace">Lekkie prace, np. w wakacje</option>
+          <option value="lekkie-prace">Lekkie prace</option>
         </select>
       </div>
       <div class="mt-4" data-pole="rok">
@@ -96,7 +96,7 @@ const faq = [
         <input type="checkbox" name="bezSzkoly" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
         <span>Nie mam ukończonej szkoły podstawowej</span>
       </label>
-      <p id="m-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+      <p id="m-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -177,6 +177,7 @@ const faq = [
   import { typografia } from '../../lib/typografia.mjs';
   import { odmiana } from '../../lib/redakcja';
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-mlodociany]');
   if (form) {
@@ -193,11 +194,15 @@ const faq = [
       const cel = el('cel').value as CelZatrudnienia;
       form.querySelector<HTMLElement>('[data-pole="rok"]')!.hidden = cel !== 'nauka-zawodu';
       let blad: string | null = null;
-      if (!poprawnaData(urodzenie) || !poprawnaData(poczatek) || !poprawnaData(naDzien)) blad = 'Wpisz datę urodzenia, początek pracy i dzień do sprawdzenia.';
-      else if (poczatek < urodzenie || naDzien < urodzenie) blad = 'Daty pracy nie mogą być przed datą urodzenia.';
-      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
-      b.hidden = !blad;
-      b.textContent = blad ?? '';
+      let zle: HTMLInputElement[] = [];
+      if (!poprawnaData(urodzenie) || !poprawnaData(poczatek) || !poprawnaData(naDzien)) {
+        blad = 'Wpisz datę urodzenia, początek pracy i dzień do sprawdzenia.';
+        zle = [el('urodzenie'), el('poczatek'), el('naDzien')].filter((p) => !poprawnaData(p.value));
+      } else if (poczatek < urodzenie || naDzien < urodzenie) {
+        blad = 'Daty pracy nie mogą być przed datą urodzenia.';
+        zle = [poczatek < urodzenie ? el('poczatek') : null, naDzien < urodzenie ? el('naDzien') : null].filter((p) => p !== null);
+      }
+      pokazBlad(form.querySelector<HTMLElement>('[data-blad="dane"]')!, blad, zle);
       if (blad) {
         w('doba').textContent = '—';
         w('opis').textContent = '';
@@ -267,6 +272,7 @@ const faq = [
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
     ustawDzisiejszeWartosci(form);
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

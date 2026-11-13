@@ -95,7 +95,7 @@ const faq = [
         <div class="mt-4" data-tryb="godziny">
           <label for="dn-godziny" class="etykieta-pola">Godziny nocne w miesiącu</label>
           <input id="dn-godziny" name="godziny" class="pole mt-1 max-w-48" type="text" inputmode="decimal" autocomplete="off" value="8" aria-describedby="dn-godziny-blad" />
-          <p id="dn-godziny-blad" class="blad-pola" data-blad="godziny" hidden></p>
+          <p id="dn-godziny-blad" class="blad-pola" data-blad="godziny" role="alert" hidden></p>
         </div>
 
         <div class="mt-4 grid gap-4 sm:grid-cols-2" data-tryb="grafik" hidden>
@@ -120,7 +120,7 @@ const faq = [
             <label for="dn-zmiany" class="etykieta-pola">Takich zmian w miesiącu</label>
             <input id="dn-zmiany" name="zmiany" class="pole mt-1" type="text" inputmode="numeric" autocomplete="off" value="5" aria-describedby="dn-zmiana-blad" />
           </div>
-          <p id="dn-zmiana-blad" class="blad-pola sm:col-span-2" data-blad="zmiana" hidden></p>
+          <p id="dn-zmiana-blad" class="blad-pola sm:col-span-2" data-blad="zmiana" role="alert" hidden></p>
         </div>
       </fieldset>
 
@@ -129,7 +129,7 @@ const faq = [
         <div class="mt-3">
           <label for="dn-procent" class="etykieta-pola">Dodatek w procentach stawki z płacy minimalnej</label>
           <input id="dn-procent" name="procent" class="pole mt-1 max-w-32" type="text" inputmode="decimal" autocomplete="off" value={PROCENT_USTAWOWY} aria-describedby="dn-procent-blad" />
-          <p id="dn-procent-blad" class="blad-pola" data-blad="procent" hidden></p>
+          <p id="dn-procent-blad" class="blad-pola" data-blad="procent" role="alert" hidden></p>
         </div>
       </details>
     </div>
@@ -249,9 +249,9 @@ const faq = [
   import { dodatekNocny } from '../../lib/narzedzia/dodatek-nocny';
   import { dniWMiesiacu, minuty, minutyNocneZmiany, nazwaMiesiaca, opisWymiaru } from '../../lib/narzedzia/czas-pracy';
   import { godz, liczba, wpisanaLiczba, zl } from '../../lib/narzedzia/format';
-  import { typografia } from '../../lib/typografia.mjs';
   import { odmiana } from '../../lib/redakcja';
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
+  import { liczPoPowrocie, pokazBlad as pokaz } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-dodatek-nocny]');
   if (form) {
@@ -259,12 +259,7 @@ const faq = [
     const wynik = (klucz: string) => form.querySelector<HTMLElement>(`[data-w="${klucz}"]`)!;
     const blad = (klucz: string) => form.querySelector<HTMLElement>(`[data-blad="${klucz}"]`)!;
 
-    const pokazBlad = (klucz: string, pola: HTMLElement[], tekst: string | null) => {
-      const b = blad(klucz);
-      b.hidden = !tekst;
-      b.textContent = tekst ?? '';
-      for (const p of pola) p.setAttribute('aria-invalid', tekst ? 'true' : 'false');
-    };
+    const pokazBlad = (klucz: string, pola: HTMLElement[], tekst: string | null) => pokaz(blad(klucz), tekst, pola);
 
     const rokSelect = pole<HTMLSelectElement>('rok');
 
@@ -285,7 +280,7 @@ const faq = [
         const tekst = Number.isNaN(godziny)
           ? 'Wpisz liczbę godzin, na przykład 8 albo 7,5.'
           : godziny > maks
-            ? typografia(`W ${nazwaMiesiaca(miesiac, 'miejscownik')} ${rok} r. pora nocna ma razem najwyżej ${odmiana(maks, ['godzinę', 'godziny', 'godzin'])} (8 godzin na dobę).`)
+            ? `W ${nazwaMiesiaca(miesiac, 'miejscownik')} ${rok} r. pora nocna ma razem najwyżej ${odmiana(maks, ['godzinę', 'godziny', 'godzin'])} (8 godzin na dobę).`
             : null;
         pokazBlad('godziny', [p], tekst);
         ok = !tekst;
@@ -299,8 +294,8 @@ const faq = [
         const zmiany = wpisanaLiczba(zm.value);
         let tekst: string | null = null;
         if (a === null || b === null) tekst = 'Wpisz początek i koniec zmiany, na przykład 22:00 i 6:00.';
-        else if (!Number.isInteger(zmiany) || zmiany > dniWMiesiacu(rok, miesiac)) tekst = typografia(`Wpisz liczbę zmian od 0 do ${dniWMiesiacu(rok, miesiac)}.`);
-        pokazBlad('zmiana', tekst === null ? [od, do_, zm] : a === null || b === null ? [od, do_] : [zm], tekst);
+        else if (!Number.isInteger(zmiany) || zmiany > dniWMiesiacu(rok, miesiac)) tekst = `Wpisz liczbę zmian od 0 do ${dniWMiesiacu(rok, miesiac)}.`;
+        pokazBlad('zmiana', a === null || b === null ? [od, do_].filter((p) => minuty(p.value) === null) : [zm], tekst);
         if (tekst === null && a !== null && b !== null) {
           nocNaZmianie.min = minutyNocneZmiany(a, b, pora);
           godziny = (nocNaZmianie.min / 60) * zmiany;
@@ -339,6 +334,7 @@ const faq = [
     form.addEventListener('submit', (e) => e.preventDefault());
     // Domyślnie bieżący rok i miesiąc (strona jest budowana raz, a czytana przez cały rok).
     ustawDzisiejszeWartosci(form);
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

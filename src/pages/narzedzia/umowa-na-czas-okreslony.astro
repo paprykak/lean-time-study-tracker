@@ -49,7 +49,7 @@ const faq = [
       {WIERSZE.map((w, i) => (
         <fieldset class="mt-4">
           <legend class="etykieta">Umowa {i + 1}</legend>
-          <div class="mt-2 grid grid-cols-2 gap-3">
+          <div class="mt-2 grid grid-cols-1 gap-3 min-[380px]:grid-cols-2">
             <div>
               <label for={`u-od-${i}`} class="etykieta-pola">Od</label>
               <input id={`u-od-${i}`} name={`od-${i}`} type="date" class="pole mt-1" min="1990-01-01" max="2100-12-31" value={w.od} aria-describedby="u-blad" />
@@ -61,7 +61,7 @@ const faq = [
           </div>
         </fieldset>
       ))}
-      <p id="u-blad" class="blad-pola mt-3" data-blad="umowy" hidden></p>
+      <p id="u-blad" class="blad-pola mt-3" data-blad="umowy" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -120,6 +120,7 @@ const faq = [
   import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
   import { odmiana } from '../../lib/redakcja';
   import { typografia } from '../../lib/typografia.mjs';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-umowy]');
   if (form) {
@@ -128,25 +129,37 @@ const faq = [
     const przelicz = () => {
       const umowy: Umowa[] = [];
       let blad: string | null = null;
+      let zle: HTMLInputElement[] = [];
+      const wpisane: number[] = [];
       for (let i = 0; i < 4; i++) {
         const od = el(`od-${i}`).value;
         const do_ = el(`do-${i}`).value;
         if (!od && !do_) continue;
-        if (!poprawnaData(od) || !poprawnaData(do_)) blad = `Umowa ${i + 1}: wpisz obie daty, od i do.`;
-        else umowy.push({ od, do: do_ });
+        if (!poprawnaData(od) || !poprawnaData(do_)) {
+          blad = `Umowa ${i + 1}: wpisz obie daty, od i do.`;
+          zle = [el(`od-${i}`), el(`do-${i}`)].filter((p) => !poprawnaData(p.value));
+        } else {
+          umowy.push({ od, do: do_ });
+          wpisane.push(i);
+        }
       }
-      if (!blad && umowy.length === 0) blad = 'Wpisz daty co najmniej jednej umowy.';
+      if (!blad && umowy.length === 0) {
+        blad = 'Wpisz daty co najmniej jednej umowy.';
+        zle = [el('od-0'), el('do-0')];
+      }
       let r: ReturnType<typeof sprawdzUmowy> | null = null;
       if (!blad) {
         try {
           r = sprawdzUmowy(umowy);
         } catch (e) {
-          blad = e instanceof RangeError && e.message.includes('zachodzić') ? 'Umowy nie mogą na siebie zachodzić: sprawdź daty.' : 'Koniec umowy nie może być wcześniejszy niż początek.';
+          const zachodza = e instanceof RangeError && e.message.includes('zachodzić');
+          blad = zachodza ? 'Umowy nie mogą na siebie zachodzić: sprawdź daty.' : 'Koniec umowy nie może być wcześniejszy niż początek.';
+          zle = zachodza
+            ? wpisane.flatMap((i) => [el(`od-${i}`), el(`do-${i}`)])
+            : wpisane.filter((i) => el(`do-${i}`).value < el(`od-${i}`).value).map((i) => el(`do-${i}`));
         }
       }
-      const b = form.querySelector<HTMLElement>('[data-blad="umowy"]')!;
-      b.hidden = !blad;
-      b.textContent = typografia(blad ?? '');
+      pokazBlad(form.querySelector<HTMLElement>('[data-blad="umowy"]')!, blad, zle);
       const status = w('status');
       if (blad || !r) {
         for (const k of ['data', 'liczba', 'razem', 'metoda']) w(k).textContent = '—';
@@ -180,6 +193,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

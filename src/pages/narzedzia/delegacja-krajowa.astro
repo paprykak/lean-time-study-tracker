@@ -56,7 +56,7 @@ const faq = [
   <form class="kalkulator" data-delegacja novalidate aria-labelledby="kalkulator-tytul">
     <div class="kalkulator-pola">
       <h2 id="kalkulator-tytul" class="tytul-m">Podróż</h2>
-      <div class="mt-4 grid grid-cols-2 items-end gap-3">
+      <div class="mt-4 grid grid-cols-1 items-end gap-3 min-[380px]:grid-cols-2">
         <div>
           <label for="d-wyjazd" class="etykieta-pola">Wyjazd: dzień</label>
           <input id="d-wyjazd" name="wyjazd" type="date" class="pole mt-1" min="2023-01-01" max="2100-12-31" value={D.wyjazd.data} data-dzis aria-describedby="d-blad" />
@@ -66,7 +66,7 @@ const faq = [
           <input id="d-wyjazd-g" name="wyjazdGodzina" type="time" class="pole mt-1" value={D.wyjazd.godzina} aria-describedby="d-blad" />
         </div>
       </div>
-      <div class="mt-4 grid grid-cols-2 items-end gap-3">
+      <div class="mt-4 grid grid-cols-1 items-end gap-3 min-[380px]:grid-cols-2">
         <div>
           <label for="d-powrot" class="etykieta-pola">Powrót: dzień</label>
           <input id="d-powrot" name="powrot" type="date" class="pole mt-1" min="2023-01-01" max="2100-12-31" value={D.powrot.data} data-dzis="1" aria-describedby="d-blad" />
@@ -77,7 +77,7 @@ const faq = [
         </div>
       </div>
       <p class="meta mt-1">Od wyjazdu do powrotu po wykonaniu zadania, razem z dojazdem (§ 7 ust. 2 rozporządzenia).</p>
-      <p id="d-blad" class="blad-pola mt-3" data-blad="czas" hidden></p>
+      <p id="d-blad" class="blad-pola mt-3" data-blad="czas" role="alert" hidden></p>
 
       <fieldset class="mt-5">
         <legend class="etykieta">Posiłki za darmo</legend>
@@ -105,7 +105,7 @@ const faq = [
         <label for="d-noclegi" class="etykieta-pola">Noclegi bez rachunku</label>
         <input id="d-noclegi" name="noclegi" class="pole mt-1 max-w-24" type="text" inputmode="numeric" autocomplete="off" value="0" aria-describedby="d-noclegi-opis d-blad-noclegi" />
         <p id="d-noclegi-opis" class="meta mt-1">Ryczałt {zl(RYCZALT_NOCLEG)} za noc, gdy nocleg nie był zapewniony za darmo i trwał co najmniej 6 godzin między 21 a 7 (§ 8 ust. 3–4).</p>
-        <p id="d-blad-noclegi" class="blad-pola mt-1" data-blad="noclegi" hidden></p>
+        <p id="d-blad-noclegi" class="blad-pola mt-1" data-blad="noclegi" role="alert" hidden></p>
       </div>
       <label class="mt-4 flex items-start gap-3 text-[0.9375rem]">
         <input type="checkbox" name="komunikacja" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
@@ -126,7 +126,7 @@ const faq = [
         <input id="d-km" name="km" class="pole mt-1 max-w-32" type="text" inputmode="numeric" autocomplete="off" value="0" aria-describedby="d-pojazd-opis d-blad-km" />
       </div>
       <p id="d-pojazd-opis" class="meta mt-1">Tylko za zgodą pracodawcy. W sferze budżetowej najwyżej {zl(STAWKI_KM['auto-ponad-900'])} za kilometr autem ponad 900 cm³ (§ 3 ust. 4); kalkulator liczy tę stawkę.</p>
-      <p id="d-blad-km" class="blad-pola mt-1" data-blad="km" hidden></p>
+      <p id="d-blad-km" class="blad-pola mt-1" data-blad="km" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -246,6 +246,7 @@ const faq = [
   } from '../../lib/narzedzia/delegacja';
   import { poprawnaData } from '../../lib/narzedzia/terminy';
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-delegacja]');
   const wzor = document.querySelector<HTMLTemplateElement>('[data-wzor-doby]');
@@ -253,11 +254,7 @@ const faq = [
     const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
     const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
     const kontener = form.querySelector<HTMLElement>('[data-doby]')!;
-    const blad = (k: string, tekst: string | null) => {
-      const b = form.querySelector<HTMLElement>(`[data-blad="${k}"]`)!;
-      b.hidden = !tekst;
-      b.textContent = tekst ?? '';
-    };
+    const blad = (k: string, tekst: string | null, pola?: Element[]) => pokazBlad(form.querySelector<HTMLElement>(`[data-blad="${k}"]`)!, tekst, pola);
 
     const posilki = (): PosilkiDoby[] =>
       [...kontener.querySelectorAll<HTMLElement>('[data-doba]')].map((f) =>
@@ -295,17 +292,23 @@ const faq = [
       const wyjazd = { data: el('wyjazd').value, godzina: el('wyjazdGodzina').value };
       const powrot = { data: el('powrot').value, godzina: el('powrotGodzina').value };
       let bladCzasu: string | null = null;
+      let zleCzasu: Element[] = [];
       let start = 0;
       let koniec = 0;
       if (![wyjazd.data, powrot.data].every(poprawnaData) || ![wyjazd.godzina, powrot.godzina].every(poprawnaGodzina)) {
         bladCzasu = 'Wpisz dzień i godzinę wyjazdu oraz powrotu.';
+        zleCzasu = [
+          ...[el('wyjazd'), el('powrot')].filter((p) => !poprawnaData(p.value)),
+          ...[el('wyjazdGodzina'), el('powrotGodzina')].filter((p) => !poprawnaGodzina(p.value)),
+        ];
       } else {
         start = chwilaWPolsce(wyjazd.data, wyjazd.godzina);
         koniec = chwilaWPolsce(powrot.data, powrot.godzina);
         if (koniec <= start) bladCzasu = 'Powrót musi być po wyjeździe.';
         else if (koniec - start > MAKS_DOB * 86_400_000) bladCzasu = `Kalkulator liczy podróże do ${MAKS_DOB} dób.`;
+        zleCzasu = [el('powrot'), el('powrotGodzina')];
       }
-      blad('czas', bladCzasu);
+      blad('czas', bladCzasu, zleCzasu);
       if (bladCzasu) {
         blad('noclegi', null);
         pusto();
@@ -323,7 +326,7 @@ const faq = [
             ? `W tej podróży mieści się najwyżej ${ileNoclegow(mozliwe)} po co najmniej 6 godzin między 21 a 7.`
             : 'W tej podróży nie ma nocy z co najmniej 6 godzinami między 21 a 7, więc ryczałt za nocleg nie przysługuje.'
           : null;
-      blad('noclegi', bladNoclegow);
+      blad('noclegi', bladNoclegow, [el('noclegi')]);
       if (bladNoclegow) {
         pusto();
         return;
@@ -334,7 +337,7 @@ const faq = [
       const tekstKm = el('km').value.trim() || '0';
       const kilometry = /^\d{1,6}$/.test(tekstKm) ? Number(tekstKm) : NaN;
       const bladKm = pojazd && !(kilometry <= 100_000) ? 'Wpisz kilometry, na przykład 250.' : null;
-      blad('km', bladKm);
+      blad('km', bladKm, [el('km')]);
       if (bladKm) {
         pusto();
         return;
@@ -354,6 +357,7 @@ const faq = [
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
     ustawDzisiejszeWartosci(form);
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

@@ -63,7 +63,7 @@ const faq = [
           <label><input type="radio" name="natryski" value="przepustowa" /> Praca z substancjami trującymi, zakaźnymi, pyląca, w gorącym mikroklimacie</label>
         </div>
       </fieldset>
-      <p id="ns-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+      <p id="ns-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -119,6 +119,7 @@ const faq = [
   import { typografia } from '../../lib/typografia.mjs';
   import { normySanitarne, type Natryski, type RodzajPracy } from '../../lib/narzedzia/normy-sanitarne';
   import { wpisanaLiczba } from '../../lib/narzedzia/format';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-normy]');
   if (form) {
@@ -130,9 +131,8 @@ const faq = [
       const k = wpisanaLiczba(el('kobiety').value || '0');
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
       const blad = !(Number.isInteger(m) && m >= 0 && Number.isInteger(k) && k >= 0) || m + k === 0 ? 'Wpisz liczbę mężczyzn i kobiet na najliczniejszej zmianie.' : null;
-      b.hidden = !blad;
-      b.textContent = typografia(blad ?? '');
-      for (const n of ['mezczyzni', 'kobiety']) el(n).setAttribute('aria-invalid', blad ? 'true' : 'false');
+      const zle = [m, k].some((x) => !(Number.isInteger(x) && x >= 0)) ? [Number.isInteger(m) && m >= 0 ? null : el('mezczyzni'), Number.isInteger(k) && k >= 0 ? null : el('kobiety')] : [el('mezczyzni'), el('kobiety')];
+      pokazBlad(b, blad, zle);
       if (blad) return;
       const praca = (form.querySelector<HTMLInputElement>('input[name="praca"]:checked')?.value ?? 'zwykla') as RodzajPracy;
       const natryski = (form.querySelector<HTMLInputElement>('input[name="natryski"]:checked')?.value ?? 'brak') as Natryski;
@@ -150,6 +150,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

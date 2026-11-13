@@ -58,7 +58,7 @@ const faq = [
         <input id="o-pensja" name="pensja" class="pole mt-1 max-w-48" type="text" inputmode="decimal" autocomplete="off" value={D.pensja} aria-describedby="o-pensja-opis o-blad" />
         <p id="o-pensja-opis" class="meta mt-1">Stała pensja plus średnia zmiennych składników, na przykład nadgodzin i premii, jak przy ekwiwalencie za urlop.</p>
       </div>
-      <div class="mt-4 grid grid-cols-2 items-end gap-3">
+      <div class="mt-4 grid grid-cols-1 items-end gap-3 min-[400px]:grid-cols-2">
         <div data-pole="umowa">
           <label for="o-umowa" class="etykieta-pola">Umowa</label>
           <select id="o-umowa" name="umowa" class="pole mt-1">
@@ -78,7 +78,7 @@ const faq = [
         <input id="o-dni" name="dni" class="pole mt-1 max-w-24" type="text" inputmode="numeric" autocomplete="off" value="10" aria-describedby="o-dni-opis o-blad" />
         <p id="o-dni-opis" class="meta mt-1">Dni, w które według grafiku byłaby praca, licząc od dnia po rozwiązaniu umowy.</p>
       </div>
-      <p id="o-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+      <p id="o-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -147,6 +147,7 @@ const faq = [
   import { zl, wpisanaLiczba } from '../../lib/narzedzia/format';
   import { odszkodowanieZaZwolnienie, SYTUACJE, zaCzasBezPracy, type OkresWypowiedzenia, type Sytuacja } from '../../lib/narzedzia/odszkodowanie-zwolnienie';
   import { dzisWPolsce } from '../../lib/narzedzia/terminy';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-odszkodowanie]');
   if (form) {
@@ -169,12 +170,11 @@ const faq = [
       const pensja = wpisanaLiczba(el('pensja').value);
       const tekstDni = el('dni').value.trim();
       const dni = /^\d{1,3}$/.test(tekstDni) ? Number(tekstDni) : NaN;
-      let blad: string | null = null;
-      if (!(pensja > 0 && pensja < 1_000_000)) blad = 'Wpisz pensję brutto, na przykład 6000.';
-      else if (potrzebaDni && !(dni >= 0 && dni <= 400)) blad = 'Wpisz liczbę dni pracy, na przykład 10.';
-      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
-      b.hidden = !blad;
-      b.textContent = typografia(blad ?? '');
+      const [blad, zle]: [string | null, string] =
+        !(pensja > 0 && pensja < 1_000_000) ? ['Wpisz pensję brutto, na przykład 6000.', 'pensja']
+        : potrzebaDni && !(dni >= 0 && dni <= 400) ? ['Wpisz liczbę dni pracy, na przykład 10.', 'dni']
+        : [null, ''];
+      pokazBlad(form.querySelector<HTMLElement>('[data-blad="dane"]')!, blad, zle ? el(zle) : []);
       if (blad) {
         w('kwota').textContent = '—';
         w('miara').textContent = '';
@@ -195,6 +195,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

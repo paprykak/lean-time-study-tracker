@@ -95,7 +95,7 @@ const faq = [
         <label for="w-szkola" class="etykieta-pola">Ukończenie szkoły lub studiów</label>
         <input id="w-szkola" name="szkola" type="date" class="pole mt-1 max-w-56" min="1960-01-01" max="2100-12-31" aria-describedby="w-blad" />
       </div>
-      <p id="w-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+      <p id="w-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -149,6 +149,7 @@ const faq = [
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
   import { odmiana } from '../../lib/redakcja';
   import { typografia } from '../../lib/typografia.mjs';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-wyczekiwanie]');
   if (form) {
@@ -171,17 +172,30 @@ const faq = [
       const szkola = el('szkola').value;
       const poprzednie: OkresUbezpieczenia[] = [];
       let blad: string | null = !poprawnaData(start) ? 'Wpisz początek ubezpieczenia.' : null;
+      let zle: Element[] = [el('start')];
       for (let i = 1; i <= 3 && !blad; i++) {
         const od = el(`od${i}`).value;
         const do_ = el(`do${i}`).value;
         if (!od && !do_) continue;
-        if (!poprawnaData(od) || !poprawnaData(do_)) blad = `Uzupełnij obie daty okresu ${i}.`;
-        else if (do_ < od) blad = `Okres ${i}: koniec przed początkiem.`;
-        else if (do_ >= start) blad = `Okres ${i} musi skończyć się przed początkiem obecnego ubezpieczenia.`;
-        else poprzednie.push({ od, do: do_, przerwaUsprawiedliwiona: el(`usp${i}`).checked });
+        if (!poprawnaData(od) || !poprawnaData(do_)) {
+          blad = `Uzupełnij obie daty okresu ${i}.`;
+          zle = [el(`od${i}`), el(`do${i}`)].filter((p) => !poprawnaData(p.value));
+        } else if (do_ < od) {
+          blad = `Okres ${i}: koniec przed początkiem.`;
+          zle = [el(`do${i}`)];
+        } else if (do_ >= start) {
+          blad = `Okres ${i} musi skończyć się przed początkiem obecnego ubezpieczenia.`;
+          zle = [el(`do${i}`)];
+        } else poprzednie.push({ od, do: do_, przerwaUsprawiedliwiona: el(`usp${i}`).checked });
       }
-      if (!blad && l4 && (!poprawnaData(l4) || l4 < start)) blad = 'Pierwszy dzień L4 nie może być przed początkiem ubezpieczenia.';
-      if (!blad && szkola && !poprawnaData(szkola)) blad = 'Wpisz poprawną datę ukończenia szkoły.';
+      if (!blad && l4 && (!poprawnaData(l4) || l4 < start)) {
+        blad = 'Pierwszy dzień L4 nie może być przed początkiem ubezpieczenia.';
+        zle = [el('l4')];
+      }
+      if (!blad && szkola && !poprawnaData(szkola)) {
+        blad = 'Wpisz poprawną datę ukończenia szkoły.';
+        zle = [el('szkola')];
+      }
       let r: ReturnType<typeof okresWyczekiwania> | null = null;
       if (!blad) {
         try {
@@ -197,11 +211,10 @@ const faq = [
           });
         } catch {
           blad = 'Wcześniejsze okresy nachodzą na siebie: popraw daty.';
+          zle = [1, 2, 3].flatMap((i) => [el(`od${i}`), el(`do${i}`)]).filter((p) => p.value);
         }
       }
-      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
-      b.hidden = !blad;
-      b.textContent = blad ? typografia(blad) : '';
+      pokazBlad(form.querySelector<HTMLElement>('[data-blad="dane"]')!, blad, zle);
       if (!r) {
         for (const k of ['prawo', 'wliczone', 'bez', 'l4']) w(k).textContent = '—';
         w('opis').textContent = '';
@@ -226,6 +239,7 @@ const faq = [
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
     ustawDzisiejszeWartosci(form);
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

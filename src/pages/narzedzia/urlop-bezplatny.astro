@@ -196,6 +196,7 @@ const faq = [
   import { dodajMiesiace, poprawnaData } from '../../lib/narzedzia/terminy';
   import { indeksyUnicode } from '../../lib/narzedzia/format';
   import { typografia } from '../../lib/typografia.mjs';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-bezplatny]');
   if (form) {
@@ -203,7 +204,6 @@ const faq = [
     const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
     const tekst = (s: string) => typografia(indeksyUnicode(s));
     const calkowita = (s: string) => (/^\d{1,2}$/.test(s.trim()) ? Number(s.trim()) : Number.NaN);
-    const POLA = ['od', 'do', 'wymiar', 'wykorzystane', 'staz'];
     const przelicz = () => {
       const od = el('od').value;
       const do_ = el('do').value;
@@ -219,10 +219,7 @@ const faq = [
       else if (!(wymiar >= 1 && wymiar <= 26)) [blad, pole] = ['Roczny wymiar urlopu: liczba całkowita od 1 do 26 dni.', 'wymiar'];
       else if (!(wykorzystane >= 0 && wykorzystane <= wymiar)) [blad, pole] = ['Wykorzystany urlop: od 0 do rocznego wymiaru.', 'wykorzystane'];
       else if (staz && !poprawnaData(staz)) [blad, pole] = ['Niepoprawna data 10 lat stażu.', 'staz'];
-      for (const n of POLA) el(n).setAttribute('aria-invalid', n === pole ? 'true' : 'false');
-      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
-      b.hidden = !blad;
-      b.textContent = blad ? typografia(blad) : '';
+      pokazBlad(form.querySelector<HTMLElement>('[data-blad="dane"]')!, blad, pole ? el(pole) : []);
       const lista = w('lista');
       const ubezpieczenia = w('ubezpieczenia');
       if (blad) {
@@ -265,6 +262,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

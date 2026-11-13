@@ -55,7 +55,7 @@ const faq = [
       <div class="mt-4">
         <label for="t-temp" class="etykieta-pola">Temperatura (°C)</label>
         <input id="t-temp" name="temperatura" class="pole mt-1 max-w-32" type="text" inputmode="decimal" autocomplete="off" value="30" aria-describedby="t-temp-blad" />
-        <p id="t-temp-blad" class="blad-pola" data-blad="temperatura" hidden></p>
+        <p id="t-temp-blad" class="blad-pola" data-blad="temperatura" role="alert" hidden></p>
       </div>
 
       <div class="mt-4">
@@ -156,6 +156,7 @@ const faq = [
   import { ocenTemperature, podsumowanie, type Miejsce, type Wysilek } from '../../lib/narzedzia/temperatura';
   import { dzisWPolsce } from '../../lib/narzedzia/terminy';
   import { liczba } from '../../lib/narzedzia/format';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-temperatura]');
   if (form) {
@@ -175,9 +176,7 @@ const faq = [
       const tekst = pole.value.trim().replace(',', '.');
       const t = /^-?\d+(\.\d+)?$/.test(tekst) ? Number(tekst) : Number.NaN;
       const zly = Number.isNaN(t) || t < -40 || t > 60;
-      blad.hidden = !zly;
-      blad.textContent = zly ? 'Wpisz temperaturę w stopniach Celsjusza, na przykład 30 albo 17,5.' : '';
-      pole.setAttribute('aria-invalid', zly ? 'true' : 'false');
+      pokazBlad(blad, zly && 'Wpisz temperaturę w stopniach Celsjusza, na przykład 30 albo 17,5.', pole);
       const lista = w('lista');
       lista.replaceChildren();
       if (zly) {
@@ -217,6 +216,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

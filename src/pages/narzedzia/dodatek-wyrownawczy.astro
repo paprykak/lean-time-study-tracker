@@ -138,7 +138,7 @@ const faq = [
           </div>
         </div>
       </fieldset>
-      <p id="d-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+      <p id="d-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -212,6 +212,7 @@ const faq = [
   import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
   import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
   import { odmiana } from '../../lib/redakcja';
   import { typografia } from '../../lib/typografia.mjs';
 
@@ -249,25 +250,26 @@ const faq = [
         dniL4: calkowita('l4'),
         dniBezPlacy: calkowita('bezPlacy'),
       };
-      let blad =
-        !poprawnaData(od) ? 'Wpisz dzień przeniesienia.'
-        : ochrona && !poprawnaData(ochrona) ? 'Wpisz poprawny dzień końca ochrony.'
-        : ochrona && ochrona < od ? 'Koniec ochrony jest przed dniem przeniesienia.'
-        : [dane.stalePrzed, dane.stalePo, dane.zmiennePrzed, dane.zmiennePo].some((x) => !(x >= 0 && x < 1_000_000)) ? 'Kwoty wpisz jako liczby, na przykład 6000.'
-        : dane.dniPrzed !== undefined && !(dane.dniPrzed >= 1 && dane.dniPrzed <= 92) ? 'Dni z wynagrodzeniem w 3 miesiącach: od 1 do 92.'
-        : !(dane.dniL4 >= 0) || !(dane.dniBezPlacy >= 0) ? 'Dni L4 i bez wynagrodzenia wpisz jako liczby całkowite.'
-        : null;
+      const zleKwoty = (['stalePrzed', 'stalePo', 'zmiennePrzed', 'zmiennePo'] as const).filter((k) => !(dane[k] >= 0 && dane[k] < 1_000_000));
+      const zleDni = (['l4', 'bezPlacy'] as const).filter((k) => !(calkowita(k) >= 0));
+      const [blad, zle]: [string | null, Element[]] =
+        !poprawnaData(od) ? ['Wpisz dzień przeniesienia.', [el('od')]]
+        : ochrona && !poprawnaData(ochrona) ? ['Wpisz poprawny dzień końca ochrony.', [el('ochrona')]]
+        : ochrona && ochrona < od ? ['Koniec ochrony jest przed dniem przeniesienia.', [el('ochrona')]]
+        : zleKwoty.length ? ['Kwoty wpisz jako liczby, na przykład 6000.', zleKwoty.map(el)]
+        : dane.dniPrzed !== undefined && !(dane.dniPrzed >= 1 && dane.dniPrzed <= 92) ? ['Dni z wynagrodzeniem w 3 miesiącach: od 1 do 92.', [el('dniPrzed')]]
+        : zleDni.length ? ['Dni L4 i bez wynagrodzenia wpisz jako liczby całkowite.', zleDni.map(el)]
+        : [null, []];
       let r: ReturnType<typeof dodatekWyrownawczy> | null = null;
+      let bladDni: string | null = null;
       if (!blad) {
         try {
           r = dodatekWyrownawczy(dane);
         } catch {
-          blad = 'Dni L4 i bez wynagrodzenia jest więcej niż dni tego miesiąca w okresie dodatku.';
+          bladDni = 'Dni L4 i bez wynagrodzenia jest więcej niż dni tego miesiąca w okresie dodatku.';
         }
       }
-      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
-      b.hidden = !blad;
-      b.textContent = blad ? typografia(blad) : '';
+      pokazBlad(form.querySelector<HTMLElement>('[data-blad="dane"]')!, blad ?? bladDni, blad ? zle : [el('l4'), el('bezPlacy')]);
       if (!r) {
         for (const k of ['kwota', 'okres', 'stala', 'zmienna', 'za-dzien']) w(k).textContent = '—';
         w('opis').textContent = '';
@@ -308,6 +310,7 @@ const faq = [
       const i = Number(el('rok').value) * 12 + Number(el('miesiac').value) - 2;
       el('od').value = `${Math.floor(i / 12)}-${String((i % 12) + 1).padStart(2, '0')}-01`;
     }
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

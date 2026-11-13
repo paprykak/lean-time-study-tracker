@@ -49,7 +49,7 @@ const faq = [
       <div class="mt-4">
         <label for="s-pensja" class="etykieta-pola">Pensja brutto miesięcznie (zł)</label>
         <input id="s-pensja" name="pensja" class="pole mt-1 max-w-48" type="text" inputmode="decimal" autocomplete="off" value={PENSJA} aria-describedby="s-blad" />
-        <p id="s-blad" class="blad-pola" data-blad="pensja" hidden></p>
+        <p id="s-blad" class="blad-pola" data-blad="pensja" role="alert" hidden></p>
       </div>
       <div class="mt-4">
         <label for="s-rok" class="etykieta-pola">Rok</label>
@@ -97,6 +97,7 @@ const faq = [
   import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
   import { typografia } from '../../lib/typografia.mjs';
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-stawka]');
   if (form) {
@@ -106,8 +107,7 @@ const faq = [
       const pensja = wpisanaLiczba(el('pensja').value);
       const b = form.querySelector<HTMLElement>('[data-blad="pensja"]')!;
       const blad = !(pensja > 0 && pensja < 1_000_000) ? 'Wpisz pensję brutto, na przykład 6000.' : null;
-      b.hidden = !blad;
-      b.textContent = blad ?? '';
+      pokazBlad(b, blad, form.elements.namedItem('pensja') as HTMLInputElement);
       if (blad) {
         w('srednio').textContent = '—';
         return;
@@ -127,6 +127,7 @@ const faq = [
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
     ustawDzisiejszeWartosci(form);
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>
