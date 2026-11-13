@@ -270,3 +270,8 @@ Patryk: bez oznaczeń, że tekst powstał z użyciem AI, a teksty mają być nap
 - **Pliki kalendarza `.ics` mają przypomnienia** (tydzień i dzień przed terminem, o 9:00; bez przypomnień przy świętach i dniach wypłat, minione pomijane). Decyzja orkiestratora na prośbę zespołu uprawnień: przypomnienie to oczywista wartość pliku z terminem i nie zbiera żadnych danych.
 - **Rejestr przepisów:** jeden klucz ustawy o systemie ubezpieczeń społecznych zamiast trzech; uwagi aktów uzupełnione o przepisy, na których opierają się nowe narzędzia (sprawdzone w tekstach z API Sejmu); `NA_GLOWNEJ` usunięte (strona główna go nie używa).
 - **Etykiety opcji przy 320 px:** dwie opcje list UDT miały 2–3 px zapasu i w CI się nie mieściły; skrócone, pełna nazwa z rozporządzenia nadal pod polem. Testy szerokości mierzą fontem strony (`document.fonts.load`).
+
+## 2026-11-13 — Runda 3: spory i wyszukiwarka
+
+- **Scalone (oba zespoły z pełnym checkiem EXIT 0 i niezależną weryfikacją):** spory (mobbing i dyskryminacja według Kp po zmianie Dz.U. 2026 poz. 1046 z 5 listopada 2026 r., z dawnym brzmieniem dla zachowań sprzed zmiany; sąd pracy czy PIP z kosztami sądowymi) i wyszukiwarka (potoczne hasła dla wszystkich narzędzi, wzięte z podpowiedzi wyszukiwarki Google i odsiane przez weryfikatora; test 82 zapytań z hali z oczekiwanym narzędziem w pierwszej trójce; poprawione najczęstsze sprawy na stronie głównej i podobne narzędzia bez fałszywych powiązań). Razem 107 narzędzi, każde z hasłami.
+- **CI na GitHubie zielone od rundy 2** (także iPhone): skrócenie dwóch etykiet UDT i pomiar fontem strony usunęły ostatni czerwony test.
