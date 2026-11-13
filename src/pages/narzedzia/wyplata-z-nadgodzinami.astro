@@ -18,15 +18,15 @@ const r = wyplataZDodatkami({ rok, miesiac, ...D });
 const faq = [
   {
     pytanie: 'Ile na rękę za nadgodziny?',
-    odpowiedz: `Za każdą nadgodzinę dostajesz normalną stawkę za godzinę i dodatek 50% albo 100% (art. 151¹ Kodeksu pracy). Przy pensji ${zl(D.pensja)} brutto w miesiącu z ${r.wymiar} godzinami pracy godzina to ${zl(r.stawka)}. Od całej wypłaty pobiera się składki i podatek: na przykład ${zl(r.zaNadgodziny + r.dodatekNocny)} brutto za ${D.godziny50} nadgodzin i ${D.godzinyNocne} godzin nocnych to ${zl(r.dodatkiNaReke)} więcej na rękę.`,
+    odpowiedz: `Za każdą nadgodzinę dostajesz normalną stawkę za godzinę i dodatek 50% albo 100% (art. 151^1 Kodeksu pracy). Przy pensji ${zl(D.pensja)} brutto w miesiącu z ${r.wymiar} godzinami pracy godzina to ${zl(r.stawka)}. Od całej wypłaty pobiera się składki i podatek: na przykład ${zl(r.zaNadgodziny + r.dodatekNocny)} brutto za ${D.godziny50} nadgodzin i ${D.godzinyNocne} godzin nocnych to ${zl(r.dodatkiNaReke)} więcej na rękę.`,
   },
   {
     pytanie: 'Jak liczy się dodatek za pracę w nocy?',
-    odpowiedz: 'Co najmniej 20% stawki godzinowej z płacy minimalnej za każdą godzinę w porze nocnej (art. 151⁸ § 1 Kodeksu pracy). Stawkę liczy się z płacy minimalnej podzielonej przez liczbę godzin do przepracowania w danym miesiącu (§ 4b rozporządzenia z 29 maja 1996 r.), a nie z Twojej pensji.',
+    odpowiedz: 'Co najmniej 20% stawki godzinowej z płacy minimalnej za każdą godzinę w porze nocnej (art. 151^8 § 1 Kodeksu pracy). Stawkę liczy się z płacy minimalnej podzielonej przez liczbę godzin do przepracowania w danym miesiącu (§ 4b rozporządzenia z 29 maja 1996 r.), a nie z Twojej pensji.',
   },
   {
     pytanie: 'Czy nocne nadgodziny liczą się podwójnie?',
-    odpowiedz: 'Nadgodzina w nocy ma dodatek 100% (art. 151¹ § 1 pkt 1 Kodeksu pracy) i dodatkowo dodatek nocny za tę godzinę (art. 151⁸). Wpisz ją wtedy w polu nadgodzin 100% i w godzinach nocnych.',
+    odpowiedz: 'Nadgodzina w nocy ma dodatek 100% (art. 151^1 § 1 pkt 1 Kodeksu pracy) i dodatkowo dodatek nocny za tę godzinę (art. 151^8). Wpisz ją wtedy w polu nadgodzin 100% i w godzinach nocnych.',
   },
 ];
 ---
