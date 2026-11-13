@@ -303,7 +303,7 @@ export const AKTY = {
   emerytury: {
     nazwa: 'Ustawa o emeryturach i rentach z Funduszu Ubezpieczeń Społecznych',
     publikator: 'Dz.U. 2025 poz. 1749',
-    uwaga: 'tekst jednolity; zmiany Dz.U. 2026 poz. 26 i 425 nie dotyczą art. 24, 67–81 i 87; art. 24 ust. 1: wiek emerytalny 60 i 65 lat; art. 80: zasiłek pogrzebowy 7000 zł od 1 stycznia 2026 r. (Dz.U. 2025 poz. 718)',
+    uwaga: 'tekst jednolity; zmiany Dz.U. 2026 poz. 26 i 425 nie dotyczą art. 24, 67–81, 87, 103–106, 127 i 138; art. 24 ust. 1: wiek emerytalny 60 i 65 lat; art. 80: zasiłek pogrzebowy 7000 zł od 1 stycznia 2026 r. (Dz.U. 2025 poz. 718)',
     adres: eli(2025, 1749),
     sprawdzono: '2026-11-12',
   },
@@ -415,6 +415,41 @@ export const AKTY = {
     publikator: 'Dz.U. 2026 poz. 1213',
     adres: eli(2026, 1213),
     sprawdzono: '2026-11-11',
+  },
+  zfss: {
+    nazwa: 'Ustawa o zakładowym funduszu świadczeń socjalnych',
+    publikator: 'Dz.U. 2024 poz. 288',
+    uwaga: 'tekst jednolity; zmiany Dz.U. 2026 poz. 25 (art. 4 ust. 3 i art. 8 ust. 2) i 2026 poz. 1123 (art. 2 pkt 1 od 2028 r.) nie dotyczą art. 3 i 5',
+    adres: eli(2024, 288),
+    sprawdzono: '2026-11-12',
+  },
+  przecietneZfss2026: {
+    nazwa: 'Obwieszczenie Prezesa GUS w sprawie przeciętnego wynagrodzenia w 2025 r. i w drugim półroczu 2025 r. (odpis na ZFŚS)',
+    publikator: 'M.P. 2026 poz. 232',
+    uwaga: '7770,04 zł za 2025 r., 7848,60 zł za drugie półrocze 2025 r.; dla 2025 r. M.P. 2025 poz. 148 (7262,39 zł)',
+    adres: 'https://eli.gov.pl/eli/MP/2026/232/ogl',
+    sprawdzono: '2026-11-12',
+  },
+  okolobudzetowa2026: {
+    nazwa: 'Ustawa o szczególnych rozwiązaniach służących realizacji ustawy budżetowej na rok 2026',
+    publikator: 'Dz.U. 2025 poz. 1840',
+    uwaga: 'zmiana Dz.U. 2026 poz. 1349; bez przepisu o odpisie na ZFŚS (ostatnie zamrożenie podstawy dotyczyło 2023 r.)',
+    adres: eli(2025, 1840),
+    sprawdzono: '2026-11-12',
+  },
+  dorabianieProgi2026: {
+    nazwa: 'Komunikat Prezesa ZUS w sprawie kwot przychodu odpowiadających 70% i 130% przeciętnego miesięcznego wynagrodzenia (zmniejszanie i zawieszanie emerytur i rent)',
+    publikator: 'M.P. 2026 poz. 839',
+    uwaga: 'od 1 września 2026 r.: 6463,20 i 12 003,10 zł; wcześniej M.P. 2026 poz. 499 (od 1 czerwca), M.P. 2026 poz. 209 (od 1 marca), M.P. 2025 poz. 1196 (od 1 grudnia 2025 r.); nowy komunikat co kwartał (art. 104 ust. 10 pkt 1)',
+    adres: 'https://eli.gov.pl/eli/MP/2026/839/ogl',
+    sprawdzono: '2026-11-12',
+  },
+  dorabianieZmniejszenia2026: {
+    nazwa: 'Komunikat Prezesa ZUS w sprawie kwoty najniższej emerytury i renty oraz kwot maksymalnych zmniejszeń emerytur i rent',
+    publikator: 'M.P. 2026 poz. 220',
+    uwaga: 'od 1 marca 2026 r.: 989,41 zł (emerytura, renta z tytułu całkowitej niezdolności), 742,10 zł (częściowej), 841,05 zł (renta rodzinna dla jednej osoby); wcześniej M.P. 2025 poz. 152',
+    adres: 'https://eli.gov.pl/eli/MP/2026/220/ogl',
+    sprawdzono: '2026-11-12',
   },
 } as const satisfies Record<string, Akt>;
 
