@@ -1,0 +1,274 @@
+---
+// Umowa na zastępstwo: okres wypowiedzenia i ostatni dzień umowy (art. 36 § 1, art. 30 § 1 pkt 4 i § 2^1 Kp), brak
+// przedłużenia do dnia porodu (art. 177 § 3 i 3^1), zakaz wypowiedzenia w ciąży (art. 177 § 1), brak limitu 33 miesięcy
+// (art. 25^1 § 4 pkt 1). Logika: src/lib/narzedzia/umowa-zastepstwo.ts.
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { wypowiedzenieZastepstwa } from '../../lib/narzedzia/umowa-zastepstwo';
+import { dataPoPolsku, dodajDni, dzisWPolsce } from '../../lib/narzedzia/terminy';
+import { odmiana } from '../../lib/redakcja';
+
+const DZIS = dzisWPolsce();
+const START = dodajDni(DZIS, -400);
+const r = wypowiedzenieZastepstwa(START, DZIS);
+
+const faq = [
+  {
+    pytanie: 'Czy umowa na zastępstwo wlicza się do limitu 33 miesięcy i 3 umów?',
+    odpowiedz: 'Zwykle nie. Limitu nie stosuje się do umowy na czas określony zawartej w celu zastępstwa pracownika w czasie jego usprawiedliwionej nieobecności w pracy, jeżeli jej zawarcie w danym przypadku służy zaspokojeniu rzeczywistego okresowego zapotrzebowania i jest niezbędne w tym zakresie w świetle wszystkich okoliczności zawarcia umowy (art. 25^1 § 4 pkt 1 Kodeksu pracy). Gdy ten warunek nie jest spełniony, stosuje się limit (art. 25^1 § 1), a po jego przekroczeniu umowa staje się umową na czas nieokreślony (art. 25^1 § 3). Pracodawca nie zawiadamia o niej inspektora pracy: ten obowiązek dotyczy tylko umów zawartych z obiektywnych przyczyn leżących po jego stronie (art. 25^1 § 5).',
+  },
+  {
+    pytanie: 'Co musi być napisane w umowie na zastępstwo?',
+    odpowiedz: 'W umowie określa się cel, czyli zastępstwo, przez informację o obiektywnych przyczynach, które uzasadniają jej zawarcie (art. 29 § 1^1 Kodeksu pracy). Jak w każdej umowie na czas określony wpisuje się też czas jej trwania albo dzień zakończenia (art. 29 § 1 pkt 7).',
+  },
+  {
+    pytanie: 'Jaki jest okres wypowiedzenia umowy na zastępstwo?',
+    odpowiedz: 'Taki sam jak przy innych umowach na czas określony i na czas nieokreślony. Zależy od stażu u tego pracodawcy: 2 tygodnie przy stażu krótszym niż 6 miesięcy, 1 miesiąc od 6 miesięcy, 3 miesiące od 3 lat (art. 36 § 1 Kodeksu pracy). Do stażu wlicza się pracę u poprzedniego pracodawcy przy przejściu zakładu pracy (art. 36 § 1^1) oraz okresy zlecenia albo działalności, w których praca była świadczona na rzecz tego pracodawcy (art. 302^1 § 8). W wypowiedzeniu pracodawca podaje przyczynę (art. 30 § 4).',
+  },
+  {
+    pytanie: 'Czy umowa na zastępstwo przedłuża się do dnia porodu?',
+    odpowiedz: 'Nie. Umowa na czas określony, która rozwiązałaby się po upływie trzeciego miesiąca ciąży, przedłuża się do dnia porodu, ale ten przepis nie dotyczy umowy zawartej w celu zastępstwa nieobecnego pracownika (art. 177 § 3 i § 3^1 Kodeksu pracy).',
+  },
+  {
+    pytanie: 'Czy pracodawca może wypowiedzieć umowę na zastępstwo w ciąży?',
+    odpowiedz: 'Co do zasady nie. W okresie ciąży pracodawca nie może wypowiedzieć ani rozwiązać umowy, chyba że zachodzą przyczyny uzasadniające rozwiązanie umowy bez wypowiedzenia z winy pracownika, a reprezentująca go zakładowa organizacja związkowa wyraziła zgodę na rozwiązanie umowy (art. 177 § 1 pkt 2 Kodeksu pracy). Wypowiedzenie jest możliwe także w razie ogłoszenia upadłości lub likwidacji pracodawcy; termin rozwiązania umowy pracodawca uzgadnia wtedy z zakładową organizacją związkową (art. 177 § 4). Istnienie tych przyczyn udowadnia pracodawca (art. 177 § 4^1). Przepis nie wyłącza z tej ochrony umowy na zastępstwo.',
+  },
+  {
+    pytanie: 'Kiedy kończy się umowa na zastępstwo?',
+    odpowiedz: 'Umowa na czas określony rozwiązuje się z upływem czasu, na który była zawarta (art. 30 § 1 pkt 4 Kodeksu pracy), a wcześniej może się zakończyć na mocy porozumienia stron, za wypowiedzeniem albo bez wypowiedzenia (art. 30 § 1). Kodeks pracy nie mówi wprost, że umowa kończy się z powrotem osoby zastępowanej: o końcu decyduje to, jak czas trwania określono w umowie.',
+  },
+];
+---
+<StronaNarzedzia
+  slug="umowa-na-zastepstwo"
+  tytul="Umowa na zastępstwo: wypowiedzenie i ciąża"
+  opis="Okres wypowiedzenia i ostatni dzień umowy na zastępstwo, czy przedłuży się do porodu i czy dotyczy jej limit 33 miesięcy. Według Kodeksu pracy."
+  h1="Umowa na zastępstwo: wypowiedzenie, ciąża i limit"
+  lead="Umowa na zastępstwo to umowa na czas określony zawarta na czas nieobecności innej osoby. Zwykle nie dotyczy jej limit 33 miesięcy, nie przedłuża się do dnia porodu, a okres wypowiedzenia jest taki jak przy innych umowach. Wpisz daty, a policzymy ostatni dzień umowy i sprawdzimy przedłużenie."
+  faq={faq}
+>
+  <form class="kalkulator" data-zastepstwo novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twoja umowa</h2>
+      <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div class="sm:col-span-2">
+          <label for="zs-rodzaj" class="etykieta-pola">Rodzaj umowy</label>
+          <select id="zs-rodzaj" name="rodzaj" class="pole mt-1">
+            <option value="zastepstwo" selected>Na zastępstwo</option>
+            <option value="okreslony">Inna na czas określony</option>
+          </select>
+        </div>
+        <div>
+          <label for="zs-start" class="etykieta-pola">Pracujesz u tego pracodawcy od</label>
+          <input id="zs-start" name="start" type="date" class="pole mt-1" min="1960-01-01" max="2100-12-31" value={START} aria-describedby="zs-blad" data-dzis="-400" />
+        </div>
+        <div>
+          <label for="zs-doreczenie" class="etykieta-pola">Dzień doręczenia wypowiedzenia</label>
+          <input id="zs-doreczenie" name="doreczenie" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={DZIS} aria-describedby="zs-blad" data-dzis />
+        </div>
+        <div>
+          <label for="zs-koniec" class="etykieta-pola">Koniec umowy (jeśli ma datę)</label>
+          <input id="zs-koniec" name="koniec" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" aria-describedby="zs-blad" />
+        </div>
+        <div>
+          <label for="zs-ciaza" class="etykieta-pola">Początek ciąży (jeśli dotyczy)</label>
+          <input id="zs-ciaza" name="ciaza" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" aria-describedby="zs-blad" />
+        </div>
+      </div>
+      <p id="zs-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Ostatni dzień umowy przy wypowiedzeniu</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-data" data-w="ostatni">{dataPoPolsku(r.ostatniDzien)}</p>
+        <p class="status-terminu" data-w="status" hidden></p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Staż u pracodawcy w dniu doręczenia</dt><dd data-w="staz">{odmiana(r.stazMiesiecy, ['pełny miesiąc', 'pełne miesiące', 'pełnych miesięcy'])}</dd></div>
+        <div><dt>Okres wypowiedzenia</dt><dd data-w="okres">{r.okres.opis}</dd></div>
+        <div><dt>Okres wypowiedzenia kończy się</dt><dd data-w="koniec-okresu">{dataPoPolsku(r.koniecOkresu)}</dd></div>
+        <div><dt>Limit 33 miesięcy i 3 umów</dt><dd data-w="limit">nie dotyczy, jeśli spełniony jest warunek z art. 25¹ § 4</dd></div>
+        <div><dt>Upływ 3. miesiąca ciąży</dt><dd data-w="uplyw">—</dd></div>
+        <div><dt>Przedłużenie do dnia porodu</dt><dd data-w="porod">nie (art. 177 § 3¹)</dd></div>
+      </dl>
+      <p class="wynik-uwaga" data-w="uwaga">W wypowiedzeniu pracodawca podaje przyczynę (art. 30 § 4 Kodeksu pracy). Limit 33 miesięcy zwykle nie dotyczy zastępstwa, gdy umowa odpowiada rzeczywistej, okresowej potrzebie zastępstwa, niezbędnej w świetle wszystkich okoliczności (art. 25¹ § 4).</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Umowę o pracę zawiera się na okres próbny, na czas określony albo na czas nieokreślony (art. 25 § 1 Kodeksu pracy).
+      Umowa na zastępstwo jest umową na czas określony zawartą „w celu zastępstwa pracownika w czasie jego
+      usprawiedliwionej nieobecności w pracy” (art. 25<sup>1</sup> § 4 pkt 1). W umowie określa się ten cel przez
+      informację o obiektywnych przyczynach, które uzasadniają jej zawarcie (art. 29 § 1<sup>1</sup>).
+    </p>
+
+    <h3>Okres wypowiedzenia i ostatni dzień umowy</h3>
+    <p>
+      Okres wypowiedzenia umowy na czas określony zależy od stażu u tego pracodawcy w dniu doręczenia (art. 36 § 1),
+      tak samo jak przy umowie na czas nieokreślony. Okres w tygodniach kończy się w sobotę, a w miesiącach ostatniego
+      dnia miesiąca (art. 30 § 2<sup>1</sup>).
+    </p>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Okres wypowiedzenia umowy na zastępstwo według stażu</caption>
+        <thead><tr><th scope="col">Staż u pracodawcy</th><th scope="col">Okres</th><th scope="col">Kończy się</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Krócej niż 6 miesięcy</th><td>2 tygodnie</td><td>w sobotę</td></tr>
+          <tr><th scope="row">Co najmniej 6 miesięcy</th><td>1 miesiąc</td><td>ostatniego dnia miesiąca</td></tr>
+          <tr><th scope="row">Co najmniej 3 lata</th><td>3 miesiące</td><td>ostatniego dnia miesiąca</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Liczymy tak samo jak <a href="/narzedzia/okres-wypowiedzenia">kalkulator okresu wypowiedzenia</a>: staż to pełne
+      miesiące od początku pracy do dnia doręczenia. Do stażu wlicza się pracę u poprzedniego pracodawcy przy przejściu
+      zakładu pracy (art. 36 § 1<sup>1</sup>) oraz okresy zlecenia albo działalności, w których praca była świadczona na
+      rzecz tego pracodawcy (art. 302<sup>1</sup> § 8); wpisz wtedy najwcześniejszą z tych dat. Gdy próg 6 miesięcy albo
+      3 lat mija w trakcie wypowiedzenia, przepis nie mówi wprost, co wtedy; jak
+      <a href="/narzedzia/okres-wypowiedzenia">kalkulator okresu wypowiedzenia</a> podajemy dłuższy okres. Przy stanowisku
+      z odpowiedzialnością materialną za powierzone mienie umowa może przewidywać dłuższy okres (art. 36 § 5); kalkulator
+      go nie zna. Gdy umowa ma datę końca wcześniejszą niż koniec okresu wypowiedzenia,
+      ostatnim dniem jest ta data, bo umowa rozwiązuje się z upływem czasu, na który była zawarta (art. 30 § 1 pkt 4).
+      Kodeks pracy nie mówi wprost, że umowa na zastępstwo kończy się z powrotem osoby zastępowanej. O jej końcu decyduje
+      to, jak czas trwania określono w umowie (art. 29 § 1 pkt 7). Gdy koniec zależy od powrotu tej osoby, kalkulator
+      tej daty nie zna.
+    </p>
+    <p>
+      W wypowiedzeniu pracodawca podaje przyczynę (art. 30 § 4) i pouczenie o prawie odwołania do sądu pracy (art. 30 § 5).
+      Nie może wypowiedzieć umowy w czasie Twojego urlopu ani innej usprawiedliwionej nieobecności, zanim minie okres,
+      który pozwala rozwiązać umowę bez wypowiedzenia (art. 41). Termin na odwołanie policzy
+      <a href="/narzedzia/odwolanie-do-sadu-pracy">kalkulator terminu odwołania</a>.
+    </p>
+
+    <h3>Limit 33 miesięcy i 3 umów</h3>
+    <p>
+      Umowy na czas określony z tym samym pracodawcą mogą trwać łącznie najwyżej 33 miesiące, a może ich być najwyżej trzy
+      (art. 25<sup>1</sup> § 1). Tego limitu nie stosuje się do umowy na zastępstwo, jeżeli jej zawarcie w danym przypadku
+      służy zaspokojeniu rzeczywistego okresowego zapotrzebowania i jest niezbędne w tym zakresie w świetle wszystkich
+      okoliczności (art. 25<sup>1</sup> § 4). Kalkulator nie ocenia tego warunku. Gdy nie jest spełniony, stosuje się
+      limit (art. 25<sup>1</sup> § 1), a po jego przekroczeniu umowa staje się umową na czas nieokreślony
+      (art. 25<sup>1</sup> § 3). Pracodawca nie zawiadamia inspektora
+      pracy o umowie na zastępstwo; obowiązek z art. 25<sup>1</sup> § 5 dotyczy tylko umów z obiektywnych przyczyn
+      leżących po jego stronie. Limit dla innych umów sprawdzi
+      <a href="/narzedzia/umowa-na-czas-okreslony">kalkulator umowy na czas określony</a>.
+    </p>
+
+    <h3 id="ciaza">Ciąża</h3>
+    <ul>
+      <li>Umowa na czas określony albo na okres próbny dłuższy niż miesiąc, która rozwiązałaby się po upływie trzeciego miesiąca ciąży, przedłuża się do dnia porodu (art. 177 § 3). Takie przedłużenie nie wlicza się do limitu 33 miesięcy (art. 25<sup>1</sup> § 4<sup>1</sup>).</li>
+      <li>Umowa na zastępstwo się nie przedłuża (art. 177 § 3<sup>1</sup>): kończy się tak, jak przewiduje umowa.</li>
+      <li>W okresie ciąży pracodawca nie może wypowiedzieć ani rozwiązać umowy, także na zastępstwo, bo przepis jej nie wyłącza (art. 177 § 1). Wyjątki: przyczyny uzasadniające rozwiązanie umowy bez wypowiedzenia z winy pracownika, gdy reprezentująca go zakładowa organizacja związkowa wyraziła zgodę na rozwiązanie umowy (art. 177 § 1 pkt 2), oraz ogłoszenie upadłości lub likwidacja pracodawcy, gdy termin rozwiązania umowy pracodawca uzgadnia z zakładową organizacją związkową (art. 177 § 4). Istnienie tych przyczyn udowadnia pracodawca (art. 177 § 4<sup>1</sup>).</li>
+      <li>Ta sama ochrona trwa też od dnia złożenia wniosku o urlop macierzyński, ojcowski, rodzicielski albo inny urlop wymieniony w tym przepisie do dnia zakończenia tego urlopu (art. 177 § 1). Więcej: <a href="/narzedzia/praca-w-ciazy">praca w ciąży</a>.</li>
+    </ul>
+    <p>
+      <strong>Którą datę wpisać.</strong> Wpisz początek ciąży z zaświadczenia lekarskiego. Przepis nie mówi, od której
+      daty liczyć miesiące ciąży ani jak je liczyć.
+    </p>
+    <p>
+      <strong>Upływ trzeciego miesiąca.</strong> Możliwe są dwa sposoby. Według art. 112 Kodeksu cywilnego (w związku
+      z art. 300 Kodeksu pracy) termin w miesiącach kończy się w dniu, który datą odpowiada dniowi początkowemu: od
+      10 stycznia byłby to 10 kwietnia. Gdy dzień początku ciąży liczyć jako pierwszy dzień pierwszego miesiąca, trzeci
+      miesiąc upływa z końcem dnia poprzedniego, czyli 9 kwietnia. Bierzemy ten wcześniejszy dzień, bo jest bezpieczny dla
+      pracownicy: umowa kończąca się 10 kwietnia przedłuża się do dnia porodu. Gdy w miesiącu nie ma dnia o tej dacie,
+      liczymy od ostatniego dnia miesiąca (od 30 listopada: upływ 27 lutego). Gdy umowa kończy się dokładnie w dniu
+      upływu, przepis nie rozstrzyga, czy to już „po upływie”; kalkulator to zaznacza i nie zgaduje. W sporze rozstrzyga
+      sąd pracy.
+    </p>
+    <p>
+      <strong>Przedłużenie a wypowiedzenie.</strong> Przedłużenie oceniamy od daty końca wpisanej w umowie. Gdy umowa
+      przedłuża się do dnia porodu, a data z umowy wypada przed końcem okresu wypowiedzenia, ostatnim dniem umowy jest
+      dzień porodu. Gdy wypowiedzenie kończy umowę przed datą z umowy, przepis nie mówi wprost, czy przedłużenie
+      obejmuje taką umowę; kalkulator to zaznacza.
+    </p>
+    <p>
+      Inne uprawnienia w ciąży i po porodzie opisują <a href="/narzedzia/praca-w-ciazy">praca w ciąży</a>
+      i <a href="/narzedzia/rodzic-w-pracy">rodzic w pracy</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
+  import { umowaNaZastepstwo, type RodzajUmowyWCiazy, type StatusPrzedluzenia } from '../../lib/narzedzia/umowa-zastepstwo';
+  import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { odmiana } from '../../lib/redakcja';
+  import { typografia } from '../../lib/typografia.mjs';
+
+  const STATUS_PORODU: Record<StatusPrzedluzenia, string> = {
+    przedluza: 'tak, do dnia porodu (art. 177 § 3)',
+    zastepstwo: 'nie (art. 177 § 3¹)',
+    'probna-krotka': 'nie: okres próbny do miesiąca (art. 177 § 3)',
+    'przed-uplywem': 'nie: umowa kończy się przed upływem 3. miesiąca ciąży',
+    granica: 'przepis nie rozstrzyga: umowa kończy się w dniu upływu 3. miesiąca',
+    'po-umowie': 'nie dotyczy: ciąża zaczyna się po końcu umowy',
+  };
+
+  const form = document.querySelector<HTMLFormElement>('[data-zastepstwo]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const POLA = ['ostatni', 'staz', 'okres', 'koniec-okresu', 'uplyw', 'porod'];
+    const przelicz = () => {
+      const rodzaj = el('rodzaj').value as RodzajUmowyWCiazy;
+      const start = el('start').value;
+      const doreczenie = el('doreczenie').value;
+      const koniec = el('koniec').value;
+      const ciaza = el('ciaza').value;
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      const status = w('status');
+      let blad: string | null = null;
+      if (!poprawnaData(start)) blad = 'Wpisz datę rozpoczęcia pracy u tego pracodawcy.';
+      else if (!poprawnaData(doreczenie)) blad = 'Wpisz dzień doręczenia wypowiedzenia.';
+      else if (doreczenie < start) blad = 'Dzień doręczenia nie może być wcześniejszy niż początek pracy.';
+      else if (koniec && !poprawnaData(koniec)) blad = 'Wpisz poprawną datę końca umowy.';
+      else if (koniec && koniec < doreczenie) blad = 'Koniec umowy nie może być wcześniejszy niż dzień doręczenia.';
+      else if (ciaza && !poprawnaData(ciaza)) blad = 'Wpisz poprawną datę początku ciąży.';
+      b.hidden = !blad;
+      b.textContent = typografia(blad ?? '');
+      if (blad) {
+        for (const k of POLA) w(k).textContent = '—';
+        status.hidden = true;
+        return;
+      }
+      const r = umowaNaZastepstwo({ rodzaj, poczatekPracy: start, doreczenie, koniecUmowy: koniec, poczatekCiazy: ciaza });
+      const wyp = r.wypowiedzenie;
+      w('ostatni').textContent = typografia(r.ostatni === 'porod' ? 'dzień porodu (art. 177 § 3)' : dataPoPolsku(r.ostatni));
+      w('staz').textContent = typografia(odmiana(wyp.stazMiesiecy, ['pełny miesiąc', 'pełne miesiące', 'pełnych miesięcy']));
+      w('okres').textContent = typografia(wyp.okres.opis);
+      w('koniec-okresu').textContent = typografia(dataPoPolsku(wyp.koniecOkresu));
+      w('limit').textContent = typografia(
+        rodzaj === 'zastepstwo' ? 'nie dotyczy, jeśli spełniony jest warunek z art. 25¹ § 4' : 'co do zasady dotyczy (art. 25¹ § 1)',
+      );
+
+      const p = r.przedluzenie;
+      w('uplyw').textContent = typografia(p?.uplyw3Miesiaca ? dataPoPolsku(p.uplyw3Miesiaca) : '—');
+      w('porod').textContent = typografia(
+        p ? STATUS_PORODU[p.status] : !ciaza ? 'wpisz początek ciąży, jeśli dotyczy' : 'wpisz koniec umowy',
+      );
+
+      const uwagi = [];
+      if (r.ostatni === 'porod') uwagi.push('Data końca z umowy wypada po upływie 3. miesiąca ciąży, więc umowa przedłuża się do dnia porodu (art. 177 § 3 Kodeksu pracy).');
+      else if (wyp.powod === 'termin') uwagi.push('Umowa kończy się wcześniej niż okres wypowiedzenia, z upływem czasu, na który ją zawarto (art. 30 § 1 pkt 4 Kodeksu pracy).');
+      if (r.przedluzeniePoWypowiedzeniu) uwagi.push('Wypowiedzenie kończy umowę przed datą z umowy. Przepis nie mówi wprost, czy taka umowa przedłuża się do dnia porodu.');
+      uwagi.push('W wypowiedzeniu pracodawca podaje przyczynę (art. 30 § 4 Kodeksu pracy).');
+      uwagi.push(
+        rodzaj === 'zastepstwo'
+          ? 'Limit 33 miesięcy zwykle nie dotyczy zastępstwa, gdy umowa odpowiada rzeczywistej, okresowej potrzebie zastępstwa, niezbędnej w świetle wszystkich okoliczności (art. 25¹ § 4).'
+          : 'Limit 33 miesięcy i 3 umów sprawdzi kalkulator umowy na czas określony.',
+      );
+      w('uwaga').textContent = typografia(uwagi.join(' '));
+
+      status.hidden = !r.wypowiedzenieWCiazy;
+      status.dataset.status = 'po-terminie';
+      status.textContent = r.wypowiedzenieWCiazy ? typografia('W ciąży wypowiedzenie jest co do zasady zakazane (art. 177 § 1 pkt 2).') : '';
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    ustawDzisiejszeWartosci(form);
+    przelicz();
+  }
+</script>

@@ -79,3 +79,4 @@ export const INDEKSOWANE = [
   '/', '/narzedzia', ...NARZEDZIA_ADRESY, '/o-nas', '/zasady-redakcyjne', '/kontakt', '/reklama',
 ] as const;
 export const NIEINDEKSOWANE = ['/styleguide', '/404', '/410', '/podglad/o-nas', '/szukaj', '/newsletter/potwierdz', '/newsletter/blad', '/kontakt/wyslano', '/kontakt/blad'] as const;
+export const NARZEDZIE_ZASTEPSTWO = '/narzedzia/umowa-na-zastepstwo';
