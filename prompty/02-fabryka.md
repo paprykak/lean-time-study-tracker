@@ -70,6 +70,9 @@ Twarde zasady treści (każda wzięła się z błędu, który już raz wyszedł)
 8. Bez atrybutu `style=""` i bez skryptów spoza Astro (CSP z hashami); bez nowych zewnętrznych skryptów i ciasteczek.
 9. Limity: `tytul` do 48 znaków, `opis` do 155, `krotko` w rejestrze do 110.
 10. Zrzut z telefonu (Playwright, 412 px) przed oddaniem: nic nie ucięte, brak przewijania w bok.
+11. Link (`<a>`) piszesz w tym samym wierszu szablonu co tekst przed nim: kompresja HTML w Astro usuwa łamanie wiersza
+    i słowo skleja się z linkiem. Datę domyślną formularza ustawiasz w przeglądarce (`src/lib/narzedzia/dzis-w-formularzu.ts`),
+    a teksty wyniku generuje jedna funkcja dla HTML i skryptu (wzór: `dorabianie-do-renty`).
 
 ## 5. Proces zespołu
 
