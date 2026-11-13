@@ -27,7 +27,7 @@
 //    minus dni L4 lub zasiłku i dni pracy bez wynagrodzenia.
 // 5. Miesiąc tylko częściowo w okresie dodatku: część stałą liczymy proporcjonalnie do dni kalendarzowych w okresie.
 // 6. Składników za okresy dłuższe niż miesiąc (§ 10) nie liczymy.
-import { dniMiedzy, dodajDni, koniecOkresu } from './terminy';
+import { dniMiedzy, koniecOkresu } from './terminy';
 import { dniWMiesiacu } from './czas-pracy';
 import { doGrosza } from './dodatek-nocny';
 import { wspolczynnik } from './ekwiwalent';

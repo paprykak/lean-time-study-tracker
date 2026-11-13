@@ -1,5 +1,5 @@
 // Terminy w latach i miesiącach (art. 112 Kodeksu cywilnego, w prawie pracy przez art. 300 Kodeksu pracy). Daty jako
-// RRRR-MM-DD, liczone w UTC. Jedna konwencja dla wszystkich narzędzi (DECYZJE.md, 2026-11-13, pakiet „wspólny kod”):
+// RRRR-MM-DD, liczone w UTC. Jedna konwencja dla wszystkich narzędzi (pakiet „wspólny kod”, 2026-11-13; decyzja w DECYZJE.md):
 //
 // 1. Termin od zdarzenia (dzień zdarzenia się nie wlicza, art. 111 § 2 KC: „3 miesiące od naruszenia”, „15 miesięcy od
 //    rozwiązania umowy”, „5 lat od dnia wydania”): kończy się z upływem dnia, który datą odpowiada dniowi zdarzenia,
@@ -18,7 +18,8 @@
 // pismo GIP z 17.01.2011); przypadku, gdy takiego dnia w ostatnim miesiącu nie ma, żadne znalezione źródło nie
 // rozstrzyga wprost: przyjmujemy literę art. 112 zd. 1 KC (ostatni dzień miesiąca).
 // Odstępstwa od pkt 2 są w narzędziach opisane jako wariant bezpieczny dla pracownika, gdy przepis nie rozstrzyga
-// (umowa na zastępstwo: upływ 3. miesiąca ciąży; praca cudzoziemca: okno na podjęcie pracy).
+// (umowa na zastępstwo: upływ 3. miesiąca ciąży; praca cudzoziemca: okno na podjęcie pracy), a w drugą stronę szkolenie
+// okresowe BHP: „do 6 (12) miesięcy od rozpoczęcia pracy” liczymy jak okres z pierwszym dniem (pkt 2), bo wychodzi wcześniej.
 
 const DZIEN_MS = 86_400_000;
 

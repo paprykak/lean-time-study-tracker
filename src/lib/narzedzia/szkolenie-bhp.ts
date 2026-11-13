@@ -112,7 +112,8 @@ export function terminSzkolenia(d: DaneSzkolenia): WynikSzkolenia {
     termin = dodajLata(d.ostatnie, g.coIleLat);
   } else if (d.poczatekPracy) {
     rodzaj = 'pierwsze';
-    // „W okresie pierwszych 6 (12) miesięcy” pracy: okres liczony z pierwszym dniem pracy (`koniecOkresu`, terminy.ts).
+    // § 15: „w okresie do 6 (12) miesięcy od rozpoczęcia pracy”. Liczymy z pierwszym dniem pracy (`koniecOkresu`), o dzień
+    // wcześniej niż termin od zdarzenia (`dodajMiesiace`): świadomy wariant wcześniejszy, bezpieczny (terminy.ts).
     termin = koniecOkresu(d.poczatekPracy, g.pierwszeMiesiecy);
   } else {
     throw new RangeError('Podaj datę ostatniego szkolenia okresowego albo datę rozpoczęcia pracy');
