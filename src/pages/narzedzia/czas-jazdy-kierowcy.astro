@@ -34,7 +34,7 @@ const faq = [
   },
   {
     pytanie: 'Kiedy kierowca musi mieć odpoczynek tygodniowy?',
-    odpowiedz: 'Najpóźniej po sześciu okresach 24-godzinnych od końca poprzedniego odpoczynku tygodniowego. Regularny trwa co najmniej 45 godzin, skrócony co najmniej 24 godziny. W dwóch kolejnych tygodniach trzeba mieć dwa regularne albo regularny i skrócony, a skrócenie odebrać w całości do końca trzeciego tygodnia (art. 8 ust. 6 i 6b). Regularnego odpoczynku tygodniowego nie wolno spędzać w kabinie; koszty noclegu poza pojazdem pokrywa pracodawca (art. 8 ust. 8).',
+    odpowiedz: 'Najpóźniej po sześciu okresach 24-godzinnych od końca poprzedniego odpoczynku tygodniowego. Regularny trwa co najmniej 45 godzin, skrócony co najmniej 24 godziny. W dwóch kolejnych tygodniach trzeba mieć dwa regularne albo regularny i skrócony, a skrócenie odebrać w całości do końca trzeciego tygodnia (art. 8 ust. 6 i 6b). Regularnego odpoczynku tygodniowego nie wolno spędzać w kabinie; koszty noclegu poza pojazdem pokrywa pracodawca (art. 8 ust. 8a).',
   },
   {
     pytanie: 'Czy przerwa w jeździe jest płatna?',
@@ -57,7 +57,7 @@ const faq = [
   <form class="kalkulator" data-jazda novalidate aria-labelledby="kalkulator-tytul">
     <div class="kalkulator-pola">
       <h2 id="kalkulator-tytul" class="tytul-m">Twój dzień za kierownicą</h2>
-      <div class="mt-4 grid grid-cols-1 gap-4 min-[360px]:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
+      <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
         <div>
           <label for="cj-pojazd" class="etykieta-pola">Pojazd</label>
           <select id="cj-pojazd" name="pojazd" class="pole mt-1">
@@ -186,7 +186,7 @@ const faq = [
       Przerwa to czas bez jazdy i bez innej pracy, tylko na wypoczynek (art. 4 lit. d). Rozładunek, tankowanie czy
       formalności to inna praca, a czekanie w gotowości to nie przerwa. Regularny odpoczynek tygodniowy i każdy
       tygodniowy ponad 45 h odbierany jako rekompensata trzeba spędzić poza pojazdem, w miejscu z odpowiednim noclegiem
-      i sanitariatami; koszty pokrywa pracodawca (art. 8 ust. 8).
+      i sanitariatami; koszty pokrywa pracodawca (art. 8 ust. 8a).
     </p>
 
     <h2 id="ustawa">Co dodaje ustawa o czasie pracy kierowców</h2>
@@ -208,7 +208,7 @@ const faq = [
       <li><strong>Czego nie liczymy:</strong> załogi kilkuosobowej, promu i pociągu, odstępstw dla okazjonalnych przewozów osób (dwie przerwy po 15 min, reguła 12 dni), dwóch kolejnych skróconych odpoczynków tygodniowych w przewozach międzynarodowych i pojazdów wyłączonych z rozporządzenia (art. 3 i 13), norm czasu pracy z art. 11, 12 i 15 ustawy, które zależą od systemu i rozkładu u pracodawcy, dyspozycji w zadaniowym czasie pracy, którą zalicza się do czasu pracy do 8 h (art. 10 ust. 3), ani przerwy po 6 h pracy z art. 13 ustawy na liniach do 50 km (ustawa nie mówi, jak się ma do art. 31b).</li>
     </ul>
     <p>
-      Do kiedy jest ważny kod 95, policzy <a href="/narzedzia/kod-95">kalkulator kodu 95</a>, a ważność zaświadczenia na przewóz towarów niebezpiecznych <a href="/narzedzia/zaswiadczenie-adr">kalkulator zaświadczenia ADR</a>. Ile się należy za dyżur, policzy <a href="/narzedzia/dyzur-w-pracy">kalkulator dyżuru</a>.
+      Do kiedy jest ważny kod 95, policzy <a href="/narzedzia/kod-95">kalkulator kodu 95</a>, a ważność zaświadczenia na przewóz towarów niebezpiecznych <a href="/narzedzia/zaswiadczenie-adr">kalkulator zaświadczenia ADR</a>. Ile płatne są dyżur i przerwy w jeździe, policzy <a href="/narzedzia/dyzur-kierowcy">kalkulator dyżuru i przerw kierowcy</a>.
     </p>
   </Fragment>
 </StronaNarzedzia>

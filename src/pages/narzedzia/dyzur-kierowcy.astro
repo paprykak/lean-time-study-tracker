@@ -60,7 +60,7 @@ const faq = [
         <input id="dk-stawka" name="stawka" class="pole mt-1 max-w-56" type="text" inputmode="decimal" autocomplete="off" value={PRZYKLAD.stawka} aria-describedby="dk-stawka-opis dk-blad" />
         <p id="dk-stawka-opis" class="meta mt-1">Stawka z osobistego zaszeregowania, bez dodatków.</p>
       </div>
-      <div class="mt-4 grid grid-cols-2 gap-4" data-tylko-miesieczna>
+      <div class="mt-4 grid grid-cols-1 gap-4 min-[360px]:grid-cols-2" data-tylko-miesieczna>
         <div>
           <label for="dk-miesiac" class="etykieta-pola">Miesiąc</label>
           <select id="dk-miesiac" name="miesiac" class="pole mt-1" data-miesiac-biezacy>

@@ -35,7 +35,7 @@ test('noc: przerwa należała się o 2:30 i ponad 10 h pracy w porze nocnej', as
   await expect(lista).toHaveCount(2);
   await expect(lista.nth(0)).toContainText(/najpóźniej\so\s2:30\snastępnego\sdnia/);
   await expect(lista.nth(1)).toContainText(/10\sh\s30\smin/);
-  await page.locator('#cj-pojazd').selectOption({ label: 'Dostawczy 2,5–3,5 t za granicą' });
+  await page.locator('#cj-pojazd').selectOption({ label: 'Bus 2,5–3,5 t za granicą' });
   await expect(page.locator('[data-w="werdykt"]')).toHaveText('1 naruszenie');
 });
 

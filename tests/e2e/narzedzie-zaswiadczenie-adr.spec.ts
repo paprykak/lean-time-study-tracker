@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { expect, test } from '@playwright/test';
 import { adresNarzedzia } from '../../src/data/narzedzia';
 
@@ -59,4 +60,15 @@ test('błędne dane: brak daty i egzamin przed wydaniem', async ({ page }) => {
   await expect(page.locator('[data-blad="egzamin"]')).toBeVisible();
   await expect(page.locator('#adr-egzamin')).toHaveAttribute('aria-invalid', 'true');
   await expect(page.locator('[data-w="plan"]')).toHaveText('—');
+});
+
+test('plik .ics: terminy z przypomnieniami, jak mówi opis pod przyciskiem', async ({ page, browserName }) => {
+  test.skip(browserName === 'webkit', 'Pobieranie plików w WebKit Playwright obsługuje inaczej.');
+  await page.locator('#adr-wazne').fill('2041-05-20');
+  await expect(page.locator('p.meta', { hasText: 'Terminy do kalendarza' })).toContainText('Przypomnienia o 9:00');
+  const [pobranie] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: 'Dodaj do kalendarza (.ics)' }).click()]);
+  const tresc = readFileSync((await pobranie.path())!, 'utf8');
+  expect(tresc).toContain('DTSTART;VALUE=DATE:20400521');
+  expect(tresc).toContain('DTSTART;VALUE=DATE:20410520');
+  expect(tresc).toContain('BEGIN:VALARM');
 });

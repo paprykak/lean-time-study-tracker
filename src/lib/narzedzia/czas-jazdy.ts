@@ -59,9 +59,9 @@ export const RODZAJE: { id: Rodzaj; nazwa: string }[] = [
 export const POJAZDY: { id: Pojazd; nazwa: string }[] = [
   { id: 'ciezarowy', nazwa: 'Ciężarówka ponad 3,5 t' },
   { id: 'autobus', nazwa: 'Autobus, autokar' },
-  { id: 'bus-miedzynarodowy', nazwa: 'Dostawczy 2,5–3,5 t za granicą' },
+  { id: 'bus-miedzynarodowy', nazwa: 'Bus 2,5–3,5 t za granicą' },
   { id: 'linia-50', nazwa: 'Linia regularna do 50 km' },
-  { id: 'do-35t', nazwa: 'Do 3,5 t (za granicą do 2,5 t)' },
+  { id: 'do-35t', nazwa: 'Do 3,5 t (za granicą 2,5 t)' },
 ];
 
 /** Limity w minutach (rozporządzenie 561/2006 i ustawa o czasie pracy kierowców). */

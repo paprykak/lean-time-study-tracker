@@ -55,3 +55,23 @@ for (const [slug, listy] of [
     }
   });
 }
+
+for (const [slug, listy] of [
+  ['czas-jazdy-kierowcy', ['#cj-pojazd']],
+  ['dyzur-kierowcy', ['#dk-miesiac']],
+] as const) {
+  test(`${slug}: opcje list kierowców nie są ucięte na 320 px`, async ({ page }) => {
+    await page.goto(`/narzedzia/${slug}`);
+    for (const lista of listy) {
+      const uciete = await page.locator(lista).evaluate(async (el) => {
+        const s = el as HTMLSelectElement;
+        const styl = getComputedStyle(s);
+        const ctx = document.createElement('canvas').getContext('2d')!;
+        ctx.font = `${styl.fontWeight} ${styl.fontSize} ${styl.fontFamily}`;
+        await document.fonts.load(ctx.font, [...s.options].map((o) => o.text).join(''));
+        return [...s.options].filter((o) => ctx.measureText(o.text).width > s.clientWidth - 40).map((o) => o.text);
+      });
+      expect(uciete, lista).toEqual([]);
+    }
+  });
+}
