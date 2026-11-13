@@ -57,7 +57,7 @@ export const KONSERWACJA: RodzajUrzadzenia[] = [
   { id: 'k-dzwigniki', krotko: 'Dźwigniki', grupa: 'Dźwigniki', nazwa: 'Dźwigniki do podnoszenia ładunków, w tym pojazdów', lata: 10 },
   { id: 'k-wyciagi', krotko: 'Wyciągi towarowe', grupa: 'Wyciągi towarowe', nazwa: 'Wyciągi towarowe', lata: 10 },
   { id: 'k-podesty', krotko: 'Podesty ruchome', grupa: 'Podesty ruchome', nazwa: 'Podesty ruchome stacjonarne, wiszące, masztowe, przejezdne albo załadowcze', lata: 5 },
-  { id: 'k-dzwigi', krotko: 'Dźwigi osobowe i towarowe', grupa: 'Dźwigi osobowe i towarowe', nazwa: 'Dźwigi osobowe, towarowo-osobowe i towarowe (napęd elektryczny albo hydrauliczny i pneumatyczny)', lata: 5 },
+  { id: 'k-dzwigi', krotko: 'Dźwigi', grupa: 'Dźwigi osobowe i towarowe', nazwa: 'Dźwigi osobowe, towarowo-osobowe i towarowe (napęd elektryczny albo hydrauliczny i pneumatyczny)', lata: 5 },
   { id: 'k-dzwigi-budowlane', krotko: 'Dźwigi budowlane', grupa: 'Dźwigi budowlane', nazwa: 'Dźwigi budowlane towarowe i towarowo-osobowe', lata: 5 },
   { id: 'k-kontenery', krotko: 'Przeładunek kontenerów', grupa: 'Urządzenia do manipulacji kontenerami', nazwa: 'Urządzenia do przemieszczania kontenerów przy pracach przeładunkowych', lata: 5 },
 ];
