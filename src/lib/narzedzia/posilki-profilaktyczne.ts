@@ -245,7 +245,7 @@ export function opisz(w: Wynik, d: Pick<Dane, 'data' | 'miejsce' | 'plec' | 'sta
   const NAPOJE: Record<PodstawaNapojow, string> = {
     n1: '§ 4 ust. 1 pkt 1: WBGT powyżej 25°C, napoje wzbogacone w sole mineralne i witaminy (§ 4 ust. 2)',
     n3: '§ 4 ust. 1 pkt 3: praca na otwartej przestrzeni przy temperaturze poniżej 10°C lub powyżej 25°C',
-    n4: `§ 4 ust. 1 pkt 4: wydatek ${progN4(d.plec)}`,
+    n4: `§ 4 ust. 1 pkt 4: wydatek ${progN4(d.plec)}${d.plec === 'mezczyzn' ? tylkoJedna(PROGI.obnizony.mezczyzn) : ''}`,
     n5: '§ 4 ust. 1 pkt 5: temperatura z powodu pogody powyżej 28°C',
   };
   let napoje = w.napoje.length

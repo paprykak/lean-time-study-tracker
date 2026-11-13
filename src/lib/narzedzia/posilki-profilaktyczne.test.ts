@@ -34,6 +34,9 @@ describe('progi wydatku energetycznego (§ 3 ust. 1 rozporządzenia o posiłkach
     expect(t.przeliczenie).toBe('1000,05 kcal = 4187 kJ (1 kcal = 4,1868 kJ)');
     const m = d({ data: '2026-07-15', miejsce: 'chlodnia', wydatek: 1500 });
     expect(opisz(ocen(m), m).podstawa).toContain('(1500 kcal = 6280,2 kJ, więcej niż 6280 kJ z nawiasu)');
+    // Napoje u mężczyzn (§ 4 ust. 1 pkt 4): 1500 kcal to nie „powyżej 1500 kcal”, ale 6280,2 kJ przekracza 6280 kJ.
+    const n = d({ wydatek: 1500 });
+    expect(opisz(ocen(n), n).napoje).toContain('§ 4 ust. 1 pkt 4: wydatek powyżej 1500 kcal (6280 kJ) (1500 kcal = 6280,2 kJ, więcej niż 6280 kJ z nawiasu)');
     const zwykly = d({ wydatek: 2500 });
     expect(opisz(ocen(zwykly), zwykly).podstawa).not.toContain('z nawiasu');
   });

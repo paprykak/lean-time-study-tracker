@@ -32,6 +32,8 @@ test('po L4: wcześniejsze zwolnienie 44 dni i weekend przerwy, badanie potrzebn
   await expect(page.locator('[data-w="a-wynik"]')).toHaveText(/^potrzebne$/);
   await expect(page.locator('[data-w="a-opis"]')).toContainText(/44\sdni/);
   await expect(page.locator('[data-w="a-powrot"]')).toContainText(/21\slutego\s2026/);
+  // FAQ mówi to samo co wynik: wcześniejsze zwolnienie ponad 30 dni bez dnia pracy w przerwie to badanie.
+  await expect(page.locator('main')).toContainText(/wcześniejsze\szwolnienie\strwało\sdłużej\sniż\s30\sdni,\sa\sdo\snastępnego\snie\sbyło\sdnia\spracy,\sbadanie\skontrolne\sjest\spotrzebne/);
 });
 
 test('po L4: 31 dni wymaga badania; koniec przed początkiem to błąd danych', async ({ page }) => {
@@ -73,4 +75,20 @@ test('orzeczenie: odwołanie do 11 listopada (święto) i przypomnienie w kalend
   await expect(page.locator('[data-w="c-wynik"]')).toHaveText('—');
   await expect(page.locator('[data-w="c-nastepne"]')).toContainText(/12\smaja\s2099/);
   await expect(page.locator('[data-ics]')).toBeEnabled();
+});
+
+test('strona zbudowana wcześniej, otwarta 5 stycznia 2027 r.: domyślne daty liczone od dziś, nie od dnia buildu', async ({ page }) => {
+  await page.clock.setFixedTime(new Date('2027-01-05T10:00:00+01:00'));
+  await page.goto(ADRES);
+  // Zwolnienie 2.12.2026–4.01.2027 (34 dni), powrót 5.01.2027.
+  await expect(page.locator('[name="od1"]')).toHaveValue('2026-12-02');
+  await expect(page.locator('[name="do1"]')).toHaveValue('2027-01-04');
+  await expect(page.locator('[name="od2"]')).toHaveValue('');
+  await expect(page.locator('[data-w="a-powrot"]')).toContainText(/5\sstycznia\s2027/);
+  await expect(page.locator('[name="koniec"]')).toHaveValue('2026-12-16');
+  await expect(page.locator('[name="start"]')).toHaveValue('2027-01-10');
+  await expect(page.locator('[name="nastepne"]')).toHaveValue('2029-01-04');
+  await page.getByLabel('Mam orzeczenie').check();
+  await expect(page.locator('[name="otrzymane"]')).toHaveValue('2027-01-05');
+  await expect(page.locator('[data-w="c-wynik"]')).toHaveText(/12\sstycznia\s2027/);
 });

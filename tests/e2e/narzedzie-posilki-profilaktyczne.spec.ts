@@ -71,3 +71,10 @@ test('pod ziemią: wydatek bez wyboru progów nie jest błędem; błąd ma role=
   await page.getByLabel('Miejsce pracy').selectOption('hala');
   await expect(page.getByRole('alert')).toContainText(/Wybierz,\sdla\skogo\sliczyć\sprogi/);
 });
+
+test('strona zbudowana jesienią, otwarta 15 kwietnia 2027 r.: data zmiany to dziś, poza okresem zimowym', async ({ page }) => {
+  await page.clock.setFixedTime(new Date('2027-04-15T10:00:00+02:00'));
+  await page.goto(ADRES);
+  await expect(page.locator('[name="data"]')).toHaveValue('2027-04-15');
+  await expect(page.locator('[data-w="zima"]')).toHaveText(/^nie\s/);
+});

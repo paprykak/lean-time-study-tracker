@@ -18,15 +18,18 @@ import {
   tekstOdwolania,
   tekstWstepnych,
 } from '../../lib/narzedzia/badania-lekarskie';
-import { dataPoPolsku, dodajDni, dodajLata, dzisWPolsce } from '../../lib/narzedzia/terminy';
+import { dataPoPolsku, dodajDni, dzisWPolsce } from '../../lib/narzedzia/terminy';
 
 const dzis = dzisWPolsce();
 const WIERSZE = 3;
-const Z = [{ od: dodajDni(dzis, -34), do: dodajDni(dzis, -1) }];
+// Przykład liczony od dnia buildu; w przeglądarce ustawDzisiejszeWartosci() przestawia go na dziś (data-dzis = przesunięcie w dniach).
+const ZD = [{ od: -34, do: -1 }];
+const Z = ZD.map((z) => ({ od: dodajDni(dzis, z.od), do: dodajDni(dzis, z.do) }));
 const kontrolne = badanieKontrolne(Z, 'choroba');
 const tk = tekstKontrolnego(kontrolne, 'choroba');
 const badanieWidoczne = kontrolne.wynik === 'potrzebne' || kontrolne.wynik === 'nierozstrzygniete';
-const P = { koniec: dodajDni(dzis, -20), start: dodajDni(dzis, 5), nastepne: dodajLata(dzis, 2) };
+const PD = { koniec: -20, start: 5, nastepne: 730 };
+const P = { koniec: dodajDni(dzis, PD.koniec), start: dodajDni(dzis, PD.start), nastepne: dodajDni(dzis, PD.nastepne) };
 const wstepne = badaniaWstepne({ rodzaj: 'nowy', ...P, orzeczenie: 'data', warunki: 'tak', szczegolnieNiebezpieczne: 'nie', mlodociany: false });
 const tw = tekstWstepnych(wstepne, 'nowy');
 const to = tekstOdwolania(odwolanie(dzis, dzis));
@@ -39,7 +42,7 @@ const faq = [
   },
   {
     pytanie: 'Czy kilka zwolnień pod rząd się sumuje?',
-    odpowiedz: `Przepis mówi o niezdolności do pracy trwającej dłużej niż ${PROG_KONTROLNE} dni. Zwolnienia, które następują dzień po dniu, to jedna nieprzerwana niezdolność. Przepis nie mówi o sumowaniu zwolnień rozdzielonych przerwą, a gdy w przerwie są tylko dni wolne, nie rozstrzyga sprawy. Wtedy bezpieczniej zrobić badanie: jest na koszt pracodawcy i w miarę możliwości w godzinach pracy (art. 229 § 2, 3 i 6 Kodeksu pracy).`,
+    odpowiedz: `Przepis mówi o niezdolności do pracy trwającej dłużej niż ${PROG_KONTROLNE} dni. Zwolnienia, które następują dzień po dniu, to jedna nieprzerwana niezdolność. Przepis nie mówi o sumowaniu zwolnień rozdzielonych przerwą, a gdy w przerwie są tylko dni wolne, nie rozstrzyga sprawy. Wyjątek: gdy już wcześniejsze zwolnienie trwało dłużej niż ${PROG_KONTROLNE} dni, a do następnego nie było dnia pracy, badanie kontrolne jest potrzebne. W pozostałych przypadkach bezpieczniej zrobić badanie: jest na koszt pracodawcy i w miarę możliwości w godzinach pracy (art. 229 § 2, 3 i 6 Kodeksu pracy).`,
   },
   {
     pytanie: 'Czy na badania lekarskie trzeba brać dzień wolny?',
@@ -87,11 +90,11 @@ const faq = [
             <div class="mt-1 grid grid-cols-2 items-end gap-3">
               <div>
                 <label for={`bl-od${i + 1}`} class="meta">Od</label>
-                <input id={`bl-od${i + 1}`} name={`od${i + 1}`} type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={Z[i]?.od} aria-describedby="bl-blad" />
+                <input id={`bl-od${i + 1}`} name={`od${i + 1}`} type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={Z[i]?.od} data-dzis={ZD[i] ? String(ZD[i].od) : undefined} aria-describedby="bl-blad" />
               </div>
               <div>
                 <label for={`bl-do${i + 1}`} class="meta">Do</label>
-                <input id={`bl-do${i + 1}`} name={`do${i + 1}`} type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={Z[i]?.do} aria-describedby="bl-blad" />
+                <input id={`bl-do${i + 1}`} name={`do${i + 1}`} type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={Z[i]?.do} data-dzis={ZD[i] ? String(ZD[i].do) : undefined} aria-describedby="bl-blad" />
               </div>
             </div>
           </fieldset>
@@ -130,11 +133,11 @@ const faq = [
         <div class="mt-4 grid grid-cols-2 items-end gap-3">
           <div data-tylko="koniec">
             <label for="bp-koniec" class="etykieta-pola">Koniec umowy</label>
-            <input id="bp-koniec" name="koniec" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={P.koniec} aria-describedby="bp-daty-opis bl-blad" />
+            <input id="bp-koniec" name="koniec" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={P.koniec} data-dzis={String(PD.koniec)} aria-describedby="bp-daty-opis bl-blad" />
           </div>
           <div data-tylko="start">
             <label for="bp-start" class="etykieta-pola">Start w nowej pracy</label>
-            <input id="bp-start" name="start" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={P.start} aria-describedby="bp-daty-opis bl-blad" />
+            <input id="bp-start" name="start" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={P.start} data-dzis={String(PD.start)} aria-describedby="bp-daty-opis bl-blad" />
           </div>
         </div>
         <p id="bp-daty-opis" class="meta mt-1" data-tylko="start">Ostatni dzień poprzedniej umowy i dzień rozpoczęcia pracy z nowej umowy.</p>
@@ -148,7 +151,7 @@ const faq = [
         </div>
         <div class="mt-4" data-tylko="nastepne">
           <label for="bp-nastepne" class="etykieta-pola">Data następnego badania</label>
-          <input id="bp-nastepne" name="nastepne" type="date" class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" value={P.nastepne} aria-describedby="bp-nastepne-opis bl-blad" />
+          <input id="bp-nastepne" name="nastepne" type="date" class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" value={P.nastepne} data-dzis={String(PD.nastepne)} aria-describedby="bp-nastepne-opis bl-blad" />
           <p id="bp-nastepne-opis" class="meta mt-1">Z orzeczenia: „Data następnego badania okresowego”.</p>
         </div>
         <div class="mt-4">
@@ -180,7 +183,7 @@ const faq = [
       <div data-sekcja="orzeczenie" hidden>
         <div class="mt-4">
           <label for="bo-otrzymane" class="etykieta-pola">Dzień otrzymania orzeczenia</label>
-          <input id="bo-otrzymane" name="otrzymane" type="date" class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" value={dzis} aria-describedby="bo-otrzymane-opis bl-blad" />
+          <input id="bo-otrzymane" name="otrzymane" type="date" class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" value={dzis} data-dzis aria-describedby="bo-otrzymane-opis bl-blad" />
           <p id="bo-otrzymane-opis" class="meta mt-1">E-orzeczenie: dzień, w którym pojawiło się w Internetowym Koncie Pacjenta. Gdy nie wiesz, wpisz dzień badania.</p>
         </div>
         <div class="mt-4">
@@ -323,6 +326,7 @@ const faq = [
   } from '../../lib/narzedzia/badania-lekarskie';
   import type { Wydarzenie } from '../../lib/narzedzia/kalendarz-ics';
   import { plikIcs } from '../../lib/narzedzia/kalendarz-ics';
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
   import { dataPoPolsku, dzisWPolsce, ileDni, poprawnaData } from '../../lib/narzedzia/terminy';
   import { typografia } from '../../lib/typografia.mjs';
 
@@ -498,6 +502,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    ustawDzisiejszeWartosci(form);
     przelicz();
   }
 </script>

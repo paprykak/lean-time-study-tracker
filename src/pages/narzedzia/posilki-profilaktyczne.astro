@@ -53,7 +53,7 @@ const faq = [
       <h2 id="kalkulator-tytul" class="tytul-m">Twoja zmiana</h2>
       <div class="mt-4">
         <label for="p-data" class="etykieta-pola">Data zmiany</label>
-        <input id="p-data" name="data" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={dzis} aria-describedby="p-blad" />
+        <input id="p-data" name="data" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={dzis} data-dzis aria-describedby="p-blad" />
       </div>
       <div class="mt-4">
         <label for="p-miejsce" class="etykieta-pola">Miejsce pracy</label>
@@ -179,7 +179,7 @@ const faq = [
 <script>
   import { ocen, opisz, wpisanaTemperatura, type Jednostka, type Miejsce, type Plec } from '../../lib/narzedzia/posilki-profilaktyczne';
   import { wpisanaLiczba } from '../../lib/narzedzia/format';
-  import { dzisWPolsce } from '../../lib/narzedzia/terminy';
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
   import { typografia } from '../../lib/typografia.mjs';
 
   const form = document.querySelector<HTMLFormElement>('[data-posilki]');
@@ -187,9 +187,6 @@ const faq = [
     const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
     const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement | HTMLSelectElement;
     const zaznaczone = (n: string) => (form.elements.namedItem(n) as HTMLInputElement).checked;
-    // Data z buildu może być nieaktualna (okres zimowy): podmieniamy ją na dzisiejszą, jeśli nikt jej nie zmienił.
-    const pole = el('data') as HTMLInputElement;
-    if (pole.value === pole.defaultValue) pole.value = dzisWPolsce();
     const pisz = (k: string, tekst: string) => {
       w(k).textContent = typografia(tekst);
     };
@@ -244,6 +241,8 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    // Data z buildu może być nieaktualna (okres zimowy): data-dzis przestawia ją na dziś, jeśli nikt jej nie zmienił.
+    ustawDzisiejszeWartosci(form);
     przelicz();
   }
 </script>

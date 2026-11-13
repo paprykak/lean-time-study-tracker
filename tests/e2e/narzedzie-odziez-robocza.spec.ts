@@ -40,3 +40,22 @@ test('63 prania w miesiącu to błąd danych', async ({ page }) => {
   await expect(page.locator('[data-blad="dane"]')).toBeVisible();
   await expect(page.locator('[data-w="pran"]')).toHaveText('—');
 });
+
+test('same maszyny: obowiązek jako wariant bezpieczny; ŚOI prane w domu: uwaga z art. 237⁹ § 2', async ({ page }) => {
+  await page.locator('input[name="warunki"][value="brud"]').uncheck();
+  await page.locator('input[name="warunki"][value="maszyny"]').check();
+  await expect(page.locator('[data-w="podstawa"]')).toContainText(/wariant\sbezpieczny/);
+  await page.locator('[name="rodzaj"]').selectOption('soi');
+  await page.locator('[name="pranie"]').selectOption('ja');
+  await expect(page.locator('[data-w="uwagi"]')).toContainText(/237⁹\s§\s2/);
+  await expect(page.locator('[data-pole="ekw-pranie"]')).toBeHidden();
+});
+
+test('własne ubranie prane w domu bez ekwiwalentu za pranie: jedna uwaga „przepis nie rozstrzyga”', async ({ page }) => {
+  await page.locator('[name="teraz"]').selectOption('wlasna');
+  await page.locator('[name="pranie"]').selectOption('ja');
+  await page.locator('[name="ekwPranie"]').selectOption('nie');
+  const uwagi = page.locator('[data-w="uwagi"] p');
+  await expect(uwagi).toHaveCount(1);
+  await expect(uwagi).toContainText(/Przepis\snie\srozstrzyga/);
+});
