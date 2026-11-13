@@ -176,7 +176,7 @@ const faq = [
         blad = e instanceof Error ? e.message : 'Popraw dane.';
       }
       b.hidden = !blad;
-      b.textContent = blad ?? '';
+      b.textContent = typografia(blad ?? '');
       lista.replaceChildren(
         ...terminy.map((t) => {
           const li = document.createElement('li');

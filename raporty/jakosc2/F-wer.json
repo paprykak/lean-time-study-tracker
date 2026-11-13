@@ -1,0 +1,94 @@
+{
+  "partia": "F",
+  "werdykty": [
+    {
+      "id": "F-1",
+      "werdykt": "potwierdzone",
+      "uzasadnienie": "Art. 42 § 3 zd. 3 Kp: bez pouczenia odmowa „do końca okresu wypowiedzenia”. Gdy próg stażu mija w trakcie wypowiedzenia, nie wiadomo, który okres jest „okresem wypowiedzenia” (strona sama to przyznaje). Wariant bezpieczny dla pracownika to koniec krótszego okresu: odmowa złożona do tego dnia jest w terminie w obu wariantach. Kod robi tak tylko przy pouczeniu (linia 58), a bez pouczenia zwraca `koniec` dłuższego okresu (linia 65). Strona obiecuje coś innego: „termin na odmowę liczymy od krótszego okresu, więc odmowa złożona do tej daty jest w terminie przy obu wariantach”. Wiersz wyniku też mówi „odmowa liczona od okresu 2 tygodnie”, a obok stoi 31 grudnia. Jeśli wydłużenia nie ma, okres kończy się 28.11, więc odmowa złożona 1–31.12 jest spóźniona i pracownik przyjmuje nowe warunki.",
+      "dowod": "DU_2026_1245.txt, art. 42 § 3: „W razie braku takiego pouczenia, pracownik może do końca okresu wypowiedzenia złożyć oświadczenie o odmowie”. npx tsx: wypowiedzenieZmieniajace('2026-05-13','2026-11-12',false) → odmowaDo '2026-12-31', prog.krotszyKoniec '2026-11-28'. Próg 3 lat: ('2023-11-20','2026-11-12',false) → odmowaDo '2027-02-28', krotszyKoniec '2026-12-31'. Z pouczeniem ('2026-05-13','2026-11-12',true) → odmowaDo '2026-11-20' (od krótszego, poprawnie). Jedyny test bez pouczenia (wypowiedzenie-zmieniajace.test.ts:44, start 2020) nie ma progu.",
+      "poprawka": "src/lib/narzedzia/wypowiedzenie-zmieniajace.ts:65 zmienić na `odmowaDo: pouczenie ? odmowaA : koniecDoOdmowy,`; poprawić JSDoc pola odmowaDo („bez pouczenia: koniec okresu, a przy progu stażu koniec krótszego”). W uwadze wyniku bez pouczenia (wypowiedzenie-zmieniajace.astro, skrypt, `w('uwaga')`) przy r.prog dopisać: „Gdy staż osiąga próg w trakcie wypowiedzenia, podajemy koniec krótszego okresu, bo nie wiadomo, czy okres się wydłuża.” W „Jak liczymy” zdanie o krótszym okresie rozszerzyć o przypadek bez pouczenia. Wiersze „Umowa rozwiązuje się” i „Nowe warunki od” zostają z dłuższego okresu.",
+      "testy": "Jednostkowe: ('2026-05-13','2026-11-12',false).odmowaDo === '2026-11-28'; ('2023-11-20','2026-11-12',false).odmowaDo === '2026-12-31'; koniec w obu przypadkach bez zmian: '2026-12-31' i '2027-02-28'; ('2020-01-15','2026-11-12',false).odmowaDo nadal '2027-02-28'. E2E: start 2026-05-13, doręczenie 2026-11-12, pouczenie odznaczone → „28 listopada 2026 r.”."
+    },
+    {
+      "id": "F-2",
+      "werdykt": "potwierdzone",
+      "uzasadnienie": "Zmierzyłem to sam na 320×640 (deviceScaleFactor 1). #c-pobyt ma clientWidth 244 px (padding 12+12). Metodą z narzedzie-probny.spec.ts (font strony, próg clientWidth − 40 = 204 px) za szerokie są: „Ochrona czasowa (status UKR)” 227 px (opcja domyślna), „Absolwent szkoły/uczelni w PL” 226, „Rodzina obywatela PL lub UE” 216, „Pobyt stały albo rezydent UE” 213. Na zrzutach pola widać „Ochrona czasowa (status U”, „Pobyt stały albo rezydent U” i „Rodzina obywatela PL lub U”. Przewijania w bok nie ma (scrollWidth 320). Test jednostkowy pilnuje tylko ≤ 38 znaków, a to za mało.",
+      "dowod": "Skrypt /tmp/claude-0/-home-user-lean-time-study-tracker/ac06a219-4538-5f71-b234-1eeb6f3157ac/scratchpad/audyt/F-wer/f2.cjs, zrzuty pobyt320.png, pobyt-staly.png, pobyt-rodzina.png w tym samym katalogu. Proponowane etykiety zmierzone tą samą metodą: „Ochrona czasowa (UKR)” 177 px, „Absolwent szkoły w PL” 168, „Rodzina obywatela PL/UE” 190, „Pobyt stały, rezydent UE” 180, wszystkie poniżej 204.",
+      "poprawka": "src/lib/narzedzia/cudzoziemiec-podstawa.ts, POBYTY: 'ochrona-czasowa': 'Ochrona czasowa (UKR)', absolwent: 'Absolwent szkoły w PL', rodzina: 'Rodzina obywatela PL/UE', staly: 'Pobyt stały, rezydent UE'. Pełne brzmienie dać w opisie pod polem albo w tabeli na stronie. Uwaga: w tym samym polu obywatelstwa też jest ucięta opcja (zob. nowe F-N1), więc test 320 px dla #c-obywatelstwo nie przejdzie bez tamtej poprawki.",
+      "testy": "tests/e2e/narzedzie-cudzoziemiec.spec.ts: describe 'telefon 320 px', viewport 320×640, ta sama ewaluacja co w narzedzie-probny.spec.ts dla '#c-pobyt' i '#c-obywatelstwo', oczekiwane [] (lista opcji szerszych niż clientWidth − 40)."
+    },
+    {
+      "id": "F-3",
+      "werdykt": "potwierdzone",
+      "uzasadnienie": "Art. 41 ustawy z Dz.U. 2026 poz. 203 obejmuje wszystkich obywateli Ukrainy „przebywających legalnie”, którzy nie korzystają z ochrony czasowej. Nie ma w nim wyłączenia dla zezwolenia na pobyt czasowy i pracę. Do tych osób stosuje się odpowiednio art. 3 ust. 1 pkt 12 (swobodny dostęp do rynku pracy) i art. 5a (powiadomienie PUP). Okres: 3 lata od wejścia w życie ustawy (art. 54: 5 marca 2026 r.). Narzędzie przy ('ukraina','karta-praca') nie bierze art. 41 pod uwagę (gałąź karta-praca jest przed gałęzią ukraina). Podaje „Na warunkach z zezwolenia na pobyt czasowy i pracę” i pisze, że praca na innych warunkach „jest nielegalna”. To przeczy przepisowi i treści samej strony (praca-cudzoziemca.astro:104: „Bez ochrony czasowej, ale z legalnym pobytem: przez 3 lata od 5 marca 2026 r. te same zasady (art. 41 …)”; FAQ, linia 12). Gałąź 'inny' i 'karta-ukr' stosują już art. 41 albo zwolnienie. Obowiązek z art. 5a już się pojawia (linie 135–140, wariant „Bezpieczniej”), więc brakuje tylko werdyktu.",
+      "dowod": "DU_2026_203.txt, art. 41: „W okresie 3 lat od dnia wejścia w życie niniejszej ustawy do obywateli Ukrainy przebywających legalnie na terytorium Rzeczypospolitej Polskiej, którzy nie korzystają z ochrony czasowej w Rzeczypospolitej Polskiej, stosuje się odpowiednio przepisy art. 3 ust. 1 pkt 12 i art. 5a ustawy zmienianej w art. 19.”; art. 54: „Ustawa wchodzi w życie z dniem 5 marca 2026 r.”. npx tsx podstawaPracy('ukraina','karta-praca') → werdykt 'na-warunkach-karty', podstawa 'art. 3 ust. 2 pkt 1 …', uwaga „Praca na innych warunkach … jest nielegalna …”, plus obowiązek „Bezpieczniej: … art. 5a … i art. 41”.",
+      "poprawka": "src/lib/narzedzia/cudzoziemiec-podstawa.ts, gałąź `pobyt === 'karta-praca'`: gdy obywatelstwo === 'ukraina', ustawić `w = bez('art. 41 ustawy o wygaszeniu pomocy obywatelom Ukrainy', 'Przez 3 lata od 5 marca 2026 r. obywatel Ukrainy przebywający legalnie bez ochrony czasowej ma dostęp do rynku pracy jak przy ochronie czasowej, także z zezwoleniem na pobyt czasowy i pracę. Po tym okresie praca tylko na warunkach z zezwolenia (art. 3 ust. 2 pkt 1).')`. `zgloszenie` zostawić null: obowiązek „Bezpieczniej … art. 5a i art. 41” doda blok z linii 135, zgodnie z treścią strony (linia 104). Datę końca podawać tak jak strona zgłoszenia („do 4 marca 2029 r.”, z zastrzeżeniem, że przepis nie przesądza 5 marca) albo bez daty, jak w gałęzi 'inny'. Dla innych obywatelstw bez zmian.",
+      "testy": "cudzoziemiec-podstawa.test.ts: podstawaPracy('ukraina','karta-praca') → werdykt 'bez-zezwolenia', podstawa zawiera 'art. 41', obowiązki zawierają podstawę z 'art. 5a'; podstawaPracy('inne','karta-praca') i ('oswiadczenie','karta-praca') nadal 'na-warunkach-karty'."
+    },
+    {
+      "id": "F-4",
+      "werdykt": "potwierdzone",
+      "uzasadnienie": "Kompresja HTML w Astro usuwa łamanie wiersza między `</a>` a „i”. W zbudowanym HTML link sklejony z następnym słowem. W 5 stronach partii to jedyne takie miejsce (przeszukane wyrażeniem `</a>[litera]` i `[litera]<a`).",
+      "dowod": "curl podglądu umowa-na-zastepstwo.html: `<a href=\"/narzedzia/praca-w-ciazy\">praca w ciąży</a>i <a href=\"/narzedzia/rodzic-w-pracy\">`; szablon: wiersz 184 kończy się na `</a>`, a wiersz 185 zaczyna od „i <a”.",
+      "poprawka": "src/pages/narzedzia/umowa-na-zastepstwo.astro:184–185: w jednym wierszu `… opisują <a href=\"/narzedzia/praca-w-ciazy\">praca w ciąży</a> i <a href=\"/narzedzia/rodzic-w-pracy\">rodzic w pracy</a>.`",
+      "testy": "Sprawdzić w HTML podglądu brak `</a>i`; opcjonalnie dodać do kontroli SEO regułę `</a>[\\p{L}]`."
+    },
+    {
+      "id": "F-5",
+      "werdykt": "potwierdzone",
+      "uzasadnienie": "Rozbieżność tylko w opisie, rachunek jest dobry: stazWDniu liczy do dnia przed doręczeniem (wypowiedzenie.ts:23, komentarz linie 6–8). Strona okres-wypowiedzenia mówi to wprost („Dnia doręczenia nie wliczamy”), a umowa-na-zastepstwo.astro:126–127 („pełne miesiące od początku pracy do dnia doręczenia”) i wypowiedzenie-zmieniajace.astro („Staż liczymy w pełnych miesiącach do dnia doręczenia”) tego zdania nie mają. „Do dnia” czyta się zwykle włącznie. Dla start 12.05.2026 i doręczenia 11.11.2026 kod daje 5 miesięcy (próg 6 mija 11.11, wydłużenie działa), czyli o miesiąc mniej, niż wynika z opisu. Waga niska.",
+      "dowod": "src/lib/narzedzia/wypowiedzenie.ts:23 `stazWDniu = (od, dzien) => pelneMiesiace(od, dodajDni(dzien, -1))`; okres-wypowiedzenia.astro:107–109 „Staż to pełne miesiące … do doręczenia … Dnia doręczenia nie wliczamy.”",
+      "poprawka": "Ujednolicić z okres-wypowiedzenia: w umowa-na-zastepstwo.astro:126–127 i wypowiedzenie-zmieniajace.astro (akapit z tabelą okresów) dopisać po zdaniu o stażu „Dnia doręczenia nie wliczamy.” albo zmienić na „do dnia przed doręczeniem”.",
+      "testy": "Brak zmian w logice. Istniejące testy progu bez zmian."
+    },
+    {
+      "id": "F-6",
+      "werdykt": "potwierdzone",
+      "uzasadnienie": "Art. 5 ust. 5 pkt 1 ustawy o zwolnieniach wprost wymienia pracownicę w ciąży i osoby po złożeniu wniosku o urlopy związane z rodzicielstwem: w okresie ochrony pracodawca może „jedynie wypowiedzieć dotychczasowe warunki pracy i płacy”. Art. 10 ust. 3 stosuje to przy zwolnieniu indywidualnym. Ust. 6 daje dodatek wyrównawczy do końca okresu ochrony, a ust. 6a każe pracodawcy udowodnić inne powody, gdy umowa rozwiąże się po odmowie. Punkt o ciąży tego nie mówi. Ogólne zdanie o „osobach chronionych” jest tylko w punkcie o ochronie przedemerytalnej. Waga niska, bo zdanie „przepis nie mówi wprost” o art. 177 jest prawdziwe co do Kp.",
+      "dowod": "DU_2026_1195.txt, art. 5 ust. 5 pkt 1 (cytat: „pracodawca może jedynie wypowiedzieć dotychczasowe warunki pracy i płacy pracownikowi: 1) … pracownicy w ciąży, pracownikowi od dnia złożenia wniosku o udzielenie urlopu macierzyńskiego … urlopu rodzicielskiego … urlopu ojcowskiego … oraz urlopu opiekuńczego – do dnia zakończenia tego urlopu”), ust. 6, ust. 6a; art. 10 ust. 3.",
+      "poprawka": "wypowiedzenie-zmieniajace.astro, punkt o ciąży (sekcja „Kiedy pracodawca nie może wypowiedzieć warunków”): dopisać „Przy zwolnieniach z przyczyn niedotyczących pracowników u pracodawcy zatrudniającego co najmniej 20 osób pracodawca może pracownicy w ciąży i osobie, która złożyła wniosek o urlop macierzyński, ojcowski, rodzicielski albo opiekuńczy, wypowiedzieć tylko warunki pracy i płacy. Gdy wynagrodzenie spada, przysługuje dodatek wyrównawczy do końca okresu ochrony (art. 5 ust. 5 pkt 1 i ust. 6 oraz art. 10 ust. 3 ustawy o zwolnieniach).”",
+      "testy": "Brak (treść)."
+    },
+    {
+      "id": "F-7",
+      "werdykt": "potwierdzone",
+      "uzasadnienie": "To realny, choć drobny błąd. Pozycja dotyczy terminu pracownika (wniosek o kartę CUKR do 4.03.2027), który nie zależy od dnia startu pracy. Dziś (13.11.2026) pracodawca planujący zatrudnienie od np. 1.04.2027 osoby ze statusem UKR nie zobaczy tej pozycji. Tymczasem właśnie dla takiej osoby jest ona najważniejsza, bo ochrona czasowa może wygasnąć 4.03.2027 (do_stanu audytora). Po 4.03.2027 przy wpisanym wcześniejszym starcie (np. powiadomienie z opóźnieniem) lista pokazuje „do 4 marca 2027 r.” bez znaku, że termin minął. Skrypt nie oznacza minionych pozycji, ma tylko `stan === 'blad'`.",
+      "dowod": "src/lib/narzedzia/cudzoziemiec-terminy.ts:203 `if (d.start <= KARTA_UKR_WNIOSEK_DO) lista.push(...karta);`; test linie 84–85 utrwala to zachowanie (start '2027-03-05' → brak). Skrypt strony (zgloszenie-pracy-cudzoziemca.astro, `opis`) nie porównuje dat z dniem dzisiejszym.",
+      "poprawka": "terminyOchrony(d, dzis = dzisWPolsce()): warunek `if (dzis <= KARTA_UKR_WNIOSEK_DO) lista.push(...karta);` (niezależnie od d.start). Po 4.03.2027 pozycja znika. Usunięcie pozycji i tekstów zostaje w STAN (do_stanu 2027-03-05).",
+      "testy": "terminyOchrony({start:'2027-04-01'}, '2026-11-13').karta zdefiniowana; terminyOchrony({start:'2026-06-01'}, '2027-03-05').karta undefined; terminyOchrony({start:'2026-06-01'}, '2027-03-04').karta zdefiniowana. Zastąpić test z linii 84–85."
+    },
+    {
+      "id": "F-8",
+      "werdykt": "czesciowo",
+      "uzasadnienie": "Luka jest prawdziwa. Art. 22¹c § 12 Kp nakłada obowiązek „przed dopuszczeniem go do pracy” na każdego nowego pracownika objętego kontrolą trzeźwości, a narzędzie ma już analogiczne pozycje warunkowe (regulamin, monitoring). Podstawa w poprawce audytora jest jednak błędna. Art. 22¹h dotyczy osób na innej podstawie niż stosunek pracy (zlecenie, B2B). Kontrolę na obecność środków działających podobnie do alkoholu obejmuje art. 22¹e § 2 („Przepisy art. 22¹c § 2–12 stosuje się odpowiednio”). Obowiązek dotyczy tylko pracownika z grupy objętej kontrolą (ustalonej w regulaminie, układzie albo obwieszczeniu, § 10), a nie każdego.",
+      "dowod": "DU_2026_1245.txt, art. 22¹c § 12: „W związku z zatrudnieniem pracownika objętego kontrolą trzeźwości pracodawca przekazuje temu pracownikowi przed dopuszczeniem go do pracy informacje, o których mowa w § 10, w postaci papierowej lub elektronicznej.”; art. 22¹e § 2 (linia 681): „Przepisy art. 22¹c § 2–12 stosuje się odpowiednio.”; art. 22¹h: osoby na innej podstawie niż stosunek pracy. grep „trzeźw” w stronie i logice: 0 trafień.",
+      "poprawka": "src/lib/narzedzia/start-w-pracy.ts: w DaneStartu pole `trzezwosc: boolean`; gdy true: {klucz:'trzezwosc', nazwa:'Informacja o kontroli trzeźwości (i na obecność środków działających podobnie do alkoholu, jeśli jest): kogo obejmuje, jak i kiedy się odbywa, jakim urządzeniem', kiedy:'przed', data:s, podstawa:'art. 22¹c § 10 i 12 oraz art. 22¹e § 2 Kodeksu pracy'}. Na stronie checkbox „U pracodawcy jest kontrola trzeźwości” i jedno zdanie w sekcji „Przed pierwszym dniem pracy”.",
+      "testy": "start-w-pracy.test.ts: obowiazkiNaStart({start:'2026-12-01',regulamin:true,monitoring:false,ppk:false,trzezwosc:true}) zawiera klucz 'trzezwosc' z kiedy 'przed' i data '2026-12-01'; przy trzezwosc:false brak tego klucza."
+    },
+    {
+      "id": "F-9",
+      "werdykt": "potwierdzone",
+      "uzasadnienie": "Przy liczebnikach 2–4 (z wyjątkiem 12–14) orzeczenie ma formę mnogą („zostały 2 dni”, „zostały 24 dni”), a przy 5 i więcej formę nijaką („zostało 5 dni”). Kod zawsze pisze „Zostało”. Odczytane z kodu (wypowiedzenie-zmieniajace.astro, skrypt). Ten sam wzór jest w urlop-ojcowski.astro (poza zakresem, już zapisany przez audytora).",
+      "dowod": "Skrypt: `` `Zostało ${odmiana(zostalo, ['dzień', 'dni', 'dni'])}` ``; 1 dzień obsłużony osobno („Został 1 dzień”).",
+      "poprawka": "const czas = zostalo % 10 >= 2 && zostalo % 10 <= 4 && (zostalo % 100 < 12 || zostalo % 100 > 14) ? 'Zostały' : 'Zostało'; potem `${czas} ${odmiana(zostalo, ['dzień','dni','dni'])}`.",
+      "testy": "2 → „Zostały 2 dni”, 4 → „Zostały 4 dni”, 5 → „Zostało 5 dni”, 12 → „Zostało 12 dni”, 22 → „Zostały 22 dni”, 25 → „Zostało 25 dni”."
+    },
+    {
+      "id": "F-10",
+      "werdykt": "czesciowo",
+      "uzasadnienie": "Typografia: potwierdzone dla zgloszenie-pracy-cudzoziemca. Komunikaty z cudzoziemiec-terminy.ts mają daty i „art. 5a”, „art. 22” („Art. 5a obowiązuje od 5 marca 2026 r.; …”, „… od 1 czerwca 2025 r.”). Dotyczy też wypowiedzenie-zmieniajace („Wpisz datę rozpoczęcia pracy u tego pracodawcy.”, jednoliterowe „u”). W informacja-o-warunkach-zatrudnienia jedyny komunikat to „Wpisz pierwszy dzień pracy.”: typografia nic tam nie zmienia, więc problemu nie ma. umowa-na-zastepstwo już używa typografia(blad). aria-invalid: wszystkie pola dat w tych formularzach mają aria-describedby wskazujące na komunikat błędu. WSPOLNE.md wymaga powiązania „przez aria-describedby/aria-invalid”, więc brak aria-invalid to usprawnienie, a nie błąd (54 ze 108 stron go nie ma).",
+      "dowod": "zgloszenie-pracy-cudzoziemca.astro:179 i wypowiedzenie-zmieniajace.astro:173 `b.textContent = blad ?? ''`; umowa-na-zastepstwo.astro:227 `typografia(blad ?? '')`; cudzoziemiec-terminy.ts:93, 145, 194 (teksty z datami); aria-describedby na polach: np. ct-o-start → ct-blad, wz-start → wz-blad.",
+      "poprawka": "zgloszenie-pracy-cudzoziemca.astro:179 i wypowiedzenie-zmieniajace.astro:173: `b.textContent = typografia(blad ?? '');` (typografia jest już zaimportowana w obu skryptach). aria-invalid opcjonalnie, bez wagi błędu.",
+      "testy": "E2E zgłoszenia: start ochrony 2026-03-01 → tekst błędu zawiera „5\\u00a0marca 2026\\u00a0r.” (sprawdzić dokładny wynik typografia() dla tego zdania)."
+    }
+  ],
+  "nowe": [
+    {
+      "id": "F-N1", "slug": "praca-cudzoziemca", "wymiar": "tresc-ux", "waga": "niska",
+      "plik": "src/lib/narzedzia/cudzoziemiec-podstawa.ts", "linia": 42,
+      "problem": "Na 320 px w polu „Obywatelstwo” opcja „Armenia/Białoruś/Mołdawia” jest ucięta po wybraniu („Armenia/Białoruś/Mołdawi”). Audytor zapowiedział test 320 px także dla #c-obywatelstwo, ale ta opcja go nie przejdzie.",
+      "dowod": "Playwright 320×640: #c-obywatelstwo clientWidth 244, „Armenia/Białoruś/Mołdawia” 210 px > 204 (metoda z narzedzie-probny.spec.ts). Zrzut /tmp/claude-0/-home-user-lean-time-study-tracker/ac06a219-4538-5f71-b234-1eeb6f3157ac/scratchpad/audyt/F-wer/oby320.png pokazuje „Armenia/Białoruś/Mołdawi”. Wersja „Armenia, Białoruś, Mołdawia” ma 215 px, też za szeroka.",
+      "poprawka": "Rozbić na trzy krótkie opcje (np. klucze 'armenia', 'bialorus', 'moldawia' w OBYWATELSTWA), które podstawaPracy traktuje jak dzisiejsze 'oswiadczenie' (np. `const OSWIADCZENIE = new Set(['armenia','bialorus','moldawia'])`). Albo zostawić klucz i dać krótszą etykietę mieszczącą się w 204 px, zmierzoną tą samą metodą. Test E2E 320 px dla #c-obywatelstwo jak w F-2."
+    }
+  ]
+}

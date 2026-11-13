@@ -19,7 +19,9 @@
 //   pobytu z art. 42c ustawy o pomocy obywatelom Ukrainy (t.j. Dz.U. 2026 poz. 1293) zwalnia z zezwolenia (art. 42v).
 // Interpretacja: przy karcie z art. 42c przepis nie mówi, czy pracodawca zgłasza pracę z art. 5a; piszemy to wprost.
 
-export type Obywatelstwo = 'ue' | 'szwajcaria' | 'ukraina' | 'oswiadczenie' | 'inne';
+export type Obywatelstwo = 'ue' | 'szwajcaria' | 'ukraina' | 'armenia' | 'bialorus' | 'moldawia' | 'inne';
+/** Państwa, których obywatele mogą pracować na oświadczeniu o powierzeniu pracy (art. 61 ust. 1). */
+const OSWIADCZENIE: readonly Obywatelstwo[] = ['armenia', 'bialorus', 'moldawia'];
 export type Pobyt =
   | 'staly'
   | 'rodzina'
@@ -39,22 +41,24 @@ export const OBYWATELSTWA: Record<Obywatelstwo, string> = {
   ue: 'Państwo UE albo EOG',
   szwajcaria: 'Szwajcaria',
   ukraina: 'Ukraina',
-  oswiadczenie: 'Armenia/Białoruś/Mołdawia',
+  armenia: 'Armenia',
+  bialorus: 'Białoruś',
+  moldawia: 'Mołdawia',
   inne: 'Inne państwo',
 };
 
 export const POBYTY: Record<Pobyt, string> = {
   inny: 'Wiza, bez wizy, inna karta',
-  'ochrona-czasowa': 'Ochrona czasowa (status UKR)',
+  'ochrona-czasowa': 'Ochrona czasowa (UKR)',
   'karta-ukr': 'Karta pobytu CUKR',
   'karta-praca': 'Karta pobytu i pracy',
-  staly: 'Pobyt stały albo rezydent UE',
-  rodzina: 'Rodzina obywatela PL lub UE',
+  staly: 'Pobyt stały, rezydent UE',
+  rodzina: 'Rodzina obywatela PL/UE',
   ochrona: 'Uchodźca, inna ochrona',
   'studia-pobyt': 'Karta pobytu na studia',
   student: 'Studia stacjonarne',
   'karta-polaka': 'Karta Polaka',
-  absolwent: 'Absolwent szkoły/uczelni w PL',
+  absolwent: 'Absolwent szkoły w PL',
 };
 
 export interface Obowiazek {
@@ -100,6 +104,9 @@ export function podstawaPracy(obywatelstwo: Obywatelstwo, pobyt: Pobyt): Wynik {
     zgloszenie = pup5a;
   } else if (pobyt === 'karta-ukr') {
     w = bez('art. 42v ustawy o pomocy obywatelom Ukrainy', 'Karta z art. 42c to zezwolenie na pobyt czasowy na 3 lata (art. 42p i 42r).');
+  } else if (pobyt === 'karta-praca' && obywatelstwo === 'ukraina') {
+    // Art. 41 ustawy o wygaszeniu obejmuje każdego legalnie przebywającego obywatela Ukrainy bez ochrony czasowej.
+    w = bez('art. 41 ustawy o wygaszeniu pomocy obywatelom Ukrainy', 'Przez 3 lata od 5 marca 2026 r. obywatel Ukrainy przebywający legalnie bez ochrony czasowej ma dostęp do rynku pracy jak przy ochronie czasowej, także z zezwoleniem na pobyt czasowy i pracę. Po tym okresie praca tylko na warunkach z zezwolenia (art. 3 ust. 2 pkt 1).');
   } else if (pobyt === 'karta-praca') {
     w = {
       werdykt: 'na-warunkach-karty',
@@ -114,7 +121,7 @@ export function podstawaPracy(obywatelstwo: Obywatelstwo, pobyt: Pobyt): Wynik {
   else if (obywatelstwo === 'ukraina') {
     w = bez('art. 41 ustawy o wygaszeniu pomocy obywatelom Ukrainy', 'Przez 3 lata od 5 marca 2026 r. obywatel Ukrainy przebywający legalnie bez ochrony czasowej ma dostęp do rynku pracy jak przy ochronie czasowej. Możliwe są też oświadczenie albo zezwolenie.');
     zgloszenie = pup5a;
-  } else if (obywatelstwo === 'oswiadczenie') {
+  } else if (OSWIADCZENIE.includes(obywatelstwo)) {
     w = {
       werdykt: 'oswiadczenie-lub-zezwolenie',
       naglowek: 'Potrzebne oświadczenie o powierzeniu pracy albo zezwolenie',

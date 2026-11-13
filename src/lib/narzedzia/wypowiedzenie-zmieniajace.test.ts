@@ -42,6 +42,11 @@ describe('wypowiedzenie zmieniające (art. 42 § 1–3, art. 36 § 1, art. 30 §
   });
   it('bez pouczenia: odmowa do końca okresu wypowiedzenia (art. 42 § 3 zdanie trzecie)', () => {
     expect(wypowiedzenieZmieniajace('2020-01-15', '2026-11-12', false).odmowaDo).toBe('2027-02-28');
+    // Bez pouczenia przy progu stażu w trakcie wypowiedzenia: koniec krótszego okresu (wariant bezpieczny).
+    // 2 tygodnie od czwartku 12.11.2026 kończą się w sobotę 28.11 (art. 30 § 2^1), miesiąc 31.12.
+    expect(wypowiedzenieZmieniajace('2026-05-13', '2026-11-12', false)).toMatchObject({ odmowaDo: '2026-11-28', koniec: '2026-12-31' });
+    // Próg 3 lat: krótszy okres 1 miesiąc (31.12.2026), dłuższy 3 miesiące (28.02.2027).
+    expect(wypowiedzenieZmieniajace('2023-11-20', '2026-11-12', false)).toMatchObject({ odmowaDo: '2026-12-31', koniec: '2027-02-28' });
   });
   it('połowa: dzień z połową w środku już się nie liczy', () => {
     expect(ostatniDzienPrzedPolowa('2026-12-01', '2026-12-31')).toBe('2026-12-15');

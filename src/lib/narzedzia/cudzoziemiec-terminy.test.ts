@@ -81,8 +81,10 @@ describe('ochrona czasowa i obywatele Ukrainy (art. 5a, art. 41 ustawy o wygasze
   it('start przed 5 marca 2026 r.: art. 5a jeszcze nie obowiązywał; start po 4 marca 2027 r.: bez pozycji o karcie', () => {
     expect(() => terminyOchrony({ start: '2026-03-04' })).toThrow(/od 5 marca 2026/);
     expect(mapa(terminyOchrony({ start: '2026-03-05' })).pup.data).toBe('2026-03-12');
-    expect(mapa(terminyOchrony({ start: '2027-03-05' })).karta).toBeUndefined();
-    expect(mapa(terminyOchrony({ start: '2027-03-04' })).karta).toBeDefined();
+    // Termin wniosku o kartę CUKR zależy od dziś, nie od startu pracy.
+    expect(mapa(terminyOchrony({ start: '2027-04-01' }, '2026-11-13')).karta).toBeDefined();
+    expect(mapa(terminyOchrony({ start: '2026-06-01' }, '2027-03-04')).karta).toBeDefined();
+    expect(mapa(terminyOchrony({ start: '2026-06-01' }, '2027-03-05')).karta).toBeUndefined();
   });
   it('błędne dane', () => {
     expect(() => terminyOchrony({ start: '2026-11-12', zmiana: '2026-11-11' })).toThrow(/przed rozpoczęciem/);

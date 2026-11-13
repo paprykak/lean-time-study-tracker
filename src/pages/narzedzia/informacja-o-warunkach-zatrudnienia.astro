@@ -59,6 +59,7 @@ const faq = [
         <div class="opcje-pionowe mt-2">
           <label><input type="checkbox" name="regulamin" checked /> Jest regulamin pracy</label>
           <label><input type="checkbox" name="monitoring" checked /> Jest monitoring (kamery, poczta, GPS)</label>
+          <label><input type="checkbox" name="trzezwosc" /> Jest kontrola trzeźwości</label>
           <label><input type="checkbox" name="ppk" checked /> Są PPK</label>
         </div>
       </fieldset>
@@ -111,6 +112,7 @@ const faq = [
       <li>Szkolenie BHP przed dopuszczeniem do pracy (art. 237<sup>3</sup> § 2): instruktaż ogólny i stanowiskowy (§ 8–11 rozporządzenia w sprawie szkolenia BHP). Nie trzeba go powtarzać przy kolejnej umowie na tym samym stanowisku zajmowanym bezpośrednio wcześniej. Pierwsze szkolenie okresowe policzy <a href="/narzedzia/szkolenie-okresowe-bhp">kalkulator szkolenia BHP</a>.</li>
       <li>Zapoznanie z regulaminem pracy, jeśli pracodawca go ma (art. 104<sup>3</sup> § 2).</li>
       <li>Informacja o celach, zakresie i sposobie monitoringu, jeśli jest (art. 22<sup>2</sup> § 8, a dla poczty i innych form art. 22<sup>3</sup> § 3–4).</li>
+      <li>Informacja o kontroli trzeźwości albo na obecność środków działających podobnie do alkoholu, jeśli obejmie nowego pracownika: grupa objęta kontrolą, sposób, czas i częstotliwość, rodzaj urządzenia (art. 22<sup>1c</sup> § 10 i 12, art. 22<sup>1e</sup> § 2).</li>
     </ul>
 
     <h2 id="co-w-informacji">Co musi być w informacji o warunkach zatrudnienia</h2>
@@ -157,7 +159,7 @@ const faq = [
         lista.replaceChildren();
         return;
       }
-      const obowiazki = obowiazkiNaStart({ start, regulamin: el('regulamin').checked, monitoring: el('monitoring').checked, ppk: el('ppk').checked });
+      const obowiazki = obowiazkiNaStart({ start, regulamin: el('regulamin').checked, monitoring: el('monitoring').checked, trzezwosc: el('trzezwosc').checked, ppk: el('ppk').checked });
       const inf = obowiazki.find((o) => o.klucz === 'informacja')!;
       w('informacja').textContent = typografia(dataPoPolsku(inf.data));
       w('informacja-przesuniecie').hidden = !inf.przesunieta;

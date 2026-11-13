@@ -22,6 +22,15 @@ test('bez pouczenia: odmowa do końca okresu', async ({ page }) => {
   await expect(page.locator('[data-w="odmowa"]')).toHaveText(/^28\slutego\s2027\sr\.$/);
 });
 
+test('bez pouczenia, próg 6 miesięcy w trakcie wypowiedzenia: odmowa do końca krótszego okresu', async ({ page }) => {
+  await page.getByLabel('Pracujesz u tego pracodawcy od').fill('2026-05-13');
+  await page.getByLabel('Dzień doręczenia pisma').fill('2026-11-12');
+  await page.getByLabel(/pouczenie/).uncheck();
+  await expect(page.locator('[data-w="odmowa"]')).toHaveText(/^28\slistopada\s2026\sr\.$/);
+  await expect(page.locator('[data-w="koniec"]')).toHaveText(/^31\sgrudnia\s2026\sr\.$/);
+  await expect(page.locator('[data-w="uwaga"]')).toContainText('koniec krótszego okresu');
+});
+
 test('doręczenie przed początkiem pracy: komunikat błędu', async ({ page }) => {
   await page.getByLabel('Pracujesz u tego pracodawcy od').fill('2026-11-13');
   await page.getByLabel('Dzień doręczenia pisma').fill('2026-11-12');

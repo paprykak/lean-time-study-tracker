@@ -48,3 +48,11 @@ describe('terminy pracodawcy na start (art. 29 § 2–3, 229, 237³, 104³, 22²
     expect(() => obowiazkiNaStart({ start: '', ...pelne })).toThrow();
   });
 });
+
+describe('kontrola trzeźwości (art. 22¹c § 12 Kp)', () => {
+  it('informacja przed dopuszczeniem do pracy tylko przy kontroli', () => {
+    const z = obowiazkiNaStart({ start: '2026-12-01', regulamin: true, monitoring: false, ppk: false, trzezwosc: true }).find((o) => o.klucz === 'trzezwosc');
+    expect(z).toMatchObject({ kiedy: 'przed', data: '2026-12-01' });
+    expect(obowiazkiNaStart({ start: '2026-12-01', regulamin: true, monitoring: false, ppk: false }).some((o) => o.klucz === 'trzezwosc')).toBe(false);
+  });
+});

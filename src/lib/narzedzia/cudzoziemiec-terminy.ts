@@ -24,7 +24,7 @@
 //   także w dniu granicy, bo przepis go nie rozstrzyga);
 // - 3 lata z art. 41 kończą się 4 marca 2029 r. (dzień przed rocznicą wejścia w życie); możliwe też liczenie do 5 marca.
 import { przesunZDniaWolnego } from './termin-odwolania';
-import { dataPoPolsku, dodajDni, dodajMiesiace, koniecOkresu, poprawnaData } from './terminy';
+import { dataPoPolsku, dodajDni, dodajMiesiace, dzisWPolsce, koniecOkresu, poprawnaData } from './terminy';
 
 export type Tryb = 'oswiadczenie' | 'zezwolenie' | 'ochrona';
 
@@ -188,7 +188,8 @@ export interface DaneOchrony {
   zmiana?: string | null;
 }
 
-export function terminyOchrony(d: DaneOchrony): Termin[] {
+/** `dzis`: termin wniosku o kartę CUKR biegnie niezależnie od dnia startu pracy, więc pokazujemy go do jego upływu. */
+export function terminyOchrony(d: DaneOchrony, dzis = dzisWPolsce()): Termin[] {
   sprawdz(d.start, d.zmiana);
   if (!d.start) throw new Error('Wpisz dzień rozpoczęcia pracy.');
   if (d.start < OD_ART_5A) throw new Error('Art. 5a obowiązuje od 5 marca 2026 r.; wcześniej zgłoszenia regulował art. 22 specustawy.');
@@ -200,7 +201,7 @@ export function terminyOchrony(d: DaneOchrony): Termin[] {
   const karta: Termin[] = [
     { klucz: 'karta', nazwa: 'Wniosek o kartę pobytu CUKR, który zapewnia legalny pobyt do decyzji', data: KARTA_UKR_WNIOSEK_DO, podstawa: 'art. 42c i 42x ustawy o pomocy obywatelom Ukrainy', uwaga: 'Dla osób ze statusem UKR 4 czerwca 2025 r., w dniu wniosku i nieprzerwanie co najmniej 365 dni (art. 42c).' },
   ];
-  if (d.start <= KARTA_UKR_WNIOSEK_DO) lista.push(...karta);
+  if (dzis <= KARTA_UKR_WNIOSEK_DO) lista.push(...karta);
   lista.push(
     { klucz: 'art41', nazwa: 'Obywatele Ukrainy bez ochrony czasowej: zasady z art. 5a', data: ART_41_DO, podstawa: 'art. 41 ustawy o wygaszeniu pomocy obywatelom Ukrainy' },
   );

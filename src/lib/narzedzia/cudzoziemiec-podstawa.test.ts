@@ -32,12 +32,12 @@ describe('podstawa pracy cudzoziemca', () => {
     expect(podstawaPracy('inne', 'karta-ukr').werdykt).toBe('nie-dotyczy');
   });
   it('Armenia, Białoruś, Mołdawia na wizie: oświadczenie (24 miesiące) albo zezwolenie, umowa do urzędu, płaca minimalna', () => {
-    const w = podstawaPracy('oswiadczenie', 'inny');
+    const w = podstawaPracy('bialorus', 'inny');
     expect(w.werdykt).toBe('oswiadczenie-lub-zezwolenie');
     expect(w.uwaga).toMatch(/24 miesiące/);
-    expect(tekst('oswiadczenie', 'inny')).toMatch(/umowę do urzędu/);
-    expect(tekst('oswiadczenie', 'inny')).toMatch(/płaca minimalna/);
-    expect(tekst('oswiadczenie', 'inny')).toMatch(/starostę .* 7 dni.* 14 dni/);
+    expect(tekst('bialorus', 'inny')).toMatch(/umowę do urzędu/);
+    expect(tekst('bialorus', 'inny')).toMatch(/płaca minimalna/);
+    expect(tekst('bialorus', 'inny')).toMatch(/starostę .* 7 dni.* 14 dni/);
   });
   it('inne państwo na wizie: zezwolenie na pracę do 3 lat, wykaz państw bez pracy w ruchu bezwizowym', () => {
     const w = podstawaPracy('inne', 'inny');
@@ -56,6 +56,13 @@ describe('podstawa pracy cudzoziemca', () => {
   });
   it('karta pobytu i pracy: na warunkach zezwolenia (art. 3 ust. 2 pkt 1)', () => {
     expect(podstawaPracy('inne', 'karta-praca')).toMatchObject({ werdykt: 'na-warunkach-karty' });
+    // Art. 41 ustawy o wygaszeniu (Dz.U. 2026 poz. 203): każdy legalnie przebywający obywatel Ukrainy bez ochrony czasowej.
+    const ua = podstawaPracy('ukraina', 'karta-praca');
+    expect(ua.werdykt).toBe('bez-zezwolenia');
+    expect(ua.podstawa).toContain('art. 41');
+    expect(ua.obowiazki.map((x) => x.podstawa).join(' ')).toContain('art. 5a');
+    expect(podstawaPracy('bialorus', 'karta-praca').werdykt).toBe('na-warunkach-karty');
+    for (const o of ['armenia', 'bialorus', 'moldawia'] as const) expect(podstawaPracy(o, 'inny').werdykt).toBe('oswiadczenie-lub-zezwolenie');
   });
   it('Szwajcaria i rodzina obywatela Polski: bez kopii dokumentu pobytowego (art. 4 ust. 5)', () => {
     expect(podstawaPracy('szwajcaria', 'inny').podstawa).toMatch(/pkt 4/);

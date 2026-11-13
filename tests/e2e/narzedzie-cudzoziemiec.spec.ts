@@ -11,7 +11,7 @@ test('Ukraina z ochroną czasową: bez zezwolenia, urząd pracy w 7 dni', async 
 });
 
 test('Białoruś na wizie: oświadczenie albo zezwolenie; inne państwo: zezwolenie', async ({ page }) => {
-  await page.getByLabel('Obywatelstwo').selectOption('oswiadczenie');
+  await page.getByLabel('Obywatelstwo').selectOption('bialorus');
   await page.getByLabel('Dokument albo status w Polsce').selectOption('inny');
   await expect(page.locator('[data-w="naglowek"]')).toHaveText(/oświadczenie/);
   await expect(page.locator('[data-w="uwaga"]')).toContainText(/24\smiesiące/);

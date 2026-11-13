@@ -103,12 +103,12 @@ const faq = [
       </table>
     </div>
     <p>
-      Okresy i ich koniec wynikają z art. 36 § 1 i art. 30 § 2<sup>1</sup>; liczymy je tak samo jak <a href="/narzedzia/okres-wypowiedzenia">kalkulator okresu wypowiedzenia</a>. Staż liczymy w pełnych miesiącach do dnia doręczenia. Wpisz początek
+      Okresy i ich koniec wynikają z art. 36 § 1 i art. 30 § 2<sup>1</sup>; liczymy je tak samo jak <a href="/narzedzia/okres-wypowiedzenia">kalkulator okresu wypowiedzenia</a>. Staż liczymy w pełnych miesiącach do dnia doręczenia; dnia doręczenia nie wliczamy. Wpisz początek
       pracy razem z wcześniejszym zleceniem albo działalnością wykonywaną dla tego pracodawcy (art. 302<sup>1</sup> § 8)
       i pracą przed przejściem zakładu na nowego pracodawcę (art. 36 § 1<sup>1</sup>); pomoże <a href="/narzedzia/staz-pracy">kalkulator
       stażu pracy</a>. Gdy próg 6 miesięcy albo 3 lat mija w trakcie okresu wypowiedzenia, przepis nie mówi wprost, co wtedy.
       Jak kalkulator okresu wypowiedzenia podajemy wtedy dłuższy okres i późniejszy koniec umowy, ale termin na odmowę
-      liczymy od krótszego okresu, więc odmowa złożona do tej daty jest w terminie przy obu wariantach. Przy umowie na czas określony, która
+      liczymy od krótszego okresu, także bez pouczenia, więc odmowa złożona do tej daty jest w terminie przy obu wariantach. Przy umowie na czas określony, która
       kończy się przed końcem okresu wypowiedzenia, umowa rozwiązuje się z upływem czasu, na który ją zawarto (art. 30 § 1 pkt 4). Przy stanowisku z odpowiedzialnością
       materialną umowa może przewidywać dłuższe okresy (art. 36 § 5); wtedy kalkulator ich nie zna. Okresu próbnego
       kalkulator nie obejmuje.
@@ -133,7 +133,7 @@ const faq = [
     <ul>
       <li>W czasie Twojego urlopu i innej usprawiedliwionej nieobecności, na przykład zwolnienia lekarskiego, zanim minie okres, który pozwala rozwiązać umowę bez wypowiedzenia (art. 41 w związku z art. 42 § 1). Ten zakaz nie obowiązuje przy zwolnieniach z przyczyn niedotyczących pracowników u pracodawcy zatrudniającego co najmniej 20 osób (art. 5 ust. 4 i art. 10 ust. 1 ustawy o zwolnieniach) ani przy upadłości lub likwidacji pracodawcy (art. 41<sup>1</sup> § 1).</li>
       <li>Gdy brakuje Ci nie więcej niż 4 lata do wieku emerytalnego, a staż pozwoli uzyskać emeryturę: tylko z powodu nowych zasad wynagradzania dla wszystkich albo Twojej grupy pracowników albo utraty zdolności do pracy lub uprawnień (art. 39, 40 i 43). Przy zwolnieniach z przyczyn niedotyczących pracowników pracodawca może wypowiedzieć warunki także osobom chronionym (art. 5 ust. 5 i art. 10 ust. 3 ustawy o zwolnieniach). Więcej: <a href="/narzedzia/ochrona-przedemerytalna">ochrona przedemerytalna</a>.</li>
-      <li>W ciąży i od złożenia wniosku o urlop macierzyński, ojcowski albo rodzicielski do jego końca pracodawca nie może wypowiedzieć umowy (art. 177 § 1). Przepis nie mówi wprost, czy ten zakaz obejmuje wypowiedzenie zmieniające; przepisy o wypowiedzeniu stosuje się do niego odpowiednio (art. 42 § 1).</li>
+      <li>W ciąży i od złożenia wniosku o urlop macierzyński, ojcowski albo rodzicielski do jego końca pracodawca nie może wypowiedzieć umowy (art. 177 § 1). Przepis nie mówi wprost, czy ten zakaz obejmuje wypowiedzenie zmieniające; przepisy o wypowiedzeniu stosuje się do niego odpowiednio (art. 42 § 1). Przy zwolnieniach z przyczyn niedotyczących pracowników u pracodawcy zatrudniającego co najmniej 20 osób pracodawca może pracownicy w ciąży i osobie, która złożyła wniosek o urlop macierzyński, ojcowski, rodzicielski albo opiekuńczy, wypowiedzieć tylko warunki pracy i płacy; gdy wynagrodzenie spada, przysługuje dodatek wyrównawczy do końca okresu ochrony (art. 5 ust. 5 pkt 1 i ust. 6 oraz art. 10 ust. 3 ustawy o zwolnieniach).</li>
       <li>Gdy reprezentuje Cię zakładowa organizacja związkowa, pracodawca najpierw zawiadamia ją o zamiarze wypowiedzenia i podaje przyczynę (art. 38 w związku z art. 42 § 1). Przy zwolnieniu grupowym obowiązuje to wtedy, gdy nie zawarto porozumienia ze związkami (art. 5 ust. 2 ustawy o zwolnieniach).</li>
     </ul>
 
@@ -170,7 +170,7 @@ const faq = [
       else if (!poprawnaData(doreczenie)) blad = 'Wpisz dzień doręczenia pisma.';
       else if (doreczenie < start) blad = 'Dzień doręczenia nie może być wcześniejszy niż początek pracy.';
       b.hidden = !blad;
-      b.textContent = blad ?? '';
+      b.textContent = typografia(blad ?? '');
       if (blad) {
         w('odmowa').textContent = '—';
         for (const k of POLA) w(k).textContent = '—';
@@ -193,13 +193,13 @@ const faq = [
       w('uwaga').textContent = typografia(
         r.pouczenie
           ? 'Odmowa złożona później może zostać uznana za spóźnioną, a wtedy przyjmujesz nowe warunki (art. 42 § 3 Kodeksu pracy). Liczy się dzień, w którym odmowa dotrze do pracodawcy.'
-          : 'Bez pouczenia możesz odmówić do końca okresu wypowiedzenia (art. 42 § 3 zdanie trzecie Kodeksu pracy). Liczy się dzień, w którym odmowa dotrze do pracodawcy.',
+          : `Bez pouczenia możesz odmówić do końca okresu wypowiedzenia (art. 42 § 3 zdanie trzecie Kodeksu pracy).${r.prog ? ' Staż osiąga próg w trakcie wypowiedzenia, a przepis nie mówi, czy okres się wydłuża, więc podajemy koniec krótszego okresu.' : ''} Liczy się dzień, w którym odmowa dotrze do pracodawcy.`,
       );
       const zostalo = dniMiedzy(dzisWPolsce(), r.odmowaDo);
       status.hidden = false;
       status.dataset.status = zostalo < 0 ? 'po-terminie' : zostalo <= 3 ? 'wkrotce' : 'w-terminie';
       status.textContent = typografia(
-        zostalo < 0 ? 'Termin na odmowę minął' : zostalo === 0 ? 'To dziś: złóż odmowę dzisiaj' : zostalo === 1 ? 'Został 1 dzień' : `Zostało ${odmiana(zostalo, ['dzień', 'dni', 'dni'])}`,
+        zostalo < 0 ? 'Termin na odmowę minął' : zostalo === 0 ? 'To dziś: złóż odmowę dzisiaj' : zostalo === 1 ? 'Został 1 dzień' : `${zostalo % 10 >= 2 && zostalo % 10 <= 4 && (zostalo % 100 < 12 || zostalo % 100 > 14) ? 'Zostały' : 'Zostało'} ${odmiana(zostalo, ['dzień', 'dni', 'dni'])}`,
       );
     };
     form.addEventListener('input', przelicz);

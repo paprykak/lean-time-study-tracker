@@ -28,3 +28,29 @@ for (const [slug, pola] of [
     }
   });
 }
+
+// Opcje list wyboru mierzone fontem strony jak w narzedzie-probny.spec.ts: przy 320 px tekst szerszy niż pole minus
+// strzałka (40 px) jest ucięty po wybraniu.
+for (const [slug, listy] of [
+  ['praca-cudzoziemca', ['#c-obywatelstwo', '#c-pobyt']],
+  ['dorabianie-do-renty', ['#d-swiadczenie']],
+  ['swiadczenie-urlopowe', ['#s-pit', '#s-rodzaj']],
+  ['dodatek-wyrownawczy', ['#d-powod', '#d-miesiac']],
+  ['zasilek-chorobowy-na-zleceniu', ['#z-status', '#z-przyczyna']],
+  ['wynagrodzenie-za-niepelny-miesiac', ['#n-miesiac']],
+] as const) {
+  test(`${slug}: żadna opcja list nie jest ucięta na 320 px`, async ({ page }) => {
+    await page.goto(`/narzedzia/${slug}`);
+    for (const lista of listy) {
+      const uciete = await page.locator(lista).evaluate(async (el) => {
+        const s = el as HTMLSelectElement;
+        const styl = getComputedStyle(s);
+        const ctx = document.createElement('canvas').getContext('2d')!;
+        ctx.font = `${styl.fontWeight} ${styl.fontSize} ${styl.fontFamily}`;
+        await document.fonts.load(ctx.font, [...s.options].map((o) => o.text).join(''));
+        return [...s.options].filter((o) => ctx.measureText(o.text).width > s.clientWidth - 40).map((o) => o.text);
+      });
+      expect(uciete, lista).toEqual([]);
+    }
+  });
+}

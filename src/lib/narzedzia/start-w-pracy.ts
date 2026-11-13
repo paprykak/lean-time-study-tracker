@@ -1,7 +1,8 @@
 // Terminy pracodawcy przy nowej umowie o pracę, liczone od pierwszego dnia pracy (dopuszczenia do pracy):
 // - przed dopuszczeniem: umowa na piśmie albo pisemne potwierdzenie ustaleń (art. 29 § 2 Kp), aktualne orzeczenie
 //   lekarskie (art. 229 § 1 pkt 1 i § 4), szkolenie BHP (art. 237^3 § 2), zapoznanie z regulaminem pracy (art. 104^3 § 2),
-//   informacje o monitoringu (art. 22^2 § 8, art. 22^3 § 3–4); Kodeks pracy t.j. Dz.U. 2026 poz. 1245;
+//   informacje o monitoringu (art. 22^2 § 8, art. 22^3 § 3–4), informacje o kontroli trzeźwości (art. 22^1c § 10 i 12,
+//   art. 22^1e § 2); Kodeks pracy t.j. Dz.U. 2026 poz. 1245;
 // - 7 dni od dopuszczenia: informacja o warunkach zatrudnienia (art. 29 § 3 pkt 1);
 // - 30 dni od dopuszczenia: informacja o instytucjach zabezpieczenia społecznego (art. 29 § 3 pkt 2);
 // - 7 dni od nawiązania stosunku pracy: zgłoszenie do ZUS (art. 13 pkt 1 i art. 36 ust. 2 i 4 ustawy o systemie ubezpieczeń
@@ -40,6 +41,8 @@ export interface DaneStartu {
   regulamin: boolean;
   /** Czy pracodawca stosuje monitoring (kamery, poczta, inne formy). */
   monitoring: boolean;
+  /** Czy pracownik będzie objęty kontrolą trzeźwości (albo na obecność środków działających podobnie do alkoholu). */
+  trzezwosc?: boolean;
   /** Czy pracodawca prowadzi PPK (pomijamy, gdy nie). */
   ppk: boolean;
 }
@@ -68,6 +71,7 @@ export function obowiazkiNaStart(d: DaneStartu): Obowiazek[] {
     { klucz: 'bhp', nazwa: 'Szkolenie BHP (instruktaż ogólny i stanowiskowy)', kiedy: 'przed', data: s, podstawa: 'art. 237³ § 2 Kodeksu pracy, § 8–11 rozporządzenia o szkoleniu BHP' },
   ];
   if (d.regulamin) lista.push({ klucz: 'regulamin', nazwa: 'Zapoznanie z regulaminem pracy', kiedy: 'przed', data: s, podstawa: 'art. 104³ § 2 Kodeksu pracy' });
+  if (d.trzezwosc) lista.push({ klucz: 'trzezwosc', nazwa: 'Informacja o kontroli trzeźwości: kogo obejmuje, jak i kiedy się odbywa, jakim urządzeniem', kiedy: 'przed', data: s, podstawa: 'art. 22¹c § 10 i 12 oraz art. 22¹e § 2 Kodeksu pracy' });
   if (d.monitoring) lista.push({ klucz: 'monitoring', nazwa: 'Informacja o celach, zakresie i sposobie monitoringu', kiedy: 'przed', data: s, podstawa: 'art. 22² § 8 i art. 22³ § 3–4 Kodeksu pracy' });
   lista.push(
     {

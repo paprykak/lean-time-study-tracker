@@ -24,7 +24,7 @@ export interface WypowiedzenieZmieniajace {
   noweWarunkiOd: string;
   /** Pierwszy dzień okresu w wariancie B (niedziela albo 1. dzień miesiąca po doręczeniu). */
   poczatekPelnegoOkresu: string;
-  /** Ostatni bezpieczny dzień na odmowę (wariant A); bez pouczenia: koniec okresu. */
+  /** Ostatni bezpieczny dzień na odmowę (wariant A); bez pouczenia: koniec okresu, a przy progu stażu koniec krótszego. */
   odmowaDo: string;
   /** Ostatni dzień pierwszej połowy w wariancie B (druga wykładnia). */
   odmowaDoWariantB: string;
@@ -62,7 +62,8 @@ export function wypowiedzenieZmieniajace(poczatekPracy: string, doreczenie: stri
     koniec,
     noweWarunkiOd: dodajDni(koniec, 1),
     poczatekPelnegoOkresu: poczatekB,
-    odmowaDo: pouczenie ? odmowaA : koniec,
+    // Bez pouczenia odmowa do końca okresu wypowiedzenia (art. 42 § 3 zd. 3); przy progu stażu do końca krótszego okresu.
+    odmowaDo: pouczenie ? odmowaA : koniecDoOdmowy,
     odmowaDoWariantB: ostatniDzienPrzedPolowa(poczatekB, koniec),
     dniA: dniMiedzy(poczatekA, koniec) + 1,
     dniB: dniMiedzy(poczatekB, koniec) + 1,
