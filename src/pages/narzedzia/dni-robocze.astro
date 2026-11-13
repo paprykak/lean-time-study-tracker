@@ -9,12 +9,15 @@ const dzis = dzisWPolsce();
 const D = { od: dzis, do: dodajDni(dzis, 30), n: 10 };
 const r = dniRobocze(D.od, D.do);
 const rok = Number(dzis.slice(0, 4));
+/** „z 1 dnia kalendarzowego”, „z 31 dni kalendarzowych”; „Po 1 dniu roboczym”, „Po 10 dniach roboczych”. */
+const zDni = (n: number) => (n === 1 ? 'z 1 dnia kalendarzowego' : `z ${n} dni kalendarzowych`);
+const poDniach = (n: number) => (n === 1 ? 'Po 1 dniu roboczym' : `Po ${n} dniach roboczych`);
 const roczne = [rok, rok + 1].map((x) => ({ rok: x, robocze: dniRobocze(`${x}-01-01`, `${x}-12-31`).robocze }));
 
 const faq = [
   {
     pytanie: 'Ile jest dni roboczych w roku?',
-    odpowiedz: `${roczne.map((x) => `W ${x.rok} r. ${x.robocze}`).join(', ')} dni od poniedziałku do piątku, nie licząc świąt z ustawy o dniach wolnych od pracy. Święto w sobotę obniża wymiar czasu pracy o 8 godzin (art. 130 § 2 Kodeksu pracy), a dzień wolny za nie wyznacza pracodawca, więc u Ciebie dni pracy może być o tyle mniej.`,
+    odpowiedz: `Dni od poniedziałku do piątku, nie licząc świąt z ustawy o dniach wolnych od pracy, jest: ${roczne.map((x) => `w ${x.rok} r. ${x.robocze}`).join(', ')}. Święto w sobotę obniża wymiar czasu pracy o 8 godzin (art. 130 § 2 Kodeksu pracy), a dzień wolny za nie wyznacza pracodawca, więc u Ciebie dni pracy może być o tyle mniej.`,
   },
   {
     pytanie: 'Czy sobota jest dniem roboczym?',
@@ -40,11 +43,11 @@ const faq = [
       <div class="mt-4 grid grid-cols-2 items-end gap-3">
         <div>
           <label for="r-od" class="etykieta-pola">Od</label>
-          <input id="r-od" name="od" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={D.od} aria-describedby="r-blad" />
+          <input id="r-od" name="od" type="date" data-dzis class="pole mt-1" min="2000-01-01" max="2100-12-31" value={D.od} aria-describedby="r-blad" />
         </div>
         <div>
           <label for="r-do" class="etykieta-pola">Do</label>
-          <input id="r-do" name="do" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={D.do} aria-describedby="r-blad" />
+          <input id="r-do" name="do" type="date" data-dzis="30" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={D.do} aria-describedby="r-blad" />
         </div>
       </div>
       <p class="meta mt-1">Oba dni liczymy włącznie.</p>
@@ -64,12 +67,12 @@ const faq = [
       <h2 id="wynik-tytul" class="etykieta">Dni robocze</h2>
       <div aria-live="polite" aria-atomic="true">
         <p class="wynik-kwota"><span data-w="robocze">{r.robocze}</span></p>
-        <p class="meta" data-w="opis">z {r.kalendarzowe} dni kalendarzowych</p>
+        <p class="meta" data-w="opis">{zDni(r.kalendarzowe)}</p>
       </div>
       <dl class="wynik-lista">
         <div><dt>Soboty i niedziele</dt><dd data-w="weekendy">{r.soboty} i {r.niedziele}</dd></div>
         <div><dt>Święta w tym czasie</dt><dd data-w="swieta">{r.swieta.length ? r.swieta.map((s) => `${dataPoPolsku(s.data)} (${s.nazwa})`).join(', ') : 'brak'}</dd></div>
-        <div><dt data-w="po-etykieta">Po {D.n} dniach roboczych</dt><dd data-w="po">{dataPoPolsku(poDniachRoboczych(D.od, D.n))}</dd></div>
+        <div><dt data-w="po-etykieta">{poDniach(D.n)}</dt><dd data-w="po">{dataPoPolsku(poDniachRoboczych(D.od, D.n))}</dd></div>
       </dl>
       <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu.</p></noscript>
     </div>
@@ -99,6 +102,8 @@ const faq = [
 <script>
   import { dniRobocze, poDniachRoboczych } from '../../lib/narzedzia/dni-robocze';
   import { dataPoPolsku, dniMiedzy, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { typografia } from '../../lib/typografia.mjs';
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
 
   const form = document.querySelector<HTMLFormElement>('[data-robocze]');
   if (form) {
@@ -111,13 +116,19 @@ const faq = [
       const n = /^\d{1,4}$/.test(tekstN) ? Number(tekstN) : NaN;
       const soboty = el('soboty').checked;
       let blad: string | null = null;
+      let zleDaty = true;
       if (!poprawnaData(od) || !poprawnaData(do_)) blad = 'Wpisz obie daty.';
       else if (do_ < od) blad = 'Data „Do” nie może być przed datą „Od”.';
       else if (dniMiedzy(od, do_) + 1 > 3660) blad = 'Kalkulator liczy najwyżej 10 lat.';
-      else if (!(n >= 1 && n <= 2000)) blad = 'Liczba dni roboczych: od 1 do 2000.';
+      else {
+        zleDaty = false;
+        if (!(n >= 1 && n <= 2000)) blad = 'Liczba dni roboczych: od 1 do 2000.';
+      }
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
       b.hidden = !blad;
-      b.textContent = blad ?? '';
+      b.textContent = typografia(blad ?? '');
+      for (const p of ['od', 'do']) el(p).setAttribute('aria-invalid', blad && zleDaty ? 'true' : 'false');
+      el('n').setAttribute('aria-invalid', blad && !zleDaty ? 'true' : 'false');
       if (blad) {
         w('robocze').textContent = '—';
         w('opis').textContent = '';
@@ -125,15 +136,16 @@ const faq = [
       }
       const r = dniRobocze(od, do_, soboty);
       w('robocze').textContent = String(r.robocze);
-      w('opis').textContent = `z ${r.kalendarzowe} dni kalendarzowych`;
+      w('opis').textContent = typografia(r.kalendarzowe === 1 ? 'z 1 dnia kalendarzowego' : `z ${r.kalendarzowe} dni kalendarzowych`);
       w('weekendy').textContent = `${r.soboty} i ${r.niedziele}`;
-      w('swieta').textContent = r.swieta.length ? r.swieta.map((s) => `${dataPoPolsku(s.data)} (${s.nazwa})`).join(', ') : 'brak';
-      w('po-etykieta').textContent = `Po ${n} dniach roboczych`;
-      w('po').textContent = dataPoPolsku(poDniachRoboczych(od, n, soboty));
+      w('swieta').textContent = typografia(r.swieta.length ? r.swieta.map((s) => `${dataPoPolsku(s.data)} (${s.nazwa})`).join(', ') : 'brak');
+      w('po-etykieta').textContent = typografia(n === 1 ? 'Po 1 dniu roboczym' : `Po ${n} dniach roboczych`);
+      w('po').textContent = typografia(dataPoPolsku(poDniachRoboczych(od, n, soboty)));
     };
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    ustawDzisiejszeWartosci(form);
     przelicz();
   }
 </script>

@@ -38,7 +38,7 @@ const faq = [
 ---
 <StronaNarzedzia
   slug="odszkodowanie-za-zwolnienie"
-  tytul="Odszkodowanie za zwolnienie z pracy: ile się należy"
+  tytul="Odszkodowanie za zwolnienie z pracy: ile wynosi"
   opis="Ile odszkodowania za bezprawne wypowiedzenie (od 2 tygodni do 3 miesięcy pensji), niesłuszną dyscyplinarkę, okres próbny i odejście z winy pracodawcy."
   h1="Odszkodowanie za zwolnienie z pracy"
   lead="Za wypowiedzenie albo dyscyplinarkę niezgodne z prawem sąd pracy może zasądzić odszkodowanie. Wybierz, co się stało, wpisz pensję i okres wypowiedzenia, a pokażemy granice z Kodeksu pracy w złotówkach."
@@ -50,7 +50,7 @@ const faq = [
       <div class="mt-4">
         <label for="o-sytuacja" class="etykieta-pola">Co się stało</label>
         <select id="o-sytuacja" name="sytuacja" class="pole mt-1">
-          {(Object.keys(SYTUACJE) as Sytuacja[]).map((k) => <option value={k} selected={k === D.sytuacja}>{SYTUACJE[k].nazwa}</option>)}
+          {(Object.keys(SYTUACJE) as Sytuacja[]).map((k) => <option value={k} selected={k === D.sytuacja}>{SYTUACJE[k].krotko}</option>)}
         </select>
       </div>
       <div class="mt-4">
@@ -60,10 +60,10 @@ const faq = [
       </div>
       <div class="mt-4 grid grid-cols-2 items-end gap-3">
         <div data-pole="umowa">
-          <label for="o-umowa" class="etykieta-pola">Umowa na czas</label>
+          <label for="o-umowa" class="etykieta-pola">Umowa</label>
           <select id="o-umowa" name="umowa" class="pole mt-1">
-            <option value="nieokreslona" selected>Nieokreślony</option>
-            <option value="okreslona">Określony</option>
+            <option value="nieokreslona" selected>Bezterminowa</option>
+            <option value="okreslona">Terminowa</option>
           </select>
         </div>
         <div data-pole="okres">
@@ -94,7 +94,7 @@ const faq = [
         <div><dt>Za dzień pracy</dt><dd data-w="dzien">{zl(r.zaDzien)}</dd></div>
       </dl>
       <p class="wynik-uwaga" data-w="polowa" hidden>Przy 2 tygodniach liczymy połowę miesięcznej kwoty. Rozporządzenie mówi to wprost przy odejściu z winy pracodawcy i roszczeniu pracodawcy (§ 2 ust. 2), a przy wypowiedzeniu i dyscyplinarce tego nie rozstrzyga.</p>
-      <p class="wynik-uwaga">Kwotę w tych granicach ustala sąd pracy. Pozew: 21 dni od doręczenia pisma (art. 264), termin policzy <a href="/narzedzia/odwolanie-do-sadu-pracy">kalkulator odwołania do sądu pracy</a>.</p>
+      <p class="wynik-uwaga">Kwotę w tych granicach ustala sąd pracy. Pozew: 21 dni od doręczenia pisma (art. 264).</p>
       <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są w tabeli poniżej.</p></noscript>
     </div>
   </form>
@@ -136,10 +136,15 @@ const faq = [
       dni pracy (§ 2a): kwota za dzień to pensja podzielona przez współczynnik dni pracy w {ROK} r., czyli
       {dniPracyWRoku(ROK)} dni przez 12 = {wsp} (§ 19 rozporządzenia urlopowego).
     </p>
+    <p>
+      Pozew składa się w ciągu 21 dni od doręczenia pisma (art. 264 Kodeksu pracy); dzień, w którym termin mija, policzy
+      <a href="/narzedzia/odwolanie-do-sadu-pracy">kalkulator odwołania do sądu pracy</a>.
+    </p>
   </Fragment>
 </StronaNarzedzia>
 
 <script>
+  import { typografia } from '../../lib/typografia.mjs';
   import { zl, wpisanaLiczba } from '../../lib/narzedzia/format';
   import { odszkodowanieZaZwolnienie, SYTUACJE, zaCzasBezPracy, type OkresWypowiedzenia, type Sytuacja } from '../../lib/narzedzia/odszkodowanie-zwolnienie';
   import { dzisWPolsce } from '../../lib/narzedzia/terminy';
@@ -170,22 +175,22 @@ const faq = [
       else if (potrzebaDni && !(dni >= 0 && dni <= 400)) blad = 'Wpisz liczbę dni pracy, na przykład 10.';
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
       b.hidden = !blad;
-      b.textContent = blad ?? '';
+      b.textContent = typografia(blad ?? '');
       if (blad) {
         w('kwota').textContent = '—';
         w('miara').textContent = '';
         return;
       }
       const r = odszkodowanieZaZwolnienie({ sytuacja, pensja, okres, okreslona, dniPracy: potrzebaDni ? dni : undefined, rok: ROK });
-      w('kwota').textContent = r.od === r.do ? zl(r.od) : `od ${zl(r.od)} do ${zl(r.do)}`;
-      w('miara').textContent = r.miara;
-      w('podstawa').textContent = s.podstawa;
-      w('dzien').textContent = zl(r.zaDzien);
+      w('kwota').textContent = typografia(r.od === r.do ? zl(r.od) : `od ${zl(r.od)} do ${zl(r.do)}`);
+      w('miara').textContent = typografia(r.miara);
+      w('podstawa').textContent = typografia(s.podstawa);
+      w('dzien').textContent = typografia(zl(r.zaDzien));
       wiersz('koniec').hidden = r.doKoncaUmowy === undefined;
-      w('koniec').textContent = r.doKoncaUmowy === undefined ? '' : `${zl(r.doKoncaUmowy)} (za czas do końca umowy, najwyżej 3 miesiące)`;
+      w('koniec').textContent = typografia(r.doKoncaUmowy === undefined ? '' : `${zl(r.doKoncaUmowy)} (za czas do końca umowy, najwyżej 3 miesiące)`);
       const bezPracy = zaCzasBezPracy(sytuacja, okres);
       wiersz('przywrocenie').hidden = !bezPracy;
-      w('przywrocenie').textContent = bezPracy ? `wynagrodzenie za czas bez pracy ${bezPracy}` : '';
+      w('przywrocenie').textContent = typografia(bezPracy ? `wynagrodzenie za czas bez pracy ${bezPracy}` : '');
       w('polowa').hidden = r.polowaWprost;
     };
     form.addEventListener('input', przelicz);

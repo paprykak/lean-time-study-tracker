@@ -1,0 +1,252 @@
+{
+ "partia": "D",
+ "sprawdzone": [
+  {
+   "slug": "kalkulator-urlopu",
+   "pliki": [
+    "src/pages/narzedzia/kalkulator-urlopu.astro",
+    "src/lib/narzedzia/urlop.ts",
+    "src/lib/narzedzia/urlop.test.ts"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "ekwiwalent-za-urlop",
+   "pliki": [
+    "src/pages/narzedzia/ekwiwalent-za-urlop.astro",
+    "src/lib/narzedzia/ekwiwalent.ts",
+    "src/lib/narzedzia/ekwiwalent.test.ts",
+    "src/lib/narzedzia/czas-pracy.ts"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "wynagrodzenie-za-urlop",
+   "pliki": [
+    "src/pages/narzedzia/wynagrodzenie-za-urlop.astro",
+    "src/lib/narzedzia/wynagrodzenie-urlopowe.ts"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "dni-wolne-od-pracy",
+   "pliki": [
+    "src/pages/narzedzia/dni-wolne-od-pracy.astro",
+    "src/lib/narzedzia/dni-wolne.ts",
+    "src/lib/narzedzia/czas-pracy.ts",
+    "tests/e2e/narzedzie-dni-wolne.spec.ts"
+   ],
+   "wynik": "ok"
+  },
+  {
+   "slug": "wolne-na-dziecko",
+   "pliki": [
+    "src/pages/narzedzia/wolne-na-dziecko.astro",
+    "src/lib/narzedzia/wolne-rodzinne.ts"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "urlop-okolicznosciowy",
+   "pliki": [
+    "src/pages/narzedzia/urlop-okolicznosciowy.astro",
+    "src/lib/narzedzia/zwolnienia.ts"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "urlop-ojcowski",
+   "pliki": [
+    "src/pages/narzedzia/urlop-ojcowski.astro",
+    "src/lib/narzedzia/urlop-ojcowski.ts",
+    "src/lib/narzedzia/urlop-ojcowski.test.ts"
+   ],
+   "wynik": "ok"
+  },
+  {
+   "slug": "urlop-wychowawczy",
+   "pliki": [
+    "src/pages/narzedzia/urlop-wychowawczy.astro",
+    "src/lib/narzedzia/urlop-wychowawczy.ts",
+    "tests/e2e/narzedzie-wychowawczy.spec.ts"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "urlop-w-agencji-pracy",
+   "pliki": [
+    "src/pages/narzedzia/urlop-w-agencji-pracy.astro",
+    "src/lib/narzedzia/urlop-agencja.ts"
+   ],
+   "wynik": "problemy"
+  }
+ ],
+ "znaleziska": [
+  {
+   "id": "D-1",
+   "slug": "urlop-wychowawczy",
+   "wymiar": "tresc-ux",
+   "waga": "srednia",
+   "plik": "src/pages/narzedzia/urlop-wychowawczy.astro",
+   "linia": 148,
+   "problem": "Gdy urlop jest skrócony wymiarem, a nie ma zarezerwowanego miesiąca (drugi rodzic już go wykorzystał albo zaznaczono jedynego uprawnionego), uwaga kończy się podwójną kropką.",
+   "dowod": "Playwright na 127.0.0.1:4322: miesiące 36, drugi rodzic 2 → [data-w=uwaga] = „Masz do wykorzystania 34 mies..”. Szablon: `${r.dostepne} mies.${r.zarezerwowane ? ', bo …' : ''}.`",
+   "poprawka": "Użyć odmiana(r.dostepne, ['miesiąc','miesiące','miesięcy']) zamiast „mies.” (np. „Masz do wykorzystania 34 miesiące, bo …”) i dodać przypadek do E2E (drugi=2, miesiące=36, oczekiwanie bez „..”)."
+  },
+  {
+   "id": "D-2",
+   "slug": "urlop-okolicznosciowy",
+   "wymiar": "tresc-ux",
+   "waga": "srednia",
+   "plik": "src/lib/narzedzia/zwolnienia.ts",
+   "linia": 21,
+   "problem": "Opcje listy „Co się wydarzyło” to całe zdania. Na telefonie są ucięte, co łamie zasadę 7 (krótkie opcje). Pozycje „pogrzeb-najblizszy” i „pogrzeb-dalszy” są na zamkniętym polu nie do odróżnienia, bo obie zaczynają się od „Zgon i pogrzeb …”.",
+   "dowod": "Pomiar Playwrightem (font pola, szerokość select − 40 px): przy 320 px ucięte 7 z 9 opcji, przy 412 px 5 z 9, m.in. „Zgon i pogrzeb siostry, brata, teściowej, teścia, babci, dziadka albo innej osoby na Twoim utrzymaniu lub pod Twoją opieką”. Zrzut: /tmp/claude-0/-home-user-lean-time-study-tracker/85e7a3e9-bef9-5b60-93fa-46f6f146f579/scratchpad/audyt/D/urlop-okolicznosciowy-320.png",
+   "poprawka": "Dodać pole `krotko` w ZWOLNIENIA, np. „Pogrzeb: rodzic, małżonek, dziecko”, „Pogrzeb: rodzeństwo, dziadkowie, teściowie”, „Ślub dziecka”, „Badania i szczepienia”, „Wezwanie do sądu lub urzędu”, „Akcja OSP”. Używać go w <option>, a pełną `nazwa` zostawić w tabeli i w wyniku."
+  },
+  {
+   "id": "D-3",
+   "slug": "urlop-okolicznosciowy",
+   "wymiar": "prawo",
+   "waga": "srednia",
+   "plik": "src/lib/narzedzia/zwolnienia.ts",
+   "linia": 27,
+   "problem": "Pozycja OSP opiera się tylko na § 11 ust. 1 pkt 1 rozporządzenia z 1996 r. (szkolenia do 6 dni w roku, zaświadczenie do rekompensaty). Pomija nowszą ustawę o OSP. Według niej pracodawca zwalnia strażaka OSP na czas działań ratowniczych, szkoleń i ćwiczeń oraz na odpoczynek z art. 132 § 1 Kp, bez limitu 6 dni. Strażak ratownik dostaje ekwiwalent z gminy.",
+   "dowod": ".cache/narzedzia/prawo/DU_2025_244.txt (t.j. ustawy o ochotniczych strażach pożarnych), art. 12: „Pracodawca zwalnia od świadczenia pracy strażaka OSP biorącego udział w działaniach ratowniczych i akcjach ratowniczych, szkoleniach lub ćwiczeniach … na czas ich trwania, a także na czas niezbędny do odpoczynku zgodnie z art. 132 § 1 … Kodeks pracy”; art. 15 ust. 1 i 3: ekwiwalent pieniężny z budżetu gminy, a za czas nieobecności strażak zachowuje „uprawnienie do innych niż wynagrodzenie świadczeń”. Późniejsze zmiany (DU_2025_900, DU_2026_1159) tych przepisów nie dotyczą.",
+   "poprawka": "Zmienić wymiar na „czas akcji, szkolenia lub ćwiczeń i odpoczynek po nich” i podstawę na „art. 12 i 15 ustawy o ochotniczych strażach pożarnych (Dz.U. 2025 poz. 244)”. Opis płatności: pracodawca nie płaci, strażak ratownik dostaje ekwiwalent z gminy (art. 15). Dopisać akt do src/data/prawo.ts i do `przepisy` w rejestrze, a w teście sprawdzić, że wymiar OSP nie zawiera „6 dni”."
+  },
+  {
+   "id": "D-4",
+   "slug": "urlop-w-agencji-pracy",
+   "wymiar": "tresc-ux",
+   "waga": "srednia",
+   "plik": "src/pages/narzedzia/urlop-w-agencji-pracy.astro",
+   "linia": 15,
+   "problem": "FAQ używa form zależnych od płci („wykorzystałeś albo wykorzystałaś”, w. 15; „przepracowałbyś albo przepracowałabyś”, w. 19). To łamie zasadę 6 (forma neutralna).",
+   "dowod": "Treść FAQ w pliku i na podglądzie: content strony zawiera „wykorzystałeś”.",
+   "poprawka": "Np. „Urlop nie przysługuje za okres, za który urlop został już wykorzystany u poprzedniego pracodawcy” oraz „… mnoży przez godziny pracy przypadające według grafiku na dni urlopu”."
+  },
+  {
+   "id": "D-5",
+   "slug": "kalkulator-urlopu",
+   "wymiar": "prawo",
+   "waga": "srednia",
+   "plik": "src/pages/narzedzia/kalkulator-urlopu.astro",
+   "linia": 97,
+   "problem": "Podpowiedź („Rozpoczęty miesiąc liczy się jak pełny. U nowego pracodawcy …”) i FAQ o zmianie pracy pomijają art. 155^2a § 3. Gdy jedna umowa kończy się, a druga zaczyna w tym samym miesiącu, ten miesiąc zaokrągla tylko dotychczasowy pracodawca. Według obecnego opisu nowy pracodawca policzy ten miesiąc drugi raz, więc wynik może być zawyżony o 1/12 wymiaru.",
+   "dowod": ".cache/narzedzia/prawo/DU_2026_1245.txt, art. 155[2a] § 3: „Jeżeli ustanie stosunku pracy u dotychczasowego pracodawcy i nawiązanie takiego stosunku u kolejnego pracodawcy następuje w tym samym miesiącu kalendarzowym, zaokrąglenia do pełnego miesiąca dokonuje dotychczasowy pracodawca.” Przykład: odejście 14 marca, nowa umowa od 15 marca do końca roku. Według podpowiedzi 10 miesięcy, czyli ceil(20·10/12) = 17 dni; według § 3 9 miesięcy, czyli 15 dni.",
+   "poprawka": "Dopisać do podpowiedzi i do FAQ: „Jeśli zmiana pracy nastąpiła w tym samym miesiącu, u nowego pracodawcy tego miesiąca nie licz (art. 155² a § 3)”."
+  },
+  {
+   "id": "D-6",
+   "slug": "kalkulator-urlopu",
+   "wymiar": "tresc-ux",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/kalkulator-urlopu.astro",
+   "linia": 228,
+   "problem": "Wynik nie odmienia słowa „dzień”: przy 1 dniu pokazuje „1 dni”. Lata odmienia własna funkcja `lata()` zamiast `odmiana()`.",
+   "dowod": "Playwright: etat 1/4, „Część roku”, 1 miesiąc → [data-w=dni] = „1 dni” (ceil(5·1/12) = 1).",
+   "poprawka": "`odmiana(r.dni, ['dzień','dni','dni'])` dla liczb całkowitych; `lata()` zastąpić `odmiana(n, ['rok','lata','lat'])` z src/lib/redakcja.ts. Dodać test E2E dla 1/4 etatu i 1 miesiąca."
+  },
+  {
+   "id": "D-7",
+   "slug": "kalkulator-urlopu",
+   "wymiar": "tresc-ux",
+   "waga": "niska",
+   "plik": "src/lib/narzedzia/urlop.ts",
+   "linia": 7,
+   "problem": "Opcje „Ukończona szkoła” są długie i ucięte na telefonie. Dwie z nich powtarzają liczbę lat: „Średnia szkoła zawodowa, 4 lata nauki (4 lata)”.",
+   "dowod": "Pomiar Playwrightem: przy 320 px ucięte 6 z 8 opcji, przy 412 px 5. Szablon w kalkulator-urlopu.astro w. 75 dopisuje „(${lata})” do nazwy, która już zawiera liczbę lat.",
+   "poprawka": "Krótkie nazwy, np. „Brak lub nieukończona”, „Zasadnicza zawodowa”, „Technikum 4-letnie”, „Technikum 5-letnie”, „Średnia po zasadniczej”, „Liceum”, „Policealna”, „Wyższa”, z dopiskiem lat tylko raz."
+  },
+  {
+   "id": "D-8",
+   "slug": "ekwiwalent-za-urlop",
+   "wymiar": "rachunek",
+   "waga": "srednia",
+   "plik": "src/pages/narzedzia/ekwiwalent-za-urlop.astro",
+   "linia": 11,
+   "problem": "Lista lat i tabela współczynników biorą lata z LATA (klucze PLACA_MINIMALNA, dziś 2025–2027), choć ekwiwalent nie zależy od płacy minimalnej. Roku 2028 nie da się wybrać, a po buildzie w 2028 r. strona po cichu policzy współczynnikiem z 2027 r. (20,92 zamiast 20,75). To osobna sprawa od X1-3: chodzi o brak roku w danych, nie o domyślny rok z buildu. W rejestrze „krotko” ma na sztywno „2026 i 2027 r.”.",
+   "dowod": "Niezależny rachunek (Python, dateutil.easter): 2027 Mon–Fri 261 − 10 świąt poza niedzielą (w tym 1 maja i 25 grudnia w sobotę) = 251 dni, współczynnik 20,9167; 2028 260 − 11 (1 stycznia i 11 listopada w sobotę) = 249 dni, współczynnik 20,75. dniPracyWRoku() daje te same wartości (2025: 249, 2026: 251, 2027: 251, 2028: 249), więc logika jest dobra, a błąd siedzi tylko w zakresie lat. Fallback: `LATA.includes(rokBiezacy) ? rokBiezacy : LATA[LATA.length - 1]`.",
+   "poprawka": "Lata ekwiwalentu liczyć niezależnie od płacy minimalnej, np. [rokBiezacy − 1, rokBiezacy, rokBiezacy + 1] (współczynnik wynika z kalendarza). W src/data/narzedzia.ts „krotko” bez lat na sztywno."
+  },
+  {
+   "id": "D-9",
+   "slug": "ekwiwalent-za-urlop",
+   "wymiar": "testy",
+   "waga": "niska",
+   "plik": "src/lib/narzedzia/ekwiwalent.test.ts",
+   "linia": 5,
+   "problem": "Testy nie obejmują 2028 r. (249 dni, dwa święta w sobotę) ani roku przestępnego. Brak testu zgodności listy świąt 2027–2028 z Wielkanocą.",
+   "dowod": "W teście występują tylko lata 2025–2027. Policzone niezależnie: Wielkanoc 2027 = 28.03, Boże Ciało 2027 = 27.05, Wielkanoc 2028 = 16.04, Boże Ciało 2028 = 15.06; swieta() zwraca te same daty.",
+   "poprawka": "Dodać `expect(dniPracyWRoku(2028)).toBe(249)`, `wspolczynnik(2028)` ≈ 20,75 oraz w czas-pracy.test.ts daty Wielkanocy i Bożego Ciała dla 2027 i 2028."
+  },
+  {
+   "id": "D-10",
+   "slug": "wynagrodzenie-za-urlop",
+   "wymiar": "tresc-ux",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/wynagrodzenie-za-urlop.astro",
+   "linia": 106,
+   "problem": "Tekst w polu „Stała pensja” (np. „abc”) daje błąd „Kwoty nie mogą być ujemne.”. Pole nie ma aria-describedby wskazującego komunikat błędu, a żadne pole nie dostaje aria-invalid.",
+   "dowod": "Playwright: #wu-stala = „abc” → #wu-blad „Kwoty nie mogą być ujemne.”. Linia 57: input wu-stala bez aria-describedby.",
+   "poprawka": "Rozdzielić błąd NaN („Wpisz kwotę, na przykład 6000.”) od ujemnej kwoty, dodać aria-describedby=\"wu-blad\" do wu-stala i ustawiać aria-invalid jak w ekwiwalencie."
+  },
+  {
+   "id": "D-11",
+   "slug": "wolne-na-dziecko",
+   "wymiar": "tresc-ux",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/wolne-na-dziecko.astro",
+   "linia": 60,
+   "problem": "Opcja „7 godzin (niższa norma z odrębnych przepisów)” jest ucięta na telefonie. Strona nie mówi też, co przy pracy przez część roku: wymiar z art. 188 i 148^1 jest roczny i nieproporcjonalny, a limit obowiązuje łącznie u kolejnych pracodawców.",
+   "dowod": "Pomiar Playwrightem przy 320 i 412 px: opcja dłuższa niż pole. DU_2026_1245.txt art. 188 § 1 i art. 148[1] § 1 („w ciągu roku kalendarzowego”, bez proporcji przy części roku).",
+   "poprawka": "Opcja „7 godzin”, objaśnienie zostaje w opisie pola. W „Jak liczymy” jedno zdanie: przy zatrudnieniu przez część roku wymiar się nie zmniejsza, ale dni wykorzystane u poprzedniego pracodawcy w tym roku się odlicza (informacja w świadectwie pracy)."
+  },
+  {
+   "id": "D-12",
+   "slug": "urlop-w-agencji-pracy",
+   "wymiar": "prawo",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/urlop-w-agencji-pracy.astro",
+   "linia": 49,
+   "problem": "Okres do stawki urlopowej opisano jako „3 miesiące przed miesiącem urlopu”. Ustawa definiuje go jako kolejne 90 dni zatrudnienia u tego samego użytkownika w ciągu 6 miesięcy przed miesiącem urlopu.",
+   "dowod": ".cache/narzedzia/prawo/DU_2025_236.txt, art. 17 ust. 5: „Okres 3 miesięcy … obejmuje łącznie okres kolejnych 90 dni zatrudnienia … przypadający w okresie 6 miesięcy kalendarzowych poprzedzających miesiąc …”.",
+   "poprawka": "Opis pola i „Jak liczymy”: „wynagrodzenie z 90 dni pracy u tego użytkownika (w ciągu 6 miesięcy przed miesiącem urlopu), art. 17 ust. 4 i 5”."
+  },
+  {
+   "id": "D-13",
+   "slug": "kalkulator-urlopu",
+   "wymiar": "tresc-ux",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/kalkulator-urlopu.astro",
+   "linia": 183,
+   "problem": "Skrypty przeglądarki całej partii nie stosują typografia(), a liczby z rzeczownikiem nie idą przez odmiana() (zasada 4). Teksty wyniku w rodzaju „13 h 20 min”, „6000,00 zł” czy „art. 153 § 1” mogą łamać się w środku. Dotyczy też ekwiwalent-za-urlop, wynagrodzenie-za-urlop, wolne-na-dziecko, urlop-ojcowski, urlop-wychowawczy, urlop-w-agencji-pracy i urlop-okolicznosciowy (dni-wolne używa ręcznych \\u00a0).",
+   "dowod": "grep: typografia=0 i odmiana=0 we wszystkich 9 plikach .astro partii. format.ts: zl() łączy zwykłą spacją „x zł”.",
+   "poprawka": "W każdym skrypcie przepuszczać textContent przez typografia() z src/lib/typografia.mjs, a liczby z rzeczownikiem przez odmiana()."
+  }
+ ],
+ "do_stanu": [
+  {
+   "sprawa": "Kodeks pracy: nowe zmiany po t.j. Dz.U. 2026 poz. 1245 dotyczące urlopów (art. 152–173^1, 182^3, 186, 188, 148^1); ostatnia zmiana DU 2026/1046 z 5.11.2026 r. dotyczy tylko równego traktowania",
+   "kiedy_sprawdzic": "2027-01-02",
+   "gdzie_w_kodzie": "src/data/prawo.ts (kodeksPracy), src/lib/narzedzia/urlop.ts, wolne-rodzinne.ts"
+  },
+  {
+   "sprawa": "Koniec okresu przejściowego na udokumentowanie stażu z art. 302^1 (24 miesiące: 1.01.2028 r. w sektorze finansów publicznych, 1.05.2028 r. u pozostałych, art. 5 ustawy Dz.U. 2025 poz. 1423); tekst strony mówi o 24 miesiącach i trzeba go wtedy uaktualnić",
+   "kiedy_sprawdzic": "2027-12-01",
+   "gdzie_w_kodzie": "src/pages/narzedzia/kalkulator-urlopu.astro (FAQ i sekcja staz-2026)"
+  }
+ ],
+ "poza_zakresem": [
+  "Kalkulator urlopu: rok, w którym pracownik osiąga 10 lat stażu, daje 26 dni za cały rok (art. 154 w zw. z art. 158). Uwaga w wyniku mówi tylko o urlopie uzupełniającym i pojawia się, gdy do 10 lat brakuje ≤ 12 miesięcy, także wtedy, gdy próg wypadnie w następnym roku. Warto doprecyzować, ale to raczej zmiana treści niż błąd.",
+  "Kalkulator urlopu przy niepełnym etacie i części roku zaokrągla dwukrotnie w górę (art. 154 § 2, potem 155^3 § 1). To zgodne z art. 155^2a § 1, który odsyła do wymiaru z art. 154 § 1 i 2, i korzystne dla pracownika, ale „Jak liczymy” tego nie opisuje."
+ ],
+ "nie_sprawdzono": [
+  "Zachowanie dni-wolne-od-pracy po 1 października i po Nowym Roku przy dacie buildu: pominięte jako zgłoszone przekrojowo (X1-3). Sama logika świąt, długich weekendów i okazji urlopowych dla 2026–2028 sprawdzona i poprawna.",
+  "Czytnik ekranu: sprawdzono tylko etykiety, aria-live i kolejność nagłówków w DOM, bez realnego czytnika.",
+  "Kwota zasiłku za urlop ojcowski (podstawaZasilku, SWIADCZENIE_RODZICIELSKIE) należy do innej partii; terminy z art. 182^3 i art. 112 KC (w tym 29 lutego → 27 lutego) są poprawne.",
+  "Wartość „dzień urlopu = 8 h” w ekwiwalencie przy normie 7 h (niepełnosprawność): pola normy nie ma w UI, więc nie testowano.",
+  "Termin wniosku „N dni przed” (S − N) w urlopie ojcowskim i wychowawczym: wariant S − N − 1 (art. 111 § 2 KC) jest możliwy w interpretacji, ale liczenie jest spójne z rodzic-w-pracy i z art. 186 § 7^1, więc nie zgłaszam."
+ ]
+}

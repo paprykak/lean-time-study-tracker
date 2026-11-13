@@ -36,3 +36,10 @@ test('bez danych: błąd', async ({ page }) => {
   await ustaw(page, []);
   await expect(page.locator('#h-blad')).toHaveText('Wpisz co najmniej jeden poziom hałasu i czas.');
 });
+
+test('błędny poziom: komunikat i aria-invalid na polu, po poprawce zdjęte', async ({ page }) => {
+  await page.locator('#h-poziom-0').fill('abc');
+  await expect(page.locator('#h-poziom-0')).toHaveAttribute('aria-invalid', 'true');
+  await page.locator('#h-poziom-0').fill('85');
+  await expect(page.locator('#h-poziom-0')).toHaveAttribute('aria-invalid', 'false');
+});

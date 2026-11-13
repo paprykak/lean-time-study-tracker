@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { dzienMiesiaca, minuty, minutyNocneZmiany, swieta, wielkanoc, wymiarMiesiaca } from './czas-pracy';
+import { dzienMiesiaca, minuty, minutyNocneZmiany, swieta, swietaWSobote, wielkanoc, wymiarMiesiaca, wymiarOkresu } from './czas-pracy';
 
 describe('wielkanoc', () => {
   it.each([
@@ -106,5 +106,27 @@ describe('wymiarOkresu i pomocnicze', async () => {
     expect(godzinyIMinuty(160)).toBe('160 h');
     expect(godzinyIMinuty(160 / 3)).toBe('53 h 20 min');
     expect(() => wymiarOkresu(2026, 1, 13)).toThrow(RangeError);
+  });
+});
+
+describe('kalendarz 2027–2028 i lata sprzed 2011 (niezależny rachunek w Pythonie: art. 130 Kp, Wielkanoc z dateutil)', () => {
+  it('wymiar miesięcy 2027 i 2028', () => {
+    const miesiace = (rok: number) => Array.from({ length: 12 }, (_, i) => wymiarMiesiaca(rok, i + 1).godziny);
+    expect(miesiace(2027)).toEqual([152, 160, 176, 176, 144, 176, 176, 176, 176, 168, 160, 168]);
+    expect(miesiace(2028)).toEqual([152, 168, 184, 152, 168, 168, 168, 176, 168, 176, 160, 152]);
+    expect(miesiace(2028).reduce((a, b) => a + b, 0)).toBe(1992);
+  });
+  it('Wielkanoc i Boże Ciało 2027–2028, święta w sobotę 2028, okres XII 2027–II 2028', () => {
+    expect(wielkanoc(2027)).toBe('2027-03-28');
+    expect(wielkanoc(2028)).toBe('2028-04-16');
+    expect(swieta(2027).find((s) => s.nazwa === 'Boże Ciało')?.data).toBe('2027-05-27');
+    expect(swieta(2028).find((s) => s.nazwa === 'Boże Ciało')?.data).toBe('2028-06-15');
+    expect(swietaWSobote(2028).map((s) => s.data)).toEqual(['2028-01-01', '2028-11-11']);
+    expect(wymiarOkresu(2027, 12, 3).godziny).toBe(488);
+  });
+  it('6 stycznia wolny dopiero od 2011 r. (Dz.U. 2010 nr 224 poz. 1459)', () => {
+    expect(swieta(2010).some((s) => s.data === '2010-01-06')).toBe(false);
+    expect(swieta(2011).some((s) => s.data === '2011-01-06')).toBe(true);
+    expect(wymiarMiesiaca(2010, 1).godziny).toBe(160);
   });
 });

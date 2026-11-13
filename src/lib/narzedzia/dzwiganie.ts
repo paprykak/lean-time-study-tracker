@@ -26,6 +26,24 @@ export const CZYNNOSCI: Record<Czynnosc, string> = {
   zespolowo: 'Zespołowo: przedmiot dłuższy niż 4 m, na jedną osobę',
 };
 
+/** Krótkie nazwy do list wyboru (telefon 320 px ucina dłuższe); pełne zostają w tabelach i w opisie pod polem. */
+export const OSOBY_KROTKO: Record<Osoba, string> = {
+  mezczyzna: 'Mężczyzna',
+  kobieta: 'Kobieta',
+  ciaza: 'Kobieta w ciąży',
+  karmiaca: 'Karmiąca piersią',
+  mlodociany: 'Młodociany chłopak',
+  mlodociana: 'Młodociana dziewczyna',
+};
+export const CZYNNOSCI_KROTKO: Record<Czynnosc, string> = {
+  podnoszenie: 'Podnoszenie, przenoszenie',
+  'nad-barki': 'Nad barki',
+  'ponad-25m': 'Ponad 25 m',
+  'gora-do-30': 'Pod górę do 30°',
+  'gora-ponad-30': 'Pod górę ponad 30°',
+  zespolowo: 'Zespołowo, na osobę',
+};
+
 /** [praca stała, praca dorywcza] w kg; 0 = zakaz. */
 type Para = readonly [number, number];
 interface Limit {
@@ -34,7 +52,7 @@ interface Limit {
 }
 
 const RPT = 'rozporządzenia o ręcznych pracach transportowych';
-const CIAZA = 'rozporządzenia o pracach wzbronionych kobietom w ciąży i karmiącym, zał. cz. I ust.';
+const CIAZA = 'rozporządzenia o pracach uciążliwych dla kobiet w ciąży i karmiących, zał. cz. I ust.';
 
 const DOROSLI: Record<'mezczyzna' | 'kobieta', Record<Czynnosc, Para>> = {
   mezczyzna: { podnoszenie: [30, 50], 'nad-barki': [21, 35], 'ponad-25m': [30, 30], 'gora-do-30': [30, 30], 'gora-ponad-30': [20, 30], zespolowo: [25, 42] },

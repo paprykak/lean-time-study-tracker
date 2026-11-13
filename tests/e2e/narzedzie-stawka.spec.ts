@@ -9,7 +9,7 @@ test.beforeEach(async ({ page }) => {
 
 test('6000 zł w 2026 r.: średnio 35,86 zł, listopad 37,50 zł', async ({ page }) => {
   await expect(page.locator('[data-w="srednio"]')).toHaveText('35,86 zł');
-  await expect(page.locator('[data-w="rocznie"]')).toHaveText('2008 h');
+  await expect(page.locator('[data-w="rocznie"]')).toHaveText(/^2008\sh$/);
   await expect(page.locator('[data-w="lista"]')).toContainText(/listopad: 37,50\szł \(160\sh\)/);
 });
 

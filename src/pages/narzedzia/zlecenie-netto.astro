@@ -1,10 +1,16 @@
 ---
 // Netto z umowy zlecenia: składki według statusu zleceniobiorcy, zdrowotna, koszty 20%, zaliczka. Logika: src/lib/narzedzia/zlecenie.ts.
 import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { LATA, PLACA_MINIMALNA } from '../../data/prawo';
 import { LIMIT_ULGI_MLODYCH } from '../../lib/narzedzia/netto';
 import { nettoZlecenie } from '../../lib/narzedzia/zlecenie';
 import { liczba, zl } from '../../lib/narzedzia/format';
+import { dzisWPolsce } from '../../lib/narzedzia/terminy';
 
+// Minimalna stawka godzinowa od bieżącego roku (art. 8a ustawy o minimalnym wynagrodzeniu, kwoty w src/data/prawo.ts).
+const rokBiezacy = Number(dzisWPolsce().slice(0, 4));
+const lataStawki = LATA.filter((r) => r >= rokBiezacy);
+const stawki = (lataStawki.length ? lataStawki : LATA.slice(-1)).map((r) => `w ${r} r. ${zl(PLACA_MINIMALNA[r].stawkaGodzinowa)}`).join(', a ');
 const start = nettoZlecenie({ brutto: 3000, chorobowe: true, pit2: false });
 const PRZYKLADY = [2000, 3000, 4000, 5000];
 
@@ -19,7 +25,7 @@ const faq = [
   },
   {
     pytanie: 'Czy pracując na etacie płacę ZUS od zlecenia?',
-    odpowiedz: 'Jeśli na etacie u innego pracodawcy zarabiasz co najmniej płacę minimalną, składki emerytalna i rentowe od zlecenia są dobrowolne (art. 9 ust. 1 i 1a ustawy o systemie ubezpieczeń społecznych). Składkę zdrowotną płaci się od każdej umowy osobno (art. 82 ust. 1 ustawy o świadczeniach opieki zdrowotnej). Przy zleceniu u własnego pracodawcy albo na jego rzecz jesteś do składek traktowany jak pracownik (art. 8 ust. 2a ustawy o systemie ubezpieczeń społecznych).',
+    odpowiedz: 'Jeśli na etacie u innego pracodawcy zarabiasz co najmniej płacę minimalną, składki emerytalna i rentowe od zlecenia są dobrowolne (art. 9 ust. 1 i 1a ustawy o systemie ubezpieczeń społecznych). Składkę zdrowotną płaci się od każdej umowy osobno (art. 82 ust. 1 ustawy o świadczeniach opieki zdrowotnej). Przy zleceniu u własnego pracodawcy albo na jego rzecz składki liczy się jak od umowy o pracę (art. 8 ust. 2a ustawy o systemie ubezpieczeń społecznych).',
   },
   {
     pytanie: 'Ile wynoszą koszty uzyskania przychodu na zleceniu?',
@@ -27,7 +33,7 @@ const faq = [
   },
   {
     pytanie: 'Czy na zleceniu jest minimalna stawka godzinowa?',
-    odpowiedz: 'Tak, w 2026 r. 31,40 zł brutto za każdą godzinę wykonywania zlecenia (art. 8a ustawy o minimalnym wynagrodzeniu za pracę). Więcej w narzędziu „Płaca minimalna: sprawdź pasek”.',
+    odpowiedz: `Tak: ${stawki} brutto za każdą godzinę wykonywania zlecenia (art. 8a ustawy o minimalnym wynagrodzeniu za pracę). Więcej w narzędziu „Płaca minimalna: sprawdź pasek”.`,
   },
 ];
 ---
@@ -83,7 +89,7 @@ const faq = [
         <div><dt>Zaliczka na podatek</dt><dd data-w="zaliczka">{zl(start.zaliczka)}</dd></div>
       </dl>
       <p class="wynik-uwaga" data-w="uwaga" hidden></p>
-      <p class="meta mt-4">Zlecenie z własnym pracodawcą albo wykonywane na jego rzecz: do składek jesteś traktowany jak pracownik (art. 8 ust. 2a ustawy o systemie ubezpieczeń społecznych), więc ten kalkulator go nie liczy.</p>
+      <p class="meta mt-4">Zlecenie z własnym pracodawcą albo wykonywane na jego rzecz: składki liczy się jak od umowy o pracę (art. 8 ust. 2a ustawy o systemie ubezpieczeń społecznych), więc ten kalkulator go nie liczy.</p>
     </div>
   </form>
 
@@ -113,9 +119,12 @@ const faq = [
       <li><strong>Koszty i podatek:</strong> koszty 20% kwoty po składkach (art. 22 ust. 9 pkt 4 ustawy o PIT), zaliczka 12% podstawy zaokrąglonej do pełnych złotych, z PIT-2 mniej o 300 zł (art. 41 ust. 1, art. 31b, art. 63 § 1 Ordynacji podatkowej).</li>
     </ol>
     <p>
-      Przy umowie do 200 zł z osobą, która nie jest pracownikiem płatnika, pobiera się podatek zryczałtowany 12% przychodu
-      (art. 30 ust. 1 pkt 5a ustawy o PIT). Składki od zlecenia płaci też zleceniodawca; tu liczymy tylko to, co potrąca się
+      Przy umowie do 200 zł z osobą, która nie jest pracownikiem płatnika, pobiera się podatek zryczałtowany 12% całego
+      przychodu, bez kosztów i bez PIT-2 (art. 30 ust. 1 pkt 5a i ust. 3 ustawy o PIT); kalkulator tak go liczy. Składki od zlecenia płaci też zleceniodawca; tu liczymy tylko to, co potrąca się
       zleceniobiorcy.
+    </p>
+    <p>
+      Najniższą stawkę godzinową i płacę minimalną w każdym roku pokaże <a href="/narzedzia/placa-minimalna">kalkulator płacy minimalnej</a>, a netto z umowy o pracę <a href="/narzedzia/brutto-netto">kalkulator brutto–netto</a>.
     </p>
   </Fragment>
 </StronaNarzedzia>
@@ -123,6 +132,7 @@ const faq = [
 <script>
   import { nettoZlecenie, type StatusZleceniobiorcy } from '../../lib/narzedzia/zlecenie';
   import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
+  import { typografia } from '../../lib/typografia.mjs';
 
   const form = document.querySelector<HTMLFormElement>('[data-zlecenie]');
   if (form) {
@@ -145,9 +155,9 @@ const faq = [
       const r = nettoZlecenie({ brutto, status, chorobowe: el('chorobowe').checked, pit2: el('pit2').checked, ulgaMlodych: el('mlody').checked });
       w('netto').textContent = zl(r.netto);
       for (const k of ['spoleczne', 'zdrowotna', 'koszty', 'zaliczka'] as const) w(k).textContent = zl(r[k]);
-      const uwaga = r.malaUmowa ? 'Umowa do 200 zł z osobą, która nie jest pracownikiem płatnika: zamiast zaliczki pobiera się podatek zryczałtowany 12% całej kwoty (art. 30 ust. 1 pkt 5a ustawy o PIT).' : null;
+      const uwaga = r.malaUmowa ? 'Umowa do 200 zł: podatek zryczałtowany 12% całej kwoty, bez kosztów i bez PIT-2 (art. 30 ust. 1 pkt 5a i ust. 3 ustawy o PIT). Liczymy przy założeniu, że nie jesteś pracownikiem zleceniodawcy.' : null;
       w('uwaga').hidden = !uwaga;
-      w('uwaga').textContent = uwaga ?? '';
+      w('uwaga').textContent = typografia(uwaga ?? '');
     };
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);

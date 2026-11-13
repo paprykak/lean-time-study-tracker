@@ -19,6 +19,8 @@ export const NAZWA_OKRESU: Record<OkresWypowiedzenia, string> = { '2t': '2 tygod
 
 export interface OpisSytuacji {
   nazwa: string;
+  /** Krótka nazwa do listy wyboru (telefon 320 px ucina dłuższe). */
+  krotko: string;
   podstawa: string;
   /** Czy wynik zależy od okresu wypowiedzenia. */
   okres: boolean;
@@ -33,6 +35,7 @@ export interface OpisSytuacji {
 export const SYTUACJE: Record<Sytuacja, OpisSytuacji> = {
   wypowiedzenie: {
     nazwa: 'Bezprawne wypowiedzenie',
+    krotko: 'Wadliwe wypowiedzenie',
     podstawa: 'art. 45 i 47¹ Kodeksu pracy',
     okres: true,
     umowa: true,
@@ -41,6 +44,7 @@ export const SYTUACJE: Record<Sytuacja, OpisSytuacji> = {
   },
   dyscyplinarka: {
     nazwa: 'Bezprawna dyscyplinarka',
+    krotko: 'Bezprawna dyscyplinarka',
     podstawa: 'art. 56 i 58 Kodeksu pracy',
     okres: true,
     umowa: true,
@@ -49,6 +53,7 @@ export const SYTUACJE: Record<Sytuacja, OpisSytuacji> = {
   },
   'w-wypowiedzeniu': {
     nazwa: 'Dyscyplinarka w wypowiedzeniu',
+    krotko: 'W okresie wypowiedzenia',
     podstawa: 'art. 60 Kodeksu pracy',
     okres: false,
     umowa: false,
@@ -57,6 +62,7 @@ export const SYTUACJE: Record<Sytuacja, OpisSytuacji> = {
   },
   probny: {
     nazwa: 'Wypowiedzenie okresu próbnego',
+    krotko: 'Okres próbny',
     podstawa: 'art. 50 § 1 Kodeksu pracy',
     okres: false,
     umowa: false,
@@ -65,6 +71,7 @@ export const SYTUACJE: Record<Sytuacja, OpisSytuacji> = {
   },
   'z-winy-pracodawcy': {
     nazwa: 'Odchodzę z winy pracodawcy',
+    krotko: 'Odejście z winy firmy',
     podstawa: 'art. 55 § 1¹ Kodeksu pracy',
     okres: true,
     umowa: true,
@@ -73,6 +80,7 @@ export const SYTUACJE: Record<Sytuacja, OpisSytuacji> = {
   },
   'od-pracownika': {
     nazwa: 'Pracodawca żąda odszkodowania',
+    krotko: 'Roszczenie pracodawcy',
     podstawa: 'art. 61¹ i 61² Kodeksu pracy',
     okres: true,
     umowa: true,

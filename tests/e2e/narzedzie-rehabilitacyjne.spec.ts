@@ -19,3 +19,8 @@ test('wypadek przy pracy: 100%', async ({ page }) => {
   await expect(page.locator('[data-w="pierwsze"]')).toHaveText(/^5198,11\szł$/);
   await expect(page.locator('[data-w="naglowek"]')).toHaveText('Miesięcznie brutto (100%)');
 });
+
+test('miesiąc to 30 dni: 75% od 10 lutego 2027 r., najdłużej do 6 listopada 2027 r.', async ({ page }) => {
+  await expect(page.locator('[data-w="dalej-opis"]')).toHaveText(/^Od\s10\slutego\s2027\sr\.,\smiesięcznie\s\(75%\)$/);
+  await expect(page.locator('[data-w="koniec"]')).toHaveText(/^6\slistopada\s2027\sr\.$/);
+});

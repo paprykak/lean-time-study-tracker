@@ -2,8 +2,9 @@
 // Rodzic w pracy: uprawnienia według wieku dziecka i terminy wniosków (art. 67^19 § 6, 178 § 2, 182^1c, 182^1d, 182^3,
 // 186, 186^7, 188, 188^1 Kp). Logika: src/lib/narzedzia/rodzic.ts (testy obok).
 import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
-import { planRodzica } from '../../lib/narzedzia/rodzic';
-import { dataPoPolsku, dodajDni, dodajLata, dzisWPolsce } from '../../lib/narzedzia/terminy';
+import { opisUprawnienia, planRodzica } from '../../lib/narzedzia/rodzic';
+import { dodajDni, dodajLata, dzisWPolsce } from '../../lib/narzedzia/terminy';
+import { typografia } from '../../lib/typografia.mjs';
 
 const dzis = dzisWPolsce();
 const D = { urodzenie: dodajLata(dzis, -2), start: dodajDni(dzis, 30) };
@@ -13,15 +14,15 @@ const dostepne = plan.filter((u) => u.dostepne).length;
 const faq = [
   {
     pytanie: 'Do kiedy można wziąć urlop rodzicielski?',
-    odpowiedz: 'Najpóźniej do końca roku kalendarzowego, w którym dziecko kończy 6 lat, jednorazowo albo w najwyżej 5 częściach (art. 182¹c Kodeksu pracy). Wniosek składa się co najmniej 21 dni przed początkiem urlopu, a pracodawca musi go uwzględnić (art. 182¹d § 1).',
+    odpowiedz: 'Najpóźniej do końca roku kalendarzowego, w którym dziecko kończy 6 lat, jednorazowo albo w najwyżej 5 częściach (art. 182^1c Kodeksu pracy). Wniosek składa się co najmniej 21 dni przed początkiem urlopu, a pracodawca musi go uwzględnić (art. 182^1d § 1).',
   },
   {
     pytanie: 'Czy pracodawca musi zgodzić się na pracę zdalną rodzica?',
-    odpowiedz: 'Przy dziecku do 4 lat pracodawca musi uwzględnić wniosek o pracę zdalną, chyba że nie pozwala na to organizacja albo rodzaj pracy. O przyczynie odmowy informuje na piśmie albo elektronicznie w ciągu 7 dni roboczych od złożenia wniosku (art. 67¹⁹ § 6 Kodeksu pracy). Na hali przy pracy przy maszynie odmowa z powodu rodzaju pracy jest więc możliwa.',
+    odpowiedz: 'Przy dziecku do 4 lat pracodawca musi uwzględnić wniosek o pracę zdalną, chyba że nie pozwala na to organizacja albo rodzaj pracy. O przyczynie odmowy informuje na piśmie albo elektronicznie w ciągu 7 dni roboczych od złożenia wniosku (art. 67^19 § 6 Kodeksu pracy). Na hali przy pracy przy maszynie odmowa z powodu rodzaju pracy jest więc możliwa.',
   },
   {
     pytanie: 'Co to jest elastyczna organizacja pracy?',
-    odpowiedz: 'Rodzic dziecka do 8 lat może wnioskować o pracę zdalną, inny system albo rozkład czasu pracy, na przykład ruchome godziny, albo o niższy etat. Wniosek składa się co najmniej 21 dni przed, a pracodawca w ciągu 7 dni informuje o zgodzie, przyczynie odmowy albo innym możliwym terminie (art. 188¹ Kodeksu pracy).',
+    odpowiedz: 'Rodzic dziecka do 8 lat może wnioskować o pracę zdalną, inny system albo rozkład czasu pracy, na przykład ruchome godziny, albo o niższy etat. Wniosek składa się co najmniej 21 dni przed, a pracodawca w ciągu 7 dni informuje o zgodzie, przyczynie odmowy albo innym możliwym terminie (art. 188^1 Kodeksu pracy).',
   },
   {
     pytanie: 'Czy rodzic małego dziecka musi zostawać po godzinach?',
@@ -29,7 +30,7 @@ const faq = [
   },
   {
     pytanie: 'Czy zamiast urlopu wychowawczego mogę pracować na pół etatu?',
-    odpowiedz: 'Tak. Pracownik uprawniony do urlopu wychowawczego może złożyć wniosek o obniżenie wymiaru czasu pracy, nie niżej niż do połowy etatu, a pracodawca musi go uwzględnić. Wniosek składa się 21 dni przed (art. 186⁷ § 1–2 Kodeksu pracy). Pracodawca nie może wtedy wypowiedzieć ani rozwiązać umowy do powrotu do pełnego etatu, najwyżej przez łącznie 12 miesięcy, poza upadłością, likwidacją i winą pracownika (art. 186⁸ § 1–2).',
+    odpowiedz: 'Tak. Pracownik uprawniony do urlopu wychowawczego może złożyć wniosek o obniżenie wymiaru czasu pracy, nie niżej niż do połowy etatu, a pracodawca musi go uwzględnić. Wniosek składa się 21 dni przed (art. 186^7 § 1–2 Kodeksu pracy). Pracodawca nie może wtedy wypowiedzieć ani rozwiązać umowy do powrotu do pełnego etatu, najwyżej przez łącznie 12 miesięcy, poza upadłością, likwidacją i winą pracownika (art. 186^8 § 1–2).',
   },
 ];
 ---
@@ -51,7 +52,7 @@ const faq = [
         </div>
         <div>
           <label for="r-start" class="etykieta-pola">Chcę zacząć od</label>
-          <input id="r-start" name="start" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={D.start} aria-describedby="r-blad" />
+          <input id="r-start" name="start" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={D.start} data-dzis="30" aria-describedby="r-blad" />
         </div>
       </div>
       <p id="r-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
@@ -65,7 +66,7 @@ const faq = [
       <ul class="lista-uprawnien mt-3" data-w="lista">
         {plan.map((u) => (
           <li data-dostepne={u.dostepne ? 'tak' : 'nie'}>
-            <strong>{u.nazwa}</strong>: {u.dostepne ? `do ${dataPoPolsku(u.do)}` : `minęło ${dataPoPolsku(u.do)}`}{u.dostepne && u.wniosekDo ? `; wniosek najpóźniej ${dataPoPolsku(u.wniosekDo)}` : ''} ({u.podstawa})
+            <strong>{typografia(u.nazwa)}</strong>: {typografia(opisUprawnienia(u, D.start))}
           </li>
         ))}
       </ul>
@@ -96,7 +97,8 @@ const faq = [
     <p>
       Wiek dziecka kończy się z początkiem dnia urodzin (art. 112 Kodeksu cywilnego), więc uprawnienie „do ukończenia
       8 lat” trwa do dnia przed 8. urodzinami. Przy wolnym na dziecko przepis mówi „w wieku do 14 lat”; przyjmujemy dzień
-      przed 14. urodzinami. Ostatni dzień na wniosek to dzień początku minus 7 albo 21 dni. Urlop wychowawczy przysługuje
+      przed 14. urodzinami. Urlop ojcowski musi się skończyć przed 1. urodzinami, a każda jego część trwa co najmniej
+      tydzień (art. 182<sup>3</sup> § 1<sup>1</sup>), więc podajemy ostatni dzień rozpoczęcia tygodnia i całych 2 tygodni. Ostatni dzień na wniosek to dzień początku minus 7 albo 21 dni. Urlop wychowawczy przysługuje
       po 6 miesiącach zatrudnienia, wliczając poprzednie umowy (art. 186 § 1). Ile i do kiedy, policzą
       <a href="/narzedzia/urlop-ojcowski">kalkulator urlopu ojcowskiego</a>,
       <a href="/narzedzia/zasilek-macierzynski">kalkulator urlopu macierzyńskiego i rodzicielskiego</a>,
@@ -107,8 +109,9 @@ const faq = [
 </StronaNarzedzia>
 
 <script>
-  import { planRodzica } from '../../lib/narzedzia/rodzic';
-  import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { opisUprawnienia, planRodzica } from '../../lib/narzedzia/rodzic';
+  import { poprawnaData } from '../../lib/narzedzia/terminy';
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
   import { typografia } from '../../lib/typografia.mjs';
 
   const form = document.querySelector<HTMLFormElement>('[data-rodzic]');
@@ -136,7 +139,7 @@ const faq = [
           li.dataset.dostepne = u.dostepne ? 'tak' : 'nie';
           const s = document.createElement('strong');
           s.textContent = typografia(u.nazwa);
-          const reszta = `: ${u.dostepne ? `do ${dataPoPolsku(u.do)}` : `minęło ${dataPoPolsku(u.do)}`}${u.dostepne && u.wniosekDo ? `; wniosek najpóźniej ${dataPoPolsku(u.wniosekDo)}` : ''} (${u.podstawa})`;
+          const reszta = `: ${opisUprawnienia(u, start)}`;
           li.append(s, document.createTextNode(typografia(reszta)));
           return li;
         }),
@@ -145,6 +148,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    ustawDzisiejszeWartosci(form);
     przelicz();
   }
 </script>

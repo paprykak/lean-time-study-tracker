@@ -3,6 +3,7 @@
 // i nowe przepisy o upale (§ 30a, od 11 stycznia 2027 r.). Logika: src/lib/narzedzia/temperatura.ts (testy obok).
 import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
 import { OD_30A } from '../../lib/narzedzia/temperatura';
+import { dzisWPolsce } from '../../lib/narzedzia/terminy';
 
 const faq = [
   {
@@ -33,7 +34,7 @@ const faq = [
 ---
 <StronaNarzedzia
   slug="temperatura-w-pracy"
-  tytul="Temperatura w pracy: minimum, upał i przepisy od 2027"
+  tytul="Temperatura w pracy: minimum, upał, zmiany 2027"
   opis="Jaka temperatura w pracy jest dozwolona: minimum 14 i 18°C, napoje od 28°C, zakaz pracy powyżej 35°C i 32°C od 11 stycznia 2027 r. Sprawdź swoją sytuację."
   h1="Temperatura w pracy: co musi zrobić pracodawca"
   lead="Za zimno czy już za gorąco? Wpisz temperaturę i opisz pracę, a pokażemy, co mówią przepisy: minimum w pomieszczeniach, napoje i nowe zasady na upał z § 30a, które wchodzą w życie 11 stycznia 2027 r."
@@ -60,7 +61,7 @@ const faq = [
       <div class="mt-4">
         <label for="t-wysilek" class="etykieta-pola">Rodzaj pracy</label>
         <select id="t-wysilek" name="wysilek" class="pole mt-1" aria-describedby="t-wysilek-opis">
-          <option value="biuro-lekka">Biuro albo lekka praca fizyczna</option>
+          <option value="biuro-lekka">Biuro, lekka praca</option>
           <option value="zwykla" selected>Inna praca</option>
           <option value="duzy">Duży wysiłek fizyczny</option>
         </select>
@@ -83,7 +84,7 @@ const faq = [
         <label for="t-data" class="etykieta-pola">Stan prawny na dzień</label>
         <select id="t-data" name="data" class="pole mt-1 max-w-72">
           <option value="dzis" selected>Dziś</option>
-          <option value={OD_30A}>Od 11 stycznia 2027 r. (nowe przepisy o upale)</option>
+          <option value={OD_30A}>Od 11.01.2027 r.</option>
         </select>
       </div>
     </div>
@@ -135,7 +136,7 @@ const faq = [
     <p>
       Rozwiązania organizacyjne pracodawca ustala po konsultacji w komisji BHP, a gdy jej nie ma, z pracownikami
       albo ich przedstawicielami i po opinii lekarza medycyny pracy, a potem informuje o nich pracowników
-      (§ 30a ust. 5–7). Przepisy weszły do Dziennika Ustaw 10 lipca 2026 r. i zaczną obowiązywać po 6 miesiącach.
+      (§ 30a ust. 5–7). Przepisy weszły do Dziennika Ustaw 10 lipca 2026 r. i {dzisWPolsce() >= OD_30A ? 'obowiązują' : 'zaczną obowiązywać'} od 11 stycznia 2027 r.
     </p>
 
     <h2 id="napoje">Napoje: kiedy i jakie</h2>
@@ -144,6 +145,9 @@ const faq = [
       (§ 4 ust. 2 rozporządzenia o napojach). Napoje mają być dostępne przez całą zmianę (§ 6 ust. 3). Stanowiska,
       na których się należą, i zasady wydawania ustala pracodawca w porozumieniu ze związkami zawodowymi, a gdy ich
       nie ma, po opinii przedstawicieli pracowników (§ 5).
+    </p>
+    <p>
+      Inne wymagania dla pomieszczeń pracy policzysz w kalkulatorach <a href="/narzedzia/powierzchnia-na-pracownika">powierzchni na pracownika</a> i <a href="/narzedzia/normy-sanitarne">norm sanitarnych</a>.
     </p>
   </Fragment>
 </StronaNarzedzia>

@@ -3,11 +3,16 @@
 // rozporządzenie z 2019 r., zał. 3). Logika: src/lib/narzedzia/uprawnienia-udt.ts (testy obok). Bez JavaScriptu działa tabela.
 import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
 import { PRZECIETNE_WYNAGRODZENIE } from '../../data/prawo';
-import { KONSERWACJA, OBSLUGA, MIESIECY_PRZED, PROCENT_OPLATY, oplataEgzaminu } from '../../lib/narzedzia/uprawnienia-udt';
+import { KONSERWACJA, OBSLUGA, MIESIECY_PRZED, PROCENT_OPLATY, kwotaGusMozeNieaktualna, opisRodzaju, oplataEgzaminu, rodzaj } from '../../lib/narzedzia/uprawnienia-udt';
 import { zl } from '../../lib/narzedzia/format';
+import { dzisWPolsce } from '../../lib/narzedzia/terminy';
+import { typografia } from '../../lib/typografia.mjs';
 
 const oplata = zl(oplataEgzaminu(PRZECIETNE_WYNAGRODZENIE.kwota));
 const przecietne = zl(PRZECIETNE_WYNAGRODZENIE.kwota);
+// Komunikat GUS wychodzi co roku w lutym: po 12 miesiącach od ostatniego znanego mógł już wyjść następny.
+const nowszaKwotaGus = `GUS mógł już ogłosić kwotę za ${PRZECIETNE_WYNAGRODZENIE.zaRok + 1} r., a wtedy opłata jest inna.`;
+const gusNieaktualne = kwotaGusMozeNieaktualna(PRZECIETNE_WYNAGRODZENIE.ogloszono, dzisWPolsce());
 
 const faq = [
   {
@@ -28,7 +33,7 @@ const faq = [
   },
   {
     pytanie: 'Ile kosztuje egzamin UDT?',
-    odpowiedz: `Opłata za sprawdzenie kwalifikacji to 3,75% przeciętnego wynagrodzenia ogłoszonego przez Prezesa GUS, obowiązującego w dniu złożenia wniosku (art. 23 ust. 4). Od ogłoszenia komunikatu za ${PRZECIETNE_WYNAGRODZENIE.zaRok} r. (${przecietne}) to ${oplata}. Kurs przygotowawczy to osobny koszt, którego przepisy nie regulują.`,
+    odpowiedz: `Opłata za sprawdzenie kwalifikacji to 3,75% przeciętnego wynagrodzenia ogłoszonego przez Prezesa GUS, obowiązującego w dniu złożenia wniosku (art. 23 ust. 4). Od ogłoszenia komunikatu za ${PRZECIETNE_WYNAGRODZENIE.zaRok} r. (${przecietne}) to ${oplata}.${gusNieaktualne ? ` ${nowszaKwotaGus}` : ''} Kurs przygotowawczy to osobny koszt, którego przepisy nie regulują.`,
   },
   {
     pytanie: 'Czy na ręczny wózek paletowy potrzebne są uprawnienia UDT?',
@@ -53,13 +58,13 @@ const faq = [
         <label for="udt-rodzaj" class="etykieta-pola">Rodzaj urządzenia</label>
         <select id="udt-rodzaj" name="rodzaj" class="pole mt-1" aria-describedby="udt-rodzaj-opis">
           <optgroup label="Obsługa">
-            {OBSLUGA.map((r) => <option value={r.id} selected={r.id === 'o-wozki'}>{r.krotko} ({r.lata} lat)</option>)}
+            {OBSLUGA.map((r) => <option value={r.id} selected={r.id === 'o-wozki'}>{r.krotko}</option>)}
           </optgroup>
           <optgroup label="Konserwacja">
-            {KONSERWACJA.map((r) => <option value={r.id}>Konserwacja: {r.krotko} ({r.lata} lat)</option>)}
+            {KONSERWACJA.map((r) => <option value={r.id}>{r.krotko}</option>)}
           </optgroup>
         </select>
-        <p id="udt-rodzaj-opis" class="meta mt-1" data-w="rodzaj-opis">Wózki z mechanicznym napędem podnoszenia, bez wózków z wysięgnikiem i z podnoszonym operatorem. Zaświadczenie ważne 10 lat.</p>
+        <p id="udt-rodzaj-opis" class="meta mt-1" data-w="rodzaj-opis">{typografia(opisRodzaju(rodzaj('o-wozki')!))}</p>
       </div>
 
       <fieldset class="mt-6">
@@ -93,7 +98,7 @@ const faq = [
       <p class="mt-5">
         <button type="button" class="przycisk przycisk-grafit" data-ics disabled>Dodaj do kalendarza (.ics)</button>
       </p>
-      <p class="meta mt-2">Przypomnienia: 30 dni przed ostatnim dniem na wniosek, w tym dniu i w dniu końca ważności (tylko te, które jeszcze nie minęły).</p>
+      <p class="meta mt-2">Plik dodaje do kalendarza trzy wydarzenia: 30 dni przed ostatnim dniem na wniosek, ostatni dzień na wniosek i dzień końca ważności (tylko te, które jeszcze nie minęły).</p>
       <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Tabele poniżej działają bez niego.</p></noscript>
     </div>
   </form>
@@ -158,6 +163,7 @@ const faq = [
       Opłata za sprawdzenie kwalifikacji to {PROCENT_OPLATY.toLocaleString('pl-PL')}% przeciętnego wynagrodzenia
       w gospodarce narodowej ogłoszonego przez Prezesa GUS, obowiązującego w dniu złożenia wniosku (art. 23 ust. 4
       ustawy). Za {PRZECIETNE_WYNAGRODZENIE.zaRok} r. GUS ogłosił {przecietne}, więc egzamin kosztuje {oplata}.
+      <span data-gus-nowsza data-ogloszono={PRZECIETNE_WYNAGRODZENIE.ogloszono} hidden={!gusNieaktualne}>{typografia(nowszaKwotaGus)}</span>
       Potwierdzenie opłaty dołącza się do wniosku o egzamin (art. 23 ust. 3).
     </p>
     <p>
@@ -168,9 +174,14 @@ const faq = [
 </StronaNarzedzia>
 
 <script>
-  import { rodzaj, terminyUdt, KONIEC_STARYCH, type StatusUdt } from '../../lib/narzedzia/uprawnienia-udt';
+  import { kwotaGusMozeNieaktualna, opisRodzaju, rodzaj, terminyUdt, KONIEC_STARYCH, type StatusUdt } from '../../lib/narzedzia/uprawnienia-udt';
+  import { typografia } from '../../lib/typografia.mjs';
   import { dataPoPolsku, dzisWPolsce, ileDni, poprawnaData } from '../../lib/narzedzia/terminy';
   import { plikIcs } from '../../lib/narzedzia/kalendarz-ics';
+
+  // Opłata za egzamin: strona zbudowana przed lutowym komunikatem GUS dopisuje ostrzeżenie, gdy czytamy ją później.
+  const gus = document.querySelector<HTMLElement>('[data-gus-nowsza]');
+  if (gus?.dataset.ogloszono) gus.hidden = !kwotaGusMozeNieaktualna(gus.dataset.ogloszono, dzisWPolsce());
 
   const form = document.querySelector<HTMLFormElement>('[data-udt]');
   if (form) {
@@ -196,7 +207,7 @@ const faq = [
 
     const przelicz = () => {
       const r = rodzaj(rodzajSelect.value)!;
-      w('rodzaj-opis').textContent = `${r.nazwa}. Zaświadczenie ważne ${r.lata} lat.`;
+      w('rodzaj-opis').textContent = typografia(opisRodzaju(r));
       const tryb = form.querySelector<HTMLInputElement>('input[name="tryb"]:checked')?.value ?? 'data';
       form.querySelector<HTMLElement>('[data-tylko-data]')!.hidden = tryb !== 'data';
       const status = w('status');

@@ -7,6 +7,7 @@ import type { Wydarzenie } from './kalendarz-ics';
 export const GRUPY = {
   robotnicze: {
     nazwa: 'Stanowisko robotnicze',
+    krotko: 'Robotnicze',
     przyklady: 'np. operator maszyn, monter, magazynier',
     coIleLat: 3,
     pierwszeMiesiecy: 12,
@@ -15,6 +16,7 @@ export const GRUPY = {
   },
   'robotnicze-szczegolnie-niebezpieczne': {
     nazwa: 'Stanowisko robotnicze z pracami szczególnie niebezpiecznymi',
+    krotko: 'Szczególnie niebezpieczne',
     przyklady: 'prace z wykazu prac szczególnie niebezpiecznych u pracodawcy',
     coIleLat: 1,
     pierwszeMiesiecy: 12,
@@ -23,6 +25,7 @@ export const GRUPY = {
   },
   kierujacy: {
     nazwa: 'Pracodawca albo osoba kierująca pracownikami',
+    krotko: 'Kierowanie pracownikami',
     przyklady: 'np. kierownik, mistrz, brygadzista',
     coIleLat: 5,
     pierwszeMiesiecy: 6,
@@ -31,6 +34,7 @@ export const GRUPY = {
   },
   'inzynieryjno-techniczne': {
     nazwa: 'Stanowisko inżynieryjno-techniczne',
+    krotko: 'Inżynieryjno-techniczne',
     przyklady: 'np. projektant, konstruktor maszyn, technolog, organizator produkcji',
     coIleLat: 5,
     pierwszeMiesiecy: 12,
@@ -39,6 +43,7 @@ export const GRUPY = {
   },
   'sluzba-bhp': {
     nazwa: 'Służba BHP',
+    krotko: 'Służba BHP',
     przyklady: 'pracownicy służby BHP i inne osoby wykonujące jej zadania',
     coIleLat: 5,
     pierwszeMiesiecy: 12,
@@ -47,6 +52,7 @@ export const GRUPY = {
   },
   'administracyjno-biurowe': {
     nazwa: 'Stanowisko administracyjno-biurowe',
+    krotko: 'Biurowe',
     przyklady: 'np. biuro, kadry, księgowość, planowanie',
     coIleLat: 6,
     pierwszeMiesiecy: 12,
@@ -55,6 +61,7 @@ export const GRUPY = {
   },
   'inne-narazeni': {
     nazwa: 'Inne stanowisko z narażeniem albo odpowiedzialnością za BHP',
+    krotko: 'Inne z narażeniem',
     przyklady: 'praca z czynnikami szkodliwymi, uciążliwymi lub niebezpiecznymi albo z odpowiedzialnością w zakresie BHP',
     coIleLat: 5,
     pierwszeMiesiecy: 12,

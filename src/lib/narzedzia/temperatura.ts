@@ -48,6 +48,10 @@ export function ocenTemperature(d: DaneTemperatury): Punkt[] {
     if (t < 14) punkty.push({ poziom: 'obowiazek', tekst: 'Za zimno: w pomieszczeniu pracy temperatura nie może być niższa niż 14°C, chyba że nie pozwalają na to względy technologiczne.', podstawa: `§ 30 ${OGOLNE}` });
     else if (d.wysilek === 'biuro-lekka' && t < 18) punkty.push({ poziom: 'obowiazek', tekst: 'Za zimno: w biurze i przy lekkiej pracy fizycznej temperatura nie może być niższa niż 18°C.', podstawa: `§ 30 ${OGOLNE}` });
 
+    // § 30a ust. 1 (najwyżej 35°C) nie zależy od źródła ciepła; zakaz pracy z ust. 2 dotyczy tylko upału z pogody.
+    if (!d.zPogody && t > 35 && !d.wyjatek) {
+      p30a('obowiazek', 'Pracodawca zapewnia w pomieszczeniu najwyżej 35°C, chyba że nie pozwalają na to względy technologiczne. Zakaz pracy z § 30a ust. 2 dotyczy tylko upału z pogody.', `§ 30a ust. 1 ${OGOLNE}`);
+    }
     if (d.zPogody) {
       if (t > 35 && !d.wyjatek) p30a('zakaz', 'Przerwać pracę: przy upale powyżej 35°C w pomieszczeniu nie wolno pracować, chyba że nie pozwalają na to względy technologiczne.', `§ 30a ust. 1 i 2 ${OGOLNE}`);
       if (t > 28 || (duzy && t > 25)) {

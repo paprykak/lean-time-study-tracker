@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { ARTYKUL, INDEKSOWANE, NIEINDEKSOWANE, STRONY } from './strony';
+import { INDEKSOWANE, NIEINDEKSOWANE, STRONY } from './strony';
 
 // Podstawowe ścieżki: strona się ładuje, ma jeden widoczny H1, brak błędów konsoli i naruszeń CSP,
 // brak przewijania w bok od 320 px, brak żądań do domen spoza serwisu (prywatność: zero skryptów stron trzecich).
@@ -38,7 +38,7 @@ test('strona główna: kanoniczny adres, okładka udostępnień i dane struktura
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'https://rytmhali.pl/');
   await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', 'https://rytmhali.pl/marka/okladka-domyslna.jpg');
   const graf = JSON.parse((await page.locator('script[type="application/ld+json"]').first().textContent())!)['@graph'];
-  expect(graf.map((x: { '@type': string }) => x['@type'])).toEqual(['WebSite', 'NewsMediaOrganization']);
+  expect(graf.map((x: { '@type': string }) => x['@type'])).toEqual(['WebSite', 'Organization']);
   const [serwis, redakcja] = graf;
   expect(serwis.potentialAction.target.urlTemplate).toBe('https://rytmhali.pl/szukaj?q={search_term_string}');
   expect(redakcja.logo).toMatchObject({ url: 'https://rytmhali.pl/marka/ikona-512.png', width: 512, height: 512 });
@@ -50,15 +50,16 @@ test('strona główna: kanoniczny adres, okładka udostępnień i dane struktura
   await expect(page.locator(`[id="${decodeURIComponent(finansowanie.hash.slice(1))}"]`)).toHaveText('Niezależność i finansowanie');
 });
 
-test('llms.txt dla asystentów AI: nagłówek, działy, zasady redakcji, linki do istniejących stron', async ({ request }) => {
+test('llms.txt dla asystentów AI: nagłówek, kategorie narzędzi, zasady redakcji, linki do istniejących stron', async ({ request }) => {
   const odp = await request.get('/llms.txt');
   expect(odp.status()).toBe(200);
   expect(odp.headers()['content-type']).toContain('text/plain');
   const tekst = await odp.text();
   expect(tekst).toMatch(/^# Rytm Hali\n\n> /);
-  expect(tekst).toContain('## Produkcja');
+  expect(tekst).toContain('## Wynagrodzenie i zasiłki');
   expect(tekst).toContain('## Zasady redakcji');
-  expect(tekst).toContain(`(https://rytmhali.pl${ARTYKUL})`);
+  expect(tekst).toContain('(https://rytmhali.pl/narzedzia/kalkulator-l4)');
+  expect(tekst).not.toMatch(/\/dzial\/|\/temat\/|\/do-pobrania|rss\.xml/);
   for (const [, url] of [...tekst.matchAll(/\]\((https:\/\/rytmhali\.pl[^)]*)\)/g)].slice(0, 8)) {
     expect((await request.get(new URL(url).pathname)).status(), url).toBe(200);
   }
@@ -74,37 +75,20 @@ test('strony indeksowane mają adres kanoniczny i są w mapie strony', async ({ 
   }
 });
 
-test('artykuł: przypisy prowadzą do źródeł, okładka z buildu, dane strukturalne Article', async ({ page }) => {
-  await page.goto(ARTYKUL);
-  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', `https://rytmhali.pl/okladki${ARTYKUL}.jpg`);
-  const typy = (await page.locator('script[type="application/ld+json"]').allTextContents()).flatMap((t) => {
-    const j = JSON.parse(t);
-    return (j['@graph'] ?? [j]).map((x: { '@type': string }) => x['@type']);
-  });
-  expect(typy).toEqual(expect.arrayContaining(['Article', 'BreadcrumbList', 'FAQPage']));
-  // Obrazy w proporcjach 16:9, 4:3 i 1:1 (Google) i okładka udostępnień; każdy plik istnieje.
-  const artykul = (await page.locator('script[type="application/ld+json"]').allTextContents()).map((t) => JSON.parse(t)).flatMap((j) => j['@graph'] ?? [j]).find((x) => x['@type'] === 'Article');
-  expect(artykul.image).toHaveLength(4);
-  for (const url of artykul.image) expect((await page.request.get(new URL(url).pathname)).status(), url).toBe(200);
-  await expect(page.getByRole('heading', { name: 'Poprawki' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Jak powstał ten tekst' })).toBeVisible();
+test('projekt nowego brzmienia strony stałej: /podglad/<slug> z oznaczeniem projektu, obok obowiązującej strony', async ({ page }) => {
+  await page.goto('/podglad/o-nas');
+  await expect(page.locator('[data-projekt]')).toContainText('Projekt tekstu');
+  await page.goto('/o-nas');
+  await expect(page.locator('[data-projekt]')).toHaveCount(0);
 });
 
-test('wyszukiwarka znajduje artykuł i nie zwraca wyników bez trafienia', async ({ page }) => {
-  await page.goto('/szukaj?q=mikroprzestoje');
-  await expect(page.locator('[data-status]')).toHaveText(/1 wynik/);
-  await expect(page.locator('[data-wyniki] a').first()).toHaveAttribute('href', ARTYKUL);
+test('wyszukiwarka pełnego tekstu znajduje narzędzie po pytaniu i nie zwraca wyników bez trafienia', async ({ page }) => {
+  await page.goto('/szukaj?q=nadgodziny');
+  await expect(page.locator('[data-status]')).toHaveText(/wynik/);
+  await expect(page.locator('[data-wyniki] a[href="/narzedzia/kalkulator-nadgodzin"]').first()).toBeVisible();
   // Słowo spoza tematyki serwisu: „politechnika” pojawiło się w prawdziwych tekstach (2026-11-07).
   await page.goto('/szukaj?q=kangur');
   await expect(page.locator('[data-status]')).toHaveText(/Brak wyników/);
-});
-
-test('kanały RSS: całość i dział', async ({ request }) => {
-  for (const adres of ['/rss.xml', '/dzial/produkcja/rss.xml']) {
-    const odp = await request.get(adres);
-    expect(odp.ok(), adres).toBe(true);
-    expect(await odp.text()).toMatch(/^<\?xml[\s\S]*<rss[\s\S]*<item>/);
-  }
 });
 
 test('strony wewnętrzne mają noindex i nie mają adresu kanonicznego', async ({ page }) => {
@@ -135,7 +119,7 @@ test('formularze wysyłają się do workera bez skryptów: kontakt i newsletter,
   await expect(kontakt.locator('[name="zgoda"]')).not.toBeChecked();
   await expect(kontakt.locator('[name="strona"]')).not.toBeInViewport();
   await expect(kontakt.locator('.kontakt-pulapka')).toHaveAttribute('aria-hidden', 'true');
-  expect(await kontakt.locator('[name="temat"] option').allTextContents()).toEqual(['Błąd w tekście', 'Temat albo materiał do tekstu', 'Reklama i współpraca', 'Inne']);
+  expect(await kontakt.locator('[name="temat"] option').allTextContents()).toEqual(['Błąd w narzędziu', 'Propozycja narzędzia', 'Reklama i współpraca', 'Inne']);
 
   await page.goto('/newsletter');
   const zapis = page.locator('form[action="/api/newsletter"]').first();

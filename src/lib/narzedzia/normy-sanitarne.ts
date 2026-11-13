@@ -51,8 +51,11 @@ export function normySanitarne(d: DaneSanitarne) {
     umywalkiPrzyUstepach,
     natryski,
     miskiPrzyNatryskach,
-    /** § 29 ust. 1: jadalnia, gdy na zmianie pracuje ponad 20 osób. */
-    jadalnia: razem > 20,
+    /** § 29 ust. 1: jadalnia, gdy na zmianie pracuje ponad 20 osób; ust. 2: także przy mniejszej liczbie, gdy praca jest
+     * szczególnie brudząca albo z substancjami szkodliwymi lub zakaźnymi (u nas: praca brudząca albo natryski przepustowe). */
+    jadalnia: razem > 20 || d.praca === 'brudzaca' || d.natryski === 'przepustowa',
+    /** Dlaczego jadalnia: liczba osób (ust. 1) albo rodzaj pracy (ust. 2). */
+    jadalniaZ: razem > 20 ? ('liczba' as const) : d.praca === 'brudzaca' || d.natryski === 'przepustowa' ? ('praca' as const) : null,
     /** § 39 ust. 1: miejsca do wypoczynku w pozycji leżącej dla kobiet w ciąży i karmiących, gdy na zmianie ponad 20 kobiet. */
     miejscaDlaKobietWCiazy: d.kobiety > 20 ? Math.max(1, Math.ceil(d.kobiety / 300)) : 0,
   };

@@ -7,6 +7,9 @@
 //   (art. 21 ust. 1 pkt 148 lit. b ustawy o PIT).
 // Koszty: 20% przychodu pomniejszonego o składki społeczne (art. 22 ust. 9 pkt 4), zaliczka 12% (art. 41 ust. 1), PIT-2
 // pomniejsza ją o 300 zł (art. 31b), zaokrąglenia do pełnych złotych (art. 63 § 1 Ordynacji podatkowej).
+// Umowa do 200 zł (art. 30 ust. 1 pkt 5a i ust. 3): podatek zryczałtowany 12% całego przychodu, bez kosztów i bez PIT-2.
+// Przepis dotyczy umowy z osobą, która nie jest pracownikiem płatnika; tak zakładamy (zlecenia z własnym pracodawcą
+// kalkulator nie liczy).
 import { doGrosza } from './dodatek-nocny';
 import { KWOTA_ZMNIEJSZAJACA, STOPY } from './netto';
 
@@ -35,9 +38,14 @@ export function nettoZlecenie(d: DaneZlecenia) {
   const spoleczne = doGrosza(emerytalna + rentowa + chorobowa);
   const zdrowotna = status === 'student' ? 0 : doGrosza(((B - spoleczne) * STOPY.zdrowotna) / 100);
   const bezPodatku = status === 'student' || d.ulgaMlodych === true;
-  const koszty = bezPodatku ? 0 : doGrosza(((B - spoleczne) * 20) / 100);
-  const podstawa = bezPodatku ? 0 : Math.max(0, zl(B - spoleczne - koszty));
-  const zaliczka = bezPodatku ? 0 : Math.max(0, zl((podstawa * STOPY.pit) / 100 - (d.pit2 ? KWOTA_ZMNIEJSZAJACA / 12 : 0)));
+  const malaUmowa = B <= 200 && !bezPodatku;
+  const koszty = bezPodatku || malaUmowa ? 0 : doGrosza(((B - spoleczne) * 20) / 100);
+  const podstawa = bezPodatku ? 0 : malaUmowa ? B : Math.max(0, zl(B - spoleczne - koszty));
+  const zaliczka = bezPodatku
+    ? 0
+    : malaUmowa
+      ? zl((B * STOPY.pit) / 100)
+      : Math.max(0, zl((podstawa * STOPY.pit) / 100 - (d.pit2 ? KWOTA_ZMNIEJSZAJACA / 12 : 0)));
   return {
     brutto: B,
     emerytalna,
@@ -49,7 +57,7 @@ export function nettoZlecenie(d: DaneZlecenia) {
     podstawa,
     zaliczka,
     netto: doGrosza(B - spoleczne - zdrowotna - zaliczka),
-    /** Umowa do 200 zł z osobą niebędącą pracownikiem płatnika: podatek zryczałtowany 12% (art. 30 ust. 1 pkt 5a). */
-    malaUmowa: B <= 200 && !bezPodatku,
+    /** Umowa do 200 zł z osobą niebędącą pracownikiem płatnika: `zaliczka` to podatek zryczałtowany 12% przychodu (art. 30 ust. 1 pkt 5a). */
+    malaUmowa,
   };
 }

@@ -67,11 +67,11 @@ const faq = [
           <input id="g-urzad" name="urzad" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" aria-describedby="g-blad" />
         </div>
         <div>
-          <label for="g-koniec" class="etykieta-pola">Twój ostatni dzień pracy</label>
-          <input id="g-koniec" name="koniec" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" aria-describedby="g-blad" />
+          <label for="g-koniec" class="etykieta-pola">Dzień rozwiązania umowy</label>
+          <input id="g-koniec" name="koniec" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" aria-describedby="g-koniec-opis g-blad" />
         </div>
       </div>
-      <p class="meta mt-1">Daty są nieobowiązkowe.</p>
+      <p id="g-koniec-opis" class="meta mt-1">Daty są nieobowiązkowe. Dzień rozwiązania to ostatni dzień umowy, także gdy wcześniej zwolniono Cię z obowiązku świadczenia pracy albo był urlop.</p>
       <p id="g-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
     </div>
 
@@ -165,10 +165,13 @@ const faq = [
       else if ((urzad && !poprawnaData(urzad)) || (koniec && !poprawnaData(koniec))) blad = 'Popraw datę.';
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
       b.hidden = !blad;
-      b.textContent = blad ?? '';
+      b.textContent = typografia(blad ?? '');
       if (blad) {
         w('rodzaj').textContent = '—';
         w('opis').textContent = '';
+        // Błąd danych: wiersze z poprzedniego rachunku znikają.
+        for (const k of ['odprawa', 'urzad', 'zgloszenie', 'powrot']) wiersz(k).hidden = true;
+        w('uwaga').hidden = true;
         return;
       }
       const r = zwolnienieGrupowe({ zatrudnionych, wypowiedzen, porozumien });

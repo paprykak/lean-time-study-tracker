@@ -12,7 +12,7 @@ test('12 h dyżuru, 2 h pracy, pensja 6000 zł: 10 h wolnego albo 375 zł', asyn
   await page.getByLabel('Godziny dyżuru').fill('12');
   await page.getByLabel('W tym godziny pracy').fill('2');
   await page.getByLabel(/Pensja zasadnicza/).fill('6000');
-  await expect(page.locator('[data-w="wolne"]')).toHaveText(/^10\sh wolnego$/);
+  await expect(page.locator('[data-w="wolne"]')).toHaveText(/^10\sh\swolnego$/);
   await expect(page.locator('[data-w="albo"]')).toContainText('375,00');
 });
 
@@ -29,4 +29,12 @@ test('bez stawki: 60% według zasad urlopowych', async ({ page }) => {
 test('dyżur w domu: nic', async ({ page }) => {
   await page.getByLabel('Gdzie pełnisz dyżur').selectOption('dom');
   await expect(page.locator('[data-w="wolne"]')).toHaveText('Nic');
+});
+
+test('60%: zmienne składniki bez godzin przepracowanych dają komunikat, a nie zaniżoną stawkę', async ({ page }) => {
+  await page.getByLabel(/Bez wyodrębnionej stawki/).check();
+  await page.locator('#d-zmienne').fill('3000');
+  await page.locator('#d-zgodz').fill('0');
+  await expect(page.getByText(/Wpisz\sgodziny\sprzepracowane/)).toBeVisible();
+  await expect(page.locator('[data-w="wolne"]')).toHaveText('—');
 });

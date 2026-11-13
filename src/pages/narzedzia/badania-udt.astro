@@ -2,13 +2,10 @@
 // Terminy badań UDT i przeglądów konserwacyjnych UTB (rozporządzenie z 2018 r., Dz.U. 2018 poz. 2176, załączniki 1 i 2).
 // Logika: src/lib/narzedzia/badania-utb.ts (testy obok). Bez JavaScriptu działa tabela.
 import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
-import { FORMY, GRUPY, URZADZENIA, co } from '../../lib/narzedzia/badania-utb';
+import { FORMY, GRUPY, URZADZENIA, co, opisUrzadzenia } from '../../lib/narzedzia/badania-utb';
+import { typografia } from '../../lib/typografia.mjs';
 
 const START = 'wozek-siedzisko';
-const opisUrzadzenia = (u: (typeof URZADZENIA)[number]) =>
-  u.badanieLat
-    ? `Dozór ${FORMY[u.forma].nazwa}: ${FORMY[u.forma].badanie} ${co(u.badanieLat)}${u.przegladDni ? `, przegląd konserwacyjny co ${u.przegladDni} dni` : ''}.`
-    : `Dozór uproszczony: bez okresowych badań UDT${u.przegladDni ? `, przegląd konserwacyjny co ${u.przegladDni} dni` : ''}.`;
 
 const faq = [
   {
@@ -54,11 +51,11 @@ const faq = [
         <select id="utb-rodzaj" name="rodzaj" class="pole mt-1" aria-describedby="utb-rodzaj-opis">
           {GRUPY.map((g) => (
             <optgroup label={g}>
-              {URZADZENIA.filter((u) => u.grupa === g).map((u) => <option value={u.id} selected={u.id === START}>{u.nazwa}</option>)}
+              {URZADZENIA.filter((u) => u.grupa === g).map((u) => <option value={u.id} selected={u.id === START}>{u.krotko}</option>)}
             </optgroup>
           ))}
         </select>
-        <p id="utb-rodzaj-opis" class="meta mt-1" data-w="rodzaj-opis">{opisUrzadzenia(URZADZENIA.find((u) => u.id === START)!)}</p>
+        <p id="utb-rodzaj-opis" class="meta mt-1" data-w="rodzaj-opis">{typografia(opisUrzadzenia(URZADZENIA.find((u) => u.id === START)!))}</p>
       </div>
 
       <div class="mt-4" data-tylko-badanie>
@@ -91,7 +88,7 @@ const faq = [
       <p class="mt-5">
         <button type="button" class="przycisk przycisk-grafit" data-ics disabled>Dodaj do kalendarza (.ics)</button>
       </p>
-      <p class="meta mt-2">Przypomnienia: w dniu następnego przeglądu i pierwszego dnia miesiąca badania (tylko te, które jeszcze nie minęły). Wiążący jest termin wyznaczony przez inspektora UDT.</p>
+      <p class="meta mt-2">Plik dodaje do kalendarza dwa wydarzenia: dzień następnego przeglądu i pierwszy dzień miesiąca badania (tylko te, które jeszcze nie minęły). Wiążący jest termin wyznaczony przez inspektora UDT.</p>
       <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Tabela poniżej działa bez niego.</p></noscript>
     </div>
   </form>
@@ -171,7 +168,8 @@ const faq = [
 </StronaNarzedzia>
 
 <script>
-  import { FORMY, co, ileMiesiecy, terminyUtb, urzadzenie, type StatusTerminu } from '../../lib/narzedzia/badania-utb';
+  import { FORMY, co, ileMiesiecy, opisUrzadzenia, terminyUtb, urzadzenie, type StatusTerminu } from '../../lib/narzedzia/badania-utb';
+  import { typografia } from '../../lib/typografia.mjs';
   import { nazwaMiesiaca } from '../../lib/narzedzia/czas-pracy';
   import { dataPoPolsku, dzisWPolsce, ileDni, poprawnaData } from '../../lib/narzedzia/terminy';
   import { plikIcs, type Wydarzenie } from '../../lib/narzedzia/kalendarz-ics';
@@ -197,9 +195,7 @@ const faq = [
     const przelicz = () => {
       const u = urzadzenie((form.elements.namedItem('rodzaj') as HTMLSelectElement).value)!;
       const forma = FORMY[u.forma];
-      w('rodzaj-opis').textContent = u.badanieLat
-        ? `Dozór ${forma.nazwa}: ${forma.badanie} ${co(u.badanieLat)}${u.przegladDni ? `, przegląd konserwacyjny co ${u.przegladDni} dni` : ''}.`
-        : `Dozór uproszczony: bez okresowych badań UDT${u.przegladDni ? `, przegląd konserwacyjny co ${u.przegladDni} dni` : ''}.`;
+      w('rodzaj-opis').textContent = typografia(opisUrzadzenia(u));
       w('forma').textContent = u.badanieLat ? `${forma.nazwa}: ${forma.badanie} ${co(u.badanieLat)}` : 'uproszczony: bez badań UDT, poza badaniem po wypadku albo awarii (§ 12 ust. 2)';
       w('lp').textContent = `załącznik nr 1, lp. ${u.lp[0]}${u.lp[1] ? `; załącznik nr 2, lp. ${u.lp[1]}` : ''}`;
       form.querySelector<HTMLElement>('[data-tylko-badanie]')!.hidden = !u.badanieLat;

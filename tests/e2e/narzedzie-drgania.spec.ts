@@ -31,3 +31,10 @@ test('drgania ogólne w ciąży: praca wzbroniona', async ({ page }) => {
   await page.getByLabel('Kto pracuje').selectOption('ciaza');
   await expect(page.locator('[data-w="status"]')).toHaveText('Praca wzbroniona w ciąży');
 });
+
+test('A(8) równe progowi (5 m/s² przez 2 h = 2,50): osiągnięty próg, program z § 5 ust. 2', async ({ page }) => {
+  await ustaw(page, [['5', '2']]);
+  await expect(page.locator('[data-w="a8"]')).toHaveText(/^2,50\sm\/s²$/);
+  await expect(page.locator('[data-w="status"]')).toContainText(/Osiągnięty\spróg\sdziałania/);
+  await expect(page.locator('[data-w="obowiazki"]')).toContainText(/§\s5\sust\.\s2/);
+});

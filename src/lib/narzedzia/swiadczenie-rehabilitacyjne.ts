@@ -3,9 +3,13 @@
 // 3 miesiące, potem 75%, w ciąży 100% (art. 19 ust. 1); z ubezpieczenia wypadkowego 100% (art. 9 ust. 1 ustawy wypadkowej).
 // Podstawa zasiłku chorobowego podlega waloryzacji wskaźnikiem z kwartału, w którym zaczyna się świadczenie (art. 19
 // ust. 2–3; wskaźniki z obwieszczeń Prezesa ZUS). Kwoty miesięczne brutto, przed zaliczką na podatek, za pełne miesiące.
+// Okres w miesiącach liczymy po 30 dni (art. 22 w związku z art. 11 ust. 5): 90% przez pierwsze 90 dni, najwyżej 360 dni.
 import { podstawaZasilku } from './chorobowe';
 import { doGrosza } from './dodatek-nocny';
-import { dodajDni, dodajMiesiace } from './terminy';
+import { dodajDni } from './terminy';
+
+/** Miesiąc świadczenia to 30 dni (art. 22 w związku z art. 11 ust. 5 ustawy zasiłkowej). */
+export const DNI_MIESIACA = 30;
 
 /** Wskaźnik waloryzacji w procentach według kwartału „RRRR-K”; 100 = bez waloryzacji. */
 export const WSKAZNIKI: Record<string, { wskaznik: number; zrodlo: string }> = {
@@ -46,9 +50,9 @@ export function swiadczenieRehabilitacyjne(d: DaneRehabilitacyjnego) {
     procentDalej: p2,
     pierwsze,
     dalej,
-    od75: dodajMiesiace(d.start, 3),
-    koniecNajpozniej: dodajDni(dodajMiesiace(d.start, 12), -1),
-    koniecPrzyznanego: dodajDni(dodajMiesiace(d.start, d.miesiace), -1),
+    od75: dodajDni(d.start, 3 * DNI_MIESIACA),
+    koniecNajpozniej: dodajDni(d.start, 12 * DNI_MIESIACA - 1),
+    koniecPrzyznanego: dodajDni(d.start, d.miesiace * DNI_MIESIACA - 1),
     razem: doGrosza(Math.min(3, d.miesiace) * pierwsze + Math.max(0, d.miesiace - 3) * dalej),
   };
 }

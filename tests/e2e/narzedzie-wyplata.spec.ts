@@ -31,3 +31,12 @@ test('plik kalendarza z wypłatami', async ({ page }) => {
   const [plik] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: /Wypłaty do kalendarza/ }).click()]);
   expect(plik.suggestedFilename()).toBe(`wyplaty-${rok}.ics`);
 });
+
+test('po ostatniej wypłacie roku najbliższa jest w styczniu następnego roku', async ({ page }) => {
+  await page.clock.setFixedTime(new Date('2026-12-15T10:00:00+01:00'));
+  await page.reload();
+  test.skip(!(await rokNaLiscie(page, '2027')), 'rok 2027 poza listą');
+  await expect(page.locator('#p-rok')).toHaveValue('2027');
+  await expect(page.locator('[data-w="najblizsza"]')).toHaveText(/^8\sstycznia\s2027\sr\.$/);
+  await expect(page.locator('[data-w="dzien-tygodnia"]')).toHaveText('piątek');
+});

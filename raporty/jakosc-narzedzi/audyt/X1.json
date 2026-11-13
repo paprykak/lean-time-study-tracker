@@ -1,0 +1,390 @@
+{
+ "partia": "X1",
+ "sprawdzone": [
+  {
+   "slug": "koszt-pracodawcy",
+   "pliki": [
+    "src/lib/narzedzia/koszt-pracodawcy.ts",
+    "src/pages/narzedzia/koszt-pracodawcy.astro",
+    "src/data/prawo.ts"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "pracownik-mlodociany",
+   "pliki": [
+    "src/lib/narzedzia/mlodociany.ts",
+    "src/pages/narzedzia/pracownik-mlodociany.astro",
+    "src/data/prawo.ts"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "swiadczenie-rehabilitacyjne",
+   "pliki": [
+    "src/lib/narzedzia/swiadczenie-rehabilitacyjne.ts",
+    "src/pages/narzedzia/swiadczenie-rehabilitacyjne.astro"
+   ],
+   "wynik": "ok"
+  },
+  {
+   "slug": "odszkodowanie-za-wypadek-przy-pracy",
+   "pliki": [
+    "src/lib/narzedzia/odszkodowanie-wypadek.ts",
+    "src/pages/narzedzia/odszkodowanie-za-wypadek-przy-pracy.astro"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "zasilek-dla-bezrobotnych",
+   "pliki": [
+    "src/lib/narzedzia/zasilek-bezrobotny.ts",
+    "src/pages/narzedzia/zasilek-dla-bezrobotnych.astro"
+   ],
+   "wynik": "ok"
+  },
+  {
+   "slug": "odprawa-posmiertna",
+   "pliki": [
+    "src/pages/narzedzia/odprawa-posmiertna.astro"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "waznosc-uprawnien-udt",
+   "pliki": [
+    "src/lib/narzedzia/uprawnienia-udt.ts",
+    "src/pages/narzedzia/waznosc-uprawnien-udt.astro",
+    "src/data/prawo.ts"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "placa-minimalna",
+   "pliki": [
+    "src/lib/narzedzia/placa-minimalna.ts",
+    "src/pages/narzedzia/placa-minimalna.astro",
+    "src/data/prawo.ts"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "brutto-netto",
+   "pliki": [
+    "src/lib/narzedzia/netto.ts",
+    "src/pages/narzedzia/brutto-netto.astro"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "zlecenie-netto",
+   "pliki": [
+    "src/lib/narzedzia/zlecenie.ts",
+    "src/pages/narzedzia/zlecenie-netto.astro"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "kalkulator-ppk",
+   "pliki": [
+    "src/lib/narzedzia/ppk.ts",
+    "src/pages/narzedzia/kalkulator-ppk.astro",
+    "src/data/narzedzia.ts"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "kalkulator-l4",
+   "pliki": [
+    "src/lib/narzedzia/chorobowe.ts",
+    "src/pages/narzedzia/kalkulator-l4.astro"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "stawka-godzinowa",
+   "pliki": [
+    "src/pages/narzedzia/stawka-godzinowa.astro"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "wynagrodzenie-za-przestoj",
+   "pliki": [
+    "src/lib/narzedzia/przestoj.ts",
+    "src/pages/narzedzia/wynagrodzenie-za-przestoj.astro"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "kalkulator-odprawy",
+   "pliki": [
+    "src/lib/narzedzia/odprawy.ts",
+    "src/pages/narzedzia/kalkulator-odprawy.astro"
+   ],
+   "wynik": "ok"
+  },
+  {
+   "slug": "dodatek-za-prace-w-nocy",
+   "pliki": [
+    "src/lib/narzedzia/dodatek-nocny.ts",
+    "src/pages/narzedzia/dodatek-za-prace-w-nocy.astro"
+   ],
+   "wynik": "ok"
+  },
+  {
+   "slug": "zasilek-opiekunczy",
+   "pliki": [
+    "src/lib/narzedzia/opiekunczy.ts",
+    "src/pages/narzedzia/zasilek-opiekunczy.astro"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "zasilek-macierzynski",
+   "pliki": [
+    "src/lib/narzedzia/macierzynski.ts",
+    "src/pages/narzedzia/zasilek-macierzynski.astro"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "delegacja-krajowa",
+   "pliki": [
+    "src/lib/narzedzia/delegacja.ts",
+    "src/pages/narzedzia/delegacja-krajowa.astro"
+   ],
+   "wynik": "ok"
+  },
+  {
+   "slug": "delegacja-zagraniczna",
+   "pliki": [
+    "src/data/diety-zagraniczne.ts",
+    "src/lib/narzedzia/delegacja-zagraniczna.ts"
+   ],
+   "wynik": "ok"
+  },
+  {
+   "slug": "rejestr (prawo.ts, rejestr.test.ts)",
+   "pliki": [
+    "src/data/prawo.ts",
+    "src/lib/narzedzia/rejestr.test.ts",
+    "src/data/narzedzia.ts"
+   ],
+   "wynik": "problemy"
+  }
+ ],
+ "znaleziska": [
+  {
+   "id": "X1-1",
+   "slug": "koszt-pracodawcy",
+   "wymiar": "prawo",
+   "waga": "wysoka",
+   "plik": "src/lib/narzedzia/koszt-pracodawcy.ts",
+   "linia": 35,
+   "problem": "Kalkulator jest na sztywno ustawiony na 2026 r. Od 1 stycznia 2027 r. próg FP/FS nadal wynosi 4806 zł, a nie 4950 zł. Limit 30-krotności to 282 600 zł zamiast 300 990 zł. Tytuł, h1, FAQ i tabela mówią „2026” i nic nie ostrzega.",
+   "dowod": "art. 259 ust. 1 ustawy o rynku pracy (.cache DU_2025_620.txt l. 5598): FP od podstawy „wynoszących w przeliczeniu na okres miesiąca co najmniej minimalne wynagrodzenie”. Rozporządzenie Dz.U. 2026 poz. 1213 § 1: od 1.01.2027 r. 4950 zł. M.P. 2026 poz. 1098 (ogłoszone 4.11.2026, art. 19 ust. 10 ustawy systemowej): limit w 2027 r. 300 990 zł, prognozowane 10 033 zł. jiti: kosztPracodawcy({brutto:4900}) daje fp 49 + fs 71,05 = 120,05 zł składek, które w 2027 r. nie są należne (koszt 5903,52 zamiast 5783,47 zł). Playwright z zegarem 2027-01-05: „Koszt pracodawcy: kalkulator 2026”, „limitu 282 600 zł”.",
+   "poprawka": "Parametr rok (select z LATA albo dzisWPolsce()). Próg przez PLACA_MINIMALNA[rok].miesiecznie. LIMIT_ROCZNY = {2026: 282600, 2027: 300990} ze źródłem M.P. 2026 poz. 1098. Stopy FP/FS/FGŚP według roku z ustawy budżetowej (2027: do czasu ogłoszenia budżetu ostrzeżenie „stopy z 2026 r., budżet na 2027 r. nieogłoszony”). Tytuł i FAQ z roku obliczenia. Test: 4900 zł w 2027 r. bez FP i FS."
+  },
+  {
+   "id": "X1-2",
+   "slug": "pracownik-mlodociany",
+   "wymiar": "prawo",
+   "waga": "wysoka",
+   "plik": "src/lib/narzedzia/mlodociany.ts",
+   "linia": 25,
+   "problem": "W PRZECIETNE_KWARTALNE brakuje ogłoszonej już kwoty za III kwartał 2026 r., która od 1 grudnia 2026 r. jest podstawą płacy młodocianych. Od tego dnia narzędzie zaniży minimalną płacę: w nauce zawodu w 1. roku 738,66 zamiast 745,37 zł. Tekst SSR „Teraz to 9233,13 zł” nie ostrzega.",
+   "dowod": "M.P. 2026 poz. 1122 (komunikat GUS z 9.11.2026, ogłoszony 10.11.2026): „przeciętne wynagrodzenie w trzecim kwartale 2026 r. wyniosło 9317,01 zł”. § 19 ust. 1 rozporządzenia (.cache DU_2018_2010.txt l. 921–925): obowiązuje „od pierwszego dnia następnego miesiąca po ogłoszeniu” w M.P., czyli od 2026-12-01. Python (zaokrąglenie w górę do grosza): 8% 745,37, 9% 838,54, 10% 931,71, 7% 652,20 zł. Kod (jiti) dla 2026-12-01 daje 738,66 i 646,32 zł. Playwright z zegarem 2026-12-03: „738,66 zł brutto: 8% z 9233,13 zł (II kwartał 2026 r.)”.",
+   "poprawka": "Dopisać { od: '2026-12-01', kwota: 9317.01, kwartal: 'III kwartał 2026 r.', publikator: 'M.P. 2026 poz. 1122' }. W prawo.ts zmienić przecietneKwartalne (l. 366) na M.P. 2026 poz. 1122 z listą wcześniejszych. Dodać test na 2026-11-30 (9233,13) i 2026-12-01 (9317,01; 745,37 zł). Przebudować i wdrożyć przed 1.12.2026."
+  },
+  {
+   "id": "X1-3",
+   "slug": "placa-minimalna",
+   "wymiar": "rachunek",
+   "waga": "srednia",
+   "plik": "src/pages/narzedzia/placa-minimalna.astro",
+   "linia": 11,
+   "problem": "Domyślny rok w <select> to rok buildu, a skrypt przeglądarki go nie poprawia. Strona zbudowana w 2026 r. i oglądana w styczniu 2027 r. liczy więc domyślnie według 4806 zł. Tak samo działają kalkulator-l4, stawka-godzinowa, wynagrodzenie-za-przestoj, zasilek-opiekunczy, zasilek-macierzynski, kalkulator-nadgodzin, kontrola-grafiku, dyzur-w-pracy, wyplata-z-nadgodzinami i ekwiwalent-za-urlop. W kalkulator-ppk skrypt liczy na bieżący rok, a tekst SSR podaje rok buildu. Repo nie ma zaplanowanego przebudowania (.github/workflows/kontrola.yml bez schedule).",
+   "dowod": "Skrypty (np. placa-minimalna l. 23 w <script>: rok: Number(el('rok').value)) biorą wartość wybraną przy buildzie. Tylko dodatek-za-prace-w-nocy.astro l. 263–264 ustawia rokSelect.value = dzis.getFullYear(). Playwright z zegarem 2027-01-05 na kalkulator-ppk: tekst „Płaca minimalna w 2026 r.: 4806,00 zł”, choć skrypt (l. 127–128) liczy dla 2027.",
+   "poprawka": "W każdym z tych skryptów przy starcie ustawić select na bieżący rok, jeśli jest w LATA (jak w dodatku nocnym), i przeliczyć. Dodatkowo wdrożyć przebudowanie 1.01.2027 (wpis w STAN.md) albo dodać cron w CI z deploy hookiem Cloudflare (decyzja Patryka)."
+  },
+  {
+   "id": "X1-4",
+   "slug": "rejestr (prawo.ts, rejestr.test.ts)",
+   "wymiar": "testy",
+   "waga": "srednia",
+   "plik": "src/lib/narzedzia/rejestr.test.ts",
+   "linia": 38,
+   "problem": "Test pilnuje tylko płacy minimalnej na bieżący rok. Nie pilnuje tabel zależnych od daty: PRZECIETNE_KWARTALNE, WSKAZNIKI rehabilitacyjnego, KWOTY_ODSZKODOWAN, KWOTY_ZASILKU, PRZECIETNE_WYNAGRODZENIE, stałych 2026 w koszt-pracodawcy ani kwoty zasiłku pogrzebowego w tekście. Bramka 455 dni od „sprawdzono” pozwala używać rocznej kwoty GUS za 2025 r. do maja 2027 r., choć nowa wychodzi w lutym.",
+   "dowod": "rejestr.test.ts l. 38–40: jedyny test zależny od daty to PLACA_MINIMALNA[dzis.getUTCFullYear()]. Brak testu wykrył X1-2 dopiero przy audycie.",
+   "poprawka": "Dodać do każdej tabeli pole „nastepnaOgloszenieDo” (np. PRZECIETNE_KWARTALNE: 15 lutego/maja/sierpnia/listopada; PRZECIETNE_WYNAGRODZENIE: 15 lutego; odszkodowania: 31 marca; zasiłek: 31 maja; WSKAZNIKI: koniec kwartału poprzedzającego) i test w rejestr.test.ts: dzis > nastepnaOgloszenieDo + 14 dni → błąd z komunikatem „sprawdź M.P.”."
+  },
+  {
+   "id": "X1-5",
+   "slug": "waznosc-uprawnien-udt",
+   "wymiar": "prawo",
+   "waga": "srednia",
+   "plik": "src/pages/narzedzia/waznosc-uprawnien-udt.astro",
+   "linia": 160,
+   "problem": "Opłatę za egzamin (333,88 zł) strona liczy z kwoty GUS za 2025 r. bez daty ważności. Po komunikacie za 2026 r. (zwykle około 10 lutego 2027 r.) strona po cichu poda starą opłatę.",
+   "dowod": "art. 23 ust. 4 ustawy o dozorze technicznym (.cache DU_2024_1194.txt l. 2218–2222): 3,75% przeciętnego wynagrodzenia ogłaszanego na podstawie art. 20 pkt 1 lit. a ustawy o emeryturach, „obowiązującej w dniu złożenia wniosku”. Obecna kwota: M.P. 2026 poz. 192 (ogłoszone 10.02.2026) 8903,56 zł.",
+   "poprawka": "Przy PRZECIETNE_WYNAGRODZENIE dodać pole nastepneDo: '2027-02-15'. Na stronie po tej dacie dopisać „GUS mógł już ogłosić kwotę za 2026 r.” i objąć to testem z X1-4. Po ogłoszeniu w lutym 2027 r. wpisać kwotę za 2026 r."
+  },
+  {
+   "id": "X1-6",
+   "slug": "brutto-netto",
+   "wymiar": "tresc-ux",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/brutto-netto.astro",
+   "linia": 10,
+   "problem": "Opis meta i FAQ biorą na sztywno PLACA_MINIMALNA[2026]: „Płaca minimalna 2026: … netto”, „Ile to netto z płacy minimalnej w 2026 r.?”. Po 1.01.2027 r. strona nie podaje netto z 4950 zł.",
+   "dowod": "l. 10, 14–15, 38: minimalna2026 = netto({ brutto: PLACA_MINIMALNA[2026].miesiecznie }).",
+   "poprawka": "Rok z dzisWPolsce() z fallbackiem na LATA (jak w innych stronach), a w FAQ obie kwoty dla lat z LATA od bieżącego."
+  },
+  {
+   "id": "X1-7",
+   "slug": "zlecenie-netto",
+   "wymiar": "tresc-ux",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/zlecenie-netto.astro",
+   "linia": 30,
+   "problem": "FAQ podaje stawkę wpisaną ręcznie: „w 2026 r. 31,40 zł”. Od 1.01.2027 r. stawka wynosi 32,30 zł, a FAQ jej nie podaje.",
+   "dowod": "Dz.U. 2026 poz. 1213 § 2: od 1 stycznia 2027 r. minimalna stawka godzinowa 32,30 zł.",
+   "poprawka": "Zbudować tekst z PLACA_MINIMALNA (rok bieżący i następny z LATA), np. „31,40 zł w 2026 r., 32,30 zł w 2027 r.”."
+  },
+  {
+   "id": "X1-8",
+   "slug": "odszkodowanie-za-wypadek-przy-pracy",
+   "wymiar": "spojnosc",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/odszkodowanie-za-wypadek-przy-pracy.astro",
+   "linia": 146,
+   "problem": "Komunikat błędu ma daty wpisane ręcznie („od 1 kwietnia 2025 r. do 31 marca 2027 r.”). Po dopisaniu kwot od 1.04.2027 r. komunikat będzie fałszywy, a pole max liczy się już z tabeli.",
+   "dowod": "l. 62: max={KWOTY_ODSZKODOWAN[…].do}; l. 146: tekst wpisany ręcznie.",
+   "poprawka": "Zbudować tekst z KWOTY_ODSZKODOWAN[0].od i ostatniego .do przez dataPoPolsku()."
+  },
+  {
+   "id": "X1-9",
+   "slug": "odprawa-posmiertna",
+   "wymiar": "prawo",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/odprawa-posmiertna.astro",
+   "linia": 110,
+   "problem": "Kwota zasiłku pogrzebowego (7000 zł, „od 1 marca 2026 r.”) jest wpisana ręcznie w FAQ (l. 30) i w wyjaśnieniu (l. 110, 112). Nie ma stałej ani daty ważności, a kwota może się zmienić od 1 marca 2027 r.",
+   "dowod": "art. 80 ust. 2–6 ustawy o emeryturach (.cache DU_2025_1749.txt l. 1486–1497): waloryzacja od 1 marca, jeśli średnioroczny wskaźnik CPI jest wyższy niż 105; komunikat Prezesa ZUS co najmniej 7 dni roboczych przed terminem. CPI za trzy kwartały 2026 r.: 102,9 (M.P. 2026 poz. 1007), więc waloryzacja jest mało prawdopodobna, ale komunikat na 2027 r. wyjdzie.",
+   "poprawka": "Przenieść kwotę do stałej w prawo.ts ({ od: '2026-03-01', kwota: 7000, akt: 'zasilekPogrzebowy2026' }) z testem z X1-4. Po komunikacie z lutego 2027 r. dopisać „od 1 marca 2027 r.”."
+  },
+  {
+   "id": "X1-10",
+   "slug": "rejestr (prawo.ts, rejestr.test.ts)",
+   "wymiar": "prawo",
+   "waga": "niska",
+   "plik": "src/data/prawo.ts",
+   "linia": 177,
+   "problem": "Dwa akty mają nowsze teksty jednolite, niż wskazuje rejestr. Ustawa o systemie ubezpieczeń społecznych: Dz.U. 2026 poz. 1474 (rejestr: poz. 199). Ustawa o świadczeniach rodzinnych: Dz.U. 2026 poz. 1240 (rejestr l. 163: 2025 poz. 1208).",
+   "dowod": "API Sejmu: DU/2026/1474 „Obwieszczenie Marszałka Sejmu z 9 października 2026 r. w sprawie ogłoszenia jednolitego tekstu ustawy o systemie ubezpieczeń społecznych” (powołuje go już M.P. 2026 poz. 1120). DU/2026/1240 „… z 1 września 2026 r. … jednolitego tekstu ustawy o świadczeniach rodzinnych”.",
+   "poprawka": "Pobrać oba teksty do .cache, sprawdzić art. 16, 19, 22 i art. 17c ust. 5, zmienić publikator, adres i datę sprawdzenia, także w komentarzach logiki (chorobowe.ts, netto.ts, koszt-pracodawcy.ts)."
+  },
+  {
+   "id": "X1-11",
+   "slug": "kalkulator-ppk",
+   "wymiar": "spojnosc",
+   "waga": "niska",
+   "plik": "src/data/narzedzia.ts",
+   "linia": 280,
+   "problem": "Rejestr podaje dla PPK tylko placa2026, a strona i logika biorą płacę minimalną z roku bieżącego z LATA (od 2027 r. 4950 zł, próg obniżenia 5940 zł, próg dopłaty z 6-krotności).",
+   "dowod": "ppk.ts l. 22 PLACA_MINIMALNA[rok]; kalkulator-ppk.astro l. 11 i 128 rok z LATA.",
+   "poprawka": "Dopisać 'minimalneWynagrodzenie', 'placa2027' (i 'placa2025', jeśli rok wybieralny) do przepisów."
+  }
+ ],
+ "do_stanu": [
+  {
+   "sprawa": "JUŻ OGŁOSZONE, wpisać: przeciętne wynagrodzenie w III kw. 2026 r. 9317,01 zł (M.P. 2026 poz. 1122, ogłoszone 10.11.2026); płace młodocianych od 1.12.2026 (§ 19 ust. 1 rozp. Dz.U. 2018 poz. 2010)",
+   "kiedy_sprawdzic": "2026-11-20",
+   "gdzie_w_kodzie": "src/lib/narzedzia/mlodociany.ts PRZECIETNE_KWARTALNE; src/data/prawo.ts przecietneKwartalne"
+  },
+  {
+   "sprawa": "JUŻ OGŁOSZONE, wpisać: limit rocznej podstawy składek emerytalnej i rentowych w 2027 r. 300 990 zł, prognozowane przeciętne wynagrodzenie 10 033 zł (M.P. 2026 poz. 1098, ogłoszone 4.11.2026, art. 19 ust. 1 i 10 ustawy systemowej; obowiązuje od 1.01.2027)",
+   "kiedy_sprawdzic": "2026-12-15",
+   "gdzie_w_kodzie": "src/lib/narzedzia/koszt-pracodawcy.ts LIMIT_ROCZNY_2026; koszt-pracodawcy.astro l. 73"
+  },
+  {
+   "sprawa": "JUŻ W KODZIE, zgodne: płaca minimalna 2027 r. 4950 zł i stawka 32,30 zł (Dz.U. 2026 poz. 1213, § 1–3: od 1.01.2027)",
+   "kiedy_sprawdzic": "2027-01-02",
+   "gdzie_w_kodzie": "src/data/prawo.ts PLACA_MINIMALNA[2027]"
+  },
+  {
+   "sprawa": "Przebudowanie i wdrożenie portalu (brak crona; domyślne lata i teksty SSR z roku buildu)",
+   "kiedy_sprawdzic": "2027-01-01",
+   "gdzie_w_kodzie": "strony z rokBiezacy/LATA (X1-3); ponownie 2027-03-01, 2027-04-01, 2027-06-01"
+  },
+  {
+   "sprawa": "Obwieszczenie Prezesa ZUS: wskaźnik waloryzacji podstawy świadczenia rehabilitacyjnego na I kw. 2027 r. (rok temu 18.11, M.P. 2025 poz. 1205). Z kwot GUS: 9317,01 / 9562,88 = 97,43%, czyli spodziewane „bez waloryzacji” (100)",
+   "kiedy_sprawdzic": "2026-11-30",
+   "gdzie_w_kodzie": "src/lib/narzedzia/swiadczenie-rehabilitacyjne.ts WSKAZNIKI['2027-1']"
+  },
+  {
+   "sprawa": "Ustawa budżetowa na 2027 r.: stopy FP, FS i FGŚP (dziś na 2026 r.: 1,0%, 1,45%, 0,10%, Dz.U. 2026 poz. 62 art. 25–27); w DU 2026 do poz. 1489 jej nie ma",
+   "kiedy_sprawdzic": "2027-02-15",
+   "gdzie_w_kodzie": "src/lib/narzedzia/koszt-pracodawcy.ts STOPY_PRACODAWCY_2026; src/data/prawo.ts budzet2026"
+  },
+  {
+   "sprawa": "Komunikat GUS: przeciętne wynagrodzenie w gospodarce narodowej w 2026 r. (art. 20 pkt 1 lit. a ustawy o emeryturach); opłata UDT od dnia ogłoszenia; podstawa kwot odszkodowań od 1.04.2027",
+   "kiedy_sprawdzic": "2027-02-12",
+   "gdzie_w_kodzie": "src/data/prawo.ts PRZECIETNE_WYNAGRODZENIE, przecietneWynagrodzenie2025"
+  },
+  {
+   "sprawa": "Komunikat GUS: przeciętne wynagrodzenie w IV kw. 2026 r.; płace młodocianych od 1.03.2027",
+   "kiedy_sprawdzic": "2027-02-12",
+   "gdzie_w_kodzie": "src/lib/narzedzia/mlodociany.ts PRZECIETNE_KWARTALNE"
+  },
+  {
+   "sprawa": "Obwieszczenie Prezesa ZUS: wskaźnik waloryzacji rehabilitacyjnego na II kw. 2027 r. (IV kw. 2026 do II kw. 2026)",
+   "kiedy_sprawdzic": "2027-02-25",
+   "gdzie_w_kodzie": "swiadczenie-rehabilitacyjne.ts WSKAZNIKI['2027-2']"
+  },
+  {
+   "sprawa": "Komunikat Prezesa ZUS: kwota zasiłku pogrzebowego od 1.03.2027 (art. 80 ust. 2–6; waloryzacja tylko przy CPI za 2026 r. > 105, za trzy kwartały 102,9)",
+   "kiedy_sprawdzic": "2027-02-20",
+   "gdzie_w_kodzie": "src/pages/narzedzia/odprawa-posmiertna.astro l. 30, 110, 112; src/data/prawo.ts zasilekPogrzebowy2026"
+  },
+  {
+   "sprawa": "Obwieszczenie MRPiPS: kwoty jednorazowych odszkodowań wypadkowych od 1.04.2027 do 31.03.2028 (art. 14 ust. 9 ustawy wypadkowej)",
+   "kiedy_sprawdzic": "2027-03-20",
+   "gdzie_w_kodzie": "src/lib/narzedzia/odszkodowanie-wypadek.ts KWOTY_ODSZKODOWAN; odszkodowanie-za-wypadek-przy-pracy.astro l. 146"
+  },
+  {
+   "sprawa": "Obwieszczenie MRPiPS: zasiłek dla bezrobotnych od 1.06.2027 (art. 228 ust. 4 ustawy o rynku pracy)",
+   "kiedy_sprawdzic": "2027-03-15",
+   "gdzie_w_kodzie": "src/lib/narzedzia/zasilek-bezrobotny.ts KWOTY_ZASILKU"
+  },
+  {
+   "sprawa": "Komunikat GUS za I kw. 2027 r. (młodociani od 1.06.2027) i wskaźnik ZUS rehabilitacyjnego na III kw. 2027 r.",
+   "kiedy_sprawdzic": "2027-05-20",
+   "gdzie_w_kodzie": "mlodociany.ts PRZECIETNE_KWARTALNE; swiadczenie-rehabilitacyjne.ts WSKAZNIKI"
+  },
+  {
+   "sprawa": "Rozporządzenie RM: płaca minimalna i stawka godzinowa na 2028 r. (do 15 września 2027 r.; bez niej rejestr.test.ts zatrzyma build 1.01.2028)",
+   "kiedy_sprawdzic": "2027-09-16",
+   "gdzie_w_kodzie": "src/data/prawo.ts PLACA_MINIMALNA, AKTY.placa2028"
+  },
+  {
+   "sprawa": "Obwieszczenie MRPiPS: limit 30-krotności na 2028 r.",
+   "kiedy_sprawdzic": "2027-11-10",
+   "gdzie_w_kodzie": "koszt-pracodawcy.ts LIMIT_ROCZNY"
+  }
+ ],
+ "poza_zakresem": [
+  "M.P. 2026 poz. 1120 (ZUS, 5.11.2026): 250% prognozowanego wynagrodzenia w 2027 r. 25 082,50 zł miesięcznie, czyli limit podstawy dobrowolnego chorobowego; żadne narzędzie tego nie liczy, informacyjnie.",
+  "Minimalnej podstawy składki zdrowotnej i kwot wolnych od potrąceń (art. 87^1 Kp) nie liczy żadne narzędzie. kara-porzadkowa.astro tylko wspomina art. 87^1 bez kwot, więc nie ma czego aktualizować.",
+  "Obwieszczenie GUS M.P. 2026 poz. 232 (przeciętne wynagrodzenie 2025 r. 7770,04 zł, dla PFRON) nie jest używane; pracownik-niepelnosprawny nie liczy wpłat PFRON.",
+  "Dieta krajowa 45 zł, kilometrówka i diety zagraniczne: w DU 2026 (do poz. 1489, 10.11.2026) nie ma nowego rozporządzenia, kwoty aktualne. Tylko tytuły „Delegacja krajowa 2026” i „Dieta zagraniczna 2026” (l. 49) zestarzeją się 1.01.2027 bez zmiany kwot.",
+  "Zmiany PIT Dz.U. 2026 poz. 1354 i 1371 (od 1.01.2027) dotyczą opłaty miejscowej i cen transferowych, nie zaliczek od wynagrodzeń; stałe w netto.ts (3600, 120 000, 85 528, 250/300 zł) pozostają."
+ ],
+ "nie_sprawdzono": [
+  "Zgodność merytoryczna treści stron poza kwotami zależnymi od daty (wymiary tresc-ux i dostępność; to inne partie).",
+  "Kalendarze świąt i dni roboczych (tabele dat, nie kwot): dni-wolne-od-pracy, praca-w-niedziele (max 2027-12-31), wymiar-czasu-pracy.",
+  "Stopa wypadkowa 1,67% i najwyższa stopa 3,33% w rozporządzeniu Dz.U. 2025 poz. 1874 po 1.04.2027: nie szukałem zmian załącznika poza listą DU 2026.",
+  "Czy ZUS opublikował już obwieszczenie na I kw. 2027 r. w M.P. po poz. 1133 (lista MP 2026 z API kończy się na 10.11.2026)."
+ ]
+}

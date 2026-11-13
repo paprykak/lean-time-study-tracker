@@ -1,0 +1,228 @@
+---
+// Okres wyczekiwania na zasiłek chorobowy (art. 4 i 9 ust. 3 ustawy zasiłkowej, art. 92 § 3 pkt 2 Kp, art. 8 ustawy
+// wypadkowej). Logika: src/lib/narzedzia/okres-wyczekiwania.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { DNI_ABSOLWENTA, DNI_WYCZEKIWANIA, MAKS_PRZERWA, okresWyczekiwania } from '../../lib/narzedzia/okres-wyczekiwania';
+import { dataPoPolsku, dodajDni, dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+const dzis = dzisWPolsce();
+const start = dodajDni(dzis, -10);
+const r = okresWyczekiwania({ rodzaj: 'obowiazkowe', start });
+const WIERSZE = 3;
+
+const faq = [
+  {
+    pytanie: 'Od kiedy przysługuje L4 w nowej pracy?',
+    odpowiedz: `Zasiłek chorobowy przysługuje po ${DNI_WYCZEKIWANIA.obowiazkowe} dniach nieprzerwanego ubezpieczenia chorobowego, gdy jest obowiązkowe, jak przy umowie o pracę (art. 4 ust. 1 ustawy zasiłkowej). Przy zatrudnieniu od 1 marca prawo jest od 31 marca. Ten sam warunek dotyczy wynagrodzenia chorobowego od pracodawcy, bo nie przysługuje ono, gdy nie ma prawa do zasiłku (art. 92 § 3 pkt 2 Kodeksu pracy). Zwolnienie lekarskie i tak usprawiedliwia nieobecność.`,
+  },
+  {
+    pytanie: 'Ile wynosi okres wyczekiwania na umowie zlecenia?',
+    odpowiedz: `Co do zasady ${DNI_WYCZEKIWANIA.dobrowolne} dni, bo zleceniobiorca podlega ubezpieczeniu chorobowemu dobrowolnie (art. 4 ust. 1 pkt 2 ustawy zasiłkowej, art. 11 ust. 2 ustawy o systemie ubezpieczeń społecznych), a bez zgłoszenia do niego zasiłku chorobowego nie ma. Wyjątki: zlecenie u własnego pracodawcy traktuje się jak etat (art. 8 ust. 2a ustawy o systemie), więc obowiązuje ${DNI_WYCZEKIWANIA.obowiazkowe} dni, a po wypadku przy pracy zasiłek z ubezpieczenia wypadkowego należy się bez chorobowego i bez czekania (art. 8 ustawy wypadkowej).`,
+  },
+  {
+    pytanie: 'Czy poprzednia praca skraca okres wyczekiwania?',
+    odpowiedz: `Tak, gdy przerwa między ubezpieczeniami nie przekroczyła ${MAKS_PRZERWA} dni albo wynikała z urlopu wychowawczego, urlopu bezpłatnego lub czynnej służby wojskowej. Wtedy wcześniejsze dni ubezpieczenia chorobowego się wlicza (art. 4 ust. 2 ustawy zasiłkowej). Przy dłuższej przerwie okres liczy się od nowa.`,
+  },
+  {
+    pytanie: 'Kto ma zasiłek chorobowy od pierwszego dnia?',
+    odpowiedz: `Między innymi absolwent szkoły lub uczelni, który podjął ubezpieczenie w ciągu ${DNI_ABSOLWENTA} dni od jej ukończenia; osoba po wypadku w drodze do pracy lub z pracy; ubezpieczony obowiązkowo z wcześniejszym co najmniej 10-letnim okresem obowiązkowego ubezpieczenia chorobowego (art. 4 ust. 3 ustawy zasiłkowej). Po wypadku przy pracy albo przy chorobie zawodowej zasiłek z ubezpieczenia wypadkowego należy się bez okresu wyczekiwania (art. 8 ustawy wypadkowej).`,
+  },
+  {
+    pytanie: 'Co, gdy L4 zaczęło się przed końcem okresu wyczekiwania?',
+    odpowiedz: 'Za dni przed nabyciem prawa nie ma zasiłku ani wynagrodzenia chorobowego. Gdy zwolnienie trwa dalej, zasiłek należy się od dnia, w którym minął okres wyczekiwania, bo prawo powstaje po jego upływie (art. 4 ust. 1 ustawy zasiłkowej). Dni L4 z okresu wyczekiwania nie wliczają się do okresu zasiłkowego (art. 9 ust. 3).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="okres-wyczekiwania"
+  tytul="Okres wyczekiwania: od kiedy płatne L4"
+  opis="Od kiedy płatne L4 w nowej pracy: 30 dni na umowie o pracę, 90 na zleceniu, wcześniejsze ubezpieczenie z przerwą do 30 dni, wyjątki od pierwszego dnia."
+  h1="Okres wyczekiwania: od kiedy płatne L4"
+  lead="W nowej pracy chorobowe nie przysługuje od razu: na umowie o pracę po 30 dniach, na zleceniu po 90. Wcześniejsza praca z krótką przerwą skraca to czekanie. Wpisz daty, a policzymy dzień, od którego L4 jest płatne."
+  faq={faq}
+>
+  <form class="kalkulator" data-wyczekiwanie novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twoje ubezpieczenie</h2>
+      <fieldset class="mt-4">
+        <legend class="etykieta-pola">Umowa</legend>
+        <div class="opcje-pionowe mt-2">
+          <label><input type="radio" name="rodzaj" value="obowiazkowe" checked /> Umowa o pracę (30 dni)</label>
+          <label><input type="radio" name="rodzaj" value="dobrowolne" /> Zlecenie, działalność (90 dni)</label>
+        </div>
+      </fieldset>
+      <div class="mt-4 grid items-end gap-4 sm:grid-cols-2">
+        <div>
+          <label for="w-start" class="etykieta-pola">Początek ubezpieczenia</label>
+          <input id="w-start" name="start" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={start} aria-describedby="w-blad w-start-opis" />
+        </div>
+        <div>
+          <label for="w-l4" class="etykieta-pola">Pierwszy dzień L4</label>
+          <input id="w-l4" name="l4" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" aria-describedby="w-blad" />
+        </div>
+      </div>
+      <p id="w-start-opis" class="meta mt-1">Pierwszy dzień umowy o pracę albo dzień z wniosku o dobrowolne chorobowe. L4 jest opcjonalne.</p>
+
+      <h3 class="etykieta-pola mt-6">Wcześniejsze ubezpieczenie chorobowe</h3>
+      <p class="meta mt-1">Poprzednie umowy z chorobowym; puste wiersze pomijamy.</p>
+      {Array.from({ length: WIERSZE }, (_, i) => (
+        <fieldset class="mt-3">
+          <legend class="meta">Okres {i + 1}</legend>
+          <div class="mt-1 grid grid-cols-1 items-end gap-3 min-[360px]:grid-cols-2">
+            <div>
+              <label for={`w-od${i + 1}`} class="meta">Od</label>
+              <input id={`w-od${i + 1}`} name={`od${i + 1}`} type="date" class="pole mt-1" min="1960-01-01" max="2100-12-31" aria-describedby="w-blad" />
+            </div>
+            <div>
+              <label for={`w-do${i + 1}`} class="meta">Do</label>
+              <input id={`w-do${i + 1}`} name={`do${i + 1}`} type="date" class="pole mt-1" min="1960-01-01" max="2100-12-31" aria-describedby="w-blad" />
+            </div>
+          </div>
+          <label class="meta mt-2 flex items-start gap-2"><input type="checkbox" name={`usp${i + 1}`} class="mt-1" /> Po okresie {i + 1}: urlop wychowawczy, bezpłatny lub wojsko</label>
+        </fieldset>
+      ))}
+
+      <fieldset class="mt-6">
+        <legend class="etykieta-pola">Bez czekania, gdy</legend>
+        <div class="opcje-pionowe mt-2">
+          <label><input type="checkbox" name="wypadekPraca" /> Wypadek przy pracy, choroba zawodowa</label>
+          <label><input type="checkbox" name="wypadekDroga" /> Wypadek w drodze do lub z pracy</label>
+          <label><input type="checkbox" name="dziesiec" /> 10 lat obowiązkowego chorobowego</label>
+        </div>
+      </fieldset>
+      <div class="mt-4">
+        <label for="w-szkola" class="etykieta-pola">Ukończenie szkoły lub studiów</label>
+        <input id="w-szkola" name="szkola" type="date" class="pole mt-1 max-w-56" min="1960-01-01" max="2100-12-31" aria-describedby="w-blad" />
+      </div>
+      <p id="w-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Zasiłek i chorobowe przysługują od</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-kwota" data-w="prawo">{dataPoPolsku(r.prawoOd)}</p>
+        <p class="meta" data-w="opis">po {r.potrzeba} dniach nieprzerwanego ubezpieczenia chorobowego</p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Wliczone z wcześniejszych umów</dt><dd data-w="wliczone">0 dni</dd></div>
+        <div><dt>Bez prawa do zasiłku</dt><dd data-w="bez">do {r.ostatniBezPrawa ? dataPoPolsku(r.ostatniBezPrawa) : '—'}</dd></div>
+        <div><dt>L4</dt><dd data-w="l4">wpisz pierwszy dzień L4, a policzymy dni bez zasiłku</dd></div>
+      </dl>
+      <p class="wynik-uwaga" data-w="uwaga">Zwolnienie lekarskie w okresie wyczekiwania usprawiedliwia nieobecność, ale za te dni nie ma wynagrodzenia chorobowego ani zasiłku.</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="zasady">Zasady okresu wyczekiwania</h2>
+    <ul>
+      <li>Umowa o pracę: ubezpieczenie chorobowe jest obowiązkowe, prawo do zasiłku po {DNI_WYCZEKIWANIA.obowiazkowe} dniach nieprzerwanego ubezpieczenia (art. 4 ust. 1 pkt 1 ustawy zasiłkowej, art. 11 ust. 1 ustawy o systemie ubezpieczeń społecznych).</li>
+      <li>Zlecenie i działalność: chorobowe jest dobrowolne, prawo po {DNI_WYCZEKIWANIA.dobrowolne} dniach (art. 4 ust. 1 pkt 2 ustawy zasiłkowej, art. 11 ust. 2 ustawy o systemie). Zlecenie u własnego pracodawcy traktuje się jak pracę na etacie (art. 8 ust. 2a ustawy o systemie).</li>
+      <li>Wcześniejsze okresy ubezpieczenia chorobowego wlicza się, gdy przerwa nie przekroczyła {MAKS_PRZERWA} dni albo wynikała z urlopu wychowawczego, bezpłatnego lub czynnej służby wojskowej (art. 4 ust. 2).</li>
+      <li>Od pierwszego dnia: absolwenci ubezpieczeni w ciągu {DNI_ABSOLWENTA} dni od ukończenia szkoły, uczelni lub szkoły doktorskiej, niezdolność po wypadku w drodze do pracy lub z pracy, ubezpieczeni obowiązkowo z wcześniejszymi co najmniej 10 latami obowiązkowego chorobowego (art. 4 ust. 3 pkt 1–3; pkt 4–5 dotyczą posłów, senatorów i dawnych funkcjonariuszy Służby Celnej). Po wypadku przy pracy i przy chorobie zawodowej zasiłek z ubezpieczenia wypadkowego należy się od pierwszego dnia (art. 8 ust. 1–2 ustawy wypadkowej).</li>
+      <li>Wynagrodzenie chorobowe od pracodawcy nie przysługuje, gdy nie ma prawa do zasiłku (art. 92 § 3 pkt 2 Kodeksu pracy), więc okres wyczekiwania dotyczy też dni L4 płatnych przez pracodawcę: do 33 dni w roku, a po roku, w którym kończysz 50 lat, do 14 dni (art. 92 § 1 i 5).</li>
+    </ul>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Prawo powstaje „po upływie” 30 albo 90 dni, więc przy ubezpieczeniu od 1 marca to 31. dzień, czyli 31 marca.
+      Dni ubezpieczenia liczymy kalendarzowo, z pierwszym i ostatnim dniem okresu. Przerwa to dni między końcem jednej
+      umowy a początkiem następnej. Od obecnej umowy cofamy się po wcześniejszych okresach, dopóki żadna przerwa nie
+      przekracza {MAKS_PRZERWA} dni albo jest oznaczona jako urlop wychowawczy, bezpłatny lub wojsko, i sumujemy ich dni.
+      Do 90 dni na zleceniu wliczamy też wcześniejsze ubezpieczenie z umowy o pracę, bo przepis mówi o „poprzednich
+      okresach ubezpieczenia chorobowego” bez podziału na obowiązkowe i dobrowolne.
+    </p>
+    <p>
+      Przepis nie mówi wprost, co z L4, które trwa dalej po okresie wyczekiwania. Liczymy zasiłek od dnia nabycia prawa:
+      prawo powstaje po upływie okresu (art. 4 ust. 1), a z okresu zasiłkowego wyłącza się tylko dni sprzed niego
+      (art. 9 ust. 3). Ile wyniesie zasiłek na etacie, policzy <a href="/narzedzia/kalkulator-l4">kalkulator L4</a>, na
+      zleceniu <a href="/narzedzia/zasilek-chorobowy-na-zleceniu">kalkulator zasiłku chorobowego na zleceniu</a>, a ile dni
+      zostało z 182, <a href="/narzedzia/okres-zasilkowy">kalkulator okresu zasiłkowego</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { okresWyczekiwania, type OkresUbezpieczenia, type RodzajUbezpieczenia } from '../../lib/narzedzia/okres-wyczekiwania';
+  import { dataPoPolsku, dodajDni, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { odmiana } from '../../lib/redakcja';
+  import { typografia } from '../../lib/typografia.mjs';
+
+  const form = document.querySelector<HTMLFormElement>('[data-wyczekiwanie]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const pisz = (k: string, tekst: string) => {
+      w(k).textContent = typografia(tekst);
+    };
+    const dni = (n: number) => odmiana(n, ['dzień', 'dni', 'dni']);
+    const NAZWY = {
+      'wypadek-przy-pracy': 'po wypadku przy pracy albo przy chorobie zawodowej zasiłek z ubezpieczenia wypadkowego (art. 8 ustawy wypadkowej)',
+      'wypadek-w-drodze': 'po wypadku w drodze do pracy lub z pracy (art. 4 ust. 3 pkt 2 ustawy zasiłkowej)',
+      absolwent: 'ubezpieczenie w ciągu 90 dni od ukończenia szkoły lub studiów (art. 4 ust. 3 pkt 1)',
+      'dziesiec-lat': 'co najmniej 10 lat obowiązkowego ubezpieczenia chorobowego (art. 4 ust. 3 pkt 3)',
+    } as const;
+    const przelicz = () => {
+      const rodzaj = (form.querySelector<HTMLInputElement>('input[name="rodzaj"]:checked')?.value ?? 'obowiazkowe') as RodzajUbezpieczenia;
+      const start = el('start').value;
+      const l4 = el('l4').value;
+      const szkola = el('szkola').value;
+      const poprzednie: OkresUbezpieczenia[] = [];
+      let blad: string | null = !poprawnaData(start) ? 'Wpisz początek ubezpieczenia.' : null;
+      for (let i = 1; i <= 3 && !blad; i++) {
+        const od = el(`od${i}`).value;
+        const do_ = el(`do${i}`).value;
+        if (!od && !do_) continue;
+        if (!poprawnaData(od) || !poprawnaData(do_)) blad = `Uzupełnij obie daty okresu ${i}.`;
+        else if (do_ < od) blad = `Okres ${i}: koniec przed początkiem.`;
+        else if (do_ >= start) blad = `Okres ${i} musi skończyć się przed początkiem obecnego ubezpieczenia.`;
+        else poprzednie.push({ od, do: do_, przerwaUsprawiedliwiona: el(`usp${i}`).checked });
+      }
+      if (!blad && l4 && (!poprawnaData(l4) || l4 < start)) blad = 'Pierwszy dzień L4 nie może być przed początkiem ubezpieczenia.';
+      if (!blad && szkola && !poprawnaData(szkola)) blad = 'Wpisz poprawną datę ukończenia szkoły.';
+      let r: ReturnType<typeof okresWyczekiwania> | null = null;
+      if (!blad) {
+        try {
+          r = okresWyczekiwania({
+            rodzaj,
+            start,
+            poprzednie,
+            ukonczenieSzkoly: szkola || undefined,
+            wypadekPrzyPracy: el('wypadekPraca').checked,
+            wypadekWDrodze: el('wypadekDroga').checked,
+            dziesiecLat: el('dziesiec').checked,
+            l4Od: l4 || undefined,
+          });
+        } catch {
+          blad = 'Wcześniejsze okresy nachodzą na siebie: popraw daty.';
+        }
+      }
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      b.hidden = !blad;
+      b.textContent = blad ? typografia(blad) : '';
+      if (!r) {
+        for (const k of ['prawo', 'wliczone', 'bez', 'l4']) w(k).textContent = '—';
+        w('opis').textContent = '';
+        w('uwaga').textContent = '';
+        return;
+      }
+      pisz('prawo', dataPoPolsku(r.prawoOd));
+      pisz('opis', r.wyjatek ? 'od pierwszego dnia ubezpieczenia' : r.brakuje ? `po ${r.potrzeba} dniach nieprzerwanego ubezpieczenia chorobowego` : `wcześniejsze ubezpieczenie wystarcza (${r.wliczone} z ${r.potrzeba} dni)`);
+      pisz('wliczone', r.wliczonychOkresow ? `${dni(r.wliczone)} z ${odmiana(r.wliczonychOkresow, ['okresu', 'okresów', 'okresów'])}` : '0 dni');
+      pisz('bez', r.ostatniBezPrawa ? `od ${dataPoPolsku(start)} do ${dataPoPolsku(r.ostatniBezPrawa)} (${dni(r.brakuje)})` : 'brak, prawo od pierwszego dnia');
+      if (r.l4) pisz('l4', r.l4.bezPlatnosci ? `${dni(r.l4.bezPlatnosci)} bez zasiłku, płatne od ${dataPoPolsku(r.l4.platneOd)}, jeśli L4 trwa` : `płatne od pierwszego dnia L4 (${dataPoPolsku(r.l4.platneOd)})`);
+      else pisz('l4', 'wpisz pierwszy dzień L4, a policzymy dni bez zasiłku');
+      const uwagi: string[] = [];
+      if (r.wyjatek) uwagi.push(`Bez okresu wyczekiwania: ${NAZWY[r.wyjatek]}.`);
+      else uwagi.push('Zwolnienie lekarskie w okresie wyczekiwania usprawiedliwia nieobecność, ale za te dni nie ma wynagrodzenia chorobowego ani zasiłku.');
+      if (el('dziesiec').checked && rodzaj === 'dobrowolne') uwagi.push('Wyjątek 10 lat dotyczy tylko ubezpieczenia obowiązkowego, czyli na przykład umowy o pracę.');
+      if (szkola && szkola > start) uwagi.push('Wyjątek dla absolwenta dotyczy ubezpieczenia, które zaczyna się po ukończeniu szkoły lub studiów.');
+      if (szkola && r.wyjatek !== 'absolwent' && szkola <= start) uwagi.push(`Wyjątek dla absolwenta działa, gdy ubezpieczenie zaczyna się najpóźniej ${dataPoPolsku(dodajDni(szkola, 90))}.`);
+      pisz('uwaga', uwagi.join(' '));
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>

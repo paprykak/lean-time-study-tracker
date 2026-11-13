@@ -12,6 +12,8 @@ describe('tabela stawek (załącznik, Dz.U. 2023 poz. 2190)', () => {
   it('114 państw z tabeli i 5 pozycji spod niej, bez powtórzeń', () => {
     expect(DIETY_ZAGRANICZNE).toHaveLength(119);
     expect(new Set(DIETY_ZAGRANICZNE.map((x) => x.panstwo)).size).toBe(119);
+    // 119 wierszy to 117 państw i terytoriów: USA ma osobne wiersze dla Nowego Jorku i Waszyngtonu (opis strony).
+    expect(new Set(DIETY_ZAGRANICZNE.map((x) => x.panstwo.replace(/ \(poza.*\)|: .*/, ''))).size).toBe(117);
   });
   it('wybrane stawki', () => {
     expect(stawki('Niemcy')).toMatchObject({ waluta: 'EUR', dieta: 49, nocleg: 170 });

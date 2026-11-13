@@ -20,6 +20,12 @@ describe('wymiar urlopu (art. 154–155 Kp)', () => {
     expect(u({ sytuacja: 'czesc-roku', miesiaceWRoku: 7 }).dni).toBe(12);
     expect(u({ stazMiesiecy: 120, sytuacja: 'czesc-roku', miesiaceWRoku: 3 }).dni).toBe(7);
     expect(u({ sytuacja: 'czesc-roku', miesiaceWRoku: 12 }).dni).toBe(20);
+    // Odejście 14 marca, nowa umowa od 15 marca do końca roku: marzec zaokrągla dotychczasowy pracodawca (art. 155^2a § 3),
+    // więc u nowego 9 miesięcy: ceil(20 · 9 / 12) = 15 dni (a nie 17 przy 10 miesiącach).
+    expect(u({ stazMiesiecy: 3 * 12, sytuacja: 'czesc-roku', miesiaceWRoku: 9 }).dni).toBe(15);
+    expect(u({ stazMiesiecy: 3 * 12, sytuacja: 'czesc-roku', miesiaceWRoku: 10 }).dni).toBe(17);
+    // 1/4 etatu, 1 miesiąc: ceil(5 · 1 / 12) = 1 dzień.
+    expect(u({ etat: [1, 4], sytuacja: 'czesc-roku', miesiaceWRoku: 1 }).dni).toBe(1);
   });
   it('pierwsza praca: 1/12 po każdym pełnym miesiącu (art. 153 § 1)', () => {
     const w = u({ sytuacja: 'pierwsza-praca', miesiaceWRoku: 3 });

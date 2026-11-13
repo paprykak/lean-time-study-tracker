@@ -10,7 +10,7 @@ const r = pracaWCiazy(D);
 const faq = [
   {
     pytanie: 'Ile godzin w ciąży można pracować przy komputerze?',
-    odpowiedz: `Łącznie najwyżej ${MONITOR.maksMin / 60} godzin na dobę. Bez przerwy przy monitorze najwyżej ${MONITOR.blokMin} minut, potem co najmniej ${MONITOR.przerwaMin} minut przerwy wliczanej do czasu pracy (rozporządzenie w sprawie prac wzbronionych kobietom w ciąży, załącznik, cz. I ust. 1 pkt 12).`,
+    odpowiedz: `Łącznie najwyżej ${MONITOR.maksMin / 60} godzin na dobę. Bez przerwy przy monitorze najwyżej ${MONITOR.blokMin} minut, potem co najmniej ${MONITOR.przerwaMin} minut przerwy wliczanej do czasu pracy (rozporządzenie w sprawie prac uciążliwych dla kobiet w ciąży i karmiących, Dz.U. 2017 poz. 796, załącznik, cz. I ust. 1 pkt 12).`,
   },
   {
     pytanie: 'Ile godzin w ciąży można stać w pracy?',
@@ -85,7 +85,7 @@ const faq = [
   <Fragment slot="wyjasnienie">
     <h2 id="zasady">Co wolno w ciąży na hali i w biurze</h2>
     <ul>
-      <li>Monitor: łącznie do {MONITOR.maksMin / 60} godzin na dobę, bez przerwy najwyżej {MONITOR.blokMin} minut, potem co najmniej {MONITOR.przerwaMin} minut przerwy wliczanej do czasu pracy (rozporządzenie w sprawie prac wzbronionych kobietom w ciąży, załącznik, cz. I ust. 1 pkt 12).</li>
+      <li>Monitor: łącznie do {MONITOR.maksMin / 60} godzin na dobę, bez przerwy najwyżej {MONITOR.blokMin} minut, potem co najmniej {MONITOR.przerwaMin} minut przerwy wliczanej do czasu pracy (rozporządzenie w sprawie prac uciążliwych dla kobiet w ciąży i karmiących, Dz.U. 2017 poz. 796, załącznik, cz. I ust. 1 pkt 12).</li>
       <li>Praca na stojąco: łącznie do {STANIE.maksMin / 60} godzin na zmianie, po {STANIE.blokMin} minutach {STANIE.przerwaMin} minut przerwy (pkt 11). Wzbroniona jest też praca w pozycji wymuszonej (pkt 10).</li>
       <li>Dźwiganie: ręcznie nie więcej niż {DZWIGANIE_MAKS_KG} kg, bez taczek i wózków pchanych ręcznie (pkt 2 i 9); szczegóły pokaże <a href="/narzedzia/ile-kg-wolno-dzwigac">kalkulator dźwigania</a>.</li>
       <li>Hałas i drgania: niższe limity niż dla innych pracowników; sprawdzą je <a href="/narzedzia/halas-w-pracy">kalkulator hałasu</a> i <a href="/narzedzia/drgania-w-pracy">kalkulator drgań</a>.</li>

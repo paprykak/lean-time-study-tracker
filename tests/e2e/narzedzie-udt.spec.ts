@@ -18,7 +18,7 @@ test('wózki (10 lat): ważne do 15.06.2029 → wniosek do 15 marca 2029 r., po 
 
 test('podesty przejezdne (5 lat): przedłużenie o 5 lat', async ({ page }) => {
   await page.getByLabel('Rodzaj urządzenia').selectOption('o-podesty-przejezdne');
-  await expect(page.locator('[data-w="rodzaj-opis"]')).toHaveText('Podesty ruchome przejezdne. Zaświadczenie ważne 5 lat.');
+  await expect(page.locator('[data-w=\"rodzaj-opis\"]')).toHaveText(/^Obsługa:\sPodesty\sruchome\sprzejezdne\.\sZaświadczenie\sważne\s5\slat\.$/);
   await page.getByLabel('Zaświadczenie ważne do').fill('2030-08-31');
   await expect(page.locator('[data-w="termin"]')).toHaveText('31 maja 2030 r.');
   await expect(page.locator('[data-w="po-przedluzeniu"]')).toContainText('31 sierpnia 2035 r.');
@@ -53,5 +53,36 @@ test.describe('bez JavaScriptu', () => {
     await page.goto(NARZEDZIE_UDT);
     await expect(page.locator('#ile-lat ~ .tabela tr', { hasText: 'Układnice' }).first()).toContainText('10 lat');
     await expect(page.locator('#konserwacja ~ .tabela tr', { hasText: 'Wózki jezdniowe podnośnikowe' }).first()).toContainText('5 lat');
+  });
+});
+
+test('konserwacja: krótka opcja bez przedrostka, w opisie „Konserwacja” i okres ważności', async ({ page }) => {
+  await page.getByLabel('Rodzaj urządzenia').selectOption('k-wozki');
+  await expect(page.getByLabel('Rodzaj urządzenia').locator('option:checked')).toHaveText('Wózki podnośnikowe');
+  await expect(page.locator('[data-w="rodzaj-opis"]')).toHaveText(/^Konserwacja:\sWózki\sjezdniowe\spodnośnikowe.*ważne\s5\slat\.$/);
+});
+
+test('opłata za egzamin: po 12 miesiącach od komunikatu GUS strona ostrzega o nowszej kwocie', async ({ page }) => {
+  await page.clock.setFixedTime(new Date('2027-02-09T10:00:00+01:00'));
+  await page.goto(NARZEDZIE_UDT);
+  await expect(page.locator('[data-gus-nowsza]')).toBeHidden();
+  await page.clock.setFixedTime(new Date('2027-02-11T10:00:00+01:00'));
+  await page.reload();
+  await expect(page.locator('[data-gus-nowsza]')).toBeVisible();
+  await expect(page.locator('[data-gus-nowsza]')).toHaveText(/GUS\smógł\sjuż\sogłosić\skwotę\sza\s2026\sr\./);
+});
+
+test.describe('telefon 320 px', () => {
+  test.use({ viewport: { width: 320, height: 640 } });
+  test('żadna opcja listy rodzajów nie jest szersza niż pole', async ({ page }) => {
+    const uciete = await page.locator('#udt-rodzaj').evaluate((el) => {
+      const s = el as HTMLSelectElement;
+      const styl = getComputedStyle(s);
+      const ctx = document.createElement('canvas').getContext('2d')!;
+      ctx.font = `${styl.fontWeight} ${styl.fontSize} ${styl.fontFamily}`;
+      const miejsce = s.clientWidth - 40;
+      return [...s.options].filter((o) => ctx.measureText(o.text).width > miejsce).map((o) => o.text);
+    });
+    expect(uciete).toEqual([]);
   });
 });

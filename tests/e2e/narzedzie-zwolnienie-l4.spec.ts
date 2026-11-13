@@ -27,3 +27,23 @@ test('ciąża: art. 177', async ({ page }) => {
   await expect(page.locator('[data-w="ostatni"]')).toHaveText('Przez całą ciążę');
   await expect(page.locator('[data-w="podstawa"]')).toHaveText('art. 177 Kodeksu pracy');
 });
+
+test('pusta data po poprawnej: podstawa i koniec zasiłku nie zostają z poprzedniego rachunku', async ({ page }) => {
+  await expect(page.locator('[data-w="zasilek"]')).toHaveText(/^1\slipca\s2026\sr\.\s\(182\sdni\)$/);
+  await page.getByLabel('Pierwszy dzień niezdolności do pracy').fill('');
+  await expect(page.locator('[data-w="ostatni"]')).toHaveText('—');
+  await expect(page.locator('[data-w="podstawa"]')).toHaveText('—');
+  await expect(page.locator('[data-wiersz="zasilek"]')).toBeHidden();
+});
+
+test('forma neutralna: „jeśli niezdolność do pracy trwa dalej”', async ({ page }) => {
+  await expect(page.locator('[data-w="odkiedy"]')).toHaveText(/^Od\s2\slipca\s2026\sr\. pracodawca może rozwiązać umowę, jeśli niezdolność do\spracy trwa dalej\.$/);
+});
+
+test.describe('po Nowym Roku', () => {
+  test('5 stycznia 2027 r.: domyślny pierwszy dzień L4 to 30 dni przed dziś', async ({ page }) => {
+    await page.clock.setFixedTime(new Date('2027-01-05T10:00:00+01:00'));
+    await page.goto(NARZEDZIE_L4_OCHRONA);
+    await expect(page.getByLabel('Pierwszy dzień niezdolności do pracy')).toHaveValue('2026-12-06');
+  });
+});

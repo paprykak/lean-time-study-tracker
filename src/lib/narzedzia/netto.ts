@@ -6,6 +6,8 @@
 // składki społeczne), pomniejszona o 1/12 kwoty zmniejszającej podatek 3600 zł (art. 27 ust. 1, art. 31b) przy PIT-2;
 // podstawa i zaliczka zaokrąglone do pełnych złotych (art. 63 § 1 Ordynacji podatkowej). Do 26 lat przychody do 85 528 zł
 // w roku są wolne od podatku (art. 21 ust. 1 pkt 148). Kontrola: 4806 zł brutto → 3605,85 zł netto (koszty 250 zł, PIT-2).
+// Przy stałej pensji liczymy też miesiąc, w którym suma od początku roku przekroczy próg 120 000 zł (dochód, art. 27 ust. 1)
+// albo limit ulgi dla młodych 85 528 zł (przychód z wpłatą PPK pracodawcy): od tego miesiąca netto spada.
 import { doGrosza } from './dodatek-nocny';
 
 export const STOPY = { emerytalna: 9.76, rentowa: 1.5, chorobowa: 2.45, zdrowotna: 9, pit: 12 } as const;
@@ -29,6 +31,10 @@ export interface DaneNetto {
 }
 
 const zl = (x: number) => Math.round(x);
+
+/** Miesiąc (1–12), w którym suma stałej kwoty od stycznia przekroczy limit; null, gdy nie przekroczy w roku. */
+export const miesiacPrzekroczenia = (limit: number, kwotaMiesieczna: number): number | null =>
+  kwotaMiesieczna > 0 && kwotaMiesieczna * 12 > limit ? Math.floor(limit / kwotaMiesieczna) + 1 : null;
 
 export function netto(d: DaneNetto) {
   if (!(d.brutto > 0 && d.brutto < 1_000_000)) throw new RangeError('Brutto musi być dodatnie');
@@ -63,7 +69,11 @@ export function netto(d: DaneNetto) {
     ppkPracodawca,
     netto: doGrosza(B - spoleczne - zdrowotna - zaliczka - ppkPracownik),
     mozliweObnizenieZdrowotnej,
-    /** Przy takiej pensji dochód przekroczy w roku próg 120 000 zł: w ostatnich miesiącach zaliczka 32%. */
+    /** Przy takiej pensji dochód przekroczy w roku próg 120 000 zł: od miesiąca `miesiacProgu` zaliczka 32% od nadwyżki. */
     progPrzekroczony: !d.ulgaMlodych && podstawa * 12 > PROG_PIT,
+    miesiacProgu: d.ulgaMlodych ? null : miesiacPrzekroczenia(PROG_PIT, podstawa),
+    /** Do 26 lat: przychód przekroczy w roku 85 528 zł, od miesiąca `miesiacLimituUlgi` pracodawca pobiera zaliczkę. */
+    limitUlgiPrzekroczony: !!d.ulgaMlodych && (B + ppkPracodawca) * 12 > LIMIT_ULGI_MLODYCH,
+    miesiacLimituUlgi: d.ulgaMlodych ? miesiacPrzekroczenia(LIMIT_ULGI_MLODYCH, B + ppkPracodawca) : null,
   };
 }

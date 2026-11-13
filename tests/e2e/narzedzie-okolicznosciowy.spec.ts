@@ -23,3 +23,26 @@ test('wezwanie do sądu: rekompensata', async ({ page }) => {
   await page.getByLabel('Co się wydarzyło').selectOption('wezwanie');
   await expect(page.locator('[data-w="platnosc"]')).toContainText('rekompensatę');
 });
+
+test('strażak OSP: czas akcji bez limitu dni, ekwiwalent z gminy (art. 12 i 15 ustawy o OSP)', async ({ page }) => {
+  await page.getByLabel('Co się wydarzyło').selectOption('osp');
+  await expect(page.locator('[data-w="wymiar"]')).toHaveText(/^czas akcji, szkolenia lub ćwiczeń i\sodpoczynek po nich/);
+  await expect(page.locator('[data-w="platnosc"]')).toContainText(/ekwiwalent pieniężny z\sbudżetu gminy/);
+  await expect(page.locator('[data-w="podstawa"]')).toHaveText(/^art\.\s12 i\s15 ustawy o\sochotniczych strażach pożarnych$/);
+  await expect(page.locator('#z-sytuacja-opis')).toHaveText('Akcja, szkolenie lub ćwiczenia OSP');
+});
+
+test.describe('telefon 320 px', () => {
+  test.use({ viewport: { width: 320, height: 640 } });
+  test('żadna opcja listy nie jest szersza niż pole', async ({ page }) => {
+    const uciete = await page.locator('#z-sytuacja').evaluate((el) => {
+      const s = el as HTMLSelectElement;
+      const styl = getComputedStyle(s);
+      const ctx = document.createElement('canvas').getContext('2d')!;
+      ctx.font = `${styl.fontWeight} ${styl.fontSize} ${styl.fontFamily}`;
+      const miejsce = s.clientWidth - 40;
+      return [...s.options].filter((o) => ctx.measureText(o.text).width > miejsce).map((o) => o.text);
+    });
+    expect(uciete).toEqual([]);
+  });
+});

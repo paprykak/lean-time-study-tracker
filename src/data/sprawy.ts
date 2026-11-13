@@ -1,0 +1,107 @@
+// Język hali dla wyszukiwarki i strony głównej. Rejestr narzędzi (src/data/narzedzia.ts) dopisują zespoły fabryki,
+// więc potoczne słowa i najczęstsze sprawy są tutaj, w osobnym pliku. Test src/lib/szukaj-narzedzi.test.ts pilnuje,
+// że każdy slug istnieje w rejestrze. Nowe narzędzie działa w wyszukiwarce bez wpisu (nazwa, opis i pytania z FAQ);
+// hasło dopisujesz tylko wtedy, gdy ludzie mówią o sprawie słowem, którego nie ma w nazwie ani w pytaniach.
+
+/** Potoczne słowa, pod którymi ludzie szukają narzędzia (slug → hasła). */
+export const HASLA: Record<string, string[]> = {
+  'kalkulator-l4': ['chorobowe', 'zwolnienie lekarskie', 'choroba', 'zasiłek chorobowy', 'e-ZLA', 'ile dostanę na L4'],
+  'okres-zasilkowy': ['L4', 'chorobowe', '182 dni', 'długie zwolnienie'],
+  'zwolnienie-na-l4': ['zwolnienie lekarskie', 'choroba', 'wypowiedzenie na L4', 'art. 53'],
+  'l4-po-zwolnieniu': ['zwolnienie lekarskie', 'choroba po pracy', 'po umowie'],
+  'swiadczenie-rehabilitacyjne': ['po L4', 'po 182 dniach', 'rehabilitacyjne'],
+  'brutto-netto': ['pensja', 'wypłata', 'na rękę', 'pasek', 'netto', 'ile dostanę'],
+  'zlecenie-netto': ['umowa zlecenie', 'na rękę', 'student'],
+  'wyplata-z-nadgodzinami': ['pasek', 'pensja', 'nocki', 'wypłata', 'nadgodziny'],
+  'kalkulator-nadgodzin': ['nadgodziny', 'godziny nadliczbowe', 'dodatek 50', 'dodatek 100', 'nadgodzinki'],
+  'dodatek-za-prace-w-nocy': ['nocki', 'nocna zmiana', 'trzecia zmiana', 'nocne'],
+  'praca-w-niedziele': ['święto', 'weekend', 'sobota', 'dzień wolny za niedzielę'],
+  'placa-minimalna': ['najniższa krajowa', 'minimalne wynagrodzenie', 'pasek'],
+  'stawka-godzinowa': ['na godzinę', 'stawka', 'pensja'],
+  'termin-wyplaty-wynagrodzenia': ['kiedy wypłata', 'spóźniona wypłata', 'dziesiąty'],
+  'przedawnienie-wynagrodzenia': ['zaległa wypłata', 'niezapłacone nadgodziny', 'pozew'],
+  'wynagrodzenie-za-przestoj': ['postój', 'brak pracy', 'awaria', 'stoi linia', 'przestój'],
+  'koszt-pracodawcy': ['brutto brutto', 'ZUS pracodawcy', 'całkowity koszt'],
+  'kalkulator-ppk': ['emerytura', 'oszczędzanie', 'wpłaty PPK'],
+  'delegacja-krajowa': ['wyjazd służbowy', 'podróż służbowa', 'dieta'],
+  'delegacja-zagraniczna': ['wyjazd za granicę', 'podróż służbowa', 'dieta zagraniczna'],
+  'zasilek-macierzynski': ['ciąża', 'macierzyński', 'rodzicielski', 'urodzenie dziecka'],
+  'zasilek-opiekunczy': ['chore dziecko', 'opieka nad dzieckiem', 'L4 na dziecko', 'opieka'],
+  'kalkulator-urlopu': ['urlop', 'ile dni urlopu', 'wypoczynkowy', '26 dni', '20 dni'],
+  'ekwiwalent-za-urlop': ['niewykorzystany urlop', 'urlop po zwolnieniu', 'pieniądze za urlop'],
+  'wynagrodzenie-za-urlop': ['urlopowe', 'płatny urlop', 'ile za urlop'],
+  'urlop-okolicznosciowy': ['ślub', 'pogrzeb', 'narodziny dziecka', 'okolicznościowy', 'krwiodawca'],
+  'wolne-na-dziecko': ['opieka nad dzieckiem', '2 dni', 'siła wyższa', 'art. 188'],
+  'rodzic-w-pracy': ['dziecko', 'praca zdalna', 'elastyczny czas', 'rodzic'],
+  'urlop-ojcowski': ['tata', 'ojciec', 'narodziny dziecka'],
+  'urlop-wychowawczy': ['wychowawczy', 'dziecko', 'opieka nad dzieckiem'],
+  'dni-wolne-od-pracy': ['święta', 'długi weekend', 'kalendarz', 'mostek'],
+  'urlop-w-agencji-pracy': ['agencja', 'praca tymczasowa', 'urlop'],
+  'okres-wypowiedzenia': ['wypowiedzenie', 'zwolnienie', 'odejście z pracy', 'zwalniają mnie', 'rzucam pracę'],
+  'kalkulator-odprawy': ['odprawa', 'zwolnienie', 'likwidacja stanowiska'],
+  'odszkodowanie-za-zwolnienie': ['niesłuszne zwolnienie', 'zwolnienie dyscyplinarne', 'przywrócenie do pracy'],
+  'odwolanie-do-sadu-pracy': ['sąd pracy', 'odwołanie', 'dyscyplinarka', 'termin 21 dni'],
+  'zwolnienia-grupowe': ['redukcja etatów', 'zwolnienia', 'odprawa'],
+  'ochrona-przedemerytalna': ['emerytura', '4 lata przed emeryturą', 'wiek emerytalny'],
+  'umowa-na-czas-okreslony': ['33 miesiące', 'trzecia umowa', 'umowa na stałe'],
+  'okres-probny': ['umowa na okres próbny', 'pierwsza umowa'],
+  'kara-porzadkowa': ['nagana', 'upomnienie', 'kara pieniężna', 'sprzeciw'],
+  'zakaz-konkurencji': ['konkurencja', 'praca u konkurencji', 'odszkodowanie'],
+  'zwrot-kosztow-szkolenia': ['lojalka', 'szkolenie', 'zwrot kosztów', 'kurs'],
+  'limit-pracy-tymczasowej': ['agencja pracy', 'praca tymczasowa', '18 miesięcy'],
+  'zasilek-dla-bezrobotnych': ['bezrobocie', 'urząd pracy', 'po zwolnieniu', 'kuroniówka'],
+  'staz-pracy': ['lata pracy', 'świadectwo pracy', 'staż'],
+  'odprawa-posmiertna': ['śmierć pracownika', 'rodzina', 'odprawa'],
+  'kontrola-grafiku': ['grafik', 'harmonogram', 'zmiany', 'odpoczynek', '11 godzin', '12 godzin'],
+  'wymiar-czasu-pracy': ['ile godzin', 'godziny w miesiącu', 'etat', 'norma godzin'],
+  'przerwy-w-pracy': ['przerwa', 'śniadaniowa', '15 minut', 'monitor'],
+  'dyzur-w-pracy': ['dyżur', 'pod telefonem', 'gotowość'],
+  'dni-robocze': ['dni robocze', 'termin', 'kalendarz'],
+  'pracownik-mlodociany': ['uczeń', 'praktykant', 'nieletni', 'młodociany'],
+  'pracownik-niepelnosprawny': ['orzeczenie', 'niepełnosprawność', 'krótszy czas pracy'],
+  'temperatura-w-pracy': ['zimno', 'upał', 'gorąco', 'ogrzewanie', 'napoje'],
+  'halas-w-pracy': ['hałas', 'głośno', 'nauszniki', 'decybele'],
+  'drgania-w-pracy': ['wibracje', 'drgania', 'młot', 'wózek'],
+  'szkolenie-okresowe-bhp': ['szkolenie BHP', 'szkolenie okresowe', 'termin BHP'],
+  'kontrola-trzezwosci': ['alkomat', 'alkohol', 'nietrzeźwy', 'kac'],
+  'praca-w-ciazy': ['ciąża', 'w ciąży', 'monitor', 'stanie'],
+  'normy-sanitarne': ['toaleta', 'WC', 'szatnia', 'prysznic'],
+  'powierzchnia-na-pracownika': ['ile osób w pomieszczeniu', 'metry na osobę'],
+  'odszkodowanie-za-wypadek-przy-pracy': ['wypadek', 'uszczerbek', 'ZUS', 'wypadek przy pracy'],
+  'ile-kg-wolno-dzwigac': ['dźwiganie', 'ciężary', 'podnoszenie', 'normy dźwigania', 'kilogramy'],
+  'waznosc-uprawnien-udt': ['UDT', 'wózek widłowy', 'uprawnienia na wózek', 'suwnica', 'przedłużenie uprawnień'],
+  'badania-udt': ['przegląd wózka', 'UDT', 'konserwacja', 'wózek widłowy'],
+};
+
+/**
+ * Najczęstsze sprawy z hali na stronie głównej: pytanie w języku ludzi → narzędzie. Wybór redakcji, dopóki nie ma
+ * statystyk; potem kolejność według odsłon, a brzmienie pytań zostaje ręczne. Zastępuje karty NA_GLOWNEJ.
+ */
+export const NAJCZESTSZE: { pytanie: string; slug: string }[] = [
+  { pytanie: 'Ile dostanę za dni na L4?', slug: 'kalkulator-l4' },
+  { pytanie: 'Ile zapłacą mi za nadgodziny?', slug: 'kalkulator-nadgodzin' },
+  { pytanie: 'Ile wyjdzie na rękę z mojej pensji?', slug: 'brutto-netto' },
+  { pytanie: 'Ile mam dodatku za nocki?', slug: 'dodatek-za-prace-w-nocy' },
+  { pytanie: 'Ile dni urlopu mam w tym roku?', slug: 'kalkulator-urlopu' },
+  { pytanie: 'Czy mój grafik zmian jest zgodny z przepisami?', slug: 'kontrola-grafiku' },
+  { pytanie: 'Ile przerwy mam na zmianie 12 godzin?', slug: 'przerwy-w-pracy' },
+  { pytanie: 'Ile mam wypowiedzenia?', slug: 'okres-wypowiedzenia' },
+  { pytanie: 'Do kiedy ważne są moje uprawnienia na wózek?', slug: 'waznosc-uprawnien-udt' },
+  { pytanie: 'Ile kilogramów wolno mi dźwigać?', slug: 'ile-kg-wolno-dzwigac' },
+  { pytanie: 'Na hali jest za zimno albo za gorąco. Co wtedy?', slug: 'temperatura-w-pracy' },
+  { pytanie: 'Co się należy za pracę w niedzielę albo w święto?', slug: 'praca-w-niedziele' },
+];
+
+/** Podpowiedzi pod polem wyszukiwania na stronie głównej: słowa, które ludzie wpisują najczęściej. */
+export const CZESTO_SZUKANE = ['L4', 'nadgodziny', 'nocki', 'urlop', 'wypowiedzenie', 'UDT na wózek', 'ile kg'];
+
+/** Słowa z hali pod nazwą kategorii na stronie głównej (klucze z KATEGORIE w src/data/narzedzia.ts). */
+export const SLOWA_KATEGORII: Record<string, string> = {
+  'czas-pracy': 'grafik, przerwy, wymiar godzin, niedziele',
+  wynagrodzenie: 'na rękę, nadgodziny, nocki, L4, delegacje',
+  urlopy: 'ile dni, ekwiwalent, wolne na dziecko, święta',
+  umowa: 'wypowiedzenie, odprawa, okres próbny, agencja',
+  bhp: 'hałas, temperatura, szkolenie, wypadek',
+  uprawnienia: 'UDT na wózek, przedłużenie',
+  transport: 'ile kg, badania wózka',
+};

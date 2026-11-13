@@ -22,3 +22,10 @@ test('6 mężczyzn, zwykła praca, bez natrysków: jedna umywalka, bez jadalni',
   await expect(page.locator('[data-w="natryski"]')).toHaveText('0');
   await expect(page.locator('[data-w="jadalnia"]')).toContainText('niewymagana');
 });
+
+test('10 osób przy pracy brudzącej: jadalnia wymagana (§ 29 ust. 2)', async ({ page }) => {
+  await page.getByLabel('Mężczyźni').fill('10');
+  await page.getByLabel('Kobiety').fill('0');
+  await page.getByLabel(/Praca brudząca albo/).check();
+  await expect(page.locator('[data-w="jadalnia"]')).toContainText(/§\s29\sust\.\s2/);
+});

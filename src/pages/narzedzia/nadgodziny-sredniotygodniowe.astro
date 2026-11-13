@@ -1,0 +1,249 @@
+---
+// Nadgodziny średniotygodniowe z bilansu okresu rozliczeniowego i limit przeciętnie 48 h w tygodniu
+// (art. 129–131, 151, 151¹ § 2 i 151² Kp). Logika i teksty wyniku: src/lib/narzedzia/nadgodziny-okres.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { nazwaMiesiaca } from '../../lib/narzedzia/czas-pracy';
+import { ETATY, LIMIT_ROCZNY, nadgodzinyOkresu, OKRESY, tekstyWyniku, type DaneOkresu } from '../../lib/narzedzia/nadgodziny-okres';
+import { typografia } from '../../lib/typografia.mjs';
+import { LATA } from '../../data/prawo';
+
+const rokBudowy = new Date().getUTCFullYear();
+const latDoWyboru = [...new Set([...LATA, rokBudowy, rokBudowy + 1])].sort((a, b) => a - b);
+const START: DaneOkresu = { rok: 2026, miesiac: 11, miesiecy: 1, etat: 1, przepracowane: 184, dobowe: 10, nieobecnosc: 0, stawka: 40 };
+const r = nadgodzinyOkresu(START);
+const t = Object.fromEntries(Object.entries(tekstyWyniku(r, START.etat, START.nieobecnosc)).map(([k, v]) => [k, typografia(v)])) as Record<string, string>;
+const okres = (n: number) => (n === 1 ? '1 miesiąc' : n < 5 ? `${n} miesiące` : `${n} miesięcy`);
+
+const faq = [
+  {
+    pytanie: 'Co to są nadgodziny średniotygodniowe?',
+    odpowiedz: 'To praca ponad wymiar czasu pracy okresu rozliczeniowego, czyli ponad przeciętnie 40 godzin w tygodniu. Nie wlicza się do nich nadgodzin dobowych. Pracą w godzinach nadliczbowych jest praca ponad normy czasu pracy (art. 151 § 1 Kodeksu pracy), a jedną z norm jest przeciętnie 40 godzin w przeciętnie pięciodniowym tygodniu (art. 129 § 1).',
+  },
+  {
+    pytanie: 'Nadgodziny średniotygodniowe: 50 czy 100%?',
+    odpowiedz: 'Zawsze 100%. Dodatek w tej wysokości przysługuje za każdą godzinę z przekroczenia przeciętnej tygodniowej normy, chyba że przekroczenie wynika z nadgodzin, za które dodatek już przysługuje, na przykład dobowych (art. 151^1 § 2 Kodeksu pracy). Za nadgodziny dobowe dodatek wynosi 100% w nocy, w niedziele i święta wolne z grafiku i w dniu wolnym za niedzielę lub święto, a w pozostałe dni 50% (art. 151^1 § 1).',
+  },
+  {
+    pytanie: 'Jak policzyć nadgodziny średniotygodniowe?',
+    odpowiedz: 'Od godzin przepracowanych w okresie odejmij nadgodziny dobowe i wymiar czasu pracy okresu, obniżony o godziny urlopu i zwolnienia z grafiku (art. 130 § 3 Kodeksu pracy). Na przykład w listopadzie 2026 r. przy 184 godzinach pracy i 10 nadgodzinach dobowych: 184 − 10 − 160 = 14 godzin.',
+  },
+  {
+    pytanie: 'Czy można pracować więcej niż 48 godzin tygodniowo?',
+    odpowiedz: 'Limit dotyczy przeciętnej: tygodniowy czas pracy z nadgodzinami nie może przekraczać przeciętnie 48 godzin w okresie rozliczeniowym (art. 131 § 1 Kodeksu pracy). Nie dotyczy to pracowników zarządzających zakładem pracy (§ 2). Nadgodzin ze szczególnych potrzeb pracodawcy może być najwyżej 150 w roku kalendarzowym. Inną liczbę może ustalić układ zbiorowy albo regulamin pracy, a gdy pracodawca nie ma układu ani obowiązku wydania regulaminu, umowa o pracę (art. 151 § 3 i 4).',
+  },
+  {
+    pytanie: 'Czy urlop i L4 zmniejszają wymiar czasu pracy?',
+    odpowiedz: 'Tak. Wymiar w okresie rozliczeniowym obniża się o godziny usprawiedliwionej nieobecności, które według grafiku miały być przepracowane (art. 130 § 3 Kodeksu pracy). Urlop na 5 dni po 8 godzin obniża go o 40 godzin, więc nadgodziny zaczynają się wcześniej.',
+  },
+  {
+    pytanie: 'Czy zamiast dodatku można dostać wolne?',
+    odpowiedz: 'Tak. Na Twój wniosek pracodawca może dać czas wolny w tym samym wymiarze (art. 151^2 § 1 Kodeksu pracy). Bez wniosku daje o połowę więcej czasu wolnego, najpóźniej do końca okresu rozliczeniowego, i nie może przez to obniżyć wynagrodzenia za pełny miesięczny wymiar (§ 2). Wtedy dodatek nie przysługuje (§ 3).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="nadgodziny-sredniotygodniowe"
+  tytul="Nadgodziny średniotygodniowe: kalkulator"
+  opis="Ile masz nadgodzin średniotygodniowych w okresie rozliczeniowym, ile wynosi dodatek 100% i czy mieścisz się w limicie przeciętnie 48 godzin w tygodniu."
+  h1="Nadgodziny średniotygodniowe i limit 48 godzin"
+  lead="Nadgodziny średniotygodniowe to godziny ponad wymiar okresu rozliczeniowego, które nie są nadgodzinami dobowymi. Za każdą należy się dodatek 100%. Wpisz godziny z okresu, a policzymy nadgodziny i sprawdzimy limit przeciętnie 48 godzin w tygodniu."
+  faq={faq}
+  objasnienia={['mrpipsNadgodziny', 'dyrektywaCzasPracy']}
+>
+  <form class="kalkulator" data-nadgodziny-okres novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twój okres rozliczeniowy</h2>
+      <fieldset class="mt-4">
+        <legend class="etykieta">Początek okresu</legend>
+        <div class="mt-2 grid grid-cols-[minmax(0,3fr)_minmax(0,2fr)] gap-3">
+          <label class="sr-only" for="no-miesiac">Miesiąc</label>
+          <select id="no-miesiac" name="miesiac" class="pole">
+            {Array.from({ length: 12 }, (_, i) => <option value={i + 1} selected={i + 1 === START.miesiac}>{nazwaMiesiaca(i + 1)}</option>)}
+          </select>
+          <label class="sr-only" for="no-rok">Rok</label>
+          <select id="no-rok" name="rok" class="pole">
+            {latDoWyboru.map((x) => <option value={x} selected={x === START.rok}>{x}</option>)}
+          </select>
+        </div>
+      </fieldset>
+      <div class="mt-4 grid grid-cols-1 gap-4 min-[360px]:grid-cols-2">
+        <div>
+          <label for="no-dlugosc" class="etykieta-pola">Długość okresu</label>
+          <select id="no-dlugosc" name="dlugosc" class="pole mt-1">
+            {OKRESY.map((n) => <option value={n} selected={n === START.miesiecy}>{okres(n)}</option>)}
+          </select>
+        </div>
+        <div>
+          <label for="no-etat" class="etykieta-pola">Etat</label>
+          <select id="no-etat" name="etat" class="pole mt-1">
+            {ETATY.map(([v, n]) => <option value={v} selected={v === '1'}>{n}</option>)}
+          </select>
+        </div>
+      </div>
+      <div class="mt-4 grid grid-cols-1 gap-4 min-[360px]:grid-cols-2">
+        <div>
+          <label for="no-przepracowane" class="etykieta-pola">Przepracowane godziny</label>
+          <input id="no-przepracowane" name="przepracowane" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value={String(START.przepracowane)} aria-describedby="no-przepracowane-opis no-blad" />
+          <p id="no-przepracowane-opis" class="meta mt-1">Łącznie z nadgodzinami</p>
+        </div>
+        <div>
+          <label for="no-dobowe" class="etykieta-pola">W tym nadgodziny dobowe</label>
+          <input id="no-dobowe" name="dobowe" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value={String(START.dobowe)} aria-describedby="no-dobowe-opis no-blad" />
+          <p id="no-dobowe-opis" class="meta mt-1">Ponad 8 h albo ponad plan dnia</p>
+        </div>
+      </div>
+      <div class="mt-4 grid grid-cols-1 gap-4 min-[360px]:grid-cols-2">
+        <div>
+          <label for="no-nieobecnosc" class="etykieta-pola">Urlop, L4 (godziny)</label>
+          <input id="no-nieobecnosc" name="nieobecnosc" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value={String(START.nieobecnosc)} aria-describedby="no-nieobecnosc-opis no-blad" />
+          <p id="no-nieobecnosc-opis" class="meta mt-1">Godziny z grafiku w dniach nieobecności</p>
+        </div>
+        <div>
+          <label for="no-stawka" class="etykieta-pola">Stawka za godzinę (zł)</label>
+          <input id="no-stawka" name="stawka" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value={String(START.stawka)} aria-describedby="no-blad" />
+          <p class="meta mt-1">Można pominąć</p>
+        </div>
+      </div>
+      <p id="no-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Nadgodziny średniotygodniowe (100%)</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-kwota" data-w="glowna">{t.glowna}</p>
+        <p class="meta" data-w="opis">{t.opis}</p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Wymiar okresu (pełny etat)</dt><dd data-w="wymiar">{t.wymiar}</dd></div>
+        <div data-wiersz="etat" hidden><dt>Wymiar Twojego etatu</dt><dd data-w="etat">{t.etat}</dd></div>
+        <div><dt>Wymiar po obniżeniu</dt><dd data-w="obnizony">{t.obnizony}</dd></div>
+        <div><dt>Nadgodziny dobowe (50 lub 100%, tu bez wyceny)</dt><dd data-w="dobowe">{t.dobowe}</dd></div>
+        <div data-wiersz="ponadwymiarowe" hidden><dt>Godziny ponadwymiarowe (niepełny etat)</dt><dd data-w="ponadwymiarowe">{t.ponadwymiarowe}</dd></div>
+        <div><dt>Nadgodziny średniotygodniowe (100%)</dt><dd data-w="sredniotygodniowe">{t.sredniotygodniowe}</dd></div>
+        <div><dt>Dodatek 100% za nie</dt><dd data-w="dodatek">{t.dodatek}</dd></div>
+        <div><dt>Średnio w tygodniu</dt><dd data-w="srednia">{t.srednia}</dd></div>
+        <div data-wiersz="neutralna" hidden><dt>Średnio bez tygodni urlopu i L4</dt><dd data-w="neutralna">{t.neutralna}</dd></div>
+        <div><dt>Limit przeciętnie 48 h</dt><dd data-w="limit" data-stan={t.stan}>{t.limit}</dd></div>
+      </dl>
+      <p class="wynik-uwaga" data-w="uwaga" hidden={!t.uwaga}>{t.uwaga}</p>
+      <p class="meta mt-4">
+        Zamiast dodatku pracodawca może dać czas wolny: na Twój wniosek godzina za godzinę, bez wniosku półtorej godziny
+        za godzinę do końca okresu rozliczeniowego (art. 151<sup>2</sup> Kp).
+      </p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Wynik powyżej to przykład dla listopada 2026 r.; zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="zasady">Nadgodziny w okresie rozliczeniowym: zasady</h2>
+    <ul>
+      <li>Norma: 8 godzin na dobę i przeciętnie 40 godzin w przeciętnie pięciodniowym tygodniu w okresie rozliczeniowym do 4 miesięcy (art. 129 § 1 Kodeksu pracy); okres można przedłużyć najwyżej do 12 miesięcy (art. 129 § 2).</li>
+      <li>Nadgodziny to praca ponad normy albo ponad przedłużony dobowy wymiar z Twojego grafiku (art. 151 § 1).</li>
+      <li>Za nadgodziny z przekroczenia przeciętnej tygodniowej normy dodatek wynosi 100% (art. 151<sup>1</sup> § 2).</li>
+      <li>Tygodniowy czas pracy z nadgodzinami: przeciętnie najwyżej 48 godzin w okresie (art. 131 § 1); tydzień to 7 dni od pierwszego dnia okresu (art. 128 § 3 pkt 2).</li>
+      <li>Nadgodzin ze szczególnych potrzeb pracodawcy najwyżej {LIMIT_ROCZNY} w roku kalendarzowym. Inną liczbę może ustalić układ zbiorowy albo regulamin pracy, a gdy pracodawca nie ma układu ani obowiązku wydania regulaminu, umowa o pracę (art. 151 § 3 i 4). Kalkulator widzi jeden okres, więc tego limitu nie sprawdza.</li>
+    </ul>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <ol>
+      <li>Wymiar okresu dla pełnego etatu: 8 godzin za każdy dzień od poniedziałku do piątku minus 8 godzin za każde święto poza niedzielą (art. 130 § 1 i 2). W listopadzie 2026 r.: 21 dni × 8 h − 8 h za 11 listopada = 160 h. Przy niepełnym etacie mnożymy go przez ułamek etatu.</li>
+      <li>Odejmujemy godziny urlopu, L4 i innej usprawiedliwionej nieobecności, które były w grafiku (art. 130 § 3).</li>
+      <li>Od przepracowanych godzin odejmujemy nadgodziny dobowe, bo za nie dodatek już przysługuje (art. 151<sup>1</sup> § 2). Reszta ponad wymiar to nadgodziny średniotygodniowe: 184 − 10 − 160 = 14 h, a przy stawce 40 zł dodatek 100% to 14 × 40 zł = 560,00 zł.</li>
+      <li>Średnia tygodniowa: przepracowane godziny przez liczbę tygodni, czyli dni okresu podzielone przez 7. W listopadzie: 184 h ÷ (30 ÷ 7) = 42,93 h. Do limitu zostaje 48 h × liczba tygodni bez nieobecności minus godziny przepracowane.</li>
+    </ol>
+    <p><strong>Czego przepis nie mówi.</strong></p>
+    <ul>
+      <li>Kodeks pracy nie mówi, jak liczyć średnią 48 godzin, gdy w okresie był urlop albo L4. Według brzmienia art. 131 § 1 dzielimy przepracowane godziny przez wszystkie tygodnie okresu. Dyrektywa 2003/88/WE (art. 16 lit. b) mówi, że okresy płatnego urlopu wypoczynkowego i zwolnień lekarskich nie są wliczane do średniej albo są dla niej neutralne. Dlatego pokazujemy też średnią z tygodni bez nieobecności: godziny nieobecności z grafiku dzielimy przez tygodniową normę etatu (40 godzin przy pełnym etacie) i o tyle tygodni zmniejszamy okres. Limit uznajemy za dochowany, gdy oba warianty wynoszą najwyżej 48 h.</li>
+      <li>Przy niepełnym etacie godziny ponad wymiar etatu, ale do wymiaru pełnego etatu, pokazujemy jako ponadwymiarowe (art. 151 § 5), a dopiero ponad wymiar pełnego etatu jako nadgodziny średniotygodniowe. Przepis nie mówi, czy nieobecność obniża też ten próg pełnego etatu. Obniżamy go o te same godziny: to wariant korzystny dla Ciebie, bo nadgodziny zaczynają się wcześniej.</li>
+    </ul>
+    <p>
+      Ile wynosi dodatek 50% albo 100% za konkretne godziny, policzy <a href="/narzedzia/kalkulator-nadgodzin">kalkulator nadgodzin</a>,
+      wymiar w każdym miesiącu i okresie pokaże <a href="/narzedzia/wymiar-czasu-pracy">kalkulator wymiaru czasu pracy</a>,
+      co za pracę w wolną sobotę, sprawdzisz w kalkulatorze <a href="/narzedzia/praca-w-sobote">praca w sobotę</a>,
+      a czy zmiana nie wchodzi w tę samą dobę, w kalkulatorze <a href="/narzedzia/doba-pracownicza">doby pracowniczej</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { nadgodzinyOkresu, tekstyWyniku, ulamekEtatu } from '../../lib/narzedzia/nadgodziny-okres';
+  import { wpisanaLiczba } from '../../lib/narzedzia/format';
+  import { typografia } from '../../lib/typografia.mjs';
+
+  const form = document.querySelector<HTMLFormElement>('[data-nadgodziny-okres]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const wiersz = (k: string) => form.querySelector<HTMLElement>(`[data-wiersz="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const POLA = ['glowna', 'opis', 'wymiar', 'etat', 'obnizony', 'dobowe', 'ponadwymiarowe', 'sredniotygodniowe', 'dodatek', 'srednia', 'neutralna', 'limit', 'uwaga'] as const;
+    const NAZWY: Record<string, string> = { przepracowane: 'przepracowane godziny', dobowe: 'nadgodziny dobowe', nieobecnosc: 'urlop i L4' };
+    const przelicz = () => {
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      const liczby: Record<string, number> = {};
+      let blad: string | null = null;
+      for (const n of ['przepracowane', 'dobowe', 'nieobecnosc', 'stawka']) el(n).removeAttribute('aria-invalid');
+      for (const n of ['przepracowane', 'dobowe', 'nieobecnosc']) {
+        liczby[n] = wpisanaLiczba(el(n).value || '0');
+        if (Number.isNaN(liczby[n])) {
+          blad ??= `Pole „${NAZWY[n]}”: wpisz liczbę, np. 7,5.`;
+          el(n).setAttribute('aria-invalid', 'true');
+        }
+      }
+      const stawkaTekst = el('stawka').value.trim();
+      const stawka = stawkaTekst ? wpisanaLiczba(stawkaTekst) : undefined;
+      if (Number.isNaN(stawka)) {
+        blad ??= 'Stawka: wpisz liczbę, np. 32,50.';
+        el('stawka').setAttribute('aria-invalid', 'true');
+      }
+      const etat = ulamekEtatu(el('etat').value);
+      let r: ReturnType<typeof nadgodzinyOkresu> | null = null;
+      if (!blad) {
+        try {
+          r = nadgodzinyOkresu({
+            rok: Number(el('rok').value),
+            miesiac: Number(el('miesiac').value),
+            miesiecy: Number(el('dlugosc').value),
+            etat,
+            przepracowane: liczby.przepracowane,
+            dobowe: liczby.dobowe,
+            nieobecnosc: liczby.nieobecnosc,
+            stawka,
+          });
+        } catch (e) {
+          if (!(e instanceof RangeError)) throw e;
+          blad = `${e.message}.`;
+        }
+      }
+      b.hidden = !blad;
+      b.textContent = blad ? typografia(blad) : '';
+      if (!r) {
+        for (const k of POLA) w(k).textContent = k === 'glowna' ? '—' : k === 'uwaga' ? '' : '—';
+        w('opis').textContent = '';
+        w('uwaga').hidden = true;
+        delete w('limit').dataset.stan;
+        return;
+      }
+      const t = tekstyWyniku(r, etat, liczby.nieobecnosc);
+      for (const k of POLA) w(k).textContent = typografia(t[k]);
+      w('limit').dataset.stan = t.stan;
+      w('uwaga').hidden = !t.uwaga;
+      wiersz('etat').hidden = etat === 1;
+      wiersz('ponadwymiarowe').hidden = etat === 1;
+      wiersz('neutralna').hidden = liczby.nieobecnosc === 0;
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>
+
+<style>
+  [data-stan='ok'] {
+    color: var(--color-sukces);
+  }
+  [data-stan='blad'] {
+    color: var(--color-blad);
+    font-weight: 600;
+  }
+</style>

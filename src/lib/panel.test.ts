@@ -4,7 +4,7 @@ import { createHash } from 'node:crypto';
 import { parse } from 'yaml';
 import { Ajv } from 'ajv';
 import { frontmatter } from './mapa.mjs';
-import { FORMATY, LICENCJE, MIEJSCA_REKLAM } from './model';
+import { MIEJSCA_REKLAM } from './model';
 
 // Panel redakcji (public/admin/config.yml) a model treści (src/content.config.ts). Rozjazd w którąkolwiek stronę
 // kończy się źle: pole spoza schematu Astro po cichu znika przy buildzie, a pole schematu bez pola w panelu
@@ -119,7 +119,7 @@ describe('konfiguracja panelu', () => {
 
 describe('panel a model treści', () => {
   it('każda kolekcja z folderu ma odpowiednik w src/content.config.ts', () => {
-    expect(zFolderu.map((k) => k.name).sort()).toEqual(['artykuly', 'autorzy', 'dzialy', 'kampanie', 'materialy', 'partnerzy', 'strony', 'tematy', 'zdjecia']);
+    expect(zFolderu.map((k) => k.name).sort()).toEqual(['kampanie', 'partnerzy', 'strony']);
   });
 
   for (const k of zFolderu) {
@@ -139,10 +139,8 @@ describe('panel a model treści', () => {
     });
   }
 
-  it('listy wyboru panelu to te same stałe co w modelu (formaty, licencje, miejsca reklam)', () => {
+  it('lista miejsc reklam w panelu to ta sama stała co w modelu', () => {
     const pole = (kolekcja: string, nazwa: string) => kolekcje.find((k) => k.name === kolekcja)!.fields!.find((p) => p.name === nazwa)!;
-    expect(wartosci(pole('artykuly', 'format'))).toEqual([...FORMATY]);
-    expect(wartosci(pole('zdjecia', 'licencja'))).toEqual([...LICENCJE]);
     expect(wartosci(pole('kampanie', 'miejsca'))).toEqual([...MIEJSCA_REKLAM]);
   });
 
@@ -178,12 +176,13 @@ describe('ustawienia serwisu w panelu', () => {
     expect(roznice(plik.fields, dane, 'ustawienia')).toEqual([]);
   });
 
-  it('pasek tematów wskazuje istniejące tematy, a linki menu i stopki są wypełnione', () => {
-    for (const t of dane.tematyWyroznione) expect(existsSync(new URL(`src/content/tematy/${t}.json`, ROOT)), t).toBe(true);
-    const linki = [...dane.menuDodatkowe, ...dane.pasekGorny, ...dane.stopka.serwis, ...dane.stopka.wspolpraca, ...dane.stopka.prawne];
+  it('linki paska górnego i stopki są wypełnione i nie prowadzą do usuniętych adresów', async () => {
+    const { usuniety } = await import('../../worker/usuniete.js');
+    const linki = [...dane.pasekGorny, ...dane.stopka.serwis, ...dane.stopka.wspolpraca, ...dane.stopka.prawne];
     for (const l of linki) {
       expect(l.nazwa.trim().length, JSON.stringify(l)).toBeGreaterThan(0);
       expect(l.adres, JSON.stringify(l)).toMatch(/^\/[a-z0-9\-/.]*$|^https:\/\//);
+      expect(usuniety(l.adres), JSON.stringify(l)).toBeNull();
     }
   });
 });

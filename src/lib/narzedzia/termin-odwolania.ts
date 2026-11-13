@@ -7,14 +7,17 @@ import { dodajDni } from './terminy';
 
 export type Sprawa = 'wypowiedzenie' | 'bez-wypowiedzenia' | 'odmowa-przyjecia' | 'sprostowanie-wniosek' | 'sprostowanie-sad' | 'kara-sprzeciw' | 'kara-sad';
 
-export const SPRAWY: Record<Sprawa, { nazwa: string; dni: number; zdarzenie: string; gdzie: 'sąd pracy' | 'pracodawca'; przepis: string }> = {
-  wypowiedzenie: { nazwa: 'Odwołanie od wypowiedzenia', dni: 21, zdarzenie: 'Dzień doręczenia wypowiedzenia', gdzie: 'sąd pracy', przepis: 'art. 264 § 1 Kodeksu pracy' },
-  'bez-wypowiedzenia': { nazwa: 'Zwolnienie bez wypowiedzenia albo wygaśnięcie umowy', dni: 21, zdarzenie: 'Dzień doręczenia pisma albo wygaśnięcia umowy', gdzie: 'sąd pracy', przepis: 'art. 264 § 2 Kodeksu pracy' },
-  'odmowa-przyjecia': { nazwa: 'Odmowa przyjęcia do pracy', dni: 21, zdarzenie: 'Dzień doręczenia odmowy', gdzie: 'sąd pracy', przepis: 'art. 264 § 3 Kodeksu pracy' },
-  'sprostowanie-wniosek': { nazwa: 'Wniosek o sprostowanie świadectwa pracy', dni: 14, zdarzenie: 'Dzień otrzymania świadectwa pracy', gdzie: 'pracodawca', przepis: 'art. 97 § 2¹ zdanie pierwsze Kodeksu pracy' },
-  'sprostowanie-sad': { nazwa: 'Sprostowanie świadectwa w sądzie po odmowie', dni: 14, zdarzenie: 'Dzień zawiadomienia o odmowie sprostowania', gdzie: 'sąd pracy', przepis: 'art. 97 § 2¹ zdanie drugie Kodeksu pracy' },
-  'kara-sprzeciw': { nazwa: 'Sprzeciw od kary porządkowej', dni: 7, zdarzenie: 'Dzień zawiadomienia o karze', gdzie: 'pracodawca', przepis: 'art. 112 § 1 Kodeksu pracy' },
-  'kara-sad': { nazwa: 'Uchylenie kary porządkowej w sądzie', dni: 14, zdarzenie: 'Dzień zawiadomienia o odrzuceniu sprzeciwu', gdzie: 'sąd pracy', przepis: 'art. 112 § 2 Kodeksu pracy' },
+/** `krotko` do listy wyboru (telefon ucina długie opcje); `przywrocenie`: czy art. 265 § 1 Kp pozwala przywrócić termin
+ * (tylko czynności z art. 97 § 2^1 i art. 264; sprzeciw od kary składa się pracodawcy, a pozwu z art. 112 § 2 art. 265
+ * nie wymienia). */
+export const SPRAWY: Record<Sprawa, { nazwa: string; krotko: string; dni: number; zdarzenie: string; gdzie: 'sąd pracy' | 'pracodawca'; przepis: string; przywrocenie: boolean }> = {
+  wypowiedzenie: { nazwa: 'Odwołanie od wypowiedzenia', krotko: 'Wypowiedzenie', dni: 21, zdarzenie: 'Dzień doręczenia wypowiedzenia', gdzie: 'sąd pracy', przepis: 'art. 264 § 1 Kodeksu pracy', przywrocenie: true },
+  'bez-wypowiedzenia': { nazwa: 'Zwolnienie bez wypowiedzenia albo wygaśnięcie umowy', krotko: 'Dyscyplinarka, wygaśnięcie', dni: 21, zdarzenie: 'Dzień doręczenia pisma albo wygaśnięcia umowy', gdzie: 'sąd pracy', przepis: 'art. 264 § 2 Kodeksu pracy', przywrocenie: true },
+  'odmowa-przyjecia': { nazwa: 'Odmowa przyjęcia do pracy', krotko: 'Odmowa przyjęcia do pracy', dni: 21, zdarzenie: 'Dzień doręczenia odmowy', gdzie: 'sąd pracy', przepis: 'art. 264 § 3 Kodeksu pracy', przywrocenie: true },
+  'sprostowanie-wniosek': { nazwa: 'Wniosek o sprostowanie świadectwa pracy', krotko: 'Sprostowanie świadectwa', dni: 14, zdarzenie: 'Dzień otrzymania świadectwa pracy', gdzie: 'pracodawca', przepis: 'art. 97 § 2¹ zdanie pierwsze Kodeksu pracy', przywrocenie: true },
+  'sprostowanie-sad': { nazwa: 'Sprostowanie świadectwa w sądzie po odmowie', krotko: 'Świadectwo: pozew', dni: 14, zdarzenie: 'Dzień zawiadomienia o odmowie sprostowania', gdzie: 'sąd pracy', przepis: 'art. 97 § 2¹ zdanie drugie Kodeksu pracy', przywrocenie: true },
+  'kara-sprzeciw': { nazwa: 'Sprzeciw od kary porządkowej', krotko: 'Sprzeciw od kary', dni: 7, zdarzenie: 'Dzień zawiadomienia o karze', gdzie: 'pracodawca', przepis: 'art. 112 § 1 Kodeksu pracy', przywrocenie: false },
+  'kara-sad': { nazwa: 'Uchylenie kary porządkowej w sądzie', krotko: 'Kara: pozew do sądu', dni: 14, zdarzenie: 'Dzień zawiadomienia o odrzuceniu sprzeciwu', gdzie: 'sąd pracy', przepis: 'art. 112 § 2 Kodeksu pracy', przywrocenie: false },
 };
 
 export interface TerminCzynnosci {
