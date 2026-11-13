@@ -71,6 +71,8 @@ export const HASLA: Record<string, string[]> = {
   'ile-kg-wolno-dzwigac': ['dźwiganie', 'ciężary', 'podnoszenie', 'normy dźwigania', 'kilogramy'],
   'waznosc-uprawnien-udt': ['UDT', 'wózek widłowy', 'uprawnienia na wózek', 'suwnica', 'przedłużenie uprawnień'],
   'badania-udt': ['przegląd wózka', 'UDT', 'konserwacja', 'wózek widłowy'],
+  'mobbing-i-dyskryminacja': ['nękanie', 'molestowanie', 'równe traktowanie', 'odszkodowanie za mobbing', 'gorsze traktowanie'],
+  'sad-pracy-czy-pip': ['inspekcja pracy', 'skarga na pracodawcę', 'zgłoszenie do PIP', 'anonimowa skarga', 'pozew', 'koszty sądowe'],
 };
 
 /**

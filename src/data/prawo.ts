@@ -752,6 +752,41 @@ export const AKTY = {
     adres: eli(2024, 964),
     sprawdzono: '2026-11-13',
   },
+  zmianaMobbing2026: {
+    nazwa: 'Ustawa z 19 czerwca 2026 r. o zmianie ustawy – Kodeks pracy oraz ustawy – Kodeks postępowania cywilnego',
+    publikator: 'Dz.U. 2026 poz. 1046',
+    uwaga: 'w mocy od 5 listopada 2026 r.: nowe art. 18³d–18³g i 94³–94³a Kp (zadośćuczynienie 1, 3 i 6 płac minimalnych, ciężar dowodu, definicja mobbingu), zmiany art. 18³a § 2, 3, 4¹ i 5 Kp; art. 47, 461 § 1¹ i 477⁶a KPC; art. 3: nowe przepisy także do wielokrotnego naruszenia równego traktowania i uporczywego nękania, które rozpoczęły się przed tym dniem i trwały po nim; art. 5: do spraw wszczętych wcześniej KPC w dawnym brzmieniu',
+    adres: eli(2026, 1046),
+    sprawdzono: '2026-11-13',
+  },
+  kosztySadowe: {
+    nazwa: 'Ustawa o kosztach sądowych w sprawach cywilnych',
+    publikator: 'Dz.U. 2025 poz. 1228',
+    uwaga: 'tekst jednolity; art. 13 (opłata stała do 20 000 zł, 5% powyżej, od 23 września 2025 r. najwyżej 100 000 zł: Dz.U. 2025 poz. 1157), art. 35 ust. 1 (opłata od apelacji pracownika tylko od wartości ponad 50 000 zł), art. 96 ust. 1 pkt 4 i art. 97 (pracownik bez kosztów przy pozwie); zmiany Dz.U. 2025 poz. 1172, 2026 poz. 1003 i 346 (od 30 września 2028 r.) nie dotyczą tych przepisów, a 2026 poz. 473 zmienia tylko art. 35 ust. 2 i art. 96 ust. 1 pkt 8 i dodaje art. 36a; w KPC (Dz.U. 2026 poz. 468) narzędzia opierają się też na art. 17 pkt 4, 23¹, 98, 102, 126¹, 316, 461, 465–466 i 477²',
+    adres: eli(2025, 1228),
+    sprawdzono: '2026-11-13',
+  },
+  pip: {
+    nazwa: 'Ustawa o Państwowej Inspekcji Pracy',
+    publikator: 'Dz.U. 2024 poz. 1712',
+    uwaga: 'tekst jednolity; art. 10–11 (zadania, nakazy, nakaz wypłaty wynagrodzenia), art. 23 ust. 2–3 (tajemnica tożsamości osoby przesłuchanej), art. 44 ust. 3 (tajemnica, że kontrola jest po skardze); zmiany Dz.U. 2025 poz. 321, 368, 620, 769 i 2026 poz. 160 nie dotyczą tych przepisów',
+    adres: eli(2024, 1712),
+    sprawdzono: '2026-11-13',
+  },
+  skargiWnioski: {
+    nazwa: 'Rozporządzenie Rady Ministrów w sprawie organizacji przyjmowania i rozpatrywania skarg i wniosków',
+    publikator: 'Dz.U. 2002 nr 5 poz. 46',
+    uwaga: '§ 8 ust. 1: skargi bez imienia, nazwiska (nazwy) i adresu pozostawia się bez rozpoznania; bez aktów zmieniających w API Sejmu',
+    adres: 'https://eli.gov.pl/eli/DU/2002/46/ogl',
+    sprawdzono: '2026-11-13',
+  },
+  zmianaPip2026: {
+    nazwa: 'Ustawa z 11 marca 2026 r. o zmianie ustawy o Państwowej Inspekcji Pracy oraz niektórych innych ustaw',
+    publikator: 'Dz.U. 2026 poz. 473',
+    uwaga: 'w mocy od 8 lipca 2026 r.: decyzja okręgowego inspektora pracy stwierdzająca stosunek pracy (art. 11 ust. 1 pkt 7a, art. 34 ust. 2b–2l i 5a ustawy o PIP), powództwo okręgowego inspektora pracy o ustalenie istnienia lub treści stosunku pracy (art. 33a ust. 3 i 6), przerwanie przedawnienia (art. 33a ust. 8)',
+    adres: eli(2026, 473),
+    sprawdzono: '2026-11-13',
+  },
 } as const satisfies Record<string, Akt>;
 
 export type KluczAktu = keyof typeof AKTY;
