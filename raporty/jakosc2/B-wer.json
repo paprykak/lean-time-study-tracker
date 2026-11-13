@@ -1,0 +1,62 @@
+{
+  "partia": "B",
+  "werdykty": [
+    {
+      "id": "B-1",
+      "werdykt": "czesciowo",
+      "uzasadnienie": "Na karcie wyniku jest sprzeczność: stan „W porządku”, opis „co najmniej 35 godzin” i szczegół „najdłuższa przerwa 33 h”. Rachunek jest dobry: tydzień od nd 15.11 do sb 21.11.2026, przerwa od pt 15:00 do sb 24:00 to 33 h, a odpracowanie jej nie skraca (najdluzsza === rozklad). Sprawa jest opisana w „Jak liczymy” (okres zaczyna się w niedzielę, weekend dzieli się między dwa tygodnie, przepis nie mówi, jak liczyć przerwę na przełomie tygodni), więc zasada „opisać w Jak liczymy” jest spełniona. Brakuje tylko wyjaśnienia przy samym wyniku. Stanu „ok” nie trzeba zmieniać, bo odpracowanie nie zabiera tu odpoczynku.",
+      "dowod": "Playwright na podglądzie, przykład startowy: „W porządku: Odpracowanie nie odbiera 35 h odpoczynku w tygodniu | W każdym tygodniu przysługuje co najmniej 35 godzin … | Tydzień od 15 listopada 2026 r.: najdłuższa przerwa 33 h.” Kod: odpracowanie.ts, opisTygodnia dopisuje „według samego rozkładu” tylko, gdy najdluzsza !== rozklad; uwagi wymagają najdluzsza < rozklad. Jak liczymy: odpracowanie-wyjscia-prywatnego.astro, linie 166-173.",
+      "poprawka": "W src/lib/narzedzia/odpracowanie.ts opisTygodnia: gdy t.rozklad < ODPOCZYNEK_TYGODNIOWY i t.najdluzsza === t.rozklad, dopisać „; tyle daje już sam rozkład, bo weekend przypada na przełomie tygodni okresu rozliczeniowego”. Stan zostaje „ok”, opis i tytuł bez zmian.",
+      "testy": "odpracowanie.test.ts, linia 35: oczekiwane ['Tydzień od 15 listopada 2026 r.: najdłuższa przerwa 33 h; tyle daje już sam rozkład, bo weekend przypada na przełomie tygodni okresu rozliczeniowego.']. Dla okresu od poniedziałku (np. 1.06.2026, tydzień pn-nd, przerwa pt 15:00 - pn 7:00 = 64 h) szczegół bez dopisku."
+    },
+    {
+      "id": "B-2",
+      "werdykt": "potwierdzone",
+      "uzasadnienie": "Art. 151 § 2^1 Kp (DU_2026_1245) mówi tylko, że czas odpracowania zwolnienia udzielonego na wniosek pracownika nie stanowi pracy w godzinach nadliczbowych. Nie mówi, czy odpracowanie jest obowiązkiem pracownika, gdy pracodawca go zażąda. Art. 80 dotyczy tylko wynagrodzenia. Zdanie „Odpracowanie nie jest obowiązkowe” to twierdzenie bez podstawy w przepisie. Może też wprowadzić w błąd, gdy pracodawca udzielił zwolnienia pod warunkiem odpracowania. FAQ tej samej strony mówi to poprawnie: „Przepis nie każe odpracować wyjścia”.",
+      "dowod": "src/lib/narzedzia/odpracowanie.ts:276; FAQ w odpracowanie-wyjscia-prywatnego.astro:28; prawo.ts rodzinaipracaWyjscie: „nieobecność niepłatna; przepisy nie określają terminu odpracowania”.",
+      "poprawka": "W odpracowanie.ts:276 zamienić drugie zdanie na: „Przepis nie nakazuje odpracowania i nie wskazuje terminu; bez odpracowania za ten czas wynagrodzenie nie przysługuje.”",
+      "testy": "Brak testu, który utrwala ten tekst (grep). Dodać asercję toContain('Przepis nie nakazuje odpracowania') dla przypadku niedoboru (np. odpracowane 2 h z 3 h, kontrola bilans: tytuł „Zostało do odpracowania: 1 h”)."
+    },
+    {
+      "id": "B-3",
+      "werdykt": "potwierdzone",
+      "uzasadnienie": "doba-pracownicza.astro:9-11 liczy start (najbliższy poniedziałek) z dzisWPolsce() przy budowaniu. Skrypt strony nie przestawia go w przeglądarce: nie importuje ustawDzisiejszeWartosci, a pole nie ma data-dzis. To narusza regułę z prompty/02-fabryka.md:74 („Datę domyślną formularza ustawiasz w przeglądarce”). Przy okazji wynik SSR (święta w tygodniu, etykiety dni) zależy od dnia budowania. data-dzis obsługuje tylko stałe przesunięcie, nie „najbliższy poniedziałek”, więc potrzebna jest własna linijka w skrypcie.",
+      "dowod": "Playwright: #dp-start = 2026-11-16 (build 13.11.2026). grep: 64 strony narzędzi używają data-dzis, doba-pracownicza nie używa.",
+      "poprawka": "SSR: stały przykład const start = '2026-11-16' (jak w e2e i w komentarzu). W <script> przed pierwszym przelicz(): const p = el('start'); if (p.value === p.defaultValue) { const d = dzisWPolsce(); p.value = dodajDni(d, (8 - new Date(`${d}T00:00:00Z`).getUTCDay()) % 7); } (import dzisWPolsce z terminy).",
+      "testy": "E2E już wpisuje 2026-11-16 w beforeEach, więc się nie zmieni. Dodać test z page.clock.setFixedTime('2027-01-13T10:00:00+01:00') (środa): #dp-start = '2027-01-18', [data-dzien=\"0\"] ma tekst „poniedziałek 18.01”. Dla 2027-01-18 (poniedziałek): '2027-01-18'."
+    },
+    {
+      "id": "B-4",
+      "werdykt": "potwierdzone",
+      "uzasadnienie": "Problem jest prawdziwy i dotyczy całego serwisu, nie tylko praca-w-sobote. unicode-range fontów (src/styles/fonty.css, generowany z scripts/fonty/znaki.mjs) obejmuje U+00A0-00FF (¹²³), ale nie U+2070 i U+2074-2079. Chromium na podglądzie rysuje „⁹” fontem systemowym. Pełny Noto Sans z przypiętego źródła (sha256 bfb7bb69… zgodny z zrodla.mjs) ma te glify. Najprościej więc dodać je do podzbioru zamiast przepisywać kilkanaście narzędzi na <sup>.",
+      "dowod": "CDP CSS.getPlatformFontsForNode dla uwagi „(art. 151⁹–151¹¹ Kodeksu pracy)” na praca-w-sobote.html (data 2026-12-26): Noto Sans 159 glifów, Liberation Sans 1 glif (isCustomFont false). fontTools na NotoSans[wdth,wght].ttf: U+2070, U+2074-2079 są w cmap. Widoczne teksty z ⁰⁴-⁹ (bez komentarzy i testów): doba-pracownicza.ts:313, praca-w-sobote.ts:169 i 198, lojalka.ts:25-33 i 57 (podstawa), rodzic.ts:37-38, odziez-robocza.ts (ok. 30 linii) i odziez-robocza.astro:43, 47, 51, 55, 63, 197, praca-na-wysokosci.ts:287, pracownik-mlodociany.astro:234-235, mobbing-i-dyskryminacja.astro:116, zwrot-kosztow-szkolenia.astro:164 i 170, dyzur-w-pracy.astro:64, 121 i 201, waznosc-uprawnien-sep.astro:185, prawo.ts:758 (uwaga), kontrola-grafiku.astro:237 i urlop-bezplatny.astro:93-102 i 204 (indeksyUnicode w widocznym tekście). Komentarz w Faq.astro:6 potwierdza, że podzbiór fontu nie ma cyfr indeksu.",
+      "poprawka": "W scripts/fonty/znaki.mjs dopisać do TYPOGRAFIA '\\u2070\\u2074\\u2075\\u2076\\u2077\\u2078\\u2079' (i poprawić komentarz), uruchomić npm run fonty (regeneracja woff2 i fonty.css; sprawdzić budżet rozmiaru), poprawić komentarz w Faq.astro:6 i format.ts:15. Inna droga to <sup> w kilkunastu narzędziach, co daje więcej zmian.",
+      "testy": "scripts/fonty/fonty.test.mjs sprawdzi glify i unicode-range po regeneracji. Dodać test w fonty.test.mjs: ZNAKI zawiera '⁰⁴⁵⁶⁷⁸⁹'. Ręcznie: CDP getPlatformFontsForNode dla uwagi praca-w-sobote 2026-12-26 pokazuje tylko Noto Sans."
+    },
+    {
+      "id": "B-5",
+      "werdykt": "potwierdzone",
+      "uzasadnienie": "W catch (nadgodziny-sredniotygodniowe.astro:212-215) ustawiany jest tylko tekst błędu, bez aria-invalid na polach. Puste pole „Przepracowane godziny” zamienia się na '0' (linia 186). Przy dobowych 10 daje to mylący komunikat, a przy dobowych 0 brak błędu i wynik „0 godzin”, co jest ciche przyjęcie pustego pola.",
+      "dowod": "Playwright: przepracowane '' → „Nadgodziny dobowe nie mogą przekraczać przepracowanych godzin.”, [aria-invalid] = []; przepracowane 800 → „W okresie jest 30 dni, czyli najwyżej 720 godzin.”, []; dobowe 200 → [], nieobecność 500 → „Nieobecność większa niż wymiar czasu pracy.”, []; dobowe 0 i przepracowane '' → brak błędu, główna „0 godzin”.",
+      "poprawka": "W przelicz(): gdy el('przepracowane').value.trim() === '', ustawić blad = 'Wpisz przepracowane godziny.' i aria-invalid na przepracowane (dobowe i nieobecność mogą zostać z '0'). W catch zmapować komunikat na pola: /Nadgodziny dobowe/ → dobowe i przepracowane; /W okresie jest/ → przepracowane; /Nieobecność/ → nieobecnosc; /Stawka/ → stawka; ustawić aria-invalid='true'.",
+      "testy": "tests/e2e/narzedzie-nadgodziny-okres.spec.ts: przepracowane '' → tekst „Wpisz przepracowane godziny.” i #no-przepracowane aria-invalid=true; przepracowane 800 (listopad 2026, 30 dni) → „najwyżej 720 godzin” i aria-invalid na przepracowane; dobowe 200 przy 184 → aria-invalid na dobowe; nieobecność 500 przy wymiarze listopada 2026 160 h → aria-invalid na nieobecność; po poprawie wartości atrybut znika."
+    },
+    {
+      "id": "B-6",
+      "werdykt": "potwierdzone",
+      "uzasadnienie": "doba-pracownicza.ts:41 i 208 korzysta z rodzajDnia (święta według ustawy o dniach wolnych od pracy, w tym Wigilia), a wynik mówi o nadgodzinach w święto. Rejestr ma tylko ['kodeksPracy']. W rejestrze 26 innych narzędzi ma 'dniWolne', w tym rownowazny-czas-pracy tuż obok.",
+      "dowod": "src/data/narzedzia.ts:760 przepisy: ['kodeksPracy']; :768 rownowazny: ['kodeksPracy', 'dniWolne']; StronaNarzedzia.astro:82 pokazuje przepisy z rejestru jako podstawę prawną.",
+      "poprawka": "src/data/narzedzia.ts:760: przepisy: ['kodeksPracy', 'dniWolne'].",
+      "testy": "Bez nowych wartości; jeśli istnieje test rejestru (narzedzia.test.ts) z listą przepisów, nic się nie psuje. Ręcznie: sekcja podstawy prawnej na doba-pracownicza pokazuje ustawę o dniach wolnych."
+    },
+    {
+      "id": "B-7",
+      "werdykt": "czesciowo",
+      "uzasadnienie": "Niespójność jest prawdziwa: nadgodziny-sredniotygodniowe ma LATA ∪ {rokBudowy, rokBudowy+1} = 2025-2027, rownowazny-czas-pracy ma LATA + ostatni+1 = 2025-2028. Obie listy są przy tym wiązane z tabelą płacy minimalnej, choć narzędzia liczą tylko z kalendarza. Proponowana poprawka audytora jest jednak błędna w szczególe: lataKalendarza() nie jest liczona w przeglądarce, tylko przy budowaniu (kalkulator-nadgodzin, kontrola-grafiku, dyzur-w-pracy, ekwiwalent: const LATA = lataKalendarza(dzis) we frontmatterze). Teza „w grudniu 2027 r. nie da się wybrać 2028” też jest przesadzona: każdy build w 2027 r. doda 2028 (rokBudowy+1). Problem byłby tylko bez żadnego buildu w 2027 r., a to dotyczy wszystkich narzędzi serwisu. Do tego nadgodziny używa new Date().getUTCFullYear() zamiast dzisWPolsce().",
+      "dowod": "Playwright: #no-rok = [2025, 2026, 2027], #r-rok = [2025, 2026, 2027, 2028]. dzis-w-formularzu.ts:36 lataKalendarza(dzis = dzisWPolsce()) = [rok-1, rok, rok+1], wołana we frontmatterze stron. nadgodziny-sredniotygodniowe.astro:10-11, rownowazny-czas-pracy.astro:11.",
+      "poprawka": "W obu stronach jak w kalkulator-nadgodzin: const LATA_WYBORU = [...new Set([...lataKalendarza(dzisWPolsce()), START.rok])].sort((a, b) => a - b), bo stały przykład 2026 musi zostać na liście także w buildach z 2028 r. Usunąć import LATA z prawo.ts w obu stronach. data-rok-biezacy nie dodawać, bo przykład startowy jest stały (SSR = skrypt).",
+      "testy": "Build 13.11.2026: obie listy [2025, 2026, 2027]. Przy dzis = 2027-12-01: [2026, 2027, 2028]; przy 2029-01-10: [2026, 2028, 2029, 2030]. E2E rownowazny nie używa roku 2028 (grep), więc zmiana listy go nie psuje."
+    }
+  ],
+  "nowe": []
+}

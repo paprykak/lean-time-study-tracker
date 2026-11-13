@@ -1,0 +1,250 @@
+{
+  "partia": "C",
+  "sprawdzone": [
+    {
+      "slug": "dodatek-wyrownawczy",
+      "pliki": [
+        "src/pages/narzedzia/dodatek-wyrownawczy.astro",
+        "src/lib/narzedzia/dodatek-wyrownawczy.ts",
+        "src/lib/narzedzia/dodatek-wyrownawczy.test.ts",
+        "tests/e2e/narzedzie-dodatek-wyrownawczy.spec.ts"
+      ],
+      "wynik": "problemy: art. 179 § 4, 230 § 2, 231 Kp (DU_2026_1245), § 7–10 i 13 rozp. DU_2017_927, art. 5 ust. 5–6 i art. 10 ust. 1–4 ustawy DU_2026_1195 zgodne; rachunek niezależny (styczeń 2027 r., 3 dni L4 + 2 dni bez płacy, współczynnik 2027 = 251/12, 3 mies. = 91 dni) zgodny co do grosza; okres 6 mies. od 31.08 i 1.09 zgodny z konwencją; uwagi: ucięta opcja na 320 px, wartości domyślne z daty buildu"
+    },
+    {
+      "slug": "okres-wyczekiwania",
+      "pliki": [
+        "src/pages/narzedzia/okres-wyczekiwania.astro",
+        "src/lib/narzedzia/okres-wyczekiwania.ts",
+        "src/lib/narzedzia/okres-wyczekiwania.test.ts",
+        "tests/e2e/narzedzie-wyczekiwanie.spec.ts"
+      ],
+      "wynik": "problemy: art. 4 ust. 1–3 i art. 9 ust. 3 ustawy zasiłkowej (DU_2026_854; zmiana DU_2026_26 art. 13 nie rusza art. 4), art. 92 § 1, 3 i 5 Kp, art. 8 ustawy wypadkowej zgodne; rachunek niezależny (przerwa 31 dni w 2027 i 30/31 dni przez luty 2028, absolwent 90 dni na przełomie 2026/2027) zgodny; błędy: „r..” i mylący komunikat absolwenta, data domyślna z buildu, SSR ≠ skrypt w polu „Bez prawa do zasiłku”"
+    },
+    {
+      "slug": "swiadczenie-urlopowe",
+      "pliki": [
+        "src/pages/narzedzia/swiadczenie-urlopowe.astro",
+        "src/lib/narzedzia/swiadczenie-urlopowe.ts",
+        "src/lib/narzedzia/swiadczenie-urlopowe.test.ts",
+        "tests/e2e/narzedzie-swiadczenie-urlopowe.spec.ts"
+      ],
+      "wynik": "problemy: art. 3 ust. 1–6 i art. 5 ust. 2–7 ustawy o ZFŚS (DU_2024_288, zmiana DU_2026_25 dotyczy tylko art. 4 ust. 3 i art. 8 ust. 2) i kwoty z M.P. 2026 poz. 232 zgodne (2943,225 → 2943,22 zł; 7/8 etatu 2575,32 zł; zaliczka 353 zł); ustawa okołobudżetowa na 2027 r. (druk 3154, uchwalona przez Sejm 6.11.2026) nie zamraża podstawy odpisu; braki: brak bezpiecznika na kwotę 2027, ucięte opcje na 320 px, komunikat każący wybrać rok, którego nie ma na liście"
+    },
+    {
+      "slug": "wynagrodzenie-za-niepelny-miesiac",
+      "pliki": [
+        "src/pages/narzedzia/wynagrodzenie-za-niepelny-miesiac.astro",
+        "src/lib/narzedzia/niepelny-miesiac.ts",
+        "src/lib/narzedzia/niepelny-miesiac.test.ts",
+        "tests/e2e/narzedzie-niepelny-miesiac.spec.ts",
+        "src/lib/narzedzia/czas-pracy.ts"
+      ],
+      "wynik": "problemy: § 11 ust. 1–2 i § 12 ust. 1–2 rozp. DU_2017_927, art. 80 Kp, art. 6 ust. 4–5, art. 7 ust. 4 i art. 8 ustawy o minimalnym wynagrodzeniu (DU_2024_1773, bez nowego aktu) i płaca 2027 = 4950 zł (DU_2026_1213 § 1) zgodne; rachunek niezależny (luty 2027 od 15 dnia: 160/80 h → 3000 zł, minimum 2475 zł; grudzień 2027 do 24 dnia: 168/136 h, Wigilia w piątek i Boże Narodzenie w sobotę; 1/2 etatu 2000 zł → wyrównanie 237,50 zł; FAQ listopad 2026 r. 3300 zł) zgodny; uwagi: wartości domyślne z daty buildu, SSR ≠ skrypt"
+    },
+    {
+      "slug": "zasilek-chorobowy-na-zleceniu",
+      "pliki": [
+        "src/pages/narzedzia/zasilek-chorobowy-na-zleceniu.astro",
+        "src/lib/narzedzia/zasilek-zlecenie.ts",
+        "src/lib/narzedzia/zasilek-zlecenie.test.ts",
+        "tests/e2e/narzedzie-zasilek-zlecenie.spec.ts"
+      ],
+      "wynik": "problemy: art. 3 pkt 4, 4, 8, 11, 45–50, 61 ustawy zasiłkowej (DU_2026_854; DU_2026_26 od 2027 r. dodaje tylko art. 9 ust. 4 i art. 17 ust. 1d–1e), art. 6 ust. 4, 9 ust. 1–1a, 11, 12 ustawy o systemie (DU_2026_1474), art. 8–9 ustawy wypadkowej (DU_2025_1644) sprawdzone; rachunek 4000 zł × 0,8629 / 30 × 80% = 92,04 zł × 10 = 920,40 zł zgodny; błędy: zasiłek za dni ponad okres zasiłkowy, „etat w innej firmie” zawsze 0 zł, ucięta opcja"
+    }
+  ],
+  "znaleziska": [
+    {
+      "id": "C-1",
+      "slug": "zasilek-chorobowy-na-zleceniu",
+      "wymiar": "rachunek",
+      "waga": "wysoka",
+      "plik": "src/lib/narzedzia/zasilek-zlecenie.ts",
+      "linia": 56,
+      "problem": "Liczba dni L4 jest ograniczona do 270 dla każdej przyczyny, a zasiłek liczony za wszystkie wpisane dni. Przy chorobie (okres zasiłkowy 182 dni) kalkulator płaci np. za 250 dni, a wynik pokazuje jednocześnie „najwyżej 182 dni”.",
+      "dowod": "art. 8 ust. 1 ustawy zasiłkowej (.cache DU_2026_854.txt): zasiłek „niedłużej jednak niż przez 182 dni, a jeżeli niezdolność do pracy została spowodowana gruźlicą lub występuje w trakcie ciąży – niedłużej niż przez 270 dni”. jiti: zasilekZlecenie({status:'zlecenie-chorobowe',przyczyna:'choroba',przychod:4000,dni:250}) → brutto 23 010 zł (250 × 92,04), okresZasilkowy 182. Playwright na podglądzie, pole „Dni L4” = 250: „kwota=23 010,00 zł … okres=najwyżej 182 dni”. Brak testu jednostkowego i E2E dla dni > 182.",
+      "poprawka": "W zasilekZlecenie walidować d.dni <= p.dni (albo liczyć zasiłek za min(d.dni, p.dni) i zwracać dni ponad okres); w skrypcie komunikat „Przy tej przyczynie zasiłek najwyżej za 182 dni (art. 8 ust. 1)”; test: choroba 183 dni → błąd/obcięcie, ciąża 270 dni → OK."
+    },
+    {
+      "id": "C-2",
+      "slug": "zasilek-chorobowy-na-zleceniu",
+      "wymiar": "prawo",
+      "waga": "srednia",
+      "plik": "src/pages/narzedzia/zasilek-chorobowy-na-zleceniu.astro",
+      "linia": 55,
+      "problem": "Opcja „Etat w innej firmie” zawsze daje 0 zł i „zasiłek ze zlecenia nie przysługuje”. Gdy pensja z etatu (np. na 1/2 etatu) jest niższa od minimalnej, emerytalne i rentowe ze zlecenia są obowiązkowe, więc dobrowolne chorobowe i zasiłek ze zlecenia są możliwe.",
+      "dowod": "art. 9 ust. 1a ustawy o systemie (.cache DU_2026_1474.txt): ubezpieczeni z ust. 1, których podstawa wymiaru składek ze stosunku pracy „jest niższa od określonej w art. 18 ust. 4 pkt 5a, podlegają również obowiązkowo ubezpieczeniom emerytalnemu i rentowym z innych tytułów”; art. 11 ust. 2: dobrowolnie chorobowemu podlegają osoby objęte obowiązkowo emerytalnym i rentowymi. Kod: zasilek-zlecenie.ts:61 ustawia przysluguje=false dla 'etat-gdzie-indziej' bez względu na pensję; etykieta opcji nie wspomina o płacy minimalnej (sam komunikat po wyborze tak).",
+      "poprawka": "Zmienić opcję na „Etat gdzie indziej, pensja ≥ minimalnej” (krótko, np. „Etat z min. pensją gdzie indziej”) i dopisać do opisu pola, że przy niższej pensji wybiera się „Zlecenie z chorobowym”; ewentualnie dodać czwartą opcję liczącą jak 'zlecenie-chorobowe'. Test jednostkowy i FAQ „A gdy mam etat i zlecenie?” uzupełnić o art. 9 ust. 1a."
+    },
+    {
+      "id": "C-3",
+      "slug": "zasilek-chorobowy-na-zleceniu",
+      "wymiar": "prawo",
+      "waga": "niska",
+      "plik": "src/lib/narzedzia/zasilek-zlecenie.ts",
+      "linia": 60,
+      "problem": "Zleceniobiorcy bez chorobowego po wypadku przy pracy kalkulator odejmuje 11,26% (art. 9 ust. 3 pkt 3 ustawy wypadkowej), choć pkt 2 obejmuje wprost „osoby, o których mowa w art. 11 ust. 2 ustawy o systemie”, czyli każdego zleceniobiorcę z obowiązkowym emerytalnym i rentowym, także bez zgłoszenia do chorobowego (wtedy rozdział 9 i 13,71%). Wykładnia daje wynik wyższy o ok. 2,8%.",
+      "dowod": "DU_2025_1644.txt art. 9 ust. 3: „2) … osobom, o których mowa w art. 11 ust. 2 ustawy o systemie ubezpieczeń społecznych – stosuje się zasady określone w rozdziale 9 …; 3) pozostałym osobom – … po odliczeniu kwoty odpowiadającej 11,26 %”. Art. 11 ust. 2 DU_2026_1474: „Dobrowolnie ubezpieczeniu chorobowemu podlegają na swój wniosek osoby objęte obowiązkowo ubezpieczeniami emerytalnym i rentowymi, wymienione w art. 6 ust. 1 pkt 2, 4–5a …” (kategoria osób, nie fakt zgłoszenia). jiti: bez chorobowego, wypadek, 4000 zł, 10 dni → 1183,20 zł (11,26%) zamiast 1150,50 zł (13,71%).",
+      "poprawka": "Albo stosować 13,71% także bez chorobowego (brzmienie pkt 2), albo zostawić 11,26% i w „Jak liczymy” napisać wprost, że brzmienie pkt 2 obejmuje wszystkich zleceniobiorców z art. 11 ust. 2 i że ZUS może liczyć z 13,71% (wynik „najwyżej”). Do potwierdzenia ręcznie w poradniku ZUS (zus.pl blokuje automaty)."
+    },
+    {
+      "id": "C-4",
+      "slug": "zasilek-chorobowy-na-zleceniu",
+      "wymiar": "tresc-ux",
+      "waga": "niska",
+      "plik": "src/pages/narzedzia/zasilek-chorobowy-na-zleceniu.astro",
+      "linia": 57,
+      "problem": "Dla „Zlecenie u pracodawcy” wynik pokazuje 0,00 zł i „zasiłek ze zlecenia nie przysługuje”, a uwaga pod spodem mówi, że chorobowe jest obowiązkowe i przychód ze zlecenia wchodzi do podstawy zasiłku. Duża kwota 0 zł przeczy uwadze.",
+      "dowod": "Playwright, status 'u-pracodawcy': „kwota=0,00 zł”, „opis=zasiłek ze zlecenia nie przysługuje”, „uwaga=Zlecenie u własnego pracodawcy traktuje się … jak etat … przychód ze zlecenia wchodzi do podstawy zasiłku”. art. 8 ust. 2a ustawy o systemie.",
+      "poprawka": "Dla 'u-pracodawcy' zamiast 0,00 zł pokazać „—” i opis „liczy się jak etat: zobacz kalkulator L4” (nie „nie przysługuje”)."
+    },
+    {
+      "id": "C-5",
+      "slug": "okres-wyczekiwania",
+      "wymiar": "tresc-ux",
+      "waga": "srednia",
+      "plik": "src/pages/narzedzia/okres-wyczekiwania.astro",
+      "linia": 220,
+      "problem": "Komunikat o absolwencie kończy się podwójną kropką „r..”, a przy zaznaczonym wypadku (wyjątek o wyższym priorytecie) pojawia się także wtedy, gdy warunek absolwenta jest spełniony, sugerując, że nie działa.",
+      "dowod": "Playwright: start 2028-03-01, ukończenie szkoły 2028-01-15, zaznaczony wypadek przy pracy → uwaga „… Wyjątek dla absolwenta działa, gdy ubezpieczenie zaczyna się najpóźniej 14 kwietnia 2028 r..”. Kod: `najpóźniej ${dataPoPolsku(dodajDni(szkola, 90))}.` (dataPoPolsku kończy się „r.”); warunek `r.wyjatek !== 'absolwent'` nie sprawdza, czy absolwent byłby spełniony. E2E nie ma przypadku absolwenta.",
+      "poprawka": "Usunąć kropkę po dacie; warunek zmienić na `szkola <= start && dniMiedzy(szkola, start) > 90`; dodać E2E: ukończenie 2026-09-16, start 2026-12-16 → uwaga kończy się „15 grudnia 2026 r.” bez „r..”."
+    },
+    {
+      "id": "C-6",
+      "slug": "okres-wyczekiwania",
+      "wymiar": "spojnosc",
+      "waga": "srednia",
+      "plik": "src/pages/narzedzia/okres-wyczekiwania.astro",
+      "linia": 9,
+      "problem": "Data domyślna „Początek ubezpieczenia” to data buildu minus 10 dni wpisana w HTML; skrypt jej nie przestawia, więc po Nowym Roku (bez przebudowy) formularz i wynik startowy pokazują daty z listopada/grudnia 2026 r. Zasada 11 i 48 innych narzędzi używają dzis-w-formularzu.ts.",
+      "dowod": "prompty/02-fabryka.md § 4 zasada 11: „Datę domyślną formularza ustawiasz w przeglądarce (src/lib/narzedzia/dzis-w-formularzu.ts)”. grep: data-dzis/ustawDzisiejszeWartosci w 0 z 5 stron partii C (w 48 innych stronach jest). Podgląd (build 2026-11-13): w-start=2026-11-03, wynik „2 grudnia 2026 r.”.",
+      "poprawka": "Dodać `data-dzis=\"-10\"` do #w-start i wywołać ustawDzisiejszeWartosci(form) przed pierwszym przelicz()."
+    },
+    {
+      "id": "C-7",
+      "slug": "wynagrodzenie-za-niepelny-miesiac",
+      "wymiar": "spojnosc",
+      "waga": "srednia",
+      "plik": "src/pages/narzedzia/wynagrodzenie-za-niepelny-miesiac.astro",
+      "linia": 14,
+      "problem": "Rok i miesiąc domyślny ustalane przy buildzie (bez data-rok-biezacy/data-miesiac-biezacy); po Nowym Roku strona zbudowana w grudniu 2026 r. liczy przykład za grudzień 2026 r. Zasada 11.",
+      "dowod": "Linie 12–14: `const rok = LATA.includes(rokBiezacy) ? …; const miesiac = rok === rokBiezacy ? Number(dzis.slice(5, 7)) : 1;` selekty bez znaczników z dzis-w-formularzu.ts; brak wywołania ustawDzisiejszeWartosci w skrypcie.",
+      "poprawka": "Dodać `data-rok-biezacy` do #n-rok i `data-miesiac-biezacy` do #n-miesiac oraz ustawDzisiejszeWartosci(form) przed przelicz()."
+    },
+    {
+      "id": "C-8",
+      "slug": "dodatek-wyrownawczy",
+      "wymiar": "spojnosc",
+      "waga": "niska",
+      "plik": "src/pages/narzedzia/dodatek-wyrownawczy.astro",
+      "linia": 14,
+      "problem": "Jak w C-7: miesiąc i rok rozliczenia oraz dzień przeniesienia (1. dzień poprzedniego miesiąca) ustalone przy buildzie, bez przestawienia w przeglądarce (zasada 11).",
+      "dowod": "Linie 12–19 liczą `od` i `miesiac` z dzisWPolsce() w czasie buildu; #d-rok, #d-miesiac, #d-od bez data-rok-biezacy/data-miesiac-biezacy/data-dzis.",
+      "poprawka": "Znaczniki z dzis-w-formularzu.ts na #d-rok i #d-miesiac (i ewentualnie przestawienie #d-od na 1. dzień poprzedniego miesiąca w skrypcie) przed pierwszym przelicz()."
+    },
+    {
+      "id": "C-9",
+      "slug": "swiadczenie-urlopowe",
+      "wymiar": "testy",
+      "waga": "srednia",
+      "plik": "src/lib/narzedzia/swiadczenie-urlopowe.ts",
+      "linia": 41,
+      "problem": "Tabela PODSTAWA_ODPISU kończy się na 2026 r., a żaden test nie zatrzymuje buildu, gdy po 20 lutego 2027 r. brakuje kwoty na 2027 r. Strona po cichu zostanie przy limicie 2026 r. (tytuł „Świadczenie urlopowe 2026”) przez cały sezon urlopowy 2027 r.",
+      "dowod": "art. 5 ust. 7 ustawy o ZFŚS (DU_2024_288): Prezes GUS ogłasza kwotę „nie później niż do dnia 20 lutego każdego roku”. src/lib/narzedzia/rejestr.test.ts, describe('kwoty ogłaszane okresowo są aktualne') (l. 59) pilnuje GUS kwartalnego, ZUS, odszkodowań, zasiłku dla bezrobotnych i ROKI_KOSZTU, ale nie PODSTAWA_ODPISU (grep: PODSTAWA_ODPISU poza swiadczenie-urlopowe.ts nie występuje).",
+      "poprawka": "W rejestr.test.ts dodać test: jeśli dziś ≥ 20 lutego + ZAPAS_DNI, to PODSTAWA_ODPISU[bieżący rok] musi istnieć (komunikat: „dopisz obwieszczenie Prezesa GUS (art. 5 ust. 7 ustawy o ZFŚS) na {rok} do PODSTAWA_ODPISU”)."
+    },
+    {
+      "id": "C-10",
+      "slug": "swiadczenie-urlopowe",
+      "wymiar": "tresc-ux",
+      "waga": "niska",
+      "plik": "src/pages/narzedzia/swiadczenie-urlopowe.astro",
+      "linia": 244,
+      "problem": "Dla urlopu w 2027 r. wynik każe „wybrać rok pierwszego dnia urlopu”, ale lista lat ma tylko 2025 i 2026; do czasu obwieszczenia GUS (luty 2027 r.) polecenia nie da się wykonać, a kwota dalej jest z 2026 r.",
+      "dowod": "Playwright: urlop 2027-07-05 – 2027-07-18 → uwaga „… Urlop zaczyna się w 2027 r., a limit jest na 2026 r.: wybierz rok pierwszego dnia urlopu.”; opcje #s-rok: 2025, 2026.",
+      "poprawka": "Gdy u.rok nie jest w LATA_ODPISU: „Kwoty na {u.rok} r. jeszcze nie ogłoszono (Prezes GUS do 20 lutego); pokazujemy limit na {rok} r.”."
+    },
+    {
+      "id": "C-11",
+      "slug": "swiadczenie-urlopowe",
+      "wymiar": "tresc-ux",
+      "waga": "srednia",
+      "plik": "src/pages/narzedzia/swiadczenie-urlopowe.astro",
+      "linia": 19,
+      "problem": "Na telefonie 320 px ucięte opcje list: „Podatek 32% (ponad 120 tys. zł)” → „Podatek 32% (ponad 120 ty”, „Młodociany, 1./2./3. rok nauki (5%)” → „Młodociany, 1. rok nauki (5” (procent znika).",
+      "dowod": "Zrzut Playwright 320×640: /tmp/claude-0/-home-user-lean-time-study-tracker/ac06a219-4538-5f71-b234-1eeb6f3157ac/scratchpad/audyt/C/su-form.png; pomiar canvas: s-pit 237 px, s-rodzaj młodociany 218 px przy ok. 200 px widocznego pola. Zasada 7 (prompty/02-fabryka.md § 4).",
+      "poprawka": "Skrócić: „32% (ponad 120 tys.)”, „12%”, „Do 26 lat (0%)”; „Młodociany, 1. rok (5%)”, „Młodociany, 2. rok (6%)”, „Młodociany, 3. rok (7%)” (RODZAJE.nazwa w swiadczenie-urlopowe.ts:57–59)."
+    },
+    {
+      "id": "C-12",
+      "slug": "dodatek-wyrownawczy",
+      "wymiar": "tresc-ux",
+      "waga": "niska",
+      "plik": "src/lib/narzedzia/dodatek-wyrownawczy.ts",
+      "linia": 39,
+      "problem": "Opcja „Objawy choroby zawodowej” ucięta na 320 px („Objawy choroby zawodowe”).",
+      "dowod": "Zrzut Playwright 320 px elementu #d-powod (/tmp/claude-0/-home-user-lean-time-study-tracker/ac06a219-4538-5f71-b234-1eeb6f3157ac/scratchpad/audyt/C/sel.png, pierwszy wiersz); szerokość tekstu 209 px.",
+      "poprawka": "Skrócić nazwę do najwyżej ok. 21 znaków, np. „Objawy ch. zawodowej” (pełne brzmienie zostaje w tabeli „Komu i jak długo”)."
+    },
+    {
+      "id": "C-13",
+      "slug": "zasilek-chorobowy-na-zleceniu",
+      "wymiar": "tresc-ux",
+      "waga": "niska",
+      "plik": "src/lib/narzedzia/zasilek-zlecenie.ts",
+      "linia": 38,
+      "problem": "Opcja „Wypadek w drodze do pracy” ucięta na 320 px („Wypadek w drodze do prac”).",
+      "dowod": "Zrzut Playwright 320 px elementu #z-przyczyna (/tmp/claude-0/-home-user-lean-time-study-tracker/ac06a219-4538-5f71-b234-1eeb6f3157ac/scratchpad/audyt/C/sel.png, drugi wiersz); szerokość tekstu 211 px.",
+      "poprawka": "Skrócić do „Wypadek w drodze”."
+    },
+    {
+      "id": "C-14",
+      "slug": "okres-wyczekiwania",
+      "wymiar": "tresc-ux",
+      "waga": "niska",
+      "plik": "src/pages/narzedzia/okres-wyczekiwania.astro",
+      "linia": 108,
+      "problem": "Wynik SSR i wynik skryptu dla przykładu startowego różnią się (pole „Bez prawa do zasiłku”), więc tekst skacze po załadowaniu i bez JS jest inny niż z JS; zasada 11 (jedna funkcja tekstów dla HTML i skryptu).",
+      "dowod": "Playwright JS wyłączony vs włączony: SSR „do 2 grudnia 2026 r.”, skrypt „od 3 listopada 2026 r. do 2 grudnia 2026 r. (30 dni)”. Analogicznie wynagrodzenie-za-niepelny-miesiac.astro:138 („Minus L4 (1/30 za dzień)” vs „Minus L4 (200,00 zł za dzień)” i inna uwaga) oraz zasilek-chorobowy-na-zleceniu.astro opis („… za dzień” vs „… za dzień (art. 11 ust. 1 ustawy zasiłkowej)”).",
+      "poprawka": "Teksty wyniku generować jedną funkcją w lib (wzór dorabianie-do-renty) i użyć jej w SSR i w skrypcie we wszystkich trzech narzędziach."
+    },
+    {
+      "id": "C-15",
+      "slug": "okres-wyczekiwania",
+      "wymiar": "testy",
+      "waga": "niska",
+      "plik": "src/lib/narzedzia/okres-wyczekiwania.test.ts",
+      "linia": 28,
+      "problem": "Brak testu przerwy między ubezpieczeniami przez luty przestępny (29 lutego 2028 r.), gdzie 30/31 dni przerwy wypada na inne daty niż w zwykłym roku; jest tylko test liczenia 30/90 dni.",
+      "dowod": "grep '02-29' w okres-wyczekiwania.test.ts: 0. Niezależnie (Playwright): poprzedni okres do 2028-01-29, start 2028-03-01 → przerwa 31 dni, brak wliczenia (prawoOd 31 marca 2028 r.); do 2028-01-30 → przerwa 30 dni, prawo od 1 marca 2028 r. (wynik poprawny, ale niepilnowany).",
+      "poprawka": "Dodać oba przypadki do testu „przez koniec roku i luty przestępny”."
+    }
+  ],
+  "do_stanu": [
+    {
+      "sprawa": "Obwieszczenie Prezesa GUS o przeciętnym wynagrodzeniu w 2026 r. i w II półroczu 2026 r. (art. 5 ust. 7 ustawy o ZFŚS) – limit świadczenia urlopowego na 2027 r.; dziś nieogłoszone",
+      "kiedy_sprawdzic": "2027-02-21",
+      "gdzie_w_kodzie": "src/lib/narzedzia/swiadczenie-urlopowe.ts PODSTAWA_ODPISU; src/data/prawo.ts (nowy wpis przecietneZfss2027) i przepisy wpisu swiadczenie-urlopowe w src/data/narzedzia.ts"
+    },
+    {
+      "sprawa": "Ustawa okołobudżetowa na 2027 r. (druk 3154, uchwalona przez Sejm 6.11.2026, tekst po III czytaniu bez zmian w ustawie o ZFŚS): sprawdzić poprawki Senatu i publikację w Dz.U.; jeśli brak zamrożenia odpisu, dopisać ją do uwagi",
+      "kiedy_sprawdzic": "2026-12-31",
+      "gdzie_w_kodzie": "src/data/prawo.ts okolobudzetowa2026; zdanie „Ustawy okołobudżetowe na lata 2024–2026” w swiadczenie-urlopowe.astro i komentarz w swiadczenie-urlopowe.ts"
+    },
+    {
+      "sprawa": "Rozporządzenie o płacy minimalnej na 2028 r. (do 15 września 2027 r.)",
+      "kiedy_sprawdzic": "2027-09-16",
+      "gdzie_w_kodzie": "src/data/prawo.ts PLACA_MINIMALNA i LATA (niepelny-miesiac.ts rzuca błąd bez płacy na dany rok; lista lat w dodatek-wyrownawczy.astro i wynagrodzenie-za-niepelny-miesiac.astro)"
+    }
+  ],
+  "poza_zakresem": [
+    "Elementy menu działów (A.menu-dzialow-link, LI) wychodzą poza 320/412 px w nagłówku, ale strona nie przewija się w bok (scrollWidth = clientWidth) – zapewne zamierzone przewijanie menu; do potwierdzenia w komponencie nagłówka."
+  ],
+  "nie_sprawdzono": [
+    "Praktyka ZUS co do 11,26% vs 13,71% przy wypadku zleceniobiorcy bez chorobowego (zus.pl blokuje automaty) – sprawdzić ręcznie w poradniku „Zasiłek chorobowy z ubezpieczenia wypadkowego”.",
+    "§ 19 ust. 3 rozporządzenia urlopowego (DU_1997_14) – tekst w .cache to słaby OCR; proporcjonalne obniżenie współczynnika przy niepełnym etacie przyjęte za zespołem.",
+    "Kwoty ZFŚS na 2025 r. (M.P. 2025 poz. 148: 7140,52 i 7262,39 zł) – brak tekstu w .cache.",
+    "Art. 34 ust. 1–3 ustawy o PIT (sposób poboru zaliczki od zasiłku przez ZUS) – tekst nieściągnięty.",
+    "Czytnik ekranu i pełna obsługa klawiaturą (sprawdzono tylko etykiety, aria-live, aria-describedby; aria-invalid nie jest ustawiany w żadnym z 5 narzędzi)."
+  ]
+}
