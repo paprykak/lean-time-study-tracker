@@ -215,6 +215,7 @@ const faq = [
       wydarzenia = [];
 
       if (tryb === 'bez-daty') {
+        pokazBlad(bladDaty, null);
         w('naglowek').textContent = 'Zaświadczenie straciło ważność';
         w('termin').textContent = dataPoPolsku(KONIEC_STARYCH);
         status.hidden = false;
