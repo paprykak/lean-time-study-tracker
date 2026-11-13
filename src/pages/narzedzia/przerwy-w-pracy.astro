@@ -53,7 +53,7 @@ const faq = [
       <div class="mt-4">
         <label for="pr-godziny" class="etykieta-pola">Dobowy wymiar czasu pracy (godziny)</label>
         <input id="pr-godziny" name="godziny" class="pole mt-1 max-w-32" type="text" inputmode="decimal" autocomplete="off" value="12" aria-describedby="pr-blad" />
-        <p id="pr-blad" class="blad-pola" data-blad="godziny" hidden></p>
+        <p id="pr-blad" class="blad-pola" data-blad="godziny" role="alert" hidden></p>
       </div>
       <div class="mt-4">
         <label for="pr-karmienie" class="etykieta-pola">Karmienie piersią</label>
@@ -65,7 +65,7 @@ const faq = [
       </div>
       <div class="mt-4">
         <label for="pr-niew" class="etykieta-pola">Przerwa niewliczana z regulaminu (minuty, 0–60)</label>
-        <input id="pr-niew" name="niewliczana" class="pole mt-1 max-w-32" type="text" inputmode="numeric" autocomplete="off" value="0" aria-describedby="pr-niew-opis" />
+        <input id="pr-niew" name="niewliczana" class="pole mt-1 max-w-32" type="text" inputmode="numeric" autocomplete="off" value="0" aria-describedby="pr-niew-opis pr-blad" />
         <p id="pr-niew-opis" class="meta mt-1">Tylko gdy pracodawca wprowadził ją w regulaminie, układzie albo umowie (art. 141).</p>
       </div>
       <label class="mt-4 flex items-start gap-3 text-[0.9375rem]">
@@ -147,6 +147,7 @@ const faq = [
   import { godzinyIMinuty } from '../../lib/narzedzia/czas-pracy';
   import { wpisanaLiczba } from '../../lib/narzedzia/format';
   import { typografia } from '../../lib/typografia.mjs';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-przerwy]');
   if (form) {
@@ -164,10 +165,7 @@ const faq = [
         : !(n >= 0 && n <= 60) ? 'Przerwa niewliczana: od 0 do 60 minut.'
         : zlyMonitor ? 'Godziny przy monitorze: od połowy do całej zmiany (poniżej połowy ta przerwa nie przysługuje).'
         : null;
-      b.hidden = !blad;
-      b.textContent = typografia(blad ?? '');
-      pole('godziny').setAttribute('aria-invalid', blad && !zlyMonitor ? 'true' : 'false');
-      pole('monitorGodzin').setAttribute('aria-invalid', zlyMonitor ? 'true' : 'false');
+      pokazBlad(b, blad, pole(!(h > 0 && h <= 24) ? 'godziny' : !(n >= 0 && n <= 60) ? 'niewliczana' : 'monitorGodzin'));
       if (blad) {
         w('wliczane').textContent = '—';
         return;
@@ -197,6 +195,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

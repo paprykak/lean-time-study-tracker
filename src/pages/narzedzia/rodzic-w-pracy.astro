@@ -45,7 +45,7 @@ const faq = [
   <form class="kalkulator" data-rodzic novalidate aria-labelledby="kalkulator-tytul">
     <div class="kalkulator-pola">
       <h2 id="kalkulator-tytul" class="tytul-m">Dziecko i plan</h2>
-      <div class="mt-4 grid grid-cols-2 items-end gap-3">
+      <div class="mt-4 grid grid-cols-1 min-[380px]:grid-cols-2 items-end gap-3">
         <div>
           <label for="r-urodzenie" class="etykieta-pola">Urodzenie dziecka</label>
           <input id="r-urodzenie" name="urodzenie" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={D.urodzenie} aria-describedby="r-blad" />
@@ -55,7 +55,7 @@ const faq = [
           <input id="r-start" name="start" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={D.start} data-dzis="30" aria-describedby="r-blad" />
         </div>
       </div>
-      <p id="r-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+      <p id="r-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -109,6 +109,7 @@ const faq = [
   import { poprawnaData } from '../../lib/narzedzia/terminy';
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
   import { typografia } from '../../lib/typografia.mjs';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-rodzic]');
   if (form) {
@@ -120,9 +121,8 @@ const faq = [
       let blad: string | null = null;
       if (!poprawnaData(urodzenie) || !poprawnaData(start)) blad = 'Wpisz datę urodzenia dziecka i dzień początku.';
       else if (start < urodzenie) blad = 'Dzień początku nie może być przed urodzeniem dziecka.';
-      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
-      b.hidden = !blad;
-      b.textContent = blad ?? '';
+      const zle = start < urodzenie && poprawnaData(urodzenie) && poprawnaData(start) ? [el('start')] : [el('urodzenie'), el('start')].filter((p) => !poprawnaData(p.value));
+      pokazBlad(form.querySelector<HTMLElement>('[data-blad="dane"]')!, blad, zle);
       if (blad) {
         w('ile').textContent = '—';
         return;
@@ -145,6 +145,7 @@ const faq = [
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
     ustawDzisiejszeWartosci(form);
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

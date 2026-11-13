@@ -145,6 +145,7 @@ const faq = [
   import { odmiana } from '../../lib/redakcja';
   import { typografia } from '../../lib/typografia.mjs';
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
+  import { liczPoPowrocie } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-grafik]');
   if (form) {
@@ -206,10 +207,14 @@ const faq = [
       });
     };
 
+    // Pola, z których zbudowano kalendarz (rok, miesiąc, wzór, start), do porównania po powrocie „Wstecz”.
+    const stanPol = () => ['rok', 'miesiac', 'wzor', 'start'].map((n) => sel(n).value);
+    let zbudowany = stanPol();
     const wypelnij = () => {
       const rok = Number(sel('rok').value);
       const miesiac = Number(sel('miesiac').value);
       zbuduj(grafikZWzoru(rok, miesiac, sel('wzor').value as Wzor, Number(sel('start').value)));
+      zbudowany = stanPol();
       sprawdz();
     };
 
@@ -262,6 +267,19 @@ const faq = [
     form.querySelector('[data-wypelnij]')!.addEventListener('click', wypelnij);
     form.addEventListener('submit', (e) => e.preventDefault());
     ustawDzisiejszeWartosci(form);
+    // Po powrocie „Wstecz” przeglądarka przywraca rok, miesiąc i wzór, ale nie dni kalendarza (tworzy je skrypt): gdy
+    // pola różnią się od tych, z których zbudowano kalendarz, robimy to samo co obsługa zmiany pola. Przy pamięci stron
+    // (bfcache) pola się zgadzają i ręcznie poprawione dni zostają.
+    liczPoPowrocie(() => {
+      const [rok, miesiac, wzor] = zbudowany;
+      if (stanPol().join() === zbudowany.join()) return sprawdz();
+      if (sel('wzor').value !== wzor) {
+        odswiezStart();
+        w('wzor-opis').textContent = WZORY[sel('wzor').value as Wzor].nazwa;
+      }
+      if (sel('rok').value !== rok || sel('miesiac').value !== miesiac || sel('wzor').value !== wzor) wyrownaj();
+      wypelnij();
+    });
     wyrownaj();
     wypelnij();
   }

@@ -67,7 +67,7 @@ const faq = [
         <input id="p-ubezpieczenie" name="ubezpieczenie" class="pole mt-1 max-w-48" type="text" inputmode="decimal" autocomplete="off" value="0" aria-describedby="p-ubezpieczenie-opis p-blad" />
         <p id="p-ubezpieczenie-opis" class="meta mt-1">Tylko gdy składki opłacał pracodawca; w innym wypadku zostaw 0 (art. 93 § 7).</p>
       </div>
-      <p id="p-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+      <p id="p-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -129,6 +129,7 @@ const faq = [
   import { odprawaPosmiertna } from '../../lib/narzedzia/odprawa-posmiertna';
   import { odmiana } from '../../lib/redakcja';
   import { typografia } from '../../lib/typografia.mjs';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-posmiertna]');
   if (form) {
@@ -146,9 +147,8 @@ const faq = [
       else if (!(lata >= 0 && lata <= 70)) blad = 'Wpisz pełne lata pracy u pracodawcy, na przykład 12.';
       else if (!(osoby >= 1 && osoby <= 20)) blad = 'Wpisz liczbę uprawnionych osób: od 1 do 20.';
       else if (!(ubezpieczenie >= 0)) blad = 'Wpisz kwotę z ubezpieczenia albo 0.';
-      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
-      b.hidden = !blad;
-      b.textContent = typografia(blad ?? '');
+      const zlePole = !(pensja > 0 && pensja < 1_000_000) ? 'pensja' : !(lata >= 0 && lata <= 70) ? 'lata' : !(osoby >= 1 && osoby <= 20) ? 'osoby' : 'ubezpieczenie';
+      pokazBlad(form.querySelector<HTMLElement>('[data-blad="dane"]')!, blad, el(zlePole));
       if (blad) {
         w('razem').textContent = '—';
         w('opis').textContent = '';
@@ -166,6 +166,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

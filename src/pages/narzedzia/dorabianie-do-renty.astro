@@ -70,7 +70,7 @@ const faq = [
           </select>
         </div>
       </div>
-      <p id="d-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+      <p id="d-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -145,6 +145,7 @@ const faq = [
   import { wpisanaLiczba } from '../../lib/narzedzia/format';
   import { dzisWPolsce } from '../../lib/narzedzia/terminy';
   import { typografia } from '../../lib/typografia.mjs';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-dorabianie]');
   if (form) {
@@ -160,10 +161,7 @@ const faq = [
     const przelicz = () => {
       const przychod = wpisanaLiczba(el('przychod').value);
       const blad = !(przychod >= 0 && przychod < 10_000_000) ? 'Wpisz przychód brutto z miesiąca, na przykład 6800.' : null;
-      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
-      b.hidden = !blad;
-      b.textContent = blad ? typografia(blad) : '';
-      el('przychod').setAttribute('aria-invalid', String(Boolean(blad)));
+      pokazBlad(form.querySelector<HTMLElement>('[data-blad="dane"]')!, blad, el('przychod'));
       if (blad) {
         for (const k of ['stan', 'p70', 'p130', 'maks', 'zapas']) w(k).textContent = '—';
         w('opis').textContent = '';
@@ -177,8 +175,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
-    // Po powrocie przyciskiem Wstecz przeglądarka przywraca wybór po pierwszym liczeniu: liczymy jeszcze raz.
-    window.addEventListener('pageshow', przelicz);
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

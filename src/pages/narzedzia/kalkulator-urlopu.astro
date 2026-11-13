@@ -68,7 +68,7 @@ const faq = [
           </div>
         </div>
         <p id="u-staz-opis" class="meta mt-1">Wszystkie umowy o pracę, a od 2026 r. także udokumentowane zlecenia i działalność ze składkami.</p>
-        <p id="u-staz-blad" class="blad-pola" data-blad="staz" hidden></p>
+        <p id="u-staz-blad" class="blad-pola" data-blad="staz" role="alert" hidden></p>
       </fieldset>
       <div class="mt-4">
         <label for="u-szkola" class="etykieta-pola">Ukończona szkoła</label>
@@ -86,7 +86,7 @@ const faq = [
         <div>
           <label for="u-sytuacja" class="etykieta-pola">W tym roku</label>
           <select id="u-sytuacja" name="sytuacja" class="pole mt-1">
-            <option value="caly-rok" selected>Cały rok u tego pracodawcy</option>
+            <option value="caly-rok" selected>Cały rok w tej pracy</option>
             <option value="czesc-roku">Część roku (zmiana pracy)</option>
             <option value="pierwsza-praca">Pierwsza praca w życiu</option>
           </select>
@@ -185,6 +185,7 @@ const faq = [
   import { godzinyIMinuty } from '../../lib/narzedzia/czas-pracy';
   import { odmiana } from '../../lib/redakcja';
   import { typografia } from '../../lib/typografia.mjs';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-urlop]');
   if (form) {
@@ -209,10 +210,11 @@ const faq = [
       const l = calkowita(pole('lata').value || '0');
       const m = calkowita(pole('miesiace').value || '0');
       const zly = Number.isNaN(l) || Number.isNaN(m) || m > 11;
-      const b = form.querySelector<HTMLElement>('[data-blad="staz"]')!;
-      b.hidden = !zly;
-      b.textContent = zly ? typografia('Wpisz pełne lata i miesiące (0–11), na przykład 7 i 4.') : '';
-      for (const p of [pole('lata'), pole('miesiace')]) p.setAttribute('aria-invalid', zly ? 'true' : 'false');
+      pokazBlad(
+        form.querySelector<HTMLElement>('[data-blad="staz"]')!,
+        zly && 'Wpisz pełne lata i miesiące (0–11), na przykład 7 i 4.',
+        [Number.isNaN(l) && pole('lata'), (Number.isNaN(m) || m > 11) && pole('miesiace')].filter((p): p is HTMLInputElement => !!p),
+      );
       if (zly) {
         w('dni').textContent = '—';
         return;
@@ -244,6 +246,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

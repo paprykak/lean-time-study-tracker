@@ -209,6 +209,7 @@ const faq = [
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
   import { dzisWPolsce } from '../../lib/narzedzia/terminy';
   import { typografia } from '../../lib/typografia.mjs';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-choroba]');
   if (form) {
@@ -246,16 +247,12 @@ const faq = [
       daty.hidden = d.narazenie === 'trwa' || !pozycja(d.choroba)?.czas;
       for (const n of ['koniec', 'objawy']) (pole(n) as HTMLInputElement).max = dzis;
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
-      for (const n of ['koniec', 'objawy']) pole(n).removeAttribute('aria-invalid');
       let t;
       try {
         t = tekstyChoroby(d, sprawdzChorobe(d, dzis), dzis);
       } catch (e) {
         if (!(e instanceof BladDanych)) throw e;
-        pole(e.pole).setAttribute('aria-invalid', 'true');
-        b.hidden = false;
-        const tekst = typografia(e.message);
-        if (b.textContent !== tekst) b.textContent = tekst;
+        pokazBlad(b, e.message, pole(e.pole));
         pisz('glowny', '—');
         pisz('podstawa', '');
         w('wiersze').replaceChildren();
@@ -263,8 +260,7 @@ const faq = [
         ostatnie.clear();
         return;
       }
-      b.hidden = true;
-      if (b.textContent) b.textContent = '';
+      pokazBlad(b, null);
       pisz('glowny', t.glowny);
       pisz('podstawa', t.podstawa);
       if (zmienione('wiersze', t.wiersze))
@@ -282,6 +278,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

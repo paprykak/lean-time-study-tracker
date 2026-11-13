@@ -56,7 +56,7 @@ const faq = [
           <option value="znaczny">Znaczny</option>
         </select>
       </div>
-      <div class="mt-4 grid grid-cols-2 items-end gap-3">
+      <div class="mt-4 grid grid-cols-1 min-[380px]:grid-cols-2 items-end gap-3">
         <div>
           <label for="n-miesiac" class="etykieta-pola">Miesiąc</label>
           <select id="n-miesiac" name="miesiac" class="pole mt-1" data-miesiac-biezacy>
@@ -84,7 +84,7 @@ const faq = [
         <input type="checkbox" name="zgoda" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
         <span>Lekarz zgodził się na pracę bez tych ograniczeń albo pracuję przy pilnowaniu</span>
       </label>
-      <p id="n-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+      <p id="n-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -142,6 +142,7 @@ const faq = [
   import { typografia } from '../../lib/typografia.mjs';
   import { odmiana } from '../../lib/redakcja';
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-niepelnosprawny]');
   if (form) {
@@ -160,9 +161,7 @@ const faq = [
       let blad: string | null = null;
       if (stawka !== null && !(stawka > 0 && stawka < 10000)) blad = 'Wpisz stawkę za godzinę, np. 31,40.';
       else if (zaliczenie && !poprawnaData(zaliczenie)) blad = 'Popraw dzień zaliczenia do stopnia.';
-      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
-      b.hidden = !blad;
-      b.textContent = blad ?? '';
+      pokazBlad(form.querySelector<HTMLElement>('[data-blad="dane"]')!, blad, el(stawka !== null && !(stawka > 0 && stawka < 10000) ? 'stawka' : 'zaliczenie'));
       if (blad) return;
       const rok = Number(el('rok').value);
       const miesiac = Number(el('miesiac').value);
@@ -195,6 +194,7 @@ const faq = [
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
     ustawDzisiejszeWartosci(form);
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

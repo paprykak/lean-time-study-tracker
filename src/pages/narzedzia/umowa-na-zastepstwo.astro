@@ -192,6 +192,7 @@ const faq = [
   import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
   import { odmiana } from '../../lib/redakcja';
   import { typografia } from '../../lib/typografia.mjs';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const STATUS_PORODU: Record<StatusPrzedluzenia, string> = {
     przedluza: 'tak, do dnia porodu (art. 177 § 3)',
@@ -222,8 +223,12 @@ const faq = [
       else if (koniec && !poprawnaData(koniec)) blad = 'Wpisz poprawną datę końca umowy.';
       else if (koniec && koniec < doreczenie) blad = 'Koniec umowy nie może być wcześniejszy niż dzień doręczenia.';
       else if (ciaza && !poprawnaData(ciaza)) blad = 'Wpisz poprawną datę początku ciąży.';
-      b.hidden = !blad;
-      b.textContent = typografia(blad ?? '');
+      const zlePole =
+        !poprawnaData(start) ? 'start'
+        : !poprawnaData(doreczenie) || doreczenie < start ? 'doreczenie'
+        : koniec && (!poprawnaData(koniec) || koniec < doreczenie) ? 'koniec'
+        : 'ciaza';
+      pokazBlad(b, blad, el(zlePole));
       if (blad) {
         for (const k of POLA) w(k).textContent = '—';
         status.hidden = true;
@@ -265,6 +270,7 @@ const faq = [
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
     ustawDzisiejszeWartosci(form);
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

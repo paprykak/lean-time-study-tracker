@@ -94,7 +94,7 @@ const faq = [
           <input id="e-godziny" name="godziny" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="0" aria-describedby="e-blad" />
         </div>
       </div>
-      <p id="e-blad" class="blad-pola" data-blad="dane" hidden></p>
+      <p id="e-blad" class="blad-pola" data-blad="dane" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -154,6 +154,7 @@ const faq = [
   import { liczba, wpisanaLiczba, zl } from '../../lib/narzedzia/format';
   import { typografia } from '../../lib/typografia.mjs';
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-ekwiwalent]');
   if (form) {
@@ -173,9 +174,14 @@ const faq = [
         : !(dni >= 0 && godziny >= 0) || dni + godziny === 0 ? 'Wpisz liczbę dni albo godzin niewykorzystanego urlopu.'
         : dni > 100 ? 'Wpisz najwyżej 100 dni urlopu.'
         : null;
-      b.hidden = !blad;
-      b.textContent = typografia(blad ?? '');
-      for (const n of pola) (form.elements.namedItem(n) as HTMLInputElement).setAttribute('aria-invalid', blad ? 'true' : 'false');
+      const ujemne = (n: string[]) => n.filter((k) => !(kwotaPola(k) >= 0));
+      const zle =
+        !(stale > 0) ? ['stale']
+        : !(zmienne >= 0 && dluzsze >= 0) ? ujemne(['zmienne', 'dluzsze'])
+        : !(dni >= 0 && godziny >= 0) ? ujemne(['dni', 'godziny'])
+        : dni + godziny === 0 ? ['dni', 'godziny']
+        : ['dni'];
+      pokazBlad(b, blad, zle.map((n) => form.elements.namedItem(n) as HTMLInputElement));
       if (blad) {
         for (const k of ['kwota', 'podstawa', 'wspolczynnik', 'za-dzien', 'za-godzine', 'godziny-urlopu']) w(k).textContent = '—';
         return;
@@ -194,6 +200,7 @@ const faq = [
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
     ustawDzisiejszeWartosci(form);
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

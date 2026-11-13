@@ -7,6 +7,7 @@ import { podstawaZasilku } from './chorobowe';
 import { doGrosza } from './dodatek-nocny';
 import { SWIADCZENIE_RODZICIELSKIE } from './macierzynski';
 import { dniMiedzy, dodajDni, dodajLata } from './terminy';
+import { odmiana } from '../redakcja';
 
 export const DNI_OJCOWSKIEGO = 14;
 export const DNI_WNIOSKU = 7;
@@ -24,4 +25,10 @@ export function zasilekOjcowski(rok: number, brutto: number, dni = DNI_OJCOWSKIE
   const miesiecznie = Math.max(doGrosza(podstawa), SWIADCZENIE_RODZICIELSKIE);
   const dziennie = doGrosza(miesiecznie / 30);
   return { podstawa, podniesiona, miesiecznie, dziennie, razem: doGrosza(dziennie * dni) };
+}
+
+/** Ile dni urlopu zostało do terminu: „Został 1 dzień”, „Zostały 2 dni”, „Zostało 5 dni” (czasownik też według liczby). */
+export function zostaloDni(n: number): string {
+  const czasownik = odmiana(n, ['Został', 'Zostały', 'Zostało']).slice(`${n} `.length);
+  return `${czasownik} ${odmiana(n, ['dzień', 'dni', 'dni'])}`;
 }

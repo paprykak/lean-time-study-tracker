@@ -88,7 +88,7 @@ const faq = [
         </select>
         <p id="s-okres-opis" class="meta mt-1" data-opis-okresu>{warunekOkresu('likwidacja')}</p>
       </div>
-      <p id="s-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+      <p id="s-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -160,6 +160,7 @@ const faq = [
   import { wpisanaLiczba } from '../../lib/narzedzia/format';
   import { dodajLata, dzisWPolsce, poprawnaData } from '../../lib/narzedzia/terminy';
   import { typografia } from '../../lib/typografia.mjs';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-przedemerytalne]');
   if (form) {
@@ -183,11 +184,7 @@ const faq = [
       if (!poprawnaData(urodzenie) || urodzenie > dzisWPolsce() || urodzenie < '1900-01-01') [blad, poleBledu] = ['Wpisz datę urodzenia.', 'urodzenie'];
       else if (!poprawnaData(data) || data < urodzenie) [blad, poleBledu] = [`${etykietaDaty(przyczyna)}: wpisz datę po dacie urodzenia.`, 'data'];
       else if (!(staz >= 0 && staz <= 70)) [blad, poleBledu] = ['Wpisz staż w latach, na przykład 25 albo 34,5.', 'staz'];
-      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
-      b.hidden = !blad;
-      b.textContent = blad ? typografia(blad) : '';
-      // Pole, którego dotyczy błąd, dla czytnika ekranu (komunikat jest w aria-describedby).
-      for (const n of ['urodzenie', 'data', 'staz']) el(n).setAttribute('aria-invalid', String(n === poleBledu));
+      pokazBlad(form.querySelector<HTMLElement>('[data-blad="dane"]')!, blad, poleBledu ? el(poleBledu) : null);
       if (blad) {
         for (const k of POLA) w(k).textContent = k === 'opis' ? '' : '—';
         w('uwaga').textContent = '';
@@ -200,8 +197,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
-    // Po powrocie przyciskiem Wstecz przeglądarka przywraca wybór po pierwszym liczeniu: liczymy jeszcze raz.
-    window.addEventListener('pageshow', przelicz);
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>
