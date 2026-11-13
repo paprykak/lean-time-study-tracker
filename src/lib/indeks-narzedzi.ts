@@ -3,7 +3,7 @@
 // (src/pages/narzedzia/<slug>.astro, `pytanie: '…'`), więc czytamy je z tekstu plików: strony narzędzi zostają
 // w rękach zespołów fabryki, a nowe narzędzie trafia do wyszukiwarki bez dopisywania czegokolwiek.
 import { KATEGORIE, NARZEDZIA } from '../data/narzedzia';
-import { HASLA } from '../data/sprawy';
+import { HASLA, NAJCZESTSZE } from '../data/sprawy';
 import type { WpisIndeksu } from './szukaj-narzedzi';
 
 const ZRODLA = import.meta.glob('../pages/narzedzia/*.astro', { query: '?raw', import: 'default', eager: true }) as Record<string, string>;
@@ -25,9 +25,10 @@ export function zKoduStrony(kod: string, rok = new Date().getFullYear()): { pyta
 
 /** Wpisy indeksu w kolejności rejestru. */
 export function indeksNarzedzi(): WpisIndeksu[] {
+  const czeste = new Set(NAJCZESTSZE.map((s) => s.slug));
   return NARZEDZIA.map((n) => {
     const kod = ZRODLA[`../pages/narzedzia/${n.slug}.astro`] ?? '';
     const { pytania, tytul } = zKoduStrony(kod);
-    return { s: n.slug, n: n.nazwa, k: n.krotko, c: KATEGORIE[n.kategoria].nazwa, kk: n.kategoria, t: tytul, p: pytania, h: HASLA[n.slug] ?? [] };
+    return { s: n.slug, n: n.nazwa, k: n.krotko, c: KATEGORIE[n.kategoria].nazwa, kk: n.kategoria, t: tytul, p: pytania, h: HASLA[n.slug] ?? [], ...(czeste.has(n.slug) ? { o: 1 as const } : {}) };
   });
 }

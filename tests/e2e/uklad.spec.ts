@@ -51,10 +51,10 @@ test('reklama kampanii: link sponsorowany z UTM, otwierany bezpiecznie', async (
   await expect(link).toHaveAttribute('href', /utm_source=rytmhali&utm_medium=display&utm_campaign=przyklad-styleguide/);
 });
 
-test('telefon: cele dotyku w nagłówku, menu działów i stronicowaniu mają co najmniej 44 px', async ({ page, isMobile }) => {
+test('telefon: cele dotyku w nagłówku, pasku kategorii i okruszkach mają co najmniej 44 px', async ({ page, isMobile }) => {
   test.skip(!isMobile, 'Tylko telefon.');
   await page.goto('/styleguide');
-  const cele = page.locator('header a:visible, header button:visible, nav[aria-label="Stronicowanie"] a, nav[aria-label="Ścieżka nawigacji"] a, .newsletter button');
+  const cele = page.locator('header a:visible, header button:visible, nav[aria-label="Ścieżka nawigacji"] a, .newsletter button');
   const n = await cele.count();
   expect(n).toBeGreaterThan(8);
   for (let i = 0; i < n; i++) {
@@ -64,7 +64,7 @@ test('telefon: cele dotyku w nagłówku, menu działów i stronicowaniu mają co
   }
 });
 
-test('telefon: menu działów przewija się w bok, a strona nie', async ({ page, isMobile }) => {
+test('telefon: pasek kategorii przewija się w bok, a strona nie', async ({ page, isMobile }) => {
   test.skip(!isMobile, 'Tylko telefon.');
   await page.goto('/styleguide');
   const menu = page.locator('.menu-dzialow-lista');

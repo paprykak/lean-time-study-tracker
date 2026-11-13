@@ -62,6 +62,11 @@ describe('wyszukiwarka narzędzi: trafność na pytaniach ludzi z hali', () => {
     expect(wsrod(q)).toContain(slug);
   });
 
+  it('hasło z hali dokładnie pasujące wygrywa z odmianą w nazwie innego narzędzia', () => {
+    expect(pierwszy('nocki')).toBe('dodatek-za-prace-w-nocy');
+    expect(pierwszy('urlop')).toBe('kalkulator-urlopu');
+  });
+
   it('nazwa narzędzia wygrywa z przypadkowym słowem w pytaniu', () => {
     expect(pierwszy('kalkulator nadgodzin')).toBe('kalkulator-nadgodzin');
     expect(pierwszy('przerwy')).toBe('przerwy-w-pracy');

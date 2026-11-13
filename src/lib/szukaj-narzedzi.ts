@@ -7,7 +7,7 @@
 // się tylko końcówką do 3 znaków („urlopu” ~ „urlop”, „ciąży” ~ „ciąża”, „zwolnienia” ~ „zwolnienie”). Słowa do
 // 3 znaków („L4”, „BHP”, „UDT”) muszą się zgadzać na początku. Polskie znaki są pomijane („ciaza” = „ciąża”).
 // Słowo, którego nie zna żadne narzędzie (literówka, „szef”), jest pomijane. Z pozostałych musi pasować co najmniej
-// połowa, a więcej trafionych słów zawsze wygrywa z wagą pola. Ranking: nazwa > hasła z hali > tytuł > pytanie > opis > kategoria.
+// połowa, a więcej trafionych słów zawsze wygrywa z wagą pola. Ranking: nazwa = hasła z hali (dokładne słowo +1) > tytuł > pytanie > opis > kategoria.
 
 export interface WpisIndeksu {
   /** slug narzędzia */
@@ -26,6 +26,8 @@ export interface WpisIndeksu {
   p: string[];
   /** hasła z hali (src/data/sprawy.ts): potoczne słowa, których nie ma w nazwie */
   h: string[];
+  /** 1, gdy narzędzie jest wśród najczęstszych spraw z hali (przy remisie idzie wyżej) */
+  o?: 1;
 }
 
 export interface Wynik {
@@ -78,7 +80,8 @@ export function pasuje(szukane: string, slowo: string): boolean {
   return wspolne >= 4 && szukane.length - wspolne <= 3 && slowo.length - wspolne <= 3;
 }
 
-const WAGI = { n: 10, h: 8, t: 6, p: 5, k: 3, c: 2 } as const;
+// Hasła z hali to świadomy wybór redakcji, więc ważą tyle co nazwa; dokładnie to samo słowo dostaje +1.
+const WAGI = { n: 10, h: 10, t: 6, p: 5, k: 3, c: 2 } as const;
 type Pole = keyof typeof WAGI;
 
 interface Przygotowany {
@@ -117,7 +120,8 @@ export function szukaj(przygotowany: Przygotowany[], zapytanie: string, limit = 
     for (const s of szukane) {
       let najlepiej = 0;
       for (const pole of ['n', 'h', 't', 'k', 'c'] as const) {
-        if (WAGI[pole] > najlepiej && x.pola[pole].some((w) => pasuje(s, w))) najlepiej = WAGI[pole];
+        if (WAGI[pole] + 1 > najlepiej && x.pola[pole].some((w) => w === s)) najlepiej = WAGI[pole] + 1;
+        else if (WAGI[pole] > najlepiej && x.pola[pole].some((w) => pasuje(s, w))) najlepiej = WAGI[pole];
       }
       if (najlepiej < WAGI.p && x.pytania.some((q) => q.slowa.some((w) => pasuje(s, w)))) najlepiej = WAGI.p;
       if (najlepiej) trafione++;
@@ -125,8 +129,10 @@ export function szukaj(przygotowany: Przygotowany[], zapytanie: string, limit = 
     }
     if (trafione < Math.ceil(szukane.length / 2)) continue;
     punkty += trafione * 100;
-    if (x.nazwa.startsWith(fraza)) punkty += 6;
-    else if (x.nazwa.includes(fraza)) punkty += 3;
+    if (x.nazwa.startsWith(fraza)) punkty += 3;
+    else if (x.nazwa.includes(fraza)) punkty += 2;
+    // Najczęstsze sprawy z hali (src/data/sprawy.ts) wygrywają remisy: „urlop” to najpierw kalkulator urlopu.
+    if (x.wpis.o) punkty += 4;
     // Pytanie z FAQ, w którym trafia najwięcej słów zapytania: odpowiada „po pytaniu”, więc pokazujemy je pod nazwą.
     let pytanie: string | undefined;
     let ilePytanie = 0;

@@ -71,12 +71,11 @@ const {
     let zegar: number | undefined;
     let numer = 0;
 
+    // Świadomie bez roli combobox i aria-expanded (pole typu search ich nie przyjmuje): wyniki to zwykła lista linków,
+    // a liczbę wyników ogłasza role="status".
     const zamknij = () => {
       warstwa.hidden = true;
-      pole.setAttribute('aria-expanded', 'false');
     };
-    pole.setAttribute('aria-expanded', 'false');
-    pole.setAttribute('aria-controls', lista.id || (lista.id = `${pole.id}-wyniki`));
 
     async function pokaz() {
       const q = pole.value.trim();
@@ -106,7 +105,6 @@ const {
       pelny.href = `/szukaj?q=${encodeURIComponent(q)}`;
       pelny.textContent = `Szukaj „${q}” w pełnym tekście wszystkich narzędzi`;
       warstwa.hidden = false;
-      pole.setAttribute('aria-expanded', 'true');
       // Czytnik ekranu słyszy liczbę po chwili bez pisania, a nie przy każdym znaku.
       window.clearTimeout(zegar);
       zegar = window.setTimeout(() => (status.textContent = tekst), 700);
