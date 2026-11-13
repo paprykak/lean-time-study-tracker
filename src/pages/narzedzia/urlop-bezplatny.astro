@@ -1,0 +1,262 @@
+---
+// Urlop bezpłatny: skutki dla urlopu wypoczynkowego (art. 155^2, 155^2a, 155^3 Kp), stażu (art. 174 § 2, 174^1 § 2,
+// 186^5) i ubezpieczeń (art. 4 i 12 ustawy zasiłkowej, art. 66–69 ustawy o świadczeniach, art. 7 ustawy o FUS).
+// Logika i teksty wyniku: src/lib/narzedzia/urlop-bezplatny.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { MAKS_LAT, RODZAJE, koniecMiesiecy, tekstyWyniku, type RodzajNieobecnosci } from '../../lib/narzedzia/urlop-bezplatny';
+import { dodajMiesiace, dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+const dzis = dzisWPolsce();
+const OD = dodajMiesiace(`${dzis.slice(0, 8)}01`, 1);
+const DO = koniecMiesiecy(OD, 3);
+const WYMIAR = 26;
+const t = tekstyWyniku({ od: OD, do: DO, rodzaj: 'bezplatny', wymiar: WYMIAR });
+const rodzaje = Object.keys(RODZAJE) as RodzajNieobecnosci[];
+
+const faq = [
+  {
+    pytanie: 'Czy urlop bezpłatny zmniejsza urlop wypoczynkowy?',
+    odpowiedz: 'Tak, gdy trwa co najmniej miesiąc. Po powrocie w ciągu roku urlop liczy się proporcjonalnie do okresu do końca roku (art. 155^2 § 1 Kodeksu pracy), a gdy urlop bezpłatny zaczął się w trakcie roku, wymiar za ten rok obniża się proporcjonalnie, chyba że przed urlopem bezpłatnym wykorzystano urlop w przysługującym lub wyższym wymiarze (art. 155^2 § 2). Każdy kalendarzowy miesiąc pracy to 1/12 wymiaru, niepełny miesiąc pracy i niepełny dzień zaokrągla się w górę (art. 155^2a i 155^3).',
+  },
+  {
+    pytanie: 'Czy urlop bezpłatny wlicza się do stażu pracy?',
+    odpowiedz: 'Nie. Okresu urlopu bezpłatnego nie wlicza się do okresu pracy, od którego zależą uprawnienia pracownicze (art. 174 § 2 Kodeksu pracy), chyba że przepis szczególny stanowi inaczej (§ 4). Wyjątkiem jest urlop bezpłatny na pracę u innego pracodawcy: ten wlicza się do okresu pracy u dotychczasowego pracodawcy (art. 174^1 § 2).',
+  },
+  {
+    pytanie: 'Czy na urlopie bezpłatnym mam ubezpieczenie zdrowotne?',
+    odpowiedz: 'Przez pierwsze 30 dni. Pracownik korzystający z urlopu bezpłatnego traci prawo do świadczeń z ubezpieczenia zdrowotnego po upływie 30 dni od dnia rozpoczęcia urlopu (art. 69 ust. 3 ustawy o świadczeniach opieki zdrowotnej). Pracownik na urlopie bezpłatnym może ubezpieczyć się dobrowolnie na pisemny wniosek złożony w NFZ (art. 68 ust. 1).',
+  },
+  {
+    pytanie: 'Czy na urlopie bezpłatnym dostanę zasiłek chorobowy?',
+    odpowiedz: 'Nie. Zasiłek chorobowy nie przysługuje za niezdolność do pracy przypadającą w czasie urlopu bezpłatnego, a tych dni nie wlicza się do okresu zasiłkowego (art. 12 ust. 2 pkt 1 i ust. 3 ustawy zasiłkowej). Czy przy chorobie trwającej dalej zasiłek przysługuje od dnia, w którym urlop bezpłatny miał się skończyć, ustawa wprost nie mówi.',
+  },
+  {
+    pytanie: 'Czy pracodawca może odwołać mnie z urlopu bezpłatnego?',
+    odpowiedz: 'Tylko przy urlopie dłuższym niż 3 miesiące i tylko wtedy, gdy przy jego udzielaniu strony przewidziały odwołanie z ważnych przyczyn (art. 174 § 3 Kodeksu pracy).',
+  },
+  {
+    pytanie: 'Czy pracodawca musi dać urlop bezpłatny?',
+    odpowiedz: 'Nie. Na wniosek pracownika złożony w postaci papierowej lub elektronicznej pracodawca „może udzielić” urlopu bezpłatnego (art. 174 § 1 Kodeksu pracy). Przepis nie określa, jak długo może on trwać.',
+  },
+];
+---
+<StronaNarzedzia
+  slug="urlop-bezplatny"
+  tytul="Urlop bezpłatny: urlop wypoczynkowy, staż, ZUS"
+  opis="Ile urlopu wypoczynkowego po urlopie bezpłatnym, o ile przesuwa się staż i 26 dni urlopu, co z zasiłkiem chorobowym i NFZ. Wpisz daty urlopu."
+  h1="Urlop bezpłatny: skutki dla urlopu, stażu i ubezpieczeń"
+  lead="Urlop bezpłatny trwający co najmniej miesiąc obniża urlop wypoczynkowy, nie liczy się do stażu, a po 30 dniach odbiera prawo do świadczeń z NFZ. Wpisz daty, a policzymy urlop za każdy rok i nową datę 10 lat stażu."
+  faq={faq}
+>
+  <form class="kalkulator" data-bezplatny novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twój urlop bezpłatny</h2>
+      <div class="mt-4 grid grid-cols-2 items-end gap-3">
+        <div>
+          <label for="b-od" class="etykieta-pola">Od</label>
+          <input id="b-od" name="od" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={OD} aria-describedby="b-blad" />
+        </div>
+        <div>
+          <label for="b-do" class="etykieta-pola">Do</label>
+          <input id="b-do" name="do" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={DO} aria-describedby="b-blad" />
+        </div>
+      </div>
+      <div class="mt-4">
+        <label for="b-rodzaj" class="etykieta-pola">Rodzaj</label>
+        <select id="b-rodzaj" name="rodzaj" class="pole mt-1">
+          {rodzaje.map((r) => <option value={r} selected={r === 'bezplatny'}>{RODZAJE[r]}</option>)}
+        </select>
+      </div>
+      <div class="mt-4 grid grid-cols-2 items-end gap-3">
+        <div>
+          <label for="b-wymiar" class="etykieta-pola">Roczny wymiar urlopu</label>
+          <input id="b-wymiar" name="wymiar" class="pole mt-1" type="text" inputmode="numeric" autocomplete="off" value={WYMIAR} aria-describedby="b-wymiar-opis b-blad" />
+        </div>
+        <div>
+          <label for="b-wykorzystane" class="etykieta-pola">Wykorzystany przed</label>
+          <input id="b-wykorzystane" name="wykorzystane" class="pole mt-1" type="text" inputmode="numeric" autocomplete="off" value="0" aria-describedby="b-wymiar-opis b-blad" />
+        </div>
+      </div>
+      <p id="b-wymiar-opis" class="meta mt-1">Dni. Wymiar na niepełny etat już przeliczony. „Wykorzystany przed”: dni urlopu wypoczynkowego wzięte w roku rozpoczęcia przed urlopem bezpłatnym.</p>
+      <div class="mt-4">
+        <label for="b-staz" class="etykieta-pola">Data 10 lat stażu bez urlopu bezpłatnego</label>
+        <input id="b-staz" name="staz" type="date" class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" aria-describedby="b-staz-opis b-blad" />
+        <p id="b-staz-opis" class="meta mt-1">Opcjonalnie. Policzy ją <a href="/narzedzia/staz-pracy">kalkulator stażu pracy</a>.</p>
+      </div>
+      <p id="b-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Urlop wypoczynkowy w roku rozpoczęcia</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-kwota" data-w="glowna">{t.glowna}</p>
+        <p class="meta" data-w="opis">{t.opis}</p>
+      </div>
+      <dl class="wynik-lista" data-w="lista">
+        {[...t.lata, ...t.pozycje].map((p) => <div><dt>{p.etykieta}</dt><dd>{p.wartosc}</dd></div>)}
+      </dl>
+      <h3 class="etykieta mt-5">Ubezpieczenia</h3>
+      <ul class="lista-ubezpieczen mt-2" data-w="ubezpieczenia">
+        {t.ubezpieczenia.map((u) => <li>{u}</li>)}
+      </ul>
+      <p class="wynik-uwaga">„Pracodawca nie może wypowiedzieć umowy o pracę w czasie urlopu pracownika, a także w czasie innej usprawiedliwionej nieobecności pracownika w pracy, jeżeli nie upłynął jeszcze okres uprawniający do rozwiązania umowy o pracę bez wypowiedzenia” (art. 41 Kodeksu pracy).</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="zasady">Urlop bezpłatny w Kodeksie pracy</h2>
+    <ul>
+      <li>Pracodawca może udzielić urlopu bezpłatnego na wniosek pracownika złożony w postaci papierowej lub elektronicznej (art. 174 § 1). To nie obowiązek.</li>
+      <li>Okresu urlopu bezpłatnego nie wlicza się do okresu pracy, od którego zależą uprawnienia pracownicze (art. 174 § 2), chyba że przepisy szczególne stanowią inaczej (§ 4).</li>
+      <li>Przy urlopie dłuższym niż 3 miesiące strony mogą przewidzieć, że pracownika wolno odwołać z ważnych przyczyn (art. 174 § 3).</li>
+      <li>Urlop bezpłatny na pracę u innego pracodawcy, na podstawie porozumienia pracodawców i za zgodą pracownika, wlicza się do okresu pracy u dotychczasowego pracodawcy (art. 174<sup>1</sup>).</li>
+      <li>Art. 41 zakazuje wypowiedzenia „w czasie urlopu pracownika” i nie rozróżnia rodzajów urlopu. Nie stosuje się go w razie upadłości lub likwidacji pracodawcy (art. 41<sup>1</sup> § 1).</li>
+    </ul>
+
+    <h2 id="urlop-wypoczynkowy">Urlop wypoczynkowy po urlopie bezpłatnym</h2>
+    <p>
+      Po co najmniej miesięcznym urlopie bezpłatnym, urlopie wychowawczym albo nieusprawiedliwionej nieobecności
+      pracownik wracający w ciągu roku dostaje urlop jak u nowego pracodawcy: proporcjonalnie do okresu pozostałego do
+      końca roku (art. 155<sup>2</sup> § 1 w związku z art. 155<sup>1</sup> § 1 pkt 2). Gdy nieobecność zaczęła się po
+      nabyciu prawa do urlopu w danym roku, wymiar za ten rok obniża się proporcjonalnie, chyba że wcześniej wykorzystano
+      urlop w przysługującym lub wyższym wymiarze (art. 155<sup>2</sup> § 2). Obniżenie z § 2 nie dotyczy urlopu
+      wychowawczego: przepis wymienia pkt 1 i 3–6, bez pkt 2.
+    </p>
+    <p>
+      Kalendarzowy miesiąc pracy odpowiada 1/12 wymiaru, a niepełny kalendarzowy miesiąc pracy zaokrągla się w górę
+      (art. 155<sup>2a</sup>). Niepełny dzień urlopu też zaokrągla się w górę, ale urlop nie może przekroczyć wymiaru
+      rocznego (art. 155<sup>3</sup>). Ile wynosi ten wymiar, policzy <a href="/narzedzia/kalkulator-urlopu">kalkulator urlopu</a>,
+      a ile urlopu wychowawczego zostało, <a href="/narzedzia/urlop-wychowawczy">kalkulator urlopu wychowawczego</a>.
+    </p>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <ul>
+      <li>Długość to dni kalendarzowe od pierwszego do ostatniego dnia urlopu włącznie.</li>
+      <li>
+        Przepis nie mówi, jak liczyć „co najmniej 1 miesiąc”. Liczymy od daty do daty (art. 112 Kodeksu cywilnego
+        przez art. 300 Kodeksu pracy): urlop od 1 marca trwa miesiąc, gdy obejmuje 31 marca, a od 15 marca, gdy obejmuje
+        14 kwietnia. Gdy w następnym miesiącu nie ma tej samej daty (urlop od 31 stycznia), wymagamy urlopu do ostatniego
+        dnia następnego miesiąca. W przypadkach granicznych wybieramy więc wariant, w którym urlopu wypoczynkowego się
+        nie obniża. Tak samo liczymy „dłuższy niż 3 miesiące” z art. 174 § 3.
+      </li>
+      <li>
+        Dla każdego roku objętego nieobecnością liczymy miesiące kalendarzowe, w których jest choć jeden dzień poza
+        nieobecnością (niepełny miesiąc pracy w górę), i bierzemy tyle dwunastych wymiaru, zaokrąglając w górę. Przy
+        urlopie od 1 marca do 31 maja 2026 r. to 9 miesięcy: 26 × 9/12 = 19,5, czyli 20 dni. Rok spędzony w całości na
+        urlopie daje z tego rachunku 0 dni. Przepisy nie mówią wprost, czy obniżenie liczy się od miesięcy pracy, czy od
+        miesięcy nieobecności; liczymy od miesięcy pracy, bo o nich mówi art. 155<sup>2a</sup>.
+      </li>
+      <li>
+        Prawo do urlopu w danym roku przyjmujemy jako nabyte 1 stycznia (art. 153 § 2). Urlop zaczęty 1 stycznia nie
+        przypada więc „po nabyciu prawa” i liczymy go z § 1; dotyczy to także urlopu wychowawczego.
+      </li>
+      <li>
+        „Chyba że” z art. 155<sup>2</sup> § 2 czytamy dosłownie: gdy urlop wykorzystany przed nieobecnością jest co
+        najmniej równy obniżonemu wymiarowi, wymiaru za rok rozpoczęcia nie obniżamy. Przepis nie mówi nic o zwrocie
+        urlopu wykorzystanego ponad wymiar.
+      </li>
+      <li>
+        Przy urlopie z art. 174<sup>1</sup> urlopu wypoczynkowego nie obniżamy, bo ten okres wlicza się do okresu pracy
+        u dotychczasowego pracodawcy (§ 2). Czy obejmuje go też art. 155<sup>2</sup> § 1 pkt 1, przepis wprost nie mówi.
+      </li>
+      <li>
+        Datę 10 lat stażu przesuwamy o liczbę dni urlopu bezpłatnego, gdy zaczął się przed tą datą. Urlop wychowawczy
+        wlicza się do okresu zatrudnienia w dniu jego zakończenia (art. 186<sup>5</sup>), więc daty nie przesuwa. Dla
+        nieobecności nieusprawiedliwionej stażu nie liczymy: art. 174 § 2 dotyczy urlopu bezpłatnego.
+      </li>
+      <li>
+        30 dni z art. 69 ust. 3 ustawy o świadczeniach opieki zdrowotnej liczymy bez dnia rozpoczęcia urlopu (art. 111
+        § 2 Kodeksu cywilnego): przy urlopie od 1 marca prawo do świadczeń trwa do 31 marca.
+      </li>
+      <li>
+        Ustawa o systemie ubezpieczeń społecznych nie wspomina o urlopie bezpłatnym, a ustawa o emeryturach i rentach
+        z FUS nie wymienia zwykłego urlopu bezpłatnego ani wśród okresów nieskładkowych (art. 7), ani wprost wśród
+        składkowych (art. 6). Nie piszemy więc, jak ten okres liczy się do emerytury. Staż z innych okresów policzy
+        <a href="/narzedzia/staz-pracy">kalkulator stażu pracy</a>.
+      </li>
+    </ul>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { tekstyWyniku, type RodzajNieobecnosci } from '../../lib/narzedzia/urlop-bezplatny';
+  import { dodajMiesiace, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { typografia } from '../../lib/typografia.mjs';
+
+  const form = document.querySelector<HTMLFormElement>('[data-bezplatny]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const calkowita = (s: string) => (/^\d{1,2}$/.test(s.trim()) ? Number(s.trim()) : Number.NaN);
+    const przelicz = () => {
+      const od = el('od').value;
+      const do_ = el('do').value;
+      const staz = el('staz').value;
+      const wymiar = calkowita(el('wymiar').value);
+      const wykorzystane = el('wykorzystane').value.trim() === '' ? 0 : calkowita(el('wykorzystane').value);
+      let blad: string | null = null;
+      if (!poprawnaData(od) || !poprawnaData(do_)) blad = 'Wpisz obie daty urlopu.';
+      else if (do_ < od) blad = 'Koniec przed początkiem.';
+      else if (do_ >= dodajMiesiace(od, 72)) blad = 'Liczymy okres krótszy niż 6 lat.';
+      else if (!(wymiar >= 1 && wymiar <= 26)) blad = 'Roczny wymiar urlopu: od 1 do 26 dni.';
+      else if (!(wykorzystane >= 0 && wykorzystane <= wymiar)) blad = 'Wykorzystany urlop: od 0 do rocznego wymiaru.';
+      else if (staz && !poprawnaData(staz)) blad = 'Niepoprawna data 10 lat stażu.';
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      b.hidden = !blad;
+      b.textContent = blad ?? '';
+      const lista = w('lista');
+      const ubezpieczenia = w('ubezpieczenia');
+      if (blad) {
+        w('glowna').textContent = '—';
+        w('opis').textContent = '';
+        lista.replaceChildren();
+        ubezpieczenia.replaceChildren();
+        return;
+      }
+      const t = tekstyWyniku({
+        od,
+        do: do_,
+        rodzaj: el('rodzaj').value as RodzajNieobecnosci,
+        wymiar,
+        wykorzystanePrzed: wykorzystane,
+        data10Lat: staz || undefined,
+      });
+      w('glowna').textContent = typografia(t.glowna);
+      w('opis').textContent = typografia(t.opis);
+      lista.replaceChildren(
+        ...[...t.lata, ...t.pozycje].map((p) => {
+          const div = document.createElement('div');
+          const dt = document.createElement('dt');
+          dt.textContent = typografia(p.etykieta);
+          const dd = document.createElement('dd');
+          dd.textContent = typografia(p.wartosc);
+          div.append(dt, dd);
+          return div;
+        }),
+      );
+      ubezpieczenia.replaceChildren(
+        ...t.ubezpieczenia.map((u) => {
+          const li = document.createElement('li');
+          li.textContent = typografia(u);
+          return li;
+        }),
+      );
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>
+
+<style>
+  .lista-ubezpieczen {
+    list-style: disc;
+    padding-left: 1.25rem;
+    font-size: 0.9375rem;
+  }
+  .lista-ubezpieczen li + li {
+    margin-top: 0.5rem;
+  }
+</style>
