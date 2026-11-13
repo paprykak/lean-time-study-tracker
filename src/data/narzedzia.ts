@@ -621,7 +621,7 @@ export const NARZEDZIA: Narzedzie[] = [
     nazwa: 'Nowa praca: terminy pracodawcy',
     krotko: 'Do kiedy umowa, badania, BHP, informacja o warunkach zatrudnienia (7 dni), zgłoszenie do ZUS i zapis do PPK.',
     kategoria: 'umowa',
-    przepisy: ['kodeksPracy', 'kodeksCywilny', 'ubezpieczeniaZgloszenie', 'ppk', 'szkoleniaBhp'],
+    przepisy: ['kodeksPracy', 'kodeksCywilny', 'systemUbezpieczen', 'ppk', 'szkoleniaBhp'],
     sprawdzono: '2026-11-12',
   },
   {
@@ -701,7 +701,7 @@ export const NARZEDZIA: Narzedzie[] = [
     nazwa: 'Urlop bezpłatny: skutki',
     krotko: 'Ile urlopu wypoczynkowego zostaje po urlopie bezpłatnym, o ile przesuwa się staż, co z zasiłkiem i NFZ.',
     kategoria: 'urlopy',
-    przepisy: ['kodeksPracy', 'kodeksCywilny', 'zasilkowa', 'swiadczeniaZdrowotne', 'emerytury', 'systemUbezpieczen2026'],
+    przepisy: ['kodeksPracy', 'kodeksCywilny', 'zasilkowa', 'swiadczeniaZdrowotne', 'emerytury', 'systemUbezpieczen'],
     sprawdzono: '2026-11-12',
   },
   {

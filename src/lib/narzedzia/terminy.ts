@@ -14,6 +14,9 @@
 //    to przepis szczególny, liczy go `wypowiedzenie.ts`.
 // 4. Wiek: kolejny rok życia kończy się z początkiem dnia urodzin (art. 112 zd. 2 KC): `dodajLata(urodzenie, n)` to
 //    pierwszy dzień po ukończeniu n lat.
+// Regułę „dzień przed dniem odpowiadającym datą” stosuje praktyka i orzecznictwo prawa pracy (np. SN II PK 223/09,
+// pismo GIP z 17.01.2011); przypadku, gdy takiego dnia w ostatnim miesiącu nie ma, żadne znalezione źródło nie
+// rozstrzyga wprost: przyjmujemy literę art. 112 zd. 1 KC (ostatni dzień miesiąca).
 // Odstępstwa od pkt 2 są w narzędziach opisane jako wariant bezpieczny dla pracownika, gdy przepis nie rozstrzyga
 // (umowa na zastępstwo: upływ 3. miesiąca ciąży; praca cudzoziemca: okno na podjęcie pracy).
 
