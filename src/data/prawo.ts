@@ -398,6 +398,13 @@ export const AKTY = {
     adres: eli(1996, 279),
     sprawdzono: '2026-11-11',
   },
+  posilki: {
+    nazwa: 'Rozporządzenie w sprawie profilaktycznych posiłków i napojów',
+    publikator: 'Dz.U. 1996 nr 60 poz. 279',
+    uwaga: 'bez tekstu jednolitego; § 1–3, 5, 6 i 8: posiłki (progi wydatku energetycznego, okres zimowy, bez ekwiwalentu pieniężnego), § 4: napoje; jedyna zmiana: Dz.U. 2019 poz. 1160 (§ 2 ust. 2)',
+    adres: eli(1996, 279),
+    sprawdzono: '2026-11-13',
+  },
   posilki2019: {
     nazwa: 'Rozporządzenie z 12 czerwca 2019 r. zmieniające rozporządzenie w sprawie profilaktycznych posiłków i napojów',
     publikator: 'Dz.U. 2019 poz. 1160',

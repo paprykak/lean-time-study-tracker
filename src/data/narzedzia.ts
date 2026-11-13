@@ -565,7 +565,7 @@ export const NARZEDZIA: Narzedzie[] = [
     nazwa: 'Posiłki profilaktyczne',
     krotko: 'Czy należy Ci się darmowy posiłek w pracy: wydatek energetyczny, chłodnia, zima na zewnątrz i napoje.',
     kategoria: 'bhp',
-    przepisy: ['kodeksPracy', 'napoje', 'posilki2019', 'pit', 'podstawaSkladek'],
+    przepisy: ['kodeksPracy', 'posilki', 'posilki2019', 'pit', 'podstawaSkladek', 'swiadczeniaZdrowotne'],
     sprawdzono: '2026-11-12',
   },
   {
@@ -574,6 +574,9 @@ export const NARZEDZIA: Narzedzie[] = [
     krotko: 'Czy należy Ci się odzież i obuwie robocze, własne ubranie za ekwiwalent, pranie, podatek i ZUS od ekwiwalentu.',
     kategoria: 'bhp',
     przepisy: ['kodeksPracy', 'ogolneBhp', 'pit', 'podstawaSkladek', 'swiadczeniaZdrowotne', 'pracaTymczasowa'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'wynagrodzenie-za-niepelny-miesiac',
     nazwa: 'Wynagrodzenie za niepełny miesiąc',
     krotko: 'Pensja za część miesiąca: po L4 (1/30), urlopie bezpłatnym, przy przyjęciu albo odejściu w trakcie miesiąca.',
