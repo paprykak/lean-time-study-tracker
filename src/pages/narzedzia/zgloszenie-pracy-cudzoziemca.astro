@@ -4,12 +4,12 @@
 // Logika: src/lib/narzedzia/cudzoziemiec-terminy.ts (testy obok).
 import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
 import { terminyOchrony, type Termin } from '../../lib/narzedzia/cudzoziemiec-terminy';
-import { dataPoPolsku, dodajDni, dodajMiesiace, dzisWPolsce } from '../../lib/narzedzia/terminy';
+import { dataPoPolsku, dodajDni, dzisWPolsce } from '../../lib/narzedzia/terminy';
 
 const DZIS = dzisWPolsce();
 const START_EW = dodajDni(DZIS, 14);
-const KONIEC_OSW = dodajDni(dodajMiesiace(START_EW, 12), -1);
-const KONIEC_ZEZW = dodajDni(dodajMiesiace(DZIS, 12), -1);
+const KONIEC_OSW = dodajDni(DZIS, 378);
+const KONIEC_ZEZW = dodajDni(DZIS, 364);
 const lista = terminyOchrony({ start: DZIS });
 const opis = (t: Termin) =>
   t.data ? `do ${dataPoPolsku(t.data)}${t.przesunieta ? ` (weekend albo święto; po przesunięciu ${dataPoPolsku(t.przesunieta)})` : ''}` : 'bez terminu w dniach';
@@ -61,7 +61,7 @@ const faq = [
         <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div>
             <label for="ct-o-start" class="etykieta-pola">Pierwszy dzień pracy</label>
-            <input id="ct-o-start" name="o-start" type="date" class="pole mt-1" min="2025-06-01" max="2100-12-31" value={DZIS} aria-describedby="ct-blad" />
+            <input id="ct-o-start" name="o-start" type="date" class="pole mt-1" min="2025-06-01" max="2100-12-31" value={DZIS} aria-describedby="ct-blad" data-dzis />
           </div>
           <div>
             <label for="ct-o-zmiana" class="etykieta-pola">Zmiana umowy lub stawki</label>
@@ -75,15 +75,15 @@ const faq = [
         <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div>
             <label for="ct-s-zlozone" class="etykieta-pola">Złożenie oświadczenia</label>
-            <input id="ct-s-zlozone" name="s-zlozone" type="date" class="pole mt-1" min="2025-06-01" max="2100-12-31" value={DZIS} aria-describedby="ct-blad" />
+            <input id="ct-s-zlozone" name="s-zlozone" type="date" class="pole mt-1" min="2025-06-01" max="2100-12-31" value={DZIS} aria-describedby="ct-blad" data-dzis />
           </div>
           <div>
             <label for="ct-s-start" class="etykieta-pola">Start pracy z ewidencji</label>
-            <input id="ct-s-start" name="s-start" type="date" class="pole mt-1" min="2025-06-01" max="2100-12-31" value={START_EW} aria-describedby="ct-blad" />
+            <input id="ct-s-start" name="s-start" type="date" class="pole mt-1" min="2025-06-01" max="2100-12-31" value={START_EW} aria-describedby="ct-blad" data-dzis="14" />
           </div>
           <div>
             <label for="ct-s-koniec" class="etykieta-pola">Koniec pracy z oświadczenia</label>
-            <input id="ct-s-koniec" name="s-koniec" type="date" class="pole mt-1" min="2025-06-01" max="2100-12-31" value={KONIEC_OSW} aria-describedby="ct-blad" />
+            <input id="ct-s-koniec" name="s-koniec" type="date" class="pole mt-1" min="2025-06-01" max="2100-12-31" value={KONIEC_OSW} aria-describedby="ct-blad" data-dzis="378" />
           </div>
           <div>
             <label for="ct-s-faktyczny" class="etykieta-pola">Faktyczny start pracy</label>
@@ -97,11 +97,11 @@ const faq = [
         <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div>
             <label for="ct-z-od" class="etykieta-pola">Zezwolenie ważne od</label>
-            <input id="ct-z-od" name="z-od" type="date" class="pole mt-1" min="2025-06-01" max="2100-12-31" value={DZIS} aria-describedby="ct-blad" />
+            <input id="ct-z-od" name="z-od" type="date" class="pole mt-1" min="2025-06-01" max="2100-12-31" value={DZIS} aria-describedby="ct-blad" data-dzis />
           </div>
           <div>
             <label for="ct-z-do" class="etykieta-pola">Zezwolenie ważne do</label>
-            <input id="ct-z-do" name="z-do" type="date" class="pole mt-1" min="2025-06-01" max="2100-12-31" value={KONIEC_ZEZW} aria-describedby="ct-blad" />
+            <input id="ct-z-do" name="z-do" type="date" class="pole mt-1" min="2025-06-01" max="2100-12-31" value={KONIEC_ZEZW} aria-describedby="ct-blad" data-dzis="364" />
           </div>
           <div>
             <label for="ct-z-start" class="etykieta-pola">Dzień rozpoczęcia pracy</label>
@@ -151,6 +151,7 @@ const faq = [
 </StronaNarzedzia>
 
 <script>
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
   import { terminyOchrony, terminyOswiadczenia, terminyZezwolenia, type Termin } from '../../lib/narzedzia/cudzoziemiec-terminy';
   import { dataPoPolsku } from '../../lib/narzedzia/terminy';
   import { typografia } from '../../lib/typografia.mjs';
@@ -191,6 +192,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    ustawDzisiejszeWartosci(form);
     przelicz();
   }
 </script>

@@ -26,11 +26,12 @@
 // 4. Staż do okresu wypowiedzenia: pełne miesiące od początku pracy do dnia doręczenia (pelneMiesiace, jak w kalkulatorze
 //    okresu wypowiedzenia). Do stażu wlicza się pracę u poprzedniego pracodawcy przy przejściu zakładu (art. 36 § 1^1)
 //    oraz zlecenie i działalność na rzecz tego pracodawcy (art. 302^1 § 8): użytkownik wpisuje najwcześniejszą datę.
-//    Gdy próg 6 miesięcy albo 3 lat mija w trakcie wypowiedzenia, przepis nie mówi, który okres stosować.
+//    Gdy próg 6 miesięcy albo 3 lat mija w trakcie wypowiedzenia, przepis nie mówi wprost, co wtedy; jak w kalkulatorze
+//    okresu wypowiedzenia (wypowiedzenieStalej) podajemy dłuższy okres (wariant bezpieczny dla pracownika).
 // 5. Przedłużenie oceniamy od daty końca wpisanej w umowie. Gdy ta data wypada przed końcem okresu wypowiedzenia,
 //    a umowa się przedłuża, ostatnim dniem jest dzień porodu. Gdy wypowiedzenie kończy umowę przed tą datą, przepis
 //    nie mówi wprost, czy przedłużenie obejmuje taką umowę: zaznaczamy to (przedluzeniePoWypowiedzeniu).
-import { koniecWypowiedzenia, okresWypowiedzenia, pelneMiesiace, type Okres } from './wypowiedzenie';
+import { wypowiedzenieStalej, type Okres } from './wypowiedzenie';
 import { dodajDni, dodajMiesiace, poprawnaData } from './terminy';
 
 export interface WypowiedzenieZastepstwa {
@@ -52,9 +53,10 @@ export function wypowiedzenieZastepstwa(poczatekPracy: string, doreczenie: strin
     if (!poprawnaData(koniecUmowy)) throw new Error('Wpisz poprawną datę końca umowy.');
     if (koniecUmowy < doreczenie) throw new Error('Koniec umowy nie może być przed doręczeniem wypowiedzenia.');
   }
-  const stazMiesiecy = pelneMiesiace(poczatekPracy, doreczenie);
-  const okres = okresWypowiedzenia('stala', stazMiesiecy);
-  const koniecOkresu = koniecWypowiedzenia(doreczenie, okres)!;
+  const w = wypowiedzenieStalej(poczatekPracy, doreczenie);
+  const stazMiesiecy = w.staz;
+  const okres = w.okres;
+  const koniecOkresu = w.koniec;
   const termin = !!koniecUmowy && koniecUmowy < koniecOkresu;
   return { stazMiesiecy, okres, koniecOkresu, ostatniDzien: termin ? koniecUmowy! : koniecOkresu, powod: termin ? 'termin' : 'wypowiedzenie' };
 }

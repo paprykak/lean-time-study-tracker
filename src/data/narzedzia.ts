@@ -573,6 +573,10 @@ export const NARZEDZIA: Narzedzie[] = [
     nazwa: 'Umowa na zastępstwo',
     krotko: 'Okres wypowiedzenia i ostatni dzień umowy na zastępstwo, czy przedłuży się do porodu, limit 33 miesięcy.',
     kategoria: 'umowa',
+    przepisy: ['kodeksPracy', 'kodeksCywilny'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'wynagrodzenie-za-niepelny-miesiac',
     nazwa: 'Wynagrodzenie za niepełny miesiąc',
     krotko: 'Pensja za część miesiąca: po L4 (1/30), urlopie bezpłatnym, przy przyjęciu albo odejściu w trakcie miesiąca.',
@@ -666,6 +670,9 @@ export const NARZEDZIA: Narzedzie[] = [
     krotko: 'Terminy zgłoszeń: obywatele Ukrainy do urzędu pracy w 7 dni, oświadczenie u starosty, zezwolenie u wojewody.',
     kategoria: 'umowa',
     przepisy: ['powierzanieCudzoziemcom', 'wygaszenieSpecustawy', 'pomocUkrainie', 'kodeksCywilny'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'odpracowanie-wyjscia-prywatnego',
     nazwa: 'Odpracowanie wyjścia prywatnego',
     krotko: 'Ile godzin odpracować po wyjściu w sprawach osobistych, kiedy to już nadgodziny i czy zostaje odpoczynek.',

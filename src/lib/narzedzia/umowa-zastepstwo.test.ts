@@ -5,9 +5,9 @@ import { przedluzenieDoPorodu, umowaNaZastepstwo, uplywTrzeciegoMiesiaca, wypowi
 describe('wypowiedzenie umowy na zastępstwo (art. 36 § 1, art. 30 § 2^1)', () => {
   it.each([
     // początek pracy, doręczenie, staż, okres, koniec okresu
-    ['2026-03-15', '2026-09-14', 5, '2 tygodnie', '2026-10-03'],
+    ['2026-03-15', '2026-09-14', 5, '1 miesiąc', '2026-10-31'], // próg 6 miesięcy w trakcie 2 tygodni: okres dłuższy (wypowiedzenieStalej)
     ['2026-03-15', '2026-09-15', 6, '1 miesiąc', '2026-10-31'],
-    ['2023-12-01', '2026-11-30', 35, '1 miesiąc', '2026-12-31'],
+    ['2023-12-01', '2026-11-30', 35, '3 miesiące', '2027-02-28'], // próg 3 lat w trakcie miesiąca: okres dłuższy
     ['2023-12-01', '2026-12-01', 36, '3 miesiące', '2027-03-31'],
     // koniec roku: dwa tygodnie przechodzą na styczeń; sobota i niedziela jako dzień doręczenia
     ['2026-10-05', '2026-12-28', 2, '2 tygodnie', '2027-01-16'],

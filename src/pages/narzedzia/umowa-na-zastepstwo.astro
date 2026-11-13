@@ -59,11 +59,11 @@ const faq = [
         </div>
         <div>
           <label for="zs-start" class="etykieta-pola">Pracujesz u tego pracodawcy od</label>
-          <input id="zs-start" name="start" type="date" class="pole mt-1" min="1960-01-01" max="2100-12-31" value={START} aria-describedby="zs-blad" />
+          <input id="zs-start" name="start" type="date" class="pole mt-1" min="1960-01-01" max="2100-12-31" value={START} aria-describedby="zs-blad" data-dzis="-400" />
         </div>
         <div>
           <label for="zs-doreczenie" class="etykieta-pola">Dzień doręczenia wypowiedzenia</label>
-          <input id="zs-doreczenie" name="doreczenie" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={DZIS} aria-describedby="zs-blad" />
+          <input id="zs-doreczenie" name="doreczenie" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={DZIS} aria-describedby="zs-blad" data-dzis />
         </div>
         <div>
           <label for="zs-koniec" class="etykieta-pola">Koniec umowy (jeśli ma datę)</label>
@@ -127,7 +127,8 @@ const faq = [
       miesiące od początku pracy do dnia doręczenia. Do stażu wlicza się pracę u poprzedniego pracodawcy przy przejściu
       zakładu pracy (art. 36 § 1<sup>1</sup>) oraz okresy zlecenia albo działalności, w których praca była świadczona na
       rzecz tego pracodawcy (art. 302<sup>1</sup> § 8); wpisz wtedy najwcześniejszą z tych dat. Gdy próg 6 miesięcy albo
-      3 lat mija w trakcie wypowiedzenia, przepis nie mówi, który okres stosować: sprawdź to w kadrach. Przy stanowisku
+      3 lat mija w trakcie wypowiedzenia, przepis nie mówi wprost, co wtedy; jak
+      <a href="/narzedzia/okres-wypowiedzenia">kalkulator okresu wypowiedzenia</a> podajemy dłuższy okres. Przy stanowisku
       z odpowiedzialnością materialną za powierzone mienie umowa może przewidywać dłuższy okres (art. 36 § 5); kalkulator
       go nie zna. Gdy umowa ma datę końca wcześniejszą niż koniec okresu wypowiedzenia,
       ostatnim dniem jest ta data, bo umowa rozwiązuje się z upływem czasu, na który była zawarta (art. 30 § 1 pkt 4).
@@ -190,6 +191,7 @@ const faq = [
 </StronaNarzedzia>
 
 <script>
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
   import { umowaNaZastepstwo, type RodzajUmowyWCiazy, type StatusPrzedluzenia } from '../../lib/narzedzia/umowa-zastepstwo';
   import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
   import { odmiana } from '../../lib/redakcja';
@@ -266,6 +268,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    ustawDzisiejszeWartosci(form);
     przelicz();
   }
 </script>

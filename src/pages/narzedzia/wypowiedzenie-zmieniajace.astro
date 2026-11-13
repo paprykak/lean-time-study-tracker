@@ -50,11 +50,11 @@ const faq = [
       <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div>
           <label for="wz-start" class="etykieta-pola">Pracujesz u tego pracodawcy od</label>
-          <input id="wz-start" name="start" type="date" class="pole mt-1" min="1960-01-01" max="2100-12-31" value={START} aria-describedby="wz-blad" />
+          <input id="wz-start" name="start" type="date" class="pole mt-1" min="1960-01-01" max="2100-12-31" value={START} aria-describedby="wz-blad" data-dzis="-400" />
         </div>
         <div>
           <label for="wz-doreczenie" class="etykieta-pola">Dzień doręczenia pisma</label>
-          <input id="wz-doreczenie" name="doreczenie" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={DZIS} aria-describedby="wz-blad" />
+          <input id="wz-doreczenie" name="doreczenie" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={DZIS} aria-describedby="wz-blad" data-dzis />
         </div>
       </div>
       <label class="mt-4 flex items-start gap-3 text-[0.9375rem]">
@@ -72,6 +72,7 @@ const faq = [
       </div>
       <dl class="wynik-lista">
         <div><dt>Okres wypowiedzenia</dt><dd data-w="okres">{r.okres.opis}</dd></div>
+        <div data-w="prog-wiersz" hidden={!r.prog}><dt>Próg stażu w trakcie wypowiedzenia</dt><dd data-w="prog">{r.prog ? `${r.prog.miesiace === 6 ? '6 miesięcy' : '3 lata'} mija ${dataPoPolsku(r.prog.dzien)}; odmowa liczona od okresu ${r.prog.krotszy}` : ''}</dd></div>
         <div><dt>Okres kończy się</dt><dd data-w="koniec">{dataPoPolsku(r.koniec)}</dd></div>
         <div><dt>Gdy przyjmiesz: nowe warunki od</dt><dd data-w="nowe">{dataPoPolsku(r.noweWarunkiOd)}</dd></div>
         <div><dt>Gdy odmówisz: ostatni dzień umowy</dt><dd data-w="ostatni">{dataPoPolsku(r.koniec)}</dd></div>
@@ -106,8 +107,9 @@ const faq = [
       <a href="/narzedzia/okres-wypowiedzenia">kalkulator okresu wypowiedzenia</a>. Staż liczymy w pełnych miesiącach do dnia doręczenia. Wpisz początek
       pracy razem z wcześniejszym zleceniem albo działalnością wykonywaną dla tego pracodawcy (art. 302<sup>1</sup> § 8)
       i pracą przed przejściem zakładu na nowego pracodawcę (art. 36 § 1<sup>1</sup>); pomoże <a href="/narzedzia/staz-pracy">kalkulator
-      stażu pracy</a>. Gdy próg 6 miesięcy albo 3 lat mija w trakcie okresu wypowiedzenia, przepis nie mówi, który okres
-      stosować; kalkulator podaje krótszy, więc termin na odmowę wychodzi wcześniej. Przy umowie na czas określony, która
+      stażu pracy</a>. Gdy próg 6 miesięcy albo 3 lat mija w trakcie okresu wypowiedzenia, przepis nie mówi wprost, co wtedy.
+      Jak kalkulator okresu wypowiedzenia podajemy wtedy dłuższy okres i późniejszy koniec umowy, ale termin na odmowę
+      liczymy od krótszego okresu, więc odmowa złożona do tej daty jest w terminie przy obu wariantach. Przy umowie na czas określony, która
       kończy się przed końcem okresu wypowiedzenia, umowa rozwiązuje się z upływem czasu, na który ją zawarto (art. 30 § 1 pkt 4). Przy stanowisku z odpowiedzialnością
       materialną umowa może przewidywać dłuższe okresy (art. 36 § 5); wtedy kalkulator ich nie zna. Okresu próbnego
       kalkulator nie obejmuje.
@@ -148,6 +150,7 @@ const faq = [
 </StronaNarzedzia>
 
 <script>
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
   import { wypowiedzenieZmieniajace } from '../../lib/narzedzia/wypowiedzenie-zmieniajace';
   import { dataPoPolsku, dniMiedzy, dzisWPolsce, poprawnaData } from '../../lib/narzedzia/terminy';
   import { odmiana } from '../../lib/redakcja';
@@ -172,6 +175,7 @@ const faq = [
       if (blad) {
         w('odmowa').textContent = '—';
         for (const k of POLA) w(k).textContent = '—';
+        w('prog-wiersz').hidden = true;
         status.hidden = true;
         w('uwaga').hidden = true;
         return;
@@ -179,6 +183,8 @@ const faq = [
       const r = wypowiedzenieZmieniajace(start, doreczenie, el('pouczenie').checked);
       w('odmowa').textContent = typografia(dataPoPolsku(r.odmowaDo));
       w('okres').textContent = typografia(r.okres.opis);
+      w('prog-wiersz').hidden = !r.prog;
+      w('prog').textContent = r.prog ? typografia(`${r.prog.miesiace === 6 ? '6 miesięcy' : '3 lata'} mija ${dataPoPolsku(r.prog.dzien)}; odmowa liczona od okresu ${r.prog.krotszy}`) : '';
       w('koniec').textContent = typografia(dataPoPolsku(r.koniec));
       w('nowe').textContent = typografia(dataPoPolsku(r.noweWarunkiOd));
       w('ostatni').textContent = typografia(dataPoPolsku(r.koniec));
@@ -200,6 +206,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    ustawDzisiejszeWartosci(form);
     przelicz();
   }
 </script>

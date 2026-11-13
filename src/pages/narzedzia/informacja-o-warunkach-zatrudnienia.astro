@@ -51,7 +51,7 @@ const faq = [
       <h2 id="kalkulator-tytul" class="tytul-m">Nowa umowa o pracę</h2>
       <div class="mt-4">
         <label for="sp-start" class="etykieta-pola">Pierwszy dzień pracy</label>
-        <input id="sp-start" name="start" type="date" class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" value={START} aria-describedby="sp-blad" />
+        <input id="sp-start" name="start" type="date" class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" value={START} aria-describedby="sp-blad" data-dzis />
         <p id="sp-blad" class="blad-pola" data-blad="dane" role="alert" hidden></p>
       </div>
       <fieldset class="mt-6">
@@ -133,6 +133,7 @@ const faq = [
 </StronaNarzedzia>
 
 <script>
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
   import { obowiazkiNaStart, type Obowiazek } from '../../lib/narzedzia/start-w-pracy';
   import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
   import { typografia } from '../../lib/typografia.mjs';
@@ -175,6 +176,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    ustawDzisiejszeWartosci(form);
     przelicz();
   }
 </script>

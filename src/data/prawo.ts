@@ -478,6 +478,7 @@ export const AKTY = {
     uwaga: 'od 22 sierpnia 2026 r.: Wenezuela, Gruzja, Kolumbia',
     adres: eli(2026, 1072),
     sprawdzono: '2026-11-12',
+  },
   zfss: {
     nazwa: 'Ustawa o zakładowym funduszu świadczeń socjalnych',
     publikator: 'Dz.U. 2024 poz. 288',
