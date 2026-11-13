@@ -1,0 +1,233 @@
+---
+// Zerowy PIT: zwolnienia do 85 528 zł z art. 21 ust. 1 pkt 148 i 152–154, ust. 39, 43–48 ustawy o PIT (t.j. Dz.U. 2026
+// poz. 592 i 2025 poz. 163), art. 53 ustawy z 29 października 2021 r. (Dz.U. 2021 poz. 2105), objaśnienia MF
+// z 30 grudnia 2022 r. Logika i teksty wyniku: src/lib/narzedzia/zerowy-pit.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { LIMIT_ZWOLNIEN, opisZwolnienia } from '../../lib/narzedzia/zerowy-pit';
+import { LATA_PIT } from '../../lib/narzedzia/ulga-na-dzieci';
+import { zl } from '../../lib/narzedzia/format';
+import { dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+const dzis = dzisWPolsce();
+const rokTeraz = Number(dzis.slice(0, 4));
+const lata = [...new Set([...LATA_PIT, rokTeraz])].sort((a, b) => a - b);
+const rok = rokTeraz;
+const start = opisZwolnienia({ rok, zwolnienie: 'mlodzi', dataUrodzenia: '2001-06-15', przychody: 60_000 });
+const limit = zl(LIMIT_ZWOLNIEN);
+
+const faq = [
+  {
+    pytanie: 'Do kiedy działa ulga dla młodych?',
+    odpowiedz: 'Do dnia 26. urodzin włącznie, także gdy wypadają w sobotę albo święto. Liczy się dzień, w którym dostajesz pieniądze: pensja za pracę przed urodzinami wypłacona po nich nie jest już zwolniona (art. 21 ust. 1 pkt 148 ustawy o PIT, objaśnienia Ministra Finansów z 30 grudnia 2022 r.).',
+  },
+  {
+    pytanie: 'Czy limit 85 528 zł jest osobny dla każdej ulgi?',
+    odpowiedz: `Nie. ${limit} to wspólny limit przychodów w roku dla ulgi dla młodych, na powrót, dla rodzin 4+ i dla pracujących seniorów (art. 21 ust. 44). Każdy z małżonków ma własny limit, ale niewykorzystanej części nie przenosi się na małżonka ani na następny rok. Limit liczy się od przychodu brutto, a nadwyżka jest opodatkowana według skali.`,
+  },
+  {
+    pytanie: 'Jakie przychody są zwolnione?',
+    odpowiedz: 'Przychody z umowy o pracę, umowy zlecenia i zasiłek macierzyński. Ulga dla młodych obejmuje też praktyki absolwenckie i staż uczniowski, a ulgi na powrót, dla rodzin 4+ i dla seniorów także działalność na skali, podatku liniowym albo ryczałcie. Nie są zwolnione na przykład umowy o dzieło, najem ani emerytura (art. 21 ust. 1 pkt 148 i 152–154).',
+  },
+  {
+    pytanie: 'Kto może skorzystać z ulgi dla pracujących seniorów?',
+    odpowiedz: 'Osoba po ukończeniu 60 lat (kobieta) albo 65 lat (mężczyzna), która z tej pracy podlega ubezpieczeniom społecznym i mimo prawa do emerytury jej nie pobiera; nie może też pobierać renty rodzinnej. Renta z tytułu niezdolności do pracy nie wyklucza ulgi. Pracodawca stosuje ulgę w zaliczkach po złożeniu przez Ciebie oświadczenia (art. 21 ust. 1 pkt 154 i art. 31a ust. 8).',
+  },
+  {
+    pytanie: 'Czy przy zerowym PIT trzeba złożyć zeznanie?',
+    odpowiedz: 'Zeznanie składasz, gdy masz też przychody opodatkowane. Przy uldze dla rodzin 4+ składasz w terminie zeznania informację o dzieciach z numerami PESEL, chyba że podasz je w zeznaniu (art. 21 ust. 46 i 48). Składki społeczne od przychodu zwolnionego nie zmniejszają dochodu (art. 26 ust. 1 pkt 2), ale zwiększają kwotę, do której urząd zwraca niewykorzystaną ulgę na dzieci (art. 27f ust. 9).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="zerowy-pit"
+  tytul="Zerowy PIT do 85 528 zł: kto i do kiedy"
+  opis="Ulga dla młodych do 26. urodzin, na powrót z zagranicy, dla rodzin 4+ i pracujących seniorów: od kiedy, do kiedy i ile przychodu bez podatku w roku."
+  h1="Zerowy PIT: ulga dla młodych, na powrót, 4+ i dla seniorów"
+  lead={`Wybierz ulgę i wpisz dane, a sprawdzimy, czy przysługuje w danym roku, od kiedy do kiedy i jaka część przychodu mieści się we wspólnym limicie ${limit}.`}
+  faq={faq}
+  objasnienia={['mfUlgaMlodych']}
+>
+  <form class="kalkulator" data-zerowy novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Ulga i dane</h2>
+      <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div>
+          <label for="z-ulga" class="etykieta-pola">Ulga</label>
+          <select id="z-ulga" name="ulga" class="pole mt-1">
+            <option value="mlodzi" selected>Do 26 lat</option>
+            <option value="powrot">Powrót z zagranicy</option>
+            <option value="rodzina4">Rodzina 4+</option>
+            <option value="senior">Pracujący senior</option>
+          </select>
+        </div>
+        <div>
+          <label for="z-rok" class="etykieta-pola">Rok</label>
+          <select id="z-rok" name="rok" class="pole mt-1" data-rok-biezacy>
+            {lata.map((r) => <option value={r} selected={r === rok}>{r}</option>)}
+          </select>
+        </div>
+        <div data-dla="mlodzi senior">
+          <label for="z-urodzenie" class="etykieta-pola">Data urodzenia</label>
+          <input id="z-urodzenie" name="urodzenie" class="pole mt-1" type="date" value="2001-06-15" aria-describedby="z-blad" />
+        </div>
+        <div data-dla="senior" hidden>
+          <label for="z-plec" class="etykieta-pola">Wiek emerytalny</label>
+          <select id="z-plec" name="plec" class="pole mt-1">
+            <option value="k" selected>Kobieta, 60 lat</option>
+            <option value="m">Mężczyzna, 65 lat</option>
+          </select>
+        </div>
+        <div data-dla="powrot" hidden>
+          <label for="z-przeniesienie" class="etykieta-pola">Rok przeprowadzki do Polski</label>
+          <input id="z-przeniesienie" name="przeniesienie" class="pole mt-1" type="text" inputmode="numeric" autocomplete="off" value={String(rokTeraz - 1)} aria-describedby="z-blad" />
+        </div>
+        <div data-dla="powrot" hidden>
+          <label for="z-start" class="etykieta-pola">Ulga od roku</label>
+          <select id="z-start" name="start" class="pole mt-1">
+            <option value="ten" selected>Przeprowadzki</option>
+            <option value="nastepny">Następnego</option>
+          </select>
+        </div>
+        <div data-dla="rodzina4" hidden>
+          <label for="z-dzieci" class="etykieta-pola">Dzieci w roku</label>
+          <select id="z-dzieci" name="dzieci" class="pole mt-1">
+            {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => <option value={n} selected={n === 4}>{n === 8 ? '8 i więcej' : n}</option>)}
+          </select>
+        </div>
+      </div>
+      <label class="mt-4 flex items-start gap-3 text-[0.9375rem]" data-dla="senior" hidden>
+        <input type="checkbox" name="bezEmerytury" checked class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+        <span>Nie pobieram emerytury ani renty rodzinnej</span>
+      </label>
+      <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div>
+          <label for="z-przychody" class="etykieta-pola">Przychody w okresie ulgi (zł)</label>
+          <input id="z-przychody" name="przychody" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="60000" aria-describedby="z-przychody-opis z-blad" />
+          <p id="z-przychody-opis" class="meta mt-1">Brutto, z pracy, zlecenia, zasiłku macierzyńskiego.</p>
+        </div>
+        <div>
+          <label for="z-inne" class="etykieta-pola">Zwolnione z innej ulgi (zł)</label>
+          <input id="z-inne" name="inne" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="" aria-describedby="z-inne-opis z-blad" />
+          <p id="z-inne-opis" class="meta mt-1">W tym roku, z jednej z pozostałych trzech ulg.</p>
+        </div>
+      </div>
+      <p id="z-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Zwolnienie z PIT w roku</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-data" data-w="stan">{start.stan}</p>
+        <p class="meta" data-w="opis">{start.opis}</p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Okres ulgi</dt><dd data-w="okres">{start.okres}</dd></div>
+        <div><dt>Limit do wykorzystania</dt><dd data-w="limit">{start.limit}</dd></div>
+        <div><dt>Bez podatku</dt><dd data-w="zwolnione">{start.zwolnione}</dd></div>
+        <div><dt>Opodatkowane</dt><dd data-w="opodatkowane">{start.opodatkowane}</dd></div>
+      </dl>
+      <p class="wynik-uwaga" data-w="uwaga">{start.uwagi.join(' ')}</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="kto">Kto i do kiedy</h2>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Zwolnienia z PIT do 85 528 zł: kto, jak długo i podstawa prawna</caption>
+        <thead><tr><th scope="col">Ulga</th><th scope="col">Kto</th><th scope="col">Jak długo</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Dla młodych (pkt 148)</th><td>Osoby przed ukończeniem 26 lat</td><td>Do dnia 26. urodzin włącznie</td></tr>
+          <tr><th scope="row">Na powrót (pkt 152)</th><td>Osoby, które przeniosły miejsce zamieszkania do Polski po 2021 r.</td><td>4 kolejne lata od roku przeprowadzki albo od następnego</td></tr>
+          <tr><th scope="row">Rodziny 4+ (pkt 153)</th><td>Rodzice i rodziny zastępcze co najmniej czworga dzieci</td><td>Każdy rok, w którym warunek jest spełniony</td></tr>
+          <tr><th scope="row">Seniorzy (pkt 154)</th><td>Kobiety po 60 i mężczyźni po 65 latach bez emerytury i renty rodzinnej, ze składkami społecznymi</td><td>Dopóki nie pobierają emerytury</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <ul>
+      <li>Ulga dla młodych obejmuje przychody otrzymane do ukończenia 26 lat (art. 21 ust. 1 pkt 148 ustawy o PIT). Według objaśnień Ministra Finansów z 30 grudnia 2022 r. wiek liczy się jak termin w latach z art. 12 § 4 Ordynacji podatkowej, więc ulga obejmuje dzień 26. urodzin, a osoba urodzona 29 lutego kończy 26 lat 28 lutego w roku bez 29 lutego. Data nie przesuwa się na dzień roboczy.</li>
+      <li>Przy uldze dla seniorów przepis mówi o przychodach „po ukończeniu” 60 albo 65 lat (pkt 154). Liczymy według tej samej zasady co przy wieku 26 lat, więc ulga zaczyna się w dniu po urodzinach. Ministerstwo Finansów w komunikacie dla mediów podaje, że zwolnione są też przychody z dnia urodzin; komunikat nie ma mocy objaśnień, więc jako wariant bezpieczny pokazujemy dzień następny.</li>
+      <li>Ulga na powrót trwa 4 kolejne lata od roku przeprowadzki albo od roku następnego, do wyboru (pkt 152), i dotyczy osób, które przeniosły miejsce zamieszkania do Polski po 31 grudnia 2021 r. (art. 53 ustawy z 29 października 2021 r.). Warunki z art. 21 ust. 43: przez 3 lata przed rokiem przeprowadzki i do jej dnia bez miejsca zamieszkania w Polsce; obywatelstwo polskie, innego państwa UE, EOG lub Szwajcarii albo Karta Polaka, albo zamieszkanie w krajach wymienionych w przepisie; certyfikat rezydencji; ulga po raz pierwszy. Spełnienia warunków nie sprawdzamy.</li>
+      <li>Ulga dla rodzin 4+ wymaga, by w roku podatkowym podatnik wykonywał władzę rodzicielską, był opiekunem prawnym albo rodziną zastępczą co najmniej czworga dzieci; liczą się dzieci małoletnie, pełnoletnie z zasiłkiem pielęgnacyjnym albo rentą socjalną i uczące się do 25 lat z dochodem w limicie (pkt 153 w zw. z art. 6 ust. 4c i 4e), bez dzieci umieszczonych przez sąd w instytucji całodobowej (ust. 45). Przepis nie mówi, przez jaką część roku dzieci ma być czworo; liczymy cały rok, w którym warunek był spełniony.</li>
+      <li>Do wspólnego limitu {limit} (ust. 44) nie wliczają się przychody z ryczałtem, zwolnione na innej podstawie i z zaniechanym poborem podatku (ust. 39). Gdy w tym samym roku masz dwie z tych ulg, na przykład najpierw dla młodych, a potem dla rodzin 4+, wpisz przychody zwolnione z pierwszej w polu „Zwolnione z innej ulgi”.</li>
+      <li>Przy zwolnieniu koszty uzyskania przychodów z pracy i zlecenia odlicza się najwyżej do części opodatkowanej (art. 22 ust. 3b), a składek społecznych od przychodu zwolnionego nie odlicza się od dochodu (art. 26 ust. 1 pkt 2).</li>
+      <li>Pracodawca stosuje ulgę dla młodych w zaliczkach sam, chyba że złożysz wniosek o jej niestosowanie (art. 32 ust. 6); ZUS od zasiłku macierzyńskiego na Twój wniosek (art. 34 ust. 4b). Ulgi na powrót, dla rodzin 4+ i dla seniorów płatnik stosuje po Twoim oświadczeniu, przy uldze na powrót z rokiem początku i końca (art. 31a ust. 8). Przy kilku płatnikach limit pilnujesz sam: przekroczenie oznacza dopłatę w zeznaniu.</li>
+    </ul>
+    <p>
+      Kwota wolna od podatku 30 000 zł działa niezależnie od tych ulg: dochód ponad limit zwolnienia liczy się według skali
+      12% i 32% z kwotą zmniejszającą 3600 zł (art. 27 ust. 1). Cały roczny wynik policzy
+      <a href="/narzedzia/zwrot-podatku-pit-37">kalkulator zwrotu podatku z PIT-11</a>, a ile wypłaty zostaje co miesiąc
+      przy uldze dla młodych, <a href="/narzedzia/brutto-netto">kalkulator brutto–netto</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { opisZwolnienia, type Zwolnienie } from '../../lib/narzedzia/zerowy-pit';
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
+  import { wpisanaLiczba } from '../../lib/narzedzia/format';
+  import { poprawnaData } from '../../lib/narzedzia/terminy';
+  import { typografia } from '../../lib/typografia.mjs';
+
+  const form = document.querySelector<HTMLFormElement>('[data-zerowy]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const pisz = (k: string, tekst: string) => {
+      w(k).textContent = typografia(tekst);
+    };
+    ustawDzisiejszeWartosci(form);
+    const kwota = (n: string) => {
+      const t = el(n).value.trim();
+      if (!t) return 0;
+      const x = wpisanaLiczba(t);
+      return x >= 0 && x < 100_000_000 ? x : Number.NaN;
+    };
+    const przelicz = () => {
+      const ulga = el('ulga').value as Zwolnienie;
+      for (const x of form.querySelectorAll<HTMLElement>('[data-dla]')) x.hidden = !x.dataset.dla!.split(' ').includes(ulga);
+      const przychody = kwota('przychody');
+      const inne = kwota('inne');
+      const data = el('urodzenie').value;
+      const rokPrzeniesienia = Number(el('przeniesienie').value.trim());
+      const blad =
+        (ulga === 'mlodzi' || ulga === 'senior') && !(poprawnaData(data) && data >= '1900-01-01')
+          ? 'Wpisz datę urodzenia.'
+          : ulga === 'powrot' && !(Number.isInteger(rokPrzeniesienia) && rokPrzeniesienia >= 1950 && rokPrzeniesienia <= 2100)
+            ? 'Wpisz rok przeprowadzki, na przykład 2024.'
+            : Number.isNaN(przychody) || Number.isNaN(inne)
+              ? 'Wpisz przychody w złotych, na przykład 60000. Puste pole liczymy jako 0.'
+              : null;
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      b.hidden = !blad;
+      b.textContent = blad ? typografia(blad) : '';
+      if (blad) {
+        for (const k of ['stan', 'okres', 'limit', 'zwolnione', 'opodatkowane']) w(k).textContent = '—';
+        w('opis').textContent = '';
+        w('uwaga').textContent = '';
+        return;
+      }
+      const o = opisZwolnienia({
+        rok: Number(el('rok').value),
+        zwolnienie: ulga,
+        dataUrodzenia: data,
+        kobieta: el('plec').value === 'k',
+        bezEmerytury: el('bezEmerytury').checked,
+        rokPrzeniesienia,
+        odNastepnego: el('start').value === 'nastepny',
+        dzieci: Number(el('dzieci').value),
+        przychody,
+        inneZwolnione: inne,
+      });
+      for (const k of ['stan', 'opis', 'okres', 'limit', 'zwolnione', 'opodatkowane'] as const) pisz(k, o[k]);
+      pisz('uwaga', o.uwagi.join(' '));
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>

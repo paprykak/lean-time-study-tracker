@@ -1,0 +1,236 @@
+---
+// Ulga na dzieci w PIT (art. 6 ust. 4c–4e i art. 27f ustawy o PIT, t.j. Dz.U. 2026 poz. 592 i 2025 poz. 163; renta
+// socjalna: art. 6 ust. 1 ustawy o rencie socjalnej i komunikaty Prezesa ZUS). Logika i teksty wyniku:
+// src/lib/narzedzia/ulga-na-dzieci.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { KWOTY_ULGI, LATA_PIT, LIMIT_INNY, LIMIT_MALZENSTWO, RENTA_SOCJALNA_GRUDZIEN, kwotaMiesiaca, limitDochoduDziecka, opisUlgi } from '../../lib/narzedzia/ulga-na-dzieci';
+import { zl } from '../../lib/narzedzia/format';
+import { dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+const rokTeraz = Number(dzisWPolsce().slice(0, 4));
+const rok = LATA_PIT.includes(rokTeraz - 1) ? rokTeraz - 1 : LATA_PIT[LATA_PIT.length - 1];
+const MIESIACE = ['styczeń', 'luty', 'marzec', 'kwiecień', 'maj', 'czerwiec', 'lipiec', 'sierpień', 'wrzesień', 'październik', 'listopad', 'grudzień'];
+const MAKS_DZIECI = 6;
+const start = opisUlgi({ dzieci: [{ od: 1, do: 12 }, { od: 1, do: 12 }], sytuacja: 'malzenstwo', dochod: 90_000, czesc: 100, podatek: 6000, skladki: 0 }, rok);
+const rocznie = (n: number) => zl(kwotaMiesiaca(n) * 12);
+const ostatniRok = LATA_PIT[LATA_PIT.length - 1];
+
+const faq = [
+  {
+    pytanie: 'Ile wynosi ulga na dzieci?',
+    odpowiedz: `Miesięcznie ${zl(KWOTY_ULGI.pierwszeIDrugie)} na pierwsze i drugie dziecko, ${zl(KWOTY_ULGI.trzecie)} na trzecie i ${zl(KWOTY_ULGI.czwarteIKolejne)} na czwarte i każde kolejne (art. 27f ust. 2 ustawy o PIT). Za cały rok to ${rocznie(1)} przy jednym dziecku, ${rocznie(2)} przy dwojgu, ${rocznie(3)} przy trojgu i ${rocznie(4)} przy czworgu.`,
+  },
+  {
+    pytanie: 'Jaki jest limit dochodów przy jednym dziecku?',
+    odpowiedz: `${zl(LIMIT_MALZENSTWO)} łącznie z małżonkiem, gdy małżeństwo trwa przez cały rok, i ${zl(LIMIT_MALZENSTWO)} dla osoby samotnie wychowującej dziecko. W pozostałych przypadkach, także gdy ślub był w trakcie roku, limit to ${zl(LIMIT_INNY)}. Liczy się dochód po odjęciu składek społecznych. Przekroczenie nawet o złotówkę odbiera całą ulgę. Przy dwojgu i więcej dzieciach oraz przy dziecku z orzeczeniem o niepełnosprawności limitu nie ma (art. 27f ust. 2, 2a i 2e).`,
+  },
+  {
+    pytanie: 'Co, gdy ulga jest większa niż mój podatek?',
+    odpowiedz: 'Urząd skarbowy zwraca różnicę, ale najwyżej do sumy składek na ubezpieczenia społeczne i zdrowotne z roku, w tym składek od przychodów zwolnionych z ulgi dla młodych i innych zwolnień do 85 528 zł. Małżonkowie, którzy byli w małżeństwie przez cały rok, liczą składki obojga razem (art. 27f ust. 8–10). Zwrot wykazujesz w zeznaniu, a urząd wypłaca go razem z nadpłatą.',
+  },
+  {
+    pytanie: 'Czy ulga przysługuje na pełnoletnie dziecko?',
+    odpowiedz: `Tak, na dziecko uczące się do 25 lat, jeśli jego dochody w roku nie przekroczyły dwunastokrotności renty socjalnej z grudnia (za ${ostatniRok} r. ${zl(limitDochoduDziecka(ostatniRok) ?? 0)}; do limitu nie liczy się renta rodzinna, liczą się przychody z ulgi dla młodych), oraz na dziecko w każdym wieku, które dostaje zasiłek pielęgnacyjny albo rentę socjalną (art. 27f ust. 6 i art. 6 ust. 4c i 4e ustawy o PIT).`,
+  },
+  {
+    pytanie: 'Jak podzielić ulgę z drugim rodzicem?',
+    odpowiedz: 'Rodzice mogą podzielić ulgę w dowolnej proporcji. Gdy się nie porozumieją, a mają wspólną władzę rodzicielską po rozwodzie albo w separacji albo mieszkają razem z dzieckiem, każdy odlicza połowę. W innych przypadkach całą ulgę odlicza rodzic, u którego dziecko mieszka (art. 27f ust. 4). Gdy w tym samym miesiącu pieczę sprawują różne osoby, każda odlicza 1/30 kwoty miesięcznej za każdy dzień opieki (ust. 3).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="ulga-na-dzieci"
+  tytul="Ulga na dzieci w PIT: kalkulator"
+  opis={`Ulga na dzieci: ${zl(KWOTY_ULGI.pierwszeIDrugie)} miesięcznie na 1. i 2. dziecko, ${zl(KWOTY_ULGI.trzecie)} na 3., ${zl(KWOTY_ULGI.czwarteIKolejne)} na kolejne. Limit przy jednym dziecku i zwrot ponad podatek.`}
+  h1="Ulga na dzieci w PIT: ile odliczysz i ile dostaniesz zwrotu"
+  lead="Wpisz dzieci i miesiące, w których przysługuje ulga, a policzymy kwotę za rok, sprawdzimy limit dochodów przy jednym dziecku i pokażemy, ile ulgi zmieści się w podatku, a ile urząd odda ponad podatek."
+  faq={faq}
+>
+  <form class="kalkulator" data-ulga-dzieci novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Dzieci i dochody</h2>
+      <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div>
+          <label for="u-rok" class="etykieta-pola">Rok podatkowy</label>
+          <select id="u-rok" name="rok" class="pole mt-1">
+            {LATA_PIT.map((r) => <option value={r} selected={r === rok}>{r}</option>)}
+          </select>
+        </div>
+        <div>
+          <label for="u-sytuacja" class="etykieta-pola">Sytuacja w roku</label>
+          <select id="u-sytuacja" name="sytuacja" class="pole mt-1">
+            <option value="malzenstwo" selected>Małżeństwo cały rok</option>
+            <option value="slub">Ślub w tym roku</option>
+            <option value="samotny">Samotny rodzic</option>
+            <option value="inna">Bez małżeństwa</option>
+          </select>
+        </div>
+        <div>
+          <label for="u-liczba" class="etykieta-pola">Liczba dzieci</label>
+          <select id="u-liczba" name="liczba" class="pole mt-1">
+            {Array.from({ length: MAKS_DZIECI }, (_, i) => i + 1).map((n) => <option value={n} selected={n === 2}>{n}</option>)}
+          </select>
+        </div>
+        <div>
+          <label for="u-czesc" class="etykieta-pola">Twoja część ulgi (%)</label>
+          <input id="u-czesc" name="czesc" class="pole mt-1" type="text" inputmode="numeric" autocomplete="off" value="100" aria-describedby="u-blad" />
+        </div>
+      </div>
+
+      <fieldset class="mt-6">
+        <legend class="etykieta">Miesiące z ulgą</legend>
+        <p class="meta mt-1">Od miesiąca urodzenia albo przysposobienia do miesiąca 18. urodzin; dziecko uczące się dalej: do grudnia.</p>
+        {Array.from({ length: MAKS_DZIECI }, (_, i) => (
+          <div class="mt-3 grid grid-cols-2 gap-3" data-dziecko={i} hidden={i >= 2}>
+            <div>
+              <label for={`u-od-${i}`} class="etykieta-pola">Dziecko {i + 1}: od</label>
+              <select id={`u-od-${i}`} name={`od-${i}`} class="pole mt-1">
+                {MIESIACE.map((m, j) => <option value={j + 1} selected={j === 0}>{m}</option>)}
+              </select>
+            </div>
+            <div>
+              <label for={`u-do-${i}`} class="etykieta-pola">Dziecko {i + 1}: do</label>
+              <select id={`u-do-${i}`} name={`do-${i}`} class="pole mt-1">
+                {MIESIACE.map((m, j) => <option value={j + 1} selected={j === 11}>{m}</option>)}
+              </select>
+            </div>
+          </div>
+        ))}
+      </fieldset>
+
+      <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div>
+          <label for="u-dochod" class="etykieta-pola">Dochód minus składki (zł)</label>
+          <input id="u-dochod" name="dochod" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="90000" aria-describedby="u-dochod-opis u-blad" />
+          <p id="u-dochod-opis" class="meta mt-1">Przy małżeństwie przez cały rok: obojga. Liczy się tylko przy jednym dziecku.</p>
+        </div>
+        <div>
+          <label for="u-podatek" class="etykieta-pola">Podatek według skali (zł)</label>
+          <input id="u-podatek" name="podatek" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="6000" aria-describedby="u-podatek-opis u-blad" />
+          <p id="u-podatek-opis" class="meta mt-1">Podatek od podstawy przed ulgą.</p>
+        </div>
+        <div>
+          <label for="u-skladki" class="etykieta-pola">Składki społeczne i zdrowotne (zł)</label>
+          <input id="u-skladki" name="skladki" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="" aria-describedby="u-skladki-opis u-blad" />
+          <p id="u-skladki-opis" class="meta mt-1">Z PIT-11, z przychodów zwolnionych też; przy małżeństwie przez cały rok: obojga.</p>
+        </div>
+      </div>
+      <label class="mt-4 flex items-start gap-3 text-[0.9375rem]">
+        <input type="checkbox" name="orzeczenie" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+        <span>Jedno dziecko z orzeczeniem o niepełnosprawności</span>
+      </label>
+      <p id="u-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Twoja ulga za rok</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-data" data-w="przysluguje">{start.przysluguje}</p>
+        <p class="meta" data-w="opis">{start.opis}</p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Ulga na całą rodzinę</dt><dd data-w="naRodzine">{start.naRodzine}</dd></div>
+        <div><dt>Odliczysz od podatku</dt><dd data-w="odliczenie">{start.odliczenie}</dd></div>
+        <div><dt>Zwrot ponad podatek</dt><dd data-w="zwrot">{start.zwrot}</dd></div>
+        <div><dt>Przepada</dt><dd data-w="przepada">{start.przepada}</dd></div>
+      </dl>
+      <p class="wynik-uwaga" data-w="uwaga">{start.uwagi.join(' ')}</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Kwoty i zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="kwoty">Kwoty ulgi</h2>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Ulga na dzieci według liczby dzieci w miesiącu i za cały rok</caption>
+        <thead><tr><th scope="col">Dzieci</th><th scope="col">Miesięcznie</th><th scope="col">Za 12 miesięcy</th></tr></thead>
+        <tbody>
+          {[1, 2, 3, 4, 5].map((n) => (
+            <tr><th scope="row">{n}</th><td>{zl(kwotaMiesiaca(n))}</td><td>{rocznie(n)}</td></tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <ul>
+      <li>Ulga przysługuje za każdy miesiąc, w którym wykonujesz władzę rodzicielską, jesteś opiekunem prawnym dziecka, które z Tobą mieszka, albo rodziną zastępczą (art. 27f ust. 1–2 ustawy o PIT). Kwota w miesiącu zależy od liczby dzieci w tym miesiącu: dziecko urodzone w czerwcu podnosi ulgę od czerwca. Przepisy na {LATA_PIT.join(' i ')} r. są takie same.</li>
+      <li>Przy jednym dziecku sprawdzamy limit dochodów: {zl(LIMIT_MALZENSTWO)} łącznie z małżonkiem przy małżeństwie przez cały rok i u samotnego rodzica, {zl(LIMIT_INNY)} w innych przypadkach (art. 27f ust. 2 pkt 1). Dochody to dochody opodatkowane według skali, liniowo i z kapitałów, po odjęciu składek społecznych (ust. 2a). Dochód równy limitowi się w nim mieści.</li>
+      <li>Jeśli choć przez jeden dzień roku ulga przysługiwała na więcej niż jedno dziecko, limitu nie ma (ust. 2b). Kalkulator liczy pełne miesiące, więc gdy w tym samym miesiącu wpiszesz dwoje dzieci, przyjmujemy, że przez część tego miesiąca było ich dwoje. Ulgi za dni (1/30 kwoty miesięcznej przy zmianie opieki w trakcie miesiąca, ust. 3) nie liczymy.</li>
+      <li>Twoja część to procent ulgi, który odliczasz; resztę odlicza drugi rodzic (ust. 4). Kwotę po podziale zaokrąglamy do grosza.</li>
+      <li>Ulgę odliczasz od podatku według skali. Część, która się nie zmieści, wraca jako zwrot, najwyżej do sumy składek społecznych odliczonych od dochodu, składek zdrowotnych i składek społecznych od przychodów zwolnionych z art. 21 ust. 1 pkt 148 i 152–154; resztę tracisz (ust. 8–9). Małżonkowie przez cały rok liczą składki obojga (ust. 10).</li>
+      <li>Pełnoletnie dziecko uczące się do 25 lat liczy się, gdy jego dochody i przychody z ulgi dla młodych i na powrót nie przekroczyły dwunastokrotności renty socjalnej z grudnia roku podatkowego (art. 6 ust. 4e). Renta socjalna jest równa najniższej rencie z tytułu całkowitej niezdolności do pracy (art. 6 ust. 1 ustawy o rencie socjalnej): od 1 marca 2025 r. {zl(RENTA_SOCJALNA_GRUDZIEN[2025].kwota)} ({RENTA_SOCJALNA_GRUDZIEN[2025].publikator}), od 1 marca 2026 r. {zl(RENTA_SOCJALNA_GRUDZIEN[2026].kwota)} ({RENTA_SOCJALNA_GRUDZIEN[2026].publikator}), więc limit to {zl(limitDochoduDziecka(2025) ?? 0)} za 2025 r. i {zl(limitDochoduDziecka(2026) ?? 0)} za 2026 r.</li>
+      <li>Ulga nie przysługuje od miesiąca, w którym dziecko trafiło na podstawie orzeczenia sądu do instytucji zapewniającej całodobowe utrzymanie albo zawarło związek małżeński (ust. 2c).</li>
+    </ul>
+    <p>
+      Ulgę wpisujesz w zeznaniu rocznym (PIT/O do PIT-37) z numerami PESEL dzieci (ust. 5). Cały roczny wynik, także
+      zwrot zaliczek i rozliczenie wspólne z małżonkiem, policzy <a href="/narzedzia/zwrot-podatku-pit-37">kalkulator zwrotu
+      podatku z PIT-11</a>, a o zwolnieniu z PIT dla rodzin z czworgiem dzieci przeczytasz przy
+      <a href="/narzedzia/zerowy-pit">zerowym PIT</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { opisUlgi, type Sytuacja } from '../../lib/narzedzia/ulga-na-dzieci';
+  import { wpisanaLiczba } from '../../lib/narzedzia/format';
+  import { dzisWPolsce } from '../../lib/narzedzia/terminy';
+  import { typografia } from '../../lib/typografia.mjs';
+
+  const form = document.querySelector<HTMLFormElement>('[data-ulga-dzieci]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const pisz = (k: string, tekst: string) => {
+      w(k).textContent = typografia(tekst);
+    };
+    const rokLista = el('rok') as unknown as HTMLSelectElement;
+    const poprzedni = String(Number(dzisWPolsce().slice(0, 4)) - 1);
+    if (rokLista.value === [...rokLista.options].find((o) => o.defaultSelected)?.value && [...rokLista.options].some((o) => o.value === poprzedni)) rokLista.value = poprzedni;
+    const kwota = (n: string) => {
+      const t = el(n).value.trim();
+      if (!t) return 0;
+      const x = wpisanaLiczba(t);
+      return x >= 0 && x < 100_000_000 ? x : Number.NaN;
+    };
+    const przelicz = () => {
+      const liczba = Number(el('liczba').value);
+      const wiersze = [...form.querySelectorAll<HTMLElement>('[data-dziecko]')];
+      wiersze.forEach((x, i) => (x.hidden = i >= liczba));
+      const dzieci = wiersze.slice(0, liczba).map((_, i) => ({ od: Number(el(`od-${i}`).value), do: Number(el(`do-${i}`).value) }));
+      const czesc = kwota('czesc');
+      const dochod = kwota('dochod');
+      const podatek = kwota('podatek');
+      const skladki = kwota('skladki');
+      const zleMiesiace = dzieci.findIndex((x) => x.od > x.do);
+      const blad =
+        zleMiesiace >= 0
+          ? `Dziecko ${zleMiesiace + 1}: miesiąc „od” nie może być później niż „do”.`
+          : !(czesc >= 0 && czesc <= 100)
+            ? 'Twoja część ulgi: liczba od 0 do 100.'
+            : [dochod, podatek, skladki].some((x) => Number.isNaN(x))
+              ? 'Wpisz kwoty w złotych, na przykład 90000 albo 1234,56. Puste pole liczymy jako 0.'
+              : null;
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      b.hidden = !blad;
+      b.textContent = blad ? typografia(blad) : '';
+      if (blad) {
+        for (const k of ['przysluguje', 'naRodzine', 'odliczenie', 'zwrot', 'przepada']) w(k).textContent = '—';
+        w('opis').textContent = '';
+        w('uwaga').textContent = '';
+        return;
+      }
+      const o = opisUlgi(
+        { dzieci, sytuacja: el('sytuacja').value as Sytuacja, dochod, orzeczenie: el('orzeczenie').checked, czesc, podatek, skladki },
+        Number(el('rok').value),
+      );
+      for (const k of ['przysluguje', 'opis', 'naRodzine', 'odliczenie', 'zwrot', 'przepada'] as const) pisz(k, o[k]);
+      pisz('uwaga', o.uwagi.join(' '));
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>

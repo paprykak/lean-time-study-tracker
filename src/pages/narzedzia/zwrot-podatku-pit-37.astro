@@ -1,0 +1,311 @@
+---
+// Zwrot podatku albo dopłata z PIT-37 na podstawie PIT-11 (art. 6, 9, 22 ust. 2, 26 ust. 1, 27 ust. 1, 27f i 45 ustawy
+// o PIT, t.j. Dz.U. 2026 poz. 592 i 2025 poz. 163; art. 63 § 1 i 77 § 1 Ordynacji podatkowej). Logika i teksty wyniku:
+// src/lib/narzedzia/pit-roczny.ts (testy obok), ulga na dzieci: src/lib/narzedzia/ulga-na-dzieci.ts.
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { opisPit, type DanePit } from '../../lib/narzedzia/pit-roczny';
+import { LATA_PIT, KWOTY_ULGI } from '../../lib/narzedzia/ulga-na-dzieci';
+import { zl } from '../../lib/narzedzia/format';
+import { dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+const rokTeraz = Number(dzisWPolsce().slice(0, 4));
+const rok = LATA_PIT.includes(rokTeraz - 1) ? rokTeraz - 1 : LATA_PIT[LATA_PIT.length - 1];
+
+// Przykład startowy: płaca minimalna 2025 r. (4666 zł) przez cały rok, PIT-2 złożony.
+const POLA = [
+  ['przychodPraca', 'Przychód z umowy o pracę', '55992'],
+  ['kosztyPraca', 'Koszty z umowy o pracę', '3000'],
+  ['przychodZlecenie', 'Przychód z umów zlecenia', ''],
+  ['kosztyZlecenie', 'Koszty z umów zlecenia', ''],
+  ['skladki', 'Składki społeczne (do odliczenia)', '7676,52'],
+  ['zdrowotna', 'Składka zdrowotna', '4348,44'],
+  ['zaliczki', 'Zaliczki pobrane przez płatnika', '1836'],
+] as const;
+const DODATKOWE = [
+  ['skladkiZwolnione', 'Składki od przychodów zwolnionych'],
+  ['odliczenia', 'Odliczenia od dochodu z PIT/O'],
+] as const;
+
+const startowe: DanePit = {
+  rok,
+  ty: { przychodPraca: 55_992, kosztyPraca: 3000, skladki: 7676.52, zdrowotna: 4348.44, zaliczki: 1836 },
+  sytuacja: 'inna',
+  dzieci: [],
+  czescUlgi: 100,
+};
+const start = opisPit(startowe, false);
+
+const faq = [
+  {
+    pytanie: 'Skąd wziąć kwoty do kalkulatora?',
+    odpowiedz: 'Z PIT-11, który pracodawca i zleceniodawca wysyłają do końca lutego. Przepisz przychód, koszty uzyskania przychodów, składki na ubezpieczenia społeczne, składkę zdrowotną i pobrane zaliczki. Gdy masz kilka PIT-11, dodaj kwoty z tych samych rubryk. Przychodów zwolnionych z ulgi dla młodych nie wpisujesz do przychodu.',
+  },
+  {
+    pytanie: 'Dlaczego mam dopłatę, skoro pracodawca co miesiąc pobierał podatek?',
+    odpowiedz: 'Najczęściej z trzech powodów: kilku płatników w tym samym miesiącu, z których każdy pomniejszał zaliczkę o 1/12 kwoty zmniejszającej podatek (łącznie wolno najwyżej 1/12, art. 31b ust. 5), dochód powyżej 120 000 zł (32% od nadwyżki) albo zaokrąglenia zaliczek do pełnych złotych, które dają różnicę kilku złotych. W zeznaniu liczy się podatek od całego roku, a zaliczki są tylko przedpłatą (art. 27 ust. 1 i art. 45 ust. 4 ustawy o PIT).',
+  },
+  {
+    pytanie: 'Kiedy opłaca się rozliczenie wspólne z małżonkiem?',
+    odpowiedz: 'Gdy małżonkowie zarabiają bardzo różnie: podatek liczy się od połowy łącznej podstawy i mnoży przez dwa, więc lepiej wykorzystana jest kwota wolna i próg 120 000 zł (art. 6 ust. 2). Warunki to małżeństwo i wspólność majątkowa przez cały rok albo od ślubu do końca roku, bez podatku liniowego i ryczałtu u żadnego z małżonków (art. 6 ust. 8). Przy zbliżonych zarobkach wynik jest zwykle taki sam.',
+  },
+  {
+    pytanie: 'Czy składka zdrowotna zmniejsza podatek?',
+    odpowiedz: 'Nie. Od 2022 r. składki zdrowotnej pracownika nie odlicza się ani od dochodu, ani od podatku. W tym kalkulatorze liczy się tylko do zwrotu niewykorzystanej ulgi na dzieci: urząd oddaje ją do wysokości składek społecznych i zdrowotnych (art. 27f ust. 9 ustawy o PIT).',
+  },
+  {
+    pytanie: 'Kiedy dostanę zwrot podatku?',
+    odpowiedz: 'Do 45 dni od złożenia zeznania przez internet, w tym w usłudze Twój e-PIT, i do 3 miesięcy od złożenia zeznania na papierze (art. 77 § 1 pkt 5 i 5a Ordynacji podatkowej). Zeznanie składa się od 15 lutego do 30 kwietnia roku po roku podatkowym; złożone wcześniej uznaje się za złożone 15 lutego (art. 45 ust. 1 ustawy o PIT).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="zwrot-podatku-pit-37"
+  tytul="Zwrot podatku z PIT-11: kalkulator PIT-37"
+  opis="Przepisz kwoty z PIT-11 i sprawdź, ile odda urząd skarbowy albo ile dopłacisz. Skala 12/32%, ulga na dzieci, rozliczenie wspólne z małżonkiem."
+  h1="Zwrot podatku z PIT-11: kalkulator PIT-37"
+  lead="Wpisz kwoty z PIT-11 od pracodawcy i zleceniodawcy, a policzymy roczny podatek według skali, ulgę na dzieci i porównamy rozliczenie osobno ze wspólnym z małżonkiem. Wynik: zwrot albo dopłata i ile."
+  faq={faq}
+  objasnienia={['mfUlgaMlodych']}
+>
+  <form class="kalkulator" data-pit novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Rok i sytuacja</h2>
+      <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div>
+          <label for="p-rok" class="etykieta-pola">Rok podatkowy</label>
+          <select id="p-rok" name="rok" class="pole mt-1">
+            {LATA_PIT.map((r) => <option value={r} selected={r === rok}>{r}</option>)}
+          </select>
+        </div>
+        <div>
+          <label for="p-sytuacja" class="etykieta-pola">Sytuacja w roku</label>
+          <select id="p-sytuacja" name="sytuacja" class="pole mt-1">
+            <option value="inna" selected>Bez małżeństwa</option>
+            <option value="malzenstwo">Małżeństwo cały rok</option>
+            <option value="slub">Ślub w tym roku</option>
+            <option value="samotny">Samotny rodzic</option>
+          </select>
+        </div>
+      </div>
+      <div class="mt-4" data-tylko-malzenstwo hidden>
+        <label for="p-sposob" class="etykieta-pola">Rozliczenie</label>
+        <select id="p-sposob" name="sposob" class="pole mt-1">
+          <option value="osobno" selected>Osobno</option>
+          <option value="wspolnie">Wspólnie z małżonkiem</option>
+        </select>
+      </div>
+
+      <fieldset class="mt-6">
+        <legend class="etykieta">Twój PIT-11 (suma ze wszystkich)</legend>
+        <div class="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {POLA.map(([nazwa, etykieta, wartosc]) => (
+            <div>
+              <label for={`p-${nazwa}`} class="etykieta-pola">{etykieta} (zł)</label>
+              <input id={`p-${nazwa}`} name={nazwa} class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value={wartosc} aria-describedby="p-blad" />
+            </div>
+          ))}
+          {DODATKOWE.map(([nazwa, etykieta]) => (
+            <div>
+              <label for={`p-${nazwa}`} class="etykieta-pola">{etykieta} (zł)</label>
+              <input id={`p-${nazwa}`} name={nazwa} class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="" aria-describedby="p-blad" />
+            </div>
+          ))}
+        </div>
+        <label class="mt-4 flex items-start gap-3 text-[0.9375rem]">
+          <input type="checkbox" name="kilkaUmowNaraz" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+          <span>Kilka umów o pracę w tym samym czasie</span>
+        </label>
+        <label class="mt-3 flex items-start gap-3 text-[0.9375rem]">
+          <input type="checkbox" name="dojazd" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+          <span>Dojazd z innej miejscowości (koszty 300 zł)</span>
+        </label>
+      </fieldset>
+
+      <fieldset class="mt-6" data-tylko-malzenstwo hidden>
+        <legend class="etykieta">PIT-11 małżonka</legend>
+        <p class="meta mt-1">Bez dochodu wpisz 0 w przychodzie. Puste pola: nie porównamy rozliczeń.</p>
+        <div class="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {[...POLA, ...DODATKOWE].map(([nazwa, etykieta]) => (
+            <div>
+              <label for={`m-${nazwa}`} class="etykieta-pola">{etykieta} (zł)</label>
+              <input id={`m-${nazwa}`} name={`m-${nazwa}`} class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="" aria-describedby="p-blad" />
+            </div>
+          ))}
+        </div>
+        <label class="mt-4 flex items-start gap-3 text-[0.9375rem]">
+          <input type="checkbox" name="m-kilkaUmowNaraz" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+          <span>Małżonek: kilka umów o pracę naraz</span>
+        </label>
+        <label class="mt-3 flex items-start gap-3 text-[0.9375rem]">
+          <input type="checkbox" name="m-dojazd" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+          <span>Małżonek: dojazd z innej miejscowości</span>
+        </label>
+      </fieldset>
+
+      <fieldset class="mt-6">
+        <legend class="etykieta">Ulga na dzieci</legend>
+        <div class="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div>
+            <label for="p-dzieci" class="etykieta-pola">Dzieci przez cały rok</label>
+            <select id="p-dzieci" name="dzieci" class="pole mt-1">
+              {[0, 1, 2, 3, 4, 5, 6].map((n) => <option value={n} selected={n === 0}>{n}</option>)}
+            </select>
+          </div>
+          <div>
+            <label for="p-czesc" class="etykieta-pola">Twoja część ulgi</label>
+            <select id="p-czesc" name="czesc" class="pole mt-1">
+              <option value="100" selected>Cała</option>
+              <option value="50">Połowa</option>
+              <option value="0">Żadna</option>
+            </select>
+          </div>
+        </div>
+        <label class="mt-4 flex items-start gap-3 text-[0.9375rem]">
+          <input type="checkbox" name="orzeczenie" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+          <span>Jedno dziecko z orzeczeniem o niepełnosprawności</span>
+        </label>
+      </fieldset>
+      <p id="p-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Rozliczenie roczne</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-data" data-w="wynik">{start.wynik}</p>
+        <p class="meta" data-w="opis">{start.opis}</p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Podstawa obliczenia podatku</dt><dd data-w="podstawa">{start.podstawa}</dd></div>
+        <div><dt>Podatek według skali</dt><dd data-w="podatek">{start.podatek}</dd></div>
+        <div><dt>Ulga na dzieci od podatku</dt><dd data-w="ulga">{start.ulga}</dd></div>
+        <div><dt>Podatek należny</dt><dd data-w="nalezny">{start.nalezny}</dd></div>
+        <div><dt>Zaliczki pobrane</dt><dd data-w="zaliczki">{start.zaliczki}</dd></div>
+      </dl>
+      <p class="wynik-uwaga" data-w="porownanie" hidden>{start.porownanie}</p>
+      <p class="wynik-uwaga" data-w="uwaga" hidden={!start.uwagi.length}>{start.uwagi.join(' ')}</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <ol>
+      <li>Dochód to przychód minus koszty uzyskania przychodów, osobno z umów o pracę i ze zleceń (art. 9 ust. 2 ustawy o PIT). Koszty z umowy o pracę w zeznaniu wynoszą najwyżej 3000 zł za rok, 3600 zł przy dojeździe z innej miejscowości, a przy kilku umowach o pracę w tym samym czasie najwyżej 4500 albo 5400 zł (art. 22 ust. 2); wyższe kwoty z PIT-11 ucinamy do limitu. Koszty większe niż przychód z danego źródła liczymy do wysokości przychodu, bez straty.</li>
+      <li>Od dochodu odejmujemy składki na ubezpieczenia społeczne potrącone przez płatnika (art. 26 ust. 1 pkt 2) i inne odliczenia od dochodu, które wpiszesz z PIT/O, na przykład ulgę na internet. Wynik to podstawa obliczenia podatku, zaokrąglona do pełnych złotych: końcówki poniżej 50 groszy pomija się, od 50 groszy w górę (art. 63 § 1 Ordynacji podatkowej).</li>
+      <li>Podatek według skali: do 120 000 zł podstawy 12% minus kwota zmniejszająca podatek 3600 zł, więc do 30 000 zł podatek wynosi 0 zł; powyżej 120 000 zł to 10 800 zł plus 32% nadwyżki (art. 27 ust. 1). Za 2025 i 2026 r. skala jest taka sama.</li>
+      <li>Rozliczenie wspólne z małżonkiem: każdy odejmuje swoje składki i odliczenia, a podatek to dwukrotność podatku od połowy łącznej podstawy (art. 6 ust. 2). Tak samo liczy się podatek osoby samotnie wychowującej dziecko (art. 6 ust. 4c–4d).</li>
+      <li>Od podatku odejmujemy ulgę na dzieci: {zl(KWOTY_ULGI.pierwszeIDrugie)} miesięcznie na pierwsze i drugie dziecko, {zl(KWOTY_ULGI.trzecie)} na trzecie i {zl(KWOTY_ULGI.czwarteIKolejne)} na czwarte i kolejne; przy jednym dziecku z limitem dochodów (art. 27f). Ulga wyższa niż podatek wraca jako zwrot do wysokości składek społecznych i zdrowotnych (art. 27f ust. 8–9). Dzieci przez część roku, podział między rodziców i limity policzy osobny <a href="/narzedzia/ulga-na-dzieci">kalkulator ulgi na dzieci</a>.</li>
+      <li>Podatek należny (zaokrąglony do pełnych złotych) minus zaliczki pobrane przez płatników daje wynik: nadpłatę, którą urząd zwraca, albo dopłatę do zapłaty do 30 kwietnia (art. 45 ust. 1 i 4).</li>
+    </ol>
+    <p>
+      Składka zdrowotna od 2022 r. nie zmniejsza podatku pracownika; wpisujesz ją tylko do zwrotu ulgi na dzieci. Przy
+      rozliczeniu osobno małżonków Twoja część ulgi to wybrany udział, reszta przypada małżonkowi; przy wspólnym liczymy całą
+      ulgę od wspólnego podatku i zakładamy wspólne dzieci. Zwrot niewykorzystanej ulgi małżonków przez cały rok ograniczamy
+      łączną sumą ich składek (art. 27f ust. 10). Przy jednym dziecku limit dochodów to 112 000 zł łącznie z małżonkiem przy
+      małżeństwie przez cały rok i 112 000 zł u samotnego rodzica, a 56 000 zł w innych przypadkach, także przy ślubie
+      w trakcie roku; liczymy dochód z PIT-11 minus składki społeczne (art. 27f ust. 2a), więc dochody z innych zeznań
+      (np. PIT-38) dodaj sam.
+    </p>
+    <p>
+      Nie liczymy działalności gospodarczej, najmu, kapitałów, dochodów z zagranicy, strat z lat ubiegłych ani ulg od
+      podatku innych niż na dzieci (np. termomodernizacyjnej). Przychody zwolnione z ulgi dla młodych, na powrót, dla
+      rodzin 4+ i dla seniorów są w PIT-11 osobno i nie wchodzą do przychodu; kto i do kiedy może z nich korzystać,
+      sprawdzisz w kalkulatorze <a href="/narzedzia/zerowy-pit">zerowego PIT</a>. Ile wypłaty zostaje co miesiąc, policzy
+      <a href="/narzedzia/brutto-netto">kalkulator brutto–netto</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { opisPit, type Pit11 } from '../../lib/narzedzia/pit-roczny';
+  import type { Sytuacja } from '../../lib/narzedzia/ulga-na-dzieci';
+  import { wpisanaLiczba } from '../../lib/narzedzia/format';
+  import { dzisWPolsce } from '../../lib/narzedzia/terminy';
+  import { typografia } from '../../lib/typografia.mjs';
+
+  const POLA = ['przychodPraca', 'kosztyPraca', 'przychodZlecenie', 'kosztyZlecenie', 'skladki', 'zdrowotna', 'zaliczki', 'skladkiZwolnione', 'odliczenia'] as const;
+  const form = document.querySelector<HTMLFormElement>('[data-pit]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const pisz = (k: string, tekst: string) => {
+      w(k).textContent = typografia(tekst);
+    };
+    // Strona mogła zostać zbudowana w poprzednim roku: domyślnie rok poprzedni względem dzisiaj, jeśli jest na liście.
+    const rokLista = el('rok') as unknown as HTMLSelectElement;
+    const poprzedni = String(Number(dzisWPolsce().slice(0, 4)) - 1);
+    if (rokLista.value === [...rokLista.options].find((o) => o.defaultSelected)?.value && [...rokLista.options].some((o) => o.value === poprzedni)) rokLista.value = poprzedni;
+
+    /** Kwota z pola: puste = 0, null = błąd. */
+    const kwota = (n: string) => {
+      const t = el(n).value.trim();
+      if (!t) return 0;
+      const x = wpisanaLiczba(t);
+      return x >= 0 && x < 100_000_000 ? x : null;
+    };
+    const osoba = (przedrostek: string): Pit11 | null | 'blad' => {
+      const v: Record<string, number> = {};
+      let puste = true;
+      for (const p of POLA) {
+        if (el(przedrostek + p).value.trim()) puste = false;
+        const x = kwota(przedrostek + p);
+        if (x === null) return 'blad';
+        v[p] = x;
+      }
+      if (przedrostek && puste) return null;
+      return {
+        przychodPraca: v.przychodPraca,
+        kosztyPraca: v.kosztyPraca,
+        przychodZlecenie: v.przychodZlecenie,
+        kosztyZlecenie: v.kosztyZlecenie,
+        skladki: v.skladki,
+        zdrowotna: v.zdrowotna,
+        zaliczki: v.zaliczki,
+        skladkiZwolnione: v.skladkiZwolnione,
+        odliczenia: v.odliczenia,
+        kilkaUmowNaraz: el(`${przedrostek}kilkaUmowNaraz`).checked,
+        dojazd: el(`${przedrostek}dojazd`).checked,
+      };
+    };
+
+    const przelicz = () => {
+      const sytuacja = el('sytuacja').value as Sytuacja;
+      const malzenstwo = sytuacja === 'malzenstwo' || sytuacja === 'slub';
+      for (const x of form.querySelectorAll<HTMLElement>('[data-tylko-malzenstwo]')) x.hidden = !malzenstwo;
+      const ty = osoba('');
+      const malzonek = malzenstwo ? osoba('m-') : null;
+      const blad = ty === 'blad' || malzonek === 'blad' ? 'Wpisz kwoty w złotych, na przykład 55992 albo 7676,52. Puste pole liczymy jako 0.' : null;
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      b.hidden = !blad;
+      b.textContent = blad ? typografia(blad) : '';
+      if (blad || ty === 'blad' || ty === null || malzonek === 'blad') {
+        for (const k of ['wynik', 'podstawa', 'podatek', 'ulga', 'nalezny', 'zaliczki']) w(k).textContent = '—';
+        w('opis').textContent = '';
+        w('porownanie').hidden = true;
+        w('uwaga').hidden = true;
+        return;
+      }
+      const n = Number(el('dzieci').value);
+      const o = opisPit(
+        {
+          rok: Number(el('rok').value),
+          ty,
+          malzonek: malzonek ?? undefined,
+          sytuacja,
+          dzieci: Array.from({ length: n }, () => ({ od: 1, do: 12 })),
+          orzeczenie: el('orzeczenie').checked,
+          czescUlgi: Number(el('czesc').value),
+        },
+        malzenstwo && el('sposob').value === 'wspolnie',
+      );
+      for (const k of ['wynik', 'opis', 'podstawa', 'podatek', 'ulga', 'nalezny', 'zaliczki', 'porownanie'] as const) pisz(k, o[k]);
+      w('porownanie').hidden = !o.porownanie;
+      pisz('uwaga', o.uwagi.join(' '));
+      w('uwaga').hidden = !o.uwagi.length;
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>

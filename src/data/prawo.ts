@@ -472,6 +472,41 @@ export const AKTY = {
     adres: eli(2026, 1474),
     sprawdzono: '2026-11-13',
   },
+  pit2025: {
+    nazwa: 'Ustawa o podatku dochodowym od osób fizycznych (brzmienie na 2025 r.)',
+    publikator: 'Dz.U. 2025 poz. 163',
+    uwaga: 'tekst jednolity ogłoszony 10 stycznia 2025 r.; art. 6, 21 ust. 1 pkt 148 i 152–154, ust. 39 i 43–48, art. 22 ust. 2, 26 ust. 1, 27 ust. 1 i 27f brzmią tak samo jak w t.j. Dz.U. 2026 poz. 592; zmiany po t.j. z 2026 r. (Dz.U. 2026 poz. 779, 846, 1079, 1098, 1123, 1287, 1371) tych przepisów nie dotyczą',
+    adres: eli(2025, 163),
+    sprawdzono: '2026-11-13',
+  },
+  polskiLad: {
+    nazwa: 'Ustawa z 29 października 2021 r. o zmianie ustawy o podatku dochodowym od osób fizycznych oraz niektórych innych ustaw',
+    publikator: 'Dz.U. 2021 poz. 2105',
+    uwaga: 'art. 53: ulga na powrót (art. 21 ust. 1 pkt 152 ustawy o PIT) dla osób, które przeniosły miejsce zamieszkania do Polski po 31 grudnia 2021 r.',
+    adres: eli(2021, 2105),
+    sprawdzono: '2026-11-13',
+  },
+  rentaSocjalna: {
+    nazwa: 'Ustawa o rencie socjalnej',
+    publikator: 'Dz.U. 2026 poz. 377',
+    uwaga: 'tekst jednolity, bez późniejszych zmian; art. 6 ust. 1: renta socjalna = 100% najniższej renty z tytułu całkowitej niezdolności do pracy',
+    adres: eli(2026, 377),
+    sprawdzono: '2026-11-13',
+  },
+  najnizszaRenta2025: {
+    nazwa: 'Komunikat Prezesa ZUS w sprawie kwoty najniższej emerytury i renty (od 1 marca 2025 r.)',
+    publikator: 'M.P. 2025 poz. 152',
+    uwaga: 'renta z tytułu całkowitej niezdolności do pracy 1878,91 zł; 12 × renta socjalna z grudnia 2025 r. = 22 546,92 zł (art. 6 ust. 4e ustawy o PIT)',
+    adres: 'https://eli.gov.pl/eli/MP/2025/152/ogl',
+    sprawdzono: '2026-11-13',
+  },
+  najnizszaRenta2026: {
+    nazwa: 'Komunikat Prezesa ZUS w sprawie kwoty najniższej emerytury i renty (od 1 marca 2026 r.)',
+    publikator: 'M.P. 2026 poz. 220',
+    uwaga: 'renta z tytułu całkowitej niezdolności do pracy 1978,49 zł; 12 × renta socjalna z grudnia 2026 r. = 23 741,88 zł (art. 6 ust. 4e ustawy o PIT)',
+    adres: 'https://eli.gov.pl/eli/MP/2026/220/ogl',
+    sprawdzono: '2026-11-13',
+  },
 } as const satisfies Record<string, Akt>;
 
 export type KluczAktu = keyof typeof AKTY;
@@ -549,6 +584,12 @@ export const OBJASNIENIA = {
     opis: 'art. 6 lit. b: przeciętnie najwyżej 48 godzin w tygodniu; art. 16 lit. b: urlopu wypoczynkowego i zwolnień lekarskich nie włącza się do średniej albo nie wpływają one na nią',
     adres: 'https://eur-lex.europa.eu/legal-content/PL/TXT/?uri=CELEX:32003L0088',
     sprawdzono: '2026-11-12',
+  },
+  mfUlgaMlodych: {
+    nazwa: 'Objaśnienia podatkowe Ministra Finansów z 30 grudnia 2022 r., „Ulga w podatku dochodowym od osób fizycznych dla osób do 26. roku życia”',
+    opis: 'ulga dla młodych włącznie z dniem 26. urodzin (art. 12 § 4 Ordynacji podatkowej), bez przesunięcia na dzień roboczy; liczy się dzień otrzymania przychodu; limit 85 528 zł wspólny z ulgą na powrót, dla rodzin 4+ i dla seniorów, osobno dla każdego z małżonków',
+    adres: 'https://www.gov.pl/attachment/c0a3c569-120e-4bc8-a8a9-860c09937cb4',
+    sprawdzono: '2026-11-13',
   },
 } as const;
 

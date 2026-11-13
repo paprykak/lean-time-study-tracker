@@ -26,7 +26,7 @@
 // warunek był spełniony, i piszemy o tym na stronie.
 import { doGrosza } from './dodatek-nocny';
 import { zl } from './format';
-import { dataPoPolsku, dodajDni, dodajLata, poprawnaData } from './terminy';
+import { dataPoPolsku, dodajDni, poprawnaData } from './terminy';
 
 export const LIMIT_ZWOLNIEN = 85_528;
 
