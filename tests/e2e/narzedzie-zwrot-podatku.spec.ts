@@ -24,10 +24,10 @@ test('małżeństwo: porównanie i rozliczenie wspólne', async ({ page }) => {
   await page.getByLabel('Składka zdrowotna (zł)', { exact: true }).fill('11648,66');
   await page.getByLabel('Zaliczki pobrane przez płatnika (zł)', { exact: true }).fill('17000');
   await expect(page.locator('[data-w="porownanie"]')).toContainText('Wpisz dane małżonka');
-  await page.locator('#m-przychodPraca').fill('0');
+  await page.getByLabel('Małżonek: przychód z umowy o pracę (zł)').fill('0');
   await expect(page.locator('[data-w="wynik"]')).toHaveText(/^Zwrot\s4\s?141,00\szł$/);
   await expect(page.locator('[data-w="porownanie"]')).toContainText(/Rozliczenie wspólne daje rodzinie 4\s?887,00\szł więcej/);
-  await page.getByLabel('Rozliczenie').selectOption('wspolnie');
+  await page.getByLabel('Sposób rozliczenia').selectOption('wspolnie');
   await expect(page.locator('[data-w="wynik"]')).toHaveText(/^Zwrot\s9\s?028,00\szł$/);
 });
 

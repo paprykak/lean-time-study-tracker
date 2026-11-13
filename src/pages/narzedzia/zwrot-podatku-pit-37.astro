@@ -88,7 +88,7 @@ const faq = [
         </div>
       </div>
       <div class="mt-4" data-tylko-malzenstwo hidden>
-        <label for="p-sposob" class="etykieta-pola">Rozliczenie</label>
+        <label for="p-sposob" class="etykieta-pola">Sposób rozliczenia</label>
         <select id="p-sposob" name="sposob" class="pole mt-1">
           <option value="osobno" selected>Osobno</option>
           <option value="wspolnie">Wspólnie z małżonkiem</option>
@@ -127,7 +127,7 @@ const faq = [
         <div class="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
           {[...POLA, ...DODATKOWE].map(([nazwa, etykieta]) => (
             <div>
-              <label for={`m-${nazwa}`} class="etykieta-pola">{etykieta} (zł)</label>
+              <label for={`m-${nazwa}`} class="etykieta-pola">Małżonek: {etykieta.charAt(0).toLowerCase() + etykieta.slice(1)} (zł)</label>
               <input id={`m-${nazwa}`} name={`m-${nazwa}`} class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="" aria-describedby="p-blad" />
             </div>
           ))}
