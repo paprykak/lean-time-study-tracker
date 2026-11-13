@@ -49,7 +49,7 @@ const faq = [
       <div class="mt-4">
         <label for="o-data" class="etykieta-pola" data-w="etykieta-daty">{SPRAWY[SPRAWA].zdarzenie}</label>
         <input id="o-data" name="data" type="date" data-dzis class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" value={dzis} aria-describedby="o-blad" />
-        <p id="o-blad" class="blad-pola" data-blad="data" hidden></p>
+        <p id="o-blad" class="blad-pola" data-blad="data" role="alert" hidden></p>
       </div>
     </div>
 
@@ -100,6 +100,7 @@ const faq = [
 </StronaNarzedzia>
 
 <script>
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
   import { SPRAWY, terminCzynnosci, type Sprawa } from '../../lib/narzedzia/termin-odwolania';
   import { dataPoPolsku, dniMiedzy, dzisWPolsce, poprawnaData } from '../../lib/narzedzia/terminy';
   import { typografia } from '../../lib/typografia.mjs';
@@ -116,9 +117,7 @@ const faq = [
       w('sprawa-opis').textContent = typografia(s.nazwa);
       const data = el('data').value;
       const blad = poprawnaData(data) ? null : 'Wpisz datę.';
-      const b = form.querySelector<HTMLElement>('[data-blad="data"]')!;
-      b.hidden = !blad;
-      b.textContent = blad ?? '';
+      pokazBlad(form.querySelector<HTMLElement>('[data-blad="data"]')!, blad, el('data'));
       const status = w('status');
       if (blad) {
         w('koniec').textContent = '—';
@@ -147,6 +146,7 @@ const faq = [
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
     ustawDzisiejszeWartosci(form);
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

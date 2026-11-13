@@ -179,6 +179,7 @@ const faq = [
 </StronaNarzedzia>
 
 <script>
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
   import { BladDanych, opisWyniku, urlopGodzinowy, type DzienUrlopu, type Zmiana } from '../../lib/narzedzia/urlop-godzinowy';
   import { wpisanaLiczba } from '../../lib/narzedzia/format';
   import { typografia } from '../../lib/typografia.mjs';
@@ -191,7 +192,6 @@ const faq = [
       w(k).textContent = typografia(tekst);
     };
     const WIERSZE = 3;
-    const WSZYSTKIE = ['dni', 'godziny', 'zadanie', ...Array.from({ length: WIERSZE }, (_, i) => [`dlugosc${i + 1}`, `liczba${i + 1}`]).flat()];
     const POLA = ['zostalo', 'opis', 'masz', 'plan', 'pokrycie', 'dalej1', 'dalej2', 'dalej1-etykieta', 'dalej2-etykieta', 'na-zadanie'];
     const przelicz = () => {
       const stan: { blad: string | null; pole: string | null } = { blad: null, pole: null };
@@ -226,13 +226,7 @@ const faq = [
           zly(e.message, e.pole);
         }
       }
-      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
-      b.hidden = !stan.blad;
-      b.textContent = stan.blad ? typografia(stan.blad) : '';
-      for (const n of WSZYSTKIE) {
-        if (n === stan.pole) el(n).setAttribute('aria-invalid', 'true');
-        else el(n).removeAttribute('aria-invalid');
-      }
+      pokazBlad(form.querySelector<HTMLElement>('[data-blad="dane"]')!, stan.blad, stan.pole ? el(stan.pole) : []);
       if (!r) {
         w('zostalo').textContent = '—';
         for (const k of POLA.slice(1)) w(k).textContent = '';
@@ -254,6 +248,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

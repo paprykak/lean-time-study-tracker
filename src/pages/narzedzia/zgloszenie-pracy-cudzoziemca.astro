@@ -150,6 +150,7 @@ const faq = [
 </StronaNarzedzia>
 
 <script>
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
   import { terminyOchrony, terminyOswiadczenia, terminyZezwolenia, type Termin } from '../../lib/narzedzia/cudzoziemiec-terminy';
   import { dataPoPolsku } from '../../lib/narzedzia/terminy';
@@ -162,6 +163,27 @@ const faq = [
     const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
     const opis = (t: Termin) =>
       t.data ? `do ${dataPoPolsku(t.data)}${t.przesunieta ? ` (weekend albo święto; po przesunięciu ${dataPoPolsku(t.przesunieta)})` : ''}` : 'bez terminu w dniach';
+    const pole = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const puste = (...n: string[]) => n.map(pole).filter((p) => !p.value);
+    // Pola, których dotyczy komunikat z biblioteki (po początku treści); inaczej wszystkie daty wybranego trybu.
+    const polaBledu = (tryb: string, blad: string): HTMLInputElement[] => {
+      const p = (...n: string[]) => n.map(pole);
+      if (tryb === 'ochrona') {
+        if (blad.startsWith('Wpisz dzień rozpoczęcia') || blad.startsWith('Art. 5a')) return p('o-start');
+        if (blad.startsWith('Zmiana nie może')) return p('o-zmiana');
+        return p('o-start', 'o-zmiana');
+      }
+      if (tryb === 'oswiadczenie') {
+        if (blad.startsWith('Wpisz dzień rozpoczęcia i zakończenia')) return puste('s-start', 's-koniec');
+        if (blad.startsWith('Koniec pracy nie może')) return p('s-koniec');
+        if (blad.startsWith('Kalkulator liczy')) return p('s-start');
+        return p('s-zlozone', 's-start', 's-koniec', 's-faktyczny');
+      }
+      if (blad.startsWith('Wpisz okres ważności')) return puste('z-od', 'z-do');
+      if (blad.startsWith('Koniec ważności')) return p('z-do');
+      if (blad.startsWith('Kalkulator liczy')) return p('z-od');
+      return p('z-od', 'z-do', 'z-start', 'z-koniec');
+    };
     const przelicz = () => {
       const tryb = v('tryb');
       for (const g of form.querySelectorAll<HTMLElement>('[data-tryb]')) g.hidden = g.dataset.tryb !== tryb;
@@ -175,8 +197,7 @@ const faq = [
       } catch (e) {
         blad = e instanceof Error ? e.message : 'Popraw dane.';
       }
-      b.hidden = !blad;
-      b.textContent = typografia(blad ?? '');
+      pokazBlad(b, blad, blad ? polaBledu(tryb, blad) : []);
       lista.replaceChildren(
         ...terminy.map((t) => {
           const li = document.createElement('li');
@@ -192,6 +213,7 @@ const faq = [
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
     ustawDzisiejszeWartosci(form);
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

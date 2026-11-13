@@ -56,7 +56,7 @@ const faq = [
         <label for="wu-stala" class="etykieta-pola">Stała pensja miesięczna (zł, 0 przy stawce godzinowej)</label>
         <input id="wu-stala" name="stala" class="pole mt-1 max-w-48" type="text" inputmode="decimal" autocomplete="off" value="6000" aria-describedby="wu-blad" />
       </div>
-      <p id="wu-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+      <p id="wu-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -87,6 +87,7 @@ const faq = [
 </StronaNarzedzia>
 
 <script>
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
   import { wynagrodzenieUrlopowe } from '../../lib/narzedzia/wynagrodzenie-urlopowe';
   import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
   import { typografia } from '../../lib/typografia.mjs';
@@ -109,9 +110,7 @@ const faq = [
         : !(godziny > 0) ? ['godziny', 'Wpisz przepracowane godziny z 3 miesięcy, na przykład 480.']
         : !(urlop > 0) ? ['urlop', 'Wpisz godziny urlopu, na przykład 40 za 5 dni po 8 godzin.']
         : [null, null];
-      b.hidden = !blad;
-      b.textContent = typografia(blad ?? '');
-      for (const n of ['zmienne', 'godziny', 'urlop', 'stala']) el(n).setAttribute('aria-invalid', n === pole ? 'true' : 'false');
+      pokazBlad(b, blad, pole ? el(pole) : []);
       if (blad) {
         for (const k of ['zmienna', 'za-godzine', 'stala']) w(k).textContent = '—';
         return;
@@ -123,6 +122,7 @@ const faq = [
     };
     form.addEventListener('input', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

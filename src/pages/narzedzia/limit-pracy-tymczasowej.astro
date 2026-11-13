@@ -52,7 +52,7 @@ const faq = [
       {WIERSZE.map((w, i) => (
         <fieldset class="mt-4">
           <legend class="etykieta">Skierowanie {i + 1}</legend>
-          <div class="mt-2 grid grid-cols-2 gap-3">
+          <div class="mt-2 grid grid-cols-1 gap-3 min-[380px]:grid-cols-2">
             <div>
               <label for={`a-od-${i}`} class="etykieta-pola">Od</label>
               <input id={`a-od-${i}`} name={`od-${i}`} type="date" class="pole mt-1" min="1990-01-01" max="2100-12-31" value={w.od} aria-describedby="a-blad" />
@@ -64,7 +64,7 @@ const faq = [
           </div>
         </fieldset>
       ))}
-      <p id="a-blad" class="blad-pola mt-3" data-blad="skierowania" hidden></p>
+      <p id="a-blad" class="blad-pola mt-3" data-blad="skierowania" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -111,6 +111,7 @@ const faq = [
 </StronaNarzedzia>
 
 <script>
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
   import { LIMIT_DNI, podsumowanie, sprawdzLimit, type Skierowanie } from '../../lib/narzedzia/praca-tymczasowa';
   import { dataPoPolsku, dzisWPolsce, poprawnaData } from '../../lib/narzedzia/terminy';
   import { odmiana } from '../../lib/redakcja';
@@ -123,26 +124,35 @@ const faq = [
     const przelicz = () => {
       const lista: Skierowanie[] = [];
       let blad: string | null = null;
+      let zlePola: HTMLInputElement[] = [];
+      const wypelnione: HTMLInputElement[] = [];
       for (let i = 0; i < 4; i++) {
         const od = el(`od-${i}`).value;
         const do_ = el(`do-${i}`).value;
         if (!od && !do_) continue;
-        if (!poprawnaData(od) || !poprawnaData(do_)) blad = `Skierowanie ${i + 1}: wpisz obie daty, od i do.`;
-        else lista.push({ od, do: do_ });
+        if (!poprawnaData(od) || !poprawnaData(do_)) {
+          blad = `Skierowanie ${i + 1}: wpisz obie daty, od i do.`;
+          zlePola = [el(`od-${i}`), el(`do-${i}`)].filter((p) => !poprawnaData(p.value));
+        } else {
+          lista.push({ od, do: do_ });
+          wypelnione.push(el(`od-${i}`), el(`do-${i}`));
+        }
       }
-      if (!blad && lista.length === 0) blad = 'Wpisz daty co najmniej jednego skierowania.';
+      if (!blad && lista.length === 0) (blad = 'Wpisz daty co najmniej jednego skierowania.'), (zlePola = [el('od-0'), el('do-0')]);
       const dzis = dzisWPolsce();
       let r: ReturnType<typeof sprawdzLimit> | null = null;
       if (!blad) {
         try {
           r = sprawdzLimit(lista, dzis);
         } catch (e) {
-          blad = e instanceof RangeError && e.message.includes('zachodzić') ? 'Skierowania nie mogą na siebie zachodzić: sprawdź daty.' : 'Koniec skierowania nie może być wcześniejszy niż początek.';
+          const zachodza = e instanceof RangeError && e.message.includes('zachodzić');
+          blad = zachodza ? 'Skierowania nie mogą na siebie zachodzić: sprawdź daty.' : 'Koniec skierowania nie może być wcześniejszy niż początek.';
+          // Przy zachodzeniu nie wiadomo, którą datę poprawić: oznaczamy wszystkie wpisane; inaczej końce przed początkiem.
+          const konce = wypelnione.filter((p, j) => j % 2 === 1 && p.value < wypelnione[j - 1].value);
+          zlePola = zachodza || !konce.length ? wypelnione : konce;
         }
       }
-      const b = form.querySelector<HTMLElement>('[data-blad="skierowania"]')!;
-      b.hidden = !blad;
-      b.textContent = typografia(blad ?? '');
+      pokazBlad(form.querySelector<HTMLElement>('[data-blad="skierowania"]')!, blad, zlePola);
       const status = w('status');
       if (blad || !r) {
         for (const k of ['data', 'razem', 'okno', 'dalej', 'potem']) w(k).textContent = '—';
@@ -170,6 +180,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

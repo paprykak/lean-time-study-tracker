@@ -51,7 +51,7 @@ const faq = [
       <div class="mt-4">
         <label for="z-brutto" class="etykieta-pola">Kwota brutto z umowy w miesiącu (zł)</label>
         <input id="z-brutto" name="brutto" class="pole mt-1 max-w-48" type="text" inputmode="decimal" autocomplete="off" value="3000" aria-describedby="z-blad" />
-        <p id="z-blad" class="blad-pola" data-blad="brutto" hidden></p>
+        <p id="z-blad" class="blad-pola" data-blad="brutto" role="alert" hidden></p>
       </div>
       <fieldset class="mt-5">
         <legend class="etykieta">Twoja sytuacja</legend>
@@ -130,6 +130,7 @@ const faq = [
 </StronaNarzedzia>
 
 <script>
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
   import { nettoZlecenie, type StatusZleceniobiorcy } from '../../lib/narzedzia/zlecenie';
   import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
   import { typografia } from '../../lib/typografia.mjs';
@@ -145,9 +146,7 @@ const faq = [
       const brutto = wpisanaLiczba(el('brutto').value);
       const b = form.querySelector<HTMLElement>('[data-blad="brutto"]')!;
       const blad = !(brutto > 0 && brutto < 1_000_000) ? 'Wpisz kwotę brutto z umowy, na przykład 3000.' : null;
-      b.hidden = !blad;
-      b.textContent = blad ?? '';
-      el('brutto').setAttribute('aria-invalid', blad ? 'true' : 'false');
+      pokazBlad(b, blad, el('brutto'));
       if (blad) {
         w('netto').textContent = '—';
         return;
@@ -162,6 +161,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

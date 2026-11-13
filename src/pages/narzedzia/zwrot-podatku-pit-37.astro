@@ -173,7 +173,7 @@ const faq = [
           <span>Jedno dziecko z orzeczeniem o niepełnosprawności</span>
         </label>
       </fieldset>
-      <p id="p-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+      <p id="p-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -226,6 +226,7 @@ const faq = [
 </StronaNarzedzia>
 
 <script>
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
   import { opisPit, type Pit11 } from '../../lib/narzedzia/pit-roczny';
   import type { Sytuacja } from '../../lib/narzedzia/ulga-na-dzieci';
   import { wpisanaLiczba } from '../../lib/narzedzia/format';
@@ -252,6 +253,7 @@ const faq = [
       const x = wpisanaLiczba(t);
       return x >= 0 && x < 100_000_000 ? x : null;
     };
+    let zlePola: HTMLInputElement[] = [];
     const osoba = (przedrostek: string): Pit11 | null | 'blad' => {
       const v: Record<string, number> = {};
       let puste = true;
@@ -259,7 +261,7 @@ const faq = [
       for (const p of POLA) {
         if (el(przedrostek + p).value.trim()) puste = false;
         const x = kwota(przedrostek + p);
-        el(przedrostek + p).setAttribute('aria-invalid', String(x === null));
+        if (x === null) zlePola.push(el(przedrostek + p));
         if (x === null) blad = true;
         v[p] = x ?? 0;
       }
@@ -288,13 +290,11 @@ const faq = [
       for (const x of form.querySelectorAll<HTMLElement>('[data-tylko-samotny]')) x.hidden = sytuacja !== 'samotny';
       const wspolnie = malzenstwo && el('sposob').value === 'wspolnie';
       for (const x of form.querySelectorAll<HTMLElement>('[data-osobno]')) x.hidden = wspolnie;
+      zlePola = [];
       const ty = osoba('');
       const malzonek = malzenstwo ? osoba('m-') : null;
-      if (!malzenstwo) for (const p of POLA) el(`m-${p}`).setAttribute('aria-invalid', 'false');
       const blad = ty === 'blad' || malzonek === 'blad' ? 'Popraw zaznaczone pole: wpisz kwotę w złotych, na przykład 55992 albo 7676,52. Puste pole liczymy jako 0.' : null;
-      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
-      b.hidden = !blad;
-      b.textContent = blad ? typografia(blad) : '';
+      pokazBlad(form.querySelector<HTMLElement>('[data-blad="dane"]')!, blad, zlePola);
       if (blad || ty === 'blad' || ty === null || malzonek === 'blad') {
         for (const k of ['wynik', 'podstawa', 'podatek', 'ulga', 'nalezny', 'zaliczki']) w(k).textContent = '—';
         w('opis').textContent = '';
@@ -323,6 +323,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

@@ -72,7 +72,7 @@ const faq = [
         <input id="p-inna" name="inna" type="date" class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" aria-describedby="p-inna-opis p-blad" />
         <p id="p-inna-opis" class="meta mt-1">Nieobowiązkowe, np. dla odprawy albo ekwiwalentu za urlop.</p>
       </div>
-      <p id="p-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+      <p id="p-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -119,6 +119,7 @@ const faq = [
 </StronaNarzedzia>
 
 <script>
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
   import { przedawnienie, wyplatyDoDochodzenia, type RodzajWyplaty } from '../../lib/narzedzia/przedawnienie';
   import { nazwaMiesiaca } from '../../lib/narzedzia/czas-pracy';
@@ -141,13 +142,12 @@ const faq = [
       const naDzien = el('naDzien').value;
       const inna = el('inna').value;
       let blad: string | null = null;
-      if (!poprawnaData(naDzien)) blad = 'Wpisz dzień, na który sprawdzamy.';
-      else if (rodzaj === 'nastepny' && !(dzien >= 1 && dzien <= 10)) blad = 'Wypłata w następnym miesiącu: dzień od 1 do 10.';
-      else if (rodzaj === 'ten' && !(dzien >= 1 && dzien <= 28)) blad = 'Dzień wypłaty: od 1 do 28 albo wybierz ostatni dzień miesiąca.';
-      else if (inna && !poprawnaData(inna)) blad = 'Popraw datę innej należności.';
-      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
-      b.hidden = !blad;
-      b.textContent = blad ?? '';
+      let pole: HTMLInputElement | null = null;
+      if (!poprawnaData(naDzien)) (blad = 'Wpisz dzień, na który sprawdzamy.'), (pole = el('naDzien'));
+      else if (rodzaj === 'nastepny' && !(dzien >= 1 && dzien <= 10)) (blad = 'Wypłata w następnym miesiącu: dzień od 1 do 10.'), (pole = el('dzien'));
+      else if (rodzaj === 'ten' && !(dzien >= 1 && dzien <= 28)) (blad = 'Dzień wypłaty: od 1 do 28 albo wybierz ostatni dzień miesiąca.'), (pole = el('dzien'));
+      else if (inna && !poprawnaData(inna)) (blad = 'Popraw datę innej należności.'), (pole = el('inna'));
+      pokazBlad(form.querySelector<HTMLElement>('[data-blad="dane"]')!, blad, pole);
       const status = w('status');
       if (blad) {
         w('najstarsza').textContent = '—';
@@ -185,6 +185,7 @@ const faq = [
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
     ustawDzisiejszeWartosci(form);
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

@@ -71,7 +71,7 @@ const faq = [
           {PANSTWA.map((x) => <option value={x.panstwo} selected={x.panstwo === D.panstwo}>{KROTKO[x.panstwo] ?? x.panstwo}</option>)}
         </select>
       </div>
-      <div class="mt-4 grid grid-cols-2 items-end gap-3">
+      <div class="mt-4 grid grid-cols-1 items-end gap-3 min-[380px]:grid-cols-2">
         <div>
           <label for="z-wyjazd" class="etykieta-pola">Wyjazd za granicę: dzień</label>
           <input id="z-wyjazd" name="wyjazd" type="date" class="pole mt-1" min="2023-01-01" max="2100-12-31" value={D.wyjazd.data} data-dzis aria-describedby="z-czas-opis z-blad" />
@@ -81,7 +81,7 @@ const faq = [
           <input id="z-wyjazd-g" name="wyjazdGodzina" type="time" class="pole mt-1" value={D.wyjazd.godzina} aria-describedby="z-czas-opis z-blad" />
         </div>
       </div>
-      <div class="mt-4 grid grid-cols-2 items-end gap-3">
+      <div class="mt-4 grid grid-cols-1 items-end gap-3 min-[380px]:grid-cols-2">
         <div>
           <label for="z-powrot" class="etykieta-pola">Powrót do Polski: dzień</label>
           <input id="z-powrot" name="powrot" type="date" class="pole mt-1" min="2023-01-01" max="2100-12-31" value={D.powrot.data} data-dzis="2" aria-describedby="z-czas-opis z-blad" />
@@ -92,7 +92,7 @@ const faq = [
         </div>
       </div>
       <p id="z-czas-opis" class="meta mt-1">Przekroczenie granicy, start samolotu z ostatniego lotniska w Polsce albo wyjście statku z ostatniego polskiego portu, w czasie polskim (§ 12). Czas w kraju rozlicza się jak delegację krajową (§ 21).</p>
-      <p id="z-blad" class="blad-pola mt-3" data-blad="czas" hidden></p>
+      <p id="z-blad" class="blad-pola mt-3" data-blad="czas" role="alert" hidden></p>
 
       <fieldset class="mt-5">
         <legend class="etykieta">Posiłki za darmo</legend>
@@ -120,7 +120,7 @@ const faq = [
         <label for="z-noclegi" class="etykieta-pola">Noclegi bez rachunku</label>
         <input id="z-noclegi" name="noclegi" class="pole mt-1 max-w-24" type="text" inputmode="numeric" autocomplete="off" value="0" aria-describedby="z-noclegi-opis z-blad-noclegi" />
         <p id="z-noclegi-opis" class="meta mt-1">Ryczałt 25% limitu na nocleg za noc, gdy nocleg nie był zapewniony za darmo (§ 16 ust. 2).</p>
-        <p id="z-blad-noclegi" class="blad-pola mt-1" data-blad="noclegi" hidden></p>
+        <p id="z-blad-noclegi" class="blad-pola mt-1" data-blad="noclegi" role="alert" hidden></p>
       </div>
       <div class="mt-4">
         <label for="z-dojazd" class="etykieta-pola">Dojazd z i na dworzec albo lotnisko za granicą</label>
@@ -227,6 +227,8 @@ const faq = [
   import { delegacjaZagraniczna, ileDietZagranicznych, stawki, wWalucie, type Dojazd } from '../../lib/narzedzia/delegacja-zagraniczna';
   import { dniMiedzy, poprawnaData } from '../../lib/narzedzia/terminy';
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
+  import { odmiana } from '../../lib/redakcja';
 
   const form = document.querySelector<HTMLFormElement>('[data-zagraniczna]');
   const wzor = document.querySelector<HTMLTemplateElement>('[data-wzor-doby]');
@@ -235,11 +237,8 @@ const faq = [
     const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
     const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
     const kontener = form.querySelector<HTMLElement>('[data-doby]')!;
-    const blad = (k: string, tekst: string | null) => {
-      const b = form.querySelector<HTMLElement>(`[data-blad="${k}"]`)!;
-      b.hidden = !tekst;
-      b.textContent = tekst ?? '';
-    };
+    const blad = (k: string, tekst: string | null, pola?: HTMLInputElement[]) =>
+      pokazBlad(form.querySelector<HTMLElement>(`[data-blad="${k}"]`)!, tekst, pola);
     const posilki = (): PosilkiDoby[] =>
       [...kontener.querySelectorAll<HTMLElement>('[data-doba]')].map((f) =>
         Object.fromEntries([...f.querySelectorAll<HTMLInputElement>('[data-posilek]')].map((x) => [x.dataset.posilek as Posilek, x.checked])),
@@ -283,17 +282,23 @@ const faq = [
       const wyjazd = { data: el('wyjazd').value, godzina: el('wyjazdGodzina').value };
       const powrot = { data: el('powrot').value, godzina: el('powrotGodzina').value };
       let bladCzasu: string | null = null;
+      let polaCzasu: HTMLInputElement[] = [];
       let start = 0;
       let koniec = 0;
       if (![wyjazd.data, powrot.data].every(poprawnaData) || ![wyjazd.godzina, powrot.godzina].every(poprawnaGodzina)) {
         bladCzasu = 'Wpisz dzień i godzinę wyjazdu oraz powrotu.';
+        polaCzasu = [
+          ...[el('wyjazd'), el('powrot')].filter((p) => !poprawnaData(p.value)),
+          ...[el('wyjazdGodzina'), el('powrotGodzina')].filter((p) => !poprawnaGodzina(p.value)),
+        ];
       } else {
         start = chwilaWPolsce(wyjazd.data, wyjazd.godzina);
         koniec = chwilaWPolsce(powrot.data, powrot.godzina);
         if (koniec <= start) bladCzasu = 'Powrót musi być po wyjeździe.';
         else if (koniec - start > MAKS_DOB * DOBA) bladCzasu = `Kalkulator liczy podróże do ${MAKS_DOB} dób.`;
+        polaCzasu = [el('powrot'), el('powrotGodzina')];
       }
-      blad('czas', bladCzasu);
+      blad('czas', bladCzasu, polaCzasu);
       if (bladCzasu) {
         blad('noclegi', null);
         pusto();
@@ -307,9 +312,9 @@ const faq = [
       const bladNoclegow = Number.isNaN(noclegi)
         ? 'Wpisz liczbę noclegów, na przykład 0 albo 2.'
         : noclegi > noce
-          ? `W tej podróży są najwyżej ${noce} ${noce === 1 ? 'noc' : noce > 1 && noce < 5 ? 'noce' : 'nocy'}.`
+          ? `W tej podróży są najwyżej ${odmiana(noce, ['noc', 'noce', 'nocy'])}.`
           : null;
-      blad('noclegi', bladNoclegow);
+      blad('noclegi', bladNoclegow, [el('noclegi')]);
       if (bladNoclegow) {
         pusto();
         return;
@@ -340,6 +345,7 @@ const faq = [
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
     ustawDzisiejszeWartosci(form);
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

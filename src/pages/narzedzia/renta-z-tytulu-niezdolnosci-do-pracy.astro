@@ -103,7 +103,7 @@ const faq = [
         </div>
       </div>
       <p id="r-okresy-opis" class="meta mt-1">Składkowe: m.in. praca, zlecenie i działalność ze składkami, zasiłek macierzyński, urlop wychowawczy, zasiłek dla bezrobotnych. Nieskładkowe: m.in. wynagrodzenie i zasiłek za czas choroby, zasiłek opiekuńczy, świadczenie rehabilitacyjne, ukończone studia (art. 7). W ostatnich 10 latach wpisz oba rodzaje razem, ale nieskładkowych najwyżej jedną trzecią składkowych z tych lat (art. 5 ust. 2). Lata możesz wpisać z ułamkiem, na przykład 4,5.</p>
-      <p id="r-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+      <p id="r-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -153,6 +153,7 @@ const faq = [
 </StronaNarzedzia>
 
 <script>
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
   import { opisRenty, type Plec, type Przyczyna, type Stopien, type Ubezpieczenie } from '../../lib/narzedzia/renta-niezdolnosc';
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
   import { wpisanaLiczba } from '../../lib/narzedzia/format';
@@ -170,21 +171,18 @@ const faq = [
       const powstanie = el('powstanie').value;
       const [skladkowe, nieskladkowe, ostatnie10] = ['skladkowe', 'nieskladkowe', 'ostatnie10'].map((n) => wpisanaLiczba(el(n).value));
       let blad: string | null = null;
-      if (!poprawnaData(urodzenie) || urodzenie > dzisWPolsce() || urodzenie < '1900-01-01') blad = 'Wpisz datę urodzenia.';
-      else if (!poprawnaData(powstanie) || powstanie < urodzenie || powstanie > dzisWPolsce()) blad = 'Wpisz dzień powstania niezdolności do pracy: po dacie urodzenia i nie później niż dziś.';
-      else if (![skladkowe, nieskladkowe, ostatnie10].every((x) => x >= 0 && x <= 70)) blad = 'Wpisz okresy w latach, na przykład 5 albo 4,5.';
-      else if (ostatnie10 > 10 || ostatnie10 > skladkowe + nieskladkowe) blad = 'Okres z ostatnich 10 lat nie może być dłuższy niż 10 lat ani niż wszystkie okresy razem.';
-      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
-      b.hidden = !blad;
-      b.textContent = blad ? typografia(blad) : '';
-      // Pole, którego dotyczy błąd, dla czytnika ekranu (komunikat jest w aria-describedby).
-      const polaBledu = blad ? ([
-        ['Wpisz datę urodzenia.', ['urodzenie']],
-        ['Wpisz dzień powstania', ['powstanie']],
-        ['Wpisz okresy w latach', ['skladkowe', 'nieskladkowe', 'ostatnie10']],
-        ['Okres z ostatnich 10', ['ostatnie10']],
-      ] as [string, string[]][]).find(([p]) => blad!.startsWith(p))?.[1] ?? [] : [];
-      for (const n of ['urodzenie', 'powstanie', 'skladkowe', 'nieskladkowe', 'ostatnie10']) el(n).setAttribute('aria-invalid', String(polaBledu.includes(n)));
+      // Pola, których dotyczy błąd (aria-invalid; komunikat jest w ich aria-describedby).
+      let polaBledu: string[] = [];
+      const okresy = { skladkowe, nieskladkowe, ostatnie10 };
+      if (!poprawnaData(urodzenie) || urodzenie > dzisWPolsce() || urodzenie < '1900-01-01') (blad = 'Wpisz datę urodzenia.'), (polaBledu = ['urodzenie']);
+      else if (!poprawnaData(powstanie) || powstanie < urodzenie || powstanie > dzisWPolsce())
+        (blad = 'Wpisz dzień powstania niezdolności do pracy: po dacie urodzenia i nie później niż dziś.'), (polaBledu = ['powstanie']);
+      else if (!Object.values(okresy).every((x) => x >= 0 && x <= 70)) {
+        blad = 'Wpisz okresy w latach, na przykład 5 albo 4,5.';
+        polaBledu = Object.entries(okresy).filter(([, x]) => !(x >= 0 && x <= 70)).map(([n]) => n);
+      } else if (ostatnie10 > 10 || ostatnie10 > skladkowe + nieskladkowe)
+        (blad = 'Okres z ostatnich 10 lat nie może być dłuższy niż 10 lat ani niż wszystkie okresy razem.'), (polaBledu = ['ostatnie10']);
+      pokazBlad(form.querySelector<HTMLElement>('[data-blad="dane"]')!, blad, polaBledu.map(el));
       if (blad) {
         for (const k of POLA) w(k).textContent = k === 'opis' ? '' : '—';
         w('uwaga').textContent = '';
@@ -208,8 +206,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
-    // Po powrocie przyciskiem Wstecz przeglądarka przywraca wybór po pierwszym liczeniu: liczymy jeszcze raz.
-    window.addEventListener('pageshow', przelicz);
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

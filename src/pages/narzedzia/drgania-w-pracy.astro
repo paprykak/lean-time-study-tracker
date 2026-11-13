@@ -48,7 +48,7 @@ const faq = [
       <div class="mt-4">
         <label for="d-rodzaj" class="etykieta-pola">Rodzaj drgań</label>
         <select id="d-rodzaj" name="rodzaj" class="pole mt-1">
-          <option value="miejscowe" selected>Przez ręce (narzędzia ręczne)</option>
+          <option value="miejscowe" selected>Przez ręce (narzędzia)</option>
           <option value="ogolne">Na całe ciało (siedzisko)</option>
         </select>
       </div>
@@ -75,7 +75,7 @@ const faq = [
         ))
       }
       <p id="d-opis" class="meta mt-1">Przyspieszenie z pomiaru albo z instrukcji narzędzia i czas rzeczywistej pracy z nim; puste wiersze pomijamy.</p>
-      <p id="d-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+      <p id="d-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -129,6 +129,7 @@ const faq = [
 
 <script>
   import { typografia } from '../../lib/typografia.mjs';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
   import { wpisanaLiczba } from '../../lib/narzedzia/format';
   import { ocenaDrgan, PROG_DZIALANIA_DRGAN, type GrupaDrgan, type OkresDrgan, type RodzajDrgan } from '../../lib/narzedzia/drgania';
 
@@ -137,9 +138,6 @@ const faq = [
     const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
     const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
     const ms = (x: number) => `${x.toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} m/s²`;
-    const oznacz = (zle: string[]) => {
-      for (const p of form.querySelectorAll<HTMLInputElement>('input[type="text"]')) p.setAttribute('aria-invalid', zle.includes(p.name) ? 'true' : 'false');
-    };
     const przelicz = () => {
       const zle: string[] = [];
       const rodzaj = el('rodzaj').value as RodzajDrgan;
@@ -161,11 +159,11 @@ const faq = [
         okresy.push({ a, godziny });
       }
       if (!blad && !okresy.length) (blad = 'Wpisz co najmniej jedno przyspieszenie drgań i czas.'), zle.push('a-0', 'czas-0');
-      else if (!blad && okresy.reduce((s, o) => s + o.godziny, 0) > 24) blad = 'Łączny czas nie może przekroczyć 24 godzin.';
-      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
-      b.hidden = !blad;
-      b.textContent = typografia(blad ?? '');
-      oznacz(zle);
+      else if (!blad && okresy.reduce((s, o) => s + o.godziny, 0) > 24) {
+        blad = 'Łączny czas nie może przekroczyć 24 godzin.';
+        for (let i = 0; i < 4; i++) if (el(`czas-${i}`).value.trim()) zle.push(`czas-${i}`);
+      }
+      pokazBlad(form.querySelector<HTMLElement>('[data-blad="dane"]')!, blad, zle.map(el));
       const status = w('status');
       if (blad) {
         w('a8').textContent = '—';
@@ -202,6 +200,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

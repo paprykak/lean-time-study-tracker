@@ -21,14 +21,14 @@ test('20 lat stażu: 120%', async ({ page }) => {
 });
 
 test('porozumienie stron z innego powodu: zasiłek od 10 lutego 2027 r.', async ({ page }) => {
-  await page.getByLabel('Jak skończyła się ostatnia praca').selectOption('porozumienie');
+  await page.getByRole('radio', { name: 'Porozumienie z innego powodu' }).check();
   await expect(page.locator('[data-w="od"]')).toHaveText('10 lutego 2027 r.');
   await expect(page.locator('[data-w="dni"]')).toHaveText('90 dni');
   await expect(page.locator('[data-w="uwaga"]')).toBeVisible();
 });
 
 test('własne wypowiedzenie: zasiłek nie przysługuje', async ({ page }) => {
-  await page.getByLabel('Jak skończyła się ostatnia praca').selectOption('wypowiedzenie-wlasne');
+  await page.getByRole('radio', { name: 'Moje wypowiedzenie' }).check();
   await expect(page.locator('[data-w="kwota"]')).toHaveText('nie przysługuje');
   await expect(page.locator('[data-w="uwaga"]')).toContainText('art. 219 ust. 1 pkt 1');
 });

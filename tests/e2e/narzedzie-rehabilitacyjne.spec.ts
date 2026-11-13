@@ -15,7 +15,7 @@ test('choroba: 90% i 75% po waloryzacji', async ({ page }) => {
 });
 
 test('wypadek przy pracy: 100%', async ({ page }) => {
-  await page.getByLabel('Przyczyna niezdolności do pracy').selectOption('wypadek');
+  await page.getByRole('radio', { name: 'Wypadek przy pracy albo choroba zawodowa' }).check();
   await expect(page.locator('[data-w="pierwsze"]')).toHaveText(/^5198,11\szł$/);
   await expect(page.locator('[data-w="naglowek"]')).toHaveText('Miesięcznie brutto (100%)');
 });

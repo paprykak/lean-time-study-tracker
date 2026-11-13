@@ -231,6 +231,7 @@ const faq = [
 </StronaNarzedzia>
 
 <script>
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
   import { KONIEC_STARYCH, oplataSep, waznoscSep, type StatusSep, type WynikSep } from '../../lib/narzedzia/uprawnienia-sep';
   import { dataPoPolsku, dzisWPolsce, ileDni, poprawnaData } from '../../lib/narzedzia/terminy';
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
@@ -253,10 +254,7 @@ const faq = [
     let wydarzenia: WynikSep['wydarzenia'] = [];
 
     const blad = (k: string, tekst: string | null) => {
-      const b = form.querySelector<HTMLElement>(`[data-blad="${k}"]`)!;
-      b.hidden = !tekst;
-      b.textContent = tekst ? typografia(tekst) : '';
-      pole(k).setAttribute('aria-invalid', tekst ? 'true' : 'false');
+      pokazBlad(form.querySelector<HTMLElement>(`[data-blad="${k}"]`)!, tekst, pole(k));
     };
     const uwaga = (tekst: string | null) => {
       w('uwaga').hidden = !tekst;
@@ -396,6 +394,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

@@ -76,7 +76,7 @@ const faq = [
         <input type="checkbox" name="wiek" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
         <span>Kobieta od 55 lat albo mężczyzna od 60 lat (bez FP, FS i FGŚP)</span>
       </label>
-      <p id="k-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+      <p id="k-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -120,6 +120,7 @@ const faq = [
 </StronaNarzedzia>
 
 <script>
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
   import { kosztPracodawcy, rokKosztu, type RokKosztu } from '../../lib/narzedzia/koszt-pracodawcy';
   import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
   import { dzisWPolsce } from '../../lib/narzedzia/terminy';
@@ -140,8 +141,7 @@ const faq = [
         !(brutto > 0 && brutto < 1_000_000) ? 'Wpisz wynagrodzenie brutto, na przykład 6000.'
         : !(wypadkowa >= 0.4 && wypadkowa <= 8.12) ? 'Stopa wypadkowa wynosi od 0,40% do 8,12%.'
         : null;
-      b.hidden = !blad;
-      b.textContent = blad ?? '';
+      pokazBlad(b, blad, !(brutto > 0 && brutto < 1_000_000) ? el('brutto') : el('wypadkowa'));
       if (blad) {
         w('koszt').textContent = '—';
         return;
@@ -156,6 +156,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

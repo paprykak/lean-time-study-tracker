@@ -49,7 +49,7 @@ const faq = [
       <div class="mt-4">
         <label for="n-brutto" class="etykieta-pola">Wynagrodzenie brutto w miesiącu (zł)</label>
         <input id="n-brutto" name="brutto" class="pole mt-1 max-w-48" type="text" inputmode="decimal" autocomplete="off" value="6000" aria-describedby="n-blad" />
-        <p id="n-blad" class="blad-pola" data-blad="brutto" hidden></p>
+        <p id="n-blad" class="blad-pola" data-blad="brutto" role="alert" hidden></p>
       </div>
       <label class="mt-4 flex items-start gap-3 text-[0.9375rem]">
         <input type="checkbox" name="pit2" checked class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
@@ -124,6 +124,7 @@ const faq = [
   import { liczba, wpisanaLiczba, zl } from '../../lib/narzedzia/format';
   import { nazwaMiesiaca } from '../../lib/narzedzia/czas-pracy';
   import { typografia } from '../../lib/typografia.mjs';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   // „w czerwcu”, „we wrześniu”
   const wMiesiacu = (m: number) => `${m === 9 ? 'we' : 'w'} ${nazwaMiesiaca(m, 'miejscownik')}`;
@@ -136,9 +137,7 @@ const faq = [
       const brutto = wpisanaLiczba(el('brutto').value);
       const b = form.querySelector<HTMLElement>('[data-blad="brutto"]')!;
       const blad = !(brutto > 0 && brutto < 1_000_000) ? 'Wpisz wynagrodzenie brutto, na przykład 6000.' : null;
-      b.hidden = !blad;
-      b.textContent = blad ?? '';
-      el('brutto').setAttribute('aria-invalid', blad ? 'true' : 'false');
+      pokazBlad(b, blad, el('brutto'));
       if (blad) {
         w('netto').textContent = '—';
         return;
@@ -157,6 +156,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

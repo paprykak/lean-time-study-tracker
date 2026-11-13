@@ -272,6 +272,7 @@ const faq = [
   import { dzisWPolsce } from '../../lib/narzedzia/terminy';
   import { odmiana } from '../../lib/redakcja';
   import { typografia } from '../../lib/typografia.mjs';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   // Strona jest budowana raz: ostrzeżenie o nowym komunikacie GUS według dzisiejszej daty.
   document.querySelectorAll<HTMLElement>('[data-gus-nowsza]').forEach((s) => {
@@ -316,13 +317,10 @@ const faq = [
       let wynik;
       try {
         wynik = czyUdt(dane);
-        blad.hidden = true;
-        udzwigPole.setAttribute('aria-invalid', 'false');
+        pokazBlad(blad, null);
       } catch (e) {
         if (!(e instanceof RangeError)) throw e;
-        blad.hidden = false;
-        blad.textContent = typografia('Wpisz udźwig w kilogramach, większy od zera.');
-        udzwigPole.setAttribute('aria-invalid', 'true');
+        pokazBlad(blad, 'Wpisz udźwig w kilogramach, większy od zera.', udzwigPole);
         w('werdykt').textContent = '—';
         w('status').hidden = true;
         ['kategoria', 'zamiast', 'konserwacja', 'warunki', 'oplata'].forEach((k) => wiersz(k, false));
@@ -358,6 +356,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

@@ -48,14 +48,14 @@ const faq = [
         <label for="r-start" class="etykieta-pola">Początek świadczenia</label>
         <input id="r-start" name="start" type="date" class="pole mt-1 max-w-56" min="2026-01-01" max="2100-12-31" value={start} data-dzis={startDzis ? '0' : undefined} aria-describedby="r-blad" />
       </div>
-      <div class="mt-4">
-        <label for="r-przyczyna" class="etykieta-pola">Przyczyna niezdolności do pracy</label>
-        <select id="r-przyczyna" name="przyczyna" class="pole mt-1">
-          <option value="choroba" selected>Choroba</option>
-          <option value="wypadek">Wypadek przy pracy albo choroba zawodowa</option>
-          <option value="ciaza">Niezdolność w czasie ciąży</option>
-        </select>
-      </div>
+      <fieldset class="mt-4">
+        <legend class="etykieta-pola">Przyczyna niezdolności do pracy</legend>
+        <div class="opcje-pionowe mt-2">
+          <label><input type="radio" name="przyczyna" value="choroba" checked /> Choroba</label>
+          <label><input type="radio" name="przyczyna" value="wypadek" /> Wypadek przy pracy albo choroba zawodowa</label>
+          <label><input type="radio" name="przyczyna" value="ciaza" /> Niezdolność w czasie ciąży</label>
+        </div>
+      </fieldset>
       <div class="mt-4">
         <label for="r-miesiace" class="etykieta-pola">Na ile miesięcy przyznano świadczenie</label>
         <select id="r-miesiace" name="miesiace" class="pole mt-1 max-w-48">
@@ -66,7 +66,7 @@ const faq = [
         <input type="checkbox" name="pelnyEtat" checked class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
         <span>Pełny etat (podstawa nie niższa niż z płacy minimalnej)</span>
       </label>
-      <p id="r-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+      <p id="r-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -118,6 +118,7 @@ const faq = [
 </StronaNarzedzia>
 
 <script>
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
   import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
   import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
   import { swiadczenieRehabilitacyjne, type Przyczyna } from '../../lib/narzedzia/swiadczenie-rehabilitacyjne';
@@ -135,21 +136,19 @@ const faq = [
       const brutto = wpisanaLiczba(el('brutto').value);
       const start = el('start').value;
       let blad: string | null = null;
-      if (!(brutto > 0 && brutto < 1_000_000)) blad = 'Wpisz pensję brutto, na przykład 6000.';
-      else if (!poprawnaData(start) || start < '2026-01-01') blad = 'Wpisz początek świadczenia od 2026 r.';
-      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
-      b.hidden = !blad;
-      b.textContent = typografia(blad ?? '');
-      if (blad) {
-        w('pierwsze').textContent = '—';
-        return;
+      let pole: HTMLInputElement | null = null;
+      if (!(brutto > 0 && brutto < 1_000_000)) (blad = 'Wpisz pensję brutto, na przykład 6000.'), (pole = el('brutto'));
+      else if (!poprawnaData(start) || start < '2026-01-01') (blad = 'Wpisz początek świadczenia od 2026 r.'), (pole = el('start'));
+      let r: ReturnType<typeof swiadczenieRehabilitacyjne> | null = null;
+      if (!blad) {
+        try {
+          r = swiadczenieRehabilitacyjne({ start, brutto, przyczyna: el('przyczyna').value as Przyczyna, miesiace: Number(el('miesiace').value), pelnyEtat: el('pelnyEtat').checked });
+        } catch {
+          (blad = 'Brak płacy minimalnej dla tego roku. Wybierz wcześniejszą datę.'), (pole = el('start'));
+        }
       }
-      let r: ReturnType<typeof swiadczenieRehabilitacyjne>;
-      try {
-        r = swiadczenieRehabilitacyjne({ start, brutto, przyczyna: el('przyczyna').value as Przyczyna, miesiace: Number(el('miesiace').value), pelnyEtat: el('pelnyEtat').checked });
-      } catch {
-        b.hidden = false;
-        b.textContent = typografia('Brak płacy minimalnej dla tego roku. Wybierz wcześniejszą datę.');
+      pokazBlad(form.querySelector<HTMLElement>('[data-blad="dane"]')!, blad, pole);
+      if (blad || !r) {
         w('pierwsze').textContent = '—';
         return;
       }
@@ -167,6 +166,7 @@ const faq = [
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
     ustawDzisiejszeWartosci(form);
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>
