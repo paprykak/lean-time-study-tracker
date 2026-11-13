@@ -18,7 +18,7 @@ describe('podobne narzędzia', () => {
   });
 
   it.each([
-    ['kalkulator-l4', 'okres-zasilkowy'],
+    ['kalkulator-l4', 'l4-po-zwolnieniu'],
     ['kalkulator-urlopu', 'ekwiwalent-za-urlop'],
     ['waznosc-uprawnien-udt', 'badania-udt'],
     ['halas-w-pracy', 'drgania-w-pracy'],

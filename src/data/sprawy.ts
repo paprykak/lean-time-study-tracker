@@ -5,7 +5,7 @@
 
 /** Potoczne słowa, pod którymi ludzie szukają narzędzia (slug → hasła). */
 export const HASLA: Record<string, string[]> = {
-  'kalkulator-l4': ['chorobowe', 'zwolnienie lekarskie', 'choroba', 'zasiłek chorobowy', 'e-ZLA'],
+  'kalkulator-l4': ['chorobowe', 'zwolnienie lekarskie', 'choroba', 'zasiłek chorobowy', 'e-ZLA', 'ile dostanę na L4'],
   'okres-zasilkowy': ['L4', 'chorobowe', '182 dni', 'długie zwolnienie'],
   'zwolnienie-na-l4': ['zwolnienie lekarskie', 'choroba', 'wypowiedzenie na L4', 'art. 53'],
   'l4-po-zwolnieniu': ['zwolnienie lekarskie', 'choroba po pracy', 'po umowie'],
