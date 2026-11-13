@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { ekwiwalentWlasne, kosztPran, sprawdzOdziez, tekstyWyniku, type DaneOdziezy } from './odziez-robocza';
+import { ekwiwalentWlasne, kosztPran, polaEkwiwalentow, sprawdzOdziez, tekstyWyniku, type DaneOdziezy } from './odziez-robocza';
 
 // Wyniki reguł i rachunków sprawdzone niezależnie w Pythonie (osobna implementacja reguł z notatek, fractions i Decimal
 // z zaokrągleniem ROUND_HALF_UP).
@@ -77,6 +77,18 @@ describe('sprawdzenie odzieży roboczej (art. 237⁶–237¹⁰ Kp)', () => {
     const ta = tekstyWyniku(ag, s(ag));
     expect(ta.wiersze.find((x) => x.dt === 'Kto pierze')?.opis).toContain('czy pranie zapewnia agencja');
     expect(ta.uwagi[0]).toContain('uzgodnienia na piśmie z agencją');
+    expect(ta.uwagi[0]).toContain('art. 27 ust. 2 pkt 1 w związku z ust. 1');
+    expect(ta.uwagi[0]).not.toContain('ust. 1–2');
+  });
+  it('pola ekwiwalentów tylko tam, gdzie zmieniają wynik', () => {
+    const p = (z: Partial<DaneOdziezy>) => polaEkwiwalentow({ ...D, ...z }, s(z));
+    // własna odzież prana w domu: ekwPranie nie zmienia uwag (interpretacja 7), więc pytania nie ma
+    expect(s({ teraz: 'wlasna', pranie: 'ja', ekwPranie: true })).toEqual(s({ teraz: 'wlasna', pranie: 'ja', ekwPranie: false }));
+    expect(p({ teraz: 'wlasna', pranie: 'ja' })).toEqual({ ekwWlasne: true, ekwPranie: false });
+    expect(p({ teraz: 'daje', pranie: 'ja' })).toEqual({ ekwWlasne: false, ekwPranie: true });
+    expect(p({ rodzaj: 'soi', teraz: 'wlasna', pranie: 'ja' })).toEqual({ ekwWlasne: false, ekwPranie: false });
+    expect(p({ umowa: 'zlecenie', teraz: 'wlasna', pranie: 'ja' })).toEqual({ ekwWlasne: false, ekwPranie: false });
+    expect(p({ warunki: ['skazenie'], pranie: 'ja' })).toEqual({ ekwWlasne: false, ekwPranie: false });
   });
 });
 

@@ -264,6 +264,7 @@ const faq = [
     WIERSZE_RZECZY,
     ekwiwalentWlasne,
     kosztPran,
+    polaEkwiwalentow,
     sprawdzOdziez,
     tekstyWyniku,
     type DaneOdziezy,
@@ -363,8 +364,9 @@ const faq = [
       };
       const r = sprawdzOdziez(d);
       // Pola ekwiwalentów tylko tam, gdzie zmieniają wynik.
-      form.querySelector<HTMLElement>('[data-pole="ekw-wlasne"]')!.hidden = !(d.teraz === 'wlasna' && r.wlasne === 'za-zgoda');
-      form.querySelector<HTMLElement>('[data-pole="ekw-pranie"]')!.hidden = !(d.pranie === 'ja' && r.pranie === 'firma-lub-ty');
+      const pola = polaEkwiwalentow(d, r);
+      form.querySelector<HTMLElement>('[data-pole="ekw-wlasne"]')!.hidden = !pola.ekwWlasne;
+      form.querySelector<HTMLElement>('[data-pole="ekw-pranie"]')!.hidden = !pola.ekwPranie;
 
       const t = tekstyWyniku(d, r);
       pisz('glowny', t.glowny);

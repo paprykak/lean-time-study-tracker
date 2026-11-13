@@ -159,6 +159,13 @@ export function sprawdzOdziez(d: DaneOdziezy): WynikOdziezy {
   return { obowiazek, kto: d.umowa === 'tymczasowa' ? 'pracodawca-uzytkownik' : 'pracodawca', wlasne, pranie, podatki, uwagi };
 }
 
+/** Które pytania o ekwiwalent pokazać: tylko te, których odpowiedź zmienia wynik (ekwWlasne, ekwPranie). */
+export function polaEkwiwalentow(d: DaneOdziezy, w: WynikOdziezy): { ekwWlasne: boolean; ekwPranie: boolean } {
+  const wlasnaZaZgoda = d.teraz === 'wlasna' && w.wlasne === 'za-zgoda';
+  // Przy własnej odzieży pranej w domu wynik to „przepis nie rozstrzyga” (interpretacja 7), niezależnie od ekwPranie.
+  return { ekwWlasne: wlasnaZaZgoda, ekwPranie: d.pranie === 'ja' && w.pranie === 'firma-lub-ty' && !wlasnaZaZgoda };
+}
+
 // ——— Rachunki (kwoty w groszach, całkowicie) ———
 
 export const MAKS_PRAN = 62;
@@ -314,7 +321,7 @@ export function tekstyWyniku(d: DaneOdziezy, w: WynikOdziezy): TekstyWyniku {
   }
 
   const UWAGI: Record<Uwaga, string> = {
-    'brak-odziezy': `Pracodawca nie może dopuścić Cię do pracy bez środków ochrony indywidualnej oraz odzieży i obuwia roboczego przewidzianych na Twoim stanowisku (art. 237⁹ § 1 ${KP}).${d.umowa === 'tymczasowa' ? ' Kto jako pracodawca użytkownik lub w jego imieniu nie dostarcza ich mimo uzgodnienia na piśmie z agencją, podlega grzywnie od 1000 do 30 000 zł (art. 27 ust. 1–2 pkt 1 ustawy o zatrudnianiu pracowników tymczasowych).' : ''}`,
+    'brak-odziezy': `Pracodawca nie może dopuścić Cię do pracy bez środków ochrony indywidualnej oraz odzieży i obuwia roboczego przewidzianych na Twoim stanowisku (art. 237⁹ § 1 ${KP}).${d.umowa === 'tymczasowa' ? ' Kto jako pracodawca użytkownik lub w jego imieniu nie dostarcza ich mimo uzgodnienia na piśmie z agencją, podlega grzywnie od 1000 do 30 000 zł (art. 27 ust. 2 pkt 1 w związku z ust. 1 ustawy o zatrudnianiu pracowników tymczasowych).' : ''}`,
     'wlasne-niedozwolone': soi
       ? `Środki ochrony indywidualnej pracodawca dostarcza nieodpłatnie (art. 237⁶ § 1 ${KP}), a kosztami BHP nie wolno obciążać pracowników (art. 207 § 2¹).`
       : `Na stanowisku z obsługą maszyn, pracami intensywnie brudzącymi albo skażeniem przepis nie dopuszcza pracy we własnej odzieży za ekwiwalent (art. 237⁷ § 3 ${KP}); odzież i obuwie daje pracodawca (§ 1).`,

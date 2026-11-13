@@ -51,10 +51,12 @@ test('same maszyny: obowiązek jako wariant bezpieczny; ŚOI prane w domu: uwaga
   await expect(page.locator('[data-pole="ekw-pranie"]')).toBeHidden();
 });
 
-test('własne ubranie prane w domu bez ekwiwalentu za pranie: jedna uwaga „przepis nie rozstrzyga”', async ({ page }) => {
+test('własne ubranie prane w domu: bez pytania o ekwiwalent za pranie, jedna uwaga „przepis nie rozstrzyga”', async ({ page }) => {
   await page.locator('[name="teraz"]').selectOption('wlasna');
   await page.locator('[name="pranie"]').selectOption('ja');
-  await page.locator('[name="ekwPranie"]').selectOption('nie');
+  // pytanie o ekwiwalent za pranie nic tu nie zmienia, więc jest ukryte
+  await expect(page.locator('[data-pole="ekw-pranie"]')).toBeHidden();
+  await expect(page.locator('[data-pole="ekw-wlasne"]')).toBeVisible();
   const uwagi = page.locator('[data-w="uwagi"] p');
   await expect(uwagi).toHaveCount(1);
   await expect(uwagi).toContainText(/Przepis\snie\srozstrzyga/);
