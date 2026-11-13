@@ -15,6 +15,7 @@ Pamięć robocza projektu. Czyta ją i aktualizuje każda sesja na początku i n
   - `/narzedzia/kalkulator-urlopu`: 20/26 dni, szkoła, staż z art. 302^1 (od 2026 r.), etat, część roku;
   - `/narzedzia/kontrola-grafiku`: grafik miesiąca (12 h, trzyzmianowy), odpoczynki, doba, niedziele, dni wolne;
   - `/narzedzia/okres-wypowiedzenia`: art. 34 i 36, koniec w sobotę albo ostatniego dnia miesiąca, dni na szukanie pracy;
+  - `/narzedzia/emerytura-pomostowa`: art. 3, 4, 6–8, 12, 15–17, 21–24 i 49 ustawy o emeryturach pomostowych (Dz.U. 2024 poz. 1696; art. 4 pkt 5 uchylony od 1 stycznia 2024 r., Dz.U. 2023 poz. 1667): 15 lat pracy z wykazu (art. 8: 10 lat), 55/60 lat (hutnictwo i porty 55, art. 8: 50/55), staż 20/25 lat, praca po 2008 r. albo cały okres przed 2009 r., koniec w wieku 60/65 lat, rekompensata przy 15 latach przed 2009 r.; wykaz prac z hali i magazynu;
   - `/narzedzia/przerwy-w-pracy`: art. 134, 141, 187, 202 § 3^1; art. 17 ustawy o rehabilitacji (15 minut); § 7 rozporządzenia o monitorach (Dz.U. 2025 poz. 58: 5 minut po każdej pełnej godzinie poza ostatnią);
   - `/narzedzia/badania-udt`: forma dozoru, badanie UDT i przegląd konserwacyjny z załączników rozporządzenia z 2018 r., .ics;
   - `/narzedzia/ekwiwalent-za-urlop`: § 15–19 rozporządzenia z 1997 r., współczynnik liczony z kalendarza (2026: 251/12), termin wypłaty z art. 171 § 4–5;

@@ -675,6 +675,20 @@ export const AKTY = {
     adres: 'https://eli.gov.pl/eli/MP/2026/220/ogl',
     sprawdzono: '2026-11-13',
   },
+  emeryturyPomostowe: {
+    nazwa: 'Ustawa o emeryturach pomostowych',
+    publikator: 'Dz.U. 2024 poz. 1696',
+    uwaga: 'tekst jednolity, stan prawny na 30 października 2024 r., bez późniejszych zmian (API Sejmu); art. 4: 15 lat pracy w szczególnych warunkach, 55/60 lat, staż 20/25 lat, praca po 2008 r.; art. 6–8 porty, hutnictwo, azbest; art. 16 koniec w wieku 60/65 lat; art. 21–23 rekompensata; załączniki: wykazy prac',
+    adres: eli(2024, 1696),
+    sprawdzono: '2026-11-13',
+  },
+  zmianaPomostowych2023: {
+    nazwa: 'Ustawa z 28 lipca 2023 r. o zmianie ustawy o emeryturach pomostowych oraz niektórych innych ustaw',
+    publikator: 'Dz.U. 2023 poz. 1667',
+    uwaga: 'od 1 stycznia 2024 r. uchylony art. 4 pkt 5 (praca w szczególnych warunkach przed 1999 r.), nowe brzmienie art. 2 pkt 5 i art. 21 (rekompensata)',
+    adres: eli(2023, 1667),
+    sprawdzono: '2026-11-13',
+  },
 } as const satisfies Record<string, Akt>;
 
 export type KluczAktu = keyof typeof AKTY;

@@ -801,6 +801,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-13',
   },
   {
+    slug: 'emerytura-pomostowa',
+    nazwa: 'Emerytura pomostowa',
+    krotko: 'Czy spełniasz warunki: 15 lat pracy z wykazu, wiek 55/60 lat, staż. Mroźnie, huty, spawanie, rekompensata.',
+    kategoria: 'wynagrodzenie',
+    przepisy: ['emeryturyPomostowe', 'zmianaPomostowych2023', 'emerytury'],
+    sprawdzono: '2026-11-13',
+  },
+  {
     slug: 'przerwy-w-pracy',
     nazwa: 'Przerwy w pracy',
     krotko: 'Ile przerw przy zmianie 8 i 12 godzin, które są płatne, przy monitorze, na karmienie, dla młodocianych.',

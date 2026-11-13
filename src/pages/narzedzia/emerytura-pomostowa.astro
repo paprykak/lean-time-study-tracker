@@ -1,0 +1,205 @@
+---
+// Emerytura pomostowa: warunki (art. 3, 4, 6–8, 12, 14–17, 21–24 i 49 ustawy o emeryturach pomostowych, Dz.U. 2024
+// poz. 1696). Logika i teksty wyniku: src/lib/narzedzia/emerytura-pomostowa.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { opisPomostowej } from '../../lib/narzedzia/emerytura-pomostowa';
+import { dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+const URODZENIE = '1966-05-20';
+const start = opisPomostowej({ plec: 'm', urodzenie: URODZENIE, rodzaj: 'ogolne', lataSzczegolne: 16, przed2009: 0, staz: 30, dzis: dzisWPolsce() });
+
+const faq = [
+  {
+    pytanie: 'Kto może dostać emeryturę pomostową?',
+    odpowiedz: 'Osoba urodzona po 31 grudnia 1948 r., która ma co najmniej 15 lat pracy w szczególnych warunkach lub o szczególnym charakterze, ukończyła 55 lat (kobieta) albo 60 lat (mężczyzna), ma co najmniej 20 albo 25 lat okresów składkowych i nieskładkowych i po 31 grudnia 2008 r. wykonywała taką pracę (art. 4 ustawy o emeryturach pomostowych). Bez pracy po 2008 r. wystarczy, że cały wymagany okres przypadł przed 1 stycznia 2009 r. (art. 49). W hutnictwie, portach morskich i przy azbeście wiek i okresy są inne (art. 6–8).',
+  },
+  {
+    pytanie: 'Czy praca w mroźni albo chłodni to praca w szczególnych warunkach?',
+    odpowiedz: 'Tak, gdy temperatura powietrza poniżej 0 °C jest narzucona technologią: wykaz wymienia prace w takich pomieszczeniach (załącznik nr 1 pkt 35, art. 3 ust. 2 pkt 2 lit. b). Po 2008 r. liczy się tylko praca w pełnym wymiarze czasu pracy (art. 3 ust. 4). Pracodawca prowadzi wykaz takich stanowisk i ewidencję pracowników i musi Cię powiadomić o wpisie albo odmowie wpisu; gdy Twojego stanowiska albo Ciebie w nich nie ma, przysługuje skarga do Państwowej Inspekcji Pracy (art. 41 ust. 4–6).',
+  },
+  {
+    pytanie: 'Czy trzeba pracować przed 1999 r.?',
+    odpowiedz: 'Nie. Warunek pracy w szczególnych warunkach przed 1 stycznia 1999 r. (art. 4 pkt 5) uchyliła ustawa z 28 lipca 2023 r. (Dz.U. 2023 poz. 1667) od 1 stycznia 2024 r., więc emeryturę pomostową mogą dostać także osoby, które zaczęły taką pracę później.',
+  },
+  {
+    pytanie: 'Czy trzeba rozwiązać umowę o pracę?',
+    odpowiedz: 'Rozwiązanie stosunku pracy nie jest warunkiem nabycia prawa (art. 4 pkt 7 jest uchylony). Emerytura pomostowa jest jednak zawieszona, gdy praca trwa dalej u tego samego pracodawcy bez rozwiązania umowy o pracę, i zawsze przy powrocie do pracy w szczególnych warunkach (art. 17 ust. 1 i 4 ustawy, art. 103a ustawy o emeryturach i rentach z FUS). Przy innej pracy obowiązują limity dorabiania (art. 104 ustawy o FUS).',
+  },
+  {
+    pytanie: 'Do kiedy wypłacana jest emerytura pomostowa?',
+    odpowiedz: 'Do dnia przed nabyciem prawa do emerytury z ZUS albo do dnia 60. urodzin kobiety i 65. urodzin mężczyzny (art. 16). Od tego wieku przysługuje zwykła emerytura z Funduszu Ubezpieczeń Społecznych. Emerytura pomostowa nie może być niższa niż najniższa emerytura (art. 14 ust. 3).',
+  },
+  {
+    pytanie: 'Co to jest rekompensata?',
+    odpowiedz: 'Odszkodowanie za utratę możliwości przejścia na wcześniejszą emeryturę (art. 2 pkt 5). Przysługuje, gdy przed 1 stycznia 2009 r. masz co najmniej 15 lat pracy w szczególnych warunkach lub w szczególnym charakterze według ustawy o emeryturach i rentach z FUS (art. 21 ust. 1). ZUS ustala ją z wnioskiem o emeryturę jako dodatek do kapitału początkowego (art. 23). Nie przysługuje osobie z prawomocnie ustalonym prawem do emerytury pomostowej albo do emerytury (art. 2 pkt 5 i art. 21 ust. 2).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="emerytura-pomostowa"
+  tytul="Emerytura pomostowa: czy spełniasz warunki"
+  opis="Sprawdź warunki emerytury pomostowej: 15 lat pracy w szczególnych warunkach, wiek 55/60 lat, staż 20/25 lat. Wykaz prac z hali i magazynu, rekompensata."
+  h1="Emerytura pomostowa: czy spełniasz warunki"
+  lead="Wpisz swoje okresy pracy, a pokażemy, które warunki emerytury pomostowej już spełniasz, od kiedy możesz ją dostać i do kiedy byłaby wypłacana."
+  faq={faq}
+>
+  <form class="kalkulator" data-pomostowa novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twoje dane</h2>
+      <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div>
+          <label for="p-plec" class="etykieta-pola">Płeć</label>
+          <select id="p-plec" name="plec" class="pole mt-1">
+            <option value="m" selected>Mężczyzna</option>
+            <option value="k">Kobieta</option>
+          </select>
+        </div>
+        <div>
+          <label for="p-urodzenie" class="etykieta-pola">Data urodzenia</label>
+          <input id="p-urodzenie" name="urodzenie" type="date" class="pole mt-1" min="1940-01-01" max="2010-12-31" value={URODZENIE} aria-describedby="p-blad" />
+        </div>
+      </div>
+      <div class="mt-4">
+        <label for="p-rodzaj" class="etykieta-pola">Rodzaj prac</label>
+        <select id="p-rodzaj" name="rodzaj" class="pole mt-1" aria-describedby="p-rodzaj-opis">
+          <option value="ogolne" selected>Z wykazu, ogólne zasady</option>
+          <option value="hutnictwo">Hutnictwo, zał. 1 pkt 4–12</option>
+          <option value="port">Port morski</option>
+          <option value="art8">Azbest, nurek, rybak</option>
+        </select>
+        <p id="p-rodzaj-opis" class="meta mt-1">Wykaz prac jest niżej, w sekcji „Prace z wykazu”.</p>
+      </div>
+      <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <div>
+          <label for="p-szczegolne" class="etykieta-pola">Praca z wykazu (lata)</label>
+          <input id="p-szczegolne" name="szczegolne" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="16" aria-describedby="p-blad" />
+        </div>
+        <div>
+          <label for="p-przed" class="etykieta-pola">Z tego przed 2009 r.</label>
+          <input id="p-przed" name="przed" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="0" aria-describedby="p-blad" />
+        </div>
+        <div>
+          <label for="p-staz" class="etykieta-pola">Staż w ZUS (lata)</label>
+          <input id="p-staz" name="staz" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="30" aria-describedby="p-blad p-staz-opis" />
+        </div>
+      </div>
+      <p id="p-staz-opis" class="meta mt-1">Staż to okresy składkowe i nieskładkowe, razem z pracą z wykazu. Lata możesz wpisać z ułamkiem, na przykład 14,5.</p>
+      <p id="p-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Emerytura pomostowa</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-data" data-w="stan">{start.stan}</p>
+        <p class="meta" data-w="opis">{start.opis}</p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Praca z wykazu</dt><dd data-w="praca">{start.praca}</dd></div>
+        <div><dt>Wiek</dt><dd data-w="wiek">{start.wiek}</dd></div>
+        <div><dt>Staż</dt><dd data-w="staz">{start.staz}</dd></div>
+        <div><dt>Praca po 2008 r.</dt><dd data-w="po2008">{start.po2008}</dd></div>
+        <div><dt>Najdłużej do</dt><dd data-w="koniec">{start.koniec}</dd></div>
+      </dl>
+      <p class="wynik-uwaga" data-w="uwaga">{start.uwagi.join(' ')}</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Warunki są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="warunki">Warunki emerytury pomostowej</h2>
+    <ul>
+      <li>Urodzenie po 31 grudnia 1948 r. (art. 4 pkt 1 ustawy o emeryturach pomostowych).</li>
+      <li>Co najmniej 15 lat pracy w szczególnych warunkach lub o szczególnym charakterze z wykazów w załącznikach nr 1 i 2 (art. 4 pkt 2, art. 3 ust. 1 i 3).</li>
+      <li>Wiek co najmniej 55 lat (kobiety) albo 60 lat (mężczyźni) (art. 4 pkt 3).</li>
+      <li>Okres składkowy i nieskładkowy co najmniej 20 lat (kobiety) albo 25 lat (mężczyźni), liczony jak do emerytury z FUS (art. 4 pkt 4).</li>
+      <li>Praca w szczególnych warunkach lub o szczególnym charakterze po 31 grudnia 2008 r. (art. 4 pkt 6). Bez niej prawo przysługuje, gdy cały wymagany okres takiej pracy przypadł przed 1 stycznia 2009 r. (art. 49).</li>
+      <li>Hutnictwo (załącznik nr 1 pkt 4–12): 55 lat, 15 lat pracy w hutnictwie i orzeczenie lekarza medycyny pracy o niezdolności do tych prac (art. 7). Porty morskie (załącznik nr 1 pkt 21 i załącznik nr 2 pkt 12): 55 lat i 15 lat pracy w porcie (art. 6). Nurkowie i kesoniarze, rybacy morscy i prace przy azbeście (załącznik nr 1 pkt 20, 22 i 32): 50 lat (kobiety) albo 55 lat (mężczyźni) i 10 lat tej pracy (art. 8). Staż 20/25 lat i praca po 2008 r. obowiązują także tu.</li>
+      <li>Po 2008 r. liczy się praca w pełnym wymiarze czasu pracy (art. 3 ust. 4–5), a do okresu pracy nie wlicza się okresów niewykonywania pracy, za które dostajesz wynagrodzenie albo świadczenie z ubezpieczenia chorobowego i macierzyńskiego (art. 12). Pracę przed 2009 r. liczy się także według dawnych przepisów (art. 3 ust. 7).</li>
+      <li>Wniosek składasz w ZUS sam albo przez pracodawcę (art. 24). Prawo powstaje z dniem spełnienia warunków, a przy pobieraniu zasiłku chorobowego albo świadczenia rehabilitacyjnego z dniem zakończenia ich pobierania (art. 15).</li>
+      <li>Emerytura pomostowa ustaje z dniem przed nabyciem emerytury z ZUS albo w dniu 60. urodzin kobiety i 65. urodzin mężczyzny (art. 16). Wypłatę zawiesza praca u tego samego pracodawcy bez rozwiązania umowy o pracę i każdy powrót do pracy w szczególnych warunkach (art. 17 ust. 1 i 4); przy innej pracy obowiązują limity dorabiania jak przy wcześniejszej emeryturze.</li>
+    </ul>
+
+    <h2 id="wykaz">Prace z wykazu, które dotyczą hali i magazynu</h2>
+    <p>Wybrane pozycje załączników do ustawy; pełny wykaz ma 40 pozycji w załączniku nr 1 i 24 w załączniku nr 2.</p>
+    <h3>Prace w szczególnych warunkach (załącznik nr 1)</h3>
+    <ul>
+      <li>pkt 35: prace w pomieszczeniach o narzuconej technologią temperaturze powietrza poniżej 0 °C (mroźnie, chłodnie);</li>
+      <li>pkt 4–6 i 10–12: odlewnie i huty: zalewanie form, ręczne wykańczanie odlewów, obsługa pieców, agregatów do metali nieżelaznych, ciągów walcowniczych i dźwignic przy wytapianiu;</li>
+      <li>pkt 9 i 39: kucie ręczne w kuźniach i obsługa młotów mechanicznych;</li>
+      <li>pkt 8 i 15–19: ręczne formowanie szkła, materiały formierskie, wyroby ogniotrwałe i ceramiczne, ręczny załadunek pieców i gorących wyrobów;</li>
+      <li>pkt 28–30: spawanie łukowe, cięcie termiczne, malowanie i montaż w zbiornikach, rurach i innych miejscach o bardzo małej kubaturze z utrudnioną wentylacją, prace w cysternach po substancjach niebezpiecznych;</li>
+      <li>pkt 32: przetwórstwo materiałów z azbestem i ich usuwanie;</li>
+      <li>pkt 33 i 40: garbarnie (mokre skóry) oraz produkcja węglików spiekanych, elektrod i żelazostopów;</li>
+      <li>pkt 21: ciężkie prace fizyczne przy przeładunku w ładowniach statku.</li>
+    </ul>
+    <h3>Prace o szczególnym charakterze (załącznik nr 2)</h3>
+    <ul>
+      <li>pkt 10: kierowcy pojazdów z towarami niebezpiecznymi oznakowanych pomarańczową tablicą ADR;</li>
+      <li>pkt 12: operatorzy żurawi wieżowych z uprawnieniami kategorii IŻ lub równorzędnymi oraz dźwignic portowych i stoczniowych;</li>
+      <li>pkt 13–14: bezpośrednie sterowanie procesami, które mogą spowodować poważną awarię przemysłową albo techniczną ze skutkami dla bezpieczeństwa publicznego;</li>
+      <li>pkt 15–16: produkcja materiałów wybuchowych i wyrobów pirotechnicznych, sterowanie blokami energetycznymi.</li>
+    </ul>
+    <p>Wykaz nie wymienia obsługi wózków jezdniowych, kompletacji ani innej zwykłej pracy magazynowej; wyjątkiem jest praca w temperaturze poniżej 0 °C narzuconej technologią (pkt 35). Praca musi też odpowiadać definicji z art. 3 ust. 1 albo 3 ustawy, a w razie sporu o wpis do wykazu stanowisk przysługuje skarga do Państwowej Inspekcji Pracy (art. 41 ust. 6).</p>
+
+    <h2 id="wygasanie">Wygasanie i rekompensata</h2>
+    <p>
+      Do końca 2023 r. emeryturę pomostową mogła dostać tylko osoba, która pracowała w szczególnych warunkach przed
+      1 stycznia 1999 r. Ten warunek uchyliła ustawa z 28 lipca 2023 r. (Dz.U. 2023 poz. 1667) od 1 stycznia 2024 r.,
+      więc emerytury pomostowe nie wygasają już z rocznikami. Rekompensata to dodatek do kapitału początkowego dla osób
+      z co najmniej 15 latami pracy w szczególnych warunkach przed 2009 r., które nie mają prawomocnie ustalonego prawa do
+      emerytury pomostowej ani do emerytury; ustala ją ZUS na wniosek o emeryturę (art. 2 pkt 5, art. 21–23). Kwotę liczy
+      ZUS według wzoru z art. 22, w którym liczy się m.in. wiek na koniec 2008 r. i okresy pracy sprzed 2009 r.
+    </p>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Porównujemy wpisane okresy z progami z art. 4 albo art. 6–8 ustawy, a datę urodzin z wymaganym wiekiem; wiek osiąga
+      się w dniu urodzin (urodzeni 29 lutego w roku nieprzestępnym 28 lutego). Pracę po 2008 r. liczymy jako różnicę
+      między okresem pracy z wykazu a jego częścią sprzed 2009 r. Gdy brakuje okresów, podajemy najwcześniejszą datę
+      przy dalszej pracy w szczególnych warunkach na pełen etat od dziś, z brakującymi miesiącami zaokrąglonymi w górę.
+      Nie sprawdzamy, czy Twoja praca jest na wykazie i odpowiada definicji z art. 3, ani jak ZUS policzy staż (okresy
+      nieskładkowe najwyżej w jednej trzeciej okresów składkowych, art. 5 ust. 2 ustawy o FUS): to ustala ZUS na
+      podstawie dokumentów od pracodawcy. Nie liczymy kwoty emerytury pomostowej (art. 14) ani rekompensaty (art. 22) i
+      pomijamy warunki lotników, maszynistów, ratowników górskich, górników i służb mundurowych (art. 5, 9–11 i 13).
+      Ile możesz dorobić na emeryturze pomostowej, policzy <a href="/narzedzia/dorabianie-do-renty">kalkulator dorabiania do renty i emerytury</a>, a kiedy chroni Cię przed zwolnieniem wiek emerytalny, <a href="/narzedzia/ochrona-przedemerytalna">kalkulator ochrony przedemerytalnej</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { opisPomostowej, type Plec, type RodzajPrac } from '../../lib/narzedzia/emerytura-pomostowa';
+  import { wpisanaLiczba } from '../../lib/narzedzia/format';
+  import { dzisWPolsce, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { typografia } from '../../lib/typografia.mjs';
+
+  const form = document.querySelector<HTMLFormElement>('[data-pomostowa]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const POLA = ['stan', 'opis', 'praca', 'wiek', 'staz', 'po2008', 'koniec'] as const;
+    const przelicz = () => {
+      const dzis = dzisWPolsce();
+      const urodzenie = el('urodzenie').value;
+      const [szczegolne, przed, staz] = ['szczegolne', 'przed', 'staz'].map((n) => wpisanaLiczba(el(n).value));
+      let blad: string | null = null;
+      if (!poprawnaData(urodzenie) || urodzenie > dzis || urodzenie < '1900-01-01') blad = 'Wpisz datę urodzenia.';
+      else if (![szczegolne, przed, staz].every((x) => x >= 0 && x <= 70)) blad = 'Wpisz okresy w latach, na przykład 15 albo 14,5.';
+      else if (przed > szczegolne) blad = 'Okres przed 2009 r. nie może być dłuższy niż cała praca z wykazu.';
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      b.hidden = !blad;
+      b.textContent = blad ? typografia(blad) : '';
+      if (blad) {
+        for (const k of POLA) w(k).textContent = k === 'opis' ? '' : '—';
+        w('uwaga').textContent = '';
+        return;
+      }
+      const o = opisPomostowej({ plec: el('plec').value as Plec, urodzenie, rodzaj: el('rodzaj').value as RodzajPrac, lataSzczegolne: szczegolne, przed2009: przed, staz, dzis });
+      for (const k of POLA) w(k).textContent = typografia(o[k]);
+      w('uwaga').textContent = typografia(o.uwagi.join(' '));
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>
