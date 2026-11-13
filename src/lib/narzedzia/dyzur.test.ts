@@ -29,4 +29,10 @@ describe('dyżur (art. 151⁵ Kp)', () => {
     expect(() => dyzur({ miejsce: 'zaklad', godzinyDyzuru: 5, godzinyPracy: 6, rok: 2026, miesiac: 11, rodzaj: 'godzinowa', stawka: 30 })).toThrow(RangeError);
     expect(() => dyzur({ miejsce: 'zaklad', godzinyDyzuru: 5, rok: 2026, miesiac: 11, rodzaj: 'godzinowa' })).toThrow(RangeError);
   });
+  it('60%: zmienne składniki bez godzin przepracowanych to błąd, z godzinami wchodzą do stawki', () => {
+    // XI 2026: 160 h. 0,6 × (5000/160 + 3000/480) = 0,6 × 37,50 = 22,50 zł za godzinę.
+    const d = { miejsce: 'zaklad', godzinyDyzuru: 10, rok: 2026, miesiac: 11, rodzaj: 'bez-stawki', stale: 5000, zmienneSuma: 3000 } as const;
+    expect(() => dyzur({ ...d, zmienneGodziny: 0 })).toThrow(RangeError);
+    expect(dyzur({ ...d, zmienneGodziny: 480 })).toMatchObject({ zaGodzine: 22.5, kwota: 225 });
+  });
 });

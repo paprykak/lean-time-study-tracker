@@ -1,6 +1,13 @@
 ---
 // Praca w niedzielę i święto: dzień wolny albo dodatek 100% (art. 151^9–151^12 Kp). Logika: src/lib/narzedzia/niedziela-swieto.ts.
 import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { dodatekZaNiedziele, wolneZaNiedzieleSwieto } from '../../lib/narzedzia/niedziela-swieto';
+import { dataPoPolsku } from '../../lib/narzedzia/terminy';
+import { zl } from '../../lib/narzedzia/format';
+
+// Przykład na stronie: ta sama funkcja co w skrypcie, więc wynik przed i po wczytaniu skryptu jest taki sam.
+const D = { data: '2026-11-15', okres: 1, godziny: 12, stawka: 35 };
+const start = wolneZaNiedzieleSwieto(D.data, D.okres);
 
 const faq = [
   {
@@ -24,7 +31,7 @@ const faq = [
 <StronaNarzedzia
   slug="praca-w-niedziele"
   tytul="Praca w niedzielę i święto: dzień wolny czy 100%"
-  opis="Co się należy za pracę w niedzielę i święto: dzień wolny w ciągu 6 dni albo do końca okresu rozliczeniowego, a gdy się nie da, dodatek 100% za każdą godzinę."
+  opis="Co się należy za pracę w niedzielę i święto: dzień wolny w ciągu 6 dni albo do końca okresu rozliczeniowego, a jeśli się nie da, dodatek 100% za godzinę."
   h1="Praca w niedzielę i święto: co się należy"
   lead="Za pracę w niedzielę pracodawca daje inny dzień wolny w ciągu 6 dni przed albo po niej, za święto w okresie rozliczeniowym. Dopiero gdy to niemożliwe, płaci dodatek 100% za każdą godzinę. Wpisz datę, a pokażemy terminy."
   faq={faq}
@@ -34,7 +41,7 @@ const faq = [
       <h2 id="kalkulator-tytul" class="tytul-m">Twój dzień pracy</h2>
       <div class="mt-4">
         <label for="ns-data" class="etykieta-pola">Data pracy (niedziela albo święto)</label>
-        <input id="ns-data" name="data" type="date" class="pole mt-1 max-w-56" min="2025-01-01" max="2027-12-31" value="2026-11-15" aria-describedby="ns-blad" />
+        <input id="ns-data" name="data" type="date" class="pole mt-1 max-w-56" min="2025-01-01" max="2100-12-31" value={D.data} aria-describedby="ns-blad" />
         <p id="ns-blad" class="blad-pola" data-blad="data" hidden></p>
       </div>
       <div class="mt-4">
@@ -51,22 +58,23 @@ const faq = [
       <div class="mt-4 grid grid-cols-2 gap-4">
         <div>
           <label for="ns-godziny" class="etykieta-pola">Godziny pracy</label>
-          <input id="ns-godziny" name="godziny" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="12" />
+          <input id="ns-godziny" name="godziny" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value={D.godziny} aria-describedby="ns-liczby-blad" />
         </div>
         <div>
           <label for="ns-stawka" class="etykieta-pola">Stawka za godzinę (zł)</label>
-          <input id="ns-stawka" name="stawka" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="35" />
+          <input id="ns-stawka" name="stawka" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value={D.stawka} aria-describedby="ns-liczby-blad" />
         </div>
       </div>
+      <p id="ns-liczby-blad" class="blad-pola mt-2" data-blad="liczby" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
       <h2 id="wynik-tytul" class="etykieta" data-w="naglowek">Dzień wolny za niedzielę najpierw</h2>
-      <p class="wynik-data" aria-live="polite" aria-atomic="true" data-w="okno">9–21 listopada 2026 r.</p>
+      <p class="wynik-data" aria-live="polite" aria-atomic="true" data-w="okno">{start.okno ? `${dataPoPolsku(start.okno.od)} – ${dataPoPolsku(start.okno.do)}` : dataPoPolsku(start.okres.do)}</p>
       <dl class="wynik-lista">
         <div><dt>Rodzaj dnia</dt><dd data-w="rodzaj">niedziela</dd></div>
-        <div><dt data-w="koniec-etykieta">Gdy się nie da: dzień wolny do</dt><dd data-w="koniec">30 listopada 2026 r. (koniec okresu rozliczeniowego)</dd></div>
-        <div><dt>Gdy i to się nie da: dodatek 100%</dt><dd data-w="dodatek">420,00 zł</dd></div>
+        <div><dt data-w="koniec-etykieta">Gdy się nie da: dzień wolny do</dt><dd data-w="koniec">{dataPoPolsku(start.okres.do)} (koniec okresu rozliczeniowego)</dd></div>
+        <div><dt>Gdy i to się nie da: dodatek 100%</dt><dd data-w="dodatek">{zl(dodatekZaNiedziele(D.godziny, D.stawka))}</dd></div>
       </dl>
       <p class="wynik-uwaga" data-w="uwaga" hidden></p>
       <p class="meta mt-4">Dotyczy pracy dozwolonej w niedziele i święta (art. 151<sup>10</sup> pkt 1–9 i 11), m.in. zmianowej i w ruchu ciągłym. Okres liczymy od stycznia; jeśli Twój zaczyna się w innym miesiącu, sprawdź jego koniec w regulaminie pracy.</p>
@@ -91,6 +99,15 @@ const faq = [
       (art. 151<sup>9</sup> § 2). Kto pracuje w niedziele, powinien mieć wolną co najmniej jedną niedzielę na 4 tygodnie
       (art. 151<sup>12</sup>); sprawdzisz to w <a href="/narzedzia/kontrola-grafiku">kontroli grafiku zmian</a>.
     </p>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Za niedzielę pokazujemy okno 6 dni kalendarzowych przed i po niej, a potem koniec okresu rozliczeniowego. Okres
+      liczymy od stycznia (1, 2, 3, 4, 6 albo 12 miesięcy), bo przepis nie mówi, od którego miesiąca się zaczyna: ustala to
+      regulamin pracy albo układ zbiorowy. Święta bierzemy z ustawy o dniach wolnych od pracy, z Wigilią od 2025 r.
+      Dodatek to stawka razy godziny pracy w tym dniu; gdy stawki godzinowej nie masz, policzysz ją w
+      <a href="/narzedzia/stawka-godzinowa">kalkulatorze stawki godzinowej</a>.
+    </p>
   </Fragment>
 </StronaNarzedzia>
 
@@ -98,6 +115,7 @@ const faq = [
   import { dodatekZaNiedziele, wolneZaNiedzieleSwieto } from '../../lib/narzedzia/niedziela-swieto';
   import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
   import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
+  import { typografia } from '../../lib/typografia.mjs';
 
   const form = document.querySelector<HTMLFormElement>('[data-niedziela]');
   if (form) {
@@ -107,9 +125,11 @@ const faq = [
     const przelicz = () => {
       const data = el('data').value;
       const b = form.querySelector<HTMLElement>('[data-blad="data"]')!;
-      const blad = !poprawnaData(data) || data < '2025-01-01' || data > '2027-12-31' ? 'Wpisz datę z lat 2025–2027.' : null;
+      // Od 2025 r., bo od tego roku Wigilia jest dniem wolnym (lista świąt liczona dla każdego roku).
+      const blad = !poprawnaData(data) || data < '2025-01-01' || data > '2100-12-31' ? typografia('Wpisz datę od 1 stycznia 2025 r.') : null;
       b.hidden = !blad;
       b.textContent = blad ?? '';
+      el('data').setAttribute('aria-invalid', blad ? 'true' : 'false');
       if (blad) {
         w('okno').textContent = '—';
         return;
@@ -117,24 +137,31 @@ const faq = [
       const r = wolneZaNiedzieleSwieto(data, Number(el('okres').value));
       const godziny = wpisanaLiczba(el('godziny').value || '0');
       const stawka = wpisanaLiczba(el('stawka').value || '0');
-      w('rodzaj').textContent = `${RODZAJ[r.rodzaj]}${r.nazwa ? `: ${r.nazwa}` : ''}`;
+      const zleGodziny = !(godziny >= 0 && godziny <= 24);
+      const zlaStawka = !(stawka >= 0);
+      const bl = form.querySelector<HTMLElement>('[data-blad="liczby"]')!;
+      bl.hidden = !(zleGodziny || zlaStawka);
+      bl.textContent = zleGodziny || zlaStawka ? typografia('Wpisz liczbę godzin (od 0 do 24) i stawkę, na przykład 12 i 35.') : '';
+      el('godziny').setAttribute('aria-invalid', zleGodziny ? 'true' : 'false');
+      el('stawka').setAttribute('aria-invalid', zlaStawka ? 'true' : 'false');
+      w('rodzaj').textContent = typografia(`${RODZAJ[r.rodzaj]}${r.nazwa ? `: ${r.nazwa}` : ''}`);
       w('koniec-etykieta').textContent = r.okno ? 'Gdy się nie da: dzień wolny do' : 'Koniec okresu rozliczeniowego';
-      w('koniec').textContent = `${dataPoPolsku(r.okres.do)}${r.okno ? ' (koniec okresu rozliczeniowego)' : ''}`;
-      w('dodatek').textContent = godziny >= 0 && stawka >= 0 ? zl(dodatekZaNiedziele(godziny, stawka)) : '—';
+      w('koniec').textContent = typografia(`${dataPoPolsku(r.okres.do)}${r.okno ? ' (koniec okresu rozliczeniowego)' : ''}`);
+      w('dodatek').textContent = zleGodziny || zlaStawka ? '—' : typografia(zl(dodatekZaNiedziele(godziny, stawka)));
       let uwaga: string | null = null;
       if (r.rodzaj === 'zwykly') {
         w('naglowek').textContent = 'To nie jest niedziela ani święto';
-        w('okno').textContent = dataPoPolsku(data);
+        w('okno').textContent = typografia(dataPoPolsku(data));
         uwaga = 'Za pracę w zwykły dzień nie przysługuje dzień wolny z art. 151¹¹. Jeśli był to Twój dzień wolny z pięciodniowego tygodnia, a była to praca w nadgodzinach, przysługuje inny dzień wolny do końca okresu rozliczeniowego (art. 151³ Kodeksu pracy).';
       } else if (r.okno) {
         w('naglowek').textContent = 'Dzień wolny za niedzielę najpierw';
-        w('okno').textContent = `${dataPoPolsku(r.okno.od)} – ${dataPoPolsku(r.okno.do)}`;
+        w('okno').textContent = typografia(`${dataPoPolsku(r.okno.od)} – ${dataPoPolsku(r.okno.do)}`);
       } else {
         w('naglowek').textContent = 'Dzień wolny za święto do';
-        w('okno').textContent = dataPoPolsku(r.okres.do);
+        w('okno').textContent = typografia(dataPoPolsku(r.okres.do));
       }
       w('uwaga').hidden = !uwaga;
-      w('uwaga').textContent = uwaga ?? '';
+      w('uwaga').textContent = typografia(uwaga ?? '');
     };
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);

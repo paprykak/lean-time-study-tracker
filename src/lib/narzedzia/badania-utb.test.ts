@@ -42,6 +42,13 @@ describe('UTB: terminy z załączników do rozporządzenia z 2018 r.', () => {
     for (const x of URZADZENIA) expect(x.forma === 'uproszczony').toBe(x.badanieLat === null);
     expect(co(1)).toBe('co rok');
     expect(co(3)).toBe('co 3 lata');
+    expect(co(2)).toBe('co 2 lata');
+    expect(co(5)).toBe('co 5 lat');
+  });
+  it('krótkie nazwy do listy wyboru: unikalne i najwyżej 25 znaków', () => {
+    const krotkie = URZADZENIA.map((x) => x.krotko);
+    expect(new Set(krotkie).size).toBe(krotkie.length);
+    for (const k of krotkie) expect(k.length).toBeLessThanOrEqual(25);
   });
 });
 

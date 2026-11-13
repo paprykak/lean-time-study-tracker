@@ -59,9 +59,12 @@ const pulapka = await pobierz('/api/newsletter', {
 });
 sprawdz(pulapka.status === 303 && /\/newsletter\/potwierdz$/.test(pulapka.headers.get('location') ?? ''), 'pułapka formularza: 303 na /newsletter/potwierdz');
 
-// Po starcie: RSS i llms.txt
+// Po starcie: llms.txt; adresy z czasów artykułów odpowiadają 410 albo 301 (worker/usuniete.js, DECYZJE.md 2026-11-13)
 if (START || podglad) {
-  for (const s of ['/rss.xml', '/llms.txt']) sprawdz((await pobierz(s)).status === 200, `${s} odpowiada 200`);
+  sprawdz((await pobierz('/llms.txt')).status === 200, '/llms.txt odpowiada 200');
+  for (const s of ['/rss.xml', '/oee-85-procent', '/dzial/produkcja']) sprawdz((await pobierz(s, { redirect: 'manual' })).status === 410, `${s} odpowiada 410`);
+  const stary = await pobierz('/grafik-zmian-wypadki', { redirect: 'manual' });
+  sprawdz(stary.status === 301 && /\/narzedzia\/kontrola-grafiku$/.test(stary.headers.get('location') ?? ''), '/grafik-zmian-wypadki: 301 na /narzedzia/kontrola-grafiku');
 }
 
 // Domeny (po konfiguracji DNS)

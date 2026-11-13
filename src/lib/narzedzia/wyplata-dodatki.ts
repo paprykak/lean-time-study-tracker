@@ -39,5 +39,7 @@ export function wyplataZDodatkami(d: DaneWyplaty) {
     nettoSamaPensja: bez.netto,
     dodatkiNaReke: doGrosza(z.netto - bez.netto),
     progPrzekroczony: z.progPrzekroczony,
+    /** Miesiąc, w którym przy takiej wypłacie co miesiąc dochód od początku roku przekroczy 120 000 zł (netto.ts). */
+    miesiacProgu: z.miesiacProgu,
   };
 }

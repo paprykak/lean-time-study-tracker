@@ -1,0 +1,341 @@
+{
+ "partia": "C",
+ "sprawdzone": [
+  {
+   "slug": "kalkulator-l4",
+   "pliki": [
+    "src/pages/narzedzia/kalkulator-l4.astro",
+    "src/lib/narzedzia/chorobowe.ts",
+    "src/lib/narzedzia/chorobowe.test.ts",
+    "tests/e2e/narzedzie-l4.spec.ts"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "zasilek-opiekunczy",
+   "pliki": [
+    "src/pages/narzedzia/zasilek-opiekunczy.astro",
+    "src/lib/narzedzia/opiekunczy.ts",
+    "src/lib/narzedzia/opiekunczy.test.ts",
+    "tests/e2e/narzedzie-opiekunczy.spec.ts"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "zasilek-macierzynski",
+   "pliki": [
+    "src/pages/narzedzia/zasilek-macierzynski.astro",
+    "src/lib/narzedzia/macierzynski.ts",
+    "src/lib/narzedzia/macierzynski.test.ts",
+    "tests/e2e/narzedzie-macierzynski.spec.ts"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "l4-po-zwolnieniu",
+   "pliki": [
+    "src/pages/narzedzia/l4-po-zwolnieniu.astro",
+    "src/lib/narzedzia/zasilek-po-ustaniu.ts",
+    "src/lib/narzedzia/zasilek-po-ustaniu.test.ts",
+    "tests/e2e/narzedzie-l4-po-zwolnieniu.spec.ts"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "swiadczenie-rehabilitacyjne",
+   "pliki": [
+    "src/pages/narzedzia/swiadczenie-rehabilitacyjne.astro",
+    "src/lib/narzedzia/swiadczenie-rehabilitacyjne.ts",
+    "src/lib/narzedzia/swiadczenie-rehabilitacyjne.test.ts",
+    "tests/e2e/narzedzie-rehabilitacyjne.spec.ts"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "okres-zasilkowy",
+   "pliki": [
+    "src/pages/narzedzia/okres-zasilkowy.astro",
+    "src/lib/narzedzia/okres-zasilkowy.ts",
+    "src/lib/narzedzia/okres-zasilkowy.test.ts",
+    "tests/e2e/narzedzie-okres-zasilkowy.spec.ts"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "zasilek-dla-bezrobotnych",
+   "pliki": [
+    "src/pages/narzedzia/zasilek-dla-bezrobotnych.astro",
+    "src/lib/narzedzia/zasilek-bezrobotny.ts",
+    "src/lib/narzedzia/zasilek-bezrobotny.test.ts",
+    "tests/e2e/narzedzie-bezrobotny.spec.ts"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "wynagrodzenie-za-przestoj",
+   "pliki": [
+    "src/pages/narzedzia/wynagrodzenie-za-przestoj.astro",
+    "src/lib/narzedzia/przestoj.ts",
+    "src/lib/narzedzia/przestoj.test.ts",
+    "tests/e2e/narzedzie-przestoj.spec.ts"
+   ],
+   "wynik": "problemy"
+  }
+ ],
+ "znaleziska": [
+  {
+   "id": "C-1",
+   "slug": "swiadczenie-rehabilitacyjne",
+   "wymiar": "prawo",
+   "waga": "wysoka",
+   "plik": "src/lib/narzedzia/swiadczenie-rehabilitacyjne.ts",
+   "linia": 49,
+   "problem": "Terminy „od 75%” (3 miesiące) i „najdłużej do” (12 miesięcy) liczone są kalendarzowo (dodajMiesiace, art. 112 KC). Ustawa każe jednak liczyć miesiąc jako 30 dni, więc 3 miesiące to 90 dni, a 12 miesięcy to 360 dni.",
+   "dowod": ".cache/narzedzia/prawo/DU_2026_854.txt, art. 22: „Do świadczenia rehabilitacyjnego stosuje się odpowiednio przepisy art. 11 ust. 4 i 5…”; art. 11 ust. 5: „Ilekroć przy ustalaniu prawa do zasiłku chorobowego lub jego wysokości okres jest oznaczony w miesiącach, za miesiąc uważa się 30 dni.” Dla startu 2026-11-12 Python daje 75% od 2027-02-10 i koniec 2027-11-06, a kod (i domyślny wynik na stronie) podaje 12 lutego 2027 r. i 11 listopada 2027 r. Dla startu 2027-12-01 jest 2028-02-29 (90 dni) zamiast 2028-03-01 z kodu.",
+   "poprawka": "od75 = dodajDni(start, 90), koniecNajpozniej = dodajDni(start, 359), koniecPrzyznanego = dodajDni(start, 30*miesiace - 1); w „Jak liczymy” dopisać „miesiąc = 30 dni (art. 22 w związku z art. 11 ust. 5)”; w teście zmienić oczekiwania na '2027-02-10' i '2027-11-06' i dodać przypadek startu 2027-12-01 → 75% od 2028-02-29. Kwoty „razem” się nie zmieniają (3×90% + 9×75%). Praktykę ZUS warto jeszcze potwierdzić ręcznie na zus.pl."
+  },
+  {
+   "id": "C-2",
+   "slug": "zasilek-opiekunczy",
+   "wymiar": "rachunek",
+   "waga": "wysoka",
+   "plik": "src/lib/narzedzia/opiekunczy.ts",
+   "linia": 37,
+   "problem": "Łączny limit 30 dni dla opieki wyłącznie nad dzieckiem z orzeczeniem (pkt 2a, 2b) i innym członkiem rodziny (pkt 3) jest opisany w komentarzu i w tabeli, ale kod go nie stosuje: zawsze liczy łączny limit 60 dni.",
+   "dowod": "DU_2026_854.txt, art. 33 ust. 2 zd. 2: „W przypadku gdy opieka jest sprawowana wyłącznie nad osobami, o których mowa w art. 32 ust. 1 pkt 2a, 2b i 3, zasiłek opiekuńczy przysługuje łącznie za okres niedłuższy niż 30 dni”. Na podglądzie (320 px): członek rodziny, 14 dni, wcześniej łącznie 20 (dziecko z orzeczeniem) → „Dni płatne 14”, 1932,84 zł; według przepisu płatnych 10 dni. Drugi przypadek: dziecko z orzeczeniem 30 dni po 14 dniach na członka rodziny → kod 30, przepis 16.",
+   "poprawka": "Dodać pole albo przełącznik „w tym roku była opieka nad dzieckiem do 14 lat / do 8 lat (pkt 1–2)”. Gdy go nie zaznaczono i rodzaj ≠ 'dziecko', limit łączny = 30. Dodać test: czlonek-rodziny, dni 14, wykorzystaneLacznie 20 → dniPlatne 10."
+  },
+  {
+   "id": "C-3",
+   "slug": "okres-zasilkowy",
+   "wymiar": "prawo",
+   "waga": "srednia",
+   "plik": "src/pages/narzedzia/okres-zasilkowy.astro",
+   "linia": 98,
+   "problem": "Strona podaje jako obowiązujące „Przy kilku umowach okres zasiłkowy jest jeden (art. 9 ust. 4)”, a ten przepis wchodzi w życie dopiero 1 stycznia 2027 r.",
+   "dowod": "DU_2026_854.txt, odnośnik 4 przy art. 9 ust. 4: „Dodany przez art. 13 pkt 1 ustawy z dnia 18 grudnia 2025 r. (Dz. U. z 2026 r. poz. 26)… wejdzie w życie z dniem 1 stycznia 2027 r.”; DU 2026/26, art. 43 pkt 3 (art. 13 pkt 1 od 1 stycznia 2027 r.).",
+   "poprawka": "Zmienić na: „Od 1 stycznia 2027 r. przy kilku tytułach ubezpieczenia okres zasiłkowy jest jeden (art. 9 ust. 4, dodany ustawą Dz.U. 2026 poz. 26)”. Po 1.01.2027 tekst można uprościć."
+  },
+  {
+   "id": "C-4",
+   "slug": "zasilek-macierzynski",
+   "wymiar": "tresc-ux",
+   "waga": "srednia",
+   "plik": "src/pages/narzedzia/zasilek-macierzynski.astro",
+   "linia": 136,
+   "problem": "Skrypt pisze „Najwyżej ${maks} tygodni” bez odmiana(). Dla 32 i 34 daje formy błędne („32 tygodni”, „34 tygodni”) i nadpisuje nimi poprawny tekst z serwera („32 tygodnie”).",
+   "dowod": "Playwright 320 px po wyborze 2 dzieci: „Najwyżej 34 tygodni: z 43 tygodni 9 przysługuje wyłącznie ojcu.” Przy 1 dziecku po załadowaniu: „Najwyżej 32 tygodni”.",
+   "poprawka": "`Najwyżej ${odmiana(maks, 'tydzień','tygodnie','tygodni')}` (sygnatura jak w src/lib/redakcja.ts) i przepuścić przez typografia(); dopisać w E2E sprawdzenie tekstu „34 tygodnie”."
+  },
+  {
+   "id": "C-5",
+   "slug": "zasilek-macierzynski",
+   "wymiar": "rachunek",
+   "waga": "srednia",
+   "plik": "src/lib/narzedzia/macierzynski.ts",
+   "linia": 44,
+   "problem": "Wariant 81,5% przy 0 tygodniach rodzicielskiego matki liczy macierzyński po 81,5% (19 691,00 zł za 20 tygodni). Przepis daje wtedy wyrównanie do 100%, czyli 24 161,20 zł, więc porównanie wariantów wypada błędnie na niekorzyść 81,5%.",
+   "dowod": "DU_2026_854.txt, art. 31 ust. 4: „W przypadku niewykorzystania w pierwszym roku życia dziecka ani jednego dnia zasiłku… za okres… urlopu rodzicielskiego… przysługuje jednorazowe wyrównanie… do wysokości 100 %”. Podgląd: tygodnie 0 → „Wariant 81,5%: razem 19 691,00 zł”, a „100% i 70%: razem 24 161,20 zł”.",
+   "poprawka": "Gdy tygRodz === 0 i wariant '81,5', razemMac liczyć jak przy 100% (albo pokazać osobny wiersz „z wyrównaniem do 100% na wniosek, art. 31 ust. 4”). Dodać test z tygodnieRodzicielskiego: 0."
+  },
+  {
+   "id": "C-6",
+   "slug": "wynagrodzenie-za-przestoj",
+   "wymiar": "rachunek",
+   "waga": "srednia",
+   "plik": "src/pages/narzedzia/wynagrodzenie-za-przestoj.astro",
+   "linia": 161,
+   "problem": "Strona nie pyta o wymiar etatu, a logika dzieli pensję przez wymiar pełnego etatu. Przy niepełnym etacie stawka za godzinę wychodzi za niska i zostaje podniesiona tylko do minimum, więc wynik jest zaniżony.",
+   "dowod": "Funkcja przestoj() ma parametr etat (przestoj.ts:38), ale strona go nie przekazuje. Pensja 3000 zł na 1/2 etatu, listopad 2026 r. (80 h): poprawnie 3000/80 = 37,50 zł/h, czyli 300,00 zł za 8 h. Podgląd: „Za godzinę według umowy 18,75 zł”, „Za przestój 240,30 zł” z adnotacją o podniesieniu do minimum.",
+   "poprawka": "Dodać pole „Wymiar etatu” (np. 1, 3/4, 1/2) i przekazywać etat do przestoj(). Minimum za godzinę zostaje płaca minimalna / wymiar pełnego etatu. Dodać test etat 0,5."
+  },
+  {
+   "id": "C-7",
+   "slug": "wynagrodzenie-za-przestoj",
+   "wymiar": "tresc-ux",
+   "waga": "srednia",
+   "plik": "src/pages/narzedzia/wynagrodzenie-za-przestoj.astro",
+   "linia": 47,
+   "problem": "Legenda pola ma formę męską: „Jak jesteś wynagradzany”. Narusza zasadę 6 (forma neutralna płciowo).",
+   "dowod": "Playwright: tekst legendy „Jak jesteś wynagradzany”.",
+   "poprawka": "„Forma wynagrodzenia” albo „Jak liczy się Twoje wynagrodzenie”."
+  },
+  {
+   "id": "C-8",
+   "slug": "l4-po-zwolnieniu",
+   "wymiar": "tresc-ux",
+   "waga": "srednia",
+   "plik": "src/pages/narzedzia/l4-po-zwolnieniu.astro",
+   "linia": 28,
+   "problem": "FAQ używa form rodzajowych „nie nabyłeś lub nie nabyłaś” (zasada 6).",
+   "dowod": "Odpowiedź FAQ „Kiedy zasiłek po ustaniu zatrudnienia nie przysługuje?”: „…albo w czasie ubezpieczenia nie nabyłeś lub nie nabyłaś prawa do zasiłku z powodu okresu wyczekiwania”.",
+   "poprawka": "„…albo prawo do zasiłku nie powstało w czasie ubezpieczenia z powodu okresu wyczekiwania (art. 13 ust. 1 pkt 3 i art. 4 ust. 1)”."
+  },
+  {
+   "id": "C-9",
+   "slug": "kalkulator-l4",
+   "wymiar": "rachunek",
+   "waga": "srednia",
+   "plik": "src/lib/narzedzia/chorobowe.ts",
+   "linia": 60,
+   "problem": "Zwolnienie przechodzące przez 1 stycznia liczone jest w całości w jednym roku. Limit 33 albo 14 dni od pracodawcy odnawia się jednak z nowym rokiem kalendarzowym, więc podział pracodawca/ZUS wychodzi błędny. Od 2027 r. zmienia się też minimum podstawy.",
+   "dowod": "Kp DU_2026_1245.txt, art. 92 § 1 pkt 1: „trwającej łącznie do 33 dni w ciągu roku kalendarzowego”. Przypadek: L4 od 20.12.2026 do 15.01.2027 (27 dni), wcześniej 30 dni w 2026 r. Kod: dniPracodawca 3, dniZus 24. Poprawnie: w 2026 r. 3 dni od pracodawcy i 9 z ZUS, w 2027 r. 15 dni od pracodawcy.",
+   "poprawka": "Dodać pod polem „Dni zwolnienia” uwagę: „zwolnienie przez Nowy Rok policz osobno dla każdego roku; limit 33/14 dni liczy się od 1 stycznia”. Alternatywnie zamienić pole na daty od–do i dzielić na lata. Dodać test przypadku z przełomu roku."
+  },
+  {
+   "id": "C-10",
+   "slug": "zasilek-opiekunczy",
+   "wymiar": "tresc-ux",
+   "waga": "srednia",
+   "plik": "src/lib/narzedzia/opiekunczy.ts",
+   "linia": 13,
+   "problem": "Opcja listy wyboru ma 95 znaków: „chore dziecko do 14 lat albo dziecko do 8 lat (zamknięty żłobek, przedszkole, szkoła; choroba niani) (60 dni)”. Jest domyślnie wybrana, a na telefonie zostaje z niej ucięty fragment (zasada 7).",
+   "dowod": "Zrzut /tmp/claude-0/-home-user-lean-time-study-tracker/85e7a3e9-bef9-5b60-93fa-46f6f146f579/scratchpad/audyt/C/opiekunczy-select-320.png: widać tylko „chore dziecko do 14 lat alb”.",
+   "poprawka": "Opcje krótkie, np. „Dziecko do 14 lat (60 dni)”, „Dziecko 14–18 lat z orzeczeniem (30 dni)”, „Inny członek rodziny (14 dni)”, a szczegóły przenieść do opisu pod polem albo do tabeli."
+  },
+  {
+   "id": "C-11",
+   "slug": "zasilek-opiekunczy",
+   "wymiar": "prawo",
+   "waga": "niska",
+   "plik": "src/lib/narzedzia/opiekunczy.ts",
+   "linia": 14,
+   "problem": "Etykieta „dziecko z orzeczeniem do 18 lat (30 dni)” sugeruje limit 30 dni także dla chorego dziecka z orzeczeniem poniżej 14 lat. Takie dziecko mieści się w art. 32 ust. 1 pkt 2 i ma limit 60 dni.",
+   "dowod": "DU_2026_854.txt, art. 32 ust. 1 pkt 2 („chorym dzieckiem w wieku do ukończenia 14 lat”) i art. 33 ust. 1 pkt 1 (60 dni dla pkt 1 i 2) wobec pkt 2a i 2b (30 dni).",
+   "poprawka": "Etykieta „dziecko 14–18 lat z orzeczeniem” i jedno zdanie w wyjaśnieniu: dziecko do 14 lat z orzeczeniem ma limit 60 dni (wariant bezpieczny dla pracownika)."
+  },
+  {
+   "id": "C-12",
+   "slug": "kalkulator-l4",
+   "wymiar": "tresc-ux",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/kalkulator-l4.astro",
+   "linia": 75,
+   "problem": "Opcje listy „Powód niezdolności do pracy” mają do 55 znaków („Badania i zabieg dawcy komórek, tkanek, narządów (100%)”, „Choroba (także pobyt w szpitalu) (80%)”) i na 320 px są ucinane.",
+   "dowod": "Zrzut /tmp/claude-0/-home-user-lean-time-study-tracker/85e7a3e9-bef9-5b60-93fa-46f6f146f579/scratchpad/audyt/C/l4-select-dawca-320.png: „Badania i zabieg dawcy ko”.",
+   "poprawka": "Skrócić nazwy w POWODY (chorobowe.ts), np. „Choroba (80%)”, „Ciąża (100%)”, „Wypadek w drodze (100%)”, „Dawca narządów (100%)”. Informację o szpitalu zostawić w FAQ."
+  },
+  {
+   "id": "C-13",
+   "slug": "kalkulator-l4",
+   "wymiar": "tresc-ux",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/kalkulator-l4.astro",
+   "linia": 174,
+   "problem": "Wyniki ze skryptu (kwoty „… zł”, „art. 92 § 4”) nie przechodzą przez typografia(). Po pierwszym przeliczeniu nadpisują wersję z twardymi spacjami z serwera (zasada 4). To samo dotyczy zasilek-opiekunczy, zasilek-macierzynski, l4-po-zwolnieniu (status, podstawa), swiadczenie-rehabilitacyjne, zasilek-dla-bezrobotnych (odcinki, POWODY, uwaga) i wynagrodzenie-za-przestoj. Typografię stosuje tylko okres-zasilkowy.",
+   "dowod": "Playwright: w .kalkulator-wynik po załadowaniu jest wzorzec /\\d zł/ ze zwykłą spacją w 7 z 8 narzędzi (zwyklaSpacjaZl: true; false tylko w okres-zasilkowy). W kodzie stron nie ma importu typografia, poza okres-zasilkowy.astro.",
+   "poprawka": "W każdym skrypcie przypisywać textContent przez helper pisz(k, tekst) = typografia(tekst), jak w okres-zasilkowy.astro."
+  },
+  {
+   "id": "C-14",
+   "slug": "l4-po-zwolnieniu",
+   "wymiar": "spojnosc",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/l4-po-zwolnieniu.astro",
+   "linia": 85,
+   "problem": "Wynik odsyła po kwotę do kalkulatora L4, który nie uwzględnia limitu podstawy dla zasiłku po ustaniu (100% przeciętnego wynagrodzenia z poprzedniego kwartału) i dzieli dni na pracodawcę i ZUS.",
+   "dowod": "DU_2026_854.txt, art. 46: „Podstawa wymiaru zasiłku chorobowego przysługującego za okres po ustaniu tytułu ubezpieczenia chorobowego nie może być wyższa niż kwota wynosząca 100 % przeciętnego wynagrodzenia…”; ostatni komunikat GUS: M.P. 2026 poz. 1122 (III kw. 2026: 9317,01 zł).",
+   "poprawka": "Dopisać w uwadze: „po ustaniu zatrudnienia podstawa nie może przekroczyć przeciętnego wynagrodzenia z poprzedniego kwartału (art. 46), a całość płaci ZUS”."
+  },
+  {
+   "id": "C-15",
+   "slug": "l4-po-zwolnieniu",
+   "wymiar": "prawo",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/l4-po-zwolnieniu.astro",
+   "linia": 95,
+   "problem": "Zdanie wymienia wszystkie wyłączenia (emerytura, praca, zasiłek dla bezrobotnych, KRUS, okres wyczekiwania), ale jako podstawę podaje tylko „art. 13 ust. 1 pkt 3”.",
+   "dowod": "DU_2026_854.txt, art. 13 ust. 1 pkt 1–5: każde wyłączenie ma osobny punkt.",
+   "poprawka": "Zamienić na „(art. 13 ust. 1)”."
+  },
+  {
+   "id": "C-16",
+   "slug": "zasilek-macierzynski",
+   "wymiar": "prawo",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/zasilek-macierzynski.astro",
+   "linia": 23,
+   "problem": "FAQ „Ile trwa urlop macierzyński i rodzicielski?” podaje tylko 41 i 43 tygodnie. Pomija rodzicielski 65 i 67 tygodni dla dziecka z zaświadczeniem „Za życiem” oraz uzupełniający urlop macierzyński przy wcześniakach. Strona nie ma też sekcji „Jak liczymy”, która mówiłaby, czego kalkulator nie liczy.",
+   "dowod": "Kp DU_2026_1245.txt, art. 182^1a § 2: „65 tygodni… 67 tygodni”; art. 180^1a (uzupełniający urlop macierzyński, wiersze 3258–3270); art. 29a ust. 1 ustawy zasiłkowej (zasiłek także za uzupełniający urlop macierzyński).",
+   "poprawka": "Dopisać do FAQ jedno zdanie o 65/67 tygodniach i urlopie uzupełniającym oraz dodać h2 „Jak liczymy” z informacją, że kalkulator tych przypadków nie liczy."
+  },
+  {
+   "id": "C-17",
+   "slug": "wynagrodzenie-za-przestoj",
+   "wymiar": "tresc-ux",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/wynagrodzenie-za-przestoj.astro",
+   "linia": 63,
+   "problem": "Pola „Stałe składniki”, „Zmienne z 3 miesięcy” i „Przepracowane godziny” nie mają aria-describedby do komunikatu błędu p-blad, choć błąd ich dotyczy („Kwoty i godziny nie mogą być ujemne”). Brakuje też linku do kalkulatora wymiaru, o którym mówi FAQ.",
+   "dowod": "Kod strony: inputy p-stale, p-zmienne, p-zgodz bez aria-describedby. FAQ 4 wspomina kalkulator wymiaru czasu pracy, a w wyjaśnieniu nie ma linku /narzedzia/wymiar-czasu-pracy (slug istnieje w rejestrze).",
+   "poprawka": "Dodać aria-describedby=\"p-blad\" do trzech pól i link <a href=\"/narzedzia/wymiar-czasu-pracy\"> w sekcji wyjaśnienia."
+  },
+  {
+   "id": "C-18",
+   "slug": "zasilek-opiekunczy",
+   "wymiar": "prawo",
+   "waga": "niska",
+   "plik": "src/data/prawo.ts",
+   "linia": 173,
+   "problem": "Wpis ustawy zasiłkowej mówi „bez późniejszych zmian”. Ustawa Dz.U. 2026 poz. 1123 (ogłoszona 25.08.2026 r., po tekście jednolitym) zmienia jednak art. 32 ust. 1 pkt 1 lit. a od 1 stycznia 2028 r. (dodaje punkt opieki dziennej). Wpis swiadczeniaRodzinne cytuje Dz.U. 2025 poz. 1208, a jest już nowszy tekst jednolity Dz.U. 2026 poz. 1240 (kwota 1000 zł bez zmian, art. 17c ust. 5).",
+   "dowod": "API Sejmu DU/1999/636 references „Akty zmieniające”: DU/2026/1123 z datą 2028-01-01; DU_2026_1123.txt, art. 9 i art. 48. DU/2003/2255 „Inf. o tekście jednolitym”: DU/2026/1240; DU_2026_1240.txt, wiersz 893: „Świadczenie rodzicielskie przysługuje w wysokości 1000,00 zł miesięcznie”.",
+   "poprawka": "zasilkowa.uwaga: „tekst jednolity; zmiana Dz.U. 2026 poz. 1123 (od 1.01.2028 r.) dotyczy tylko art. 32 ust. 1 pkt 1 lit. a; art. 9 ust. 4 i art. 17 ust. 1d–1e w mocy od 1.01.2027 r.”. swiadczeniaRodzinne: publikator „Dz.U. 2026 poz. 1240”."
+  },
+  {
+   "id": "C-19",
+   "slug": "swiadczenie-rehabilitacyjne",
+   "wymiar": "testy",
+   "waga": "niska",
+   "plik": "src/lib/narzedzia/swiadczenie-rehabilitacyjne.test.ts",
+   "linia": 26,
+   "problem": "Luki w testach: brak przypadku startu przy 29 lutego (2028), na przełomie roku i przy wyborze roku bez płacy minimalnej (2028 → komunikat błędu). Test „kwartał bez wskaźnika” utrwala brak waloryzacji w I kw. 2027 r., zanim ukaże się obwieszczenie.",
+   "dowod": "Plik testu: przypadki tylko z 2026-11-12, 2026-07-01 i 2027-01-15. Podgląd: start 2028-02-29 → „Brak płacy minimalnej dla tego roku”.",
+   "poprawka": "Dodać testy z niezależnymi wartościami z Pythona (po poprawce C-1: start 2026-11-12 → 2027-02-10/2027-11-06, start 2027-12-01 → 2028-02-29). Po obwieszczeniu na I kw. 2027 r. dopisać '2027-1' do WSKAZNIKI."
+  },
+  {
+   "id": "C-20",
+   "slug": "okres-zasilkowy",
+   "wymiar": "testy",
+   "waga": "niska",
+   "plik": "src/lib/narzedzia/okres-zasilkowy.test.ts",
+   "linia": 30,
+   "problem": "Brak testów przełomu roku i 29 lutego oraz limitu 270 dni dla gruźlicy. Logika daje poprawne wyniki (sprawdzone niezależnie), ale nic tego nie pilnuje.",
+   "dowod": "Python: 182 dni od 2027-09-01 kończy się 2028-02-29; 270 dni od 2027-12-01 kończy się 2028-08-26. Kod zwraca to samo (vitest w katalogu roboczym), ale w pliku testu nie ma takich przypadków.",
+   "poprawka": "Dodać: okresZasilkowy([{od:'2027-09-01',do:'2027-09-10'}],'choroba').koniecLimitu === '2028-02-29' oraz okresZasilkowy([{od:'2027-12-01',do:'2027-12-10'}],'gruzlica').koniecLimitu === '2028-08-26'."
+  }
+ ],
+ "do_stanu": [
+  {
+   "sprawa": "Wskaźnik waloryzacji podstawy świadczenia rehabilitacyjnego na I kwartał 2027 r. (obwieszczenie Prezesa ZUS, art. 19 ust. 3). Ze wzoru: III kw. 2026 r. 9317,01 zł (M.P. 2026 poz. 1122) / I kw. 2026 r. 9562,88 zł (M.P. 2026 poz. 457) = 97,43%, więc prawdopodobnie bez waloryzacji. Dziś najnowsze jest M.P. 2026 poz. 858 (IV kw.: 100,4%).",
+   "kiedy_sprawdzic": "2026-12-31",
+   "gdzie_w_kodzie": "src/lib/narzedzia/swiadczenie-rehabilitacyjne.ts (WSKAZNIKI, klucz '2027-1'); src/data/prawo.ts (waloryzacjaRehabilitacyjnego2026 → nowy wpis na 2027)"
+  },
+  {
+   "sprawa": "Kwoty zasiłku dla bezrobotnych od 1 czerwca 2027 r. (obwieszczenie MRPiPS, art. 228 ust. 4 ustawy o rynku pracy, po komunikacie GUS o inflacji za 2026 r.). Do tego czasu kod pokazuje dla dni od 2027-06-01 „kwota… jeszcze nieogłoszona” i odrzuca rejestrację od tej daty. Po 1.06.2027 FAQ i opis pokazywałyby kwoty sprzed waloryzacji.",
+   "kiedy_sprawdzic": "2027-03-15",
+   "gdzie_w_kodzie": "src/lib/narzedzia/zasilek-bezrobotny.ts (KWOTY_ZASILKU); src/data/prawo.ts (zasilekBezrobotni2026 → 2027)"
+  },
+  {
+   "sprawa": "Płaca minimalna 2028 (rozporządzenie do 15.09.2027). Bez niej kalkulator-l4, zasilek-opiekunczy, zasilek-macierzynski i wynagrodzenie-za-przestoj po cichu przyjmują rok 2027, a swiadczenie-rehabilitacyjne z datą w 2028 r. pokazuje błąd.",
+   "kiedy_sprawdzic": "2027-09-16",
+   "gdzie_w_kodzie": "src/data/prawo.ts (PLACA_MINIMALNA, LATA)"
+  },
+  {
+   "sprawa": "Art. 9 ust. 4 ustawy zasiłkowej (jeden okres zasiłkowy przy kilku tytułach) i art. 17 ust. 1d–1e wchodzą w życie 1.01.2027 r. (Dz.U. 2026 poz. 26). Po tej dacie uprościć tekst z C-3.",
+   "kiedy_sprawdzic": "2027-01-02",
+   "gdzie_w_kodzie": "src/pages/narzedzia/okres-zasilkowy.astro:98"
+  },
+  {
+   "sprawa": "Od 1.01.2028 r. zasiłek opiekuńczy także przy zamknięciu punktu opieki dziennej (art. 32 ust. 1 pkt 1 lit. a w brzmieniu Dz.U. 2026 poz. 1123).",
+   "kiedy_sprawdzic": "2027-12-15",
+   "gdzie_w_kodzie": "src/lib/narzedzia/opiekunczy.ts (LIMITY_OPIEKI.dziecko.nazwa), FAQ w zasilek-opiekunczy.astro"
+  }
+ ],
+ "poza_zakresem": [],
+ "nie_sprawdzono": [
+  "Praktyka ZUS (zus.pl) przy liczeniu 3 i 12 miesięcy świadczenia rehabilitacyjnego jako 90 i 360 dni: wniosek w C-1 opiera się na brzmieniu art. 22 i art. 11 ust. 5; warto potwierdzić ręcznie.",
+  "Szczegóły § 2–5 rozporządzenia Dz.U. 2017 poz. 927 dla wariantu 60% przy przestoju: kopia w .cache to struktura JSON/HTML bez czytelnego tekstu paragrafów, więc metodę 60% sprawdzono tylko wobec komentarza w kodzie.",
+  "Prawdziwy czytnik ekranu: sprawdzono tylko etykiety, aria-describedby i aria-live w DOM.",
+  "Testy E2E nie były uruchamiane (zakaz z WSPOLNE.md). Testy jednostkowe partii: 8 plików, 46 testów, wszystkie zielone."
+ ]
+}

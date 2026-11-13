@@ -1,7 +1,7 @@
 // Worker Rytmu Hali: punkty /api/* (reszta to pliki statyczne z dist/, które Cloudflare serwuje bez workera,
 // patrz run_worker_first w wrangler.jsonc). Teraz: logowanie do panelu /admin przez GitHub (OAuth, przepływ z kodem
-// autoryzacji), zapis na newsletter i formularz kontaktowy (F6, worker/formularze.js). Dalej: 410 dla usuniętych
-// artykułów (F8).
+// autoryzacji), zapis na newsletter i formularz kontaktowy (F6, worker/formularze.js) oraz 410 i 301 dla adresów
+// usuniętych z serwisu (worker/usuniete.js).
 //
 // Logowanie to port protokołu Sveltia CMS Authenticator (https://github.com/sveltia/sveltia-cms-auth, licencja MIT,
 // © 2026 Kohei Yoshino), ograniczony do GitHuba i zaostrzony:
@@ -12,6 +12,7 @@
 // Sekrety (GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET) ustawia Patryk: npx wrangler secret put <NAZWA> (STAN.md).
 
 import { kontakt, zapisNaNewsletter } from './formularze.js';
+import { odpowiedzUsunietego, usuniety } from './usuniete.js';
 
 const DOSTAWCA = 'github';
 const CIASTKO = '__Host-rh-oauth';
@@ -148,6 +149,8 @@ export default {
       if (zadanie.method !== 'POST') return new Response('Ten adres przyjmuje tylko formularz (POST).', { status: 405, headers: { Allow: 'POST', 'Cache-Control': 'no-store' } });
       return pathname === '/api/newsletter' ? zapisNaNewsletter(zadanie, env) : kontakt(zadanie, env);
     }
+    const decyzja = usuniety(pathname);
+    if (decyzja) return odpowiedzUsunietego(zadanie, env, decyzja);
     if (pathname.startsWith('/api/')) {
       return new Response(JSON.stringify({ blad: 'Nie ma takiego punktu API.' }), {
         status: 404,

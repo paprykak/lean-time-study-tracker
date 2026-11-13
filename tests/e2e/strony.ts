@@ -1,11 +1,11 @@
 // Lista stron do testów E2E i Lighthouse. Testy działają na buildzie testowym (RH_TESTOWE=1, npm run check):
-// cały portal z fikcyjnymi treściami z src/content/testowe, z zachowaniem produkcji (indeksowanie, kanoniczne).
+// cały portal z fikcyjnymi kampaniami z src/content/testowe i projektami stron stałych, z zachowaniem produkcji
+// (indeksowanie, kanoniczne).
 // Każdy nowy szablon dopisuje tu swój adres. Adresy narzędzi idą z rejestru (src/data/narzedzia.ts), więc nowe
 // narzędzie nie wymaga zmian w tym pliku; stała z adresem jest potrzebna tylko wtedy, gdy importuje ją test narzędzia.
 import { NARZEDZIA, adresNarzedzia } from '../../src/data/narzedzia';
 
 const NARZEDZIA_ADRESY = NARZEDZIA.map((n) => adresNarzedzia(n.slug));
-export const ARTYKUL = '/testowy-mikroprzestoje';
 export const NARZEDZIE = '/narzedzia/dodatek-za-prace-w-nocy';
 export const NARZEDZIE_BHP = '/narzedzia/szkolenie-okresowe-bhp';
 export const NARZEDZIE_UDT = '/narzedzia/waznosc-uprawnien-udt';
@@ -73,9 +73,9 @@ export const NARZEDZIE_TRZEZWOSC = '/narzedzia/kontrola-trzezwosci';
 export const NARZEDZIE_CIAZA = '/narzedzia/praca-w-ciazy';
 export const NARZEDZIE_RODZIC = '/narzedzia/rodzic-w-pracy';
 export const STRONY = [
-  '/', ARTYKUL, '/narzedzia', ...NARZEDZIA_ADRESY, '/dzial/produkcja', '/dzial/produkcja/2', '/temat/oee', '/autor/redakcja', '/do-pobrania', '/do-pobrania/testowy-karta-obserwacji', '/szukaj', '/o-nas', '/kontakt', '/polityka-prywatnosci', '/regulamin-newslettera', '/stopka-redakcyjna', '/reklama', '/newsletter', '/newsletter/potwierdz', '/newsletter/blad', '/kontakt/wyslano', '/styleguide', '/404', '/410',
+  '/', '/narzedzia', ...NARZEDZIA_ADRESY, '/szukaj', '/o-nas', '/kontakt', '/polityka-prywatnosci', '/regulamin-newslettera', '/stopka-redakcyjna', '/reklama', '/newsletter', '/newsletter/potwierdz', '/newsletter/blad', '/kontakt/wyslano', '/styleguide', '/404', '/410', '/podglad/o-nas',
 ] as const;
 export const INDEKSOWANE = [
-  '/', ARTYKUL, '/narzedzia', ...NARZEDZIA_ADRESY, '/dzial/produkcja', '/temat/oee', '/do-pobrania',
+  '/', '/narzedzia', ...NARZEDZIA_ADRESY, '/o-nas', '/zasady-redakcyjne', '/kontakt', '/reklama',
 ] as const;
-export const NIEINDEKSOWANE = ['/styleguide', '/404', '/410', '/szukaj', '/newsletter/potwierdz', '/newsletter/blad', '/kontakt/wyslano', '/kontakt/blad'] as const;
+export const NIEINDEKSOWANE = ['/styleguide', '/404', '/410', '/podglad/o-nas', '/szukaj', '/newsletter/potwierdz', '/newsletter/blad', '/kontakt/wyslano', '/kontakt/blad'] as const;

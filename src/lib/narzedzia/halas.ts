@@ -25,14 +25,18 @@ export interface Okres {
   godziny: number;
 }
 
-/** Poziom ekspozycji odniesiony do 8 godzin (dB), z dokładnością do 0,1 dB. */
-export function ekspozycja8h(okresy: Okres[]): number {
+/** Poziom ekspozycji odniesiony do 8 godzin (dB) bez zaokrąglenia do wyświetlenia (do porównań z progami). */
+export function ekspozycja8hDokladna(okresy: Okres[]): number {
   const wazne = okresy.filter((o) => o.godziny > 0);
   if (!wazne.length) throw new RangeError('Podaj co najmniej jeden okres');
   for (const o of wazne) if (!(o.poziom >= 0 && o.poziom <= 160 && o.godziny <= 24)) throw new RangeError('Poziom 0–160 dB, czas do 24 h');
   const energia = wazne.reduce((s, o) => s + (o.godziny / OSIEM_GODZIN) * 10 ** (o.poziom / 10), 0);
-  return Math.round(10 * Math.log10(energia) * 10) / 10;
+  // Do 1e-6 dB, żeby błąd zmiennoprzecinkowy (85 dB przez 8 h = 85,000000000001) nie dawał przekroczenia.
+  return Math.round(10 * Math.log10(energia) * 1e6) / 1e6;
 }
+
+/** Poziom ekspozycji odniesiony do 8 godzin (dB), z dokładnością do 0,1 dB (do wyświetlenia). */
+export const ekspozycja8h = (okresy: Okres[]) => Math.round(ekspozycja8hDokladna(okresy) * 10) / 10;
 
 /** Najdłuższy czas (h) przy danym poziomie, po którym ekspozycja osiąga limit L_EX,8h. */
 export const dopuszczalnyCzas = (poziom: number, limit = LIMITY.dorosly.lex) => OSIEM_GODZIN * 10 ** ((limit - poziom) / 10);
@@ -43,16 +47,18 @@ export const dopuszczalnyCzas = (poziom: number, limit = LIMITY.dorosly.lex) => 
  * dla młodocianych i kobiet w ciąży: praca wzbroniona).
  */
 export function ocenaHalasu(okresy: Okres[], grupa: Grupa, maksA?: number, szczytC?: number) {
-  const lex = ekspozycja8h(okresy);
+  // Progi porównujemy z wartością niezaokrągloną: 85,045 dB to przekroczenie, choć po zaokrągleniu wychodzi 85,0.
+  const dokladna = ekspozycja8hDokladna(okresy);
+  const lex = Math.round(dokladna * 10) / 10;
   const l = LIMITY[grupa];
-  const przekroczone = lex > l.lex || (maksA ?? 0) > l.maksA || (szczytC ?? 0) > l.szczytC;
-  const osiagaNdn = lex >= l.lex || (maksA ?? 0) >= l.maksA || (szczytC ?? 0) >= l.szczytC;
+  const przekroczone = dokladna > l.lex || (maksA ?? 0) > l.maksA || (szczytC ?? 0) > l.szczytC;
+  const osiagaNdn = dokladna >= l.lex || (maksA ?? 0) >= l.maksA || (szczytC ?? 0) >= l.szczytC;
   return {
     lex,
     limit: l,
     przekroczone,
     osiagaNdn,
-    powyzejProgu: lex > PROG_DZIALANIA || (szczytC ?? 0) > LIMITY.dorosly.szczytC,
+    powyzejProgu: dokladna > PROG_DZIALANIA || (szczytC ?? 0) > LIMITY.dorosly.szczytC,
     godziny: okresy.reduce((s, o) => s + (o.godziny > 0 ? o.godziny : 0), 0),
   };
 }

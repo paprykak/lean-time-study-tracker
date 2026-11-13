@@ -53,3 +53,31 @@ test('5 godzin za granicą: 1/3 diety', async ({ page }) => {
   await expect(page.locator('[data-w="dieta"]')).toContainText('1/3 diety');
   await expect(page.locator('[data-w="razem"]')).toHaveText(/^16,33\sEUR$/);
 });
+
+test('krótka nazwa USA w liście, pełna w tabeli; opis czasu bez linku do innego narzędzia', async ({ page }) => {
+  await page.getByLabel('Państwo docelowe').selectOption('Stany Zjednoczone Ameryki: Nowy Jork');
+  await expect(page.getByLabel('Państwo docelowe').locator('option:checked')).toHaveText('USA: Nowy Jork');
+  await expect(page.locator('#z-czas-opis a')).toHaveCount(0);
+});
+
+test('strona czytana w styczniu 2027 r.: wyjazd dziś, powrót za 2 dni', async ({ page }) => {
+  await page.clock.setFixedTime(new Date('2027-01-05T10:00:00+01:00'));
+  await page.goto(NARZEDZIE_ZAGRANICZNA);
+  await expect(page.getByLabel('Wyjazd za granicę: dzień')).toHaveValue('2027-01-05');
+  await expect(page.getByLabel('Powrót do Polski: dzień')).toHaveValue('2027-01-07');
+});
+
+test.describe('telefon 320 px', () => {
+  test.use({ viewport: { width: 320, height: 640 } });
+  test('żadna opcja listy państw nie jest szersza niż pole', async ({ page }) => {
+    const uciete = await page.locator('#z-panstwo').evaluate((el) => {
+      const s = el as HTMLSelectElement;
+      const styl = getComputedStyle(s);
+      const ctx = document.createElement('canvas').getContext('2d')!;
+      ctx.font = `${styl.fontWeight} ${styl.fontSize} ${styl.fontFamily}`;
+      const miejsce = s.clientWidth - 40;
+      return [...s.options].filter((o) => ctx.measureText(o.text).width > miejsce).map((o) => o.text);
+    });
+    expect(uciete).toEqual([]);
+  });
+});

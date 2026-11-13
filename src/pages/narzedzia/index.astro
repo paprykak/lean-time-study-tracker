@@ -1,17 +1,21 @@
 ---
-// Wszystkie narzędzia według kategorii (rejestr: src/data/narzedzia.ts) i lista tych w przygotowaniu.
+// Spis narzędzi (rejestr src/data/narzedzia.ts) w zwartych wierszach: nazwa i jedno zdanie, według kategorii. Skaluje
+// się do kilkuset pozycji (wiersz zamiast karty). Bez JavaScriptu: pełna lista, kategorie to kotwice (#bhp), pole
+// to formularz do /szukaj. Ze skryptem: filtr kategorii bez przeładowania (stan w kotwicy, działa „Wstecz” i link
+// do kategorii z menu), filtr tekstowy na żywo (stan w ?q=) tym samym silnikiem co pole na stronie głównej.
 import Uklad from '../../layouts/Uklad.astro';
 import Okruszki from '../../components/Okruszki.astro';
-import NaglowekSekcji from '../../components/NaglowekSekcji.astro';
-import KartaNarzedzia from '../../components/narzedzia/KartaNarzedzia.astro';
-import Newsletter from '../../components/Newsletter.astro';
+import Ikona from '../../components/Ikona.astro';
 import Tekst from '../../components/Tekst.astro';
+import Newsletter from '../../components/Newsletter.astro';
 import ustawienia from '../../data/ustawienia.json';
 import { KATEGORIE, NARZEDZIA, W_PRZYGOTOWANIU, adresNarzedzia, type KategoriaNarzedzia } from '../../data/narzedzia';
+import { odmiana } from '../../lib/redakcja';
 
 const kategorie = (Object.keys(KATEGORIE) as KategoriaNarzedzia[])
   .map((k) => ({ klucz: k, ...KATEGORIE[k], narzedzia: NARZEDZIA.filter((n) => n.kategoria === k) }))
   .filter((k) => k.narzedzia.length > 0);
+const ile = (n: number) => odmiana(n, ['narzędzie', 'narzędzia', 'narzędzi']);
 const jsonLd = [
   {
     '@context': 'https://schema.org',
@@ -31,47 +35,326 @@ const jsonLd = [
   opis="Bezpłatne kalkulatory dla ludzi z hali: wypłata na rękę, nadgodziny, urlopy, zasiłki, umowy, BHP i uprawnienia UDT. Każda liczba ze źródłem w przepisach."
   jsonLd={jsonLd}
   aktywny="narzedzia"
+  bezSzukania
 >
   <div class="kontener">
     <Okruszki class="mt-4" pozycje={[{ nazwa: 'Narzędzia' }]} />
-    <header class="mt-4 border-b-2 border-grafit pb-6">
+    <header class="mt-4">
       <p class="kategoria">Bezpłatnie, bez logowania</p>
       <h1 class="tytul-xl mt-2">Narzędzia</h1>
       <p class="lead mt-3 max-w-3xl">
-        <Tekst t="Kalkulatory i ściągi z przepisów dla ludzi z hali: ile się należy, czy wolno, kiedy mija termin. Liczymy według przepisów, przy każdym narzędziu podajemy źródło i datę sprawdzenia, a dane zostają w Twojej przeglądarce." />
+        <Tekst t={`Wszystkie ${ile(NARZEDZIA.length)} w jednym miejscu: ile się należy, czy wolno, kiedy mija termin. Przy każdym przepis i data sprawdzenia, a dane zostają w Twojej przeglądarce.`} />
       </p>
-      <nav aria-label="Kategorie narzędzi" class="mt-5">
-        <ul class="flex flex-wrap gap-2">
-          {kategorie.map((k) => <li><a href={`#kategoria-${k.klucz}`} class="przycisk przycisk-obrys">{k.nazwa} ({k.narzedzia.length})</a></li>)}
-        </ul>
-      </nav>
-    </header>
-
-    {kategorie.map((k) => (
-      <section aria-labelledby={`kategoria-${k.klucz}`} class="mt-10">
-        <NaglowekSekcji tytul={k.nazwa} id={`kategoria-${k.klucz}`} />
-        <div class="mt-4 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {k.narzedzia.map((n) => <KartaNarzedzia narzedzie={n} />)}
+      <form action="/szukaj" method="get" role="search" class="mt-6 max-w-[36rem]" data-filtr-form>
+        <label for="filtr" class="mb-2 block text-[0.9375rem] font-bold text-tekst">Zawęź listę</label>
+        <div class="filtr-pole">
+          <Ikona nazwa="szukaj" rozmiar={20} class="ml-3 shrink-0 text-tekst-drugi" />
+          <input id="filtr" name="q" type="search" class="filtr-input" placeholder="np. urlop, nocki, UDT" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search" maxlength="120" aria-describedby="filtr-opis" data-filtr />
+          <button type="submit" class="filtr-przycisk">Szukaj</button>
         </div>
-      </section>
-    ))}
+        <p id="filtr-opis" class="meta mt-1.5">Szukamy w nazwach, opisach i pytaniach. Możesz pisać bez polskich znaków.</p>
+      </form>
+    </header>
+  </div>
 
-    {W_PRZYGOTOWANIU.length > 0 && (
-      <section aria-labelledby="w-przygotowaniu" class="mt-12">
-        <NaglowekSekcji tytul="W przygotowaniu" id="w-przygotowaniu" />
-        <ul class="mt-4 grid gap-x-6 sm:grid-cols-2 lg:grid-cols-3">
-          {W_PRZYGOTOWANIU.map((w) => (
-            <li class="border-b border-linia py-3">
-              <span class="kategoria block">{KATEGORIE[w.kategoria].krotko}</span>
-              <span class="mt-1 block font-semibold text-tekst">{w.nazwa}</span>
-            </li>
-          ))}
-        </ul>
-      </section>
-    )}
+  <nav aria-label="Kategorie narzędzi" class="kategorie-pasek">
+    <div class="kontener">
+      <ul class="kategorie-lista">
+        <li><a href="/narzedzia" class="kategoria-przelacznik" data-kategoria="" aria-current="true">Wszystkie <span class="kategoria-liczba">{NARZEDZIA.length}</span></a></li>
+        {kategorie.map((k) => (
+          <li><a href={`#${k.klucz}`} class="kategoria-przelacznik" data-kategoria={k.klucz}>{k.krotko} <span class="kategoria-liczba">{k.narzedzia.length}</span></a></li>
+        ))}
+      </ul>
+    </div>
+  </nav>
+
+  <div class="kontener">
+    <div class="mt-5 flex flex-wrap items-center justify-between gap-3">
+      <p class="font-semibold text-tekst" role="status" aria-live="polite" data-licznik>{ile(NARZEDZIA.length)} w {odmiana(kategorie.length, ['kategorii', 'kategoriach', 'kategoriach'])}</p>
+      <button type="button" class="link hidden min-h-11 text-[0.9375rem]" data-pokaz-wszystkie>Pokaż wszystkie</button>
+    </div>
+
+    <section aria-labelledby="najlepsze" class="mt-2" hidden data-wyniki-sekcja>
+      <h2 id="najlepsze" class="naglowek-kategorii">Najlepiej pasujące</h2>
+      <ol class="lista-narzedzi mt-1" data-wyniki></ol>
+      <p class="mt-4 text-[0.9375rem]" data-wyniki-pelny><a href="/szukaj" class="link">Szukaj w pełnym tekście wszystkich narzędzi</a></p>
+    </section>
+
+    <div data-spis>
+      {kategorie.map((k) => (
+        <section aria-labelledby={`naglowek-${k.klucz}`} id={k.klucz} class="kategoria-sekcja" data-sekcja={k.klucz}>
+          <h2 id={`naglowek-${k.klucz}`} class="naglowek-kategorii">{k.nazwa} <span class="naglowek-liczba">{ile(k.narzedzia.length)}</span></h2>
+          <ul class="lista-narzedzi lista-dwie">
+            {k.narzedzia.map((n) => (
+              <li class="wiersz">
+                <a href={adresNarzedzia(n.slug)} class="wiersz-link">
+                  <span class="wiersz-nazwa">{n.nazwa}</span>
+                  <span class="wiersz-opis"><Tekst t={n.krotko} /></span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+
+      {W_PRZYGOTOWANIU.length > 0 && (
+        <section aria-labelledby="w-przygotowaniu" class="kategoria-sekcja" data-sekcja="w-przygotowaniu">
+          <h2 id="w-przygotowaniu" class="naglowek-kategorii">W przygotowaniu</h2>
+          <ul class="lista-narzedzi lista-dwie">
+            {W_PRZYGOTOWANIU.map((w) => (
+              <li class="wiersz wiersz-bez-linku">
+                <span class="wiersz-nazwa">{w.nazwa}</span>
+                <span class="wiersz-opis">{KATEGORIE[w.kategoria].nazwa}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+    </div>
 
     <div class="mt-14">
       <Newsletter id="narzedzia-newsletter" wariant="pasek" miejsce="narzedzia" />
     </div>
   </div>
 </Uklad>
+
+<script>
+  import { ileNarzedzi, slowa, szukaj, wierszWyniku, zaladujIndeks } from '../../lib/szukaj-klient';
+  import { odmiana } from '../../lib/redakcja';
+
+  const pole = document.querySelector<HTMLInputElement>('[data-filtr]')!;
+  const licznik = document.querySelector<HTMLElement>('[data-licznik]')!;
+  const sekcje = [...document.querySelectorAll<HTMLElement>('[data-sekcja]')];
+  const przelaczniki = [...document.querySelectorAll<HTMLAnchorElement>('[data-kategoria]')];
+  const wynikiSekcja = document.querySelector<HTMLElement>('[data-wyniki-sekcja]')!;
+  const wyniki = document.querySelector<HTMLOListElement>('[data-wyniki]')!;
+  const pelny = document.querySelector<HTMLAnchorElement>('[data-wyniki-pelny] a')!;
+  const pokazWszystkie = document.querySelector<HTMLButtonElement>('[data-pokaz-wszystkie]')!;
+  const spis = document.querySelector<HTMLElement>('[data-spis]')!;
+  const KATEGORIE = new Set(przelaczniki.map((p) => p.dataset.kategoria).filter(Boolean));
+  const liczbaWszystkich = document.querySelectorAll('[data-sekcja] .wiersz-link').length;
+
+  const kategoriaZAdresu = () => {
+    const k = decodeURIComponent(location.hash.slice(1));
+    return KATEGORIE.has(k) ? k : '';
+  };
+  let numer = 0;
+
+  async function odswiez() {
+    const kategoria = kategoriaZAdresu();
+    const q = pole.value.trim();
+    for (const p of przelaczniki) {
+      if (p.dataset.kategoria === kategoria) p.setAttribute('aria-current', 'true');
+      else p.removeAttribute('aria-current');
+    }
+    pokazWszystkie.hidden = !kategoria && q.length < 2;
+    pokazWszystkie.classList.toggle('hidden', pokazWszystkie.hidden);
+
+    if (q.length >= 2) {
+      const moj = ++numer;
+      let indeks;
+      try {
+        indeks = await zaladujIndeks();
+      } catch {
+        return;
+      }
+      if (moj !== numer) return;
+      const szukane = slowa(q);
+      const lista = szukaj(indeks, q).filter((w) => !kategoria || w.wpis.kk === kategoria);
+      wyniki.replaceChildren(...lista.map((w) => wierszWyniku(w, szukane, 'wiersz')));
+      pelny.href = `/szukaj?q=${encodeURIComponent(q)}`;
+      wynikiSekcja.hidden = false;
+      spis.hidden = true;
+      licznik.textContent = lista.length
+        ? `${ileNarzedzi(lista.length)} dla „${q}”${kategoria ? ' w tej kategorii' : ''}`
+        : `Nie mamy narzędzia do „${q}”${kategoria ? ' w tej kategorii' : ''}. Spróbuj prostszego słowa, np. urlop albo L4.`;
+      return;
+    }
+    wynikiSekcja.hidden = true;
+    spis.hidden = false;
+    for (const s of sekcje) s.hidden = Boolean(kategoria) && s.dataset.sekcja !== kategoria;
+    if (kategoria) {
+      const n = document.querySelectorAll(`[data-sekcja="${kategoria}"] .wiersz-link`).length;
+      const nazwa = document.querySelector(`#naglowek-${kategoria}`)?.firstChild?.textContent?.trim() ?? '';
+      licznik.textContent = `${ileNarzedzi(n)}: ${nazwa}`;
+    } else {
+      licznik.textContent = `${ileNarzedzi(liczbaWszystkich)} w ${odmiana(KATEGORIE.size, ['kategorii', 'kategoriach', 'kategoriach'])}`;
+    }
+  }
+
+  // Kategoria bez przeładowania: kotwica w adresie (link z menu, „Wstecz”), lista od góry zamiast skoku do sekcji.
+  for (const p of przelaczniki) {
+    p.addEventListener('click', (e) => {
+      if (e.metaKey || e.ctrlKey || e.shiftKey) return;
+      e.preventDefault();
+      const k = p.dataset.kategoria!;
+      history.pushState(null, '', `${location.pathname}${location.search}${k ? `#${k}` : ''}`);
+      odswiez();
+      document.querySelector('.kategorie-pasek')!.scrollIntoView({ block: 'start' });
+    });
+  }
+  addEventListener('popstate', odswiez);
+  addEventListener('hashchange', odswiez);
+
+  let opoznienie: number | undefined;
+  pole.addEventListener('input', () => {
+    window.clearTimeout(opoznienie);
+    opoznienie = window.setTimeout(() => {
+      const url = new URL(location.href);
+      if (pole.value.trim()) url.searchParams.set('q', pole.value.trim());
+      else url.searchParams.delete('q');
+      history.replaceState(null, '', url);
+      odswiez();
+    }, 150);
+  });
+  pole.addEventListener('focus', () => zaladujIndeks().catch(() => {}), { once: true });
+  // Enter filtruje na miejscu; pełny tekst jest pod linkiem nad wynikami.
+  document.querySelector<HTMLFormElement>('[data-filtr-form]')!.addEventListener('submit', (e) => {
+    e.preventDefault();
+    odswiez();
+  });
+  pokazWszystkie.addEventListener('click', () => {
+    pole.value = '';
+    history.replaceState(null, '', location.pathname);
+    odswiez();
+    pole.focus();
+  });
+
+  pole.value = new URLSearchParams(location.search).get('q')?.slice(0, 120) ?? '';
+  if (kategoriaZAdresu() || pole.value) {
+    odswiez().then(() => {
+      if (kategoriaZAdresu()) document.querySelector('.kategorie-pasek')!.scrollIntoView({ block: 'start' });
+    });
+  }
+</script>
+
+<style>
+  .filtr-pole {
+    display: flex;
+    align-items: center;
+    min-height: 3.25rem;
+    border: 2px solid var(--color-grafit);
+    border-radius: var(--radius-przycisk);
+    background: var(--color-tlo);
+  }
+  .filtr-pole:focus-within {
+    outline: 3px solid var(--color-akcent);
+    outline-offset: 1px;
+  }
+  .filtr-input {
+    flex: 1;
+    align-self: stretch;
+    min-width: 0;
+    padding: 0 0.75rem;
+    background: transparent;
+    font-size: 1.0625rem;
+    color: var(--color-tekst);
+    outline: none;
+  }
+  .filtr-input::placeholder {
+    color: var(--color-tekst-drugi);
+  }
+  .filtr-przycisk {
+    align-self: stretch;
+    padding: 0 1.125rem;
+    background: var(--color-grafit);
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .filtr-przycisk:focus-visible {
+    outline: 3px solid var(--color-akcent);
+    outline-offset: -5px;
+  }
+  /* Pasek kategorii przykleja się do góry ekranu: na długiej liście zmiana kategorii zawsze jest pod kciukiem. */
+  .kategorie-pasek {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    margin-top: 1.5rem;
+    border-top: 1px solid var(--color-linia);
+    border-bottom: 1px solid var(--color-linia);
+    background: var(--color-tlo);
+  }
+  .kategorie-lista {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem 0.5rem 0;
+    margin-inline: -0.25rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    mask-image: linear-gradient(to right, #000 calc(100% - 2rem), transparent);
+  }
+  .kategorie-lista::-webkit-scrollbar {
+    display: none;
+  }
+  @media (min-width: 64rem) {
+    .kategorie-lista {
+      flex-wrap: wrap;
+      mask-image: none;
+    }
+  }
+  .kategoria-przelacznik {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    min-height: 2.75rem;
+    padding: 0 0.875rem;
+    white-space: nowrap;
+    border: 1px solid var(--color-linia-mocna);
+    border-radius: var(--radius-przycisk);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--color-tekst);
+    background: var(--color-tlo);
+  }
+  .kategoria-przelacznik:hover {
+    border-color: var(--color-akcent);
+  }
+  .kategoria-przelacznik[aria-current='true'] {
+    background: var(--color-grafit);
+    border-color: var(--color-grafit);
+    color: var(--color-tekst-na-ciemnym);
+  }
+  .kategoria-liczba {
+    font-weight: 400;
+    font-size: 0.8125rem;
+    opacity: 0.8;
+  }
+  .kategoria-sekcja {
+    margin-top: 2rem;
+    scroll-margin-top: 4.5rem;
+  }
+  .naglowek-kategorii {
+    padding-top: 0.75rem;
+    border-top: 2px solid var(--color-grafit);
+    font-family: var(--font-display);
+    font-size: 1.375rem;
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--color-tekst);
+  }
+  .naglowek-liczba {
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    font-weight: 400;
+    color: var(--color-tekst-drugi);
+  }
+  .wiersz-bez-linku {
+    display: block;
+    padding: 0.75rem 0;
+  }
+  .lista-dwie {
+    display: grid;
+    column-gap: 2.5rem;
+  }
+  @media (min-width: 64rem) {
+    .wiersz-bez-linku {
+    display: block;
+    padding: 0.75rem 0;
+  }
+  .lista-dwie {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>

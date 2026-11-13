@@ -4,6 +4,10 @@
 // macierzyński i 70% za rodzicielski albo, przy wniosku do 21 dni po porodzie (art. 30a ust. 1), 81,5% za cały okres
 // (ust. 3); 9 tygodni drugiego rodzica 70% (ust. 3f). Miesięczny zasiłek nie niższy niż świadczenie rodzicielskie
 // 1000 zł (ust. 3a; art. 17c ust. 5 ustawy o świadczeniach rodzinnych). Podstawa jak przy chorobowym (art. 47).
+// Wariant 81,5% bez ani jednego dnia rodzicielskiego matki w pierwszym roku życia dziecka: na wniosek jednorazowe
+// wyrównanie zasiłku za urlop macierzyński do 100% (art. 31 ust. 4), więc „razem” liczymy wtedy po 100%.
+// Nie liczymy rodzicielskiego 65 i 67 tygodni („Za życiem”, art. 182^1a § 2 Kp) ani uzupełniającego urlopu
+// macierzyńskiego (art. 180^2 Kp).
 import { podstawaZasilku } from './chorobowe';
 import { doGrosza } from './dodatek-nocny';
 
@@ -41,7 +45,9 @@ export function zasilekMacierzynski(d: DaneMacierzynskiego) {
   // Kwota za dzień: jedna trzydziesta miesięcznej, zaokrąglona do grosza, za każdy dzień (art. 31 ust. 5, art. 11 ust. 4, art. 36 ust. 3).
   const dziennieMac = doGrosza(mMac / 30);
   const dziennieRodz = doGrosza(mRodz / 30);
-  const razemMac = doGrosza(dziennieMac * tygMac * 7);
+  const razemMacBezWyrownania = doGrosza(dziennieMac * tygMac * 7);
+  const wyrownanie = d.wariant === '81,5' && tygRodz === 0;
+  const razemMac = wyrownanie ? doGrosza(doGrosza(miesiecznie(podstawa, 100) / 30) * tygMac * 7) : razemMacBezWyrownania;
   const razemRodz = doGrosza(dziennieRodz * tygRodz * 7);
   return {
     podstawa,
@@ -51,6 +57,8 @@ export function zasilekMacierzynski(d: DaneMacierzynskiego) {
     miesiecznieRodzicielski: mRodz,
     razemMacierzynski: razemMac,
     razemRodzicielski: razemRodz,
+    /** Wyrównanie do 100% za urlop macierzyński na wniosek (art. 31 ust. 4); 0, gdy nie przysługuje. */
+    wyrownanie: doGrosza(razemMac - razemMacBezWyrownania),
     razem: doGrosza(razemMac + razemRodz),
   };
 }

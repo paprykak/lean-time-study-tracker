@@ -16,10 +16,10 @@ test('36°C w pomieszczeniu z pogody: zakaz pracy', async ({ page }) => {
   await expect(page.locator('[data-w="lista"] li[data-poziom="zakaz"]')).toHaveCount(1);
 });
 
-test('36°C z technologii: bez zakazu', async ({ page }) => {
+test('36°C z technologii: bez zakazu, ale obowiązek najwyżej 35°C (§ 30a ust. 1)', async ({ page }) => {
   await page.getByLabel('Temperatura (°C)').fill('36');
   await page.getByLabel(/Ciepło pochodzi z\stechnologii/).check();
-  await expect(naglowek(page)).toHaveText('36°C: bez dodatkowych obowiązków');
+  await expect(naglowek(page)).toHaveText('36°C: pracodawca ma obowiązki');
 });
 
 test('ruch ciągły przy 36°C: obowiązki bez zakazu', async ({ page }) => {

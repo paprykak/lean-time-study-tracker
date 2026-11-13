@@ -22,3 +22,15 @@ test('za dużo tygodni: komunikat', async ({ page }) => {
   await page.getByLabel('Tygodnie rodzicielskiego matki').fill('40');
   await expect(page.getByText('Tygodnie rodzicielskiego matki: od 0 do 32.')).toBeVisible();
 });
+
+test('odmiana tygodni: 32 tygodnie, bliźnięta 34 tygodnie', async ({ page }) => {
+  await expect(page.locator('[data-w="tyg-opis"]')).toContainText(/Najwyżej\s32\stygodnie:/);
+  await page.getByLabel('Dzieci z jednego porodu').selectOption('2');
+  await expect(page.locator('[data-w="tyg-opis"]')).toContainText(/Najwyżej\s34\stygodnie:/);
+});
+
+test('81,5% bez rodzicielskiego matki: razem z wyrównaniem do 100%', async ({ page }) => {
+  await page.getByLabel('Tygodnie rodzicielskiego matki').fill('0');
+  await expect(page.locator('[data-w="razem-b"]')).toContainText(/^24\s161,20\szł\s\(z\swyrównaniem/);
+  await expect(page.locator('[data-w="razem-a"]')).toHaveText(/^24\s161,20\szł$/);
+});

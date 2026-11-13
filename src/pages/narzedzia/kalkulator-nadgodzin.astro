@@ -5,12 +5,15 @@
 import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
 import { nazwaMiesiaca } from '../../lib/narzedzia/czas-pracy';
 import { nadgodziny, LIMIT_ROCZNY } from '../../lib/narzedzia/nadgodziny';
-import { LATA } from '../../data/prawo';
 import { zl, godz } from '../../lib/narzedzia/format';
+import { lataKalendarza } from '../../lib/narzedzia/dzis-w-formularzu';
+import { dzisWPolsce } from '../../lib/narzedzia/terminy';
 
-const teraz = new Date();
-const rok = LATA.includes(teraz.getUTCFullYear()) ? teraz.getUTCFullYear() : LATA[LATA.length - 1];
-const miesiac = teraz.getUTCMonth() + 1;
+// Rok i miesiąc w Polsce w chwili budowania; skrypt przestawia je na dziś (ustawDzisiejszeWartosci).
+const dzis = dzisWPolsce();
+const LATA = lataKalendarza(dzis);
+const rok = Number(dzis.slice(0, 4));
+const miesiac = Number(dzis.slice(5, 7));
 const start = nadgodziny({ wynagrodzenie: { rodzaj: 'godzinowa', stawka: 35 }, godziny100: 0, godziny50: 8 });
 
 const faq = [
@@ -52,7 +55,7 @@ const faq = [
     <div class="kalkulator-pola">
       <h2 id="kalkulator-tytul" class="tytul-m">Twoje wynagrodzenie</h2>
       <fieldset class="mt-4">
-        <legend class="etykieta">Jak jesteś wynagradzany</legend>
+        <legend class="etykieta">Forma wynagrodzenia</legend>
         <div class="opcje-pionowe mt-2">
           <label><input type="radio" name="rodzaj" value="godzinowa" checked /> Stawka godzinowa</label>
           <label><input type="radio" name="rodzaj" value="miesieczna" /> Pensja miesięczna (stawka zasadnicza)</label>
@@ -68,11 +71,11 @@ const faq = [
         <legend class="etykieta">Miesiąc nadgodzin</legend>
         <div class="mt-2 grid grid-cols-[minmax(0,3fr)_minmax(0,2fr)] gap-3">
           <label class="sr-only" for="n-miesiac">Miesiąc</label>
-          <select id="n-miesiac" name="miesiac" class="pole">
+          <select id="n-miesiac" name="miesiac" class="pole" data-miesiac-biezacy>
             {Array.from({ length: 12 }, (_, i) => <option value={i + 1} selected={i + 1 === miesiac}>{nazwaMiesiaca(i + 1)}</option>)}
           </select>
           <label class="sr-only" for="n-rok">Rok</label>
-          <select id="n-rok" name="rok" class="pole">
+          <select id="n-rok" name="rok" class="pole" data-rok-biezacy>
             {LATA.map((r) => <option value={r} selected={r === rok}>{r}</option>)}
           </select>
         </div>
@@ -102,7 +105,7 @@ const faq = [
         <div><dt>Normalne wynagrodzenie za te godziny</dt><dd data-w="normalne">{zl(start.normalne)}</dd></div>
         <div><dt>Zamiast dodatku: czas wolny</dt><dd data-w="wolne">{godz(start.wolneNaWniosek)} na Twój wniosek albo {godz(start.wolneBezWniosku)} bez wniosku</dd></div>
       </dl>
-      <p class="meta mt-3">Normalne wynagrodzenie liczymy tą samą stawką za godzinę. Zaokrąglamy do grosza.</p>
+      <p class="meta mt-3">Normalne wynagrodzenie liczymy pełną stawką za godzinę; 60% wynagrodzenia to tylko podstawa dodatku (art. 151<sup>1</sup> § 1 i 3 Kodeksu pracy). Zaokrąglamy do grosza.</p>
     </div>
   </form>
 
@@ -133,8 +136,10 @@ const faq = [
       Przy stawce godzinowej podstawą dodatku jest ta stawka. Przy pensji miesięcznej dzielimy ją przez liczbę godzin
       pracy do przepracowania w danym miesiącu (§ 4a rozporządzenia w sprawie sposobu ustalania wynagrodzenia), więc
       w miesiącu ze 184 godzinami stawka jest niższa niż w miesiącu ze 160. Gdy stawki zasadniczej nie wyodrębniono,
-      podstawą jest 60% wynagrodzenia (art. 151<sup>1</sup> § 3 Kodeksu pracy). Dodatek 100% to stawka razy godziny,
-      dodatek 50% to połowa stawki razy godziny.
+      podstawą dodatku jest 60% wynagrodzenia (art. 151<sup>1</sup> § 3 Kodeksu pracy), a normalne wynagrodzenie za te
+      godziny należy się w pełnej wysokości (§ 1: dodatek przysługuje „oprócz normalnego wynagrodzenia”). Dodatek 100% to
+      stawka razy godziny, dodatek 50% to połowa stawki razy godziny. Jeśli wynagrodzenie ma składniki zmienne, rozporządzenie
+      każe liczyć podstawę według zasad urlopowych (§ 4): kalkulator przyjmuje wpisaną kwotę jako stałą pensję miesięczną.
     </p>
 
     <h2 id="niepelny-etat">Niepełny etat: godziny ponad umowę to nie zawsze nadgodziny</h2>
@@ -143,8 +148,8 @@ const faq = [
       dostanie dodatek jak za nadgodziny (art. 151 § 5 Kodeksu pracy). Godziny do tej granicy są płatne normalnie.
     </p>
     <p>
-      Niezapłacone nadgodziny przedawniają się po 3 latach od dnia wypłaty, za każdy miesiąc osobno (art. 291 § 1
-      Kodeksu pracy); najstarszy miesiąc, o który możesz jeszcze wystąpić, pokaże
+      Niezapłacone nadgodziny przedawniają się po 3 latach od dnia, w którym wynagrodzenie powinno być wypłacone, za każdy
+      miesiąc osobno (art. 291 § 1 Kodeksu pracy); najstarszy miesiąc, o który możesz jeszcze wystąpić, pokaże
       <a href="/narzedzia/przedawnienie-wynagrodzenia">kalkulator przedawnienia</a>.
     </p>
   </Fragment>
@@ -154,6 +159,8 @@ const faq = [
   import { nadgodziny, type Wynagrodzenie } from '../../lib/narzedzia/nadgodziny';
   import { godz, wpisanaLiczba, zl } from '../../lib/narzedzia/format';
   import { nazwaMiesiaca } from '../../lib/narzedzia/czas-pracy';
+  import { typografia } from '../../lib/typografia.mjs';
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
 
   const form = document.querySelector<HTMLFormElement>('[data-nadgodziny]');
   if (form) {
@@ -188,15 +195,16 @@ const faq = [
       w('razem').textContent = zl(r.razem);
       w('stawka').textContent = zl(r.stawka);
       w('stawka-opis').textContent =
-        r.wymiar === null ? '' : `${rodzaj === 'bez-zaszeregowania' ? '60% wynagrodzenia' : 'pensja'} : ${r.wymiar} h w ${nazwaMiesiaca(miesiac, 'miejscownik')} ${rok}`;
+        r.wymiar === null ? '' : typografia(`${rodzaj === 'bez-zaszeregowania' ? '60% wynagrodzenia' : 'pensja'} : ${r.wymiar} h w ${nazwaMiesiaca(miesiac, 'miejscownik')} ${rok}`);
       w('d100').textContent = zl(r.dodatek100);
       w('d50').textContent = zl(r.dodatek50);
       w('normalne').textContent = zl(r.normalne);
-      w('wolne').textContent = `${godz(r.wolneNaWniosek)} na Twój wniosek albo ${godz(r.wolneBezWniosku)} bez wniosku`;
+      w('wolne').textContent = typografia(`${godz(r.wolneNaWniosek)} na Twój wniosek albo ${godz(r.wolneBezWniosku)} bez wniosku`);
     };
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    ustawDzisiejszeWartosci(form);
     przelicz();
   }
 </script>

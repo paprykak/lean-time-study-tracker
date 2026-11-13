@@ -1,0 +1,347 @@
+{
+ "partia": "G+H+X2",
+ "werdykty": [
+  {
+   "id": "G-1",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Według § 5 ust. 2 pkt 2 program działań trzeba wprowadzić już przy osiągnięciu progu działania. Kod sprawdza tylko przekroczenie. Przy A(8) równym 2,50 (miejscowe) albo 0,50 (ogólne) strona pisze „Poniżej progu działania” i podaje tylko § 5 ust. 1. Hałas (halas.ts) jest liczony dobrze: osiagaNdn używa >= (§ 5 ust. 2 pkt 1 i § 6 ust. 1 pkt 2 mówią „osiągają lub przekraczają” NDN), a powyzejProgu > 80 dB (§ 6 ust. 1 pkt 1 mówi „przekraczają” próg). Uwaga: § 8 (rękawice i odzież) wymaga przekroczenia, czyli >, a strona w liście zasad (linia 112) wiąże go z formułą „Od progu”.",
+   "dowod": "DU_2005_1318.txt, § 5 ust. 2: „po osiągnięciu lub przekroczeniu … 2) drgania mechaniczne — wartości progów działania pracodawca sporządza i wprowadza w życie program”; § 8: „przekraczają wartości progów działania”. node: ocenaDrgan([{a:5,godziny:2}],'miejscowe','dorosly') → a8 2.5, powyzejProgu false; [{a:0.5,godziny:8}] ogólne → a8 0.5, powyzejProgu false. W drgania-w-pracy.astro, linie 180–187, przy powyzejProgu=false jest „Poniżej progu działania”. W „Jak liczymy” (linie 123–124) stoi „obowiązki zaczynają się po jego przekroczeniu”.",
+   "poprawka": "drgania.ts: dodać pole osiagaProg: a8 >= PROG_DZIALANIA_DRGAN[rodzaj] (program z § 5 ust. 2 pkt 2) i zostawić powyzejProgu: a8 > próg (§ 8). W skrypcie strony warunek `r.osiagaProg && !szczegolna` zamiast `r.powyzejProgu`. Status: przy a8 równym progowi „Osiągnięty próg działania X”, przy większym „Powyżej progu działania X”. Obowiązki: program (§ 5 ust. 2 pkt 2), a gdy powyzejProgu, dopisek „przy zimnie i wilgoci rękawice albo odzież ochronna (§ 8)”. W „Jak liczymy”: „obowiązek programu zaczyna się po osiągnięciu progu (§ 5 ust. 2), a rękawice i odzież ochronna po jego przekroczeniu (§ 8)”. Linia 112: „Od progu: program …; powyżej progu przy zimnie i wilgoci … (§ 8)”. Porównanie musi iść na wartości niezaokrąglonej (patrz G-8).",
+   "testy": "ocenaDrgan([{a:5,godziny:2}],'miejscowe','dorosly') → {a8:2.5, osiagaProg:true, powyzejProgu:false, przekroczone:false}; [{a:0.5,godziny:8}] 'ogolne' → {a8:0.5, osiagaProg:true, powyzejProgu:false}; [{a:2.4,godziny:8}] miejscowe → osiagaProg false; [{a:2.6,godziny:8}] → osiagaProg true i powyzejProgu true."
+  },
+  {
+   "id": "G-2",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Warunek „z uwagi na warunki atmosferyczne” mają tylko ust. 2–4. Ust. 1 (najwyżej 35°C w pomieszczeniu, chyba że nie pozwalają na to względy technologiczne) obowiązuje bez względu na źródło ciepła. Kod pomija cały § 30a, gdy zPogody=false. Test utrwalający ten błąd jest w temperatura.test.ts w liniach 29–30, nie w 103.",
+   "dowod": "DU_2026_927.txt, § 30a ust. 1: „W pomieszczeniach pracy należy zapewnić temperaturę niewyższą niż 35 °C (308 K), chyba że względy technologiczne na to nie pozwalają”; ust. 2 tylko „z uwagi na warunki atmosferyczne”. temperatura.ts:51: `if (d.zPogody) { if (t > 35 && !d.wyjatek) p30a('zakaz', …) … }`. Test: `it('36°C z technologii: bez zakazu i bez § 30a', … toEqual([]))`.",
+   "poprawka": "temperatura.ts, gałąź pomieszczenia: obok `if (d.zPogody) {…}` dodać `if (!d.zPogody && t > 35 && !d.wyjatek) p30a('obowiazek', 'Pracodawca zapewnia w pomieszczeniu najwyżej 35°C, chyba że nie pozwalają na to względy technologiczne. Zakaz pracy z § 30a ust. 2 dotyczy tylko upału z pogody.', `§ 30a ust. 1 ${OGOLNE}`)`. W teście z linii 29–30 zmienić oczekiwanie.",
+   "testy": "{pomieszczenie, zwykla, 36, zPogody:false, wyjatek:false, data:'2027-01-11'} → jeden punkt {poziom:'obowiazek', podstawa zawiera '§ 30a ust. 1'}, podsumowanie 'obowiazki'; to samo z data:'2026-11-13' → poziom 'zapowiedz'; 36, zPogody:false, wyjatek:true → []; 35, zPogody:false → []."
+  },
+  {
+   "id": "G-3",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "§ 29 ust. 2 rozszerza obowiązek jadalni na pracodawców z 20 i mniej pracownikami przy pracach szczególnie brudzących albo przy kontakcie ze szkodliwymi środkami chemicznymi, promieniotwórczymi lub materiałami zakaźnymi. FAQ (linia 25) i tabela (linia 101) mówią to poprawnie, ale wynik kalkulatora (linie 79 i 146) i normy-sanitarne.ts:55 nie biorą tego pod uwagę. Wpis w rejestrze to pomija.",
+   "dowod": "DU_2003_1650.txt, około linii 12623: „Obowiązek określony w ust. 1 dotyczy również pracodawców zatrudniających dwudziestu i mniej pracowników, jeżeli narażeni są na kontakt ze szkodliwymi środkami chemicznymi lub promieniotwórczymi, materiałami biologicznie zakaźnymi albo przy pracach szczególnie brudzących”. Kod: `jadalnia: razem > 20`. Opcja „brudzaca” na stronie: „Praca brudząca albo z substancjami szkodliwymi lub zakaźnymi”, a „przepustowa”: „trującymi, zakaźnymi…”.",
+   "poprawka": "normy-sanitarne.ts: `jadalnia: razem > 20 || d.praca === 'brudzaca' || d.natryski === 'przepustowa'` oraz pole `jadalniaZ: razem > 20 ? 'liczba' : … ? 'praca' : null`. Tekst wyniku (SSR, linia 79, i skrypt, linia 146): przy 'liczba' „wymagana (ponad 20 osób na zmianie)”, przy 'praca' „wymagana przy pracach brudzących lub szkodliwych (§ 29 ust. 2)”. src/data/narzedzia.ts, krotko: „… Jadalnia od 21 osób albo przy pracach brudzących.” (do 110 znaków).",
+   "testy": "{kobiety:0, mezczyzni:10, praca:'brudzaca', natryski:'brak'} → jadalnia true; {0,10,'zwykla','brak'} → false; {0,10,'zwykla','przepustowa'} → true; {0,21,'zwykla','brak'} → true; {0,20,'zwykla','brak'} → false."
+  },
+  {
+   "id": "G-4",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Pomiar powtórzony: szerokość tekstu z canvas w foncie pola, porównana z clientWidth pola bez paddingu.",
+   "dowod": "Przy 320 px: dz-osoba ma 220 px, ucięte 3 z 6 opcji; dz-czynnosc ma 220 px, ucięte 5 z 6. Przy 412 px dz-czynnosc ma 312 px, ucięte 3 z 6 („Pod górę (schody, pochylnie) do 30°, na wysokość ponad 4 m”, „… ponad 30° …”, „Zespołowo: przedmiot dłuższy niż 4 m, na jedną osobę”). Skrypt: GHX2-wer/sel.cjs.",
+   "poprawka": "Jak w znalezisku audytora: krótkie etykiety w OSOBY i CZYNNOSCI, warunki (powyżej 4 m, ponad 4 m) w opisie pod polem.",
+   "testy": "E2E 320 px: dla każdej opcji szerokość tekstu (canvas) nie większa niż clientWidth pola minus padding."
+  },
+  {
+   "id": "G-5",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Pomiar powtórzony.",
+   "dowod": "bhp-grupa: przy 320 px (220 px) ucięte 5 z 7 opcji, przy 412 px (312 px) 3 z 7, te same nazwy, które podał audytor.",
+   "poprawka": "Jak w znalezisku audytora: krótka etykieta w GRUPY dla <option>, pełna nazwa w tabeli i w opisie pod polem.",
+   "testy": "Jak w G-4."
+  },
+  {
+   "id": "G-6",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Ucięcie opcji potwierdzone pomiarem. Linia 138: „zaczną obowiązywać po 6 miesiącach”, nagłówek w linii 127: „Co się zmienia 11 stycznia 2027 r.”. Po 11.01.2027 r. tekst będzie nieaktualny, a „Dziś” i opcja z datą dadzą ten sam wynik.",
+   "dowod": "t-data przy 412 px ma 262 px i „Od 11 stycznia 2027 r. (nowe przepisy o upale)” się nie mieści; t-wysilek przy 320 px ucina „Biuro albo lekka praca fizyczna”.",
+   "poprawka": "Jak w znalezisku audytora. Tekst z linii 138 liczyć z daty budowania: `dzisWPolsce() >= OD_30A ? 'obowiązują od 11 stycznia 2027 r.' : 'zaczną obowiązywać 11 stycznia 2027 r.'`. Przy dzisWPolsce() >= OD_30A ukryć pole „Stan prawny na dzień” w SSR (hidden).",
+   "testy": "-"
+  },
+  {
+   "id": "G-7",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Pomiar powtórzony.",
+   "dowod": "d-rodzaj przy 320 px (220 px): ucięta opcja „Na całe ciało (siedzisko, podest)”; przy 412 px wszystko się mieści.",
+   "poprawka": "Opcja „Na całe ciało”, przykłady (siedzisko, podest) w opisie pod polem.",
+   "testy": "-"
+  },
+  {
+   "id": "G-8",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Do progów porównywana jest wartość zaokrąglona. Problem jest szerszy, niż opisał audytor: 80 dB przez 8 h 05 min (80,045 dB) daje powyzejProgu=false, czyli brak ochronników z § 6 ust. 1 pkt 1. Przy drganiach 2,8 m/s² przez 8 h 01 min (2,8029) strona nie pokazuje nawet „na granicy”, tylko „Powyżej progu działania”, bez § 9. W drugą stronę zaokrąglenie zawyża: 84,96 dB → 85,0 daje osiagaNdn=true.",
+   "dowod": "node: ocenaHalasu([{poziom:85,godziny:8+5/60}]) → lex 85, przekroczone false; ocenaHalasu([{poziom:80,godziny:8+5/60}]) → lex 80, powyzejProgu false; ocenaDrgan([{a:2.8,godziny:8+1/60}],'miejscowe','dorosly') → a8 2.8, przekroczone false. Python: 85+10·lg(8,0833/8) = 85,045; 2,8·√(8,0167/8) = 2,8029.",
+   "poprawka": "halas.ts: wydzielić `ekspozycja8hDokladna(okresy)` bez Math.round. ekspozycja8h = Math.round(dokładna·10)/10 tylko do wyświetlenia. W ocenaHalasu porównania (przekroczone, osiagaNdn, powyzejProgu) robić na wartości dokładnej. Tak samo drgania.ts: `ekspozycjaA8Dokladna` i porównania w ocenaDrgan (także osiagaProg z G-1). Przy A(8) dokładnie równym progowi (np. 5 m/s² × 2 h) wynik w liczbach zmiennoprzecinkowych jest dokładny (√6,25 = 2,5), więc G-1 działa także bez zaokrąglania.",
+   "testy": "ocenaHalasu([{poziom:85,godziny:8+5/60}],'dorosly').przekroczone → true; ocenaHalasu([{poziom:80,godziny:8+5/60}],'dorosly').powyzejProgu → true; ocenaHalasu([{poziom:84.96,godziny:8}],'dorosly').osiagaNdn → false (lex do wyświetlenia 85); ocenaDrgan([{a:2.8,godziny:8+1/60}],'miejscowe','dorosly').przekroczone → true; ocenaHalasu([{poziom:85,godziny:8}]).przekroczone → false (bez zmian)."
+  },
+  {
+   "id": "G-9",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "grep 'aria-invalid' zwraca 0 w halas-w-pracy, drgania-w-pracy, normy-sanitarne, powierzchnia-na-pracownika i odszkodowanie-za-wypadek-przy-pracy, a 1 w temperaturze, dźwiganiu i szkoleniu BHP.",
+   "dowod": "Wynik grep -c w src/pages/narzedzia/*.astro.",
+   "poprawka": "Jak w znalezisku audytora (w pętli walidacji zapamiętać indeks wiersza z błędem i ustawić aria-invalid na jego polach, przy braku błędu je zdjąć).",
+   "testy": "E2E: po „abc” w #h-poziom-0 pole ma aria-invalid=\"true\", po poprawce atrybutu nie ma."
+  },
+  {
+   "id": "G-10",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "plikIcs tworzy tylko VEVENT całodniowe z TRANSP:TRANSPARENT, bez VALARM. Biblioteki używają też dni-wolne-od-pracy, termin-wyplaty-wynagrodzenia, badania-udt i waznosc-uprawnien-udt, więc VALARM zmieni wszystkie te pliki.",
+   "dowod": "src/lib/narzedzia/kalendarz-ics.ts, linie 35–48; szkolenie-okresowe-bhp.astro:96: „Plik ma przypomnienie w dniu terminu i … dni wcześniej”.",
+   "poprawka": "Najbezpieczniej poprawić tekst w szkolenie-okresowe-bhp.astro:96 (i podobne zdania w badania-udt i waznosc-uprawnien-udt): „Plik dodaje do kalendarza dwa wydarzenia: dzień terminu i dzień 60 dni wcześniej”. Druga możliwość: opcjonalny VALARM (ACTION:DISPLAY, TRIGGER:-PT15H, DESCRIPTION) w plikIcs za parametrem, z testem w terminy.test.ts.",
+   "testy": "Gdy VALARM: plik zawiera 'BEGIN:VALARM' i 'TRIGGER:-PT15H' w każdym VEVENT."
+  },
+  {
+   "id": "G-11",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "„Jak liczymy” (linie 130–137) opisuje metodę (art. 112 KC), ale nie mówi, że przepis nie określa, od czego liczyć okres („raz w roku” może znaczyć raz w roku kalendarzowym). Zasada 2 standardu wymaga takiej informacji.",
+   "dowod": "DU_2024_1327.txt, § 15 ust. 1: „nie rzadziej niż raz na 3 lata … nie rzadziej niż raz w roku”.",
+   "poprawka": "Dopisać zdanie z poprawki audytora na końcu akapitu „Jak liczymy termin”.",
+   "testy": "-"
+  },
+  {
+   "id": "G-12",
+   "werdykt": "czesciowo",
+   "uzasadnienie": "W temperatura.test.ts nie ma dat 2027-01-10/11 ani temperatur progowych (są tylko 5, 12, 16, 20, 21, 22, 26, 29, 33, 36). halas.test.ts:28 ma już test dokładnie 85 dB (osiagaNdn true, przekroczone false). Brakuje tam 80 dB dokładnie i przypadków z G-8. drgania.test.ts nie ma 2,5, 0,5 ani 2,8 w ocenaDrgan.",
+   "dowod": "grep wartości 'temperatura:' i 'data:' w temperatura.test.ts; halas.test.ts:25–31; drgania.test.ts:19–23.",
+   "poprawka": "Dodać testy temperatury z poprawki audytora (data '2027-01-10' → 'zapowiedz', '2027-01-11' → 'zakaz'/'obowiazek'; 14 → brak § 30, 13.9 → § 30; 28 → bez ust. 3, 28.1 → ust. 3; 35 → bez zakazu, 35.1 → zakaz; otwarta, duży wysiłek: 32 → bez zakazu, 32.1 → zakaz). Hałas: 80 dB × 8 h → powyzejProgu false. Drgania: testy z G-1 i G-8. Testu 85 dB nie dublować.",
+   "testy": "Jak w poprawce."
+  },
+  {
+   "id": "H-1",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "SSR (linia 95) i skrypt (linia 176) wypisują `${godziny} godzin`. Wymiar policzony z czas-pracy.ts: 2027 r. przy 8 h to styczeń 152 i maj 144 („godziny”), przy 7 h styczeń 133, a marzec, kwiecień, czerwiec, lipiec, sierpień i wrzesień po 154. W 2026 r. lipiec przy 8 h to 184.",
+   "dowod": "node wymiarMiesiaca: 2026: 160,160,176,168,160,168,184,160,176,176,160,160; 2027: 152,160,176,176,144,176,176,176,176,168,160,168. odmiana w src/lib/redakcja.ts ma sygnaturę odmiana(n, [jeden, kilka, wiele]) i zwraca liczbę razem ze słowem.",
+   "poprawka": "SSR i skrypt: `${odmiana(r.godziny, ['godzina', 'godziny', 'godzin'])} (${r.dni} × ${r.doba} godzin)` (po „×” zawsze 7 albo 8, więc „godzin” jest dobre).",
+   "testy": "Jednostkowo albo E2E: marzec 2027, stopień umiarkowany → „154 godziny (22 × 7 godzin)”; styczeń 2027, lekki → „152 godziny (19 × 8 godzin)”; luty 2027, lekki → „160 godzin”."
+  },
+  {
+   "id": "H-2",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Cztery szablony „Masz ${r.lata} lat.” bez odmiany (linie 105, 216, 222, 223). Przy osobie dorosłej (pole min=1990-01-01) wychodzi np. „Masz 22 lat”.",
+   "dowod": "Linie 105, 216, 222, 223 w pracownik-mlodociany.astro; walidacja (191–192) nie ogranicza wieku.",
+   "poprawka": "`Masz ${odmiana(r.lata, ['rok', 'lata', 'lat'])}.` we wszystkich czterech miejscach (odmiana z ../../lib/redakcja, tablica jako drugi argument).",
+   "testy": "Urodzenie 2004-01-01, dzień 2026-11-13 → „Masz 22 lata.”; 2008-05-01 → „Masz 18 lat.”; 2011-01-01 → „Masz 15 lat.”."
+  },
+  {
+   "id": "H-3",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Pomiar powtórzony (szerokość pola bez paddingu). Liczby różnią się trochę od audytora, kierunek ten sam. Wyjątek: „Motorower” w delegacji krajowej się mieści.",
+   "dowod": "320 px: utb-rodzaj ucięte 18 z 22, udt-rodzaj 29 z 35, z-panstwo 5 z 120 (Demokratyczna Republika Konga, 3 opcje USA, Zjednoczone Emiraty Arabskie), d-pojazd (91 px) „Auto ponad 900 cm³” i „Auto do 900 cm³”. 412 px: utb 17, udt 15, z-panstwo 1 (USA poza NY i Waszyngtonem), d-pojazd (137 px) „Auto ponad 900 cm³”.",
+   "poprawka": "Jak w znalezisku audytora (pole krotko w URZADZENIA, krótsze opcje konserwacji UDT, „USA”, „USA: Nowy Jork”, „USA: Waszyngton”, pole pojazdu w osobnym wierszu na całą szerokość). Okres ważności, który znika z opcji UDT, musi zostać w opisie albo wyniku.",
+   "testy": "Jak w G-4."
+  },
+  {
+   "id": "H-4",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Lead w linii 52: „posiłki, które dostałeś albo dostałaś za darmo”, wbrew zasadzie 6. To samo zgłasza X2-11.",
+   "dowod": "delegacja-krajowa.astro:52.",
+   "poprawka": "„… zaznacz posiłki zapewnione za darmo, a policzymy, ile się należy.”",
+   "testy": "-"
+  },
+  {
+   "id": "H-5",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Rok wpisany na stałe w tytule (49: „Delegacja krajowa 2026: …”, zagraniczna 49: „Dieta zagraniczna 2026: …”) i w pytaniu FAQ (linia 22: „w 2026 roku”). Rok nie pochodzi z daty budowania, tylko z literału, więc na stronach z 2027 r. zostanie stary. X2-13 to duplikat.",
+   "dowod": "grep '2026' w obu plikach.",
+   "poprawka": "`const rok = Number(dzisWPolsce().slice(0, 4))`, a w tytule i FAQ `${rok}`. Długość tytułu się nie zmienia (46 i 42 znaki, limit 48).",
+   "testy": "-"
+  },
+  {
+   "id": "H-6",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Art. 182^3 § 1^1: żadna część nie może być krótsza niż tydzień, a cały urlop musi się zmieścić do ukończenia przez dziecko 12 miesięcy (§ 1 pkt 1). Rozpoczęcie później niż na 7 dni przed końcem jest niemożliwe, a całe 2 tygodnie trzeba zacząć najpóźniej 13 dni przed końcem (tak liczy urlop-ojcowski.ts:17: ostatniStart = koniec − (14 − 1)). planRodzica przyjmuje dostepne = start <= do.",
+   "dowod": "DU_2026_1245.txt, art. 182[3] § 1 i § 1[1]: „niedłużej jednak niż do: 1) ukończenia przez dziecko 12 miesiąca życia”; „jednorazowo albo niewięcej niż w 2 częściach, z których żadna nie może być krótsza niż tydzień”. rodzic.ts:45: `dostepne: start <= u.do`.",
+   "poprawka": "rodzic.ts: w UprawnienieRodzica dodać `minDni?: number` (ojcowski: 7) i `ostatniStart` (ojcowski: dodajDni(do, -13) dla całych 2 tygodni). W planRodzica `dostepne: start <= (u.minDni ? dodajDni(u.do, -(u.minDni - 1)) : u.do)`. Strona: przy ojcowskim pokazać „całe 2 tygodnie: rozpoczęcie najpóźniej {ostatniStart}; jeden tydzień najpóźniej {do − 6}”.",
+   "testy": "Urodzenie 2024-03-15 → do 2025-03-14. planRodzica(…,'2025-03-08') ojcowski.dostepne → true; '2025-03-09' → false; '2025-03-12' → false (dziś true); ostatniStart = '2025-03-01'."
+  },
+  {
+   "id": "H-7",
+   "werdykt": "czesciowo",
+   "uzasadnienie": "„Jak liczymy” (linie 151–152) opisuje przyjęty wariant („traktujemy jak zmniejszony wymiar 26 dni: należy się 1 stycznia tego roku albo po roku pracy”), ale nie mówi, że przepis nie rozstrzyga przypadku, gdy rok pracy mija po 18. urodzinach. Przypadek urodzin 1 stycznia nie jest błędem: warunek „prawo do urlopu uzyskał przed ukończeniem 18 lat” spełnia wcześniejszy wpis 12 albo 26 dni, a nie wpis z 1 stycznia.",
+   "dowod": "Art. 205 § 2 (DU_2026_1245.txt, linie 3771–3773); mlodociany.ts:77–90.",
+   "poprawka": "Dopisać w „Jak liczymy”: „Przepis nie mówi wprost, czy 20 dni należy się, gdy rok pracy mija już po 18. urodzinach. Przyjmujemy wariant korzystny dla pracownika.” Bez zmiany logiki i bez testu urodzin 1 stycznia jako błędu.",
+   "testy": "Opcjonalnie: urlopMlodocianego('1993-01-01','2009-09-01') → ostatni wpis {data:'2011-01-01', dni:20}."
+  },
+  {
+   "id": "H-8",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Zasada 5: linki do innych narzędzi tylko w sekcji wyjaśnienia. Ten sam link jest już na liście „Zasady”.",
+   "dowod": "delegacja-zagraniczna.astro, <p id=\"z-czas-opis\"> z <a href=\"/narzedzia/delegacja-krajowa\">.",
+   "poprawka": "Jak w znalezisku audytora.",
+   "testy": "-"
+  },
+  {
+   "id": "H-9",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "DIETY_ZAGRANICZNE ma 119 wierszy. Według komentarza w src/data/diety-zagraniczne.ts to lp. 1–114 z tabeli, Gibraltar, Hongkong i Tajwan spod tabeli oraz 2 dodatkowe wiersze USA (Nowy Jork, Waszyngton) z uwag, czyli 114 + 3 = 117 państw i terytoriów (+ lp. 115 „inne”). Hongkong i Tajwan formalnie nie są państwami, ale załącznik je wymienia.",
+   "dowod": "grep 'panstwo:' w diety-zagraniczne.ts: 119 wpisów w tablicy (bez interfejsu i INNE_PANSTWA), w tym 3 wiersze „Stany Zjednoczone Ameryki…”. Opis (linia 50) i krotko w src/data/narzedzia.ts:302 mówią „119 państw”.",
+   "poprawka": "W opisie strony i w krotko: „stawki dla 117 państw i terytoriów” albo „dla wszystkich państw z załącznika” (krotko do 110 znaków).",
+   "testy": "Jednostkowo: new Set(DIETY_ZAGRANICZNE.map(d => d.panstwo.replace(/ \\(poza.*\\)|: .*/, ''))).size === 117."
+  },
+  {
+   "id": "H-10",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Tytuł aktu (DU_2017_796.json): „… w sprawie wykazu prac uciążliwych, niebezpiecznych lub szkodliwych dla zdrowia kobiet w ciąży i kobiet karmiących dziecko piersią”. Ta sama stara nazwa „w sprawie prac wzbronionych kobietom w ciąży” jest też w drgania-w-pracy.astro:33 (FAQ) i halas-w-pracy.astro:31 (FAQ).",
+   "dowod": "grep 'prac wzbronionych kobietom' w src/pages/narzedzia/: drgania-w-pracy:33, praca-w-ciazy:13 i 88, halas-w-pracy:31.",
+   "poprawka": "We wszystkich czterech miejscach: „rozporządzenie w sprawie prac uciążliwych dla kobiet w ciąży i karmiących (Dz.U. 2017 poz. 796)” albo pełny tytuł.",
+   "testy": "-"
+  },
+  {
+   "id": "H-11",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Rozporządzenie z 2002 r. (DU_2002_271, § 1 ust. 2) samo odsyła warunki zwrotu za podróże służbowe do przepisów o podróżach. Limit stawek za podróż służbową wynika z § 3 ust. 4 rozporządzenia dla sfery budżetowej (DU_2023_2190), a nie z § 2 rozporządzenia z 2002 r., które FAQ podaje jako podstawę. W prywatnej firmie warunki ustala układ, regulamin albo umowa (art. 77^5 § 3 Kp), a z PIT zwolniona jest tylko kwota do stawek z rozporządzenia. Zdanie „nie wyżej niż” jest też w opisie pola d-pojazd-opis (linia 129, nie 141).",
+   "dowod": "DU_2002_271.txt, § 1 ust. 1–2 (jazdy lokalne; podróże „określają przepisy” o podróżach); DU_2026_1245.txt, art. 77[5] § 3. Strona, linia 39: „Stawkę za kilometr ustala pracodawca, ale nie wyżej niż …”; linia 129: „najwyżej … (§ 3 ust. 3–4)”.",
+   "poprawka": "FAQ: „W sferze budżetowej stawkę za kilometr ustala pracodawca, nie wyżej niż {…} (§ 3 ust. 4 rozporządzenia w sprawie należności z tytułu podróży służbowej, stawki z rozporządzenia Ministra Infrastruktury z 25 marca 2002 r.). W firmie prywatnej stawkę ustala regulamin albo umowa (art. 77⁵ § 3 Kp); nadwyżka ponad te kwoty nie jest zwolniona z podatku.” Linia 129: „W sferze budżetowej najwyżej … (§ 3 ust. 4); kalkulator liczy tę stawkę.”",
+   "testy": "-"
+  },
+  {
+   "id": "H-12",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Własna funkcja odmianaMiesiecy (linia 93) i co() (linia 61) bez odmiana(). Dziś działa (okresy 1–3 lata), więc waga niska.",
+   "dowod": "badania-utb.ts:61, 93, 99.",
+   "poprawka": "`co = (lat) => lat === 1 ? 'co rok' : `co ${odmiana(lat, ['rok', 'lata', 'lat'])}``, a w linii 99 odmiana(m, ['miesiąc', 'miesiące', 'miesięcy']) w miejsce `${m} ${odmianaMiesiecy(m)}`.",
+   "testy": "co(5) → 'co 5 lat'; co(2) → 'co 2 lata'; ileMiesiecy dla 22 → 'za 22 miesiące'."
+  },
+  {
+   "id": "X2-1",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "staz-pracy.astro:73: `(${s.lata} lat)` daje „(3 lat)” i „(4 lat)”. kalkulator-urlopu.astro ma własną funkcję lata() (linie 9 i 192) zamiast odmiana(). Dopiski „4 lata nauki (4 lata)” mówią o dwóch różnych rzeczach (czas nauki i zaliczenie do stażu), więc nie są zdublowane: to nie jest błąd.",
+   "dowod": "SZKOLY w urlop.ts: zasadnicza 3, technikum-4 i liceum 4.",
+   "poprawka": "staz-pracy.astro:73: `${s.lata ? ` (${odmiana(s.lata, ['rok', 'lata', 'lat'])})` : ''}`. Przy okazji zastąpić lokalne lata() w kalkulator-urlopu.astro funkcją odmiana(). Dopisków „(4 lata)” nie usuwać, ewentualnie „(do stażu 4 lata)”.",
+   "testy": "Opcja zasadnicza → „… (3 lata)”, technikum-5 → „(5 lat)”."
+  },
+  {
+   "id": "X2-2",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Skrypt (linia 136): „Najwyżej ${maks} tygodni”, przy maks 32 albo 34 powinno być „tygodnie”. SSR (linia 71) ma poprawnie „32 tygodnie”.",
+   "dowod": "zasilek-macierzynski.astro, linie 71 i 136.",
+   "poprawka": "`Najwyżej ${odmiana(maks, ['tydzień', 'tygodnie', 'tygodni'])}: z ${tygodnieRodzicielskiego(dzieci)} tygodni 9 przysługuje wyłącznie ojcu.` (sygnatura z tablicą, nie z 4 argumentami jak w poprawce audytora).",
+   "testy": "E2E: 1 dziecko → „Najwyżej 32 tygodnie”, 2 dzieci → „Najwyżej 34 tygodnie”."
+  },
+  {
+   "id": "X2-3",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "W HEAD szablon `${wynik.zmian} zmian` był błędny. W drzewie roboczym (niezatwierdzona zmiana innego agenta) linia 221 ma już odmiana(wynik.zmian, ['zmiana', 'zmiany', 'zmian']) z typografia().",
+   "dowod": "git diff src/pages/narzedzia/kontrola-grafiku.astro.",
+   "poprawka": "Zatwierdzić zmianę z drzewa roboczego.",
+   "testy": "E2E: miesiąc z 22 zmianami → „22 zmiany”."
+  },
+  {
+   "id": "X2-4",
+   "werdykt": "czesciowo",
+   "uzasadnienie": "Duplikat H-2. Dowód nieścisły: pole urodzenia ma min=\"1990-01-01\", choć skrypt (novalidate) tego nie sprawdza. Poprawka audytora ma złą sygnaturę: odmiana przyjmuje tablicę.",
+   "dowod": "pracownik-mlodociany.astro:67.",
+   "poprawka": "Jak w H-2.",
+   "testy": "Jak w H-2."
+  },
+  {
+   "id": "X2-5",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Rachunek niezależny (czas-pracy.ts): 2027 r. styczeń 152 h, maj 144 h, cały rok 2008; 2028 r. cały rok 1992, styczeń, kwiecień i grudzień po 152. Przy 2008 jest „godzin” (dobrze), przy 1992 i 152 powinno być „godziny”. stawka-godzinowa.astro i FAQ kontroli grafiku są już poprawione w drzewie roboczym (niezatwierdzone). Zostają dodatek-za-prace-w-nocy.astro:173 i wymiar-czasu-pracy.astro:31 i 114.",
+   "dowod": "node wymiarMiesiaca(2027/2028); git diff stawka-godzinowa.astro i kontrola-grafiku.astro.",
+   "poprawka": "dodatek-za-prace-w-nocy.astro:173: `{odmiana(przyklad.wymiar.godziny, ['godzina', 'godziny', 'godzin'])} do przepracowania`; wymiar-czasu-pracy.astro:31 i 114: `${odmiana(t.rocznie.godziny, ['godzina', 'godziny', 'godzin'])}` (import odmiana już jest).",
+   "testy": "odmiana(152, […]) → '152 godziny'; odmiana(1992, […]) → '1992 godziny'; odmiana(2008, […]) → '2008 godzin'."
+  },
+  {
+   "id": "X2-6",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "FAQ w linii 30 ma literał „w 2026 r. 31,40 zł”. Kwota na 2027 r. jest ogłoszona: Dz.U. 2026 poz. 1213 (rozporządzenie RM z 14.09.2026 r., ogłoszone 15.09.2026 r., wchodzi w życie 1.01.2027 r.), w prawo.ts:514 stawkaGodzinowa 32.3.",
+   "dowod": "API Sejmu DU/2026/1213: entryIntoForce 2027-01-01.",
+   "poprawka": "Rok z daty budowania i PLACA_MINIMALNA[rok].stawkaGodzinowa (jak w placa-minimalna.astro), np. `Tak, w ${rok} r. ${zl(PLACA_MINIMALNA[rok].stawkaGodzinowa)} brutto …`. Odesłanie do narzędzia przenieść jako link do wyjaśnienia.",
+   "testy": "-"
+  },
+  {
+   "id": "X2-7",
+   "werdykt": "odrzucone",
+   "uzasadnienie": "Już poprawione w commicie ff220b3 (2026-11-13 00:49, przed zapisaniem X2.json): rok z rokKosztu(dzisWPolsce()), PLACA_MINIMALNA[rok], ROKI_KOSZTU 2026/2027 (limit 300 990 zł z M.P. 2026 poz. 1098, stopy z 2026 r. opisane na stronie), test dla 4900 zł w 2027 r. (koszt-pracodawcy.test.ts:37–40).",
+   "dowod": "koszt-pracodawcy.ts:58 `PLACA_MINIMALNA[rok]`; koszt-pracodawcy.astro:10–14.",
+   "poprawka": "Brak.",
+   "testy": "Istnieją."
+  },
+  {
+   "id": "X2-8",
+   "werdykt": "czesciowo",
+   "uzasadnienie": "Mechanizm opisany dobrze (src/components/artykul/Faq.astro, a nie narzedzia/Faq.astro: ^n zamienia na <sup>). Skala jest jednak mniejsza: ¹ ² ³ (U+00B9, U+00B2, U+00B3) leżą w zakresie U+00A0-00FF, który podzbiór fontu obejmuje (scripts/fonty/znaki.mjs: zakres(0xa0, 0xff), test sprawdza glify). Poza fontem są tylko ⁰ i ⁴–⁹ (U+2070, U+2074–2079). Znaki spoza fontu mają w FAQ tylko 6 stron: delegacja-krajowa, delegacja-zagraniczna, dyzur-w-pracy, rodzic-w-pracy, wyplata-z-nadgodzinami, zwrot-kosztow-szkolenia. Pozostałe 15 z listy używa tylko ¹²³: wygląd niespójny z <sup>, ale font się nie zmienia.",
+   "dowod": "Skrypt Pythona na blokach const faq w src/pages/narzedzia/*.astro; fonty.css: unicode-range bez U+2070-2079.",
+   "poprawka": "Najprościej i dla FAQ, i dla tekstów skryptów: w scripts/fonty/znaki.mjs dopisać do TYPOGRAFIA '\\u2070\\u2074\\u2075\\u2076\\u2077\\u2078\\u2079' i uruchomić `npm run fonty` (Noto Sans ma blok indeksów górnych; test fonty.test.mjs potwierdzi glify i unicode-range). Jeśli fontu nie ruszamy: w FAQ 6 wymienionych stron zamienić indeksy Unicode na ^n.",
+   "testy": "fonty.test.mjs przechodzi z nowym zestawem; unicode-range zawiera U+2070 i U+2074-2079."
+  },
+  {
+   "id": "X2-9",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "10 wymienionych stron nie ma żadnego href=\"/narzedzia/…\". Do badania-udt, koszt-pracodawcy i temperatura-w-pracy nie linkuje żadna strona. placa-minimalna i stawka-godzinowa mają dziś po jednym linku przychodzącym z nowych, niezatwierdzonych stron (wynagrodzenie-za-niepelny-miesiac, praca-w-niedziele).",
+   "dowod": "grep -o 'href=\"/narzedzia/' w src/pages/narzedzia/*.astro.",
+   "poprawka": "Jak w znalezisku audytora: jedno zdanie z linkiem w slocie wyjaśnienia dla każdej pary, bez linków w FAQ.",
+   "testy": "-"
+  },
+  {
+   "id": "X2-10",
+   "werdykt": "czesciowo",
+   "uzasadnienie": "Stosowanie art. 115 KC (przez art. 300 Kp) do terminów z art. 109 § 1 da się obronić: nałożenie kary to czynność. To więc nie jest twardy błąd. Jest to jednak wariant niekorzystny dla pracownika, a „Jak liczymy” (linie 87–88) wspomina przesunięcie tylko przy sprzeciwie. Zasada 2 standardu wymaga wariantu bezpiecznego i opisu.",
+   "dowod": "kara-porzadkowa.ts:21–22 (przesunZDniaWolnego dla 2 tygodni i 3 miesięcy); komentarz w linii 5–6 tego pliku; przedawnienie.ts:8 (bez art. 115).",
+   "poprawka": "kara-porzadkowa.ts: do2tygodni = dodajDni(wiadomosc, 14), do3miesiecy = dodajMiesiace(naruszenie, 3), bez przesunięcia. Dodać pole poPrzesunieciu = przesunZDniaWolnego(ostatniDzienKary).koniec, a gdy różni się od ostatniDzienKary, wynik ma brzmieć „termin niepewny”. „Jak liczymy”: „Przepis nie mówi wprost, czy sobota i dzień wolny przesuwają termin na ukaranie. Podajemy dzień bez przesunięcia; przy art. 115 KC kara byłaby jeszcze w terminie do {data}.” Przesunięcie zostawić dla sprzeciwu (art. 112 § 1).",
+   "testy": "Wiadomość w sobotę 2026-11-14 → 2 tygodnie: do2tygodni '2026-11-28' (sobota), poPrzesunieciu '2026-11-30'; ukaranie '2026-11-30' → wTerminie false (albo status 'niepewny')."
+  },
+  {
+   "id": "X2-11",
+   "werdykt": "czesciowo",
+   "uzasadnienie": "zwolnienie-na-l4.astro:75 i 147 („niezdolny albo niezdolna”) i delegacja-krajowa.astro:52 potwierdzone (to drugie to duplikat H-4). „Jestem jedynym uprawnionym rodzicem albo opiekunem” (urlop-wychowawczy.astro:64) to rzeczowniki używane w przepisie (art. 186) w funkcji neutralnej, a nie forma czasownika w rodzaju: zmiana opcjonalna.",
+   "dowod": "grep w trzech plikach.",
+   "poprawka": "L4: „…, jeśli niezdolność do pracy trwa dalej.” (SSR i skrypt). Delegacja: jak w H-4. Wychowawczy bez zmian albo „Tylko ja mam prawo do urlopu (jedyny rodzic albo opiekun)”.",
+   "testy": "-"
+  },
+  {
+   "id": "X2-12",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Limit 48 z zasady 9 dotyczy propa `tytul`, czyli tytułu BEZ sufiksu: StronaNarzedzia.astro:55 dopisuje „ | Rytm Hali” (12 znaków), więc 48 + 12 = 60 i to zgadza się z „zalecane do 60” w kontroli SEO. scripts/seo-check.mjs:69–74 liczy cały <title> z sufiksem w surowym HTML i tylko ostrzega powyżej 65 znaków, czyli dopiero powyżej 53 bez sufiksu. Opis ostrzega dopiero powyżej 165. Dlatego obecna kontrola przepuszcza wszystkie przekroczenia. Mój pomiar na podglądzie: 16 tytułów ponad 48 (49–53 znaki; najdłuższe: kalkulator-l4, okres-wypowiedzenia, temperatura-w-pracy po 53) i 17 opisów ponad 155 (156–164).",
+   "dowod": "GHX2-wer/lim.py (html.unescape, bez sufiksu). Komentarz w StronaNarzedzia.astro:21 („do ok. 50 znaków”) różni się od zasady 9: plik poza zakresem.",
+   "poprawka": "Skrócić teksty z list. W scripts/seo-check.mjs dla adresów /narzedzia/<slug> (bez strony indeksu) dodać regułę-błąd: `tytul.replace(/ \\| Rytm Hali$/, '')` po zdekodowaniu encji ma najwyżej 48 znaków, opis po zdekodowaniu najwyżej 155. Dla innych stron zostawić dzisiejsze ostrzeżenia. Tytuły i opisy z rokiem albo kwotą z szablonu (np. wymiar-czasu-pracy „2026 i 2027”) sprawdzić także przy roku dwucyfrowo dłuższym.",
+   "testy": "Test jednostkowy reguły: tytuł 49 znaków + sufiks → błąd; 48 → ok; opis z &quot; liczony po zdekodowaniu."
+  },
+  {
+   "id": "X2-13",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Duplikat H-5 (rok wpisany w tytule, nie z daty budowania).",
+   "dowod": "delegacja-krajowa.astro:49, delegacja-zagraniczna.astro:49.",
+   "poprawka": "Jak w H-5.",
+   "testy": "-"
+  }
+ ],
+ "nowe": [
+  {
+   "id": "GHX2-N1",
+   "slug": "urlop-w-agencji-pracy",
+   "wymiar": "tresc-ux",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/urlop-w-agencji-pracy.astro",
+   "linia": 15,
+   "problem": "FAQ ma formę rodzajową „za który wykorzystałeś albo wykorzystałaś urlop u poprzedniego …” (zasada 6).",
+   "dowod": "grep -oE '(łeś|łaś) albo' w src/pages/narzedzia/*.astro.",
+   "poprawka": "„Urlop nie przysługuje za okres, za który urlop został już wykorzystany u poprzedniego …”."
+  },
+  {
+   "id": "GHX2-N2",
+   "slug": "l4-po-zwolnieniu",
+   "wymiar": "tresc-ux",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/l4-po-zwolnieniu.astro",
+   "linia": 28,
+   "problem": "FAQ ma formę rodzajową „nie nabyłeś lub nie nabyłaś prawa do zasiłku” (zasada 6).",
+   "dowod": "grep -noE '[a-ząęółśżźćń]+łeś' w src/pages/narzedzia/*.astro.",
+   "poprawka": "„… albo w czasie ubezpieczenia nie powstało prawo do zasiłku z …”."
+  },
+  {
+   "id": "GHX2-N3",
+   "slug": "halas-w-pracy / drgania-w-pracy",
+   "wymiar": "prawo",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/halas-w-pracy.astro",
+   "linia": 31,
+   "problem": "FAQ obu stron (halas-w-pracy:31, drgania-w-pracy:33) nazywa akt „rozporządzeniem w sprawie prac wzbronionych kobietom w ciąży”, czyli nazwą aktu uchylonego (jak w H-10).",
+   "dowod": ".cache/narzedzia/prawo/DU_2017_796.json, title: „… w sprawie wykazu prac uciążliwych, niebezpiecznych lub szkodliwych dla zdrowia kobiet w ciąży i kobiet karmiących dziecko piersią”.",
+   "poprawka": "Ta sama nazwa co w poprawce H-10."
+  },
+  {
+   "id": "GHX2-N4",
+   "slug": "halas-w-pracy",
+   "wymiar": "rachunek",
+   "waga": "niska",
+   "plik": "src/lib/narzedzia/halas.ts",
+   "linia": 55,
+   "problem": "Przez zaokrąglenie przed porównaniem ekspozycja tylko trochę ponad próg działania 80 dB (np. 80 dB przez 8 h 05 min = 80,045 dB) nie daje powyzejProgu, więc strona nie wspomina o ochronnikach z § 6 ust. 1 pkt 1. To rozszerzenie G-8.",
+   "dowod": "node: ocenaHalasu([{poziom:80,godziny:8+5/60}],'dorosly') → {lex:80, powyzejProgu:false}.",
+   "poprawka": "W ramach G-8 porównywać wartość niezaokrągloną; test jak w G-8."
+  }
+ ]
+}

@@ -45,17 +45,18 @@ const faq = [
       <h2 id="kalkulator-tytul" class="tytul-m">Zwolnienie lekarskie</h2>
       <div class="mt-4">
         <label for="l-poczatek" class="etykieta-pola">Pierwszy dzień niezdolności do pracy</label>
-        <input id="l-poczatek" name="poczatek" type="date" class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" value={START} aria-describedby="l-poczatek-opis l-blad" />
+        <input id="l-poczatek" name="poczatek" type="date" class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" value={START} data-dzis="-30" aria-describedby="l-poczatek-opis l-blad" />
         <p id="l-poczatek-opis" class="meta mt-1">Pierwszy dzień L4 bez przerwy do dziś. Wcześniejsze zwolnienia z przerwą do 60 dni też wliczają się do okresu zasiłkowego (art. 9 ust. 2 ustawy zasiłkowej), więc wtedy ochrona kończy się wcześniej.</p>
       </div>
       <div class="mt-4">
         <label for="l-przyczyna" class="etykieta-pola">Przyczyna</label>
-        <select id="l-przyczyna" name="przyczyna" class="pole mt-1">
+        <select id="l-przyczyna" name="przyczyna" class="pole mt-1" aria-describedby="l-przyczyna-opis">
           <option value="choroba" selected>Choroba</option>
-          <option value="wypadek">Wypadek przy pracy, choroba zawodowa</option>
+          <option value="wypadek">Wypadek przy pracy</option>
           <option value="gruzlica">Gruźlica</option>
           <option value="ciaza">Ciąża</option>
         </select>
+        <p id="l-przyczyna-opis" class="meta mt-1">„Wypadek przy pracy” obejmuje też chorobę zawodową.</p>
       </div>
       <label class="mt-4 flex items-start gap-3 text-[0.9375rem]">
         <input type="checkbox" name="szescMiesiecy" checked class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
@@ -72,7 +73,7 @@ const faq = [
       <h2 id="wynik-tytul" class="etykieta">Ochrona przed zwolnieniem do</h2>
       <div aria-live="polite" aria-atomic="true">
         <p class="wynik-data" data-w="ostatni">{dataPoPolsku(r.ostatniDzien)}</p>
-        <p class="meta" data-w="odkiedy">Od {dataPoPolsku(r.odKiedy)} pracodawca może rozwiązać umowę, jeśli nadal jesteś niezdolny albo niezdolna do pracy.</p>
+        <p class="meta" data-w="odkiedy">Od {dataPoPolsku(r.odKiedy)} pracodawca może rozwiązać umowę, jeśli niezdolność do pracy trwa dalej.</p>
       </div>
       <dl class="wynik-lista">
         <div><dt>Podstawa</dt><dd data-w="podstawa">art. 41 i 53 § 1 pkt 1 lit. {r.litera} Kodeksu pracy</dd></div>
@@ -98,7 +99,9 @@ const faq = [
     <p>
       Okres zasiłkowy liczymy od pierwszego dnia niezdolności do pracy, 182 albo 270 kolejnych dni. Świadczenie
       rehabilitacyjne zaczyna się po nim, a jego 3 miesiące liczymy kalendarzowo (art. 112 Kodeksu cywilnego), tak jak
-      3 miesiące niezdolności przy krótkim stażu: od 1 stycznia do 31 marca. Ile wynosi i jak długo trwa świadczenie,
+      3 miesiące niezdolności przy krótkim stażu: od 1 stycznia do 31 marca. ZUS przy samym świadczeniu liczy miesiąc
+      jako 30 dni, więc 90% świadczenia płaci przez 90 dni (art. 22 i art. 11 ust. 5 ustawy zasiłkowej); data z art. 53
+      może przez to wypaść o 1–2 dni później, co jest bezpieczniejsze dla pracownika. Ile wynosi i jak długo trwa świadczenie,
       policzy <a href="/narzedzia/swiadczenie-rehabilitacyjne">kalkulator świadczenia rehabilitacyjnego</a>, a zasiłek po końcu
       umowy <a href="/narzedzia/l4-po-zwolnieniu">kalkulator L4 po zwolnieniu z pracy</a>. Przepis nie
       wskazuje, na który dzień liczyć 6 miesięcy zatrudnienia, dlatego zaznaczasz to sam.
@@ -113,6 +116,8 @@ const faq = [
 <script>
   import { ochronaNaL4, type PrzyczynaL4 } from '../../lib/narzedzia/ochrona-l4';
   import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { typografia } from '../../lib/typografia.mjs';
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
 
   const form = document.querySelector<HTMLFormElement>('[data-l4]');
   if (form) {
@@ -123,11 +128,15 @@ const faq = [
       const blad = poprawnaData(poczatek) ? null : 'Wpisz pierwszy dzień zwolnienia lekarskiego.';
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
       b.hidden = !blad;
-      b.textContent = blad ?? '';
+      b.textContent = typografia(blad ?? '');
+      el('poczatek').setAttribute('aria-invalid', blad ? 'true' : 'false');
       const wiersz = form.querySelector<HTMLElement>('[data-wiersz="zasilek"]')!;
       if (blad) {
         w('ostatni').textContent = '—';
         w('odkiedy').textContent = '';
+        w('podstawa').textContent = '—';
+        w('zasilek').textContent = '';
+        wiersz.hidden = true;
         return;
       }
       const r = ochronaNaL4({
@@ -138,20 +147,21 @@ const faq = [
       });
       if (r.ciaza) {
         w('ostatni').textContent = 'Przez całą ciążę';
-        w('odkiedy').textContent = 'Pracodawca nie może wypowiedzieć ani rozwiązać umowy, poza winą pracownicy za zgodą związku oraz upadłością i likwidacją (art. 177 § 1 i 4).';
-        w('podstawa').textContent = 'art. 177 Kodeksu pracy';
+        w('odkiedy').textContent = typografia('Pracodawca nie może wypowiedzieć ani rozwiązać umowy, poza winą pracownicy za zgodą związku oraz upadłością i likwidacją (art. 177 § 1 i 4).');
+        w('podstawa').textContent = typografia('art. 177 Kodeksu pracy');
         wiersz.hidden = true;
         return;
       }
-      w('ostatni').textContent = dataPoPolsku(r.ostatniDzien);
-      w('odkiedy').textContent = `Od ${dataPoPolsku(r.odKiedy)} pracodawca może rozwiązać umowę, jeśli nadal jesteś niezdolny albo niezdolna do pracy.`;
-      w('podstawa').textContent = `art. 41 i 53 § 1 pkt 1 lit. ${r.litera} Kodeksu pracy`;
+      w('ostatni').textContent = typografia(dataPoPolsku(r.ostatniDzien));
+      w('odkiedy').textContent = typografia(`Od ${dataPoPolsku(r.odKiedy)} pracodawca może rozwiązać umowę, jeśli niezdolność do pracy trwa dalej.`);
+      w('podstawa').textContent = typografia(`art. 41 i 53 § 1 pkt 1 lit. ${r.litera} Kodeksu pracy`);
       wiersz.hidden = !r.koniecZasilku;
-      w('zasilek').textContent = r.koniecZasilku ? `${dataPoPolsku(r.koniecZasilku)} (${r.dniZasilku} dni)` : '';
+      w('zasilek').textContent = r.koniecZasilku ? typografia(`${dataPoPolsku(r.koniecZasilku)} (${r.dniZasilku} dni)`) : '';
     };
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    ustawDzisiejszeWartosci(form);
     przelicz();
   }
 </script>

@@ -4,7 +4,7 @@
   "link": "https://example.com/oferta-stara",
   "od": "2026-01-01T00:00:00+01:00",
   "do": "2026-02-01T00:00:00+01:00",
-  "miejsca": ["glowna-gora", "glowna-bok"],
+  "miejsca": ["glowna"],
   "kreacje": { "billboard": "/src/assets/testowe/kampanie/testowa-b-billboard.png", "baner": "/src/assets/testowe/kampanie/testowa-b-baner.png", "prostokat": "/src/assets/testowe/kampanie/testowa-b-prostokat.png", "polstrona": "/src/assets/testowe/kampanie/testowa-b-polstrona.png", "mobilny": "/src/assets/testowe/kampanie/testowa-b-mobilny.png", "mobilnyProstokat": "/src/assets/testowe/kampanie/testowa-b-mobilny-prostokat.png" },
   "altKreacji": "Kreacja testowa zakończonej kampanii",
   "aktywna": true

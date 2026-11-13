@@ -1,0 +1,344 @@
+{
+ "partia": "B+D+E",
+ "werdykty": [
+  {
+   "id": "B-1",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "SSR wybiera rok+1 tylko przy buildzie w grudniu (l. 12). Skrypt szuka najbliższej wypłaty wyłącznie w roku wybranym w <select> i gdy nic nie zostało, bierze `?? lista[0]`. Portal nie ma przebudowy z harmonogramu (.github/workflows ma tylko kontrola.yml), więc strona zbudowana w listopadzie 2026 r. od 11.12.2026 r. pokazuje 9 stycznia 2026 r. (wypłata 10. dnia).",
+   "dowod": "Kod: termin-wyplaty-wynagrodzenia.astro l. 12–16 i l. 134. terminyWyplaty(2026,10)[11].wyplata = 2026-12-10, a terminyWyplaty(2027,10)[0] = 2027-01-08 (10.01 to niedziela, 9.01 sobota wolna), bez wolnej soboty 2027-01-09 (sonda esbuild+node).",
+   "poprawka": "W SSR i w skrypcie liczyć najbliższą wypłatę od dzisiejszej daty, niezależnie od roku w select: `const rD = Number(dzis.slice(0,4)); const pula = [...terminyWyplaty(rD, dzien, sobota), ...terminyWyplaty(rD+1, dzien, sobota)]; const najblizsza = pula.find(t => t.wyplata >= dzis)!;`. Lista roczna zostaje z roku wybranego. Usunąć `?? lista[0]`.",
+   "testy": "Jednostkowy (wydzielić funkcję najblizszaWyplata(dzis, dzien, sobota) w termin-wyplaty.ts): ('2026-12-15',10,true) → 2027-01-08; ('2026-12-15',10,false) → 2027-01-09; ('2026-12-10',10,true) → 2026-12-10. E2E z zegarem 2026-12-15: [data-w=najblizsza] = „8 stycznia 2027 r.”."
+  },
+  {
+   "id": "B-2",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Komunikat (l. 285) wstawia `${maks} godzin` przy maks = 8 × liczba dni. W lutym wychodzi 224 albo 232, a to wymaga formy „godziny”. Przykład SSR (l. 173) ma to samo przy wymiarze 152 h albo 144 h (build w styczniu albo maju 2027 r.). Część o typografia() pomijam zgodnie z poleceniem.",
+   "dowod": "odmiana(224, …) daje „godziny” (jedności 4, dziesiątki 24). Kod l. 273 i 285, l. 173.",
+   "poprawka": "Zrobić tak, jak proponuje audytor: odmiana(maks, ['godzina','godziny','godzin']) w skrypcie i odmiana(przyklad.wymiar.godziny, …) w SSR.",
+   "testy": "E2E: luty 2027 i 300 h → tekst zawiera „224 godziny”. Luty 2028 → „232 godziny”."
+  },
+  {
+   "id": "B-3",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Przy uldze kod zeruje koszty, podstawę i zaliczkę bez żadnej kontroli limitu 85 528 zł. progPrzekroczony to `!d.ulgaMlodych && …`, więc jest zawsze false. Strona nie pokazuje żadnej uwagi.",
+   "dowod": "Sonda: netto({brutto:10000, ulgaMlodych:true}) → netto 7852,39 zł, zaliczka 0, progPrzekroczony false. 10 000 × 9 = 90 000 > 85 528, więc limit pęka we wrześniu. Art. 21 ust. 1 pkt 148 (DU_2026_592.txt): „do wysokości nieprzekraczającej w roku podatkowym kwoty 85 528 zł”.",
+   "poprawka": "W netto() zwracać `limitUlgiPrzekroczony: !!d.ulgaMlodych && (B + ppkPracodawca) * 12 > LIMIT_ULGI_MLODYCH` i `miesiacLimituUlgi: Math.ceil(LIMIT_ULGI_MLODYCH / (B + ppkPracodawca))`. Na stronie dać uwagę „Przy takiej pensji przychód przekroczy w {miesiącu} 85 528 zł: od nadwyżki pracodawca pobierze zaliczkę, więc netto będzie niższe.” W „Jak liczymy” dopisać, że limit dotyczy łącznie przychodów z etatu i zleceń w roku.",
+   "testy": "brutto 7127 z ulgą → false (85 524 zł). 7128 → true (85 536 zł). 10 000 → true, miesiąc 9."
+  },
+  {
+   "id": "B-4",
+   "werdykt": "czesciowo",
+   "uzasadnienie": "Uwaga „w ostatnich miesiącach roku” jest nieprecyzyjna: przy 25 000 zł próg pęka w czerwcu. Limit 30-krotności jest już jednak opisany w „Jak liczymy” (l. 105–107), więc ta część zarzutu odpada. Typografię pomijam.",
+   "dowod": "Sonda: netto({brutto:25000}).podstawa = 21 323. 120 000 / 21 323 = 5,63, czyli przekroczenie w 6. miesiącu.",
+   "poprawka": "W uwadze podać miesiąc przekroczenia: Math.ceil(PROG_PIT / podstawa), nazwa miesiąca w miejscowniku: „…od nadwyżki zaliczka 32%: netto spadnie od {miesiąca}”. Zdania o limicie składek w uwadze nie trzeba dodawać.",
+   "testy": "25 000 zł → miesiąc 6. Podstawa 10 000 zł (120 000 / 10 000 = 12) → progPrzekroczony false. Podstawa 10 001 zł → true, miesiąc 12."
+  },
+  {
+   "id": "B-5",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "brutto-netto.astro l. 53: „Złożyłem albo złożyłam PIT-2”. Pozostałe narzędzia mają formę neutralną.",
+   "dowod": "grep l. 53.",
+   "poprawka": "„Złożony PIT-2 (zaliczka mniejsza o 300 zł)”.",
+   "testy": "brak"
+  },
+  {
+   "id": "B-6",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Forma męska „jesteś … traktowany” stoi w zlecenie-netto.astro w l. 22 (FAQ) i w l. 86.",
+   "dowod": "grep.",
+   "poprawka": "Jak proponuje audytor, w obu miejscach.",
+   "testy": "brak"
+  },
+  {
+   "id": "B-7",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Art. 30 ust. 1 pkt 5a ustawy o PIT: od umów z art. 13 pkt 2 i 5–9, gdy należność z umowy zawartej z osobą niebędącą pracownikiem płatnika nie przekracza 200 zł, pobiera się podatek „w wysokości 12 % przychodu”. Art. 30 ust. 3: ten podatek „pobiera się bez pomniejszania przychodu o koszty uzyskania”. W ustawie nie ma przepisu, który pozwalałby tu odjąć składki społeczne (szukałem „pkt 5a” w całym t.j.). Art. 41 ust. 1 (zaliczka od świadczenia pomniejszonego o koszty z art. 22 ust. 9 i składki) dotyczy umów powyżej progu. Kod przy malaUmowa liczy zwykłą zaliczkę, więc wynik jest zaniżony co do podatku, a uwaga go nie koryguje. Próg „nie przekracza” obejmuje dokładnie 200 zł, i kod tak ma (B <= 200).",
+   "dowod": "DU_2026_592.txt l. 7022–7023 (art. 30 ust. 1 pkt 5a), l. 7072–7073 (ust. 3), l. 8547–8552 (art. 41 ust. 1). Sonda: 150 zł → koszty 26,62, zaliczka 13, netto 108,13. 200 zł → zaliczka 17, netto 144,51. 200,01 zł → netto 144,52, malaUmowa false.",
+   "poprawka": "W nettoZlecenie, gdy B <= 200 i !bezPodatku: koszty = 0, podstawa = B (przychód), zaliczka (podatek zryczałtowany) = Math.round(B * 0.12), bez PIT-2. Uwagę na stronie przeredagować na stwierdzenie: „Umowa do 200 zł: podatek zryczałtowany 12% całej kwoty, bez kosztów i bez PIT-2 (art. 30 ust. 1 pkt 5a i ust. 3 ustawy o PIT); liczymy przy założeniu, że nie jesteś pracownikiem zleceniodawcy.”",
+   "testy": "150 zł (jedyne, bez chorobowego): społeczne 16,89, zdrowotna 11,98, podatek 18, netto 103,13. Z pit2:true to samo. 200 zł: społeczne 22,52, zdrowotna 15,97, podatek 24, netto 137,51. 200,01 zł: bez zmian, zaliczka 17, netto 144,52."
+  },
+  {
+   "id": "B-8",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "„Jak liczymy” (l. 107) wymienia dodatek 100% tylko z art. 151^1 § 1 pkt 1. Pomija § 2: dodatek 100% za przekroczenie przeciętnej normy tygodniowej w okresie rozliczeniowym. Przy pracy w wolną sobotę bez oddania dnia wolnego czytelnik wpisze te godziny jako 50%.",
+   "dowod": "DU_2026_1245.txt l. 2685–2688, art. 151[1] § 2: „Dodatek w wysokości określonej w § 1 pkt 1 przysługuje także za każdą godzinę pracy nadliczbowej z tytułu przekroczenia przeciętnej tygodniowej normy czasu pracy…”.",
+   "poprawka": "Dopisać do listy 100%: „oraz za przekroczenie przeciętnej normy tygodniowej w okresie rozliczeniowym, na przykład za pracę w wolną sobotę, za którą nie oddano dnia wolnego (art. 151<sup>1</sup> § 2)”. W opisie pola x-g100 dać jedno zdanie podpowiedzi.",
+   "testy": "brak (treść)"
+  },
+  {
+   "id": "B-9",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Pole `noc` ma limit 400 h (l. 136), a pora nocna w miesiącu to najwyżej 8 × liczba dni, czyli 248 h. Dodatek-nocny tę wartość waliduje.",
+   "dowod": "wyplata-z-nadgodzinami.astro l. 136, dodatek-za-prace-w-nocy.astro l. 273.",
+   "poprawka": "Dla `noc` przyjąć limit 8 * dniWMiesiacu(rok, miesiac) z komunikatem z odmiana() (jak w B-2). Limit 400 h zostaje dla g50 i g100.",
+   "testy": "E2E: luty 2027 i noc 225 → błąd z „224 godziny”, noc 224 → wynik."
+  },
+  {
+   "id": "B-10",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "dodatek-za-prace-w-nocy.astro l. 148: „jesteś … pracującym w nocy” to forma męska.",
+   "dowod": "grep l. 148.",
+   "poprawka": "Jak proponuje audytor.",
+   "testy": "brak"
+  },
+  {
+   "id": "B-11",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Znalezisko o roku z dnia budowania: potwierdzone bez weryfikacji, zgodnie z poleceniem.",
+   "dowod": "-",
+   "poprawka": "Jak proponuje audytor.",
+   "testy": "Progi 2027: 5940,00 zł i 1039,50 zł (wartości audytora)."
+  },
+  {
+   "id": "B-12",
+   "werdykt": "odrzucone",
+   "uzasadnienie": "Już poprawione w bieżącym kodzie (commit ff220b3). Komentarz w koszt-pracodawcy.ts l. 7–8 mówi teraz „FGŚP 0,10% … bez progu płacy minimalnej, ale z tym samym progiem wieku (art. 9b ust. 2 ustawy o ochronie roszczeń pracowniczych)”. Kod l. 61: `fgsp = d.wiekZwolniony ? 0 : …`.",
+   "dowod": "sed -n 1,25p i grep fgsp w src/lib/narzedzia/koszt-pracodawcy.ts.",
+   "poprawka": "brak",
+   "testy": "brak"
+  },
+  {
+   "id": "B-13",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "W testach brakuje przypadków progowych.",
+   "dowod": "Lista it() w netto.test.ts, zlecenie.test.ts i termin-wyplaty.test.ts.",
+   "poprawka": "Dodać przypadki z B-1, B-3, B-4 i B-7.",
+   "testy": "Wartości podane w B-1, B-3, B-4 i B-7."
+  },
+  {
+   "id": "D-1",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Szablon `${r.dostepne} mies.${zarezerwowane ? '…' : ''}.` bez rezerwacji kończy się „mies..”.",
+   "dowod": "urlop-wychowawczy.astro l. 148.",
+   "poprawka": "odmiana(r.dostepne, ['miesiąc','miesiące','miesięcy']) zamiast „mies.”, kropka raz, na końcu.",
+   "testy": "E2E: miesiące 36, drugi rodzic 2 → „Masz do wykorzystania 34 miesiące.”, bez „..”."
+  },
+  {
+   "id": "D-2",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Opcje to całe zdania, na telefonie ucięte.",
+   "dowod": "Playwright 320 px na podglądzie: #z-sytuacja ma szerokość tekstu 204 px, ucięte 7 z 9 opcji.",
+   "poprawka": "Pole `krotko` w ZWOLNIENIA dla <option> (propozycje audytora). Pełna nazwa zostaje w tabeli i w wyniku.",
+   "testy": "E2E: na 320 px żadna opcja nie jest szersza niż pole."
+  },
+  {
+   "id": "D-3",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Ustawa o OSP jest późniejsza i szczególna wobec § 11 ust. 1 pkt 1 rozporządzenia z 1996 r. Art. 12 każe pracodawcy zwolnić strażaka OSP na czas działań, akcji, szkoleń i ćwiczeń organizowanych przez gminę, PSP albo inne uprawnione podmioty, na czas ich trwania i na odpoczynek z art. 132 § 1 Kp, bez limitu 6 dni. Opis płatności „rekompensata … od właściwego organu” (§ 16 ust. 2) wprowadza w błąd. Art. 15 ust. 1 daje strażakowi ratownikowi ekwiwalent pieniężny z budżetu gminy (za każdą rozpoczętą godzinę, najwyżej 1/175 przeciętnego wynagrodzenia, stawkę ustala rada gminy), a ust. 3 mówi o zachowaniu uprawnienia „do innych niż wynagrodzenie świadczeń”. „Rekompensata” w ustawie (art. 14) dotyczy wyłącznie niezdolności do pracy po wypadku. Sprawdziłem wszystkie 4 nowelizacje po t.j. z `references`, nie tylko te 2 wskazane przez audytora: DU 2025/900 zmienia art. 10 i 29, DU 2026/180 art. 11, DU 2026/426 art. 16 ust. 1 i art. 56, DU 2026/1159 art. 2a i 3. Żadna nie dotyczy art. 12 ani 15.",
+   "dowod": "DU_2025_244.txt l. 220–223 (art. 12), l. 294–299 (art. 14 ust. 1), l. 320–341 (art. 15 ust. 1–3). DU_2026_426 i DU_2026_180 pobrane z API Sejmu do scratchpad/audyt/BDE-wer (art. 8 i art. 3 tych ustaw). Rozporządzenie DU_2014_1632 § 11 ust. 1 pkt 1 i § 16 ust. 2.",
+   "poprawka": "zwolnienia.ts, pozycja osp: nazwa „Akcja, szkolenie lub ćwiczenia OSP”, wymiar „czas akcji, szkolenia lub ćwiczeń i odpoczynek po nich (art. 132 § 1 Kp)”, podstawa „art. 12 i 15 ustawy o ochotniczych strażach pożarnych”. Nowy typ płatności, np. 'ekwiwalent-osp': „Pracodawca nie płaci wynagrodzenia za ten czas. Strażak ratownik OSP dostaje ekwiwalent pieniężny z budżetu gminy za każdą rozpoczętą godzinę, w wysokości z uchwały rady gminy (art. 15 ust. 1 i 2); zachowuje inne niż wynagrodzenie świadczenia związane z pracą (art. 15 ust. 3).” Do prawo.ts dopisać akt (Dz.U. 2025 poz. 244 ze zm. 900, 2026 poz. 180, 426, 1159), a w rejestrze dopisać go do `przepisy` urlop-okolicznosciowy.",
+   "testy": "zwolnienie('osp').wymiar nie zawiera „6 dni”; platnosc === 'ekwiwalent-osp'; podstawa zawiera „art. 12”."
+  },
+  {
+   "id": "D-4",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "FAQ l. 15 („wykorzystałeś albo wykorzystałaś”) i l. 19 („przepracowałbyś albo przepracowałabyś”) mają formy zależne od płci.",
+   "dowod": "grep.",
+   "poprawka": "Jak proponuje audytor.",
+   "testy": "brak"
+  },
+  {
+   "id": "D-5",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Art. 155[2a] § 3: gdy stary stosunek pracy ustaje, a nowy powstaje w tym samym miesiącu, zaokrągla tylko dotychczasowy pracodawca. Podpowiedź „Rozpoczęty miesiąc liczy się jak pełny. U nowego pracodawcy … miesiące do końca roku” (l. 97 i l. 206) każe nowemu policzyć ten miesiąc drugi raz. FAQ cytuje art. 155^2a ogólnie, bez § 3.",
+   "dowod": "DU_2026_1245.txt l. 2910–2915. Przykład: odejście 14.03, nowa umowa od 15.03 do końca roku. Według podpowiedzi 10 miesięcy, czyli 20·10/12 = 16,67, po zaokrągleniu 17 dni. Według § 3 9 miesięcy, czyli 15 dni.",
+   "poprawka": "Do podpowiedzi (l. 97 i 206) i do FAQ dopisać: „Gdy poprzednia praca skończyła się w tym samym miesiącu, w którym zaczęła się nowa, u nowego pracodawcy tego miesiąca nie licz (art. 155^2a § 3 Kodeksu pracy).”",
+   "testy": "urlop({sytuacja:'czesc-roku', miesiaceWRoku:9, staż < 10 lat}) → 15 dni (dokumentuje przykład)."
+  },
+  {
+   "id": "D-6",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "l. 228: `${r.dni} dni`. Etat 1/4, 1 miesiąc: 5/12, w górę do 1, więc „1 dni”. Funkcja lata(1) zwraca samo „rok”, bez liczby.",
+   "dowod": "Kod l. 9, 192 i 228; rachunek ceil(5·1/12) = 1.",
+   "poprawka": "odmiana(r.dni, ['dzień','dni','dni']) dla liczb całkowitych. lata() zastąpić odmiana(n, ['rok','lata','lat']).",
+   "testy": "E2E: etat 1/4, część roku, 1 miesiąc → „1 dzień”."
+  },
+  {
+   "id": "D-7",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Nazwy dublują liczbę lat i są ucięte.",
+   "dowod": "Playwright 320 px: #u-szkola, ucięte 6 z 8 opcji; „Średnia szkoła zawodowa, 4 lata nauki (4 lata)”.",
+   "poprawka": "Krótkie nazwy w SZKOLY (wspólne z staz-pracy, E-4), liczba lat tylko w dopisku.",
+   "testy": "E2E szerokości opcji na 320 px."
+  },
+  {
+   "id": "D-8",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Lata ekwiwalentu pochodzą z kluczy PLACA_MINIMALNA, choć współczynnik zależy tylko od kalendarza. Dopóki w prawo.ts nie ma płacy na 2028 r., nawet build w 2028 r. nie pozwoli wybrać 2028 i po cichu policzy rokiem 2027.",
+   "dowod": "ekwiwalent-za-urlop.astro l. 5, 10–11, 60, 125. Sonda: dniPracyWRoku(2028) = 249. Ręcznie: 260 dni pon.–pt., minus 9 świąt w dni robocze, minus 2 święta w sobotę (1.01 i 11.11), co daje 249 i współczynnik 20,75.",
+   "poprawka": "LATA_EKW = [rokBiezacy - 1, rokBiezacy, rokBiezacy + 1] niezależnie od prawo.ts. Z „krotko” w rejestrze usunąć lata na sztywno.",
+   "testy": "dniPracyWRoku(2028) = 249, wspolczynnik(2028) = 20,75."
+  },
+  {
+   "id": "D-9",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Brak testów lat 2028 i Wielkanocy 2027/2028.",
+   "dowod": "Sonda: 249 dla 2028.",
+   "poprawka": "Jak proponuje audytor.",
+   "testy": "Wielkanoc 2027-03-28, Boże Ciało 2027-05-27, Wielkanoc 2028-04-16, Boże Ciało 2028-06-15, dniPracyWRoku(2028) = 249."
+  },
+  {
+   "id": "D-10",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "wpisanaLiczba('abc') zwraca NaN, a warunek `!(x >= 0)` daje wtedy komunikat o ujemnej kwocie. Pole wu-stala (l. 57) nie ma aria-describedby.",
+   "dowod": "format.ts l. 10–13, wynagrodzenie-za-urlop.astro l. 57 i 106.",
+   "poprawka": "Jak proponuje audytor.",
+   "testy": "E2E: „abc” → „Wpisz kwotę…”, aria-invalid=true."
+  },
+  {
+   "id": "D-11",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Opcja #w-norma jest ucięta na 320 px. Art. 188 § 1 i art. 148[1] § 1 dają wymiar „w ciągu roku kalendarzowego”, bez proporcji, a strona nie mówi nic o zmianie pracy w trakcie roku.",
+   "dowod": "Playwright 320 px: w-norma, ucięta 1 z 2 opcji.",
+   "poprawka": "Jak proponuje audytor (opcja „7 godzin” i jedno zdanie o świadectwie pracy).",
+   "testy": "brak"
+  },
+  {
+   "id": "D-12",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Art. 17 ust. 5 definiuje „okres 3 miesięcy” jako kolejne 90 dni zatrudnienia u tego samego użytkownika w ciągu 6 miesięcy kalendarzowych przed miesiącem urlopu, liczone wstecz od dnia przed tym miesiącem. Strona mówi tylko o „3 miesiącach przed miesiącem urlopu” (l. 19, 36, 47–53, 84, 96).",
+   "dowod": "DU_2025_236.txt l. 227–243 (art. 17 ust. 4 i 5).",
+   "poprawka": "Opis pola a-wynagrodzenie i „Jak liczymy”: „wynagrodzenie z ostatnich 90 dni pracy u tego użytkownika (liczonych wstecz od dnia przed miesiącem urlopu, w ciągu 6 miesięcy), art. 17 ust. 4 i 5”. Etykiety można zostawić skrócone („z 3 miesięcy (90 dni)”).",
+   "testy": "brak"
+  },
+  {
+   "id": "D-13",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Znalezisko o typografia(): potwierdzone bez weryfikacji, zgodnie z poleceniem.",
+   "dowod": "-",
+   "poprawka": "Jak proponuje audytor.",
+   "testy": "-"
+  },
+  {
+   "id": "E-1",
+   "werdykt": "czesciowo",
+   "uzasadnienie": "Rozstrzygnięcie dla 2026-03-31→2026-09-30: art. 112 KC nie reguluje wprost terminu, którego pierwszy dzień się wlicza. Brzmienie jego drugiej części („gdyby takiego dnia w ostatnim miesiącu nie było – w ostatnim dniu tego miesiąca”) prowadzi do tego, że 6 miesięcy od 31.03 (31.03 wliczony) mija z końcem 30.09. Takie jest obecne pelneMiesiace: koniec w dniu przed dniem o tym samym numerze, a gdy takiego dnia nie ma, w ostatnim dniu miesiąca. Pełne 6 miesięcy staż ma więc od 1.10, a przy doręczeniu 30.09, którego nie wliczamy (jak w istniejących testach 05-15→11-14 = 5), wynik 5 miesięcy jest zgodny z art. 112. Konwencja terminy.ts (dodajMiesiace(od,n) − 1) daje 29.09, bo odejmuje dzień już po zastosowaniu reguły „ostatniego dnia”. Tego art. 112 nie przewiduje, a skutki bywają absurdalne: 31.01 + 1 miesiąc kończy się 27.02 (E-12), umowa 33-miesięczna od 31.05.2024 r. kończy się 27.02.2027 (E-9). Poprawka audytora (przejście na terminy.ts) nie wynika więc z brzmienia przepisu. Problem praktyczny jest jednak realny: przy doręczeniu 30.09 próg 6 miesięcy przypada 1.10, czyli w trakcie wypowiedzenia, a narzędzie podaje 2 tygodnie. Właściwą poprawką jest E-3. Prawdziwa jest też niespójność w portalu: staz-pracy (miesiaceIDni na dodajMiesiace) dla 31.03–30.09 daje 6 m 1 d, a okres-wypowiedzenia 5 pełnych miesięcy (zob. „nowe”).",
+   "dowod": "Sonda (esbuild+node na kodzie repo): pelneMiesiace 2026-03-31→2026-09-30 = 5 (2 tygodnie, koniec 2026-10-17), →2026-10-01 = 6. 2024-02-29→2027-02-28 = 35, a →2027-03-01 = 36. 2026-08-31→2027-02-28 = 5. miesiaceIDni dla tych samych dat: 6 m 1 d, 36 m 1 d, 6 m 1 d. KC art. 112 (DU_2026_795.txt).",
+   "poprawka": "Nie zmieniać formuły pelneMiesiace. Zamiast tego: (1) wdrożyć E-3, czyli próg osiągnięty w trakcie biegu wypowiedzenia wydłuża okres, co dla obu dat granicznych audytora daje wariant korzystny dla pracownika (1 miesiąc albo 3 miesiące); (2) w „Jak liczymy” dopisać: „Staż liczymy według art. 112 Kodeksu cywilnego: 6 miesięcy od 31 marca mija z końcem 30 września. Dnia doręczenia nie wliczamy.”; (3) w DECYZJE.md zapisać jedną konwencję miesięcy dla całego portalu (zob. „nowe” 1).",
+   "testy": "pelneMiesiace: 2026-03-31→2026-09-30 = 5, 2026-03-31→2026-10-01 = 6, 2024-02-29→2027-02-28 = 35, 2024-02-29→2027-03-01 = 36, 2026-08-31→2027-03-01 = 6. Po E-3 wynik końcowy: 2026-03-31→2026-09-30 → 1 miesiąc, koniec 2026-10-31. 2024-02-29→2027-02-28 → 3 miesiące, koniec 2027-05-31."
+  },
+  {
+   "id": "E-2",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Pole „Początek pracy u tego pracodawcy / Pierwszy dzień pierwszej umowy” (l. 51–53) w połączeniu z pelneMiesiace liczy staż ciągły od pierwszej umowy, więc wlicza przerwy. Art. 36 § 1 mówi o okresie zatrudnienia u danego pracodawcy. „Bez względu na przerwy” w FAQ (l. 16) znaczy, że okresy sprzed przerwy się sumuje, a nie że przerwę się wlicza. Zleceń z art. 302^1 § 8 (wymienionych w FAQ) formularz też nie pozwala doliczyć. Wynik może być zawyżony, a to wariant niekorzystny dla pracodawcy i mylący dla pracownika.",
+   "dowod": "Kod l. 51–53, FAQ l. 16. Przykład audytora odtworzony logicznie: 2020-01-01 do 2026-09-15 to 80 pełnych miesięcy, więc wychodzą 3 miesiące, a faktyczny staż to 3 + 4,5 miesiąca, czyli 1 miesiąc.",
+   "poprawka": "Minimum: opis pola zmienić na „Pierwszy dzień pracy u tego pracodawcy. Gdy były przerwy między umowami albo zlecenia na jego rzecz, policz staż w kalkulatorze stażu pracy i wpisz datę, od której liczyłby się taki sam staż bez przerw.” W wyjaśnieniu dodać link /narzedzia/staz-pracy. Docelowo: tryb „staż u tego pracodawcy” (lata i miesiące) albo lista okresów przez staz() ze staz-pracy.ts.",
+   "testy": "E2E: tryb stażu 0 lat 7 miesięcy → 1 miesiąc."
+  },
+  {
+   "id": "E-3",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Narzędzie pokazuje krótszy okres bez konkretnego ostrzeżenia, a próg przypada przed końcem wypowiedzenia. W praktyce (stanowisko PIP i MRPiPS, część orzecznictwa SN) okres wypowiedzenia wydłuża się wtedy z mocy prawa. Ogólne zdanie w „Jak liczymy” (l. 108–109) nie wystarcza wobec zasady wariantu bezpiecznego dla pracownika. Źródła stanowiska nie sprawdziłem w sieci, bo sn.pl blokuje automaty.",
+   "dowod": "Sonda: 2026-03-01→2026-08-20: pelne 5, 2 tygodnie, koniec 2026-09-05. pelneMiesiace(2026-03-01, 2026-09-06) = 6, czyli próg (1.09) wypada przed końcem. 1 miesiąc od doręczenia 20.08 kończy się 2026-09-30.",
+   "poprawka": "Po wyliczeniu końca: dopóki pelneMiesiace(od, dodajDni(koniec, 1)) >= kolejny próg (6, potem 36), przeliczyć okres dla stażu z tego dnia (okresWypowiedzenia('stala', pelneMiesiace(od, dodajDni(koniec,1)))) i koniec od tego samego doręczenia (pętla, bo 1 miesiąc może dojść do progu 36). Wynik pokazać jako dłuższy okres z uwagą: „W trakcie wypowiedzenia staż osiągnie {6 miesięcy|3 lata} ({data}), więc okres wydłuża się do {X}. Sprawdź w kadrach.” Ewentualnie pokazać oba warianty, ale jako wynik główny dłuższy.",
+   "testy": "2026-03-01→2026-08-20 → 1 miesiąc, koniec 2026-09-30. 2026-03-31→2026-09-30 → 1 miesiąc, koniec 2026-10-31. 2024-02-29→2027-02-28 → 3 miesiące, koniec 2027-05-31. 2026-03-01→2026-08-01 (próg 1.09 po końcu 15.08) → 2 tygodnie, bez uwagi."
+  },
+  {
+   "id": "E-4",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "staz-pracy.astro l. 73: `(${s.lata} lat)` daje „(3 lat)” i „(4 lat)”.",
+   "dowod": "Playwright 320 px: #s-szkola, ucięte 6 z 8 opcji; „Zasadnicza (branżowa) szkoła zawodowa (3 lat)”.",
+   "poprawka": "odmiana(s.lata, ['rok','lata','lat']) i wspólne krótkie nazwy SZKOLY (D-7).",
+   "testy": "E2E: opcja zawiera „(3 lata)”."
+  },
+  {
+   "id": "E-5",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Długie opcje są ucięte na telefonie.",
+   "dowod": "Playwright 320 px: #p-plan ucięte 3 z 4 opcji, #wy-rodzaj 4 z 4 (szerokość tekstu 204 px).",
+   "poprawka": "Skrócić etykiety, jak proponuje audytor.",
+   "testy": "E2E szerokości opcji."
+  },
+  {
+   "id": "E-6",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "ochrona-przedemerytalna.astro l. 107–110: w gałęzi błędu czyszczone są tylko `od` i status, a `do` i `wiek` zostają ze starymi wartościami.",
+   "dowod": "Kod l. 98–118.",
+   "poprawka": "W gałęziach błędu ustawiać „—” we wszystkich [data-w] i ukrywać [data-wiersz] (tak samo w zwolnienie-na-l4, okres-probny, staz-pracy, zwolnienia-grupowe).",
+   "testy": "E2E: poprawna data, potem 1930-01-11 → [data-w=do] = „—”."
+  },
+  {
+   "id": "E-7",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "#wy-dor nie ma aria-describedby, a #wy-od tylko 'wy-od-opis'.",
+   "dowod": "grep l. 52 i 56.",
+   "poprawka": "Jak proponuje audytor, plus aria-invalid przy błędzie.",
+   "testy": "E2E atrybutów."
+  },
+  {
+   "id": "E-8",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Art. 25^1 § 3 mówi o dniu zawarcia czwartej umowy, a kod podaje czwarta.od (umowy-okreslone.ts l. 60).",
+   "dowod": "Kod l. 58–60.",
+   "poprawka": "Uwaga, jak proponuje audytor.",
+   "testy": "brak"
+  },
+  {
+   "id": "E-9",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Brakuje testów brzegowych. Wynik dla 2024-05-31 (limitDo 2027-02-27) bierze się z konwencji terminy.ts. Według brzmienia art. 112 (zob. E-1) byłoby to 2027-02-28. Obecny wynik jest korzystniejszy dla pracownika (wcześniejsza umowa na czas nieokreślony), więc wystarczy go opisać.",
+   "dowod": "Rachunek: dodajMiesiace(2024-05-31, 33) = 2027-02-28, minus 1 dzień daje 2027-02-27.",
+   "poprawka": "Dodać testy audytora i jedno zdanie o konwencji w „Jak liczymy”.",
+   "testy": "Start 2024-05-31 → limitDo 2027-02-27 (obecna konwencja); przerwa 1 dnia → 2027-09-19 (sonda audytora)."
+  },
+  {
+   "id": "E-10",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Art. 9 ust. 1–2 ustawy o zwolnieniach grupowych liczy terminy od dnia rozwiązania stosunku pracy. Dzień rozwiązania różni się od ostatniego dnia pracy np. przy zwolnieniu z obowiązku świadczenia pracy.",
+   "dowod": "zwolnienia-grupowe.astro l. 70.",
+   "poprawka": "Etykieta „Dzień rozwiązania umowy (ostatni dzień umowy)”.",
+   "testy": "brak"
+  },
+  {
+   "id": "E-11",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Wpis staz-pracy (narzedzia.ts l. 392) ma ['kodeksPracy','kodeksCywilny'], choć strona cytuje Dz.U. 2025 poz. 1423, a klucz zmianaStazu2025 istnieje (prawo.ts l. 401).",
+   "dowod": "grep.",
+   "poprawka": "Dopisać 'zmianaStazu2025'.",
+   "testy": "brak"
+  },
+  {
+   "id": "E-12",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "okres-probny.ts l. 33: dodajMiesiace − 1 daje dla 2026-01-31 + 1 miesiąc koniec 2026-02-27, czyli umowę krótszą niż luty. Według brzmienia art. 112 („w ostatnim dniu tego miesiąca”) byłby to 28.02 (zob. E-1). Dla okresu próbnego wcześniejszy koniec nie przekracza ustawowego maksimum, więc jest to wariant bezpieczny, ale strona go nie opisuje.",
+   "dowod": "Rachunek dodajMiesiace(2026-01-31, 1) = 2026-02-28, minus 1 dzień daje 2026-02-27.",
+   "poprawka": "Testy audytora i zdanie w „Jak liczymy”. Decyzję o konwencji zapisać w DECYZJE.md (zob. „nowe” 1).",
+   "testy": "2026-01-31 + 1 miesiąc → 2026-02-27; 2026-11-30 + 3 miesiące → 2027-02-27; 2027-01-29 + 1 miesiąc → 2027-02-27."
+  }
+ ],
+ "nowe": [
+  {
+   "id": "BDE-N1",
+   "slug": "okres-wypowiedzenia, staz-pracy, okres-probny, umowa-na-czas-okreslony",
+   "wymiar": "spojnosc",
+   "waga": "srednia",
+   "plik": "src/lib/narzedzia/wypowiedzenie.ts",
+   "linia": 18,
+   "problem": "Portal liczy terminy miesięczne od dnia, który sam się wlicza, dwiema konwencjami. pelneMiesiace kończy termin w ostatnim dniu miesiąca, gdy brakuje dnia o tym numerze (brzmienie art. 112 KC). terminy.ts/dodajMiesiace − 1 (staz-pracy, okres-probny, umowy-okreslone) odejmuje dzień także wtedy. Ta sama para dat 31.03–30.09 daje w stazu-pracy 6 m 1 d, a w okresie wypowiedzenia 5 pełnych miesięcy.",
+   "dowod": "Sonda: miesiaceIDni('2026-03-31','2026-09-30') = 6 m 1 d; pelneMiesiace = 5.",
+   "poprawka": "Decyzja w DECYZJE.md: jedna funkcja w terminy.ts, np. `koniecMiesiecy(od, n)` = dzień przed datą o tym samym numerze, a gdy takiego dnia nie ma, ostatni dzień miesiąca. Wszędzie, gdzie przepis nie rozstrzyga, wybrać wariant korzystniejszy dla pracownika i opisać go w „Jak liczymy”. Testy dla 31.01, 29.02, 31.03 i 31.08."
+  },
+  {
+   "id": "BDE-N2",
+   "slug": "kalkulator-urlopu",
+   "wymiar": "tresc-ux",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/kalkulator-urlopu.astro",
+   "linia": 192,
+   "problem": "lata(1) zwraca samo „rok”, więc okres() pisze np. „brakuje rok 3 mies.”. Miesiące są skracane do „mies.” zamiast odmiany przez odmiana().",
+   "dowod": "Kod l. 9, 192–197.",
+   "poprawka": "okres(): odmiana(l, ['rok','lata','lat']) i odmiana(m, ['miesiąc','miesiące','miesięcy']), połączone „ i ”."
+  },
+  {
+   "id": "BDE-N3",
+   "slug": "urlop-okolicznosciowy",
+   "wymiar": "prawo",
+   "waga": "niska",
+   "plik": "src/lib/narzedzia/zwolnienia.ts",
+   "linia": 38,
+   "problem": "OPIS_PLATNOSCI.rekompensata (wydanie zaświadczenia o utraconym wynagrodzeniu do rekompensaty, § 16 ust. 2) jest przypięty także do OSP, a ustawa o OSP nie przewiduje rekompensaty utraconego wynagrodzenia, tylko ekwiwalent z gminy (art. 15). Rekompensata z art. 14 dotyczy niezdolności do pracy po wypadku.",
+   "dowod": "DU_2025_244.txt art. 14 ust. 1, art. 15 ust. 1–3.",
+   "poprawka": "Osobny typ płatności dla OSP (w ramach D-3)."
+  }
+ ]
+}

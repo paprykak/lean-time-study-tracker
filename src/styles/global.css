@@ -160,9 +160,6 @@
   .kategoria {
     @apply inline-block text-kategoria font-bold tracking-[0.08em] text-akcent-tekst uppercase;
   }
-  .kategoria-na-ciemnym {
-    @apply text-tekst-na-ciemnym;
-  }
   .tytul-xl {
     @apply font-display text-[1.75rem] leading-[1.15] font-bold tracking-[-0.01em] text-tekst sm:text-[2.25rem] lg:text-[2.625rem];
   }
@@ -218,20 +215,6 @@
     @apply font-semibold text-akcent-tekst underline decoration-1 underline-offset-[3px] najazd:text-akcent-ciemny najazd:decoration-2;
   }
 
-  /* Zdjęcia: proporcje stałe, więc miejsce jest zarezerwowane zanim obraz się wczyta (CLS) */
-  .zdjecie {
-    @apply block w-full overflow-hidden rounded-[var(--radius-karta)] bg-tlo-szare object-cover;
-  }
-  .proporcja-16-9 {
-    aspect-ratio: 16 / 9;
-  }
-  .proporcja-16-10 {
-    aspect-ratio: 16 / 10;
-  }
-  .proporcja-1-1 {
-    aspect-ratio: 1 / 1;
-  }
-
   /* Rozciągnięty link: cała karta klika się jednym linkiem w tytule (jedno miejsce w kolejności Tab) */
   .karta {
     position: relative;
@@ -250,10 +233,6 @@
     outline: 3px solid var(--color-akcent);
     outline-offset: 4px;
   }
-  .karta-nad {
-    position: relative;
-    z-index: 2;
-  }
   .karta .karta-tytul {
     text-decoration-line: underline;
     text-decoration-color: transparent;
@@ -270,12 +249,50 @@
     text-decoration-color: currentColor;
   }
 
-  .sr-tylko {
-    @apply sr-only;
-  }
 }
 
-/* Treść artykułu (szablon w F3; typografia należy do systemu wizualnego) */
+/* Podświetlenie trafionych słów w wynikach wyszukiwarki narzędzi (src/lib/szukaj-klient.ts): jasny akcent, tekst bez zmian. */
+mark {
+  background: #fde3d3;
+  color: inherit;
+  padding: 0 0.0625rem;
+}
+
+/* Wiersz narzędzia w spisie /narzedzia i w wynikach wyszukiwarki (src/lib/szukaj-klient.ts tworzy te same klasy). */
+.wiersz {
+  border-bottom: 1px solid var(--color-linia);
+}
+.wiersz-link {
+  display: block;
+  min-height: 3.5rem;
+  padding: 0.75rem 0;
+}
+.wiersz-nazwa {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--color-tekst);
+}
+.wiersz-opis {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--color-tekst-tresc);
+}
+.wiersz-link:hover .wiersz-nazwa {
+  color: var(--color-akcent-tekst);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.wiersz-link:focus-visible {
+  outline: 3px solid var(--color-akcent);
+  outline-offset: 2px;
+}
+
+/* Treść stron stałych i wyjaśnień narzędzi (typografia należy do systemu wizualnego) */
 .tresc {
   @apply text-[1.0625rem] leading-[1.75] text-tekst-tresc sm:text-[1.125rem];
   max-width: 44rem;
@@ -327,17 +344,6 @@
 }
 .tresc figcaption {
   @apply mt-2 text-meta text-tekst-drugi;
-}
-/* Przypis [n] (src/lib/markdown.mjs): odsyłacz do n-tego źródła. Interlinia akapitu się nie zmienia. */
-.tresc sup.przypis {
-  @apply text-[0.72em] font-semibold text-tekst-drugi;
-  line-height: 0;
-}
-.tresc sup.przypis a {
-  @apply text-akcent-tekst no-underline;
-}
-.tresc sup.przypis a:hover {
-  @apply underline;
 }
 .tresc hr {
   @apply my-10 border-linia;

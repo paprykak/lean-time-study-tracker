@@ -31,6 +31,11 @@ describe('okres zasiłkowy (art. 8–9 ustawy zasiłkowej)', () => {
     expect(okresZasilkowy([{ od: '2026-01-01', do: '2026-08-01' }], 'choroba')).toMatchObject({ wykorzystane: 182, ponadLimit: 31, zostalo: 0, koniecLimitu: '2026-07-01' });
     expect(okresZasilkowy([{ od: '2026-01-01', do: '2026-07-05' }, { od: '2026-08-01', do: '2026-08-05' }], 'choroba').koniecLimitu).toBe('2026-07-01');
   });
+  it('29 lutego i przełom roku: 182 dni od 1 września 2027 r., 270 dni gruźlicy od 1 grudnia 2027 r.', () => {
+    // Python: 2027-09-01 + 181 dni = 2028-02-29; 2027-12-01 + 269 dni = 2028-08-26
+    expect(okresZasilkowy([{ od: '2027-09-01', do: '2027-09-10' }], 'choroba').koniecLimitu).toBe('2028-02-29');
+    expect(okresZasilkowy([{ od: '2027-12-01', do: '2027-12-10' }], 'gruzlica')).toMatchObject({ limit: 270, koniecLimitu: '2028-08-26' });
+  });
   it('zwolnienia stykające się i nachodzące scala w jedno', () => {
     expect(scal([{ od: '2026-01-11', do: '2026-01-20' }, { od: '2026-01-01', do: '2026-01-10' }, { od: '2026-01-15', do: '2026-01-25' }])).toEqual([{ od: '2026-01-01', do: '2026-01-25' }]);
     expect(() => scal([{ od: '2026-01-10', do: '2026-01-01' }])).toThrow(RangeError);

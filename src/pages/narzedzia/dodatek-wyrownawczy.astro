@@ -1,0 +1,304 @@
+---
+// Dodatek wyrównawczy (art. 179 § 4, 230 § 2, 231 Kp; art. 5 ust. 6 i art. 10 ust. 4 ustawy o zwolnieniach grupowych;
+// § 7–9 rozporządzenia z 29 maja 1996 r.). Logika: src/lib/narzedzia/dodatek-wyrownawczy.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { LATA } from '../../data/prawo';
+import { POWODY, dodatekWyrownawczy } from '../../lib/narzedzia/dodatek-wyrownawczy';
+import { nazwaMiesiaca } from '../../lib/narzedzia/czas-pracy';
+import { zl } from '../../lib/narzedzia/format';
+import { dataPoPolsku, dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+const dzis = dzisWPolsce();
+const rokBiezacy = Number(dzis.slice(0, 4));
+const rok = LATA.includes(rokBiezacy) ? rokBiezacy : LATA[LATA.length - 1];
+const miesiac = rok === rokBiezacy ? Number(dzis.slice(5, 7)) : 1;
+// Przykład startowy: przeniesienie pierwszego dnia poprzedniego miesiąca.
+const od = (() => {
+  const i = rok * 12 + (miesiac - 1) - 1;
+  return `${Math.floor(i / 12)}-${String((i % 12) + 1).padStart(2, '0')}-01`;
+})();
+const start = dodatekWyrownawczy({ powod: 'wypadek', od, rok, miesiac, stalePrzed: 6000, stalePo: 5200, zmiennePrzed: 2700, zmiennePo: 300 });
+const ETATY = [
+  { wartosc: '1', nazwa: 'pełny etat' },
+  { wartosc: '0.875', nazwa: '7/8 etatu' },
+  { wartosc: '0.75', nazwa: '3/4 etatu' },
+  { wartosc: '0.5', nazwa: '1/2 etatu' },
+  { wartosc: '0.25', nazwa: '1/4 etatu' },
+];
+
+const faq = [
+  {
+    pytanie: 'Ile wynosi dodatek wyrównawczy?',
+    odpowiedz: 'Tyle, ile wynosi różnica między wynagrodzeniem sprzed przeniesienia a wynagrodzeniem po przeniesieniu. Oba liczy się według zasad wynagrodzenia za urlop: stałe składniki w wysokości należnej, a zmienne, na przykład premie i nadgodziny, średnio z 3 miesięcy (§ 7 rozporządzenia z 29 maja 1996 r.). Część zmienną liczy się za dzień i mnoży przez dni z wynagrodzeniem po przeniesieniu (§ 9).',
+  },
+  {
+    pytanie: 'Jak długo przysługuje dodatek wyrównawczy?',
+    odpowiedz: 'Po przeniesieniu z powodu objawów choroby zawodowej albo po wypadku przy pracy najwyżej 6 miesięcy (art. 230 § 2 i 231 Kodeksu pracy). Pracownicy w ciąży lub karmiącej piersią przez cały czas pracy na zmienionych warunkach, aż pracodawca przywróci dawną pracę (art. 179 § 4 i 6). Przy wypowiedzeniu warunków osobie chronionej w zwolnieniach grupowych do końca okresu ochrony, a przy zwolnieniach indywidualnych najwyżej 6 miesięcy.',
+  },
+  {
+    pytanie: 'Czy w ciąży przy skróceniu czasu pracy należy się dodatek?',
+    odpowiedz: 'Tak. Gdy zmiana warunków pracy, skrócenie czasu pracy albo przeniesienie do innej pracy obniża wynagrodzenie pracownicy w ciąży lub karmiącej piersią, przysługuje jej dodatek wyrównawczy (art. 179 § 4 Kodeksu pracy). Gdy pracodawca zwalnia ją z obowiązku świadczenia pracy, zachowuje dotychczasowe wynagrodzenie (§ 5).',
+  },
+  {
+    pytanie: 'Czy dodatek wyrównawczy jest opodatkowany i oskładkowany?',
+    odpowiedz: 'Tak. To przychód ze stosunku pracy, od którego pobiera się zaliczkę na podatek (art. 12 ust. 1 ustawy o PIT), i nie ma go na liście przychodów zwolnionych ze składek ZUS (§ 2 ust. 1 rozporządzenia o podstawie wymiaru składek).',
+  },
+  {
+    pytanie: 'Czy L4 zmniejsza dodatek wyrównawczy?',
+    odpowiedz: 'Tak. Część dodatku ze stałej pensji zmniejsza się o 1/30 za każdy dzień wynagrodzenia chorobowego albo zasiłku, a za dzień pracy bez wynagrodzenia (na przykład urlop bezpłatny) o kwotę podzieloną przez współczynnik urlopowy (§ 8 rozporządzenia z 29 maja 1996 r.). Część zmienna należy się tylko za dni, za które przysługuje wynagrodzenie (§ 9).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="dodatek-wyrownawczy"
+  tytul="Dodatek wyrównawczy: ile i jak długo"
+  opis="Ile wynosi dodatek wyrównawczy po przeniesieniu do gorzej płatnej pracy: w ciąży, po wypadku przy pracy, przy chorobie zawodowej, w okresie ochrony."
+  h1="Dodatek wyrównawczy: kalkulator"
+  lead="Gdy pracodawca musi przenieść Cię do innej pracy, a nowa płaci mniej, różnicę wyrównuje dodatek. Wpisz zarobki sprzed i po przeniesieniu, a policzymy dodatek za wybrany miesiąc i do kiedy przysługuje."
+  faq={faq}
+>
+  <form class="kalkulator" data-dodatek novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twoje przeniesienie</h2>
+      <div class="mt-4">
+        <label for="d-powod" class="etykieta-pola">Powód przeniesienia</label>
+        <select id="d-powod" name="powod" class="pole mt-1">
+          {Object.entries(POWODY).map(([k, p]) => <option value={k} selected={k === 'wypadek'}>{p.nazwa}</option>)}
+        </select>
+      </div>
+      <div class="mt-4 grid items-end gap-4 sm:grid-cols-2">
+        <div>
+          <label for="d-od" class="etykieta-pola">Dzień przeniesienia</label>
+          <input id="d-od" name="od" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={od} aria-describedby="d-blad" />
+        </div>
+        <div data-ochrona hidden>
+          <label for="d-ochrona" class="etykieta-pola">Koniec ochrony</label>
+          <input id="d-ochrona" name="ochrona" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" aria-describedby="d-blad" />
+        </div>
+      </div>
+      <p class="meta mt-4">Zmienne: premie miesięczne, nadgodziny, akord i płaca za godziny przy stawce godzinowej.</p>
+      <fieldset class="mt-2">
+        <legend class="etykieta-pola">Przed przeniesieniem</legend>
+        <div class="mt-1 grid items-end gap-4 sm:grid-cols-2">
+          <div>
+            <label for="d-sprzed" class="meta">Stała pensja przed (zł)</label>
+            <input id="d-sprzed" name="stalePrzed" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="6000" aria-describedby="d-blad" />
+          </div>
+          <div>
+            <label for="d-zprzed" class="meta">Premie, nadgodziny z 3 miesięcy (zł)</label>
+            <input id="d-zprzed" name="zmiennePrzed" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="2700" aria-describedby="d-blad" />
+          </div>
+        </div>
+        <div class="mt-3">
+          <label for="d-dprzed" class="meta">Dni z wynagrodzeniem w tych 3 miesiącach</label>
+          <input id="d-dprzed" name="dniPrzed" class="pole mt-1 max-w-48" type="text" inputmode="numeric" autocomplete="off" placeholder={String(start.dniPrzed)} aria-describedby="d-blad" />
+        </div>
+      </fieldset>
+      <fieldset class="mt-4">
+        <legend class="etykieta-pola">Po przeniesieniu</legend>
+        <div class="mt-1 grid items-end gap-4 sm:grid-cols-2">
+          <div>
+            <label for="d-spo" class="meta">Stała pensja po (zł)</label>
+            <input id="d-spo" name="stalePo" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="5200" aria-describedby="d-blad" />
+          </div>
+          <div>
+            <label for="d-zpo" class="meta">Premie, nadgodziny w tym miesiącu (zł)</label>
+            <input id="d-zpo" name="zmiennePo" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="300" aria-describedby="d-blad" />
+          </div>
+        </div>
+        <div class="mt-3">
+          <label for="d-etat" class="meta">Wymiar etatu</label>
+          <select id="d-etat" name="etat" class="pole mt-1">
+            {ETATY.map((e) => <option value={e.wartosc}>{e.nazwa}</option>)}
+          </select>
+        </div>
+      </fieldset>
+      <fieldset class="mt-4">
+        <legend class="etykieta-pola">Miesiąc rozliczenia</legend>
+        <div class="mt-1 grid grid-cols-2 gap-4">
+          <div>
+            <label for="d-miesiac" class="meta">Miesiąc</label>
+            <select id="d-miesiac" name="miesiac" class="pole mt-1">
+              {Array.from({ length: 12 }, (_, i) => <option value={i + 1} selected={i + 1 === miesiac}>{nazwaMiesiaca(i + 1)}</option>)}
+            </select>
+          </div>
+          <div>
+            <label for="d-rok" class="meta">Rok</label>
+            <select id="d-rok" name="rok" class="pole mt-1">
+              {LATA.map((r) => <option value={r} selected={r === rok}>{r}</option>)}
+            </select>
+          </div>
+          <div>
+            <label for="d-l4" class="meta">Dni L4 lub zasiłku</label>
+            <input id="d-l4" name="l4" class="pole mt-1" type="text" inputmode="numeric" autocomplete="off" value="0" aria-describedby="d-blad" />
+          </div>
+          <div>
+            <label for="d-bp" class="meta">Dni bez wynagrodzenia</label>
+            <input id="d-bp" name="bezPlacy" class="pole mt-1" type="text" inputmode="numeric" autocomplete="off" value="0" aria-describedby="d-blad" />
+          </div>
+        </div>
+      </fieldset>
+      <p id="d-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Dodatek za miesiąc (brutto)</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-kwota" data-w="kwota">{zl(start.dodatek)}</p>
+        <p class="meta" data-w="opis">{POWODY.wypadek.podstawa}</p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Okres dodatku</dt><dd data-w="okres">od {dataPoPolsku(start.okres.od)} do {start.okres.koniec ? dataPoPolsku(start.okres.koniec) : '—'}</dd></div>
+        <div><dt>Ze stałej pensji</dt><dd data-w="stala">{zl(start.stala)}</dd></div>
+        <div><dt>Z premii i nadgodzin</dt><dd data-w="zmienna">{zl(start.zmienna)}</dd></div>
+        <div><dt>Średnio za dzień przed przeniesieniem</dt><dd data-w="za-dzien">{zl(start.zaDzien)} × {start.dniPo} dni</dd></div>
+      </dl>
+      <p class="wynik-uwaga" data-w="uwaga">Dodatek to część wynagrodzenia: pobiera się od niego składki i zaliczkę na podatek.</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="komu">Komu i jak długo</h2>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Prawo do dodatku wyrównawczego i jego okres</caption>
+        <thead><tr><th scope="col">Sytuacja</th><th scope="col">Jak długo</th><th scope="col">Przepis</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Ciąża lub karmienie piersią: zmiana warunków, krótszy czas pracy, przeniesienie</th><td>do ustania przyczyny</td><td>art. 179 § 4 i 6 Kodeksu pracy</td></tr>
+          <tr><th scope="row">Objawy choroby zawodowej</th><td>do 6 miesięcy</td><td>art. 230 § 2 Kodeksu pracy</td></tr>
+          <tr><th scope="row">Wypadek przy pracy lub choroba zawodowa: przeniesienie na podstawie orzeczenia lekarskiego, gdy ZUS nie uznał niezdolności do pracy</th><td>do 6 miesięcy</td><td>art. 231 Kodeksu pracy</td></tr>
+          <tr><th scope="row">Wypowiedzenie warunków osobie chronionej przy zwolnieniu grupowym</th><td>do końca ochrony</td><td>art. 5 ust. 5–6 ustawy o zwolnieniach grupowych</td></tr>
+          <tr><th scope="row">To samo przy zwolnieniu indywidualnym (pracodawca od 20 osób)</th><td>do 6 miesięcy; nie przy ochronie z art. 41 Kodeksu pracy</td><td>art. 10 ust. 4 tej ustawy</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Dodatek to różnica wynagrodzenia sprzed i po przeniesieniu, liczonego według zasad wynagrodzenia za urlop (§ 7
+      rozporządzenia z 29 maja 1996 r.). Ze stałej pensji i stałych dodatków bierzemy różnicę kwot. Zmniejszamy ją
+      o 1/30 za każdy dzień L4 albo zasiłku, a za dzień pracy bez wynagrodzenia o kwotę podzieloną przez współczynnik
+      urlopowy (§ 8 i § 13 ust. 2), czyli współczynnik z § 19 rozporządzenia z 8 stycznia 1997 r., przy niepełnym etacie proporcjonalnie niższy (§ 19 ust. 3). Premie,
+      nadgodziny, płacę za godziny i inne zmienne składniki sprzed przeniesienia dzielimy przez liczbę dni, za które
+      przysługiwało wtedy wynagrodzenie, i mnożymy przez dni z wynagrodzeniem po przeniesieniu;
+      od wyniku odejmujemy zmienne składniki po przeniesieniu (§ 9). Gdy suma wyjdzie zero lub mniej, dodatek się nie
+      należy, bo przepisy dają go tylko przy obniżeniu wynagrodzenia.
+    </p>
+    <p>
+      Co przyjęliśmy, bo przepisy tego nie mówią. Zmienne składniki bierzemy z 3 pełnych miesięcy przed miesiącem
+      przeniesienia, jak przy urlopie (§ 7 ust. 2 odsyła do zasad wynagrodzenia urlopowego), i dzielimy przez dni
+      kalendarzowe, za które przysługiwało wynagrodzenie (§ 9 mówi tylko o „liczbie dni”). Rozporządzenie mówi o przeniesieniu; te same zasady stosujemy do zmiany
+      warunków i krótszego czasu pracy w ciąży, a ustawa o zwolnieniach grupowych odsyła do „zasad wynikających z Kodeksu
+      pracy”, czyli do tego rozporządzenia. Okres 6 miesięcy liczymy od dnia przeniesienia do dnia przed dniem, który datą
+      mu odpowiada; gdy takiego dnia nie ma (przeniesienie 31 sierpnia), do ostatniego dnia miesiąca, czyli w wariancie
+      dłuższym. W pierwszym i ostatnim miesiącu, który tylko częściowo mieści się w okresie, część ze stałej pensji liczymy
+      proporcjonalnie do dni kalendarzowych w okresie. Dni z wynagrodzeniem po przeniesieniu to dni kalendarzowe
+      w okresie minus dni L4 i bez wynagrodzenia. Przy krótszym czasie pracy przepis porównuje kwoty, więc dodatek wyrównuje
+      całą różnicę. Nie liczymy składników płaconych za okresy dłuższe niż miesiąc, na przykład premii kwartalnej (§ 10).
+    </p>
+    <p>
+      Kiedy pracodawca musi przenieść pracownicę w ciąży, sprawdzisz w narzędziu <a href="/narzedzia/praca-w-ciazy">praca
+      w ciąży</a>, ochronę przed wypowiedzeniem przed emeryturą w narzędziu <a href="/narzedzia/ochrona-przedemerytalna">ochrona
+      przedemerytalna</a>, a jednorazowe odszkodowanie po wypadku w <a href="/narzedzia/odszkodowanie-za-wypadek-przy-pracy">kalkulatorze
+      odszkodowania za wypadek przy pracy</a>. Zasady wynagrodzenia za urlop opisuje <a href="/narzedzia/wynagrodzenie-za-urlop">kalkulator
+      wynagrodzenia za urlop</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { POWODY, dodatekWyrownawczy, dniTrzechMiesiecyPrzed, type PowodDodatku } from '../../lib/narzedzia/dodatek-wyrownawczy';
+  import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
+  import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { odmiana } from '../../lib/redakcja';
+  import { typografia } from '../../lib/typografia.mjs';
+
+  const form = document.querySelector<HTMLFormElement>('[data-dodatek]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const pisz = (k: string, tekst: string) => {
+      w(k).textContent = typografia(tekst);
+    };
+    const kwota = (n: string) => wpisanaLiczba(el(n).value || '0');
+    const calkowita = (n: string) => {
+      const x = wpisanaLiczba(el(n).value || '0');
+      return Number.isInteger(x) ? x : Number.NaN;
+    };
+    const przelicz = () => {
+      const powod = el('powod').value as PowodDodatku;
+      form.querySelector<HTMLElement>('[data-ochrona]')!.hidden = powod !== 'grupowe';
+      const od = el('od').value;
+      const ochrona = powod === 'grupowe' ? el('ochrona').value : '';
+      if (poprawnaData(od)) el('dniPrzed').placeholder = String(dniTrzechMiesiecyPrzed(od));
+      const dniPrzedTekst = el('dniPrzed').value.trim();
+      const dane = {
+        powod,
+        od,
+        koniecOchrony: ochrona || undefined,
+        rok: Number(el('rok').value),
+        miesiac: Number(el('miesiac').value),
+        etat: Number(el('etat').value),
+        stalePrzed: kwota('stalePrzed'),
+        stalePo: kwota('stalePo'),
+        zmiennePrzed: kwota('zmiennePrzed'),
+        zmiennePo: kwota('zmiennePo'),
+        dniPrzed: dniPrzedTekst ? calkowita('dniPrzed') : undefined,
+        dniL4: calkowita('l4'),
+        dniBezPlacy: calkowita('bezPlacy'),
+      };
+      let blad =
+        !poprawnaData(od) ? 'Wpisz dzień przeniesienia.'
+        : ochrona && !poprawnaData(ochrona) ? 'Wpisz poprawny dzień końca ochrony.'
+        : ochrona && ochrona < od ? 'Koniec ochrony jest przed dniem przeniesienia.'
+        : [dane.stalePrzed, dane.stalePo, dane.zmiennePrzed, dane.zmiennePo].some((x) => !(x >= 0 && x < 1_000_000)) ? 'Kwoty wpisz jako liczby, na przykład 6000.'
+        : dane.dniPrzed !== undefined && !(dane.dniPrzed >= 1 && dane.dniPrzed <= 92) ? 'Dni z wynagrodzeniem w 3 miesiącach: od 1 do 92.'
+        : !(dane.dniL4 >= 0) || !(dane.dniBezPlacy >= 0) ? 'Dni L4 i bez wynagrodzenia wpisz jako liczby całkowite.'
+        : null;
+      let r: ReturnType<typeof dodatekWyrownawczy> | null = null;
+      if (!blad) {
+        try {
+          r = dodatekWyrownawczy(dane);
+        } catch {
+          blad = 'Dni L4 i bez wynagrodzenia jest więcej niż dni tego miesiąca w okresie dodatku.';
+        }
+      }
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      b.hidden = !blad;
+      b.textContent = blad ? typografia(blad) : '';
+      if (!r) {
+        for (const k of ['kwota', 'okres', 'stala', 'zmienna', 'za-dzien']) w(k).textContent = '—';
+        w('opis').textContent = '';
+        w('uwaga').textContent = '';
+        return;
+      }
+      const koniec = r.okres.koniec
+        ? dataPoPolsku(r.okres.koniec)
+        : powod === 'ciaza' ? 'końca ciąży lub karmienia piersią' : 'końca ochrony (wpisz dzień)';
+      pisz('okres', `od ${dataPoPolsku(r.okres.od)} do ${koniec}`);
+      pisz('opis', POWODY[powod].podstawa);
+      const uwagi: string[] = [];
+      if (!r.wOkresie) {
+        pisz('kwota', zl(0));
+        for (const k of ['stala', 'zmienna', 'za-dzien']) w(k).textContent = '—';
+        uwagi.push('Ten miesiąc jest poza okresem dodatku: wybierz miesiąc między dniem przeniesienia a końcem okresu.');
+      } else {
+        pisz('kwota', zl(r.dodatek));
+        pisz('stala', r.zmniejszenie ? `${zl(r.stala)} (po zmniejszeniu o ${zl(r.zmniejszenie)})` : zl(r.stala));
+        pisz('zmienna', zl(r.zmienna));
+        pisz('za-dzien', `${zl(r.zaDzien)} × ${odmiana(r.dniPo, ['dzień', 'dni', 'dni'])}`);
+        if (r.przysluguje && (r.stala < 0 || r.zmienna < 0)) uwagi.push('Część z minusem zmniejsza dodatek: po przeniesieniu ten składnik jest wyższy niż przed albo zmienne za dni pracy po przeniesieniu przekraczają średnią sprzed.');
+        if (!r.przysluguje) uwagi.push('Po przeniesieniu zarabiasz tyle samo albo więcej, więc dodatek się nie należy: przepisy dają go tylko przy obniżeniu wynagrodzenia.');
+        else uwagi.push('Dodatek to część wynagrodzenia: pobiera się od niego składki i zaliczkę na podatek.');
+        if (r.dniWOkresie < new Date(Date.UTC(dane.rok, dane.miesiac, 0)).getUTCDate()) uwagi.push(`W okresie dodatku jest ${odmiana(r.dniWOkresie, ['dzień', 'dni', 'dni'])} tego miesiąca, więc część ze stałej pensji liczymy proporcjonalnie.`);
+      }
+      if (powod === 'indywidualne') uwagi.push('Dodatek nie przysługuje, gdy ochrona wynika z urlopu albo innej usprawiedliwionej nieobecności (art. 41 Kodeksu pracy).');
+      pisz('uwaga', uwagi.join(' '));
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>

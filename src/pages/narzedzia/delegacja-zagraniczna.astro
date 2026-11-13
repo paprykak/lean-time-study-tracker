@@ -8,6 +8,7 @@ import { czesciDiety, delegacjaZagraniczna, ileDietZagranicznych, wWalucie } fro
 import { dodajDni, dzisWPolsce } from '../../lib/narzedzia/terminy';
 
 const dzis = dzisWPolsce();
+const rok = Number(dzis.slice(0, 4));
 const D = { panstwo: 'Niemcy', wyjazd: { data: dzis, godzina: '06:00' }, powrot: { data: dodajDni(dzis, 2), godzina: '10:00' } };
 const r = delegacjaZagraniczna(D);
 const s = r.stawki;
@@ -20,6 +21,15 @@ const POSILKI = [
 ] as const;
 const PANSTWA = [...DIETY_ZAGRANICZNE, INNE_PANSTWA];
 const niemcy = DIETY_ZAGRANICZNE.find((x) => x.panstwo === 'Niemcy')!;
+// Krótkie nazwy w liście wyboru (telefon ucina długie opcje); w tabeli zostają pełne nazwy z załącznika.
+const KROTKO: Record<string, string> = {
+  'Stany Zjednoczone Ameryki (poza Nowym Jorkiem i Waszyngtonem)': 'USA',
+  'Stany Zjednoczone Ameryki: Nowy Jork': 'USA: Nowy Jork',
+  'Stany Zjednoczone Ameryki: Waszyngton': 'USA: Waszyngton',
+  'Demokratyczna Republika Konga': 'DR Konga',
+  'Zjednoczone Emiraty Arabskie': 'Emiraty Arabskie',
+};
+for (const nazwa of Object.keys(KROTKO)) if (!PANSTWA.some((x) => x.panstwo === nazwa)) throw new Error(`Brak państwa w tabeli: ${nazwa}`);
 
 const faq = [
   {
@@ -36,7 +46,7 @@ const faq = [
   },
   {
     pytanie: 'Czy prywatna firma może płacić niższą dietę za granicą?',
-    odpowiedz: 'Może ustalić w regulaminie wynagradzania, układzie zbiorowym albo umowie o pracę inne stawki niż w tabeli, ale dieta za dobę podróży za granicą nie może być niższa niż dieta krajowa, czyli 45 zł (art. 77⁵ § 3–4 Kodeksu pracy). Gdy firma nie ma takich zasad, stosuje się rozporządzenie (art. 77⁵ § 5).',
+    odpowiedz: 'Może ustalić w regulaminie wynagradzania, układzie zbiorowym albo umowie o pracę inne stawki niż w tabeli, ale dieta za dobę podróży za granicą nie może być niższa niż dieta krajowa, czyli 45 zł (art. 77^5 § 3–4 Kodeksu pracy). Gdy firma nie ma takich zasad, stosuje się rozporządzenie (art. 77^5 § 5).',
   },
   {
     pytanie: 'Ile wynosi ryczałt za nocleg za granicą?',
@@ -46,8 +56,8 @@ const faq = [
 ---
 <StronaNarzedzia
   slug="delegacja-zagraniczna"
-  tytul="Dieta zagraniczna 2026: delegacja i tabela"
-  opis="Policz dietę z delegacji za granicą: stawki dla 119 państw, 1/3 i 1/2 diety za niepełną dobę, posiłki 15/30/30%, ryczałt za nocleg 25% limitu i dojazdy."
+  tytul={`Dieta zagraniczna ${rok}: delegacja i tabela`}
+  opis="Policz dietę z delegacji za granicą: stawki dla 117 państw i terytoriów, 1/3 i 1/2 diety za niepełną dobę, posiłki 15/30/30%, ryczałt za nocleg 25% limitu."
   h1="Delegacja zagraniczna: dieta i nocleg"
   lead="Dieta za granicą zależy od państwa i czasu od przekroczenia granicy. Wybierz państwo, wpisz godziny wyjazdu i powrotu, zaznacz posiłki, a policzymy dietę i ryczałty w walucie."
   faq={faq}
@@ -58,13 +68,13 @@ const faq = [
       <div class="mt-4">
         <label for="z-panstwo" class="etykieta-pola">Państwo docelowe</label>
         <select id="z-panstwo" name="panstwo" class="pole mt-1">
-          {PANSTWA.map((x) => <option value={x.panstwo} selected={x.panstwo === D.panstwo}>{x.panstwo}</option>)}
+          {PANSTWA.map((x) => <option value={x.panstwo} selected={x.panstwo === D.panstwo}>{KROTKO[x.panstwo] ?? x.panstwo}</option>)}
         </select>
       </div>
       <div class="mt-4 grid grid-cols-2 items-end gap-3">
         <div>
           <label for="z-wyjazd" class="etykieta-pola">Wyjazd za granicę: dzień</label>
-          <input id="z-wyjazd" name="wyjazd" type="date" class="pole mt-1" min="2023-01-01" max="2100-12-31" value={D.wyjazd.data} aria-describedby="z-czas-opis z-blad" />
+          <input id="z-wyjazd" name="wyjazd" type="date" class="pole mt-1" min="2023-01-01" max="2100-12-31" value={D.wyjazd.data} data-dzis aria-describedby="z-czas-opis z-blad" />
         </div>
         <div>
           <label for="z-wyjazd-g" class="etykieta-pola">Godzina wyjazdu</label>
@@ -74,14 +84,14 @@ const faq = [
       <div class="mt-4 grid grid-cols-2 items-end gap-3">
         <div>
           <label for="z-powrot" class="etykieta-pola">Powrót do Polski: dzień</label>
-          <input id="z-powrot" name="powrot" type="date" class="pole mt-1" min="2023-01-01" max="2100-12-31" value={D.powrot.data} aria-describedby="z-czas-opis z-blad" />
+          <input id="z-powrot" name="powrot" type="date" class="pole mt-1" min="2023-01-01" max="2100-12-31" value={D.powrot.data} data-dzis="2" aria-describedby="z-czas-opis z-blad" />
         </div>
         <div>
           <label for="z-powrot-g" class="etykieta-pola">Godzina powrotu</label>
           <input id="z-powrot-g" name="powrotGodzina" type="time" class="pole mt-1" value={D.powrot.godzina} aria-describedby="z-czas-opis z-blad" />
         </div>
       </div>
-      <p id="z-czas-opis" class="meta mt-1">Przekroczenie granicy, start samolotu z ostatniego lotniska w Polsce albo wyjście statku z ostatniego polskiego portu, w czasie polskim (§ 12). Czas w kraju policzy <a href="/narzedzia/delegacja-krajowa">kalkulator delegacji krajowej</a> (§ 21).</p>
+      <p id="z-czas-opis" class="meta mt-1">Przekroczenie granicy, start samolotu z ostatniego lotniska w Polsce albo wyjście statku z ostatniego polskiego portu, w czasie polskim (§ 12). Czas w kraju rozlicza się jak delegację krajową (§ 21).</p>
       <p id="z-blad" class="blad-pola mt-3" data-blad="czas" hidden></p>
 
       <fieldset class="mt-5">
@@ -216,6 +226,7 @@ const faq = [
   import { chwilaWPolsce, czasPodrozy, MAKS_DOB, opisChwili, poprawnaGodzina, type Posilek, type PosilkiDoby } from '../../lib/narzedzia/delegacja';
   import { delegacjaZagraniczna, ileDietZagranicznych, stawki, wWalucie, type Dojazd } from '../../lib/narzedzia/delegacja-zagraniczna';
   import { dniMiedzy, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
 
   const form = document.querySelector<HTMLFormElement>('[data-zagraniczna]');
   const wzor = document.querySelector<HTMLTemplateElement>('[data-wzor-doby]');
@@ -328,6 +339,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    ustawDzisiejszeWartosci(form);
     przelicz();
   }
 </script>

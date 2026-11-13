@@ -1,9 +1,9 @@
 ---
-// Treść odpowiedzi 410 (artykuł usunięty na stałe). Worker (F8) zwraca ten plik ze statusem 410 dla adresów z listy
-// usuniętych tekstów; sam adres /410 ma noindex i jest poza mapą strony.
+// Treść odpowiedzi 410 (strona usunięta na stałe). Worker zwraca ten plik ze statusem 410 dla adresów z listy
+// worker/usuniete.js; sam adres /410 ma noindex i jest poza mapą strony.
 import Uklad from '../layouts/Uklad.astro';
 import StronaBledu from '../components/StronaBledu.astro';
 ---
-<Uklad tytul="Artykuł usunięty | Rytm Hali" opis="Redakcja wycofała ten artykuł na stałe. Aktualne teksty znajdziesz w działach i w wyszukiwarce." noindex>
+<Uklad tytul="Strona usunięta | Rytm Hali" opis="Redakcja usunęła tę stronę na stałe. Rytm Hali to teraz bezpłatne narzędzia i przepisy dla ludzi z hali." noindex>
   <StronaBledu kod={410} />
 </Uklad>

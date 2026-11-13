@@ -4,13 +4,16 @@
 import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
 import { LIMIT, MAKS_PRZERWA, okresZasilkowy } from '../../lib/narzedzia/okres-zasilkowy';
 import { dataPoPolsku, dodajDni, dzisWPolsce } from '../../lib/narzedzia/terminy';
+import { odmiana } from '../../lib/redakcja';
 
 const dzis = dzisWPolsce();
 const WIERSZE = 5;
-const D = [
-  { od: dodajDni(dzis, -120), do: dodajDni(dzis, -80) },
-  { od: dodajDni(dzis, -40), do: dzis },
+// Przesunięcia względem dziś; te same liczby stoją w data-dzis, więc przeglądarka przestawia daty na prawdziwe dziś.
+const PRZESUNIECIA = [
+  { od: -120, do: -80 },
+  { od: -40, do: 0 },
 ];
+const D = PRZESUNIECIA.map((p) => ({ od: dodajDni(dzis, p.od), do: dodajDni(dzis, p.do) }));
 const r = okresZasilkowy(D, 'choroba');
 
 const faq = [
@@ -54,11 +57,11 @@ const faq = [
           <div class="mt-1 grid grid-cols-2 items-end gap-3">
             <div>
               <label for={`z-od${i + 1}`} class="meta">Od</label>
-              <input id={`z-od${i + 1}`} name={`od${i + 1}`} type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={D[i]?.od} aria-describedby="z-blad" />
+              <input id={`z-od${i + 1}`} name={`od${i + 1}`} type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={D[i]?.od} data-dzis={PRZESUNIECIA[i]?.od} aria-describedby="z-blad" />
             </div>
             <div>
               <label for={`z-do${i + 1}`} class="meta">Do</label>
-              <input id={`z-do${i + 1}`} name={`do${i + 1}`} type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={D[i]?.do} aria-describedby="z-blad" />
+              <input id={`z-do${i + 1}`} name={`do${i + 1}`} type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={D[i]?.do} data-dzis={PRZESUNIECIA[i]?.do} aria-describedby="z-blad" />
             </div>
           </div>
         </fieldset>
@@ -77,7 +80,7 @@ const faq = [
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
       <h2 id="wynik-tytul" class="etykieta">Zostało z okresu zasiłkowego</h2>
       <div aria-live="polite" aria-atomic="true">
-        <p class="wynik-kwota" data-w="zostalo">{r.zostalo} dni</p>
+        <p class="wynik-kwota" data-w="zostalo">{odmiana(r.zostalo, ['dzień', 'dni', 'dni'])}</p>
         <p class="meta" data-w="opis">Wykorzystane {r.wykorzystane} z {r.limit} dni, okres od {dataPoPolsku(r.poczatekOkresu)}</p>
       </div>
       <dl class="wynik-lista">
@@ -95,7 +98,7 @@ const faq = [
       <li>Zasiłek chorobowy najwyżej przez {LIMIT.choroba} dni, przy gruźlicy i niezdolności w trakcie ciąży {LIMIT.ciaza} dni (art. 8 ust. 1 ustawy zasiłkowej).</li>
       <li>Do okresu zasiłkowego wlicza się wszystkie dni niezdolności do pracy (art. 9 ust. 1) i wcześniejsze zwolnienia, gdy przerwa nie przekroczyła {MAKS_PRZERWA} dni, bez względu na chorobę (art. 9 ust. 2).</li>
       <li>Gdy po przerwie zwolnienie wystąpiło w trakcie ciąży, zwolnień sprzed przerwy się nie wlicza (art. 9 ust. 2 zd. 2).</li>
-      <li>Przy kilku umowach okres zasiłkowy jest jeden (art. 9 ust. 4).</li>
+      <li>Od 1 stycznia 2027 r. przy kilku tytułach ubezpieczenia okres zasiłkowy jest jeden (art. 9 ust. 4).</li>
       <li>Po końcu umowy zasiłek trwa najwyżej 91 dni, poza gruźlicą, ciążą i badaniami dawców narządów (art. 8 ust. 2); to policzy <a href="/narzedzia/l4-po-zwolnieniu">kalkulator L4 po zwolnieniu z pracy</a>.</li>
     </ul>
 
@@ -116,6 +119,8 @@ const faq = [
   import { okresZasilkowy, type PrzyczynaZwolnienia, type Zwolnienie } from '../../lib/narzedzia/okres-zasilkowy';
   import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
   import { typografia } from '../../lib/typografia.mjs';
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
+  import { odmiana } from '../../lib/redakcja';
 
   const form = document.querySelector<HTMLFormElement>('[data-zasilkowy]');
   if (form) {
@@ -138,14 +143,14 @@ const faq = [
       if (!blad && !lista.length) blad = 'Wpisz co najmniej jedno zwolnienie.';
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
       b.hidden = !blad;
-      b.textContent = blad ?? '';
+      b.textContent = typografia(blad ?? '');
       if (blad) {
         w('zostalo').textContent = '—';
         w('opis').textContent = '';
         return;
       }
       const r = okresZasilkowy(lista, el('przyczyna').value as PrzyczynaZwolnienia);
-      pisz('zostalo', `${r.zostalo} dni`);
+      pisz('zostalo', odmiana(r.zostalo, ['dzień', 'dni', 'dni']));
       pisz(
         'opis',
         `Wykorzystane ${r.wykorzystane} z ${r.limit} dni, okres od ${dataPoPolsku(r.poczatekOkresu)}${r.ponadLimit ? `; ${r.ponadLimit} dni zwolnienia ponad limit` : ''}`,
@@ -162,6 +167,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    ustawDzisiejszeWartosci(form);
     przelicz();
   }
 </script>

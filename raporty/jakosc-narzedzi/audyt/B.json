@@ -1,0 +1,252 @@
+{
+ "partia": "B",
+ "sprawdzone": [
+  {
+   "slug": "dodatek-za-prace-w-nocy",
+   "pliki": [
+    "src/pages/narzedzia/dodatek-za-prace-w-nocy.astro",
+    "src/lib/narzedzia/dodatek-nocny.ts",
+    "src/lib/narzedzia/dodatek-nocny.test.ts"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "placa-minimalna",
+   "pliki": [
+    "src/pages/narzedzia/placa-minimalna.astro",
+    "src/lib/narzedzia/placa-minimalna.ts",
+    "src/lib/narzedzia/placa-minimalna.test.ts",
+    "src/data/prawo.ts"
+   ],
+   "wynik": "ok"
+  },
+  {
+   "slug": "brutto-netto",
+   "pliki": [
+    "src/pages/narzedzia/brutto-netto.astro",
+    "src/lib/narzedzia/netto.ts",
+    "src/lib/narzedzia/netto.test.ts"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "zlecenie-netto",
+   "pliki": [
+    "src/pages/narzedzia/zlecenie-netto.astro",
+    "src/lib/narzedzia/zlecenie.ts",
+    "src/lib/narzedzia/zlecenie.test.ts"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "koszt-pracodawcy",
+   "pliki": [
+    "src/pages/narzedzia/koszt-pracodawcy.astro",
+    "src/lib/narzedzia/koszt-pracodawcy.ts",
+    "src/lib/narzedzia/koszt-pracodawcy.test.ts"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "kalkulator-ppk",
+   "pliki": [
+    "src/pages/narzedzia/kalkulator-ppk.astro",
+    "src/lib/narzedzia/ppk.ts",
+    "src/lib/narzedzia/ppk.test.ts"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "wyplata-z-nadgodzinami",
+   "pliki": [
+    "src/pages/narzedzia/wyplata-z-nadgodzinami.astro",
+    "src/lib/narzedzia/wyplata-dodatki.ts",
+    "src/lib/narzedzia/nadgodziny.ts",
+    "src/lib/narzedzia/wyplata-dodatki.test.ts"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "termin-wyplaty-wynagrodzenia",
+   "pliki": [
+    "src/pages/narzedzia/termin-wyplaty-wynagrodzenia.astro",
+    "src/lib/narzedzia/termin-wyplaty.ts",
+    "src/lib/narzedzia/termin-wyplaty.test.ts"
+   ],
+   "wynik": "problemy"
+  }
+ ],
+ "znaleziska": [
+  {
+   "id": "B-1",
+   "slug": "termin-wyplaty-wynagrodzenia",
+   "wymiar": "rachunek",
+   "waga": "wysoka",
+   "plik": "src/pages/narzedzia/termin-wyplaty-wynagrodzenia.astro",
+   "linia": 134,
+   "problem": "„Najbliższa wypłata” liczy się tylko w wybranym roku. Gdy wszystkie daty tego roku już minęły, kod bierze `?? lista[0]` i pokazuje styczeń tego samego roku, czyli datę z przeszłości. W SSR (linia 17) jest tak samo. Strona zbudowana w listopadzie 2026 r. ma domyślnie rok 2026, więc ten błąd widać już od 11.12.2026 r. do następnego przebudowania.",
+   "dowod": "Playwright z zegarem ustawionym na 2026-12-15: [data-w=najblizsza] = „9 stycznia 2026 r.”, #p-rok = 2026.",
+   "poprawka": "Najbliższą wypłatę liczyć od dzisiejszej daty: `terminyWyplaty(rok)` dla bieżącego roku i dla następnego, sklejone, potem `find(t => t.wyplata >= dzis)`. Gdy wybrany rok jest w całości przeszły, nagłówek powinien brzmieć „Ostatnia wypłata w roku”. Do testu E2E dodać zegar 2026-12-15 z oczekiwanym wynikiem 8 stycznia 2027 r."
+  },
+  {
+   "id": "B-2",
+   "slug": "dodatek-za-prace-w-nocy",
+   "wymiar": "tresc-ux",
+   "waga": "srednia",
+   "plik": "src/pages/narzedzia/dodatek-za-prace-w-nocy.astro",
+   "linia": 285,
+   "problem": "Komunikat błędu ma liczebnik bez odmiany: „najwyżej ${maks} godzin”. W lutym wychodzi 224 (232 w roku przestępnym), a to wymaga formy „godziny”. To samo dzieje się w przykładzie SSR w linii 173 („ma ${przyklad.wymiar.godziny} godzin”): po buildzie w styczniu 2027 r. (152 h) albo w maju 2027 r. (144 h) wyjdzie „152 godzin” i „144 godzin”. Tekst skryptu nie przechodzi też przez typografia().",
+   "dowod": "Playwright, luty 2027 i 300 godzin: „W lutym 2027 r. pora nocna ma razem najwyżej 224 godzin (8 godzin na dobę).” Wymiar 2027 policzony niezależnie (wymiar.py): 152,160,176,176,144,176,176,176,176,168,160,168.",
+   "poprawka": "W skrypcie i w SSR użyć `odmiana(maks, ['godzina','godziny','godzin'])`, a tekst skryptu puścić przez `typografia()`. Dodać test E2E dla lutego oraz test jednostkowy tekstu przykładu dla 152 h."
+  },
+  {
+   "id": "B-3",
+   "slug": "brutto-netto",
+   "wymiar": "rachunek",
+   "waga": "srednia",
+   "plik": "src/lib/narzedzia/netto.ts",
+   "linia": 67,
+   "problem": "Przy uldze dla młodych `progPrzekroczony` jest zawsze false, a limitu 85 528 zł w roku nic nie pilnuje. Przy 10 000 zł brutto miesięcznie przychód przekracza limit we wrześniu, od tego miesiąca należy się zaliczka, a kalkulator pokazuje netto bez podatku i żadnej uwagi.",
+   "dowod": "Art. 21 ust. 1 pkt 148 ustawy o PIT (.cache DU_2026_592.txt, l. 2584–2594): zwolnienie „do wysokości nieprzekraczającej w roku podatkowym kwoty 85 528 zł”. Playwright: 10 000 zł z zaznaczonym „Mam mniej niż 26 lat” daje netto 7852,39 zł, uwaga ukryta. Python: limit przekroczony w 9. miesiącu.",
+   "poprawka": "W netto() dodać `limitUlgiPrzekroczony: d.ulgaMlodych && B*12 > LIMIT_ULGI_MLODYCH` (z wpłatą PPK pracodawcy) i na stronie pokazać uwagę: „Przy takiej pensji przychód przekroczy w roku 85 528 zł: od tego miesiąca pracodawca pobiera zaliczkę”. Do tego test jednostkowy."
+  },
+  {
+   "id": "B-4",
+   "slug": "brutto-netto",
+   "wymiar": "tresc-ux",
+   "waga": "srednia",
+   "plik": "src/pages/narzedzia/brutto-netto.astro",
+   "linia": 138,
+   "problem": "Uwaga o progu 120 000 zł mówi o niższym netto „w ostatnich miesiącach roku”, a przy wysokich pensjach skok następuje w połowie roku. Uwaga pomija też limit 30-krotności, który pod koniec roku podnosi netto. Treść skryptu idzie bez typografia() i bez twardych spacji.",
+   "dowod": "Niezależny rachunek roczny (netto.py), 25 000 zł, koszty 250 zł, PIT-2: netto 17 371,97 zł w I–V, 15 784,97 zł w VI, 13 107,97 zł w VII–XI. W XII 2026 r. jest 14 263,88 zł (limit 282 600 zł), w XII 2027 r. 13 107,97 zł (limit 300 990 zł, M.P. 2026 poz. 1098). Miesięczne wyniki narzędzia (17 371,97 / 7147,39 / 3605,85 / 3703,93) zgadzają się z Pythonem.",
+   "poprawka": "Policzyć miesiąc przekroczenia, czyli ceil(120000 / podstawa), i napisać „od {miesiąc} zaliczka 32% od nadwyżki”. Gdy brutto*12 przekracza limit składek, dopisać zdanie o limicie. Tekst puścić przez typografia(). Test: 25 000 zł daje czerwiec."
+  },
+  {
+   "id": "B-5",
+   "slug": "brutto-netto",
+   "wymiar": "tresc-ux",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/brutto-netto.astro",
+   "linia": 53,
+   "problem": "Etykieta „Złożyłem albo złożyłam PIT-2” ma formę zależną od płci (zasada 6). W pozostałych narzędziach etykieta jest neutralna.",
+   "dowod": "zlecenie-netto.astro l. 67, kalkulator-ppk.astro l. 78 i wyplata-z-nadgodzinami.astro l. 78 mają „Złożony PIT-2 (zaliczka mniejsza o 300 zł)”.",
+   "poprawka": "Zmienić na „Złożony PIT-2 (zaliczka mniejsza o 300 zł)”."
+  },
+  {
+   "id": "B-6",
+   "slug": "zlecenie-netto",
+   "wymiar": "tresc-ux",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/zlecenie-netto.astro",
+   "linia": 86,
+   "problem": "Forma męska „jesteś traktowany jak pracownik” stoi w uwadze pod wynikiem (l. 86) i w FAQ (l. 22).",
+   "dowod": "Zasada 6 z prompty/02-fabryka.md, sekcja 4.",
+   "poprawka": "Zmienić na „składki liczy się jak od umowy o pracę (art. 8 ust. 2a ustawy o systemie ubezpieczeń społecznych)”."
+  },
+  {
+   "id": "B-7",
+   "slug": "zlecenie-netto",
+   "wymiar": "rachunek",
+   "waga": "niska",
+   "plik": "src/lib/narzedzia/zlecenie.ts",
+   "linia": 40,
+   "problem": "Przy umowie do 200 zł (malaUmowa) wynik netto liczy zaliczkę 12% od podstawy po kosztach 20%, a podatek zryczałtowany to 12% całego przychodu, bez kosztów. Kwota wyniku jest więc błędna, a strona dokłada tylko uwagę.",
+   "dowod": "nettoZlecenie({brutto:150}): koszty 26,62, zaliczka 13, netto 108,13 zł. Art. 30 ust. 1 pkt 5a ustawy o PIT: 12% przychodu, czyli 18 zł, co daje netto 103,13 zł. Do tego art. 83 ust. 3 pkt 6 ustawy o świadczeniach (DU_2025_1461.txt): zdrowotna bez ograniczenia.",
+   "poprawka": "Gdy malaUmowa i nie ma zwolnienia: koszty 0, podatek = zl(B*0,12), bez PIT-2. Dodać test dla 150 zł i 200,01 zł."
+  },
+  {
+   "id": "B-8",
+   "slug": "wyplata-z-nadgodzinami",
+   "wymiar": "prawo",
+   "waga": "srednia",
+   "plik": "src/pages/narzedzia/wyplata-z-nadgodzinami.astro",
+   "linia": 107,
+   "problem": "„Jak liczymy” wymienia dodatek 100% tylko za noc, niedziele, święta i dzień wolny za niedzielę. Pomija § 2: 100% należy się też za godziny ponad przeciętną normę tygodniową. Czytelnik zakwalifikuje je jako 50%.",
+   "dowod": "Art. 151^1 § 2 Kp (DU_2026_1245.txt l. 2685): „Dodatek w wysokości określonej w § 1 pkt 1 przysługuje także za każdą godzinę pracy nadliczbowej z tytułu przekroczenia przeciętnej tygodniowej normy czasu pracy…”. Komentarz w nadgodziny.ts (l. 17) tę przesłankę uwzględnia.",
+   "poprawka": "Dopisać do listy 100% „oraz za przekroczenie przeciętnej normy tygodniowej w okresie rozliczeniowym (art. 151^1 § 2)”, a w etykiecie pola 100% dodać krótką podpowiedź."
+  },
+  {
+   "id": "B-9",
+   "slug": "wyplata-z-nadgodzinami",
+   "wymiar": "spojnosc",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/wyplata-z-nadgodzinami.astro",
+   "linia": 136,
+   "problem": "Pole godzin nocnych przyjmuje do 400 h. Kalkulator dodatku nocnego ogranicza je do 8 h × liczba dni miesiąca. Ta sama dana jest walidowana na dwa sposoby, a uwaga o progu (l. 164) idzie bez typografia().",
+   "dowod": "dodatek-za-prace-w-nocy.astro l. 273: `maks = 8 * dniWMiesiacu(rok, miesiac)`. Tutaj warunek to `g <= 400`.",
+   "poprawka": "Dla pola `noc` wziąć ten sam limit `8 * dniWMiesiacu(rok, miesiac)` i ten sam komunikat (z odmiana()), a tekst uwagi puścić przez typografia()."
+  },
+  {
+   "id": "B-10",
+   "slug": "dodatek-za-prace-w-nocy",
+   "wymiar": "tresc-ux",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/dodatek-za-prace-w-nocy.astro",
+   "linia": 148,
+   "problem": "Uwaga w wyniku ma formę męską: „jesteś w rozumieniu Kodeksu pracy pracującym w nocy”.",
+   "dowod": "Zasada 6 z prompty/02-fabryka.md, sekcja 4.",
+   "poprawka": "Zmienić na „Kodeks pracy uznaje Cię wtedy za osobę pracującą w nocy (art. 151^7 § 2)”."
+  },
+  {
+   "id": "B-11",
+   "slug": "kalkulator-ppk",
+   "wymiar": "rachunek",
+   "waga": "srednia",
+   "plik": "src/pages/narzedzia/kalkulator-ppk.astro",
+   "linia": 54,
+   "problem": "Skrypt bierze rok z zegara przeglądarki (l. 127), ale opis pola (l. 54), FAQ i wyjaśnienie pokazują próg z roku buildu. Po 1.01.2027 r. bez przebudowy strona mówi „Mniej niż 2% tylko przy pensji do 5767,20 zł”, a walidacja przepuszcza kwoty do 5940 zł. Komunikat błędu i opis podają wtedy różne progi. W 2028 r. (brak w LATA) skrypt po cichu liczy z płacą 2027 r.",
+   "dowod": "progObnizenia: 2026 = 5767,20 zł, 2027 = 5940,00 zł. Próg dopłaty rocznej: 1009,26 i 1039,50 zł (art. 32 ust. 2 ustawy o PPK, DU_2026_192.txt; Python).",
+   "poprawka": "Skrypt powinien aktualizować tekst `#k-pracownik-opis` progiem dla roku, z którego liczy. Gdy roku bieżącego nie ma w LATA, pokazać uwagę „liczymy z płacą minimalną {rok}”. Test jednostkowy progów 2027."
+  },
+  {
+   "id": "B-12",
+   "slug": "koszt-pracodawcy",
+   "wymiar": "tresc-ux",
+   "waga": "niska",
+   "plik": "src/lib/narzedzia/koszt-pracodawcy.ts",
+   "linia": 7,
+   "problem": "Komentarz mówi, że FGŚP jest „bez tego samego progu wieku”, a kod i FAQ słusznie zwalniają z FGŚP osoby 55+ i 60+. Komentarz jest sprzeczny z przepisem i z kodem.",
+   "dowod": "Art. 9b ust. 2 ustawy o ochronie roszczeń pracowniczych (DU_2026_186.txt): pracodawca nie opłaca składek na Fundusz za pracowników, „którzy osiągnęli wiek wynoszący co najmniej 55 lat dla kobiet i co najmniej 60 lat dla mężczyzn”. Art. 29 ust. 1: podstawa bez progu płacy minimalnej.",
+   "poprawka": "Zmienić komentarz na „bez progu płacy minimalnej, ale z tym samym progiem wieku (art. 9b ust. 2)”."
+  },
+  {
+   "id": "B-13",
+   "slug": "brutto-netto",
+   "wymiar": "testy",
+   "waga": "niska",
+   "plik": "src/lib/narzedzia/netto.test.ts",
+   "linia": 33,
+   "problem": "Brakuje testów progów ±1: podstawa*12 równa dokładnie 120 000 i o złotówkę wyżej, brutto przy granicy 85 528 zł z ulgą. W zlecenie.test.ts brakuje kwot 200 i 200,01 zł. W termin-wyplaty E2E brakuje daty po ostatniej wypłacie roku (B-1).",
+   "dowod": "Lista it() w netto.test.ts (7 przypadków), zlecenie.test.ts (7) i termin-wyplaty.test.ts (5) nie ma tych wartości.",
+   "poprawka": "Dodać przypadki brzegowe z wartościami policzonymi w Pythonie (skrypt w scratchpad/audyt/B/netto.py)."
+  }
+ ],
+ "do_stanu": [
+  {
+   "sprawa": "Stopy Funduszu Pracy, Funduszu Solidarnościowego i FGŚP na 2027 r.: ustawa budżetowa na 2027 r. jeszcze nieogłoszona (w Dz.U. 2026 jej nie ma)",
+   "kiedy_sprawdzic": "2027-01-31",
+   "gdzie_w_kodzie": "src/lib/narzedzia/koszt-pracodawcy.ts STOPY_PRACODAWCY_2026, src/data/prawo.ts budzet2026"
+  },
+  {
+   "sprawa": "Płaca minimalna 2028 (rozporządzenie RM zwykle we wrześniu); bez niej narzędzia w 2028 r. po cichu liczą z kwotą 2027",
+   "kiedy_sprawdzic": "2027-09-20",
+   "gdzie_w_kodzie": "src/data/prawo.ts PLACA_MINIMALNA i AKTY.placa2028"
+  },
+  {
+   "sprawa": "Przebudować portal po 1.01.2027 r. (SSR: tytuły, FAQ, domyślny rok i przykłady z roku buildu; termin-wyplaty LATA)",
+   "kiedy_sprawdzic": "2027-01-01",
+   "gdzie_w_kodzie": "placa-minimalna.astro, kalkulator-ppk.astro, dodatek-za-prace-w-nocy.astro, termin-wyplaty-wynagrodzenia.astro"
+  },
+  {
+   "sprawa": "Zmiany PIT, które weszły w życie po t.j. Dz.U. 2026 poz. 592 (poz. 779, 1098, 1287, 1347, 1354, 1371) nie dotyczą art. 21 ust. 1 pkt 148, 22 ust. 2, 27, 31b, 32 ani 41. Przy nowym t.j. sprawdzić ponownie.",
+   "kiedy_sprawdzic": "2027-01-15",
+   "gdzie_w_kodzie": "src/lib/narzedzia/netto.ts, zlecenie.ts"
+  }
+ ],
+ "poza_zakresem": [],
+ "nie_sprawdzono": [
+  "Druk projektu ustawy budżetowej na 2027 r. w API Sejmu (/sejm/term10/prints zwróciło niepoprawny JSON)",
+  "Czytnik ekranu: tylko przegląd kodu (aria-live, etykiety). Na 320 i 412 px żadne z 8 narzędzi nie przewija się w bok (Playwright), zrzuty 320 px są w /tmp/claude-0/-home-user-lean-time-study-tracker/85e7a3e9-bef9-5b60-93fa-46f6f146f579/scratchpad/audyt/B/",
+  "Obniżenie składki zdrowotnej (art. 83 ust. 1 i 2b) na zleceniu przy bardzo niskich kwotach: według rachunku w praktyce nie wiąże, kod go nie liczy"
+ ]
+}

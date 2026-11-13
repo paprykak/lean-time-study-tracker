@@ -1,8 +1,8 @@
 ---
-// Stopka serwisu: logo w wersji ciemnej, działy, strony zaufania, współpraca, dane wydawcy (stopka redakcyjna w F7).
+// Stopka serwisu: logo w wersji ciemnej, kategorie narzędzi (rejestr), strony zaufania, współpraca, dane wydawcy.
 import Logo from './Logo.astro';
 import ustawienia from '../data/ustawienia.json';
-import { DZIALY } from '../lib/dane';
+import { KATEGORIE, NARZEDZIA, type KategoriaNarzedzia } from '../data/narzedzia';
 
 interface Props {
   wariant?: 'pelna' | 'minimalna';
@@ -10,7 +10,15 @@ interface Props {
 const { wariant = 'pelna' } = Astro.props;
 const rok = new Date().getFullYear();
 const kolumny = [
-  { tytul: 'Działy', linki: DZIALY.map((d) => ({ nazwa: d.nazwa, adres: d.adres })) },
+  {
+    tytul: 'Narzędzia',
+    linki: [
+      ...(Object.keys(KATEGORIE) as KategoriaNarzedzia[])
+        .map((k) => ({ nazwa: KATEGORIE[k].nazwa, adres: `/narzedzia#${k}`, liczba: NARZEDZIA.filter((n) => n.kategoria === k).length }))
+        .filter((l) => l.liczba > 0),
+      { nazwa: 'Wszystkie narzędzia', adres: '/narzedzia', liczba: NARZEDZIA.length },
+    ],
+  },
   { tytul: 'Redakcja', linki: ustawienia.stopka.serwis },
   { tytul: 'Współpraca', linki: ustawienia.stopka.wspolpraca },
 ];
@@ -28,7 +36,7 @@ const kolumny = [
             <h2 class="font-sans text-kategoria font-bold tracking-[0.08em] text-white uppercase">{k.tytul}</h2>
             <ul class="mt-3">
               {k.linki.map((l) => (
-                <li><a href={l.adres} class="inline-flex min-h-11 items-center text-[0.9375rem] najazd:text-white najazd:underline md:min-h-9">{l.nazwa}</a></li>
+                <li><a href={l.adres} class="inline-flex min-h-11 items-center text-[0.9375rem] najazd:text-white najazd:underline md:min-h-9">{l.nazwa}{'liczba' in l && <span class="ml-1.5 text-[0.8125rem] tabular-nums opacity-80">{l.liczba}</span>}</a></li>
               ))}
             </ul>
           </nav>

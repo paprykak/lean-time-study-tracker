@@ -27,8 +27,8 @@ const faq = [
 ---
 <StronaNarzedzia
   slug="okres-wypowiedzenia"
-  tytul="Okres wypowiedzenia: kalkulator ostatniego dnia umowy"
-  opis="Ile trwa okres wypowiedzenia umowy o pracę i który dzień jest ostatnim dniem umowy: 2 tygodnie do soboty, miesiąc do końca miesiąca. Z dniami na szukanie pracy."
+  tytul="Okres wypowiedzenia: kalkulator końca umowy"
+  opis="Ile trwa okres wypowiedzenia umowy o pracę i który dzień jest ostatni: 2 tygodnie do soboty, miesiąc do końca miesiąca. Z dniami na szukanie pracy."
   h1="Okres wypowiedzenia: ile trwa i kiedy się kończy"
   lead="Okres wypowiedzenia zależy od rodzaju umowy i stażu u pracodawcy, a kończy się w sobotę albo ostatniego dnia miesiąca. Wpisz datę rozpoczęcia pracy i dzień, w którym wypowiedzenie doręczono, a policzymy ostatni dzień umowy."
   faq={faq}
@@ -40,21 +40,21 @@ const faq = [
       <div class="mt-4">
         <label for="wy-rodzaj" class="etykieta-pola">Rodzaj umowy</label>
         <select id="wy-rodzaj" name="rodzaj" class="pole mt-1">
-          <option value="stala" selected>Na czas nieokreślony albo określony</option>
-          <option value="probna-2tyg">Na okres próbny do 2 tygodni</option>
-          <option value="probna-ponad-2tyg">Na okres próbny dłuższy niż 2 tygodnie</option>
-          <option value="probna-3mies">Na okres próbny 3 miesiące</option>
+          <option value="stala" selected>Na czas (nie)określony</option>
+          <option value="probna-2tyg">Próbna do 2 tygodni</option>
+          <option value="probna-ponad-2tyg">Próbna ponad 2 tygodnie</option>
+          <option value="probna-3mies">Próbna 3 miesiące</option>
         </select>
       </div>
       <div class="mt-4 grid gap-4 sm:grid-cols-2">
         <div data-tylko-stala>
           <label for="wy-od" class="etykieta-pola">Początek pracy u tego pracodawcy</label>
-          <input id="wy-od" name="od" type="date" class="pole mt-1" min="1960-01-01" max="2100-12-31" aria-describedby="wy-od-opis" />
-          <p id="wy-od-opis" class="meta mt-1">Pierwszy dzień pierwszej umowy z tym pracodawcą.</p>
+          <input id="wy-od" name="od" type="date" class="pole mt-1" min="1960-01-01" max="2100-12-31" aria-describedby="wy-od-opis wy-blad" />
+          <p id="wy-od-opis" class="meta mt-1">Pierwszy dzień pracy u tego pracodawcy. Gdy były przerwy między umowami albo zlecenia na jego rzecz, policz staż w kalkulatorze stażu pracy i wpisz datę, od której liczyłby się taki sam staż bez przerw.</p>
         </div>
         <div>
           <label for="wy-dor" class="etykieta-pola">Doręczenie wypowiedzenia</label>
-          <input id="wy-dor" name="doreczenie" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" />
+          <input id="wy-dor" name="doreczenie" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" aria-describedby="wy-blad" />
         </div>
       </div>
       <p id="wy-blad" class="blad-pola" data-blad="daty" hidden></p>
@@ -105,8 +105,19 @@ const faq = [
       Okres w miesiącach liczymy od 1. dnia miesiąca po doręczeniu do ostatniego dnia miesiąca, w którym upływa
       (art. 30 § 2<sup>1</sup>; przykład gov.pl: wypowiedzenie 22 lipca, miesięczne do 31 sierpnia). Okres w tygodniach
       obejmuje pełne tygodnie od niedzieli do soboty po dniu doręczenia; dnia doręczenia nie liczymy. Staż to pełne
-      miesiące od początku pracy u tego pracodawcy do doręczenia. Gdy w trakcie wypowiedzenia staż przekroczy 6 miesięcy
-      albo 3 lata, sprawdź w kadrach, czy okres się nie zmienia.
+      miesiące od początku pracy u tego pracodawcy do doręczenia, według art. 112 Kodeksu cywilnego: 6 miesięcy od 31 marca
+      mija z końcem 30 września. Dnia doręczenia nie wliczamy.
+    </p>
+    <p>
+      Gdy w trakcie wypowiedzenia staż osiągnie 6 miesięcy albo 3 lata, Kodeks pracy nie mówi wprost, który okres wtedy
+      obowiązuje. W praktyce (stanowisko inspekcji pracy i ministerstwa, część orzecznictwa Sądu Najwyższego) okres wydłuża
+      się do dłuższego, liczonego od tego samego doręczenia. Kalkulator podaje wtedy dłuższy okres, pokazuje też krótszy
+      i radzi sprawdzić to w kadrach.
+    </p>
+    <p>
+      Staż liczy się z okresów zatrudnienia u tego pracodawcy, a przerw między umowami się nie wlicza (art. 36 § 1). Od 2026 r.
+      dochodzą zlecenia i działalność na jego rzecz (art. 302<sup>1</sup> § 8). Gdy były przerwy, staż z kilku okresów
+      policzy <a href="/narzedzia/staz-pracy">kalkulator stażu pracy</a>.
     </p>
     <p>
       Oświadczenie o wypowiedzeniu składa się na piśmie (art. 30 § 3). Wypowiedzenie przez pracodawcę umowy na czas
@@ -120,15 +131,17 @@ const faq = [
 </StronaNarzedzia>
 
 <script>
-  import { dniNaPoszukiwanie, koniecWypowiedzenia, okresWypowiedzenia, pelneMiesiace, type RodzajUmowy } from '../../lib/narzedzia/wypowiedzenie';
+  import { dniNaPoszukiwanie, koniecWypowiedzenia, okresWypowiedzenia, wypowiedzenieStalej, type RodzajUmowy } from '../../lib/narzedzia/wypowiedzenie';
   import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { odmiana } from '../../lib/redakcja';
+  import { typografia } from '../../lib/typografia.mjs';
 
   const form = document.querySelector<HTMLFormElement>('[data-wypowiedzenie]');
   if (form) {
     const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
     const pole = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
     const DNI = ['niedziela', 'poniedziałek', 'wtorek', 'środa', 'czwartek', 'piątek', 'sobota'];
-    const lata = (n: number) => (n === 1 ? '1 rok' : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? `${n} lata` : `${n} lat`);
+    const pisz = (k: string, t: string) => (w(k).textContent = typografia(t));
     const przelicz = () => {
       const rodzaj = (form.elements.namedItem('rodzaj') as HTMLSelectElement).value as RodzajUmowy;
       const stala = rodzaj === 'stala';
@@ -143,28 +156,36 @@ const faq = [
             ? 'Początek pracy musi być przed doręczeniem wypowiedzenia.'
             : null;
       b.hidden = !blad;
-      b.textContent = blad ?? '';
+      b.textContent = typografia(blad ?? '');
+      const zlaData = (n: string) => !!blad && (blad.startsWith('Początek') ? n === 'od' || n === 'doreczenie' : !!pole(n).value && !poprawnaData(pole(n).value));
+      for (const n of ['od', 'doreczenie']) pole(n).setAttribute('aria-invalid', zlaData(n) ? 'true' : 'false');
       if (blad || !dor || (stala && !od)) {
         w('koniec').textContent = 'Wpisz daty';
         for (const k of ['okres', 'staz', 'poszukiwanie', 'podstawa']) w(k).textContent = '—';
         w('uwaga').hidden = true;
         return;
       }
-      const staz = stala ? pelneMiesiace(od, dor) : 0;
-      const okres = okresWypowiedzenia(rodzaj, staz);
-      const koniec = koniecWypowiedzenia(dor, okres);
-      w('koniec').textContent = koniec ? `${dataPoPolsku(koniec)} (${DNI[new Date(`${koniec}T00:00:00Z`).getUTCDay()]})` : '3 dni robocze';
-      w('okres').textContent = okres.opis;
-      w('staz').textContent = stala ? [Math.floor(staz / 12) ? lata(Math.floor(staz / 12)) : '', staz % 12 ? `${staz % 12} mies.` : ''].filter(Boolean).join(' ') || 'mniej niż miesiąc' : 'nie dotyczy';
+      const s = stala ? wypowiedzenieStalej(od, dor) : null;
+      const staz = s?.staz ?? 0;
+      const okres = s?.okres ?? okresWypowiedzenia(rodzaj, 0);
+      const koniec = s?.koniec ?? koniecWypowiedzenia(dor, okres);
+      const zDniem = (d: string) => `${dataPoPolsku(d)} (${DNI[new Date(`${d}T00:00:00Z`).getUTCDay()]})`;
+      pisz('koniec', koniec ? zDniem(koniec) : '3 dni robocze');
+      pisz('okres', okres.opis);
+      const l = Math.floor(staz / 12);
+      const m = staz % 12;
+      pisz('staz', stala ? [l ? odmiana(l, ['rok', 'lata', 'lat']) : '', m ? odmiana(m, ['miesiąc', 'miesiące', 'miesięcy']) : ''].filter(Boolean).join(' i ') || 'mniej niż miesiąc' : 'nie dotyczy');
       const pracodawca = (form.querySelector<HTMLInputElement>('input[name="kto"]:checked')?.value ?? 'pracodawca') === 'pracodawca';
       const dni = pracodawca ? dniNaPoszukiwanie(okres) : 0;
-      w('poszukiwanie').textContent = dni ? `${dni} dni robocze, płatne` : pracodawca ? 'nie przysługują przy tym okresie' : 'nie przysługują (wypowiada pracownik)';
-      w('podstawa').textContent = `${okres.podstawa}; koniec: art. 30 § 2¹`;
-      const uwaga = koniec
-        ? null
-        : 'Przy okresie próbnym do 2 tygodni wypowiedzenie trwa 3 dni robocze; które to dni, zależy od rozkładu pracy.';
+      pisz('poszukiwanie', dni ? `${dni} dni robocze, płatne` : pracodawca ? 'nie przysługują przy tym okresie' : 'nie przysługują (wypowiada pracownik)');
+      pisz('podstawa', `${okres.podstawa}; koniec: art. 30 § 2¹`);
+      const uwaga = !koniec
+        ? 'Przy okresie próbnym do 2 tygodni wypowiedzenie trwa 3 dni robocze; które to dni, zależy od rozkładu pracy.'
+        : s?.prog
+          ? `W trakcie wypowiedzenia, z końcem dnia ${dataPoPolsku(s.prog.dzien)}, staż osiągnie ${s.prog.miesiace === 36 ? '3 lata' : '6 miesięcy'}, więc okres wypowiedzenia wydłuża się do ${okres.opis === '1 miesiąc' ? '1 miesiąca' : '3 miesięcy'}. Bez wydłużenia: ${s.prog.krotszy.opis}, do ${zDniem(s.prog.krotszyKoniec)}. Sprawdź to w kadrach.`
+          : null;
       w('uwaga').hidden = !uwaga;
-      w('uwaga').textContent = uwaga ?? '';
+      w('uwaga').textContent = typografia(uwaga ?? '');
     };
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);

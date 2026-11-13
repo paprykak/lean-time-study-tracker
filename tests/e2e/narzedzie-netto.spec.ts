@@ -27,5 +27,14 @@ test('do 26 lat: bez zaliczki', async ({ page }) => {
 
 test('wysoka pensja: uwaga o progu 120 000 zł', async ({ page }) => {
   await page.getByLabel('Wynagrodzenie brutto w miesiącu (zł)').fill('12000');
-  await expect(page.locator('[data-w="uwaga"]')).toContainText('120 000 zł');
+  await expect(page.locator('[data-w="uwaga"]')).toContainText(/120\s000\szł w\sgrudniu/);
+  await page.getByLabel('Wynagrodzenie brutto w miesiącu (zł)').fill('25000');
+  await expect(page.locator('[data-w="uwaga"]')).toContainText(/120\s000\szł w\sczerwcu/);
+});
+
+test('do 26 lat, 10 000 zł: uwaga o limicie ulgi 85 528 zł od września', async ({ page }) => {
+  await page.getByLabel('Wynagrodzenie brutto w miesiącu (zł)').fill('10000');
+  await page.getByLabel(/Mam mniej niż 26\slat/).check();
+  await expect(page.locator('[data-w="uwaga"]')).toBeVisible();
+  await expect(page.locator('[data-w="uwaga"]')).toContainText(/85\s528\szł we wrześniu/);
 });

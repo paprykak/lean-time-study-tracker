@@ -4,15 +4,18 @@ import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
 import { LATA, PLACA_MINIMALNA } from '../../data/prawo';
 import { LIMIT_ULGI_MLODYCH, netto } from '../../lib/narzedzia/netto';
 import { liczba, zl } from '../../lib/narzedzia/format';
+import { dzisWPolsce } from '../../lib/narzedzia/terminy';
 
+const rokBiezacy = Number(dzisWPolsce().slice(0, 4));
+const rok = LATA.includes(rokBiezacy) ? rokBiezacy : LATA[LATA.length - 1];
 const start = netto({ brutto: 6000 });
 const PRZYKLADY = [...new Set([...LATA.map((r) => PLACA_MINIMALNA[r].miesiecznie), 5500, 6000, 7000, 8000])].sort((a, b) => a - b);
-const minimalna2026 = netto({ brutto: PLACA_MINIMALNA[2026].miesiecznie });
+const minimalna = netto({ brutto: PLACA_MINIMALNA[rok].miesiecznie });
 
 const faq = [
   {
-    pytanie: 'Ile to netto z płacy minimalnej w 2026 r.?',
-    odpowiedz: `Z ${zl(PLACA_MINIMALNA[2026].miesiecznie)} brutto zostaje ${zl(minimalna2026.netto)} netto przy kosztach uzyskania 250 zł i złożonym PIT-2, bez PPK: składki społeczne ${zl(minimalna2026.spoleczne)}, zdrowotna ${zl(minimalna2026.zdrowotna)}, zaliczka na podatek ${zl(minimalna2026.zaliczka)}.`,
+    pytanie: `Ile to netto z płacy minimalnej w ${rok} r.?`,
+    odpowiedz: `Z ${zl(PLACA_MINIMALNA[rok].miesiecznie)} brutto zostaje ${zl(minimalna.netto)} netto przy kosztach uzyskania 250 zł i złożonym PIT-2, bez PPK: składki społeczne ${zl(minimalna.spoleczne)}, zdrowotna ${zl(minimalna.zdrowotna)}, zaliczka na podatek ${zl(minimalna.zaliczka)}.`,
   },
   {
     pytanie: 'Jakie składki płaci pracownik?',
@@ -35,7 +38,7 @@ const faq = [
 <StronaNarzedzia
   slug="brutto-netto"
   tytul="Brutto na netto: ile na rękę z umowy o pracę"
-  opis={`Policz netto z pensji brutto na umowie o pracę: składki ZUS 13,71%, zdrowotna 9%, zaliczka na PIT z PIT-2 i ulgą do 26 lat. Płaca minimalna 2026: ${zl(minimalna2026.netto)} netto.`}
+  opis={`Policz netto z pensji brutto: ZUS 13,71%, zdrowotna 9%, zaliczka na PIT z PIT-2 i ulgą do 26 lat. Płaca minimalna ${rok}: ${zl(minimalna.netto)} netto.`}
   h1="Kalkulator brutto–netto: umowa o pracę"
   lead="Z pensji brutto potrąca się składki ZUS, składkę zdrowotną i zaliczkę na podatek. Wpisz kwotę z umowy, a pokażemy, ile zostanie na rękę, i każdą potrąconą złotówkę z podstawą w przepisach."
   faq={faq}
@@ -50,7 +53,7 @@ const faq = [
       </div>
       <label class="mt-4 flex items-start gap-3 text-[0.9375rem]">
         <input type="checkbox" name="pit2" checked class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
-        <span>Złożyłem albo złożyłam PIT-2 (zaliczka mniejsza o 300 zł)</span>
+        <span>Złożony PIT-2 (zaliczka mniejsza o 300 zł)</span>
       </label>
       <label class="mt-3 flex items-start gap-3 text-[0.9375rem]">
         <input type="checkbox" name="dojazd" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
@@ -103,17 +106,27 @@ const faq = [
     </ol>
     <p>
       Kalkulator liczy miesiąc, w którym dochód od początku roku nie przekroczył 120 000 zł. Po przekroczeniu tego progu
-      zaliczka wynosi 32% od nadwyżki (art. 32 ust. 2). Przy bardzo wysokich zarobkach, po przekroczeniu w roku limitu
+      zaliczka wynosi 32% od nadwyżki (art. 32 ust. 2); przy stałej pensji podajemy, w którym miesiącu to nastąpi. Ulga
+      dla osób do 26 lat obejmuje w roku łącznie do {liczba(LIMIT_ULGI_MLODYCH)} zł przychodów z etatu i zleceń (art. 21
+      ust. 1 pkt 148); od nadwyżki pracodawca pobiera zaliczkę, więc netto spada. Przy bardzo wysokich zarobkach, po przekroczeniu w roku limitu
       składek emerytalnej i rentowych (art. 19 ust. 1 ustawy o systemie ubezpieczeń społecznych), tych dwóch składek się
       nie potrąca i netto rośnie. Przy bardzo niskim przychodzie składka zdrowotna może zostać obniżona do kwoty zaliczki
       liczonej według przepisów z 2021 r. (art. 83 ustawy o świadczeniach); kalkulator wtedy to sygnalizuje.
+    </p>
+    <p>
+      Ile pracodawcę kosztuje ta sama pensja, pokaże <a href="/narzedzia/koszt-pracodawcy">kalkulator kosztu pracodawcy</a>, a netto z umowy zlecenia <a href="/narzedzia/zlecenie-netto">kalkulator zlecenia netto</a>.
     </p>
   </Fragment>
 </StronaNarzedzia>
 
 <script>
-  import { netto } from '../../lib/narzedzia/netto';
-  import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
+  import { LIMIT_ULGI_MLODYCH, PROG_PIT, netto } from '../../lib/narzedzia/netto';
+  import { liczba, wpisanaLiczba, zl } from '../../lib/narzedzia/format';
+  import { nazwaMiesiaca } from '../../lib/narzedzia/czas-pracy';
+  import { typografia } from '../../lib/typografia.mjs';
+
+  // „w czerwcu”, „we wrześniu”
+  const wMiesiacu = (m: number) => `${m === 9 ? 'we' : 'w'} ${nazwaMiesiaca(m, 'miejscownik')}`;
 
   const form = document.querySelector<HTMLFormElement>('[data-netto]');
   if (form) {
@@ -135,10 +148,11 @@ const faq = [
       for (const k of ['emerytalna', 'rentowa', 'chorobowa', 'zdrowotna', 'zaliczka'] as const) w(k).textContent = zl(r[k]);
       const uwagi = [
         r.mozliweObnizenieZdrowotnej ? 'Przy tak niskim przychodzie składka zdrowotna może zostać obniżona (art. 83 ustawy o świadczeniach opieki zdrowotnej), więc netto może być wyższe.' : null,
-        r.progPrzekroczony ? 'Przy takiej pensji dochód przekroczy w roku 120 000 zł: od nadwyżki zaliczka wyniesie 32%, więc w ostatnich miesiącach roku netto będzie niższe.' : null,
+        r.miesiacProgu ? `Przy takiej pensji dochód od początku roku przekroczy ${liczba(PROG_PIT)} zł ${wMiesiacu(r.miesiacProgu)}: od nadwyżki zaliczka wyniesie 32%, więc od tego miesiąca netto będzie niższe.` : null,
+        r.miesiacLimituUlgi ? `Przy takiej pensji przychód od początku roku przekroczy ${liczba(LIMIT_ULGI_MLODYCH)} zł ${wMiesiacu(r.miesiacLimituUlgi)}: od nadwyżki pracodawca pobierze zaliczkę, więc od tego miesiąca netto będzie niższe.` : null,
       ].filter(Boolean);
       w('uwaga').hidden = uwagi.length === 0;
-      w('uwaga').textContent = uwagi.join(' ');
+      w('uwaga').textContent = typografia(uwagi.join(' '));
     };
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);

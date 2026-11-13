@@ -117,10 +117,12 @@ const faq = [
       const zajetaPowierzchnia = opcjonalna('zajetaPowierzchnia');
       const zajetaObjetosc = opcjonalna('zajetaObjetosc');
       let blad: string | null = null;
-      if (!(powierzchnia > 0 && powierzchnia <= 100_000)) blad = 'Wpisz powierzchnię podłogi w m², na przykład 100.';
-      else if (!(wysokosc > 0 && wysokosc <= 50)) blad = 'Wpisz wysokość w metrach, na przykład 3,5.';
-      else if (!(zajetaPowierzchnia >= 0 && zajetaPowierzchnia <= powierzchnia)) blad = 'Zajęta podłoga nie może być większa niż całe pomieszczenie.';
-      else if (!(zajetaObjetosc >= 0 && zajetaObjetosc <= powierzchnia * wysokosc)) blad = 'Zajęta objętość nie może być większa niż całe pomieszczenie.';
+      let zlePole = '';
+      if (!(powierzchnia > 0 && powierzchnia <= 100_000)) (blad = 'Wpisz powierzchnię podłogi w m², na przykład 100.'), (zlePole = 'powierzchnia');
+      else if (!(wysokosc > 0 && wysokosc <= 50)) (blad = 'Wpisz wysokość w metrach, na przykład 3,5.'), (zlePole = 'wysokosc');
+      else if (!(zajetaPowierzchnia >= 0 && zajetaPowierzchnia <= powierzchnia)) (blad = 'Zajęta podłoga nie może być większa niż całe pomieszczenie.'), (zlePole = 'zajetaPowierzchnia');
+      else if (!(zajetaObjetosc >= 0 && zajetaObjetosc <= powierzchnia * wysokosc)) (blad = 'Zajęta objętość nie może być większa niż całe pomieszczenie.'), (zlePole = 'zajetaObjetosc');
+      for (const n of ['powierzchnia', 'wysokosc', 'zajetaPowierzchnia', 'zajetaObjetosc']) el(n).setAttribute('aria-invalid', n === zlePole ? 'true' : 'false');
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
       b.hidden = !blad;
       b.textContent = blad ?? '';

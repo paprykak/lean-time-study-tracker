@@ -26,8 +26,23 @@ describe('upał w pomieszczeniu (§ 30a od 11 stycznia 2027 r. i napoje)', () =>
     expect(podsumowanie(p)).toBe('zakaz');
     expect(p[0].podstawa).toContain('§ 30a ust. 1 i 2');
   });
-  it('36°C z technologii: bez zakazu i bez § 30a', () => {
-    expect(podstawy({ temperatura: 36, zPogody: false })).toEqual([]);
+  it('36°C z technologii: bez zakazu, ale obowiązek najwyżej 35°C z § 30a ust. 1', () => {
+    const p = ocena({ temperatura: 36, zPogody: false });
+    expect(p).toHaveLength(1);
+    expect(p[0]).toMatchObject({ poziom: 'obowiazek' });
+    expect(p[0].podstawa).toContain('§ 30a ust. 1');
+    expect(ocena({ temperatura: 36, zPogody: false, data: '2026-11-13' })[0].poziom).toBe('zapowiedz');
+    expect(podstawy({ temperatura: 36, zPogody: false, wyjatek: true })).toEqual([]);
+    expect(podstawy({ temperatura: 35, zPogody: false })).toEqual([]);
+  });
+  it('przełączenie 10/11 stycznia 2027 r. i temperatury na progach', () => {
+    expect(ocena({ temperatura: 36, data: '2027-01-10' })[0].poziom).toBe('zapowiedz');
+    expect(ocena({ temperatura: 36, data: '2027-01-11' })[0].poziom).toBe('zakaz');
+    expect(podsumowanie(ocena({ temperatura: 35 }))).not.toBe('zakaz');
+    expect(podsumowanie(ocena({ temperatura: 35.1 }))).toBe('zakaz');
+    const ust3 = (t: number) => ocena({ temperatura: t }).some((p) => p.podstawa.startsWith('§ 30a ust. 3'));
+    expect(ust3(28)).toBe(false);
+    expect(ust3(28.1)).toBe(true);
   });
   it('36°C w pracy z wyjątków (np. ruch ciągły): bez zakazu, obowiązki zostają', () => {
     const p = ocena({ temperatura: 36, wyjatek: true });

@@ -28,3 +28,12 @@ test('plik kalendarza ze świętami wybranego roku', async ({ page }) => {
   const [plik] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: /Święta do kalendarza/ }).click()]);
   expect(plik.suggestedFilename()).toBe('dni-wolne-od-pracy-2027.ics');
 });
+
+test.describe('rok później', () => {
+  test('5 października 2027 r.: domyślnie następny rok, 2028 (249 dni pracy)', async ({ page }) => {
+    await page.clock.setFixedTime(new Date('2027-10-05T10:00:00+02:00'));
+    await page.goto(NARZEDZIE_WOLNE_DNI);
+    await expect(page.getByLabel('Rok', { exact: true })).toHaveValue('2028');
+    await expect(page.locator('[data-w="dni-pracy"]')).toHaveText('249');
+  });
+});

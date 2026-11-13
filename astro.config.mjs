@@ -1,16 +1,16 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import { createHash } from 'node:crypto';
-import { cpSync, existsSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import { readFileSync, readdirSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import tailwindcss from '@tailwindcss/vite';
 import sitemap from '@astrojs/sitemap';
 import { satteri } from '@astrojs/markdown-satteri';
-import { ADRES, PODGLAD, PORTAL, TESTOWE, WSZYSTKIE_TRESCI } from './src/lib/srodowisko.mjs';
+import { ADRES, PODGLAD, PORTAL } from './src/lib/srodowisko.mjs';
 import { plikNaglowkow } from './src/lib/naglowki.mjs';
 import { WTYCZKI } from './src/lib/markdown.mjs';
-import { artykulyMapy, listaWMapie, listy } from './src/lib/mapa.mjs';
+import { lastmodAdresu, narzedziaMapy, stronyMapy } from './src/lib/mapa.mjs';
 import { zostaje } from './src/lib/przed-startem.mjs';
 
 // Pamięć treści Astro (node_modules/.astro/data-store.json) czyści się po zmianie konfiguracji, ale kod wtyczek
@@ -22,15 +22,13 @@ const WERSJA_WTYCZEK = createHash('sha256')
   .slice(0, 12);
 
 // Strony, które nigdy nie trafiają do mapy strony (mają noindex albo nie są treścią).
-const POZA_MAPA = /\/(404|410|styleguide|admin|szukaj)(\/|$)|\/(newsletter|kontakt)\/./;
-// Artykuły (/<slug>): szkice, wpisy testowe i noindex poza mapą; lastmod z dat w treści (src/lib/mapa.mjs).
-// Strony list (dział, temat, autor) w mapie od progu liczby artykułów, z datą najnowszego tekstu.
+const POZA_MAPA = /\/(404|410|styleguide|admin|szukaj|podglad)(\/|$)|\/(newsletter|kontakt)\/./;
+// lastmod: narzędzia z datą sprawdzenia z przepisami (rejestr), strony stałe z datą aktualizacji (src/lib/mapa.mjs).
 const katalog = (/** @type {string} */ k) => fileURLToPath(new URL(k, import.meta.url));
-const ARTYKULY = artykulyMapy(
-  WSZYSTKIE_TRESCI ? [katalog('./src/content/artykuly/'), katalog('./src/content/testowe/artykuly/')] : katalog('./src/content/artykuly/'),
-  TESTOWE,
-);
-const LISTY = listy(ARTYKULY);
+const DATY = {
+  narzedzia: narzedziaMapy(readFileSync(katalog('./src/data/narzedzia.ts'), 'utf8')),
+  strony: stronyMapy(katalog('./src/content/strony/')),
+};
 /**
  * @param {string} adres
  * @returns {{ doMapy?: boolean, lastmod?: string }}
@@ -40,7 +38,8 @@ const wMapie = (adres) => {
   if (POZA_MAPA.test(sciezka)) return { doMapy: false };
   // Przed startem w mapie są tylko strony, które zostają na produkcji (src/lib/przed-startem.mjs).
   if (!PORTAL) return zostaje(sciezka === '/' ? 'index.html' : `${sciezka.slice(1)}.html`) ? {} : { doMapy: false };
-  return ARTYKULY.get(sciezka.slice(1)) ?? listaWMapie(sciezka, LISTY) ?? {};
+  const lastmod = lastmodAdresu(sciezka, DATY);
+  return lastmod ? { lastmod } : {};
 };
 
 /**
@@ -54,21 +53,9 @@ const pliki = (kat) =>
     return statSync(p).isDirectory() ? pliki(p) : [p];
   });
 
-/** Pliki fikcyjnych materiałów do pobrania (src/content/testowe/pobierz) tylko w podglądzie i buildzie testowym. */
-const plikiTestowe = () => ({
-  name: 'rytm-hali:pliki-testowe',
-  hooks: {
-    /** @param {{ dir: URL }} opcje */
-    'astro:build:done': ({ dir }) => {
-      const zrodlo = katalog('./src/content/testowe/pobierz/');
-      if (WSZYSTKIE_TRESCI && existsSync(zrodlo)) cpSync(zrodlo, fileURLToPath(new URL('pobierz/', dir)), { recursive: true });
-    },
-  },
-});
-
 /**
  * Indeks wyszukiwarki Pagefind (statyczny, bez serwera) w dist/pagefind: tylko strony z data-pagefind-body
- * (artykuły i materiały do pobrania). Przed startem produkcja go nie ma (nie ma portalu).
+ * (strony narzędzi: opis, „Jak liczymy” i pytania). Przed startem produkcja go nie ma (nie ma portalu).
  */
 const wyszukiwarka = () => ({
   name: 'rytm-hali:wyszukiwarka',
@@ -160,7 +147,6 @@ export default defineConfig({
       },
     }),
     naglowki(),
-    plikiTestowe(),
     wyszukiwarka(),
     przedStartem(),
   ],

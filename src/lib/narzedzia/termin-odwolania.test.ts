@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { terminCzynnosci } from './termin-odwolania';
+import { SPRAWY, terminCzynnosci } from './termin-odwolania';
 
 // Oczekiwane daty z niezależnego rachunku w Pythonie (dzień zdarzenia niewliczony, przesunięcie z sobót i dni wolnych).
 describe('terminy odwołania do sądu pracy i sprostowania świadectwa (art. 264 i 97 § 2¹ Kp, art. 111 § 2 i 115 KC)', () => {
@@ -25,5 +25,22 @@ describe('terminy odwołania do sądu pracy i sprostowania świadectwa (art. 264
   it('świadectwo pracy: 14 dni', () => {
     expect(terminCzynnosci('2026-11-12', 'sprostowanie-wniosek').koniec).toBe('2026-11-26');
     expect(terminCzynnosci('2026-11-12', 'sprostowanie-sad').koniec).toBe('2026-11-26');
+  });
+});
+
+describe('przywrócenie terminu (art. 265 § 1 Kp) i przełom 2027/2028', () => {
+  it('tylko sprawy z art. 264 i 97 § 2^1', () => {
+    expect(SPRAWY['wypowiedzenie'].przywrocenie).toBe(true);
+    expect(SPRAWY['sprostowanie-sad'].przywrocenie).toBe(true);
+    expect(SPRAWY['kara-sprzeciw'].przywrocenie).toBe(false);
+    expect(SPRAWY['kara-sad'].przywrocenie).toBe(false);
+    for (const s of Object.values(SPRAWY)) expect(s.krotko.length).toBeLessThanOrEqual(28);
+  });
+  it('święta 2027 i 2028 (niezależnie w Pythonie)', () => {
+    expect(terminCzynnosci('2027-03-08', 'wypowiedzenie').koniec).toBe('2027-03-30');
+    expect(terminCzynnosci('2027-12-03', 'wypowiedzenie').koniec).toBe('2027-12-27');
+    expect(terminCzynnosci('2027-12-11', 'wypowiedzenie').koniec).toBe('2028-01-03');
+    expect(terminCzynnosci('2027-05-06', 'wypowiedzenie').koniec).toBe('2027-05-28');
+    expect(terminCzynnosci('2028-12-10', 'wypowiedzenie').koniec).toBe('2029-01-02');
   });
 });

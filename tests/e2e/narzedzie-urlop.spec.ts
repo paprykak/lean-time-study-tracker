@@ -41,7 +41,38 @@ test('pierwsza praca, 3 pełne miesiące: 5 dni nabyte', async ({ page }) => {
   await expect(page.locator('[data-w="uwaga"]')).toContainText('13 h 20 min');
 });
 
+test('1/4 etatu, 1 miesiąc: „1 dzień” (odmiana), staż z odmianą miesięcy', async ({ page }) => {
+  await staz(page, '3', 'brak');
+  await page.getByLabel('Miesiące', { exact: true }).fill('1');
+  await page.getByLabel('Etat', { exact: true }).selectOption('1/4');
+  await page.getByLabel('W tym roku', { exact: true }).selectOption('czesc-roku');
+  await page.getByLabel('Miesiące pracy u tego pracodawcy w tym roku').fill('1');
+  await expect(dni(page)).toHaveText(/^1\sdzień$/);
+  await expect(page.locator('[data-w="staz"]')).toHaveText(/^3\slata\si\s1\smiesiąc$/);
+  await expect(page.locator('[data-w="do-26"]')).toHaveText(/^brakuje\s6\slat\si\s11\smiesięcy$/);
+  await expect(page.locator('#u-mies-opis')).toContainText(/art\.\s155²ᵃ\s§\s3/);
+});
+
+test('lista szkół: krótkie nazwy z odmianą lat', async ({ page }) => {
+  await expect(page.locator('#u-szkola option[value="zasadnicza"]')).toHaveText('Zasadnicza (3 lata)');
+  await expect(page.locator('#u-szkola option[value="technikum-5"]')).toHaveText('Technikum 5-letnie (5 lat)');
+});
+
 test('błędny staż: komunikat', async ({ page }) => {
   await page.getByLabel('Miesiące', { exact: true }).fill('15');
   await expect(page.getByText('Wpisz pełne lata i miesiące')).toBeVisible();
+});
+
+test.describe('telefon 320 px', () => {
+  test.use({ viewport: { width: 320, height: 640 } });
+  test('żadna opcja listy szkół nie jest szersza niż pole', async ({ page }) => {
+    const uciete = await page.locator('#u-szkola').evaluate((el) => {
+      const s = el as HTMLSelectElement;
+      const styl = getComputedStyle(s);
+      const ctx = document.createElement('canvas').getContext('2d')!;
+      ctx.font = `${styl.fontWeight} ${styl.fontSize} ${styl.fontFamily}`;
+      return [...s.options].filter((o) => ctx.measureText(o.text).width > s.clientWidth - 40).map((o) => o.text);
+    });
+    expect(uciete).toEqual([]);
+  });
 });
