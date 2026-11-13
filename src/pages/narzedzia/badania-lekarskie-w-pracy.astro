@@ -1,0 +1,508 @@
+---
+// Badania lekarskie w pracy: badanie kontrolne po zwolnieniu dłuższym niż 30 dni (art. 229 § 2 Kp), badania wstępne
+// i zwolnienie z nich w 30 dni (art. 229 § 1–1³, art. 201 § 1 Kp), odwołanie od orzeczenia w 7 dni (§ 5 rozporządzenia
+// o badaniach lekarskich pracowników) i przypomnienie .ics o następnym badaniu okresowym. Czas i koszty: art. 229 § 3 i 6.
+// Logika: src/lib/narzedzia/badania-lekarskie.ts (testy obok), kalendarz-ics.ts.
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import {
+  DNI_BADANIE_ODWOLAWCZE,
+  DNI_NA_ODWOLANIE,
+  DNI_NA_PRZYJECIE,
+  DNI_PRZEKAZANIE,
+  PROG_KONTROLNE,
+  PRZYPOMNIENIE_DNI,
+  badaniaWstepne,
+  badanieKontrolne,
+  odwolanie,
+  tekstKontrolnego,
+  tekstOdwolania,
+  tekstWstepnych,
+} from '../../lib/narzedzia/badania-lekarskie';
+import { dataPoPolsku, dodajDni, dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+const dzis = dzisWPolsce();
+const WIERSZE = 3;
+// Przykład liczony od dnia buildu; w przeglądarce ustawDzisiejszeWartosci() przestawia go na dziś (data-dzis = przesunięcie w dniach).
+const ZD = [{ od: -34, do: -1 }];
+const Z = ZD.map((z) => ({ od: dodajDni(dzis, z.od), do: dodajDni(dzis, z.do) }));
+const kontrolne = badanieKontrolne(Z, 'choroba');
+const tk = tekstKontrolnego(kontrolne, 'choroba');
+const badanieWidoczne = kontrolne.wynik === 'potrzebne' || kontrolne.wynik === 'nierozstrzygniete';
+const PD = { koniec: -20, start: 5, nastepne: 730 };
+const P = { koniec: dodajDni(dzis, PD.koniec), start: dodajDni(dzis, PD.start), nastepne: dodajDni(dzis, PD.nastepne) };
+const wstepne = badaniaWstepne({ rodzaj: 'nowy', ...P, orzeczenie: 'data', warunki: 'tak', szczegolnieNiebezpieczne: 'nie', mlodociany: false });
+const tw = tekstWstepnych(wstepne, 'nowy');
+const to = tekstOdwolania(odwolanie(dzis, dzis));
+const STAN = { tak: 'Tak', nie: 'Nie', sprawdz: 'Do sprawdzenia' } as const;
+
+const faq = [
+  {
+    pytanie: 'Po ilu dniach L4 trzeba iść na badania kontrolne?',
+    odpowiedz: `Gdy niezdolność do pracy z powodu choroby trwa dłużej niż ${PROG_KONTROLNE} dni, czyli co najmniej ${PROG_KONTROLNE + 1} dni. Badanie ustala, czy możesz wykonywać pracę na dotychczasowym stanowisku (art. 229 § 2 Kodeksu pracy). Liczą się dni kalendarzowe, także weekendy.`,
+  },
+  {
+    pytanie: 'Czy kilka zwolnień pod rząd się sumuje?',
+    odpowiedz: `Przepis mówi o niezdolności do pracy trwającej dłużej niż ${PROG_KONTROLNE} dni. Zwolnienia, które następują dzień po dniu, to jedna nieprzerwana niezdolność. Przepis nie mówi o sumowaniu zwolnień rozdzielonych przerwą, a gdy w przerwie są tylko dni wolne, nie rozstrzyga sprawy. Wyjątek: gdy już wcześniejsze zwolnienie trwało dłużej niż ${PROG_KONTROLNE} dni, a do następnego nie było dnia pracy, badanie kontrolne jest potrzebne. W pozostałych przypadkach bezpieczniej zrobić badanie: jest na koszt pracodawcy i w miarę możliwości w godzinach pracy (art. 229 § 2, 3 i 6 Kodeksu pracy).`,
+  },
+  {
+    pytanie: 'Czy na badania lekarskie trzeba brać dzień wolny?',
+    odpowiedz: 'Badania okresowe i kontrolne przeprowadza się w miarę możliwości w godzinach pracy, a za czas niewykonywania pracy w związku z badaniami zachowujesz prawo do wynagrodzenia. Gdy jedziesz na badania do innej miejscowości, należą Ci się pieniądze na pokrycie kosztów przejazdu według zasad podróży służbowych (art. 229 § 3 Kodeksu pracy). Badania wstępne, okresowe i kontrolne są na koszt pracodawcy (art. 229 § 6), z wyjątkiem badań w ramach programu zdrowotnego, do którego lekarz może Cię skierować za Twoją zgodą: te finansuje program (art. 229 § 6^1).',
+  },
+  {
+    pytanie: 'Czy w nowej pracy zawsze trzeba robić badania wstępne?',
+    odpowiedz: `Nie zawsze. U innego pracodawcy możesz ich nie robić, gdy zaczynasz pracę w ciągu ${DNI_NA_PRZYJECIE} dni od końca poprzedniej umowy, masz aktualne orzeczenie, pracodawca stwierdzi, że warunki pracy ze skierowania odpowiadają nowemu stanowisku, i nie są to prace szczególnie niebezpieczne. Pracodawca żąda wtedy orzeczenia i skierowania (art. 229 § 1^1 pkt 2 i § 1^3 Kodeksu pracy). Osoba młodociana przechodzi badania wstępne przed przyjęciem do pracy (art. 201 § 1).`,
+  },
+  {
+    pytanie: 'Ile mam czasu na odwołanie od orzeczenia lekarskiego?',
+    odpowiedz: `${DNI_NA_ODWOLANIE} dni od dnia otrzymania orzeczenia. Odwołanie składasz na piśmie, z uzasadnieniem, za pośrednictwem jednostki medycyny pracy, w której wydano orzeczenie, zwykle do wojewódzkiego ośrodka medycyny pracy. Badanie w trybie odwołania odbywa się w ${DNI_BADANIE_ODWOLAWCZE} dni od otrzymania odwołania, a orzeczenie z odwołania jest ostateczne (§ 5 rozporządzenia w sprawie badań lekarskich pracowników).`,
+  },
+  {
+    pytanie: 'Kiedy następne badanie okresowe?',
+    odpowiedz: 'W dniu wpisanym w orzeczeniu jako data następnego badania okresowego. Lekarz ustala ją według wskazówek metodycznych i może wyznaczyć krótszy termin (§ 2 ust. 1 i 2 oraz § 3 ust. 4a pkt 12 rozporządzenia). Od 17 kwietnia 2026 r., po okresie przejściowym do października 2026 r., orzeczenie jest zwykle elektroniczne i widać je w Internetowym Koncie Pacjenta (§ 3 ust. 4d i 4g).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="badania-lekarskie-w-pracy"
+  tytul="Badania lekarskie w pracy: które i kiedy"
+  opis="Sprawdź, czy po L4 czeka Cię badanie kontrolne, czy w nowej pracy trzeba badań wstępnych i do kiedy możesz odwołać się od orzeczenia."
+  h1="Badania lekarskie w pracy: wstępne, okresowe i kontrolne"
+  lead="Po L4 z powodu choroby dłuższym niż 30 dni idziesz na badanie kontrolne, a w nowej pracy zwykle na wstępne. Wpisz daty, a sprawdzimy, które badanie Cię czeka, do kiedy możesz złożyć odwołanie od orzeczenia i kiedy przypada następne badanie okresowe."
+  faq={faq}
+>
+  <form class="kalkulator" data-badania novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twoja sytuacja</h2>
+      <fieldset class="mt-4">
+        <legend class="etykieta">Co sprawdzasz</legend>
+        <div class="przelacznik mt-2">
+          <label><input type="radio" name="sytuacja" value="l4" checked /> Po L4</label>
+          <label><input type="radio" name="sytuacja" value="praca" /> Nowa praca</label>
+          <label><input type="radio" name="sytuacja" value="orzeczenie" /> Mam orzeczenie</label>
+        </div>
+      </fieldset>
+
+      <div data-sekcja="l4">
+        <p class="meta mt-4">Zwolnienia od najstarszego; puste wiersze pomijamy.</p>
+        {Array.from({ length: WIERSZE }, (_, i) => (
+          <fieldset class="mt-3">
+            <legend class="etykieta-pola">Zwolnienie {i + 1}</legend>
+            <div class="mt-1 grid grid-cols-2 items-end gap-3">
+              <div>
+                <label for={`bl-od${i + 1}`} class="meta">Od</label>
+                <input id={`bl-od${i + 1}`} name={`od${i + 1}`} type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={Z[i]?.od} data-dzis={ZD[i] ? String(ZD[i].od) : undefined} aria-describedby="bl-blad" />
+              </div>
+              <div>
+                <label for={`bl-do${i + 1}`} class="meta">Do</label>
+                <input id={`bl-do${i + 1}`} name={`do${i + 1}`} type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={Z[i]?.do} data-dzis={ZD[i] ? String(ZD[i].do) : undefined} aria-describedby="bl-blad" />
+              </div>
+            </div>
+          </fieldset>
+        ))}
+        <div class="mt-4">
+          <label for="bl-powod" class="etykieta-pola">Powód zwolnienia</label>
+          <select id="bl-powod" name="powod" class="pole mt-1">
+            <option value="choroba" selected>Choroba</option>
+            <option value="ciaza">Ciąża</option>
+            <option value="wypadek">Wypadek</option>
+            <option value="opieka">Opieka nad kimś</option>
+          </select>
+        </div>
+        <div class="mt-4" data-tylko="przerwa" hidden>
+          <label for="bl-przerwa" class="etykieta-pola">Między zwolnieniami był dzień pracy?</label>
+          <select id="bl-przerwa" name="dzienPracy" class="pole mt-1" aria-describedby="bl-przerwa-opis">
+            <option value="auto" selected>Nie wiem</option>
+            <option value="tak">Tak</option>
+            <option value="nie">Nie</option>
+          </select>
+          <p id="bl-przerwa-opis" class="meta mt-1">Dzień pracy według grafiku. „Nie wiem”: przyjmujemy poniedziałek–piątek bez świąt.</p>
+        </div>
+      </div>
+
+      <div data-sekcja="praca" hidden>
+        <div class="mt-4">
+          <label for="bp-rodzaj" class="etykieta-pola">Rodzaj zmiany</label>
+          <select id="bp-rodzaj" name="rodzaj" class="pole mt-1" aria-describedby="bp-rodzaj-opis">
+            <option value="nowy" selected>Nowy pracodawca</option>
+            <option value="ten-sam">Ten sam pracodawca</option>
+            <option value="drugi-etat">Drugi etat</option>
+            <option value="zmiana-stanowiska">Zmiana stanowiska</option>
+          </select>
+          <p id="bp-rodzaj-opis" class="meta mt-1">Ten sam pracodawca: nowa umowa po końcu poprzedniej. Zmiana stanowiska: przeniesienie u obecnego pracodawcy.</p>
+        </div>
+        <div class="mt-4 grid grid-cols-2 items-end gap-3">
+          <div data-tylko="koniec">
+            <label for="bp-koniec" class="etykieta-pola">Koniec umowy</label>
+            <input id="bp-koniec" name="koniec" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={P.koniec} data-dzis={String(PD.koniec)} aria-describedby="bp-daty-opis bl-blad" />
+          </div>
+          <div data-tylko="start">
+            <label for="bp-start" class="etykieta-pola">Start w nowej pracy</label>
+            <input id="bp-start" name="start" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={P.start} data-dzis={String(PD.start)} aria-describedby="bp-daty-opis bl-blad" />
+          </div>
+        </div>
+        <p id="bp-daty-opis" class="meta mt-1" data-tylko="start">Ostatni dzień poprzedniej umowy i dzień rozpoczęcia pracy z nowej umowy.</p>
+        <div class="mt-4" data-tylko="orzeczenie">
+          <label for="bp-orzeczenie" class="etykieta-pola" data-w="etykieta-orzeczenie">Orzeczenie z poprzedniej pracy</label>
+          <select id="bp-orzeczenie" name="orzeczenie" class="pole mt-1">
+            <option value="data" selected>Mam, z datą badania</option>
+            <option value="bez-daty">Mam, bez daty</option>
+            <option value="brak">Nie mam</option>
+          </select>
+        </div>
+        <div class="mt-4" data-tylko="nastepne">
+          <label for="bp-nastepne" class="etykieta-pola">Data następnego badania</label>
+          <input id="bp-nastepne" name="nastepne" type="date" class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" value={P.nastepne} data-dzis={String(PD.nastepne)} aria-describedby="bp-nastepne-opis bl-blad" />
+          <p id="bp-nastepne-opis" class="meta mt-1">Z orzeczenia: „Data następnego badania okresowego”.</p>
+        </div>
+        <div class="mt-4">
+          <label for="bp-warunki" class="etykieta-pola" data-w="etykieta-warunki">Warunki pracy jak w skierowaniu?</label>
+          <select id="bp-warunki" name="warunki" class="pole mt-1" aria-describedby="bp-warunki-opis">
+            <option value="tak" selected>Tak</option>
+            <option value="nie">Nie</option>
+            <option value="nie-wiem">Nie wiem</option>
+          </select>
+          <p id="bp-warunki-opis" class="meta mt-1">Skierowanie opisuje warunki pracy, w tym czynniki szkodliwe i uciążliwe.</p>
+        </div>
+        <div class="mt-4" data-tylko="prace">
+          <label for="bp-prace" class="etykieta-pola">Prace szczególnie niebezpieczne?</label>
+          <select id="bp-prace" name="prace" class="pole mt-1" aria-describedby="bp-prace-opis">
+            <option value="nie" selected>Nie</option>
+            <option value="tak">Tak</option>
+            <option value="nie-wiem">Nie wiem</option>
+          </select>
+          <p id="bp-prace-opis" class="meta mt-1">Wykaz takich prac prowadzi pracodawca.</p>
+        </div>
+        <div class="mt-4">
+          <label class="flex items-start gap-3 text-[0.9375rem]">
+            <input type="checkbox" name="mlodociany" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+            <span>Masz mniej niż 18 lat</span>
+          </label>
+        </div>
+      </div>
+
+      <div data-sekcja="orzeczenie" hidden>
+        <div class="mt-4">
+          <label for="bo-otrzymane" class="etykieta-pola">Dzień otrzymania orzeczenia</label>
+          <input id="bo-otrzymane" name="otrzymane" type="date" class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" value={dzis} data-dzis aria-describedby="bo-otrzymane-opis bl-blad" />
+          <p id="bo-otrzymane-opis" class="meta mt-1">E-orzeczenie: dzień, w którym pojawiło się w Internetowym Koncie Pacjenta. Gdy nie wiesz, wpisz dzień badania.</p>
+        </div>
+        <div class="mt-4">
+          <label for="bo-nastepne" class="etykieta-pola">Następne badanie okresowe</label>
+          <input id="bo-nastepne" name="nastepneOkresowe" type="date" class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" aria-describedby="bo-nastepne-opis bl-blad" />
+          <p id="bo-nastepne-opis" class="meta mt-1">Data z orzeczenia, jeśli jest. Zrobimy z niej przypomnienie w kalendarzu.</p>
+        </div>
+      </div>
+
+      <p id="bl-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta" data-w="naglowek">Badanie kontrolne</h2>
+
+      <div data-wynik="l4">
+        <div aria-live="polite" aria-atomic="true">
+          <p class="wynik-data" data-w="a-wynik">{tk.wynik}</p>
+          <p class="status-terminu" data-w="a-status" data-status={tk.status?.rodzaj} hidden={!tk.status}>{tk.status?.tekst}</p>
+          <p class="meta mt-2" data-w="a-opis">{tk.opis}</p>
+        </div>
+        <dl class="wynik-lista">
+          <div data-tylko="kontrolne" hidden={!badanieWidoczne}><dt>Kiedy</dt><dd>przed dopuszczeniem do pracy, bo bez aktualnego orzeczenia pracodawca nie dopuści do pracy (art. 229 § 4 Kodeksu pracy)</dd></div>
+          <div><dt>Powrót do pracy</dt><dd data-w="a-powrot">{dataPoPolsku(kontrolne.powrot)}, dzień po końcu zwolnienia</dd></div>
+          <div data-tylko="kontrolne" hidden={!badanieWidoczne}><dt>Skierowanie</dt><dd>od pracodawcy (art. 229 § 4a)</dd></div>
+        </dl>
+      </div>
+
+      <div data-wynik="praca" hidden>
+        <div aria-live="polite" aria-atomic="true">
+          <p class="wynik-data" data-w="b-wynik">{tw.wynik}</p>
+          <p class="status-terminu" data-w="b-status" data-status={tw.status?.rodzaj}>{tw.status?.tekst}</p>
+          <p class="meta mt-2" data-w="b-opis">{tw.opis}</p>
+        </div>
+        <dl class="wynik-lista" data-w="b-warunki">
+          {wstepne.warunki.map((w) => <div><dt>{w.nazwa}</dt><dd>{STAN[w.stan]}: {w.opis}</dd></div>)}
+        </dl>
+      </div>
+
+      <div data-wynik="orzeczenie" hidden>
+        <div aria-live="polite" aria-atomic="true">
+          <p class="meta">Odwołanie najpóźniej</p>
+          <p class="wynik-data" data-w="c-wynik">{to.wynik}</p>
+          <p class="status-terminu" data-w="c-status" data-status={to.status?.rodzaj}>{to.status?.tekst}</p>
+          <p class="meta mt-2" data-w="c-opis">{to.opis}</p>
+        </div>
+        <dl class="wynik-lista">
+          <div><dt>Jak</dt><dd>na piśmie, z uzasadnieniem, przez jednostkę medycyny pracy, w której wydano orzeczenie (§ 5 ust. 1 i 3 rozporządzenia)</dd></div>
+          <div><dt>Co dalej</dt><dd>jednostka przekazuje odwołanie w {DNI_PRZEKAZANIE} dni, badanie w {DNI_BADANIE_ODWOLAWCZE} dni od otrzymania odwołania; orzeczenie z odwołania jest ostateczne (§ 5 ust. 4–6)</dd></div>
+          <div><dt>Następne badanie okresowe</dt><dd data-w="c-nastepne">wpisz datę z orzeczenia</dd></div>
+        </dl>
+        <p class="mt-5">
+          <button type="button" class="przycisk przycisk-grafit" data-ics disabled>Dodaj do kalendarza (.ics)</button>
+        </p>
+        <p class="meta mt-2">Plik ma przypomnienie w dniu badania i {PRZYPOMNIENIE_DNI} dni wcześniej, żeby zdążyć po skierowanie, jeśli te dni jeszcze nie minęły.</p>
+      </div>
+
+      <p class="wynik-uwaga" data-uwaga="czas">Badania okresowe i kontrolne odbywają się w miarę możliwości w godzinach pracy. Za czas badań zachowujesz wynagrodzenie, a przy przejeździe do innej miejscowości należy Ci się zwrot kosztów jak w podróży służbowej (art. 229 § 3 Kodeksu pracy). Koszt badań ponosi pracodawca, chyba że robisz je w ramach programu zdrowotnego (art. 229 § 6 i 6<sup>1</sup>).</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Bez niego widać przykład dla zwolnienia; zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="zasady">Trzy rodzaje badań</h2>
+    <ul>
+      <li><strong>Wstępne</strong>: przed przyjęciem do pracy, a także przy przeniesieniu młodocianego na inne stanowisko i dorosłego na stanowisko z czynnikami szkodliwymi dla zdrowia lub warunkami uciążliwymi (art. 229 § 1 Kodeksu pracy).</li>
+      <li><strong>Okresowe</strong>: w czasie zatrudnienia (art. 229 § 2), w terminie, który lekarz wpisuje w orzeczeniu (§ 3 ust. 4a pkt 12 rozporządzenia w sprawie badań lekarskich pracowników).</li>
+      <li><strong>Kontrolne</strong>: po niezdolności do pracy z powodu choroby trwającej dłużej niż {PROG_KONTROLNE} dni, żeby ustalić, czy możesz wrócić na dotychczasowe stanowisko (art. 229 § 2).</li>
+    </ul>
+    <p>
+      Wszystkie trzy robisz na skierowanie od pracodawcy (art. 229 § 4a) i na jego koszt (art. 229 § 6). Wyjątek: gdy
+      lekarz za Twoją zgodą skieruje Cię do programu zdrowotnego i badania zrobisz w nim, finansuje je program
+      (art. 229 § 6<sup>1</sup>). Bez aktualnego
+      orzeczenia, że nie ma przeciwwskazań do pracy na stanowisku, pracodawca nie może dopuścić do pracy (art. 229 § 4).
+      Poddanie się badaniom to obowiązek pracownika (art. 211 pkt 5).
+    </p>
+
+    <h2 id="czas-pracy">Czy na badania bierzesz wolne</h2>
+    <p>
+      Badania okresowe i kontrolne przeprowadza się w miarę możliwości w godzinach pracy. Za czas niewykonywania pracy
+      w związku z badaniami zachowujesz prawo do wynagrodzenia, a gdy jedziesz na nie do innej miejscowości, należą Ci
+      się pieniądze na pokrycie kosztów przejazdu według zasad podróży służbowych (art. 229 § 3 Kodeksu pracy). Przepis
+      nie wymienia tu badań wstępnych.
+    </p>
+
+    <h2 id="bez-wstepnych">Kiedy bez badań wstępnych</h2>
+    <ul>
+      <li>Ten sam pracodawca: ponowne przyjęcie na to samo stanowisko albo o takich samych warunkach pracy w ciągu {DNI_NA_PRZYJECIE} dni po końcu poprzedniej umowy z nim (art. 229 § 1<sup>1</sup> pkt 1).</li>
+      <li>Inny pracodawca: przyjęcie w ciągu {DNI_NA_PRZYJECIE} dni po końcu poprzedniej umowy, z aktualnym orzeczeniem, gdy pracodawca stwierdzi, że warunki ze skierowania odpowiadają nowemu stanowisku; nie dotyczy prac szczególnie niebezpiecznych (art. 229 § 1<sup>1</sup> pkt 2). Pracodawca żąda wtedy orzeczenia i skierowania (§ 1<sup>3</sup>).</li>
+      <li>Drugi etat: jak u innego pracodawcy (aktualne orzeczenie, warunki ze skierowania, bez prac szczególnie niebezpiecznych), ale bez terminu {DNI_NA_PRZYJECIE} dni, bo poprzednia umowa trwa (art. 229 § 1<sup>2</sup>).</li>
+      <li>Osoba młodociana przechodzi badania wstępne przed przyjęciem do pracy (art. 201 § 1); więcej o jej pracy w <a href="/narzedzia/pracownik-mlodociany">kalkulatorze dla młodocianego pracownika</a>.</li>
+    </ul>
+
+    <h2 id="odwolanie">Odwołanie od orzeczenia</h2>
+    <p>
+      Odwołanie przysługuje osobie badanej i pracodawcy. Składa się je na piśmie, z uzasadnieniem, w {DNI_NA_ODWOLANIE} dni od
+      otrzymania orzeczenia, za pośrednictwem jednostki medycyny pracy, w której orzeczenie wydano, między innymi do
+      wojewódzkiego ośrodka medycyny pracy właściwego ze względu na miejsce pracy (§ 5 ust. 1–3 rozporządzenia). Badanie
+      w trybie odwołania odbywa się w {DNI_BADANIE_ODWOLAWCZE} dni od otrzymania odwołania, a wydane wtedy orzeczenie jest
+      ostateczne (§ 5 ust. 5–6). Orzeczenie zawiera datę następnego badania okresowego i pouczenie
+      o odwołaniu (§ 3 ust. 4a pkt 12 i 15). Od 17 kwietnia 2026 r., po okresie przejściowym do października 2026 r.,
+      wydaje się je zwykle elektronicznie i trafia do Internetowego Konta Pacjenta (§ 3 ust. 4d, 4e i 4g).
+    </p>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <ul>
+      <li>Liczymy dni kalendarzowe zwolnienia razem z pierwszym i ostatnim. Zwolnienia dzień po dniu albo nachodzące na siebie traktujemy jak jedną niezdolność. Gdy między zwolnieniami są tylko dni wolne, przepis nie mówi, czy to jedna niezdolność; wtedy wskazujemy, że bezpieczniej zrobić badanie. Gdy jednak już wcześniejsze zwolnienie trwało ponad {PROG_KONTROLNE} dni, a do następnego nie było dnia pracy, badanie jest potrzebne.</li>
+      <li>Przepis mówi o niezdolności spowodowanej chorobą. Zwolnienie w ciąży i po wypadku liczymy tak samo. Terminu badania kontrolnego przepis nie podaje; wynika z zakazu dopuszczenia do pracy bez aktualnego orzeczenia.</li>
+      <li>{DNI_NA_PRZYJECIE} dni na zwolnienie z badań wstępnych liczymy od dnia po końcu poprzedniej umowy (art. 111 Kodeksu cywilnego) do pierwszego dnia nowej pracy z umowy (art. 26 Kodeksu pracy).</li>
+      <li>Przepis nie definiuje „aktualnego orzeczenia”. Przyjmujemy, że jest aktualne, gdy zaczynasz pracę przed datą następnego badania z orzeczenia. Przepis nie mówi też, czy przy pracy u tego samego pracodawcy po terminie badania trzeba badań wstępnych, czy innych: piszemy tylko, że potrzebne jest badanie.</li>
+      <li>Gdy nie wiesz, czy prace są szczególnie niebezpieczne albo czy na nowym stanowisku są czynniki szkodliwe, przyjmujemy, że badania są potrzebne. Osobie młodocianej zawsze wskazujemy badania wstępne.</li>
+      <li>Termin odwołania liczymy od dnia po otrzymaniu orzeczenia (art. 111 § 2 Kodeksu cywilnego). Rozporządzenie nie przesuwa terminu z soboty ani święta, a czy stosuje się art. 115 Kodeksu cywilnego, przepisy nie rozstrzygają: pokazujemy datę bez przesunięcia. Przy e-orzeczeniu przepis nie mówi, co jest dniem otrzymania; bezpieczniej liczyć od najwcześniejszej daty.</li>
+      <li>Datę następnego badania wyznacza lekarz w orzeczeniu. Nie wyliczamy jej z tabel, bo zależą od oceny ryzyka.</li>
+    </ul>
+    <p>
+      Do kiedy pracodawca nie może Cię zwolnić w czasie L4, policzy <a href="/narzedzia/zwolnienie-na-l4">kalkulator ochrony na L4</a>,
+      a ile zostało z 182 dni zasiłku, <a href="/narzedzia/okres-zasilkowy">kalkulator okresu zasiłkowego</a>. Przy hałasie badania
+      słuchu mają własną częstotliwość: sprawdzi ją <a href="/narzedzia/halas-w-pracy">kalkulator hałasu w pracy</a>. Termin szkolenia
+      BHP pokaże <a href="/narzedzia/szkolenie-okresowe-bhp">kalkulator szkolenia okresowego BHP</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import {
+    badaniaWstepne,
+    badanieKontrolne,
+    odwolanie,
+    przypomnienie,
+    tekstKontrolnego,
+    tekstOdwolania,
+    tekstWstepnych,
+    type DzienPracyWPrzerwie,
+    type PowodNiezdolnosci,
+    type RodzajPrzyjecia,
+    type StanOrzeczenia,
+    type TakNie,
+    type TekstWyniku,
+    type Zwolnienie,
+  } from '../../lib/narzedzia/badania-lekarskie';
+  import type { Wydarzenie } from '../../lib/narzedzia/kalendarz-ics';
+  import { plikIcs } from '../../lib/narzedzia/kalendarz-ics';
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
+  import { dataPoPolsku, dzisWPolsce, ileDni, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { typografia } from '../../lib/typografia.mjs';
+
+  type Sytuacja = 'l4' | 'praca' | 'orzeczenie';
+  const NAGLOWKI: Record<Sytuacja, string> = { l4: 'Badanie kontrolne', praca: 'Badania wstępne', orzeczenie: 'Odwołanie i następne badanie' };
+  const STAN = { tak: 'Tak', nie: 'Nie', sprawdz: 'Do sprawdzenia' } as const;
+  const PREFIKS: Record<Sytuacja, string> = { l4: 'a', praca: 'b', orzeczenie: 'c' };
+
+  const form = document.querySelector<HTMLFormElement>('[data-badania]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const input = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const select = (n: string) => form.elements.namedItem(n) as HTMLSelectElement;
+    const pisz = (k: string, tekst: string) => {
+      w(k).textContent = typografia(tekst);
+    };
+    const blad = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+    const ics = form.querySelector<HTMLButtonElement>('[data-ics]')!;
+    let wydarzenia: Wydarzenie[] = [];
+
+    const pokazWynik = (prefiks: string, t: TekstWyniku) => {
+      pisz(`${prefiks}-wynik`, t.wynik);
+      const s = w(`${prefiks}-status`);
+      s.hidden = !t.status;
+      if (t.status) {
+        s.dataset.status = t.status.rodzaj;
+        s.textContent = typografia(t.status.tekst);
+      }
+      pisz(`${prefiks}-opis`, t.opis);
+    };
+    const wyczysc = (prefiks: string) => {
+      w(`${prefiks}-wynik`).textContent = '—';
+      w(`${prefiks}-status`).hidden = true;
+      w(`${prefiks}-opis`).textContent = '';
+    };
+    const tylko = (k: string, widoczne: boolean) => {
+      form.querySelectorAll<HTMLElement>(`[data-tylko="${k}"]`).forEach((e) => (e.hidden = !widoczne));
+    };
+
+    const l4 = (): string | null => {
+      const lista: Zwolnienie[] = [];
+      for (let i = 1; i <= 3; i++) {
+        const od = input(`od${i}`).value;
+        const do_ = input(`do${i}`).value;
+        if (!od && !do_) continue;
+        if (!poprawnaData(od) || !poprawnaData(do_)) return `Uzupełnij obie daty zwolnienia ${i}.`;
+        if (do_ < od) return `Zwolnienie ${i}: koniec przed początkiem.`;
+        lista.push({ od, do: do_ });
+      }
+      if (!lista.length) return 'Wpisz co najmniej jedno zwolnienie.';
+      const powod = select('powod').value as PowodNiezdolnosci;
+      const k = badanieKontrolne(lista, powod, select('dzienPracy').value as DzienPracyWPrzerwie);
+      tylko('przerwa', k.przerwa && powod !== 'opieka');
+      tylko('kontrolne', k.wynik === 'potrzebne' || k.wynik === 'nierozstrzygniete');
+      pokazWynik('a', tekstKontrolnego(k, powod));
+      pisz('a-powrot', `${dataPoPolsku(k.powrot)}, dzień po końcu zwolnienia`);
+      return null;
+    };
+
+    const praca = (): string | null => {
+      const rodzaj = select('rodzaj').value as RodzajPrzyjecia;
+      const zmiana = rodzaj === 'zmiana-stanowiska';
+      const zKoncem = rodzaj === 'nowy' || rodzaj === 'ten-sam';
+      const orzeczenie = select('orzeczenie').value as StanOrzeczenia;
+      tylko('koniec', zKoncem);
+      tylko('start', !zmiana);
+      tylko('orzeczenie', !zmiana);
+      tylko('nastepne', !zmiana && orzeczenie === 'data');
+      tylko('prace', rodzaj === 'nowy' || rodzaj === 'drugi-etat');
+      pisz('etykieta-orzeczenie', rodzaj === 'drugi-etat' ? 'Orzeczenie z obecnej pracy' : 'Orzeczenie z poprzedniej pracy');
+      pisz('etykieta-warunki', zmiana ? 'Czynniki szkodliwe lub uciążliwe?' : rodzaj === 'ten-sam' ? 'Takie same warunki pracy?' : 'Warunki pracy jak w skierowaniu?');
+      const koniec = input('koniec').value;
+      const start = input('start').value;
+      const nastepne = input('nastepne').value;
+      if (zKoncem && !poprawnaData(koniec)) return 'Wpisz ostatni dzień poprzedniej umowy.';
+      if (!zmiana && !poprawnaData(start)) return 'Wpisz pierwszy dzień nowej pracy.';
+      if (zKoncem && start <= koniec) return 'Pierwszy dzień nowej pracy musi być po końcu poprzedniej umowy.';
+      if (!zmiana && orzeczenie === 'data' && !poprawnaData(nastepne)) return 'Wpisz datę następnego badania z orzeczenia.';
+      const wynik = badaniaWstepne({
+        rodzaj,
+        koniec: zKoncem ? koniec : null,
+        start: zmiana ? null : start,
+        orzeczenie,
+        nastepne: orzeczenie === 'data' ? nastepne : null,
+        warunki: select('warunki').value as TakNie,
+        szczegolnieNiebezpieczne: select('prace').value as TakNie,
+        mlodociany: input('mlodociany').checked,
+      });
+      pokazWynik('b', tekstWstepnych(wynik, rodzaj));
+      const lista = w('b-warunki');
+      lista.replaceChildren(
+        ...wynik.warunki.map((x) => {
+          const div = document.createElement('div');
+          const dt = document.createElement('dt');
+          const dd = document.createElement('dd');
+          dt.textContent = typografia(x.nazwa);
+          dd.textContent = typografia(`${STAN[x.stan]}: ${x.opis}`);
+          div.append(dt, dd);
+          return div;
+        }),
+      );
+      return null;
+    };
+
+    const orzeczenie = (): string | null => {
+      const dzis = dzisWPolsce();
+      const otrzymane = input('otrzymane').value;
+      const nastepne = input('nastepneOkresowe').value;
+      // Termin odwołania i przypomnienie liczymy niezależnie: błąd jednego pola nie kasuje drugiego wyniku.
+      let komunikat: string | null = null;
+      const zOtrzymaniem = poprawnaData(otrzymane);
+      if (zOtrzymaniem) pokazWynik('c', tekstOdwolania(odwolanie(otrzymane, dzis)));
+      else {
+        wyczysc('c');
+        komunikat = 'Wpisz dzień otrzymania orzeczenia.';
+      }
+      if (!nastepne) pisz('c-nastepne', 'wpisz datę z orzeczenia');
+      else if (!poprawnaData(nastepne) || (zOtrzymaniem && nastepne <= otrzymane)) {
+        w('c-nastepne').textContent = '—';
+        komunikat ??= poprawnaData(nastepne) ? 'Data następnego badania musi być po dniu otrzymania orzeczenia.' : 'Wpisz pełną datę następnego badania.';
+      } else {
+        const p = przypomnienie(nastepne, dzis);
+        pisz('c-nastepne', `${dataPoPolsku(nastepne)}, ${p.dniDo < 0 ? `termin minął ${ileDni(p.dniDo)}` : ileDni(p.dniDo)}`);
+        wydarzenia = p.wydarzenia;
+      }
+      return komunikat;
+    };
+
+    const przelicz = () => {
+      const sytuacja = (form.querySelector<HTMLInputElement>('input[name="sytuacja"]:checked')?.value ?? 'l4') as Sytuacja;
+      form.querySelectorAll<HTMLElement>('[data-sekcja]').forEach((e) => (e.hidden = e.dataset.sekcja !== sytuacja));
+      form.querySelectorAll<HTMLElement>('[data-wynik]').forEach((e) => (e.hidden = e.dataset.wynik !== sytuacja));
+      form.querySelector<HTMLElement>('[data-uwaga="czas"]')!.hidden = sytuacja === 'praca';
+      pisz('naglowek', NAGLOWKI[sytuacja]);
+      wydarzenia = [];
+      let komunikat: string | null;
+      let wyjatek = false;
+      try {
+        komunikat = sytuacja === 'l4' ? l4() : sytuacja === 'praca' ? praca() : orzeczenie();
+      } catch (e) {
+        komunikat = e instanceof RangeError ? e.message : 'Sprawdź wpisane dane.';
+        wyjatek = true;
+      }
+      blad.hidden = !komunikat;
+      blad.textContent = komunikat ? typografia(komunikat) : '';
+      // Przy orzeczeniu wyniki czyści sama funkcja (każdy osobno), chyba że rzuciła wyjątek.
+      if (komunikat && (sytuacja !== 'orzeczenie' || wyjatek)) {
+        wyczysc(PREFIKS[sytuacja]);
+        if (sytuacja === 'l4') {
+          w('a-powrot').textContent = '—';
+          tylko('przerwa', false);
+          tylko('kontrolne', false);
+        }
+        if (sytuacja === 'praca') w('b-warunki').replaceChildren();
+        if (sytuacja === 'orzeczenie') w('c-nastepne').textContent = '—';
+        wydarzenia = [];
+      }
+      ics.disabled = wydarzenia.length === 0;
+    };
+
+    ics.addEventListener('click', () => {
+      if (!wydarzenia.length) return;
+      const blob = new Blob([plikIcs(wydarzenia, 'badania-lekarskie-w-pracy')], { type: 'text/calendar;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'badanie-okresowe.ics';
+      document.body.append(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    });
+
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    ustawDzisiejszeWartosci(form);
+    przelicz();
+  }
+</script>
