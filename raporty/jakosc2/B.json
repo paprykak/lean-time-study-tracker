@@ -1,0 +1,73 @@
+{
+  "partia": "B",
+  "sprawdzone": [
+    {"slug": "doba-pracownicza", "pliki": ["src/pages/narzedzia/doba-pracownicza.astro", "src/lib/narzedzia/doba-pracownicza.ts", "src/lib/narzedzia/doba-pracownicza.test.ts", "tests/e2e/narzedzie-doba-pracownicza.spec.ts", "src/lib/narzedzia/czas-pracy.ts"], "wynik": "problemy: art. 128 § 3, 129, 132, 135-137, 140^1, 151, 151^1, 151^9 zgodne z DU_2026_1245; 400 losowych grafików porównanych z niezależnym rachunkiem minutowym w Pythonie (0 różnic); Wigilia, przełom roku, SSR = skrypt; data domyślna z dnia buildu, indeks ⁹ spoza fontu, brak dniWolne w rejestrze"},
+    {"slug": "nadgodziny-sredniotygodniowe", "pliki": ["src/pages/narzedzia/nadgodziny-sredniotygodniowe.astro", "src/lib/narzedzia/nadgodziny-okres.ts", "src/lib/narzedzia/nadgodziny-okres.test.ts", "tests/e2e/narzedzie-nadgodziny-okres.spec.ts"], "wynik": "problemy: art. 129-131, 151 § 3-5, 151^1 § 2, 151^2 zgodne; wymiar 2026-2028 zgodny z niezależnym rachunkiem (2008/2008/1992 h); okres XII 2026-II 2027 = 472 h, XII 2027-II 2028 = 488 h; brak aria-invalid przy błędach zakresu, mylący komunikat przy pustym polu"},
+    {"slug": "odpracowanie-wyjscia-prywatnego", "pliki": ["src/pages/narzedzia/odpracowanie-wyjscia-prywatnego.astro", "src/lib/narzedzia/odpracowanie.ts", "src/lib/narzedzia/odpracowanie.test.ts", "tests/e2e/narzedzie-odpracowanie.spec.ts"], "wynik": "problemy: art. 151 § 2^1, 132, 133, 128 § 3, 80, 148^1, 188, 151^10-11 zgodne; Wigilia 2026 jako święto (uwaga), przełom 2026/2027 (uwaga o okresie); przykład startowy pokazuje „W porządku” przy przerwie tygodniowej 33 h; zdanie „Odpracowanie nie jest obowiązkowe” bez podstawy"},
+    {"slug": "praca-w-sobote", "pliki": ["src/pages/narzedzia/praca-w-sobote.astro", "src/lib/narzedzia/praca-w-sobote.ts", "src/lib/narzedzia/praca-w-sobote.test.ts", "tests/e2e/narzedzie-praca-w-sobote.spec.ts", "src/lib/narzedzia/niedziela-swieto.ts"], "wynik": "problemy: art. 151^3, 151^1 § 1-2, 151^7, 104^1 § 1 pkt 4 zgodne; kwoty wariantów A/B przeliczone ręcznie (105 zł / 665 zł, noc 22-10: 210 / 770 zł); 26.12.2026, 1.05.2027 i 25.12.2027 jako święto w sobotę; termin dnia wolnego przez przełom roku poprawny; indeks ⁹ spoza fontu"},
+    {"slug": "rownowazny-czas-pracy", "pliki": ["src/pages/narzedzia/rownowazny-czas-pracy.astro", "src/lib/narzedzia/rownowazny.ts", "src/lib/narzedzia/rownowazny.test.ts", "tests/e2e/narzedzie-rownowazny.spec.ts"], "wynik": "ok: art. 129 § 2, 134, 135-137, 143, 144, 147, 148, 150 zgodne; weekendowy XII 2027 (13 dni, brakuje 12 h) i 24 h XII 2027-II 2028 (488 h, 4 święta) przeliczone niezależnie; lata do wyboru 2025-2028"}
+  ],
+  "znaleziska": [
+    {
+      "id": "B-1", "slug": "odpracowanie-wyjscia-prywatnego", "wymiar": "tresc-ux", "waga": "srednia",
+      "plik": "src/lib/narzedzia/odpracowanie.ts", "linia": 297,
+      "problem": "Przykład startowy (i każdy okres zaczynający się w niedzielę) pokazuje kontrolę odpoczynku tygodniowego jako „W porządku: Odpracowanie nie odbiera 35 h odpoczynku w tygodniu” z opisem „W każdym tygodniu przysługuje co najmniej 35 godzin” i szczegółem „najdłuższa przerwa 33 h”. Użytkownik widzi zielony stan obok liczby niższej niż 35 h, bez wyjaśnienia, że 33 h daje już sam rozkład (weekend na przełomie tygodni). Gdy najdluzsza === rozklad, opisTygodnia pomija dopisek „według samego rozkładu”.",
+      "dowod": "Playwright na podglądzie, odpracowanie-wyjscia-prywatnego.html (JS i SSR): „W porządku: Odpracowanie nie odbiera 35 h odpoczynku w tygodniu / W każdym tygodniu przysługuje co najmniej 35 godzin nieprzerwanego odpoczynku. … / Tydzień od 15 listopada 2026 r.: najdłuższa przerwa 33 h.” Okres 1-miesięczny od 1.11.2026 (niedziela), rozkład pn-pt 7-15: przerwa pt 15:00 - sob 24:00 = 33 h. Test odpracowanie.test.ts linia 35 utrwala ten tekst jako oczekiwany. Art. 133 § 1 Kp (DU_2026_1245): „co najmniej 35 godzin nieprzerwanego odpoczynku”.",
+      "poprawka": "W opisTygodnia dopisywać informację także, gdy t.rozklad < 35 h (np. „…33 h; tyle daje już sam rozkład, bo weekend przypada na przełomie tygodni okresu rozliczeniowego”), a w stanie ok z takim tygodniem użyć opisu z wariantu „uwaga” albo osobnego zdania. Zmienić oczekiwanie w odpracowanie.test.ts (linia 35) i dodać asercję w e2e przykładu startowego."
+    },
+    {
+      "id": "B-2", "slug": "odpracowanie-wyjscia-prywatnego", "wymiar": "prawo", "waga": "niska",
+      "plik": "src/lib/narzedzia/odpracowanie.ts", "linia": 276,
+      "problem": "Kontrola bilansu przy niedoborze mówi: „Odpracowanie nie jest obowiązkowe, ale bez niego za ten czas wynagrodzenie nie przysługuje.” Kodeks nie rozstrzyga, czy pracownik może odmówić odpracowania, gdy pracodawca udzielił zwolnienia z warunkiem odpracowania; twierdzenie nie ma źródła w przepisie (zasada 1 i 2 z sekcji 4). FAQ na stronie mówi to poprawnie: „Przepis nie każe odpracować wyjścia”.",
+      "dowod": "DU_2026_1245, art. 151 § 2^1: „Nie stanowi pracy w godzinach nadliczbowych czas odpracowania zwolnienia od pracy, udzielonego pracownikowi, na jego wniosek …” (przepis nie mówi o obowiązku ani o jego braku); art. 80 dotyczy tylko wynagrodzenia. Objaśnienie rodzinaipracaWyjscie w prawo.ts mówi tylko „nieobecność niepłatna; przepisy nie określają terminu odpracowania”.",
+      "poprawka": "Zastąpić zdanie brzmieniem jak w FAQ: „Przepis nie nakazuje odpracowania ani nie wskazuje terminu; bez odpracowania za ten czas wynagrodzenie nie przysługuje.” Zaktualizować test tekstów kontroli."
+    },
+    {
+      "id": "B-3", "slug": "doba-pracownicza", "wymiar": "rachunek", "waga": "niska",
+      "plik": "src/pages/narzedzia/doba-pracownicza.astro", "linia": 11,
+      "problem": "Pole „Pierwszy dzień” dostaje wartość domyślną z dnia budowania (najbliższy poniedziałek od dzisWPolsce() w czasie buildu), a skrypt przeglądarki jej nie przestawia. Strona zbudowana 13.11.2026 pokazuje w 2027 r. tydzień od 16.11.2026 i etykiety dni z tego tygodnia. Narusza zasadę 11 z sekcji 4 (data domyślna formularza w przeglądarce, dzis-w-formularzu.ts).",
+      "dowod": "Playwright: input #dp-start = „2026-11-16” na podglądzie; w skrypcie strony brak importu ustawDzisiejszeWartosci ani atrybutu data-dzis (w 120 innych miejscach stron narzędzi jest używany).",
+      "poprawka": "Dodać do pola data-dzis z przesunięciem do najbliższego poniedziałku (albo w skrypcie: jeśli value === defaultValue, ustawić najbliższy poniedziałek od dzisWPolsce()) przed pierwszym przelicz(); SSR może zostać stałym przykładem 16.11.2026 r. (jak w e2e), żeby wynik w HTML nie zależał od dnia buildu."
+    },
+    {
+      "id": "B-4", "slug": "praca-w-sobote", "wymiar": "tresc-ux", "waga": "niska",
+      "plik": "src/lib/narzedzia/praca-w-sobote.ts", "linia": 169,
+      "problem": "Teksty wyniku zawierają indeks Unicode „⁹” (U+2079): „art. 151⁹–151¹¹” (linia 169) i „art. 151⁹ § 2” (linia 198); to samo w doba-pracownicza.ts linia 313 („art. 151⁹ § 2”). Podzbiór fontu Noto ma tylko U+00A0-00FF (¹²³), więc „⁹” rysuje font zastępczy (inna wysokość i grubość w jednym numerze artykułu). Faq.astro i odpracowanie.astro piszą wprost, że font nie ma cyfr indeksu, i używają <sup>.",
+      "dowod": "src/styles/fonty.css: unicode-range „U+0020-007E, U+00A0-00FF, … U+2022, U+2026, U+202F-2030 …” (brak U+2070-2079); src/components/narzedzia/Faq.astro: „podzbiór fontu nie ma cyfr indeksu”; uwaga widoczna na podglądzie przy dacie 2026-12-26 i przy zmianie 22:00-10:00 w sobotę 21.11.2026.",
+      "poprawka": "Zapisywać indeksy jako „151^9” i w skrypcie zamieniać na <sup> jak w odpracowanie-wyjscia-prywatnego.astro (zIndeksami), albo dodać U+2070-2079 do podzbioru w scripts/fonty (npm run fonty)."
+    },
+    {
+      "id": "B-5", "slug": "nadgodziny-sredniotygodniowe", "wymiar": "tresc-ux", "waga": "niska",
+      "plik": "src/pages/narzedzia/nadgodziny-sredniotygodniowe.astro", "linia": 214,
+      "problem": "Błędy zakresu z nadgodzinyOkresu (nadgodziny dobowe większe niż przepracowane, ponad 24 h × dni okresu, nieobecność większa niż wymiar) nie ustawiają aria-invalid na żadnym polu; aria-invalid dostaje tylko pole z tekstem zamiast liczby. Puste pole „Przepracowane godziny” liczy się jako 0 i daje mylący komunikat „Nadgodziny dobowe nie mogą przekraczać przepracowanych godzin.”. E2E tej strony nie sprawdza aria-invalid (0 wystąpień).",
+      "dowod": "Playwright: przepracowane „” → błąd „Nadgodziny dobowe nie mogą przekraczać przepracowanych godzin.”, [aria-invalid] = []; przepracowane „800” → „W okresie jest 30 dni, czyli najwyżej 720 godzin.”, [aria-invalid] = []; dobowe „200” → [aria-invalid] = [].",
+      "poprawka": "W catch mapować komunikat na pola (dobowe+przepracowane, przepracowane, nieobecnosc) i ustawiać aria-invalid; puste „Przepracowane godziny” traktować jako brak danych („Wpisz przepracowane godziny.”). Dopisać asercję toHaveAttribute('aria-invalid','true') w tests/e2e/narzedzie-nadgodziny-okres.spec.ts."
+    },
+    {
+      "id": "B-6", "slug": "doba-pracownicza", "wymiar": "spojnosc", "waga": "niska",
+      "plik": "src/data/narzedzia.ts", "linia": 760,
+      "problem": "Wpis rejestru doba-pracownicza ma przepisy: ['kodeksPracy'], a narzędzie liczy nadgodziny przypadające w święto według ustawy o dniach wolnych od pracy (rodzajDnia → swieta(), m.in. Wigilia od 2025 r.). Pozostałe 4 narzędzia partii mają ['kodeksPracy', 'dniWolne'].",
+      "dowod": "doba-pracownicza.ts: import { rodzajDnia } from './niedziela-swieto' i pętla wNiedzieleSwieta; na podglądzie tydzień od 21.12.2026: „8 h nadgodzin przypada w niedzielę lub święto” (25.12).",
+      "poprawka": "przepisy: ['kodeksPracy', 'dniWolne'] w src/data/narzedzia.ts."
+    },
+    {
+      "id": "B-7", "slug": "nadgodziny-sredniotygodniowe", "wymiar": "spojnosc", "waga": "niska",
+      "plik": "src/pages/narzedzia/nadgodziny-sredniotygodniowe.astro", "linia": 11,
+      "problem": "Lista lat zależy od roku buildu: LATA (2025-2027) plus rokBudowy i rokBudowy+1, czyli dziś 2025-2027; równoważny czas pracy ma 2025-2028 (LATA + 1). Narzędzie liczy tylko z kalendarza, więc nie ma powodu wiązać lat z tabelą płacy minimalnej; w grudniu 2027 r. bez nowego buildu nie da się wybrać okresu od stycznia 2028 r., a oba narzędzia z tej samej partii pokazują różne lata.",
+      "dowod": "Playwright: #no-rok = ['2025','2026','2027'], #r-rok = ['2025','2026','2027','2028']. dzis-w-formularzu.ts ma lataKalendarza() przeznaczone dla narzędzi „które liczą z kalendarza (wymiar, święta), a nie z kwot”.",
+      "poprawka": "Użyć w obu narzędziach tej samej listy (np. LATA ∪ lata z kalendarza do rok+1, liczona w przeglądarce przez lataKalendarza() i data-rok-biezacy), tak żeby od grudnia był dostępny następny rok."
+    }
+  ],
+  "do_stanu": [
+    {"sprawa": "Kodeks pracy: po t.j. Dz.U. 2026 poz. 1245 akty zmieniające DU 2026/473 (w mocy 8.07.2026) i DU 2026/1046 (5.11.2026) nie zmieniają działu VI; sprawdzić, czy nie ogłoszono zmian czasu pracy z wejściem w 2027 r.", "kiedy_sprawdzic": "2027-01-02", "gdzie_w_kodzie": "src/data/prawo.ts (kodeksPracy), src/lib/narzedzia/czas-pracy.ts"},
+    {"sprawa": "Ustawa o dniach wolnych od pracy (t.j. Dz.U. 2025 poz. 296, ostatnia zmiana DU 2024/1965): sprawdzić nowe zmiany kalendarza świąt", "kiedy_sprawdzic": "2027-01-02", "gdzie_w_kodzie": "src/lib/narzedzia/czas-pracy.ts (swieta)"}
+  ],
+  "poza_zakresem": [
+    "Pasek działów w nagłówku (menu-dzialow, LI/A sięgają do 329-589 px przy 320 i 412 px) wychodzi poza ekran; documentElement.scrollWidth = szerokość okna, więc to przewijany pasek, a nie przewijanie strony w bok; do potwierdzenia przy wspólnych komponentach."
+  ],
+  "nie_sprawdzono": [
+    "Czytnik ekranu (tylko atrybuty aria w DOM), Safari/WebKit.",
+    "Strony MRPiPS i rodzinaipraca.gov.pl cytowane w objaśnieniach (rodzinaipracaWyjscie, rodzinaipracaSobota, rodzinaipracaWeekend, mrpipsRozliczanie) nie zostały pobrane i porównane z opisami w prawo.ts.",
+    "Zgodność doby pracowniczej z kontrolą grafiku (grafik.ts) w przypadkach zmian dłuższych niż 8 h w systemie podstawowym."
+  ]
+}

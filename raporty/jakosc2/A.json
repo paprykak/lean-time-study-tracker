@@ -1,0 +1,78 @@
+{
+  "partia": "A",
+  "sprawdzone": [
+    {"slug": "urlop-bezplatny", "pliki": ["src/pages/narzedzia/urlop-bezplatny.astro", "src/lib/narzedzia/urlop-bezplatny.ts", "src/lib/narzedzia/urlop-bezplatny.test.ts", "tests/e2e/narzedzie-urlop-bezplatny.spec.ts"], "wynik": "problemy: drobne. Prawo zgodne z art. 155^1, 155^2 § 1–2, 155^2a, 155^3, 174, 174^1, 186^5 Kp (DU_2026_1245) i art. 69 ust. 3 ustawy o świadczeniach (DU_2025_1461; nowelizacje po t.j., w tym Dz.U. 2026 poz. 26 od 2027 r., nie zmieniają art. 66–69). 3000 losowych przypadków 2025–2028 zgodnych z niezależnym rachunkiem w Pythonie; SSR = wynik skryptu; błędy z role=alert i aria-invalid. Rok bez „r.” w wyniku; dwa pola daty obok siebie na 320 px"},
+    {"slug": "urlop-szkoleniowy", "pliki": ["src/pages/narzedzia/urlop-szkoleniowy.astro", "src/lib/narzedzia/urlop-szkoleniowy.ts", "src/lib/narzedzia/urlop-szkoleniowy.test.ts", "tests/e2e/narzedzie-urlop-szkoleniowy.spec.ts"], "wynik": "problemy: prawo zgodne z art. 103^1–103^6 Kp (6/6/6/21 dni, dni pracy z rozkładu); SSR = skrypt; na 320 i 360 px etykieta „Eksternistyczny” wychodzi poza kolumnę i nachodzi na „Maturalny”"},
+    {"slug": "urlop-w-godzinach", "pliki": ["src/pages/narzedzia/urlop-w-godzinach.astro", "src/lib/narzedzia/urlop-godzinowy.ts", "src/lib/narzedzia/urlop-godzinowy.test.ts", "tests/e2e/narzedzie-urlop-godzinowy.spec.ts"], "wynik": "problemy: prawo zgodne z art. 154 § 1–3, 154^2 § 1–4, 162, 167^2, 167^3, 168 Kp; tabela 160 h/208 h i FAQ przeliczone; SSR = skrypt. Bez planu urlop na żądanie „do 4 dni” także przy 3 h pozostałego urlopu; tekst „3 h (3 h po 8 h)”; dodatkowe godziny tylko całkowite"},
+    {"slug": "urlop-w-okresie-wypowiedzenia", "pliki": ["src/pages/narzedzia/urlop-w-okresie-wypowiedzenia.astro", "src/lib/narzedzia/urlop-wypowiedzenie.ts", "src/lib/narzedzia/urlop-wypowiedzenie.test.ts", "tests/e2e/narzedzie-urlop-wypowiedzenie.spec.ts"], "wynik": "problemy: prawo zgodne z art. 37, 153 § 2, 155^1, 155^2a, 155^3, 161, 165–166, 167^1, 171 § 1, 3–5 Kp (§ 4–5 od 27.01.2026 r., Dz.U. 2026 poz. 25); 3000 losowych przypadków (proporcja, dni pracy ze świętami 2025–2028 z Wigilią, przełom roku) zgodnych z Pythonem. Domyślne daty formularza z dnia budowania, bez przestawienia w przeglądarce (zasada 11)"},
+    {"slug": "zalegly-urlop", "pliki": ["src/pages/narzedzia/zalegly-urlop.astro", "src/lib/narzedzia/zalegly-urlop.ts", "src/lib/narzedzia/zalegly-urlop.test.ts", "tests/e2e/narzedzie-zalegly-urlop.spec.ts"], "wynik": "ok: art. 161, 163, 165, 166, 168, 171 § 1, 3–5, 282 § 1 pkt 2 (2000–60 000 zł od 8.07.2026 r.), 291 § 1 i 4, 292, 293^1, 295 Kp zgodne z DU_2026_1245; terminy 30.09 i 31.12 + 3 lata (art. 112 KC) sprawdzone; domyślny rok i dzień przestawiane w przeglądarce; SSR = skrypt; błędy z aria-invalid"}
+  ],
+  "znaleziska": [
+    {
+      "id": "A-1", "slug": "urlop-w-okresie-wypowiedzenia", "wymiar": "rachunek", "waga": "srednia",
+      "plik": "src/pages/narzedzia/urlop-w-okresie-wypowiedzenia.astro", "linia": 10,
+      "problem": "Domyślne „Ostatni dzień umowy” (koniec miesiąca budowania) i „Urlop możesz dostać od” (dzień budowania) pochodzą z dnia budowania, a skrypt przeglądarki ich nie przestawia. Strona czytana tygodnie po wdrożeniu, także po 1.01.2027 r., liczy przykład dla starej daty, z etykietą „Wykorzystane z urlopu za 2026 r.” i dniami pracy z 2026 r. Łamie to zasadę 11 z sekcji 4 fabryki.",
+      "dowod": "Linie 8–10: `const dzis = dzisWPolsce(); const domyslne = { koniecUmowy: koniecMiesiaca(dzis), urlopOd: dzis, ... }`; pola `#uw-koniec`/`#uw-od` (linie 54, 58) nie mają `data-dzis`, a w <script> nie ma `ustawDzisiejszeWartosci` ani innego przestawienia. Na podglądzie zbudowanym 13.11.2026 r. wynik po skrypcie to „12 dni ... Dni pracy do końca umowy 12 dni od 13 listopada 2026 r.”, czyli wartości z HTML. Dla porównania zalegly-urlop.astro przestawia „Na dzień” w skrypcie.",
+      "poprawka": "Na początku skryptu, gdy `el('od').value === el('od').defaultValue`, ustaw `od = dzisWPolsce()`, a `koniec = koniecMiesiaca(dzis)`, gdy pole `koniec` też ma wartość domyślną, potem wywołaj `przelicz()`. `data-dzis` wystarczy dla „od”, ale nie dla końca miesiąca. Do tego test e2e z `page.clock.setFixedTime('2027-02-10')`: pola pokazują 10.02.2027 i 28.02.2027, a etykieta „Wykorzystane z urlopu za 2027 r.”."
+    },
+    {
+      "id": "A-2", "slug": "urlop-szkoleniowy", "wymiar": "tresc-ux", "waga": "srednia",
+      "plik": "src/pages/narzedzia/urlop-szkoleniowy.astro", "linia": 71,
+      "problem": "Na telefonie 320 px (i 360 px) etykieta „Eksternistyczny” w siatce trzech kolumn wychodzi poza swoją kolumnę i nachodzi na etykietę „Maturalny”: na zrzucie widać „EksternistycznyMaturalny”.",
+      "dowod": "Playwright, viewport 320×640: prawa krawędź tekstu etykiety `label[for=s-eksternistyczny]` = 131 px, a jej kolumny = 111 px (przy 360 px: 131 vs 124; przy 412 px mieści się). Zrzut z /tmp/claude-0/-home-user-lean-time-study-tracker/ac06a219-4538-5f71-b234-1eeb6f3157ac/scratchpad/audyt/A/szk-crop.png. Kontrola scrollWidth tego nie wychwyci, bo nic nie przewija się w bok.",
+      "poprawka": "Zmień siatkę na `grid grid-cols-1 min-[400px]:grid-cols-3` albo `grid-cols-2 sm:grid-cols-3`, albo skróć etykietę (np. „Ekstern.” z pełną nazwą w opisie `s-egz-opis`). Dodaj e2e na 320 px: prawa krawędź każdej etykiety ≤ prawej krawędzi jej pola."
+    },
+    {
+      "id": "A-3", "slug": "urlop-w-godzinach", "wymiar": "rachunek", "waga": "niska",
+      "plik": "src/lib/narzedzia/urlop-godzinowy.ts", "linia": 123,
+      "problem": "Bez planu liczba dni na żądanie to po prostu 4 minus dni wykorzystane, niezależnie od pozostałego urlopu. Przy 3 h albo 8 h urlopu narzędzie pisze „do 4 dni w ramach pozostałego urlopu”, a z planem w tej samej sytuacji liczy 0 albo 1. Urlop na żądanie to część urlopu (art. 168 i 163 § 1 Kp), więc wynik obiecuje więcej, niż zostało.",
+      "dowod": "jiti: `opisWyniku(urlopGodzinowy({dni:0,godziny:3,dzien:8,plan:[],naZadanieWykorzystane:0})).naZadanie` → „do 4 dni w ramach pozostałego urlopu; godziny zależą od długości zmiany w grafiku”; to samo dla dni:1. Podgląd: dni 0, godziny 3, pusty plan → „Na żądanie zostało do 4 dni…”.",
+      "poprawka": "Bez planu ogranicz liczbę dni na żądanie tak jak dla dni po 8 h (albo po 7 h): `Math.min(limitNaZadanie, Math.max(1, Math.ceil(zostalo / min(dzien))))`. Możesz też dopisać „o ile zmieści się w pozostałych X h”. Dodaj test jednostkowy dla 3 h i 8 h bez planu."
+    },
+    {
+      "id": "A-4", "slug": "urlop-w-godzinach", "wymiar": "tresc-ux", "waga": "niska",
+      "plik": "src/lib/narzedzia/urlop-godzinowy.ts", "linia": 177,
+      "problem": "Gdy urlopu jest mniej niż jeden dzień, wynik ma niezrozumiałe wiersze „Masz: 3 h (3 h po 8 h)” i „To 3 h urlopu po 8 h”.",
+      "dowod": "Podgląd: dni 0, dodatkowe godziny 3, pusty plan → „Masz 3 h (3 h po 8 h)”, opis „To 3 h urlopu po 8 h”. `dniIGodziny` zwraca samo „3 h”, a szablon dokleja „po 8 h”.",
+      "poprawka": "W `opisWyniku` dopisuj „po ${dzien} h” tylko wtedy, gdy `pelneZmiany(x, dzien).pelne > 0`. Przy mniej niż dniu pokazuj samo „3 h” (bez nawiasu), a w opisie „To mniej niż dzień urlopu (dzień = 8 h)”. Dodaj test tekstu."
+    },
+    {
+      "id": "A-5", "slug": "urlop-w-godzinach", "wymiar": "rachunek", "waga": "niska",
+      "plik": "src/lib/narzedzia/urlop-godzinowy.ts", "linia": 86,
+      "problem": "Pole „Dodatkowe godziny” przyjmuje tylko pełne godziny, a plan przyjmuje zmiany po 7,5 h czy 10,5 h. Resztka po takich zmianach (np. 4,5 h z poprzedniego rozliczenia) jest typowa, a narzędzie ją odrzuca błędem.",
+      "dowod": "`calkowita(godziny, 0, dzien - 1)` → BladDanych „Dodatkowe godziny: pełne godziny od 0 do 7.”. Tymczasem `Zmiana.dlugosc` dopuszcza ułamki, a nagłówek pliku mówi: „Liczymy w minutach, żeby zmiany po 7,5 h nie dawały błędów zaokrągleń”.",
+      "poprawka": "Dopuść godziny niecałkowite: `Number.isFinite(godziny) && godziny >= 0 && godziny < dzien`, z zaokrągleniem do pełnej minuty jak w `min()`. W formularzu ustaw `inputmode=\"decimal\"` i opis „np. 4,5”. Dodaj test 0 dni + 4,5 h."
+    },
+    {
+      "id": "A-6", "slug": "urlop-bezplatny", "wymiar": "spojnosc", "waga": "niska",
+      "plik": "src/lib/narzedzia/urlop-bezplatny.ts", "linia": 258,
+      "problem": "Rok w etykietach i opisie wyniku nie ma „r.” („Urlop wypoczynkowy za 2026”, „Drugie odczytanie za 2026”, „Zostało do wykorzystania za 2026”). Pozostałe narzędzia partii piszą „za 2026 r.” (urlop-wypowiedzenie: „Zostało z urlopu za 2026 r.”, zalegly-urlop: „Urlop za 2024 r.”).",
+      "dowod": "Linie 258, 275, 284, 290: szablony `za ${x.rok}` i `za ${pierwszy.rok}`. Podgląd: „Urlop wypoczynkowy za 2026 20 dni, praca w 9 z 12 miesięcy…”.",
+      "poprawka": "Zmień na `za ${x.rok} r.` (4 miejsca) i dopasuj oczekiwania w urlop-bezplatny.test.ts oraz w e2e."
+    },
+    {
+      "id": "A-7", "slug": "urlop-bezplatny", "wymiar": "tresc-ux", "waga": "niska",
+      "plik": "src/pages/narzedzia/urlop-bezplatny.astro", "linia": 54,
+      "problem": "Pola dat „Od” i „Do” stoją obok siebie (grid-cols-2). Na 320 px Chromium ucina w nich rok (widać „03/01/20”). Ten sam układ mają pola urlopu wychowawczego w zalegly-urlop.astro (linia 84).",
+      "dowod": "Zrzut Playwright 320×640 (Chromium headless): /tmp/claude-0/-home-user-lean-time-study-tracker/ac06a219-4538-5f71-b234-1eeb6f3157ac/scratchpad/audyt/A/bez-pl.png i bez-crop.png pokazują „03/01/20” i „05/31/20”. Na telefonie z polskim formatem daty („01.03.2026”) tekst ma podobną długość; na prawdziwym urządzeniu nie sprawdzono.",
+      "poprawka": "Na wąskim ekranie układaj pola dat w jednej kolumnie: `grid grid-cols-1 min-[380px]:grid-cols-2` (urlop-bezplatny.astro linia 54, zalegly-urlop.astro linia 84). Możesz też zmniejszyć padding pola daty."
+    },
+    {
+      "id": "A-8", "slug": "urlop-w-okresie-wypowiedzenia", "wymiar": "testy", "waga": "niska",
+      "plik": "tests/e2e/narzedzie-urlop-wypowiedzenie.spec.ts", "linia": 8,
+      "problem": "Żaden test nie sprawdza wartości domyślnych zależnych od dnia (patrz A-1), a testy jednostkowe nie obejmują przełomu 2027/2028 r. (Wigilia 24.12.2027 r. w piątek, 1.01.2028 r. w sobotę).",
+      "dowod": "Każdy test e2e wpisuje w beforeEach koniec 2026-11-30 i od 2026-11-02. Testy jednostkowe kończą się na przełomie 2026/2027 (linie 70 i 128). Ja sprawdziłem 2027 i 2028 niezależnie: 253 i 251 dni roboczych pon.–pt., zgodnie z dniRobocze.",
+      "poprawka": "Dodaj test e2e z `page.clock` (data po Nowym Roku, bez wypełniania pól) i test jednostkowy: od 20.12.2027 do 14.01.2028, urlop za 2028 r. tylko w dniach pracy od 3.01.2028 r."
+    }
+  ],
+  "do_stanu": [],
+  "poza_zakresem": [
+    "Menu kategorii w nagłówku (A.menu-dzialow-link „Czas pracy”, „Wynagrodzenie”, „Urlopy”) wychodzi poza 320/412 px. Strona nie przewija się w bok (scrollWidth = szerokość okna), więc to raczej celowe przewijanie paska. Wspólny komponent nagłówka, nie te narzędzia."
+  ],
+  "nie_sprawdzono": [
+    "Orzecznictwo SN o dniu wymagalności roszczenia o urlop i ekwiwalent (sn.pl blokuje automaty). Narzędzie zalegly-urlop pokazuje oba warianty i to opisuje.",
+    "Odnośnik 53 Kp do ustawy Dz.U. 2026 poz. 473 (art. 282 § 1 od 8.07.2026 r.): przyjęte z odnośnika 57 i daty wejścia w życie z metadanych, bez czytania tekstu odnośnika 53.",
+    "Wygląd natywnych pól daty na prawdziwym telefonie z Androidem lub iOS (A-7 oparte na Chromium headless).",
+    "Czytnik ekranu: sprawdzone tylko aria-live, role=alert, aria-invalid i aria-describedby w DOM, bez NVDA/VoiceOver."
+  ]
+}
