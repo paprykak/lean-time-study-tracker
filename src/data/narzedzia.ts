@@ -801,6 +801,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-13',
   },
   {
+    slug: 'choroba-zawodowa',
+    nazwa: 'Choroba zawodowa: wykaz i terminy',
+    krotko: 'Czy choroba jest w wykazie (cieśń nadgarstka, słuch, kręgosłup), do kiedy po pracy w narażeniu, jak zgłosić.',
+    kategoria: 'bhp',
+    przepisy: ['chorobyZawodowe', 'kodeksPracy', 'wypadkowa', 'odszkodowaniaWypadkowe2026', 'kpa', 'kodeksCywilny'],
+    sprawdzono: '2026-11-13',
+  },
+  {
     slug: 'przerwy-w-pracy',
     nazwa: 'Przerwy w pracy',
     krotko: 'Ile przerw przy zmianie 8 i 12 godzin, które są płatne, przy monitorze, na karmienie, dla młodocianych.',

@@ -675,6 +675,34 @@ export const AKTY = {
     adres: 'https://eli.gov.pl/eli/MP/2026/220/ogl',
     sprawdzono: '2026-11-13',
   },
+  chorobyZawodowe: {
+    nazwa: 'Rozporządzenie Rady Ministrów w sprawie chorób zawodowych',
+    publikator: 'Dz.U. 2026 poz. 1297',
+    uwaga: 'tekst jednolity, obejmuje zmianę Dz.U. 2025 poz. 1582 (od 21 grudnia 2025 r.: nowe brzmienie poz. 5 i 21, nowe poz. 6a i 17 pkt 10–11); § 3–9 (zgłoszenie, orzeczenie, ponowne badanie, decyzja) i załącznik: wykaz z okresami',
+    adres: eli(2026, 1297),
+    sprawdzono: '2026-11-13',
+  },
+  kpa: {
+    nazwa: 'Kodeks postępowania administracyjnego',
+    publikator: 'Dz.U. 2025 poz. 1691',
+    uwaga: 'tekst jednolity, bez późniejszych zmian; art. 127 i 129 (odwołanie od decyzji w 14 dni od doręczenia)',
+    adres: eli(2025, 1691),
+    sprawdzono: '2026-11-13',
+  },
+  maszynyBhp: {
+    nazwa: 'Rozporządzenie w sprawie minimalnych wymagań dotyczących bezpieczeństwa i higieny pracy w zakresie użytkowania maszyn przez pracowników podczas pracy',
+    publikator: 'Dz.U. 2002 poz. 1596',
+    uwaga: 'zmiana Dz.U. 2003 poz. 1745 (bez tekstu jednolitego): § 8a–8b, tymczasowa praca na wysokości i drabiny',
+    adres: eli(2002, 1596),
+    sprawdzono: '2026-11-13',
+  },
+  budowlaneBhp: {
+    nazwa: 'Rozporządzenie w sprawie bezpieczeństwa i higieny pracy podczas wykonywania robót budowlanych',
+    publikator: 'Dz.U. 2003 poz. 401',
+    uwaga: 'bez zmian; § 6, § 15 ust. 2 i § 133: zabezpieczenie od 1 m, balustrada 1,1 m i 0,15 m',
+    adres: eli(2003, 401),
+    sprawdzono: '2026-11-13',
+  },
 } as const satisfies Record<string, Akt>;
 
 export type KluczAktu = keyof typeof AKTY;
