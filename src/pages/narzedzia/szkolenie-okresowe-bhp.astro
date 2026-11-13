@@ -74,7 +74,7 @@ const faq = [
       <div class="mt-4">
         <label for="bhp-data" class="etykieta-pola" data-w="etykieta-daty">Data ostatniego szkolenia okresowego (z zaświadczenia)</label>
         <input id="bhp-data" name="data" type="date" class="pole mt-1 max-w-56" min="1990-01-01" max="2100-12-31" aria-describedby="bhp-data-blad" />
-        <p id="bhp-data-blad" class="blad-pola" data-blad="data" hidden></p>
+        <p id="bhp-data-blad" class="blad-pola" data-blad="data" role="alert" hidden></p>
       </div>
     </div>
 
@@ -178,6 +178,7 @@ const faq = [
 </StronaNarzedzia>
 
 <script>
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
   import { GRUPY, terminSzkolenia, type GrupaStanowisk } from '../../lib/narzedzia/szkolenie-bhp';
   import { dataPoPolsku, dzisWPolsce, ileDni, poprawnaData } from '../../lib/narzedzia/terminy';
   import { plikIcs } from '../../lib/narzedzia/kalendarz-ics';
@@ -218,9 +219,7 @@ const faq = [
         else if (!poprawnaData(data)) blad = 'Wpisz pełną datę: dzień, miesiąc i rok.';
         else if (tryb === 'kolejne' && data > dzis) blad = 'Ta data jest w przyszłości. Wpisz datę ukończenia ostatniego szkolenia.';
       }
-      bladDaty.hidden = !blad;
-      bladDaty.textContent = blad ?? '';
-      dataPole.setAttribute('aria-invalid', blad ? 'true' : 'false');
+      pokazBlad(bladDaty, blad, dataPole);
 
       if (zwolniony) {
         w('termin').textContent = 'Nie jest wymagane';
@@ -258,6 +257,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

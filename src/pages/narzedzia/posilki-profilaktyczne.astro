@@ -64,8 +64,8 @@ const faq = [
       <fieldset class="mt-4">
         <legend class="etykieta-pola">Progi dla</legend>
         <div class="przelacznik mt-1">
-          <label><input type="radio" name="plec" value="kobiet" /> kobiet</label>
-          <label><input type="radio" name="plec" value="mezczyzn" /> mężczyzn</label>
+          <label><input type="radio" name="plec" value="kobiet" aria-describedby="p-blad" /> kobiet</label>
+          <label><input type="radio" name="plec" value="mezczyzn" aria-describedby="p-blad" /> mężczyzn</label>
         </div>
       </fieldset>
       <div class="mt-4 grid grid-cols-2 items-end gap-3">
@@ -174,6 +174,7 @@ const faq = [
 </StronaNarzedzia>
 
 <script>
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
   import { ocen, opisz, wpisanaTemperatura, type Jednostka, type Miejsce, type Plec } from '../../lib/narzedzia/posilki-profilaktyczne';
   import { wpisanaLiczba } from '../../lib/narzedzia/format';
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
@@ -211,8 +212,16 @@ const faq = [
         if (!(e instanceof RangeError)) throw e;
         blad = e.message;
       }
-      b.hidden = !blad;
-      b.textContent = blad ? typografia(blad) : '';
+      // Pole, którego dotyczy komunikat z biblioteki (po początku treści).
+      const polaBledu: [string, string[]][] = [
+        ['Wpisz poprawną datę', ['data']],
+        ['Wpisz godzinę', ['start']],
+        ['Wpisz wydatek', ['wydatek']],
+        ['Wybierz, dla kogo', ['plec']],
+        ['Wpisz temperaturę', ['temp']],
+      ];
+      const nazwy = (blad && polaBledu.find(([p]) => blad!.startsWith(p))?.[1]) || [];
+      pokazBlad(b, blad, nazwy.flatMap((n) => [...form.querySelectorAll<HTMLInputElement>(`[name="${n}"]`)]));
       const status = w('status');
       if (!wynik) {
         w('naglowek').textContent = '—';
@@ -240,6 +249,7 @@ const faq = [
     form.addEventListener('submit', (e) => e.preventDefault());
     // Data z buildu może być nieaktualna (okres zimowy): data-dzis przestawia ją na dziś, jeśli nikt jej nie zmienił.
     ustawDzisiejszeWartosci(form);
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

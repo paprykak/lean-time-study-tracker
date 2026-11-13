@@ -77,7 +77,7 @@ const faq = [
         <label for="o-dluzsze" class="etykieta-pola">Premie kwartalne i roczne z 12 miesięcy, razem (zł)</label>
         <input id="o-dluzsze" name="dluzsze" class="pole mt-1 max-w-48" type="text" inputmode="decimal" autocomplete="off" value="0" aria-describedby="o-blad" />
       </div>
-      <p id="o-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+      <p id="o-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -149,6 +149,7 @@ const faq = [
 </StronaNarzedzia>
 
 <script>
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
   import { odprawa, type RodzajOdprawy } from '../../lib/narzedzia/odprawy';
   import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
   import { poprawnaData } from '../../lib/narzedzia/terminy';
@@ -176,6 +177,11 @@ const faq = [
         : rodzaj === 'zwolnienie' && !(poprawnaData(od) && poprawnaData(do_)) ? 'Wpisz pełne daty: początek pracy i dzień rozwiązania umowy.'
         : rodzaj === 'zwolnienie' && do_ < od ? 'Dzień rozwiązania umowy nie może być wcześniejszy niż początek pracy.'
         : null;
+      const zlePola =
+        !(stale > 0) ? [el('stale')]
+        : !(zmienne >= 0 && dluzsze >= 0) ? [el('zmienne'), el('dluzsze')].filter((p) => !(wpisanaLiczba(p.value || '0') >= 0))
+        : !(poprawnaData(od) && poprawnaData(do_)) ? [el('od'), el('do')].filter((p) => !poprawnaData(p.value))
+        : [el('do')];
       let r: ReturnType<typeof odprawa> | null = null;
       if (!blad) {
         try {
@@ -184,8 +190,7 @@ const faq = [
           blad = 'Kalkulator zna płacę minimalną tylko na lata, które są w tabeli poniżej. Wybierz dzień rozwiązania umowy z tych lat.';
         }
       }
-      b.hidden = !blad;
-      b.textContent = typografia(blad ?? '');
+      pokazBlad(b, blad, zlePola);
       if (blad || !r) {
         w('kwota').textContent = '—';
         return;
@@ -203,6 +208,7 @@ const faq = [
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
     ustawDzisiejszeWartosci(form);
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

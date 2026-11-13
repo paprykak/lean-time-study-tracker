@@ -41,5 +41,5 @@ test('błędny poziom: komunikat i aria-invalid na polu, po poprawce zdjęte', a
   await page.locator('#h-poziom-0').fill('abc');
   await expect(page.locator('#h-poziom-0')).toHaveAttribute('aria-invalid', 'true');
   await page.locator('#h-poziom-0').fill('85');
-  await expect(page.locator('#h-poziom-0')).toHaveAttribute('aria-invalid', 'false');
+  await expect(page.locator('#h-poziom-0')).not.toHaveAttribute('aria-invalid', 'true');
 });

@@ -88,7 +88,7 @@ const faq = [
         </div>
       </div>
       <p id="p-staz-opis" class="meta mt-1">Staż to okresy składkowe i nieskładkowe, razem z pracą z wykazu. Lata możesz wpisać z ułamkiem, na przykład 14,5.</p>
-      <p id="p-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+      <p id="p-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -185,6 +185,7 @@ const faq = [
   import { wpisanaLiczba } from '../../lib/narzedzia/format';
   import { dzisWPolsce, poprawnaData } from '../../lib/narzedzia/terminy';
   import { typografia } from '../../lib/typografia.mjs';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-pomostowa]');
   if (form) {
@@ -205,23 +206,17 @@ const faq = [
       form.querySelector<HTMLElement>('[data-etykieta-rodzaju]')!.textContent = typografia(ETYKIETY[rodzaj] ?? '');
       const [szczegolne, przed, staz, rodzaju] = ['szczegolne', 'przed', 'staz', 'rodzaju'].map((n) => wpisanaLiczba(el(n).value));
       let blad: string | null = null;
-      if (!poprawnaData(urodzenie) || urodzenie > dzis || urodzenie < '1900-01-01') blad = 'Wpisz datę urodzenia.';
-      else if (![szczegolne, przed, staz].every((x) => x >= 0 && x <= 70)) blad = 'Wpisz okresy w latach, na przykład 15 albo 14,5.';
-      else if (przed > szczegolne) blad = 'Okres przed 2009 r. nie może być dłuższy niż cała praca z wykazu.';
-      else if (staz < szczegolne) blad = 'Staż nie może być krótszy niż praca z wykazu, bo ją obejmuje.';
-      else if (rodzaj !== 'ogolne' && !(rodzaju >= 0 && rodzaju <= szczegolne)) blad = 'Pracę z wybranych punktów wpisz w latach, najwyżej tyle, ile cała praca z wykazu.';
-      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
-      b.hidden = !blad;
-      b.textContent = blad ? typografia(blad) : '';
-      // Pole, którego dotyczy błąd, dla czytnika ekranu (komunikat jest w aria-describedby).
-      const polaBledu = blad ? ([
-        ['Wpisz datę urodzenia.', ['urodzenie']],
-        ['Wpisz okresy w latach', ['szczegolne', 'przed', 'staz']],
-        ['Okres przed 2009', ['przed']],
-        ['Staż nie może', ['staz']],
-        ['Pracę z wybranych', ['rodzaju']],
-      ] as [string, string[]][]).find(([p]) => blad!.startsWith(p))?.[1] ?? [] : [];
-      for (const n of ['urodzenie', 'szczegolne', 'rodzaju', 'przed', 'staz']) el(n).setAttribute('aria-invalid', String(polaBledu.includes(n)));
+      // Pola, których dotyczy błąd (aria-invalid; komunikat jest w ich aria-describedby).
+      let polaBledu: string[] = [];
+      const lata = { szczegolne, przed, staz };
+      if (!poprawnaData(urodzenie) || urodzenie > dzis || urodzenie < '1900-01-01') (blad = 'Wpisz datę urodzenia.'), (polaBledu = ['urodzenie']);
+      else if (!Object.values(lata).every((x) => x >= 0 && x <= 70)) {
+        blad = 'Wpisz okresy w latach, na przykład 15 albo 14,5.';
+        polaBledu = Object.entries(lata).filter(([, x]) => !(x >= 0 && x <= 70)).map(([n]) => n);
+      } else if (przed > szczegolne) (blad = 'Okres przed 2009 r. nie może być dłuższy niż cała praca z wykazu.'), (polaBledu = ['przed']);
+      else if (staz < szczegolne) (blad = 'Staż nie może być krótszy niż praca z wykazu, bo ją obejmuje.'), (polaBledu = ['staz']);
+      else if (rodzaj !== 'ogolne' && !(rodzaju >= 0 && rodzaju <= szczegolne)) (blad = 'Pracę z wybranych punktów wpisz w latach, najwyżej tyle, ile cała praca z wykazu.'), (polaBledu = ['rodzaju']);
+      pokazBlad(form.querySelector<HTMLElement>('[data-blad="dane"]')!, blad, polaBledu.map(el));
       if (blad) {
         for (const k of POLA) w(k).textContent = k === 'opis' ? '' : '—';
         w('uwaga').textContent = '';
@@ -234,8 +229,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
-    // Po powrocie przyciskiem Wstecz przeglądarka przywraca wybór po pierwszym liczeniu: liczymy jeszcze raz.
-    window.addEventListener('pageshow', przelicz);
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

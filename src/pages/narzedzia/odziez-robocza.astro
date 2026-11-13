@@ -254,6 +254,7 @@ const faq = [
 </StronaNarzedzia>
 
 <script>
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
   import {
     MAKS_CENA,
     MAKS_KOSZT_PRANIA,
@@ -301,6 +302,17 @@ const faq = [
       return e;
     };
 
+    // Pola z błędem z ostatniego liczenia (aria-invalid); każde pole sprawdzamy osobno tą samą funkcją z biblioteki.
+    let zlePola: HTMLInputElement[] = [];
+    const rzuca = (f: () => unknown) => {
+      try {
+        f();
+        return false;
+      } catch {
+        return true;
+      }
+    };
+
     const przeliczPrania = (): string | null => {
       const p = wej('pranMies').value.trim();
       const k = wej('kosztPrania').value.trim();
@@ -319,6 +331,8 @@ const faq = [
       } catch {
         pisz('pran', '—');
         pisz('pran-opis', '');
+        if (rzuca(() => kosztPran(n, 0))) zlePola.push(wej('pranMies'));
+        if (rzuca(() => kosztPran(0, koszt))) zlePola.push(wej('kosztPrania'));
         return `Prania: od 0 do ${MAKS_PRAN} w miesiącu, koszt jednego prania do ${MAKS_KOSZT_PRANIA} zł (najwyżej z groszami).`;
       }
     };
@@ -335,6 +349,8 @@ const faq = [
         } catch {
           pisz('ekw', '—');
           pisz('ekw-opis', '');
+          if (rzuca(() => ekwiwalentWlasne([{ cena: r.cena, miesiace: 1 }]))) zlePola.push(wej(`cena${i}`));
+          if (rzuca(() => ekwiwalentWlasne([{ cena: 1, miesiace: r.miesiace }]))) zlePola.push(wej(`mies${i}`));
           return `Rzecz ${i}: cena od 0,01 do ${MAKS_CENA} zł, okres od 1 do ${MAKS_MIESIECY} miesięcy.`;
         }
         rzeczy.push(r);
@@ -381,15 +397,14 @@ const faq = [
         );
       if (zmienione('uwagi', t.uwagi)) w('uwagi').replaceChildren(...t.uwagi.map((u) => nowy('p', u, 'wynik-uwaga')));
 
+      zlePola = [];
       const bledy = [przeliczPrania(), przeliczEkwiwalent()].filter((x): x is string => !!x);
-      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
-      const tekstBledu = typografia(bledy.join(' '));
-      b.hidden = !bledy.length;
-      if (b.textContent !== tekstBledu) b.textContent = tekstBledu;
+      pokazBlad(form.querySelector<HTMLElement>('[data-blad="dane"]')!, bledy.join(' '), zlePola);
     };
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

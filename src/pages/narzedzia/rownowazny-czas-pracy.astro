@@ -96,7 +96,7 @@ const faq = [
         </select>
       </div>
       <p class="meta mt-3">Liczymy dla pełnego etatu.</p>
-      <p id="r-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+      <p id="r-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -191,6 +191,7 @@ const faq = [
 </StronaNarzedzia>
 
 <script>
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
   import { KOLOR_STATUSU, SYSTEMY, opisWyniku, planOkresu, type SystemRownowazny } from '../../lib/narzedzia/rownowazny';
   import { wpisanaLiczba } from '../../lib/narzedzia/format';
   import { typografia } from '../../lib/typografia.mjs';
@@ -215,9 +216,7 @@ const faq = [
         r = planOkresu(system, L, Number(el('rok').value), Number(el('miesiac').value), Number(el('okres').value));
       } catch (e) {
         const tekst = e instanceof RangeError ? e.message : 'Nie udało się policzyć.';
-        blad.hidden = false;
-        blad.textContent = typografia(tekst.endsWith('.') ? tekst : `${tekst}.`);
-        el('zmiana').setAttribute('aria-invalid', 'true');
+        pokazBlad(blad, tekst.endsWith('.') ? tekst : `${tekst}.`, el('zmiana'));
         w('glowny').textContent = '—';
         w('opis').textContent = '';
         w('status').hidden = true;
@@ -225,9 +224,7 @@ const faq = [
         for (const k of ['odpoczynek', 'rytm', 'dostepne']) form.querySelector<HTMLElement>(`[data-wiersz="${k}"]`)!.hidden = true;
         return;
       }
-      blad.hidden = true;
-      blad.textContent = '';
-      el('zmiana').removeAttribute('aria-invalid');
+      pokazBlad(blad, null);
       const t = opisWyniku(r);
       for (const k of ['glowny', 'opis', 'status', 'okres', 'wymiar', 'wolne', 'przerwy'] as const) pisz(k, t[k]);
       w('status').hidden = false;
@@ -250,6 +247,7 @@ const faq = [
     });
     form.addEventListener('input', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

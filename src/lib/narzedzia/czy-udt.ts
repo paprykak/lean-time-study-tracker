@@ -90,7 +90,7 @@ export const RODZAJE: { id: RodzajMaszyny; nazwa: string; pola: Pole[] }[] = [
   { id: 'zuraw', nazwa: 'Żuraw (np. słupowy, HDS)', pola: ['typZurawia', 'naped', 'udzwig', 'osoby'] },
   { id: 'ukladnica', nazwa: 'Układnica', pola: ['naped', 'udzwig', 'osoby'] },
   { id: 'wyciag', nazwa: 'Wyciąg towarowy', pola: ['naped', 'udzwig'] },
-  { id: 'podest', nazwa: 'Podest, podnośnik koszowy', pola: ['typPodestu', 'naped'] },
+  { id: 'podest', nazwa: 'Podest ruchomy, zwyżka', pola: ['typPodestu', 'naped'] },
   { id: 'dzwignik', nazwa: 'Stół podnośny, dźwignik', pola: ['typDzwignika'] },
   { id: 'dzwig', nazwa: 'Dźwig (winda)', pola: ['typDzwigu', 'napedDzwigu'] },
 ];

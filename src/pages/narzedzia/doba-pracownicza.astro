@@ -184,6 +184,7 @@ const wartosc = (i: number, k: 'od' | 'do') => PRZYKLAD[i][k];
   import { minuty } from '../../lib/narzedzia/czas-pracy';
   import { dodajDni, dzisWPolsce, poprawnaData } from '../../lib/narzedzia/terminy';
   import { typografia } from '../../lib/typografia.mjs';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-doba]');
   if (form) {
@@ -204,15 +205,13 @@ const wartosc = (i: number, k: 'od' | 'do') => PRZYKLAD[i][k];
       }
       return c;
     };
-    const oznacz = (dzien: number | null) => {
-      for (let i = 0; i < 7; i++)
-        for (const k of ['od', 'do']) {
-          const pole = el(`${k}${i + 1}`);
-          if (i === dzien) pole.setAttribute('aria-invalid', 'true');
-          else pole.removeAttribute('aria-invalid');
-        }
-      if (dzien === -1) el('start').setAttribute('aria-invalid', 'true');
-      else el('start').removeAttribute('aria-invalid');
+    // Pola do poprawy: przy błędzie dnia jego puste godziny (albo obie), przy złej dacie pole daty.
+    const zlePola = (dzien: number | null): HTMLInputElement[] => {
+      if (dzien === null) return [];
+      if (dzien === -1) return [el('start')];
+      const pola = [el(`od${dzien + 1}`), el(`do${dzien + 1}`)];
+      const puste = pola.filter((p) => !p.value);
+      return puste.length ? puste : pola;
     };
     const przelicz = () => {
       const start = el('start').value;
@@ -227,9 +226,7 @@ const wartosc = (i: number, k: 'od' | 'do') => PRZYKLAD[i][k];
       try {
         const r = dobaPracownicza(start, wiersze, { ruchomy: el('ruchomy').checked, poraNocnaOd: minuty((form.elements.namedItem('pora') as HTMLSelectElement).value) ?? 22 * 60 });
         const o = opisWyniku(r);
-        oznacz(null);
-        b.hidden = true;
-        b.textContent = '';
+        pokazBlad(b, null);
         pisz('nadgodziny', o.glowna);
         pisz('dodatki', o.dodatki);
         pisz('odpoczynek', o.odpoczynek);
@@ -250,9 +247,7 @@ const wartosc = (i: number, k: 'od' | 'do') => PRZYKLAD[i][k];
         );
       } catch (e) {
         if (!(e instanceof RangeError)) throw e;
-        oznacz(e instanceof BladDnia ? e.dzien : poprawnaData(start) ? null : -1);
-        b.hidden = false;
-        b.textContent = typografia(e.message);
+        pokazBlad(b, e.message, zlePola(e instanceof BladDnia ? e.dzien : poprawnaData(start) ? null : -1));
         w('nadgodziny').textContent = '—';
         w('dodatki').textContent = '';
         w('odpoczynek').textContent = '—';
@@ -269,6 +264,7 @@ const wartosc = (i: number, k: 'od' | 'do') => PRZYKLAD[i][k];
       const dzis = dzisWPolsce();
       poleStart.value = dodajDni(dzis, (8 - new Date(`${dzis}T00:00:00Z`).getUTCDay()) % 7);
     }
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

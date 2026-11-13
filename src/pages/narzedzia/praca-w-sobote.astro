@@ -49,7 +49,7 @@ const faq = [
       <div class="mt-4">
         <label for="s-data" class="etykieta-pola">Data pracy (dzień wolny z grafiku)</label>
         <input id="s-data" name="data" type="date" class="pole mt-1 max-w-56" min="2025-01-01" max="2030-12-31" value={D.data} aria-describedby="s-blad-data" />
-        <p id="s-blad-data" class="blad-pola" data-blad="data" hidden></p>
+        <p id="s-blad-data" class="blad-pola" data-blad="data" role="alert" hidden></p>
       </div>
       <div class="mt-4 grid grid-cols-2 gap-4">
         <div>
@@ -62,7 +62,7 @@ const faq = [
         </div>
       </div>
       <p class="meta mt-1">Zmiana może kończyć się po północy.</p>
-      <p id="s-blad-godziny" class="blad-pola" data-blad="godziny" hidden></p>
+      <p id="s-blad-godziny" class="blad-pola" data-blad="godziny" role="alert" hidden></p>
       <div class="mt-4">
         <label for="s-okres" class="etykieta-pola">Okres rozliczeniowy (od stycznia)</label>
         <select id="s-okres" name="okres" class="pole mt-1">
@@ -87,7 +87,7 @@ const faq = [
         </div>
       </div>
       <p id="s-stawka-opis" class="meta mt-1">Puste pole: bez kwot, same procenty.</p>
-      <p id="s-blad-stawka" class="blad-pola" data-blad="stawka" hidden></p>
+      <p id="s-blad-stawka" class="blad-pola" data-blad="stawka" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -163,6 +163,7 @@ const faq = [
 </StronaNarzedzia>
 
 <script>
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
   import { opisWyniku, pracaWSobote, type Wiersz } from '../../lib/narzedzia/praca-w-sobote';
   import { minuty } from '../../lib/narzedzia/czas-pracy';
   import { poprawnaData } from '../../lib/narzedzia/terminy';
@@ -174,13 +175,7 @@ const faq = [
     const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
     const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
     const bledy = (k: string, tekst: string | null, pola: string[]) => {
-      const b = form.querySelector<HTMLElement>(`[data-blad="${k}"]`)!;
-      b.hidden = !tekst;
-      b.textContent = tekst ?? '';
-      for (const p of pola) {
-        if (tekst) el(p).setAttribute('aria-invalid', 'true');
-        else el(p).removeAttribute('aria-invalid');
-      }
+      pokazBlad(form.querySelector<HTMLElement>(`[data-blad="${k}"]`)!, tekst, pola.map(el));
     };
     const lista = (dl: HTMLElement, wiersze: Wiersz[]) => {
       dl.replaceChildren(
@@ -208,9 +203,7 @@ const faq = [
       const bladStawki = stawka !== null && Number.isNaN(stawka) ? 'Wpisz stawkę jako liczbę nieujemną, np. 35,50.' : null;
       const zlaGodzina = [mOd === null ? 'od' : null, mDo === null ? 'do' : null].filter((x): x is string => x !== null);
       bledy('data', bladData, ['data']);
-      bledy('godziny', bladGodzin, []);
-      for (const p of ['od', 'do']) el(p).removeAttribute('aria-invalid');
-      if (bladGodzin) for (const p of zlaGodzina.length ? zlaGodzina : ['od', 'do']) el(p).setAttribute('aria-invalid', 'true');
+      bledy('godziny', bladGodzin, zlaGodzina.length ? zlaGodzina : ['do']);
       bledy('stawka', bladStawki, ['stawka']);
       if (bladData || bladGodzin || bladStawki) {
         w('naglowek').textContent = typografia('Dzień wolny za tę pracę do');
@@ -243,6 +236,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

@@ -81,7 +81,7 @@ const faq = [
         </div>
       </div>
       <p id="h-opcja" class="meta mt-1">Nieobowiązkowo, gdy są w wynikach pomiaru.</p>
-      <p id="h-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+      <p id="h-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -135,6 +135,7 @@ const faq = [
 </StronaNarzedzia>
 
 <script>
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
   import { wpisanaLiczba } from '../../lib/narzedzia/format';
   import { godzinyIMinuty, LIMITY, ocenaHalasu, PROG_DZIALANIA, type Grupa, type Okres } from '../../lib/narzedzia/halas';
 
@@ -144,9 +145,6 @@ const faq = [
     const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
     const dB = (x: number) => `${x.toLocaleString('pl-PL', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}\u00a0dB`;
     const opcjonalna = (n: string) => (el(n).value.trim() === '' ? undefined : wpisanaLiczba(el(n).value));
-    const oznacz = (zle: string[]) => {
-      for (const p of form.querySelectorAll<HTMLInputElement>('input[type="text"]')) p.setAttribute('aria-invalid', zle.includes(p.name) ? 'true' : 'false');
-    };
     const przelicz = () => {
       const zle: string[] = [];
       const grupa = el('grupa').value as Grupa;
@@ -170,12 +168,15 @@ const faq = [
       const maks = opcjonalna('maks');
       const szczyt = opcjonalna('szczyt');
       if (!blad && !okresy.length) (blad = 'Wpisz co najmniej jeden poziom hałasu i czas.'), zle.push('poziom-0', 'czas-0');
-      else if (!blad && okresy.reduce((s, o) => s + o.godziny, 0) > 24) blad = 'Łączny czas nie może przekroczyć 24 godzin.';
-      else if (!blad && ((maks !== undefined && !(maks >= 0 && maks <= 200)) || (szczyt !== undefined && !(szczyt >= 0 && szczyt <= 200)))) (blad = 'Poziom maksymalny i szczytowy: od 0 do 200\u00a0dB.'), zle.push('maks', 'szczyt');
-      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
-      b.hidden = !blad;
-      b.textContent = blad ?? '';
-      oznacz(zle);
+      else if (!blad && okresy.reduce((s, o) => s + o.godziny, 0) > 24) {
+        blad = 'Łączny czas nie może przekroczyć 24 godzin.';
+        for (let i = 0; i < 4; i++) if (el(`czas-${i}`).value.trim()) zle.push(`czas-${i}`);
+      } else if (!blad && ((maks !== undefined && !(maks >= 0 && maks <= 200)) || (szczyt !== undefined && !(szczyt >= 0 && szczyt <= 200)))) {
+        blad = 'Poziom maksymalny i szczytowy: od 0 do 200\u00a0dB.';
+        if (maks !== undefined && !(maks >= 0 && maks <= 200)) zle.push('maks');
+        if (szczyt !== undefined && !(szczyt >= 0 && szczyt <= 200)) zle.push('szczyt');
+      }
+      pokazBlad(form.querySelector<HTMLElement>('[data-blad="dane"]')!, blad, zle.map(el));
       const status = w('status');
       if (blad) {
         w('lex').textContent = '—';
@@ -211,6 +212,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

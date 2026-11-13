@@ -51,7 +51,7 @@ const faq = [
           <input id="z-procent" name="procent" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="25" aria-describedby="z-blad" />
         </div>
       </div>
-      <p id="z-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+      <p id="z-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -88,6 +88,7 @@ const faq = [
 </StronaNarzedzia>
 
 <script>
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
   import { typografia } from '../../lib/typografia.mjs';
   import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
   import { MINIMUM_PROCENT, odszkodowanieZaZakaz } from '../../lib/narzedzia/zakaz-konkurencji';
@@ -101,12 +102,11 @@ const faq = [
       const miesiace = /^\d{1,2}$/.test(el('miesiace').value.trim()) ? Number(el('miesiace').value.trim()) : NaN;
       const procent = wpisanaLiczba(el('procent').value);
       let blad: string | null = null;
-      if (!(pensja > 0 && pensja < 1_000_000)) blad = 'Wpisz pensję brutto, na przykład 6000.';
-      else if (!(miesiace >= 1 && miesiace <= 60)) blad = 'Okres zakazu: od 1 do 60 miesięcy.';
-      else if (!(procent > 0 && procent <= 100)) blad = 'Procent: od 1 do 100.';
-      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
-      b.hidden = !blad;
-      b.textContent = typografia(blad ?? '');
+      let pole: HTMLInputElement | null = null;
+      if (!(pensja > 0 && pensja < 1_000_000)) (blad = 'Wpisz pensję brutto, na przykład 6000.'), (pole = el('pensja'));
+      else if (!(miesiace >= 1 && miesiace <= 60)) (blad = 'Okres zakazu: od 1 do 60 miesięcy.'), (pole = el('miesiace'));
+      else if (!(procent > 0 && procent <= 100)) (blad = 'Procent: od 1 do 100.'), (pole = el('procent'));
+      pokazBlad(form.querySelector<HTMLElement>('[data-blad="dane"]')!, blad, pole);
       const status = w('status');
       if (blad) {
         w('razem').textContent = '—';
@@ -124,6 +124,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

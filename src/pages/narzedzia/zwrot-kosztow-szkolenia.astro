@@ -49,7 +49,7 @@ const faq = [
         <input id="l-koszt" name="koszt" class="pole mt-1 max-w-40" type="text" inputmode="decimal" autocomplete="off" value={D.koszt} aria-describedby="l-koszt-opis l-blad" />
         <p id="l-koszt-opis" class="meta mt-1">Opłaty za naukę, przejazdy, podręczniki, noclegi, bez wynagrodzenia za dni szkolenia.</p>
       </div>
-      <div class="mt-4 grid grid-cols-2 items-end gap-3">
+      <div class="mt-4 grid grid-cols-1 items-end gap-3 min-[380px]:grid-cols-2">
         <div>
           <label for="l-ukonczenie" class="etykieta-pola">Koniec nauki</label>
           <input id="l-ukonczenie" name="ukonczenie" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={D.ukonczenie} aria-describedby="l-blad" />
@@ -76,7 +76,7 @@ const faq = [
           <option value="koniec-umowy">Umowa terminowa minęła</option>
         </select>
       </div>
-      <p id="l-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+      <p id="l-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -126,6 +126,7 @@ const faq = [
 </StronaNarzedzia>
 
 <script>
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
   import { lojalka, type Rozwiazanie } from '../../lib/narzedzia/lojalka';
   import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
   import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
@@ -145,12 +146,14 @@ const faq = [
       const ukonczenie = el('ukonczenie').value;
       const koniecPracy = el('koniecPracy').value;
       let blad: string | null = null;
-      if (!(koszt >= 0)) blad = 'Wpisz koszt w złotych, np. 4500.';
-      else if (!(miesiecy >= 1 && miesiecy <= 36)) blad = 'Zobowiązanie: od 1 do 36 miesięcy (najwyżej 3 lata).';
-      else if (!poprawnaData(ukonczenie) || !poprawnaData(koniecPracy)) blad = 'Wpisz datę końca nauki i ostatni dzień pracy.';
-      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
-      b.hidden = !blad;
-      b.textContent = blad ?? '';
+      let zlePola: HTMLInputElement[] = [];
+      if (!(koszt >= 0)) (blad = 'Wpisz koszt w złotych, np. 4500.'), (zlePola = [el('koszt')]);
+      else if (!(miesiecy >= 1 && miesiecy <= 36)) (blad = 'Zobowiązanie: od 1 do 36 miesięcy (najwyżej 3 lata).'), (zlePola = [el('miesiecy')]);
+      else if (!poprawnaData(ukonczenie) || !poprawnaData(koniecPracy)) {
+        blad = 'Wpisz datę końca nauki i ostatni dzień pracy.';
+        zlePola = [el('ukonczenie'), el('koniecPracy')].filter((p) => !poprawnaData(p.value));
+      }
+      pokazBlad(form.querySelector<HTMLElement>('[data-blad="dane"]')!, blad, zlePola);
       if (blad) {
         w('kwota').textContent = '—';
         w('opis').textContent = '';
@@ -176,6 +179,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

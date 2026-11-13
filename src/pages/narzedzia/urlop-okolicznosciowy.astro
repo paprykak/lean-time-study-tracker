@@ -96,6 +96,7 @@ const faq = [
 <script>
   import { OPIS_PLATNOSCI, zwolnienie } from '../../lib/narzedzia/zwolnienia';
   import { typografia } from '../../lib/typografia.mjs';
+  import { liczPoPowrocie } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-okolicznosciowy]');
   if (form) {
@@ -110,6 +111,7 @@ const faq = [
     };
     form.addEventListener('change', pokaz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    liczPoPowrocie(pokaz);
     pokaz();
   }
 </script>

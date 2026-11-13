@@ -57,7 +57,7 @@ const faq = [
           <input id="wy-dor" name="doreczenie" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" aria-describedby="wy-blad" />
         </div>
       </div>
-      <p id="wy-blad" class="blad-pola" data-blad="daty" hidden></p>
+      <p id="wy-blad" class="blad-pola" data-blad="daty" role="alert" hidden></p>
       <fieldset class="mt-5">
         <legend class="etykieta">Kto wypowiada</legend>
         <div class="przelacznik mt-2">
@@ -131,6 +131,7 @@ const faq = [
 </StronaNarzedzia>
 
 <script>
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
   import { dniNaPoszukiwanie, koniecWypowiedzenia, okresWypowiedzenia, wypowiedzenieStalej, type RodzajUmowy } from '../../lib/narzedzia/wypowiedzenie';
   import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
   import { odmiana } from '../../lib/redakcja';
@@ -155,10 +156,8 @@ const faq = [
           : stala && od && dor && od > dor
             ? 'Początek pracy musi być przed doręczeniem wypowiedzenia.'
             : null;
-      b.hidden = !blad;
-      b.textContent = typografia(blad ?? '');
       const zlaData = (n: string) => !!blad && (blad.startsWith('Początek') ? n === 'od' || n === 'doreczenie' : !!pole(n).value && !poprawnaData(pole(n).value));
-      for (const n of ['od', 'doreczenie']) pole(n).setAttribute('aria-invalid', zlaData(n) ? 'true' : 'false');
+      pokazBlad(b, blad, ['od', 'doreczenie'].filter(zlaData).map(pole));
       if (blad || !dor || (stala && !od)) {
         w('koniec').textContent = 'Wpisz daty';
         for (const k of ['okres', 'staz', 'poszukiwanie', 'podstawa']) w(k).textContent = '—';
@@ -190,6 +189,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

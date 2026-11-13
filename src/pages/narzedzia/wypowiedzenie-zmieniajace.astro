@@ -149,6 +149,7 @@ const faq = [
 </StronaNarzedzia>
 
 <script>
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
   import { wypowiedzenieZmieniajace } from '../../lib/narzedzia/wypowiedzenie-zmieniajace';
   import { dataPoPolsku, dniMiedzy, dzisWPolsce, poprawnaData } from '../../lib/narzedzia/terminy';
@@ -166,11 +167,11 @@ const faq = [
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
       const status = w('status');
       let blad: string | null = null;
-      if (!poprawnaData(start)) blad = 'Wpisz datę rozpoczęcia pracy u tego pracodawcy.';
-      else if (!poprawnaData(doreczenie)) blad = 'Wpisz dzień doręczenia pisma.';
-      else if (doreczenie < start) blad = 'Dzień doręczenia nie może być wcześniejszy niż początek pracy.';
-      b.hidden = !blad;
-      b.textContent = typografia(blad ?? '');
+      let pole: HTMLInputElement | null = null;
+      if (!poprawnaData(start)) (blad = 'Wpisz datę rozpoczęcia pracy u tego pracodawcy.'), (pole = el('start'));
+      else if (!poprawnaData(doreczenie)) (blad = 'Wpisz dzień doręczenia pisma.'), (pole = el('doreczenie'));
+      else if (doreczenie < start) (blad = 'Dzień doręczenia nie może być wcześniejszy niż początek pracy.'), (pole = el('doreczenie'));
+      pokazBlad(b, blad, pole);
       if (blad) {
         w('odmowa').textContent = '—';
         for (const k of POLA) w(k).textContent = '—';
@@ -206,6 +207,7 @@ const faq = [
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
     ustawDzisiejszeWartosci(form);
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

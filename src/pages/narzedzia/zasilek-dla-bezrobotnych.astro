@@ -53,19 +53,19 @@ const faq = [
       <div class="mt-4">
         <label for="b-data" class="etykieta-pola">Data rejestracji w urzędzie pracy</label>
         <input id="b-data" name="rejestracja" type="date" class="pole mt-1 max-w-56" min={KWOTY_ZASILKU[0].od} value={rejestracja} data-dzis={rejestracja === dzis ? '0' : undefined} aria-describedby="b-blad" />
-        <p id="b-blad" class="blad-pola" data-blad="data" hidden></p>
+        <p id="b-blad" class="blad-pola" data-blad="data" role="alert" hidden></p>
       </div>
-      <div class="mt-4">
-        <label for="b-koniec" class="etykieta-pola">Jak skończyła się ostatnia praca</label>
-        <select id="b-koniec" name="koniec" class="pole mt-1">
-          <option value="pracodawca" selected>Wypowiedzenie od pracodawcy, koniec umowy</option>
-          <option value="porozumienie-zaklad">Porozumienie: przyczyny zakładu, przeprowadzka</option>
-          <option value="porozumienie">Porozumienie z innego powodu</option>
-          <option value="wypowiedzenie-wlasne">Moje wypowiedzenie</option>
-          <option value="dyscyplinarka">Dyscyplinarka z mojej winy</option>
-        </select>
-        <p class="meta mt-1">Przyczyny zakładu to upadłość, likwidacja albo zmniejszenie zatrudnienia. Własne wypowiedzenie z powodu przeprowadzki i rozwiązanie umowy z art. 55 Kodeksu pracy (z winy pracodawcy albo ze względu na zdrowie) wybierz jak wypowiedzenie od pracodawcy (art. 219 ust. 1 pkt 1).</p>
-      </div>
+      <fieldset class="mt-4" aria-describedby="b-koniec-opis">
+        <legend class="etykieta-pola">Jak skończyła się ostatnia praca</legend>
+        <div class="opcje-pionowe mt-2">
+          <label><input type="radio" name="koniec" value="pracodawca" checked /> Wypowiedzenie od pracodawcy, koniec umowy</label>
+          <label><input type="radio" name="koniec" value="porozumienie-zaklad" /> Porozumienie: przyczyny zakładu, przeprowadzka</label>
+          <label><input type="radio" name="koniec" value="porozumienie" /> Porozumienie z innego powodu</label>
+          <label><input type="radio" name="koniec" value="wypowiedzenie-wlasne" /> Moje wypowiedzenie</label>
+          <label><input type="radio" name="koniec" value="dyscyplinarka" /> Dyscyplinarka z mojej winy</label>
+        </div>
+        <p id="b-koniec-opis" class="meta mt-1">Przyczyny zakładu to upadłość, likwidacja albo zmniejszenie zatrudnienia. Własne wypowiedzenie z powodu przeprowadzki i rozwiązanie umowy z art. 55 Kodeksu pracy (z winy pracodawcy albo ze względu na zdrowie) wybierz jak wypowiedzenie od pracodawcy (art. 219 ust. 1 pkt 1).</p>
+      </fieldset>
       <label class="mt-4 flex items-start gap-3 text-[0.9375rem]">
         <input type="checkbox" name="staz365" checked class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
         <span>W 18 miesiącach przed rejestracją mam co najmniej 365 dni pracy od płacy minimalnej (etat, zlecenie, własna firma)</span>
@@ -147,6 +147,7 @@ const faq = [
 </StronaNarzedzia>
 
 <script>
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
   import { zl } from '../../lib/narzedzia/format';
   import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
   import { KWOTY_ZASILKU, kwotyNa, zasilekDlaBezrobotnych, type KoniecPracy } from '../../lib/narzedzia/zasilek-bezrobotny';
@@ -174,8 +175,7 @@ const faq = [
       if (!poprawnaData(rejestracja)) blad = 'Wpisz datę rejestracji.';
       else if (rejestracja < KWOTY_ZASILKU[0].od) blad = 'Kalkulator liczy zasiłek według ustawy w mocy od 1 czerwca 2025 r.';
       else if (!kwotyNa(rejestracja)) blad = 'Kwoty zasiłku na ten dzień nie są jeszcze ogłoszone (waloryzacja co roku od 1 czerwca).';
-      b.hidden = !blad;
-      b.textContent = typografia(blad ?? '');
+      pokazBlad(b, blad, el('rejestracja'));
       const uwaga = w('uwaga');
       if (blad) {
         w('kwota').textContent = '—';
@@ -223,6 +223,7 @@ const faq = [
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
     ustawDzisiejszeWartosci(form);
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

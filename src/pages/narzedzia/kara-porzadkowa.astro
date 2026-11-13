@@ -51,7 +51,7 @@ const faq = [
         <label for="k-ukaranie" class="etykieta-pola">Dzień zawiadomienia o karze</label>
         <input id="k-ukaranie" name="ukaranie" type="date" data-dzis class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" value={D.ukaranie} aria-describedby="k-blad" />
       </div>
-      <p id="k-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+      <p id="k-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -95,6 +95,7 @@ const faq = [
 </StronaNarzedzia>
 
 <script>
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
   import { karaPorzadkowa } from '../../lib/narzedzia/kara-porzadkowa';
   import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
   import { typografia } from '../../lib/typografia.mjs';
@@ -107,12 +108,18 @@ const faq = [
     const przelicz = () => {
       const d = { naruszenie: el('naruszenie').value, wiadomosc: el('wiadomosc').value, ukaranie: el('ukaranie').value };
       let blad: string | null = null;
-      if (![d.naruszenie, d.wiadomosc, d.ukaranie].every(poprawnaData)) blad = 'Wpisz wszystkie trzy daty.';
-      else if (d.wiadomosc < d.naruszenie) blad = 'Pracodawca nie mógł się dowiedzieć o naruszeniu przed jego dniem.';
-      else if (d.ukaranie < d.wiadomosc) blad = 'Zawiadomienie o karze nie może być wcześniejsze niż dowiedzenie się o naruszeniu.';
-      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
-      b.hidden = !blad;
-      b.textContent = typografia(blad ?? '');
+      let zlePola: HTMLInputElement[] = [];
+      if (![d.naruszenie, d.wiadomosc, d.ukaranie].every(poprawnaData)) {
+        blad = 'Wpisz wszystkie trzy daty.';
+        zlePola = [el('naruszenie'), el('wiadomosc'), el('ukaranie')].filter((p) => !poprawnaData(p.value));
+      } else if (d.wiadomosc < d.naruszenie) {
+        blad = 'Pracodawca nie mógł się dowiedzieć o naruszeniu przed jego dniem.';
+        zlePola = [el('wiadomosc')];
+      } else if (d.ukaranie < d.wiadomosc) {
+        blad = 'Zawiadomienie o karze nie może być wcześniejsze niż dowiedzenie się o naruszeniu.';
+        zlePola = [el('ukaranie')];
+      }
+      pokazBlad(form.querySelector<HTMLElement>('[data-blad="dane"]')!, blad, zlePola);
       const status = w('status');
       if (blad) {
         w('sprzeciw').textContent = '—';
@@ -133,6 +140,7 @@ const faq = [
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
     ustawDzisiejszeWartosci(form);
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>
