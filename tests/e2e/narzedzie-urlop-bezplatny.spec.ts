@@ -61,3 +61,10 @@ test('błędne dane: koniec przed początkiem i zły wymiar, komunikat role="ale
     await expect(page.locator('[data-w="glowna"]')).toHaveText('—');
   }
 });
+
+test('1.05–31.05.2026: krócej niż miesiąc (26 dni), drugie odczytanie z dniem rozpoczęcia 24 dni', async ({ page }) => {
+  await page.getByLabel('Od', { exact: true }).fill('2026-05-01');
+  await page.getByLabel('Do', { exact: true }).fill('2026-05-31');
+  await expect(page.locator('[data-w="glowna"]')).toHaveText(/^26\sdni$/);
+  await expect(page.locator('[data-w="lista"]')).toContainText(/24\sdni,\sprzy\sliczeniu\smiesiąca\sz\sdniem\srozpoczęcia/);
+});

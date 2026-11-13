@@ -37,9 +37,9 @@ describe('urlop bezpłatny a urlop wypoczynkowy (art. 155^2, 155^2a, 155^3 Kp)',
       [2028, 10, 17, 'powrot', null],
     ]);
   });
-  it('miesiąc liczony od dnia po rozpoczęciu: 1.03–31.03 krócej, 1.03–1.04 już miesiąc (24 dni)', () => {
+  it('miesiąc liczony od dnia po rozpoczęciu: 1.03–31.03 krócej (drugie odczytanie 24), 1.03–1.04 już miesiąc (24 dni)', () => {
     expect(koniecMiesiecy('2026-03-01', 1)).toBe('2026-04-01');
-    expect(lata({ od: '2026-03-01', do: '2026-03-31', rodzaj: 'bezplatny', wymiar: 26 })).toEqual([[2026, 11, 26, 'bez-zmian', null]]);
+    expect(lata({ od: '2026-03-01', do: '2026-03-31', rodzaj: 'bezplatny', wymiar: 26 })).toEqual([[2026, 11, 26, 'bez-zmian', 24]]);
     expect(lata({ od: '2026-03-01', do: '2026-04-01', rodzaj: 'bezplatny', wymiar: 26 })).toEqual([[2026, 11, 24, 'obnizenie', null]]);
   });
   it('29 lutego 2028: miesiąc do 29 marca; 31 stycznia: miesiąc do 28 lutego', () => {
@@ -118,5 +118,19 @@ describe('urlop bezpłatny a urlop wypoczynkowy (art. 155^2, 155^2a, 155^3 Kp)',
     expect(u.lata.map((x) => x.etykieta)).toEqual(['Urlop wypoczynkowy za 2026', 'Drugie odczytanie za 2026']);
     expect(u.pozycje.slice(0, 2).map((x) => x.wartosc)).toEqual(['0 dni po odjęciu 20 dni wykorzystanego urlopu', '6 dni']);
     expect(tekstyWyniku({ od: '2026-03-01', do: '2026-05-31', rodzaj: 'nieobecnosc', wymiar: 26 }).ochrona).toContain('nie obejmuje');
+  });
+  it('drugie odczytanie przy liczeniu miesiąca z dniem rozpoczęcia: 1.05–31.05 i 1.03–31.03 → 26, drugie 24; 1.03–30.03 bez', () => {
+    expect(lata({ od: '2026-05-01', do: '2026-05-31', rodzaj: 'bezplatny', wymiar: 26 })).toEqual([[2026, 11, 26, 'bez-zmian', 24]]);
+    expect(urlopBezplatny({ od: '2026-05-01', do: '2026-05-31', rodzaj: 'bezplatny', wymiar: 26 }).lata[0].drugieOdczytanie).toEqual({ dni: 24, powod: 'z-dniem-rozpoczecia' });
+    expect(lata({ od: '2026-03-01', do: '2026-03-31', rodzaj: 'bezplatny', wymiar: 26 })).toEqual([[2026, 11, 26, 'bez-zmian', 24]]);
+    expect(lata({ od: '2026-03-01', do: '2026-03-30', rodzaj: 'bezplatny', wymiar: 26 })).toEqual([[2026, 12, 26, 'bez-zmian', null]]);
+    expect(lata({ od: '2026-05-01', do: '2026-05-31', rodzaj: 'wychowawczy', wymiar: 26 })).toEqual([[2026, 11, 26, 'bez-zmian', null]]);
+    const t = tekstyWyniku({ od: '2026-05-01', do: '2026-05-31', rodzaj: 'bezplatny', wymiar: 26 });
+    expect(t.lata[1].wartosc).toBe('24 dni, przy liczeniu miesiąca z dniem rozpoczęcia urlopu; przepis tego nie rozstrzyga');
+  });
+  it('3 miesiące: 1.03–1.06 nie jest dłuższy, ale byłby przy liczeniu z dniem rozpoczęcia (uwaga)', () => {
+    const r = urlopBezplatny({ od: '2026-03-01', do: '2026-06-01', rodzaj: 'bezplatny', wymiar: 26 });
+    expect(r).toMatchObject({ dluzszyNiz3Miesiace: false, dluzszyNiz3MiesiaceZDniem: true });
+    expect(tekstyWyniku({ od: '2026-03-01', do: '2026-06-01', rodzaj: 'bezplatny', wymiar: 26 }).pozycje.at(-1)!.wartosc).toContain('przy liczeniu z dniem rozpoczęcia ten urlop byłby dłuższy');
   });
 });
