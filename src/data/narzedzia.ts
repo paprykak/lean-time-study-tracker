@@ -558,7 +558,7 @@ export const NARZEDZIA: Narzedzie[] = [
     krotko: 'Do kiedy ważne świadectwo kwalifikacyjne E albo D, czy stare jeszcze działa, ile kosztuje egzamin.',
     kategoria: 'uprawnienia',
     przepisy: ['prawoEnergetyczne', 'kwalifikacjeSep', 'zmianaPe2021', 'placa2026', 'placa2027', 'kodeksCywilny', 'kodeksPracy'],
-    sprawdzono: '2026-11-12',
+    sprawdzono: '2026-11-13',
   },
   {
     slug: 'czy-potrzebne-uprawnienia-udt',
@@ -566,7 +566,7 @@ export const NARZEDZIA: Narzedzie[] = [
     krotko: 'Czy na paleciak elektryczny, wózek, suwnicę albo podest trzeba mieć zaświadczenie UDT i na ile lat.',
     kategoria: 'uprawnienia',
     przepisy: ['rodzajeUdt', 'dozorTechniczny', 'kwalifikacjeUdt', 'zmianaUdt2018', 'wozkiBhp', 'warunkiUtb', 'szkoleniaBhp', 'przecietneWynagrodzenie2025', 'kodeksPracy'],
-    sprawdzono: '2026-11-12',
+    sprawdzono: '2026-11-13',
   },
   {
     slug: 'kod-95',
@@ -574,7 +574,7 @@ export const NARZEDZIA: Narzedzie[] = [
     krotko: 'Do kiedy ważny kod 95 w prawie jazdy, kiedy najpóźniej szkolenie okresowe i czy Twoja praca go wymaga.',
     kategoria: 'uprawnienia',
     przepisy: ['transportDrogowy', 'kierujacyPojazdami', 'szkolenieKierowcow', 'oplatyPrawoJazdy', 'dniWolne', 'kodeksCywilny', 'kodeksPracy'],
-    sprawdzono: '2026-11-12',
+    sprawdzono: '2026-11-13',
   },
   {
     slug: 'badania-kierowcy',
@@ -582,7 +582,7 @@ export const NARZEDZIA: Narzedzie[] = [
     krotko: 'Kiedy następne badania kierowcy zawodowego (co 5 lat, po 60. roku co 30 miesięcy), kto płaci i ile kosztują.',
     kategoria: 'uprawnienia',
     przepisy: ['transportDrogowy', 'kierujacyPojazdami', 'badaniaLekarskieKierowcow', 'badaniaPsychologiczne', 'zmianaPsychotestow2026', 'badaniaProfilaktyczne', 'wozkiBhp', 'kodeksPracy', 'kodeksCywilny'],
-    sprawdzono: '2026-11-12',
+    sprawdzono: '2026-11-13',
   },
   {
     slug: 'badania-lekarskie-w-pracy',
@@ -590,7 +590,7 @@ export const NARZEDZIA: Narzedzie[] = [
     krotko: 'Badanie kontrolne po L4, badania wstępne w nowej pracy, odwołanie od orzeczenia i przypomnienie w kalendarzu.',
     kategoria: 'bhp',
     przepisy: ['kodeksPracy', 'badaniaLekarskie', 'badaniaLekarskie2026', 'kodeksCywilny', 'dniWolne', 'ogolneBhp'],
-    sprawdzono: '2026-11-12',
+    sprawdzono: '2026-11-13',
   },
   {
     slug: 'posilki-profilaktyczne',
@@ -598,7 +598,7 @@ export const NARZEDZIA: Narzedzie[] = [
     krotko: 'Czy należy Ci się darmowy posiłek w pracy: wydatek energetyczny, chłodnia, zima na zewnątrz i napoje.',
     kategoria: 'bhp',
     przepisy: ['kodeksPracy', 'posilki', 'posilki2019', 'pit', 'podstawaSkladek', 'swiadczeniaZdrowotne'],
-    sprawdzono: '2026-11-12',
+    sprawdzono: '2026-11-13',
   },
   {
     slug: 'odziez-robocza',
@@ -606,7 +606,7 @@ export const NARZEDZIA: Narzedzie[] = [
     krotko: 'Czy należy Ci się odzież i obuwie robocze, własne ubranie za ekwiwalent, pranie, podatek i ZUS od ekwiwalentu.',
     kategoria: 'bhp',
     przepisy: ['kodeksPracy', 'ogolneBhp', 'pit', 'podstawaSkladek', 'swiadczeniaZdrowotne', 'pracaTymczasowa'],
-    sprawdzono: '2026-11-12',
+    sprawdzono: '2026-11-13',
   },
   {
     slug: 'wypowiedzenie-zmieniajace',
@@ -614,7 +614,7 @@ export const NARZEDZIA: Narzedzie[] = [
     krotko: 'Do kiedy odmówić nowych warunków pracy lub płacy, od kiedy obowiązują i kiedy kończy się umowa po odmowie.',
     kategoria: 'umowa',
     przepisy: ['kodeksPracy', 'kodeksCywilny', 'zwolnieniaGrupowe'],
-    sprawdzono: '2026-11-12',
+    sprawdzono: '2026-11-13',
   },
   {
     slug: 'informacja-o-warunkach-zatrudnienia',
@@ -622,7 +622,7 @@ export const NARZEDZIA: Narzedzie[] = [
     krotko: 'Do kiedy umowa, badania, BHP, informacja o warunkach zatrudnienia (7 dni), zgłoszenie do ZUS i zapis do PPK.',
     kategoria: 'umowa',
     przepisy: ['kodeksPracy', 'kodeksCywilny', 'systemUbezpieczen', 'ppk', 'szkoleniaBhp'],
-    sprawdzono: '2026-11-12',
+    sprawdzono: '2026-11-13',
   },
   {
     slug: 'umowa-na-zastepstwo',
@@ -630,7 +630,7 @@ export const NARZEDZIA: Narzedzie[] = [
     krotko: 'Okres wypowiedzenia i ostatni dzień umowy na zastępstwo, czy przedłuży się do porodu, limit 33 miesięcy.',
     kategoria: 'umowa',
     przepisy: ['kodeksPracy', 'kodeksCywilny'],
-    sprawdzono: '2026-11-12',
+    sprawdzono: '2026-11-13',
   },
   {
     slug: 'wynagrodzenie-za-niepelny-miesiac',
@@ -638,7 +638,7 @@ export const NARZEDZIA: Narzedzie[] = [
     krotko: 'Pensja za część miesiąca: po L4 (1/30), urlopie bezpłatnym, przy przyjęciu albo odejściu w trakcie miesiąca.',
     kategoria: 'wynagrodzenie',
     przepisy: ['kodeksPracy', 'wynagrodzenieRozp', 'minimalneWynagrodzenie', 'dniWolne', 'placa2025', 'placa2026', 'placa2027'],
-    sprawdzono: '2026-11-12',
+    sprawdzono: '2026-11-13',
   },
   {
     slug: 'dodatek-wyrownawczy',
@@ -646,7 +646,7 @@ export const NARZEDZIA: Narzedzie[] = [
     krotko: 'Ile dodatku po przeniesieniu do gorzej płatnej pracy: w ciąży, po wypadku, przy chorobie zawodowej.',
     kategoria: 'wynagrodzenie',
     przepisy: ['kodeksPracy', 'wynagrodzenieRozp', 'urlopowe', 'zwolnieniaGrupowe', 'podstawaSkladek', 'pit', 'kodeksCywilny'],
-    sprawdzono: '2026-11-12',
+    sprawdzono: '2026-11-13',
   },
   {
     slug: 'okres-wyczekiwania',
@@ -654,7 +654,7 @@ export const NARZEDZIA: Narzedzie[] = [
     krotko: 'Od kiedy płatne L4 w nowej pracy: 30 dni na etacie, 90 na zleceniu, wcześniejsze umowy, wyjątki.',
     kategoria: 'wynagrodzenie',
     przepisy: ['zasilkowa', 'kodeksPracy', 'systemUbezpieczen', 'wypadkowa'],
-    sprawdzono: '2026-11-12',
+    sprawdzono: '2026-11-13',
   },
   {
     slug: 'zasilek-chorobowy-na-zleceniu',
@@ -662,7 +662,7 @@ export const NARZEDZIA: Narzedzie[] = [
     krotko: 'Ile ZUS płaci za L4 na umowie zlecenia: podstawa z przychodu, 80 albo 100%, kto wypłaca, ile na rękę.',
     kategoria: 'wynagrodzenie',
     przepisy: ['zasilkowa', 'systemUbezpieczen', 'wypadkowa', 'pit', 'ordynacja'],
-    sprawdzono: '2026-11-12',
+    sprawdzono: '2026-11-13',
   },
   {
     slug: 'swiadczenie-urlopowe',
@@ -670,7 +670,7 @@ export const NARZEDZIA: Narzedzie[] = [
     krotko: 'Ile najwyżej wynosi świadczenie urlopowe przy Twoim etacie, kiedy się należy i ile zostaje na rękę.',
     kategoria: 'wynagrodzenie',
     przepisy: ['zfss', 'przecietneZfss2026', 'okolobudzetowa2026', 'podstawaSkladek', 'swiadczeniaZdrowotne', 'pit', 'ordynacja', 'kodeksPracy', 'pracaTymczasowa'],
-    sprawdzono: '2026-11-12',
+    sprawdzono: '2026-11-13',
   },
   {
     slug: 'urlop-w-godzinach',
@@ -678,7 +678,7 @@ export const NARZEDZIA: Narzedzie[] = [
     krotko: 'Ile godzin urlopu masz przy zmianach 12 h, ile zmian się zmieści, reszta na część dnia i urlop na żądanie.',
     kategoria: 'urlopy',
     przepisy: ['kodeksPracy'],
-    sprawdzono: '2026-11-12',
+    sprawdzono: '2026-11-13',
   },
   {
     slug: 'urlop-w-okresie-wypowiedzenia',
@@ -686,7 +686,7 @@ export const NARZEDZIA: Narzedzie[] = [
     krotko: 'Ile urlopu wykorzystasz w wypowiedzeniu, a za ile dni dostaniesz ekwiwalent. Proporcja, zaległy, dni pracy.',
     kategoria: 'urlopy',
     przepisy: ['kodeksPracy', 'dniWolne'],
-    sprawdzono: '2026-11-12',
+    sprawdzono: '2026-11-13',
   },
   {
     slug: 'urlop-szkoleniowy',
@@ -694,7 +694,7 @@ export const NARZEDZIA: Narzedzie[] = [
     krotko: 'Ile dni i godzin urlopu szkoleniowego masz przed egzaminem i w ostatnim roku studiów, co przy nauce bez zgody.',
     kategoria: 'urlopy',
     przepisy: ['kodeksPracy'],
-    sprawdzono: '2026-11-12',
+    sprawdzono: '2026-11-13',
   },
   {
     slug: 'urlop-bezplatny',
@@ -702,7 +702,7 @@ export const NARZEDZIA: Narzedzie[] = [
     krotko: 'Ile urlopu wypoczynkowego zostaje po urlopie bezpłatnym, o ile przesuwa się staż, co z zasiłkiem i NFZ.',
     kategoria: 'urlopy',
     przepisy: ['kodeksPracy', 'kodeksCywilny', 'zasilkowa', 'swiadczeniaZdrowotne', 'emerytury', 'systemUbezpieczen'],
-    sprawdzono: '2026-11-12',
+    sprawdzono: '2026-11-13',
   },
   {
     slug: 'zalegly-urlop',
@@ -710,7 +710,7 @@ export const NARZEDZIA: Narzedzie[] = [
     krotko: 'Do kiedy pracodawca musi dać zaległy urlop i kiedy roszczenie o urlop może się przedawnić.',
     kategoria: 'urlopy',
     przepisy: ['kodeksPracy', 'kodeksCywilny'],
-    sprawdzono: '2026-11-12',
+    sprawdzono: '2026-11-13',
   },
   {
     slug: 'praca-cudzoziemca',
@@ -718,7 +718,7 @@ export const NARZEDZIA: Narzedzie[] = [
     krotko: 'Czy cudzoziemiec potrzebuje zezwolenia, oświadczenia, czy pracuje bez nich, i co musi zrobić pracodawca.',
     kategoria: 'umowa',
     przepisy: ['powierzanieCudzoziemcom', 'wygaszenieSpecustawy', 'pomocUkrainie', 'oswiadczeniaPanstwa', 'pracaBezZezwolenia', 'bezwizowyWykaz'],
-    sprawdzono: '2026-11-12',
+    sprawdzono: '2026-11-13',
   },
   {
     slug: 'zgloszenie-pracy-cudzoziemca',
@@ -726,7 +726,7 @@ export const NARZEDZIA: Narzedzie[] = [
     krotko: 'Terminy zgłoszeń: obywatele Ukrainy do urzędu pracy w 7 dni, oświadczenie u starosty, zezwolenie u wojewody.',
     kategoria: 'umowa',
     przepisy: ['powierzanieCudzoziemcom', 'wygaszenieSpecustawy', 'pomocUkrainie', 'kodeksCywilny'],
-    sprawdzono: '2026-11-12',
+    sprawdzono: '2026-11-13',
   },
   {
     slug: 'odpracowanie-wyjscia-prywatnego',
@@ -734,7 +734,7 @@ export const NARZEDZIA: Narzedzie[] = [
     krotko: 'Ile godzin odpracować po wyjściu w sprawach osobistych, kiedy to już nadgodziny i czy zostaje odpoczynek.',
     kategoria: 'czas-pracy',
     przepisy: ['kodeksPracy', 'dniWolne'],
-    sprawdzono: '2026-11-12',
+    sprawdzono: '2026-11-13',
   },
   {
     slug: 'praca-w-sobote',
@@ -742,7 +742,7 @@ export const NARZEDZIA: Narzedzie[] = [
     krotko: 'Do kiedy dzień wolny za pracę w wolną sobotę, kiedy dodatek 50%, a kiedy 100% i ile to złotych.',
     kategoria: 'czas-pracy',
     przepisy: ['kodeksPracy', 'dniWolne'],
-    sprawdzono: '2026-11-12',
+    sprawdzono: '2026-11-13',
   },
   {
     slug: 'nadgodziny-sredniotygodniowe',
@@ -750,7 +750,7 @@ export const NARZEDZIA: Narzedzie[] = [
     krotko: 'Nadgodziny ponad wymiar okresu rozliczeniowego, dodatek 100% i limit przeciętnie 48 godzin w tygodniu.',
     kategoria: 'czas-pracy',
     przepisy: ['kodeksPracy', 'dniWolne'],
-    sprawdzono: '2026-11-12',
+    sprawdzono: '2026-11-13',
   },
   {
     slug: 'doba-pracownicza',
@@ -758,7 +758,7 @@ export const NARZEDZIA: Narzedzie[] = [
     krotko: 'Czy wcześniejszy start zmiany daje nadgodziny w tej samej dobie i czy masz 11 godzin odpoczynku.',
     kategoria: 'czas-pracy',
     przepisy: ['kodeksPracy', 'dniWolne'],
-    sprawdzono: '2026-11-12',
+    sprawdzono: '2026-11-13',
   },
   {
     slug: 'rownowazny-czas-pracy',
@@ -766,7 +766,7 @@ export const NARZEDZIA: Narzedzie[] = [
     krotko: 'Zmiany po 12, 16 i 24 godziny: ile w okresie rozliczeniowym, ile dni wolnych, jaki okres. Też weekendowy.',
     kategoria: 'czas-pracy',
     przepisy: ['kodeksPracy', 'dniWolne'],
-    sprawdzono: '2026-11-12',
+    sprawdzono: '2026-11-13',
   },
   {
     slug: 'dorabianie-do-renty',
@@ -774,7 +774,7 @@ export const NARZEDZIA: Narzedzie[] = [
     krotko: 'Ile zarobić bez zmniejszenia renty albo wcześniejszej emerytury, o ile ZUS ją zmniejszy i kiedy zawiesi.',
     kategoria: 'wynagrodzenie',
     przepisy: ['emerytury', 'dorabianieProgi2026', 'dorabianieZmniejszenia2026'],
-    sprawdzono: '2026-11-12',
+    sprawdzono: '2026-11-13',
   },
   {
     slug: 'zwrot-podatku-pit-37',

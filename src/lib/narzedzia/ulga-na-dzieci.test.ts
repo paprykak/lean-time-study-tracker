@@ -84,9 +84,9 @@ describe('audyt jakości 2: limit samotnego rodzica i część ulgi', () => {
     expect(samotny(80_000)).toMatchObject({ limitMaloletniego: true, przysluguje: 1112.04 });
     expect(samotny(112_000.01)).toMatchObject({ limitMaloletniego: false, ponadLimit: true });
     expect(ulgaNaDzieci({ ...baza, sytuacja: 'malzenstwo', dzieci: [caly], dochod: 80_000 }).limitMaloletniego).toBe(false);
-    expect(opisUlgi({ ...baza, sytuacja: 'samotny', dzieci: [caly], dochod: 80_000 }).uwagi.join(' ')).toContain('Gdy jedyne dziecko jest pełnoletnie');
+    expect(opisUlgi({ ...baza, sytuacja: 'samotny', dzieci: [caly], dochod: 80_000 }, 2026).uwagi.join(' ')).toContain('Gdy jedyne dziecko jest pełnoletnie');
   });
   it('część ulgi z ułamkiem z przecinkiem: 33,5%', () => {
-    expect(opisUlgi({ ...baza, dzieci: [caly], czesc: 33.5 }).opis.replace(/\s/g, ' ')).toContain('Twoja część 33,5%');
+    expect(opisUlgi({ ...baza, dzieci: [caly], czesc: 33.5 }, 2026).opis.replace(/\s/g, ' ')).toContain('Twoja część 33,5%');
   });
 });
