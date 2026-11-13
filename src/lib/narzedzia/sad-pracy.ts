@@ -34,31 +34,31 @@ export const SPRAWY_PRACOWNICZE: Record<SprawaPracownicza, OpisSprawy> = {
     krotko: 'Zaległa wypłata',
     rejonowy: false,
     pip: 'Inspektor może nakazać pracodawcy wypłatę należnego wynagrodzenia i innych świadczeń; nakaz podlega natychmiastowemu wykonaniu (art. 11 ust. 1 pkt 7 ustawy o PIP).',
-    sad: 'Pozew o zapłatę do sądu pracy. Roszczenie przedawnia się po 3 latach od dnia wypłaty (art. 291 § 1 Kodeksu pracy).',
+    sad: 'Pozew o zapłatę do sądu pracy. Roszczenie przedawnia się po 3 latach od dnia, w którym pensja powinna być wypłacona (art. 291 § 1 i art. 85 Kodeksu pracy).',
   },
   wypowiedzenie: {
     krotko: 'Zwolnienie z pracy',
     rejonowy: true,
     pip: 'Inspekcja może skontrolować pracodawcę, ale o bezskuteczności wypowiedzenia, przywróceniu do pracy i odszkodowaniu orzeka tylko sąd pracy (art. 45 § 1 i 56 § 1 Kodeksu pracy).',
-    sad: 'Odwołanie do sądu pracy w 21 dni od doręczenia pisma o wypowiedzeniu albo zwolnieniu dyscyplinarnym (art. 264 Kodeksu pracy). Ten termin biegnie także wtedy, gdy sprawą zajmuje się PIP. Wyjątek dotyczy tylko decyzji inspektora stwierdzającej stosunek pracy (art. 34 ust. 2i ustawy o PIP).',
+    sad: 'Odwołanie do sądu pracy w 21 dni od doręczenia wypowiedzenia albo zawiadomienia o rozwiązaniu umowy (art. 264 § 1–2 Kodeksu pracy), także wtedy, gdy sprawą zajmuje się PIP. Inaczej termin biegnie tylko w szczególnym przypadku z art. 34 ust. 2g–2i ustawy o PIP. Termin przekroczony bez Twojej winy sąd może przywrócić na wniosek złożony w 7 dni od ustania przyczyny (art. 265 Kodeksu pracy).',
   },
   mobbing: {
     krotko: 'Mobbing, dyskryminacja',
     rejonowy: true,
     pip: 'Inspektor może skierować do pracodawcy wystąpienie albo polecenie usunięcia naruszeń (art. 11 ust. 1 pkt 8 ustawy o PIP), ale zadośćuczynienie zasądza tylko sąd.',
-    sad: 'Pozew o zadośćuczynienie albo odszkodowanie do sądu pracy (art. 18³d i 94³ Kodeksu pracy); od 5 listopada 2026 r. zawsze w sądzie rejonowym.',
+    sad: 'Pozew o zadośćuczynienie lub odszkodowanie do sądu pracy (art. 18³d, 18³e i 94³ Kodeksu pracy); sprawy wniesione od 5 listopada 2026 r. zawsze trafiają do sądu rejonowego (art. 5 ustawy z 19 czerwca 2026 r.).',
   },
   'umowa-o-prace': {
     krotko: 'Zlecenie zamiast etatu',
     rejonowy: true,
-    pip: 'Od 8 lipca 2026 r. okręgowy inspektor pracy może decyzją stwierdzić stosunek pracy, gdy pracodawca nie wykona polecenia zawarcia umowy o pracę (art. 11 ust. 1 pkt 7a i ust. 2 ustawy o PIP). Inspektor może też wnieść pozew o ustalenie stosunku pracy na Twoją rzecz (art. 10 ust. 1 pkt 11).',
+    pip: 'Od 8 lipca 2026 r. okręgowy inspektor pracy może decyzją stwierdzić stosunek pracy, gdy pracodawca nie wykona polecenia zawarcia umowy o pracę (art. 11 ust. 1 pkt 7a i ust. 2 ustawy o PIP). Okręgowy inspektor pracy może też wnieść pozew o ustalenie istnienia lub treści stosunku pracy na Twoją rzecz (art. 33a ust. 3). Decyzja obejmuje stan od rozpoczęcia kontroli, a umowa o pracę liczy się co do zasady od dnia decyzji (art. 34 ust. 2d i 2f); za okres wcześniejszy potrzebny jest pozew (art. 33a ust. 6).',
     sad: 'Pozew o ustalenie istnienia stosunku pracy do sądu pracy; taka sprawa zawsze trafia do sądu rejonowego (art. 461 § 1¹ Kodeksu postępowania cywilnego).',
   },
   swiadectwo: {
     krotko: 'Świadectwo pracy',
     rejonowy: true,
     pip: 'Inspektor może skierować do pracodawcy wystąpienie albo polecenie wydania świadectwa (art. 11 ust. 1 pkt 8 ustawy o PIP).',
-    sad: 'Żądanie wydania świadectwa można zgłosić w sądzie w każdym czasie przed przedawnieniem (art. 97¹ § 1 i 3 Kodeksu pracy); sprostowanie: 14 dni od zawiadomienia o odmowie (art. 97 § 2¹).',
+    sad: 'Żądanie wydania świadectwa można zgłosić w sądzie w każdym czasie przed przedawnieniem (art. 97¹ § 1 i 3 Kodeksu pracy). Sprostowanie: najpierw wniosek do pracodawcy w 14 dni od otrzymania świadectwa, po odmowie pozew w 14 dni od zawiadomienia o niej, a gdy pracodawca nie zawiadomi o odmowie, żądanie wnosi się do sądu (art. 97 § 2¹).',
   },
   kara: {
     krotko: 'Kara porządkowa',
@@ -69,7 +69,7 @@ export const SPRAWY_PRACOWNICZE: Record<SprawaPracownicza, OpisSprawy> = {
   bhp: {
     krotko: 'BHP, zagrożenie w pracy',
     rejonowy: false,
-    pip: 'Inspektor może nakazać usunięcie uchybień, wstrzymać prace albo maszyny przy bezpośrednim zagrożeniu życia lub zdrowia; takie nakazy wykonuje się od razu (art. 11 ust. 1 pkt 1–4 ustawy o PIP).',
+    pip: 'Inspektor może nakazać usunięcie uchybień w terminie (art. 11 ust. 1 pkt 1 ustawy o PIP), a przy bezpośrednim zagrożeniu życia lub zdrowia wstrzymać prace albo maszyny; te nakazy wykonuje się od razu (pkt 2–4).',
     sad: 'Sąd pracy rozpatruje roszczenia, na przykład o odszkodowanie; nakazy BHP wydaje inspekcja, nie sąd.',
   },
 };
@@ -112,12 +112,12 @@ export function opisSadu(sprawa: SprawaPracownicza, wartosc: number): WynikSadu 
   const sad = sadPierwszejInstancji(sprawa, wartosc);
   const apel = oplataApelacji(wartosc);
   const uwagi: string[] = [];
-  if (s.rejonowy) uwagi.push('Ta sprawa należy do sądu rejonowego bez względu na kwotę (art. 461 § 1¹ Kodeksu postępowania cywilnego).');
+  if (s.rejonowy) uwagi.push(sprawa === 'mobbing' ? 'Sprawa wniesiona od 5 listopada 2026 r. należy do sądu rejonowego bez względu na kwotę (art. 461 § 1¹ Kodeksu postępowania cywilnego, art. 5 ustawy z 19 czerwca 2026 r.).' : 'Ta sprawa należy do sądu rejonowego bez względu na kwotę (art. 461 § 1¹ Kodeksu postępowania cywilnego).');
   else if (sad === 'okręgowy') uwagi.push('Przy roszczeniu majątkowym powyżej 100 000 zł właściwy jest sąd okręgowy (art. 17 pkt 4 Kodeksu postępowania cywilnego).');
   if (apel > 0) {
     uwagi.push(`Opłata od apelacji liczona od ${liczba(Math.ceil(wartosc) - PROG_APELACJI)} zł, czyli od wartości ponad 50 000 zł (art. 35 ust. 1 ustawy o kosztach sądowych). Gdy apelacja dotyczy tylko części wyroku, opłata liczy się od tej części (art. 126¹ § 2 Kodeksu postępowania cywilnego).`);
   }
-  uwagi.push('Przegrana strona zwraca przeciwnikowi koszty procesu, na przykład wynagrodzenie adwokata (art. 98 § 1 Kodeksu postępowania cywilnego).');
+  uwagi.push('Bez opłaty nie znaczy bez ryzyka: przegrana strona zwraca przeciwnikowi na jego żądanie koszty procesu, na przykład wynagrodzenie adwokata (art. 98 § 1 Kodeksu postępowania cywilnego), choć w wypadkach szczególnie uzasadnionych sąd może tego nie zasądzić (art. 102). Wydatkami, na przykład za biegłego, sąd obciąża pracownika tylko w wypadkach szczególnie uzasadnionych (art. 97 ustawy o kosztach sądowych).');
   return {
     sad: `Sąd ${sad} (sąd pracy)`,
     pozew: '0 zł',

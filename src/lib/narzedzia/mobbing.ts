@@ -19,8 +19,12 @@
 // - zachowanie w dniu 5.11.2026 i później: nowe przepisy (art. 3 mówi o zachowaniach trwających „po dniu” wejścia
 //   w życie, ale w dniu wejścia w życie nowe brzmienie już obowiązuje);
 // - przedawnienie: 3 lata od dnia, w którym roszczenie stało się wymagalne (art. 291 § 1); Kodeks nie mówi, kiedy
-//   wymagalne jest roszczenie o zadośćuczynienie, więc liczymy od dnia zachowania wpisanego przez osobę (koniec bez
-//   przesunięć, jak w src/lib/narzedzia/przedawnienie.ts); każde wcześniejsze zachowanie przedawnia się wcześniej.
+//   wymagalne jest roszczenie o zadośćuczynienie, więc liczymy ostrożnie od dnia zachowania wpisanego przez osobę (koniec
+//   bez przesunięć, jak w src/lib/narzedzia/przedawnienie.ts); czy przy mobbingu termin biegnie od ostatniego zachowania,
+//   czy osobno od każdego, Kodeks nie rozstrzyga;
+// - zadośćuczynienie „lub” odszkodowanie: spójnik „lub” nie wyklucza dochodzenia obu (wariant korzystny dla pracownika);
+// - art. 18^3f to przepis o postępowaniu bez przepisu przejściowego: przy dyskryminacji sprzed 5.11.2026 piszemy, że sąd
+//   w sprawie wniesionej od tego dnia może go stosować.
 import { PLACA_MINIMALNA } from '../../data/prawo';
 import { odmiana } from '../redakcja';
 import { zl } from './format';
@@ -34,9 +38,9 @@ export type Naruszenie = 'dyskryminacja' | 'wielokrotna' | 'odwet' | 'mobbing';
 
 /** `krotko` do listy wyboru (telefon ucina długie opcje), `nazwa` do opisu pod polem. */
 export const NARUSZENIA: Record<Naruszenie, { krotko: string; nazwa: string }> = {
-  dyskryminacja: { krotko: 'Dyskryminacja', nazwa: 'Gorsze traktowanie z powodu płci, wieku, narodowości, rodzaju umowy albo innej cechy z art. 18³a § 1.' },
+  dyskryminacja: { krotko: 'Dyskryminacja', nazwa: 'Gorsze traktowanie na przykład z powodu płci, wieku, narodowości albo umowy na czas określony (art. 18³a § 1).' },
   wielokrotna: { krotko: 'Powtarzana dyskryminacja', nazwa: 'Powtarzana z tej samej przyczyny, z wielu przyczyn albo jednorazowo z kilku przyczyn naraz.' },
-  odwet: { krotko: 'Kara za upominanie się', nazwa: 'Gorsze traktowanie za korzystanie z praw pracownika albo za wsparcie osoby, która z nich korzysta.' },
+  odwet: { krotko: 'Kara za upominanie się', nazwa: 'Gorsze traktowanie za upominanie się o prawa po ich naruszeniu (skarga, pozew) albo za wsparcie osoby, która to robi.' },
   mobbing: { krotko: 'Mobbing', nazwa: 'Uporczywe nękanie: powtarzalne, nawracające albo stałe.' },
 };
 
@@ -90,9 +94,9 @@ export interface OpisMobbingu {
 const DOWOD_NOWY =
   'Wystarczy uprawdopodobnić naruszenie, czyli przedstawić fakty, które je uwiarygodniają; wtedy pracodawca musi wykazać, że zasady nie naruszył (art. 18³f), a przy różnicowaniu z art. 18³b § 1, że kierował się obiektywnymi powodami.';
 const DOWOD_DAWNY =
-  'Gdy pracodawca różnicował sytuację pracownika z przyczyny z art. 18³a § 1, to pracodawca musi udowodnić, że kierował się obiektywnymi powodami (art. 18³b § 1).';
+  'Gdy pracodawca różnicował sytuację pracownika z przyczyny z art. 18³a § 1, to pracodawca musi udowodnić, że kierował się obiektywnymi powodami (art. 18³b § 1). W sprawie wniesionej od 5 listopada 2026 r. sąd może stosować art. 18³f (wystarczy uprawdopodobnić naruszenie): to przepis o postępowaniu, a ustawa zmieniająca nie ma tu przepisu przejściowego.';
 const DOWOD_OGOLNY =
-  'Fakty musisz udowodnić Ty, więc zbieraj dowody: świadków, wiadomości, notatki z datami. Kodeks pracy nie ma przy tym roszczeniu osobnej reguły dowodowej, a fakty udowadnia ta strona, która wywodzi z nich skutki prawne (art. 6 Kodeksu cywilnego przez art. 300 Kodeksu pracy). Gdy sprawa dotyczy też dyskryminacji, w postępowaniu o naruszenie równego traktowania wystarczy ją uprawdopodobnić (art. 18³f, od 5 listopada 2026 r.).';
+  'Fakty musisz udowodnić Ty, więc zbieraj dowody: świadków, wiadomości, notatki z datami. Kodeks pracy nie ma przy tym roszczeniu osobnej reguły dowodowej, a fakty udowadnia ta strona, która wywodzi z nich skutki prawne (art. 6 Kodeksu cywilnego przez art. 300 Kodeksu pracy). Gdy sprawa dotyczy dyskryminacji albo odwetu za skargę na nierówne traktowanie, w postępowaniu o naruszenie równego traktowania wystarczy naruszenie uprawdopodobnić (art. 18³f, od 5 listopada 2026 r.).';
 
 /** Teksty wyniku: te same w HTML ze strony i w skrypcie przeglądarki. */
 export function opisMobbingu(naruszenie: Naruszenie, dataZachowania: string, rok: number, dzis: string): OpisMobbingu {
@@ -113,7 +117,7 @@ export function opisMobbingu(naruszenie: Naruszenie, dataZachowania: string, rok
     opis = `nie mamy płacy minimalnej na ${rok} r.`;
   } else if (r.rodzaj === 'zadośćuczynienie') {
     const razy = r.mnoznik === 1 ? 'płaca minimalna' : r.mnoznik === 3 ? '3 × płaca minimalna' : '6 × płaca minimalna';
-    opis = `zadośćuczynienie za krzywdę: co najmniej ${razy} z ${rok} r.; zamiast niego możesz żądać odszkodowania za szkodę, bez kwoty najniższej`;
+    opis = `zadośćuczynienie za krzywdę: co najmniej ${razy} z ${rok} r.; możesz też żądać odszkodowania za szkodę majątkową, bez kwoty najniższej`;
   } else {
     opis = `odszkodowanie: co najmniej płaca minimalna z ${rok} r.`;
   }
@@ -121,13 +125,13 @@ export function opisMobbingu(naruszenie: Naruszenie, dataZachowania: string, rok
     uwagi.push('Gdy mobbing wywołał rozstrój zdrowia, możesz też żądać zadośćuczynienia w „odpowiedniej sumie”: przepis nie podaje kwoty najniższej (art. 94³ § 3 w brzmieniu sprzed 5 listopada 2026 r.).');
   }
   if (!nowe && (naruszenie === 'mobbing' || naruszenie === 'wielokrotna')) {
-    uwagi.push(`Jeśli te zachowania trwały także po 4 listopada 2026 r., stosuje się nowe przepisy (art. 3 ustawy z 19 czerwca 2026 r.): wpisz datę ostatniego zachowania.`);
+    uwagi.push('Jeśli te zachowania zaczęły się wcześniej i trwały także 5 listopada 2026 r. albo później, stosuje się nowe przepisy (art. 3 ustawy z 19 czerwca 2026 r. mówi o zachowaniach trwających po dniu wejścia w życie; sam 5 listopada liczymy na korzyść pracownika): wpisz datę ostatniego zachowania.');
   }
   if (nowe && naruszenie === 'wielokrotna') {
     uwagi.push('Przy naruszeniu wielokrotnym sąd ocenia rozmiar krzywdy i zasądza kwotę odpowiednio wyższą, nie niższą niż trzykrotność płacy minimalnej (art. 18³d § 2).');
   }
   if (nowe && naruszenie === 'mobbing') {
-    uwagi.push('Mobbingiem nie są zachowania jednorazowe ani uzasadniona krytyka wyrażona we właściwej formie (art. 94³ § 3 i 9).');
+    uwagi.push('Mobbingiem nie są zachowania incydentalne, czyli sporadyczne, ani uzasadniona krytyka wyrażona we właściwej formie (art. 94³ § 3 i 9). Mobbingiem są te zachowania, choćby ich celem nie było nękanie (§ 7).');
   }
   if (naruszenie === 'odwet') {
     uwagi.push(nowe

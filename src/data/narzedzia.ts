@@ -877,7 +877,7 @@ export const NARZEDZIA: Narzedzie[] = [
     nazwa: 'Sąd pracy czy PIP: koszty i który sąd',
     krotko: 'Co może inspekcja pracy, a co tylko sąd. Pozew pracownika bez opłat, ile za apelację, który sąd.',
     kategoria: 'umowa',
-    przepisy: ['kodeksPracy', 'kpc', 'kosztySadowe', 'pip', 'zmianaPip2026', 'zmianaMobbing2026'],
+    przepisy: ['kodeksPracy', 'kpc', 'kosztySadowe', 'pip', 'zmianaPip2026', 'zmianaMobbing2026', 'skargiWnioski'],
     sprawdzono: '2026-11-13',
   },
   {
