@@ -48,6 +48,7 @@ test('wypadek przy pracy bez stażu; 18 miesięcy po końcu pracy przy częścio
 test('błędne dane', async ({ page }) => {
   await page.getByLabel('Z tego w ostatnich 10 latach').fill('12');
   await expect(page.locator('[data-blad="dane"]')).toBeVisible();
+  await expect(page.getByLabel('Z tego w ostatnich 10 latach')).toHaveAttribute('aria-invalid', 'true');
   await expect(page.locator('[data-w="stan"]')).toHaveText('—');
   await page.getByLabel('Z tego w ostatnich 10 latach').fill('5');
   await page.getByLabel('Niezdolność powstała dnia').fill('1980-01-01');

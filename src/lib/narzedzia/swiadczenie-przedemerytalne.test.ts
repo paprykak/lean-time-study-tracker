@@ -2,7 +2,8 @@
 // (29 lutego: 28 lutego w roku nieprzestępnym), pkt 6 szacowany od dołu (staż minus 4/3 zaczętych miesięcy roku),
 // 180 dni zasiłku przed 60/65 urodzinami, staż obcięty do setnych. Skrypt: scratchpad zespołu (przed.py).
 import { describe, expect, it } from 'vitest';
-import { kwotyNaDzien, opisPrzedemerytalnego, swiadczeniePrzedemerytalne, type DanePrzedemerytalne } from './swiadczenie-przedemerytalne';
+import { MAKS_ZMNIEJSZENIA } from './dorabianie';
+import { KWOTY_PRZYCHODU, kwotyNaDzien, opisPrzedemerytalnego, swiadczeniePrzedemerytalne, type DanePrzedemerytalne } from './swiadczenie-przedemerytalne';
 
 const D = (z: Partial<DanePrzedemerytalne>): DanePrzedemerytalne => ({
   plec: 'm',
@@ -50,7 +51,10 @@ describe('świadczenie przedemerytalne (art. 2 ust. 1 ustawy o świadczeniach pr
   it('180 dni zasiłku muszą minąć przed 65. urodzinami (art. 2 ust. 3 i art. 4 ust. 1 pkt 3)', () => {
     expect(swiadczeniePrzedemerytalne(D({ data: '2030-03-01' })).stan).toBe('nie-zdazy');
     expect(swiadczeniePrzedemerytalne(D({ data: '2029-12-17' })).stan).toBe('nie-zdazy');
-    expect(swiadczeniePrzedemerytalne(D({ data: '2029-12-16' })).stan).toBe('spelnia');
+    // Data + 182 dni (rejestracja następnego dnia, 180 dni zasiłku, wniosek, świadczenie od dnia po wniosku).
+    expect(swiadczeniePrzedemerytalne(D({ data: '2029-12-16' })).stan).toBe('nie-zdazy');
+    expect(swiadczeniePrzedemerytalne(D({ data: '2029-12-15' })).stan).toBe('nie-zdazy');
+    expect(swiadczeniePrzedemerytalne(D({ data: '2029-12-14' })).stan).toBe('spelnia');
     expect(swiadczeniePrzedemerytalne(D({ data: '2030-06-15' })).stan).toBe('wiek-emerytalny');
     expect(opisPrzedemerytalnego(D({ data: '2030-03-01' }), '2026-11-13')).toMatchObject({ stan: 'Nie zdąży się zacząć', koniec: '—', podstawa: '—' });
   });
@@ -63,7 +67,14 @@ describe('świadczenie przedemerytalne (art. 2 ust. 1 ustawy o świadczeniach pr
 
   it('kwoty przychodu od 1 marca (M.P. 2025 poz. 142, M.P. 2026 poz. 208)', () => {
     expect(kwotyNaDzien('2026-02-28')).toMatchObject({ dopuszczalna: 2045.5, graniczna: 5727.2 });
-    expect(kwotyNaDzien('2026-11-13')).toMatchObject({ dopuszczalna: 2225.9, graniczna: 6232.5 });
+    expect(kwotyNaDzien('2026-11-13')).toMatchObject({ dopuszczalna: 2225.9, graniczna: 6232.5, mozeNieaktualne: false });
+    expect(kwotyNaDzien('2027-02-28').mozeNieaktualne).toBe(false);
+    expect(kwotyNaDzien('2027-03-01')).toMatchObject({ dopuszczalna: 2225.9, mozeNieaktualne: true });
+    expect(opisPrzedemerytalnego(D({}), '2027-03-01').uwagi.join(' ')).toContain('mogą być już nieaktualne');
+    expect(opisPrzedemerytalnego(D({}), '2026-11-13').uwagi.join(' ')).not.toContain('mogą być już nieaktualne');
+  });
+  it('kwoty przychodu dopisywane razem z kwotami zmniejszeń w dorabianiu (oba komunikaty ZUS od 1 marca)', () => {
+    expect(KWOTY_PRZYCHODU.at(-1)!.od >= MAKS_ZMNIEJSZENIA.at(-1)!.od).toBe(true);
   });
 
   it('błędne dane', () => {

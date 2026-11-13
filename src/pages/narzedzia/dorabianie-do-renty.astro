@@ -49,13 +49,14 @@ const faq = [
       <h2 id="kalkulator-tytul" class="tytul-m">Świadczenie i przychód</h2>
       <div class="mt-4">
         <label for="d-swiadczenie" class="etykieta-pola">Świadczenie</label>
-        <select id="d-swiadczenie" name="swiadczenie" class="pole mt-1">
-          <option value="renta-calkowita" selected>Renta, całkowita niezdolność</option>
-          <option value="renta-czesciowa">Renta, częściowa niezdolność</option>
+        <select id="d-swiadczenie" name="swiadczenie" class="pole mt-1" aria-describedby="d-swiadczenie-opis">
+          <option value="renta-calkowita" selected>Renta całkowita</option>
+          <option value="renta-czesciowa">Renta częściowa</option>
           <option value="renta-rodzinna">Renta rodzinna, 1 osoba</option>
-          <option value="emerytura">Emerytura, poniżej 60/65 lat</option>
-          <option value="emerytura-wiek">Emerytura, ukończone 60/65 lat</option>
+          <option value="emerytura">Emerytura przed 60/65 lat</option>
+          <option value="emerytura-wiek">Emerytura od 60/65 lat</option>
         </select>
+        <p id="d-swiadczenie-opis" class="meta mt-1">Renta z tytułu całkowitej albo częściowej niezdolności do pracy. Wiek emerytalny: 60 lat kobieta, 65 lat mężczyzna.</p>
       </div>
       <div class="mt-4 grid grid-cols-1 gap-4">
         <div>
@@ -153,14 +154,16 @@ const faq = [
       w(k).textContent = typografia(tekst);
     };
     const dzis = dzisWPolsce();
-    // Strona mogła zostać zbudowana w poprzednim okresie: domyślny okres według dzisiejszej daty.
-    el('okres').value = okresNaDzien(dzis);
+    // Strona mogła zostać zbudowana w poprzednim okresie: domyślny okres według dzisiejszej daty (tylko wartość z HTML).
+    const okres = form.elements.namedItem('okres') as HTMLSelectElement;
+    if (okres.value === ([...okres.options].find((o) => o.defaultSelected)?.value ?? okres.options[0]?.value)) okres.value = okresNaDzien(dzis);
     const przelicz = () => {
       const przychod = wpisanaLiczba(el('przychod').value);
       const blad = !(przychod >= 0 && przychod < 10_000_000) ? 'Wpisz przychód brutto z miesiąca, na przykład 6800.' : null;
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
       b.hidden = !blad;
       b.textContent = blad ? typografia(blad) : '';
+      el('przychod').setAttribute('aria-invalid', String(Boolean(blad)));
       if (blad) {
         for (const k of ['stan', 'p70', 'p130', 'maks', 'zapas']) w(k).textContent = '—';
         w('opis').textContent = '';
@@ -174,6 +177,8 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    // Po powrocie przyciskiem Wstecz przeglądarka przywraca wybór po pierwszym liczeniu: liczymy jeszcze raz.
+    window.addEventListener('pageshow', przelicz);
     przelicz();
   }
 </script>

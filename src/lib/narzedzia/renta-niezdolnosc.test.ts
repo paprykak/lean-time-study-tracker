@@ -101,3 +101,16 @@ describe('renta z tytułu niezdolności do pracy (art. 57–58 ustawy o FUS, art
     expect(opisRenty(D({ plec: 'k', urodzenie: '2004-01-15', powstanie: '2026-01-16', skladkowe: 2.5, nieskladkowe: 0 })).opis).toBe('przy liczeniu wieku w pełnych latach potrzeba 2 lat, a przy liczeniu od dnia po urodzinach 3 lat; przepis tego nie rozstrzyga, decyduje ZUS, a w sporze sąd');
   });
 });
+
+describe('audyt jakości 2: limit 1/3 w ostatnich 10 latach i orzeczenie od 2027 r.', () => {
+  const dane = { plec: 'm' as const, urodzenie: '1980-01-01', powstanie: '2026-06-01', przyczyna: 'choroba' as const, stopien: 'czesciowa' as const, skladkowe: 15, nieskladkowe: 2, ostatnie10: 5, ubezpieczenie: 'w-trakcie' as const, dzis: '2026-11-13' };
+  it('gdy liczy się 5 lat w ostatnich 10, wynik przypomina o art. 5 ust. 2', () => {
+    const o = opisRenty(dane);
+    expect(o.stan).toBe('Warunki stażu spełnione');
+    expect(o.uwagi.join(' ')).toContain('najwyżej do 1/3 składkowych z tych lat (art. 5 ust. 2)');
+    expect(opisRenty({ ...dane, urodzenie: '2000-01-01' }).uwagi.join(' ')).not.toContain('z tych lat');
+  });
+  it('orzeczenie: art. 14 ustawy o FUS i od 2027 r. art. 85a ustawy o systemie', () => {
+    expect(opisRenty(dane).uwagi.join(' ')).toContain('od 1 stycznia 2027 r. art. 85a ustawy o systemie ubezpieczeń społecznych');
+  });
+});

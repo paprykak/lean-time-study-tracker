@@ -25,7 +25,8 @@
 // w pełnych latach wystarczy krótszy, a staż mieści się między nimi, pokazujemy „zależy” (wariant bezpieczny dla
 // pracownika: nie odradzamy wniosku). W dniu 20. urodzin wymagamy 2 lat (to już nie „przed ukończeniem 20 lat”), a w dniu
 // 22., 25. i 30. urodzin krótszego okresu z niższego przedziału wieku. Lata wpisane z ułamkiem zaokrąglamy do setnych
-// przed porównaniem, a braki podajemy w miesiącach w górę. Okres z ostatnich 10 lat bierzemy wprost, bez limitu 1/3.
+// przed porównaniem, a braki podajemy w miesiącach w górę. Okres z ostatnich 10 lat bierzemy wprost, a w wyniku przypominamy,
+// że i w nim nieskładkowe liczą się najwyżej do 1/3 składkowych (art. 5 ust. 2 dotyczy całego ustalania prawa do renty).
 
 import { odmiana } from '../redakcja';
 import { lat, latBrak, miesiecyBrak } from './emerytura-pomostowa';
@@ -128,7 +129,9 @@ export interface OpisRenty {
   uwagi: string[];
 }
 
-const ORZECZENIE = 'O niezdolności do pracy i jej stopniu orzeka lekarz orzecznik ZUS (art. 14 ust. 1).';
+// Od 1 stycznia 2027 r. art. 14 ust. 1 mówi tylko o formie orzeczenia, a kto orzeka, mówi art. 85a ustawy o systemie
+// ubezpieczeń społecznych (Dz.U. 2026 poz. 26, art. 12 pkt 3 i art. 1 pkt 9): o niezdolności do pracy lekarz orzecznik.
+const ORZECZENIE = 'O niezdolności do pracy i jej stopniu orzeka lekarz orzecznik ZUS (art. 14 ustawy o FUS; od 1 stycznia 2027 r. art. 85a ustawy o systemie ubezpieczeń społecznych).';
 const ART_58_3 =
   'Staż uważa się też za spełniony, gdy zgłoszono Cię do ubezpieczenia przed 18. urodzinami albo w ciągu 6 miesięcy po ukończeniu szkoły ponadpodstawowej, ponadgimnazjalnej lub wyższej i do dnia powstania niezdolności okresy składkowe i nieskładkowe trwały bez przerw dłuższych niż 6 miesięcy (art. 58 ust. 3).';
 
@@ -170,6 +173,8 @@ export function opisRenty(d: DaneRenty): OpisRenty {
     o.opis = braki.join('; ');
     if (r.brakStazu > 0 || r.brak10 > 0) o.uwagi.push(ART_58_3);
   }
+  if (r.potrzeba10 && (r.stan === 'spelnia' || r.stan === 'zalezy'))
+    o.uwagi.push('W ostatnich 10 latach okresy nieskładkowe też liczą się najwyżej do 1/3 składkowych z tych lat (art. 5 ust. 2): kalkulator bierze wpisaną sumę wprost, ZUS może policzyć mniej.');
   if (r.stan !== 'bez-stazu' && r.stan !== 'emerytura') {
     o.uwagi.push(`Renta z FUS nie przysługuje, gdy w dniu decyzji masz prawo do emerytury z FUS albo spełniasz warunki do niej, na przykład od dnia ${r.wiekEmerytalny}. urodzin (art. 57 ust. 1 pkt 4).`);
   }

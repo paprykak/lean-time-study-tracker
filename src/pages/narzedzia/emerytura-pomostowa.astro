@@ -213,6 +213,15 @@ const faq = [
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
       b.hidden = !blad;
       b.textContent = blad ? typografia(blad) : '';
+      // Pole, którego dotyczy błąd, dla czytnika ekranu (komunikat jest w aria-describedby).
+      const polaBledu = blad ? ([
+        ['Wpisz datę urodzenia.', ['urodzenie']],
+        ['Wpisz okresy w latach', ['szczegolne', 'przed', 'staz']],
+        ['Okres przed 2009', ['przed']],
+        ['Staż nie może', ['staz']],
+        ['Pracę z wybranych', ['rodzaju']],
+      ] as [string, string[]][]).find(([p]) => blad!.startsWith(p))?.[1] ?? [] : [];
+      for (const n of ['urodzenie', 'szczegolne', 'rodzaju', 'przed', 'staz']) el(n).setAttribute('aria-invalid', String(polaBledu.includes(n)));
       if (blad) {
         for (const k of POLA) w(k).textContent = k === 'opis' ? '' : '—';
         w('uwaga').textContent = '';
@@ -225,6 +234,8 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    // Po powrocie przyciskiem Wstecz przeglądarka przywraca wybór po pierwszym liczeniu: liczymy jeszcze raz.
+    window.addEventListener('pageshow', przelicz);
     przelicz();
   }
 </script>

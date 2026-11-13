@@ -41,6 +41,7 @@ test('koniec renty: etykieta daty i opis warunku się zmieniają; błędne dane'
   await expect(page.locator('[data-opis-okresu]')).toContainText('5 lat');
   await page.getByLabel('Staż pracy w ZUS (lata)').fill('dużo');
   await expect(page.locator('[data-blad="dane"]')).toBeVisible();
+  await expect(page.getByLabel('Staż pracy w ZUS (lata)')).toHaveAttribute('aria-invalid', 'true');
   await expect(page.locator('[data-w="stan"]')).toHaveText('—');
   await page.getByLabel('Staż pracy w ZUS (lata)').fill('25');
   await expect(page.locator('[data-blad="dane"]')).toBeHidden();

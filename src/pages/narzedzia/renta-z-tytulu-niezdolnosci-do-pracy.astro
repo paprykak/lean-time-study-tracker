@@ -102,7 +102,7 @@ const faq = [
           <input id="r-ostatnie10" name="ostatnie10" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="6" aria-describedby="r-blad r-okresy-opis" />
         </div>
       </div>
-      <p id="r-okresy-opis" class="meta mt-1">Składkowe: m.in. praca, zlecenie i działalność ze składkami, zasiłek macierzyński, urlop wychowawczy, zasiłek dla bezrobotnych. Nieskładkowe: m.in. wynagrodzenie i zasiłek za czas choroby, zasiłek opiekuńczy, świadczenie rehabilitacyjne, ukończone studia (art. 7). W ostatnich 10 latach wpisz oba rodzaje razem. Lata możesz wpisać z ułamkiem, na przykład 4,5.</p>
+      <p id="r-okresy-opis" class="meta mt-1">Składkowe: m.in. praca, zlecenie i działalność ze składkami, zasiłek macierzyński, urlop wychowawczy, zasiłek dla bezrobotnych. Nieskładkowe: m.in. wynagrodzenie i zasiłek za czas choroby, zasiłek opiekuńczy, świadczenie rehabilitacyjne, ukończone studia (art. 7). W ostatnich 10 latach wpisz oba rodzaje razem, ale nieskładkowych najwyżej jedną trzecią składkowych z tych lat (art. 5 ust. 2). Lata możesz wpisać z ułamkiem, na przykład 4,5.</p>
       <p id="r-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
     </div>
 
@@ -144,7 +144,7 @@ const faq = [
       urodzinach, a gdy przy liczeniu w pełnych latach wystarczy krótszy i Twój staż mieści się między nimi, piszemy
       „zależy”: rozstrzyga ZUS, a w sporze sąd. W dniu 20. urodzin wymagamy 2 lat (to już nie „przed ukończeniem 20 lat”),
       a w dniu 22., 25. i 30. urodzin krótszego okresu z niższego przedziału wieku. Warunek braku prawa do emerytury
-      sprawdzamy na dzień powstania niezdolności i na dziś. Okres z ostatnich 10 lat wpisujesz sam: liczy się 10 lat przed wnioskiem albo 10 lat przed powstaniem niezdolności, więc możesz
+      sprawdzamy na dzień powstania niezdolności i na dziś. Limit 1/3 dla okresów nieskładkowych dotyczy też 5 lat w ostatnich 10 latach (art. 5 ust. 2 i art. 58 ust. 2); tę liczbę bierzemy tak, jak ją wpiszesz. Okres z ostatnich 10 lat wpisujesz sam: liczy się 10 lat przed wnioskiem albo 10 lat przed powstaniem niezdolności, więc możesz
       sprawdzić oba. Zgłoszenia do ubezpieczenia przed 18. urodzinami albo po szkole (art. 58 ust. 3) kalkulator nie
       sprawdza. Nie oceniamy niezdolności do pracy (to robi lekarz orzecznik ZUS) i nie liczymy wysokości renty.
       Ile możesz dorobić do renty, policzy <a href="/narzedzia/dorabianie-do-renty">kalkulator dorabiania do renty i emerytury</a>, a jednorazowe odszkodowanie po wypadku przy pracy <a href="/narzedzia/odszkodowanie-za-wypadek-przy-pracy">kalkulator odszkodowania za wypadek</a>. Gdy niezdolność jest okresowa, a leczenie rokuje powrót do pracy, sprawdź <a href="/narzedzia/swiadczenie-rehabilitacyjne">świadczenie rehabilitacyjne</a>.
@@ -177,6 +177,14 @@ const faq = [
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
       b.hidden = !blad;
       b.textContent = blad ? typografia(blad) : '';
+      // Pole, którego dotyczy błąd, dla czytnika ekranu (komunikat jest w aria-describedby).
+      const polaBledu = blad ? ([
+        ['Wpisz datę urodzenia.', ['urodzenie']],
+        ['Wpisz dzień powstania', ['powstanie']],
+        ['Wpisz okresy w latach', ['skladkowe', 'nieskladkowe', 'ostatnie10']],
+        ['Okres z ostatnich 10', ['ostatnie10']],
+      ] as [string, string[]][]).find(([p]) => blad!.startsWith(p))?.[1] ?? [] : [];
+      for (const n of ['urodzenie', 'powstanie', 'skladkowe', 'nieskladkowe', 'ostatnie10']) el(n).setAttribute('aria-invalid', String(polaBledu.includes(n)));
       if (blad) {
         for (const k of POLA) w(k).textContent = k === 'opis' ? '' : '—';
         w('uwaga').textContent = '';
@@ -200,6 +208,8 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    // Po powrocie przyciskiem Wstecz przeglądarka przywraca wybór po pierwszym liczeniu: liczymy jeszcze raz.
+    window.addEventListener('pageshow', przelicz);
     przelicz();
   }
 </script>

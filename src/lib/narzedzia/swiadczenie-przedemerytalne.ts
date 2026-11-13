@@ -23,8 +23,10 @@
 // miesięcy bieżącego roku (rok pracy zmienia staż najwyżej o 4/3 roku, bo nieskładkowe liczą się do 1/3 składkowych,
 // art. 5 ust. 2 ustawy o FUS); gdy szacunek nie wystarcza, a staż tak, wynik to „zależy”. Wiek „ukończony do dnia”:
 // dzień urodzin wystarcza (urodzeni 29 lutego: 28 lutego w roku nieprzestępnym, art. 112 KC). Staż z ułamkiem obcinamy
-// do setnych (bez zaokrąglania w górę). Gdy 60/65 urodziny wypadają przed upływem 180 dni od daty, świadczenie nie
-// zdąży się zacząć (art. 2 ust. 3 i art. 4 ust. 1 pkt 3).
+// do setnych (bez zaokrąglania w górę). Najwcześniejszy dzień świadczenia to data + 182 dni: rejestracja w urzędzie
+// pracy najwcześniej dzień po dacie (zasiłek od dnia rejestracji, art. 218 ust. 1 ustawy o rynku pracy), 180 dni zasiłku,
+// wniosek następnego dnia i świadczenie od dnia po wniosku (art. 2 ust. 3, art. 7 ust. 1). Gdy 60/65 urodziny wypadają
+// w tym dniu albo wcześniej, świadczenie nie zdąży się zacząć (art. 4 ust. 1 pkt 3: ustaje „z dniem osiągnięcia wieku”).
 
 import { zl } from './format';
 import { lat, miesiecyBrak } from './emerytura-pomostowa';
@@ -53,7 +55,11 @@ export const KWOTY_PRZYCHODU = [
 
 export function kwotyNaDzien(data: string) {
   const p = KWOTY_PRZYCHODU.filter((k) => k.od <= data);
-  return p.length ? p[p.length - 1] : KWOTY_PRZYCHODU[0];
+  const kw = p.length ? p[p.length - 1] : KWOTY_PRZYCHODU[0];
+  // Rok rozliczeniowy trwa od 1 marca (art. 6 ust. 1): od 1 marca następnego roku obowiązują już nowe kwoty.
+  const ostatni = KWOTY_PRZYCHODU[KWOTY_PRZYCHODU.length - 1];
+  const mozeNieaktualne = kw === ostatni && data >= `${Number(ostatni.od.slice(0, 4)) + 1}-03-01`;
+  return { ...kw, mozeNieaktualne };
 }
 
 interface Podstawa {
@@ -101,7 +107,7 @@ export function swiadczeniePrzedemerytalne(dane: DanePrzedemerytalne) {
   if (pkt6 === 'tak') spelnione.push('pkt 6');
   let stan: StanPrzedemerytalnego;
   if (d.data >= koniec) stan = 'wiek-emerytalny';
-  else if (spelnione.length || pkt6 === 'zalezy') stan = dodajDni(d.data, 180) >= koniec ? 'nie-zdazy' : spelnione.length ? 'spelnia' : 'zalezy';
+  else if (spelnione.length || pkt6 === 'zalezy') stan = dodajDni(d.data, 182) >= koniec ? 'nie-zdazy' : spelnione.length ? 'spelnia' : 'zalezy';
   else stan = 'brak';
   return { stan, lista, spelnione, pkt6, prog6, koniec, wiekEmerytalny };
 }
@@ -181,7 +187,7 @@ export function opisPrzedemerytalnego(dane: DanePrzedemerytalne, dzis: string): 
     o.opis = `świadczenie ustaje w dniu ${r.wiekEmerytalny}. urodzin (art. 4 ust. 1 pkt 3); w tym wieku można przejść na emeryturę`;
   } else if (r.stan === 'nie-zdazy') {
     o.stan = 'Nie zdąży się zacząć';
-    o.opis = `świadczenie przysługuje po co najmniej 180 dniach zasiłku dla bezrobotnych (art. 2 ust. 3), a ustaje w dniu ${r.wiekEmerytalny}. urodzin, ${dataPoPolsku(r.koniec)} (art. 4 ust. 1 pkt 3), czyli przed upływem tych 180 dni`;
+    o.opis = `świadczenie przysługuje po co najmniej 180 dniach zasiłku dla bezrobotnych (art. 2 ust. 3), a ustaje w dniu ${r.wiekEmerytalny}. urodzin, ${dataPoPolsku(r.koniec)} (art. 4 ust. 1 pkt 3), czyli zanim świadczenie mogłoby się zacząć`;
   } else if (r.stan === 'spelnia') {
     o.stan = 'Spełniasz warunki';
     o.opis = 'świadczenie przysługuje po co najmniej 180 dniach pobierania zasiłku dla bezrobotnych (art. 2 ust. 3)';
@@ -207,6 +213,8 @@ export function opisPrzedemerytalnego(dane: DanePrzedemerytalne, dzis: string): 
       'Do 180 dni wlicza się też okresy, w których zasiłek jeszcze nie przysługiwał z powodów z art. 220 ustawy o rynku pracy (na przykład po odszkodowaniu za skrócone wypowiedzenie albo przez 90 dni po porozumieniu stron), oraz pracę podjętą w tym czasie (art. 2 ust. 5). Wniosek do ZUS składasz najpóźniej 30 dni od dnia, w którym urząd pracy wyda dokument o 180 dniach zasiłku, i wciąż musisz być w rejestrze bezrobotnych (art. 2 ust. 3).',
       `Ustawa podaje kwotę 1600,70 zł miesięcznie, podnoszoną co roku od 1 marca przy waloryzacji emerytur (art. 3); aktualną podaje ZUS.${d.przyczyna === 'renta' ? ' Po rencie świadczenie nie może być wyższe niż ostatnio otrzymywana renta (art. 3 ust. 1).' : ''} Przy przychodzie powyżej ${zl(kw.dopuszczalna)} świadczenie maleje o nadwyżkę, ale nie poniżej kwoty z art. 5 ust. 4, a powyżej ${zl(kw.graniczna)} jest zawieszone (art. 5, kwoty od ${dataPoPolsku(kw.od)}, ${kw.publikator}); ZUS rozlicza przychód po roku od 1 marca do końca lutego, rocznie albo miesięcznie, jak jest korzystniej (art. 6 ust. 1).`,
     );
+    if (kw.mozeNieaktualne)
+      o.uwagi.push(`Kwoty przychodu mogą być już nieaktualne: od 1 marca ${dzis.slice(0, 4)} r. obowiązują nowe z komunikatu Prezesa ZUS (art. 6 ust. 4).`);
   }
   o.uwagi.push('Prawo przyznaje ZUS na wniosek, od dnia po jego złożeniu z dokumentami (art. 7 ust. 1). Świadczenie ustaje m.in. w dniu przed nabyciem prawa do emerytury i w dniu 60. urodzin kobiety albo 65. urodzin mężczyzny (art. 4 ust. 1).');
   return o;

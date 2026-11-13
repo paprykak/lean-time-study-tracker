@@ -44,4 +44,16 @@ test('błędny przychód', async ({ page }) => {
   await page.getByLabel('Przychód w miesiącu (zł brutto)').fill('sześć tysięcy');
   await expect(page.locator('[data-blad="dane"]')).toBeVisible();
   await expect(page.locator('[data-w="stan"]')).toHaveText('—');
+  await expect(page.getByLabel('Przychód w miesiącu (zł brutto)')).toHaveAttribute('aria-invalid', 'true');
+  await page.getByLabel('Przychód w miesiącu (zł brutto)').fill('6000');
+  await expect(page.getByLabel('Przychód w miesiącu (zł brutto)')).toHaveAttribute('aria-invalid', 'false');
+});
+
+test('po powrocie przyciskiem Wstecz wynik odpowiada przywróconemu wyborowi', async ({ page }) => {
+  await page.getByLabel('Świadczenie', { exact: true }).selectOption('emerytura-wiek');
+  await expect(page.locator('[data-w="stan"]')).toHaveText(/^Bez\slimitu/);
+  await page.goto('/narzedzia');
+  await page.goBack();
+  await expect(page.getByLabel('Świadczenie', { exact: true })).toHaveValue('emerytura-wiek');
+  await expect(page.locator('[data-w="stan"]')).toHaveText(/^Bez\slimitu/);
 });

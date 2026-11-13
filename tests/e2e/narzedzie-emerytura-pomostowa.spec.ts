@@ -54,6 +54,7 @@ test('rekompensata przy 15 latach przed 2009 r. i błędne dane', async ({ page 
   await page.getByLabel('Z tego przed 2009 r.').fill('0');
   await page.getByLabel('Staż w ZUS (lata)').fill('10');
   await expect(page.locator('[data-blad="dane"]')).toContainText('Staż nie może być krótszy');
+  await expect(page.getByLabel('Staż w ZUS (lata)')).toHaveAttribute('aria-invalid', 'true');
 });
 
 test.describe('telefon 320 px', () => {
