@@ -26,6 +26,13 @@ const PRZYPADKI: [number, Miejsce, Oslona, boolean, Osoba, Record<string, unknow
   [250, 'rampa', 'sciany', false, 'dorosly', { naWysokosci: false, wylaczenie: 'sciany', zabezpieczenie: 'brak-wymogu', mlodociany: 'nie-dotyczy', ciaza: 'nie-dotyczy' }],
   [250, 'rampa', 'balustrada', false, 'dorosly', { naWysokosci: false, wylaczenie: 'balustrada', zabezpieczenie: 'brak-wymogu', mlodociany: 'nie-dotyczy', ciaza: 'nie-dotyczy' }],
   [250, 'rampa', 'brak', false, 'dorosly', { naWysokosci: true, wylaczenie: null, zabezpieczenie: 'rampa', mlodociany: 'nie-dotyczy', ciaza: 'nie-dotyczy' }],
+  // Słup, maszt, konstrukcja bez stropów: § 110 ust. 1 od 1,0 m (wariant bezpieczny, przepis nie rozstrzyga progu 2 m).
+  [100, 'konstrukcja', 'brak', false, 'dorosly', { naWysokosci: true, wylaczenie: null, zabezpieczenie: 'szelki', mlodociany: 'nie-dotyczy', ciaza: 'nie-dotyczy' }],
+  [150, 'konstrukcja', 'brak', false, 'dorosly', { naWysokosci: true, wylaczenie: null, zabezpieczenie: 'szelki', mlodociany: 'nie-dotyczy', ciaza: 'nie-dotyczy' }],
+  [200, 'konstrukcja', 'balustrada', false, 'dorosly', { naWysokosci: true, wylaczenie: null, zabezpieczenie: 'szelki', mlodociany: 'nie-dotyczy', ciaza: 'nie-dotyczy' }],
+  [99, 'konstrukcja', 'brak', false, 'dorosly', { naWysokosci: false, wylaczenie: 'nisko', zabezpieczenie: 'brak-wymogu', mlodociany: 'nie-dotyczy', ciaza: 'nie-dotyczy' }],
+  [200, 'drabina', 'brak', false, 'dorosly', { naWysokosci: true, wylaczenie: null, zabezpieczenie: 'stabilne', mlodociany: 'nie-dotyczy', ciaza: 'nie-dotyczy' }],
+  [150, 'dach', 'brak', false, 'dorosly', { naWysokosci: true, wylaczenie: null, zabezpieczenie: 'balustrada', mlodociany: 'nie-dotyczy', ciaza: 'nie-dotyczy' }],
   [99, 'pomost', 'brak', false, 'dorosly', { naWysokosci: false, wylaczenie: 'nisko', zabezpieczenie: 'brak-wymogu', mlodociany: 'nie-dotyczy', ciaza: 'nie-dotyczy' }],
   [99, 'drabina', 'brak', false, 'dorosly', { naWysokosci: false, wylaczenie: 'nisko', zabezpieczenie: 'brak-wymogu', mlodociany: 'nie-dotyczy', ciaza: 'nie-dotyczy' }],
   [100, 'pomost', 'brak', false, 'dorosly', { naWysokosci: true, wylaczenie: null, zabezpieczenie: 'balustrada-1m', mlodociany: 'nie-dotyczy', ciaza: 'nie-dotyczy' }],

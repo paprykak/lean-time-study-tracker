@@ -50,6 +50,20 @@ test('rusztowanie: bez opcji ścian, dach bez szelek', async ({ page }) => {
   await expect(page.locator('[data-w="wiersze"]')).not.toContainText('Szelki z linką');
 });
 
+test('zmiana miejsca bez dozwolonych ścian: osłona „brak”, nie zakładamy balustrady', async ({ page }) => {
+  await page.getByLabel('Gdzie pracujesz?').selectOption('pomost');
+  await page.getByLabel('Co chroni przed upadkiem?').selectOption('sciany');
+  await page.getByLabel('Gdzie pracujesz?').selectOption('rusztowanie');
+  await expect(page.getByLabel('Co chroni przed upadkiem?')).toHaveValue('brak');
+});
+
+test('słup, maszt, konstrukcja na 1,5 m: szelki i hełm (wariant bezpieczny § 110 ust. 1)', async ({ page }) => {
+  await page.getByLabel('Gdzie pracujesz?').selectOption('konstrukcja');
+  await page.getByLabel('Co chroni przed upadkiem?').selectOption('brak');
+  await page.getByLabel(/Wysokość/).fill('1,5');
+  await expect(page.locator('[data-w="wiersze"]')).toContainText('Szelki z linką i hełm');
+});
+
 test.describe('telefon 320 px', () => {
   test.use({ viewport: { width: 320, height: 640 } });
   test('żadna opcja list nie jest szersza niż pole', async ({ page }) => {

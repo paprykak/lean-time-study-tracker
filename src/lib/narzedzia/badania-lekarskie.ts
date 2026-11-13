@@ -254,8 +254,9 @@ export function badaniaWstepne(d: DaneWstepnych): Wstepne {
     sprawdzDate(d.nastepne, 'następne badanie');
   }
   let ostatniDzien: string | null = null;
-  if (d.rodzaj === 'nowy' || d.rodzaj === 'ten-sam') {
-    if (!d.koniec) throw new RangeError('Brak końca poprzedniej umowy');
+  // Przy nowym pracodawcy brak końca poprzedniej umowy to pierwsza praca albo wcześniej bez umowy o pracę.
+  if (d.rodzaj === 'ten-sam' && !d.koniec) throw new RangeError('Brak końca poprzedniej umowy');
+  if ((d.rodzaj === 'nowy' || d.rodzaj === 'ten-sam') && d.koniec) {
     sprawdzDate(d.koniec, 'koniec poprzedniej umowy');
     if (d.start! <= d.koniec) throw new RangeError('Pierwszy dzień nowej pracy musi być po końcu poprzedniej umowy');
     ostatniDzien = dodajDni(d.koniec, DNI_NA_PRZYJECIE);
@@ -287,6 +288,14 @@ export function badaniaWstepne(d: DaneWstepnych): Wstepne {
     return { wynik: d.warunki === 'nie' ? 'niewymagane' : 'potrzebne', ostatniDzien, warunki };
   }
 
+  if (d.rodzaj === 'nowy' && !d.koniec) {
+    warunki.push({
+      nazwa: `Poprzednia umowa o pracę w ciągu ${DNI_NA_PRZYJECIE} dni`,
+      stan: 'nie',
+      opis: `bez poprzedniego stosunku pracy zakończonego w ciągu ${DNI_NA_PRZYJECIE} dni przed startem zwolnienia z badań wstępnych nie ma (art. 229 § 1 pkt 1 i § 1¹ pkt 2 Kodeksu pracy)`,
+    });
+    return { wynik: 'potrzebne', ostatniDzien, warunki };
+  }
   const w30 = ostatniDzien === null || d.start! <= ostatniDzien;
   if (ostatniDzien !== null) {
     warunki.push({
@@ -430,11 +439,11 @@ export function przypomnienie(nastepne: string, dzis: string): Przypomnienie {
   sprawdzDate(nastepne, 'następne badanie');
   sprawdzDate(dzis, 'dziś');
   const dniDo = dniMiedzy(dzis, nastepne);
-  const opis = 'Data następnego badania okresowego z orzeczenia lekarskiego. Badanie na skierowanie od pracodawcy, w miarę możliwości w godzinach pracy, z zachowaniem wynagrodzenia (art. 229 § 3 i 4a Kodeksu pracy).';
+  const opis = 'Data następnego badania okresowego z orzeczenia lekarskiego. Przepis nie mówi, czy orzeczenie jest jeszcze aktualne w tym dniu: bezpieczniej zrobić badanie wcześniej. Badanie na skierowanie od pracodawcy, w miarę możliwości w godzinach pracy, z zachowaniem wynagrodzenia (art. 229 § 3 i 4a Kodeksu pracy).';
   const wczesniej = dodajDni(nastepne, -PRZYPOMNIENIE_DNI);
   const wydarzenia: Wydarzenie[] = [
     ...(wczesniej >= dzis ? [{ data: wczesniej, tytul: `Za ${PRZYPOMNIENIE_DNI} dni badanie okresowe: poproś o skierowanie`, opis, przypomnienia: [0] }] : []),
-    ...(nastepne >= dzis ? [{ data: nastepne, tytul: 'Termin badania okresowego (z orzeczenia)', opis }] : []),
+    ...(nastepne >= dzis ? [{ data: nastepne, tytul: 'Data następnego badania z orzeczenia: badanie zrób przed tym dniem', opis }] : []),
   ];
   return { dniDo, wydarzenia };
 }

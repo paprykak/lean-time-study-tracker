@@ -60,6 +60,14 @@ test('nowa praca: 30. dzień po umowie warunkowo bez badań, 31. dzień badania 
   await expect(page.locator('[data-w="b-wynik"]')).toHaveText(/^potrzebne$/);
 });
 
+test('nowa praca bez poprzedniej umowy o pracę: badania wstępne potrzebne, bez błędu', async ({ page }) => {
+  await page.getByLabel('Nowa praca').check();
+  await page.locator('[name="koniec"]').fill('');
+  await page.locator('[name="start"]').fill('2026-12-01');
+  await expect(page.locator('[data-w="b-wynik"]')).toHaveText(/^potrzebne$/);
+  await expect(page.locator('[data-w="b-warunki"]')).toContainText(/zwolnienia\sz\sbadań\swstępnych\snie\sma/);
+});
+
 test('orzeczenie: odwołanie do 11 listopada (święto) i przypomnienie w kalendarzu', async ({ page }) => {
   await page.getByLabel('Mam orzeczenie').check();
   await page.locator('[name="otrzymane"]').fill('2026-11-04');

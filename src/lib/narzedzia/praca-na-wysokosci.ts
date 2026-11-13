@@ -45,7 +45,10 @@
 //    podwyższeń na każdej wysokości od 1,0 m (wariant bezpieczny).
 // 7. Dach nie jest wymieniony w § 110 ust. 1, więc na dachu bez wychylania się nie podajemy szelek z § 110, tylko
 //    balustradę albo inne skuteczne środki z § 106. Słup, maszt i konstrukcja bez stropów to nie stała powierzchnia
-//    z osłoną: wyjątku z § 105 ust. 2 nie stosujemy, a powyżej 2 m obowiązuje § 110 ust. 1.
+//    z osłoną: wyjątku z § 105 ust. 2 nie stosujemy. § 110 ust. 1 nie rozstrzyga, czy „na wysokości powyżej 2 m” dotyczy
+//    całego wyliczenia, czy tylko drabin i klamer (§ 108 ma próg „do 2 m” tylko dla drabin, klamer, rusztowań
+//    i podwyższeń). Przy słupach, masztach, kominach i konstrukcjach bez stropów stosujemy § 110 ust. 1 od 1,0 m
+//    (wariant bezpieczny), przy drabinach i klamrach powyżej 2 m.
 // 4. Kobieta w ciąży: wyjątek dotyczy tylko stałych podwyższeń z pełnym zabezpieczeniem bez ŚOI, więc rusztowanie,
 //    podnośnik, rampa bez balustrady i otwarta krawędź są zakazane od 1,0 m, a drabiny i klamry na każdej wysokości.
 // 5. Młodociani: zakaz powyżej 3 m bez wyjątku dla balustrad (przepis go nie przewiduje).
@@ -124,7 +127,7 @@ export function sprawdzPrace(d: DanePracy): WynikPracy {
     if (wylaczenie === 'balustrada' && cm > 100 && d.miejsce !== 'rampa') zabezpieczenie = 'balustrada';
   } else if (cm >= 100) {
     if (d.miejsce === 'drabina') zabezpieczenie = cm > 200 || d.wychylanie ? 'szelki' : 'stabilne';
-    else if (d.miejsce === 'konstrukcja' && cm > 200) zabezpieczenie = 'szelki';
+    else if (d.miejsce === 'konstrukcja') zabezpieczenie = 'szelki';
     else if (d.wychylanie) zabezpieczenie = 'szelki';
     else if (d.miejsce === 'rusztowanie' && cm > 200) zabezpieczenie = 'rusztowanie';
     else if (d.miejsce === 'rampa') zabezpieczenie = 'rampa';
@@ -184,7 +187,7 @@ const ZABEZPIECZENIA: Record<Zabezpieczenie, [string, string]> = {
   ],
   szelki: [
     'Szelki z linką i hełm',
-    `Przed pracą sprawdza się stan konstrukcji i punktów mocowania linek; pracownicy używają sprzętu chroniącego przed upadkiem, np. szelek bezpieczeństwa z linką przymocowaną do stałych elementów konstrukcji, oraz hełmów ochronnych (§ 110 ust. 1 ${OGOLNE}). Dotyczy to pracy powyżej 2 m na drabinach, klamrach, słupach, masztach i konstrukcjach bez stropów, a na pomostach, drabinach i innych podwyższeniach także niżej, gdy praca wymaga wychylania się albo wymuszonej pozycji (§ 110 ust. 2; przy niższych wysokościach to nasz wariant bezpieczny).`,
+    `Przed pracą sprawdza się stan konstrukcji i punktów mocowania linek; pracownicy używają sprzętu chroniącego przed upadkiem, np. szelek bezpieczeństwa z linką przymocowaną do stałych elementów konstrukcji, oraz hełmów ochronnych (§ 110 ust. 1 ${OGOLNE}). Dotyczy to pracy na słupach, masztach i konstrukcjach bez stropów, przy ustawianiu i rozbiórce rusztowań oraz powyżej 2 m na drabinach i klamrach (przy słupach i konstrukcjach przepis nie mówi jasno, czy próg 2 m ich dotyczy, więc podajemy szelki od 1,0 m), a na pomostach, drabinach i innych podwyższeniach także niżej, gdy praca wymaga wychylania się albo wymuszonej pozycji (§ 110 ust. 2; przy niższych wysokościach to nasz wariant bezpieczny).`,
   ],
 };
 

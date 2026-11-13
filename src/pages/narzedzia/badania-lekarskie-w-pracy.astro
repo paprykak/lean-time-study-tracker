@@ -58,7 +58,7 @@ const faq = [
   },
   {
     pytanie: 'Kiedy następne badanie okresowe?',
-    odpowiedz: 'W dniu wpisanym w orzeczeniu jako data następnego badania okresowego. Lekarz ustala ją według wskazówek metodycznych i może wyznaczyć krótszy termin (§ 2 ust. 1 i 2 oraz § 3 ust. 4a pkt 12 rozporządzenia). Od 17 kwietnia 2026 r., po okresie przejściowym do października 2026 r., orzeczenie jest zwykle elektroniczne i widać je w Internetowym Koncie Pacjenta (§ 3 ust. 4d i 4g).',
+    odpowiedz: 'Przed dniem wpisanym w orzeczeniu jako data następnego badania okresowego. Przepis nie mówi, czy w tym dniu orzeczenie jest jeszcze aktualne, więc bezpieczniej zrobić badanie wcześniej. Lekarz ustala ją według wskazówek metodycznych i może wyznaczyć krótszy termin (§ 2 ust. 1 i 2 oraz § 3 ust. 4a pkt 12 rozporządzenia). Od 17 kwietnia 2026 r., po okresie przejściowym do października 2026 r., orzeczenie jest zwykle elektroniczne i widać je w Internetowym Koncie Pacjenta (§ 3 ust. 4d i 4g).',
   },
 ];
 ---
@@ -140,7 +140,7 @@ const faq = [
             <input id="bp-start" name="start" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={P.start} data-dzis={String(PD.start)} aria-describedby="bp-daty-opis bl-blad" />
           </div>
         </div>
-        <p id="bp-daty-opis" class="meta mt-1" data-tylko="start">Ostatni dzień poprzedniej umowy i dzień rozpoczęcia pracy z nowej umowy.</p>
+        <p id="bp-daty-opis" class="meta mt-1" data-tylko="start">Ostatni dzień poprzedniej umowy i dzień rozpoczęcia pracy z nowej umowy. Pierwsza praca albo wcześniej bez umowy o pracę: zostaw koniec pusty.</p>
         <div class="mt-4" data-tylko="orzeczenie">
           <label for="bp-orzeczenie" class="etykieta-pola" data-w="etykieta-orzeczenie">Orzeczenie z poprzedniej pracy</label>
           <select id="bp-orzeczenie" name="orzeczenie" class="pole mt-1">
@@ -238,7 +238,7 @@ const faq = [
         <p class="mt-5">
           <button type="button" class="przycisk przycisk-grafit" data-ics disabled>Dodaj do kalendarza (.ics)</button>
         </p>
-        <p class="meta mt-2">Plik ma dwa wydarzenia: dzień badania i dzień {PRZYPOMNIENIE_DNI} dni wcześniej, żeby zdążyć po skierowanie (tylko te, które jeszcze nie minęły). Przypomnienia o 9:00: w dniu „poproś o skierowanie” oraz tydzień i dzień przed badaniem. Część kalendarzy pomija przypomnienia z pliku i ustawia własne.</p>
+        <p class="meta mt-2">Plik ma dwa wydarzenia: dzień z orzeczenia i dzień {PRZYPOMNIENIE_DNI} dni wcześniej, żeby zdążyć po skierowanie (tylko te, które jeszcze nie minęły). Przypomnienia o 9:00: w dniu „poproś o skierowanie” oraz tydzień i dzień przed badaniem. Część kalendarzy pomija przypomnienia z pliku i ustawia własne.</p>
       </div>
 
       <p class="wynik-uwaga" data-uwaga="czas">Badania okresowe i kontrolne odbywają się w miarę możliwości w godzinach pracy. Za czas badań zachowujesz wynagrodzenie, a przy przejeździe do innej miejscowości należy Ci się zwrot kosztów jak w podróży służbowej (art. 229 § 3 Kodeksu pracy). Koszt badań ponosi pracodawca, chyba że robisz je w ramach programu zdrowotnego (art. 229 § 6 i 6<sup>1</sup>).</p>
@@ -293,7 +293,7 @@ const faq = [
       <li>Liczymy dni kalendarzowe zwolnienia razem z pierwszym i ostatnim. Zwolnienia dzień po dniu albo nachodzące na siebie traktujemy jak jedną niezdolność. Gdy między zwolnieniami są tylko dni wolne, przepis nie mówi, czy to jedna niezdolność; wtedy wskazujemy, że bezpieczniej zrobić badanie. Gdy jednak już wcześniejsze zwolnienie trwało ponad {PROG_KONTROLNE} dni, a do następnego nie było dnia pracy, badanie jest potrzebne.</li>
       <li>Przepis mówi o niezdolności spowodowanej chorobą. Zwolnienie w ciąży i po wypadku liczymy tak samo. Terminu badania kontrolnego przepis nie podaje; wynika z zakazu dopuszczenia do pracy bez aktualnego orzeczenia.</li>
       <li>{DNI_NA_PRZYJECIE} dni na zwolnienie z badań wstępnych liczymy od dnia po końcu poprzedniej umowy (art. 111 Kodeksu cywilnego) do pierwszego dnia nowej pracy z umowy (art. 26 Kodeksu pracy).</li>
-      <li>Przepis nie definiuje „aktualnego orzeczenia”. Przyjmujemy, że jest aktualne, gdy zaczynasz pracę przed datą następnego badania z orzeczenia. Przepis nie mówi też, czy przy pracy u tego samego pracodawcy po terminie badania trzeba badań wstępnych, czy innych: piszemy tylko, że potrzebne jest badanie.</li>
+      <li>Przepis nie definiuje „aktualnego orzeczenia”. Przyjmujemy, że jest aktualne, gdy zaczynasz pracę przed datą następnego badania z orzeczenia; tak samo w pliku kalendarza radzimy zrobić badanie przed tą datą. Przepis nie mówi też, czy przy pracy u tego samego pracodawcy po terminie badania trzeba badań wstępnych, czy innych: piszemy tylko, że potrzebne jest badanie.</li>
       <li>Gdy nie wiesz, czy prace są szczególnie niebezpieczne albo czy na nowym stanowisku są czynniki szkodliwe, przyjmujemy, że badania są potrzebne. Osobie młodocianej zawsze wskazujemy badania wstępne.</li>
       <li>Termin odwołania liczymy od dnia po otrzymaniu orzeczenia (art. 111 § 2 Kodeksu cywilnego). Rozporządzenie nie przesuwa terminu z soboty ani święta, a czy stosuje się art. 115 Kodeksu cywilnego, przepisy nie rozstrzygają: pokazujemy datę bez przesunięcia. Przy e-orzeczeniu przepis nie mówi, co jest dniem otrzymania; bezpieczniej liczyć od najwcześniejszej daty.</li>
       <li>Datę następnego badania wyznacza lekarz w orzeczeniu. Nie wyliczamy jej z tabel, bo zależą od oceny ryzyka.</li>
@@ -401,13 +401,14 @@ const faq = [
       const koniec = input('koniec').value;
       const start = input('start').value;
       const nastepne = input('nastepne').value;
-      if (zKoncem && !poprawnaData(koniec)) return 'Wpisz ostatni dzień poprzedniej umowy.';
+      if (rodzaj === 'ten-sam' && !poprawnaData(koniec)) return 'Wpisz ostatni dzień poprzedniej umowy.';
+      if (zKoncem && koniec && !poprawnaData(koniec)) return 'Wpisz ostatni dzień poprzedniej umowy albo zostaw pole puste.';
       if (!zmiana && !poprawnaData(start)) return 'Wpisz pierwszy dzień nowej pracy.';
-      if (zKoncem && start <= koniec) return 'Pierwszy dzień nowej pracy musi być po końcu poprzedniej umowy.';
+      if (zKoncem && koniec && start <= koniec) return 'Pierwszy dzień nowej pracy musi być po końcu poprzedniej umowy.';
       if (!zmiana && orzeczenie === 'data' && !poprawnaData(nastepne)) return 'Wpisz datę następnego badania z orzeczenia.';
       const wynik = badaniaWstepne({
         rodzaj,
-        koniec: zKoncem ? koniec : null,
+        koniec: zKoncem && koniec ? koniec : null,
         start: zmiana ? null : start,
         orzeczenie,
         nastepne: orzeczenie === 'data' ? nastepne : null,

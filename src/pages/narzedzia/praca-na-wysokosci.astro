@@ -16,7 +16,7 @@ const faq = [
   },
   {
     pytanie: 'Kiedy trzeba mieć szelki bezpieczeństwa?',
-    odpowiedz: 'Przy pracy powyżej 2 m na drabinach, klamrach, słupach, masztach, konstrukcjach bez stropów oraz przy ustawianiu i rozbiórce rusztowań pracodawca zapewnia sprzęt chroniący przed upadkiem, np. szelki z linką przymocowaną do stałych elementów konstrukcji, i hełmy ochronne (§ 110 ust. 1). Na galeriach, pomostach i innych podwyższeniach dotyczy to także pracy, która wymaga wychylania się poza balustradę albo wymuszonej pozycji ciała (§ 110 ust. 2). Dachu § 110 nie wymienia: tam obowiązuje balustrada albo inne skuteczne środki ochrony (§ 106).',
+    odpowiedz: 'Przy pracy na słupach, masztach, konstrukcjach bez stropów, przy ustawianiu i rozbiórce rusztowań oraz powyżej 2 m na drabinach i klamrach pracodawca zapewnia sprzęt chroniący przed upadkiem, np. szelki z linką przymocowaną do stałych elementów konstrukcji, i hełmy ochronne (§ 110 ust. 1). Przepis nie mówi jasno, czy próg 2 m dotyczy też słupów, masztów i konstrukcji, więc kalkulator podaje tam szelki od 1,0 m. Na galeriach, pomostach i innych podwyższeniach dotyczy to także pracy, która wymaga wychylania się poza balustradę albo wymuszonej pozycji ciała (§ 110 ust. 2). Dachu § 110 nie wymienia: tam obowiązuje balustrada albo inne skuteczne środki ochrony (§ 106).',
   },
   {
     pytanie: 'Jaka balustrada jest wymagana?',
@@ -116,7 +116,7 @@ const faq = [
           <tr><th scope="row">od 1,0 m</th><td>praca na wysokości, czyli praca szczególnie niebezpieczna (poza powierzchnią osłoniętą ścianami do 1,5 m albo stałą konstrukcją chroniącą przed upadkiem)</td><td>§ 80, § 105</td></tr>
           <tr><th scope="row">powyżej 1,0 m</th><td>balustrada: poręcz co najmniej 1,1 m, krawężnik 0,15 m, poprzeczka w połowie; nie dotyczy ramp przeładunkowych</td><td>§ 106</td></tr>
           <tr><th scope="row">do 2 m</th><td>na drabinach, klamrach, rusztowaniach i innych podwyższeniach, gdy praca nie wymaga wychylania się: stabilne urządzenia, pomost z informacją o dopuszczalnym obciążeniu</td><td>§ 108</td></tr>
-          <tr><th scope="row">powyżej 2 m</th><td>na drabinach, klamrach, słupach, masztach i konstrukcjach bez stropów oraz przy ustawianiu rusztowań: szelki z linką i hełm; rusztowanie po odbiorze technicznym</td><td>§ 109, § 110</td></tr>
+          <tr><th scope="row">powyżej 2 m</th><td>na drabinach i klamrach: szelki z linką i hełm; rusztowanie po odbiorze technicznym; na słupach, masztach i konstrukcjach bez stropów oraz przy ustawianiu rusztowań szelki i hełm, przy czym przepis nie mówi jasno, czy także niżej (kalkulator przyjmuje od 1,0 m)</td><td>§ 109, § 110</td></tr>
           <tr><th scope="row">powyżej 3 m</th><td>praca wzbroniona młodocianym (wyjątek od 16 lat w przygotowaniu zawodowym: do 2 godzin na dobę)</td><td>wykaz prac wzbronionych młodocianym</td></tr>
         </tbody>
       </table>
@@ -155,7 +155,9 @@ const faq = [
       pozycji: wtedy osłona nie chroni, a § 110 ust. 2 wymaga szelek i hełmu. To nasz wariant bezpieczny dla pracującego;
       przepis nie mówi tego wprost. § 110 ust. 2 stosujemy do pomostów, drabin, klamer i innych podwyższeń na każdej
       wysokości od 1,0 m. Dachu § 110 ust. 1 nie wymienia, więc bez wychylania się podajemy dla niego balustradę albo inne
-      skuteczne środki z § 106, a nie szelki. Dla
+      skuteczne środki z § 106, a nie szelki. § 110 ust. 1 nie rozstrzyga, czy „na wysokości powyżej 2 m” dotyczy całego
+      wyliczenia, czy tylko drabin i klamer (§ 108 ma próg 2 m tylko dla drabin, klamer, rusztowań i podwyższeń), więc przy
+      słupach, masztach i konstrukcjach bez stropów podajemy szelki i hełm od 1,0 m (wariant bezpieczny). Dla
       kobiety w ciąży za „pełne zabezpieczenie” uznajemy tylko stałą powierzchnię z balustradą albo ścianami, bez
       wychylania się.
     </p>
@@ -201,7 +203,8 @@ const faq = [
       const lista = pole('oslona') as HTMLSelectElement;
       const dozwolone = dozwoloneOslony(miejsce);
       for (const o of lista.options) o.hidden = o.disabled = !dozwolone.includes(o.value as Oslona);
-      if (!dozwolone.includes(lista.value as Oslona)) lista.value = 'balustrada';
+      // Wariant bezpieczny: nie zakładamy osłony, której nikt nie wybrał.
+      if (!dozwolone.includes(lista.value as Oslona)) lista.value = 'brak';
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
       const d: DanePracy = {
         wysokosc: wpisanaLiczba(pole('wysokosc').value),

@@ -148,7 +148,13 @@ describe('badania wstępne (art. 229 § 1–1³ i art. 201 § 1 Kp)', () => {
   });
   it('błędne dane: start w dniu końca umowy, brak dat, zła data badania', () => {
     expect(() => badaniaWstepne({ ...B1, start: '2026-10-31' })).toThrow(RangeError);
-    expect(() => badaniaWstepne({ ...B1, koniec: null })).toThrow(RangeError);
+    expect(() => badaniaWstepne({ ...B1, rodzaj: 'ten-sam', koniec: null })).toThrow(RangeError);
+    // Nowy pracodawca bez poprzedniej umowy o pracę (pierwsza praca): badania wstępne zawsze (art. 229 § 1 pkt 1 i § 1¹).
+    for (const x of [{}, { orzeczenie: 'data' as const, nastepne: '2028-01-01' }, { mlodociany: true }]) {
+      const w = badaniaWstepne({ ...B1, rodzaj: 'nowy', koniec: null, ...x });
+      expect(w).toMatchObject({ wynik: 'potrzebne', ostatniDzien: null });
+    }
+    expect(badaniaWstepne({ ...B1, rodzaj: 'nowy', koniec: null }).warunki[0].stan).toBe('nie');
     expect(() => badaniaWstepne({ ...B1, start: null })).toThrow(RangeError);
     expect(() => badaniaWstepne({ ...B1, nastepne: '2027-02-29' })).toThrow(RangeError);
   });
@@ -183,6 +189,8 @@ describe('odwołanie od orzeczenia (§ 5 ust. 3 rozporządzenia) i następne bad
     expect(p.wydarzenia.map((w) => w.data)).toEqual(['2027-04-12', '2027-05-12']);
     expect(przypomnienie('2026-11-01', '2026-11-12')).toMatchObject({ dniDo: -11, wydarzenia: [] });
     expect(przypomnienie('2026-12-01', '2026-11-12').wydarzenia.map((w) => w.data)).toEqual(['2026-12-01']);
+    // Wariant bezpieczny jak przy aktualności orzeczenia: badanie przed datą z orzeczenia (data wydarzenia bez zmian).
+    expect(przypomnienie('2027-05-12', '2026-11-12').wydarzenia.at(-1)).toMatchObject({ data: '2027-05-12', tytul: 'Data następnego badania z orzeczenia: badanie zrób przed tym dniem' });
   });
   it('błędne dane: zła data', () => {
     expect(() => odwolanie('2026-13-01', '2026-11-12')).toThrow(RangeError);

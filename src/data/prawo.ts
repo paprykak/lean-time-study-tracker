@@ -338,7 +338,7 @@ export const AKTY = {
   praceKobietCiaza: {
     nazwa: 'Rozporządzenie w sprawie wykazu prac uciążliwych, niebezpiecznych lub szkodliwych dla zdrowia kobiet w ciąży i kobiet karmiących dziecko piersią',
     publikator: 'Dz.U. 2017 poz. 796',
-    uwaga: 'załącznik, cz. I',
+    uwaga: 'załącznik: cz. I (wysiłek fizyczny, pozycja ciała), cz. III (hałas i drgania), cz. VIII (m.in. praca na wysokości)',
     adres: eli(2017, 796),
     sprawdzono: '2026-11-11',
   },
@@ -543,7 +543,7 @@ export const AKTY = {
     sprawdzono: '2026-11-12',
   },
   badaniaProfilaktyczne: {
-    nazwa: 'Rozporządzenie w sprawie przeprowadzania badań lekarskich pracowników, zakresu profilaktycznej opieki zdrowotnej nad pracownikami oraz orzeczeń lekarskich',
+    nazwa: 'Rozporządzenie w sprawie przeprowadzania badań lekarskich pracowników, zakresu profilaktycznej opieki zdrowotnej nad pracownikami oraz orzeczeń lekarskich wydawanych do celów przewidzianych w Kodeksie pracy',
     publikator: 'Dz.U. 2023 poz. 607',
     uwaga: 'tekst jednolity; zmiany Dz.U. 2026 poz. 456 i 726 bez zmian w załączniku nr 1 (wskazówki metodyczne)',
     adres: eli(2023, 607),
