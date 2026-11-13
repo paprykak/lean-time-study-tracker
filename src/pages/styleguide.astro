@@ -241,7 +241,7 @@ const przyklady = ['kalkulator-l4', 'kalkulator-nadgodzin', 'waznosc-uprawnien-u
     <section aria-labelledby="wyszukiwanie">
       <NaglowekSekcji tytul="Pole wyszukiwania" id="wyszukiwanie" />
       <p class="mt-3 max-w-3xl text-[0.9375rem]">Jedno pole na ekranie: duże na stronie głównej, zwarte w nagłówku pozostałych stron. Wyniki pojawiają się pod polem w trakcie pisania (nazwa narzędzia i pytanie z FAQ, na które odpowiada); bez skryptu to zwykły formularz do /szukaj. Wpisz np. „nocki” albo „ile kg”.</p>
-      <div class="mt-6 grid gap-8 lg:grid-cols-2">
+      <div class="mt-6 grid gap-8 lg:grid-cols-2 [&>*]:min-w-0">
         <Wyszukiwarka id="sg-szukaj-duze" />
         <Wyszukiwarka id="sg-szukaj-naglowek" wariant="naglowek" etykieta="Wariant nagłówka" placeholder="Szukaj, np. L4, urlop" limit={5} />
       </div>
@@ -274,9 +274,9 @@ const przyklady = ['kalkulator-l4', 'kalkulator-nadgodzin', 'waznosc-uprawnien-u
     {/* LISTY */}
     <section aria-labelledby="listy">
       <NaglowekSekcji tytul="Nagłówki sekcji i pytania" id="listy" />
-      <div class="mt-6 grid gap-10 lg:grid-cols-2">
+      <div class="mt-6 grid gap-10 lg:grid-cols-2 [&>*]:min-w-0">
         <div class="space-y-6">
-          <NaglowekSekcji tytul="Wynagrodzenie i zasiłki" link={{ nazwa: 'Wszystkie narzędzia', adres: '/narzedzia' }} poziom="h3" />
+          <NaglowekSekcji tytul="Wynagrodzenie i zasiłki" link={{ nazwa: 'Więcej', adres: '/narzedzia' }} poziom="h3" />
           <NaglowekSekcji tytul="Nagłówek bez linku" poziom="h3" />
           <NaglowekSekcji tytul="Bardzo długi nagłówek sekcji, który na telefonie przechodzi do drugiej linii" link={{ nazwa: 'Więcej', adres: '/narzedzia' }} poziom="h3" />
         </div>

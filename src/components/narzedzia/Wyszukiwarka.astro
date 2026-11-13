@@ -115,9 +115,10 @@ const {
       window.clearTimeout(opoznienie);
       opoznienie = window.setTimeout(pokaz, 120);
     });
-    pole.addEventListener('focus', () => {
-      zaladujIndeks().catch(() => {});
-      if (pole.value.trim().length >= 2) pokaz();
+    pole.addEventListener('focus', () => zaladujIndeks().catch(() => {}));
+    // Kliknięcie w pole z wpisanym tekstem pokazuje wyniki ponownie (fokus po Esc ich nie otwiera).
+    pole.addEventListener('click', () => {
+      if (warstwa.hidden && pole.value.trim().length >= 2) pokaz();
     });
 
     const linki = () => [...formularz.querySelectorAll<HTMLAnchorElement>('.szukajka-wynik-link, [data-szukajka-pelny]')];
@@ -152,6 +153,7 @@ const {
 <style>
   .szukajka {
     position: relative;
+    min-width: 0;
   }
   .szukajka-etykieta {
     display: block;
