@@ -1,22 +1,23 @@
 ---
 // Dyżur w pracy (art. 151^5 Kp, § 4 i § 4a rozporządzenia z 29 maja 1996 r.). Logika: src/lib/narzedzia/dyzur.ts.
 import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
-import { LATA } from '../../data/prawo';
 import { nazwaMiesiaca } from '../../lib/narzedzia/czas-pracy';
 import { dyzur } from '../../lib/narzedzia/dyzur';
 import { zl } from '../../lib/narzedzia/format';
 import { dzisWPolsce } from '../../lib/narzedzia/terminy';
+import { lataKalendarza } from '../../lib/narzedzia/dzis-w-formularzu';
 
+// Wymiar zależy tylko od kalendarza, więc lata nie są ograniczone do tabeli płacy minimalnej.
 const dzis = dzisWPolsce();
-const rokBiezacy = Number(dzis.slice(0, 4));
-const rok = LATA.includes(rokBiezacy) ? rokBiezacy : LATA[LATA.length - 1];
-const miesiac = rok === rokBiezacy ? Number(dzis.slice(5, 7)) : 1;
+const LATA = lataKalendarza(dzis);
+const rok = Number(dzis.slice(0, 4));
+const miesiac = Number(dzis.slice(5, 7));
 const start = dyzur({ miejsce: 'zaklad', godzinyDyzuru: 12, godzinyPracy: 2, rok, miesiac, rodzaj: 'miesieczna', stawka: 6000 });
 
 const faq = [
   {
     pytanie: 'Czy dyżur wlicza się do czasu pracy?',
-    odpowiedz: 'Nie, jeżeli w czasie dyżuru nie pracowałeś albo nie pracowałaś. Gdy pracodawca wezwał Cię do pracy, ten czas jest czasem pracy (art. 151⁵ § 2 Kodeksu pracy) i rozlicza się go jak pracę, także jako nadgodziny. Dyżur nie może naruszać prawa do 11 godzin odpoczynku na dobę i 35 godzin w tygodniu (art. 151⁵ § 2 w związku z art. 132 i 133).',
+    odpowiedz: 'Nie, jeżeli w czasie dyżuru nie było pracy. Gdy pracodawca wezwał Cię do pracy, ten czas jest czasem pracy (art. 151⁵ § 2 Kodeksu pracy) i rozlicza się go jak pracę, także jako nadgodziny. Dyżur nie może naruszać prawa do 11 godzin odpoczynku na dobę i 35 godzin w tygodniu (art. 151⁵ § 2 w związku z art. 132 i 133).',
   },
   {
     pytanie: 'Ile płaci się za dyżur w pracy?',
@@ -60,9 +61,9 @@ const faq = [
           <input id="d-praca" name="praca" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="2" aria-describedby="d-praca-opis d-blad" />
         </div>
       </div>
-      <p id="d-praca-opis" class="meta mt-1">Czas, w którym na wezwanie faktycznie pracowałeś albo pracowałaś: to czas pracy, płatny jak praca (art. 151⁵ § 2).</p>
+      <p id="d-praca-opis" class="meta mt-1">Czas faktycznej pracy na wezwanie: to czas pracy, płatny jak praca (art. 151⁵ § 2).</p>
       <fieldset class="mt-4" data-tylko-zaklad>
-        <legend class="etykieta">Jak jesteś wynagradzany</legend>
+        <legend class="etykieta">Forma wynagrodzenia</legend>
         <div class="opcje-pionowe mt-2">
           <label><input type="radio" name="rodzaj" value="godzinowa" /> Stawka godzinowa</label>
           <label><input type="radio" name="rodzaj" value="miesieczna" checked /> Pensja miesięczna (stawka zasadnicza)</label>
@@ -92,13 +93,13 @@ const faq = [
       <div class="mt-4 grid grid-cols-2 gap-4" data-tylko-zaklad-czas>
         <div>
           <label for="d-miesiac" class="etykieta-pola">Miesiąc dyżuru</label>
-          <select id="d-miesiac" name="miesiac" class="pole mt-1">
+          <select id="d-miesiac" name="miesiac" class="pole mt-1" data-miesiac-biezacy>
             {Array.from({ length: 12 }, (_, i) => <option value={i + 1} selected={i + 1 === miesiac}>{nazwaMiesiaca(i + 1)}</option>)}
           </select>
         </div>
         <div>
           <label for="d-rok" class="etykieta-pola">Rok</label>
-          <select id="d-rok" name="rok" class="pole mt-1">
+          <select id="d-rok" name="rok" class="pole mt-1" data-rok-biezacy>
             {LATA.map((r) => <option value={r} selected={r === rok}>{r}</option>)}
           </select>
         </div>
@@ -149,6 +150,8 @@ const faq = [
   import { dyzur, type MiejsceDyzuru } from '../../lib/narzedzia/dyzur';
   import type { RodzajStawki } from '../../lib/narzedzia/przestoj';
   import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
+  import { typografia } from '../../lib/typografia.mjs';
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
 
   const form = document.querySelector<HTMLFormElement>('[data-dyzur]');
   if (form) {
@@ -173,10 +176,11 @@ const faq = [
         : !(praca >= 0 && praca <= godziny) ? 'Godziny pracy nie mogą przekraczać godzin dyżuru.'
         : zaklad && rodzaj !== 'bez-stawki' && !(stawka > 0) ? 'Wpisz stawkę albo pensję.'
         : zaklad && rodzaj === 'bez-stawki' && !(liczba('stale') >= 0 && liczba('zmienne') >= 0 && liczba('zgodz') >= 0) ? 'Kwoty i godziny nie mogą być ujemne.'
+        : zaklad && rodzaj === 'bez-stawki' && liczba('zmienne') > 0 && !(liczba('zgodz') > 0) ? 'Wpisz godziny przepracowane w miesiącach, z których są zmienne składniki.'
         : null;
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
       b.hidden = !blad;
-      b.textContent = blad ?? '';
+      b.textContent = typografia(blad ?? '');
       if (blad) {
         w('wolne').textContent = '—';
         w('albo').textContent = '';
@@ -196,19 +200,20 @@ const faq = [
       });
       if (r.domowy) {
         w('wolne').textContent = 'Nic';
-        w('albo').textContent = 'Za dyżur w domu nie należy się czas wolny ani wynagrodzenie (art. 151⁵ § 3).';
+        w('albo').textContent = typografia('Za dyżur w domu nie należy się czas wolny ani wynagrodzenie (art. 151⁵ § 3).');
         w('za-godzine').textContent = '—';
       } else {
-        w('wolne').textContent = `${godz(r.czasWolny)} wolnego`;
-        w('albo').textContent = `albo, gdy nie można dać wolnego, ${zl(r.kwota)} brutto`;
-        w('za-godzine').textContent = `${zl(r.zaGodzine)}${rodzaj === 'bez-stawki' ? ' (60%)' : ''}`;
+        w('wolne').textContent = typografia(`${godz(r.czasWolny)} wolnego`);
+        w('albo').textContent = typografia(`albo, gdy nie można dać wolnego, ${zl(r.kwota)} brutto`);
+        w('za-godzine').textContent = typografia(`${zl(r.zaGodzine)}${rodzaj === 'bez-stawki' ? ' (60%)' : ''}`);
       }
-      w('praca').textContent = `${godz(r.praca)}, płatne jak praca`;
-      w('wymiar').textContent = godz(r.wymiar);
+      w('praca').textContent = typografia(`${godz(r.praca)}, płatne jak praca`);
+      w('wymiar').textContent = typografia(godz(r.wymiar));
     };
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    ustawDzisiejszeWartosci(form);
     przelicz();
   }
 </script>

@@ -1,0 +1,252 @@
+{
+ "partia": "X2",
+ "sprawdzone": [
+  {
+   "slug": "wszystkie 66 (spójność dat)",
+   "pliki": [
+    "src/lib/narzedzia/terminy.ts",
+    "czas-pracy.ts",
+    "dni-robocze.ts",
+    "termin-odwolania.ts",
+    "wypowiedzenie.ts",
+    "staz-pracy.ts",
+    "mlodociany.ts",
+    "odprawy.ts",
+    "rodzic.ts",
+    "urlop-ojcowski.ts",
+    "okres-probny.ts",
+    "niepelnosprawny.ts",
+    "praca-tymczasowa.ts",
+    "kara-porzadkowa.ts",
+    "przedawnienie.ts",
+    "ochrona-przedemerytalna.ts"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "święta i dni robocze",
+   "pliki": [
+    "src/lib/narzedzia/czas-pracy.ts"
+   ],
+   "wynik": "ok: jedna funkcja swieta()/wielkanoc() z Wigilią od 2025, używają jej dni-robocze, dni-wolne, termin-odwolania, termin-wyplaty, niedziela-swieto i wymiar. Kopii nie ma. Sprawdzone: 21 dni od 2026-12-03 → 2026-12-28, od 2027-12-03 → 2027-12-27, grudzień 2026 160 h / 21 dni roboczych, grudzień 2027 168 h"
+  },
+  {
+   "slug": "dodawanie miesięcy i lat (art. 112 KC)",
+   "pliki": [
+    "src/lib/narzedzia/terminy.ts"
+   ],
+   "wynik": "ok: tylko dodajMiesiace/dodajLata (31 plików je importuje), nigdzie nie ma setMonth ani setFullYear. 2024-02-29+1 rok = 2025-02-28, 2026-01-31+1 miesiąc = 2026-02-28. Konwencje są spójne: okres od dnia zdarzenia kończy się w dniu dodajMiesiace(zdarzenie, n), a okres od dnia rozpoczęcia w dniu dodajMiesiace(start, n)−1. Dają to samo w odprawy, staz-pracy, mlodociany, okres-probny, rodzic i urlop-ojcowski (dziecko ur. 2024-02-29 → koniec 2025-02-27 w obu)"
+  },
+  {
+   "slug": "wiek",
+   "pliki": [
+    "src/lib/narzedzia/mlodociany.ts"
+   ],
+   "wynik": "ok: jedna funkcja wiek(), a pozostałe pliki liczą urodziny przez dodajLata. Osoba ur. 29.02 kończy lata 28.02 wszędzie tak samo"
+  },
+  {
+   "slug": "wymiar czasu pracy",
+   "pliki": [
+    "czas-pracy.ts",
+    "ekwiwalent.ts",
+    "nadgodziny.ts",
+    "dodatek-nocny.ts",
+    "przestoj.ts",
+    "dyzur.ts",
+    "grafik.ts",
+    "niepelnosprawny.ts"
+   ],
+   "wynik": "ok: wszystkie biorą wymiarMiesiaca()"
+  },
+  {
+   "slug": "płaca minimalna",
+   "pliki": [
+    "src/data/prawo.ts",
+    "chorobowe.ts",
+    "dodatek-nocny.ts",
+    "odprawy.ts",
+    "placa-minimalna.ts",
+    "ppk.ts",
+    "przestoj.ts",
+    "koszt-pracodawcy.ts",
+    "zlecenie-netto.astro"
+   ],
+   "wynik": "problemy (koszt-pracodawcy, zlecenie-netto). Pozostałe narzędzia biorą PLACA_MINIMALNA[rok], w tym 2027 = 4950 zł, Dz.U. 2026 poz. 1213"
+  },
+  {
+   "slug": "linki między narzędziami",
+   "pliki": [
+    "src/pages/narzedzia/*.astro",
+    "src/lib/narzedzia/*.ts"
+   ],
+   "wynik": "112 odnośników href=\"/narzedzia/...\": każdy prowadzi do istniejącego sluga, żaden do siebie samego. Rejestr ma 66 slugów zgodnych z plikami stron. Brakuje kilku oczywistych powiązań (niżej)"
+  },
+  {
+   "slug": "już znane (nie powtarzam)",
+   "pliki": [],
+   "wynik": "Skrypty bez typografia(): wynik nadpisuje twarde spacje z SSR w 57 z 66 narzędzi (Playwright, plik /tmp/claude-0/-home-user-lean-time-study-tracker/85e7a3e9-bef9-5b60-93fa-46f6f146f579/scratchpad/audyt/X2/typo.json). Długie opcje <select>. Pola daty i roku z dnia budowania. Formy rodzajowe w dyzur, nadgodziny, przestoj, l4-po-zwolnieniu, brutto-netto, zlecenie-netto, dodatek nocny i urlop-w-agencji. Przewijania w bok na 320 px nie ma w żadnym narzędziu. Atrybutów style=\"\" nie ma. Nie ma też „r..” ani HTML w FAQ"
+  }
+ ],
+ "znaleziska": [
+  {
+   "id": "X2-1",
+   "slug": "staz-pracy",
+   "wymiar": "spojnosc",
+   "waga": "srednia",
+   "plik": "src/pages/narzedzia/staz-pracy.astro",
+   "linia": 73,
+   "problem": "Ta sama lista SZKOLY (urlop.ts) jest pokazana w dwóch narzędziach z różną odmianą. W staz-pracy opcje mają „(3 lat)” i „(4 lat)”, a w kalkulator-urlopu poprawnie „(3 lata)”, z odmianą.",
+   "dowod": "staz-pracy.astro:73 `{s.nazwa}{s.lata ? ` (${s.lata} lat)` : ''}`. SZKOLY: zasadnicza lata 3, technikum-4 i liceum lata 4. Na podglądzie widać „Zasadnicza (branżowa) szkoła zawodowa (3 lat)”.",
+   "poprawka": "Użyć odmiana(s.lata, 'rok','lata','lat') albo funkcji lata() z kalkulator-urlopu.astro:9. Przy okazji usunąć zdublowane „4 lata nauki (4 lata)” w obu narzędziach."
+  },
+  {
+   "id": "X2-2",
+   "slug": "zasilek-macierzynski",
+   "wymiar": "spojnosc",
+   "waga": "srednia",
+   "plik": "src/pages/narzedzia/zasilek-macierzynski.astro",
+   "linia": 136,
+   "problem": "Opis pola różni się w SSR i w skrypcie. Serwer pokazuje „Najwyżej 32 tygodnie”, a skrypt po każdym przeliczeniu „Najwyżej 32 tygodni” (przy 34 tak samo).",
+   "dowod": "Linia 71 (SSR): „Najwyżej 32 tygodnie: z 41 tygodni…”. Linia 136: `Najwyżej ${maks} tygodni: z ${tygodnieRodzicielskiego(dzieci)} tygodni`, gdzie maks = 41−9 = 32 albo 43−9 = 34.",
+   "poprawka": "`Najwyżej ${maks} ${odmiana(maks,'tydzień','tygodnie','tygodni')}` (zostawić „z 41/43 tygodni”) i dodać test E2E dla 1 i 2 dzieci."
+  },
+  {
+   "id": "X2-3",
+   "slug": "kontrola-grafiku",
+   "wymiar": "tresc-ux",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/kontrola-grafiku.astro",
+   "linia": 213,
+   "problem": "Liczba zmian jest sklejona z rzeczownikiem bez odmiana(). Typowe wartości w miesiącu (22, 23, 24, 2–4) dają „22 zmian” zamiast „22 zmiany”.",
+   "dowod": "`${wynik.zmian} zmian, ${wynik.godziny} h…`",
+   "poprawka": "`${odmiana(wynik.zmian,'zmiana','zmiany','zmian')}` (z liczbą, jak w innych narzędziach)."
+  },
+  {
+   "id": "X2-4",
+   "slug": "pracownik-mlodociany",
+   "wymiar": "tresc-ux",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/pracownik-mlodociany.astro",
+   "linia": 216,
+   "problem": "Wiek „Masz ${r.lata} lat” nie przechodzi przez odmiana(). Pole urodzenia nie ma ograniczenia, więc dla osoby dorosłej wychodzi „Masz 22 lat” (22–24, 32–34…), a dla dziecka „Masz 2 lat” albo „1 lat”.",
+   "dowod": "Linie 105, 216, 222 i 223 mają szablon `Masz ${r.lata} lat`. Walidacja (191–192) sprawdza tylko poprawność daty i to, że nie jest przed urodzeniem.",
+   "poprawka": "Wstawić odmiana(r.lata,'rok','lata','lat') w SSR i w skrypcie. Test: urodzenie 2004-01-01, na dzień 2026-11-13 → „Masz 22 lata”."
+  },
+  {
+   "id": "X2-5",
+   "slug": "dodatek-za-prace-w-nocy",
+   "wymiar": "tresc-ux",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/dodatek-za-prace-w-nocy.astro",
+   "linia": 173,
+   "problem": "Po Nowym Roku przykład z wymiarem dostaje złą odmianę. Szablony „{godziny} godzin” zakładają liczbę zakończoną na 0/5–9, a wymiar w 2027 r. to styczeń 152 h i maj 144 h, w 2028 r. rocznie 1992 h.",
+   "dowod": "Skrypt /tmp/claude-0/-home-user-lean-time-study-tracker/85e7a3e9-bef9-5b60-93fa-46f6f146f579/scratchpad/audyt/X2/wymiar.mjs zwrócił: 2027 → 1:152, 5:144; 2028 → rocznie 1992 i miesiące 1, 4, 12 po 152 h. Te same szablony są w wymiar-czasu-pracy.astro:31 i 114 („Na pełny etat ${t.rocznie.godziny} godzin”, przy budowie w 2027 r. tabela obejmuje 2028), stawka-godzinowa.astro:19 (`${rocznie} godzin`) i kontrola-grafiku.astro:18 (`${czterobrygadowy.godziny} godzin`, wielokrotność 12, np. 192).",
+   "poprawka": "We wszystkich czterech miejscach odmiana(n,'godzina','godziny','godzin'). Test jednostkowy: wymiarMiesiaca(2027,1) z tekstem „152 godziny”."
+  },
+  {
+   "id": "X2-6",
+   "slug": "zlecenie-netto",
+   "wymiar": "spojnosc",
+   "waga": "wysoka",
+   "plik": "src/pages/narzedzia/zlecenie-netto.astro",
+   "linia": 30,
+   "problem": "FAQ podaje minimalną stawkę godzinową wpisaną na sztywno („w 2026 r. 31,40 zł”), a nie z prawo.ts. Od 1.01.2027 strona będzie podawać nieaktualną kwotę, choć placa-minimalna.astro pokaże już 32,30 zł.",
+   "dowod": "'Tak, w 2026 r. 31,40 zł brutto za każdą godzinę wykonywania zlecenia (art. 8a …)'. W prawo.ts:472 jest 2027: stawkaGodzinowa 32.3 (Dz.U. 2026 poz. 1213).",
+   "poprawka": "Rok bieżący z LATA (jak w placa-minimalna.astro:10–11) i `${zl(PLACA_MINIMALNA[rok].stawkaGodzinowa)} w ${rok} r.`. Nazwa „Płaca minimalna” w tej odpowiedzi powinna być linkiem w sekcji wyjaśnienia (patrz X2-9)."
+  },
+  {
+   "id": "X2-7",
+   "slug": "koszt-pracodawcy",
+   "wymiar": "spojnosc",
+   "waga": "srednia",
+   "plik": "src/lib/narzedzia/koszt-pracodawcy.ts",
+   "linia": 35,
+   "problem": "Jako jedyne narzędzie bierze płacę minimalną z roku wpisanego na sztywno (PLACA_MINIMALNA[2026]), a nie według daty. Stopy i limit są też tylko na 2026, a strona po 1.01.2027 dalej pokazuje „2026”. W 2027 r. pensja 4806–4949 zł dostanie FP i FS, choć podstawa jest niższa od płacy minimalnej 4950 zł.",
+   "dowod": "`const placiFp = !d.wiekZwolniony && B >= PLACA_MINIMALNA[2026].miesiecznie;`, STOPY_PRACODAWCY_2026 i LIMIT_ROCZNY_2026. W koszt-pracodawcy.astro:9–36 tytuł i h1 mają „2026”, przykłady PLACA_MINIMALNA[2026].",
+   "poprawka": "Dodać parametr rok (domyślnie bieżący z LATA) i PLACA_MINIMALNA[rok]. Do czasu sprawdzenia stóp na 2027 r. (ustawa budżetowa, kwota 30-krotności) pokazać komunikat, że kalkulator liczy według stawek z 2026 r. Test dla B=4900 i rok=2027."
+  },
+  {
+   "id": "X2-8",
+   "slug": "wiele (21 narzędzi)",
+   "wymiar": "spojnosc",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/dyzur-w-pracy.astro",
+   "linia": 19,
+   "problem": "Indeksy przepisów w FAQ są zapisane na dwa sposoby. Część stron używa umownego „151^8” (Faq.astro zamienia go na <sup>, bo podzbiór fontu nie ma cyfr indeksu), a 21 stron wpisuje znaki Unicode „151⁵”, „103⁵” spoza unicode-range fontu, więc te cyfry rysuje font zastępczy.",
+   "dowod": "Faq.astro:5 mówi: zapisujesz „art. 151^8”, na stronie to <sup>. fonty.css: unicode-range kończy się na U+00A0-00FF i nie ma U+2070-2079. Strony z Unicode w FAQ: delegacja-krajowa, delegacja-zagraniczna, drgania-w-pracy, dyzur-w-pracy, kalkulator-urlopu, kara-porzadkowa, kontrola-trzezwosci, ochrona-przedemerytalna, odszkodowanie-za-zwolnienie, okres-probny, powierzchnia-na-pracownika, praca-w-ciazy, pracownik-mlodociany, rodzic-w-pracy, urlop-ojcowski, urlop-wychowawczy, wyplata-z-nadgodzinami, zakaz-konkurencji, zasilek-dla-bezrobotnych, zwolnienie-na-l4, zwrot-kosztow-szkolenia.",
+   "poprawka": "W tablicach faq zamienić [⁰-⁹] na ^n (skrypt sed), a do kontroli SEO dodać regułę, która wykrywa indeksy Unicode w faq. Teksty skryptów (textContent) muszą zostać przy Unicode, więc do fontu trzeba dodać U+2070-2079 albo przyjąć „art. 151 § …” bez indeksu."
+  },
+  {
+   "id": "X2-9",
+   "slug": "badania-udt / waznosc-uprawnien-udt / zlecenie-netto / placa-minimalna / stawka-godzinowa",
+   "wymiar": "spojnosc",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/badania-udt.astro",
+   "linia": 104,
+   "problem": "Brakuje oczywistych linków w sekcji wyjaśnienia. 10 narzędzi nie ma żadnego linku wychodzącego (badania-udt, brutto-netto, dodatek-za-prace-w-nocy, kontrola-grafiku, placa-minimalna, szkolenie-okresowe-bhp, temperatura-w-pracy, wynagrodzenie-za-przestoj, zakaz-konkurencji, zlecenie-netto), a do 18 nie linkuje żadne inne narzędzie.",
+   "dowod": "Najbardziej widoczne pary bez linku: badania-udt ↔ waznosc-uprawnien-udt (w obu mowa o UDT, wózkach i suwnicach); zlecenie-netto odsyła do „narzędzia Płaca minimalna” tylko tekstem w FAQ (linia 30); placa-minimalna ↔ stawka-godzinowa ↔ wynagrodzenie-za-przestoj (ta sama stawka z płacy minimalnej i wymiaru); dodatek-za-prace-w-nocy ↔ wyplata-z-nadgodzinami i wymiar-czasu-pracy; brutto-netto ↔ koszt-pracodawcy (link jest tylko z koszt-pracodawcy) i zlecenie-netto; kontrola-grafiku ↔ wymiar-czasu-pracy i przerwy-w-pracy; temperatura-w-pracy ↔ normy-sanitarne i powierzchnia-na-pracownika. Do żadnego z tych narzędzi nie ma linku: badania-udt, dni-robocze, dyzur-w-pracy, kalkulator-ppk, koszt-pracodawcy, odszkodowanie-za-wypadek-przy-pracy, okres-probny, placa-minimalna, praca-w-niedziele, stawka-godzinowa, szkolenie-okresowe-bhp, temperatura-w-pracy, urlop-okolicznosciowy, wynagrodzenie-za-przestoj, wynagrodzenie-za-urlop, wyplata-z-nadgodzinami, zakaz-konkurencji, zlecenie-netto.",
+   "poprawka": "Dopisać po jednym zdaniu z linkiem w slocie „wyjasnienie” każdej z wymienionych par. Nie dopisywać linków w FAQ."
+  },
+  {
+   "id": "X2-10",
+   "slug": "kara-porzadkowa / przedawnienie-wynagrodzenia",
+   "wymiar": "spojnosc",
+   "waga": "niska",
+   "plik": "src/lib/narzedzia/kara-porzadkowa.ts",
+   "linia": 21,
+   "problem": "Narzędzia różnie stosują art. 115 KC. przedawnienie celowo go nie stosuje (wariant bezpieczny: najwcześniejsza data). kara-porzadkowa przesuwa z soboty i święta terminy pracodawcy na ukaranie (2 tygodnie i 3 miesiące, art. 109 § 1), czyli wydłuża je na niekorzyść pracownika i ocenia jako „w terminie” karę nałożoną w poniedziałek po terminie przypadającym w sobotę.",
+   "dowod": "kara-porzadkowa.ts:21–22: przesunZDniaWolnego(dodajDni(wiadomosc,14)) i przesunZDniaWolnego(dodajMiesiace(naruszenie,3)). przedawnienie.ts:8: „Nie liczymy też przesunięć z art. 115 KC”. Zasada 2 w 02-fabryka.md §4 mówi o wariancie bezpiecznym dla pracownika.",
+   "poprawka": "Do decyzji partii prawnej: dla terminów pracodawcy z art. 109 § 1 nie przesuwać końca (albo pokazać oba warianty i napisać w „Jak liczymy”, czego przepis nie rozstrzyga). Przesunięcie zostawić dla sprzeciwu pracownika (art. 112 § 1)."
+  },
+  {
+   "id": "X2-11",
+   "slug": "zwolnienie-na-l4 / delegacja-krajowa / urlop-wychowawczy",
+   "wymiar": "tresc-ux",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/zwolnienie-na-l4.astro",
+   "linia": 147,
+   "problem": "Formy rodzajowe poza listą już zgłoszonych narzędzi.",
+   "dowod": "zwolnienie-na-l4.astro:75 i 147: „jeśli nadal jesteś niezdolny albo niezdolna do pracy”. delegacja-krajowa.astro:52 (lead): „posiłki, które dostałeś albo dostałaś za darmo”. urlop-wychowawczy.astro:64: „Jestem jedynym uprawnionym rodzicem albo opiekunem”.",
+   "poprawka": "„jeśli niezdolność do pracy trwa dalej”, „posiłki zapewnione za darmo”, „Tylko ja mam prawo do urlopu (jedyny rodzic albo opiekun)”."
+  },
+  {
+   "id": "X2-12",
+   "slug": "wiele (35 narzędzi)",
+   "wymiar": "tresc-ux",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/okres-wypowiedzenia.astro",
+   "linia": 1,
+   "problem": "Przekroczone limity zasady 9. Wyrenderowany <title> (bez „| Rytm Hali”) ma ponad 48 znaków na 17 stronach, a meta description ponad 155 znaków na 18 stronach. `krotko` w rejestrze mieści się w 110 znakach wszędzie.",
+   "dowod": "Skrypt /tmp/claude-0/-home-user-lean-time-study-tracker/85e7a3e9-bef9-5b60-93fa-46f6f146f579/scratchpad/audyt/X2/limity.mjs na podglądzie 127.0.0.1:4322. Tytuły (znaki): temperatura-w-pracy 53, kalkulator-l4 53, okres-wypowiedzenia 53, odszkodowanie-za-wypadek-przy-pracy 52, wymiar-czasu-pracy 51, ekwiwalent-za-urlop 51, umowa-na-czas-okreslony 51, wynagrodzenie-za-urlop 51, swiadczenie-rehabilitacyjne 51, kontrola-grafiku 51, ochrona-przedemerytalna 51, odszkodowanie-za-zwolnienie 51, okres-probny 50, urlop-ojcowski 49, termin-wyplaty-wynagrodzenia 49, zasilek-dla-bezrobotnych 49. Opisy (znaki): wolne-na-dziecko 164, umowa-na-czas-okreslony 164, dni-wolne-od-pracy 163, brutto-netto 163, drgania-w-pracy 162, urlop-wychowawczy 162, halas-w-pracy 160, delegacja-krajowa 160, okres-wypowiedzenia 160, wymiar-czasu-pracy 159, placa-minimalna 159, kalkulator-l4 158, odprawa-posmiertna 158, praca-w-niedziele 157, urlop-w-agencji-pracy 156, kalkulator-ppk 156, koszt-pracodawcy 156. Część opisów ma kwoty z szablonu, więc ich długość zmienia się z rokiem.",
+   "poprawka": "Skrócić teksty. Do scripts/ (kontrola SEO) dodać regułę: tytuł bez sufiksu do 48 znaków, description do 155, liczone na zbudowanym HTML."
+  },
+  {
+   "id": "X2-13",
+   "slug": "delegacja-krajowa / delegacja-zagraniczna",
+   "wymiar": "spojnosc",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/delegacja-krajowa.astro",
+   "linia": 49,
+   "problem": "Rok w tytule jest wpisany na sztywno („Delegacja krajowa 2026”, „Dieta zagraniczna 2026”), podczas gdy inne narzędzia biorą rok z LATA i daty. Po 1.01.2027 tytuł w wynikach wyszukiwania będzie nieaktualny, choć stawki się nie zmieniają.",
+   "dowod": "delegacja-krajowa.astro:49 tytul=\"Delegacja krajowa 2026: dieta 45 zł i ryczałty\", delegacja-zagraniczna.astro:49 tytul=\"Dieta zagraniczna 2026: delegacja i tabela\"",
+   "poprawka": "Rok bieżący z dzisWPolsce() (jak placa-minimalna.astro:10) albo usunąć rok z tytułu."
+  }
+ ],
+ "do_stanu": [
+  {
+   "sprawa": "Stopy FP/FS/FGŚP i 30-krotność przeciętnego wynagrodzenia na 2027 r. (ustawa budżetowa i obwieszczenie MRPiPS), potrzebne do koszt-pracodawcy w 2027 r.",
+   "kiedy_sprawdzic": "2026-12-31",
+   "gdzie_w_kodzie": "src/lib/narzedzia/koszt-pracodawcy.ts:12–15, 35"
+  }
+ ],
+ "poza_zakresem": [
+  "src/components/narzedzia/StronaNarzedzia.astro: sekcja „Inne narzędzia” pokazuje wszystkie 65 pozostałych narzędzi bez doboru tematycznego, więc nie zastąpi linków kontekstowych z X2-9.",
+  "src/styles/fonty.css (podzbiór fontu): brak U+2070-2079, przez co indeksy Unicode w tekstach skryptów (art. 151⁵, 103⁵) rysuje font zastępczy (X2-8)."
+ ],
+ "nie_sprawdzono": [
+  "Zgodność pola `przepisy` w rejestrze z artykułami cytowanymi na każdej stronie (tylko limity `krotko`).",
+  "Różne zaokrąglanie stawki godzinowej z płacy minimalnej (dodatek-nocny zaokrągla do grosza przed liczeniem 20%, przestoj liczy na wartości dokładnej). Nie oceniałem, czy daje to widoczne rozbieżności w groszach między narzędziami.",
+  "Teksty „1 dni” w kilku narzędziach (kalkulator-l4, okres-zasilkowy, zasilek-opiekunczy, ochrona-przedemerytalna, zwrot-kosztow-szkolenia): WSPOLNE.md uznaje „1 dni” za dopuszczalne, więc ich nie zgłaszam.",
+  "Wypowiedzenie.pelneMiesiace a terminy.ts: już zgłoszone jako E-1. Mój skrypt potwierdza rozbieżność: od 2025-08-31 do 2026-02-28 → 5 miesięcy i 2 tygodnie zamiast 6 miesięcy i 1 miesiąca; od 2024-02-29 do 2027-02-28 → 35 miesięcy zamiast 36, więc 1 miesiąc zamiast 3 miesięcy wypowiedzenia. Innych takich par nie znalazłem: niepelnosprawny, odprawy, mlodociany, okres-probny, rodzic, urlop-ojcowski i praca-tymczasowa liczą według tych samych konwencji (skrypty /tmp/claude-0/-home-user-lean-time-study-tracker/85e7a3e9-bef9-5b60-93fa-46f6f146f579/scratchpad/audyt/X2/spojnosc.mjs i /tmp/claude-0/-home-user-lean-time-study-tracker/85e7a3e9-bef9-5b60-93fa-46f6f146f579/scratchpad/audyt/X2/pary.mjs)."
+ ]
+}
