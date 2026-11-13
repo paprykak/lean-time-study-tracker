@@ -1,0 +1,65 @@
+{
+  "partia": "I",
+  "sprawdzone": [
+    {"slug": "czy-potrzebne-uprawnienia-udt", "pliki": ["src/pages/narzedzia/czy-potrzebne-uprawnienia-udt.astro", "src/lib/narzedzia/czy-udt.ts", "src/lib/narzedzia/czy-udt.test.ts", "src/lib/narzedzia/uprawnienia-udt.ts", "tests/e2e/narzedzie-czy-udt.spec.ts", "src/data/narzedzia.ts", "src/data/prawo.ts"], "wynik": "problemy: tabela nr 1 i 2 zał. nr 3 (PDF Dz.U. 2019 poz. 1008) zgodna z OBSLUGA/KONSERWATOR co do nazw i okresów 5/10 lat; wyłączenia poz. 1–3 i 4–11, progi 250/1000 kg włącznie, § 1 pkt 6–7 rozp. 2012, § 4 rozp. o wózkach, art. 22–23 ustawy (t.j. 2024 poz. 1194, zmiana 2026 poz. 252 bez wpływu) zgodne; 320/412 px bez przewijania w bok, listy nieucięte, SSR = skrypt; opłata egzaminu bez ostrzeżenia o nowym komunikacie GUS, komunikat błędu bez role=alert"},
+    {"slug": "waznosc-uprawnien-sep", "pliki": ["src/pages/narzedzia/waznosc-uprawnien-sep.astro", "src/lib/narzedzia/uprawnienia-sep.ts", "src/lib/narzedzia/uprawnienia-sep.test.ts", "tests/e2e/narzedzie-sep.spec.ts", "src/data/narzedzia.ts", "src/data/prawo.ts"], "wynik": "problemy: art. 54 ust. 1aa, 2, 4–4b PE (t.j. 2026 poz. 43; zmiany 2026 poz. 516, 607, 900, 1347, 1348 sprawdzone, tylko poz. 900 dodaje ust. 4b), art. 25 ustawy 2021 poz. 1093 (w życie 3.07.2021), § 5, 7, 10, 13, 14, 16 rozp. 2022 poz. 1392 zgodne; daty (29.02.2024 → 27/28.02.2029, rocznica, 31.05 → 28.02 i 30.04 w .ics) i opłaty 480,60/495,00 zł policzone niezależnie w Pythonie; plik .ics poprawny (zawijanie ≤75 B, alarmy); w roku bez płacy minimalnej skrypt po cichu przestawia datę wniosku na 31.12 ostatniego roku z tabeli; komunikaty błędów bez role=alert"},
+    {"slug": "sad-pracy-czy-pip", "pliki": ["src/pages/narzedzia/sad-pracy-czy-pip.astro", "src/lib/narzedzia/sad-pracy.ts", "src/lib/narzedzia/sad-pracy.test.ts", "tests/e2e/narzedzie-sad-pracy.spec.ts", "src/data/narzedzia.ts", "src/data/prawo.ts"], "wynik": "ok z drobnymi nieścisłościami cytowań: art. 13, 21, 35, 96–97 u.k.s.c. (t.j. 2025 poz. 1228 + 1157; zmiany 2025 poz. 1172, 2026 poz. 346, 473, 1003 sprawdzone), art. 17 pkt 4, 23¹, 461 § 1 i 1¹ (po 2026 poz. 1046), 465–466, 477² KPC (zmiana 2026 poz. 1296 bez wpływu), art. 10–11, 23, 33a, 34, 44 ustawy o PIP po 2026 poz. 473, art. 97, 97¹, 112, 264–265 Kp zgodne; progi opłaty od apelacji 50 000/50 000,01/70 020,01/100 000,01 zł i limit 100 000 zł policzone niezależnie; 320/412 px ok, SSR = skrypt"},
+    {"slug": "mobbing-i-dyskryminacja", "pliki": ["src/pages/narzedzia/mobbing-i-dyskryminacja.astro", "src/lib/narzedzia/mobbing.ts", "src/lib/narzedzia/mobbing.test.ts", "tests/e2e/narzedzie-mobbing.spec.ts", "src/data/narzedzia.ts", "src/data/prawo.ts"], "wynik": "ok, jedna luka w testach: art. 18³d–18³g i 94³ Kp w brzmieniu z Dz.U. 2026 poz. 1046 (ogłoszona 4.08.2026, w życie 5.11.2026) i dawne brzmienie (odnośniki 11 i 28 w t.j. 2026 poz. 1245), art. 3 i 5 ustawy zmieniającej, art. 291 i 295 Kp, art. 461 § 1¹ i 477⁶a KPC zgodne; kwoty 1/3/6 × 4666/4806/4950 zł (2027: Dz.U. 2026 poz. 1213, § 1) i przedawnienie (29.02.2024 → 28.02.2027, ostatni dzień 13.11.2026) policzone niezależnie; brak nowszych zmian Kp w API Sejmu; 320/412 px ok, SSR = skrypt"}
+  ],
+  "znaleziska": [
+    {
+      "id": "I-1", "slug": "czy-potrzebne-uprawnienia-udt", "wymiar": "prawo", "waga": "srednia",
+      "plik": "src/pages/narzedzia/czy-potrzebne-uprawnienia-udt.astro", "linia": 13,
+      "problem": "Opłata za egzamin UDT (333,88 zł) jest liczona przy budowaniu z komunikatu GUS o przeciętnym wynagrodzeniu za 2025 r. i pokazywana w wyniku, FAQ i sekcji „Egzamin UDT” bez roku komunikatu i bez ostrzeżenia. Po ogłoszeniu komunikatu za 2026 r. (luty 2027 r.) kwota będzie po cichu nieaktualna; siostrzane narzędzie waznosc-uprawnien-udt ma na to ostrzeżenie (kwotaGusMozeNieaktualna), to nie.",
+      "dowod": "DU_2024_1194.txt, art. 23 ust. 4: „Opłaty … pobierane są w wysokości 3,75 % kwoty przeciętnego wynagrodzenia … ogłaszanej przez Prezesa GUS … obowiązującej w dniu złożenia wniosku”. src/data/prawo.ts:877 PRZECIETNE_WYNAGRODZENIE = { zaRok: 2025, kwota: 8903.56, ogloszono: '2026-02-10' }; grep kwotaGusMozeNieaktualna: używane tylko w src/pages/narzedzia/waznosc-uprawnien-udt.astro (linie 6, 15, 177, 184), w czy-potrzebne-uprawnienia-udt.astro brak. Linie 13, 62 (FAQ), 200 (wiersz „Egzamin”), 256.",
+      "poprawka": "Podawać kwotę z dopiskiem „(z przeciętnego wynagrodzenia za ${PRZECIETNE_WYNAGRODZENIE.zaRok} r.)” i dodać ten sam ukryty akapit co w waznosc-uprawnien-udt.astro (data-ogloszono + kwotaGusMozeNieaktualna w skrypcie), widoczny po 10.02.2027 r. Test E2E z page.clock na 2027-02-11: ostrzeżenie widoczne."
+    },
+    {
+      "id": "I-2", "slug": "waznosc-uprawnien-sep", "wymiar": "rachunek", "waga": "niska",
+      "plik": "src/pages/narzedzia/waznosc-uprawnien-sep.astro", "linia": 385,
+      "problem": "Gdy bieżący rok nie ma płacy minimalnej w PLACA_MINIMALNA (np. 2028 przed dopisaniem rozporządzenia), skrypt po cichu zmienia domyślną datę wniosku na 31 grudnia ostatniego roku z tabeli i pokazuje opłatę z tamtego roku bez komunikatu; osoba widzi kwotę 495,00 zł jako opłatę „dziś”.",
+      "dowod": "Linia 385: `if (!LATA.includes(Number(wniosek.value.slice(0, 4)))) wniosek.value = `${LATA[LATA.length - 1]}-12-31`;` — przy ręcznie wpisanej dacie z 2028 r. ten sam przypadek daje komunikat błędu (linia 275, sprawdzone Playwrightem: wniosek 2028-01-01 → opłata „—” i błąd), ale przy wartości domyślnej błędu nie ma. § 14 ust. 1 rozp. 2022 poz. 1392: opłata z płacy „obowiązującego w dniu złożenia wniosku”.",
+      "poprawka": "Zamiast przestawiać datę zostawić dzisiejszą i pokazać ten sam komunikat co przy ręcznym wpisie („Nie mamy płacy minimalnej na 2028 r.”), albo przestawić datę i dopisać uwagę, że to opłata dla wniosku z ostatniego znanego roku. Test E2E z page.clock na 2028-01-05."
+    },
+    {
+      "id": "I-3", "slug": "czy-potrzebne-uprawnienia-udt", "wymiar": "tresc-ux", "waga": "niska",
+      "plik": "src/pages/narzedzia/czy-potrzebne-uprawnienia-udt.astro", "linia": 171,
+      "problem": "Komunikat błędu udźwigu nie ma role=\"alert\" i leży poza regionem aria-live, więc czytnik ekranu nie ogłasza błędu (inaczej niż w sad-pracy-czy-pip i mobbing-i-dyskryminacja). To samo w waznosc-uprawnien-sep (sep-wydano-blad, sep-wpis-blad, sep-wniosek-blad, linie 75, 85, 92).",
+      "dowod": "Playwright 320 px, wciągnik, udźwig '' / '0' / '-5': blad hidden=false, tekst „Wpisz udźwig w kilogramach, większy od zera.”, role=null, aria-invalid=true. W sad-pracy-czy-pip.astro:56 i mobbing-i-dyskryminacja.astro:69 komunikat ma role=\"alert\".",
+      "poprawka": "Dodać role=\"alert\" do <p id=\"cu-udzwig-blad\">, <p id=\"sep-wydano-blad\">, <p id=\"sep-wpis-blad\">, <p id=\"sep-wniosek-blad\">."
+    },
+    {
+      "id": "I-4", "slug": "sad-pracy-czy-pip", "wymiar": "prawo", "waga": "niska",
+      "plik": "src/lib/narzedzia/sad-pracy.ts", "linia": 49,
+      "problem": "Opis drogi sądowej przy mobbingu wskazuje jako podstawę właściwości sądu rejonowego art. 5 ustawy z 19 czerwca 2026 r.; ten przepis mówi tylko, że do spraw wszczętych wcześniej stosuje się KPC w dawnym brzmieniu. Podstawą jest art. 461 § 1¹ KPC w brzmieniu nadanym art. 2 pkt 2 tej ustawy.",
+      "dowod": "DU_2026_1046.txt, art. 5: „Do postępowań wszczętych i niezakończonych przed dniem wejścia w życie niniejszej ustawy stosuje się przepisy ustawy zmienianej w art. 2 w brzmieniu dotychczasowym.”; art. 2 pkt 2: nowe brzmienie art. 461 § 1¹ („sprawy dotyczące ochrony dóbr osobistych, mobbingu, naruszenia zasady równego traktowania”).",
+      "poprawka": "W SPRAWY_PRACOWNICZE.mobbing.sad: „…zawsze trafiają do sądu rejonowego (art. 461 § 1¹ Kodeksu postępowania cywilnego; art. 5 ustawy z 19 czerwca 2026 r.)” albo samo „(art. 461 § 1¹ KPC)”, tak jak w uwadze z linii 115."
+    },
+    {
+      "id": "I-5", "slug": "sad-pracy-czy-pip", "wymiar": "prawo", "waga": "niska",
+      "plik": "src/pages/narzedzia/sad-pracy-czy-pip.astro", "linia": 23,
+      "problem": "Niepełny tytuł rozporządzenia w FAQ: „w sprawie przyjmowania i rozpatrywania skarg i wniosków”; tytuł brzmi „w sprawie organizacji przyjmowania i rozpatrywania skarg i wniosków” (rejestr skargiWnioski w prawo.ts ma tytuł poprawny).",
+      "dowod": "DU_2002_46.json, title: „Rozporządzenie Rady Ministrów z dnia 8 stycznia 2002 r. w sprawie organizacji przyjmowania i rozpatrywania skarg i wniosków.”",
+      "poprawka": "W FAQ (linia 23) wpisać „w sprawie organizacji przyjmowania i rozpatrywania skarg i wniosków”."
+    },
+    {
+      "id": "I-6", "slug": "mobbing-i-dyskryminacja", "wymiar": "testy", "waga": "niska",
+      "plik": "tests/e2e/narzedzie-mobbing.spec.ts", "linia": 9,
+      "problem": "Brak testu przełomu roku: lista „Płaca minimalna z roku” ma się przestawić w przeglądarce na bieżący rok (data-rok-biezacy), a kwota na 29 700,00 zł po 1.01.2027; wszystkie testy wybierają rok ręcznie (selectOption('2026')). Narzędzie SEP ma taki test (5.01.2027 → 495,00 zł).",
+      "dowod": "tests/e2e/narzedzie-mobbing.spec.ts:12 `selectOption('2026')` w beforeEach; brak page.clock. tests/e2e/narzedzie-sep.spec.ts:51 „domyślna data wniosku to prawdziwe dziś: 5.01.2027 → 495,00 zł”.",
+      "poprawka": "Dodać test z page.clock.setFixedTime('2027-01-05T10:00:00+01:00') bez wyboru roku: #m-rok ma wartość 2027, data domyślna 2027-01-05, kwota /^29\\s?700,00\\szł$/ dla mobbingu."
+    }
+  ],
+  "do_stanu": [
+    {"sprawa": "Komunikat Prezesa GUS o przeciętnym wynagrodzeniu w 2026 r. (M.P., zwykle ok. 10 lutego): nowa podstawa opłaty za egzamin UDT (3,75%, art. 23 ust. 4 ustawy o dozorze technicznym)", "kiedy_sprawdzic": "2027-02-10", "gdzie_w_kodzie": "src/data/prawo.ts: PRZECIETNE_WYNAGRODZENIE i wpis przecietneWynagrodzenie2025; strony czy-potrzebne-uprawnienia-udt i waznosc-uprawnien-udt"},
+    {"sprawa": "Rozporządzenie Rady Ministrów o minimalnym wynagrodzeniu w 2028 r. (do 15 września 2027 r.): mobbing (kwoty 1/3/6 ×, lista lat) i SEP (opłata 10%)", "kiedy_sprawdzic": "2027-09-15", "gdzie_w_kodzie": "src/data/prawo.ts: PLACA_MINIMALNA[2028] i wpis placa2028; rejestr narzedzia.ts (przepisy mobbing-i-dyskryminacja, waznosc-uprawnien-sep)"},
+    {"sprawa": "Ustawa z 27 lutego 2026 r. (Dz.U. 2026 poz. 346) zmienia ustawę o kosztach sądowych od 30 września 2028 r.; według rejestru nie dotyczy art. 13, 35, 96–97, sprawdzić tekst jednolity po wejściu w życie", "kiedy_sprawdzic": "2028-09-30", "gdzie_w_kodzie": "src/lib/narzedzia/sad-pracy.ts (oplataOdPisma, oplataApelacji)"}
+  ],
+  "poza_zakresem": [],
+  "nie_sprawdzono": [
+    "Orzecznictwo SN (sn.pl blokuje automaty): wymagalność i początek biegu przedawnienia roszczeń o zadośćuczynienie za mobbing (art. 291 § 1 Kp a art. 442¹ KC) oraz czy art. 18³f Kp stosuje się do zachowań sprzed 5.11.2026 r. — narzędzie opisuje oba warianty, do ręcznej weryfikacji.",
+    "Stanowisko UDT co do wózka „reach truck” (wysięgnik czy nie) i dźwigów towarowych małych w tab. nr 2 lp. 12 (konserwacja) — przepis nie rozstrzyga, narzędzie opisuje przyjętą interpretację.",
+    "Czytnik ekranu (NVDA/VoiceOver) — sprawdzono tylko atrybuty ARIA w DOM, bez realnego odsłuchu.",
+    "Wygląd w WebKit/iPhone — Playwright tylko Chromium."
+  ]
+}
