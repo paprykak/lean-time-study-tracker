@@ -815,9 +815,6 @@ export const W_PRZYGOTOWANIU: { nazwa: string; kategoria: KategoriaNarzedzia }[]
   { nazwa: 'Testy UDT na wózki widłowe', kategoria: 'uprawnienia' },
 ];
 
-/** Karty na stronie głównej (wybór redakcji, dopóki nie ma statystyk); pozostałe narzędzia są tam na zwartej liście. */
-export const NA_GLOWNEJ = ['brutto-netto', 'kalkulator-l4', 'dodatek-za-prace-w-nocy', 'kalkulator-nadgodzin', 'kalkulator-urlopu', 'waznosc-uprawnien-udt'] as const;
-
 export const adresNarzedzia = (slug: string) => `/narzedzia/${slug}`;
 
 export function narzedzie(slug: string): Narzedzie {
