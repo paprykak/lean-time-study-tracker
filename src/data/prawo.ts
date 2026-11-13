@@ -703,6 +703,13 @@ export const AKTY = {
     adres: eli(2003, 401),
     sprawdzono: '2026-11-13',
   },
+  sprawnoscPsychofizyczna: {
+    nazwa: 'Rozporządzenie w sprawie rodzajów prac wymagających szczególnej sprawności psychofizycznej',
+    publikator: 'Dz.U. 1996 poz. 287',
+    uwaga: 'bez zmian; pkt 2: obsługa podnośników i platform hydraulicznych, pkt 3: układnice magazynowe',
+    adres: eli(1996, 287),
+    sprawdzono: '2026-11-13',
+  },
 } as const satisfies Record<string, Akt>;
 
 export type KluczAktu = keyof typeof AKTY;

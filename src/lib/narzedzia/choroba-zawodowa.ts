@@ -370,7 +370,7 @@ export function tekstyChoroby(d: DaneChoroby, w: WynikChoroby, dzis: string): Te
       podstawa = `Choroba jest w wykazie (${nr}). Pierwsze udokumentowane objawy z ${dataPoPolsku(d.objawy!)} mieszczą się w okresie, który trwa do ${t} włącznie, więc termin z art. 235² ${KP} nie zamyka drogi do rozpoznania.`;
     } else if (w.stan === 'objawy-po-okresie') {
       glowny = 'Objawy po okresie z wykazu';
-      podstawa = `Choroba jest w wykazie (${nr}), ale okres na udokumentowane objawy trwał do ${t}, a objawy wpisano z ${dataPoPolsku(d.objawy!)}. Jeśli objawy były wcześniej i są w dokumentacji (np. u lekarza), liczy się ta wcześniejsza data.`;
+      podstawa = `Choroba jest w wykazie (${nr}), ale okres na udokumentowane objawy trwał do ${t}, a wpisane objawy są z ${dataPoPolsku(d.objawy!)}, czyli później. Jeśli objawy były wcześniej i są w dokumentacji (np. u lekarza), liczy się ta wcześniejsza data.`;
     } else if (w.stan === 'termin') {
       glowny = `Objawy do ${t}`;
       podstawa = `Choroba jest w wykazie (${nr}). Udokumentowane objawy muszą wystąpić najpóźniej ${t} (${zaIle(w.dniDoTerminu!)}). Zgłoszenie i badanie mogą być później: liczy się data objawów w dokumentacji.`;

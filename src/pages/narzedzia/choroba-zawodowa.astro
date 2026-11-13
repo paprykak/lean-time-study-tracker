@@ -54,7 +54,7 @@ const faq = [
   },
   {
     pytanie: 'Co przysługuje po stwierdzeniu choroby zawodowej?',
-    odpowiedz: `Świadczenia z ubezpieczenia wypadkowego: zasiłek chorobowy w wysokości 100% podstawy od pierwszego dnia niezdolności do pracy, świadczenie rehabilitacyjne, zasiłek wyrównawczy, jednorazowe odszkodowanie za stały lub długotrwały uszczerbek na zdrowiu, renta z tytułu niezdolności do pracy i renta szkoleniowa (art. 6, 8 i 9 ustawy wypadkowej).${kwota ? ` Za każdy procent uszczerbku ZUS płaci ${zl(kwota.zaProcent)} przy decyzji wydanej od ${dataPoPolsku(kwota.od)} do ${dataPoPolsku(kwota.do)}.` : ''}`,
+    odpowiedz: `Świadczenia z ubezpieczenia wypadkowego: zasiłek chorobowy w wysokości 100% podstawy od pierwszego dnia niezdolności do pracy, świadczenie rehabilitacyjne, zasiłek wyrównawczy, jednorazowe odszkodowanie za stały lub długotrwały uszczerbek na zdrowiu, renta z tytułu niezdolności do pracy i renta szkoleniowa (art. 6, 8 i 9 ustawy wypadkowej).${kwota ? ` Za każdy procent uszczerbku ZUS płaci ${zl(kwota.zaProcent)} przy decyzji wydanej od ${dataPoPolsku(kwota.od)} do ${dataPoPolsku(kwota.do)} (${kwota.zrodlo}).` : ''}`,
   },
 ];
 ---
