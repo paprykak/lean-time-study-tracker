@@ -9,7 +9,7 @@ import { dzisWPolsce } from '../../lib/narzedzia/terminy';
 
 const rok = rokKosztu(dzisWPolsce());
 const start = kosztPracodawcy({ brutto: 6000, rok });
-const minimalne = LATA_KOSZTU.map((r) => ({ rok: r, placa: PLACA_MINIMALNA[r].miesiecznie, ...kosztPracodawcy({ brutto: PLACA_MINIMALNA[r].miesiecznie, rok: r }) }));
+const minimalne = LATA_KOSZTU.map((r) => ({ placa: PLACA_MINIMALNA[r].miesiecznie, ...kosztPracodawcy({ brutto: PLACA_MINIMALNA[r].miesiecznie, rok: r }) }));
 const minimalna = minimalne.find((m) => m.rok === rok)!;
 const PRZYKLADY = [PLACA_MINIMALNA[rok].miesiecznie, 6000, 7000, 8000, 10000];
 const LATA_TEKST = LATA_KOSZTU.join(' i ');

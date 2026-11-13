@@ -1,0 +1,181 @@
+{
+ "partia": "A",
+ "werdykty": [
+  {
+   "id": "A-1",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Pole daty ma na sztywno min 2025-01-01 i max 2027-12-31, a walidacja w skrypcie sprawdza `data > '2027-12-31'`. Logika (wolneZaNiedzieleSwieto, swieta) działa dla każdego roku, więc od 1.01.2028 narzędzie blokuje się bez powodu.",
+   "dowod": "Playwright na podglądzie: 2028-01-02 daje okno „—” i komunikat „Wpisz datę z lat 2025–2027.”. Wywołanie przez tsx: wolneZaNiedzieleSwieto('2028-01-02',1) daje okno 2027-12-27–2028-01-08 i okres 2028-01-01–2028-01-31, czyli funkcja liczy poprawnie. Kod: praca-w-niedziele.astro:37 i :110.",
+   "poprawka": "praca-w-niedziele.astro:37: max=\"2100-12-31\" (jak w dni-robocze), min może zostać 2025-01-01 (Wigilia od 2025). :110: warunek `!poprawnaData(data) || data < '2025-01-01' || data > '2100-12-31'`, a komunikat „Wpisz datę od 1 stycznia 2025 r.” przepuszczony przez typografia().",
+   "testy": "E2E: 2028-01-02 daje okno „27 grudnia 2027 r. – 8 stycznia 2028 r.” i koniec „31 stycznia 2028 r.”. 2028-11-11 (sobota, święto) daje nagłówek „Dzień wolny za święto do” i 30 listopada 2028 r. Jednostkowy: oba przypadki dla wolneZaNiedzieleSwieto."
+  },
+  {
+   "id": "A-2",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Art. 151^1 § 1 Kp: „oprócz normalnego wynagrodzenia, przysługuje dodatek”. § 3 dotyczy wyłącznie „Wynagrodzenie stanowiące podstawę obliczania dodatku, o którym mowa w § 1 … – 60 % wynagrodzenia”. Rozporządzenie (Dz.U. 2017 poz. 927) też odsyła do 60% tylko przy dodatku. § 4 ust. 1: „Przy ustalaniu wynagrodzenia określonego procentowo w celu obliczenia … dodatku za pracę w godzinach nadliczbowych (art. 151^1 § 3 Kp) … stosuje się zasady obowiązujące przy ustalaniu wynagrodzenia za urlop”. § 4 ust. 2 pkt 1: stałe składniki dzieli się przez godziny do przepracowania. § 4a: stawka miesięczna z zaszeregowania przez godziny w miesiącu. Ani Kp, ani rozporządzenie nie obniżają do 60% normalnego wynagrodzenia za godziny nadliczbowe. To wynagrodzenie umowne w pełnej wysokości, czyli przy samej pensji pensja podzielona przez wymiar miesiąca. Kod mnoży 60% także przez godziny przy normalnym wynagrodzeniu, więc wynik „razem” jest zaniżony o 40% normalnego wynagrodzenia. Dotyczy tylko trybu „bez-zaszeregowania”. Tryby godzinowy i miesięczny są poprawne.",
+   "dowod": "Przepisy: .cache/narzedzia/prawo/DU_2026_1245.txt, wiersze 2676–2692 (art. 151^1 § 1 i 3), oraz DU_2017_927.txt, wiersze 490–545 (§ 4 ust. 1–2, § 4a). Kod: nadgodziny.ts:49–54, `stawka = doGrosza(0.6*kwota/wymiar)` i `normalne = doGrosza(stawka*(g100+g50))`. Podgląd: 8000 zł, XI 2026 (wymiar 160 h według wymiarMiesiaca), 1 h z 50% daje stawkę 30,00, dodatek 15,00, normalne 30,00 i razem 45,00 zł. Powinno być normalne 50,00 i razem 65,00. Przez tsx: 1 h z 100% daje razem 60. Powinno być 80.",
+   "poprawka": "nadgodziny.ts: (1) liczyć `stawkaNormalna = rodzaj==='godzinowa' ? w.stawka : doGrosza(w.kwota / wymiar)` oraz `stawka` (podstawa dodatku) `= rodzaj==='bez-zaszeregowania' ? doGrosza(0.6 * w.kwota / wymiar) : stawkaNormalna`. (2) `normalne = doGrosza(stawkaNormalna * (godziny100 + godziny50))`. Dodatki zostają liczone od `stawka`. (3) Dodać pole `stawkaNormalna` w WynikNadgodzin. kalkulator-nadgodzin.astro: :105, „Normalne wynagrodzenie liczymy tą samą stawką za godzinę” zastąpić zdaniem „Normalne wynagrodzenie liczymy pełną stawką za godzinę; 60% wynagrodzenia to tylko podstawa dodatku (art. 151^1 § 1 i 3 Kodeksu pracy).”. W „Jak liczymy” (:135–137) po zdaniu o 60% dopisać „…podstawą dodatku jest 60% wynagrodzenia; normalne wynagrodzenie za te godziny należy się w pełnej wysokości”. Przy normalnym wynagrodzeniu w trybie bez-zaszeregowania można pokazać stawkę pełną („8000 zł : 160 h”). FAQ 3 można uzupełnić tym samym zdaniem.",
+   "testy": "nadgodziny.test.ts, XI 2026 (160 h): bez-zaszeregowania 8000 zł i 1 h z 50% daje stawkę 30, stawkaNormalna 50, dodatek50 15, normalne 50, razem 65. 8000 zł i 1 h ze 100% daje dodatek100 30, normalne 50, razem 80. 6000 zł i 1 h z 50% daje stawkę 22,5, normalne 37,5, dodatek 11,25, razem 48,75. Regresja trybu miesięcznego: 8000 zł i 1 h z 50% daje stawkę 50, normalne 50, dodatek 25, razem 75. Istniejący test (linia 17, stawka 30) zostaje. E2E: radio bez-zaszeregowania, 8000, XI 2026, 1 h z 50% daje „65,00 zł”."
+  },
+  {
+   "id": "A-3",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "LATA = klucze PLACA_MINIMALNA (prawo.ts:511), dziś 2025–2027. Nadgodziny, grafik, dyżur i stawka biorą z nich listę i rok domyślny. Wymiar od płacy nie zależy. W stawce-godzinowej FAQ i tabela używają PLACA_MINIMALNA[rok], więc samo dołożenie roku bez osłony rzuciłoby błąd buildu.",
+   "dowod": "Podgląd: #n-rok to [2025, 2026, 2027]. kalkulator-nadgodzin.astro:12, kontrola-grafiku.astro:10, dyzur-w-pracy.astro:11–12 (w 2028 r. rok=2027 i miesiąc=1), stawka-godzinowa.astro:11, 27 i 76.",
+   "poprawka": "We wszystkich czterech stronach: `const rokBiezacy = Number(dzisWPolsce().slice(0,4)); const lata = [...new Set([...LATA, rokBiezacy, rokBiezacy+1])].sort((a,b)=>a-b); const rok = rokBiezacy;`, opcje z `lata`. Dyżur: miesiąc zawsze bieżący. Stawka-godzinowa: kolumnę i FAQ z płacą minimalną renderować tylko, gdy `PLACA_MINIMALNA[rok]` istnieje (w przeciwnym razie zdanie bez kwoty płacy). Jeśli skrypt przeglądarki stawki czyta PLACA_MINIMALNA[rok], też go osłonić.",
+   "testy": "Jednostkowo nie da się sprawdzić daty buildu. Wystarczy przegląd kodu i sprawdzenie, że wymiarMiesiaca(2028, m) zwraca [152,168,184,152,168,168,168,176,168,176,160,152] (policzone niezależnie w Pythonie)."
+  },
+  {
+   "id": "A-4",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Dopełniacz i miejscownik liczby mnogiej są poprawne dla każdego n ≥ 2 („z 2 dni”, „po 22 dniach”). Błąd jest tylko przy 1. odmiana() z trzema formami się tu nie nadaje, więc właściwa jest warunkowa poprawka audytora.",
+   "dowod": "Podgląd: od = do = 2026-12-31, n = 1 daje „z 1 dni kalendarzowych | Po 1 dniach roboczych 4 stycznia 2027 r.”. Kod: dni-robocze.astro:68 i :72 (SSR) oraz :127 i :130 (skrypt).",
+   "poprawka": "W SSR i w skrypcie: `r.kalendarzowe === 1 ? 'z 1 dnia kalendarzowego' : `z ${r.kalendarzowe} dni kalendarzowych``, `n === 1 ? 'Po 1 dniu roboczym' : `Po ${n} dniach roboczych``. Przepuścić przez typografia().",
+   "testy": "E2E: od = do = 2026-12-31, n = 1 daje „z 1 dnia kalendarzowego”, „Po 1 dniu roboczym” i 4 stycznia 2027 r. n = 2 daje „Po 2 dniach roboczych”."
+  },
+  {
+   "id": "A-5",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "`${wynik.zmian} zmian` daje „23 zmian” i „2 zmian”. Zgodnie z zasadą 4 liczba z rzeczownikiem idzie przez odmiana().",
+   "dowod": "kontrola-grafiku.astro:213. Funkcja odmiana(n, [jeden, kilka, wiele]) jest w src/lib/redakcja.ts:80.",
+   "poprawka": "`typografia(`${odmiana(wynik.zmian, ['zmiana', 'zmiany', 'zmian'])}, ${wynik.godziny} h przy wymiarze ${wynik.wymiar} h, dni wolnych: ${wynik.dniWolnych}`)`.",
+   "testy": "Jednostkowo odmiana(23, …) = „23 zmiany”, odmiana(22, …) = „22 zmiany”, odmiana(1, …) = „1 zmiana”, odmiana(25, …) = „25 zmian”. E2E: wzór trzyzmianowy, marzec 2027 r. daje „23 zmiany” (wartość 23 według audytora, niesprawdzona przeze mnie na podglądzie)."
+  },
+  {
+   "id": "A-6",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Zasada 6 (prompty/02-fabryka.md): „nigdy »pracowałeś«”. „Jak jesteś wynagradzany” też jest formą męską.",
+   "dowod": "grep: dyzur-w-pracy.astro:19 („nie pracowałeś albo nie pracowałaś”), :63 („faktycznie pracowałeś albo pracowałaś”), :65 i kalkulator-nadgodzin.astro:55 („Jak jesteś wynagradzany”).",
+   "poprawka": "Zgodnie z propozycją audytora: FAQ „Nie, jeżeli w czasie dyżuru nie było pracy.”, opis pola „Czas faktycznej pracy na wezwanie: to czas pracy, płatny jak praca (art. 151⁵ § 2).”, legenda w obu narzędziach „Forma wynagrodzenia”. Sprawdzić grepem pozostałe wystąpienia „pracowałeś” w skrypcie dyżuru (audytor podał 3 w HTML).",
+   "testy": "grep -E 'pracowałeś|pracowałaś|wynagradzany' src/pages/narzedzia/{dyzur-w-pracy,kalkulator-nadgodzin}.astro ma dać 0."
+  },
+  {
+   "id": "A-7",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Dwie z trzech opcji są długie: 44 i 63 znaki. Trzecia ma 25 znaków, więc zakres „44–63” u audytora jest nieścisły, ale problem jest. Pole przy 320 px ma 246 px.",
+   "dowod": "Playwright 320 px: opcje [44: „Czterobrygadowy 12 h: 2 dni, 2 noce, 4 wolne”, 25: „12 h: dzień, noc, 2 wolne”, 63: „Trzyzmianowy 8 h: tydzień rano, tydzień popołudnie, tydzień noc”], szerokość selecta 246 px. Kod: grafik.ts:21–23.",
+   "poprawka": "Dodać w WZORY krótkie pole `krotko`: „12 h: 2 dni, 2 noce, 4 wolne”, „12 h: dzień, noc, 2 wolne”, „8 h: trzy zmiany tygodniami”. Select pokazuje `krotko`, a pełna `nazwa` stoi w opisie pod polem (aria-describedby, aktualizowanym przy zmianie). Nazwa w FAQ (kontrola-grafiku.astro:18) bez zmian.",
+   "testy": "Zrzut 320 px bez uciętej opcji. Każde `krotko` ma najwyżej 28 znaków."
+  },
+  {
+   "id": "A-8",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "§ 7 pkt 2 rozporządzenia (DU_2025_58.txt, wiersz 126): przerwa „po każdej godzinie pracy przy obsłudze monitora ekranowego”. Checkbox mówi „co najmniej połowę zmiany”, a kod liczy ceil(godziny) − 1 od całej zmiany, więc przy części zmiany przy monitorze zawyża przerwy. Przepis to rozstrzyga, więc zasada „wariantu korzystnego” tu nie pomaga. Rachunek ceil − 1 jest poprawny tylko przy monitorze przez całą zmianę (8 h daje 7 przerw, 7,5 h daje 7).",
+   "dowod": "przerwy.ts:45–47. przerwy-w-pracy.astro:77 i :119.",
+   "poprawka": "Minimum: w opisie pozycji (przerwy.ts:47) „Przy monitorze przez całą zmianę: co najmniej 5 minut po każdej godzinie (N × 5 min)” i zdanie w wyjaśnieniu: „Wynik zakłada pracę przy monitorze przez całą zmianę; przy krótszej przerwa należy się po każdej pełnej godzinie przy monitorze”. Lepiej: pole „Godziny przy monitorze” (od godziny/2 do godziny, domyślnie godziny), a w przerwy() `monitorGodzin` z liczbą przerw `Math.min(Math.floor(monitorGodzin), Math.ceil(godziny) - 1)`.",
+   "testy": "przerwy({godziny: 8, monitor: true}) daje 35 min przy monitorze (bez zmian). Przy wariancie z polem: monitorGodzin 4 przy 8 h daje 20 min, monitorGodzin 8 daje 35 min."
+  },
+  {
+   "id": "A-9",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Art. 202 § 3^1 nie odsyła do art. 134 i nie rozstrzyga, czy się kumulują. W komentarzach spotyka się oba poglądy, w tym ten, że 30 minut zastępuje 15 jako przepis szczególny. Strona pokazuje sumę bez słowa wyjaśnienia, a zasada 2 każe to napisać w „Jak liczymy”. Poprawka (zdanie w tekście) jest właściwa.",
+   "dowod": "przerwy.ts:40 i :43 (obie pozycje dodawane niezależnie). przerwy-w-pracy.astro:29–30 (FAQ bez słowa o relacji do art. 134). Strona nie ma sekcji jak-liczymy (A-16).",
+   "poprawka": "W nowej sekcji „Jak liczymy” na przerwy-w-pracy: „Przepis nie mówi, czy 30 minut dla młodocianego (art. 202 § 3¹) zastępuje 15 minut z art. 134. Pokazujemy obie przerwy, czyli wariant korzystniejszy dla pracownika; część komentatorów uważa, że należy się tylko 30 minut.”. Kodu nie zmieniać.",
+   "testy": "Bez zmian w rachunku."
+  },
+  {
+   "id": "A-10",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "6 stycznia jest dniem wolnym od 1.01.2011 (Dz.U. 2010 nr 224 poz. 1459). swieta() dodaje go zawsze, a dni-robocze przyjmuje daty od 2000-01-01.",
+   "dowod": "czas-pracy.ts:44. Podgląd: 2010-01-01–2010-01-31 daje 19 dni i wymienia „6 stycznia 2010 r. (Święto Trzech Króli)”. Python: 21 dni pn–pt minus 1.01 daje 20.",
+   "poprawka": "czas-pracy.ts: `export const TRZECH_KROLI_OD = 2011;` i `...(rok >= TRZECH_KROLI_OD ? [{ data: stale(1, 6), nazwa: 'Święto Trzech Króli' }] : [])`. Funkcję współdzielą dni-wolne, termin-wyplaty i niepelny-miesiac, ale dla lat ≥ 2011 nic się nie zmienia.",
+   "testy": "swieta(2010) bez 2010-01-06. Styczeń 2010 w dniRobocze daje 20, cały 2010 r. daje 255 (wartość audytora z Pythona, zgodna z +1 względem 254). wymiarMiesiaca(2010,1).godziny = 160. swieta(2011) zawiera 2011-01-06."
+  },
+  {
+   "id": "A-11",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Szablon `W ${x.rok} r. ${x.robocze}` połączony przecinkami daje wielką literę po przecinku.",
+   "dowod": "dni-robocze.astro:17.",
+   "poprawka": "`Dni roboczych (od poniedziałku do piątku, bez świąt z ustawy o dniach wolnych od pracy) jest: ${roczne.map((x) => `w ${x.rok} r. ${x.robocze}`).join(', ')}. Święto w sobotę…` (dalsza część bez zmian).",
+   "testy": "Zbudowany HTML/FAQ nie zawiera „, W 20”."
+  },
+  {
+   "id": "A-12",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "SSR to statyczny tekst „9–21 listopada 2026 r.”, a skrypt pisze „9 listopada 2026 r. – 21 listopada 2026 r.”, więc format zmienia się po załadowaniu. Błędne godziny lub stawka dają „—” bez komunikatu i bez aria-invalid. Wartości SSR są dziś liczbowo zgodne (2026-11-15 to niedziela, 12 × 35 = 420), ale nie pochodzą z funkcji.",
+   "dowod": "Podgląd: domyślnie „9 listopada 2026 r. – 21 listopada 2026 r.” po skrypcie. Godziny = „abc” dają dodatek „—”, a blad-pola dla tych pól nie istnieje (praca-w-niedziele.astro:50–59 bez aria-describedby). Kod :65–69 to stały tekst.",
+   "poprawka": "We frontmatterze: `const start = wolneZaNiedzieleSwieto('2026-11-15', 1)` (albo z D.data) i render przez dataPoPolsku w tym samym formacie co skrypt; dodatek przez `zl(dodatekZaNiedziele(12, 35))`. Dodać `<p id=\"ns-liczby-blad\" class=\"blad-pola\" data-blad=\"liczby\" hidden>`, aria-describedby na polach godzin i stawki, a w skrypcie komunikat „Wpisz liczbę godzin i stawkę, na przykład 12 i 35.” i aria-invalid.",
+   "testy": "E2E: tekst okna przed i po hydratacji jest identyczny. Godziny „abc” dają widoczny komunikat i aria-invalid=\"true\"."
+  },
+  {
+   "id": "A-13",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "dyzur.ts:41: `d.zmienneSuma && d.zmienneGodziny ? … : 0`, więc przy zmiennych > 0 i godzinach 0 składniki zmienne znikają bez komunikatu i stawka jest zaniżona.",
+   "dowod": "Kod dyzur.ts:41 i walidacja w dyzur-w-pracy.astro:175 (sprawdza tylko ≥ 0). Audytor na podglądzie: 5000/3000/0 daje 18,75 zł = 0,6 × 5000/160.",
+   "poprawka": "dyzur.ts: `if (d.rodzaj === 'bez-stawki' && (d.zmienneSuma ?? 0) > 0 && !((d.zmienneGodziny ?? 0) > 0)) throw new RangeError('Podaj godziny przepracowane')`. Skrypt :175: komunikat „Wpisz godziny przepracowane w miesiącach, z których są zmienne składniki.” i aria-invalid na polu zgodz.",
+   "testy": "dyzur({…rodzaj:'bez-stawki', stale:5000, zmienneSuma:3000, zmienneGodziny:0}) rzuca RangeError. Z zmienneGodziny 480: zaGodzine = 0,6 × (5000/160 + 3000/480) = 0,6 × 37,5 = 22,50 (XI 2026, wymiar 160)."
+  },
+  {
+   "id": "A-14",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Art. 291 § 1 Kp (DU_2026_1245.txt, wiersz 4642): „z upływem 3 lat od dnia, w którym roszczenie stało się wymagalne”. „Od dnia wypłaty” jest nieścisłe, zwłaszcza gdy wypłaty nie było.",
+   "dowod": "kalkulator-nadgodzin.astro:146.",
+   "poprawka": "„Niezapłacone nadgodziny przedawniają się po 3 latach od dnia, w którym wynagrodzenie powinno być wypłacone, za każdy miesiąc osobno (art. 291 § 1 Kodeksu pracy)…”.",
+   "testy": "brak"
+  },
+  {
+   "id": "A-15",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Zasada 4: teksty w skryptach przeglądarki idą przez typografia(), liczby z rzeczownikiem przez odmiana(). grep po 8 stronach daje 0 importów.",
+   "dowod": "grep -n 'typografia\\|odmiana' po 8 plikach .astro partii A: brak trafień.",
+   "poprawka": "Jak u audytora: import { typografia } from '../../lib/typografia.mjs' w każdym <script> i textContent = typografia(...) dla zdań z liczbą lub jednoliterowym słowem. Odmiany załatwiają A-4 i A-5. Priorytet: dyżur, nadgodziny („na Twój wniosek”, „albo”), przerwy, grafik.",
+   "testy": "E2E na 1–2 narzędziach: tekst wyniku zawiera U+00A0 po „z”/„w”/„i” albo między liczbą a „h”/„zł”."
+  },
+  {
+   "id": "A-16",
+   "werdykt": "czesciowo",
+   "uzasadnienie": "Standard (02-fabryka.md, zasada 2) nie wymaga sekcji „Jak liczymy” na każdej stronie, tylko opisu w niej tego, czego przepis nie rozstrzyga. Sekcja jest więc potrzebna tam, gdzie są przyjęte interpretacje: przerwy-w-pracy (A-8, A-9) i kontrola-grafiku (brak grafiku z poprzedniego miesiąca, okres). Na praca-w-niedziele założenie „okres od stycznia” jest napisane pod wynikiem (:73), więc sekcja jest pożądana dla spójności, ale nie krytyczna. Dla stawki-godzinowej nie wskazano niejasności w przepisie.",
+   "dowod": "grep -L 'id=\"jak-liczymy\"' daje kontrola-grafiku, przerwy-w-pracy, praca-w-niedziele i stawka-godzinowa. Zasada 2 w prompty/02-fabryka.md, wiersze 60–61.",
+   "poprawka": "Dodać `<h2 id=\"jak-liczymy\">Jak liczymy</h2>` na przerwy-w-pracy (młodociany A-9, monitor A-8, ceil(godziny) − 1), kontrola-grafiku (założenia kontroli odpoczynku na przełomie miesięcy, okres rozliczeniowy) i praca-w-niedziele (okres od stycznia, okno ±6 dni, święto bez okna). Na stawce-godzinowej opcjonalnie.",
+   "testy": "brak"
+  },
+  {
+   "id": "A-17",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Wymiar, nadgodziny i grafik biorą rok i miesiąc z UTC, a dyżur, stawka i dni-robocze z dzisWPolsce(). Build między 0:00 a 1:00 (zimą) albo 2:00 (latem) czasu polskiego na przełomie miesiąca lub roku daje poprzedni miesiąc lub rok.",
+   "dowod": "wymiar-czasu-pracy.astro:8 i :14, kalkulator-nadgodzin.astro:11–13, kontrola-grafiku.astro:9–11 (getUTC*). dyzur-w-pracy.astro:10 (dzisWPolsce).",
+   "poprawka": "We wszystkich trzech: `const dzis = dzisWPolsce(); const rokBudowy = Number(dzis.slice(0,4)); const miesiac = Number(dzis.slice(5,7));`. Najlepiej razem z A-3.",
+   "testy": "brak (data buildu)"
+  },
+  {
+   "id": "A-18",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "FAQ dni-robocze cytuje art. 130 § 2 Kodeksu pracy, a rejestr dla dni-robocze ma przepisy ['dniWolne', 'kodeksCywilny']. W skrypcie dni-robocze nie ma aria-invalid.",
+   "dowod": "src/data/narzedzia.ts:472. grep aria-invalid w dni-robocze.astro: 0 trafień. FAQ :17.",
+   "poprawka": "narzedzia.ts:472: ['dniWolne', 'kodeksPracy', 'kodeksCywilny']. dni-robocze.astro (skrypt około :110–120): aria-invalid na #r-od i #r-do przy złej dacie lub do < od, na polu n przy złym n, a 'false' po poprawie.",
+   "testy": "E2E: do < od daje aria-invalid=\"true\" na obu polach daty. n = 0 daje je na polu n."
+  },
+  {
+   "id": "A-19",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "czas-pracy.test.ts nie zawiera 2028 (grep -c daje 0). Rok 2027 jest testowany tylko sumą roczną, przełomem XI 2026–I 2027 i świętami w sobotę. Brak testu normalnego wynagrodzenia w trybie 60%.",
+   "dowod": "Niezależny Python (art. 130: 8 h × dni pn–pt minus 8 h za święto poza niedzielą, Wielkanoc z dateutil, 6.01 od 2011, 24.12 od 2025): 2027 = [152,160,176,176,144,176,176,176,176,168,160,168] (2008), 2028 = [152,168,184,152,168,168,168,176,168,176,160,152] (1992), XII 2027–II 2028 = 488, wielkanoc(2028) = 2028-04-16. Zgodne z audytorem i z TS (wymiarMiesiaca(2026,11) = 160, (2027,1) = 152).",
+   "poprawka": "Dopisać w czas-pracy.test.ts testy z wartościami podanymi wyżej oraz swietaWSobote(2028) = ['2028-01-01','2028-11-11'] i wymiarOkresu(2027,12,3).godziny = 488. W dni-robocze.test.ts: rok 2028 = 251. Po A-10: styczeń 2010 = 20 dni. Testy A-2 w nadgodziny.test.ts. Testy A-1 (2028) w E2E i jednostkowe niedziela-swieto.",
+   "testy": "jak w poprawce"
+  }
+ ],
+ "nowe": [
+  {
+   "id": "A-W1",
+   "slug": "kalkulator-nadgodzin",
+   "wymiar": "spojnosc",
+   "waga": "niska",
+   "plik": "src/lib/narzedzia/nadgodziny.ts",
+   "linia": 49,
+   "problem": "W trybie bez wyodrębnionej stawki podstawa dodatku to 60% jednej kwoty podzielonej przez wymiar. Według § 4 ust. 1–2 rozporządzenia (Dz.U. 2017 poz. 927) 60% liczy się według zasad urlopowych: stałe składniki przez godziny w miesiącu, zmienne przez godziny przepracowane w okresie, z którego się je liczy. Kalkulator dyżuru (dyzur.ts:41) robi to dobrze, a nadgodziny nie, więc te same zasady są w portalu liczone różnie.",
+   "dowod": "DU_2017_927.txt, wiersze 490–522 (§ 4 ust. 1 wprost wymienia dodatek z art. 151^1 § 3, ust. 2 pkt 1–2). dyzur.ts:41 rozdziela stałe i zmienne, nadgodziny.ts:49 nie.",
+   "poprawka": "Minimum: w „Jak liczymy” nadgodzin napisać, że kwota to stałe składniki miesięczne, a przy zmiennych odesłać do zasad urlopowych. Lepiej: w trybie bez-zaszeregowania pola jak w dyżurze (stałe, zmienne z 3 miesięcy, godziny przepracowane) i wspólna funkcja dla obu narzędzi."
+  },
+  {
+   "id": "A-W2",
+   "slug": "kalkulator-nadgodzin",
+   "wymiar": "tresc-ux",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/kalkulator-nadgodzin.astro",
+   "linia": 105,
+   "problem": "Zdanie „Normalne wynagrodzenie liczymy tą samą stawką za godzinę” utrwala błąd z A-2 i po jego poprawce byłoby nieprawdziwe w trybie 60%.",
+   "dowod": "kalkulator-nadgodzin.astro:105.",
+   "poprawka": "Zmienić razem z A-2 (tekst w werdykcie A-2)."
+  }
+ ]
+}

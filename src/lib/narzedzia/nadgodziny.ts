@@ -20,13 +20,15 @@ export interface DaneNadgodzin {
 }
 
 export interface WynikNadgodzin {
-  /** Podstawa dodatku za godzinę, zł. */
+  /** Podstawa dodatku za godzinę, zł (bez wyodrębnionej stawki: 60% wynagrodzenia, art. 151^1 § 3). */
   stawka: number;
+  /** Pełna stawka za godzinę do normalnego wynagrodzenia za nadgodziny (art. 151^1 § 1: „oprócz normalnego wynagrodzenia”). */
+  stawkaNormalna: number;
   /** Wymiar miesiąca, gdy stawka wynika z pensji. */
   wymiar: number | null;
   dodatek100: number;
   dodatek50: number;
-  /** Normalne wynagrodzenie za godziny nadliczbowe liczone tą samą stawką. */
+  /** Normalne wynagrodzenie za godziny nadliczbowe, pełną stawką (60% dotyczy tylko podstawy dodatku). */
   normalne: number;
   razem: number;
   /** Czas wolny zamiast dodatku (godziny): na wniosek 1:1, bez wniosku 1,5:1. */
@@ -39,22 +41,24 @@ export const LIMIT_ROCZNY = 150;
 export function nadgodziny({ wynagrodzenie: w, godziny100, godziny50 }: DaneNadgodzin): WynikNadgodzin {
   if (!(godziny100 >= 0) || !(godziny50 >= 0)) throw new RangeError('Liczba godzin musi być nieujemna');
   let stawka: number;
+  let stawkaNormalna: number;
   let wymiar: number | null = null;
   if (w.rodzaj === 'godzinowa') {
     if (!(w.stawka > 0)) throw new RangeError('Stawka musi być dodatnia');
-    stawka = w.stawka;
+    stawka = stawkaNormalna = w.stawka;
   } else {
     if (!(w.kwota > 0)) throw new RangeError('Wynagrodzenie musi być dodatnie');
     wymiar = wymiarMiesiaca(w.rok, w.miesiac).godziny;
-    const podstawa = w.rodzaj === 'bez-zaszeregowania' ? w.kwota * 0.6 : w.kwota;
-    stawka = doGrosza(podstawa / wymiar);
+    stawkaNormalna = doGrosza(w.kwota / wymiar);
+    stawka = w.rodzaj === 'bez-zaszeregowania' ? doGrosza((w.kwota * 0.6) / wymiar) : stawkaNormalna;
   }
   const dodatek100 = doGrosza(stawka * godziny100);
   const dodatek50 = doGrosza(stawka * 0.5 * godziny50);
-  const normalne = doGrosza(stawka * (godziny100 + godziny50));
+  const normalne = doGrosza(stawkaNormalna * (godziny100 + godziny50));
   const suma = godziny100 + godziny50;
   return {
     stawka,
+    stawkaNormalna,
     wymiar,
     dodatek100,
     dodatek50,

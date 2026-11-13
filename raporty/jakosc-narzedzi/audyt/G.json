@@ -1,0 +1,229 @@
+{
+ "partia": "G",
+ "sprawdzone": [
+  {
+   "slug": "halas-w-pracy",
+   "pliki": [
+    "src/lib/narzedzia/halas.ts",
+    "src/lib/narzedzia/halas.test.ts",
+    "src/pages/narzedzia/halas-w-pracy.astro"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "drgania-w-pracy",
+   "pliki": [
+    "src/lib/narzedzia/drgania.ts",
+    "src/lib/narzedzia/drgania.test.ts",
+    "src/pages/narzedzia/drgania-w-pracy.astro"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "temperatura-w-pracy",
+   "pliki": [
+    "src/lib/narzedzia/temperatura.ts",
+    "src/lib/narzedzia/temperatura.test.ts",
+    "src/pages/narzedzia/temperatura-w-pracy.astro"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "normy-sanitarne",
+   "pliki": [
+    "src/lib/narzedzia/normy-sanitarne.ts",
+    "src/lib/narzedzia/normy-sanitarne.test.ts",
+    "src/pages/narzedzia/normy-sanitarne.astro"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "powierzchnia-na-pracownika",
+   "pliki": [
+    "src/lib/narzedzia/pomieszczenie-pracy.ts",
+    "src/lib/narzedzia/pomieszczenie-pracy.test.ts",
+    "src/pages/narzedzia/powierzchnia-na-pracownika.astro"
+   ],
+   "wynik": "ok"
+  },
+  {
+   "slug": "ile-kg-wolno-dzwigac",
+   "pliki": [
+    "src/lib/narzedzia/dzwiganie.ts",
+    "src/lib/narzedzia/dzwiganie.test.ts",
+    "src/pages/narzedzia/ile-kg-wolno-dzwigac.astro"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "szkolenie-okresowe-bhp",
+   "pliki": [
+    "src/lib/narzedzia/szkolenie-bhp.ts",
+    "src/lib/narzedzia/szkolenie-bhp.test.ts",
+    "src/lib/narzedzia/terminy.ts",
+    "src/lib/narzedzia/kalendarz-ics.ts",
+    "src/pages/narzedzia/szkolenie-okresowe-bhp.astro",
+    "tests/e2e/narzedzie-bhp.spec.ts"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "odszkodowanie-za-wypadek-przy-pracy",
+   "pliki": [
+    "src/lib/narzedzia/odszkodowanie-wypadek.ts",
+    "src/lib/narzedzia/odszkodowanie-wypadek.test.ts",
+    "src/pages/narzedzia/odszkodowanie-za-wypadek-przy-pracy.astro",
+    "src/data/prawo.ts"
+   ],
+   "wynik": "ok"
+  }
+ ],
+ "znaleziska": [
+  {
+   "id": "G-1",
+   "slug": "drgania-w-pracy",
+   "wymiar": "prawo",
+   "waga": "wysoka",
+   "plik": "src/lib/narzedzia/drgania.ts",
+   "linia": 59,
+   "problem": "Pracodawca musi wprowadzić program ograniczania drgań już wtedy, gdy A(8) jest równe progowi działania, a narzędzie sprawdza tylko przekroczenie (a8 > 2,5 / 0,5). Przy A(8) równym dokładnie progowi strona pisze „Poniżej progu działania” i że nie ma dodatkowych obowiązków. „Jak liczymy” (strona, ok. linii 130) też mówi, że obowiązki zaczynają się „po jego przekroczeniu”.",
+   "dowod": ".cache/narzedzia/prawo/DU_2005_1318.txt, § 5 ust. 2: „po osiągnięciu lub przekroczeniu … przez wielkości charakteryzujące: … 2) drgania mechaniczne — wartości progów działania pracodawca sporządza i wprowadza w życie program”. Playwright: 5 m/s² przez 2 h → „2,50 m/s² | Poniżej progu działania 2,50 m/s² | Ograniczać ryzyko … (§ 5 ust. 1)”.",
+   "poprawka": "Rozdzielić dwa pola: progOsiagniety: a8 >= PROG_DZIALANIA_DRGAN[rodzaj] (program z § 5 ust. 2 pkt 2) oraz powyzejProgu: a8 > próg (§ 3 ust. 3 i rękawice albo odzież z § 8). W skrypcie strony dla progOsiagniety pokazywać „Osiągnięty próg działania” i program z § 5 ust. 2. Poprawić zdanie w „Jak liczymy”. Test: [{a:5,godziny:2}] miejscowe → program wymagany; [{a:0.5,godziny:8}] ogólne → to samo."
+  },
+  {
+   "id": "G-2",
+   "slug": "temperatura-w-pracy",
+   "wymiar": "prawo",
+   "waga": "srednia",
+   "plik": "src/lib/narzedzia/temperatura.ts",
+   "linia": 51,
+   "problem": "Gdy zaznaczone jest „ciepło z technologii”, cały § 30a zostaje pominięty. Tymczasem § 30a ust. 1 (najwyżej 35°C w pomieszczeniu, chyba że nie pozwalają na to względy technologiczne) nie zależy od tego, czy ciepło pochodzi z pogody. Od 11.01.2027 r. przy 36°C z pieca narzędzie pisze „bez dodatkowych obowiązków”.",
+   "dowod": ".cache/narzedzia/prawo/DU_2026_927.txt, § 30a ust. 1: „W pomieszczeniach pracy należy zapewnić temperaturę niewyższą niż 35 °C (308 K), chyba że względy technologiczne na to nie pozwalają”. Tylko ust. 2–4 mają warunek „z uwagi na warunki atmosferyczne”. Playwright (36°C, technologia, stan od 2027-01-11): „36°C: bez dodatkowych obowiązków”. Test temperatura.test.ts:103 utrwala ten wynik.",
+   "poprawka": "Gdy zPogody=false i t>35 (nie dotyczy wyjątków z ust. 8): p30a('obowiazek', 'Pracodawca zapewnia najwyżej 35°C, chyba że nie pozwalają na to względy technologiczne; zakaz pracy z ust. 2 dotyczy tylko upału z pogody.', '§ 30a ust. 1 …'). Dodać zdanie o mikroklimacie gorącym (napoje, § 4 ust. 1 pkt 1). Poprawić test z linii 103."
+  },
+  {
+   "id": "G-3",
+   "slug": "normy-sanitarne",
+   "wymiar": "prawo",
+   "waga": "srednia",
+   "plik": "src/lib/narzedzia/normy-sanitarne.ts",
+   "linia": 55,
+   "problem": "Narzędzie uznaje jadalnię za wymaganą tylko przy ponad 20 osobach. Przy co najwyżej 20 osobach i zaznaczonej pracy „brudzącej albo z substancjami szkodliwymi lub zakaźnymi” (albo natryskach „przepustowa”) wynik to „niewymagana”, choć przepis wymaga wtedy jadalni. Wpis w rejestrze („Jadalnia od 21 osób”) też to pomija.",
+   "dowod": "Załącznik nr 3 w .cache/narzedzia/prawo/DU_2003_1650.txt, § 29 ust. 2: „Obowiązek określony w ust. 1 dotyczy również pracodawców zatrudniających dwudziestu i mniej pracowników, jeżeli narażeni są na kontakt ze szkodliwymi środkami chemicznymi lub promieniotwórczymi, materiałami biologicznie zakaźnymi albo przy pracach szczególnie brudzących”. Playwright: 10 mężczyzn, praca brudząca → „niewymagana przy tej liczbie osób”.",
+   "poprawka": "jadalnia: razem > 20 || d.praca === 'brudzaca' || d.natryski === 'przepustowa'. Tekst wyniku: „wymagana (§ 29 ust. 2: prace brudzące lub szkodliwe)”. Test dla 10 osób przy pracy brudzącej. W src/data/narzedzia.ts zmienić „Jadalnia od 21 osób” na np. „Jadalnia od 21 osób albo przy pracach brudzących”."
+  },
+  {
+   "id": "G-4",
+   "slug": "ile-kg-wolno-dzwigac",
+   "wymiar": "tresc-ux",
+   "waga": "srednia",
+   "plik": "src/lib/narzedzia/dzwiganie.ts",
+   "linia": 11,
+   "problem": "Opcje list wyboru są za długie i ucinają się na telefonie: przy 320 px w liście osób 3 z 6 opcji, w liście czynności 5 z 6. Przy 412 px nadal ucinają się 3 czynności.",
+   "dowod": "Playwright (skrypt /tmp/claude-0/-home-user-lean-time-study-tracker/85e7a3e9-bef9-5b60-93fa-46f6f146f579/scratchpad/audyt/G/skrypty/uklad.cjs; szerokość tekstu z canvas, pole ma 220 px przy 320 i 312 px przy 412). Ucięte przy 320 px: „Kobieta karmiąca dziecko piersią”, „Młodociany (15–18 lat), chłopak”, „Młodociana (15–18 lat), dziewczyna”, „Pod górę (schody, pochylnie) ponad 30°, na wysokość ponad 4 m”, „Zespołowo: przedmiot dłuższy niż 4 m, na jedną osobę” i inne. Zasada 7 z prompty/02-fabryka.md, sekcja 4.",
+   "poprawka": "Skrócić OSOBY i CZYNNOSCI, np. „Karmiąca piersią”, „Młodociany chłopak”, „Młodociana dziewczyna”, „Nad barki”, „Ponad 25 m”, „Pod górę do 30°”, „Pod górę ponad 30°”, „Zespołowo, na osobę”. Warunki (wysokość ponad 4 m, długość ponad 4 m) przenieść do opisu pod polem albo do tabeli."
+  },
+  {
+   "id": "G-5",
+   "slug": "szkolenie-okresowe-bhp",
+   "wymiar": "tresc-ux",
+   "waga": "srednia",
+   "plik": "src/lib/narzedzia/szkolenie-bhp.ts",
+   "linia": 9,
+   "problem": "Nazwy grup w polu „Stanowisko” ucinają się na telefonie: przy 320 px 5 z 7 opcji, przy 412 px 3.",
+   "dowod": "Playwright: ucięte przy 412 px: „Stanowisko robotnicze z pracami szczególnie niebezpiecznymi”, „Pracodawca albo osoba kierująca pracownikami”, „Inne stanowisko z narażeniem albo odpowiedzialnością za BHP”; przy 320 px dodatkowo „Stanowisko inżynieryjno-techniczne” i „Stanowisko administracyjno-biurowe”.",
+   "poprawka": "Dodać do GRUPY krótką etykietę do <option> (np. „Robotnicze”, „Robotnicze, szczególnie niebezpieczne”, „Kierujący”, „Inżynieryjno-techniczne”, „Służba BHP”, „Biurowe”, „Inne z narażeniem”). Pełną nazwę zostawić w tabeli i w opisie pod polem (data-w=\"grupa-opis\")."
+  },
+  {
+   "id": "G-6",
+   "slug": "temperatura-w-pracy",
+   "wymiar": "tresc-ux",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/temperatura-w-pracy.astro",
+   "linia": 86,
+   "problem": "Opcja „Od 11 stycznia 2027 r. (nowe przepisy o upale)” ucina się przy 320 i 412 px, a „Biuro albo lekka praca fizyczna” przy 320 px. Po 11.01.2027 r. opcja „Dziś” i opcja z datą dają ten sam stan prawny, a teksty „zaczną obowiązywać po 6 miesiącach” (linia 138) i „Co się zmienia 11 stycznia 2027 r.” się zdezaktualizują.",
+   "dowod": "Playwright: #t-data ma 262 px przy 412 px i opcja się nie mieści. Kod: ocenTemperature używa d.data >= OD_30A, więc „Dziś” przełącza się na nowe przepisy sam (to działa poprawnie).",
+   "poprawka": "Opcja „Od 11.01.2027 r.”, wysiłek „Biuro, lekka praca”. Gdy dzisWPolsce() >= OD_30A, skrypt ukrywa pole „Stan prawny na dzień”. W tekście: „obowiązują od 11 stycznia 2027 r.” zamiast „zaczną obowiązywać”."
+  },
+  {
+   "id": "G-7",
+   "slug": "drgania-w-pracy",
+   "wymiar": "tresc-ux",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/drgania-w-pracy.astro",
+   "linia": 60,
+   "problem": "Przy 320 px ucina się opcja „Na całe ciało (siedzisko, podest)”.",
+   "dowod": "Playwright: #d-rodzaj ma 220 px przy 320 px, opcja ucięta.",
+   "poprawka": "„Całe ciało (siedzisko)” albo „Na całe ciało”; przykłady przenieść do opisu pod polem."
+  },
+  {
+   "id": "G-8",
+   "slug": "halas-w-pracy",
+   "wymiar": "rachunek",
+   "waga": "niska",
+   "plik": "src/lib/narzedzia/halas.ts",
+   "linia": 34,
+   "problem": "Do progów porównywana jest wartość już zaokrąglona (L_EX,8h do 0,1 dB, A(8) do 0,01 m/s²). Ekspozycja tylko trochę ponad NDN wychodzi przez to jako „na granicy”, a nie „przekroczona”. To samo w drgania.ts:40 (np. 2,8 m/s² przez 8 h 01 min = 2,803 → 2,80, czyli „nieprzekroczone”).",
+   "dowod": "Python (/tmp/claude-0/-home-user-lean-time-study-tracker/85e7a3e9-bef9-5b60-93fa-46f6f146f579/scratchpad/audyt/G/obl.py): 85 dB przez 8 h 05 min = 85,045 dB. Playwright: „85,0 dB | Na granicy normy 85 dB”. Według § 9 ust. 1 DU_2005_1318 NDN nie może być przekroczone.",
+   "poprawka": "W ocenaHalasu/ocenaDrgan porównywać wartość niezaokrągloną (osobna funkcja bez Math.round), a zaokrąglać tylko do wyświetlenia. Dodać testy: [{poziom:85,godziny:8.0833}] → przekroczone; [{a:2.8,godziny:8.0167}] → przekroczone."
+  },
+  {
+   "id": "G-9",
+   "slug": "halas-w-pracy",
+   "wymiar": "tresc-ux",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/halas-w-pracy.astro",
+   "linia": 158,
+   "problem": "Przy błędzie danych pola nie dostają aria-invalid, choć temperatura, dźwiganie i szkolenie je ustawiają. Tak samo w drgania-w-pracy.astro, normy-sanitarne.astro, powierzchnia-na-pracownika.astro i odszkodowanie-za-wypadek-przy-pracy.astro.",
+   "dowod": "Playwright: po wpisaniu „abc” w #h-poziom-0 pojawia się komunikat w #h-blad, a aria-invalid = null.",
+   "poprawka": "Przy błędzie ustawiać aria-invalid=\"true\" na polu, którego błąd dotyczy (wiersz i), i zdejmować je po poprawce."
+  },
+  {
+   "id": "G-10",
+   "slug": "szkolenie-okresowe-bhp",
+   "wymiar": "tresc-ux",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/szkolenie-okresowe-bhp.astro",
+   "linia": 96,
+   "problem": "Strona obiecuje „przypomnienie w dniu terminu i 60 dni wcześniej”, ale plik .ics zawiera tylko dwa wydarzenia całodniowe bez VALARM. Wiele kalendarzy nie powiadomi o nich, więc o terminie łatwo zapomnieć.",
+   "dowod": "src/lib/narzedzia/kalendarz-ics.ts, funkcja plikIcs: wydarzenia VEVENT z TRANSP:TRANSPARENT, brak BEGIN:VALARM.",
+   "poprawka": "Dodać do VEVENT blok VALARM (ACTION:DISPLAY, TRIGGER:-PT15H albo TRIGGER;VALUE=DATE-TIME) albo zmienić tekst na „Plik dodaje do kalendarza dwa wydarzenia: termin i dzień 60 dni wcześniej”."
+  },
+  {
+   "id": "G-11",
+   "slug": "szkolenie-okresowe-bhp",
+   "wymiar": "prawo",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/szkolenie-okresowe-bhp.astro",
+   "linia": 132,
+   "problem": "Rozporządzenie mówi tylko „nie rzadziej niż raz w roku / raz na 3 lata” i nie określa, od czego liczyć okres. Narzędzie liczy od daty poprzedniego szkolenia (art. 112 KC), czyli wariantem wcześniejszym i bezpiecznym, ale „Jak liczymy” nie mówi, że to interpretacja ani że nie liczymy do końca roku kalendarzowego (zasada 2 standardu).",
+   "dowod": ".cache/narzedzia/prawo/DU_2024_1327.txt, § 15 ust. 1: „nie rzadziej niż raz na 3 lata, a na stanowiskach, na których są wykonywane prace szczególnie niebezpieczne, nie rzadziej niż raz w roku”. Nowelizacja DU 2025/1640 zmienia tylko § 12.",
+   "poprawka": "Dopisać w „Jak liczymy”: „Przepis nie mówi, od czego liczyć okres. Liczymy od daty ukończenia poprzedniego szkolenia, a nie do końca roku kalendarzowego, bo to termin najwcześniejszy i bezpieczny dla pracownika.”"
+  },
+  {
+   "id": "G-12",
+   "slug": "temperatura-w-pracy",
+   "wymiar": "testy",
+   "waga": "niska",
+   "plik": "src/lib/narzedzia/temperatura.test.ts",
+   "linia": 110,
+   "problem": "Testy nie sprawdzają przełączenia na dzień 2027-01-10/2027-01-11 ani wartości dokładnie na progach (14, 18, 25, 28, 32, 35°C). Podobnie halas.test.ts i drgania.test.ts nie mają testów dla wartości dokładnie na progu działania i na NDN, a dzwiganie.test.ts dla masy równej granicy.",
+   "dowod": "Przegląd plików testów; vitest: 8 plików, 62 testy przechodzą, ale żaden nie dotyczy tych granic.",
+   "poprawka": "it.each z data '2027-01-10' → poziom 'zapowiedz' i '2027-01-11' → 'zakaz'/'obowiazek'. Temperatury 14→brak, 13.9→obowiązek, 28→brak ust. 3, 28.1→ust. 3, 35→brak zakazu, 35.1→zakaz, 32/32.1 na otwartej przestrzeni przy dużym wysiłku. Hałas dokładnie 80 i 85 dB, drgania 2,5 i 2,8 m/s², porownaj(12, kobieta stała) → mieści się."
+  }
+ ],
+ "do_stanu": [
+  {
+   "sprawa": "Sprawdzić po wejściu w życie § 30a ogólnych przepisów BHP (Dz.U. 2026 poz. 927), czy „Dziś” przełącza się na nowe przepisy, i usunąć teksty w czasie przyszłym",
+   "kiedy_sprawdzic": "2027-01-11",
+   "gdzie_w_kodzie": "src/lib/narzedzia/temperatura.ts (OD_30A), src/pages/narzedzia/temperatura-w-pracy.astro (linie 84–88, 127–139)"
+  }
+ ],
+ "poza_zakresem": [],
+ "nie_sprawdzono": [
+  "Czytnik ekranu (NVDA/VoiceOver): sprawdzone tylko etykiety pól, aria-live i kolejność nagłówków (H1 → H2 → H3) w DOM.",
+  "Import pliku .ics w Outlooku i Kalendarzu Google.",
+  "Zrzuty pojedynczych formularzy po wybraniu długich opcji: skrypt wybor.cjs przerwał się na selektorze 'form' (pierwszy na stronie jest ukryty). Ucięcie opcji zmierzone przez canvas. Zrzuty całych stron 320/412 px: /tmp/claude-0/-home-user-lean-time-study-tracker/85e7a3e9-bef9-5b60-93fa-46f6f146f579/scratchpad/audyt/G/zrzuty/",
+  "Kategorie ryzyka wypadkowego (art. 237^3 § 2^2 Kp): narzędzie ich nie liczy, nie sprawdzano."
+ ]
+}

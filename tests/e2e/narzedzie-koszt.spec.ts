@@ -23,7 +23,7 @@ test('kobieta 55+ albo mężczyzna 60+: bez FP, FS i FGŚP', async ({ page }) =>
   await expect(page.locator('[data-w="fgsp"]')).toHaveText('0,00 zł');
 });
 
-test('2027: próg FP i FS to płaca minimalna 4950 zł, limit 300 990 zł; po Nowym Roku rok domyślnie 2027', async ({ page }) => {
+test('2027: próg FP i FS to płaca minimalna 4950 zł, limit 300 990 zł', async ({ page }) => {
   await page.getByLabel('Rok wypłaty').selectOption('2027');
   await page.getByLabel('Wynagrodzenie brutto w miesiącu (zł)').fill('4900');
   await expect(page.locator('[data-w="fp"]')).toHaveText('0,00 zł');
