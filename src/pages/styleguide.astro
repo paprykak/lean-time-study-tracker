@@ -1,25 +1,17 @@
 ---
 // /styleguide (noindex): tokeny, typografia i wszystkie komponenty w stanach (najechanie, fokus, pusty, długi tytuł).
-// Na tej stronie Patryk akceptuje wygląd przed budową szablonów (bramka F1). Treści przykładowe są fikcyjne.
+// Na tej stronie Patryk akceptuje wygląd (bramka F1; od 2026-11-12 komponenty serwisu narzędzi). Przykłady to
+// prawdziwe narzędzia z rejestru albo treści fikcyjne.
 import Uklad from '../layouts/Uklad.astro';
-import PasekTematow from '../components/PasekTematow.astro';
 import NaglowekSekcji from '../components/NaglowekSekcji.astro';
-import NajczesciejCzytane from '../components/NajczesciejCzytane.astro';
 import SlotReklamowy from '../components/SlotReklamowy.astro';
 import Newsletter from '../components/Newsletter.astro';
-import RamkaAutora from '../components/RamkaAutora.astro';
-import Udostepnij from '../components/Udostepnij.astro';
 import Okruszki from '../components/Okruszki.astro';
-import Stronicowanie from '../components/Stronicowanie.astro';
 import StronaBledu from '../components/StronaBledu.astro';
-import Zdjecie from '../components/Zdjecie.astro';
-import KartaGlowna from '../components/karty/KartaGlowna.astro';
-import KartaBoczna from '../components/karty/KartaBoczna.astro';
-import KartaSiatka from '../components/karty/KartaSiatka.astro';
-import KartaLista from '../components/karty/KartaLista.astro';
-import Meta from '../components/karty/Meta.astro';
-import { ARTYKULY, DLUGI_TYTUL, NAJCZESCIEJ } from '../data/przyklady';
-import { dostepne, zdjecie } from '../lib/zdjecia';
+import KartaNarzedzia from '../components/narzedzia/KartaNarzedzia.astro';
+import Faq from '../components/narzedzia/Faq.astro';
+import Wyszukiwarka from '../components/narzedzia/Wyszukiwarka.astro';
+import { KATEGORIE, adresNarzedzia, narzedzie } from '../data/narzedzia';
 import { tokenyKolorow } from '../lib/tokeny';
 import { kontrast, zapisKontrastu } from '../lib/kontrast';
 import { FORMATY, type Format, type Kampania } from '../lib/reklamy';
@@ -47,11 +39,11 @@ import k320 from '../assets/przyklady/kreacja-320x100.svg?url';
 const t = tokenyKolorow();
 const KOLORY: { token: string; uzycie: string; tlo?: string }[] = [
   { token: 'tlo', uzycie: 'Tło stron' },
-  { token: 'tlo-szare', uzycie: 'Pasek tematów, ramki, pola zastępcze' },
-  { token: 'grafit', uzycie: 'Menu działów, przyciski grafitowe, linie nagłówków sekcji' },
+  { token: 'tlo-szare', uzycie: 'Tło pola wyszukiwania na stronie głównej, ramki, zastrzeżenia' },
+  { token: 'grafit', uzycie: 'Pasek kategorii, przyciski grafitowe, linie nagłówków sekcji' },
   { token: 'grafit-ciemny', uzycie: 'Pasek górny, stopka' },
   { token: 'tekst', uzycie: 'Tytuły' },
-  { token: 'tekst-tresc', uzycie: 'Treść artykułów' },
+  { token: 'tekst-tresc', uzycie: 'Treść stron i opisy narzędzi' },
   { token: 'tekst-drugi', uzycie: 'Metadane, podpisy, „REKLAMA”' },
   { token: 'akcent', uzycie: 'Kolor marki: paski, dach logo, numery, fokus, duży tekst' },
   { token: 'akcent-tekst', uzycie: 'Kategorie, linki, przycisk główny (mały tekst)' },
@@ -69,14 +61,13 @@ const SPIS = [
   ['siatka', 'Siatka i odstępy'],
   ['logo', 'Logo'],
   ['przyciski', 'Przyciski i pola'],
-  ['tematy-sg', 'Pasek tematów'],
-  ['karty', 'Karty'],
-  ['listy', 'Listy i nagłówki sekcji'],
+  ['wyszukiwanie', 'Pole wyszukiwania'],
+  ['karty', 'Karty i wiersze narzędzi'],
+  ['listy', 'Nagłówki sekcji i pytania'],
   ['reklamy', 'Sloty reklamowe'],
   ['newsletter', 'Newsletter'],
-  ['autor', 'Ramka autora i udostępnianie'],
-  ['nawigacja', 'Okruszki i stronicowanie'],
-  ['tresc', 'Treść artykułu'],
+  ['nawigacja', 'Okruszki'],
+  ['tresc-sg', 'Treść stron i wyjaśnień'],
   ['blad', 'Strona błędu'],
 ] as const;
 
@@ -89,23 +80,19 @@ const kampania: Kampania = {
 };
 const kreacjaDla: Record<Format, string> = { billboard: k970, baner: k750, prostokat: k300, polstrona: k600, mobilny: k320, 'mobilny-prostokat': k300 };
 const kampaniaFormat = (f: Format): Kampania => ({ ...kampania, komputer: { src: kreacjaDla[f], alt: `Kreacja przykładowa ${FORMATY[f].szerokosc} × ${FORMATY[f].wysokosc}` }, telefon: { src: kreacjaDla[f], alt: `Kreacja przykładowa ${FORMATY[f].szerokosc} × ${FORMATY[f].wysokosc}` } });
-const scada = zdjecie('stanowisko-scada');
-const linia = zdjecie('linia-montazu-elektroniki', 'Instrukcje stanowiskowe nad każdym stołem linii montażu.');
-const zdjeciaSerwisu = dostepne();
+const przyklady = ['kalkulator-l4', 'kalkulator-nadgodzin', 'waznosc-uprawnien-udt'].map(narzedzie);
 ---
-<Uklad tytul="System wizualny | Rytm Hali" opis="Tokeny, typografia i komponenty Rytmu Hali do akceptacji wyglądu (strona wewnętrzna)." noindex aktywny="produkcja">
-  <PasekTematow slot="pod-naglowkiem" />
+<Uklad tytul="System wizualny | Rytm Hali" opis="Tokeny, typografia i komponenty Rytmu Hali do akceptacji wyglądu (strona wewnętrzna)." noindex aktywny="wynagrodzenie">
 
   <div class="kontener py-8">
     <p class="kategoria">Bramka F1 · do akceptacji</p>
     <h1 class="tytul-xl mt-2">System wizualny Rytmu Hali</h1>
     <p class="lead mt-3 max-w-3xl">
       Tokeny, typografia i komponenty w stanach: zwykły, po najechaniu, z fokusem klawiatury, pusty i z długim tytułem.
-      Treści są przykładowe i fikcyjne. Nagłówek wyżej pokazuje aktywny dział „Produkcja”.
+      Przykłady to prawdziwe narzędzia z rejestru albo treści fikcyjne. Nagłówek wyżej pokazuje aktywną kategorię „Wynagrodzenie”.
     </p>
     <div class="mt-5 border-l-4 border-akcent bg-tlo-szare px-4 py-3 text-[0.9375rem]">
-      <p><strong class="text-tekst">Zdjęcia:</strong> prawdziwe, z rejestrem licencji (<code>src/content/zdjecia/</code>, w panelu „Zdjęcia”), lista źródeł na dole strony. Zdjęcie, którego pliku jeszcze nie pobrano, pokazuje pole zastępcze; na produkcji pole zastępcze blokuje kontrola SEO.</p>
-      <p class="mt-1"><strong class="text-tekst">Logo:</strong> koncepcja C po szlifie (uzasadnienie w <code>marka/README.md</code>); oryginalne pliki Patryka podmienią je bez zmian w szablonach.</p>
+      <p><strong class="text-tekst">Logo:</strong> koncepcja C po szlifie (uzasadnienie w <code>marka/README.md</code>); oryginalne pliki Patryka podmienią je bez zmian w szablonach.</p>
     </div>
     <nav aria-label="Spis treści" class="mt-6">
       <ul class="flex flex-wrap gap-x-5 gap-y-1 text-[0.9375rem]">
@@ -145,23 +132,23 @@ const zdjeciaSerwisu = dostepne();
       <div class="mt-6 grid gap-8 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
         <div class="space-y-6">
           <div>
-            <p class="meta">Hierarchia jak w redakcji: kategoria, tytuł, lead, metadane</p>
+            <p class="meta">Hierarchia strony narzędzia: kategoria, tytuł, lead, data sprawdzenia</p>
             <div class="mt-3 border-t border-linia pt-4">
-              <p class="kategoria">Produkcja · Poradnik</p>
-              <p class="tytul-xl mt-2">Zażółć gęślą jaźń: przezbrojenie krótsze o połowę bez nowych maszyn</p>
-              <p class="lead mt-3">Większość czasu przezbrojenia to czynności, które można zrobić, zanim maszyna stanie. Pokazujemy, jak je wyłowić z nagrania.</p>
-              <Meta data={new Date('2026-11-06T06:40:00Z')} autor="Redakcja Rytmu Hali" czasCzytania={9} class="mt-3" />
+              <p class="kategoria">Wynagrodzenie i zasiłki</p>
+              <p class="tytul-xl mt-2">Zażółć gęślą jaźń: ile dostaniesz na zwolnieniu lekarskim</p>
+              <p class="lead mt-3">Przykładowy lead: jedno, dwa zdania o tym, co narzędzie policzy i z jakiego przepisu.</p>
+              <p class="meta mt-3">Sprawdzono z przepisami: 12 listopada 2026. Liczy w przeglądarce: niczego nie wysyłamy ani nie zapisujemy.</p>
             </div>
           </div>
         </div>
         <dl class="divide-y divide-linia border-y border-linia text-[0.9375rem]">
           {[
-            ['tytul-xl', 'Tytuł artykułu, karta główna', '28 / 36 / 42 px · Display Bold'],
+            ['tytul-xl', 'Tytuł strony (H1)', '28 / 36 / 42 px · Display Bold'],
             ['tytul-l', 'Tytuł sekcji wyróżnionej', '22 / 24 px · Display Bold'],
-            ['tytul-m', 'Karta w siatce', '18 px · Display Bold'],
-            ['tytul-s', 'Karta boczna, listy', '16 px · Display Bold'],
+            ['tytul-m', 'Karta narzędzia', '18 px · Display Bold'],
+            ['tytul-s', 'Listy', '16 px · Display Bold'],
             ['lead', 'Lead', '18 / 20 px · Sans 400'],
-            ['tresc', 'Treść artykułu', '17 / 18 px · interlinia 1,75'],
+            ['tresc', 'Treść stron i wyjaśnień narzędzi', '17 / 18 px · interlinia 1,75'],
             ['meta', 'Metadane', '13 px · Sans 400'],
             ['kategoria', 'Kategoria', '12 px · Sans 700 · wersaliki, światło 0,08 em'],
           ].map(([klasa, nazwa, opis]) => (
@@ -250,63 +237,54 @@ const zdjeciaSerwisu = dostepne();
       </div>
     </section>
 
-    {/* PASEK TEMATÓW */}
-    <section aria-labelledby="tematy-sg">
-      <NaglowekSekcji tytul="Pasek tematów" id="tematy-sg" />
-      <p class="mt-3 max-w-3xl text-[0.9375rem]">Stała nawigacja po zagadnieniach pod nagłówkiem (widoczna na górze tej strony), jak „Topics” w magazynach eksperckich. Zastąpiła pasek „Na zmianie” z godzinami, bo Rytm Hali publikuje artykuły, nie wiadomości. Tematy ustawia redakcja w panelu. Na telefonie przewija się w bok.</p>
+    {/* POLE WYSZUKIWANIA */}
+    <section aria-labelledby="wyszukiwanie">
+      <NaglowekSekcji tytul="Pole wyszukiwania" id="wyszukiwanie" />
+      <p class="mt-3 max-w-3xl text-[0.9375rem]">Jedno pole na ekranie: duże na stronie głównej, zwarte w nagłówku pozostałych stron. Wyniki pojawiają się pod polem w trakcie pisania (nazwa narzędzia i pytanie z FAQ, na które odpowiada); bez skryptu to zwykły formularz do /szukaj. Wpisz np. „nocki” albo „ile kg”.</p>
+      <div class="mt-6 grid gap-8 lg:grid-cols-2">
+        <Wyszukiwarka id="sg-szukaj-duze" />
+        <Wyszukiwarka id="sg-szukaj-naglowek" wariant="naglowek" etykieta="Wariant nagłówka" placeholder="Szukaj, np. L4, urlop" limit={5} />
+      </div>
     </section>
 
-    {/* KARTY */}
+    {/* KARTY I WIERSZE */}
     <section aria-labelledby="karty">
-      <NaglowekSekcji tytul="Karty" id="karty" />
-      <p class="mt-3 max-w-3xl text-[0.9375rem]">Cała karta klika się jednym linkiem w tytule (jedno miejsce w kolejności klawisza Tab). Po najechaniu tytuł się podkreśla, fokus obrysowuje całą kartę.</p>
-
-      <h3 class="tytul-s mt-8">1. Główna na zdjęciu</h3>
-      <div class="mt-3 grid gap-6 lg:grid-cols-[minmax(0,8fr)_minmax(0,4fr)]">
-        <KartaGlowna artykul={ARTYKULY[0]} poziom="h3" />
-        <div class="space-y-4">
-          <KartaBoczna artykul={ARTYKULY[1]} />
-          <KartaBoczna artykul={ARTYKULY[2]} class="stan-najazd" />
-          <KartaBoczna artykul={ARTYKULY[3]} class="stan-fokus" />
-          <p class="meta">2. Boczne: zwykła, po najechaniu, z fokusem</p>
+      <NaglowekSekcji tytul="Karty i wiersze narzędzi" id="karty" />
+      <p class="mt-3 max-w-3xl text-[0.9375rem]">Karta (wariant pełny i mały) i zwarty wiersz spisu /narzedzia: nazwa i jedno zdanie z rejestru. Wiersz skaluje się do kilkuset pozycji.</p>
+      <div class="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <KartaNarzedzia narzedzie={przyklady[0]} />
+        <KartaNarzedzia narzedzie={przyklady[1]} />
+        <div class="divide-y divide-linia border-t-2 border-grafit">
+          {przyklady.map((n) => <KartaNarzedzia narzedzie={n} wariant="mala" />)}
         </div>
       </div>
-
-      <h3 class="tytul-s mt-10">3. Siatka: zwykła, po najechaniu, z fokusem, długi tytuł</h3>
-      <div class="mt-3 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        <KartaSiatka artykul={ARTYKULY[1]} zLeadem szerokosc={290} />
-        <KartaSiatka artykul={ARTYKULY[2]} class="stan-najazd" szerokosc={290} />
-        <KartaSiatka artykul={ARTYKULY[4]} class="stan-fokus" szerokosc={290} />
-        <KartaSiatka artykul={DLUGI_TYTUL} szerokosc={290} />
-      </div>
-
-      <h3 class="tytul-s mt-10">Materiał partnera, kadr z punktem zaczepienia, brak zdjęcia (pusty)</h3>
-      <div class="mt-3 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        <KartaSiatka artykul={ARTYKULY[5]} zLeadem szerokosc={290} />
-        <KartaSiatka artykul={{ ...ARTYKULY[3], tytul: 'Stanowisko operatora: kadr przycięty od lewej, bez logo z prawej części ściany', zdjecie: scada }} szerokosc={290} />
-        <KartaSiatka artykul={{ ...ARTYKULY[4], tytul: 'Stan pusty: zdjęcie jeszcze niewybrane (dozwolony tylko tutaj)', zdjecie: undefined }} szerokosc={290} />
-      </div>
-
-      <h3 class="tytul-s mt-10">4. Lista bez zdjęć: dział i format, tytuł, autor, czas czytania</h3>
-      <div class="mt-3 max-w-xl">
-        {ARTYKULY.slice(0, 4).map((a) => <KartaLista artykul={a} />)}
-        <KartaLista artykul={ARTYKULY[5]} />
-      </div>
+      <ul class="mt-8 max-w-2xl">
+        {przyklady.map((n) => (
+          <li class="wiersz">
+            <a href={adresNarzedzia(n.slug)} class="wiersz-link">
+              <span class="kategoria block">{KATEGORIE[n.kategoria].krotko}</span>
+              <span class="wiersz-nazwa">{n.nazwa}</span>
+              <span class="wiersz-opis">{n.krotko}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
     </section>
 
     {/* LISTY */}
     <section aria-labelledby="listy">
-      <NaglowekSekcji tytul="Listy i nagłówki sekcji" id="listy" />
-      <div class="mt-6 grid gap-8 lg:grid-cols-3">
-        <NajczesciejCzytane artykuly={NAJCZESCIEJ} />
-        <div class="space-y-8">
-          <NaglowekSekcji tytul="Produkcja" link={{ nazwa: 'Więcej z działu', adres: '/dzial/produkcja' }} poziom="h3" />
+      <NaglowekSekcji tytul="Nagłówki sekcji i pytania" id="listy" />
+      <div class="mt-6 grid gap-10 lg:grid-cols-2">
+        <div class="space-y-6">
+          <NaglowekSekcji tytul="Wynagrodzenie i zasiłki" link={{ nazwa: 'Wszystkie narzędzia', adres: '/narzedzia' }} poziom="h3" />
           <NaglowekSekcji tytul="Nagłówek bez linku" poziom="h3" />
-          <NaglowekSekcji tytul="Bardzo długi nagłówek sekcji, który na telefonie przechodzi do drugiej linii" link={{ nazwa: 'Więcej', adres: '/dzial/produkcja' }} poziom="h3" />
+          <NaglowekSekcji tytul="Bardzo długi nagłówek sekcji, który na telefonie przechodzi do drugiej linii" link={{ nazwa: 'Więcej', adres: '/narzedzia' }} poziom="h3" />
         </div>
-        <div>
-          <p class="meta">Pusta lista „Najczęściej czytane” się nie wyświetla (zero elementów poniżej).</p>
-          <NajczesciejCzytane artykuly={[]} />
+        <div class="tresc">
+          <Faq id="sg-faq" tytul="Pytania i odpowiedzi (przykład)" pytania={[
+            { pytanie: 'Przykładowe pytanie: od kiedy liczy się termin?', odpowiedz: 'Odpowiedź fikcyjna do akceptacji wyglądu: termin liczy się od dnia następnego po zdarzeniu.' },
+            { pytanie: 'Drugie pytanie z dłuższym brzmieniem, które na telefonie zawija się do drugiej linii?', odpowiedz: 'Odpowiedź fikcyjna. Pytania działają bez JavaScriptu, klawiaturą i czytnikiem ekranu.' },
+          ]} />
         </div>
       </div>
     </section>
@@ -358,39 +336,21 @@ const zdjeciaSerwisu = dostepne();
       </div>
     </section>
 
-    {/* AUTOR I UDOSTĘPNIANIE */}
-    <section aria-labelledby="autor">
-      <NaglowekSekcji tytul="Ramka autora i udostępnianie" id="autor" />
-      <div class="mt-6 grid gap-8 lg:grid-cols-2">
-        <RamkaAutora imie="Patryk Korpyta" rola="Redaktor naczelny" bio="Założyciel i redaktor naczelny Rytmu Hali. Pisze o produkcji, magazynach, lean i danych w operacjach." adres="/autor/patryk-korpyta" email="redakcja@rytmhali.pl" />
-        <div class="space-y-6">
-          <div>
-            <p class="meta">Przy metadanych artykułu</p>
-            <div class="mt-2"><Udostepnij adres="https://rytmhali.pl/przyklad-smed" tytul="Przezbrojenie krótsze o połowę bez nowych maszyn" wariant="gora" /></div>
-          </div>
-          <Udostepnij adres="https://rytmhali.pl/przyklad-smed" tytul="Przezbrojenie krótsze o połowę bez nowych maszyn" wariant="dol" />
-        </div>
-      </div>
-    </section>
-
     {/* NAWIGACJA */}
     <section aria-labelledby="nawigacja">
-      <NaglowekSekcji tytul="Okruszki i stronicowanie" id="nawigacja" />
+      <NaglowekSekcji tytul="Okruszki" id="nawigacja" />
       <div class="mt-6 space-y-6">
-        <Okruszki pozycje={[{ nazwa: 'Produkcja', adres: '/dzial/produkcja' }, { nazwa: 'Przezbrojenie krótsze o połowę bez nowych maszyn' }]} />
-        <Stronicowanie biezaca={1} liczba={5} bazowy="/przyklad-dzial" />
-        <Stronicowanie biezaca={6} liczba={20} bazowy="/przyklad-dzial" />
-        <Stronicowanie biezaca={20} liczba={20} bazowy="/przyklad-dzial" />
+        <Okruszki pozycje={[{ nazwa: 'Narzędzia', adres: '/narzedzia' }, { nazwa: 'Kalkulator L4: chorobowe i zasiłek' }]} />
       </div>
     </section>
 
     {/* TREŚĆ */}
     <section aria-labelledby="tresc-sg">
-      <NaglowekSekcji tytul="Treść artykułu" id="tresc-sg" />
+      <NaglowekSekcji tytul="Treść stron i wyjaśnień narzędzi" id="tresc-sg" />
       <div class="tresc mt-6">
         <p>Akapit treści w Noto Sans, 18 px, interlinia 1,75, do 70 znaków w linii. <a href="#tresc-sg">Link w treści</a> jest podkreślony i ma kolor akcentu w odcieniu do tekstu. <strong>Pogrubienie</strong> i <em>kursywa</em> mają własne kroje.</p>
         <h2>Śródtytuł drugiego poziomu</h2>
-        <p>Śródtytuły dostaną kotwice w szablonie artykułu (F3), a długie teksty spis treści.</p>
+        <p>Śródtytuły mają kotwice, więc do sekcji „Jak liczymy” można linkować wprost.</p>
         <ul>
           <li>Lista punktowana z kwadratowym znacznikiem w kolorze akcentu.</li>
           <li>Druga pozycja listy, nieco dłuższa, żeby sprawdzić zawijanie do drugiej linii na telefonie.</li>
@@ -399,42 +359,22 @@ const zdjeciaSerwisu = dostepne();
         <h3>Śródtytuł trzeciego poziomu</h3>
         <div class="tabela">
           <table>
-            <caption class="sr-only">Przykładowa tabela wskaźników</caption>
-            <thead><tr><th scope="col">Wskaźnik</th><th scope="col">Definicja</th><th scope="col">Częstotliwość</th><th scope="col">Źródło danych</th></tr></thead>
+            <caption class="sr-only">Przykładowa tabela stawek</caption>
+            <thead><tr><th scope="col">Rok</th><th scope="col">Płaca minimalna</th><th scope="col">Stawka godzinowa</th><th scope="col">Źródło</th></tr></thead>
             <tbody>
-              <tr><td>Dokładność kompletacji</td><td>Pozycje bez błędu / wszystkie pozycje</td><td>Codziennie</td><td>WMS</td></tr>
-              <tr><td>Czas przezbrojenia</td><td>Od ostatniej dobrej sztuki do pierwszej dobrej</td><td>Każde przezbrojenie</td><td>Karta przezbrojenia</td></tr>
+              <tr><td>Przykład A</td><td>0000 zł</td><td>00,00 zł</td><td>Dziennik Ustaw (fikcyjny wiersz)</td></tr>
+              <tr><td>Przykład B</td><td>0000 zł</td><td>00,00 zł</td><td>Dziennik Ustaw (fikcyjny wiersz)</td></tr>
             </tbody>
           </table>
         </div>
-        <figure>
-          <Zdjecie zdjecie={linia} proporcja="16-9" szerokosc={704} sizes="(min-width: 768px) 704px, 100vw" />
-          <figcaption>
-            {linia?.podpis} {linia && <a href={linia.zrodlo} rel="noopener" target="_blank">{linia.fot}</a>}
-          </figcaption>
-        </figure>
         <p>Tabela przewija się w bok na telefonie i jest wtedy osiągalna klawiaturą.</p>
       </div>
-    </section>
-
-    {/* ŹRÓDŁA ZDJĘĆ */}
-    <section aria-labelledby="zrodla-zdjec">
-      <NaglowekSekcji tytul="Zdjęcia: źródła i licencje" id="zrodla-zdjec" />
-      <p class="mt-3 max-w-3xl text-[0.9375rem]">Wszystkie zdjęcia na tej stronie, z rejestru licencji <code>src/content/zdjecia/</code>. Na stronach artykułów podpis „Fot.” stoi pod każdym zdjęciem.</p>
-      <ul class="mt-4 grid gap-x-8 gap-y-2 text-[0.875rem] md:grid-cols-2">
-        {zdjeciaSerwisu.map((z) => (
-          <li class="border-b border-linia py-2">
-            <a href={z.zrodlo} rel="noopener" target="_blank" class="link font-medium">{z.fot}</a>
-            <span class="text-tekst-drugi"> · <a href={z.licencjaUrl} rel="noopener license" target="_blank" class="underline">licencja</a></span>
-          </li>
-        ))}
-      </ul>
     </section>
 
     {/* BŁĄD */}
     <section aria-labelledby="blad">
       <NaglowekSekcji tytul="Strona błędu" id="blad" />
-      <p class="mt-3 text-[0.9375rem]">Pełna strona: <a href="/404" class="link">/404</a>. Wariant 410 (artykuł usunięty na stałe) zwraca worker w F8.</p>
+      <p class="mt-3 text-[0.9375rem]">Pełna strona: <a href="/404" class="link">/404</a>. Wariant 410 (strona usunięta na stałe) zwraca worker dla adresów z listy w <code>worker/usuniete.js</code>.</p>
       <div class="mt-4 border border-linia">
         <div class="pointer-events-none origin-top-left scale-[0.85]" inert>
           <StronaBledu kod={410} poziom="h3" />

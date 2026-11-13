@@ -275,7 +275,48 @@
   }
 }
 
-/* Treść artykułu (szablon w F3; typografia należy do systemu wizualnego) */
+/* Podświetlenie trafionych słów w wynikach wyszukiwarki narzędzi (src/lib/szukaj-klient.ts): jasny akcent, tekst bez zmian. */
+mark {
+  background: #fde3d3;
+  color: inherit;
+  padding: 0 0.0625rem;
+}
+
+/* Wiersz narzędzia w spisie /narzedzia i w wynikach wyszukiwarki (src/lib/szukaj-klient.ts tworzy te same klasy). */
+.wiersz {
+  border-bottom: 1px solid var(--color-linia);
+}
+.wiersz-link {
+  display: block;
+  min-height: 3.5rem;
+  padding: 0.75rem 0;
+}
+.wiersz-nazwa {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--color-tekst);
+}
+.wiersz-opis {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--color-tekst-tresc);
+}
+.wiersz-link:hover .wiersz-nazwa {
+  color: var(--color-akcent-tekst);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.wiersz-link:focus-visible {
+  outline: 3px solid var(--color-akcent);
+  outline-offset: 2px;
+}
+
+/* Treść stron stałych i wyjaśnień narzędzi (typografia należy do systemu wizualnego) */
 .tresc {
   @apply text-[1.0625rem] leading-[1.75] text-tekst-tresc sm:text-[1.125rem];
   max-width: 44rem;

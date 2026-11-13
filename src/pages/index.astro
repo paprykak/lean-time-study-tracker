@@ -1,33 +1,31 @@
 ---
 // Strona główna. Przed bramką publicznego startu produkcja pokazuje „Wkrótce” z zapisem na listę oczekujących
-// (prompt F8: start w dwóch krokach); podgląd, build testowy i produkcja po starcie — portal (src/lib/srodowisko.mjs).
+// (prompt F8: start w dwóch krokach); podgląd, build testowy i produkcja po starcie — centrum narzędzi (StronaGlowna).
 import Uklad from '../layouts/Uklad.astro';
 import Newsletter from '../components/Newsletter.astro';
 import StronaGlowna from '../components/StronaGlowna.astro';
-import PasekTematow from '../components/PasekTematow.astro';
 import ustawienia from '../data/ustawienia.json';
-import { DZIALY } from '../lib/dane';
+import { KATEGORIE } from '../data/narzedzia';
 import { PORTAL } from '../lib/srodowisko.mjs';
 ---
 {PORTAL ? (
-  <Uklad tytul={`${ustawienia.nazwa}: ${ustawienia.haslo.toLowerCase()}`} opis={ustawienia.opis} rss>
-    <PasekTematow slot="pod-naglowkiem" />
+  <Uklad tytul={`${ustawienia.nazwa}: ${ustawienia.haslo.toLowerCase()}`} opis={ustawienia.opis} bezSzukania>
     <StronaGlowna />
   </Uklad>
 ) : (
-  <Uklad tytul="Rytm Hali: niezależne medium o operacjach" opis={ustawienia.opis} naglowek="minimalny">
+  <Uklad tytul={`${ustawienia.nazwa}: ${ustawienia.haslo.toLowerCase()}`} opis={ustawienia.opis} naglowek="minimalny">
     <div class="kontener grid gap-10 py-10 md:py-16 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-16">
       <div>
         <p class="kategoria">Wkrótce start</p>
         <h1 class="tytul-xl mt-3 max-w-[20ch]">{ustawienia.haslo}</h1>
         <p class="lead mt-5 max-w-[46ch]">
-          Piszemy dla kierowników produkcji i magazynów, dyrektorów operacyjnych, specjalistów ciągłego doskonalenia i liderów zmian.
-          Konkretnie, ze źródłami, bez reklam udających artykuły.
+          Bezpłatne kalkulatory i ściągi z prawa pracy i BHP dla ludzi z hali: ile się należy, czy wolno, kiedy mija termin.
+          Przy każdej liczbie przepis i data sprawdzenia.
         </p>
-        <h2 class="mt-10 font-sans text-kategoria font-bold tracking-[0.08em] text-tekst-drugi uppercase">Działy</h2>
+        <h2 class="mt-10 font-sans text-kategoria font-bold tracking-[0.08em] text-tekst-drugi uppercase">Tematy</h2>
         <ul class="mt-2 max-w-xl border-t-2 border-grafit">
-          {DZIALY.map((d) => (
-            <li class="border-b border-linia py-3 font-display text-[1.125rem] font-bold text-tekst">{d.nazwa}</li>
+          {Object.values(KATEGORIE).map((k) => (
+            <li class="border-b border-linia py-3 font-display text-[1.125rem] font-bold text-tekst">{k.nazwa}</li>
           ))}
         </ul>
       </div>

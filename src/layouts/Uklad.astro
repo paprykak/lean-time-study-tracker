@@ -21,9 +21,11 @@ interface Props {
   /** „minimalny”: samo logo (strona „Wkrótce”); „pelny”: pasek górny, wyszukiwarka i menu. */
   naglowek?: 'pelny' | 'minimalny';
   aktywny?: string;
+  /** Strona ma własne pole wyszukiwania w treści, więc nagłówek go nie powtarza. */
+  bezSzukania?: boolean;
 }
 
-const { tytul, opis, obraz = '/marka/okladka-domyslna.jpg', typ = 'website', noindex = false, jsonLd = [], aktywny } = Astro.props;
+const { tytul, opis, obraz = '/marka/okladka-domyslna.jpg', typ = 'website', noindex = false, jsonLd = [], aktywny, bezSzukania = false } = Astro.props;
 // Przed startem na produkcji są tylko „Wkrótce” i strony błędów: bez menu i stopki z linkami do stron portalu.
 const naglowek = PORTAL ? (Astro.props.naglowek ?? 'pelny') : 'minimalny';
 const adres = ustawienia.adres;
@@ -95,7 +97,7 @@ const graf = {
   <body class="flex min-h-dvh flex-col">
     <a href="#tresc" class="przejdz-do-tresci">Przejdź do treści</a>
     {naglowek === 'pelny' ? (
-      <Naglowek aktywny={aktywny} />
+      <Naglowek aktywny={aktywny} bezSzukania={bezSzukania} />
     ) : (
       <header class="border-b border-linia">
         <div class="kontener flex h-16 items-center md:h-24">

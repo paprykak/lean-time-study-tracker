@@ -52,12 +52,16 @@
     ],
     "wspolpraca": [
       {
+        "nazwa": "Raport zmianowy",
+        "adres": "/newsletter"
+      },
+      {
         "nazwa": "Reklama i współpraca",
         "adres": "/reklama"
       },
       {
-        "nazwa": "Raport zmianowy",
-        "adres": "/newsletter"
+        "nazwa": "Zgłoś błąd w narzędziu",
+        "adres": "/kontakt"
       }
     ],
     "prawne": [
