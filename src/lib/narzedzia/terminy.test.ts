@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { dataPoPolsku, dniMiedzy, dodajDni, dodajLata, dodajMiesiace, dzisWPolsce, ileDni, poprawnaData } from './terminy';
-import { plikIcs } from './kalendarz-ics';
+import { plikIcs, wyzwalacz } from './kalendarz-ics';
 
 describe('terminy (art. 112 KC)', () => {
   it.each([
@@ -54,5 +54,87 @@ describe('plikIcs (RFC 5545)', () => {
   });
   it('wiersze najwyżej 75 bajtów', () => {
     for (const l of linie) expect(new TextEncoder().encode(l).length).toBeLessThanOrEqual(75);
+  });
+  it('domyślne przypomnienia: tydzień i dzień przed terminem o 9:00 (VALARM)', () => {
+    const rozwiniete = ics.replace(/\r\n /g, '');
+    expect(rozwiniete).toContain(
+      'BEGIN:VALARM\r\nACTION:DISPLAY\r\nDESCRIPTION:Za 7 dni: Ostatni dzień na szkolenie okresowe BHP\r\nTRIGGER;RELATED=START:-P6DT15H\r\nEND:VALARM',
+    );
+    expect(rozwiniete).toContain('DESCRIPTION:Jutro: Ostatni dzień na szkolenie okresowe BHP\r\nTRIGGER;RELATED=START:-PT15H\r\nEND:VALARM');
+    // Alarm leży wewnątrz wydarzenia.
+    expect(rozwiniete.indexOf('END:VALARM')).toBeLessThan(rozwiniete.indexOf('END:VEVENT'));
+  });
+});
+
+describe('wyzwalacz przypomnienia (RFC 5545, 3.3.6 i 3.8.6.3)', () => {
+  it('przesunięcie od północy dnia wydarzenia do 9:00 N dni wcześniej', () => {
+    expect([0, 1, 2, 7, 30].map(wyzwalacz)).toEqual(['PT9H', '-PT15H', '-P1DT15H', '-P6DT15H', '-P29DT15H']);
+  });
+  it('odrzuca dni ujemne i ułamkowe', () => {
+    expect(() => wyzwalacz(-1)).toThrow(RangeError);
+    expect(() => wyzwalacz(1.5)).toThrow(RangeError);
+  });
+});
+
+/** Minimalna kontrola gramatyki RFC 5545: CRLF, zawijanie, pary BEGIN/END, wymagane właściwości, format wartości. */
+function bledyIcs(ics: string): string[] {
+  const bledy: string[] = [];
+  if (!ics.endsWith('\r\n') || /[^\r]\n/.test(ics)) bledy.push('wiersze muszą kończyć się CRLF');
+  const linie = ics.replace(/\r\n[ \t]/g, '').split('\r\n').slice(0, -1);
+  const stos: { nazwa: string; wlasciwosci: Map<string, string[]> }[] = [];
+  for (const l of linie) {
+    const m = /^([A-Z][A-Z0-9-]*)((?:;[A-Z-]+=[^;:]+)*):(.*)$/.exec(l);
+    if (!m) {
+      bledy.push(`zły wiersz: ${l}`);
+      continue;
+    }
+    const [, nazwa, , wartosc] = m;
+    if (nazwa === 'BEGIN') stos.push({ nazwa: wartosc, wlasciwosci: new Map() });
+    else if (nazwa === 'END') {
+      const k = stos.pop();
+      if (!k || k.nazwa !== wartosc) bledy.push(`END:${wartosc} bez pary`);
+      else {
+        const wymagane = { VCALENDAR: ['PRODID', 'VERSION'], VEVENT: ['UID', 'DTSTAMP', 'DTSTART'], VALARM: ['ACTION', 'TRIGGER', 'DESCRIPTION'] }[k.nazwa] ?? [];
+        for (const w of wymagane) if (k.wlasciwosci.get(w)?.length !== 1) bledy.push(`${k.nazwa}: ${w} musi wystąpić dokładnie raz`);
+        if (k.nazwa === 'VALARM' && stos.at(-1)?.nazwa !== 'VEVENT') bledy.push('VALARM poza VEVENT');
+      }
+    } else {
+      const k = stos.at(-1);
+      if (!k) bledy.push(`właściwość poza komponentem: ${nazwa}`);
+      else k.wlasciwosci.set(nazwa, [...(k.wlasciwosci.get(nazwa) ?? []), wartosc]);
+      if (nazwa === 'TRIGGER' && !/^[+-]?P(?:\d+W|(?:\d+D)?(?:T(?:\d+H)?(?:\d+M)?(?:\d+S)?)?)$/.test(wartosc)) bledy.push(`zły TRIGGER: ${wartosc}`);
+      if (/^DT(START|END)$/.test(nazwa) && !/^\d{8}$/.test(wartosc)) bledy.push(`zła data: ${l}`);
+      if (/^(SUMMARY|DESCRIPTION)$/.test(nazwa) && /(?<!\\)[;,]/.test(wartosc)) bledy.push(`nieucieczony znak: ${l}`);
+    }
+  }
+  if (stos.length) bledy.push('niezamknięty komponent');
+  return bledy;
+}
+
+describe('plik .ics zgodny z RFC 5545', () => {
+  const plik = plikIcs(
+    [
+      { data: '2027-02-28', tytul: 'Zaplanuj: badanie; okresowe, z zapasem', opis: 'Opis\nw dwóch wierszach ze znakami ąęółżźćń '.repeat(4), przypomnienia: [0] },
+      { data: '2027-03-01', tytul: 'Termin' },
+      { data: '2027-03-02', tytul: 'Święto', przypomnienia: [] },
+      { data: '2027-03-03', tytul: 'Powtórzone', przypomnienia: [1, 1, 30] },
+    ],
+    'test',
+    new Date('2026-11-13T08:00:00Z'),
+  );
+  it('bez błędów składni i z wymaganymi właściwościami', () => {
+    expect(bledyIcs(plik)).toEqual([]);
+  });
+  it('liczba alarmów: [0] → 1, domyślnie 2, [] → 0, powtórzenia raz', () => {
+    const wydarzenia = plik.replace(/\r\n /g, '').split('BEGIN:VEVENT').slice(1);
+    expect(wydarzenia.map((w) => w.split('BEGIN:VALARM').length - 1)).toEqual([1, 2, 0, 2]);
+    expect(wydarzenia[0]).toContain('TRIGGER;RELATED=START:PT9H');
+    expect(wydarzenia[0]).toContain('DESCRIPTION:Dziś: Zaplanuj: badanie\\; okresowe\\, z zapasem');
+    expect(wydarzenia[3]).toContain('DESCRIPTION:Za 30 dni: Powtórzone');
+  });
+  it('kontrola łapie błędy', () => {
+    expect(bledyIcs('BEGIN:VCALENDAR\r\nBEGIN:VALARM\r\nTRIGGER:-1D\r\nEND:VALARM\r\n')).toEqual(
+      expect.arrayContaining(['zły TRIGGER: -1D', 'VALARM poza VEVENT', 'niezamknięty komponent']),
+    );
   });
 });

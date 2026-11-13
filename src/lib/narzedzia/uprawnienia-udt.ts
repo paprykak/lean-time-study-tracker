@@ -97,7 +97,7 @@ export function terminyUdt({ waznoDo, lata, dzis, nazwa }: { waznoDo: string; la
     dniDoKonca < 0 ? 'wygaslo' : dniDoWniosku < 0 ? 'za-pozno-na-wniosek' : dniDoWniosku <= 30 ? 'pilne' : dniDoWniosku <= 90 ? 'wkrotce' : 'w-terminie';
   const opis = `Zaświadczenie kwalifikacyjne UDT${nazwa ? ` (${nazwa})` : ''} ważne do ${dataPoPolsku(waznoDo)} Wniosek o przedłużenie najpóźniej ${dataPoPolsku(wniosekDo)}, do jednostki, która wydała zaświadczenie (np. przez portal eUDT). Policzone na rytmhali.pl/narzedzia/waznosc-uprawnien-udt.`;
   const kandydaci: Wydarzenie[] = [
-    { data: dodajDni(wniosekDo, -30), tytul: 'Złóż wniosek o przedłużenie uprawnień UDT', opis },
+    { data: dodajDni(wniosekDo, -30), tytul: 'Złóż wniosek o przedłużenie uprawnień UDT', opis, przypomnienia: [0] },
     { data: wniosekDo, tytul: 'Ostatni dzień na wniosek o przedłużenie uprawnień UDT', opis },
     { data: waznoDo, tytul: 'Koniec ważności zaświadczenia UDT', opis },
   ];

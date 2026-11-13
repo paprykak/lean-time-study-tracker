@@ -166,13 +166,13 @@ export function wydarzenia(terminy: { rodzaj: RodzajBadania; termin: string; ost
       const opis = `Następne ${NAZWA[rodzaj]} najpóźniej ${dataPoPolsku(termin)} ${rodzaj === 'okresowe' ? PLACI_KP : PLACI_KIEROWCA} Policzone na rytmhali.pl/narzedzia/badania-kierowcy.`;
       const duze = NAZWA[rodzaj][0].toUpperCase() + NAZWA[rodzaj].slice(1);
       const lista: Wydarzenie[] = [
-        { data: dodajDni(termin, -DNI_PRZYPOMNIENIA), tytul: `Umów: ${NAZWA[rodzaj]}`, opis },
+        { data: dodajDni(termin, -DNI_PRZYPOMNIENIA), tytul: `Umów: ${NAZWA[rodzaj]}`, opis, przypomnienia: [0] },
         { data: termin, tytul: `${duze}: ostatni dzień`, opis },
       ];
       if (ostroznie && ostroznie < termin) {
         const opisOstr = `Termin ostrożny po 60. urodzinach (${dataPoPolsku(ostroznie)}): nasza interpretacja, przepis tego nie wymaga. Termin wiążący to ${dataPoPolsku(termin)} Policzone na rytmhali.pl/narzedzia/badania-kierowcy.`;
         lista.push(
-          { data: dodajDni(ostroznie, -DNI_PRZYPOMNIENIA), tytul: `Bezpieczniej umów: ${NAZWA[rodzaj]}`, opis: opisOstr },
+          { data: dodajDni(ostroznie, -DNI_PRZYPOMNIENIA), tytul: `Bezpieczniej umów: ${NAZWA[rodzaj]}`, opis: opisOstr, przypomnienia: [0] },
           { data: ostroznie, tytul: `Bezpieczniej wcześniej: ${NAZWA[rodzaj]}`, opis: opisOstr },
         );
       }
@@ -211,13 +211,15 @@ export interface Widok {
   oplataLek: string;
   oplataPsy: string;
   uwaga: string | null;
-  /** Co trafi do pliku .ics (bez obietnic powiadomień: plik nie ma alarmów). */
+  /** Co trafi do pliku .ics i kiedy kalendarz przypomni (VALARM z kalendarz-ics.ts). */
   icsOpis: string;
   wydarzenia: Wydarzenie[];
 }
+const UWAGA_ICS = ' Część kalendarzy pomija przypomnienia z pliku i ustawia własne.';
 const ICS_KIEROWCA =
-  'Terminy do kalendarza: 30 dni przed terminem i w dniu terminu, a gdy jest termin ostrożny, także 30 dni przed nim i w jego dniu (tylko te, które jeszcze nie minęły).';
-const ICS_KP = 'Terminy do kalendarza: 30 dni przed terminem z orzeczenia i w jego dniu (tylko te, które jeszcze nie minęły).';
+  'Terminy do kalendarza: 30 dni przed terminem i w dniu terminu, a gdy jest termin ostrożny, także 30 dni przed nim i w jego dniu (tylko te, które jeszcze nie minęły). Przypomnienia o 9:00: „umów” w jego dniu, terminy tydzień i dzień wcześniej.' + UWAGA_ICS;
+const ICS_KP =
+  'Terminy do kalendarza: 30 dni przed terminem z orzeczenia i w jego dniu (tylko te, które jeszcze nie minęły). Przypomnienia o 9:00: „umów” w jego dniu, termin tydzień i dzień wcześniej.' + UWAGA_ICS;
 const ICS_BEZ_TERMINU = 'Terminy do kalendarza po wpisaniu terminu z orzeczenia.';
 
 const ETYKIETA: Record<Status, string> = { 'po-terminie': 'Zaległe', pilne: 'Pilne', wkrotce: 'Wkrótce', 'w-terminie': 'W terminie' };

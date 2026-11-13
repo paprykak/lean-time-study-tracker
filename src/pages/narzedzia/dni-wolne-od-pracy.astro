@@ -73,7 +73,7 @@ const faq = [
       <p class="mt-5">
         <button type="button" class="przycisk przycisk-grafit" data-ics>Święta do kalendarza (.ics)</button>
       </p>
-      <p class="meta mt-2">Plik ze świętami z wybranego roku otworzy kalendarz w telefonie, Outlook i Kalendarz Google.</p>
+      <p class="meta mt-2">Plik ze świętami z wybranego roku otworzy kalendarz w telefonie, Outlook i Kalendarz Google. Święta są w nim bez przypomnień.</p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -173,6 +173,8 @@ const faq = [
         data: s.data,
         tytul: s.nazwa,
         opis: new Date(`${s.data}T00:00:00Z`).getUTCDay() === 6 ? 'Dzień wolny od pracy w sobotę: obniża wymiar czasu pracy o 8 godzin (art. 130 § 2 Kodeksu pracy).' : 'Dzień wolny od pracy (ustawa o dniach wolnych od pracy).',
+        // Święta to lista informacyjna, nie termin do dotrzymania: bez alarmów.
+        przypomnienia: [],
       }));
       const blob = new Blob([plikIcs(wydarzenia, `dni-wolne-od-pracy-${r}`)], { type: 'text/calendar;charset=utf-8' });
       const a = document.createElement('a');
