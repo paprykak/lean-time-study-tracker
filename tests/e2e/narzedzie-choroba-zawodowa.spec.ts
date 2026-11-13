@@ -16,7 +16,7 @@ test('cieśń nadgarstka: objawy w okresie i po nim', async ({ page }) => {
   await expect(page.locator('[data-w="glowny"]')).toHaveText('Objawy w okresie z wykazu');
   await expect(page.locator('[data-w="podstawa"]')).toContainText(/15\smarca\s2026\sr\.\swłącznie/);
   await expect(page.locator('[data-w="wiersze"]')).toContainText(/Poz\.\s20\spkt\s1/);
-  await expect(page.locator('[data-w="wiersze"]')).toContainText(/Możesz\sTy,\ssam\slub\ssama/);
+  await expect(page.locator('[data-w="wiersze"]')).toContainText(/Możesz\szgłosić\ssamodzielnie/);
   await page.getByLabel('Pierwsze objawy w dokumentacji').fill('2026-03-16');
   await expect(page.locator('[data-w="glowny"]')).toHaveText('Objawy po okresie z wykazu');
 });
@@ -37,6 +37,7 @@ test('kręgosłup spoza wykazu, pylica bez daty', async ({ page }) => {
   await expect(page.locator('[data-w="glowny"]')).toHaveText('Nie ma w wykazie');
   await page.getByLabel('Choroba', { exact: true }).selectOption('3.1');
   await expect(page.locator('[data-w="glowny"]')).toHaveText(/^Okres:\snie\smożna\sokreślić$/);
+  await expect(page.getByLabel('Ostatni dzień w narażeniu')).toBeHidden();
 });
 
 test('błąd: koniec narażenia w przyszłości', async ({ page }) => {
@@ -44,4 +45,29 @@ test('błąd: koniec narażenia w przyszłości', async ({ page }) => {
   await expect(page.locator('[data-blad="dane"]')).toBeVisible();
   await expect(page.getByLabel('Ostatni dzień w narażeniu')).toHaveAttribute('aria-invalid', 'true');
   await expect(page.locator('[data-w="glowny"]')).toHaveText('—');
+  await page.getByLabel('Ostatni dzień w narażeniu').fill('2025-03-15');
+  await expect(page.locator('[data-blad="dane"]')).toBeHidden();
+  await expect(page.getByLabel('Ostatni dzień w narażeniu')).not.toHaveAttribute('aria-invalid', 'true');
+});
+
+test.describe('telefon 320 px', () => {
+  test.use({ viewport: { width: 320, height: 640 } });
+  test('żadna opcja list nie jest szersza niż pole', async ({ page }) => {
+    const uciete = await page.locator('select').evaluateAll(async (listy) => {
+      const wynik: string[] = [];
+      for (const el of listy) {
+        const s = el as HTMLSelectElement;
+        const styl = getComputedStyle(s);
+        const ctx = document.createElement('canvas').getContext('2d')!;
+        ctx.font = `${styl.fontWeight} ${styl.fontSize} ${styl.fontFamily}`;
+        // Mierzymy fontem strony, nie zastępczym: bez tego wynik zależy od fontów systemu (w CI szersze).
+        await document.fonts.load(ctx.font, [...s.options].map((o) => o.text).join(''));
+        const miejsce = s.clientWidth - 40;
+        wynik.push(...[...s.options].filter((o) => ctx.measureText(o.text).width > miejsce).map((o) => o.text));
+      }
+      return wynik;
+    });
+    expect(uciete).toEqual([]);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  });
 });

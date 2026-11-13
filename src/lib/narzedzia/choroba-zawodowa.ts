@@ -41,6 +41,7 @@
 
 import { kwotyNaDzien } from './odszkodowanie-wypadek';
 import { zl } from './format';
+import { odmiana } from '../redakcja';
 import { dataPoPolsku, dniMiedzy, dodajDni, dodajMiesiace, poprawnaData } from './terminy';
 
 export interface CzasWykazu {
@@ -67,17 +68,17 @@ export interface PozycjaWykazu {
 
 export const GRUPY: Record<string, { nazwa: string; krotko: string }> = {
   '3': { nazwa: 'Pylice płuc', krotko: 'Pylice płuc' },
-  '4': { nazwa: 'Choroby opłucnej lub osierdzia wywołane pyłem azbestu', krotko: 'Azbest: opłucna, osierdzie' },
+  '4': { nazwa: 'Choroby opłucnej lub osierdzia wywołane pyłem azbestu', krotko: 'Azbest: opłucna' },
   '7': { nazwa: 'Zewnątrzpochodne alergiczne zapalenie pęcherzyków płucnych', krotko: 'Pęcherzyki płucne' },
   '15': { nazwa: 'Przewlekłe choroby narządu głosu spowodowane nadmiernym wysiłkiem głosowym, trwającym co najmniej 15 lat', krotko: 'Narząd głosu' },
-  '16': { nazwa: 'Choroby wywołane działaniem promieniowania jonizującego', krotko: 'Promieniowanie jonizujące' },
+  '16': { nazwa: 'Choroby wywołane działaniem promieniowania jonizującego', krotko: 'Promieniowanie' },
   '17': { nazwa: 'Nowotwory złośliwe powstałe w następstwie działania czynników występujących w środowisku pracy, uznanych za rakotwórcze u ludzi', krotko: 'Nowotwory złośliwe' },
   '18': { nazwa: 'Choroby skóry', krotko: 'Choroby skóry' },
   '19': { nazwa: 'Przewlekłe choroby układu ruchu wywołane sposobem wykonywania pracy', krotko: 'Układ ruchu' },
   '20': { nazwa: 'Przewlekłe choroby obwodowego układu nerwowego wywołane sposobem wykonywania pracy', krotko: 'Nerwy obwodowe' },
   '22': { nazwa: 'Zespół wibracyjny', krotko: 'Zespół wibracyjny' },
   '23': { nazwa: 'Choroby wywołane pracą w warunkach podwyższonego ciśnienia atmosferycznego', krotko: 'Podwyższone ciśnienie' },
-  '24': { nazwa: 'Choroby wywołane działaniem wysokich albo niskich temperatur otoczenia', krotko: 'Wysoka i niska temperatura' },
+  '24': { nazwa: 'Choroby wywołane działaniem wysokich albo niskich temperatur otoczenia', krotko: 'Upał i zimno' },
   '25': { nazwa: 'Choroby układu wzrokowego wywołane czynnikami fizycznymi, chemicznymi lub biologicznymi', krotko: 'Oczy' },
 };
 
@@ -89,31 +90,31 @@ export const WYKAZ: readonly PozycjaWykazu[] = [
   { id: '3.2', poz: '3.2', grupa: '3', nazwa: 'pylica górników kopalń węgla', krotko: 'Pylica górników węgla', okres: 'nie można określić', czas: null },
   { id: '3.3', poz: '3.3', grupa: '3', nazwa: 'pylico-gruźlica', krotko: 'Pylico-gruźlica', okres: 'nie można określić', czas: null },
   { id: '3.4', poz: '3.4', grupa: '3', nazwa: 'pylica spawaczy', krotko: 'Pylica spawaczy', okres: 'nie można określić', czas: null },
-  { id: '3.5', poz: '3.5', grupa: '3', nazwa: 'pylica azbestowa oraz pozostałe pylice krzemianowe', krotko: 'Pylica azbestowa, krzemianowe', okres: 'nie można określić', czas: null },
+  { id: '3.5', poz: '3.5', grupa: '3', nazwa: 'pylica azbestowa oraz pozostałe pylice krzemianowe', krotko: 'Pylica azbestowa', okres: 'nie można określić', czas: null },
   { id: '3.6', poz: '3.6', grupa: '3', nazwa: 'pylica talkowa', krotko: 'Pylica talkowa', okres: 'nie można określić', czas: null },
   { id: '3.7', poz: '3.7', grupa: '3', nazwa: 'pylica grafitowa', krotko: 'Pylica grafitowa', okres: 'nie można określić', czas: null },
-  { id: '3.8', poz: '3.8', grupa: '3', nazwa: 'pylice wywoływane pyłami metali', krotko: 'Pylice od pyłów metali', okres: 'nie można określić', czas: null },
+  { id: '3.8', poz: '3.8', grupa: '3', nazwa: 'pylice wywoływane pyłami metali', krotko: 'Pylica od metali', okres: 'nie można określić', czas: null },
   { id: '4.1', poz: '4.1', grupa: '4', nazwa: 'rozległe zgrubienia opłucnej', krotko: 'Zgrubienia opłucnej', okres: 'nie można określić', czas: null },
-  { id: '4.2', poz: '4.2', grupa: '4', nazwa: 'rozległe blaszki opłucnej lub osierdzia', krotko: 'Blaszki opłucnej, osierdzia', okres: 'nie można określić', czas: null },
+  { id: '4.2', poz: '4.2', grupa: '4', nazwa: 'rozległe blaszki opłucnej lub osierdzia', krotko: 'Blaszki opłucnej', okres: 'nie można określić', czas: null },
   { id: '4.3', poz: '4.3', grupa: '4', nazwa: 'wysięk opłucnowy', krotko: 'Wysięk opłucnowy', okres: '3 lata', czas: { miesiace: 36 } },
-  { id: '5', poz: '5', nazwa: 'Przewlekłe obturacyjne zapalenie oskrzeli, które spowodowało trwałe upośledzenie sprawności wentylacyjnej płuc ze stosunkiem procentowym natężonej objętości wydechowej pierwszosekundowej (FEV1) do pojemności życiowej (VC) wynoszącym poniżej 0,7 po leku rozszerzającym oskrzela', krotko: 'Obturacyjne zapalenie oskrzeli', okres: '1 rok', czas: { miesiace: 12 } },
+  { id: '5', poz: '5', nazwa: 'Przewlekłe obturacyjne zapalenie oskrzeli, które spowodowało trwałe upośledzenie sprawności wentylacyjnej płuc ze stosunkiem procentowym natężonej objętości wydechowej pierwszosekundowej (FEV1) do pojemności życiowej (VC) wynoszącym poniżej 0,7 po leku rozszerzającym oskrzela', krotko: 'POChP (oskrzela)', okres: '1 rok', czas: { miesiace: 12 } },
   { id: '6', poz: '6', nazwa: 'Astma oskrzelowa', krotko: 'Astma oskrzelowa', okres: '1 rok', czas: { miesiace: 12 } },
-  { id: '6a', poz: '6a', nazwa: 'Eozynofilowe zapalenie oskrzeli', krotko: 'Eozynofilowe zapalenie oskrzeli', okres: '1 rok', czas: { miesiace: 12 } },
-  { id: '7.1', poz: '7.1', grupa: '7', nazwa: 'postać ostra i podostra', krotko: 'Pęcherzyki płucne, ostre', okres: '1 rok', czas: { miesiace: 12 } },
-  { id: '7.2', poz: '7.2', grupa: '7', nazwa: 'postać przewlekła', krotko: 'Pęcherzyki płucne, przewlekłe', okres: '3 lata', czas: { miesiace: 36 } },
-  { id: '8', poz: '8', nazwa: 'Ostre uogólnione reakcje alergiczne', krotko: 'Ostra reakcja alergiczna', okres: '1 dzień', czas: { dni: 1 } },
+  { id: '6a', poz: '6a', nazwa: 'Eozynofilowe zapalenie oskrzeli', krotko: 'Eozynofilowe oskrzeli', okres: '1 rok', czas: { miesiace: 12 } },
+  { id: '7.1', poz: '7.1', grupa: '7', nazwa: 'postać ostra i podostra', krotko: 'Postać ostra', okres: '1 rok', czas: { miesiace: 12 } },
+  { id: '7.2', poz: '7.2', grupa: '7', nazwa: 'postać przewlekła', krotko: 'Postać przewlekła', okres: '3 lata', czas: { miesiace: 36 } },
+  { id: '8', poz: '8', nazwa: 'Ostre uogólnione reakcje alergiczne', krotko: 'Ostra alergia', okres: '1 dzień', czas: { dni: 1 } },
   { id: '9', poz: '9', nazwa: 'Byssinoza', krotko: 'Byssinoza', okres: '7 dni', czas: { dni: 7 } },
   { id: '10', poz: '10', nazwa: 'Beryloza', krotko: 'Beryloza', okres: 'nie można określić', czas: null },
-  { id: '11', poz: '11', nazwa: 'Choroby płuc wywołane pyłem metali twardych', krotko: 'Płuca od pyłu metali twardych', okres: 'nie można określić', czas: null },
-  { id: '12', poz: '12', nazwa: 'Alergiczny nieżyt nosa', krotko: 'Alergiczny nieżyt nosa', okres: '1 rok', czas: { miesiace: 12 } },
-  { id: '13', poz: '13', nazwa: 'Zapalenie obrzękowe krtani o podłożu alergicznym', krotko: 'Alergiczny obrzęk krtani', okres: '1 rok', czas: { miesiace: 12 } },
-  { id: '14', poz: '14', nazwa: 'Przedziurawienie przegrody nosa wywołane substancjami o działaniu żrącym lub drażniącym', krotko: 'Przedziurawienie przegrody nosa', okres: '2 lata', czas: { miesiace: 24 } },
+  { id: '11', poz: '11', nazwa: 'Choroby płuc wywołane pyłem metali twardych', krotko: 'Płuca: metale twarde', okres: 'nie można określić', czas: null },
+  { id: '12', poz: '12', nazwa: 'Alergiczny nieżyt nosa', krotko: 'Alergiczny katar', okres: '1 rok', czas: { miesiace: 12 } },
+  { id: '13', poz: '13', nazwa: 'Zapalenie obrzękowe krtani o podłożu alergicznym', krotko: 'Obrzęk krtani', okres: '1 rok', czas: { miesiace: 12 } },
+  { id: '14', poz: '14', nazwa: 'Przedziurawienie przegrody nosa wywołane substancjami o działaniu żrącym lub drażniącym', krotko: 'Dziura w przegrodzie', okres: '2 lata', czas: { miesiace: 24 } },
   { id: '15.1', poz: '15.1', grupa: '15', nazwa: 'guzki głosowe twarde', krotko: 'Guzki głosowe', okres: '2 lata', czas: { miesiace: 24 } },
-  { id: '15.2', poz: '15.2', grupa: '15', nazwa: 'wtórne zmiany przerostowe fałdów głosowych', krotko: 'Przerost fałdów głosowych', okres: '2 lata', czas: { miesiace: 24 } },
-  { id: '15.3', poz: '15.3', grupa: '15', nazwa: 'niedowład mięśni wewnętrznych krtani z wrzecionowatą niedomykalnością fonacyjną głośni i trwałą dysfonią', krotko: 'Niedowład mięśni krtani', okres: '2 lata', czas: { miesiace: 24 } },
-  { id: '16.1', poz: '16.1', grupa: '16', nazwa: 'ostra choroba popromienna uogólniona po napromieniowaniu całego ciała lub przeważającej jego części', krotko: 'Ostra choroba popromienna', okres: '2 miesiące', czas: { miesiace: 2 } },
-  { id: '16.2', poz: '16.2', grupa: '16', nazwa: 'ostra choroba popromienna o charakterze zmian zapalnych lub zapalno-martwiczych skóry i tkanki podskórnej', krotko: 'Ostre zmiany skóry od promieni', okres: '1 miesiąc', czas: { miesiace: 1 } },
-  { id: '16.3', poz: '16.3', grupa: '16', nazwa: 'przewlekłe popromienne zapalenie skóry', krotko: 'Popromienne zapalenie skóry', okres: 'nie można określić', czas: null },
+  { id: '15.2', poz: '15.2', grupa: '15', nazwa: 'wtórne zmiany przerostowe fałdów głosowych', krotko: 'Przerost fałdów', okres: '2 lata', czas: { miesiace: 24 } },
+  { id: '15.3', poz: '15.3', grupa: '15', nazwa: 'niedowład mięśni wewnętrznych krtani z wrzecionowatą niedomykalnością fonacyjną głośni i trwałą dysfonią', krotko: 'Niedowład krtani', okres: '2 lata', czas: { miesiace: 24 } },
+  { id: '16.1', poz: '16.1', grupa: '16', nazwa: 'ostra choroba popromienna uogólniona po napromieniowaniu całego ciała lub przeważającej jego części', krotko: 'Ostra popromienna', okres: '2 miesiące', czas: { miesiace: 2 } },
+  { id: '16.2', poz: '16.2', grupa: '16', nazwa: 'ostra choroba popromienna o charakterze zmian zapalnych lub zapalno-martwiczych skóry i tkanki podskórnej', krotko: 'Ostre zmiany skóry', okres: '1 miesiąc', czas: { miesiace: 1 } },
+  { id: '16.3', poz: '16.3', grupa: '16', nazwa: 'przewlekłe popromienne zapalenie skóry', krotko: 'Zapalenie skóry', okres: 'nie można określić', czas: null },
   { id: '16.4', poz: '16.4', grupa: '16', nazwa: 'przewlekłe uszkodzenie szpiku kostnego', krotko: 'Uszkodzenie szpiku', okres: 'nie można określić', czas: null },
   { id: '16.5', poz: '16.5', grupa: '16', nazwa: 'zaćma popromienna', krotko: 'Zaćma popromienna', okres: '10 lat', czas: { miesiace: 120 } },
   { id: '17.1', poz: '17.1', grupa: '17', nazwa: 'rak płuca, rak oskrzela', krotko: 'Rak płuca, oskrzela', okres: 'indywidualnie w zależności od okresu latencji nowotworu', czas: null },
@@ -124,27 +125,27 @@ export const WYKAZ: readonly PozycjaWykazu[] = [
   { id: '17.6', poz: '17.6', grupa: '17', nazwa: 'nowotwór wątroby', krotko: 'Nowotwór wątroby', okres: 'indywidualnie w zależności od okresu latencji nowotworu', czas: null },
   { id: '17.7', poz: '17.7', grupa: '17', nazwa: 'rak krtani', krotko: 'Rak krtani', okres: 'indywidualnie w zależności od okresu latencji nowotworu', czas: null },
   { id: '17.8', poz: '17.8', grupa: '17', nazwa: 'nowotwór nosa i zatok przynosowych', krotko: 'Nowotwór nosa, zatok', okres: 'indywidualnie w zależności od okresu latencji nowotworu', czas: null },
-  { id: '17.9', poz: '17.9', grupa: '17', nazwa: 'nowotwory wywołane działaniem promieniowania jonizującego', krotko: 'Nowotwór od promieniowania', okres: 'indywidualnie, po oszacowaniu ryzyka z prawdopodobieństwem indukcji przekraczającym 10 %', czas: null },
+  { id: '17.9', poz: '17.9', grupa: '17', nazwa: 'nowotwory wywołane działaniem promieniowania jonizującego', krotko: 'Od promieniowania', okres: 'indywidualnie, po oszacowaniu ryzyka z prawdopodobieństwem indukcji przekraczającym 10 %', czas: null },
   { id: '17.10', poz: '17.10', grupa: '17', nazwa: 'rak jajnika', krotko: 'Rak jajnika', okres: 'indywidualnie w zależności od okresu latencji nowotworu', czas: null },
-  { id: '17.11', poz: '17.11', grupa: '17', nazwa: 'nowotwór przewodu pokarmowego', krotko: 'Nowotwór przewodu pokarmowego', okres: 'indywidualnie w zależności od okresu latencji nowotworu', czas: null },
-  { id: '18.1', poz: '18.1', grupa: '18', nazwa: 'alergiczne kontaktowe zapalenie skóry', krotko: 'Alergiczne zapalenie skóry', okres: '2 lata', czas: { miesiace: 24 } },
-  { id: '18.2', poz: '18.2', grupa: '18', nazwa: 'kontaktowe zapalenie skóry z podrażnienia', krotko: 'Zapalenie skóry z podrażnienia', okres: '1 miesiąc', czas: { miesiace: 1 } },
-  { id: '18.3', poz: '18.3', grupa: '18', nazwa: 'trądzik olejowy, smarowy lub chlorowy o rozległym charakterze', krotko: 'Trądzik olejowy, chlorowy', okres: '1 miesiąc', czas: { miesiace: 1 } },
+  { id: '17.11', poz: '17.11', grupa: '17', nazwa: 'nowotwór przewodu pokarmowego', krotko: 'Przewód pokarmowy', okres: 'indywidualnie w zależności od okresu latencji nowotworu', czas: null },
+  { id: '18.1', poz: '18.1', grupa: '18', nazwa: 'alergiczne kontaktowe zapalenie skóry', krotko: 'Alergia kontaktowa', okres: '2 lata', czas: { miesiace: 24 } },
+  { id: '18.2', poz: '18.2', grupa: '18', nazwa: 'kontaktowe zapalenie skóry z podrażnienia', krotko: 'Podrażnienie skóry', okres: '1 miesiąc', czas: { miesiace: 1 } },
+  { id: '18.3', poz: '18.3', grupa: '18', nazwa: 'trądzik olejowy, smarowy lub chlorowy o rozległym charakterze', krotko: 'Trądzik olejowy', okres: '1 miesiąc', czas: { miesiace: 1 } },
   { id: '18.4', poz: '18.4', grupa: '18', nazwa: 'drożdżakowe zapalenie skóry rąk u osób pracujących w warunkach sprzyjających rozwojowi drożdżaków chorobotwórczych', krotko: 'Drożdżyca skóry rąk', okres: '1 miesiąc', czas: { miesiace: 1 } },
-  { id: '18.5', poz: '18.5', grupa: '18', nazwa: 'grzybice skóry u osób stykających się z materiałem biologicznym pochodzącym od zwierząt', krotko: 'Grzybica skóry od zwierząt', okres: '1 miesiąc', czas: { miesiace: 1 } },
+  { id: '18.5', poz: '18.5', grupa: '18', nazwa: 'grzybice skóry u osób stykających się z materiałem biologicznym pochodzącym od zwierząt', krotko: 'Grzybica od zwierząt', okres: '1 miesiąc', czas: { miesiace: 1 } },
   { id: '18.6', poz: '18.6', grupa: '18', nazwa: 'pokrzywka kontaktowa', krotko: 'Pokrzywka kontaktowa', okres: '2 miesiące', czas: { miesiace: 2 } },
   { id: '18.7', poz: '18.7', grupa: '18', nazwa: 'fotodermatozy zawodowe', krotko: 'Fotodermatoza', okres: '2 lata', czas: { miesiace: 24 } },
-  { id: '19.1', poz: '19.1', grupa: '19', nazwa: 'przewlekłe zapalenie ścięgna i jego pochewki', krotko: 'Zapalenie ścięgna, pochewki', okres: '1 rok', czas: { miesiace: 12 } },
-  { id: '19.2', poz: '19.2', grupa: '19', nazwa: 'przewlekłe zapalenie kaletki maziowej', krotko: 'Zapalenie kaletki maziowej', okres: '1 rok', czas: { miesiace: 12 } },
+  { id: '19.1', poz: '19.1', grupa: '19', nazwa: 'przewlekłe zapalenie ścięgna i jego pochewki', krotko: 'Zapalenie ścięgna', okres: '1 rok', czas: { miesiace: 12 } },
+  { id: '19.2', poz: '19.2', grupa: '19', nazwa: 'przewlekłe zapalenie kaletki maziowej', krotko: 'Zapalenie kaletki', okres: '1 rok', czas: { miesiace: 12 } },
   { id: '19.3', poz: '19.3', grupa: '19', nazwa: 'przewlekłe uszkodzenie łąkotki u osób wykonujących pracę w pozycji klęczącej lub kucznej', krotko: 'Uszkodzenie łąkotki', okres: '1 rok', czas: { miesiace: 12 } },
   { id: '19.4', poz: '19.4', grupa: '19', nazwa: 'przewlekłe zapalenie okołostawowe barku', krotko: 'Zapalenie barku', okres: '1 rok', czas: { miesiace: 12 } },
-  { id: '19.5', poz: '19.5', grupa: '19', nazwa: 'przewlekłe zapalenie nadkłykcia kości ramiennej', krotko: 'Zapalenie nadkłykcia (łokieć)', okres: '1 rok', czas: { miesiace: 12 } },
-  { id: '19.6', poz: '19.6', grupa: '19', nazwa: 'zmęczeniowe złamanie kości', krotko: 'Zmęczeniowe złamanie kości', okres: '1 rok', czas: { miesiace: 12 } },
+  { id: '19.5', poz: '19.5', grupa: '19', nazwa: 'przewlekłe zapalenie nadkłykcia kości ramiennej', krotko: 'Łokieć (nadkłykieć)', okres: '1 rok', czas: { miesiace: 12 } },
+  { id: '19.6', poz: '19.6', grupa: '19', nazwa: 'zmęczeniowe złamanie kości', krotko: 'Złamanie zmęczeniowe', okres: '1 rok', czas: { miesiace: 12 } },
   { id: '20.1', poz: '20.1', grupa: '20', nazwa: 'zespół cieśni w obrębie nadgarstka', krotko: 'Cieśń nadgarstka', okres: '1 rok', czas: { miesiace: 12 } },
-  { id: '20.2', poz: '20.2', grupa: '20', nazwa: 'zespół rowka nerwu łokciowego', krotko: 'Rowek nerwu łokciowego', okres: '1 rok', czas: { miesiace: 12 } },
+  { id: '20.2', poz: '20.2', grupa: '20', nazwa: 'zespół rowka nerwu łokciowego', krotko: 'Nerw łokciowy', okres: '1 rok', czas: { miesiace: 12 } },
   { id: '20.3', poz: '20.3', grupa: '20', nazwa: 'zespół kanału de Guyona', krotko: 'Kanał Guyona', okres: '1 rok', czas: { miesiace: 12 } },
-  { id: '20.4', poz: '20.4', grupa: '20', nazwa: 'uszkodzenie nerwu strzałkowego wspólnego u osób wykonujących pracę w pozycji kucznej', krotko: 'Nerw strzałkowy (kucanie)', okres: '1 rok', czas: { miesiace: 12 } },
-  { id: '21', poz: '21', nazwa: 'Trwały odbiorczy ubytek słuchu typu ślimakowego lub czuciowo-nerwowego spowodowany hałasem, wyrażony podwyższeniem progu słuchu o wielkości co najmniej 45 dB, obliczony jako średnia arytmetyczna dla częstotliwości audiometrycznych 1, 2 i 3 kHz', krotko: 'Ubytek słuchu od hałasu', okres: '2 lata', czas: { miesiace: 24 } },
+  { id: '20.4', poz: '20.4', grupa: '20', nazwa: 'uszkodzenie nerwu strzałkowego wspólnego u osób wykonujących pracę w pozycji kucznej', krotko: 'Nerw strzałkowy', okres: '1 rok', czas: { miesiace: 12 } },
+  { id: '21', poz: '21', nazwa: 'Trwały odbiorczy ubytek słuchu typu ślimakowego lub czuciowo-nerwowego spowodowany hałasem, wyrażony podwyższeniem progu słuchu o wielkości co najmniej 45 dB, obliczony jako średnia arytmetyczna dla częstotliwości audiometrycznych 1, 2 i 3 kHz', krotko: 'Słuch od hałasu', okres: '2 lata', czas: { miesiace: 24 } },
   { id: '22.1', poz: '22.1', grupa: '22', nazwa: 'postać naczyniowo-nerwowa', krotko: 'Naczyniowo-nerwowy', okres: '1 rok', czas: { miesiace: 12 } },
   { id: '22.2', poz: '22.2', grupa: '22', nazwa: 'postać kostno-stawowa', krotko: 'Kostno-stawowy', okres: '3 lata', czas: { miesiace: 36 } },
   { id: '22.3', poz: '22.3', grupa: '22', nazwa: 'postać mieszana: naczyniowo-nerwowa i kostno-stawowa', krotko: 'Mieszany', okres: '3 lata', czas: { miesiace: 36 } },
@@ -154,17 +155,17 @@ export const WYKAZ: readonly PozycjaWykazu[] = [
   { id: '24.1', poz: '24.1', grupa: '24', nazwa: 'udar cieplny albo jego następstwa', krotko: 'Udar cieplny', okres: '1 rok', czas: { miesiace: 12 } },
   { id: '24.2', poz: '24.2', grupa: '24', nazwa: 'wyczerpanie cieplne albo jego następstwa', krotko: 'Wyczerpanie cieplne', okres: '1 rok', czas: { miesiace: 12 } },
   { id: '24.3', poz: '24.3', grupa: '24', nazwa: 'odmroziny', krotko: 'Odmroziny', okres: '1 rok', czas: { miesiace: 12 } },
-  { id: '25.1', poz: '25.1', grupa: '25', nazwa: 'alergiczne zapalenie spojówek', krotko: 'Alergiczne zapalenie spojówek', okres: '1 rok', czas: { miesiace: 12 } },
-  { id: '25.2', poz: '25.2', grupa: '25', nazwa: 'ostre zapalenie spojówek wywołane promieniowaniem nadfioletowym', krotko: 'Spojówki od nadfioletu', okres: '3 dni', czas: { dni: 3 } },
-  { id: '25.3', poz: '25.3', grupa: '25', nazwa: 'epidemiczne wirusowe zapalenie spojówek lub rogówki', krotko: 'Wirusowe zapalenie spojówek', okres: '1 rok', czas: { miesiace: 12 } },
+  { id: '25.1', poz: '25.1', grupa: '25', nazwa: 'alergiczne zapalenie spojówek', krotko: 'Alergia spojówek', okres: '1 rok', czas: { miesiace: 12 } },
+  { id: '25.2', poz: '25.2', grupa: '25', nazwa: 'ostre zapalenie spojówek wywołane promieniowaniem nadfioletowym', krotko: 'Spojówki od UV', okres: '3 dni', czas: { dni: 3 } },
+  { id: '25.3', poz: '25.3', grupa: '25', nazwa: 'epidemiczne wirusowe zapalenie spojówek lub rogówki', krotko: 'Wirusowe spojówek', okres: '1 rok', czas: { miesiace: 12 } },
   { id: '25.4', poz: '25.4', grupa: '25', nazwa: 'zwyrodnienie rogówki wywołane czynnikami drażniącymi', krotko: 'Zwyrodnienie rogówki', okres: '3 lata', czas: { miesiace: 36 } },
-  { id: '25.5', poz: '25.5', grupa: '25', nazwa: 'zaćma wywołana działaniem promieniowania podczerwonego lub długofalowego nadfioletowego', krotko: 'Zaćma od podczerwieni, UV', okres: '10 lat', czas: { miesiace: 120 } },
+  { id: '25.5', poz: '25.5', grupa: '25', nazwa: 'zaćma wywołana działaniem promieniowania podczerwonego lub długofalowego nadfioletowego', krotko: 'Zaćma od podczerwieni', okres: '10 lat', czas: { miesiace: 120 } },
   { id: '25.6', poz: '25.6', grupa: '25', nazwa: 'centralne zmiany zwyrodnieniowe siatkówki i naczyniówki wywołane krótkofalowym promieniowaniem podczerwonym lub promieniowaniem widzialnym z obszaru widma niebieskiego', krotko: 'Siatkówka od światła', okres: '3 lata', czas: { miesiace: 36 } },
-  { id: '26', poz: '26', nazwa: 'Choroby zakaźne lub pasożytnicze albo ich następstwa', krotko: 'Choroba zakaźna, pasożytnicza', okres: 'nie można określić', czas: null },
+  { id: '26', poz: '26', nazwa: 'Choroby zakaźne lub pasożytnicze albo ich następstwa', krotko: 'Zakaźna, pasożytnicza', okres: 'nie można określić', czas: null },
 ];
 
 /** Wybór spoza wykazu, o który często pytają ludzie z hali. */
-export const SPOZA_WYKAZU = { id: 'kregoslup', krotko: 'Kręgosłup (np. dyskopatia)' } as const;
+export const SPOZA_WYKAZU = { id: 'kregoslup', krotko: 'Kręgosłup, dyskopatia' } as const;
 
 export const pozycja = (id: string) => WYKAZ.find((p) => p.id === id) ?? null;
 
@@ -230,6 +231,8 @@ export function sprawdzChorobe(d: DaneChoroby, dzis: string): WynikChoroby {
   const p = pozycja(d.choroba);
   if (!p) throw new RangeError('Nieznana pozycja wykazu');
   if (d.narazenie === 'trwa') return { stan: 'w-narazeniu', pozycja: p };
+  // Bez okresu w liczbach daty nic nie zmieniają: nie wymagamy ich (pola są wtedy ukryte).
+  if (!p.czas) return { stan: 'bez-daty', pozycja: p };
 
   const koniec = d.koniec ?? '';
   if (!poprawnaData(koniec) || koniec < MIN_DATA) throw new BladDanych('Wpisz ostatni dzień pracy w narażeniu.', 'koniec');
@@ -240,7 +243,6 @@ export function sprawdzChorobe(d: DaneChoroby, dzis: string): WynikChoroby {
     if (objawy > dzis) throw new BladDanych('Dzień objawów nie może być później niż dziś.', 'objawy');
   }
 
-  if (!p.czas) return { stan: 'bez-daty', pozycja: p };
   const termin = koniecOkresu(koniec, p.czas);
   const dniDoTerminu = dniMiedzy(dzis, termin);
   if (objawy !== undefined) return { stan: objawy <= termin ? 'objawy-w-okresie' : 'objawy-po-okresie', pozycja: p, termin, dniDoTerminu };
@@ -265,20 +267,22 @@ const KP = 'Kodeksu pracy';
 const ROZP = 'rozporządzenia w sprawie chorób zawodowych';
 const KTO_ROZPOZNAJE = `Narzędzie porównuje daty z przepisem. Czy to choroba zawodowa, ocenia lekarz jednostki orzeczniczej (§ 6 ${ROZP}), a stwierdza decyzją państwowy inspektor sanitarny (§ 8).`;
 
-/** „za 45 dni”, „dziś”, „45 dni temu”. */
-const zaIle = (dni: number) => {
+/** „został 1 dzień”, „zostały 2 dni”, „zostało 5 dni”, „to dziś”, „1 dzień temu”, „12 dni temu”. */
+export const zaIle = (dni: number) => {
   if (dni === 0) return 'to dziś';
   const n = Math.abs(dni);
-  const s = n === 1 ? 'dzień' : 'dni';
-  return dni > 0 ? `zostało ${n} ${s}` : `minęło ${n} ${s} temu`;
+  const ile = odmiana(n, ['dzień', 'dni', 'dni']);
+  if (dni < 0) return `${ile} temu`;
+  const czasownik = n === 1 ? 'został' : odmiana(n, ['zostało', 'zostały', 'zostało']).split(' ')[1];
+  return `${czasownik} ${ile}`;
 };
 
 function wierszZgloszenia(d: DaneChoroby): Wiersz {
   if (d.narazenie === 'koniec-nie-pracuje')
     return {
       dt: 'Kto zgłasza',
-      dd: 'Możesz Ty, sam lub sama',
-      opis: `Były pracownik może zgłosić podejrzenie choroby zawodowej (art. 235 § 2² ${KP}); pośrednictwa lekarza przepis wymaga tylko od pracownika aktualnie zatrudnionego. Zgłoszenie trafia do państwowego inspektora sanitarnego i okręgowego inspektora pracy właściwych dla miejsca pracy w narażeniu (§ 3 ust. 1 ${ROZP}). Każdy lekarz, który podejrzewa chorobę zawodową, kieruje na badania (art. 235 § 2¹).`,
+      dd: 'Możesz zgłosić samodzielnie',
+      opis: `Były pracownik może zgłosić podejrzenie choroby zawodowej (art. 235 § 2² ${KP}); pośrednictwa lekarza przepis wymaga tylko od pracownika aktualnie zatrudnionego. Zgłoszenie trafia do państwowego inspektora sanitarnego i okręgowego inspektora pracy właściwych dla miejsca, w którym praca jest lub była wykonywana, gdy tam gromadzi się dokumentację narażenia, a w innym razie dla miejsca ostatniego narażenia (§ 3 ust. 1 ${ROZP}). Każdy lekarz, który podejrzewa chorobę zawodową, kieruje na badania (art. 235 § 2¹).`,
     };
   return {
     dt: 'Kto zgłasza',
@@ -290,8 +294,8 @@ function wierszZgloszenia(d: DaneChoroby): Wiersz {
 const WIERSZE_POSTEPOWANIA: Wiersz[] = [
   {
     dt: 'Badanie',
-    dd: 'Skierowanie od inspektora sanitarnego',
-    opis: `Inspektor sanitarny ocenia narażenie zawodowe i kieruje na badania do jednostki orzeczniczej I stopnia, np. poradni chorób zawodowych wojewódzkiego ośrodka medycyny pracy (§ 4 ust. 1 i § 5 ust. 2 ${ROZP}). Lekarz wydaje orzeczenie o rozpoznaniu choroby zawodowej albo o braku podstaw do jej rozpoznania (§ 6 ust. 1).`,
+    dd: 'Skierowanie od inspektora albo lekarza',
+    opis: `Inspektor sanitarny ocenia narażenie zawodowe i kieruje na badania do jednostki orzeczniczej I stopnia, np. poradni chorób zawodowych wojewódzkiego ośrodka medycyny pracy; skierowanie może też wydać lekarz, który podejrzewa chorobę zawodową, a gdy zgłosił ją lekarz tej jednostki, skierowanie nie jest potrzebne (§ 4 ust. 1–3 i § 5 ust. 2 ${ROZP}). Lekarz wydaje orzeczenie o rozpoznaniu choroby zawodowej albo o braku podstaw do jej rozpoznania (§ 6 ust. 1).`,
   },
   {
     dt: 'Nie zgadzasz się z orzeczeniem',
@@ -366,8 +370,11 @@ export function tekstyChoroby(d: DaneChoroby, w: WynikChoroby, dzis: string): Te
     okresWiersz.opis += ` Ostatni dzień pracy w narażeniu: ${dataPoPolsku(d.koniec!)}; liczymy od następnego dnia.`;
     wiersze.push(okresWiersz);
     if (w.stan === 'objawy-w-okresie') {
-      glowny = 'Objawy w okresie z wykazu';
-      podstawa = `Choroba jest w wykazie (${nr}). Pierwsze udokumentowane objawy z ${dataPoPolsku(d.objawy!)} mieszczą się w okresie, który trwa do ${t} włącznie, więc termin z art. 235² ${KP} nie zamyka drogi do rozpoznania.`;
+      glowny = d.objawy! <= d.koniec! ? 'Objawy w czasie pracy w narażeniu' : 'Objawy w okresie z wykazu';
+      podstawa =
+        d.objawy! <= d.koniec!
+          ? `Choroba jest w wykazie (${nr}). Pierwsze udokumentowane objawy z ${dataPoPolsku(d.objawy!)} wystąpiły jeszcze w czasie pracy w narażeniu, a rozpoznanie może nastąpić w okresie takiej pracy albo po jej zakończeniu (art. 235² ${KP}).`
+          : `Choroba jest w wykazie (${nr}). Pierwsze udokumentowane objawy z ${dataPoPolsku(d.objawy!)} mieszczą się w okresie, który trwa do ${t} włącznie, więc termin z art. 235² ${KP} nie zamyka drogi do rozpoznania.`;
     } else if (w.stan === 'objawy-po-okresie') {
       glowny = 'Objawy po okresie z wykazu';
       podstawa = `Choroba jest w wykazie (${nr}), ale okres na udokumentowane objawy trwał do ${t}, a wpisane objawy są z ${dataPoPolsku(d.objawy!)}, czyli później. Jeśli objawy były wcześniej i są w dokumentacji (np. u lekarza), liczy się ta wcześniejsza data.`;

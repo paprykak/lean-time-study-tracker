@@ -11,7 +11,7 @@
 //   konstrukcje chroniące przed upadkiem), § 106 (balustrada powyżej 1,0 m: poręcz 1,1 m, krawężnik 0,15 m, poprzeczka;
 //   gdy niemożliwa, inne skuteczne środki; rampy przeładunkowe bez wymogu balustrady), § 107 (bez wychylania się),
 //   § 108 (do 2 m: stabilne drabiny i pomosty, informacja o obciążeniu), § 109 (rusztowania powyżej 2 m),
-//   § 110 (powyżej 2 m na słupach, konstrukcjach, drabinach i klamrach, przy ustawianiu rusztowań: szelki z linką
+//   § 110 (powyżej 2 m na słupach, masztach, konstrukcjach bez stropów, drabinach i klamrach, przy ustawianiu rusztowań: szelki z linką
 //   i hełm; ust. 2: to samo na pomostach i podwyższeniach, gdy praca wymaga wychylenia lub wymuszonej pozycji),
 //   załącznik nr 2 § 1 (ŚOI, gdy ochrona zbiorowa nie wystarcza).
 // - Rozporządzenie w sprawie minimalnych wymagań BHP przy użytkowaniu maszyn, Dz.U. 2002 poz. 1596, zm. 2003 poz. 1745:
@@ -28,7 +28,7 @@
 //   na dobę, przy pełnym zabezpieczeniu), § 3–4.
 // - Rozporządzenie w sprawie prac wzbronionych kobietom w ciąży i karmiącym, Dz.U. 2017 poz. 796: załącznik cz. VIII
 //   ust. 2 (praca na wysokości poza stałymi podwyższeniami z pełnym zabezpieczeniem oraz drabiny i klamry).
-// - Kodeks pracy, t.j. Dz.U. 2026 poz. 1245: art. 176, 204, 207 § 2¹, 210 § 1–3, 211 pkt 4.
+// - Kodeks pracy, t.j. Dz.U. 2026 poz. 1245: art. 176, 204, 207 § 2¹, 210 § 1–3, 211 pkt 4, 237⁶ § 1.
 // - Rozporządzenie o pracach wymagających szczególnej sprawności psychofizycznej, Dz.U. 1996 poz. 287: pkt 2
 //   (podnośniki i platformy hydrauliczne).
 //
@@ -41,8 +41,11 @@
 //    wychylania się poza nią albo wymuszonej pozycji, osłona nie chroni: wtedy traktujemy pracę jak pracę na wysokości
 //    i stosujemy § 110 ust. 2 (wariant bezpieczny). Na drabinie, klamrach, rusztowaniu i podnośniku wyjątku nie
 //    stosujemy (sprzęt do tymczasowej pracy na wysokości, nie stała powierzchnia z osłoną; wariant bezpieczny).
-// 3. § 110 ust. 2 odsyła do podwyższeń „o których mowa w § 108”; stosujemy go do pomostów i podwyższeń na każdej
-//    wysokości od 1,0 m (wariant bezpieczny).
+// 3. § 110 ust. 2 odsyła do podwyższeń „o których mowa w § 108”; stosujemy go do pomostów, drabin, klamer i innych
+//    podwyższeń na każdej wysokości od 1,0 m (wariant bezpieczny).
+// 7. Dach nie jest wymieniony w § 110 ust. 1, więc na dachu bez wychylania się nie podajemy szelek z § 110, tylko
+//    balustradę albo inne skuteczne środki z § 106. Słup, maszt i konstrukcja bez stropów to nie stała powierzchnia
+//    z osłoną: wyjątku z § 105 ust. 2 nie stosujemy, a powyżej 2 m obowiązuje § 110 ust. 1.
 // 4. Kobieta w ciąży: wyjątek dotyczy tylko stałych podwyższeń z pełnym zabezpieczeniem bez ŚOI, więc rusztowanie,
 //    podnośnik, rampa bez balustrady i otwarta krawędź są zakazane od 1,0 m, a drabiny i klamry na każdej wysokości.
 // 5. Młodociani: zakaz powyżej 3 m bez wyjątku dla balustrad (przepis go nie przewiduje).
@@ -50,16 +53,22 @@
 
 import { liczba } from './format';
 
-export type Miejsce = 'pomost' | 'drabina' | 'rusztowanie' | 'podnosnik' | 'konstrukcja' | 'rampa';
+export type Miejsce = 'pomost' | 'drabina' | 'rusztowanie' | 'podnosnik' | 'dach' | 'konstrukcja' | 'rampa';
 export type Oslona = 'sciany' | 'balustrada' | 'brak';
 export type Osoba = 'dorosly' | 'mlodociany' | 'ciaza';
 
-export const MIEJSCA: readonly Miejsce[] = ['pomost', 'drabina', 'rusztowanie', 'podnosnik', 'konstrukcja', 'rampa'];
+export const MIEJSCA: readonly Miejsce[] = ['pomost', 'drabina', 'rusztowanie', 'podnosnik', 'dach', 'konstrukcja', 'rampa'];
 export const OSLONY: readonly Oslona[] = ['sciany', 'balustrada', 'brak'];
 export const OSOBY: readonly Osoba[] = ['dorosly', 'mlodociany', 'ciaza'];
 
 /** Miejsca, na których osłona powierzchni (§ 105 ust. 2) ma sens; na drabinie i klamrach jej nie ma. */
 export const maOslone = (m: Miejsce) => m !== 'drabina';
+
+/** Stałe powierzchnie, do których stosujemy wyjątek z § 105 ust. 2 (interpretacja 2). */
+export const stalaPowierzchnia = (m: Miejsce) => m === 'pomost' || m === 'dach' || m === 'rampa';
+
+/** Osłony do wyboru: ściany tylko przy stałej powierzchni; na rusztowaniu i podnośniku barierki albo nic. */
+export const dozwoloneOslony = (m: Miejsce): readonly Oslona[] => (!maOslone(m) ? ['brak'] : stalaPowierzchnia(m) ? OSLONY : ['balustrada', 'brak']);
 
 export interface DanePracy {
   /** Wysokość powierzchni, na której stoisz, nad podłogą lub ziemią (m). */
@@ -98,19 +107,22 @@ export function centymetry(m: number): number {
 
 export function sprawdzPrace(d: DanePracy): WynikPracy {
   const cm = centymetry(d.wysokosc);
-  const oslona = maOslone(d.miejsce) ? d.oslona : 'brak';
+  // Osłona spoza listy dla miejsca (np. „ściany” przy podnośniku) liczy się jak barierki: nie wyłącza pracy z definicji.
+  const oslona: Oslona = dozwoloneOslony(d.miejsce).includes(d.oslona) ? d.oslona : maOslone(d.miejsce) ? 'balustrada' : 'brak';
   // § 105 ust. 2: osłona ścianami albo stałą konstrukcją wyłącza pracę z definicji, chyba że praca wymaga wychylania się
-  // poza nią (interpretacja 2). Podnośnik i rusztowanie nie są stałą osłoną powierzchni w hali: wyłączenie tylko dla
-  // ścian i stałych balustrad pomostów, konstrukcji i ramp.
-  const stala = d.miejsce === 'pomost' || d.miejsce === 'konstrukcja' || d.miejsce === 'rampa';
+  // poza nią (interpretacja 2). Tylko stałe powierzchnie: pomost, dach, rampa.
+  const stala = stalaPowierzchnia(d.miejsce);
   let wylaczenie: WynikPracy['wylaczenie'] = null;
   if (cm < 100) wylaczenie = 'nisko';
-  else if (!d.wychylanie && oslona === 'sciany') wylaczenie = 'sciany';
-  else if (!d.wychylanie && oslona === 'balustrada' && stala) wylaczenie = 'balustrada';
+  else if (!d.wychylanie && stala && oslona === 'sciany') wylaczenie = 'sciany';
+  else if (!d.wychylanie && stala && oslona === 'balustrada') wylaczenie = 'balustrada';
   const naWysokosci = wylaczenie === null;
 
   let zabezpieczenie: Zabezpieczenie = 'brak-wymogu';
-  if (cm >= 100) {
+  if (wylaczenie === 'sciany' || wylaczenie === 'balustrada') {
+    // Poza definicją zostają tylko wymagania § 106 dla samej balustrady powyżej 1,0 m (poza rampą, ust. 3).
+    if (wylaczenie === 'balustrada' && cm > 100 && d.miejsce !== 'rampa') zabezpieczenie = 'balustrada';
+  } else if (cm >= 100) {
     if (d.miejsce === 'drabina') zabezpieczenie = cm > 200 || d.wychylanie ? 'szelki' : 'stabilne';
     else if (d.miejsce === 'konstrukcja' && cm > 200) zabezpieczenie = 'szelki';
     else if (d.wychylanie) zabezpieczenie = 'szelki';
@@ -172,7 +184,7 @@ const ZABEZPIECZENIA: Record<Zabezpieczenie, [string, string]> = {
   ],
   szelki: [
     'Szelki z linką i hełm',
-    `Przed pracą sprawdza się stan konstrukcji i punktów mocowania linek; pracownicy używają sprzętu chroniącego przed upadkiem, np. szelek bezpieczeństwa z linką przymocowaną do stałych elementów konstrukcji, oraz hełmów ochronnych (§ 110 ust. 1 ${OGOLNE}). Dotyczy to pracy powyżej 2 m na drabinach, klamrach, słupach i konstrukcjach, a na pomostach i podwyższeniach także niżej, gdy praca wymaga wychylania się albo wymuszonej pozycji (§ 110 ust. 2).`,
+    `Przed pracą sprawdza się stan konstrukcji i punktów mocowania linek; pracownicy używają sprzętu chroniącego przed upadkiem, np. szelek bezpieczeństwa z linką przymocowaną do stałych elementów konstrukcji, oraz hełmów ochronnych (§ 110 ust. 1 ${OGOLNE}). Dotyczy to pracy powyżej 2 m na drabinach, klamrach, słupach, masztach i konstrukcjach bez stropów, a na pomostach, drabinach i innych podwyższeniach także niżej, gdy praca wymaga wychylania się albo wymuszonej pozycji (§ 110 ust. 2; przy niższych wysokościach to nasz wariant bezpieczny).`,
   ],
 };
 
@@ -181,7 +193,8 @@ const MIEJSCE_NAZWA: Record<Miejsce, string> = {
   drabina: 'na drabinie lub klamrach',
   rusztowanie: 'na rusztowaniu',
   podnosnik: 'na podnośniku lub platformie',
-  konstrukcja: 'na dachu, słupie lub konstrukcji',
+  dach: 'na dachu',
+  konstrukcja: 'na słupie, maszcie lub konstrukcji',
   rampa: 'na rampie przeładunkowej',
 };
 
@@ -193,7 +206,7 @@ export function tekstyPracy(d: DanePracy, w: WynikPracy): TekstyPracy {
   if (w.naWysokosci) {
     glowny = 'To praca na wysokości';
     podstawa = `Praca ${gdzie} ${h} nad podłogą lub ziemią: pracą na wysokości jest praca na powierzchni co najmniej 1,0 m nad poziomem podłogi lub ziemi (§ 105 ust. 1 ${OGOLNE}).`;
-    if (d.wychylanie && d.oslona !== 'brak' && maOslone(d.miejsce))
+    if (d.wychylanie && d.oslona !== 'brak' && stalaPowierzchnia(d.miejsce))
       podstawa += ' Osłona nie wyłącza tej pracy, bo praca wymaga wychylania się poza nią albo wymuszonej pozycji (nasz wariant bezpieczny, opisany niżej).';
   } else if (w.wylaczenie === 'nisko') {
     glowny = 'To nie jest praca na wysokości';
@@ -212,7 +225,7 @@ export function tekstyPracy(d: DanePracy, w: WynikPracy): TekstyPracy {
       ? {
           dt: 'Praca szczególnie niebezpieczna',
           dd: 'Tak',
-          opis: `Prace na wysokości są pracami szczególnie niebezpiecznymi (§ 80 ust. 1 i § 105 ${OGOLNE}). Pracodawca zapewnia bezpośredni nadzór wyznaczonej osoby, odpowiednie środki zabezpieczające i instruktaż z imiennym podziałem pracy, kolejnością zadań i wymaganiami BHP, a do miejsca pracy dopuszcza tylko osoby upoważnione i poinstruowane (§ 81). Drugiej osoby do asekuracji przepis przy tej pracy nie wymaga.`,
+          opis: `Prace na wysokości są pracami szczególnie niebezpiecznymi (§ 80 ust. 1 i § 105 ${OGOLNE}). Pracodawca zapewnia bezpośredni nadzór wyznaczonej osoby, odpowiednie środki zabezpieczające i instruktaż z imiennym podziałem pracy, kolejnością zadań i wymaganiami BHP, a do miejsca pracy dopuszcza tylko osoby upoważnione i poinstruowane (§ 81). Ogólne przepisy BHP nie wymagają przy tej pracy osobnej osoby asekurującej, tylko bezpośredniego nadzoru osoby wyznaczonej przez pracodawcę (§ 81 ust. 1 pkt 1).`,
         }
       : {
           dt: 'Praca szczególnie niebezpieczna',
@@ -271,10 +284,10 @@ export function tekstyPracy(d: DanePracy, w: WynikPracy): TekstyPracy {
   if (w.brakBalustrady)
     uwagi.push(`Otwarta krawędź powyżej 1,0 m: powinna być balustrada albo, gdy to niemożliwe, inne skuteczne środki ochrony przed upadkiem (§ 106 ${OGOLNE}). Środki ochrony indywidualnej, np. szelki, stosuje się, gdy organizacja pracy i ochrona zbiorowa nie wystarczają (załącznik nr 2 § 1).`);
   if (w.naWysokosci || w.cm >= 100)
-    uwagi.push('Gdy warunki pracy nie odpowiadają przepisom BHP i stwarzają bezpośrednie zagrożenie dla zdrowia lub życia, masz prawo powstrzymać się od pracy, zawiadamiając niezwłocznie przełożonego; zachowujesz wynagrodzenie i nie możesz ponieść z tego powodu konsekwencji (art. 210 § 1, 2¹ i 3 Kodeksu pracy). Sprzęt ochronny daje pracodawca bez opłat (art. 207 § 2¹), a Ty używasz go zgodnie z przeznaczeniem (art. 211 pkt 4).');
+    uwagi.push('Gdy warunki pracy nie odpowiadają przepisom BHP i stwarzają bezpośrednie zagrożenie dla zdrowia lub życia, masz prawo powstrzymać się od pracy, zawiadamiając niezwłocznie przełożonego; zachowujesz wynagrodzenie i nie możesz ponieść z tego powodu konsekwencji (art. 210 § 1, 2¹ i 3 Kodeksu pracy). Środki ochrony indywidualnej pracodawca daje nieodpłatnie (art. 237⁶ § 1), kosztami BHP nie może obciążać pracowników (art. 207 § 2¹), a Ty używasz ich zgodnie z przeznaczeniem (art. 211 pkt 4).');
   if (d.miejsce === 'podnosnik' && w.cm >= 100)
     uwagi.push('Obsługa podnośników i platform hydraulicznych to praca wymagająca szczególnej sprawności psychofizycznej (pkt 2 załącznika do rozporządzenia z 28 maja 1996 r.). Czy potrzebne jest też zaświadczenie kwalifikacyjne UDT, zależy od rodzaju urządzenia.');
-  if ((d.miejsce === 'rusztowanie' || d.miejsce === 'konstrukcja' || d.miejsce === 'drabina') && w.cm >= 100)
+  if ((d.miejsce === 'rusztowanie' || d.miejsce === 'dach' || d.miejsce === 'konstrukcja' || d.miejsce === 'drabina') && w.cm >= 100)
     uwagi.push('Tymczasową pracę na wysokości wykonuje się tylko wtedy, gdy warunki pogodowe nie zagrażają bezpieczeństwu i zdrowiu pracowników (§ 8a ust. 2 rozporządzenia o użytkowaniu maszyn).');
   return { glowny, podstawa, wiersze, uwagi };
 }

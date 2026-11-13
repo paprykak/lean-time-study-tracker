@@ -16,7 +16,7 @@ const faq = [
   },
   {
     pytanie: 'Kiedy trzeba mieć szelki bezpieczeństwa?',
-    odpowiedz: 'Przy pracy powyżej 2 m na drabinach, klamrach, słupach, masztach, konstrukcjach bez stropów oraz przy ustawianiu i rozbiórce rusztowań pracodawca zapewnia sprzęt chroniący przed upadkiem, np. szelki z linką przymocowaną do stałych elementów konstrukcji, i hełmy ochronne (§ 110 ust. 1). Na pomostach i podwyższeniach dotyczy to także niższych wysokości, gdy praca wymaga wychylania się poza balustradę albo wymuszonej pozycji ciała (§ 110 ust. 2).',
+    odpowiedz: 'Przy pracy powyżej 2 m na drabinach, klamrach, słupach, masztach, konstrukcjach bez stropów oraz przy ustawianiu i rozbiórce rusztowań pracodawca zapewnia sprzęt chroniący przed upadkiem, np. szelki z linką przymocowaną do stałych elementów konstrukcji, i hełmy ochronne (§ 110 ust. 1). Na galeriach, pomostach i innych podwyższeniach dotyczy to także pracy, która wymaga wychylania się poza balustradę albo wymuszonej pozycji ciała (§ 110 ust. 2). Dachu § 110 nie wymienia: tam obowiązuje balustrada albo inne skuteczne środki ochrony (§ 106).',
   },
   {
     pytanie: 'Jaka balustrada jest wymagana?',
@@ -32,7 +32,7 @@ const faq = [
   },
   {
     pytanie: 'Czy kobieta w ciąży albo młodociany mogą pracować na wysokości?',
-    odpowiedz: 'Kobiecie w ciąży nie wolno pracować na wysokości poza stałymi galeriami, pomostami i podestami z pełnym zabezpieczeniem przed upadkiem, ani wchodzić i schodzić po drabinach i klamrach. Młodocianym wzbronione są prace na wysokości powyżej 3 m; osoba powyżej 16 lat może je wykonywać tylko w przygotowaniu zawodowym, do 2 godzin na dobę, przy pełnym zabezpieczeniu i stałym nadzorze.',
+    odpowiedz: 'Kobiecie w ciąży nie wolno pracować na wysokości poza stałymi galeriami, pomostami, podestami i innymi stałymi podwyższeniami z pełnym zabezpieczeniem przed upadkiem, bez potrzeby używania środków ochrony indywidualnej, ani wchodzić i schodzić po drabinach i klamrach. Młodocianym wzbronione są prace na wysokości powyżej 3 m; osoba powyżej 16 lat może je wykonywać tylko w przygotowaniu zawodowym, do 2 godzin na dobę, przy pełnym zabezpieczeniu i stałym nadzorze.',
   },
 ];
 ---
@@ -41,7 +41,7 @@ const faq = [
   tytul="Praca na wysokości: od ilu metrów i jakie BHP"
   opis="Od 1 m to praca na wysokości: kiedy balustrada, kiedy szelki i hełm, szkolenie BHP co rok, badania lekarskie, zakazy dla młodocianych i kobiet w ciąży."
   h1="Praca na wysokości: od ilu metrów i co musi zapewnić firma"
-  lead="Wpisz wysokość, na której stoisz, i wybierz, gdzie pracujesz. Sprawdzisz, czy to praca na wysokości, jakie zabezpieczenie jest wymagane, kiedy szelki i hełm, co z szkoleniem i badaniami oraz czy wolno tak pracować młodocianym i kobiecie w ciąży."
+  lead="Wpisz wysokość, na której stoisz, i wybierz, gdzie pracujesz. Sprawdzisz, czy to praca na wysokości, jakie zabezpieczenie jest wymagane, kiedy szelki i hełm, co ze szkoleniem i badaniami oraz czy wolno tak pracować młodocianym i kobiecie w ciąży."
   faq={faq}
 >
   <form class="kalkulator" data-wysokosc novalidate aria-labelledby="kalkulator-tytul">
@@ -60,7 +60,8 @@ const faq = [
             <option value="drabina" selected>Drabina, klamry</option>
             <option value="rusztowanie">Rusztowanie</option>
             <option value="podnosnik">Podnośnik, platforma</option>
-            <option value="konstrukcja">Dach, słup, konstrukcja</option>
+            <option value="dach">Dach</option>
+            <option value="konstrukcja">Słup, maszt, konstrukcja</option>
             <option value="rampa">Rampa przeładunkowa</option>
           </select>
         </div>
@@ -76,13 +77,13 @@ const faq = [
           <label for="pw-osoba" class="etykieta-pola">Kto pracuje?</label>
           <select id="pw-osoba" name="osoba" class="pole mt-1">
             <option value="dorosly" selected>Osoba dorosła</option>
-            <option value="mlodociany">Młodociany (do 18 lat)</option>
+            <option value="mlodociany">Młodociany (15–18 lat)</option>
             <option value="ciaza">Kobieta w ciąży</option>
           </select>
         </div>
       </div>
       <div class="opcje-pionowe mt-4">
-        <label><input type="checkbox" name="wychylanie" /> Praca wymaga wychylania się poza barierkę albo wymuszonej pozycji</label>
+        <label><input type="checkbox" name="wychylanie" /> Praca wymaga wychylania się poza balustradę albo wymuszonej pozycji</label>
       </div>
       <p id="pw-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
     </div>
@@ -114,8 +115,8 @@ const faq = [
         <tbody>
           <tr><th scope="row">od 1,0 m</th><td>praca na wysokości, czyli praca szczególnie niebezpieczna (poza powierzchnią osłoniętą ścianami do 1,5 m albo stałą konstrukcją chroniącą przed upadkiem)</td><td>§ 80, § 105</td></tr>
           <tr><th scope="row">powyżej 1,0 m</th><td>balustrada: poręcz co najmniej 1,1 m, krawężnik 0,15 m, poprzeczka w połowie; nie dotyczy ramp przeładunkowych</td><td>§ 106</td></tr>
-          <tr><th scope="row">do 2 m</th><td>stabilne drabiny, rusztowania i pomosty, informacja o dopuszczalnym obciążeniu pomostu, gdy praca nie wymaga wychylania się</td><td>§ 108</td></tr>
-          <tr><th scope="row">powyżej 2 m</th><td>na drabinach, klamrach, słupach i konstrukcjach oraz przy ustawianiu rusztowań: szelki z linką i hełm; rusztowanie po odbiorze technicznym</td><td>§ 109, § 110</td></tr>
+          <tr><th scope="row">do 2 m</th><td>na drabinach, klamrach, rusztowaniach i innych podwyższeniach, gdy praca nie wymaga wychylania się: stabilne urządzenia, pomost z informacją o dopuszczalnym obciążeniu</td><td>§ 108</td></tr>
+          <tr><th scope="row">powyżej 2 m</th><td>na drabinach, klamrach, słupach, masztach i konstrukcjach bez stropów oraz przy ustawianiu rusztowań: szelki z linką i hełm; rusztowanie po odbiorze technicznym</td><td>§ 109, § 110</td></tr>
           <tr><th scope="row">powyżej 3 m</th><td>praca wzbroniona młodocianym (wyjątek od 16 lat w przygotowaniu zawodowym: do 2 godzin na dobę)</td><td>wykaz prac wzbronionych młodocianym</td></tr>
         </tbody>
       </table>
@@ -149,10 +150,12 @@ const faq = [
     </p>
     <p>
       Stała balustrada albo ściany do 1,5 m ze wszystkich stron wyłączają pracę z definicji pracy na wysokości (§ 105
-      ust. 2). Wyjątek stosujemy tylko do stałych powierzchni (pomost, antresola, dach, konstrukcja, rampa), a nie do
-      drabin, rusztowań i podnośników, i nie stosujemy go, gdy praca wymaga wychylania się poza osłonę albo wymuszonej
+      ust. 2). Wyjątek stosujemy tylko do stałych powierzchni (pomost, antresola, dach, rampa), a nie do drabin,
+      rusztowań, podnośników, słupów, masztów i konstrukcji bez stropów, i nie stosujemy go, gdy praca wymaga wychylania się poza osłonę albo wymuszonej
       pozycji: wtedy osłona nie chroni, a § 110 ust. 2 wymaga szelek i hełmu. To nasz wariant bezpieczny dla pracującego;
-      przepis nie mówi tego wprost. § 110 ust. 2 stosujemy do pomostów i podwyższeń na każdej wysokości od 1,0 m. Dla
+      przepis nie mówi tego wprost. § 110 ust. 2 stosujemy do pomostów, drabin, klamer i innych podwyższeń na każdej
+      wysokości od 1,0 m. Dachu § 110 ust. 1 nie wymienia, więc bez wychylania się podajemy dla niego balustradę albo inne
+      skuteczne środki z § 106, a nie szelki. Dla
       kobiety w ciąży za „pełne zabezpieczenie” uznajemy tylko stałą powierzchnię z balustradą albo ścianami, bez
       wychylania się.
     </p>
@@ -166,7 +169,7 @@ const faq = [
 </StronaNarzedzia>
 
 <script>
-  import { MAKS_WYSOKOSC, maOslone, sprawdzPrace, tekstyPracy, type DanePracy, type Miejsce, type Oslona, type Osoba } from '../../lib/narzedzia/praca-na-wysokosci';
+  import { MAKS_WYSOKOSC, dozwoloneOslony, maOslone, sprawdzPrace, tekstyPracy, type DanePracy, type Miejsce, type Oslona, type Osoba } from '../../lib/narzedzia/praca-na-wysokosci';
   import { wpisanaLiczba } from '../../lib/narzedzia/format';
   import { typografia } from '../../lib/typografia.mjs';
 
@@ -194,6 +197,11 @@ const faq = [
     const przelicz = () => {
       const miejsce = pole('miejsce').value as Miejsce;
       form.querySelector<HTMLElement>('[data-pole="oslona"]')!.hidden = !maOslone(miejsce);
+      // Ściany do 1,5 m mają sens tylko przy stałej powierzchni; na rusztowaniu i podnośniku chowamy tę opcję.
+      const lista = pole('oslona') as HTMLSelectElement;
+      const dozwolone = dozwoloneOslony(miejsce);
+      for (const o of lista.options) o.hidden = o.disabled = !dozwolone.includes(o.value as Oslona);
+      if (!dozwolone.includes(lista.value as Oslona)) lista.value = 'balustrada';
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
       const d: DanePracy = {
         wysokosc: wpisanaLiczba(pole('wysokosc').value),
@@ -208,7 +216,8 @@ const faq = [
       } catch {
         pole('wysokosc').setAttribute('aria-invalid', 'true');
         b.hidden = false;
-        b.textContent = typografia(`Wpisz wysokość w metrach od 0 do ${MAKS_WYSOKOSC} m, najwyżej z dwoma miejscami po przecinku, na przykład 2,5.`);
+        const tekst = typografia(`Wpisz wysokość w metrach od 0 do ${MAKS_WYSOKOSC} m, najwyżej z dwoma miejscami po przecinku, na przykład 2,5.`);
+        if (b.textContent !== tekst) b.textContent = tekst;
         pisz('glowny', '—');
         pisz('podstawa', '');
         w('wiersze').replaceChildren();
@@ -218,7 +227,7 @@ const faq = [
       }
       pole('wysokosc').removeAttribute('aria-invalid');
       b.hidden = true;
-      b.textContent = '';
+      if (b.textContent) b.textContent = '';
       const t = tekstyPracy(d, r);
       pisz('glowny', t.glowny);
       pisz('podstawa', t.podstawa);

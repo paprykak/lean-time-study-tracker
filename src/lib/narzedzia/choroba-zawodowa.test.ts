@@ -1,18 +1,18 @@
 import { describe, expect, it } from 'vitest';
-import { BladDanych, GRUPY, WYKAZ, SPOZA_WYKAZU, koniecOkresu, numerPozycji, pozycja, sprawdzChorobe, tekstyChoroby, type DaneChoroby } from './choroba-zawodowa';
+import { BladDanych, GRUPY, WYKAZ, SPOZA_WYKAZU, koniecOkresu, numerPozycji, pozycja, sprawdzChorobe, tekstyChoroby, zaIle, type DaneChoroby } from './choroba-zawodowa';
 
 // Oczekiwane daty policzone niezależnie w Pythonie (datetime, calendar): scratchpad/budowa/choroba_oczekiwane.py.
 const DZIS = '2026-11-13';
 const zak = (choroba: string, koniec: string, objawy?: string): DaneChoroby => ({ choroba, narazenie: 'koniec-nie-pracuje', koniec, objawy });
 
 describe('wykaz chorób zawodowych (t.j. Dz.U. 2026 poz. 1297)', () => {
-  it('78 wierszy z okresem, zatrucia rozbite na ostre i przewlekłe, identyfikatory unikalne', () => {
+  it('78 wierszy wykazu i zatrucia rozbite na ostre i przewlekłe, identyfikatory unikalne', () => {
     expect(WYKAZ).toHaveLength(79);
     expect(new Set(WYKAZ.map((p) => p.id)).size).toBe(79);
     expect(Object.keys(GRUPY)).toHaveLength(13);
     for (const p of WYKAZ) {
       if (p.grupa) expect(GRUPY[p.grupa], p.id).toBeDefined();
-      expect(p.krotko.length, p.id).toBeLessThanOrEqual(31);
+      expect(p.krotko.length, p.id).toBeLessThanOrEqual(21);
     }
   });
   it('typowe dla hali: cieśń 20.1 (1 rok), słuch 21 (2 lata, 45 dB), wibracje 22.2 (3 lata), nadkłykieć 19.5', () => {
@@ -69,6 +69,8 @@ describe('sprawdzenie', () => {
   });
   it('bez okresu w liczbach: pylice, nowotwory, zatrucia przewlekłe', () => {
     for (const id of ['3.1', '17.1', '1-przewlekle', '26']) expect(sprawdzChorobe(zak(id, '2020-01-01'), DZIS).stan).toBe('bez-daty');
+    // Daty nic tu nie zmieniają, więc puste pole nie jest błędem.
+    expect(sprawdzChorobe(zak('3.1', ''), DZIS).stan).toBe('bez-daty');
   });
   it('praca w narażeniu trwa: bez dat', () => {
     expect(sprawdzChorobe({ choroba: '20.1', narazenie: 'trwa', koniec: 'zła' }, DZIS).stan).toBe('w-narazeniu');
@@ -80,12 +82,22 @@ describe('sprawdzenie', () => {
     expect(() => sprawdzChorobe(zak('20.1', '2026-01-01', '2026-11-14'), DZIS)).toThrow(BladDanych);
     expect(() => sprawdzChorobe(zak('20.1', '1949-12-31'), DZIS)).toThrow(BladDanych);
     expect(() => sprawdzChorobe(zak('99', '2026-01-01'), DZIS)).toThrow(RangeError);
-    try {
-      sprawdzChorobe(zak('20.1', '2026-01-01', 'x'), DZIS);
-    } catch (e) {
-      expect((e as BladDanych).pole).toBe('objawy');
-    }
+    expect(() => sprawdzChorobe(zak('20.1', '2026-01-01', 'x'), DZIS)).toThrow(expect.objectContaining({ pole: 'objawy' }));
+    expect(() => sprawdzChorobe(zak('20.1', 'x'), DZIS)).toThrow(expect.objectContaining({ pole: 'koniec' }));
   });
+});
+
+describe('odmiana dni', () => {
+  it.each([
+    [1, 'został 1 dzień'],
+    [2, 'zostały 2 dni'],
+    [5, 'zostało 5 dni'],
+    [12, 'zostało 12 dni'],
+    [22, 'zostały 22 dni'],
+    [0, 'to dziś'],
+    [-1, '1 dzień temu'],
+    [-258, '258 dni temu'],
+  ])('%i → %s', (n, tekst) => expect(zaIle(n)).toBe(tekst));
 });
 
 describe('teksty wyniku', () => {
@@ -93,10 +105,10 @@ describe('teksty wyniku', () => {
   it('termin: data, były pracownik zgłasza sam, odwołania 14 dni, kwota odszkodowania', () => {
     const x = t(zak('20.1', '2026-03-15'));
     expect(x.glowny).toBe('Objawy do 15 marca 2027 r.');
-    expect(x.podstawa).toContain('zostało 122 dni');
+    expect(x.podstawa).toContain('zostały 122 dni');
     expect(x.wiersze[0]).toMatchObject({ dt: 'W wykazie', dd: 'Poz. 20 pkt 1' });
     expect(x.wiersze[0].opis).toContain('Przewlekłe choroby obwodowego układu nerwowego');
-    expect(x.wiersze.find((w) => w.dt === 'Kto zgłasza')?.dd).toBe('Możesz Ty, sam lub sama');
+    expect(x.wiersze.find((w) => w.dt === 'Kto zgłasza')?.dd).toBe('Możesz zgłosić samodzielnie');
     expect(x.wiersze.map((w) => w.dd)).toContain('14 dni na wniosek');
     expect(x.wiersze.find((w) => w.dt === 'Po stwierdzeniu')?.opis).toContain('1781,00 zł');
     expect(x.uwagi.join(' ')).toContain('ocenia lekarz');
@@ -113,6 +125,7 @@ describe('teksty wyniku', () => {
     expect(t(zak('20.1', '2025-01-10')).glowny).toBe('Okres minął 10 stycznia 2026 r.');
     expect(t(zak('20.1', '2025-01-10', '2026-02-01')).glowny).toBe('Objawy po okresie z wykazu');
     expect(t(zak('20.1', '2025-01-10', '2026-01-10')).glowny).toBe('Objawy w okresie z wykazu');
+    expect(t(zak('20.1', '2025-01-10', '2025-01-10')).glowny).toBe('Objawy w czasie pracy w narażeniu');
     expect(t(zak('3.1', '2025-01-10')).glowny).toBe('Okres: nie można określić');
     expect(t(zak('1-przewlekle', '2025-01-10')).glowny).toBe('Okres: w zależności od rodzaju substancji');
     expect(t(zak('17.1', '2025-01-10')).glowny).toBe('Okres: indywidualnie');

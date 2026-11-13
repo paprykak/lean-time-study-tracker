@@ -24,12 +24,16 @@ for (const p of WYKAZ) {
   if (ostatni && ostatni.grupa === g && g !== null) ostatni.pozycje.push(p);
   else bloki.push({ grupa: g, pozycje: [p] });
 }
-// Tabela wykazu: zatrucia (poz. 1) jednym wierszem, nagłówek grupy przed jej pierwszym punktem.
-const wierszeTabeli = WYKAZ.filter((p) => p.id !== '1-przewlekle').map((p, i, lista) => ({
-  p,
-  naglowek: p.grupa && lista[i - 1]?.grupa !== p.grupa ? `${p.grupa}. ${GRUPY[p.grupa].nazwa}` : null,
-  nazwa: p.id === '1-ostre' ? p.nazwa : p.nazwa.charAt(0).toUpperCase() + p.nazwa.slice(1),
-}));
+// Tabela wykazu: zatrucia (poz. 1) jednym wierszem; każda grupa z punktami to osobne <tbody> z nagłówkiem grupy.
+const grupyTabeli: { naglowek: string | null; wiersze: { poz: string; nazwa: string; okres: string }[] }[] = [];
+for (const p of WYKAZ.filter((x) => x.id !== '1-przewlekle')) {
+  const naglowek = p.grupa ? `${p.grupa}. ${GRUPY[p.grupa].nazwa}` : null;
+  const ostatnia = grupyTabeli[grupyTabeli.length - 1];
+  const wiersz = { poz: p.poz, nazwa: p.id === '1-ostre' ? p.nazwa : p.nazwa.charAt(0).toUpperCase() + p.nazwa.slice(1), okres: p.okres };
+  if (ostatnia && naglowek !== null && ostatnia.naglowek === naglowek) ostatnia.wiersze.push(wiersz);
+  else if (ostatnia && naglowek === null && ostatnia.naglowek === null) ostatnia.wiersze.push(wiersz);
+  else grupyTabeli.push({ naglowek, wiersze: [wiersz] });
+}
 
 const faq = [
   {
@@ -46,7 +50,7 @@ const faq = [
   },
   {
     pytanie: 'Jak zgłosić podejrzenie choroby zawodowej?',
-    odpowiedz: 'Pracownik zgłasza je za pośrednictwem lekarza, który sprawuje nad nim profilaktyczną opiekę zdrowotną (lekarza medycyny pracy), a były pracownik może zgłosić sam (art. 235 § 2² Kodeksu pracy). Zgłoszenie trafia do państwowego inspektora sanitarnego i okręgowego inspektora pracy właściwych dla miejsca pracy (§ 3 rozporządzenia w sprawie chorób zawodowych). Pracodawca musi zgłosić każde podejrzenie niezwłocznie (art. 235 § 1), a każdy lekarz, który podejrzewa chorobę zawodową, kieruje na badania (art. 235 § 2¹).',
+    odpowiedz: 'Pracownik zgłasza je za pośrednictwem lekarza, który sprawuje nad nim profilaktyczną opiekę zdrowotną (lekarza medycyny pracy), a były pracownik może zgłosić sam (art. 235 § 2² Kodeksu pracy). Zgłoszenie trafia do państwowego inspektora sanitarnego i okręgowego inspektora pracy (§ 3 rozporządzenia w sprawie chorób zawodowych). Pracodawca musi zgłosić każde podejrzenie niezwłocznie (art. 235 § 1), a każdy lekarz, który podejrzewa chorobę zawodową, kieruje na badania (art. 235 § 2¹).',
   },
   {
     pytanie: 'Ile lat po odejściu z pracy można stwierdzić chorobę zawodową?',
@@ -91,7 +95,7 @@ const faq = [
         <label for="cz-narazenie" class="etykieta-pola">Czy nadal pracujesz w narażeniu?</label>
         <select id="cz-narazenie" name="narazenie" class="pole mt-1" aria-describedby="cz-narazenie-opis">
           <option value="trwa">Tak, nadal</option>
-          <option value="koniec-pracuje">Nie, ale mam umowę o pracę</option>
+          <option value="koniec-pracuje">Nie, mam umowę o pracę</option>
           <option value="koniec-nie-pracuje" selected>Nie, już nie mam etatu</option>
         </select>
         <p id="cz-narazenie-opis" class="meta mt-1">Narażenie to praca przy czynniku, który mógł wywołać chorobę, np. hałas, wibracje, powtarzalne ruchy rąk.</p>
@@ -99,7 +103,8 @@ const faq = [
       <div class="mt-4 grid gap-4 sm:grid-cols-2" data-pole="daty">
         <div>
           <label for="cz-koniec" class="etykieta-pola">Ostatni dzień w narażeniu</label>
-          <input id="cz-koniec" name="koniec" type="date" class="pole mt-1 max-w-56" min={MIN_DATA} max="2100-12-31" value={D.koniec} data-dzis={DNI_KONIEC} aria-describedby="cz-blad" />
+          <input id="cz-koniec" name="koniec" type="date" class="pole mt-1 max-w-56" min={MIN_DATA} max="2100-12-31" value={D.koniec} data-dzis={DNI_KONIEC} aria-describedby="cz-koniec-opis cz-blad" />
+          <p id="cz-koniec-opis" class="meta mt-1">Po przeniesieniu na inne stanowisko: ostatni dzień pracy przy szkodliwym czynniku.</p>
         </div>
         <div>
           <label for="cz-objawy" class="etykieta-pola">Pierwsze objawy w dokumentacji</label>
@@ -139,7 +144,7 @@ const faq = [
 
     <h2 id="postepowanie">Zgłoszenie i postępowanie krok po kroku</h2>
     <ol>
-      <li><strong>Zgłoszenie.</strong> Pracodawca i lekarz jednostki właściwej do rozpoznawania chorób zawodowych zgłaszają każde podejrzenie niezwłocznie (art. 235 § 1–2 Kodeksu pracy, § 3 ust. 2 rozporządzenia), a każdy lekarz, który podejrzewa chorobę zawodową, kieruje na badania (art. 235 § 2¹). Pracownik zgłasza je przez lekarza medycyny pracy, a były pracownik może sam (art. 235 § 2²). Adresaci: państwowy inspektor sanitarny i okręgowy inspektor pracy właściwi dla miejsca pracy (§ 3 ust. 1). Terminu na zgłoszenie przez pracownika przepis nie podaje.</li>
+      <li><strong>Zgłoszenie.</strong> Pracodawca i lekarz jednostki właściwej do rozpoznawania chorób zawodowych zgłaszają każde podejrzenie niezwłocznie (art. 235 § 1–2 Kodeksu pracy, § 3 ust. 2 rozporządzenia), a każdy lekarz, który podejrzewa chorobę zawodową, kieruje na badania (art. 235 § 2¹). Pracownik zgłasza je przez lekarza medycyny pracy, a były pracownik może sam (art. 235 § 2²). Adresaci: państwowy inspektor sanitarny i okręgowy inspektor pracy właściwi dla miejsca, w którym praca jest lub była wykonywana, gdy tam gromadzi się dokumentację narażenia, a w innym razie dla miejsca ostatniego narażenia (§ 3 ust. 1). Terminu na zgłoszenie przez pracownika przepis nie podaje.</li>
       <li><strong>Ocena narażenia i skierowanie.</strong> Inspektor sanitarny ocenia narażenie zawodowe i kieruje na badania do jednostki orzeczniczej I stopnia, np. poradni chorób zawodowych wojewódzkiego ośrodka medycyny pracy albo kliniki uczelni medycznej (§ 4 i § 5 ust. 2). Oczywiście bezzasadne zgłoszenie kończy się postanowieniem o odmowie wszczęcia postępowania (§ 4 ust. 1).</li>
       <li><strong>Orzeczenie lekarskie.</strong> Lekarz jednostki wydaje orzeczenie o rozpoznaniu choroby zawodowej albo o braku podstaw do jej rozpoznania (§ 6). Jeśli się z nim nie zgadzasz, w 14 dni od jego otrzymania składasz wniosek o ponowne badanie w jednostce II stopnia, czyli instytucie medycyny pracy, za pośrednictwem jednostki, która wydała orzeczenie (§ 5 ust. 3 i § 7).</li>
       <li><strong>Decyzja.</strong> Inspektor sanitarny wydaje decyzję o stwierdzeniu choroby zawodowej albo o braku podstaw do jej stwierdzenia (§ 8). Odwołanie wnosisz w 14 dni od doręczenia decyzji do organu wyższego stopnia, za pośrednictwem inspektora, który ją wydał (art. 127 i 129 Kodeksu postępowania administracyjnego).</li>
@@ -159,19 +164,17 @@ const faq = [
     </p>
 
     <h2 id="wykaz">Wykaz chorób zawodowych</h2>
-    <p>Druga kolumna to okres, w którym wystąpienie udokumentowanych objawów pozwala rozpoznać chorobę zawodową mimo wcześniejszego zakończenia pracy w narażeniu (załącznik do rozporządzenia, tekst jednolity Dz.U. 2026 poz. 1297).</p>
+    <p>Kolumna „Okres” to okres, w którym wystąpienie udokumentowanych objawów pozwala rozpoznać chorobę zawodową mimo wcześniejszego zakończenia pracy w narażeniu (załącznik do rozporządzenia, tekst jednolity Dz.U. 2026 poz. 1297).</p>
     <div class="tabela">
       <table>
         <caption class="sr-only">Wykaz chorób zawodowych z okresem po zakończeniu pracy w narażeniu</caption>
-        <thead><tr><th scope="col">Poz.</th><th scope="col">Choroba</th><th scope="col">Okres</th></tr></thead>
-        <tbody>
-          {wierszeTabeli.map((w) => (
-            <Fragment>
-              {w.naglowek && <tr><th scope="colgroup" colspan="3">{w.naglowek}</th></tr>}
-              <tr><td>{w.p.poz}</td><td>{w.nazwa}</td><td>{w.p.okres}</td></tr>
-            </Fragment>
-          ))}
-        </tbody>
+        <thead><tr><th scope="col">Poz.</th><th scope="col">Okres</th><th scope="col">Choroba</th></tr></thead>
+        {grupyTabeli.map((g) => (
+          <tbody>
+            {g.naglowek && <tr><th scope="rowgroup" colspan="3">{g.naglowek}</th></tr>}
+            {g.wiersze.map((r) => <tr><td>{r.poz}</td><td>{r.okres}</td><td>{r.nazwa}</td></tr>)}
+          </tbody>
+        ))}
       </table>
     </div>
 
@@ -179,7 +182,7 @@ const faq = [
     <p>
       Przepis mówi o okresie „pomimo wcześniejszego zakończenia pracy w narażeniu zawodowym”, ale nie podaje, od którego dnia
       go liczyć ani jak (art. 235<sup>2</sup> Kodeksu pracy, § 2 rozporządzenia). Liczymy od ostatniego dnia pracy
-      w narażeniu tak jak terminy w Kodeksie cywilnym: tego dnia nie wliczamy (art. 111 § 2), a okres w latach albo
+      w narażeniu tak jak terminy w Kodeksie cywilnym: tego dnia nie wliczamy (art. 111 § 2, dla okresów w dniach), a okres w latach albo
       miesiącach kończy się w dniu, który datą odpowiada ostatniemu dniu narażenia, a gdy takiego dnia nie ma, w ostatnim
       dniu miesiąca (art. 112). Ostatni dzień okresu traktujemy jako dzień, w którym objawy jeszcze się mieszczą: to
       najpóźniejszy możliwy wariant. Przepis nie mówi też, czy chodzi o koniec narażenia, czy koniec zatrudnienia; przy
@@ -202,7 +205,7 @@ const faq = [
 </StronaNarzedzia>
 
 <script>
-  import { BladDanych, sprawdzChorobe, tekstyChoroby, type DaneChoroby, type Narazenie } from '../../lib/narzedzia/choroba-zawodowa';
+  import { BladDanych, pozycja, sprawdzChorobe, tekstyChoroby, type DaneChoroby, type Narazenie } from '../../lib/narzedzia/choroba-zawodowa';
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
   import { dzisWPolsce } from '../../lib/narzedzia/terminy';
   import { typografia } from '../../lib/typografia.mjs';
@@ -240,7 +243,8 @@ const faq = [
         objawy: pole('objawy').value,
       };
       const daty = form.querySelector<HTMLElement>('[data-pole="daty"]')!;
-      daty.hidden = d.narazenie === 'trwa' || d.choroba === 'kregoslup';
+      daty.hidden = d.narazenie === 'trwa' || !pozycja(d.choroba)?.czas;
+      for (const n of ['koniec', 'objawy']) (pole(n) as HTMLInputElement).max = dzis;
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
       for (const n of ['koniec', 'objawy']) pole(n).removeAttribute('aria-invalid');
       let t;
@@ -250,7 +254,8 @@ const faq = [
         if (!(e instanceof BladDanych)) throw e;
         pole(e.pole).setAttribute('aria-invalid', 'true');
         b.hidden = false;
-        b.textContent = typografia(e.message);
+        const tekst = typografia(e.message);
+        if (b.textContent !== tekst) b.textContent = tekst;
         pisz('glowny', '—');
         pisz('podstawa', '');
         w('wiersze').replaceChildren();
@@ -259,7 +264,7 @@ const faq = [
         return;
       }
       b.hidden = true;
-      b.textContent = '';
+      if (b.textContent) b.textContent = '';
       pisz('glowny', t.glowny);
       pisz('podstawa', t.podstawa);
       if (zmienione('wiersze', t.wiersze))

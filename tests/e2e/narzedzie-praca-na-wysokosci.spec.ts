@@ -36,4 +36,40 @@ test('błędna wysokość', async ({ page }) => {
   await page.getByLabel('Wysokość, na której stoisz (m)').fill('wysoko');
   await expect(page.locator('[data-blad="dane"]')).toBeVisible();
   await expect(page.locator('[data-w="glowny"]')).toHaveText('—');
+  await page.getByLabel('Wysokość, na której stoisz (m)').fill('2');
+  await expect(page.locator('[data-blad="dane"]')).toBeHidden();
+  await expect(page.getByLabel('Wysokość, na której stoisz (m)')).not.toHaveAttribute('aria-invalid', 'true');
+});
+
+test('rusztowanie: bez opcji ścian, dach bez szelek', async ({ page }) => {
+  await page.getByLabel('Gdzie pracujesz?').selectOption('rusztowanie');
+  await expect(page.getByLabel('Co chroni przed upadkiem?').locator('option[value="sciany"]')).toBeDisabled();
+  await page.getByLabel('Gdzie pracujesz?').selectOption('dach');
+  await page.getByLabel('Co chroni przed upadkiem?').selectOption('brak');
+  await expect(page.locator('[data-w="wiersze"]')).toContainText(/Balustrada:\sporęcz\s1,1\sm/);
+  await expect(page.locator('[data-w="wiersze"]')).not.toContainText('Szelki z linką');
+});
+
+test.describe('telefon 320 px', () => {
+  test.use({ viewport: { width: 320, height: 640 } });
+  test('żadna opcja list nie jest szersza niż pole', async ({ page }) => {
+    // Lista osłon jest ukryta przy drabinie: na pomoście widać wszystkie listy.
+    await page.getByLabel('Gdzie pracujesz?').selectOption('pomost');
+    const uciete = await page.locator('select').evaluateAll(async (listy) => {
+      const wynik: string[] = [];
+      for (const el of listy) {
+        const s = el as HTMLSelectElement;
+        const styl = getComputedStyle(s);
+        const ctx = document.createElement('canvas').getContext('2d')!;
+        ctx.font = `${styl.fontWeight} ${styl.fontSize} ${styl.fontFamily}`;
+        // Mierzymy fontem strony, nie zastępczym: bez tego wynik zależy od fontów systemu (w CI szersze).
+        await document.fonts.load(ctx.font, [...s.options].map((o) => o.text).join(''));
+        const miejsce = s.clientWidth - 40;
+        wynik.push(...[...s.options].filter((o) => ctx.measureText(o.text).width > miejsce).map((o) => o.text));
+      }
+      return wynik;
+    });
+    expect(uciete).toEqual([]);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  });
 });

@@ -678,7 +678,7 @@ export const AKTY = {
   chorobyZawodowe: {
     nazwa: 'Rozporządzenie Rady Ministrów w sprawie chorób zawodowych',
     publikator: 'Dz.U. 2026 poz. 1297',
-    uwaga: 'tekst jednolity, obejmuje zmianę Dz.U. 2025 poz. 1582 (od 21 grudnia 2025 r.: nowe brzmienie poz. 5 i 21, nowe poz. 6a i 17 pkt 10–11); § 3–9 (zgłoszenie, orzeczenie, ponowne badanie, decyzja) i załącznik: wykaz z okresami',
+    uwaga: 'tekst jednolity, obejmuje zmianę Dz.U. 2025 poz. 1582 (od 21 grudnia 2025 r., m.in. nowe brzmienie poz. 5 i 21, nowe poz. 6a i 17 pkt 10–11); § 3–9 (zgłoszenie, orzeczenie, ponowne badanie, decyzja) i załącznik: wykaz z okresami',
     adres: eli(2026, 1297),
     sprawdzono: '2026-11-13',
   },
