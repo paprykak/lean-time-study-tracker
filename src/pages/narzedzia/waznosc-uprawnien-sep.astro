@@ -72,7 +72,7 @@ const faq = [
         <label for="sep-wydano" class="etykieta-pola" data-w="etykieta-wydano">Data wydania świadectwa</label>
         <input id="sep-wydano" name="wydano" type="date" class="pole mt-1 max-w-56" min="1990-01-01" max="2100-12-31" value={startWydano} data-dzis={PRZYKLAD_DNI} aria-describedby="sep-wydano-opis sep-wydano-blad" />
         <p id="sep-wydano-opis" class="meta mt-1" data-w="opis-wydano">Na ostatniej stronie, obok miejsca wystawienia.</p>
-        <p id="sep-wydano-blad" class="blad-pola" data-blad="wydano" hidden></p>
+        <p id="sep-wydano-blad" role="alert" class="blad-pola" data-blad="wydano" hidden></p>
       </div>
 
       <div class="opcje-pionowe mt-3">
@@ -82,14 +82,14 @@ const faq = [
       <div class="mt-4">
         <label for="sep-wpis" class="etykieta-pola">Wpis „ważne do” (jeśli jest)</label>
         <input id="sep-wpis" name="wpis" type="date" class="pole mt-1 max-w-56" min="1990-01-01" max="2100-12-31" aria-describedby="sep-wpis-blad" />
-        <p id="sep-wpis-blad" class="blad-pola" data-blad="wpis" hidden></p>
+        <p id="sep-wpis-blad" role="alert" class="blad-pola" data-blad="wpis" hidden></p>
       </div>
 
       <div class="mt-6">
         <label for="sep-wniosek" class="etykieta-pola">Data wniosku o egzamin</label>
         <input id="sep-wniosek" name="wniosek" type="date" class="pole mt-1 max-w-56" min={`${lataPlacy[0]}-01-01`} max={`${lataPlacy[lataPlacy.length - 1]}-12-31`} value={dzis} data-dzis aria-describedby="sep-wniosek-opis sep-wniosek-blad" />
         <p id="sep-wniosek-opis" class="meta mt-1">Opłata zależy od dnia złożenia wniosku, nie egzaminu.</p>
-        <p id="sep-wniosek-blad" class="blad-pola" data-blad="wniosek" hidden></p>
+        <p id="sep-wniosek-blad" role="alert" class="blad-pola" data-blad="wniosek" hidden></p>
       </div>
     </div>
 
@@ -263,6 +263,8 @@ const faq = [
       w('uwaga').textContent = tekst ? typografia(tekst) : '';
     };
 
+    // Gdy na bieżący rok nie ma jeszcze płacy minimalnej, domyślna data wniosku to koniec ostatniego roku z tabeli.
+    let wniosekPrzestawiony = false;
     const przeliczOplate = () => {
       const d = pole('wniosek').value;
       if (!poprawnaData(d)) {
@@ -278,7 +280,11 @@ const faq = [
       }
       const o = oplataSep(d);
       blad('wniosek', null);
-      pisz('oplata', `${zl(o.kwota)} (10% z ${zl(o.placa)}, płaca minimalna w ${o.rok} r.)`);
+      const dopisek =
+        wniosekPrzestawiony && d === `${LATA[LATA.length - 1]}-12-31`
+          ? ` Nie mamy jeszcze płacy minimalnej na ${dzisWPolsce().slice(0, 4)} r.: wniosek złożony w tym roku kosztuje 10% nowej kwoty.`
+          : '';
+      pisz('oplata', `${zl(o.kwota)} (10% z ${zl(o.placa)}, płaca minimalna w ${o.rok} r.)${dopisek}`);
     };
 
     const przelicz = () => {
@@ -382,7 +388,10 @@ const faq = [
 
     ustawDzisiejszeWartosci(form);
     const wniosek = pole('wniosek');
-    if (!LATA.includes(Number(wniosek.value.slice(0, 4)))) wniosek.value = `${LATA[LATA.length - 1]}-12-31`;
+    if (!LATA.includes(Number(wniosek.value.slice(0, 4)))) {
+      wniosek.value = `${LATA[LATA.length - 1]}-12-31`;
+      wniosekPrzestawiony = Number(dzisWPolsce().slice(0, 4)) > LATA[LATA.length - 1];
+    }
     pole('wydano').max = dzisWPolsce();
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);

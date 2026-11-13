@@ -46,7 +46,7 @@ export const SPRAWY_PRACOWNICZE: Record<SprawaPracownicza, OpisSprawy> = {
     krotko: 'Mobbing, dyskryminacja',
     rejonowy: true,
     pip: 'Inspektor może skierować do pracodawcy wystąpienie albo polecenie usunięcia naruszeń (art. 11 ust. 1 pkt 8 ustawy o PIP), ale zadośćuczynienie zasądza tylko sąd.',
-    sad: 'Pozew o zadośćuczynienie lub odszkodowanie do sądu pracy (art. 18³d, 18³e i 94³ Kodeksu pracy); sprawy wniesione od 5 listopada 2026 r. zawsze trafiają do sądu rejonowego (art. 5 ustawy z 19 czerwca 2026 r.).',
+    sad: 'Pozew o zadośćuczynienie lub odszkodowanie do sądu pracy (art. 18³d, 18³e i 94³ Kodeksu pracy); sprawy wniesione od 5 listopada 2026 r. zawsze trafiają do sądu rejonowego (art. 461 § 1¹ Kodeksu postępowania cywilnego; art. 5 ustawy z 19 czerwca 2026 r.).',
   },
   'umowa-o-prace': {
     krotko: 'Zlecenie zamiast etatu',

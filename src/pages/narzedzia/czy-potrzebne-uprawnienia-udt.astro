@@ -6,11 +6,17 @@
 import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
 import { PRZECIETNE_WYNAGRODZENIE } from '../../data/prawo';
 import { czyUdt, polaRodzaju, RODZAJE, type DaneMaszyny } from '../../lib/narzedzia/czy-udt';
-import { oplataEgzaminu, PROCENT_OPLATY } from '../../lib/narzedzia/uprawnienia-udt';
+import { kwotaGusMozeNieaktualna, oplataEgzaminu, PROCENT_OPLATY } from '../../lib/narzedzia/uprawnienia-udt';
+import { dzisWPolsce } from '../../lib/narzedzia/terminy';
+import { typografia } from '../../lib/typografia.mjs';
 import { zl } from '../../lib/narzedzia/format';
 import { odmiana } from '../../lib/redakcja';
 
 const oplata = zl(oplataEgzaminu(PRZECIETNE_WYNAGRODZENIE.kwota));
+// Komunikat GUS wychodzi co roku w lutym: po 12 miesiącach od ostatniego znanego mógł już wyjść następny
+// (ten sam mechanizm co w waznosc-uprawnien-udt.astro).
+const nowszaKwotaGus = `GUS mógł już ogłosić kwotę za ${PRZECIETNE_WYNAGRODZENIE.zaRok + 1} r., a wtedy opłata jest inna.`;
+const gusNieaktualne = kwotaGusMozeNieaktualna(PRZECIETNE_WYNAGRODZENIE.ogloszono, dzisWPolsce());
 const lat = (n: number) => odmiana(n, ['rok', 'lata', 'lat']);
 
 const START: DaneMaszyny = { rodzaj: 'paleciak', jazdaSilnikowa: true, podnoszenieMechaniczne: true };
@@ -59,7 +65,7 @@ const faq = [
   },
   {
     pytanie: 'Od ilu lat można zdobyć uprawnienia na wózek widłowy?',
-    odpowiedz: `Od 18 lat. Do egzaminu UDT podchodzi osoba, która ukończyła 18 lat i zna polski na tyle, żeby zdać egzamin, albo przychodzi z tłumaczem przysięgłym (art. 23 ust. 1c ustawy o dozorze technicznym). Egzamin kosztuje ${oplata} (art. 23 ust. 4). Przepis nie wymaga kursu ani konkretnego wykształcenia.`,
+    odpowiedz: `Od 18 lat. Do egzaminu UDT podchodzi osoba, która ukończyła 18 lat i zna polski na tyle, żeby zdać egzamin, albo przychodzi z tłumaczem przysięgłym (art. 23 ust. 1c ustawy o dozorze technicznym). Egzamin kosztuje ${oplata} (3,75% przeciętnego wynagrodzenia za ${PRZECIETNE_WYNAGRODZENIE.zaRok} r., art. 23 ust. 4).${gusNieaktualne ? ` ${nowszaKwotaGus}` : ''} Przepis nie wymaga kursu ani konkretnego wykształcenia.`,
   },
   {
     pytanie: 'Czy suwnica sterowana kasetą wymaga uprawnień?',
@@ -168,7 +174,7 @@ const faq = [
       <div class="mt-5" data-pole="udzwig" hidden={ukryj('udzwig')}>
         <label for="cu-udzwig" class="etykieta-pola">Udźwig z tabliczki (kg)</label>
         <input id="cu-udzwig" name="udzwig" type="number" inputmode="numeric" min="1" step="1" class="pole mt-1 max-w-40" value="1000" aria-describedby="cu-udzwig-blad" />
-        <p id="cu-udzwig-blad" class="blad-pola" data-blad="udzwig" hidden></p>
+        <p id="cu-udzwig-blad" role="alert" class="blad-pola" data-blad="udzwig" hidden></p>
       </div>
 
       <div class="mt-5" data-pole="przeznaczenie" hidden={ukryj('przeznaczenie')}>
@@ -197,7 +203,7 @@ const faq = [
         <div data-wiersz="zamiast" hidden={!w.zamiast}><dt>Co zamiast</dt><dd data-w="zamiast">{w.zamiast}</dd></div>
         <div data-wiersz="konserwacja" hidden={!w.konserwacja}><dt>Konserwator</dt><dd data-w="konserwacja">{w.konserwacja ? `potrzebuje zaświadczenia „${w.konserwacja.nazwa}”, ${lat(w.konserwacja.lata)}` : ''}</dd></div>
         <div data-wiersz="warunki" hidden={!w.potrzebne}><dt>Kto może zdawać</dt><dd>osoba, która ukończyła 18 lat i zna polski albo przyjdzie z tłumaczem przysięgłym (art. 23 ust. 1c ustawy o dozorze technicznym)</dd></div>
-        <div data-wiersz="oplata" hidden={!w.potrzebne}><dt>Egzamin</dt><dd>{oplata} (art. 23 ust. 4), jedno zaświadczenie na jeden rodzaj urządzenia (§ 4 ust. 3 rozporządzenia z 2019 r.)</dd></div>
+        <div data-wiersz="oplata" hidden={!w.potrzebne}><dt>Egzamin</dt><dd>{oplata} (z przeciętnego wynagrodzenia za {PRZECIETNE_WYNAGRODZENIE.zaRok} r., art. 23 ust. 4), jedno zaświadczenie na jeden rodzaj urządzenia (§ 4 ust. 3 rozporządzenia z 2019 r.)</dd></div>
       </dl>
       <ul class="wynik-uwaga grid gap-2" data-w="uwagi" hidden={!w.uwagi.length}>{w.uwagi.map((u) => <li>{u}</li>)}</ul>
       <noscript><p class="wynik-uwaga">Kalkulator zmienia wynik w przeglądarce i potrzebuje JavaScriptu. Tabela typowych maszyn poniżej działa bez niego.</p></noscript>
@@ -253,7 +259,8 @@ const faq = [
     <p>
       Egzamin ma część pisemną i praktyczną (§ 3 ust. 3 rozporządzenia z 2019 r.), a odbywa się najpóźniej 30 dni roboczych od
       złożenia kompletnego wniosku, chyba że poprosisz o późniejszy termin (§ 3 ust. 2 rozporządzenia z 2019 r.). Opłata to {PROCENT_OPLATY.toLocaleString('pl-PL')}%
-      przeciętnego wynagrodzenia ogłoszonego przez Prezesa GUS (art. 23 ust. 4), czyli {oplata}. Po oblanym egzaminie
+      przeciętnego wynagrodzenia ogłoszonego przez Prezesa GUS, obowiązującego w dniu złożenia wniosku (art. 23 ust. 4). Za {PRZECIETNE_WYNAGRODZENIE.zaRok} r. to {oplata}.
+      <span data-gus-nowsza data-ogloszono={PRZECIETNE_WYNAGRODZENIE.ogloszono} hidden={!gusNieaktualne}>{typografia(nowszaKwotaGus)}</span> Po oblanym egzaminie
       trzeba złożyć nowy wniosek (§ 4 ust. 4).
     </p>
   </Fragment>
@@ -261,9 +268,15 @@ const faq = [
 
 <script>
   import { czyUdt, polaRodzaju, tylkoPola, type DaneMaszyny, type RodzajMaszyny } from '../../lib/narzedzia/czy-udt';
+  import { kwotaGusMozeNieaktualna } from '../../lib/narzedzia/uprawnienia-udt';
+  import { dzisWPolsce } from '../../lib/narzedzia/terminy';
   import { odmiana } from '../../lib/redakcja';
   import { typografia } from '../../lib/typografia.mjs';
 
+  // Strona jest budowana raz: ostrzeżenie o nowym komunikacie GUS według dzisiejszej daty.
+  document.querySelectorAll<HTMLElement>('[data-gus-nowsza]').forEach((s) => {
+    if (s.dataset.ogloszono) s.hidden = !kwotaGusMozeNieaktualna(s.dataset.ogloszono, dzisWPolsce());
+  });
   const form = document.querySelector<HTMLFormElement>('[data-czy-udt]');
   if (form) {
     const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;

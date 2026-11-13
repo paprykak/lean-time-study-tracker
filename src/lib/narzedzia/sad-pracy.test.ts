@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { oplataApelacji, oplataOdPisma, opisSadu, sadPierwszejInstancji } from './sad-pracy';
+import { SPRAWY_PRACOWNICZE, oplataApelacji, oplataOdPisma, opisSadu, sadPierwszejInstancji } from './sad-pracy';
 
 // Oczekiwane kwoty z niezależnego rachunku w Pythonie (progi art. 13 ust. 1, 5% z ust. 2 najwyżej 100 000 zł,
 // zaokrąglenie w górę z art. 21 i art. 126¹ § 3 KPC, art. 35 ust. 1 od nadwyżki ponad 50 000 zł).
@@ -33,5 +33,11 @@ describe('apelacja pracownika (art. 35 ust. 1) i sąd (art. 17 pkt 4, 461 § 1¹
     expect(opisSadu('mobbing', 0).uwagi[0]).toContain('461 § 1¹');
     expect(opisSadu('wynagrodzenie', 150_000).sad).toBe('Sąd okręgowy (sąd pracy)');
     expect(() => opisSadu('kara', -1)).toThrow(RangeError);
+  });
+});
+
+describe('podstawa właściwości sądu w sprawach o mobbing', () => {
+  it('art. 461 § 1¹ KPC, a art. 5 ustawy zmieniającej tylko jako granica w czasie', () => {
+    expect(SPRAWY_PRACOWNICZE.mobbing.sad).toContain('art. 461 § 1¹ Kodeksu postępowania cywilnego');
   });
 });

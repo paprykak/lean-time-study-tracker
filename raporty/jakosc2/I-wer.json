@@ -1,0 +1,62 @@
+{
+  "partia": "I",
+  "werdykty": [
+    {
+      "id": "I-1",
+      "werdykt": "potwierdzone",
+      "uzasadnienie": "Art. 23 ust. 4 ustawy o dozorze technicznym (DU_2024_1194.txt, l. 729–733) każe liczyć opłatę z kwoty GUS „obowiązującej w dniu złożenia wniosku”. czy-potrzebne-uprawnienia-udt.astro liczy 333,88 zł przy budowaniu (8903,56 × 3,75% = 333,8835) i podaje ją w FAQ (l. 62), w wierszu „Egzamin” (l. 200) i w sekcji „Egzamin UDT” (l. 256) bez roku komunikatu i bez ostrzeżenia. Siostrzana waznosc-uprawnien-udt.astro ma na to gotowy mechanizm: stałą nowszaKwotaGus, gusNieaktualne liczone przy budowaniu (do FAQ), <span data-gus-nowsza data-ogloszono hidden> w akapicie o opłacie i dwie linie w skrypcie. Strona czy-udt go nie ma.",
+      "dowod": "Playwright z page.clock: 2027-02-11 → na waznosc-uprawnien-udt span [data-gus-nowsza] hidden=false („GUS mógł już ogłosić kwotę za 2026 r., a wtedy opłata jest inna.”), 2027-02-10 → hidden=true (zgodnie z testem kwotaGusMozeNieaktualna w uprawnienia-udt.test.ts:42–44). Na czy-potrzebne-uprawnienia-udt w obu dniach brak [data-gus-nowsza], akapit pod #egzamin: „…ogłoszonego przez Prezesa GUS (art. 23 ust. 4), czyli 333,88 zł.” bez roku.",
+      "poprawka": "src/pages/narzedzia/czy-potrzebne-uprawnienia-udt.astro, wzór 1:1 z waznosc-uprawnien-udt.astro (l. 5–15, 166, 183–184):\n(1) frontmatter: import { kwotaGusMozeNieaktualna, oplataEgzaminu, PROCENT_OPLATY } from '../../lib/narzedzia/uprawnienia-udt'; import { dzisWPolsce } from '../../lib/narzedzia/terminy'; import { typografia } from '../../lib/typografia.mjs';\n  const nowszaKwotaGus = `GUS mógł już ogłosić kwotę za ${PRZECIETNE_WYNAGRODZENIE.zaRok + 1} r., a wtedy opłata jest inna.`;\n  const gusNieaktualne = kwotaGusMozeNieaktualna(PRZECIETNE_WYNAGRODZENIE.ogloszono, dzisWPolsce());\n(2) FAQ l. 62: `… Egzamin kosztuje ${oplata} (3,75% przeciętnego wynagrodzenia za ${PRZECIETNE_WYNAGRODZENIE.zaRok} r., art. 23 ust. 4).${gusNieaktualne ? ` ${nowszaKwotaGus}` : ''} Przepis nie wymaga…`\n(3) wiersz l. 200: <dd>{oplata} (stawka z przeciętnego wynagrodzenia za {PRZECIETNE_WYNAGRODZENIE.zaRok} r., art. 23 ust. 4), jedno zaświadczenie…</dd> (bez spana: ostrzeżenie wystarczy w sekcji opisowej; jeśli zespół chce i tu, drugi span z tym samym data-gus-nowsza i querySelectorAll w skrypcie).\n(4) sekcja #egzamin l. 256: „…ogłoszonego przez Prezesa GUS, obowiązującego w dniu złożenia wniosku (art. 23 ust. 4). Za {PRZECIETNE_WYNAGRODZENIE.zaRok} r. to {oplata}. <span data-gus-nowsza data-ogloszono={PRZECIETNE_WYNAGRODZENIE.ogloszono} hidden={!gusNieaktualne}>{typografia(nowszaKwotaGus)}</span> Po oblanym egzaminie…”\n(5) <script>: import { kwotaGusMozeNieaktualna } from '../../lib/narzedzia/uprawnienia-udt'; import { dzisWPolsce } from '../../lib/narzedzia/terminy'; przed if (form): document.querySelectorAll<HTMLElement>('[data-gus-nowsza]').forEach((s) => { if (s.dataset.ogloszono) s.hidden = !kwotaGusMozeNieaktualna(s.dataset.ogloszono, dzisWPolsce()); });",
+      "testy": "tests/e2e/narzedzie-czy-udt.spec.ts: page.clock.setFixedTime('2027-02-10T10:00:00+01:00') → [data-gus-nowsza] ukryty; '2027-02-11T10:00:00+01:00' → widoczny i zawiera /za\\s2026\\sr\\./; tekst #egzamin zawiera /za\\s2025\\sr\\..*333,88\\szł/. Kwota 333,88 zł bez zmian (8903,56 × 0,0375 = 333,8835)."
+    },
+    {
+      "id": "I-2",
+      "werdykt": "czesciowo",
+      "uzasadnienie": "Mechanizm opisany poprawnie, ale nie jest całkiem „po cichu”: osoba w 2028 r. widzi w polu „Data wniosku o egzamin” 31.12.2027 (nie dzisiejszą) i opłatę z dopiskiem „płaca minimalna w 2027 r.”. Problem polega na tym, że nie wybrała tej daty i nic nie mówi, że dla wniosku złożonego dziś (2028) kwota będzie inna (§ 14 ust. 1 rozp. DU_2022_1392: płaca „obowiązująca w dniu złożenia wniosku”). Scenariusz realny tylko, jeśli nikt nie dopisze PLACA_MINIMALNA[2028] (rozporządzenie do 15.09.2027, jest w do_stanu); waga niska. Strona zbudowana wcześniej zawsze ma max pola = 2027-12-31.",
+      "dowod": "Playwright, clock 2028-01-05, podgląd zbudowany 2026-11-13: #sep-wniosek value=2027-12-31 (min 2026-01-01, max 2027-12-31), [data-w=oplata] „495,00 zł (10% z 4950,00 zł, płaca minimalna w 2027 r.)”, błąd wniosku ukryty, uwaga ukryta. Clock 2027-01-05: value=2027-01-05, 495,00 zł (zgodnie z testem sep.spec.ts:51).",
+      "poprawka": "Najmniej ryzykowna: zostawić przestawienie daty (formularz nie startuje z błędem, plik .ics i reszta wyniku działają), ale dopisać wyjaśnienie w wierszu opłaty. W waznosc-uprawnien-sep.astro <script>: let wniosekPrzestawiony = false; w l. 385: if (!LATA.includes(Number(wniosek.value.slice(0, 4)))) { wniosek.value = `${LATA[LATA.length - 1]}-12-31`; wniosekPrzestawiony = Number(dzisWPolsce().slice(0, 4)) > LATA[LATA.length - 1]; } a w przeliczOplate po obliczeniu: const dopisek = wniosekPrzestawiony && d === `${LATA[LATA.length - 1]}-12-31` ? ` Nie mamy jeszcze płacy minimalnej na ${dzisWPolsce().slice(0, 4)} r.: wniosek złożony w tym roku kosztuje 10% nowej kwoty.` : ''; pisz('oplata', `${zl(o.kwota)} (10% z ${zl(o.placa)}, płaca minimalna w ${o.rok} r.)${dopisek}`). Alternatywa (prostsza, ale startuje z komunikatem błędu): usunąć l. 385, wtedy działa istniejąca gałąź z l. 274–277.",
+      "testy": "E2E: page.clock.setFixedTime('2028-01-05T10:00:00+01:00'), reload → #sep-wniosek ma wartość 2027-12-31, [data-w=oplata] zawiera /495,00\\szł/ i /Nie\\smamy\\sjeszcze\\spłacy\\sminimalnej\\sna\\s2028\\sr\\./; po fill('2027-06-01') dopisku brak. Uwaga: test trzeba będzie przesunąć o rok po dopisaniu płacy 2028 (albo liczyć rok z LATA)."
+    },
+    {
+      "id": "I-3",
+      "werdykt": "czesciowo",
+      "uzasadnienie": "Powiązanie aria-describedby + aria-invalid spełnia WCAG 3.3.1 (błąd opisany tekstem i przypięty do pola), a czytnik odczyta go przy ponownym fokusie. Zmiana treści opisu przy fokusie w polu nie jest jednak ogłaszana (NVDA/JAWS nie czytają ponownie aria-describedby po zmianie), więc przy wpisywaniu brakuje komunikatu stanu (WCAG 4.1.3). W UDT region aria-live dostaje przy błędzie tylko „—” (werdykt), a w SEP błąd daty wniosku zmienia opłatę na „—” poza regionem aria-live (nic nie jest ogłaszane); błąd daty wydania ogłasza się pośrednio, bo „Wpisz datę” trafia do regionu live. Problem jest jednak ogólnoserwisowy, nie tej partii: role=\"alert\" na .blad-pola ma tylko 17 stron narzędzi, ok. 80 z ~100 stron z .blad-pola go nie ma (w tym waznosc-uprawnien-udt), a 02-fabryka.md i DECYZJE.md nie wymagają role=alert. Poprawka czterech elementów jest sensowna i bezpieczna (błąd pojawia się tylko przy pustym/0/ujemnym udźwigu i złych datach, więc nie zalewa czytnika przy pisaniu), ale właściwie powinna być jedna decyzja dla wszystkich stron.",
+      "dowod": "grep na src/pages/narzedzia/*.astro: 108 stron, 100 z class=\"blad-pola\"; z role=\"alert\" 17 (m.in. sad-pracy-czy-pip:56, mobbing-i-dyskryminacja:69, praca-na-wysokosci, zalegly-urlop), bez: m.in. brutto-netto, kalkulator-urlopu, okres-wypowiedzenia, waznosc-uprawnien-udt, czy-potrzebne-uprawnienia-udt:171, waznosc-uprawnien-sep:75/85/92. czy-potrzebne-uprawnienia-udt.astro l. 308–316: przy RangeError werdykt='—' (w aria-live), reszta wyniku ukryta. waznosc-uprawnien-sep.astro l. 268–277: przy błędzie wniosku pisz('oplata','—') w <dl> poza aria-live (l. 97–106).",
+      "poprawka": "Dodać role=\"alert\" do <p id=\"cu-udzwig-blad\"> (czy-potrzebne-uprawnienia-udt.astro:171) oraz <p id=\"sep-wydano-blad\">, <p id=\"sep-wpis-blad\">, <p id=\"sep-wniosek-blad\"> (waznosc-uprawnien-sep.astro:75, 85, 92) – tak jak w sad-pracy-czy-pip i mobbing-i-dyskryminacja. Ujednolicenie pozostałych ~80 stron (w tym waznosc-uprawnien-udt) to sprawa ogólnoserwisowa: decyzja w DECYZJE.md i jeden przegląd (patrz „nowe”).",
+      "testy": "E2E: czy-udt, rodzaj wciągnik, fill('') w udźwig → getByRole('alert') ma tekst /Wpisz\\sudźwig/; SEP fill('2099-01-01') w dacie wydania → getByRole('alert') /późniejsza\\sniż\\sdziś/."
+    },
+    {
+      "id": "I-4",
+      "werdykt": "potwierdzone",
+      "uzasadnienie": "W sad-pracy.ts:49 jedyną podstawą zdania „sprawy wniesione od 5 listopada 2026 r. zawsze trafiają do sądu rejonowego” jest art. 5 ustawy z 19.06.2026, który jest tylko przepisem przejściowym (dawne KPC dla postępowań wszczętych wcześniej); właściwość wynika z art. 461 § 1¹ KPC w brzmieniu z art. 2 pkt 2. Art. 5 jest właściwy dla granicy czasowej, więc trzeba podać oba, jak już robią uwaga w l. 115, sad-pracy-czy-pip.astro:88 i mobbing-i-dyskryminacja.astro:116.",
+      "dowod": "DU_2026_1046.txt l. 148–157: art. 2 pkt 2 – nowe art. 461 § 1¹ („sprawy dotyczące ochrony dóbr osobistych, mobbingu, naruszenia zasady równego traktowania w zatrudnieniu”); l. 169–170: art. 5 „Do postępowań wszczętych i niezakończonych przed dniem wejścia w życie niniejszej ustawy stosuje się przepisy ustawy zmienianej w art. 2 w brzmieniu dotychczasowym.”",
+      "poprawka": "src/lib/narzedzia/sad-pracy.ts:49, koniec pola sad: „…zawsze trafiają do sądu rejonowego (art. 461 § 1¹ Kodeksu postępowania cywilnego; art. 5 ustawy z 19 czerwca 2026 r.).”",
+      "testy": "sad-pracy.test.ts: SPRAWY_PRACOWNICZE.mobbing.sad zawiera '461 § 1¹'."
+    },
+    {
+      "id": "I-5",
+      "werdykt": "potwierdzone",
+      "uzasadnienie": "Tytuł w FAQ jest niepełny; rejestr w prawo.ts:777 ma tytuł poprawny. Treść przywołanego § 8 ust. 1 zgodna z przepisem.",
+      "dowod": "DU_2002_46.json title: „Rozporządzenie Rady Ministrów z dnia 8 stycznia 2002 r. w sprawie organizacji przyjmowania i rozpatrywania skarg i wniosków.”; DU_2002_46.txt l. 126–128 § 8 ust. 1. sad-pracy-czy-pip.astro:23: „…w sprawie przyjmowania i rozpatrywania skarg i wniosków)”.",
+      "poprawka": "sad-pracy-czy-pip.astro:23: „(§ 8 ust. 1 rozporządzenia Rady Ministrów z 8 stycznia 2002 r. w sprawie organizacji przyjmowania i rozpatrywania skarg i wniosków)”.",
+      "testy": "brak potrzeby; ewentualnie E2E/unit: tekst FAQ zawiera „w sprawie organizacji przyjmowania”."
+    },
+    {
+      "id": "I-6",
+      "werdykt": "potwierdzone",
+      "uzasadnienie": "beforeEach w narzedzie-mobbing.spec.ts zawsze wybiera rok 2026 i wpisuje datę, więc przestawienie domyślnych wartości (data-rok-biezacy na #m-rok, data-dzis na #m-data) po Nowym Roku nie jest testowane. Zachowanie dziś działa, więc to luka w testach, nie błąd.",
+      "dowod": "Playwright, clock 2027-01-05T10:00+01:00, bez żadnej interakcji: #m-rok=2027, m-data=2027-01-05, [data-w=kwota] „29 700,00 zł” (6 × 4950 zł, Dz.U. 2026 poz. 1213); po selectOption('mobbing') tak samo.",
+      "poprawka": "Nowy test w osobnym describe (bez beforeEach z selectOption('2026')): page.clock.setFixedTime(new Date('2027-01-05T10:00:00+01:00')); goto; selectOption('mobbing') w „Sprawa”; expect #m-rok toHaveValue('2027'), „Dzień ostatniego zachowania” toHaveValue('2027-01-05'), [data-w=kwota] /^29\\s?700,00\\szł$/.",
+      "testy": "2027-01-05 → rok 2027, data 2027-01-05, mobbing 29 700,00 zł (sprawdzone na podglądzie)."
+    }
+  ],
+  "nowe": [
+    {
+      "id": "I-N1", "slug": "wiele (ok. 80 stron narzędzi)", "wymiar": "tresc-ux", "waga": "niska",
+      "plik": "src/pages/narzedzia/*.astro (np. waznosc-uprawnien-udt.astro, brutto-netto.astro, kalkulator-urlopu.astro)", "linia": 0,
+      "problem": "Niespójna konwencja komunikatów błędów pól: role=\"alert\" na <p class=\"blad-pola\"> ma 17 ze 100 stron z takim komunikatem, reszta polega tylko na aria-describedby + aria-invalid, więc błąd pojawiający się przy wpisywaniu nie jest ogłaszany czytnikowi (WCAG 4.1.3). Standard narzędzia w 02-fabryka.md tego nie rozstrzyga.",
+      "dowod": "grep -h 'class=\"blad-pola' src/pages/narzedzia/*.astro: 17 linii z role=\"alert\", 103 bez; lista plików w uzasadnieniu I-3.",
+      "poprawka": "Decyzja Patryka/redakcji w DECYZJE.md (proponowana: role=\"alert\" na każdym .blad-pola, bo komunikaty pokazują się tylko przy złych danych), dopisek do standardu w prompty/02-fabryka.md sekcja 4 i jeden przegląd wszystkich stron; ewentualnie kontrola w scripts/ (SEO/dostępność), że .blad-pola ma role=\"alert\". To sprawa wspólna (poza zakresem partii I)."
+    }
+  ]
+}
