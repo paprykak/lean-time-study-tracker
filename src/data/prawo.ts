@@ -364,11 +364,11 @@ export const AKTY = {
     sprawdzono: '2026-11-12',
   },
   przecietneKwartalne: {
-    nazwa: 'Komunikat Prezesa GUS w sprawie przeciętnego wynagrodzenia w drugim kwartale 2026 r.',
-    publikator: 'M.P. 2026 poz. 779',
-    uwaga: '9233,13 zł, dla płac młodocianych od 1 września 2026 r.; wcześniej M.P. 2026 poz. 457 (9562,88 zł), M.P. 2026 poz. 194 (9197,79 zł) i M.P. 2025 poz. 1148 (8771,70 zł)',
-    adres: 'https://eli.gov.pl/eli/MP/2026/779/ogl',
-    sprawdzono: '2026-11-12',
+    nazwa: 'Komunikat Prezesa GUS w sprawie przeciętnego wynagrodzenia w trzecim kwartale 2026 r.',
+    publikator: 'M.P. 2026 poz. 1122',
+    uwaga: '9317,01 zł (ogłoszony 10 listopada 2026 r.), dla płac młodocianych od 1 grudnia 2026 r.; wcześniej M.P. 2026 poz. 779 (9233,13 zł od 1 września 2026 r.), M.P. 2026 poz. 457 (9562,88 zł), M.P. 2026 poz. 194 (9197,79 zł) i M.P. 2025 poz. 1148 (8771,70 zł)',
+    adres: 'https://eli.gov.pl/eli/MP/2026/1122/ogl',
+    sprawdzono: '2026-11-13',
   },
   temperatura2026: {
     nazwa: 'Rozporządzenie z 9 lipca 2026 r. zmieniające rozporządzenie w sprawie ogólnych przepisów BHP (§ 30a: temperatura)',
