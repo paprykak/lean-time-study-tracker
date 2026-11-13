@@ -48,7 +48,15 @@ async function czytajZPamieci(szukany: string): Promise<string | undefined> {
       if (uchwyt.kind === 'directory') {
         const wynik = await szukaj(uchwyt, p);
         if (wynik) return wynik;
-      } else if (p.endsWith(szukany)) return (await uchwyt.getFile()).text();
+      } else if (p.endsWith(szukany)) {
+        // Panel może właśnie zapisywać plik: odczyt w trakcie zapisu rzuca NotReadableError, a expect.poll
+        // nie ponawia po wyjątku, więc traktujemy to jak „jeszcze nie ma” i czekamy na następną próbę.
+        try {
+          return await (await uchwyt.getFile()).text();
+        } catch {
+          return undefined;
+        }
+      }
     }
   };
   return szukaj(await navigator.storage.getDirectory(), '');

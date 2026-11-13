@@ -1,0 +1,251 @@
+---
+// Praca na wysokości: § 80–81 i 105–110 ogólnych przepisów BHP, § 8a–8b rozporządzenia o użytkowaniu maszyn, § 11 i 15
+// rozporządzenia o szkoleniu BHP, załącznik nr 1 cz. V lp. 5 rozporządzenia o badaniach lekarskich, wykazy prac
+// wzbronionych młodocianym i kobietom w ciąży, art. 176, 204, 210 Kodeksu pracy.
+// Logika i interpretacje: src/lib/narzedzia/praca-na-wysokosci.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { sprawdzPrace, tekstyPracy, type DanePracy } from '../../lib/narzedzia/praca-na-wysokosci';
+
+const D: DanePracy = { wysokosc: 2.5, miejsce: 'drabina', oslona: 'brak', wychylanie: false, osoba: 'dorosly' };
+const t = tekstyPracy(D, sprawdzPrace(D));
+
+const faq = [
+  {
+    pytanie: 'Od ilu metrów jest praca na wysokości?',
+    odpowiedz: 'Od 1,0 m. Pracą na wysokości jest praca na powierzchni co najmniej 1,0 m nad poziomem podłogi lub ziemi (§ 105 ust. 1 rozporządzenia w sprawie ogólnych przepisów BHP). Nie jest nią praca na powierzchni osłoniętej ze wszystkich stron ścianami do wysokości co najmniej 1,5 m albo wyposażonej w stałe konstrukcje chroniące przed upadkiem, np. balustradę (§ 105 ust. 2).',
+  },
+  {
+    pytanie: 'Kiedy trzeba mieć szelki bezpieczeństwa?',
+    odpowiedz: 'Przy pracy powyżej 2 m na drabinach, klamrach, słupach, masztach, konstrukcjach bez stropów oraz przy ustawianiu i rozbiórce rusztowań pracodawca zapewnia sprzęt chroniący przed upadkiem, np. szelki z linką przymocowaną do stałych elementów konstrukcji, i hełmy ochronne (§ 110 ust. 1). Na galeriach, pomostach i innych podwyższeniach dotyczy to także pracy, która wymaga wychylania się poza balustradę albo wymuszonej pozycji ciała (§ 110 ust. 2). Dachu § 110 nie wymienia: tam obowiązuje balustrada albo inne skuteczne środki ochrony (§ 106).',
+  },
+  {
+    pytanie: 'Jaka balustrada jest wymagana?',
+    odpowiedz: 'Na powierzchniach powyżej 1,0 m, na których przebywają pracownicy albo którymi się przechodzi: poręcz ochronna na wysokości co najmniej 1,1 m, krawężnik co najmniej 0,15 m, a między nimi w połowie wysokości poprzeczka albo wypełnienie, przez które nie da się wypaść. Gdy balustrada jest niemożliwa, stosuje się inne skuteczne środki ochrony. Wymóg nie dotyczy ramp przeładunkowych (§ 106).',
+  },
+  {
+    pytanie: 'Czy praca na wysokości to praca szczególnie niebezpieczna?',
+    odpowiedz: 'Tak. Prace na wysokości są wymienione w rozdziale o pracach szczególnie niebezpiecznych (§ 80 i § 105–110). Pracodawca zapewnia bezpośredni nadzór, środki zabezpieczające i instruktaż (§ 81), a szkolenie okresowe BHP na takim stanowisku robotniczym odbywa się nie rzadziej niż raz w roku (§ 15 ust. 1 rozporządzenia w sprawie szkolenia BHP).',
+  },
+  {
+    pytanie: 'Jakie badania lekarskie do pracy na wysokości?',
+    odpowiedz: 'Badanie ze szczególnym zwróceniem uwagi na narząd równowagi, badanie słuchu, wzroku (ostrość, rozpoznawanie barw, widzenie przestrzenne, pole widzenia) i poziom glukozy we krwi. Badania okresowe: do 25. roku życia co 3 lata, od 25. do 50. roku życia co 2–3 lata, powyżej 50. roku życia co 1–2 lata (załącznik nr 1 do rozporządzenia o badaniach lekarskich, cz. V lp. 5). Podziału na pracę do 3 m i powyżej 3 m obowiązujący przepis nie zawiera.',
+  },
+  {
+    pytanie: 'Czy kobieta w ciąży albo młodociany mogą pracować na wysokości?',
+    odpowiedz: 'Kobiecie w ciąży nie wolno pracować na wysokości poza stałymi galeriami, pomostami, podestami i innymi stałymi podwyższeniami z pełnym zabezpieczeniem przed upadkiem, bez potrzeby używania środków ochrony indywidualnej, ani wchodzić i schodzić po drabinach i klamrach. Młodocianym wzbronione są prace na wysokości powyżej 3 m; osoba powyżej 16 lat może je wykonywać tylko w przygotowaniu zawodowym, do 2 godzin na dobę, przy pełnym zabezpieczeniu i stałym nadzorze.',
+  },
+];
+---
+<StronaNarzedzia
+  slug="praca-na-wysokosci"
+  tytul="Praca na wysokości: od ilu metrów i jakie BHP"
+  opis="Od 1 m to praca na wysokości: kiedy balustrada, kiedy szelki i hełm, szkolenie BHP co rok, badania lekarskie, zakazy dla młodocianych i kobiet w ciąży."
+  h1="Praca na wysokości: od ilu metrów i co musi zapewnić firma"
+  lead="Wpisz wysokość, na której stoisz, i wybierz, gdzie pracujesz. Sprawdzisz, czy to praca na wysokości, jakie zabezpieczenie jest wymagane, kiedy szelki i hełm, co ze szkoleniem i badaniami oraz czy wolno tak pracować młodocianym i kobiecie w ciąży."
+  faq={faq}
+>
+  <form class="kalkulator" data-wysokosc novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twoje stanowisko</h2>
+      <div class="mt-4 grid gap-4 sm:grid-cols-2">
+        <div>
+          <label for="pw-wysokosc" class="etykieta-pola">Wysokość, na której stoisz (m)</label>
+          <input id="pw-wysokosc" name="wysokosc" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="2,5" aria-describedby="pw-wysokosc-opis pw-blad" />
+          <p id="pw-wysokosc-opis" class="meta mt-1">Od podłogi lub ziemi do powierzchni, na której stoisz.</p>
+        </div>
+        <div>
+          <label for="pw-miejsce" class="etykieta-pola">Gdzie pracujesz?</label>
+          <select id="pw-miejsce" name="miejsce" class="pole mt-1">
+            <option value="pomost">Pomost, antresola, podest</option>
+            <option value="drabina" selected>Drabina, klamry</option>
+            <option value="rusztowanie">Rusztowanie</option>
+            <option value="podnosnik">Podnośnik, platforma</option>
+            <option value="dach">Dach</option>
+            <option value="konstrukcja">Słup, maszt, konstrukcja</option>
+            <option value="rampa">Rampa przeładunkowa</option>
+          </select>
+        </div>
+        <div data-pole="oslona" hidden>
+          <label for="pw-oslona" class="etykieta-pola">Co chroni przed upadkiem?</label>
+          <select id="pw-oslona" name="oslona" class="pole mt-1">
+            <option value="balustrada">Stała balustrada</option>
+            <option value="sciany">Ściany min. 1,5 m dookoła</option>
+            <option value="brak" selected>Nic, otwarta krawędź</option>
+          </select>
+        </div>
+        <div>
+          <label for="pw-osoba" class="etykieta-pola">Kto pracuje?</label>
+          <select id="pw-osoba" name="osoba" class="pole mt-1">
+            <option value="dorosly" selected>Osoba dorosła</option>
+            <option value="mlodociany">Młodociany (15–18 lat)</option>
+            <option value="ciaza">Kobieta w ciąży</option>
+          </select>
+        </div>
+      </div>
+      <div class="opcje-pionowe mt-4">
+        <label><input type="checkbox" name="wychylanie" /> Praca wymaga wychylania się poza balustradę albo wymuszonej pozycji</label>
+      </div>
+      <p id="pw-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Według przepisów</h2>
+      <div aria-live="polite">
+        <p class="wynik-data" data-w="glowny">{t.glowny}</p>
+        <p class="meta mt-2" data-w="podstawa">{t.podstawa}</p>
+        <dl class="wynik-lista" data-w="wiersze">
+          {t.wiersze.map((r) => (
+            <div><dt>{r.dt}</dt><dd>{r.dd}<span class="wynik-opis">{r.opis}</span></dd></div>
+          ))}
+        </dl>
+        <div data-w="uwagi">
+          {t.uwagi.map((u) => <p class="wynik-uwaga">{u}</p>)}
+        </div>
+      </div>
+      <noscript><p class="wynik-uwaga">Narzędzie działa w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="progi">Progi wysokości w przepisach</h2>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Progi wysokości w przepisach BHP o pracy na wysokości</caption>
+        <thead><tr><th scope="col">Wysokość</th><th scope="col">Co z tego wynika</th><th scope="col">Przepis</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">od 1,0 m</th><td>praca na wysokości, czyli praca szczególnie niebezpieczna (poza powierzchnią osłoniętą ścianami do 1,5 m albo stałą konstrukcją chroniącą przed upadkiem)</td><td>§ 80, § 105</td></tr>
+          <tr><th scope="row">powyżej 1,0 m</th><td>balustrada: poręcz co najmniej 1,1 m, krawężnik 0,15 m, poprzeczka w połowie; nie dotyczy ramp przeładunkowych</td><td>§ 106</td></tr>
+          <tr><th scope="row">do 2 m</th><td>na drabinach, klamrach, rusztowaniach i innych podwyższeniach, gdy praca nie wymaga wychylania się: stabilne urządzenia, pomost z informacją o dopuszczalnym obciążeniu</td><td>§ 108</td></tr>
+          <tr><th scope="row">powyżej 2 m</th><td>na drabinach, klamrach, słupach, masztach i konstrukcjach bez stropów oraz przy ustawianiu rusztowań: szelki z linką i hełm; rusztowanie po odbiorze technicznym</td><td>§ 109, § 110</td></tr>
+          <tr><th scope="row">powyżej 3 m</th><td>praca wzbroniona młodocianym (wyjątek od 16 lat w przygotowaniu zawodowym: do 2 godzin na dobę)</td><td>wykaz prac wzbronionych młodocianym</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Paragrafy bez nazwy aktu pochodzą z rozporządzenia w sprawie ogólnych przepisów BHP (tekst jednolity Dz.U. 2003 poz. 1650 ze zmianami; § 81 i § 110 ust. 1 pkt 3 mają brzmienie z 2007 r.).</p>
+
+    <h2 id="obowiazki">Obowiązki pracodawcy i Twoje prawa</h2>
+    <ul>
+      <li>Pracodawca prowadzi wykaz prac szczególnie niebezpiecznych w zakładzie (§ 80 ust. 2), zapewnia bezpośredni nadzór wyznaczonej osoby, środki zabezpieczające i instruktaż z imiennym podziałem pracy, a do miejsca pracy dopuszcza tylko osoby upoważnione (§ 81).</li>
+      <li>Pierwszeństwo ma ochrona zbiorowa, np. balustrady i pomosty; środki ochrony indywidualnej, np. szelki, stosuje się, gdy organizacja pracy i ochrona zbiorowa nie wystarczają (§ 8a ust. 1 pkt 2 rozporządzenia o użytkowaniu maszyn, załącznik nr 2 § 1 ogólnych przepisów BHP). Kosztami BHP nie wolno obciążać pracowników (art. 207 § 2<sup>1</sup> Kodeksu pracy).</li>
+      <li>Drabina może być stanowiskiem pracy tylko przy niskim ryzyku i krótkiej pracy albo w okolicznościach, których pracodawca nie może zmienić; musi stać stabilnie, a Ty musisz móc bezpiecznie się jej trzymać (§ 8b rozporządzenia o użytkowaniu maszyn).</li>
+      <li>Gdy warunki nie odpowiadają przepisom BHP i stwarzają bezpośrednie zagrożenie, możesz powstrzymać się od pracy, zawiadamiając przełożonego, i zachowujesz wynagrodzenie (art. 210 § 1–3 Kodeksu pracy).</li>
+      <li>Szkolenie okresowe na stanowisku z pracami szczególnie niebezpiecznymi: nie rzadziej niż raz w roku. Termin następnego policzy <a href="/narzedzia/szkolenie-okresowe-bhp">kalkulator szkolenia okresowego BHP</a>, a badania lekarskie <a href="/narzedzia/badania-lekarskie-w-pracy">kalkulator badań lekarskich w pracy</a>.</li>
+    </ul>
+
+    <h2 id="budowa">Na budowie i przy podnośnikach</h2>
+    <p>
+      Przy robotach budowlanych obowiązują też osobne przepisy (rozporządzenie w sprawie BHP podczas wykonywania robót
+      budowlanych, Dz.U. 2003 poz. 401): stanowiska od 1 m zabezpiecza się balustradą z poręczą 1,1 m i deską krawężnikową
+      0,15 m, a szelki są dopuszczalne, gdy nie da się zastosować ochrony zbiorowej (§ 6, § 15 ust. 2 i § 133). Obsługa
+      podnośników i platform hydraulicznych to praca wymagająca szczególnej sprawności psychofizycznej (rozporządzenie
+      z 28 maja 1996 r., Dz.U. 1996 poz. 287). Czy do urządzenia potrzebne jest zaświadczenie UDT, sprawdzi <a href="/narzedzia/czy-potrzebne-uprawnienia-udt">narzędzie „Czy potrzebne uprawnienia UDT”</a>.
+    </p>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Przepis mówi o pracy „na powierzchni” na określonej wysokości nad podłogą lub ziemią, więc liczymy wysokość
+      powierzchni, na której stoisz. Progi porównujemy w centymetrach, dosłownie: 1,0 m to już praca na wysokości (§ 105:
+      „co najmniej”), ale balustradę § 106 wymaga dopiero „powyżej 1,0 m”; 2,0 m mieści się w § 108 („do 2 m”), a § 109–110
+      zaczynają się powyżej 2 m; zakaz dla młodocianych zaczyna się powyżej 3 m.
+    </p>
+    <p>
+      Stała balustrada albo ściany do 1,5 m ze wszystkich stron wyłączają pracę z definicji pracy na wysokości (§ 105
+      ust. 2). Wyjątek stosujemy tylko do stałych powierzchni (pomost, antresola, dach, rampa), a nie do drabin,
+      rusztowań, podnośników, słupów, masztów i konstrukcji bez stropów, i nie stosujemy go, gdy praca wymaga wychylania się poza osłonę albo wymuszonej
+      pozycji: wtedy osłona nie chroni, a § 110 ust. 2 wymaga szelek i hełmu. To nasz wariant bezpieczny dla pracującego;
+      przepis nie mówi tego wprost. § 110 ust. 2 stosujemy do pomostów, drabin, klamer i innych podwyższeń na każdej
+      wysokości od 1,0 m. Dachu § 110 ust. 1 nie wymienia, więc bez wychylania się podajemy dla niego balustradę albo inne
+      skuteczne środki z § 106, a nie szelki. Dla
+      kobiety w ciąży za „pełne zabezpieczenie” uznajemy tylko stałą powierzchnię z balustradą albo ścianami, bez
+      wychylania się.
+    </p>
+    <p>
+      Rozporządzenie o badaniach lekarskich nie definiuje pracy na wysokości; wiersz o badaniach pokazujemy, gdy praca
+      spełnia definicję z § 105. Zakres badań ustala lekarz na podstawie skierowania i oceny ryzyka na stanowisku.
+      Pracodawca może uznać za szczególnie niebezpieczne także inne prace i wpisać je do swojego wykazu (§ 80), więc wynik
+      „nie jest” nie wyklucza ostrzejszych zasad w Twojej firmie. Zasady dla młodocianych opisuje też <a href="/narzedzia/pracownik-mlodociany">kalkulator pracownika młodocianego</a>, a dla kobiet w ciąży <a href="/narzedzia/praca-w-ciazy">narzędzie o pracy w ciąży</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { MAKS_WYSOKOSC, dozwoloneOslony, maOslone, sprawdzPrace, tekstyPracy, type DanePracy, type Miejsce, type Oslona, type Osoba } from '../../lib/narzedzia/praca-na-wysokosci';
+  import { wpisanaLiczba } from '../../lib/narzedzia/format';
+  import { typografia } from '../../lib/typografia.mjs';
+
+  const form = document.querySelector<HTMLFormElement>('[data-wysokosc]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const pole = (n: string) => form.elements.namedItem(n) as HTMLInputElement | HTMLSelectElement;
+    const pisz = (k: string, tekst: string) => {
+      const t = typografia(tekst);
+      if (w(k).textContent !== t) w(k).textContent = t;
+    };
+    const ostatnie = new Map<string, string>();
+    const zmienione = (k: string, wartosc: unknown) => {
+      const s = JSON.stringify(wartosc);
+      if (ostatnie.get(k) === s) return false;
+      ostatnie.set(k, s);
+      return true;
+    };
+    const nowy = (tag: string, tekst: string, klasa?: string) => {
+      const e = document.createElement(tag);
+      e.textContent = typografia(tekst);
+      if (klasa) e.className = klasa;
+      return e;
+    };
+    const przelicz = () => {
+      const miejsce = pole('miejsce').value as Miejsce;
+      form.querySelector<HTMLElement>('[data-pole="oslona"]')!.hidden = !maOslone(miejsce);
+      // Ściany do 1,5 m mają sens tylko przy stałej powierzchni; na rusztowaniu i podnośniku chowamy tę opcję.
+      const lista = pole('oslona') as HTMLSelectElement;
+      const dozwolone = dozwoloneOslony(miejsce);
+      for (const o of lista.options) o.hidden = o.disabled = !dozwolone.includes(o.value as Oslona);
+      if (!dozwolone.includes(lista.value as Oslona)) lista.value = 'balustrada';
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      const d: DanePracy = {
+        wysokosc: wpisanaLiczba(pole('wysokosc').value),
+        miejsce,
+        oslona: pole('oslona').value as Oslona,
+        wychylanie: (pole('wychylanie') as HTMLInputElement).checked,
+        osoba: pole('osoba').value as Osoba,
+      };
+      let r;
+      try {
+        r = sprawdzPrace(d);
+      } catch {
+        pole('wysokosc').setAttribute('aria-invalid', 'true');
+        b.hidden = false;
+        const tekst = typografia(`Wpisz wysokość w metrach od 0 do ${MAKS_WYSOKOSC} m, najwyżej z dwoma miejscami po przecinku, na przykład 2,5.`);
+        if (b.textContent !== tekst) b.textContent = tekst;
+        pisz('glowny', '—');
+        pisz('podstawa', '');
+        w('wiersze').replaceChildren();
+        w('uwagi').replaceChildren();
+        ostatnie.clear();
+        return;
+      }
+      pole('wysokosc').removeAttribute('aria-invalid');
+      b.hidden = true;
+      if (b.textContent) b.textContent = '';
+      const t = tekstyPracy(d, r);
+      pisz('glowny', t.glowny);
+      pisz('podstawa', t.podstawa);
+      if (zmienione('wiersze', t.wiersze))
+        w('wiersze').replaceChildren(
+          ...t.wiersze.map((x) => {
+            const div = document.createElement('div');
+            const dd = nowy('dd', x.dd);
+            dd.append(nowy('span', x.opis, 'wynik-opis'));
+            div.append(nowy('dt', x.dt), dd);
+            return div;
+          }),
+        );
+      if (zmienione('uwagi', t.uwagi)) w('uwagi').replaceChildren(...t.uwagi.map((u) => nowy('p', u, 'wynik-uwaga')));
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>

@@ -801,6 +801,22 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-13',
   },
   {
+    slug: 'choroba-zawodowa',
+    nazwa: 'Choroba zawodowa: wykaz i terminy',
+    krotko: 'Czy choroba jest w wykazie (cieśń nadgarstka, słuch, kręgosłup), do kiedy po pracy w narażeniu, jak zgłosić.',
+    kategoria: 'bhp',
+    przepisy: ['chorobyZawodowe', 'kodeksPracy', 'wypadkowa', 'odszkodowaniaWypadkowe2026', 'kpa', 'kodeksCywilny'],
+    sprawdzono: '2026-11-13',
+  },
+  {
+    slug: 'praca-na-wysokosci',
+    nazwa: 'Praca na wysokości: od ilu metrów',
+    krotko: 'Od 1 m praca na wysokości: balustrada, szelki powyżej 2 m, szkolenie co rok, badania, ciąża i młodociani.',
+    kategoria: 'bhp',
+    przepisy: ['ogolneBhp', 'maszynyBhp', 'szkoleniaBhp', 'badaniaProfilaktyczne', 'praceMlodocianych', 'praceKobietCiaza', 'kodeksPracy', 'sprawnoscPsychofizyczna', 'budowlaneBhp'],
+    sprawdzono: '2026-11-13',
+  },
+  {
     slug: 'przerwy-w-pracy',
     nazwa: 'Przerwy w pracy',
     krotko: 'Ile przerw przy zmianie 8 i 12 godzin, które są płatne, przy monitorze, na karmienie, dla młodocianych.',

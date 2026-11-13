@@ -1,0 +1,287 @@
+---
+// Choroba zawodowa: wykaz i okresy z rozporządzenia Rady Ministrów w sprawie chorób zawodowych (t.j. Dz.U. 2026 poz. 1297),
+// art. 230, 235–235² i 237¹ Kodeksu pracy, art. 3–9 i 11–12 ustawy wypadkowej, art. 127 i 129 KPA.
+// Logika, wykaz i interpretacje: src/lib/narzedzia/choroba-zawodowa.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { GRUPY, MIN_DATA, SPOZA_WYKAZU, WYKAZ, numerPozycji, sprawdzChorobe, tekstyChoroby, type DaneChoroby, type PozycjaWykazu } from '../../lib/narzedzia/choroba-zawodowa';
+import { kwotyNaDzien } from '../../lib/narzedzia/odszkodowanie-wypadek';
+import { zl } from '../../lib/narzedzia/format';
+import { dataPoPolsku, dodajDni, dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+const dzis = dzisWPolsce();
+// Wartość startowa względem dziś (data-dzis w dniach); skrypt przestawia ją na prawdziwe dziś (dzis-w-formularzu.ts).
+const DNI_KONIEC = -120;
+const D: DaneChoroby = { choroba: '20.1', narazenie: 'koniec-nie-pracuje', koniec: dodajDni(dzis, DNI_KONIEC) };
+const t = tekstyChoroby(D, sprawdzChorobe(D, dzis), dzis);
+const kwota = kwotyNaDzien(dzis);
+
+// Lista wyboru: punkty pozycji w grupach (optgroup), pozycje bez punktów osobno, na końcu choroby spoza wykazu.
+type Blok = { grupa: string | null; pozycje: PozycjaWykazu[] };
+const bloki: Blok[] = [];
+for (const p of WYKAZ) {
+  const g = p.grupa ?? null;
+  const ostatni = bloki[bloki.length - 1];
+  if (ostatni && ostatni.grupa === g && g !== null) ostatni.pozycje.push(p);
+  else bloki.push({ grupa: g, pozycje: [p] });
+}
+// Tabela wykazu: zatrucia (poz. 1) jednym wierszem; każda grupa z punktami to osobne <tbody> z nagłówkiem grupy.
+const grupyTabeli: { naglowek: string | null; wiersze: { poz: string; nazwa: string; okres: string }[] }[] = [];
+for (const p of WYKAZ.filter((x) => x.id !== '1-przewlekle')) {
+  const naglowek = p.grupa ? `${p.grupa}. ${GRUPY[p.grupa].nazwa}` : null;
+  const ostatnia = grupyTabeli[grupyTabeli.length - 1];
+  const wiersz = { poz: p.poz, nazwa: p.id === '1-ostre' ? p.nazwa : p.nazwa.charAt(0).toUpperCase() + p.nazwa.slice(1), okres: p.okres };
+  if (ostatnia && naglowek !== null && ostatnia.naglowek === naglowek) ostatnia.wiersze.push(wiersz);
+  else if (ostatnia && naglowek === null && ostatnia.naglowek === null) ostatnia.wiersze.push(wiersz);
+  else grupyTabeli.push({ naglowek, wiersze: [wiersz] });
+}
+
+const faq = [
+  {
+    pytanie: 'Czy zespół cieśni nadgarstka to choroba zawodowa?',
+    odpowiedz: 'Może nią być: zespół cieśni w obrębie nadgarstka jest w wykazie chorób zawodowych (poz. 20 pkt 1, przewlekłe choroby obwodowego układu nerwowego wywołane sposobem wykonywania pracy). Po zakończeniu pracy w narażeniu udokumentowane objawy muszą wystąpić w ciągu 1 roku. O tym, czy to choroba zawodowa, rozstrzyga ocena warunków pracy: musi wynikać z niej bezspornie lub z wysokim prawdopodobieństwem, że chorobę spowodowała praca (art. 235¹ Kodeksu pracy).',
+  },
+  {
+    pytanie: 'Czy dyskopatia albo ból kręgosłupa to choroba zawodowa?',
+    odpowiedz: 'Nie. Chorobą zawodową może być tylko choroba wymieniona w wykazie (art. 235¹ Kodeksu pracy), a wykaz nie wymienia chorób kręgosłupa. Nagłe zdarzenie wywołane przyczyną zewnętrzną, które w związku z pracą spowodowało uraz, może być wypadkiem przy pracy (art. 3 ust. 1 ustawy wypadkowej).',
+  },
+  {
+    pytanie: 'Jaki ubytek słuchu jest chorobą zawodową?',
+    odpowiedz: 'Trwały odbiorczy ubytek słuchu typu ślimakowego lub czuciowo-nerwowego spowodowany hałasem, wyrażony podwyższeniem progu słuchu o co najmniej 45 dB, liczony jako średnia dla częstotliwości 1, 2 i 3 kHz (poz. 21 wykazu). Od 21 grudnia 2025 r. przepis nie wymaga, żeby ubytek był obustronny i mierzony w uchu lepiej słyszącym (Dz.U. 2025 poz. 1582). Objawy muszą wystąpić w ciągu 2 lat po zakończeniu pracy w hałasie.',
+  },
+  {
+    pytanie: 'Jak zgłosić podejrzenie choroby zawodowej?',
+    odpowiedz: 'Pracownik zgłasza je za pośrednictwem lekarza, który sprawuje nad nim profilaktyczną opiekę zdrowotną (lekarza medycyny pracy), a były pracownik może zgłosić sam (art. 235 § 2² Kodeksu pracy). Zgłoszenie trafia do państwowego inspektora sanitarnego i okręgowego inspektora pracy (§ 3 rozporządzenia w sprawie chorób zawodowych). Pracodawca musi zgłosić każde podejrzenie niezwłocznie (art. 235 § 1), a każdy lekarz, który podejrzewa chorobę zawodową, kieruje na badania (art. 235 § 2¹).',
+  },
+  {
+    pytanie: 'Ile lat po odejściu z pracy można stwierdzić chorobę zawodową?',
+    odpowiedz: 'To zależy od choroby. Rozpoznanie po zakończeniu pracy w narażeniu jest możliwe, gdy udokumentowane objawy wystąpiły w okresie podanym w wykazie (art. 235² Kodeksu pracy): np. 1 rok przy cieśni nadgarstka i zapaleniu nadkłykcia, 2 lata przy ubytku słuchu od hałasu, 3 lata przy kostno-stawowej postaci zespołu wibracyjnego. Przy pylicach wykaz podaje „nie można określić”, a przy nowotworach „indywidualnie”.',
+  },
+  {
+    pytanie: 'Co przysługuje po stwierdzeniu choroby zawodowej?',
+    odpowiedz: `Świadczenia z ubezpieczenia wypadkowego: zasiłek chorobowy w wysokości 100% podstawy od pierwszego dnia niezdolności do pracy, świadczenie rehabilitacyjne, zasiłek wyrównawczy, jednorazowe odszkodowanie za stały lub długotrwały uszczerbek na zdrowiu, renta z tytułu niezdolności do pracy i renta szkoleniowa (art. 6, 8 i 9 ustawy wypadkowej).${kwota ? ` Za każdy procent uszczerbku ZUS płaci ${zl(kwota.zaProcent)} przy decyzji wydanej od ${dataPoPolsku(kwota.od)} do ${dataPoPolsku(kwota.do)} (${kwota.zrodlo}).` : ''}`,
+  },
+];
+---
+<StronaNarzedzia
+  slug="choroba-zawodowa"
+  tytul="Choroba zawodowa: wykaz, terminy, zgłoszenie"
+  opis="Czy Twoja choroba jest w wykazie chorób zawodowych, do kiedy po zakończeniu pracy muszą wystąpić objawy, kto i komu zgłasza, terminy odwołań i świadczenia."
+  h1="Choroba zawodowa: czy jest w wykazie i do kiedy"
+  lead="Wybierz chorobę z wykazu i wpisz, kiedy skończyła się praca w narażeniu. Zobaczysz, do kiedy muszą wystąpić udokumentowane objawy, kto zgłasza podejrzenie, jakie są terminy odwołań i co daje stwierdzenie choroby zawodowej."
+  faq={faq}
+>
+  <form class="kalkulator" data-choroba novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Choroba i praca</h2>
+      <div class="mt-4">
+        <label for="cz-choroba" class="etykieta-pola">Choroba</label>
+        <select id="cz-choroba" name="choroba" class="pole mt-1" aria-describedby="cz-choroba-opis">
+          {bloki.map((b) =>
+            b.grupa ? (
+              <optgroup label={GRUPY[b.grupa].krotko}>
+                {b.pozycje.map((p) => <option value={p.id} selected={p.id === D.choroba}>{p.krotko}</option>)}
+              </optgroup>
+            ) : (
+              b.pozycje.map((p) => <option value={p.id}>{p.krotko}</option>)
+            ),
+          )}
+          <optgroup label="Spoza wykazu">
+            <option value={SPOZA_WYKAZU.id}>{SPOZA_WYKAZU.krotko}</option>
+          </optgroup>
+        </select>
+        <p id="cz-choroba-opis" class="meta mt-1">Lista idzie za wykazem z rozporządzenia; pełne brzmienie pokażemy w wyniku.</p>
+      </div>
+      <div class="mt-4">
+        <label for="cz-narazenie" class="etykieta-pola">Czy nadal pracujesz w narażeniu?</label>
+        <select id="cz-narazenie" name="narazenie" class="pole mt-1" aria-describedby="cz-narazenie-opis">
+          <option value="trwa">Tak, nadal</option>
+          <option value="koniec-pracuje">Nie, mam umowę o pracę</option>
+          <option value="koniec-nie-pracuje" selected>Nie, już nie mam etatu</option>
+        </select>
+        <p id="cz-narazenie-opis" class="meta mt-1">Narażenie to praca przy czynniku, który mógł wywołać chorobę, np. hałas, wibracje, powtarzalne ruchy rąk.</p>
+      </div>
+      <div class="mt-4 grid gap-4 sm:grid-cols-2" data-pole="daty">
+        <div>
+          <label for="cz-koniec" class="etykieta-pola">Ostatni dzień w narażeniu</label>
+          <input id="cz-koniec" name="koniec" type="date" class="pole mt-1 max-w-56" min={MIN_DATA} max="2100-12-31" value={D.koniec} data-dzis={DNI_KONIEC} aria-describedby="cz-koniec-opis cz-blad" />
+          <p id="cz-koniec-opis" class="meta mt-1">Po przeniesieniu na inne stanowisko: ostatni dzień pracy przy szkodliwym czynniku.</p>
+        </div>
+        <div>
+          <label for="cz-objawy" class="etykieta-pola">Pierwsze objawy w dokumentacji</label>
+          <input id="cz-objawy" name="objawy" type="date" class="pole mt-1 max-w-56" min={MIN_DATA} max="2100-12-31" value="" aria-describedby="cz-objawy-opis cz-blad" />
+          <p id="cz-objawy-opis" class="meta mt-1">Nieobowiązkowe: np. data wizyty u lekarza z tymi objawami.</p>
+        </div>
+      </div>
+      <p id="cz-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Według przepisów</h2>
+      <div aria-live="polite">
+        <p class="wynik-data" data-w="glowny">{t.glowny}</p>
+        <p class="meta mt-2" data-w="podstawa">{t.podstawa}</p>
+        <dl class="wynik-lista" data-w="wiersze">
+          {t.wiersze.map((r) => (
+            <div><dt>{r.dt}</dt><dd>{r.dd}<span class="wynik-opis">{r.opis}</span></dd></div>
+          ))}
+        </dl>
+        <div data-w="uwagi">
+          {t.uwagi.map((u) => <p class="wynik-uwaga">{u}</p>)}
+        </div>
+      </div>
+      <noscript><p class="wynik-uwaga">Narzędzie liczy w przeglądarce i potrzebuje JavaScriptu. Wykaz i zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="zasady">Co jest chorobą zawodową</h2>
+    <ul>
+      <li>Chorobą zawodową jest choroba wymieniona w wykazie chorób zawodowych, jeżeli ocena warunków pracy wskazuje bezspornie lub z wysokim prawdopodobieństwem, że spowodowały ją czynniki szkodliwe w środowisku pracy albo sposób wykonywania pracy, czyli narażenie zawodowe (art. 235<sup>1</sup> Kodeksu pracy). Choroby spoza wykazu, np. choroby kręgosłupa, chorobą zawodową nie są.</li>
+      <li>Rozpoznanie może nastąpić w czasie pracy w narażeniu albo po jej zakończeniu, jeśli udokumentowane objawy wystąpiły w okresie podanym w wykazie (art. 235<sup>2</sup>).</li>
+      <li>Wykaz i okresy zawiera załącznik do rozporządzenia Rady Ministrów w sprawie chorób zawodowych (tekst jednolity Dz.U. 2026 poz. 1297). Od 21 grudnia 2025 r. nowe brzmienie mają m.in. poz. 21 (ubytek słuchu) i poz. 5, a doszły poz. 6a i 17 pkt 10–11 (Dz.U. 2025 poz. 1582).</li>
+      <li>Przy objawach wskazujących na powstawanie choroby zawodowej pracodawca na podstawie orzeczenia lekarskiego przenosi pracownika do innej pracy, a gdy wynagrodzenie spada, przez najwyżej 6 miesięcy płaci dodatek wyrównawczy (art. 230 Kodeksu pracy). Jego wysokość policzy <a href="/narzedzia/dodatek-wyrownawczy">kalkulator dodatku wyrównawczego</a>.</li>
+    </ul>
+
+    <h2 id="postepowanie">Zgłoszenie i postępowanie krok po kroku</h2>
+    <ol>
+      <li><strong>Zgłoszenie.</strong> Pracodawca i lekarz jednostki właściwej do rozpoznawania chorób zawodowych zgłaszają każde podejrzenie niezwłocznie (art. 235 § 1–2 Kodeksu pracy, § 3 ust. 2 rozporządzenia), a każdy lekarz, który podejrzewa chorobę zawodową, kieruje na badania (art. 235 § 2¹). Pracownik zgłasza je przez lekarza medycyny pracy, a były pracownik może sam (art. 235 § 2²). Adresaci: państwowy inspektor sanitarny i okręgowy inspektor pracy właściwi dla miejsca, w którym praca jest lub była wykonywana, gdy tam gromadzi się dokumentację narażenia, a w innym razie dla miejsca ostatniego narażenia (§ 3 ust. 1). Terminu na zgłoszenie przez pracownika przepis nie podaje.</li>
+      <li><strong>Ocena narażenia i skierowanie.</strong> Inspektor sanitarny ocenia narażenie zawodowe i kieruje na badania do jednostki orzeczniczej I stopnia, np. poradni chorób zawodowych wojewódzkiego ośrodka medycyny pracy albo kliniki uczelni medycznej (§ 4 i § 5 ust. 2). Oczywiście bezzasadne zgłoszenie kończy się postanowieniem o odmowie wszczęcia postępowania (§ 4 ust. 1).</li>
+      <li><strong>Orzeczenie lekarskie.</strong> Lekarz jednostki wydaje orzeczenie o rozpoznaniu choroby zawodowej albo o braku podstaw do jej rozpoznania (§ 6). Jeśli się z nim nie zgadzasz, w 14 dni od jego otrzymania składasz wniosek o ponowne badanie w jednostce II stopnia, czyli instytucie medycyny pracy, za pośrednictwem jednostki, która wydała orzeczenie (§ 5 ust. 3 i § 7).</li>
+      <li><strong>Decyzja.</strong> Inspektor sanitarny wydaje decyzję o stwierdzeniu choroby zawodowej albo o braku podstaw do jej stwierdzenia (§ 8). Odwołanie wnosisz w 14 dni od doręczenia decyzji do organu wyższego stopnia, za pośrednictwem inspektora, który ją wydał (art. 127 i 129 Kodeksu postępowania administracyjnego).</li>
+      <li><strong>Karta stwierdzenia.</strong> W 14 dni od dnia, w którym decyzja o stwierdzeniu stała się ostateczna, inspektor sporządza kartę stwierdzenia choroby zawodowej dla Centralnego Rejestru Chorób Zawodowych (§ 9). Pracodawca ustala przyczyny choroby i usuwa czynniki, które ją powodują (art. 235 § 3 Kodeksu pracy).</li>
+    </ol>
+
+    <h2 id="swiadczenia">Świadczenia z ZUS</h2>
+    <p>
+      Choroba zawodowa daje świadczenia z ubezpieczenia wypadkowego (art. 237<sup>1</sup> § 1 Kodeksu pracy i art. 6 ust. 1
+      ustawy wypadkowej): zasiłek chorobowy i świadczenie rehabilitacyjne w wysokości 100% podstawy (art. 9 ust. 1), zasiłek
+      chorobowy od pierwszego dnia niezdolności do pracy, niezależnie od okresu ubezpieczenia (art. 8 ust. 1–2), zasiłek wyrównawczy,
+      jednorazowe odszkodowanie za stały lub długotrwały uszczerbek na zdrowiu (art. 11–12), rentę z tytułu niezdolności do
+      pracy (co najmniej 80% podstawy przy całkowitej i 60% przy częściowej niezdolności, art. 18 ust. 1), rentę
+      szkoleniową, a po śmierci rentę rodzinną i jednorazowe odszkodowanie dla rodziny. Renty przysługują bez względu na
+      długość ubezpieczenia (art. 17 ust. 2). Lekarz orzecznik ZUS jest związany decyzją o stwierdzeniu choroby zawodowej
+      (§ 7 rozporządzenia o orzekaniu o uszczerbku, Dz.U. 2020 poz. 233).{kwota && ` Za każdy procent uszczerbku ZUS płaci ${zl(kwota.zaProcent)} przy decyzji wydanej od ${dataPoPolsku(kwota.od)} do ${dataPoPolsku(kwota.do)} (${kwota.zrodlo}).`} Kwotę dla swojego procentu uszczerbku policzy <a href="/narzedzia/odszkodowanie-za-wypadek-przy-pracy">kalkulator odszkodowania za wypadek przy pracy</a>.
+    </p>
+
+    <h2 id="wykaz">Wykaz chorób zawodowych</h2>
+    <p>Kolumna „Okres” to okres, w którym wystąpienie udokumentowanych objawów pozwala rozpoznać chorobę zawodową mimo wcześniejszego zakończenia pracy w narażeniu (załącznik do rozporządzenia, tekst jednolity Dz.U. 2026 poz. 1297).</p>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Wykaz chorób zawodowych z okresem po zakończeniu pracy w narażeniu</caption>
+        <thead><tr><th scope="col">Poz.</th><th scope="col">Okres</th><th scope="col">Choroba</th></tr></thead>
+        {grupyTabeli.map((g) => (
+          <tbody>
+            {g.naglowek && <tr><th scope="rowgroup" colspan="3">{g.naglowek}</th></tr>}
+            {g.wiersze.map((r) => <tr><td>{r.poz}</td><td>{r.okres}</td><td>{r.nazwa}</td></tr>)}
+          </tbody>
+        ))}
+      </table>
+    </div>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Przepis mówi o okresie „pomimo wcześniejszego zakończenia pracy w narażeniu zawodowym”, ale nie podaje, od którego dnia
+      go liczyć ani jak (art. 235<sup>2</sup> Kodeksu pracy, § 2 rozporządzenia). Liczymy od ostatniego dnia pracy
+      w narażeniu tak jak terminy w Kodeksie cywilnym: tego dnia nie wliczamy (art. 111 § 2, dla okresów w dniach), a okres w latach albo
+      miesiącach kończy się w dniu, który datą odpowiada ostatniemu dniu narażenia, a gdy takiego dnia nie ma, w ostatnim
+      dniu miesiąca (art. 112). Ostatni dzień okresu traktujemy jako dzień, w którym objawy jeszcze się mieszczą: to
+      najpóźniejszy możliwy wariant. Przepis nie mówi też, czy chodzi o koniec narażenia, czy koniec zatrudnienia; przy
+      przeniesieniu na inne stanowisko wpisz ostatni dzień pracy przy szkodliwym czynniku.
+    </p>
+    <p>
+      Liczy się data udokumentowanych objawów, nie data zgłoszenia ani badania. Przepis nie określa, jaki dokument je
+      dokumentuje. Przy okresach „nie można określić” i „indywidualnie” nie podajemy daty i nie piszemy, że to brak limitu:
+      przepis tego nie rozstrzyga, ocenia lekarz. Uznajemy, że osoba zatrudniona u innego pracodawcy jest „pracownikiem
+      aktualnie zatrudnionym” i zgłasza przez lekarza medycyny pracy. Osoby na zleceniu i prowadzące działalność zgłaszają
+      i stwierdzają chorobę według Kodeksu pracy stosowanego odpowiednio (art. 5 ust. 3 ustawy wypadkowej).
+    </p>
+    <p>
+      Narzędzie porównuje daty z przepisem i nie ocenia, czy objawy to choroba zawodowa: rozpoznaje lekarz jednostki
+      orzeczniczej, a stwierdza decyzją inspektor sanitarny. Od 1 stycznia 2027 r. zmienia się tryb orzekania o uszczerbku
+      w ZUS (Dz.U. 2026 poz. 26); zasady stwierdzania choroby zawodowej zostają. Hałas na stanowisku sprawdzi <a href="/narzedzia/halas-w-pracy">kalkulator hałasu w pracy</a>, drgania <a href="/narzedzia/drgania-w-pracy">kalkulator drgań w pracy</a>,
+      a terminy badań okresowych <a href="/narzedzia/badania-lekarskie-w-pracy">kalkulator badań lekarskich w pracy</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { BladDanych, pozycja, sprawdzChorobe, tekstyChoroby, type DaneChoroby, type Narazenie } from '../../lib/narzedzia/choroba-zawodowa';
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
+  import { dzisWPolsce } from '../../lib/narzedzia/terminy';
+  import { typografia } from '../../lib/typografia.mjs';
+
+  const form = document.querySelector<HTMLFormElement>('[data-choroba]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const pole = (n: string) => form.elements.namedItem(n) as HTMLInputElement | HTMLSelectElement;
+    // Zmieniamy DOM tylko przy innej treści, żeby region aria-live nie ogłaszał tego samego przy każdej zmianie.
+    const pisz = (k: string, tekst: string) => {
+      const t = typografia(tekst);
+      if (w(k).textContent !== t) w(k).textContent = t;
+    };
+    const ostatnie = new Map<string, string>();
+    const zmienione = (k: string, wartosc: unknown) => {
+      const s = JSON.stringify(wartosc);
+      if (ostatnie.get(k) === s) return false;
+      ostatnie.set(k, s);
+      return true;
+    };
+    const nowy = (tag: string, tekst: string, klasa?: string) => {
+      const e = document.createElement(tag);
+      e.textContent = typografia(tekst);
+      if (klasa) e.className = klasa;
+      return e;
+    };
+    ustawDzisiejszeWartosci(form);
+
+    const przelicz = () => {
+      const dzis = dzisWPolsce();
+      const d: DaneChoroby = {
+        choroba: pole('choroba').value,
+        narazenie: pole('narazenie').value as Narazenie,
+        koniec: pole('koniec').value,
+        objawy: pole('objawy').value,
+      };
+      const daty = form.querySelector<HTMLElement>('[data-pole="daty"]')!;
+      daty.hidden = d.narazenie === 'trwa' || !pozycja(d.choroba)?.czas;
+      for (const n of ['koniec', 'objawy']) (pole(n) as HTMLInputElement).max = dzis;
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      for (const n of ['koniec', 'objawy']) pole(n).removeAttribute('aria-invalid');
+      let t;
+      try {
+        t = tekstyChoroby(d, sprawdzChorobe(d, dzis), dzis);
+      } catch (e) {
+        if (!(e instanceof BladDanych)) throw e;
+        pole(e.pole).setAttribute('aria-invalid', 'true');
+        b.hidden = false;
+        const tekst = typografia(e.message);
+        if (b.textContent !== tekst) b.textContent = tekst;
+        pisz('glowny', '—');
+        pisz('podstawa', '');
+        w('wiersze').replaceChildren();
+        w('uwagi').replaceChildren();
+        ostatnie.clear();
+        return;
+      }
+      b.hidden = true;
+      if (b.textContent) b.textContent = '';
+      pisz('glowny', t.glowny);
+      pisz('podstawa', t.podstawa);
+      if (zmienione('wiersze', t.wiersze))
+        w('wiersze').replaceChildren(
+          ...t.wiersze.map((x) => {
+            const div = document.createElement('div');
+            const dd = nowy('dd', x.dd);
+            dd.append(nowy('span', x.opis, 'wynik-opis'));
+            div.append(nowy('dt', x.dt), dd);
+            return div;
+          }),
+        );
+      if (zmienione('uwagi', t.uwagi)) w('uwagi').replaceChildren(...t.uwagi.map((u) => nowy('p', u, 'wynik-uwaga')));
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>
