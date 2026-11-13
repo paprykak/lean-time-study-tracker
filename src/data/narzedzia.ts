@@ -801,6 +801,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-13',
   },
   {
+    slug: 'czas-jazdy-kierowcy',
+    nazwa: 'Czas jazdy kierowcy: przerwy i odpoczynki',
+    krotko: 'Wpisz jazdę i przerwy: naruszenia, przerwa po 4,5 h, jazda 9/10 h, 56 i 90 h, odpoczynek 11 h i 45 h.',
+    kategoria: 'czas-pracy',
+    przepisy: ['rozporzadzenie561', 'czasPracyKierowcow'],
+    sprawdzono: '2026-11-13',
+  },
+  {
     slug: 'zaswiadczenie-adr',
     nazwa: 'Zaświadczenie ADR: ważność i kurs',
     krotko: 'Do kiedy ważne ADR, kiedy kurs doskonalący, żeby nic nie przepadło, i kto płaci za kurs i egzamin.',
