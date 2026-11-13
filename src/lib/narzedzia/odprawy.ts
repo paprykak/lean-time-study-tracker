@@ -1,7 +1,7 @@
 // Odprawy przy końcu pracy: z przyczyn niedotyczących pracownika (art. 8 i 10 ustawy o szczególnych zasadach
 // rozwiązywania z pracownikami stosunków pracy z przyczyn niedotyczących pracowników, t.j. Dz.U. 2026 poz. 1195)
-// i emerytalna albo rentowa (art. 92^1 Kp). Wynagrodzenie liczy się jak do ekwiwalentu za urlop (art. 8 ust. 3 ustawy,
-// § 2 ust. 1 pkt 7 rozporządzenia z 29 maja 1996 r., t.j. Dz.U. 2017 poz. 927): składniki stałe, średnia zmiennych
+// i emerytalna albo rentowa (art. 92^1 Kp). Wynagrodzenie liczy się jak do ekwiwalentu za urlop: odprawę z ustawy
+// według art. 8 ust. 3 ustawy, emerytalną i rentową według § 2 ust. 1 pkt 7 rozporządzenia z 29 maja 1996 r. (t.j. Dz.U. 2017 poz. 927): składniki stałe, średnia zmiennych
 // z 3 miesięcy i jedna dwunasta składników za okresy dłuższe niż miesiąc z 12 miesięcy (§ 15–17 rozporządzenia urlopowego).
 import { PLACA_MINIMALNA } from '../../data/prawo';
 import { doGrosza } from './dodatek-nocny';

@@ -107,7 +107,7 @@ const faq = [
 
     <h2 id="zasilek-pogrzebowy">Zasiłek pogrzebowy z ZUS</h2>
     <ul>
-      <li>Kwota: 7000 zł od 1 stycznia 2026 r. (art. 80 ust. 1 ustawy o emeryturach i rentach z FUS), także od 1 marca 2026 r. według komunikatu Prezesa ZUS (M.P. 2026 poz. 150). Należy się w kwocie z dnia śmierci (art. 80 ust. 7).</li>
+      <li>Kwota: 7000 zł od 1 stycznia 2026 r. (art. 80 ust. 1 ustawy o emeryturach i rentach z FUS), także od 1 marca 2026 r. według komunikatu Prezesa ZUS (M.P. 2026 poz. 150). Należy się w kwocie z dnia śmierci (art. 80 ust. 7). Kwota rośnie od 1 marca tylko wtedy, gdy średnioroczna inflacja z poprzedniego roku przekroczy 5% (art. 80 ust. 2–3).</li>
       <li>Dostaje go osoba, która pokryła koszty pogrzebu, a także pracodawca, dom pomocy społecznej, gmina, powiat, kościół albo związek wyznaniowy, gdy to one zapłaciły; przy kilku płacących dzieli się go proporcjonalnie do kosztów (art. 78).</li>
       <li>Osoba spoza rodziny zmarłego (art. 77 ust. 2) dostaje zwrot udokumentowanych kosztów, najwyżej 7000 zł (art. 79 ust. 1).</li>
       <li>Wniosek do ZUS: w ciągu 12 miesięcy od śmierci, inaczej prawo wygasa (art. 81 ust. 1).</li>
@@ -127,14 +127,14 @@ const faq = [
 <script>
   import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
   import { odprawaPosmiertna } from '../../lib/narzedzia/odprawa-posmiertna';
+  import { odmiana } from '../../lib/redakcja';
+  import { typografia } from '../../lib/typografia.mjs';
 
   const form = document.querySelector<HTMLFormElement>('[data-posmiertna]');
   if (form) {
     const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
     const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
     const calkowita = (t: string) => (/^\d{1,2}$/.test(t.trim()) ? Number(t.trim()) : NaN);
-    const odmiana = (n: number, jeden: string, kilka: string, wiele: string) =>
-      n === 1 ? jeden : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? kilka : wiele;
     const przelicz = () => {
       const pensja = wpisanaLiczba(el('pensja').value);
       const lata = calkowita(el('lata').value);
@@ -144,24 +144,24 @@ const faq = [
       let blad: string | null = null;
       if (!(pensja > 0 && pensja < 1_000_000)) blad = 'Wpisz pensję brutto, na przykład 6000.';
       else if (!(lata >= 0 && lata <= 70)) blad = 'Wpisz pełne lata pracy u pracodawcy, na przykład 12.';
-      else if (!(osoby >= 1 && osoby <= 20)) blad = 'Wpisz liczbę uprawnionych osób, co najmniej 1.';
+      else if (!(osoby >= 1 && osoby <= 20)) blad = 'Wpisz liczbę uprawnionych osób: od 1 do 20.';
       else if (!(ubezpieczenie >= 0)) blad = 'Wpisz kwotę z ubezpieczenia albo 0.';
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
       b.hidden = !blad;
-      b.textContent = blad ?? '';
+      b.textContent = typografia(blad ?? '');
       if (blad) {
         w('razem').textContent = '—';
         w('opis').textContent = '';
         return;
       }
       const r = odprawaPosmiertna({ pensja, lata, osoby, ubezpieczenie });
-      w('razem').textContent = zl(r.doWyplaty);
+      w('razem').textContent = typografia(zl(r.doWyplaty));
       const opis = r.jednaOsoba
-        ? `Połowa z ${r.miesiace} ${odmiana(r.miesiace, 'miesięcznego wynagrodzenia', 'miesięcznych wynagrodzeń', 'miesięcznych wynagrodzeń')}, bo uprawniona jest jedna osoba`
-        : `${r.miesiace} ${odmiana(r.miesiace, 'miesięczne wynagrodzenie', 'miesięczne wynagrodzenia', 'miesięcznych wynagrodzeń')}, po równo dla ${osoby} osób`;
-      w('opis').textContent = ubezpieczenie > 0 ? `${opis}, po odjęciu wypłaty z ubezpieczenia` : opis;
-      w('osoba').textContent = zl(r.naOsobe);
-      w('odprawa').textContent = zl(r.odprawa);
+        ? `Połowa z ${odmiana(r.miesiace, ['miesięcznego wynagrodzenia', 'miesięcznych wynagrodzeń', 'miesięcznych wynagrodzeń'])}, bo uprawniona jest jedna osoba`
+        : `${odmiana(r.miesiace, ['miesięczne wynagrodzenie', 'miesięczne wynagrodzenia', 'miesięcznych wynagrodzeń'])}, po równo dla ${osoby} osób`;
+      w('opis').textContent = typografia(ubezpieczenie > 0 ? `${opis}, po odjęciu wypłaty z ubezpieczenia` : opis);
+      w('osoba').textContent = typografia(zl(r.naOsobe));
+      w('odprawa').textContent = typografia(zl(r.odprawa));
     };
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);

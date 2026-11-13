@@ -29,7 +29,7 @@ const faq = [
   },
   {
     pytanie: 'Od czego liczy się odprawę?',
-    odpowiedz: 'Od wynagrodzenia liczonego jak ekwiwalent za urlop (art. 8 ust. 3 ustawy, § 2 ust. 1 pkt 7 rozporządzenia z 29 maja 1996 r.): stałe składniki w wysokości z miesiąca rozwiązania umowy, średnia zmiennych z 3 miesięcy i jedna dwunasta premii kwartalnych i rocznych z 12 miesięcy (§ 15–17 rozporządzenia urlopowego).',
+    odpowiedz: 'Od wynagrodzenia liczonego jak ekwiwalent za urlop (art. 8 ust. 3 ustawy o zwolnieniach z przyczyn niedotyczących pracowników): stałe składniki w wysokości z miesiąca rozwiązania umowy, średnia zmiennych z 3 miesięcy i jedna dwunasta premii kwartalnych i rocznych z 12 miesięcy (§ 15–17 rozporządzenia urlopowego).',
   },
   {
     pytanie: 'Czy liczy się staż u poprzedniego pracodawcy?',
@@ -62,7 +62,7 @@ const faq = [
         </div>
         <div>
           <label for="o-do" class="etykieta-pola">Dzień rozwiązania umowy</label>
-          <input id="o-do" name="do" type="date" class="pole mt-1" min="1950-01-01" max="2100-12-31" value={koniec} aria-describedby="o-blad" />
+          <input id="o-do" name="do" type="date" data-dzis class="pole mt-1" min="1950-01-01" max="2100-12-31" value={koniec} aria-describedby="o-blad" />
         </div>
       </div>
       <div class="mt-4">
@@ -154,6 +154,8 @@ const faq = [
   import { odprawa, type RodzajOdprawy } from '../../lib/narzedzia/odprawy';
   import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
   import { poprawnaData } from '../../lib/narzedzia/terminy';
+  import { typografia } from '../../lib/typografia.mjs';
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
 
   const form = document.querySelector<HTMLFormElement>('[data-odprawa]');
   if (form) {
@@ -185,23 +187,24 @@ const faq = [
         }
       }
       b.hidden = !blad;
-      b.textContent = blad ?? '';
+      b.textContent = typografia(blad ?? '');
       if (blad || !r) {
         w('kwota').textContent = '—';
         return;
       }
-      w('kwota').textContent = zl(r.kwota);
-      w('miesieczne').textContent = zl(r.miesieczne);
-      w('miesiecy').textContent = rodzaj === 'emerytalna' ? '1 (art. 92¹ § 1 Kodeksu pracy)' : `${r.miesiecy} (${STAZ[r.miesiecy as 1 | 2 | 3]})`;
-      w('limit').textContent = r.limit === null ? 'brak limitu' : `${zl(r.limit)} (15 płac minimalnych)`;
-      w('podstawa').textContent = rodzaj === 'emerytalna' ? 'art. 92¹ Kodeksu pracy' : 'art. 8 ustawy o zwolnieniach grupowych';
+      w('kwota').textContent = typografia(zl(r.kwota));
+      w('miesieczne').textContent = typografia(zl(r.miesieczne));
+      w('miesiecy').textContent = typografia(rodzaj === 'emerytalna' ? '1 (art. 92¹ § 1 Kodeksu pracy)' : `${r.miesiecy} (${STAZ[r.miesiecy as 1 | 2 | 3]})`);
+      w('limit').textContent = typografia(r.limit === null ? 'brak limitu' : `${zl(r.limit)} (15 płac minimalnych)`);
+      w('podstawa').textContent = typografia(rodzaj === 'emerytalna' ? 'art. 92¹ Kodeksu pracy' : 'art. 8 ustawy o zwolnieniach grupowych');
       const uwaga = r.ograniczona ? `Odprawa obliczona z pensji przekracza limit, więc wynosi ${zl(r.kwota)} (art. 8 ust. 4 ustawy).` : null;
       w('uwaga').hidden = !uwaga;
-      w('uwaga').textContent = uwaga ?? '';
+      w('uwaga').textContent = typografia(uwaga ?? '');
     };
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    ustawDzisiejszeWartosci(form);
     przelicz();
   }
 </script>

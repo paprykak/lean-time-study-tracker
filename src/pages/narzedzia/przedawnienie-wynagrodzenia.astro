@@ -65,7 +65,7 @@ const faq = [
       </label>
       <div class="mt-4">
         <label for="p-dzis" class="etykieta-pola">Sprawdź na dzień</label>
-        <input id="p-dzis" name="naDzien" type="date" class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" value={dzis} aria-describedby="p-blad" />
+        <input id="p-dzis" name="naDzien" type="date" data-dzis class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" value={dzis} aria-describedby="p-blad" />
       </div>
       <div class="mt-4">
         <label for="p-inna" class="etykieta-pola">Inna należność: dzień, w którym miała być zapłacona</label>
@@ -119,6 +119,7 @@ const faq = [
 </StronaNarzedzia>
 
 <script>
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
   import { przedawnienie, wyplatyDoDochodzenia, type RodzajWyplaty } from '../../lib/narzedzia/przedawnienie';
   import { nazwaMiesiaca } from '../../lib/narzedzia/czas-pracy';
   import { dataPoPolsku, ileDni, poprawnaData } from '../../lib/narzedzia/terminy';
@@ -183,6 +184,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    ustawDzisiejszeWartosci(form);
     przelicz();
   }
 </script>
