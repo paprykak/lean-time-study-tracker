@@ -128,7 +128,8 @@ const faq = [
 <script>
   import { liczba } from '../../lib/narzedzia/format';
   import { kwotyNaDzien, odszkodowanie } from '../../lib/narzedzia/odszkodowanie-wypadek';
-  import { poprawnaData } from '../../lib/narzedzia/terminy';
+  import { dataPoPolsku, dzisWPolsce, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { typografia } from '../../lib/typografia.mjs';
 
   const form = document.querySelector<HTMLFormElement>('[data-odszkodowanie]');
   if (form) {
@@ -141,12 +142,18 @@ const faq = [
       const poprzedni = el('poprzedni').value.trim() === '' ? 0 : calkowita(el('poprzedni').value);
       const data = el('data').value;
       let blad: string | null = null;
-      if (!(procent >= 1 && procent <= 100)) blad = 'Wpisz procent uszczerbku z orzeczenia, od 1 do 100.';
-      else if (!(poprzedni >= 0 && poprzedni < procent)) blad = 'Wcześniejszy procent musi być mniejszy niż obecny (0, jeśli to pierwsze odszkodowanie).';
-      else if (!poprawnaData(data) || !kwotyNaDzien(data)) blad = 'Kwoty są ogłoszone dla decyzji od 1 kwietnia 2025 r. do 31 marca 2027 r.';
+      let zlePole = '';
+      if (!(procent >= 1 && procent <= 100)) (blad = 'Wpisz procent uszczerbku z orzeczenia, od 1 do 100.'), (zlePole = 'procent');
+      else if (!(poprzedni >= 0 && poprzedni < procent)) (blad = 'Wcześniejszy procent musi być mniejszy niż obecny (0, jeśli to pierwsze odszkodowanie).'), (zlePole = 'poprzedni');
+      else if (!poprawnaData(data) || !kwotyNaDzien(data)) {
+        // Zakres z atrybutów pola (min i max liczone z tabeli KWOTY_ODSZKODOWAN), więc po dopisaniu kwot komunikat sam się zmieni.
+        blad = `Kwoty są ogłoszone dla decyzji od ${dataPoPolsku(el('data').min)} do ${dataPoPolsku(el('data').max)}.`;
+        zlePole = 'data';
+      }
+      for (const n of ['procent', 'poprzedni', 'data']) el(n).setAttribute('aria-invalid', n === zlePole ? 'true' : 'false');
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
       b.hidden = !blad;
-      b.textContent = blad ?? '';
+      b.textContent = typografia(blad ?? '');
       const uwaga = w('uwaga');
       if (blad) {
         w('razem').textContent = '—';
@@ -164,6 +171,9 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    // Strona budowana raz: domyślnie dzisiejsza data decyzji, jeśli są na nią ogłoszone kwoty.
+    const dzis = dzisWPolsce();
+    if (el('data').value === el('data').defaultValue && kwotyNaDzien(dzis)) el('data').value = dzis;
     przelicz();
   }
 </script>

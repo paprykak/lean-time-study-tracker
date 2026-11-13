@@ -3,6 +3,7 @@
 // i nowe przepisy o upale (§ 30a, od 11 stycznia 2027 r.). Logika: src/lib/narzedzia/temperatura.ts (testy obok).
 import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
 import { OD_30A } from '../../lib/narzedzia/temperatura';
+import { dzisWPolsce } from '../../lib/narzedzia/terminy';
 
 const faq = [
   {
@@ -60,7 +61,7 @@ const faq = [
       <div class="mt-4">
         <label for="t-wysilek" class="etykieta-pola">Rodzaj pracy</label>
         <select id="t-wysilek" name="wysilek" class="pole mt-1" aria-describedby="t-wysilek-opis">
-          <option value="biuro-lekka">Biuro albo lekka praca fizyczna</option>
+          <option value="biuro-lekka">Biuro, lekka praca</option>
           <option value="zwykla" selected>Inna praca</option>
           <option value="duzy">Duży wysiłek fizyczny</option>
         </select>
@@ -83,7 +84,7 @@ const faq = [
         <label for="t-data" class="etykieta-pola">Stan prawny na dzień</label>
         <select id="t-data" name="data" class="pole mt-1 max-w-72">
           <option value="dzis" selected>Dziś</option>
-          <option value={OD_30A}>Od 11 stycznia 2027 r. (nowe przepisy o upale)</option>
+          <option value={OD_30A}>Od 11.01.2027 r.</option>
         </select>
       </div>
     </div>
@@ -135,7 +136,7 @@ const faq = [
     <p>
       Rozwiązania organizacyjne pracodawca ustala po konsultacji w komisji BHP, a gdy jej nie ma, z pracownikami
       albo ich przedstawicielami i po opinii lekarza medycyny pracy, a potem informuje o nich pracowników
-      (§ 30a ust. 5–7). Przepisy weszły do Dziennika Ustaw 10 lipca 2026 r. i zaczną obowiązywać po 6 miesiącach.
+      (§ 30a ust. 5–7). Przepisy weszły do Dziennika Ustaw 10 lipca 2026 r. i {dzisWPolsce() >= OD_30A ? 'obowiązują' : 'zaczną obowiązywać'} od 11 stycznia 2027 r.
     </p>
 
     <h2 id="napoje">Napoje: kiedy i jakie</h2>

@@ -50,9 +50,9 @@ const faq = [
       <div class="mt-4">
         <label for="bhp-grupa" class="etykieta-pola">Stanowisko</label>
         <select id="bhp-grupa" name="grupa" class="pole mt-1" aria-describedby="bhp-grupa-opis">
-          {KLUCZE_GRUP.map((k) => <option value={k} selected={k === 'robotnicze'}>{GRUPY[k].nazwa}</option>)}
+          {KLUCZE_GRUP.map((k) => <option value={k} selected={k === 'robotnicze'}>{GRUPY[k].krotko}</option>)}
         </select>
-        <p id="bhp-grupa-opis" class="meta mt-1" data-w="grupa-opis">{GRUPY.robotnicze.przyklady}; szkolenie {lata(GRUPY.robotnicze.coIleLat)}.</p>
+        <p id="bhp-grupa-opis" class="meta mt-1" data-w="grupa-opis">{GRUPY.robotnicze.nazwa}, {GRUPY.robotnicze.przyklady}; szkolenie {lata(GRUPY.robotnicze.coIleLat)}.</p>
       </div>
 
       <div class="mt-4" data-tylko-biuro hidden>
@@ -93,7 +93,7 @@ const faq = [
       <p class="mt-5">
         <button type="button" class="przycisk przycisk-grafit" data-ics disabled>Dodaj do kalendarza (.ics)</button>
       </p>
-      <p class="meta mt-2">Plik ma przypomnienie w dniu terminu i {PRZYPOMNIENIE_DNI} dni wcześniej, jeśli ten dzień jeszcze nie minął. Otworzy go kalendarz w telefonie, Outlook i Kalendarz Google.</p>
+      <p class="meta mt-2">Plik dodaje do kalendarza dwa wydarzenia: dzień terminu i dzień {PRZYPOMNIENIE_DNI} dni wcześniej, jeśli ten jeszcze nie minął. Otworzy go kalendarz w telefonie, Outlook i Kalendarz Google.</p>
       <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Tabela poniżej działa bez niego.</p></noscript>
     </div>
   </form>
@@ -133,7 +133,9 @@ const faq = [
       rozpoczęcia pracy przy pierwszym szkoleniu 6 albo 12 miesięcy. Termin kończy się w dniu o tej samej dacie,
       a gdy takiego dnia w miesiącu nie ma, w ostatnim dniu miesiąca, jak w art. 112 Kodeksu cywilnego: szkolenie
       z 29 lutego 2024 r. przy częstotliwości co rok wypada najpóźniej 28 lutego 2025 r. Zaplanuj szkolenie z zapasem:
-      kończy się egzaminem i zaświadczeniem (§ 16 rozporządzenia).
+      kończy się egzaminem i zaświadczeniem (§ 16 rozporządzenia). Przepis mówi tylko „nie rzadziej niż raz w roku” albo
+      „raz na 3 lata” i nie wskazuje, od czego liczyć okres. Liczymy od daty ukończenia poprzedniego szkolenia, a nie do
+      końca roku kalendarzowego, bo to termin najwcześniejszy i bezpieczny dla pracownika.
     </p>
 
     <h2 id="szkolenie-wstepne">Najpierw szkolenie wstępne</h2>
@@ -194,7 +196,7 @@ const faq = [
       const tryb = (form.querySelector<HTMLInputElement>('input[name="tryb"]:checked')?.value ?? 'kolejne') as 'kolejne' | 'pierwsze';
       const biuro = grupa === 'administracyjno-biurowe';
       form.querySelector<HTMLElement>('[data-tylko-biuro]')!.hidden = !biuro;
-      w('grupa-opis').textContent = `${g.przyklady}; szkolenie ${lata(g.coIleLat)}.`;
+      w('grupa-opis').textContent = `${g.nazwa}, ${g.przyklady}; szkolenie ${lata(g.coIleLat)}.`;
       w('czestotliwosc').textContent = `nie rzadziej niż ${g.coIleLat === 1 ? 'raz w roku' : `raz na ${g.coIleLat} ${g.coIleLat >= 5 ? 'lat' : 'lata'}`}`;
       w('pierwsze').textContent = `do ${g.pierwszeMiesiecy} miesięcy od rozpoczęcia pracy na stanowisku`;
       w('forma').textContent = g.forma;

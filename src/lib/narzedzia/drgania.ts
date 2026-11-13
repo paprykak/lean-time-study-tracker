@@ -32,23 +32,27 @@ export interface OkresDrgan {
   godziny: number;
 }
 
-/** A(8) w m/s², z dokładnością do 0,01. */
-export function ekspozycjaA8(okresy: OkresDrgan[]): number {
+/** A(8) w m/s² bez zaokrąglenia do wyświetlenia (do porównań z progami; do 1e-9 przeciw błędom zmiennoprzecinkowym). */
+export function ekspozycjaA8Dokladna(okresy: OkresDrgan[]): number {
   const wazne = okresy.filter((o) => o.godziny > 0);
   if (!wazne.length) throw new RangeError('Podaj co najmniej jeden okres');
   for (const o of wazne) if (!(o.a >= 0 && o.a <= 100 && o.godziny <= 24)) throw new RangeError('Przyspieszenie 0–100 m/s², czas do 24 h');
-  return Math.round(Math.sqrt(wazne.reduce((s, o) => s + o.a * o.a * o.godziny, 0) / 8) * 100) / 100;
+  return Math.round(Math.sqrt(wazne.reduce((s, o) => s + o.a * o.a * o.godziny, 0) / 8) * 1e9) / 1e9;
 }
+
+/** A(8) w m/s², z dokładnością do 0,01 (do wyświetlenia). */
+export const ekspozycjaA8 = (okresy: OkresDrgan[]) => Math.round(ekspozycjaA8Dokladna(okresy) * 100) / 100;
 
 /** Najdłuższy czas (h) przy danym przyspieszeniu, po którym A(8) osiąga limit. */
 export const dopuszczalnyCzasDrgan = (a: number, limit: number) => (a > 0 ? 8 * (limit / a) ** 2 : Infinity);
 
 export function ocenaDrgan(okresy: OkresDrgan[], rodzaj: RodzajDrgan, grupa: GrupaDrgan) {
-  const a8 = ekspozycjaA8(okresy);
+  const dokladna = ekspozycjaA8Dokladna(okresy);
+  const a8 = Math.round(dokladna * 100) / 100;
   const l = LIMITY_DRGAN[rodzaj][grupa];
   const krotkie = okresy.filter((o) => o.godziny > 0 && o.godziny <= 0.5);
   const wzbronione = l.a8 === null;
-  const przekroczoneA8 = l.a8 !== null && a8 > l.a8;
+  const przekroczoneA8 = l.a8 !== null && dokladna > l.a8;
   const przekroczoneKrotkie = l.krotka !== null && krotkie.some((o) => o.a > l.krotka!);
   return {
     a8,
@@ -56,6 +60,9 @@ export function ocenaDrgan(okresy: OkresDrgan[], rodzaj: RodzajDrgan, grupa: Gru
     wzbronione,
     przekroczone: wzbronione || przekroczoneA8 || przekroczoneKrotkie,
     przekroczoneKrotkie,
-    powyzejProgu: a8 > PROG_DZIALANIA_DRGAN[rodzaj],
+    /** Osiągnięty próg działania: program ograniczania drgań (§ 5 ust. 2 pkt 2: „po osiągnięciu lub przekroczeniu”). */
+    osiagaProg: dokladna >= PROG_DZIALANIA_DRGAN[rodzaj],
+    /** Przekroczony próg działania: rękawice albo odzież przy zimnie i wilgoci (§ 8: „przekraczają”). */
+    powyzejProgu: dokladna > PROG_DZIALANIA_DRGAN[rodzaj],
   };
 }

@@ -28,7 +28,7 @@ const faq = [
   },
   {
     pytanie: 'Jaki hałas jest dopuszczalny w ciąży i dla młodocianych?',
-    odpowiedz: `Kobietom w ciąży nie wolno pracować przy ekspozycji powyżej ${LIMITY.ciaza.lex} dB, szczytowym poziomie C powyżej ${LIMITY.ciaza.szczytC} dB albo maksymalnym A powyżej ${LIMITY.ciaza.maksA} dB (rozporządzenie w sprawie prac wzbronionych kobietom w ciąży, załącznik, cz. III). Młodocianym: powyżej ${LIMITY.mlodociany.lex} dB, ${LIMITY.mlodociany.szczytC} dB i ${LIMITY.mlodociany.maksA} dB (wykaz prac wzbronionych młodocianym, załącznik nr 1, cz. I ust. 2 pkt 6).`,
+    odpowiedz: `Kobietom w ciąży nie wolno pracować przy ekspozycji powyżej ${LIMITY.ciaza.lex} dB, szczytowym poziomie C powyżej ${LIMITY.ciaza.szczytC} dB albo maksymalnym A powyżej ${LIMITY.ciaza.maksA} dB (rozporządzenie w sprawie prac uciążliwych dla kobiet w ciąży i karmiących, załącznik, cz. III). Młodocianym: powyżej ${LIMITY.mlodociany.lex} dB, ${LIMITY.mlodociany.szczytC} dB i ${LIMITY.mlodociany.maksA} dB (wykaz prac wzbronionych młodocianym, załącznik nr 1, cz. I ust. 2 pkt 6).`,
   },
   {
     pytanie: 'Kto mierzy hałas na stanowisku pracy?',
@@ -144,7 +144,11 @@ const faq = [
     const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
     const dB = (x: number) => `${x.toLocaleString('pl-PL', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}\u00a0dB`;
     const opcjonalna = (n: string) => (el(n).value.trim() === '' ? undefined : wpisanaLiczba(el(n).value));
+    const oznacz = (zle: string[]) => {
+      for (const p of form.querySelectorAll<HTMLInputElement>('input[type="text"]')) p.setAttribute('aria-invalid', zle.includes(p.name) ? 'true' : 'false');
+    };
     const przelicz = () => {
+      const zle: string[] = [];
       const grupa = el('grupa').value as Grupa;
       const l = LIMITY[grupa];
       const okresy: Okres[] = [];
@@ -156,6 +160,8 @@ const faq = [
         const poziom = wpisanaLiczba(tp);
         const godziny = wpisanaLiczba(tc);
         if (!(poziom >= 0 && poziom <= 160) || !(godziny > 0 && godziny <= 24)) {
+          if (!(poziom >= 0 && poziom <= 160)) zle.push(`poziom-${i}`);
+          if (!(godziny > 0 && godziny <= 24)) zle.push(`czas-${i}`);
           blad = `Hałas ${i + 1}: wpisz poziom od 0 do 160\u00a0dB i czas w godzinach, na przykład 85 i 4.`;
           break;
         }
@@ -163,12 +169,13 @@ const faq = [
       }
       const maks = opcjonalna('maks');
       const szczyt = opcjonalna('szczyt');
-      if (!blad && !okresy.length) blad = 'Wpisz co najmniej jeden poziom hałasu i czas.';
+      if (!blad && !okresy.length) (blad = 'Wpisz co najmniej jeden poziom hałasu i czas.'), zle.push('poziom-0', 'czas-0');
       else if (!blad && okresy.reduce((s, o) => s + o.godziny, 0) > 24) blad = 'Łączny czas nie może przekroczyć 24 godzin.';
-      else if (!blad && ((maks !== undefined && !(maks >= 0 && maks <= 200)) || (szczyt !== undefined && !(szczyt >= 0 && szczyt <= 200)))) blad = 'Poziom maksymalny i szczytowy: od 0 do 200\u00a0dB.';
+      else if (!blad && ((maks !== undefined && !(maks >= 0 && maks <= 200)) || (szczyt !== undefined && !(szczyt >= 0 && szczyt <= 200)))) (blad = 'Poziom maksymalny i szczytowy: od 0 do 200\u00a0dB.'), zle.push('maks', 'szczyt');
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
       b.hidden = !blad;
       b.textContent = blad ?? '';
+      oznacz(zle);
       const status = w('status');
       if (blad) {
         w('lex').textContent = '—';

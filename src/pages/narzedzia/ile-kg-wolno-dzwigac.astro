@@ -3,7 +3,7 @@
 // w ciąży i karmiących (Dz.U. 2017 poz. 796) i młodocianych (Dz.U. 2023 poz. 1240). Logika: src/lib/narzedzia/dzwiganie.ts.
 // Mapa regału: strefa do wysokości barków i powyżej barków dla wybranej osoby i rodzaju pracy.
 import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
-import { CZYNNOSCI, OSOBY, limit, type Czynnosc, type Osoba } from '../../lib/narzedzia/dzwiganie';
+import { CZYNNOSCI, CZYNNOSCI_KROTKO, OSOBY, OSOBY_KROTKO, limit, type Czynnosc, type Osoba } from '../../lib/narzedzia/dzwiganie';
 import { liczba } from '../../lib/narzedzia/format';
 
 const kg = (x: { kg: number; zakaz: boolean }) => (x.zakaz ? 'zakaz' : `${liczba(x.kg)} kg`);
@@ -55,15 +55,16 @@ const faq = [
       <div class="mt-4">
         <label for="dz-osoba" class="etykieta-pola">Kto dźwiga</label>
         <select id="dz-osoba" name="osoba" class="pole mt-1">
-          {osoby.map((o) => <option value={o} selected={o === domyslnie.osoba}>{OSOBY[o]}</option>)}
+          {osoby.map((o) => <option value={o} selected={o === domyslnie.osoba}>{OSOBY_KROTKO[o]}</option>)}
         </select>
       </div>
 
       <div class="mt-4">
         <label for="dz-czynnosc" class="etykieta-pola">Co robi</label>
-        <select id="dz-czynnosc" name="czynnosc" class="pole mt-1">
-          {czynnosci.map((c) => <option value={c} selected={c === domyslnie.czynnosc}>{CZYNNOSCI[c]}</option>)}
+        <select id="dz-czynnosc" name="czynnosc" class="pole mt-1" aria-describedby="dz-czynnosc-opis" data-opisy={JSON.stringify(CZYNNOSCI)}>
+          {czynnosci.map((c) => <option value={c} selected={c === domyslnie.czynnosc}>{CZYNNOSCI_KROTKO[c]}</option>)}
         </select>
+        <p id="dz-czynnosc-opis" class="meta mt-1" data-w="czynnosc-opis">{CZYNNOSCI[domyslnie.czynnosc]}</p>
       </div>
 
       <fieldset class="mt-6">
@@ -223,6 +224,8 @@ const faq = [
       const czynnosc = (form.elements.namedItem('czynnosc') as HTMLSelectElement).value as Czynnosc;
       const tryb = (form.querySelector<HTMLInputElement>('input[name="tryb"]:checked')?.value ?? 'stala') as Tryb;
       const l = limit(osoba, czynnosc, tryb);
+      const listaCzynnosci = form.elements.namedItem('czynnosc') as HTMLSelectElement;
+      w('czynnosc-opis').textContent = (JSON.parse(listaCzynnosci.dataset.opisy ?? '{}') as Record<string, string>)[czynnosc] ?? '';
       w('limit').textContent = l.zakaz ? 'Zakaz' : kg(l);
       w('podstawa').textContent = `Podstawa: ${l.podstawa}`;
 
