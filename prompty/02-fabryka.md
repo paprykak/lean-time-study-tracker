@@ -73,6 +73,11 @@ Twarde zasady treści (każda wzięła się z błędu, który już raz wyszedł)
 11. Link (`<a>`) piszesz w tym samym wierszu szablonu co tekst przed nim: kompresja HTML w Astro usuwa łamanie wiersza
     i słowo skleja się z linkiem. Datę domyślną formularza ustawiasz w przeglądarce (`src/lib/narzedzia/dzis-w-formularzu.ts`),
     a teksty wyniku generuje jedna funkcja dla HTML i skryptu (wzór: `dorabianie-do-renty`).
+12. Formularz według wspólnego wzorca (`src/lib/narzedzia/formularz.ts`, wzór: `okres-zasilkowy`): komunikat błędu
+    `<p id="…" class="blad-pola" role="alert" hidden>`, pola wskazują go w `aria-describedby`, a skrypt pokazuje go tylko
+    przez `pokazBlad(komunikat, tekst, pola)` (aria-invalid na polach, ogłoszenie raz); `liczPoPowrocie(przelicz)` przed
+    pierwszym liczeniem. Listy lat z samego kalendarza mają `data-lata-kalendarza`. Pilnują tego testy
+    `tests/e2e/formularze.spec.ts` i `tests/e2e/uklad-320.spec.ts` (320 px: żadna opcja ani pole nie są ucięte).
 
 ## 5. Proces zespołu
 

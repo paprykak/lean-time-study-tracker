@@ -1,4 +1,4 @@
-// Wspólny wzorzec formularzy narzędzi (DECYZJE.md, 2026-11-13, pakiet „spójność UX”). Każde narzędzie z komunikatem
+// Wspólny wzorzec formularzy narzędzi (pakiet „spójność UX”, 2026-11-13, raporty/ux/RAPORT.md). Każde narzędzie z komunikatem
 // błędu używa tych funkcji zamiast własnego przełączania `hidden`; pilnują tego testy tests/e2e/formularze.spec.ts.
 //
 // Komunikat błędu w HTML:

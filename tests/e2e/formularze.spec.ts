@@ -1,7 +1,7 @@
 import { expect, test, type Locator, type Page } from '@playwright/test';
 import { NARZEDZIA, adresNarzedzia } from '../../src/data/narzedzia';
 
-// Wspólny wzorzec formularzy na wszystkich narzędziach z rejestru (src/lib/narzedzia/formularz.ts, DECYZJE.md 2026-11-13):
+// Wspólny wzorzec formularzy na wszystkich narzędziach z rejestru (src/lib/narzedzia/formularz.ts, raporty/ux/RAPORT.md):
 // 1. komunikat błędu (.blad-pola) ma role="alert", id wskazywane przez aria-describedby pola, nie siedzi w regionie
 //    aria-live i nie jest widoczny przy wartościach domyślnych;
 // 2. błąd wywołany wpisaniem złej wartości: pole ma aria-invalid="true", komunikat nie jest wpisywany ponownie przy
