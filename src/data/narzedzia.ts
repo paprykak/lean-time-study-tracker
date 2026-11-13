@@ -569,6 +569,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-12',
   },
   {
+    slug: 'zalegly-urlop',
+    nazwa: 'Zaległy urlop',
+    krotko: 'Do kiedy pracodawca musi dać zaległy urlop i kiedy roszczenie o urlop może się przedawnić.',
+    kategoria: 'urlopy',
+    przepisy: ['kodeksPracy', 'kodeksCywilny'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'urlop-szkoleniowy',
     nazwa: 'Urlop szkoleniowy i zwolnienia na naukę',
     krotko: 'Ile dni i godzin urlopu szkoleniowego masz przed egzaminem i w ostatnim roku studiów, co przy nauce bez zgody.',
