@@ -52,7 +52,8 @@ Pliki jednego narzędzia, wszystkie nowe:
 - `src/pages/narzedzia/<slug>.astro`: `StronaNarzedzia`, formularz, wynik, sekcja „Jak liczymy”, 4–6 pytań FAQ;
 - `tests/e2e/narzedzie-<nazwa>.spec.ts`: stałe daty, dopasowania z `\s` (twarde spacje), błąd danych;
 - wpis w `src/data/narzedzia.ts` (przed wpisem `przerwy-w-pracy`), nowe akty w `src/data/prawo.ts`, jedna linijka
-  w `STAN.md` w liście narzędzi. Tych trzech plików dotykasz tylko dopisując; scalanie gałęzi łączy dopiski (`.gitattributes`).
+  w `STAN.md` w liście narzędzi. Tych trzech plików dotykasz tylko dopisując. `STAN.md` scala się sam (`union`), a przy
+  konflikcie w rejestrach zostawiasz wpisy z obu stron i od razu uruchamiasz `npx tsc --noEmit -p .`.
   `tests/e2e/strony.ts` bierze adresy narzędzi z rejestru: nie dopisuj tam nic.
 
 Twarde zasady treści (każda wzięła się z błędu, który już raz wyszedł):
@@ -85,6 +86,8 @@ Twarde zasady treści (każda wzięła się z błędu, który już raz wyszedł)
 ## 6. Integracja (orkiestrator)
 
 1. `git fetch`, scalenie gałęzi zespołów po kolei na gałęzi roboczej; konflikty rozstrzygane ręcznie, bez gubienia wpisów.
+   Po każdym scaleniu `npx tsc --noEmit -p .` i porównanie każdego wpisu rejestrów z gałęzią źródłową (skrypt, nie oko).
+   Scalasz tylko zespół z raportem końcowym i zielonym pełnym checkiem; „review ready” bez raportu to nie koniec pracy.
 2. Jeden pełny `BEZ_WEBKIT=1 npm run check` po scaleniu; czerwony wynik naprawia orkiestrator albo odsyła zespołowi.
 3. Wdrożenie na `main` według AGENTS.md (zgoda „wdrażaj” jest w rozmowie z 2026-11-11), poczekać na koniec przebiegu CI,
    test produkcji nowych adresów, IndexNow.
