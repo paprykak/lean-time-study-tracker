@@ -811,7 +811,7 @@ export const NARZEDZIA: Narzedzie[] = [
   {
     slug: 'renta-z-tytulu-niezdolnosci-do-pracy',
     nazwa: 'Renta z tytułu niezdolności do pracy',
-    krotko: 'Czy masz staż do renty: 1–5 lat zależnie od wieku, 5 z ostatnich 10 lat, 18 miesięcy po pracy, wypadek.',
+    krotko: 'Czy masz staż do renty: 1–5 lat zależnie od wieku, 5 z ostatnich 10 lat, termin 18 miesięcy, wypadek.',
     kategoria: 'wynagrodzenie',
     przepisy: ['emerytury', 'wypadkowa'],
     sprawdzono: '2026-11-13',

@@ -13,6 +13,7 @@ const D = (z: Partial<DaneRenty>): DaneRenty => ({
   nieskladkowe: 1,
   ostatnie10: 6,
   ubezpieczenie: 'w-trakcie',
+  dzis: '2026-11-13',
   ...z,
 });
 
@@ -34,8 +35,8 @@ describe('renta z tytułu niezdolności do pracy (art. 57–58 ustawy o FUS, art
 
   it('po 30 latach: 5 lat, w tym 5 w ostatnich 10 latach; nieskładkowe do 1/3 składkowych', () => {
     expect(warunkiRenty(D({}))).toMatchObject({ stan: 'spelnia', wiek: 41, wymagany: 5, staz: 7, okres: 'spelniony', potrzeba10: true });
-    expect(warunkiRenty(D({ ostatnie10: 4 }))).toMatchObject({ stan: 'brak', brak10: 1 });
-    expect(warunkiRenty(D({ skladkowe: 3, nieskladkowe: 3 }))).toMatchObject({ stan: 'brak', staz: 4, brakStazu: 1 });
+    expect(warunkiRenty(D({ ostatnie10: 4 }))).toMatchObject({ stan: 'brak', brak10: 12 });
+    expect(warunkiRenty(D({ skladkowe: 3, nieskladkowe: 3 }))).toMatchObject({ stan: 'brak', staz: 4, brakStazu: 12 });
   });
 
   it('całkowita niezdolność i 30 lat składkowych (mężczyzna): bez warunku 10 lat (art. 58 ust. 4)', () => {
@@ -58,7 +59,7 @@ describe('renta z tytułu niezdolności do pracy (art. 57–58 ustawy o FUS, art
     expect(warunkiRenty(D({ urodzenie: '1970-02-01', stopien: 'calkowita', skladkowe: 20, nieskladkowe: 9, ostatnie10: 5, ubezpieczenie: 'pozniej' }))).toMatchObject({ stan: 'spelnia', staz: 26.667, okres: 'zwolniony' });
     expect(warunkiRenty(D({ urodzenie: '1970-02-01', stopien: 'czesciowa', skladkowe: 20, nieskladkowe: 9, ostatnie10: 5, ubezpieczenie: 'pozniej' }))).toMatchObject({ stan: 'brak', okres: 'niespelniony' });
     // 27 lat stażu zwalnia z 18 miesięcy, ale 24 lata składkowe nie zwalniają z 5 lat w ostatnich 10 latach.
-    expect(warunkiRenty(D({ urodzenie: '1970-02-01', stopien: 'calkowita', skladkowe: 24, nieskladkowe: 3, ostatnie10: 0, ubezpieczenie: 'pozniej' }))).toMatchObject({ stan: 'brak', okres: 'zwolniony', brak10: 5 });
+    expect(warunkiRenty(D({ urodzenie: '1970-02-01', stopien: 'calkowita', skladkowe: 24, nieskladkowe: 3, ostatnie10: 0, ubezpieczenie: 'pozniej' }))).toMatchObject({ stan: 'brak', okres: 'zwolniony', brak10: 60 });
   });
 
   it('wypadek przy pracy: bez stażu i bez 18 miesięcy; w drodze do pracy: bez stażu, ale z 18 miesiącami', () => {
@@ -74,6 +75,18 @@ describe('renta z tytułu niezdolności do pracy (art. 57–58 ustawy o FUS, art
     expect(warunkiRenty(D({ plec: 'k', urodzenie: '1966-11-14', stopien: 'calkowita', skladkowe: 30, nieskladkowe: 0, ostatnie10: 10 })).stan).toBe('spelnia');
   });
 
+  it('ułamki lat: 4,999 roku to 5 lat; braki w miesiącach w górę', () => {
+    expect(warunkiRenty(D({ skladkowe: 4.999, nieskladkowe: 0, ostatnie10: 4.999 }))).toMatchObject({ stan: 'spelnia', staz: 5 });
+    expect(opisRenty(D({ skladkowe: 4.5, nieskladkowe: 0, ostatnie10: 4.5 })).opis).toBe('brakuje 6 miesięcy okresów składkowych i nieskładkowych; w ostatnich 10 latach brakuje 6 miesięcy (art. 58 ust. 2)');
+  });
+
+  it('emerytura: wiek 65 lat w dniu decyzji (dziś), urodzeni przed 1949 r. przy stażu 20 lat (art. 27–28)', () => {
+    expect(warunkiRenty(D({ urodzenie: '1961-11-13', powstanie: '2026-06-01', stopien: 'calkowita', skladkowe: 40, ostatnie10: 10 })).stan).toBe('emerytura');
+    expect(warunkiRenty(D({ urodzenie: '1961-11-14', powstanie: '2026-06-01', stopien: 'calkowita', skladkowe: 40, ostatnie10: 10 })).stan).toBe('spelnia');
+    expect(warunkiRenty(D({ urodzenie: '1945-01-01', powstanie: '2012-01-01', stopien: 'calkowita', skladkowe: 30, ostatnie10: 10 })).stan).toBe('emerytura');
+    expect(warunkiRenty(D({ urodzenie: '1945-01-01', powstanie: '2012-01-01', stopien: 'calkowita', skladkowe: 19, nieskladkowe: 0, ostatnie10: 10 })).stan).not.toBe('emerytura');
+  });
+
   it('błędne dane', () => {
     expect(() => warunkiRenty(D({ skladkowe: -1 }))).toThrow(RangeError);
     expect(() => warunkiRenty(D({ powstanie: '1980-01-01' }))).toThrow(RangeError);
@@ -85,6 +98,6 @@ describe('renta z tytułu niezdolności do pracy (art. 57–58 ustawy o FUS, art
     expect(opisRenty(D({ ostatnie10: 4 })).opis).toBe('w ostatnich 10 latach brakuje 1 roku (art. 58 ust. 2)');
     expect(opisRenty(D({ ostatnie10: 4 })).uwagi.join(' ')).toContain('art. 58 ust. 3');
     expect(opisRenty(D({ przyczyna: 'praca' }))).toMatchObject({ stan: 'Staż nie jest wymagany', wymagany: 'nie jest wymagany' });
-    expect(opisRenty(D({ plec: 'k', urodzenie: '2004-01-15', powstanie: '2026-01-16', skladkowe: 2.5, nieskladkowe: 0 })).opis).toContain('wystarczy 2 lata');
+    expect(opisRenty(D({ plec: 'k', urodzenie: '2004-01-15', powstanie: '2026-01-16', skladkowe: 2.5, nieskladkowe: 0 })).opis).toBe('przy liczeniu wieku w pełnych latach potrzeba 2 lat, a przy liczeniu od dnia po urodzinach 3 lat; przepis tego nie rozstrzyga, decyduje ZUS, a w sporze sąd');
   });
 });

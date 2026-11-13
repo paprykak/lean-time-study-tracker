@@ -73,7 +73,9 @@ export function podstawy(przyczyna: Przyczyna, plec: Plec): Podstawa[] {
 
 export type StanPrzedemerytalnego = 'spelnia' | 'zalezy' | 'brak' | 'wiek-emerytalny';
 
-export function swiadczeniePrzedemerytalne(d: DanePrzedemerytalne) {
+export function swiadczeniePrzedemerytalne(dane: DanePrzedemerytalne) {
+  // Staż z ułamkiem do setnych przed porównaniem (tak jak go wyświetlamy).
+  const d = { ...dane, staz: Math.round(dane.staz * 100) / 100 };
   if (!(d.staz >= 0)) throw new RangeError('Staż nie może być ujemny');
   if (d.data < d.urodzenie) throw new RangeError('Data przed urodzeniem');
   const wiekEmerytalny = d.plec === 'k' ? 60 : 65;
@@ -118,9 +120,21 @@ const WARUNEK_OKRESU: Record<Przyczyna, string> = {
 
 export const warunekOkresu = (p: Przyczyna) => WARUNEK_OKRESU[p];
 
+/** Pełny opis pozycji z krótkiej listy wyboru (telefon ucina długie opcje). */
+const OPIS_PRZYCZYNY: Record<Przyczyna, string> = {
+  likwidacja: 'Likwidacja albo niewypłacalność pracodawcy.',
+  zaklad: 'Rozwiązanie umowy z przyczyn dotyczących zakładu pracy, na przykład zwolnienie z przyczyn niedotyczących pracowników albo likwidacja stanowiska.',
+  firma: 'Ogłoszenie upadłości własnej działalności.',
+  renta: 'Koniec renty z tytułu niezdolności do pracy.',
+  opiekun: 'Koniec świadczenia pielęgnacyjnego, specjalnego zasiłku opiekuńczego albo zasiłku dla opiekuna.',
+};
+
+export const opisPrzyczyny = (p: Przyczyna) => OPIS_PRZYCZYNY[p];
+
 /** Teksty wyniku: te same w HTML ze strony i w skrypcie przeglądarki. */
-export function opisPrzedemerytalnego(d: DanePrzedemerytalne, dzis: string): OpisPrzedemerytalnego {
-  const r = swiadczeniePrzedemerytalne(d);
+export function opisPrzedemerytalnego(dane: DanePrzedemerytalne, dzis: string): OpisPrzedemerytalnego {
+  const r = swiadczeniePrzedemerytalne(dane);
+  const d = { ...dane, staz: Math.round(dane.staz * 100) / 100 };
   const kw = kwotyNaDzien(dzis);
   const o: OpisPrzedemerytalnego = {
     stan: '',

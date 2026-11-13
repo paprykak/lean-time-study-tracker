@@ -38,7 +38,7 @@ test('wypadek przy pracy bez stażu; 18 miesięcy po końcu pracy przy częścio
   await page.getByLabel('Przyczyna').selectOption('choroba');
   await page.getByLabel('Okresy składkowe (lata)').fill('26');
   await page.getByLabel('Z tego w ostatnich 10 latach').fill('10');
-  await page.getByLabel('Kiedy powstała').selectOption('pozniej');
+  await page.getByLabel('Względem ubezpieczenia').selectOption('pozniej');
   await expect(page.locator('[data-w="okres"]')).toHaveText('nie');
   await page.getByLabel('Niezdolność', { exact: true }).selectOption('calkowita');
   await expect(page.locator('[data-w="okres"]')).toContainText('art. 57 ust. 2');
@@ -52,4 +52,26 @@ test('błędne dane', async ({ page }) => {
   await page.getByLabel('Z tego w ostatnich 10 latach').fill('5');
   await page.getByLabel('Niezdolność powstała dnia').fill('1980-01-01');
   await expect(page.locator('[data-blad="dane"]')).toContainText('po dacie urodzenia');
+});
+
+test.describe('telefon 320 px', () => {
+  test.use({ viewport: { width: 320, height: 640 } });
+  test('żadna opcja list wyboru nie jest szersza niż pole; brak przewijania w bok', async ({ page }) => {
+    const uciete = await page.locator('form select').evaluateAll(async (listy) => {
+      const wynik: string[] = [];
+      for (const el of listy) {
+        const s = el as HTMLSelectElement;
+        const styl = getComputedStyle(s);
+        const ctx = document.createElement('canvas').getContext('2d')!;
+        ctx.font = `${styl.fontWeight} ${styl.fontSize} ${styl.fontFamily}`;
+        // Mierzymy fontem strony, nie zastępczym: bez tego wynik zależy od fontów systemu (w CI szersze).
+        await document.fonts.load(ctx.font, [...s.options].map((o) => o.text).join(''));
+        const miejsce = s.clientWidth - 40;
+        wynik.push(...[...s.options].filter((o) => ctx.measureText(o.text).width > miejsce).map((o) => o.text));
+      }
+      return wynik;
+    });
+    expect(uciete).toEqual([]);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  });
 });

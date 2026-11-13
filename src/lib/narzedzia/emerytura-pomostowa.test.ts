@@ -41,6 +41,9 @@ describe('emerytura pomostowa (art. 4, 6–8, 16 i 49 ustawy o emeryturach pomos
     expect(r).toMatchObject({ stan: 'brak', brakPracy: 6, brakStazu: 12, najwczesniej: '2027-11-13', zaPozno: false });
     expect(emeryturaPomostowa(D({ lataSzczegolne: 15, staz: 25 })).stan).toBe('spelnia');
     expect(emeryturaPomostowa(D({ lataSzczegolne: 14.99 })).brakPracy).toBe(1);
+    // 14,999 wyświetlamy jako 15 lat, więc i liczymy jako 15.
+    expect(opisPomostowej(D({ lataSzczegolne: 14.999 }))).toMatchObject({ stan: 'Spełniasz warunki', praca: 'tak: 15 lat z wymaganych 15 lat' });
+    expect(opisPomostowej(D({ lataSzczegolne: 14.99 }))).toMatchObject({ stan: 'Jeszcze nie', praca: 'nie: 14,99 roku z wymaganych 15 lat' });
   });
 
   it('hutnictwo: 55 lat także dla mężczyzn; art. 8: 10 lat pracy, 50 lat dla kobiet', () => {
@@ -52,9 +55,15 @@ describe('emerytura pomostowa (art. 4, 6–8, 16 i 49 ustawy o emeryturach pomos
     const r = emeryturaPomostowa(D({ urodzenie: '1970-03-10', rodzaj: 'hutnictwo', lataSzczegolne: 15, lataRodzaju: 5, przed2009: 10, staz: 25 }));
     expect(r).toMatchObject({ stan: 'wiek', szczegolneZasady: false, dataWieku: '2030-03-10', wymagania: { wiek: 60 } });
     const o = opisPomostowej(D({ urodzenie: '1970-03-10', rodzaj: 'hutnictwo', lataSzczegolne: 15, lataRodzaju: 5, przed2009: 10, staz: 25 }));
-    expect(o.uwagi[0]).toBe('Pracy w hutnictwie (zał. 1 pkt 4–12, art. 7) masz 5 lat z wymaganych 15 lat; ogólne zasady z art. 4 dają wcześniejszą datę, więc liczymy według nich.');
+    expect(o.uwagi[0]).toBe('Pracy w hutnictwie (zał. 1 pkt 4–12, art. 7) masz 5 lat z wymaganych 15 lat, więc liczymy według ogólnych zasad z art. 4.');
     expect(o.uwagi.join(' ')).not.toContain('lekarza medycyny pracy');
     expect(() => emeryturaPomostowa(D({ rodzaj: 'port', lataRodzaju: 17 }))).toThrow(RangeError);
+    // Wiersz „Praca z wykazu” pokazuje okres z punktów art. 8, gdy liczymy według art. 8.
+    expect(opisPomostowej(D({ plec: 'k', urodzenie: '1975-01-01', rodzaj: 'art8', lataSzczegolne: 12, lataRodzaju: 9, staz: 18 })).praca).toBe('nie: 9 lat z pkt 20, 22 albo 32 z wymaganych 10 lat');
+    // Remis dat (oba warianty spełnione dziś): art. 4, bez orzeczenia lekarza z art. 7.
+    const remis = emeryturaPomostowa(D({ urodzenie: '1965-01-01', rodzaj: 'hutnictwo', lataSzczegolne: 16, lataRodzaju: 16 }));
+    expect(remis).toMatchObject({ stan: 'spelnia', szczegolneZasady: false });
+    expect(opisPomostowej(D({ urodzenie: '1965-01-01', rodzaj: 'hutnictwo', lataSzczegolne: 16, lataRodzaju: 16 })).uwagi.join(' ')).not.toContain('lekarza medycyny pracy');
   });
 
   it('bez pracy po 2008 r.: wystarczy cały wymagany okres przed 2009 r. (art. 49)', () => {
@@ -92,6 +101,6 @@ describe('emerytura pomostowa (art. 4, 6–8, 16 i 49 ustawy o emeryturach pomos
     const b = opisPomostowej(D({ plec: 'k', urodzenie: '1972-02-29', lataSzczegolne: 14.5, przed2009: 5, staz: 19 }));
     expect(b.opis).toBe('brakuje 6 miesięcy pracy w szczególnych warunkach i 1 roku stażu; przy dalszej pracy w szczególnych warunkach na pełen etat warunki spełnisz najwcześniej 13 listopada 2027 r.');
     expect(opisPomostowej(D({ lataSzczegolne: 16, przed2009: 15, staz: 20 })).uwagi.join(' ')).toContain('rekompensaty');
-    expect(opisPomostowej(D({ rodzaj: 'hutnictwo' })).uwagi[0]).toContain('lekarza medycyny pracy');
+    expect(opisPomostowej(D({ urodzenie: '1969-05-20', rodzaj: 'hutnictwo' })).uwagi[0]).toContain('lekarza medycyny pracy');
   });
 });

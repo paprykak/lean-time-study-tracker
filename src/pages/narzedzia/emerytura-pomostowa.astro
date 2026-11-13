@@ -69,14 +69,14 @@ const faq = [
         </select>
         <p id="p-rodzaj-opis" class="meta mt-1">Wykaz prac jest niżej, w sekcji „Prace z wykazu”.</p>
       </div>
-      <div class="mt-4" data-pole-rodzaju hidden>
-        <label for="p-rodzaju" class="etykieta-pola" data-etykieta-rodzaju>Z tego w hutnictwie, pkt 4–12 (lata)</label>
-        <input id="p-rodzaju" name="rodzaju" class="pole mt-1 max-w-56" type="text" inputmode="decimal" autocomplete="off" value="0" aria-describedby="p-blad" />
-      </div>
-      <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
           <label for="p-szczegolne" class="etykieta-pola">Praca z wykazu (lata)</label>
           <input id="p-szczegolne" name="szczegolne" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="16" aria-describedby="p-blad" />
+        </div>
+        <div data-pole-rodzaju hidden>
+          <label for="p-rodzaju" class="etykieta-pola" data-etykieta-rodzaju>Z tego w hutnictwie, pkt 4–12 (lata)</label>
+          <input id="p-rodzaju" name="rodzaju" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="0" aria-describedby="p-blad" />
         </div>
         <div>
           <label for="p-przed" class="etykieta-pola">Z tego przed 2009 r.</label>
@@ -143,7 +143,7 @@ const faq = [
       <li>pkt 13–14: bezpośrednie sterowanie procesami, które mogą spowodować poważną awarię przemysłową albo techniczną ze skutkami dla bezpieczeństwa publicznego;</li>
       <li>pkt 15–16: produkcja materiałów wybuchowych i wyrobów pirotechnicznych, sterowanie blokami energetycznymi.</li>
     </ul>
-    <p>Opcja „Hutnictwo” w kalkulatorze to tylko pkt 4–12 (art. 7); pkt 8 i 9 dotyczą hutnictwa szkła i kuźni. Wykaz nie wymienia jako takich obsługi wózków jezdniowych, kompletacji ani innej zwykłej pracy magazynowej; liczy się praca z konkretnej pozycji, na przykład w pomieszczeniu z temperaturą poniżej 0 °C narzuconą technologią (pkt 35). Praca musi też odpowiadać definicji z art. 3 ust. 1 albo 3 ustawy, a w razie sporu o wpis do wykazu stanowisk przysługuje skarga do Państwowej Inspekcji Pracy (art. 41 ust. 6).</p>
+    <p>Opcja „Hutnictwo” w kalkulatorze to pkt 4–12 (art. 7), w tym hutnictwo szkła (pkt 8) i kuźnie (pkt 9). Wykaz nie wymienia jako takich obsługi wózków jezdniowych, kompletacji ani innej zwykłej pracy magazynowej; liczy się praca z konkretnej pozycji, na przykład w pomieszczeniu z temperaturą poniżej 0 °C narzuconą technologią (pkt 35). Praca musi też odpowiadać definicji z art. 3 ust. 1 albo 3 ustawy, a w razie sporu o wpis do wykazu stanowisk przysługuje skarga do Państwowej Inspekcji Pracy (art. 41 ust. 6).</p>
 
     <h2 id="wygasanie">Wygasanie i rekompensata</h2>
     <p>
@@ -164,9 +164,11 @@ const faq = [
 
     <h2 id="jak-liczymy">Jak liczymy</h2>
     <p>
-      Porównujemy wpisane okresy z progami z art. 4 albo art. 6–8 ustawy, a datę urodzin z wymaganym wiekiem; wiek osiąga
+      Porównujemy wpisane okresy z progami z art. 4 albo art. 6–8 ustawy (przy art. 6–8 liczy się tylko praca z ich
+      punktów; sprawdzamy też art. 4 i bierzemy wcześniejszą datę, a przy równej art. 4, bo ma mniej warunków), a datę urodzin z wymaganym wiekiem; wiek osiąga
       się w dniu urodzin (osoby urodzone 29 lutego w roku nieprzestępnym 28 lutego). Pracę po 2008 r. liczymy jako różnicę
-      między okresem pracy z wykazu a jego częścią sprzed 2009 r. Gdy brakuje okresów, podajemy najwcześniejszą datę
+      między okresem pracy z wykazu a jego częścią sprzed 2009 r.; przy art. 49 bierzemy całą wpisaną pracę sprzed 2009 r.
+      Lata z ułamkiem zaokrąglamy do setnych. Gdy brakuje okresów, podajemy najwcześniejszą datę
       przy dalszej pracy w szczególnych warunkach na pełen etat od dziś, z brakującymi miesiącami zaokrąglonymi w górę.
       Nie sprawdzamy, czy Twoja praca jest na wykazie i odpowiada definicji z art. 3, ani jak ZUS policzy staż (okresy
       nieskładkowe najwyżej w jednej trzeciej okresów składkowych, art. 5 ust. 2 ustawy o FUS, bez okresów rolniczych
@@ -206,6 +208,7 @@ const faq = [
       if (!poprawnaData(urodzenie) || urodzenie > dzis || urodzenie < '1900-01-01') blad = 'Wpisz datę urodzenia.';
       else if (![szczegolne, przed, staz].every((x) => x >= 0 && x <= 70)) blad = 'Wpisz okresy w latach, na przykład 15 albo 14,5.';
       else if (przed > szczegolne) blad = 'Okres przed 2009 r. nie może być dłuższy niż cała praca z wykazu.';
+      else if (staz < szczegolne) blad = 'Staż nie może być krótszy niż praca z wykazu, bo ją obejmuje.';
       else if (rodzaj !== 'ogolne' && !(rodzaju >= 0 && rodzaju <= szczegolne)) blad = 'Pracę z wybranych punktów wpisz w latach, najwyżej tyle, ile cała praca z wykazu.';
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
       b.hidden = !blad;

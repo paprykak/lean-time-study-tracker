@@ -3,7 +3,7 @@
 // ust. 1 pkt 38 ustawy o rynku pracy; kwoty przychodu M.P. 2026 poz. 208). Logika i teksty wyniku:
 // src/lib/narzedzia/swiadczenie-przedemerytalne.ts (testy obok).
 import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
-import { KWOTY_PRZYCHODU, opisPrzedemerytalnego, warunekOkresu } from '../../lib/narzedzia/swiadczenie-przedemerytalne';
+import { KWOTY_PRZYCHODU, opisPrzedemerytalnego, opisPrzyczyny, warunekOkresu } from '../../lib/narzedzia/swiadczenie-przedemerytalne';
 import { zl } from '../../lib/narzedzia/format';
 import { dataPoPolsku, dzisWPolsce } from '../../lib/narzedzia/terminy';
 
@@ -48,13 +48,14 @@ const faq = [
       <h2 id="kalkulator-tytul" class="tytul-m">Koniec pracy i staż</h2>
       <div class="mt-4">
         <label for="s-przyczyna" class="etykieta-pola">Jak skończyła się praca</label>
-        <select id="s-przyczyna" name="przyczyna" class="pole mt-1">
-          <option value="likwidacja" selected>Likwidacja, niewypłacalność</option>
-          <option value="zaklad">Zwolnienie z przyczyn firmy</option>
+        <select id="s-przyczyna" name="przyczyna" class="pole mt-1" aria-describedby="s-przyczyna-opis">
+          <option value="likwidacja" selected>Likwidacja firmy</option>
+          <option value="zaklad">Przyczyny pracodawcy</option>
           <option value="firma">Upadłość własnej firmy</option>
           <option value="renta">Koniec renty</option>
-          <option value="opiekun">Koniec świadczenia opiekuna</option>
+          <option value="opiekun">Koniec świadczenia</option>
         </select>
+        <p id="s-przyczyna-opis" class="meta mt-1" data-opis-przyczyny>{opisPrzyczyny('likwidacja')}</p>
       </div>
       <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
@@ -143,7 +144,7 @@ const faq = [
 </StronaNarzedzia>
 
 <script>
-  import { opisPrzedemerytalnego, warunekOkresu, type Plec, type Przyczyna } from '../../lib/narzedzia/swiadczenie-przedemerytalne';
+  import { opisPrzedemerytalnego, opisPrzyczyny, warunekOkresu, type Plec, type Przyczyna } from '../../lib/narzedzia/swiadczenie-przedemerytalne';
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
   import { wpisanaLiczba } from '../../lib/narzedzia/format';
   import { dzisWPolsce, poprawnaData } from '../../lib/narzedzia/terminy';
@@ -167,6 +168,7 @@ const faq = [
       const przyczyna = el('przyczyna').value as Przyczyna;
       form.querySelector<HTMLElement>('[data-etykieta-daty]')!.textContent = ETYKIETY_DATY[przyczyna];
       form.querySelector<HTMLElement>('[data-opis-okresu]')!.textContent = typografia(warunekOkresu(przyczyna));
+      form.querySelector<HTMLElement>('[data-opis-przyczyny]')!.textContent = typografia(opisPrzyczyny(przyczyna));
       const urodzenie = el('urodzenie').value;
       const data = el('data').value;
       const staz = wpisanaLiczba(el('staz').value);

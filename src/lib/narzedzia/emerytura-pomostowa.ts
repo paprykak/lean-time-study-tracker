@@ -67,7 +67,11 @@ export type StanPomostowej = 'spelnia' | 'wiek' | 'brak' | 'po-wieku' | 'rocznik
 /** Miesiące brakujące do progu w latach, zaokrąglone w górę (0, gdy próg osiągnięty). */
 const brakMiesiecy = (mam: number, prog: number) => (mam >= prog ? 0 : Math.ceil(Math.round((prog - mam) * 12 * 1000) / 1000));
 
-export function emeryturaPomostowa(d: DanePomostowej) {
+const r2 = (x: number) => Math.round(x * 100) / 100;
+
+export function emeryturaPomostowa(dane: DanePomostowej) {
+  // Lata z ułamkiem do setnych przed porównaniem, żeby wynik zgadzał się z tym, co wyświetlamy (14,999 → 15).
+  const d = { ...dane, lataSzczegolne: r2(dane.lataSzczegolne), przed2009: r2(dane.przed2009), staz: r2(dane.staz), lataRodzaju: dane.lataRodzaju === undefined ? undefined : r2(dane.lataRodzaju) };
   if (!(d.lataSzczegolne >= 0 && d.przed2009 >= 0 && d.staz >= 0)) throw new RangeError('Okresy nie mogą być ujemne');
   if (d.przed2009 > d.lataSzczegolne) throw new RangeError('Okres przed 2009 r. dłuższy niż cały okres');
   if (d.dzis < d.urodzenie) throw new RangeError('Data urodzenia z przyszłości');
@@ -79,7 +83,8 @@ export function emeryturaPomostowa(d: DanePomostowej) {
   const brakStazu = brakMiesiecy(d.staz, staz);
   const rocznik = d.urodzenie > '1948-12-31';
   // Art. 6–8 liczą tylko pracę z ich punktów załączników; art. 4 każdą pracę z wykazu. Przy wybranym rodzaju prac
-  // sprawdzamy oba i bierzemy ten, który daje wcześniejszą datę (przy równej: przepis szczególny).
+  // sprawdzamy oba i bierzemy ten, który daje wcześniejszą datę (przy równej: art. 4, bo ma mniej warunków, np. bez
+  // orzeczenia lekarza z art. 7).
   const licz = (rodzaj: RodzajPrac, okres: number) => {
     const w = wymagania(rodzaj, d.plec);
     const dataWieku = dodajLata(d.urodzenie, w.wiek);
@@ -98,7 +103,7 @@ export function emeryturaPomostowa(d: DanePomostowej) {
   };
   const ogolne = licz('ogolne', d.lataSzczegolne);
   const szczegolne = d.rodzaj === 'ogolne' ? null : licz(d.rodzaj, lataRodzaju);
-  const wybrane = szczegolne && szczegolne.najwczesniej <= ogolne.najwczesniej ? szczegolne : ogolne;
+  const wybrane = szczegolne && szczegolne.najwczesniej < ogolne.najwczesniej ? szczegolne : ogolne;
   const { w, dataWieku, warunki, brakPracy, najwczesniej } = wybrane;
   let stan: StanPomostowej;
   if (!rocznik) stan = 'rocznik';
@@ -124,7 +129,7 @@ export const latBrak = (x: number) => {
 };
 
 /** Brakujące miesiące po „brakuje”: „1 miesiąca”, „6 miesięcy”, „1 roku i 2 miesięcy”. */
-const miesiecyBrak = (m: number) => {
+export const miesiecyBrak = (m: number) => {
   const l = Math.floor(m / 12);
   const r = m % 12;
   const mies = r === 1 ? '1 miesiąca' : `${r} miesięcy`;
@@ -146,6 +151,12 @@ export interface OpisPomostowej {
 const ART_17 =
   'Emerytura pomostowa jest zawieszona, gdy praca trwa dalej u tego samego pracodawcy bez rozwiązania umowy o pracę (art. 17 ust. 1 ustawy i art. 103a ustawy o FUS) i gdy podejmiesz pracę w szczególnych warunkach na umowę o pracę albo umowę cywilnoprawną (art. 17 ust. 4); przy innej pracy obowiązują limity dorabiania jak przy wcześniejszej emeryturze.';
 
+const KROTKO_RODZAJ: Record<Exclude<RodzajPrac, 'ogolne'>, string> = {
+  hutnictwo: 'w hutnictwie',
+  port: 'w porcie morskim',
+  art8: 'z pkt 20, 22 albo 32',
+};
+
 const NAZWA_RODZAJU: Record<Exclude<RodzajPrac, 'ogolne'>, string> = {
   hutnictwo: 'w hutnictwie (zał. 1 pkt 4–12, art. 7)',
   port: 'w porcie morskim (zał. 1 pkt 21 albo zał. 2 pkt 12, art. 6)',
@@ -160,7 +171,10 @@ export function opisPomostowej(d: DanePomostowej): OpisPomostowej {
   const o: OpisPomostowej = {
     stan: '',
     opis: '',
-    praca: tak(r.warunki.praca, `${lat(d.lataSzczegolne)} z wymaganych ${lat(w.lataPracy)}`),
+    praca: tak(
+      r.warunki.praca,
+      d.rodzaj !== 'ogolne' && r.szczegolneZasady ? `${lat(r.lataRodzaju)} ${KROTKO_RODZAJ[d.rodzaj]} z wymaganych ${lat(w.lataPracy)}` : `${lat(d.lataSzczegolne)} z wymaganych ${lat(w.lataPracy)}`,
+    ),
     wiek: `${w.wiek} lat: ${dataPoPolsku(r.dataWieku)}`,
     staz: tak(r.warunki.staz, `${lat(d.staz)} z wymaganych ${lat(r.stazWymagany)}`),
     po2008: r.po2008 > 0 ? `tak: ${lat(r.po2008)} po 2008 r.` : r.warunki.po2008 ? `nie, ale wymagany okres prac z załączników przed 2009 r. (art. 49)` : 'nie: brak pracy po 2008 r. i pełnego okresu przed 2009 r.',
@@ -188,7 +202,12 @@ export function opisPomostowej(d: DanePomostowej): OpisPomostowej {
     o.opis = `brakuje ${braki}; przy dalszej pracy w szczególnych warunkach na pełen etat warunki spełnisz najwcześniej ${dataPoPolsku(r.najwczesniej)}`;
   }
   if (d.rodzaj !== 'ogolne' && !r.szczegolneZasady) {
-    o.uwagi.push(`Pracy ${NAZWA_RODZAJU[d.rodzaj]} masz ${lat(r.lataRodzaju)} z wymaganych ${lat(wymagania(d.rodzaj, d.plec).lataPracy)}; ogólne zasady z art. 4 dają wcześniejszą datę, więc liczymy według nich.`);
+    const potrzeba = lat(wymagania(d.rodzaj, d.plec).lataPracy);
+    o.uwagi.push(
+      r.lataRodzaju >= wymagania(d.rodzaj, d.plec).lataPracy
+        ? `Pracy ${NAZWA_RODZAJU[d.rodzaj]} masz ${lat(r.lataRodzaju)}, ale ogólne zasady z art. 4 dają tę samą albo wcześniejszą datę i mniej warunków, więc liczymy według nich.`
+        : `Pracy ${NAZWA_RODZAJU[d.rodzaj]} masz ${lat(r.lataRodzaju)} z wymaganych ${potrzeba}, więc liczymy według ogólnych zasad z art. 4.`,
+    );
   }
   if (d.rodzaj === 'hutnictwo' && r.szczegolneZasady) o.uwagi.push('W hutnictwie potrzebne jest też orzeczenie lekarza medycyny pracy o niezdolności do pracy w szczególnych warunkach z pkt 4–12 załącznika nr 1 (art. 7 pkt 3).');
   if (d.rodzaj === 'port' && r.szczegolneZasady) o.uwagi.push('Liczy się praca w morskim porcie handlowym albo przedsiębiorstwie pomocniczym portu: przeładunek w ładowniach statku (zał. 1 pkt 21) albo obsługa dźwignic portowych (zał. 2 pkt 12) (art. 6).');
