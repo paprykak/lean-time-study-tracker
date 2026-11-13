@@ -32,7 +32,10 @@ for (const n of NARZEDZIA) {
         if (!widoczny(s) || pominiety(s)) continue;
         ctx.font = font(s);
         await document.fonts.load(ctx.font, [...s.options].map((o) => o.text).join(''));
-        const miejsce = s.clientWidth - parseFloat(getComputedStyle(s).paddingLeft) - 28;
+        const st = getComputedStyle(s);
+        // Lista bez natywnej strzałki (appearance: none, np. litery zmian w kalendarzu grafiku) nie potrzebuje zapasu.
+        const strzalka = st.appearance === 'none' ? 0 : 28;
+        const miejsce = s.clientWidth - parseFloat(st.paddingLeft) - parseFloat(st.paddingRight) * (strzalka ? 0 : 1) - strzalka;
         const uciete = [...s.options].filter((o) => ctx.measureText(o.text).width > miejsce).map((o) => o.text);
         if (uciete.length) p.push(`lista ${nazwa(s)} (${Math.round(miejsce)} px): ${uciete.join(' | ')}`);
       }
