@@ -84,6 +84,6 @@ test('ułamek dni w wykorzystanych to błąd przy tym polu', async ({ page }) =>
   await expect(page.locator('[data-blad="dane"]')).toBeVisible();
   await expect(page.locator('[data-blad="dane"]')).toContainText(/Wykorzystane/);
   await expect(page.locator('[name="wykorzystane"]')).toHaveAttribute('aria-invalid', 'true');
-  await expect(page.locator('[name="zalegly"]')).toHaveAttribute('aria-invalid', 'false');
+  await expect(page.locator('[name="zalegly"]')).not.toHaveAttribute('aria-invalid');
   await expect(page.locator('[data-w="wwyp"]')).toHaveText('—');
 });

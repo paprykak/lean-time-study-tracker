@@ -312,7 +312,13 @@ const faq = [
     font-size: 0.75rem;
     color: var(--color-tekst-drugi);
   }
+  /* Bez strzałki listy: w komórce kalendarza przy 320 px (ok. 30 px) strzałka zasłaniała literę zmiany. Lista dalej
+     otwiera się dotknięciem albo klawiaturą (strzałki, spacja), a ramka pokazuje, że to pole wyboru. */
   .kalendarz :global(.kalendarz-wybor) {
+    appearance: none;
+    padding: 0;
+    text-align-last: center;
+    cursor: pointer;
     min-height: 2.75rem;
     width: 100%;
     border: 1px solid #8a939e;
