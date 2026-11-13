@@ -48,7 +48,7 @@ const faq = [
       </div>
       <div class="mt-4">
         <label for="k-pracownik" class="etykieta-pola">Twoja wpłata podstawowa</label>
-        <select id="k-pracownik" name="pracownik" class="pole mt-1 max-w-48" aria-describedby="k-pracownik-opis">
+        <select id="k-pracownik" name="pracownik" class="pole mt-1 max-w-48" aria-describedby="k-pracownik-opis k-blad">
           {[2, 1.5, 1, 0.5].map((p) => <option value={p} selected={p === 2}>{liczba(p)}%</option>)}
         </select>
         <p id="k-pracownik-opis" class="meta mt-1" data-w="pracownik-opis">Mniej niż 2% tylko przy pensji do {zl(progObnizenia(rok))} w {rok} r. (art. 27 ust. 2).</p>
@@ -77,7 +77,7 @@ const faq = [
         <input type="checkbox" name="pit2" checked class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
         <span>Złożony PIT-2 (zaliczka mniejsza o 300 zł)</span>
       </label>
-      <p id="k-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+      <p id="k-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -119,6 +119,7 @@ const faq = [
   import { dzisWPolsce } from '../../lib/narzedzia/terminy';
   import { PLACA_MINIMALNA } from '../../data/prawo';
   import { typografia } from '../../lib/typografia.mjs';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-ppk]');
   if (form) {
@@ -137,11 +138,13 @@ const faq = [
       const brutto = wpisanaLiczba(el('brutto').value);
       const pracownik = Number(el('pracownik').value);
       let blad: string | null = null;
+      let zlePole = el('brutto');
       if (!(brutto > 0 && brutto < 1_000_000)) blad = 'Wpisz pensję brutto, na przykład 6000.';
-      else if (pracownik < 2 && brutto > progObnizenia(rok)) blad = typografia(`Wpłatę poniżej 2% można wybrać tylko przy pensji do ${zl(progObnizenia(rok))}.`);
-      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
-      b.hidden = !blad;
-      b.textContent = blad ?? '';
+      else if (pracownik < 2 && brutto > progObnizenia(rok)) {
+        blad = `Wpłatę poniżej 2% można wybrać tylko przy pensji do ${zl(progObnizenia(rok))}.`;
+        zlePole = el('pracownik');
+      }
+      pokazBlad(form.querySelector<HTMLElement>('[data-blad="dane"]')!, blad, zlePole);
       if (blad) {
         w('na-koncie').textContent = '—';
         return;
@@ -165,6 +168,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

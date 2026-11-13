@@ -125,6 +125,7 @@ const faq = [
 <script>
   import { godzinyZwolnienia } from '../../lib/narzedzia/wolne-rodzinne';
   import { typografia } from '../../lib/typografia.mjs';
+  import { liczPoPowrocie } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-wolne]');
   if (form) {
@@ -137,6 +138,7 @@ const faq = [
     };
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

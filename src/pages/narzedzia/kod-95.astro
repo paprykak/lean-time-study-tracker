@@ -64,7 +64,7 @@ const faq = [
         <label for="k95-data" class="etykieta-pola" data-w="data-etykieta">Świadectwo wydane</label>
         <input id="k95-data" name="data" type="date" class="pole mt-1 max-w-56" min="2008-01-01" max="2100-12-31" value={START.data} data-dzis={String(PRZYKLAD_DNI.data)} aria-describedby="k95-data-opis k95-data-blad" />
         <p id="k95-data-opis" class="meta mt-1" data-w="data-opis">Świadectwo kwalifikacji zawodowej z ostatniego szkolenia albo kwalifikacji.</p>
-        <p id="k95-data-blad" class="blad-pola" data-blad="data" hidden></p>
+        <p id="k95-data-blad" class="blad-pola" data-blad="data" role="alert" hidden></p>
       </div>
 
       <fieldset class="mt-6">
@@ -79,14 +79,14 @@ const faq = [
             <input id="k95-psych" name="psychologiczne" type="date" class="pole mt-1" min="2008-01-01" max="2100-12-31" aria-describedby="k95-orz-blad" />
           </div>
         </div>
-        <p id="k95-orz-blad" class="blad-pola" data-blad="orzeczenia" hidden></p>
+        <p id="k95-orz-blad" class="blad-pola" data-blad="orzeczenia" role="alert" hidden></p>
       </fieldset>
 
       <div class="mt-6">
         <label for="k95-szkolenie" class="etykieta-pola">Szkolenie skończysz (opcjonalnie)</label>
         <input id="k95-szkolenie" name="szkolenie" type="date" class="pole mt-1 max-w-56" min="2008-01-01" max="2100-12-31" value={START.szkolenie} data-dzis={String(PRZYKLAD_DNI.szkolenie)} aria-describedby="k95-szkolenie-opis k95-szkolenie-blad" />
         <p id="k95-szkolenie-opis" class="meta mt-1">Pokażemy, do kiedy będzie nowy kod i ile dni obecnego kodu przepadnie.</p>
-        <p id="k95-szkolenie-blad" class="blad-pola" data-blad="szkolenie" hidden></p>
+        <p id="k95-szkolenie-blad" class="blad-pola" data-blad="szkolenie" role="alert" hidden></p>
       </div>
     </div>
 
@@ -218,6 +218,7 @@ const faq = [
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
   import { odmiana } from '../../lib/redakcja';
   import { typografia } from '../../lib/typografia.mjs';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-kod95]');
   if (form) {
@@ -239,11 +240,6 @@ const faq = [
     const NIEPELNA = 'Wpisz pełną datę: dzień, miesiąc i rok.';
     let wydarzenia: Wydarzenie[] = [];
 
-    const blad = (el: HTMLElement, t: string | null) => {
-      el.hidden = !t;
-      el.textContent = t ?? '';
-    };
-    const nieprawidlowe = (p: HTMLInputElement, zle: boolean) => p.setAttribute('aria-invalid', zle ? 'true' : 'false');
     /** Niepełna data (przeglądarka zwraca wtedy pusty tekst) albo data spoza kalendarza. */
     const niepelna = (p: HTMLInputElement) => p.validity.badInput || (!!p.value && !poprawnaData(p.value));
     const pusto = (t: string) => {
@@ -271,13 +267,9 @@ const faq = [
       const zlyPsych = niepelna(pPsych) || (!bD && tryb === 'swiadectwo' && !!psych && psych < data);
       const bO = niepelna(pLek) || niepelna(pPsych) ? NIEPELNA : zlyLek || zlyPsych ? 'Orzeczenie kończy się przed wydaniem świadectwa. Sprawdź daty.' : null;
       const bS = niepelna(pSzk) ? NIEPELNA : !bD && tryb === 'swiadectwo' && !!szk && szk < data ? 'Szkolenie nie może skończyć się przed wydaniem obecnego świadectwa.' : null;
-      blad(bladData, bD);
-      blad(bladOrz, bO);
-      blad(bladSzk, bS);
-      nieprawidlowe(pData, !!bD);
-      nieprawidlowe(pLek, zlyLek);
-      nieprawidlowe(pPsych, zlyPsych);
-      nieprawidlowe(pSzk, !!bS);
+      pokazBlad(bladData, bD, pData);
+      pokazBlad(bladOrz, bO, [zlyLek && pLek, zlyPsych && pPsych].filter((p): p is HTMLInputElement => !!p));
+      pokazBlad(bladSzk, bS, pSzk);
       if (bD || bO) return pusto('Wpisz datę');
 
       // Przy błędzie w dacie szkolenia liczymy bez planu.
@@ -331,6 +323,7 @@ const faq = [
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
     ustawDzisiejszeWartosci(form);
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 
@@ -365,6 +358,7 @@ const faq = [
     fp.addEventListener('input', przelicz);
     fp.addEventListener('change', przelicz);
     fp.addEventListener('submit', (e) => e.preventDefault());
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

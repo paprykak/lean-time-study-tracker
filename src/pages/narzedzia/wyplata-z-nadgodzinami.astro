@@ -41,7 +41,7 @@ const faq = [
   <form class="kalkulator" data-wyplata-dodatki novalidate aria-labelledby="kalkulator-tytul">
     <div class="kalkulator-pola">
       <h2 id="kalkulator-tytul" class="tytul-m">Pensja i godziny</h2>
-      <div class="mt-4 grid grid-cols-2 items-end gap-3">
+      <div class="mt-4 grid grid-cols-1 min-[380px]:grid-cols-2 items-end gap-3">
         <div>
           <label for="x-miesiac" class="etykieta-pola">Miesiąc</label>
           <select id="x-miesiac" name="miesiac" class="pole mt-1" data-miesiac-biezacy>
@@ -82,7 +82,7 @@ const faq = [
         <input type="checkbox" name="ppk" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
         <span>Odkładam w PPK (2% i 1,5% od pracodawcy)</span>
       </label>
-      <p id="x-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+      <p id="x-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -124,6 +124,7 @@ const faq = [
   import { typografia } from '../../lib/typografia.mjs';
   import { odmiana } from '../../lib/redakcja';
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   // „w czerwcu”, „we wrześniu”
   const wMiesiacu = (m: number) => `${m === 9 ? 'we' : 'w'} ${nazwaMiesiaca(m, 'miejscownik')}`;
@@ -147,10 +148,12 @@ const faq = [
       else if (![g50, g100].every((g) => g >= 0 && g <= 400)) blad = 'Godziny: liczby od 0 do 400.';
       else if (!(noc >= 0)) blad = 'Godziny pracy w nocy: wpisz liczbę, na przykład 40.';
       else if (noc > maksNoc)
-        blad = typografia(`W ${nazwaMiesiaca(miesiac, 'miejscownik')} ${rok} r. pora nocna ma razem najwyżej ${odmiana(maksNoc, ['godzinę', 'godziny', 'godzin'])} (8 godzin na dobę).`);
-      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
-      b.hidden = !blad;
-      b.textContent = blad ?? '';
+        blad = `W ${nazwaMiesiaca(miesiac, 'miejscownik')} ${rok} r. pora nocna ma razem najwyżej ${odmiana(maksNoc, ['godzinę', 'godziny', 'godzin'])} (8 godzin na dobę).`;
+      const zle =
+        !(pensja > 0 && pensja < 1_000_000) ? ['pensja']
+        : ![g50, g100].every((g) => g >= 0 && g <= 400) ? ['g50', 'g100'].filter((_, i) => !([g50, g100][i] >= 0 && [g50, g100][i] <= 400))
+        : ['noc'];
+      pokazBlad(form.querySelector<HTMLElement>('[data-blad="dane"]')!, blad, zle.map(el));
       const uwaga = w('uwaga');
       if (blad) {
         w('netto').textContent = '—';
@@ -183,6 +186,7 @@ const faq = [
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
     ustawDzisiejszeWartosci(form);
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

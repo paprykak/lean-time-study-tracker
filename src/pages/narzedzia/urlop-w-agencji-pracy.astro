@@ -58,7 +58,7 @@ const faq = [
           <input id="a-dziennie" name="dziennie" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value={D.godzinDziennie} aria-describedby="a-blad" />
         </div>
       </div>
-      <p id="a-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+      <p id="a-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -106,6 +106,7 @@ const faq = [
   import { urlopTymczasowy, wynagrodzenieZaUrlopTymczasowy } from '../../lib/narzedzia/urlop-agencja';
   import { odmiana } from '../../lib/redakcja';
   import { typografia } from '../../lib/typografia.mjs';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-agencja]');
   if (form) {
@@ -122,9 +123,12 @@ const faq = [
       else if (!(wynagrodzenie > 0 && wynagrodzenie < 1_000_000)) blad = 'Wpisz wynagrodzenie z 3 miesięcy, na przykład 15000.';
       else if (!(godziny > 0 && godziny <= 2200)) blad = 'Wpisz godziny pracy z 3 miesięcy, na przykład 500.';
       else if (!(dziennie > 0 && dziennie <= 24)) blad = 'Wpisz godziny w dniu pracy, na przykład 8.';
-      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
-      b.hidden = !blad;
-      b.textContent = typografia(blad ?? '');
+      const zlePole =
+        !(miesiace >= 0 && miesiace <= 18) ? 'miesiace'
+        : !(wynagrodzenie > 0 && wynagrodzenie < 1_000_000) ? 'wynagrodzenie'
+        : !(godziny > 0 && godziny <= 2200) ? 'godziny'
+        : 'dziennie';
+      pokazBlad(form.querySelector<HTMLElement>('[data-blad="dane"]')!, blad, el(zlePole));
       if (blad) {
         w('dni').textContent = '—';
         w('opis').textContent = '';
@@ -142,6 +146,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

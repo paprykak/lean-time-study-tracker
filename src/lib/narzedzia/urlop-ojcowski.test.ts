@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { urlopOjcowski, zasilekOjcowski } from './urlop-ojcowski';
+import { urlopOjcowski, zasilekOjcowski, zostaloDni } from './urlop-ojcowski';
 
 describe('urlop ojcowski (art. 182^3 Kp, art. 31 ustawy zasiłkowej)', () => {
   it('dziecko urodzone 15 marca 2026 r.: urlop najpóźniej do 14 marca 2027 r.', () => {
@@ -23,5 +23,15 @@ describe('urlop ojcowski (art. 182^3 Kp, art. 31 ustawy zasiłkowej)', () => {
   });
   it('niska podstawa przy niepełnym etacie: nie mniej niż 1000 zł miesięcznie', () => {
     expect(zasilekOjcowski(2026, 1000, 14, false)).toMatchObject({ miesiecznie: 1000, dziennie: 33.33, razem: 466.62 });
+  });
+});
+
+describe('zostało dni (komunikat terminu)', () => {
+  it('czasownik i rzeczownik według liczby', () => {
+    expect(zostaloDni(1)).toBe('Został 1 dzień');
+    expect(zostaloDni(2)).toBe('Zostały 2 dni');
+    expect(zostaloDni(5)).toBe('Zostało 5 dni');
+    expect(zostaloDni(22)).toBe('Zostały 22 dni');
+    expect(zostaloDni(12)).toBe('Zostało 12 dni');
   });
 });

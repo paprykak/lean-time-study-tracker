@@ -36,7 +36,7 @@ export const OSOBY_KROTKO: Record<Osoba, string> = {
   mlodociana: 'Młodociana dziewczyna',
 };
 export const CZYNNOSCI_KROTKO: Record<Czynnosc, string> = {
-  podnoszenie: 'Podnoszenie, przenoszenie',
+  podnoszenie: 'Podnoszenie, noszenie',
   'nad-barki': 'Nad barki',
   'ponad-25m': 'Ponad 25 m',
   'gora-do-30': 'Pod górę do 30°',

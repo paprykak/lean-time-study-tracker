@@ -79,7 +79,7 @@ const faq = [
       <div class="mt-4" data-urodzenie>
         <label for="bk-urodzenie" class="etykieta-pola">Data urodzenia</label>
         <input id="bk-urodzenie" name="urodzenie" type="date" class="pole mt-1 max-w-56" min="1930-01-01" max="2100-12-31" value={START.urodzenie} data-dzis={DNI_URODZENIE} aria-describedby="bk-urodzenie-blad" />
-        <p id="bk-urodzenie-blad" class="blad-pola" data-blad="urodzenie" hidden></p>
+        <p id="bk-urodzenie-blad" class="blad-pola" role="alert" data-blad="urodzenie" hidden></p>
       </div>
 
       <fieldset class="mt-6">
@@ -87,13 +87,13 @@ const faq = [
         <div class="mt-2">
           <label for="bk-lek" class="etykieta-pola">Data orzeczenia lekarskiego</label>
           <input id="bk-lek" name="lek" type="date" class="pole mt-1 max-w-56" min="1950-01-01" max="2100-12-31" value={START.lek} data-dzis={DNI_BADANIE} aria-describedby="bk-lek-blad" />
-          <p id="bk-lek-blad" class="blad-pola" data-blad="lek" hidden></p>
+          <p id="bk-lek-blad" class="blad-pola" role="alert" data-blad="lek" hidden></p>
         </div>
         <div class="mt-3">
           <label for="bk-lek-termin" class="etykieta-pola">Termin z orzeczenia lekarskiego</label>
           <input id="bk-lek-termin" name="lekTermin" type="date" class="pole mt-1 max-w-56" min="1950-01-01" max="2100-12-31" aria-describedby="bk-lek-termin-opis bk-lek-termin-blad" />
           <p id="bk-lek-termin-opis" class="meta mt-1">Pole „Termin następnego badania”. Opcjonalne.</p>
-          <p id="bk-lek-termin-blad" class="blad-pola" data-blad="lekTermin" hidden></p>
+          <p id="bk-lek-termin-blad" class="blad-pola" role="alert" data-blad="lekTermin" hidden></p>
         </div>
       </fieldset>
 
@@ -102,13 +102,13 @@ const faq = [
         <div class="mt-2">
           <label for="bk-psy" class="etykieta-pola">Data orzeczenia psychologa</label>
           <input id="bk-psy" name="psy" type="date" class="pole mt-1 max-w-56" min="1950-01-01" max="2100-12-31" value={START.psy} data-dzis={DNI_BADANIE} aria-describedby="bk-psy-blad" />
-          <p id="bk-psy-blad" class="blad-pola" data-blad="psy" hidden></p>
+          <p id="bk-psy-blad" class="blad-pola" role="alert" data-blad="psy" hidden></p>
         </div>
         <div class="mt-3">
           <label for="bk-psy-termin" class="etykieta-pola">Termin z orzeczenia psychologa</label>
           <input id="bk-psy-termin" name="psyTermin" type="date" class="pole mt-1 max-w-56" min="1950-01-01" max="2100-12-31" aria-describedby="bk-psy-termin-opis bk-psy-termin-blad" />
           <p id="bk-psy-termin-opis" class="meta mt-1">Pole „Termin następnego badania”. Opcjonalne.</p>
-          <p id="bk-psy-termin-blad" class="blad-pola" data-blad="psyTermin" hidden></p>
+          <p id="bk-psy-termin-blad" class="blad-pola" role="alert" data-blad="psyTermin" hidden></p>
         </div>
       </fieldset>
     </div>
@@ -224,6 +224,7 @@ const faq = [
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
   import { plikIcs } from '../../lib/narzedzia/kalendarz-ics';
   import { typografia } from '../../lib/typografia.mjs';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-kierowca]');
   if (form) {
@@ -249,12 +250,16 @@ const faq = [
         el.textContent = typografia(s.tekst);
       }
     };
+    // Komunikaty zbieramy w czasie sprawdzania (późniejszy wygrywa) i pokazujemy raz na końcu, żeby pole sprawdzane
+    // dwa razy (np. format, a potem data z przyszłości) nie chowało i nie wpisywało komunikatu ponownie.
+    const POLA_DAT = ['urodzenie', 'lek', 'lekTermin', 'psy', 'psyTermin'];
+    const bledy = new Map<string, string | null>();
     const blad = (n: string, tekst: string | null) => {
-      const b = form.querySelector<HTMLElement>(`[data-blad="${n}"]`)!;
-      b.hidden = !tekst;
-      b.textContent = tekst ?? '';
-      pole(n).setAttribute('aria-invalid', tekst ? 'true' : 'false');
+      bledy.set(n, tekst);
       return !tekst;
+    };
+    const pokazBledy = () => {
+      for (const n of POLA_DAT) pokazBlad(form.querySelector<HTMLElement>(`[data-blad="${n}"]`)!, bledy.get(n) ?? null, pole(n));
     };
     const pusty = () => {
       pisz('lek', 'Wpisz daty');
@@ -284,6 +289,7 @@ const faq = [
       const v = (n: string) => pole(n).value;
       const dzis = dzisWPolsce();
       let ok = true;
+      bledy.clear();
       // novalidate wyłącza min i max z HTML, więc sprawdzamy je tu.
       const data = (n: string, wymagane: boolean) => {
         const x = v(n);
@@ -311,6 +317,7 @@ const faq = [
         blad('psy', null);
         blad('psyTermin', null);
       }
+      pokazBledy();
       if (!ok) return pusty();
 
       const r = widok({ rola, urodzenie: v('urodzenie'), lek: v('lek'), lekTermin: v('lekTermin') || null, psy: v('psy'), psyTermin: v('psyTermin') || null }, dzis);
@@ -352,6 +359,7 @@ const faq = [
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
     ustawDzisiejszeWartosci(form);
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

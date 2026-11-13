@@ -99,7 +99,7 @@ const faq = [
         </div>
         <p class="meta mt-2">Godziny wpisz jako 4, 4,5 albo 4,25. Dyżuru w domu nie wpisuj: nie jest płatny.</p>
       </fieldset>
-      <p id="dk-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+      <p id="dk-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -162,6 +162,7 @@ const faq = [
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
   import { wpisanaLiczba } from '../../lib/narzedzia/format';
   import { typografia } from '../../lib/typografia.mjs';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-dyzur-kierowcy]');
   if (form) {
@@ -180,10 +181,7 @@ const faq = [
       const zlaStawka = !(stawka > 0 && stawka < 1_000_000);
       const zleGodziny = GODZINY.map((_, i) => !(godz[i] >= 0 && godz[i] <= 744));
       const blad = zlaStawka ? (rodzaj === 'miesieczna' ? 'Wpisz pensję, na przykład 6000.' : 'Wpisz stawkę za godzinę, na przykład 31,40.') : zleGodziny.some(Boolean) ? 'Wpisz godziny od 0 do 744, na przykład 4 albo 4,5.' : null;
-      pole('stawka').setAttribute('aria-invalid', zlaStawka ? 'true' : 'false');
-      GODZINY.forEach((k, i) => pole(k).setAttribute('aria-invalid', zleGodziny[i] ? 'true' : 'false'));
-      b.hidden = !blad;
-      b.textContent = blad ? typografia(blad) : '';
+      pokazBlad(b, blad, zlaStawka ? pole('stawka') : GODZINY.filter((_, i) => zleGodziny[i]).map(pole));
       if (blad) {
         for (const k of ['razem', 'godzina', 'dyzur', 'przerwy', 'zaloga', 'przerywany']) w(k).textContent = '—';
         return;
@@ -205,6 +203,7 @@ const faq = [
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
     ustawDzisiejszeWartosci(form);
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

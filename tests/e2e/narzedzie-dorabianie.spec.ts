@@ -46,7 +46,8 @@ test('błędny przychód', async ({ page }) => {
   await expect(page.locator('[data-w="stan"]')).toHaveText('—');
   await expect(page.getByLabel('Przychód w miesiącu (zł brutto)')).toHaveAttribute('aria-invalid', 'true');
   await page.getByLabel('Przychód w miesiącu (zł brutto)').fill('6000');
-  await expect(page.getByLabel('Przychód w miesiącu (zł brutto)')).toHaveAttribute('aria-invalid', 'false');
+  // Po poprawie atrybut znika (wspólny wzorzec, src/lib/narzedzia/formularz.ts).
+  await expect(page.getByLabel('Przychód w miesiącu (zł brutto)')).not.toHaveAttribute('aria-invalid');
 });
 
 test('po powrocie przyciskiem Wstecz wynik odpowiada przywróconemu wyborowi', async ({ page }) => {

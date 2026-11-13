@@ -65,7 +65,7 @@ const faq = [
       <div class="mt-4">
         <label for="n-kwota" class="etykieta-pola" data-w="etykieta-kwoty">Stawka za godzinę (zł brutto)</label>
         <input id="n-kwota" name="kwota" class="pole mt-1 max-w-48" type="text" inputmode="decimal" autocomplete="off" value="35" aria-describedby="n-kwota-blad" />
-        <p id="n-kwota-blad" class="blad-pola" data-blad="kwota" hidden></p>
+        <p id="n-kwota-blad" class="blad-pola" data-blad="kwota" role="alert" hidden></p>
       </div>
       <fieldset class="mt-4" data-tylko-pensja hidden>
         <legend class="etykieta">Miesiąc nadgodzin</legend>
@@ -91,7 +91,7 @@ const faq = [
           <input id="n-50" name="godziny50" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="8" aria-describedby="n-50-opis n-godziny-blad" />
           <p id="n-50-opis" class="meta mt-1">W pozostałe dni, na przykład po zmianie w dzień roboczy.</p>
         </div>
-        <p id="n-godziny-blad" class="blad-pola sm:col-span-2" data-blad="godziny" hidden></p>
+        <p id="n-godziny-blad" class="blad-pola sm:col-span-2" data-blad="godziny" role="alert" hidden></p>
       </div>
     </div>
 
@@ -160,16 +160,14 @@ const faq = [
   import { nazwaMiesiaca } from '../../lib/narzedzia/czas-pracy';
   import { typografia } from '../../lib/typografia.mjs';
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-nadgodziny]');
   if (form) {
     const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
     const pole = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
     const blad = (k: string, pola: HTMLInputElement[], tekst: string | null) => {
-      const b = form.querySelector<HTMLElement>(`[data-blad="${k}"]`)!;
-      b.hidden = !tekst;
-      b.textContent = tekst ?? '';
-      for (const p of pola) p.setAttribute('aria-invalid', tekst ? 'true' : 'false');
+      pokazBlad(form.querySelector<HTMLElement>(`[data-blad="${k}"]`)!, tekst, pola);
     };
     const przelicz = () => {
       const rodzaj = (form.querySelector<HTMLInputElement>('input[name="rodzaj"]:checked')?.value ?? 'godzinowa') as Wynagrodzenie['rodzaj'];
@@ -182,7 +180,7 @@ const faq = [
       const zlaKwota = !(kwota > 0);
       const zleGodziny = Number.isNaN(g100) || Number.isNaN(g50);
       blad('kwota', [pole('kwota')], zlaKwota ? 'Wpisz kwotę w złotych, na przykład 35 albo 6400.' : null);
-      blad('godziny', [pole('godziny100'), pole('godziny50')], zleGodziny ? 'Wpisz liczbę godzin, na przykład 8 albo 2,5.' : null);
+      blad('godziny', [Number.isNaN(g100) && pole('godziny100'), Number.isNaN(g50) && pole('godziny50')].filter((p): p is HTMLInputElement => !!p), zleGodziny ? 'Wpisz liczbę godzin, na przykład 8 albo 2,5.' : null);
       if (zlaKwota || zleGodziny) {
         w('razem').textContent = '—';
         return;
@@ -204,6 +202,7 @@ const faq = [
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
     ustawDzisiejszeWartosci(form);
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

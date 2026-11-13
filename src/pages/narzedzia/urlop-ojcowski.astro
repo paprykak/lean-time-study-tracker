@@ -5,7 +5,8 @@ import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
 import { LATA } from '../../data/prawo';
 import { zl } from '../../lib/narzedzia/format';
 import { dataPoPolsku, dodajMiesiace, dzisWPolsce } from '../../lib/narzedzia/terminy';
-import { urlopOjcowski, zasilekOjcowski } from '../../lib/narzedzia/urlop-ojcowski';
+import { urlopOjcowski, zasilekOjcowski, zostaloDni } from '../../lib/narzedzia/urlop-ojcowski';
+import { typografia } from '../../lib/typografia.mjs';
 
 const dzis = dzisWPolsce();
 const rokBiezacy = Number(dzis.slice(0, 4));
@@ -53,14 +54,14 @@ const faq = [
         <input type="checkbox" name="pelnyEtat" checked class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
         <span>Pełny etat (podstawa nie niższa niż z płacy minimalnej)</span>
       </label>
-      <p id="j-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+      <p id="j-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
       <h2 id="wynik-tytul" class="etykieta">Ostatni dzień urlopu ojcowskiego</h2>
       <div aria-live="polite" aria-atomic="true">
         <p class="wynik-data" data-w="koniec">{dataPoPolsku(u.koniec)}</p>
-        <p class="status-terminu" data-w="status" data-status="w-terminie">Zostało {u.dniDoKonca} dni</p>
+        <p class="status-terminu" data-w="status" data-status="w-terminie">{typografia(zostaloDni(u.dniDoKonca))}</p>
       </div>
       <dl class="wynik-lista">
         <div><dt>Cały urlop naraz: rozpocznij najpóźniej</dt><dd data-w="start">{dataPoPolsku(u.ostatniStart)}</dd></div>
@@ -97,10 +98,10 @@ const faq = [
 <script>
   import { zl, wpisanaLiczba } from '../../lib/narzedzia/format';
   import { dataPoPolsku, dodajMiesiace, dzisWPolsce, poprawnaData } from '../../lib/narzedzia/terminy';
-  import { urlopOjcowski, zasilekOjcowski } from '../../lib/narzedzia/urlop-ojcowski';
+  import { urlopOjcowski, zasilekOjcowski, zostaloDni } from '../../lib/narzedzia/urlop-ojcowski';
   import { LATA } from '../../data/prawo';
-  import { odmiana } from '../../lib/redakcja';
   import { typografia } from '../../lib/typografia.mjs';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-ojcowski]');
   if (form) {
@@ -113,9 +114,7 @@ const faq = [
       let blad: string | null = null;
       if (!poprawnaData(urodzenie) || urodzenie > dzis) blad = 'Wpisz datę urodzenia dziecka.';
       else if (!(brutto > 0 && brutto < 1_000_000)) blad = 'Wpisz pensję brutto, na przykład 6000.';
-      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
-      b.hidden = !blad;
-      b.textContent = typografia(blad ?? '');
+      pokazBlad(form.querySelector<HTMLElement>('[data-blad="dane"]')!, blad, el(blad?.endsWith('dziecka.') ? 'urodzenie' : 'brutto'));
       const status = w('status');
       if (blad) {
         for (const k of ['koniec', 'start', 'wniosek', 'zasilek', 'dziennie']) w(k).textContent = '—';
@@ -133,13 +132,14 @@ const faq = [
       w('dziennie').textContent = typografia(zl(z.dziennie));
       status.hidden = false;
       status.dataset.status = u.minal ? 'po-terminie' : u.dniDoKonca <= 30 ? 'wkrotce' : 'w-terminie';
-      status.textContent = u.minal ? 'Termin minął' : typografia(`Zostało ${odmiana(u.dniDoKonca, ['dzień', 'dni', 'dni'])}`);
+      status.textContent = u.minal ? 'Termin minął' : typografia(zostaloDni(u.dniDoKonca));
     };
     // Przykład z HTML (dziecko urodzone 2 miesiące przed dniem budowania strony) przestawiamy na dziś.
     if (el('urodzenie').value === el('urodzenie').defaultValue) el('urodzenie').value = dodajMiesiace(dzisWPolsce(), -2);
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

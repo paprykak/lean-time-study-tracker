@@ -83,7 +83,7 @@ const faq = [
         <input type="checkbox" name="pelnyEtat" checked class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
         <span>Pracuję na pełny etat (minimum podstawy z płacy minimalnej)</span>
       </label>
-      <p id="o-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+      <p id="o-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -130,6 +130,7 @@ const faq = [
   import { typografia } from '../../lib/typografia.mjs';
   import { odmiana } from '../../lib/redakcja';
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-opiekunczy]');
   if (form) {
@@ -154,8 +155,11 @@ const faq = [
         : !(Number.isInteger(ileDni) && ileDni >= 1 && ileDni <= 366) ? 'Wpisz liczbę dni opieki, na przykład 5.'
         : !(Number.isInteger(ten) && ten >= 0 && Number.isInteger(lacznie) && lacznie >= 0) ? 'Wcześniejsze dni: liczby całkowite od 0.'
         : null;
-      b.hidden = !blad;
-      b.textContent = typografia(blad ?? '');
+      const zle =
+        !(brutto > 0) ? ['brutto']
+        : !(Number.isInteger(ileDni) && ileDni >= 1 && ileDni <= 366) ? ['dni']
+        : ['ten', 'lacznie'].filter((_, i) => !(Number.isInteger([ten, lacznie][i]) && [ten, lacznie][i] >= 0));
+      pokazBlad(b, blad, zle.map((n) => form.elements.namedItem(n) as HTMLInputElement));
       if (blad) {
         w('kwota').textContent = '—';
         return;
@@ -183,6 +187,7 @@ const faq = [
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
     ustawDzisiejszeWartosci(form);
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

@@ -79,7 +79,7 @@ const faq = [
       <div class="mt-4">
         <label for="dz-masa" class="etykieta-pola">Masa ładunku w kg (opcjonalnie)</label>
         <input id="dz-masa" name="masa" class="pole mt-1 max-w-40" type="text" inputmode="decimal" autocomplete="off" aria-describedby="dz-masa-blad" />
-        <p id="dz-masa-blad" class="blad-pola" data-blad="masa" hidden></p>
+        <p id="dz-masa-blad" class="blad-pola" data-blad="masa" role="alert" hidden></p>
       </div>
     </div>
 
@@ -209,6 +209,7 @@ const faq = [
 <script>
   import { limit, porownaj, type Czynnosc, type Osoba, type Tryb } from '../../lib/narzedzia/dzwiganie';
   import { liczba, wpisanaLiczba } from '../../lib/narzedzia/format';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-dzwiganie]');
   if (form) {
@@ -249,9 +250,7 @@ const faq = [
       const tekst = masaPole.value.trim();
       const masa = tekst ? wpisanaLiczba(tekst) : Number.NaN;
       const blad = tekst && (Number.isNaN(masa) || masa <= 0) ? 'Wpisz masę w kilogramach, na przykład 18 albo 7,5.' : null;
-      bladMasy.hidden = !blad;
-      bladMasy.textContent = blad ?? '';
-      masaPole.setAttribute('aria-invalid', blad ? 'true' : 'false');
+      pokazBlad(bladMasy, blad, masaPole);
       if (!tekst || blad) {
         status.hidden = true;
         return;
@@ -269,6 +268,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

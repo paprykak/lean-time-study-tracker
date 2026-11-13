@@ -105,7 +105,7 @@ const faq = [
           <p class="meta mt-1">Można pominąć</p>
         </div>
       </div>
-      <p id="no-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+      <p id="no-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -170,6 +170,7 @@ const faq = [
   import { nadgodzinyOkresu, tekstyWyniku, ulamekEtatu } from '../../lib/narzedzia/nadgodziny-okres';
   import { wpisanaLiczba } from '../../lib/narzedzia/format';
   import { typografia } from '../../lib/typografia.mjs';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-nadgodziny-okres]');
   if (form) {
@@ -182,23 +183,23 @@ const faq = [
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
       const liczby: Record<string, number> = {};
       let blad: string | null = null;
-      for (const n of ['przepracowane', 'dobowe', 'nieobecnosc', 'stawka']) el(n).removeAttribute('aria-invalid');
+      const zle = new Set<string>();
       if (!el('przepracowane').value.trim()) {
         blad = 'Wpisz przepracowane godziny.';
-        el('przepracowane').setAttribute('aria-invalid', 'true');
+        zle.add('przepracowane');
       }
       for (const n of ['przepracowane', 'dobowe', 'nieobecnosc']) {
         liczby[n] = wpisanaLiczba(el(n).value || '0');
         if (Number.isNaN(liczby[n])) {
           blad ??= `Pole „${NAZWY[n]}”: wpisz liczbę, np. 7,5.`;
-          el(n).setAttribute('aria-invalid', 'true');
+          zle.add(n);
         }
       }
       const stawkaTekst = el('stawka').value.trim();
       const stawka = stawkaTekst ? wpisanaLiczba(stawkaTekst) : undefined;
       if (Number.isNaN(stawka)) {
         blad ??= 'Stawka: wpisz liczbę, np. 32,50.';
-        el('stawka').setAttribute('aria-invalid', 'true');
+        zle.add('stawka');
       }
       const etat = ulamekEtatu(el('etat').value);
       let r: ReturnType<typeof nadgodzinyOkresu> | null = null;
@@ -218,12 +219,18 @@ const faq = [
           if (!(e instanceof RangeError)) throw e;
           blad = `${e.message}.`;
           // Komunikat z logiki dotyczy konkretnych pól: oznaczamy je dla czytnika ekranu.
-          const pola = e.message.startsWith('Nadgodziny dobowe') ? ['dobowe', 'przepracowane'] : e.message.startsWith('W okresie jest') ? ['przepracowane'] : e.message.startsWith('Nieobecność') ? ['nieobecnosc'] : e.message.startsWith('Stawka') ? ['stawka'] : [];
-          for (const n of pola) el(n).setAttribute('aria-invalid', 'true');
+          const m = e.message;
+          const pola =
+            m.startsWith('Nadgodziny dobowe') ? ['dobowe', 'przepracowane']
+            : m.startsWith('W okresie jest') || m.startsWith('Godziny (przepracowane)') ? ['przepracowane']
+            : m.startsWith('Godziny (dobowe)') ? ['dobowe']
+            : m.startsWith('Nieobecność') || m.startsWith('Godziny (nieobecność)') ? ['nieobecnosc']
+            : m.startsWith('Stawka') ? ['stawka']
+            : [];
+          for (const n of pola) zle.add(n);
         }
       }
-      b.hidden = !blad;
-      b.textContent = blad ? typografia(blad) : '';
+      pokazBlad(b, blad, [...zle].map(el));
       if (!r) {
         for (const k of POLA) w(k).textContent = k === 'glowna' ? '—' : k === 'uwaga' ? '' : '—';
         w('opis').textContent = '';
@@ -242,6 +249,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

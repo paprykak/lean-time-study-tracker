@@ -141,6 +141,7 @@ const faq = [
   import { dzisWPolsce, poprawnaData } from '../../lib/narzedzia/terminy';
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
   import { typografia } from '../../lib/typografia.mjs';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-mobbing]');
   if (form) {
@@ -155,10 +156,7 @@ const faq = [
       const dzis = dzisWPolsce();
       const data = el('data').value;
       const blad = !poprawnaData(data) ? 'Wpisz datę.' : data > dzis ? 'Wpisz datę, która już minęła albo jest dzisiaj.' : null;
-      const b = form.querySelector<HTMLElement>('[data-blad="data"]')!;
-      b.hidden = !blad;
-      b.textContent = blad ? typografia(blad) : '';
-      el('data').setAttribute('aria-invalid', String(!!blad));
+      pokazBlad(form.querySelector<HTMLElement>('[data-blad="data"]')!, blad, el('data'));
       const status = w('status');
       if (blad) {
         for (const k of ['kwota', 'przepisy', 'przedawnienie']) w(k).textContent = '—';
@@ -177,6 +175,7 @@ const faq = [
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
     ustawDzisiejszeWartosci(form);
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>
