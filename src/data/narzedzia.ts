@@ -582,6 +582,9 @@ export const NARZEDZIA: Narzedzie[] = [
     krotko: 'Kiedy następne badania kierowcy zawodowego (co 5 lat, po 60. roku co 30 miesięcy), kto płaci i ile kosztują.',
     kategoria: 'uprawnienia',
     przepisy: ['transportDrogowy', 'kierujacyPojazdami', 'badaniaLekarskieKierowcow', 'badaniaPsychologiczne', 'zmianaPsychotestow2026', 'badaniaProfilaktyczne', 'wozkiBhp', 'kodeksPracy', 'kodeksCywilny'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'wynagrodzenie-za-niepelny-miesiac',
     nazwa: 'Wynagrodzenie za niepełny miesiąc',
     krotko: 'Pensja za część miesiąca: po L4 (1/30), urlopie bezpłatnym, przy przyjęciu albo odejściu w trakcie miesiąca.',

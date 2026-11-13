@@ -520,6 +520,7 @@ export const AKTY = {
     uwaga: 'tekst jednolity; zmiany Dz.U. 2026 poz. 456 i 726 bez zmian w załączniku nr 1 (wskazówki metodyczne)',
     adres: eli(2023, 607),
     sprawdzono: '2026-11-12',
+  },
   zfss: {
     nazwa: 'Ustawa o zakładowym funduszu świadczeń socjalnych',
     publikator: 'Dz.U. 2024 poz. 288',
