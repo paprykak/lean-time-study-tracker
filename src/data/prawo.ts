@@ -710,6 +710,34 @@ export const AKTY = {
     adres: eli(1996, 287),
     sprawdzono: '2026-11-13',
   },
+  emeryturyPomostowe: {
+    nazwa: 'Ustawa o emeryturach pomostowych',
+    publikator: 'Dz.U. 2024 poz. 1696',
+    uwaga: 'tekst jednolity, stan prawny na 30 października 2024 r., bez późniejszych zmian (API Sejmu); art. 4: 15 lat pracy w szczególnych warunkach, 55/60 lat, staż 20/25 lat, praca po 2008 r.; art. 6 porty, art. 7 hutnictwo, art. 8 nurkowie, rybacy morscy i azbest; art. 16 koniec w wieku 60/65 lat; art. 21–23 rekompensata; załączniki: wykazy prac',
+    adres: eli(2024, 1696),
+    sprawdzono: '2026-11-13',
+  },
+  zmianaPomostowych2023: {
+    nazwa: 'Ustawa z 28 lipca 2023 r. o zmianie ustawy o emeryturach pomostowych oraz niektórych innych ustaw',
+    publikator: 'Dz.U. 2023 poz. 1667',
+    uwaga: 'od 1 stycznia 2024 r.: uchylony art. 4 pkt 5 (praca w szczególnych warunkach przed 1999 r.) i art. 53, nowe brzmienie art. 2 pkt 5, 21 i 22 (rekompensata), art. 5–11 (odesłanie do art. 4 pkt 1, 4 i 6), art. 17 ust. 4 (także umowy cywilnoprawne), art. 49 pkt 2; nowy art. 4 stosuje się do postępowań niezakończonych prawomocnie (art. 5 ust. 1)',
+    adres: eli(2023, 1667),
+    sprawdzono: '2026-11-13',
+  },
+  swiadczeniaPrzedemerytalne: {
+    nazwa: 'Ustawa o świadczeniach przedemerytalnych',
+    publikator: 'Dz.U. 2026 poz. 115',
+    uwaga: 'tekst jednolity, stan prawny na 22 stycznia 2026 r., bez późniejszych zmian (API Sejmu); art. 2 ust. 1 pkt 1–6: warunki, ust. 3: 180 dni zasiłku dla bezrobotnych i wniosek do 30 dni; art. 3: 1600,70 zł, waloryzowane; art. 4: koniec w wieku 60/65 lat; art. 5: zmniejszenie i zawieszenie przy przychodzie',
+    adres: eli(2026, 115),
+    sprawdzono: '2026-11-13',
+  },
+  przychodPrzedemerytalne2026: {
+    nazwa: 'Komunikat Prezesa ZUS w sprawie dopuszczalnej i granicznej kwoty przychodu przy świadczeniach przedemerytalnych (od 1 marca 2026 r.)',
+    publikator: 'M.P. 2026 poz. 208',
+    uwaga: 'od 1 marca 2026 r.: 2225,90 zł (25% przeciętnego wynagrodzenia w 2025 r.) i 6232,50 zł (70%) miesięcznie; wcześniej M.P. 2025 poz. 142 (2045,50 i 5727,20 zł)',
+    adres: 'https://eli.gov.pl/eli/MP/2026/208/ogl',
+    sprawdzono: '2026-11-13',
+  },
 } as const satisfies Record<string, Akt>;
 
 export type KluczAktu = keyof typeof AKTY;
