@@ -26,9 +26,9 @@ describe('apelacja pracownika (art. 35 ust. 1) i sąd (art. 17 pkt 4, 461 § 1¹
   it('opis wyniku', () => {
     const o = opisSadu('wynagrodzenie', 80_000);
     expect(o.pozew).toBe('0 zł');
-    expect(o.apelacja).toMatch(/^1\s?500,00\szł$/);
+    expect(o.apelacja).toMatch(/^1\s?500\szł$/);
     expect(o.sad).toBe('Sąd rejonowy (sąd pracy)');
-    expect(o.uwagi.join(' ')).toMatch(/od 30\s000,00\szł/);
+    expect(o.uwagi.join(' ')).toMatch(/od 30\s000\szł/);
     expect(o.pip).toContain('art. 11 ust. 1 pkt 7');
     expect(opisSadu('mobbing', 0).uwagi[0]).toContain('461 § 1¹');
     expect(opisSadu('wynagrodzenie', 150_000).sad).toBe('Sąd okręgowy (sąd pracy)');

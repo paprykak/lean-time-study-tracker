@@ -31,7 +31,7 @@ describe('opis wyniku i przedawnienie (art. 291 § 1 Kp)', () => {
     expect(o.kwota).toMatch(/^28\s836,00\szł$/);
     expect(o.przepisy).toBe('art. 94³ § 11 Kodeksu pracy');
     expect(o.przedawnienie).toBe('10 listopada 2029 r.');
-    expect(o.status).toBe('Zostało 1093 dni');
+    expect(o.status).toBe('Zostało: 1093 dni');
     expect(o.uwagi.join(' ')).toMatch(/29\s700,00\szł/);
   });
   it('29 lutego, ostatni dzień i po terminie', () => {

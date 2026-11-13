@@ -17,7 +17,7 @@
 // przedmiotu sporu podlega opłacie tylko od wartości tej części (art. 126¹ § 2 KPC), więc przy apelacji od części wyroku
 // opłata może być niższa. Pokazujemy opłatę od apelacji co do całości, według brzmienia przepisu.
 
-import { zl } from './format';
+import { liczba } from './format';
 
 export type SprawaPracownicza = 'wynagrodzenie' | 'wypowiedzenie' | 'mobbing' | 'umowa-o-prace' | 'swiadectwo' | 'kara' | 'bhp';
 
@@ -25,59 +25,50 @@ export interface OpisSprawy {
   krotko: string;
   /** Zawsze sąd rejonowy (art. 461 § 1¹ KPC). */
   rejonowy: boolean;
-  /** Czy to roszczenie pieniężne, przy którym ma sens wartość sporu. */
-  pieniezna: boolean;
   pip: string;
   sad: string;
 }
 
 export const SPRAWY_PRACOWNICZE: Record<SprawaPracownicza, OpisSprawy> = {
   wynagrodzenie: {
-    krotko: 'Zaległa wypłata, nadgodziny',
+    krotko: 'Zaległa wypłata',
     rejonowy: false,
-    pieniezna: true,
     pip: 'Inspektor może nakazać pracodawcy wypłatę należnego wynagrodzenia i innych świadczeń; nakaz podlega natychmiastowemu wykonaniu (art. 11 ust. 1 pkt 7 ustawy o PIP).',
     sad: 'Pozew o zapłatę do sądu pracy. Roszczenie przedawnia się po 3 latach od dnia wypłaty (art. 291 § 1 Kodeksu pracy).',
   },
   wypowiedzenie: {
-    krotko: 'Wypowiedzenie, dyscyplinarka',
+    krotko: 'Zwolnienie z pracy',
     rejonowy: true,
-    pieniezna: false,
     pip: 'Inspekcja może skontrolować pracodawcę, ale o bezskuteczności wypowiedzenia, przywróceniu do pracy i odszkodowaniu orzeka tylko sąd pracy (art. 45 § 1 i 56 § 1 Kodeksu pracy).',
-    sad: 'Odwołanie do sądu pracy w 21 dni od doręczenia pisma (art. 264 Kodeksu pracy), także wtedy, gdy sprawą zajmuje się PIP; inny początek terminu ustawa przewiduje tylko po decyzji inspektora stwierdzającej stosunek pracy (art. 34 ust. 2i ustawy o PIP).',
+    sad: 'Odwołanie do sądu pracy w 21 dni od doręczenia pisma o wypowiedzeniu albo zwolnieniu dyscyplinarnym (art. 264 Kodeksu pracy). Ten termin biegnie także wtedy, gdy sprawą zajmuje się PIP. Wyjątek dotyczy tylko decyzji inspektora stwierdzającej stosunek pracy (art. 34 ust. 2i ustawy o PIP).',
   },
   mobbing: {
     krotko: 'Mobbing, dyskryminacja',
     rejonowy: true,
-    pieniezna: true,
     pip: 'Inspektor może skierować do pracodawcy wystąpienie albo polecenie usunięcia naruszeń (art. 11 ust. 1 pkt 8 ustawy o PIP), ale zadośćuczynienie zasądza tylko sąd.',
     sad: 'Pozew o zadośćuczynienie albo odszkodowanie do sądu pracy (art. 18³d i 94³ Kodeksu pracy); od 5 listopada 2026 r. zawsze w sądzie rejonowym.',
   },
   'umowa-o-prace': {
-    krotko: 'Zlecenie zamiast umowy o pracę',
+    krotko: 'Zlecenie zamiast etatu',
     rejonowy: true,
-    pieniezna: false,
     pip: 'Od 8 lipca 2026 r. okręgowy inspektor pracy może decyzją stwierdzić stosunek pracy, gdy pracodawca nie wykona polecenia zawarcia umowy o pracę (art. 11 ust. 1 pkt 7a i ust. 2 ustawy o PIP). Inspektor może też wnieść pozew o ustalenie stosunku pracy na Twoją rzecz (art. 10 ust. 1 pkt 11).',
-    sad: 'Pozew o ustalenie istnienia stosunku pracy do sądu pracy; ta sama sprawa zawsze w sądzie rejonowym (art. 461 § 1¹ Kodeksu postępowania cywilnego).',
+    sad: 'Pozew o ustalenie istnienia stosunku pracy do sądu pracy; taka sprawa zawsze trafia do sądu rejonowego (art. 461 § 1¹ Kodeksu postępowania cywilnego).',
   },
   swiadectwo: {
     krotko: 'Świadectwo pracy',
     rejonowy: true,
-    pieniezna: false,
     pip: 'Inspektor może skierować do pracodawcy wystąpienie albo polecenie wydania świadectwa (art. 11 ust. 1 pkt 8 ustawy o PIP).',
     sad: 'Żądanie wydania świadectwa można zgłosić w sądzie w każdym czasie przed przedawnieniem (art. 97¹ § 1 i 3 Kodeksu pracy); sprostowanie: 14 dni od zawiadomienia o odmowie (art. 97 § 2¹).',
   },
   kara: {
     krotko: 'Kara porządkowa',
     rejonowy: true,
-    pieniezna: false,
     pip: 'Inspekcja może skontrolować, czy kara była zgodna z przepisami, ale uchylić ją może pracodawca po sprzeciwie albo sąd pracy (art. 112 Kodeksu pracy).',
     sad: 'Najpierw sprzeciw do pracodawcy w 7 dni, po jego odrzuceniu pozew do sądu pracy w 14 dni (art. 112 § 1–2 Kodeksu pracy).',
   },
   bhp: {
     krotko: 'BHP, zagrożenie w pracy',
     rejonowy: false,
-    pieniezna: false,
     pip: 'Inspektor może nakazać usunięcie uchybień, wstrzymać prace albo maszyny przy bezpośrednim zagrożeniu życia lub zdrowia; takie nakazy wykonuje się od razu (art. 11 ust. 1 pkt 1–4 ustawy o PIP).',
     sad: 'Sąd pracy rozpatruje roszczenia, na przykład o odszkodowanie; nakazy BHP wydaje inspekcja, nie sąd.',
   },
@@ -124,13 +115,13 @@ export function opisSadu(sprawa: SprawaPracownicza, wartosc: number): WynikSadu 
   if (s.rejonowy) uwagi.push('Ta sprawa należy do sądu rejonowego bez względu na kwotę (art. 461 § 1¹ Kodeksu postępowania cywilnego).');
   else if (sad === 'okręgowy') uwagi.push('Przy roszczeniu majątkowym powyżej 100 000 zł właściwy jest sąd okręgowy (art. 17 pkt 4 Kodeksu postępowania cywilnego).');
   if (apel > 0) {
-    uwagi.push(`Opłata od apelacji liczona od ${zl(Math.ceil(wartosc) - PROG_APELACJI)}, czyli od wartości ponad 50 000 zł (art. 35 ust. 1 ustawy o kosztach sądowych). Gdy apelacja dotyczy tylko części wyroku, opłata liczy się od tej części (art. 126¹ § 2 Kodeksu postępowania cywilnego).`);
+    uwagi.push(`Opłata od apelacji liczona od ${liczba(Math.ceil(wartosc) - PROG_APELACJI)} zł, czyli od wartości ponad 50 000 zł (art. 35 ust. 1 ustawy o kosztach sądowych). Gdy apelacja dotyczy tylko części wyroku, opłata liczy się od tej części (art. 126¹ § 2 Kodeksu postępowania cywilnego).`);
   }
   uwagi.push('Przegrana strona zwraca przeciwnikowi koszty procesu, na przykład wynagrodzenie adwokata (art. 98 § 1 Kodeksu postępowania cywilnego).');
   return {
     sad: `Sąd ${sad} (sąd pracy)`,
     pozew: '0 zł',
-    apelacja: apel > 0 ? zl(apel) : '0 zł',
+    apelacja: `${liczba(apel)} zł`,
     pip: s.pip,
     droga: s.sad,
     uwagi,

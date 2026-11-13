@@ -14,6 +14,8 @@ const rok = LATA.includes(rokDzis) ? rokDzis : LATA[LATA.length - 1];
 const NARUSZENIE: Naruszenie = 'mobbing';
 const start = opisMobbingu(NARUSZENIE, dzis, rok, dzis);
 const placa = PLACA_MINIMALNA[rok].miesiecznie;
+// Nowe kwoty obowiązują od 5 listopada 2026 r., więc tabela pokazuje płacę od 2026 r.
+const LATA_NOWE = LATA.filter((r) => r >= 2026);
 
 const faq = [
   {
@@ -64,7 +66,7 @@ const faq = [
         <div>
           <label for="m-data" class="etykieta-pola">Dzień ostatniego zachowania</label>
           <input id="m-data" name="data" type="date" data-dzis class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" value={dzis} aria-describedby="m-blad" />
-          <p id="m-blad" class="blad-pola" data-blad="data" hidden></p>
+          <p id="m-blad" class="blad-pola" data-blad="data" role="alert" hidden></p>
         </div>
         <div>
           <label for="m-rok" class="etykieta-pola">Płaca minimalna z roku</label>
@@ -80,12 +82,12 @@ const faq = [
       <div aria-live="polite" aria-atomic="true">
         <p class="wynik-data" data-w="kwota">{start.kwota}</p>
         <p class="meta" data-w="opis">{start.opis}</p>
+        <dl class="wynik-lista">
+          <div><dt>Przepis</dt><dd data-w="przepisy">{start.przepisy}</dd></div>
+          <div><dt>Przedawnienie</dt><dd data-w="przedawnienie">{start.przedawnienie}</dd></div>
+        </dl>
+        <p class="status-terminu" data-w="status" data-status={start.statusKlasa}>{start.status}</p>
       </div>
-      <dl class="wynik-lista">
-        <div><dt>Przepis</dt><dd data-w="przepisy">{start.przepisy}</dd></div>
-        <div><dt>Przedawnienie</dt><dd data-w="przedawnienie">{start.przedawnienie}</dd></div>
-      </dl>
-      <p class="status-terminu" data-w="status" data-status={start.statusKlasa}>{start.status}</p>
       <p class="wynik-uwaga" data-w="dowod">{start.dowod}</p>
       <p class="wynik-uwaga" data-w="uwaga">{start.uwagi.join(' ')}</p>
       <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady i kwoty są opisane poniżej.</p></noscript>
@@ -97,12 +99,12 @@ const faq = [
     <div class="tabela">
       <table>
         <caption class="sr-only">Najniższe zadośćuczynienie według rodzaju naruszenia i roku płacy minimalnej</caption>
-        <thead><tr><th scope="col">Sprawa</th><th scope="col">Najmniej</th>{LATA.map((r) => <th scope="col">{r}</th>)}<th scope="col">Przepis</th></tr></thead>
+        <thead><tr><th scope="col">Sprawa</th>{LATA_NOWE.map((r) => <th scope="col">{r}</th>)}</tr></thead>
         <tbody>
-          <tr><th scope="row">Dyskryminacja</th><td>1 × płaca</td>{LATA.map((r) => <td>{zl(PLACA_MINIMALNA[r].miesiecznie)}</td>)}<td>art. 18³d § 1</td></tr>
-          <tr><th scope="row">Dyskryminacja wielokrotna</th><td>3 × płaca</td>{LATA.map((r) => <td>{zl(3 * PLACA_MINIMALNA[r].miesiecznie)}</td>)}<td>art. 18³d § 2</td></tr>
-          <tr><th scope="row">Kara za upominanie się o prawa</th><td>1 × płaca</td>{LATA.map((r) => <td>{zl(PLACA_MINIMALNA[r].miesiecznie)}</td>)}<td>art. 18³e § 2</td></tr>
-          <tr><th scope="row">Mobbing</th><td>6 × płaca</td>{LATA.map((r) => <td>{zl(6 * PLACA_MINIMALNA[r].miesiecznie)}</td>)}<td>art. 94³ § 11</td></tr>
+          <tr><th scope="row">Dyskryminacja: 1 × płaca (art. 18³d § 1)</th>{LATA_NOWE.map((r) => <td>{zl(PLACA_MINIMALNA[r].miesiecznie)}</td>)}</tr>
+          <tr><th scope="row">Powtarzana dyskryminacja: 3 × płaca (art. 18³d § 2)</th>{LATA_NOWE.map((r) => <td>{zl(3 * PLACA_MINIMALNA[r].miesiecznie)}</td>)}</tr>
+          <tr><th scope="row">Kara za upominanie się: 1 × płaca (art. 18³e § 2)</th>{LATA_NOWE.map((r) => <td>{zl(PLACA_MINIMALNA[r].miesiecznie)}</td>)}</tr>
+          <tr><th scope="row">Mobbing: 6 × płaca (art. 94³ § 11)</th>{LATA_NOWE.map((r) => <td>{zl(6 * PLACA_MINIMALNA[r].miesiecznie)}</td>)}</tr>
         </tbody>
       </table>
     </div>
@@ -156,6 +158,7 @@ const faq = [
       const b = form.querySelector<HTMLElement>('[data-blad="data"]')!;
       b.hidden = !blad;
       b.textContent = blad ? typografia(blad) : '';
+      el('data').setAttribute('aria-invalid', String(!!blad));
       const status = w('status');
       if (blad) {
         for (const k of ['kwota', 'przepisy', 'przedawnienie']) w(k).textContent = '—';

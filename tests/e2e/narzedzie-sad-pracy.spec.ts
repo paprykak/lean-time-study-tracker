@@ -9,13 +9,18 @@ test.beforeEach(async ({ page }) => {
   await page.getByLabel('Sprawa', { exact: true }).selectOption('wynagrodzenie');
 });
 
+test('kwota z „zł”', async ({ page }) => {
+  await page.getByLabel('Kwota, której żądasz (zł)').fill('80 000 zł');
+  await expect(page.locator('[data-w="apelacja"]')).toHaveText(/^1\s?500\szł$/);
+});
+
 test('opłaty od pozwu i apelacji', async ({ page }) => {
   const kwota = page.getByLabel('Kwota, której żądasz (zł)');
   await kwota.fill('80000');
   await expect(page.locator('[data-w="pozew"]')).toHaveText('0 zł');
-  await expect(page.locator('[data-w="apelacja"]')).toHaveText(/^1\s?500,00\szł$/);
+  await expect(page.locator('[data-w="apelacja"]')).toHaveText(/^1\s?500\szł$/);
   await kwota.fill('60000');
-  await expect(page.locator('[data-w="apelacja"]')).toHaveText(/^500,00\szł$/);
+  await expect(page.locator('[data-w="apelacja"]')).toHaveText(/^500\szł$/);
   await kwota.fill('50000');
   await expect(page.locator('[data-w="apelacja"]')).toHaveText('0 zł');
   await expect(page.locator('[data-w="pip"]')).toContainText(/art\.\s11\sust\.\s1\spkt\s7/);

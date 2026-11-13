@@ -35,7 +35,7 @@ export type Naruszenie = 'dyskryminacja' | 'wielokrotna' | 'odwet' | 'mobbing';
 /** `krotko` do listy wyboru (telefon ucina długie opcje), `nazwa` do opisu pod polem. */
 export const NARUSZENIA: Record<Naruszenie, { krotko: string; nazwa: string }> = {
   dyskryminacja: { krotko: 'Dyskryminacja', nazwa: 'Gorsze traktowanie z powodu płci, wieku, narodowości, rodzaju umowy albo innej cechy z art. 18³a § 1.' },
-  wielokrotna: { krotko: 'Dyskryminacja wielokrotna', nazwa: 'Powtarzana z tej samej przyczyny, z wielu przyczyn albo jednorazowo z kilku przyczyn naraz.' },
+  wielokrotna: { krotko: 'Powtarzana dyskryminacja', nazwa: 'Powtarzana z tej samej przyczyny, z wielu przyczyn albo jednorazowo z kilku przyczyn naraz.' },
   odwet: { krotko: 'Kara za upominanie się', nazwa: 'Gorsze traktowanie za korzystanie z praw pracownika albo za wsparcie osoby, która z nich korzysta.' },
   mobbing: { krotko: 'Mobbing', nazwa: 'Uporczywe nękanie: powtarzalne, nawracające albo stałe.' },
 };
@@ -92,7 +92,7 @@ const DOWOD_NOWY =
 const DOWOD_DAWNY =
   'Gdy pracodawca różnicował sytuację pracownika z przyczyny z art. 18³a § 1, to pracodawca musi udowodnić, że kierował się obiektywnymi powodami (art. 18³b § 1).';
 const DOWOD_OGOLNY =
-  'Kodeks pracy nie ma przy tym roszczeniu osobnej reguły dowodowej, więc fakty udowadnia ta strona, która wywodzi z nich skutki prawne (art. 6 Kodeksu cywilnego przez art. 300 Kodeksu pracy). Gdy sprawa dotyczy też dyskryminacji, w postępowaniu o naruszenie równego traktowania wystarczy ją uprawdopodobnić (art. 18³f, od 5 listopada 2026 r.).';
+  'Fakty musisz udowodnić Ty, więc zbieraj dowody: świadków, wiadomości, notatki z datami. Kodeks pracy nie ma przy tym roszczeniu osobnej reguły dowodowej, a fakty udowadnia ta strona, która wywodzi z nich skutki prawne (art. 6 Kodeksu cywilnego przez art. 300 Kodeksu pracy). Gdy sprawa dotyczy też dyskryminacji, w postępowaniu o naruszenie równego traktowania wystarczy ją uprawdopodobnić (art. 18³f, od 5 listopada 2026 r.).';
 
 /** Teksty wyniku: te same w HTML ze strony i w skrypcie przeglądarki. */
 export function opisMobbingu(naruszenie: Naruszenie, dataZachowania: string, rok: number, dzis: string): OpisMobbingu {
@@ -106,7 +106,7 @@ export function opisMobbingu(naruszenie: Naruszenie, dataZachowania: string, rok
       ? 'Termin minął'
       : zostalo === 0
         ? 'To ostatni dzień'
-        : `Zostało ${odmiana(zostalo, ['dzień', 'dni', 'dni'])}`;
+        : `Zostało: ${odmiana(zostalo, ['dzień', 'dni', 'dni'])}`;
   const uwagi: string[] = [];
   let opis: string;
   if (kwota === null) {
@@ -133,6 +133,9 @@ export function opisMobbingu(naruszenie: Naruszenie, dataZachowania: string, rok
     uwagi.push(nowe
       ? 'Ochrona nie przysługuje osobie, która wiedziała, że do naruszenia prawa pracy nie doszło (art. 18³e § 4).'
       : 'Ochrona obejmuje też osobę, która wspierała pracownika korzystającego z tych uprawnień (art. 18³e § 2 w brzmieniu sprzed 5 listopada 2026 r.).');
+  }
+  if (kwota !== null && rok < Number(dataZachowania.slice(0, 4))) {
+    uwagi.push('Wybrany rok płacy minimalnej jest wcześniejszy niż rok zachowania, więc kwota jest niższa niż z płacą z roku zachowania albo późniejszego.');
   }
   const nastepny = PLACA_MINIMALNA[rok + 1];
   if (kwota !== null && nastepny && r.mnoznik > 0) {

@@ -53,7 +53,7 @@ const faq = [
         <label for="s-wartosc" class="etykieta-pola">Kwota, której żądasz (zł)</label>
         <input id="s-wartosc" name="wartosc" class="pole mt-1 max-w-56" type="text" inputmode="decimal" autocomplete="off" value={String(WARTOSC)} aria-describedby="s-wartosc-opis s-blad" />
         <p id="s-wartosc-opis" class="meta mt-1">Bez kwoty wpisz 0. Przy wypowiedzeniu wartość sporu to wynagrodzenie za rok albo za sporny okres umowy terminowej.</p>
-        <p id="s-blad" class="blad-pola mt-1" data-blad="dane" hidden></p>
+        <p id="s-blad" class="blad-pola mt-1" data-blad="dane" role="alert" hidden></p>
       </div>
     </div>
 
@@ -61,11 +61,11 @@ const faq = [
       <h2 id="wynik-tytul" class="etykieta">Sąd i koszty</h2>
       <div aria-live="polite" aria-atomic="true">
         <p class="wynik-data" data-w="sad">{start.sad}</p>
+        <dl class="wynik-lista">
+          <div><dt>Opłata od pozwu</dt><dd data-w="pozew">{start.pozew}</dd></div>
+          <div><dt>Opłata od apelacji</dt><dd data-w="apelacja">{start.apelacja}</dd></div>
+        </dl>
       </div>
-      <dl class="wynik-lista">
-        <div><dt>Opłata od pozwu</dt><dd data-w="pozew">{start.pozew}</dd></div>
-        <div><dt>Opłata od apelacji</dt><dd data-w="apelacja">{start.apelacja}</dd></div>
-      </dl>
       <p class="wynik-uwaga"><strong>PIP:</strong> <span data-w="pip">{start.pip}</span></p>
       <p class="wynik-uwaga"><strong>Sąd:</strong> <span data-w="droga">{start.droga}</span></p>
       <p class="wynik-uwaga" data-w="uwaga">{start.uwagi.join(' ')}</p>
@@ -86,7 +86,7 @@ const faq = [
     <ul>
       <li>Spory o roszczenia ze stosunku pracy rozstrzygają sądy pracy (art. 262 § 1 Kodeksu pracy). Pozew składasz w sądzie właściwym dla pracodawcy albo w sądzie miejsca pracy (art. 461 § 1 Kodeksu postępowania cywilnego).</li>
       <li>Sąd rejonowy rozpoznaje bez względu na kwotę sprawy o ustalenie stosunku pracy, wypowiedzenie, przywrócenie do pracy, odszkodowanie za rozwiązanie umowy, kary porządkowe i świadectwo pracy, a od 5 listopada 2026 r. także o dobra osobiste, mobbing i równe traktowanie (art. 461 § 1¹). Inne roszczenia majątkowe powyżej 100 000 zł trafiają do sądu okręgowego (art. 17 pkt 4).</li>
-      <li>Pozew pracownika jest bez opłaty (art. 96 ust. 1 pkt 4 ustawy o kosztach sądowych). Od apelacji w sprawie o wartości ponad 50 000 zł pobiera się opłatę od nadwyżki według art. 13: od 30 do 1000 zł przy nadwyżce do 20 000 zł, powyżej 5% (art. 35 ust. 1 i art. 13).</li>
+      <li>Pozew pracownika jest bez opłaty (art. 96 ust. 1 pkt 4 ustawy o kosztach sądowych). Od apelacji w sprawie o wartości ponad 50 000 zł pobiera się opłatę od nadwyżki według art. 13: od 30 do 1000 zł przy nadwyżce do 20 000 zł, a przy większej nadwyżce 5% tej nadwyżki, najwyżej 100 000 zł (art. 35 ust. 1 i art. 13).</li>
       <li>Przy zasądzeniu należności sąd z urzędu nadaje wyrokowi rygor natychmiastowej wykonalności do wysokości pełnego miesięcznego wynagrodzenia (art. 477² § 1 Kodeksu postępowania cywilnego).</li>
     </ul>
 
@@ -95,7 +95,7 @@ const faq = [
       Opłatę od apelacji liczymy od kwoty ponad 50 000 zł według progów art. 13 ust. 1 ustawy o kosztach sądowych (30 zł
       do 500 zł, 100 zł do 1500 zł, 200 zł do 4000 zł, 400 zł do 7500 zł, 500 zł do 10 000 zł, 750 zł do 15 000 zł, 1000 zł
       do 20 000 zł), a powyżej 20 000 zł jako 5%, najwyżej 100 000 zł (ust. 2), z zaokrągleniem w górę do pełnego złotego
-      (art. 21). Kwotę zaokrąglamy w górę do pełnego złotego (art. 126¹ § 3 Kodeksu postępowania cywilnego). Pokazujemy
+      (art. 21). Wartość sporu zaokrąglamy w górę do pełnego złotego (art. 126¹ § 3 Kodeksu postępowania cywilnego). Pokazujemy
       opłatę od apelacji co do całości; gdy apelacja dotyczy części wyroku, opłata liczy się od tej części (art. 126¹ § 2).
       W sprawach o nawiązanie, istnienie albo rozwiązanie stosunku pracy wartością sporu jest wynagrodzenie za rok, a przy
       umowie na czas określony za sporny okres, najwyżej rok (art. 23¹).
@@ -121,12 +121,13 @@ const faq = [
       w(k).textContent = typografia(tekst);
     };
     const przelicz = () => {
-      const tekst = el('wartosc').value.trim();
+      const tekst = el('wartosc').value.trim().replace(/\s*zł\.?$/i, '');
       const wartosc = tekst === '' ? 0 : wpisanaLiczba(tekst);
       const blad = !(wartosc >= 0 && wartosc < 1_000_000_000) ? 'Wpisz kwotę w złotych, na przykład 12000, albo 0.' : null;
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
       b.hidden = !blad;
       b.textContent = blad ? typografia(blad) : '';
+      el('wartosc').setAttribute('aria-invalid', String(!!blad));
       if (blad) {
         for (const k of ['sad', 'pozew', 'apelacja']) w(k).textContent = '—';
         for (const k of ['pip', 'droga', 'uwaga']) w(k).textContent = '';
