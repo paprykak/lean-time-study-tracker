@@ -116,8 +116,10 @@ describe('widok', () => {
     expect(v.statusLek?.status).toBe('w-terminie');
     expect(v.oplataPsy).toMatch(/^150 zł .* 200 zł od 14 listopada 2026 r\./);
     expect(widok(we, '2026-11-14').oplataPsy).toMatch(/^200 zł/);
-    expect(v.wydarzenia).toHaveLength(6);
-    expect(v.wydarzenia.filter((w) => w.tytul.startsWith('Bezpieczniej')).map((w) => w.data)).toEqual(['2028-03-15', '2028-07-20']);
+    expect(v.wydarzenia).toHaveLength(8);
+    // 30 dni przed (Python: 2028-02-14, 2028-06-20) i w dniu terminu ostrożnego
+    expect(v.wydarzenia.filter((w) => w.tytul.startsWith('Bezpieczniej')).map((w) => w.data)).toEqual(['2028-02-14', '2028-03-15', '2028-06-20', '2028-07-20']);
+    expect(v.dzien60).toBe('15 marca 2028 r.; badania wykonane od tego dnia: następne po 30 miesiącach');
   });
   it('kierowca: zaległe badanie ze statusu daty wiążącej, nie ostrożnej; osobne podstawy dla lekarskiego i psychotestów', () => {
     // 60. urodziny 2028-03-15; dziś 2029-01-01: ostrożny termin minął, ustawowy (2031-01-20) nie
@@ -128,6 +130,18 @@ describe('widok', () => {
     expect(z.statusPsy?.status).toBe('po-terminie');
     expect(z.uwaga).toContain('art. 39a ust. 1 pkt 4');
     expect(z.uwaga).not.toContain('229');
+  });
+  it('opis .ics terminu ostrożnego podaje termin wiążący (tu z orzeczenia), nie „według ustawy”', () => {
+    const v = widok({ rola: 'kierowca', urodzenie: '1968-03-15', lek: '2026-01-20', lekTermin: '2030-01-01', psy: '2026-01-20' }, '2026-11-13');
+    const o = v.wydarzenia.find((w) => w.data === '2028-07-20' && w.tytul.includes('lekarskie'))!;
+    expect(o.opis).toContain('Termin wiążący to 1 stycznia 2030 r.');
+    expect(o.opis).not.toContain('Według ustawy');
+    expect(v.placi).toContain('wykonujesz przewóz samodzielnie, płacisz Ty');
+  });
+  it('opis kalendarza: przy aucie służbowym bez terminu z orzeczenia brak wydarzeń i dopisek', () => {
+    const v = widok({ rola: 'auto-sluzbowe', urodzenie: '', lek: '2025-08-31', psy: '' }, '2026-11-13');
+    expect(v.wydarzenia).toEqual([]);
+    expect(v.icsOpis).toBe('Terminy do kalendarza po wpisaniu terminu z orzeczenia.');
   });
   it('orzeczenie równe ustawowemu: bez słowa „wcześniejszy”', () => {
     const v = widok({ rola: 'kierowca', urodzenie: '1981-05-10', lek: '2026-11-12', lekTermin: '2031-11-12', psy: '2026-11-12' }, '2026-11-12');

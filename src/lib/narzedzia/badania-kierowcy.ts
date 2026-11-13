@@ -62,7 +62,7 @@ export const WIDELKI = {
 } as const;
 export const WIEK_WOZEK = 50;
 
-/** Ile dni przed terminem przypomnienie w kalendarzu. */
+/** Ile dni przed terminem dodatkowy wpis w kalendarzu. */
 export const DNI_PRZYPOMNIENIA = 30;
 
 export type Status = 'po-terminie' | 'pilne' | 'wkrotce' | 'w-terminie';
@@ -153,14 +153,13 @@ export function oplataPsychotestu(rozpoczete: string, zakonczone?: string): numb
   return rozpoczete < ZMIANA_OPLATY_PSYCH ? OPLATA_PSYCH_DAWNA : OPLATA_PSYCH;
 }
 
-const PLACI_KIEROWCA = 'Skierowanie wydaje i koszt ponosi przewoźnik albo pracodawca; gdy jako przedsiębiorca sam wykonujesz przewóz, Ty (art. 39m ustawy o transporcie drogowym).';
+const PLACI_KIEROWCA = 'Skierowanie wydaje i koszt ponosi przewoźnik albo pracodawca; gdy jako przedsiębiorca wykonujesz przewóz samodzielnie, płacisz Ty (art. 39m ustawy o transporcie drogowym).';
 const PLACI_KP = 'Skierowanie wydaje i koszt ponosi pracodawca.';
 const NAZWA = { lekarskie: 'badanie lekarskie kierowcy', psychologiczne: 'badanie psychologiczne kierowcy (psychotesty)', okresowe: 'okresowe badanie lekarskie' } as const;
 export type RodzajBadania = keyof typeof NAZWA;
 
-/** Wydarzenia do pliku .ics: 30 dni przed terminem i w dniu terminu, tylko te, które jeszcze nie minęły. */
 /** Wydarzenia do pliku .ics od daty wiążącej: 30 dni przed i w dniu terminu, tylko te, które jeszcze nie minęły.
- *  Termin ostrożny (gdy jest) to osobne, wyraźnie opisane przypomnienie. */
+ *  Termin ostrożny (gdy jest) to osobne, wyraźnie opisane wydarzenia: 30 dni przed nim i w jego dniu. */
 export function wydarzenia(terminy: { rodzaj: RodzajBadania; termin: string; ostroznie?: string | null }[], dzis: string): Wydarzenie[] {
   return terminy
     .flatMap(({ rodzaj, termin, ostroznie }) => {
@@ -170,12 +169,13 @@ export function wydarzenia(terminy: { rodzaj: RodzajBadania; termin: string; ost
         { data: dodajDni(termin, -DNI_PRZYPOMNIENIA), tytul: `Umów: ${NAZWA[rodzaj]}`, opis },
         { data: termin, tytul: `${duze}: ostatni dzień`, opis },
       ];
-      if (ostroznie && ostroznie < termin)
-        lista.push({
-          data: ostroznie,
-          tytul: `Bezpieczniej wcześniej: ${NAZWA[rodzaj]}`,
-          opis: `Termin ostrożny po 60. urodzinach: nasza interpretacja, przepis tego nie wymaga. Według ustawy termin to ${dataPoPolsku(termin)} Policzone na rytmhali.pl/narzedzia/badania-kierowcy.`,
-        });
+      if (ostroznie && ostroznie < termin) {
+        const opisOstr = `Termin ostrożny po 60. urodzinach (${dataPoPolsku(ostroznie)}): nasza interpretacja, przepis tego nie wymaga. Termin wiążący to ${dataPoPolsku(termin)} Policzone na rytmhali.pl/narzedzia/badania-kierowcy.`;
+        lista.push(
+          { data: dodajDni(ostroznie, -DNI_PRZYPOMNIENIA), tytul: `Bezpieczniej umów: ${NAZWA[rodzaj]}`, opis: opisOstr },
+          { data: ostroznie, tytul: `Bezpieczniej wcześniej: ${NAZWA[rodzaj]}`, opis: opisOstr },
+        );
+      }
       return lista;
     })
     .filter((w) => dniMiedzy(dzis, w.data) >= 0)
@@ -211,8 +211,14 @@ export interface Widok {
   oplataLek: string;
   oplataPsy: string;
   uwaga: string | null;
+  /** Co trafi do pliku .ics (bez obietnic powiadomień: plik nie ma alarmów). */
+  icsOpis: string;
   wydarzenia: Wydarzenie[];
 }
+const ICS_KIEROWCA =
+  'Terminy do kalendarza: 30 dni przed terminem i w dniu terminu, a gdy jest termin ostrożny, także 30 dni przed nim i w jego dniu (tylko te, które jeszcze nie minęły).';
+const ICS_KP = 'Terminy do kalendarza: 30 dni przed terminem z orzeczenia i w jego dniu (tylko te, które jeszcze nie minęły).';
+const ICS_BEZ_TERMINU = 'Terminy do kalendarza po wpisaniu terminu z orzeczenia.';
 
 const ETYKIETA: Record<Status, string> = { 'po-terminie': 'Zaległe', pilne: 'Pilne', wkrotce: 'Wkrótce', 'w-terminie': 'W terminie' };
 const statusWidoku = (termin: string, dzis: string): StatusWidoku => {
@@ -261,11 +267,12 @@ export function widok(we: Wejscie, dzis: string): Widok {
       statusPsy: sp,
       psyOpis: opisKierowcy(p, 'art. 39k ust. 3'),
       psyOstroznie: opisOstroznie(p),
-      dzien60: `${dataPoPolsku(l.dzien60)}; od tego dnia badania co ${MIESIECY_PO_60} miesięcy`,
-      placi: 'przewoźnik albo pracodawca (art. 39l ust. 1 pkt 2 ustawy o transporcie drogowym); gdy jako przedsiębiorca sam wykonujesz przewóz, Ty (art. 39m)',
+      dzien60: `${dataPoPolsku(l.dzien60)}; badania wykonane od tego dnia: następne po ${MIESIECY_PO_60} miesiącach`,
+      placi: 'przewoźnik albo pracodawca (art. 39l ust. 1 pkt 2 ustawy o transporcie drogowym); gdy jako przedsiębiorca wykonujesz przewóz samodzielnie, płacisz Ty (art. 39m)',
       oplataLek: `limit ${OPLATA_LEKARSKA_MAKS} zł dotyczy badania z ustawy o kierujących pojazdami (art. 79a); przepis nie przesądza, czy obejmuje całe badanie kierowcy z art. 39j. Na etacie i tak płaci pracodawca`,
       oplataPsy: opisOplatyPsych(dzis),
       uwaga: [sl.status === 'po-terminie' ? ZALEGLE : '', sp.status === 'po-terminie' ? ZALEGLE_PSY : ''].filter(Boolean).join(' ') || null,
+      icsOpis: ICS_KIEROWCA,
       wydarzenia: wydarzenia(
         [
           { rodzaj: 'lekarskie', termin: l.termin, ostroznie: l.ostroznie },
@@ -283,15 +290,19 @@ export function widok(we: Wejscie, dzis: string): Widok {
   const st = we.lekTermin ? statusWidoku(we.lekTermin, dzis) : dniMiedzy(dzis, w.do) < 0 ? statusWidoku(w.do, dzis) : null;
   const zakres =
     we.rola === 'wozek'
-      ? `co ${w.miesiaceOd / 12}–${w.miesiaceDo / 12} lata${w.po50 ? ' po ukończeniu 50 lat' : ''}, zał. nr 1 cz. V pkt 2; inne czynniki ze skierowania, np. praca wymagająca sprawności psychoruchowej (pkt 4: co 1–2 lata, po 50 latach co rok), mogą skrócić termin`
+      ? `co ${w.miesiaceOd / 12}–${w.miesiaceDo / 12} lata${w.po50 ? ' po ukończeniu 50 lat' : ''}, zał. nr 1 cz. V pkt 2`
       : 'co 30 miesięcy – 5 lat, zał. nr 1 cz. V pkt 11, jeśli kierowanie pojazdem jest w skierowaniu';
   return {
     naglowekLek: we.lekTermin ? 'Następne badanie okresowe najpóźniej' : 'Następne badanie okresowe',
     lek: we.lekTermin ? dataPoPolsku(we.lekTermin) : `między ${dataPoPolsku(w.od)} a ${dataPoPolsku(w.do)}`,
     statusLek: st,
-    lekOpis: we.lekTermin
-      ? `Wiąże termin z orzeczenia. Widełki ze wskazówek metodycznych: ${zakres}.`
-      : `Widełki ze wskazówek metodycznych (${zakres}). Wiąże termin, który lekarz wpisze w orzeczeniu.`,
+    lekOpis:
+      (we.lekTermin
+        ? `Wiąże termin z orzeczenia. Widełki ze wskazówek metodycznych: ${zakres}.`
+        : `Widełki ze wskazówek metodycznych: ${zakres}. Wiąże termin, który lekarz wpisze w orzeczeniu.`) +
+      (we.rola === 'wozek'
+        ? ' Inne czynniki ze skierowania mogą skrócić termin, na przykład praca wymagająca sprawności psychoruchowej: co 1–2 lata, po 50 latach co rok (pkt 4).'
+        : ''),
     lekOstroznie: null,
     pokazPsy: false,
     psy: '',
@@ -307,6 +318,7 @@ export function widok(we: Wejscie, dzis: string): Widok {
         : 'stałego obowiązku nie ma; lekarz może skierować na konsultację psychologiczną (§ 2 ust. 2 rozporządzenia o badaniach profilaktycznych)') +
       '. Psychotesty z ustawy o kierujących pojazdami obowiązują też m.in. po spowodowaniu wypadku z ofiarami, jeździe po alkoholu, przekroczeniu 24 punktów albo na skierowanie lekarza (art. 82 ust. 1 pkt 3–5)',
     uwaga: st?.status === 'po-terminie' ? ZALEGLE : null,
+    icsOpis: we.lekTermin ? ICS_KP : ICS_BEZ_TERMINU,
     wydarzenia: we.lekTermin ? wydarzenia([{ rodzaj: 'okresowe', termin: we.lekTermin }], dzis) : [],
   };
 }

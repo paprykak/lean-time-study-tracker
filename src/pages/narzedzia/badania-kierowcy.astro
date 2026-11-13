@@ -13,10 +13,13 @@ import {
   ZMIANA_OPLATY_PSYCH,
   widok,
 } from '../../lib/narzedzia/badania-kierowcy';
-import { dataPoPolsku, dodajDni, dodajLata, dzisWPolsce } from '../../lib/narzedzia/terminy';
+import { dataPoPolsku, dodajDni, dzisWPolsce } from '../../lib/narzedzia/terminy';
 
 const dzis = dzisWPolsce();
-const START = { rola: 'kierowca' as const, urodzenie: dodajLata(dzis, -45), lek: dodajLata(dzis, -2), psy: dodajLata(dzis, -2) };
+// Wartości startowe względem dziś (data-dzis w dniach); skrypt przestawia je na prawdziwe dziś (dzis-w-formularzu.ts).
+const DNI_URODZENIE = -16436; // ok. 45 lat
+const DNI_BADANIE = -730; // 2 lata
+const START = { rola: 'kierowca' as const, urodzenie: dodajDni(dzis, DNI_URODZENIE), lek: dodajDni(dzis, DNI_BADANIE), psy: dodajDni(dzis, DNI_BADANIE) };
 const v = widok(START, dzis);
 const zmiana = dataPoPolsku(ZMIANA_OPLATY_PSYCH);
 const OPIS_KIEROWCY =
@@ -30,7 +33,7 @@ const faq = [
   },
   {
     pytanie: 'Kto płaci za badania i psychotesty kierowcy?',
-    odpowiedz: 'Przewoźnik albo pracodawca: musi skierować kierowcę na badania i pokryć ich koszt (art. 39l ust. 1 pkt 1 i 2 ustawy o transporcie drogowym, art. 229 § 6 Kodeksu pracy). Gdy jako przedsiębiorca sam wykonujesz przewóz, płacisz sam (art. 39m). Za czas badań okresowych i kontrolnych pracownik zachowuje prawo do wynagrodzenia (art. 229 § 3 Kodeksu pracy).',
+    odpowiedz: 'Przewoźnik albo pracodawca: musi skierować kierowcę na badania i pokryć ich koszt (art. 39l ust. 1 pkt 1 i 2 ustawy o transporcie drogowym, art. 229 § 6 Kodeksu pracy). Gdy jako przedsiębiorca wykonujesz przewóz samodzielnie, płacisz Ty (art. 39m). Za czas badań okresowych i kontrolnych pracownik zachowuje prawo do wynagrodzenia (art. 229 § 3 Kodeksu pracy).',
   },
   {
     pytanie: 'Ile kosztują psychotesty dla kierowcy w 2026 roku?',
@@ -75,7 +78,7 @@ const faq = [
 
       <div class="mt-4" data-urodzenie>
         <label for="bk-urodzenie" class="etykieta-pola">Data urodzenia</label>
-        <input id="bk-urodzenie" name="urodzenie" type="date" class="pole mt-1 max-w-56" min="1930-01-01" max="2100-12-31" value={START.urodzenie} aria-describedby="bk-urodzenie-blad" />
+        <input id="bk-urodzenie" name="urodzenie" type="date" class="pole mt-1 max-w-56" min="1930-01-01" max="2100-12-31" value={START.urodzenie} data-dzis={DNI_URODZENIE} aria-describedby="bk-urodzenie-blad" />
         <p id="bk-urodzenie-blad" class="blad-pola" data-blad="urodzenie" hidden></p>
       </div>
 
@@ -83,7 +86,7 @@ const faq = [
         <legend class="etykieta" data-w="legenda-lek">Badanie lekarskie</legend>
         <div class="mt-2">
           <label for="bk-lek" class="etykieta-pola">Data orzeczenia lekarskiego</label>
-          <input id="bk-lek" name="lek" type="date" class="pole mt-1 max-w-56" min="1950-01-01" max="2100-12-31" value={START.lek} aria-describedby="bk-lek-blad" />
+          <input id="bk-lek" name="lek" type="date" class="pole mt-1 max-w-56" min="1950-01-01" max="2100-12-31" value={START.lek} data-dzis={DNI_BADANIE} aria-describedby="bk-lek-blad" />
           <p id="bk-lek-blad" class="blad-pola" data-blad="lek" hidden></p>
         </div>
         <div class="mt-3">
@@ -98,12 +101,13 @@ const faq = [
         <legend class="etykieta">Badanie psychologiczne</legend>
         <div class="mt-2">
           <label for="bk-psy" class="etykieta-pola">Data orzeczenia psychologa</label>
-          <input id="bk-psy" name="psy" type="date" class="pole mt-1 max-w-56" min="1950-01-01" max="2100-12-31" value={START.psy} aria-describedby="bk-psy-blad" />
+          <input id="bk-psy" name="psy" type="date" class="pole mt-1 max-w-56" min="1950-01-01" max="2100-12-31" value={START.psy} data-dzis={DNI_BADANIE} aria-describedby="bk-psy-blad" />
           <p id="bk-psy-blad" class="blad-pola" data-blad="psy" hidden></p>
         </div>
         <div class="mt-3">
           <label for="bk-psy-termin" class="etykieta-pola">Termin z orzeczenia psychologa</label>
-          <input id="bk-psy-termin" name="psyTermin" type="date" class="pole mt-1 max-w-56" min="1950-01-01" max="2100-12-31" aria-describedby="bk-psy-termin-blad" />
+          <input id="bk-psy-termin" name="psyTermin" type="date" class="pole mt-1 max-w-56" min="1950-01-01" max="2100-12-31" aria-describedby="bk-psy-termin-opis bk-psy-termin-blad" />
+          <p id="bk-psy-termin-opis" class="meta mt-1">Pole „Termin następnego badania”. Opcjonalne.</p>
           <p id="bk-psy-termin-blad" class="blad-pola" data-blad="psyTermin" hidden></p>
         </div>
       </fieldset>
@@ -113,13 +117,13 @@ const faq = [
       <div aria-live="polite" aria-atomic="true">
         <h2 id="wynik-tytul" class="etykieta" data-w="naglowek-lek">{v.naglowekLek}</h2>
         <p class="wynik-data" data-w="lek">{v.lek}</p>
-        <p class="status-terminu" data-w="status-lek" data-status={v.statusLek?.status} hidden={!v.statusLek}>{v.statusLek?.tekst}</p>
+        <p class="status-terminu" data-w="status-lek" hidden></p>
         <p class="meta mt-1" data-w="lek-opis">{v.lekOpis}</p>
         <p class="meta mt-1" data-w="lek-ostroznie" hidden={!v.lekOstroznie}>{v.lekOstroznie}</p>
         <div class="mt-5" data-w="blok-psy">
           <h3 class="etykieta">Następne psychotesty najpóźniej</h3>
           <p class="wynik-data" data-w="psy">{v.psy}</p>
-          <p class="status-terminu" data-w="status-psy" data-status={v.statusPsy?.status} hidden={!v.statusPsy}>{v.statusPsy?.tekst}</p>
+          <p class="status-terminu" data-w="status-psy" hidden></p>
           <p class="meta mt-1" data-w="psy-opis">{v.psyOpis}</p>
           <p class="meta mt-1" data-w="psy-ostroznie" hidden={!v.psyOstroznie}>{v.psyOstroznie}</p>
         </div>
@@ -134,7 +138,7 @@ const faq = [
       <p class="mt-5">
         <button type="button" class="przycisk przycisk-grafit" data-ics disabled>Dodaj do kalendarza (.ics)</button>
       </p>
-      <p class="meta mt-2">Przypomnienia: 30 dni przed terminem i w dniu terminu, a przy 60. urodzinach także w dniu terminu ostrożnego (tylko te, które jeszcze nie minęły).</p>
+      <p class="meta mt-2" data-w="ics-opis">{v.icsOpis}</p>
       <noscript><p class="wynik-uwaga">Wynik powyżej to przykład dla kierowcy 45 lat po badaniach sprzed 2 lat. Żeby wpisać swoje daty, włącz JavaScript; zasady i tabela są poniżej.</p></noscript>
     </div>
   </form>
@@ -172,7 +176,7 @@ const faq = [
     <ul>
       <li>Termin liczymy od daty ostatniego orzeczenia, osobno dla badania lekarskiego i psychologicznego. Do daty dodajemy {LATA_DO_60} lat albo {MIESIECY_PO_60} miesięcy jak w art. 112 Kodeksu cywilnego: ten sam dzień miesiąca, a gdy go brak, ostatni dzień miesiąca (31 sierpnia + 30 miesięcy = koniec lutego). Badanie trzeba zrobić najpóźniej w tym dniu.</li>
       <li>Wiek liczymy według art. 112 Kodeksu cywilnego: 60 lat kończysz z początkiem dnia 60. urodzin. Badanie w dniu urodzin to już badanie po ukończeniu 60 lat.</li>
-      <li>Odstęp wybieramy według wieku w dniu badania, jak we wzorze orzeczenia psychologicznego. Przepis nie mówi, co wtedy, gdy {LATA_DO_60} lat od badania kończy się po 60. urodzinach. Jako wiążący pokazujemy termin według brzmienia przepisu. Osobno podajemy termin ostrożny, wcześniejszy: 30 miesięcy od badania, ale nie wcześniej niż w dniu 60. urodzin. To nasza interpretacja, przepis tego nie wymaga, więc nie wpływa na status ani na ostrzeżenie o zaległym badaniu; w pliku .ics jest osobnym, opisanym przypomnieniem.</li>
+      <li>Odstęp wybieramy według wieku w dniu badania, jak we wzorze orzeczenia psychologicznego. Przepis nie mówi, co wtedy, gdy {LATA_DO_60} lat od badania kończy się po 60. urodzinach. Jako wiążący pokazujemy termin według brzmienia przepisu. Osobno podajemy termin ostrożny, wcześniejszy: 30 miesięcy od badania, ale nie wcześniej niż w dniu 60. urodzin. To nasza interpretacja, przepis tego nie wymaga, więc nie wpływa na status ani na ostrzeżenie o zaległym badaniu; w pliku .ics ma osobne, opisane wpisy: 30 dni przed nim i w jego dniu.</li>
       <li>Termin z orzeczenia ma pierwszeństwo, gdy jest wcześniejszy: lekarz może go skrócić ze względu na stan zdrowia (art. 79 ust. 3 pkt 1 ustawy o kierujących pojazdami, § 2 ust. 2 rozporządzenia o badaniach profilaktycznych). Gdy podasz termin z orzeczenia, wiąże wcześniejsza z dat: z orzeczenia albo z ustawy.</li>
       <li>Przy aucie służbowym i wózku podajemy tylko widełki: wiąże termin z orzeczenia. „Powyżej 50. roku życia” liczymy jako ukończone 50 lat w dniu badania. Po górnej granicy widełek badanie jest zaległe, bo lekarz może termin skrócić, ale nie wydłużyć. Widełki dla auta dotyczą sytuacji, gdy kierowanie pojazdem jest w skierowaniu (pkt 11), a dla wózka tylko czynnika z pkt 2: inne czynniki ze skierowania, na przykład praca wymagająca sprawności psychoruchowej (pkt 4: co 1–2 lata, po 50 latach co rok), mogą termin skrócić.</li>
       <li>Nie liczymy terminów dla motorniczych tramwajów, instruktorów, egzaminatorów, kierowców pojazdów uprzywilejowanych i przewożących wartości pieniężne: mają osobne zasady.</li>
@@ -182,7 +186,7 @@ const faq = [
     <p>
       Przewoźnik albo pracodawca kieruje kierowcę na badania i pokrywa ich koszt (art. 39l ust. 1 pkt 1 i 2 ustawy
       o transporcie drogowym), a za czas badań okresowych i kontrolnych pracownik zachowuje wynagrodzenie (art. 229 § 3
-      Kodeksu pracy). Gdy jako przedsiębiorca sam wykonujesz przewóz, koszt ponosisz Ty (art. 39m). Za badanie lekarskie
+      Kodeksu pracy). Gdy jako przedsiębiorca wykonujesz przewóz samodzielnie, płacisz Ty (art. 39m). Za badanie lekarskie
       z ustawy o kierujących pojazdami (art. 75 ust. 1) opłata nie może przekroczyć {OPLATA_LEKARSKA_MAKS} zł (art. 79a);
       przepis nie przesądza, czy limit obejmuje całe badanie kierowcy z art. 39j, które jest badaniem z Kodeksu pracy
       poszerzonym o zakres tej ustawy. Pracownik i tak nie płaci.
@@ -216,7 +220,8 @@ const faq = [
 
 <script>
   import { widok, type Rola, type StatusWidoku } from '../../lib/narzedzia/badania-kierowcy';
-  import { dzisWPolsce, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { dataPoPolsku, dzisWPolsce, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
   import { plikIcs } from '../../lib/narzedzia/kalendarz-ics';
   import { typografia } from '../../lib/typografia.mjs';
 
@@ -261,6 +266,7 @@ const faq = [
       w('psy').textContent = '—';
       w('psy-opis').textContent = '';
       w('uwaga').hidden = true;
+      w('wiersz-60').hidden = true;
       wydarzenia = [];
       ics.disabled = true;
     };
@@ -278,11 +284,17 @@ const faq = [
       const v = (n: string) => pole(n).value;
       const dzis = dzisWPolsce();
       let ok = true;
-      const data = (n: string, wymagane: boolean, tekst = 'Wpisz pełną datę: dzień, miesiąc i rok.') => {
+      // novalidate wyłącza min i max z HTML, więc sprawdzamy je tu.
+      const data = (n: string, wymagane: boolean) => {
         const x = v(n);
-        const dobra = x ? poprawnaData(x) : !wymagane;
-        ok = blad(n, dobra ? null : tekst) && ok;
-        return dobra;
+        const p = pole(n);
+        let tekst: string | null = null;
+        if (!x) tekst = wymagane ? 'Wpisz pełną datę: dzień, miesiąc i rok.' : null;
+        else if (!poprawnaData(x)) tekst = 'Wpisz pełną datę: dzień, miesiąc i rok.';
+        else if (x < p.min) tekst = `Wpisz datę od ${dataPoPolsku(p.min)}`;
+        else if (x > p.max) tekst = `Wpisz datę do ${dataPoPolsku(p.max)}`;
+        ok = blad(n, tekst) && ok;
+        return !tekst;
       };
       const potrzebneUrodzenie = rola !== 'auto-sluzbowe';
       if (potrzebneUrodzenie && data('urodzenie', true) && v('urodzenie') > dzis) ok = blad('urodzenie', 'Data urodzenia nie może być z przyszłości.') && ok;
@@ -319,6 +331,7 @@ const faq = [
       pisz('oplata-psy', r.oplataPsy);
       w('uwaga').hidden = !r.uwaga;
       pisz('uwaga', r.uwaga ?? '');
+      pisz('ics-opis', r.icsOpis);
       wydarzenia = r.wydarzenia;
       ics.disabled = wydarzenia.length === 0;
     };
@@ -338,6 +351,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    ustawDzisiejszeWartosci(form);
     przelicz();
   }
 </script>

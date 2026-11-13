@@ -73,6 +73,28 @@ test('plik .ics z terminami obu badań', async ({ page, browserName }) => {
   expect(tresc).toContain('DTSTART;VALUE=DATE:20300630');
 });
 
+test('wartości startowe liczone od prawdziwego dziś (page.clock 2027-06-01)', async ({ page }) => {
+  await page.clock.setFixedTime(new Date('2027-06-01T10:00:00+02:00'));
+  await page.goto(ADRES);
+  await expect(page.getByLabel('Data orzeczenia lekarskiego')).toHaveValue('2025-06-01');
+  await expect(page.getByLabel('Data urodzenia')).toHaveValue('1982-06-01'); // Python: 2027-06-01 − 16436 dni
+  await expect(page.locator('[data-w="lek"]')).toHaveText(/^1\sczerwca\s2030\sr\.$/);
+  await expect(page.locator('[data-w="status-lek"]')).toHaveText(/W\sterminie:\sza\s1096\sdni/);
+});
+
+test('data spoza zakresu pola: komunikat zamiast wyniku', async ({ page }) => {
+  await wpisz(page, { 'Data urodzenia': '1920-01-01' });
+  await expect(page.locator('[data-blad="urodzenie"]')).toHaveText(/Wpisz\sdatę\sod\s1\sstycznia\s1930\sr\./);
+  await expect(page.locator('[data-w="lek"]')).toHaveText('Wpisz daty');
+  await expect(page.locator('[data-w="wiersz-60"]')).toBeHidden();
+});
+
+test('wózek bez terminu z orzeczenia: kalendarz wyłączony z dopiskiem', async ({ page }) => {
+  await page.getByLabel('Operator wózka widłowego').check();
+  await expect(page.getByRole('button', { name: 'Dodaj do kalendarza (.ics)' })).toBeDisabled();
+  await expect(page.locator('[data-w="ics-opis"]')).toHaveText(/Terminy\sdo\skalendarza\spo\swpisaniu\sterminu\sz\sorzeczenia\./);
+});
+
 test.describe('bez JavaScriptu', () => {
   test.use({ javaScriptEnabled: false });
   test('wynik startowy i tabela są w HTML', async ({ page }) => {
@@ -80,5 +102,6 @@ test.describe('bez JavaScriptu', () => {
     await expect(page.locator('[data-w="lek"]')).toHaveText(/\d{4}\sr\.$/);
     await expect(page.locator('[data-w="oplata-lek"]')).toContainText('200 zł');
     await expect(page.locator('#co-ile ~ .tabela tr', { hasText: 'po 60 latach' })).toContainText('co 30 miesięcy');
+    await expect(page.locator('[data-w="status-lek"]')).toBeHidden();
   });
 });
