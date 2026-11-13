@@ -689,6 +689,20 @@ export const AKTY = {
     adres: eli(2023, 1667),
     sprawdzono: '2026-11-13',
   },
+  swiadczeniaPrzedemerytalne: {
+    nazwa: 'Ustawa o świadczeniach przedemerytalnych',
+    publikator: 'Dz.U. 2026 poz. 115',
+    uwaga: 'tekst jednolity, stan prawny na 22 stycznia 2026 r., bez późniejszych zmian (API Sejmu); art. 2 ust. 1 pkt 1–6: warunki, ust. 3: 180 dni zasiłku dla bezrobotnych i wniosek do 30 dni; art. 3: 1600,70 zł, waloryzowane; art. 4: koniec w wieku 60/65 lat; art. 5: zmniejszenie i zawieszenie przy przychodzie',
+    adres: eli(2026, 115),
+    sprawdzono: '2026-11-13',
+  },
+  przychodPrzedemerytalne2026: {
+    nazwa: 'Komunikat Prezesa ZUS w sprawie dopuszczalnej i granicznej kwoty przychodu przy świadczeniach przedemerytalnych (od 1 marca 2026 r.)',
+    publikator: 'M.P. 2026 poz. 208',
+    uwaga: 'od 1 marca 2026 r.: 2225,90 zł (25% przeciętnego wynagrodzenia w 2025 r.) i 6232,50 zł (70%) miesięcznie; wcześniej M.P. 2025 poz. 142 (2045,50 i 5727,20 zł)',
+    adres: 'https://eli.gov.pl/eli/MP/2026/208/ogl',
+    sprawdzono: '2026-11-13',
+  },
 } as const satisfies Record<string, Akt>;
 
 export type KluczAktu = keyof typeof AKTY;

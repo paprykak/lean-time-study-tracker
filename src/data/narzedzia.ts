@@ -817,6 +817,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-13',
   },
   {
+    slug: 'swiadczenie-przedemerytalne',
+    nazwa: 'Świadczenie przedemerytalne',
+    krotko: 'Czy po likwidacji firmy albo zwolnieniu przed emeryturą przysługuje: wiek, staż, 180 dni zasiłku.',
+    kategoria: 'wynagrodzenie',
+    przepisy: ['swiadczeniaPrzedemerytalne', 'przychodPrzedemerytalne2026', 'rynekPracy', 'emerytury', 'kodeksPracy'],
+    sprawdzono: '2026-11-13',
+  },
+  {
     slug: 'przerwy-w-pracy',
     nazwa: 'Przerwy w pracy',
     krotko: 'Ile przerw przy zmianie 8 i 12 godzin, które są płatne, przy monitorze, na karmienie, dla młodocianych.',
