@@ -38,11 +38,11 @@ const faq = [
   },
   {
     pytanie: 'Czy przerwa w jeździe jest płatna?',
-    odpowiedz: 'Z przerwy w jeździe 15 minut wlicza się do czasu pracy, jeśli dobowy wymiar czasu pracy to co najmniej 6 godzin (art. 27 ust. 3 ustawy o czasie pracy kierowców). Pozostała część przerwy to czas dyżuru (art. 27 ust. 1), za który przysługuje wynagrodzenie nie niższe niż połowa stawki z osobistego zaszeregowania (art. 9 ust. 5 i 6).',
+    odpowiedz: 'Z przerwy w jeździe 15 minut wlicza się do czasu pracy, jeśli dobowy wymiar czasu pracy to co najmniej 6 godzin (art. 27 ust. 3 ustawy o czasie pracy kierowców). Pozostała część przerwy to czas dyżuru (art. 27 ust. 1), za który przysługuje wynagrodzenie nie niższe niż połowa stawki z osobistego zaszeregowania (art. 9 ust. 5 i 6). Na liniach regularnych do 50 km przerwy rozlicza się jak czas pracy (art. 31b ust. 4).',
   },
   {
     pytanie: 'Czy kierowcy busa do 3,5 tony dotyczą te przepisy?',
-    odpowiedz: 'Rozporządzenie 561/2006 obejmuje przewóz rzeczy pojazdami powyżej 3,5 tony, a od 1 lipca 2026 r. także przewóz międzynarodowy i kabotaż pojazdami powyżej 2,5 tony (art. 2 ust. 1). Kierowca pojazdu do 3,5 tony w kraju ma odpoczynki z ustawy o czasie pracy kierowców: 11 godzin w każdej dobie i 35 godzin w tygodniu (art. 14) oraz 15 minut przerwy przy co najmniej 6 godzinach pracy (art. 6 ust. 3).',
+    odpowiedz: 'Rozporządzenie 561/2006 obejmuje przewóz rzeczy pojazdami powyżej 3,5 tony, a od 1 lipca 2026 r. także przewóz międzynarodowy i kabotaż pojazdami powyżej 2,5 tony (art. 2 ust. 1). Kierowca pojazdu do 3,5 tony w kraju ma odpoczynki z ustawy o czasie pracy kierowców: 11 godzin w każdej dobie i 35 godzin w tygodniu (art. 14) oraz 15 minut przerwy przy dobowym wymiarze czasu pracy co najmniej 6 godzin (art. 6 ust. 3). To samo dotyczy przewozu za granicą pojazdem do 2,5 tony.',
   },
 ];
 ---
@@ -66,14 +66,14 @@ const faq = [
         </div>
         <div>
           <label for="cj-start" class="etykieta-pola">Początek pracy</label>
-          <input id="cj-start" name="start" type="time" class="pole mt-1" value={PRZYKLAD.start} aria-describedby="cj-start-opis" />
+          <input id="cj-start" name="start" type="time" class="pole mt-1" value={PRZYKLAD.start} aria-describedby="cj-start-opis cj-blad" />
         </div>
       </div>
       <p id="cj-start-opis" class="meta mt-1">Godzina końca odpoczynku dobowego albo tygodniowego.</p>
 
       <fieldset class="mt-6">
         <legend class="etykieta-pola">Co robisz i do której godziny</legend>
-        <p class="meta mt-1">Każdy okres zaczyna się, gdy kończy się poprzedni. Puste wiersze pomijamy; godzina wcześniejsza niż poprzednia to następny dzień.</p>
+        <p id="cj-okresy-opis" class="meta mt-1">Każdy okres zaczyna się, gdy kończy się poprzedni; godzina wcześniejsza niż poprzednia to następny dzień, a puste wiersze pomijamy. Gdy zaczynasz odpoczynek dobowy, wpisz go jako ostatni okres („Odpoczynek”, do godziny końca).</p>
         <ol class="okresy mt-2">
           {Array.from({ length: WIERSZE }, (_, i) => {
             const w = PRZYKLAD.wiersze[i];
@@ -84,7 +84,7 @@ const faq = [
                   {RODZAJE.map((x) => <option value={x.id} selected={x.id === (w?.rodzaj ?? 'jazda')}>{x.nazwa}</option>)}
                 </select>
                 <label class="sr-only" for={`cj-d${i}`}>Okres {i + 1}: do godziny</label>
-                <input id={`cj-d${i}`} name={`d${i}`} type="time" class="pole" value={w?.do ?? ''} aria-describedby="cj-blad" />
+                <input id={`cj-d${i}`} name={`d${i}`} type="time" class="pole" value={w?.do ?? ''} aria-describedby="cj-okresy-opis cj-blad" />
               </li>
             );
           })}
@@ -98,26 +98,26 @@ const faq = [
         <div class="mt-2 grid grid-cols-1 gap-4 min-[360px]:grid-cols-2">
           <div>
             <label for="cj-tydzien" class="meta">Jazda przed dziś (h)</label>
-            <input id="cj-tydzien" name="tydzien" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value={PRZYKLAD.jazdaTydzien} aria-describedby="cj-tydzien-blad" />
+            <input id="cj-tydzien" name="tydzien" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value={PRZYKLAD.jazdaTydzien} aria-describedby="cj-tydzien-opis cj-tydzien-blad" />
           </div>
           <div>
             <label for="cj-poprzedni" class="meta">Jazda w zeszłym tygodniu (h)</label>
-            <input id="cj-poprzedni" name="poprzedni" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value={PRZYKLAD.jazdaPoprzedni} aria-describedby="cj-tydzien-blad" />
+            <input id="cj-poprzedni" name="poprzedni" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value={PRZYKLAD.jazdaPoprzedni} aria-describedby="cj-tydzien-opis cj-tydzien-blad" />
           </div>
           <div>
             <label for="cj-ponad9" class="meta">Dni z jazdą ponad 9 h</label>
-            <select id="cj-ponad9" name="ponad9" class="pole mt-1">
+            <select id="cj-ponad9" name="ponad9" class="pole mt-1" aria-describedby="cj-tydzien-opis">
               {[0, 1, 2].map((x) => <option value={x} selected={x === 0}>{x}</option>)}
             </select>
           </div>
           <div>
             <label for="cj-skrocone" class="meta">Skrócone odpoczynki dobowe</label>
-            <select id="cj-skrocone" name="skrocone" class="pole mt-1" aria-describedby="cj-skrocone-opis">
+            <select id="cj-skrocone" name="skrocone" class="pole mt-1" aria-describedby="cj-tydzien-opis">
               {[0, 1, 2, 3].map((x) => <option value={x} selected={x === 0}>{x}</option>)}
             </select>
           </div>
         </div>
-        <p id="cj-skrocone-opis" class="meta mt-1">Dni i skrócone odpoczynki liczysz od ostatniego odpoczynku tygodniowego, bez dziś. Godziny jazdy wpisz jako 32, 32,5 albo 32:30.</p>
+        <p id="cj-tydzien-opis" class="meta mt-1">Jazdę i dni ponad 9 h liczysz od poniedziałku, a skrócone odpoczynki od ostatniego odpoczynku tygodniowego, zawsze bez dziś. Godziny wpisz jako 32, 32,5 albo 32:30.</p>
         <p id="cj-tydzien-blad" class="blad-pola mt-2" data-blad="tydzien" hidden></p>
       </fieldset>
 
@@ -192,20 +192,20 @@ const faq = [
     <h2 id="ustawa">Co dodaje ustawa o czasie pracy kierowców</h2>
     <ul>
       <li><strong>Czas pracy w nocy:</strong> gdy praca przypada w porze nocnej, czas pracy między dwoma odpoczynkami nie może przekroczyć 10 h (art. 21). Pora nocna to 4 godziny między 0:00 a 7:00 (art. 2 pkt 6a). Nie dotyczy to m.in. przewozu rzeczy pojazdami do 3,5 t i osób pojazdami do 9 osób (art. 22).</li>
-      <li><strong>Przerwa w czasie pracy:</strong> z przerwy w jeździe 15 min wlicza się do czasu pracy, gdy dobowy wymiar to co najmniej 6 h (art. 27 ust. 3), a reszta przerwy to płatny czas dyżuru (art. 27 ust. 1 i art. 9 ust. 6). Przy przerwach i odpoczynkach z rozporządzenia nie stosuje się przerw i odpoczynków z art. 13 i 14 ustawy (art. 27 ust. 4–5).</li>
-      <li><strong>Linie regularne do 50 km:</strong> jazda dzienna najwyżej 10 h, w tygodniu 60 h, w dwóch tygodniach 90 h (art. 31a). Przy 6–8 h jazdy łącznie 30 min przerwy, powyżej 8 h 45 min, w częściach po co najmniej 15 min, ale nie przed pierwszą i nie po ostatniej jeździe (art. 31b). Odpoczynek 11 h w dobie i 35 h w tygodniu, tygodniowy najpóźniej po sześciu okresach 24 h (art. 31c i 14).</li>
-      <li><strong>Pojazdy do 3,5 t w kraju:</strong> rozporządzenia nie stosuje się, więc obowiązuje odpoczynek 11 h w każdej dobie i 35 h w każdym tygodniu (art. 14 ust. 1–2, przy zmianie zmiany najmniej 24 h, ust. 3) oraz przerwa 15 min wliczana do czasu pracy przy dobowym wymiarze co najmniej 6 h (art. 6 ust. 3).</li>
+      <li><strong>Przerwa w czasie pracy:</strong> z przerwy w jeździe 15 min wlicza się do czasu pracy, gdy dobowy wymiar to co najmniej 6 h (art. 27 ust. 3), a reszta przerwy to płatny czas dyżuru (art. 27 ust. 1 i art. 9 ust. 6). Kto wykorzystał przerwy i odpoczynki z rozporządzenia, do tego nie stosuje się przerw i odpoczynków z art. 13 i 14 ustawy (art. 27 ust. 4–5).</li>
+      <li><strong>Linie regularne do 50 km:</strong> jazda dzienna najwyżej 10 h, w tygodniu 60 h, w dwóch tygodniach 90 h (art. 31a). Przy 6–8 h jazdy łącznie 30 min przerwy, powyżej 8 h 45 min, w częściach po co najmniej 15 min, ale nie przed pierwszą i nie po ostatniej jeździe; przerwy rozlicza się jak czas pracy (art. 31b). Odpoczynek 11 h w dobie i 35 h w tygodniu, tygodniowy najpóźniej po sześciu okresach 24 h (art. 31c i 14).</li>
+      <li><strong>Pojazdy do 3,5 t w kraju (za granicą do 2,5 t):</strong> rozporządzenia nie stosuje się, więc obowiązuje odpoczynek 11 h w każdej dobie i 35 h w każdym tygodniu (art. 14 ust. 1–2, przy zmianie zmiany najmniej 24 h, ust. 3) oraz przerwa 15 min wliczana do czasu pracy przy dobowym wymiarze co najmniej 6 h (art. 6 ust. 3).</li>
     </ul>
 
     <h2 id="jak-liczymy">Jak liczymy</h2>
     <ul>
-      <li><strong>Okresy:</strong> każdy wpisany okres zaczyna się, gdy kończy się poprzedni, a godzina wcześniejsza niż poprzednia to następny dzień. Sąsiednie okresy tego samego rodzaju łączymy. Liczymy w godzinach zegarowych, bez zmiany czasu w marcu i październiku.</li>
+      <li><strong>Okresy:</strong> każdy wpisany okres zaczyna się, gdy kończy się poprzedni, a godzina wcześniejsza niż poprzednia to następny dzień. Sąsiednie okresy tego samego rodzaju łączymy. Odpoczynek dobowy wpisujesz jako ostatni okres; przerwę na końcu dłuższą niż 9 h też traktujemy jak odpoczynek. Liczymy w godzinach zegarowych, bez zmiany czasu w marcu i październiku.</li>
       <li><strong>Przerwa po 4,5 h:</strong> pełna przerwa to co najmniej 45 min albo najpierw co najmniej 15 min, a później co najmniej 30 min. Przerwy krótsze niż 15 min i okresy dyspozycji nie są przerwą. „Najpóźniej o” zakłada, że od końca wpisanych okresów jedziesz bez przerwy.</li>
       <li><strong>Jazda dzienna:</strong> do 9 h zawsze, do 10 h, jeśli w tym tygodniu przed dziś nie było już dwóch dni po ponad 9 h. Ile takich dni było, wpisujesz sam.</li>
-      <li><strong>Odpoczynek dobowy:</strong> musi się zmieścić w 24 h od wpisanego początku pracy, więc regularny 11 h zaczyna się najpóźniej 13 h po starcie, a skrócony 9 h albo druga część dzielonego (po przerwie co najmniej 3 h) 15 h po starcie.</li>
-      <li><strong>Pora nocna:</strong> przepis wskazuje 4 godziny między 0:00 a 7:00, a które, ustala pracodawca. Gdy nie wiesz, liczymy cały przedział 0:00–7:00, co daje limit 10 h częściej niż u pracodawcy. Do czasu pracy liczymy jazdę i inną pracę oraz 15 min przerwy, gdy praca trwa co najmniej 6 h; dyspozycji nie liczymy (art. 10). Ustawa wiąże 15 min z wymiarem czasu pracy z rozkładu, a my bierzemy wpisaną pracę.</li>
-      <li><strong>Tydzień:</strong> od poniedziałku 0:00 do niedzieli 24:00 (art. 4 lit. i). Jazdę przed dziś i z poprzedniego tygodnia wpisujesz z tachografu; „zostało” to mniej z dwóch limitów: 56 h w tygodniu i 90 h w dwóch tygodniach.</li>
-      <li><strong>Czego nie liczymy:</strong> załogi kilkuosobowej, promu i pociągu, odstępstw dla okazjonalnych przewozów osób (dwie przerwy po 15 min, reguła 12 dni), dwóch kolejnych skróconych odpoczynków tygodniowych w przewozach międzynarodowych i pojazdów wyłączonych z rozporządzenia (art. 3 i 13), ani norm czasu pracy z art. 11, 12 i 15 ustawy, które zależą od systemu i rozkładu u pracodawcy.</li>
+      <li><strong>Odpoczynek dobowy:</strong> musi się zmieścić w 24 h od wpisanego początku pracy, więc regularny 11 h zaczyna się najpóźniej 13 h po starcie, a skrócony 9 h albo druga część dzielonego (po przerwie co najmniej 3 h) 15 h po starcie. Gdy wpiszesz odpoczynek, sprawdzamy, ile z niego mieści się w tych 24 h.</li>
+      <li><strong>Pora nocna:</strong> przepis wskazuje 4 godziny między 0:00 a 7:00, a które, ustala pracodawca. Gdy nie wiesz, liczymy cały przedział 0:00–7:00, co daje limit 10 h częściej niż u pracodawcy. Na liście są pełne godziny; gdy u pracodawcy pora nocna zaczyna się o pół godziny, wybierz „Nie wiem”. Do czasu pracy liczymy jazdę i inną pracę oraz 15 min przerwy, gdy praca trwa co najmniej 6 h i była przerwa co najmniej 15 min; ustawa wiąże te 15 min z wymiarem czasu pracy z rozkładu, a my bierzemy wpisaną pracę. Na linii do 50 km dodajemy wszystkie przerwy, bo rozlicza się je jak czas pracy (art. 31b ust. 4). Dyspozycji nie liczymy (art. 10 ust. 1).</li>
+      <li><strong>Tydzień:</strong> od poniedziałku 0:00 do niedzieli 24:00 (art. 4 lit. i). Jazdę przed dziś i z poprzedniego tygodnia wpisujesz z tachografu; „zostało” to mniej z dwóch limitów: 56 h w tygodniu i 90 h w dwóch tygodniach. Całą wpisaną jazdę liczymy do bieżącego tygodnia, także gdy przechodzi przez poniedziałek 0:00. Jazda w tygodniu nie może też prowadzić do przekroczenia tygodniowego czasu pracy z dyrektywy 2002/15/WE (art. 6 ust. 2); tego nie sprawdzamy.</li>
+      <li><strong>Czego nie liczymy:</strong> załogi kilkuosobowej, promu i pociągu, odstępstw dla okazjonalnych przewozów osób (dwie przerwy po 15 min, reguła 12 dni), dwóch kolejnych skróconych odpoczynków tygodniowych w przewozach międzynarodowych i pojazdów wyłączonych z rozporządzenia (art. 3 i 13), norm czasu pracy z art. 11, 12 i 15 ustawy, które zależą od systemu i rozkładu u pracodawcy, dyspozycji w zadaniowym czasie pracy, którą zalicza się do czasu pracy do 8 h (art. 10 ust. 3), ani przerwy po 6 h pracy z art. 13 ustawy na liniach do 50 km (ustawa nie mówi, jak się ma do art. 31b).</li>
     </ul>
     <p>
       Do kiedy jest ważny kod 95, policzy <a href="/narzedzia/kod-95">kalkulator kodu 95</a>, a ważność zaświadczenia na przewóz towarów niebezpiecznych <a href="/narzedzia/zaswiadczenie-adr">kalkulator zaświadczenia ADR</a>. Ile się należy za dyżur, policzy <a href="/narzedzia/dyzur-w-pracy">kalkulator dyżuru</a>.
@@ -232,7 +232,7 @@ const faq = [
 </style>
 
 <script>
-  import { czasJazdy, minutyZGodziny, okresyZGodzin, opisJazdy, wpisaneGodziny, type Pojazd, type Rodzaj } from '../../lib/narzedzia/czas-jazdy';
+  import { BladOkresu, czasJazdy, minutyZGodziny, okresyZGodzin, opisJazdy, wpisaneGodziny, type Pojazd, type Rodzaj } from '../../lib/narzedzia/czas-jazdy';
   import { poprawnaData } from '../../lib/narzedzia/terminy';
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
   import { typografia } from '../../lib/typografia.mjs';
@@ -262,10 +262,13 @@ const faq = [
     const przelicz = () => {
       const start = minutyZGodziny(pole('start').value);
       const wiersze: { rodzaj: Rodzaj; do: number }[] = [];
+      const indeksy: number[] = [];
+      pole('start').setAttribute('aria-invalid', Number.isNaN(start) ? 'true' : 'false');
       for (let i = 0; i < WIERSZE; i++) {
         const p = pole(`d${i}`);
         p.setAttribute('aria-invalid', 'false');
         if (!p.value) continue;
+        indeksy.push(i);
         wiersze.push({ rodzaj: (form.elements.namedItem(`r${i}`) as HTMLSelectElement).value as Rodzaj, do: minutyZGodziny(p.value) });
       }
       let okresy;
@@ -275,11 +278,18 @@ const faq = [
       else {
         try {
           okresy = okresyZGodzin(start, wiersze);
-        } catch {
-          bO = 'Każdy okres musi kończyć się o innej godzinie niż poprzedni. Sprawdź godziny.';
+        } catch (e) {
+          const wiersz = e instanceof BladOkresu ? e.wiersz : 0;
+          pole(`d${indeksy[wiersz]}`).setAttribute('aria-invalid', 'true');
+          bO = e instanceof BladOkresu && e.message.startsWith('Odpoczynek') ? 'Odpoczynek dobowy wpisz jako ostatni okres.' : 'Każdy okres musi kończyć się o innej godzinie niż poprzedni. Sprawdź godziny.';
         }
       }
-      if (!bO && okresy && okresy[okresy.length - 1].do - start > 1440) bO = 'Wpisane okresy trwają ponad 24 h. Wpisz tylko czas od końca ostatniego odpoczynku.';
+      // Ponad 24 h pracy od startu (bez odpoczynku na końcu) to już nie jeden dzień jazdy.
+      const praca = okresy?.filter((o) => o.rodzaj !== 'odpoczynek');
+      if (!bO && praca?.length && praca[praca.length - 1].do - start > 1440) {
+        pole(`d${indeksy[praca.length - 1]}`).setAttribute('aria-invalid', 'true');
+        bO = 'Wpisane okresy trwają ponad 24 h. Wpisz tylko czas od końca ostatniego odpoczynku.';
+      }
       blad(bladOkresy, bO);
       const tydzienT = pole('tydzien').value;
       const poprzedniT = pole('poprzedni').value;

@@ -22,11 +22,11 @@ const faq = [
   },
   {
     pytanie: 'Kto płaci za kurs ADR?',
-    odpowiedz: `Koszt kursu ADR, egzaminu i wydania zaświadczenia ponosi firma, na rzecz której kierowca wykonuje czynności przy przewozie towarów niebezpiecznych, albo firma, która sama osobiście wykonuje przewóz. W innych przypadkach płaci uczestnik kursu (art. 39 ustawy o przewozie towarów niebezpiecznych). Opłata za wydanie zaświadczenia albo wtórnika wynosi ${OPLATA} zł (§ 18 rozporządzenia w sprawie egzaminów dla kierowców przewożących towary niebezpieczne).`,
+    odpowiedz: `Koszt kursu ADR i wydania zaświadczenia ponosi uczestnik przewozu towarów niebezpiecznych (np. przewoźnik albo nadawca), na rzecz którego kierowca wykonuje czynności przy przewozie, albo firma, która sama osobiście wykonuje przewóz. W innych przypadkach płaci uczestnik kursu (art. 39 ustawy o przewozie towarów niebezpiecznych). Opłata za wydanie zaświadczenia albo wtórnika wynosi ${OPLATA} zł (§ 18 rozporządzenia w sprawie egzaminów dla kierowców przewożących towary niebezpieczne). Osobnej opłaty za egzamin nie ma: wynagrodzenie komisji pokrywa ośrodek szkolenia (art. 21 ust. 5).`,
   },
   {
     pytanie: 'Co grozi za jazdę bez ważnego zaświadczenia ADR?',
-    odpowiedz: `Pojazdem, dla którego ADR wymaga kursu kierowcy, może kierować tylko osoba z ważnym zaświadczeniem ADR (art. 20 ust. 1). Firma, która dopuści do przewozu towaru niebezpiecznego kierowcę bez wymaganego zaświadczenia, płaci karę ${KARA_FIRMY} zł (załącznik nr 1 do ustawy, lp. 2.8).`,
+    odpowiedz: `Pojazdem, dla którego ADR wymaga kursu kierowcy, może kierować tylko osoba z ważnym zaświadczeniem ADR (art. 20 ust. 1). Firma, która dopuści do przewozu towaru niebezpiecznego kierowcę bez wymaganego zaświadczenia, płaci karę ${KARA_FIRMY} zł (art. 107 ust. 1–2 i załącznik nr 1 do ustawy, lp. 2.8). Odpowiedzialności samego kierowcy kalkulator nie opisuje.`,
   },
   {
     pytanie: 'Od ilu lat można zrobić ADR?',
@@ -39,7 +39,7 @@ const faq = [
   tytul="Zaświadczenie ADR: ważność i kurs doskonalący"
   opis="Do kiedy ważne jest zaświadczenie ADR, kiedy zrobić kurs doskonalący i egzamin, żeby nic nie przepadło, do kiedy nowe i kto płaci za kurs."
   h1="Zaświadczenie ADR: do kiedy ważne i kiedy kurs doskonalący"
-  lead={`Zaświadczenie ADR jest ważne ${LATA_WAZNOSCI} lat. Wpisz datę „ważne do”, a policzymy, w jakim okresie zrobić kurs doskonalący i egzamin, żeby przedłużyć ważność bez straty, do kiedy będzie ważne nowe i kto za to płaci.`}
+  lead={`Zaświadczenie ADR jest ważne ${LATA_WAZNOSCI} lat. Wpisz datę „ważne do”, a policzymy, w jakim okresie zrobić kurs doskonalący i egzamin, żeby przedłużyć ważność bez straty, do kiedy będzie ważne nowe i kto płaci za kurs.`}
   faq={faq}
 >
   <form class="kalkulator" data-adr novalidate aria-labelledby="kalkulator-tytul">
@@ -105,13 +105,14 @@ const faq = [
 
     <h2 id="kto-placi">Kto płaci</h2>
     <p>
-      Koszt kursu ADR, egzaminu i wydania zaświadczenia ponosi uczestnik przewozu towarów niebezpiecznych (przewoźnik,
-      nadawca, załadowca i inne firmy z ustawy), gdy kierowca wykonuje czynności na jego rzecz albo gdy ta firma sama
-      osobiście wykonuje przewóz. W innych przypadkach płaci uczestnik kursu albo osoba, która przystępuje do egzaminu
-      (art. 39 ustawy o przewozie towarów niebezpiecznych). Opłata za wydanie zaświadczenia albo wtórnika wynosi {OPLATA} zł
+      Koszt kursu ADR i wydania zaświadczenia ponosi uczestnik przewozu towarów niebezpiecznych (przewoźnik, nadawca,
+      załadowca i inne firmy z ustawy), gdy kierowca wykonuje czynności na jego rzecz albo gdy ta firma sama osobiście
+      wykonuje przewóz. W innych przypadkach płaci uczestnik kursu (art. 39 ustawy o przewozie towarów niebezpiecznych).
+      Osobnej opłaty za egzamin ADR nie ma: wynagrodzenie komisji egzaminacyjnej pokrywa podmiot prowadzący kurs
+      (art. 21 ust. 5). Opłata za wydanie zaświadczenia albo wtórnika wynosi {OPLATA} zł
       (§ 18 rozporządzenia Ministra Infrastruktury w sprawie egzaminów dla kierowców przewożących towary niebezpieczne,
       Dz.U. 2024 poz. 964). Firma, która dopuści do przewozu kierowcę bez wymaganego zaświadczenia ADR, płaci karę {KARA_FIRMY} zł
-      (załącznik nr 1 do ustawy, lp. 2.8).
+      (art. 107 ust. 1–2 i załącznik nr 1 do ustawy, lp. 2.8).
     </p>
 
     <h2 id="jak-liczymy">Jak liczymy</h2>
@@ -119,7 +120,8 @@ const faq = [
       <li><strong>Okres na kurs doskonalący:</strong> ustawa mówi o {MIESIACE_OKNA} miesiącach „poprzedzających dzień upływu ważności”. Za ten dzień bierzemy datę „ważne do”. Przepis nie mówi, czy ten dzień liczy się do okresu, więc podajemy część wspólną obu odczytań: od dnia po dacie sprzed {MIESIACE_OKNA} miesięcy do dnia przed końcem ważności. Miesiące liczymy jak w art. 112 Kodeksu cywilnego: ten sam dzień miesiąca, a gdy go nie ma, ostatni dzień miesiąca.</li>
       <li><strong>Nowe zaświadczenie:</strong> {LATA_WAZNOSCI} lat od dnia upływu ważności (przy przedłużeniu) albo od dnia egzaminu może się skończyć w dniu, który datą odpowiada początkowi, albo dzień wcześniej. Podajemy wcześniejszy dzień jako „co najmniej do”; wiąże data, którą wpisze marszałek województwa.</li>
       <li><strong>Egzamin z zapasem:</strong> marszałek ma {DNI_NA_WYDANIE} dni od egzaminu na wydanie zaświadczenia (art. 23 ust. 3), więc egzamin najpóźniej {DNI_NA_WYDANIE} dni przed końcem ważności daje szansę, że nowy dokument będzie gotowy na czas. To nasz rachunek, bez czasu na pocztę, nie termin z ustawy.</li>
-      <li><strong>Egzamin za wcześnie:</strong> art. 24 ust. 6 dotyczy tylko kursu i egzaminu w ostatnich {MIESIACE_OKNA} miesiącach. Przy wcześniejszym egzaminie liczymy nowe {LATA_WAZNOSCI} lat od dnia egzaminu (art. 23 ust. 4), a dni do końca obecnego zaświadczenia przepadają.</li>
+      <li><strong>Egzamin za wcześnie:</strong> przedłużenie z art. 24 ust. 6 dotyczy tylko kursu i egzaminu w ostatnich {MIESIACE_OKNA} miesiącach. Czy i na jak długo urząd wyda nowe zaświadczenie po wcześniejszym egzaminie, ustawa nie mówi; pokazujemy, do kiedy byłoby ważne, gdyby na {LATA_WAZNOSCI} lat od dnia egzaminu (art. 23 ust. 4), i ile dni obecnego by przepadło.</li>
+      <li><strong>Egzamin w ostatnim dniu ważności:</strong> przepis nie mówi, czy ten dzień należy do okresu z art. 24 ust. 6, więc piszemy, że przedłużenie może nie przysługiwać. Przy egzaminie po końcu ważności dni bez zaświadczenia liczymy od dnia po dacie „ważne do” do dnia przed egzaminem; nowy dokument przychodzi jeszcze później.</li>
       <li><strong>Po terminie:</strong> po upływie ważności przedłużenie z art. 24 ust. 6 już nie przysługuje. Ustawa wymienia kurs doskonalący przy przedłużeniu, a początkowy przy pierwszym zaświadczeniu i nie mówi wprost, który kurs robi osoba z wygasłym zaświadczeniem, więc tego nie przesądzamy.</li>
       <li><strong>Czego nie liczymy:</strong> czy dany ładunek wymaga zaświadczenia (o tym decydują ilości i rodzaje towarów w ADR), ani zakresu kursów specjalistycznych. Tekst ADR w Dzienniku Ustaw (Dz.U. 2025 poz. 642) jest opublikowany jako skan, więc opieramy się na ustawie, która przenosi zasady ważności z ADR.</li>
     </ul>

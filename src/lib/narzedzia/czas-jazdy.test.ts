@@ -1,9 +1,9 @@
 // Oczekiwane wartości policzone niezależnie skryptem w Pythonie (minuta po minucie dla art. 7, okresy z godzin końca,
 // okna 24 h od startu, datetime dla odpoczynku tygodniowego). Scenariusze A–K jak w skrypcie.
 import { describe, expect, it } from 'vitest';
-import { czasJazdy, czasTrwania, godzina, minutyZGodziny, okresyZGodzin, opisJazdy, PRZYKLAD, tygodniowyNajpozniej, type DaneJazdy, type Pojazd, type Rodzaj } from './czas-jazdy';
+import { BladOkresu, czasJazdy, czasTrwania, godzina, minutyZGodziny, okresyZGodzin, opisJazdy, PRZYKLAD, tygodniowyNajpozniej, type DaneJazdy, type Pojazd, type Rodzaj } from './czas-jazdy';
 
-const R: Record<string, Rodzaj> = { J: 'jazda', P: 'przerwa', W: 'praca', D: 'dyspozycja' };
+const R: Record<string, Rodzaj> = { J: 'jazda', P: 'przerwa', W: 'praca', D: 'dyspozycja', O: 'odpoczynek' };
 function dane(start: string, wiersze: [string, string][], reszta: Partial<DaneJazdy> = {}, pojazd: Pojazd = 'ciezarowy'): DaneJazdy {
   const s = minutyZGodziny(start);
   return { pojazd, start: s, okresy: okresyZGodzin(s, wiersze.map(([r, d]) => ({ rodzaj: R[r], do: minutyZGodziny(d) }))), ...reszta };
@@ -176,5 +176,84 @@ describe('odpoczynek tygodniowy', () => {
     expect(opisJazdy(r, { data: '2026-11-08', minuty: 1080, poprzedniSkrocony: true }).uwagi[0]).toContain('14 listopada 2026 r. o 18:00: regularny, co najmniej 45 h');
     const l = czasJazdy(dane('06:00', [['J', '10:00']], {}, 'linia-50'));
     expect(opisJazdy(l, { data: '2026-11-08', minuty: 1080 }).uwagi[0]).toContain('co najmniej 35 h');
+  });
+});
+
+describe('odpoczynek wpisany na końcu i przypadki brzegowe', () => {
+  const rano: [string, string][] = [['J', '10:30'], ['P', '11:15'], ['J', '15:45']];
+  it('odpoczynek od 15:45 do 22:00: w 24 h tylko 6 h 15 min', () => {
+    const r = czasJazdy(dane('06:00', [...rano, ['O', '22:00']]));
+    expect(r.naruszenia.map((n) => n.kod)).toEqual(['odpoczynek']);
+    expect(r.naruszenia[0].tekst).toContain('mieści się 6 h 15 min, a potrzeba co najmniej 9 h');
+    expect(r.koniec).toBe(945);
+  });
+  it('odpoczynek do 7:00 następnego dnia: regularny, przerwa nie dotyczy', () => {
+    const r = czasJazdy(dane('06:00', [...rano, ['O', '07:00']]));
+    expect(r.naruszenia).toEqual([]);
+    expect(r.odpoczynekW24).toBe(855);
+    const o = opisJazdy(r);
+    expect(o.odpoczynek).toBe('od 15:45: 14 h 15 min w 24 h od początku pracy (regularny)');
+    expect(o.przerwa).toBe('nie dotyczy: od 15:45 odpoczynek dobowy');
+  });
+  it('przerwa na końcu od 9 h to odpoczynek (skrócony), nie część dzielonego', () => {
+    const r = czasJazdy(dane('06:00', [...rano, ['P', '01:00']]));
+    expect(r.naruszenia).toEqual([]);
+    expect(r.dzielony).toBe(false);
+    expect(r.odpoczynekOd).toBe(945);
+    expect(opisJazdy(r).odpoczynek).toContain('(skrócony)');
+  });
+  it('3 h przerwy, a potem 9 h odpoczynku: druga część dzielonego mimo trzech skróconych', () => {
+    const r = czasJazdy(dane('06:00', [['J', '09:00'], ['P', '12:00'], ['J', '16:00'], ['O', '01:00']], { skrocone: 3 }));
+    expect(r.naruszenia).toEqual([]);
+    expect(opisJazdy(r).odpoczynek).toContain('druga część dzielonego');
+  });
+  it('odpoczynek nie na końcu: błąd z numerem wiersza', () => {
+    try {
+      okresyZGodzin(360, [{ rodzaj: 'odpoczynek', do: 600 }, { rodzaj: 'jazda', do: 660 }]);
+      expect.unreachable();
+    } catch (e) {
+      expect(e).toBeInstanceOf(BladOkresu);
+      expect((e as BladOkresu).wiersz).toBe(1);
+    }
+  });
+  it('linia do 50 km: przerwy w czasie pracy (art. 31b ust. 4), 10 h 30 min przy pracy nocą', () => {
+    const w: [string, string][] = [['J', '08:30'], ['P', '08:50'], ['J', '12:00'], ['P', '12:25'], ['J', '14:30']];
+    const r = czasJazdy(dane('04:00', w, {}, 'linia-50'));
+    expect(r.jazda).toBe(585);
+    expect(r.czasPracy).toBe(630);
+    expect(r.naruszenia.map((n) => n.kod)).toEqual(['noc']);
+    expect(kody(dane('04:00', w, { nocOd: 0 }, 'linia-50'))).toEqual([]);
+  });
+  it('dokładnie 56 h i 90 h: bez naruszenia, zostało 0; minuta więcej: dwa naruszenia', () => {
+    const r = czasJazdy(dane('06:00', [['J', '10:00']], { jazdaTydzien: 52 * 60, jazdaPoprzedni: 34 * 60 }));
+    expect(r.naruszenia).toEqual([]);
+    expect(r.zostaloTydzien).toBe(0);
+    expect(kody(dane('06:00', [['J', '10:01']], { jazdaTydzien: 52 * 60, jazdaPoprzedni: 34 * 60 }))).toEqual(['jazda-tydzien', 'jazda-dwa-tygodnie']);
+    expect(czasJazdy(dane('06:00', [['J', '10:00']], { jazdaTydzien: 0 })).tydzien).toBe(240);
+  });
+  it('4 h 30 min, dyspozycja i minuta jazdy: naruszenie o 11:30', () => {
+    const r = czasJazdy(dane('06:00', [['J', '10:30'], ['D', '11:30'], ['J', '11:31']]));
+    expect(r.naruszenia.map((n) => n.tekst)).toEqual(['Przerwa należała się najpóźniej o 11:30, po 4 h 30 min jazdy; jazda dłużej o 1 min (art. 7 rozporządzenia 561/2006).']);
+  });
+  it('przerwa 44 min to tylko część 15 min; 14 + 31 min nie zamyka przerwy', () => {
+    const r = czasJazdy(dane('06:00', [['J', '09:00'], ['P', '09:44'], ['J', '11:14']]));
+    expect(r.naruszenia).toEqual([]);
+    expect(r.przerwaDlugosc).toBe(30);
+    expect(godzina(r.przerwaNajpozniej!)).toBe('11:14');
+    const r2 = czasJazdy(dane('06:00', [['J', '09:00'], ['P', '09:14'], ['J', '09:30'], ['P', '10:01'], ['J', '11:16']]));
+    expect(r2.naruszenia[0].tekst).toContain('najpóźniej o 11:15');
+  });
+  it('noc: dokładnie 10 h pracy bez naruszenia, 10 h 1 min z naruszeniem', () => {
+    const w: [string, string][] = [['J', '02:30'], ['P', '03:15'], ['J', '07:00']];
+    expect(czasJazdy(dane('22:00', [...w, ['W', '08:30']])).naruszenia).toEqual([]);
+    expect(kody(dane('22:00', [...w, ['W', '08:31']]))).toEqual(['noc']);
+  });
+  it('do 3,5 t: 5 h 59 min pracy bez przerwy w porządku, 6 h już nie', () => {
+    expect(kody(dane('07:00', [['J', '12:59']], {}, 'do-35t'))).toEqual([]);
+    expect(kody(dane('07:00', [['J', '13:00']], {}, 'do-35t'))).toEqual(['przerwa-15']);
+  });
+  it('odmiana: 7 naruszeń', () => {
+    const r = czasJazdy(dane('22:00', [['J', '03:00'], ['P', '03:45'], ['J', '09:00'], ['W', '12:00']], { dniPonad9: 2, skrocone: 3, jazdaTydzien: 56 * 60, jazdaPoprzedni: 40 * 60 }));
+    expect(opisJazdy(r).werdykt).toBe('7 naruszeń');
   });
 });

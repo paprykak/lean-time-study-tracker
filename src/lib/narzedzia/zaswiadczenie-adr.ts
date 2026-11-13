@@ -1,5 +1,5 @@
 // Zaświadczenie ADR kierowcy: do kiedy ważne, w jakim okresie zrobić kurs doskonalący i egzamin, żeby przedłużyć
-// ważność bez przerwy, do kiedy będzie ważne nowe i kto płaci za kurs, egzamin i wydanie dokumentu.
+// ważność bez przerwy, do kiedy będzie ważne nowe i kto płaci za kurs i wydanie dokumentu.
 //
 // Przepisy (sprawdzone 2026-11-13):
 // - ustawa o przewozie towarów niebezpiecznych (t.j. Dz.U. 2024 poz. 643; po tekście jednolitym bez zmian według API Sejmu):
@@ -8,10 +8,12 @@
 //   wydłuża ważności), art. 21 ust. 10 (egzamin najpóźniej 6 miesięcy od ukończenia kursu), art. 23 ust. 3 (marszałek
 //   województwa wydaje zaświadczenie w 14 dni od egzaminu i wysyła pocztą), art. 23 ust. 4 (5 lat od dnia egzaminu),
 //   art. 24 ust. 6 (kurs doskonalący i egzamin w okresie 12 miesięcy poprzedzających dzień upływu ważności: przedłużenie
-//   na kolejne 5 lat od dnia upływu ważności dotychczasowego), art. 39 (koszt kursu, egzaminu i wydania zaświadczenia
-//   ponosi uczestnik przewozu, gdy kierowca wykonuje czynności na jego rzecz albo gdy sam osobiście prowadzi tę
-//   działalność; w innych przypadkach uczestnik kursu), załącznik nr 1 lp. 2.8 (kara 2000 zł za dopuszczenie do
-//   przewozu kierowcy bez wymaganego zaświadczenia);
+//   na kolejne 5 lat od dnia upływu ważności dotychczasowego), art. 39 (koszt kursu ADR i wydania zaświadczenia ponosi
+//   uczestnik przewozu, gdy kierowca wykonuje czynności na jego rzecz albo gdy sam osobiście prowadzi tę działalność;
+//   w innych przypadkach uczestnik kursu; egzaminów, które wymienia art. 39, to egzaminy na eksperta ADN), art. 21
+//   ust. 5 (wynagrodzenie komisji egzaminacyjnej opłaca podmiot prowadzący kurs; opłata egzaminacyjna z art. 25 ust. 1
+//   pkt 2 uchylona), art. 107 ust. 1–2 z załącznikiem nr 1 lp. 2.8 (kara 2000 zł dla uczestnika przewozu za
+//   dopuszczenie do przewozu kierowcy bez wymaganego zaświadczenia);
 // - rozporządzenie w sprawie egzaminów dla kierowców przewożących towary niebezpieczne (Dz.U. 2024 poz. 964): § 11
 //   (zdany przy co najmniej 2/3 poprawnych odpowiedzi), § 18 (opłata za zaświadczenie albo wtórnik 50 zł); zmiana
 //   Dz.U. 2026 poz. 1491 (od 1 stycznia 2027 r.) dotyczy tylko wynagrodzenia komisji.
@@ -25,8 +27,12 @@
 // 2. Nowe 5 lat liczone od dnia upływu ważności (przedłużenie) albo od dnia egzaminu (egzamin przed okresem z art. 24
 //    ust. 6) może się kończyć w dniu, który datą odpowiada początkowi, albo dzień wcześniej; podajemy wcześniejszy dzień
 //    jako „co najmniej do”. Datę wiążącą wpisuje marszałek województwa na zaświadczeniu.
-// 3. Egzamin przed okresem 12 miesięcy: ustawa nie mówi, że przedłuża ważność od dnia jej upływu (art. 24 ust. 6 tego
-//    nie obejmuje), więc liczymy nowe 5 lat od dnia egzaminu (art. 23 ust. 4). Część starej ważności przepada.
+// 3. Egzamin przed okresem 12 miesięcy: ustawa przewiduje przedłużenie tylko w trybie art. 24 ust. 6 i nie mówi, czy
+//    i na jak długo urząd wyda wtedy nowe zaświadczenie. Podajemy datę „gdyby” urząd wydał je na 5 lat od egzaminu
+//    (art. 23 ust. 4) i ile dni obecnego wtedy przepada.
+// 4a. Egzamin w dniu „ważne do”: przepis nie mówi, czy ten dzień należy do okresu z art. 24 ust. 6, więc piszemy, że
+//    przedłużenie może nie przysługiwać. Egzamin po tym dniu: dni bez zaświadczenia liczymy od dnia po „ważne do” do dnia
+//    przed egzaminem (nowy dokument przychodzi jeszcze później).
 // 4. Po upływie ważności przedłużenie z art. 24 ust. 6 nie jest już możliwe. Czy wystarczy wtedy kurs doskonalący, ustawa
 //    nie rozstrzyga (art. 20 ust. 2 pkt 3 zna kurs początkowy przy pierwszym zaświadczeniu i doskonalący przy
 //    przedłużeniu), więc tego nie przesądzamy.
@@ -34,6 +40,7 @@
 //    zaświadczenia (art. 23 ust. 3); bez czasu na pocztę. To nasz rachunek, nie termin z ustawy.
 import { dataPoPolsku, dniMiedzy, dodajDni, dodajLata, dodajMiesiace, poprawnaData } from './terminy';
 import type { Wydarzenie } from './kalendarz-ics';
+import { odmiana } from '../redakcja';
 
 /** Zaświadczenie na 5 lat (art. 23 ust. 4 i art. 24 ust. 6). */
 export const LATA_WAZNOSCI = 5;
@@ -50,7 +57,7 @@ export const KARA_FIRMY = 2000;
 
 export type Platnik = 'firma' | 'wlasna-firma' | 'sam';
 export type StatusAdr = 'wygaslo' | 'okno' | 'przed-oknem';
-export type Egzamin = 'brak' | 'w-oknie' | 'przed-oknem' | 'po-koncu' | 'przed-wydaniem';
+export type Egzamin = 'brak' | 'w-oknie' | 'przed-oknem' | 'ostatni-dzien' | 'po-koncu' | 'przed-wydaniem';
 
 export interface DaneAdr {
   /** Data „ważne do” z zaświadczenia. */
@@ -72,6 +79,8 @@ export interface WynikAdr {
   /** Egzamin z zapasem 14 dni na wydanie dokumentu (nasz rachunek). */
   zZapasem: string;
   zapasMinal: boolean;
+  /** Okres z art. 24 ust. 6 już minął (dziś po dniu przed końcem ważności). */
+  oknoMinal: boolean;
   /** Nowe zaświadczenie po przedłużeniu: co najmniej do (art. 24 ust. 6). */
   nowyPoPrzedluzeniu: string;
   egzamin: Egzamin;
@@ -110,9 +119,10 @@ export function zaswiadczenieAdr({ waznyDo, egzamin, dzis }: DaneAdr): WynikAdr 
   let strata = 0;
   let przerwa = 0;
   if (egzamin) {
-    if (egzamin >= waznyDo) {
+    if (egzamin === waznyDo) stan = 'ostatni-dzien';
+    else if (egzamin > waznyDo) {
       stan = 'po-koncu';
-      przerwa = dniMiedzy(waznyDo, egzamin);
+      przerwa = dniMiedzy(waznyDo, egzamin) - 1;
     } else if (egzamin < okno.od) {
       stan = 'przed-oknem';
       nowyKoniec = piecLatOd(egzamin);
@@ -140,6 +150,7 @@ export function zaswiadczenieAdr({ waznyDo, egzamin, dzis }: DaneAdr): WynikAdr 
     oknoDo: okno.do,
     zZapasem,
     zapasMinal: dzis > zZapasem,
+    oknoMinal: dzis > okno.do,
     nowyPoPrzedluzeniu,
     egzamin: stan,
     nowyKoniec,
@@ -149,11 +160,12 @@ export function zaswiadczenieAdr({ waznyDo, egzamin, dzis }: DaneAdr): WynikAdr 
   };
 }
 
-/** Kto płaci za kurs, egzamin i wydanie zaświadczenia (art. 39). */
+/** Kto płaci za kurs i wydanie zaświadczenia (art. 39); egzamin ADR nie ma osobnej opłaty. */
 export function ktoPlaci(platnik: Platnik): string {
-  if (platnik === 'firma') return 'Firma, dla której wozisz towary niebezpieczne (pracodawca albo zleceniodawca): kurs, egzamin i wydanie zaświadczenia (art. 39 pkt 1).';
-  if (platnik === 'wlasna-firma') return 'Ty jako firma, bo osobiście wykonujesz przewóz towarów niebezpiecznych (art. 39 pkt 1).';
-  return 'Ty jako uczestnik kursu, gdy nie wykonujesz przewozu na rzecz firmy (art. 39 pkt 2). Gdy zaczniesz wozić towary niebezpieczne dla firmy, koszty następnego kursu ponosi ona.';
+  const egzamin = ' Osobnej opłaty za egzamin ADR nie ma: komisję opłaca ośrodek szkolenia (art. 21 ust. 5).';
+  if (platnik === 'firma') return `Firma, która jest uczestnikiem przewozu towarów niebezpiecznych (np. przewoźnik albo nadawca), gdy wozisz je na jej rzecz: kurs ADR i wydanie zaświadczenia (art. 39 pkt 1).${egzamin}`;
+  if (platnik === 'wlasna-firma') return `Ty jako firma, bo osobiście wykonujesz przewóz towarów niebezpiecznych (art. 39 pkt 1).${egzamin}`;
+  return `Ty jako uczestnik kursu, gdy nie wykonujesz czynności przy przewozie na rzecz firmy (art. 39 pkt 2).${egzamin}`;
 }
 
 export interface OpisAdr {
@@ -171,9 +183,12 @@ export interface OpisAdr {
 
 /** Teksty wyniku: te same w HTML ze strony i w skrypcie przeglądarki. */
 export function opisAdr(r: WynikAdr, platnik: Platnik): OpisAdr {
-  const dni = (n: number) => `${n} ${n === 1 ? 'dzień' : 'dni'}`;
-  const status =
-    r.status === 'wygaslo'
+  const dni = (n: number) => odmiana(n, ['dzień', 'dni', 'dni']);
+  // Egzamin zdany w okresie z art. 24 ust. 6 przedłuża ważność także wtedy, gdy dokument jeszcze nie przyszedł.
+  const przedluzone = r.status === 'wygaslo' && (r.egzamin === 'w-oknie' || r.egzamin === 'przed-wydaniem');
+  const status = przedluzone
+    ? 'Przedłużone egzaminem: sprawdź, czy masz nowe zaświadczenie'
+    : r.status === 'wygaslo'
       ? 'Wygasło'
       : r.status === 'okno'
         ? r.dniDoKonca === 0
@@ -189,25 +204,31 @@ export function opisAdr(r: WynikAdr, platnik: Platnik): OpisAdr {
       case 'przed-wydaniem':
         return `przedłużenie: nowe zaświadczenie ważne co najmniej do ${dataPoPolsku(r.nowyKoniec!)}, ale urząd ma 14 dni na wydanie, więc dokument może przyjść po końcu obecnego`;
       case 'przed-oknem':
-        return `za wcześnie na przedłużenie: nowe 5 lat od dnia egzaminu, co najmniej do ${dataPoPolsku(r.nowyKoniec!)}; przepada ${dni(r.strata)} obecnej ważności`;
+        return `za wcześnie na przedłużenie z art. 24 ust. 6: ustawa nie mówi, czy i na jak długo urząd wyda wtedy nowe zaświadczenie; gdyby na 5 lat od egzaminu, byłoby ważne co najmniej do ${dataPoPolsku(r.nowyKoniec!)}, a przepadłoby ${dni(r.strata)} obecnej ważności`;
+      case 'ostatni-dzien':
+        return 'w ostatnim dniu ważności: poza bezpiecznym okresem, przedłużenie z art. 24 ust. 6 może nie przysługiwać';
       case 'po-koncu':
-        return `po końcu ważności: ${dni(r.przerwa)} bez zaświadczenia, przedłużenie już nie przysługuje`;
+        return `po końcu ważności: przedłużenie z art. 24 ust. 6 już nie przysługuje${r.przerwa > 0 ? `; co najmniej ${dni(r.przerwa)} bez zaświadczenia przed egzaminem` : ''}`;
     }
   })();
   const uwagi: string[] = [];
-  if (r.status === 'wygaslo') {
+  if (r.status === 'wygaslo' && !przedluzone) {
     uwagi.push(
       'Bez ważnego zaświadczenia nie możesz kierować pojazdem, dla którego ADR wymaga kursu (art. 20 ust. 1). Przedłużenia z art. 24 ust. 6 już nie ma; ustawa przy przedłużeniu przewiduje kurs doskonalący, a przy pierwszym zaświadczeniu początkowy, więc o rodzaj kursu po wygaśnięciu zapytaj w ośrodku szkolenia albo urzędzie marszałkowskim.',
     );
+  } else if (przedluzone) {
+    uwagi.push('Bez ważnego zaświadczenia w ręku nie wolno kierować pojazdem, dla którego ADR wymaga kursu (art. 20 ust. 1); kierowca ma mieć przy sobie wymagane dokumenty (art. 19 ust. 2).');
+  } else if (r.oknoMinal) {
+    uwagi.push('Okres na kurs doskonalący i egzamin, który na pewno przedłuża ważność od dnia jej upływu, już minął (art. 24 ust. 6).');
   } else {
-    uwagi.push(`Egzamin trzeba zdać najpóźniej 6 miesięcy po ukończeniu kursu (art. 21 ust. 10), więc kurs skończ tak, żeby egzamin wypadł w okresie od ${dataPoPolsku(r.oknoOd)} do ${dataPoPolsku(r.oknoDo)}`);
+    uwagi.push(`Kurs doskonalący i egzamin muszą się zmieścić w okresie od ${dataPoPolsku(r.oknoOd)} do ${dataPoPolsku(r.oknoDo)} (art. 24 ust. 6), a egzamin najpóźniej 6 miesięcy po kursie (art. 21 ust. 10).`);
   }
-  uwagi.push(`Firma, która dopuści do przewozu kierowcę bez wymaganego zaświadczenia ADR, płaci karę ${KARA_FIRMY} zł.`);
+  uwagi.push(`Firma, która dopuści do przewozu kierowcę bez wymaganego zaświadczenia ADR, płaci karę ${KARA_FIRMY} zł (art. 107 ust. 1–2 i załącznik nr 1, lp. 2.8).`);
   return {
     status,
-    kod: r.status,
+    kod: przedluzone ? 'okno' : r.status,
     termin: dataPoPolsku(r.waznyDo),
-    okno: r.status === 'wygaslo' ? 'minął' : `od ${dataPoPolsku(r.oknoOd)} do ${dataPoPolsku(r.oknoDo)}`,
+    okno: r.status === 'wygaslo' || r.oknoMinal ? 'minął' : `od ${dataPoPolsku(r.oknoOd)} do ${dataPoPolsku(r.oknoDo)}`,
     zapas: r.status === 'wygaslo' || r.zapasMinal ? 'minął' : `do ${dataPoPolsku(r.zZapasem)} (nasz rachunek: 14 dni na wydanie)`,
     nowy: `co najmniej do ${dataPoPolsku(r.nowyPoPrzedluzeniu)}`,
     plan,

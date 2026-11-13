@@ -17,7 +17,7 @@ const o = opisDyzuruKierowcy(dyzurKierowcy(d), d);
 const faq = [
   {
     pytanie: 'Czy przerwa w jeździe jest płatna?',
-    odpowiedz: 'Tak. Z przerwy w jeździe 15 minut wlicza się do czasu pracy, gdy dobowy wymiar czasu pracy to co najmniej 6 godzin (art. 27 ust. 3 ustawy o czasie pracy kierowców). Reszta przerwy to czas dyżuru (art. 27 ust. 1), za który należy się wynagrodzenie według przepisów u pracodawcy, nie niższe niż połowa stawki z osobistego zaszeregowania (art. 9 ust. 6 w związku z ust. 5).',
+    odpowiedz: 'Tak. Z przerwy w jeździe 15 minut wlicza się do czasu pracy, gdy dobowy wymiar czasu pracy to co najmniej 6 godzin (art. 27 ust. 3 ustawy o czasie pracy kierowców). Reszta przerwy to czas dyżuru (art. 27 ust. 1), za który należy się wynagrodzenie według przepisów u pracodawcy, nie niższe niż połowa stawki z osobistego zaszeregowania (art. 9 ust. 6 w związku z ust. 5). Wyjątek: na liniach regularnych do 50 km przerwy rozlicza się jak czas pracy (art. 31b ust. 4).',
   },
   {
     pytanie: 'Ile płaci się kierowcy za dyżur?',
@@ -29,7 +29,7 @@ const faq = [
   },
   {
     pytanie: 'Co to jest przerywany czas pracy kierowcy?',
-    odpowiedz: 'To system z jedną przerwą w ciągu doby, najwyżej 5 godzin, a przy przewozach regularnych do 6 godzin, gdy dobowy wymiar nie przekracza 7 godzin. Za czas przerwy należy się połowa wynagrodzenia z osobistego zaszeregowania, a w czasie przerwy kierowca może swobodnie dysponować swoim czasem (art. 16 ust. 1–2). Wprowadza się go w układzie zbiorowym, regulaminie pracy albo umowie o pracę (art. 18 ust. 3).',
+    odpowiedz: 'To system stosowany w szczególnie uzasadnionych przypadkach, według z góry ustalonego rozkładu, z jedną przerwą w ciągu doby, najwyżej 5 godzin, a przy przewozach regularnych do 6 godzin, gdy dobowy wymiar nie przekracza 7 godzin. Za czas przerwy należy się połowa wynagrodzenia z osobistego zaszeregowania, a w czasie przerwy kierowca może swobodnie dysponować swoim czasem (art. 16 ust. 1–2). Wprowadza się go w układzie zbiorowym albo regulaminie pracy, a u pracodawcy bez zakładowej organizacji związkowej w umowie o pracę (art. 18 ust. 3).',
   },
   {
     pytanie: 'Czy dyżur wlicza się do odpoczynku?',
@@ -42,14 +42,14 @@ const faq = [
   tytul="Dyżur i przerwy kierowcy: ile płatne"
   opis="Ile należy się kierowcy za dyżur, przerwy w jeździe, jazdę w załodze bez prowadzenia i przerwę w przerywanym czasie pracy: pełna stawka albo połowa."
   h1="Dyżur, przerwy i jazda w załodze: ile należy się kierowcy"
-  lead="Przerwy w jeździe, dyżur i czas drugiego kierowcy w załodze to nie czas pracy, ale są płatne. Wpisz stawkę i godziny z miesiąca, a policzymy najniższe wynagrodzenie z ustawy o czasie pracy kierowców."
+  lead="Przerwy w jeździe, dyżur i czas drugiego kierowcy w załodze to zwykle nie czas pracy, ale większość z nich jest płatna. Wpisz stawkę i godziny z miesiąca, a policzymy najniższe wynagrodzenie z ustawy o czasie pracy kierowców."
   faq={faq}
 >
   <form class="kalkulator" data-dyzur-kierowcy novalidate aria-labelledby="kalkulator-tytul">
     <div class="kalkulator-pola">
       <h2 id="kalkulator-tytul" class="tytul-m">Stawka i godziny z miesiąca</h2>
       <fieldset class="mt-4">
-        <legend class="etykieta">Wynagrodzenie zasadnicze</legend>
+        <legend class="etykieta-pola">Wynagrodzenie zasadnicze</legend>
         <div class="opcje-pionowe mt-2">
           <label><input type="radio" name="rodzaj" value="miesieczna" checked /> Pensja miesięczna</label>
           <label><input type="radio" name="rodzaj" value="godzinowa" /> Stawka za godzinę</label>
@@ -86,7 +86,7 @@ const faq = [
           <div>
             <label for="dk-przerwy" class="meta">Przerwy w jeździe</label>
             <input id="dk-przerwy" name="przerwy" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value={PRZYKLAD.przerwy} aria-describedby="dk-przerwy-opis dk-blad" />
-            <p id="dk-przerwy-opis" class="meta mt-1">Bez 15 min dziennie wliczanych do czasu pracy.</p>
+            <p id="dk-przerwy-opis" class="meta mt-1">Po 4,5 h jazdy bez 15 min dziennie w czasie pracy, też przerwy po 6 h pracy (art. 13); nie dotyczy linii do 50 km.</p>
           </div>
           <div>
             <label for="dk-zaloga" class="meta">W załodze, bez prowadzenia</label>
@@ -130,6 +130,8 @@ const faq = [
           <tr><th scope="row">Dyżur w domu</th><td>nic</td><td>art. 9 ust. 5</td></tr>
           <tr><th scope="row">Dyspozycja poza rozkładem</th><td>czas dyżuru</td><td>art. 10 ust. 2</td></tr>
           <tr><th scope="row">Przerwa w jeździe po 4,5 h</th><td>15 min w czasie pracy (przy wymiarze od 6 h), reszta: co najmniej połowa stawki</td><td>art. 27 ust. 1 i 3, art. 9 ust. 6</td></tr>
+          <tr><th scope="row">Przerwa po 6 h pracy</th><td>co najmniej połowa stawki (skracana o 15 min w czasie pracy)</td><td>art. 13, art. 9 ust. 2 i 6</td></tr>
+          <tr><th scope="row">Przerwy na linii do 50 km</th><td>jak czas pracy</td><td>art. 31b ust. 4</td></tr>
           <tr><th scope="row">Drugi kierowca w załodze</th><td>co najmniej połowa stawki</td><td>art. 9 ust. 3 i 6</td></tr>
           <tr><th scope="row">Przerwa w przerywanym czasie pracy</th><td>połowa stawki</td><td>art. 16 ust. 2</td></tr>
         </tbody>
@@ -137,9 +139,9 @@ const faq = [
     </div>
     <p>
       Dyżur to pozostawanie poza normalnymi godzinami pracy w gotowości do pracy w zakładzie albo w innym miejscu
-      wyznaczonym przez pracodawcę (art. 9 ust. 1). Gdy kierowca jeździ według przepisów rozporządzenia (WE) nr 561/2006,
-      przerwy z art. 13 ustawy go nie dotyczą (art. 27 ust. 4), a przerwy w jeździe po 4,5 h są czasem dyżuru (art. 27
-      ust. 1). Czasu dyżuru nie wlicza się do odpoczynku dobowego (art. 9 ust. 4).
+      wyznaczonym przez pracodawcę (art. 9 ust. 1). Do kierowcy, który wykorzystał przerwy w jeździe z art. 7 rozporządzenia
+      (WE) nr 561/2006, nie stosuje się przerwy z art. 13 ustawy (art. 27 ust. 4), a przerwy w jeździe po 4,5 h są czasem
+      dyżuru (art. 27 ust. 1). Czasu dyżuru nie wlicza się do odpoczynku dobowego (art. 9 ust. 4).
     </p>
 
     <h2 id="jak-liczymy">Jak liczymy</h2>

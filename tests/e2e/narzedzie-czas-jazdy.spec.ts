@@ -29,7 +29,7 @@ test('przykład: bez naruszeń, przerwa najpóźniej o 16:45, odpoczynek do 19:0
 });
 
 test('noc: przerwa należała się o 2:30 i ponad 10 h pracy w porze nocnej', async ({ page }) => {
-  await wpisz(page, '22:00', [['Jazda', '02:45'], ['Przerwa, odpoczynek', '03:30'], ['Jazda', '07:00'], ['Inna praca', '09:00']]);
+  await wpisz(page, '22:00', [['Jazda', '02:45'], ['Przerwa', '03:30'], ['Jazda', '07:00'], ['Inna praca', '09:00']]);
   await expect(page.locator('[data-w="werdykt"]')).toHaveText('2 naruszenia');
   const lista = page.locator('[data-w="naruszenia"] li');
   await expect(lista).toHaveCount(2);
@@ -40,7 +40,7 @@ test('noc: przerwa należała się o 2:30 i ponad 10 h pracy w porze nocnej', as
 });
 
 test('pora nocna 0:00–4:00: zmiana od 5:00 bez limitu 10 h, ale 10 h 30 min jazdy to naruszenie', async ({ page }) => {
-  await wpisz(page, '05:00', [['Jazda', '09:30'], ['Przerwa, odpoczynek', '10:15'], ['Jazda', '14:45'], ['Przerwa, odpoczynek', '15:30'], ['Jazda', '17:00']]);
+  await wpisz(page, '05:00', [['Jazda', '09:30'], ['Przerwa', '10:15'], ['Jazda', '14:45'], ['Przerwa', '15:30'], ['Jazda', '17:00']]);
   await expect(page.locator('[data-w="werdykt"]')).toHaveText('2 naruszenia');
   await page.locator('#cj-noc').selectOption({ label: '0:00–4:00' });
   await expect(page.locator('[data-w="werdykt"]')).toHaveText('1 naruszenie');
@@ -49,7 +49,7 @@ test('pora nocna 0:00–4:00: zmiana od 5:00 bez limitu 10 h, ale 10 h 30 min ja
 
 test('linia do 50 km: brakuje 10 min przerw', async ({ page }) => {
   await page.locator('#cj-pojazd').selectOption({ label: 'Linia regularna do 50 km' });
-  await wpisz(page, '06:00', [['Jazda', '09:00'], ['Przerwa, odpoczynek', '09:10'], ['Jazda', '12:00'], ['Przerwa, odpoczynek', '12:20'], ['Jazda', '14:00']]);
+  await wpisz(page, '06:00', [['Jazda', '09:00'], ['Przerwa', '09:10'], ['Jazda', '12:00'], ['Przerwa', '12:20'], ['Jazda', '14:00']]);
   await expect(page.locator('[data-w="przerwa"]')).toHaveText(/wykorzystano\s20\smin,\sbrakuje\s10\smin/);
   await expect(page.locator('[data-w="naruszenia"] li')).toContainText('art. 31b');
 });
@@ -64,4 +64,15 @@ test('błędne dane: brak okresów i zła liczba godzin w tygodniu', async ({ pa
   await expect(page.locator('[data-blad="tydzien"]')).toBeVisible();
   await expect(page.locator('#cj-tydzien')).toHaveAttribute('aria-invalid', 'true');
   await expect(page.locator('[data-w="tydzien"]')).toHaveText('wpisz jazdę z tego tygodnia');
+});
+
+test('odpoczynek wpisany na końcu: bez naruszenia, przerwa nie dotyczy; odpoczynek w środku: błąd przy wierszu', async ({ page }) => {
+  await wpisz(page, '06:00', [['Jazda', '10:30'], ['Przerwa', '11:15'], ['Jazda', '15:45'], ['Odpoczynek', '07:00']]);
+  await expect(page.locator('[data-w="werdykt"]')).toHaveText('Bez naruszeń');
+  await expect(page.locator('[data-w="przerwa"]')).toHaveText(/nie\sdotyczy:\sod\s15:45\sodpoczynek\sdobowy/);
+  await expect(page.locator('[data-w="odpoczynek"]')).toHaveText(/od\s15:45:\s14\sh\s15\smin\sw\s24\sh/);
+  await page.locator('#cj-r4').selectOption({ label: 'Jazda' });
+  await page.locator('#cj-d4').fill('08:00');
+  await expect(page.locator('[data-blad="okresy"]')).toHaveText(/Odpoczynek\sdobowy\swpisz\sjako\sostatni\sokres/);
+  await expect(page.locator('#cj-d4')).toHaveAttribute('aria-invalid', 'true');
 });

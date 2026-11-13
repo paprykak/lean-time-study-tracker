@@ -4,6 +4,8 @@
 //   pracodawcę) poza domem: czas wolny w wymiarze równym dyżurowi, a gdy nie można go udzielić, wynagrodzenie
 //   z osobistego zaszeregowania (stawka godzinowa albo miesięczna), a bez wyodrębnionej stawki 60% wynagrodzenia;
 //   dyżur w domu: bez czasu wolnego i wynagrodzenia;
+// - art. 31b ust. 4: na liniach regularnych do 50 km przerwy rozlicza się jak czas pracy (nie dyżur), więc tu ich nie
+//   liczymy;
 // - art. 9 ust. 2, 3 i 6: przerwy na odpoczynek z art. 13 i czas nieprowadzenia pojazdu w załodze dwóch lub więcej
 //   kierowców to czas dyżuru z wynagrodzeniem według przepisów u pracodawcy, nie niższym niż połowa wynagrodzenia z ust. 5;
 // - art. 27 ust. 1 i 3: przerwy w jeździe z art. 7 rozporządzenia (WE) nr 561/2006 to czas dyżuru z art. 9 ust. 6, a ich
@@ -22,7 +24,7 @@
 // 4. Wariantu „60% wynagrodzenia” bez wyodrębnionej stawki nie liczymy: ustawa nie mówi, jak ustalić to wynagrodzenie.
 import { wymiarMiesiaca } from './czas-pracy';
 import { doGrosza } from './dodatek-nocny';
-import { zl } from './format';
+import { liczba, zl } from './format';
 
 export type Stawka = 'godzinowa' | 'miesieczna';
 
@@ -34,7 +36,7 @@ export interface DaneDyzuruKierowcy {
   miesiac: number;
   /** Dyżur poza domem bez pracy i dyspozycja poza rozkładem, za które nie udzielono czasu wolnego (h). */
   dyzur: number;
-  /** Przerwy w jeździe z art. 7 rozporządzenia ponad 15 min wliczane do czasu pracy (h). */
+  /** Przerwy w jeździe z art. 7 rozporządzenia (ponad 15 min wliczane do czasu pracy) i przerwy z art. 13 ustawy (h). */
   przerwy: number;
   /** Czas w załodze bez prowadzenia pojazdu (h). */
   zaloga: number;
@@ -58,8 +60,9 @@ export function dyzurKierowcy(d: DaneDyzuruKierowcy): WynikDyzuruKierowcy {
   if (!(d.stawka > 0 && d.stawka < 1_000_000)) throw new RangeError('Podaj stawkę');
   for (const g of [d.dyzur, d.przerwy, d.zaloga, d.przerywany]) if (!(g >= 0 && g <= 744)) throw new RangeError('Godziny od 0 do 744');
   const wymiar = d.rodzaj === 'miesieczna' ? wymiarMiesiaca(d.rok, d.miesiac).godziny : null;
-  const zaGodzine = d.rodzaj === 'godzinowa' ? d.stawka : d.stawka / wymiar!;
-  const polowa = zaGodzine / 2;
+  // Stawkę i połowę zaokrąglamy do grosza przed mnożeniem, żeby iloczyn w wyniku zgadzał się z kwotą.
+  const zaGodzine = doGrosza(d.rodzaj === 'godzinowa' ? d.stawka : d.stawka / wymiar!);
+  const polowa = doGrosza(zaGodzine / 2);
   const kwotaDyzur = doGrosza(zaGodzine * d.dyzur);
   const kwotaPrzerwy = doGrosza(polowa * d.przerwy);
   const kwotaZaloga = doGrosza(polowa * d.zaloga);
@@ -87,7 +90,7 @@ export interface OpisDyzuruKierowcy {
 
 /** Teksty wyniku: te same w HTML ze strony i w skrypcie przeglądarki. */
 export function opisDyzuruKierowcy(r: WynikDyzuruKierowcy, d: DaneDyzuruKierowcy): OpisDyzuruKierowcy {
-  const h = (x: number) => `${String(x).replace('.', ',')} h`;
+  const h = (x: number) => `${liczba(x)} h`;
   const linia = (godz: number, kwota: number, stawka: number, przepis: string) => (godz > 0 ? `${zl(kwota)} (${h(godz)} × ${zl(stawka)}; ${przepis})` : '—');
   return {
     razem: zl(r.razem),

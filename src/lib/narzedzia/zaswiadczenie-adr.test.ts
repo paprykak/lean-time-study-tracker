@@ -49,7 +49,8 @@ describe('zaświadczenie ADR', () => {
     expect(zaswiadczenieAdr({ waznyDo: '2027-05-20', egzamin: '2026-05-21', dzis: '2026-01-01' }).egzamin).toBe('w-oknie');
     expect(zaswiadczenieAdr({ waznyDo: '2027-05-20', egzamin: '2026-05-20', dzis: '2026-01-01' }).egzamin).toBe('przed-oknem');
     expect(zaswiadczenieAdr({ waznyDo: '2027-05-20', egzamin: '2027-05-19', dzis: '2026-01-01' }).egzamin).toBe('przed-wydaniem');
-    expect(zaswiadczenieAdr({ waznyDo: '2027-05-20', egzamin: '2027-05-20', dzis: '2026-01-01' }).egzamin).toBe('po-koncu');
+    expect(zaswiadczenieAdr({ waznyDo: '2027-05-20', egzamin: '2027-05-20', dzis: '2026-01-01' }).egzamin).toBe('ostatni-dzien');
+    expect(zaswiadczenieAdr({ waznyDo: '2027-05-20', egzamin: '2027-05-21', dzis: '2026-01-01' }).egzamin).toBe('po-koncu');
   });
   it('egzamin za wcześnie: 5 lat od egzaminu, przepada 405 dni', () => {
     const r = zaswiadczenieAdr({ waznyDo: '2027-05-20', egzamin: '2026-04-10', dzis: '2026-01-01' });
@@ -63,10 +64,13 @@ describe('zaświadczenie ADR', () => {
     expect(r.nowyKoniec).toBe('2032-02-27');
     expect(r.strata).toBe(366);
   });
-  it('egzamin po końcu: 14 dni bez zaświadczenia', () => {
+  it('egzamin po końcu: 13 dni bez zaświadczenia (21.05–2.06)', () => {
     const r = zaswiadczenieAdr({ waznyDo: '2027-05-20', egzamin: '2027-06-03', dzis: '2026-11-13' });
     expect(r.egzamin).toBe('po-koncu');
-    expect(r.przerwa).toBe(14);
+    expect(r.przerwa).toBe(13);
+    expect(opisAdr(r, 'firma').plan).toBe('po końcu ważności: przedłużenie z art. 24 ust. 6 już nie przysługuje; co najmniej 13 dni bez zaświadczenia przed egzaminem');
+    const dzienPo = zaswiadczenieAdr({ waznyDo: '2027-05-20', egzamin: '2027-05-21', dzis: '2026-11-13' });
+    expect(opisAdr(dzienPo, 'firma').plan).toBe('po końcu ważności: przedłużenie z art. 24 ust. 6 już nie przysługuje');
     expect(r.nowyKoniec).toBeNull();
   });
   it('w okresie i ostatni dzień; po końcu: wygasło, bez wydarzeń', () => {
@@ -102,5 +106,36 @@ describe('teksty wyniku', () => {
     expect(ktoPlaci('firma')).toContain('art. 39 pkt 1');
     expect(ktoPlaci('wlasna-firma')).toContain('osobiście');
     expect(ktoPlaci('sam')).toContain('art. 39 pkt 2');
+  });
+});
+
+describe('poprawki po weryfikacji', () => {
+  it('wygasło, ale egzamin w okresie: przedłużone, bez uwagi o braku przedłużenia', () => {
+    const o = opisAdr(zaswiadczenieAdr({ waznyDo: '2026-10-20', egzamin: '2026-09-01', dzis: '2026-11-13' }), 'firma');
+    expect(o.status).toBe('Przedłużone egzaminem: sprawdź, czy masz nowe zaświadczenie');
+    expect(o.kod).toBe('okno');
+    expect(o.plan).toBe('przedłużenie: nowe zaświadczenie ważne co najmniej do 19 października 2031 r.');
+    expect(o.uwagi.join(' ')).not.toContain('Przedłużenia z art. 24 ust. 6 już nie ma');
+  });
+  it('ostatni dzień ważności: okres minął, bez rady o kursie', () => {
+    const o = opisAdr(zaswiadczenieAdr({ waznyDo: '2027-05-20', dzis: '2027-05-20' }), 'firma');
+    expect(o.okno).toBe('minął');
+    expect(o.uwagi[0]).toContain('już minął');
+  });
+  it('pierwszy dzień okresu: status „czas na kurs”, rada o kursie i egzaminie w okresie', () => {
+    const o = opisAdr(zaswiadczenieAdr({ waznyDo: '2027-05-20', dzis: '2026-05-21' }), 'firma');
+    expect(o.status).toBe('Czas na kurs doskonalący: zostało 364 dni');
+    expect(o.uwagi[0]).toBe('Kurs doskonalący i egzamin muszą się zmieścić w okresie od 21 maja 2026 r. do 19 maja 2027 r. (art. 24 ust. 6), a egzamin najpóźniej 6 miesięcy po kursie (art. 21 ust. 10).');
+  });
+  it('egzamin w ostatnim dniu i za wcześnie: bez przesądzania', () => {
+    expect(opisAdr(zaswiadczenieAdr({ waznyDo: '2027-05-20', egzamin: '2027-05-20', dzis: '2026-01-01' }), 'firma').plan).toContain('może nie przysługiwać');
+    const o = opisAdr(zaswiadczenieAdr({ waznyDo: '2027-05-20', egzamin: '2026-04-10', dzis: '2026-01-01' }), 'firma');
+    expect(o.plan).toContain('ustawa nie mówi, czy i na jak długo');
+    expect(o.plan).toContain('co najmniej do 9 kwietnia 2031 r., a przepadłoby 405 dni');
+  });
+  it('egzamin ADR bez osobnej opłaty (art. 21 ust. 5), kara z art. 107', () => {
+    for (const p of ['firma', 'wlasna-firma', 'sam'] as const) expect(ktoPlaci(p)).toContain('art. 21 ust. 5');
+    expect(ktoPlaci('firma')).not.toContain('egzamin i wydanie');
+    expect(opisAdr(zaswiadczenieAdr({ waznyDo: '2027-05-20', dzis: '2026-02-01' }), 'firma').uwagi.at(-1)).toContain('art. 107');
   });
 });

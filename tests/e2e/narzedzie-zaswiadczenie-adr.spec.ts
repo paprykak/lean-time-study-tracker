@@ -24,7 +24,7 @@ test('ważne do 20.05.2041: okres, zapas i nowe zaświadczenie', async ({ page }
 test('egzamin za wcześnie: 5 lat od egzaminu i strata dni', async ({ page }) => {
   await page.locator('#adr-wazne').fill('2041-05-20');
   await page.locator('#adr-egzamin').fill('2040-04-10');
-  await expect(page.locator('[data-w="plan"]')).toHaveText(/za\swcześnie.*co\snajmniej\sdo\s9\skwietnia\s2045\sr\.;\sprzepada\s405\sdni/);
+  await expect(page.locator('[data-w="plan"]')).toHaveText(/za\swcześnie.*co\snajmniej\sdo\s9\skwietnia\s2045\sr\.,\sa\sprzepadłoby\s405\sdni/);
 });
 
 test('egzamin w okresie i po końcu ważności', async ({ page }) => {
@@ -32,7 +32,7 @@ test('egzamin w okresie i po końcu ważności', async ({ page }) => {
   await page.locator('#adr-egzamin').fill('2041-03-10');
   await expect(page.locator('[data-w="plan"]')).toHaveText(/^przedłużenie:\snowe\szaświadczenie\sważne\sco\snajmniej\sdo\s19\smaja\s2046\sr\.$/);
   await page.locator('#adr-egzamin').fill('2041-06-03');
-  await expect(page.locator('[data-w="plan"]')).toHaveText(/14\sdni\sbez\szaświadczenia/);
+  await expect(page.locator('[data-w="plan"]')).toHaveText(/co\snajmniej\s13\sdni\sbez\szaświadczenia/);
 });
 
 test('kto płaci zależy od wyboru', async ({ page }) => {

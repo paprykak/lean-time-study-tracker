@@ -678,7 +678,7 @@ export const AKTY = {
   czasPracyKierowcow: {
     nazwa: 'Ustawa o czasie pracy kierowców',
     publikator: 'Dz.U. 2026 poz. 477',
-    uwaga: 'tekst jednolity, stan prawny na 25 marca 2026 r., ze zmianą Dz.U. 2025 poz. 1661 (od 13 grudnia 2025 r., tylko art. 8 ust. 3); po tekście jednolitym bez zmian; art. 2 pkt 6a, art. 6 ust. 3, art. 13, 14, 21, 22, 27, 29',
+    uwaga: 'tekst jednolity, stan prawny na 25 marca 2026 r., ze zmianą Dz.U. 2025 poz. 1661 (od 13 grudnia 2025 r., tylko art. 8 ust. 3); po tekście jednolitym bez zmian; art. 2 pkt 6a, art. 6 ust. 3, art. 9, 10, 13, 14, 16, 18, 21, 22, 27, 31a–31c',
     adres: eli(2026, 477),
     sprawdzono: '2026-11-13',
   },
