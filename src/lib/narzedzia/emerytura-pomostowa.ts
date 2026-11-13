@@ -10,6 +10,7 @@
 // - warunki szczególne: art. 6 (porty morskie, zał. 1 pkt 21 i zał. 2 pkt 12: 55 lat, 15 lat w porcie), art. 7 (hutnictwo,
 //   zał. 1 pkt 4–12: 55 lat, 15 lat, orzeczenie lekarza medycyny pracy), art. 8 (zał. 1 pkt 20, 22 i 32: nurkowie, rybacy
 //   morscy, azbest: 50/55 lat, 10 lat); w każdym z nich staż 20/25 lat i praca po 2008 r. (art. 4 pkt 1, 4 i 6);
+//   okres liczy się tylko z prac z tych punktów; sprawdzamy też ogólne zasady z art. 4 i bierzemy wcześniejszą datę;
 // - art. 3 ust. 4–5: po 2008 r. liczy się praca w pełnym wymiarze czasu pracy; art. 12: bez okresów niewykonywania pracy, za które
 //   jest wynagrodzenie albo świadczenie z ubezpieczenia chorobowego i macierzyńskiego; art. 3 ust. 7: praca przed 2009 r. także według art. 32 i 33 ustawy o FUS;
 // - art. 15–16: prawo powstaje z dniem spełnienia warunków i ustaje z dniem przed nabyciem emerytury z FUS albo z dniem
@@ -52,6 +53,8 @@ export interface DanePomostowej {
   rodzaj: RodzajPrac;
   /** Praca w szczególnych warunkach lub o szczególnym charakterze razem (lata). */
   lataSzczegolne: number;
+  /** Z tego prace z punktów art. 6–8 dla wybranego rodzaju (lata); dla „ogolne” pomijane. */
+  lataRodzaju?: number;
   /** Z tego przed 1 stycznia 2009 r. (lata). */
   przed2009: number;
   /** Okres składkowy i nieskładkowy (lata). */
@@ -68,32 +71,44 @@ export function emeryturaPomostowa(d: DanePomostowej) {
   if (!(d.lataSzczegolne >= 0 && d.przed2009 >= 0 && d.staz >= 0)) throw new RangeError('Okresy nie mogą być ujemne');
   if (d.przed2009 > d.lataSzczegolne) throw new RangeError('Okres przed 2009 r. dłuższy niż cały okres');
   if (d.dzis < d.urodzenie) throw new RangeError('Data urodzenia z przyszłości');
-  const w = wymagania(d.rodzaj, d.plec);
-  const dataWieku = dodajLata(d.urodzenie, w.wiek);
+  const lataRodzaju = d.lataRodzaju ?? d.lataSzczegolne;
+  if (d.rodzaj !== 'ogolne' && !(lataRodzaju >= 0 && lataRodzaju <= d.lataSzczegolne)) throw new RangeError('Okres prac z punktów art. 6–8 poza zakresem');
   const koniec = dodajLata(d.urodzenie, wiekPowszechny(d.plec));
   const staz = stazWymagany(d.plec);
   const po2008 = Math.round((d.lataSzczegolne - d.przed2009) * 1000) / 1000;
-  const warunki = {
-    rocznik: d.urodzenie > '1948-12-31',
-    praca: d.lataSzczegolne >= w.lataPracy,
-    wiek: d.dzis >= dataWieku,
-    staz: d.staz >= staz,
-    // Art. 4 pkt 6 albo art. 49 (cały wymagany okres przed 2009 r.).
-    po2008: po2008 > 0 || d.przed2009 >= w.lataPracy,
-  };
-  const brakPracy = brakMiesiecy(d.lataSzczegolne, w.lataPracy);
   const brakStazu = brakMiesiecy(d.staz, staz);
-  // Przy dalszej pracy w szczególnych warunkach od dziś przybywa obu okresów naraz (i pracy po 2008 r.).
-  const miesiace = Math.max(brakPracy, brakStazu);
-  const najwczesniej = [dataWieku, dodajMiesiace(d.dzis, miesiace)].sort()[1];
+  const rocznik = d.urodzenie > '1948-12-31';
+  // Art. 6–8 liczą tylko pracę z ich punktów załączników; art. 4 każdą pracę z wykazu. Przy wybranym rodzaju prac
+  // sprawdzamy oba i bierzemy ten, który daje wcześniejszą datę (przy równej: przepis szczególny).
+  const licz = (rodzaj: RodzajPrac, okres: number) => {
+    const w = wymagania(rodzaj, d.plec);
+    const dataWieku = dodajLata(d.urodzenie, w.wiek);
+    const warunki = {
+      rocznik,
+      praca: okres >= w.lataPracy,
+      wiek: d.dzis >= dataWieku,
+      staz: d.staz >= staz,
+      // Art. 4 pkt 6 albo art. 49 (cały wymagany okres przed 2009 r.).
+      po2008: po2008 > 0 || d.przed2009 >= w.lataPracy,
+    };
+    const brakPracy = brakMiesiecy(okres, w.lataPracy);
+    // Przy dalszej pracy w szczególnych warunkach od dziś przybywa obu okresów naraz (i pracy po 2008 r.).
+    const najwczesniej = [dataWieku, dodajMiesiace(d.dzis, Math.max(brakPracy, brakStazu))].sort()[1];
+    return { w, dataWieku, warunki, brakPracy, najwczesniej };
+  };
+  const ogolne = licz('ogolne', d.lataSzczegolne);
+  const szczegolne = d.rodzaj === 'ogolne' ? null : licz(d.rodzaj, lataRodzaju);
+  const wybrane = szczegolne && szczegolne.najwczesniej <= ogolne.najwczesniej ? szczegolne : ogolne;
+  const { w, dataWieku, warunki, brakPracy, najwczesniej } = wybrane;
   let stan: StanPomostowej;
-  if (!warunki.rocznik) stan = 'rocznik';
+  if (!rocznik) stan = 'rocznik';
   else if (d.dzis >= koniec) stan = 'po-wieku';
   else if (warunki.praca && warunki.staz && warunki.po2008) stan = warunki.wiek ? 'spelnia' : 'wiek';
   else stan = 'brak';
   // Wymagane okresy dopiero po 60/65 latach: emerytura pomostowa nie zdąży powstać.
   const zaPozno = stan === 'brak' && najwczesniej >= koniec;
-  return { stan, warunki, wymagania: w, stazWymagany: staz, dataWieku, koniec, po2008, brakPracy, brakStazu, najwczesniej, zaPozno, rekompensata: d.przed2009 >= 15 };
+  const szczegolneZasady = wybrane === szczegolne;
+  return { stan, warunki, wymagania: w, stazWymagany: staz, dataWieku, koniec, po2008, brakPracy, brakStazu, najwczesniej, zaPozno, szczegolneZasady, lataRodzaju, rekompensata: rocznik && d.przed2009 >= 15 };
 }
 
 /** „1 rok”, „2 lata”, „5 lat”, z ułamkiem: „14,5 roku”. */
@@ -129,7 +144,13 @@ export interface OpisPomostowej {
 }
 
 const ART_17 =
-  'Emerytura pomostowa jest zawieszona, gdy praca trwa dalej u tego samego pracodawcy bez rozwiązania umowy o pracę (art. 17 ust. 1 ustawy i art. 103a ustawy o FUS) i gdy wracasz do pracy w szczególnych warunkach (art. 17 ust. 4); przy innej pracy obowiązują limity dorabiania jak przy wcześniejszej emeryturze.';
+  'Emerytura pomostowa jest zawieszona, gdy praca trwa dalej u tego samego pracodawcy bez rozwiązania umowy o pracę (art. 17 ust. 1 ustawy i art. 103a ustawy o FUS) i gdy podejmiesz pracę w szczególnych warunkach na umowę o pracę albo umowę cywilnoprawną (art. 17 ust. 4); przy innej pracy obowiązują limity dorabiania jak przy wcześniejszej emeryturze.';
+
+const NAZWA_RODZAJU: Record<Exclude<RodzajPrac, 'ogolne'>, string> = {
+  hutnictwo: 'w hutnictwie (zał. 1 pkt 4–12, art. 7)',
+  port: 'w porcie morskim (zał. 1 pkt 21 albo zał. 2 pkt 12, art. 6)',
+  art8: 'z zał. 1 pkt 20, 22 albo 32 (art. 8)',
+};
 
 /** Teksty wyniku: te same w HTML ze strony i w skrypcie przeglądarki. */
 export function opisPomostowej(d: DanePomostowej): OpisPomostowej {
@@ -142,7 +163,7 @@ export function opisPomostowej(d: DanePomostowej): OpisPomostowej {
     praca: tak(r.warunki.praca, `${lat(d.lataSzczegolne)} z wymaganych ${lat(w.lataPracy)}`),
     wiek: `${w.wiek} lat: ${dataPoPolsku(r.dataWieku)}`,
     staz: tak(r.warunki.staz, `${lat(d.staz)} z wymaganych ${lat(r.stazWymagany)}`),
-    po2008: r.po2008 > 0 ? `tak: ${lat(r.po2008)} po 2008 r.` : r.warunki.po2008 ? `nie, ale ${lat(w.lataPracy)} przed 2009 r. (art. 49)` : 'nie: brak pracy po 2008 r. i pełnego okresu przed 2009 r.',
+    po2008: r.po2008 > 0 ? `tak: ${lat(r.po2008)} po 2008 r.` : r.warunki.po2008 ? `nie, ale wymagany okres prac z załączników przed 2009 r. (art. 49)` : 'nie: brak pracy po 2008 r. i pełnego okresu przed 2009 r.',
     koniec: dataPoPolsku(r.koniec),
     uwagi: [],
   };
@@ -151,7 +172,7 @@ export function opisPomostowej(d: DanePomostowej): OpisPomostowej {
     o.opis = 'emerytura pomostowa jest dla osób urodzonych po 31 grudnia 1948 r. (art. 4 pkt 1)';
   } else if (r.stan === 'po-wieku') {
     o.stan = 'Już nie przysługuje';
-    o.opis = `prawo do emerytury pomostowej ustaje w dniu ${wiekPowszechny(d.plec)}. urodzin (art. 16 pkt 2); w tym wieku przysługuje emerytura z FUS`;
+    o.opis = `prawo do emerytury pomostowej ustaje w dniu ${wiekPowszechny(d.plec)}. urodzin (art. 16 pkt 2); w tym wieku można przejść na emeryturę z FUS`;
   } else if (r.stan === 'spelnia') {
     o.stan = 'Spełniasz warunki';
     o.opis = `prawo powstaje z dniem spełnienia warunków (art. 15 ust. 1) i trwa najdłużej do ${dataPoPolsku(r.koniec)}`;
@@ -166,14 +187,19 @@ export function opisPomostowej(d: DanePomostowej): OpisPomostowej {
     o.stan = 'Jeszcze nie';
     o.opis = `brakuje ${braki}; przy dalszej pracy w szczególnych warunkach na pełen etat warunki spełnisz najwcześniej ${dataPoPolsku(r.najwczesniej)}`;
   }
-  if (d.rodzaj === 'hutnictwo') o.uwagi.push('W hutnictwie potrzebne jest też orzeczenie lekarza medycyny pracy o niezdolności do pracy w szczególnych warunkach z pkt 4–12 załącznika nr 1 (art. 7 pkt 3).');
-  if (d.rodzaj === 'port') o.uwagi.push('Liczy się praca w morskim porcie handlowym albo przedsiębiorstwie pomocniczym portu: przeładunek w ładowniach statku (zał. 1 pkt 21) albo obsługa dźwignic portowych (zał. 2 pkt 12) (art. 6).');
+  if (d.rodzaj !== 'ogolne' && !r.szczegolneZasady) {
+    o.uwagi.push(`Pracy ${NAZWA_RODZAJU[d.rodzaj]} masz ${lat(r.lataRodzaju)} z wymaganych ${lat(wymagania(d.rodzaj, d.plec).lataPracy)}; ogólne zasady z art. 4 dają wcześniejszą datę, więc liczymy według nich.`);
+  }
+  if (d.rodzaj === 'hutnictwo' && r.szczegolneZasady) o.uwagi.push('W hutnictwie potrzebne jest też orzeczenie lekarza medycyny pracy o niezdolności do pracy w szczególnych warunkach z pkt 4–12 załącznika nr 1 (art. 7 pkt 3).');
+  if (d.rodzaj === 'port' && r.szczegolneZasady) o.uwagi.push('Liczy się praca w morskim porcie handlowym albo przedsiębiorstwie pomocniczym portu: przeładunek w ładowniach statku (zał. 1 pkt 21) albo obsługa dźwignic portowych (zał. 2 pkt 12) (art. 6).');
   if (r.stan === 'spelnia' || r.stan === 'wiek') o.uwagi.push('Wniosek składasz w ZUS sam albo przez pracodawcę (art. 24).', ART_17);
   if (r.rekompensata && r.stan !== 'spelnia' && r.stan !== 'wiek') {
-    o.uwagi.push('Masz co najmniej 15 lat pracy w szczególnych warunkach przed 2009 r., więc możesz mieć prawo do rekompensaty: dodatku do kapitału początkowego ustalanego z wnioskiem o emeryturę (art. 21–23). Nie przysługuje, gdy masz już prawomocnie ustalone prawo do emerytury pomostowej albo do emerytury (art. 2 pkt 5 i art. 21 ust. 2).');
+    o.uwagi.push('Jeśli przed 2009 r. masz co najmniej 15 lat pracy w szczególnych warunkach według dawnych przepisów (art. 32 i 33 ustawy o FUS, nie według załączników), możesz mieć prawo do rekompensaty: dodatku do kapitału początkowego ustalanego z wnioskiem o emeryturę (art. 21–23). Nie przysługuje, gdy masz już prawomocnie ustalone prawo do emerytury pomostowej albo do emerytury (art. 2 pkt 5 i art. 21 ust. 2).');
   } else if (r.rekompensata) {
-    o.uwagi.push('Rekompensata za pracę przed 2009 r. (art. 21–23) przysługuje tylko osobie bez prawomocnie ustalonego prawa do emerytury pomostowej (art. 2 pkt 5).');
+    o.uwagi.push('Rekompensata za pracę przed 2009 r. (art. 21–23) przysługuje tylko osobie bez prawomocnie ustalonego prawa do emerytury pomostowej ani do innej emerytury (art. 2 pkt 5 i art. 21 ust. 2).');
+  } else if (r.warunki.rocznik && d.przed2009 > 0 && r.stan !== 'po-wieku') {
+    o.uwagi.push('Do rekompensaty (art. 21 ust. 1) potrzeba 15 lat pracy przed 2009 r. w szczególnych warunkach według dawnych przepisów (art. 32 i 33 ustawy o FUS), a nie według załączników; ten okres może być inny niż wpisany.');
   }
-  o.uwagi.push('Liczy się tylko praca z wykazów w załącznikach do ustawy, po 2008 r. na pełen etat, bez okresów niewykonywania pracy, za które dostajesz wynagrodzenie albo zasiłek z ubezpieczenia chorobowego i macierzyńskiego (art. 3 i 12). Okresy potwierdza pracodawca, a o prawie decyduje ZUS.');
+  o.uwagi.push('Liczy się tylko praca z wykazów w załącznikach do ustawy, po 2008 r. na pełen etat, bez okresów niewykonywania pracy, za które dostajesz wynagrodzenie (na przykład za chorobę) albo świadczenie z ubezpieczenia chorobowego (art. 3 i 12). Okresy potwierdza pracodawca, a o prawie decyduje ZUS.');
   return o;
 }

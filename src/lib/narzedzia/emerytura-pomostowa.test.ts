@@ -48,16 +48,27 @@ describe('emerytura pomostowa (art. 4, 6–8, 16 i 49 ustawy o emeryturach pomos
     expect(emeryturaPomostowa(D({ plec: 'k', urodzenie: '1975-01-01', rodzaj: 'art8', lataSzczegolne: 9, staz: 18 }))).toMatchObject({ stan: 'brak', brakPracy: 12, brakStazu: 24, najwczesniej: '2028-11-13' });
   });
 
+  it('art. 6–8 tylko z pracą z tych punktów: 5 z 15 lat w hucie → ogólne zasady (60 lat 10 marca 2030 r. wcześniej niż 10 lat dalszej pracy w hucie)', () => {
+    const r = emeryturaPomostowa(D({ urodzenie: '1970-03-10', rodzaj: 'hutnictwo', lataSzczegolne: 15, lataRodzaju: 5, przed2009: 10, staz: 25 }));
+    expect(r).toMatchObject({ stan: 'wiek', szczegolneZasady: false, dataWieku: '2030-03-10', wymagania: { wiek: 60 } });
+    const o = opisPomostowej(D({ urodzenie: '1970-03-10', rodzaj: 'hutnictwo', lataSzczegolne: 15, lataRodzaju: 5, przed2009: 10, staz: 25 }));
+    expect(o.uwagi[0]).toBe('Pracy w hutnictwie (zał. 1 pkt 4–12, art. 7) masz 5 lat z wymaganych 15 lat; ogólne zasady z art. 4 dają wcześniejszą datę, więc liczymy według nich.');
+    expect(o.uwagi.join(' ')).not.toContain('lekarza medycyny pracy');
+    expect(() => emeryturaPomostowa(D({ rodzaj: 'port', lataRodzaju: 17 }))).toThrow(RangeError);
+  });
+
   it('bez pracy po 2008 r.: wystarczy cały wymagany okres przed 2009 r. (art. 49)', () => {
     const r = emeryturaPomostowa(D({ urodzenie: '1962-12-01', lataSzczegolne: 17, przed2009: 17, staz: 40 }));
     expect(r).toMatchObject({ stan: 'spelnia', po2008: 0, rekompensata: true });
     expect(r.warunki.po2008).toBe(true);
-    expect(opisPomostowej(D({ urodzenie: '1962-12-01', lataSzczegolne: 17, przed2009: 17, staz: 40 })).po2008).toBe('nie, ale 15 lat przed 2009 r. (art. 49)');
+    expect(opisPomostowej(D({ urodzenie: '1962-12-01', lataSzczegolne: 17, przed2009: 17, staz: 40 })).po2008).toBe('nie, ale wymagany okres prac z załączników przed 2009 r. (art. 49)');
   });
 
   it('po 65. urodzinach już nie przysługuje; urodzeni do 31 grudnia 1948 r. nigdy', () => {
     expect(emeryturaPomostowa(D({ urodzenie: '1961-01-01', lataSzczegolne: 20, przed2009: 10, staz: 40 }))).toMatchObject({ stan: 'po-wieku', koniec: '2026-01-01' });
     expect(emeryturaPomostowa(D({ urodzenie: '1948-12-31', lataSzczegolne: 20, przed2009: 10, staz: 40 })).stan).toBe('rocznik');
+    // Rekompensata to dodatek do kapitału początkowego, którego urodzeni przed 1949 r. nie mają (art. 173 ustawy o FUS).
+    expect(opisPomostowej(D({ urodzenie: '1948-12-31', lataSzczegolne: 20, przed2009: 16, staz: 40 })).uwagi.join(' ')).not.toContain('rekompensat');
   });
 
   it('brakujące 10 lat pracy zebrane dopiero po 65 latach: nie zdąży', () => {

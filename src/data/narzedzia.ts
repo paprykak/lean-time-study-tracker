@@ -803,7 +803,7 @@ export const NARZEDZIA: Narzedzie[] = [
   {
     slug: 'emerytura-pomostowa',
     nazwa: 'Emerytura pomostowa',
-    krotko: 'Czy spełniasz warunki: 15 lat pracy z wykazu, wiek 55/60 lat, staż. Mroźnie, huty, spawanie, rekompensata.',
+    krotko: 'Czy spełniasz warunki: 15 lat pracy z wykazu, wiek 55/60 lat, staż. Mroźnie, huty, rekompensata.',
     kategoria: 'wynagrodzenie',
     przepisy: ['emeryturyPomostowe', 'zmianaPomostowych2023', 'emerytury'],
     sprawdzono: '2026-11-13',

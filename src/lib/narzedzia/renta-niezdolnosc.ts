@@ -77,7 +77,7 @@ export function warunkiRenty(dane: DaneRenty) {
   // Art. 57 ust. 2 i art. 58 ust. 4: progi zwalniające z warunku 18 miesięcy i z warunku 10 lat.
   const bez18 = calkowita && staz >= (d.plec === 'k' ? 20 : 25);
   const bez10 = calkowita && d.skladkowe >= (d.plec === 'k' ? 25 : 30);
-  const okres = d.przyczyna === 'praca' ? 'niewymagany' : d.ubezpieczenie !== 'pozniej' ? 'spelniony' : bez18 ? 'zwolniony' : 'niespelniony';
+  const okres: 'niewymagany' | 'spelniony' | 'zwolniony' | 'niespelniony' = d.przyczyna === 'praca' ? 'niewymagany' : d.ubezpieczenie !== 'pozniej' ? 'spelniony' : bez18 ? 'zwolniony' : 'niespelniony';
   const potrzeba10 = dokladnie === 5 && !bez10;
   const okStaz = (wymagany: number) => staz >= wymagany && (wymagany < 5 || !potrzeba10 || d.ostatnie10 >= 5);
   const stazNiewymagany = d.przyczyna !== 'choroba';

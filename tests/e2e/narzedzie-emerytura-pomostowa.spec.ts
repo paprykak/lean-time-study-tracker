@@ -27,6 +27,8 @@ test('kobieta przed 55. urodzinami: data, od której spełni warunki', async ({ 
 
 test('hutnictwo, rocznik 1948 i brak czasu na uzbieranie okresów', async ({ page }) => {
   await page.getByLabel('Rodzaj prac').selectOption('hutnictwo');
+  await expect(page.locator('[data-w="uwaga"]')).toContainText('ogólne zasady z art. 4');
+  await page.getByLabel('Z tego w hutnictwie, pkt 4–12 (lata)').fill('16');
   await expect(page.locator('[data-w="uwaga"]')).toContainText('lekarza medycyny pracy');
   await page.getByLabel('Data urodzenia').fill('1948-12-31');
   await expect(page.locator('[data-w="stan"]')).toHaveText('Nie przysługuje');
