@@ -3,19 +3,20 @@
 // ust. 1 pkt 38 ustawy o rynku pracy; kwoty przychodu M.P. 2026 poz. 208). Logika i teksty wyniku:
 // src/lib/narzedzia/swiadczenie-przedemerytalne.ts (testy obok).
 import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
-import { KWOTY_PRZYCHODU, opisPrzedemerytalnego, opisPrzyczyny, warunekOkresu } from '../../lib/narzedzia/swiadczenie-przedemerytalne';
+import { KWOTY_PRZYCHODU, etykietaDaty, opisPrzedemerytalnego, opisPrzyczyny, warunekOkresu } from '../../lib/narzedzia/swiadczenie-przedemerytalne';
 import { zl } from '../../lib/narzedzia/format';
-import { dataPoPolsku, dzisWPolsce } from '../../lib/narzedzia/terminy';
+import { dataPoPolsku, dodajLata, dzisWPolsce } from '../../lib/narzedzia/terminy';
 
 const dzis = dzisWPolsce();
-const URODZENIE = '1965-06-15';
+// Przykład: 62 lata dziś (przestawiany w przeglądarce), żeby po latach nie pokazywał „Nie przysługuje”.
+const URODZENIE = dodajLata(dzis, -62);
 const start = opisPrzedemerytalnego({ plec: 'm', urodzenie: URODZENIE, przyczyna: 'likwidacja', data: dzis, staz: 25, okres: true }, dzis);
 const kw = KWOTY_PRZYCHODU[KWOTY_PRZYCHODU.length - 1];
 
 const faq = [
   {
     pytanie: 'Komu przysługuje świadczenie przedemerytalne?',
-    odpowiedz: 'Osobie, która straciła pracę przed emeryturą i spełnia jeden z warunków art. 2 ust. 1 ustawy o świadczeniach przedemerytalnych. Najczęściej na hali: likwidacja albo niewypłacalność pracodawcy po co najmniej 6 miesiącach pracy u niego, ukończone 56 lat (kobieta) albo 61 lat (mężczyzna) i 20 albo 25 lat okresów składkowych i nieskładkowych (pkt 1), albo zwolnienie z przyczyn dotyczących zakładu pracy, 55 albo 60 lat i 30 albo 35 lat stażu (pkt 2). Bez względu na wiek wystarczy 35 albo 40 lat stażu (pkt 5).',
+    odpowiedz: 'Osobie przed wiekiem emerytalnym, która spełnia jeden z warunków art. 2 ust. 1 ustawy o świadczeniach przedemerytalnych. Najczęściej na hali: likwidacja albo niewypłacalność pracodawcy po co najmniej 6 miesiącach pracy u niego, ukończone 56 lat (kobieta) albo 61 lat (mężczyzna) i 20 albo 25 lat okresu uprawniającego do emerytury (okresy składkowe, nieskładkowe i uzupełniające okresy rolne, art. 2 ust. 2) (pkt 1), albo rozwiązanie umowy z przyczyn dotyczących zakładu pracy, 55 albo 60 lat i 30 albo 35 lat stażu (pkt 2). Bez względu na wiek wystarczy 35 albo 40 lat stażu (pkt 5).',
   },
   {
     pytanie: 'Od kiedy wypłacane jest świadczenie przedemerytalne?',
@@ -23,15 +24,15 @@ const faq = [
   },
   {
     pytanie: 'Co to są przyczyny dotyczące zakładu pracy?',
-    odpowiedz: 'Według ustawy o rynku pracy (art. 2 ust. 1 pkt 38) to m.in. rozwiązanie umowy z przyczyn niedotyczących pracowników (także w firmie poniżej 20 osób), z powodu upadłości lub likwidacji pracodawcy albo likwidacji stanowiska z przyczyn ekonomicznych, organizacyjnych, produkcyjnych lub technologicznych, wygaśnięcie umowy po śmierci pracodawcy oraz rozwiązanie umowy przez pracownika bez wypowiedzenia z winy pracodawcy albo z powodu orzeczenia lekarskiego (art. 55 § 1 i 1¹ Kodeksu pracy).',
+    odpowiedz: 'Według ustawy o rynku pracy (art. 2 ust. 1 pkt 38) to m.in. rozwiązanie umowy z przyczyn niedotyczących pracowników (także w firmie poniżej 20 osób), z powodu upadłości lub likwidacji pracodawcy albo likwidacji stanowiska z przyczyn ekonomicznych, organizacyjnych, produkcyjnych lub technologicznych, wygaśnięcie umowy po śmierci pracodawcy albo przy przejściu zakładu na innego pracodawcę, który nie zaproponował nowych warunków, oraz rozwiązanie umowy przez pracownika bez wypowiedzenia, gdy pracodawca ciężko naruszył podstawowe obowiązki wobec niego (art. 55 § 1¹ Kodeksu pracy) albo gdy orzeczenie lekarskie stwierdza szkodliwy wpływ pracy na zdrowie, a pracodawca nie przeniósł do innej pracy (art. 55 § 1).',
   },
   {
     pytanie: 'Ile można dorobić na świadczeniu przedemerytalnym?',
-    odpowiedz: `Od ${dataPoPolsku(kw.od)} bez zmniejszenia do ${zl(kw.dopuszczalna)} miesięcznie (25% przeciętnego wynagrodzenia). Powyżej tej kwoty świadczenie maleje o nadwyżkę, a przy przychodzie powyżej ${zl(kw.graniczna)} (70%) jest zawieszone (art. 5 ustawy, ${kw.publikator}). O przychodzie trzeba niezwłocznie powiadomić ZUS (art. 6 ust. 2).`,
+    odpowiedz: `Od ${dataPoPolsku(kw.od)} bez zmniejszenia do ${zl(kw.dopuszczalna)} miesięcznie (25% przeciętnego wynagrodzenia). Powyżej tej kwoty świadczenie maleje o nadwyżkę, a przy przychodzie powyżej ${zl(kw.graniczna)} (70%) jest zawieszone (art. 5 ustawy, ${kw.publikator}). ZUS rozlicza przychód po roku od 1 marca do końca lutego, rocznie albo miesięcznie, jak jest korzystniej, więc jeden miesiąc ponad limit nie musi oznaczać zawieszenia (art. 6 ust. 1). O przychodzie trzeba niezwłocznie powiadomić ZUS (art. 6 ust. 2).`,
   },
   {
     pytanie: 'Do kiedy wypłacane jest świadczenie przedemerytalne?',
-    odpowiedz: 'Do dnia przed nabyciem prawa do emerytury albo do dnia 60. urodzin kobiety i 65. urodzin mężczyzny. Ustaje też na Twój wniosek, po nabyciu gospodarstwa rolnego powyżej 2 ha przeliczeniowych i jest zawieszane po przyznaniu renty z tytułu niezdolności do pracy (art. 4).',
+    odpowiedz: 'Prawo ustaje w dniu przed nabyciem prawa do emerytury, w dniu 60. urodzin kobiety albo 65. urodzin mężczyzny, na Twój wniosek, a także gdy staniesz się właścicielem, współwłaścicielem albo posiadaczem, na przykład dzierżawcą, ziemi rolnej o powierzchni użytków rolnych ponad 2 ha przeliczeniowe. Zawiesza się je m.in. po przyznaniu renty z tytułu niezdolności do pracy (art. 4).',
   },
 ];
 ---
@@ -49,11 +50,11 @@ const faq = [
       <div class="mt-4">
         <label for="s-przyczyna" class="etykieta-pola">Jak skończyła się praca</label>
         <select id="s-przyczyna" name="przyczyna" class="pole mt-1" aria-describedby="s-przyczyna-opis">
-          <option value="likwidacja" selected>Likwidacja firmy</option>
+          <option value="likwidacja" selected>Likwidacja, upadłość</option>
           <option value="zaklad">Przyczyny pracodawcy</option>
           <option value="firma">Upadłość własnej firmy</option>
           <option value="renta">Koniec renty</option>
-          <option value="opiekun">Koniec świadczenia</option>
+          <option value="opiekun">Świadczenie opiekuna</option>
         </select>
         <p id="s-przyczyna-opis" class="meta mt-1" data-opis-przyczyny>{opisPrzyczyny('likwidacja')}</p>
       </div>
@@ -74,11 +75,11 @@ const faq = [
           <input id="s-data" name="data" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={dzis} data-dzis aria-describedby="s-blad" />
         </div>
         <div>
-          <label for="s-staz" class="etykieta-pola">Staż do emerytury (lata)</label>
+          <label for="s-staz" class="etykieta-pola">Staż pracy w ZUS (lata)</label>
           <input id="s-staz" name="staz" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="25" aria-describedby="s-blad s-staz-opis" />
         </div>
       </div>
-      <p id="s-staz-opis" class="meta mt-1">Okresy składkowe i nieskładkowe do tego dnia, jak do emerytury z ZUS. Lata możesz wpisać z ułamkiem, na przykład 34,5.</p>
+      <p id="s-staz-opis" class="meta mt-1">Okres uprawniający do emerytury do tego dnia: okresy składkowe i nieskładkowe (i uzupełniające okresy rolne), jak do emerytury z ZUS. Lata możesz wpisać z ułamkiem, na przykład 34,5.</p>
       <div class="mt-4">
         <label for="s-okres" class="etykieta-pola">Wymagany czas pracy lub świadczenia</label>
         <select id="s-okres" name="okres" class="pole mt-1 max-w-56" aria-describedby="s-okres-opis">
@@ -98,7 +99,7 @@ const faq = [
       </div>
       <dl class="wynik-lista">
         <div><dt>Podstawa</dt><dd data-w="podstawa">{start.podstawa}</dd></div>
-        <div><dt>Najdłużej do</dt><dd data-w="koniec">{start.koniec}</dd></div>
+        <div><dt>Ustaje w dniu</dt><dd data-w="koniec">{start.koniec}</dd></div>
         <div><dt>Przychód</dt><dd data-w="przychod">{start.przychod}</dd></div>
       </dl>
       <p class="wynik-uwaga" data-w="uwaga">{start.uwagi.join(' ')}</p>
@@ -120,53 +121,57 @@ const faq = [
     </ul>
     <p>
       Potem trzeba co najmniej 180 dni pobierać zasiłek dla bezrobotnych, wciąż mieć status bezrobotnego i złożyć wniosek
-      w ZUS najpóźniej 30 dni od dokumentu urzędu pracy o 180 dniach (art. 2 ust. 3). Do 180 dni wlicza się okresy, za które
-      zasiłek nie przysługiwał (art. 220 ust. 2 ustawy o rynku pracy), oraz pracę podjętą w tym czasie (art. 2 ust. 5).
-      W szczególnie uzasadnionych przypadkach ZUS może przywrócić termin wniosku (art. 2 ust. 4).
+      w ZUS najpóźniej 30 dni od dokumentu urzędu pracy o 180 dniach (art. 2 ust. 3). Do 180 dni wlicza się okresy, w których
+      zasiłek jeszcze nie przysługiwał z powodów z art. 220 ustawy o rynku pracy (na przykład po odszkodowaniu za skrócone
+      wypowiedzenie albo przez 90 dni po porozumieniu stron), oraz pracę podjętą w tym czasie (art. 2 ust. 5).
+      W szczególnie uzasadnionych przypadkach ZUS może przywrócić termin wniosku, także po końcu pracy podjętej w czasie
+      zasiłku (art. 2 ust. 4 i 5a). Świadczenie przysługuje też, na tych samych zasadach, osobom z art. 6 ustawy o zakazie
+      stosowania wyrobów zawierających azbest (art. 2 ust. 6). Po rencie (pkt 4) świadczenie nie może być wyższe niż ostatnio
+      otrzymywana renta (art. 3 ust. 1).
     </p>
     <p>
       Ustawa podaje kwotę świadczenia 1600,70 zł miesięcznie; rośnie ona przy każdej waloryzacji emerytur (art. 3), a aktualną
       kwotę podaje ZUS. Przy przychodzie powyżej {zl(kw.dopuszczalna)} świadczenie maleje o nadwyżkę, ale nie poniżej kwoty
       z art. 5 ust. 4 (w ustawie 800,35 zł, też waloryzowanej), a powyżej {zl(kw.graniczna)} jest zawieszone (art. 5; kwoty
-      od {dataPoPolsku(kw.od)}, {kw.publikator}).
+      od {dataPoPolsku(kw.od)}, {kw.publikator}). ZUS rozlicza przychód po roku rozliczeniowym od 1 marca do końca lutego,
+      rocznie albo miesięcznie, jak jest korzystniej (art. 6 ust. 1).
     </p>
 
     <h2 id="jak-liczymy">Jak liczymy</h2>
     <p>
       Porównujemy wiek w dniu rozwiązania umowy (albo ogłoszenia upadłości, końca renty lub świadczenia) i wpisany staż
       z progami z art. 2 ust. 1; wiek osiąga się w dniu urodzin (osoby urodzone 29 lutego w roku nieprzestępnym 28 lutego).
-      Likwidacja i niewypłacalność pracodawcy to też przyczyny dotyczące zakładu pracy, więc przy nich sprawdzamy także
-      pkt 2 i 5. Stażu na 31 grudnia (pkt 6) nie znamy, więc szacujemy go od dołu: wpisany staż minus zaczęte miesiące
-      bieżącego roku; gdy to za mało, a cały staż wystarcza, piszemy „zależy”. Czy masz prawo do zasiłku dla bezrobotnych
+      Likwidacja pracodawcy i ogłoszenie jego upadłości to też przyczyny dotyczące zakładu pracy (art. 2 ust. 1 pkt 38
+      lit. b ustawy o rynku pracy), a zwolnienie z powodu innej niewypłacalności zwykle następuje z przyczyn niedotyczących
+      pracowników (lit. a), więc przy nich sprawdzamy także pkt 2 i 5. Stażu na 31 grudnia (pkt 6) nie znamy, więc
+      szacujemy go od dołu: wpisany staż minus zaczęte miesiące bieżącego roku z zapasem jednej trzeciej (okresy
+      nieskładkowe liczą się najwyżej do 1/3 składkowych, art. 5 ust. 2 ustawy o FUS); gdy to za mało, a cały staż
+      wystarcza, piszemy „zależy”. Staż z ułamkiem obcinamy do setnych. Gdy 60. albo 65. urodziny wypadają w ciągu 180 dni
+      od tej daty, świadczenie nie zdąży się zacząć. Czy masz prawo do zasiłku dla bezrobotnych
       i czy urząd pracy wyda dokument o 180 dniach, nie sprawdzamy: zasiłek policzy <a href="/narzedzia/zasilek-dla-bezrobotnych">kalkulator zasiłku dla bezrobotnych</a>. Czy wolno Cię zwolnić tuż przed emeryturą, sprawdzi <a href="/narzedzia/ochrona-przedemerytalna">kalkulator ochrony przedemerytalnej</a>, a odprawę <a href="/narzedzia/kalkulator-odprawy">kalkulator odprawy</a>.
     </p>
   </Fragment>
 </StronaNarzedzia>
 
 <script>
-  import { opisPrzedemerytalnego, opisPrzyczyny, warunekOkresu, type Plec, type Przyczyna } from '../../lib/narzedzia/swiadczenie-przedemerytalne';
+  import { etykietaDaty, opisPrzedemerytalnego, opisPrzyczyny, warunekOkresu, type Plec, type Przyczyna } from '../../lib/narzedzia/swiadczenie-przedemerytalne';
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
   import { wpisanaLiczba } from '../../lib/narzedzia/format';
-  import { dzisWPolsce, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { dodajLata, dzisWPolsce, poprawnaData } from '../../lib/narzedzia/terminy';
   import { typografia } from '../../lib/typografia.mjs';
-
-  const ETYKIETY_DATY: Record<Przyczyna, string> = {
-    likwidacja: 'Dzień rozwiązania umowy',
-    zaklad: 'Dzień rozwiązania umowy',
-    firma: 'Dzień ogłoszenia upadłości',
-    renta: 'Dzień końca renty',
-    opiekun: 'Dzień końca świadczenia',
-  };
 
   const form = document.querySelector<HTMLFormElement>('[data-przedemerytalne]');
   if (form) {
     ustawDzisiejszeWartosci(form);
     const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
     const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    // Przykładowe urodzenie: 62 lata przed dziś (strona mogła zostać zbudowana dawno), o ile nikt go nie zmienił.
+    const ur = el('urodzenie');
+    if (ur.value === ur.defaultValue) ur.value = dodajLata(dzisWPolsce(), -62);
     const POLA = ['stan', 'opis', 'podstawa', 'koniec', 'przychod'] as const;
     const przelicz = () => {
       const przyczyna = el('przyczyna').value as Przyczyna;
-      form.querySelector<HTMLElement>('[data-etykieta-daty]')!.textContent = ETYKIETY_DATY[przyczyna];
+      form.querySelector<HTMLElement>('[data-etykieta-daty]')!.textContent = etykietaDaty(przyczyna);
       form.querySelector<HTMLElement>('[data-opis-okresu]')!.textContent = typografia(warunekOkresu(przyczyna));
       form.querySelector<HTMLElement>('[data-opis-przyczyny]')!.textContent = typografia(opisPrzyczyny(przyczyna));
       const urodzenie = el('urodzenie').value;
@@ -174,7 +179,7 @@ const faq = [
       const staz = wpisanaLiczba(el('staz').value);
       let blad: string | null = null;
       if (!poprawnaData(urodzenie) || urodzenie > dzisWPolsce() || urodzenie < '1900-01-01') blad = 'Wpisz datę urodzenia.';
-      else if (!poprawnaData(data) || data < urodzenie) blad = 'Wpisz dzień końca pracy albo świadczenia, po dacie urodzenia.';
+      else if (!poprawnaData(data) || data < urodzenie) blad = `${etykietaDaty(przyczyna)}: wpisz datę po dacie urodzenia.`;
       else if (!(staz >= 0 && staz <= 70)) blad = 'Wpisz staż w latach, na przykład 25 albo 34,5.';
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
       b.hidden = !blad;

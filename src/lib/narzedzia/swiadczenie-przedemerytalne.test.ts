@@ -1,5 +1,6 @@
 // Oczekiwane wartości policzone niezależnie skryptem w Pythonie (datetime, calendar): wiek w dniu urodzin
-// (29 lutego: 28 lutego w roku nieprzestępnym), pkt 6 szacowany od dołu (staż minus zaczęte miesiące roku).
+// (29 lutego: 28 lutego w roku nieprzestępnym), pkt 6 szacowany od dołu (staż minus 4/3 zaczętych miesięcy roku),
+// 180 dni zasiłku przed 60/65 urodzinami, staż obcięty do setnych. Skrypt: scratchpad zespołu (przed.py).
 import { describe, expect, it } from 'vitest';
 import { kwotyNaDzien, opisPrzedemerytalnego, swiadczeniePrzedemerytalne, type DanePrzedemerytalne } from './swiadczenie-przedemerytalne';
 
@@ -27,14 +28,16 @@ describe('świadczenie przedemerytalne (art. 2 ust. 1 ustawy o świadczeniach pr
     expect(swiadczeniePrzedemerytalne(D({ urodzenie: '1980-01-01', przyczyna: 'zaklad', data: '2026-09-30', staz: 40 }))).toMatchObject({ stan: 'spelnia', spelnione: ['pkt 5'] });
   });
 
-  it('pkt 6: 39 lat do 31 grudnia poprzedniego roku, szacowane od dołu', () => {
-    expect(swiadczeniePrzedemerytalne(D({ urodzenie: '1980-01-01', data: '2026-03-31', staz: 39.3 }))).toMatchObject({ stan: 'spelnia', spelnione: ['pkt 6'], pkt6: 'tak' });
-    expect(swiadczeniePrzedemerytalne(D({ urodzenie: '1980-01-01', data: '2026-03-31', staz: 39.2 }))).toMatchObject({ stan: 'zalezy', pkt6: 'zalezy' });
+  it('pkt 6: 39 lat do 31 grudnia poprzedniego roku, szacowane od dołu (4/3 zaczętych miesięcy)', () => {
+    expect(swiadczeniePrzedemerytalne(D({ urodzenie: '1980-01-01', data: '2026-03-31', staz: 39.34 }))).toMatchObject({ stan: 'spelnia', spelnione: ['pkt 6'], pkt6: 'tak' });
+    expect(swiadczeniePrzedemerytalne(D({ urodzenie: '1980-01-01', data: '2026-03-31', staz: 39.3 }))).toMatchObject({ stan: 'zalezy', pkt6: 'zalezy' });
+    expect(swiadczeniePrzedemerytalne(D({ urodzenie: '1980-01-01', data: '2026-01-15', staz: 39.11 })).stan).toBe('zalezy');
+    expect(swiadczeniePrzedemerytalne(D({ urodzenie: '1980-01-01', data: '2026-01-15', staz: 39.12 })).stan).toBe('spelnia');
     expect(swiadczeniePrzedemerytalne(D({ urodzenie: '1980-01-01', data: '2026-12-15', staz: 39.5 })).stan).toBe('zalezy');
   });
 
   it('koniec renty: 55 lat kobiety urodzonej 29 lutego to 28 lutego 2023 r.', () => {
-    expect(swiadczeniePrzedemerytalne(D({ plec: 'k', urodzenie: '1968-02-29', przyczyna: 'renta', data: '2024-02-28', staz: 22 }))).toMatchObject({ stan: 'spelnia', spelnione: ['pkt 4'], koniec: '2028-02-29' });
+    expect(swiadczeniePrzedemerytalne(D({ plec: 'k', urodzenie: '1968-02-29', przyczyna: 'renta', data: '2023-02-28', staz: 22 }))).toMatchObject({ stan: 'spelnia', spelnione: ['pkt 4'], koniec: '2028-02-29' });
     expect(swiadczeniePrzedemerytalne(D({ plec: 'k', urodzenie: '1968-02-29', przyczyna: 'renta', data: '2023-02-27', staz: 22 })).stan).toBe('brak');
   });
 
@@ -42,6 +45,20 @@ describe('świadczenie przedemerytalne (art. 2 ust. 1 ustawy o świadczeniach pr
     expect(swiadczeniePrzedemerytalne(D({ plec: 'k', urodzenie: '1969-01-10', przyczyna: 'opiekun', data: '2026-01-10', staz: 20 })).spelnione).toEqual(['pkt 4a']);
     expect(swiadczeniePrzedemerytalne(D({ urodzenie: '1964-01-10', przyczyna: 'firma', data: '2025-12-31', staz: 25 })).spelnione).toEqual(['pkt 3']);
     expect(swiadczeniePrzedemerytalne(D({ urodzenie: '1960-05-01', data: '2026-01-10', staz: 30 })).stan).toBe('wiek-emerytalny');
+  });
+
+  it('180 dni zasiłku muszą minąć przed 65. urodzinami (art. 2 ust. 3 i art. 4 ust. 1 pkt 3)', () => {
+    expect(swiadczeniePrzedemerytalne(D({ data: '2030-03-01' })).stan).toBe('nie-zdazy');
+    expect(swiadczeniePrzedemerytalne(D({ data: '2029-12-17' })).stan).toBe('nie-zdazy');
+    expect(swiadczeniePrzedemerytalne(D({ data: '2029-12-16' })).stan).toBe('spelnia');
+    expect(swiadczeniePrzedemerytalne(D({ data: '2030-06-15' })).stan).toBe('wiek-emerytalny');
+    expect(opisPrzedemerytalnego(D({ data: '2030-03-01' }), '2026-11-13')).toMatchObject({ stan: 'Nie zdąży się zacząć', koniec: '—', podstawa: '—' });
+  });
+
+  it('staż obcięty do setnych: 34,999 roku to nie 35 lat (brakuje 1 miesiąca)', () => {
+    const d = D({ plec: 'k', urodzenie: '1980-01-01', przyczyna: 'zaklad', data: '2026-09-30', staz: 34.999 });
+    expect(swiadczeniePrzedemerytalne(d).stan).toBe('brak');
+    expect(opisPrzedemerytalnego(d, '2026-11-13').opis).toContain('bez względu na wiek (pkt 5): brakuje 1 miesiąca stażu');
   });
 
   it('kwoty przychodu od 1 marca (M.P. 2025 poz. 142, M.P. 2026 poz. 208)', () => {
@@ -57,10 +74,14 @@ describe('świadczenie przedemerytalne (art. 2 ust. 1 ustawy o świadczeniach pr
   it('teksty wyniku', () => {
     const o = opisPrzedemerytalnego(D({}), '2026-11-13');
     expect(o).toMatchObject({ stan: 'Spełniasz warunki', podstawa: 'art. 2 ust. 1 pkt 1', koniec: '15 czerwca 2030 r.', przychod: 'bez zmniejszenia do 2225,90 zł, zawieszenie powyżej 6232,50 zł' });
-    expect(opisPrzedemerytalnego(D({ data: '2026-06-14', staz: 24 }), '2026-11-13').opis).toBe(
-      'pkt 1: brakuje wieku 61 lat w dniu rozwiązania (osiągasz go 15 czerwca 2026 r.) i 1 roku stażu; pkt 2: brakuje 11 lat stażu; pkt 5: brakuje 16 lat stażu',
-    );
+    expect(opisPrzedemerytalnego(D({ data: '2026-06-14', staz: 24 }), '2026-11-13')).toMatchObject({
+      opis: 'przy likwidacji lub niewypłacalności (pkt 1): brakuje wieku 61 lat w dniu rozwiązania umowy (61. urodziny: 15 czerwca 2026 r.) i 1 roku stażu; przy przyczynach dotyczących zakładu pracy (pkt 2): brakuje 11 lat stażu; bez względu na wiek (pkt 5): brakuje 16 lat stażu; bez względu na wiek, do 31 grudnia 2025 r. (pkt 6): brakuje co najmniej 15 lat stażu',
+      koniec: '—',
+      przychod: '—',
+    });
+    expect(opisPrzedemerytalnego(D({ plec: 'k', urodzenie: '1968-02-29', przyczyna: 'renta', data: '2023-02-27', staz: 22 }), '2026-11-13').opis).toBe('po rencie (pkt 4): brakuje wieku 55 lat w dniu końca renty (55. urodziny: 28 lutego 2023 r.)');
     expect(opisPrzedemerytalnego(D({ urodzenie: '1980-01-01', data: '2026-03-31', staz: 39.2 }), '2026-11-13').opis).toBe('wystarczy 39 lat okresu uprawniającego do emerytury do 31 grudnia 2025 r. (art. 2 ust. 1 pkt 6)');
-    expect(opisPrzedemerytalnego(D({ okres: false }), '2026-11-13').opis).toBe('brakuje warunku: co najmniej 6 miesięcy pracy u tego pracodawcy');
+    expect(opisPrzedemerytalnego(D({ przyczyna: 'renta', data: '2026-06-15' }), '2026-11-13').uwagi.join(' ')).toContain('nie może być wyższe niż ostatnio otrzymywana renta');
+    expect(opisPrzedemerytalnego(D({ okres: false }), '2026-11-13').opis).toBe('brakuje warunku: co najmniej 6 miesięcy pracy u tego pracodawcy; przy przyczynach dotyczących zakładu pracy (pkt 2): brakuje 10 lat stażu; bez względu na wiek (pkt 5): brakuje 15 lat stażu; bez względu na wiek, do 31 grudnia 2025 r. (pkt 6): brakuje co najmniej 14 lat stażu');
   });
 });
