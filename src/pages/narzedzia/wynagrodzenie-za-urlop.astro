@@ -54,7 +54,7 @@ const faq = [
       </div>
       <div class="mt-4">
         <label for="wu-stala" class="etykieta-pola">Stała pensja miesięczna (zł, 0 przy stawce godzinowej)</label>
-        <input id="wu-stala" name="stala" class="pole mt-1 max-w-48" type="text" inputmode="decimal" autocomplete="off" value="6000" />
+        <input id="wu-stala" name="stala" class="pole mt-1 max-w-48" type="text" inputmode="decimal" autocomplete="off" value="6000" aria-describedby="wu-blad" />
       </div>
       <p id="wu-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
     </div>
@@ -90,6 +90,7 @@ const faq = [
 <script>
   import { wynagrodzenieUrlopowe } from '../../lib/narzedzia/wynagrodzenie-urlopowe';
   import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
+  import { typografia } from '../../lib/typografia.mjs';
 
   const form = document.querySelector<HTMLFormElement>('[data-urlopowe]');
   if (form) {
@@ -102,21 +103,24 @@ const faq = [
       const urlop = liczba('urlop');
       const stala = liczba('stala');
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
-      const blad =
-        !(zmienne >= 0 && stala >= 0) ? 'Kwoty nie mogą być ujemne.'
-        : !(godziny > 0) ? 'Wpisz przepracowane godziny z 3 miesięcy, na przykład 480.'
-        : !(urlop > 0) ? 'Wpisz godziny urlopu, na przykład 40 za 5 dni po 8 godzin.'
-        : null;
+      // wpisanaLiczba nie przyjmuje minusa, więc ujemną kwotę rozpoznajemy po znaku, a resztę jako tekst, który nie jest liczbą.
+      const zlaKwota = (['zmienne', 'stala'] as const).find((n) => !(liczba(n) >= 0));
+      const [pole, blad] =
+        zlaKwota ? [zlaKwota, el(zlaKwota).value.includes('-') ? 'Kwoty nie mogą być ujemne.' : 'Wpisz kwotę cyframi, na przykład 6000.']
+        : !(godziny > 0) ? ['godziny', 'Wpisz przepracowane godziny z 3 miesięcy, na przykład 480.']
+        : !(urlop > 0) ? ['urlop', 'Wpisz godziny urlopu, na przykład 40 za 5 dni po 8 godzin.']
+        : [null, null];
       b.hidden = !blad;
-      b.textContent = blad ?? '';
+      b.textContent = typografia(blad ?? '');
+      for (const n of ['zmienne', 'godziny', 'urlop', 'stala']) el(n).setAttribute('aria-invalid', n === pole ? 'true' : 'false');
       if (blad) {
-        w('zmienna').textContent = '—';
+        for (const k of ['zmienna', 'za-godzine', 'stala']) w(k).textContent = '—';
         return;
       }
       const r = wynagrodzenieUrlopowe({ zmienneSuma: zmienne, godzinyPrzepracowane: godziny, godzinyUrlopu: urlop, stala });
-      w('zmienna').textContent = zl(r.zmiennaCzesc);
-      w('za-godzine').textContent = zl(r.zaGodzine);
-      w('stala').textContent = `${zl(r.stala)} (bez zmian, § 7)`;
+      w('zmienna').textContent = typografia(zl(r.zmiennaCzesc));
+      w('za-godzine').textContent = typografia(zl(r.zaGodzine));
+      w('stala').textContent = typografia(`${zl(r.stala)} (bez zmian, § 7)`);
     };
     form.addEventListener('input', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());

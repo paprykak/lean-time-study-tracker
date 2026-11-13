@@ -36,12 +36,13 @@ const faq = [
       <h2 id="kalkulator-tytul" class="tytul-m">Twoja umowa</h2>
       <div class="mt-4">
         <label for="p-plan" class="etykieta-pola">Jaka umowa ma być po okresie próbnym</label>
-        <select id="p-plan" name="plan" class="pole mt-1">
+        <select id="p-plan" name="plan" class="pole mt-1" aria-describedby="p-plan-opis">
           <option value="nieokreslony" selected>Na czas nieokreślony</option>
-          <option value="okreslony-12">Na czas określony, 12 miesięcy lub dłużej</option>
-          <option value="okreslony-6-12">Na czas określony, od 6 do mniej niż 12 miesięcy</option>
-          <option value="okreslony-ponizej-6">Na czas określony, krócej niż 6 miesięcy</option>
+          <option value="okreslony-12">Określony, rok lub dłużej</option>
+          <option value="okreslony-6-12">Określony, 6–12 miesięcy</option>
+          <option value="okreslony-ponizej-6">Określony, do 6 miesięcy</option>
         </select>
+        <p id="p-plan-opis" class="meta mt-1">Umowa na czas określony: „6–12 miesięcy” to od 6 do mniej niż 12 miesięcy, „do 6 miesięcy” to krócej niż 6.</p>
       </div>
       <div class="mt-4 grid grid-cols-2 items-end gap-3">
         <div>
@@ -55,7 +56,7 @@ const faq = [
         </div>
         <div>
           <label for="p-start" class="etykieta-pola">Od</label>
-          <input id="p-start" name="start" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={START} aria-describedby="p-blad" />
+          <input id="p-start" name="start" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={START} data-dzis aria-describedby="p-blad" />
         </div>
       </div>
       <label class="mt-4 flex items-start gap-3 text-[0.9375rem]">
@@ -99,41 +100,52 @@ const faq = [
       umowa od 1 marca na 3 miesiące trwa do 31 maja (art. 112 Kodeksu cywilnego). Gdy w umowie uzgodniono wydłużenie
       o czas urlopu albo innej usprawiedliwionej nieobecności (art. 25 § 2¹), koniec przesuwa się o te dni.
     </p>
+    <p>
+      Gdy w ostatnim miesiącu nie ma dnia o numerze dnia początku, na przykład umowa od 31 stycznia na 1 miesiąc, liczymy
+      koniec na dzień przed ostatnim dniem tego miesiąca (27 lutego, tak jak dzień przed 28 lutego). Art. 112 Kodeksu
+      cywilnego nie rozstrzyga terminu liczonego od dnia, który sam się wlicza; wcześniejszy koniec nie przekracza
+      ustawowego maksimum. Sprawdź datę w umowie.
+    </p>
   </Fragment>
 </StronaNarzedzia>
 
 <script>
   import { okresProbny, type DlugoscProby, type PlanowanaUmowa } from '../../lib/narzedzia/okres-probny';
   import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { odmiana } from '../../lib/redakcja';
+  import { typografia } from '../../lib/typografia.mjs';
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
 
   const form = document.querySelector<HTMLFormElement>('[data-probny]');
   if (form) {
     const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
     const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
-    const miesiace = (m: number) => `${m} ${m === 1 ? 'miesiąc' : m < 5 ? 'miesiące' : 'miesięcy'}`;
+    const miesiace = (m: number) => odmiana(m, ['miesiąc', 'miesiące', 'miesięcy']);
     const przelicz = () => {
       const start = el('start').value;
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
       const blad = poprawnaData(start) ? null : 'Wpisz datę początku umowy.';
       b.hidden = !blad;
-      b.textContent = blad ?? '';
+      b.textContent = typografia(blad ?? '');
+      el('start').setAttribute('aria-invalid', blad ? 'true' : 'false');
       const status = w('status');
       if (blad) {
-        w('koniec').textContent = '—';
+        for (const k of ['koniec', 'maks', 'wypowiedzenie']) w(k).textContent = '—';
         status.hidden = true;
         return;
       }
       const r = okresProbny(start, el('plan').value as PlanowanaUmowa, el('dlugosc').value as DlugoscProby, el('wydluzenie').checked);
-      w('koniec').textContent = dataPoPolsku(r.koniec);
-      w('maks').textContent = miesiace(r.maks);
-      w('wypowiedzenie').textContent = r.wypowiedzenie;
+      w('koniec').textContent = typografia(dataPoPolsku(r.koniec));
+      w('maks').textContent = typografia(miesiace(r.maks));
+      w('wypowiedzenie').textContent = typografia(r.wypowiedzenie);
       status.hidden = false;
       status.dataset.status = r.dozwolony ? 'w-terminie' : 'po-terminie';
-      status.textContent = r.dozwolony ? 'Zgodny z Kodeksem pracy' : `Za długi: przy tej umowie najwyżej ${miesiace(r.maks)} (art. 25 § 2–2³)`;
+      status.textContent = r.dozwolony ? 'Zgodny z Kodeksem pracy' : typografia(`Za długi: przy tej umowie najwyżej ${miesiace(r.maks)} (art. 25 § 2–2³)`);
     };
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    ustawDzisiejszeWartosci(form);
     przelicz();
   }
 </script>

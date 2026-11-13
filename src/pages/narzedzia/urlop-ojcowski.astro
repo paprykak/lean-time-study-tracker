@@ -98,9 +98,11 @@ const faq = [
 
 <script>
   import { zl, wpisanaLiczba } from '../../lib/narzedzia/format';
-  import { dataPoPolsku, dzisWPolsce, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { dataPoPolsku, dodajMiesiace, dzisWPolsce, poprawnaData } from '../../lib/narzedzia/terminy';
   import { urlopOjcowski, zasilekOjcowski } from '../../lib/narzedzia/urlop-ojcowski';
   import { LATA } from '../../data/prawo';
+  import { odmiana } from '../../lib/redakcja';
+  import { typografia } from '../../lib/typografia.mjs';
 
   const form = document.querySelector<HTMLFormElement>('[data-ojcowski]');
   if (form) {
@@ -115,10 +117,10 @@ const faq = [
       else if (!(brutto > 0 && brutto < 1_000_000)) blad = 'Wpisz pensję brutto, na przykład 6000.';
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
       b.hidden = !blad;
-      b.textContent = blad ?? '';
+      b.textContent = typografia(blad ?? '');
       const status = w('status');
       if (blad) {
-        w('koniec').textContent = '—';
+        for (const k of ['koniec', 'start', 'wniosek', 'zasilek', 'dziennie']) w(k).textContent = '—';
         status.hidden = true;
         return;
       }
@@ -126,15 +128,17 @@ const faq = [
       const rok = LATA.includes(rokBiezacy) ? rokBiezacy : LATA[LATA.length - 1];
       const u = urlopOjcowski(urodzenie, dzis);
       const z = zasilekOjcowski(rok, brutto, 14, el('pelnyEtat').checked);
-      w('koniec').textContent = dataPoPolsku(u.koniec);
-      w('start').textContent = dataPoPolsku(u.ostatniStart);
-      w('wniosek').textContent = dataPoPolsku(u.wniosekDo);
-      w('zasilek').textContent = zl(z.razem);
-      w('dziennie').textContent = zl(z.dziennie);
+      w('koniec').textContent = typografia(dataPoPolsku(u.koniec));
+      w('start').textContent = typografia(dataPoPolsku(u.ostatniStart));
+      w('wniosek').textContent = typografia(dataPoPolsku(u.wniosekDo));
+      w('zasilek').textContent = typografia(zl(z.razem));
+      w('dziennie').textContent = typografia(zl(z.dziennie));
       status.hidden = false;
       status.dataset.status = u.minal ? 'po-terminie' : u.dniDoKonca <= 30 ? 'wkrotce' : 'w-terminie';
-      status.textContent = u.minal ? 'Termin minął' : `Zostało ${u.dniDoKonca} ${u.dniDoKonca === 1 ? 'dzień' : 'dni'}`;
+      status.textContent = u.minal ? 'Termin minął' : typografia(`Zostało ${odmiana(u.dniDoKonca, ['dzień', 'dni', 'dni'])}`);
     };
+    // Przykład z HTML (dziecko urodzone 2 miesiące przed dniem budowania strony) przestawiamy na dziś.
+    if (el('urodzenie').value === el('urodzenie').defaultValue) el('urodzenie').value = dodajMiesiace(dzisWPolsce(), -2);
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());

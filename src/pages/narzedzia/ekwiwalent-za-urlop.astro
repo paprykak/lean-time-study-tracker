@@ -2,13 +2,15 @@
 // Ekwiwalent za niewykorzystany urlop (art. 171 Kp, § 6 i § 14–19 rozporządzenia z 8 stycznia 1997 r.).
 // Logika: src/lib/narzedzia/ekwiwalent.ts (testy obok). Bez JavaScriptu działa tabela współczynników.
 import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
-import { LATA } from '../../data/prawo';
 import { dniPracyWRoku, ekwiwalent, wspolczynnik } from '../../lib/narzedzia/ekwiwalent';
 import { liczba, zl } from '../../lib/narzedzia/format';
 import { dzisWPolsce } from '../../lib/narzedzia/terminy';
+import { lataKalendarza } from '../../lib/narzedzia/dzis-w-formularzu';
 
-const rokBiezacy = Number(dzisWPolsce().slice(0, 4));
-const rok = LATA.includes(rokBiezacy) ? rokBiezacy : LATA[LATA.length - 1];
+// Współczynnik zależy tylko od kalendarza (§ 19 ust. 2), więc lata nie są ograniczone do tabeli płacy minimalnej.
+const dzis = dzisWPolsce();
+const LATA = lataKalendarza(dzis);
+const rok = Number(dzis.slice(0, 4));
 const start = ekwiwalent({ rok, stale: 6000, godzinyUrlopu: 40 });
 const wsp = (r: number, etat = 1) => liczba(Math.round(wspolczynnik(r) * etat * 100) / 100);
 const ETATY = [
@@ -56,7 +58,7 @@ const faq = [
       <div class="mt-4 grid gap-4 sm:grid-cols-2">
         <div>
           <label for="e-rok" class="etykieta-pola">Rok odejścia z pracy</label>
-          <select id="e-rok" name="rok" class="pole mt-1">
+          <select id="e-rok" name="rok" class="pole mt-1" data-rok-biezacy>
             {LATA.map((r) => <option value={r} selected={r === rok}>{r} (współczynnik {wsp(r)})</option>)}
           </select>
         </div>
@@ -150,6 +152,8 @@ const faq = [
 <script>
   import { dniPracyWRoku, ekwiwalent } from '../../lib/narzedzia/ekwiwalent';
   import { liczba, wpisanaLiczba, zl } from '../../lib/narzedzia/format';
+  import { typografia } from '../../lib/typografia.mjs';
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
 
   const form = document.querySelector<HTMLFormElement>('[data-ekwiwalent]');
   if (form) {
@@ -170,24 +174,26 @@ const faq = [
         : dni > 100 ? 'Wpisz najwyżej 100 dni urlopu.'
         : null;
       b.hidden = !blad;
-      b.textContent = blad ?? '';
+      b.textContent = typografia(blad ?? '');
       for (const n of pola) (form.elements.namedItem(n) as HTMLInputElement).setAttribute('aria-invalid', blad ? 'true' : 'false');
       if (blad) {
-        w('kwota').textContent = '—';
+        for (const k of ['kwota', 'podstawa', 'wspolczynnik', 'za-dzien', 'za-godzine', 'godziny-urlopu']) w(k).textContent = '—';
         return;
       }
       const godzinyUrlopu = dni * 8 + godziny;
       const r = ekwiwalent({ rok, stale, zmienne, dluzsze12: dluzsze, etat, godzinyUrlopu });
-      w('kwota').textContent = zl(r.kwota);
-      w('podstawa').textContent = zl(r.podstawa);
-      w('wspolczynnik').textContent = `${liczba(Math.round(r.wspolczynnik * 100) / 100)} (${dniPracyWRoku(rok)} dni pracy / 12${etat < 1 ? ` × ${liczba(etat)} etatu` : ''})`;
-      w('za-dzien').textContent = zl(r.zaDzien);
-      w('za-godzine').textContent = zl(r.zaGodzine);
-      w('godziny-urlopu').textContent = `${liczba(godzinyUrlopu)} h (dzień urlopu = 8 h)`;
+      const pisz = (k: string, t: string) => (w(k).textContent = typografia(t));
+      pisz('kwota', zl(r.kwota));
+      pisz('podstawa', zl(r.podstawa));
+      pisz('wspolczynnik', `${liczba(Math.round(r.wspolczynnik * 100) / 100)} (${dniPracyWRoku(rok)} dni pracy / 12${etat < 1 ? ` × ${liczba(etat)} etatu` : ''})`);
+      pisz('za-dzien', zl(r.zaDzien));
+      pisz('za-godzine', zl(r.zaGodzine));
+      pisz('godziny-urlopu', `${liczba(godzinyUrlopu)} h (dzień urlopu = 8 h)`);
     };
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    ustawDzisiejszeWartosci(form);
     przelicz();
   }
 </script>

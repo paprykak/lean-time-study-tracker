@@ -91,7 +91,14 @@ const faq = [
     <p>
       Gdy umowy następują jedna po drugiej, liczymy 33 miesiące kalendarzowe od pierwszego dnia pierwszej umowy (art. 112
       Kodeksu cywilnego). Gdy są przerwy, sumujemy dni na umowach i przyjmujemy {LIMIT_DNI_PRZY_PRZERWACH} dni, czyli
-      miesiąc za 30 dni (art. 114 Kodeksu cywilnego w związku z art. 300 Kodeksu pracy).
+      miesiąc za 30 dni (art. 114 Kodeksu cywilnego w związku z art. 300 Kodeksu pracy). 33 miesiące kalendarzowe to
+      1003–1005 dni, więc już jeden dzień przerwy między umowami skraca limit o kilkanaście dni. Gdy pierwsza umowa zaczęła
+      się 29., 30. albo 31. dnia miesiąca, a w miesiącu końcowym takiego dnia nie ma, limit liczymy do dnia przed ostatnim
+      dniem tego miesiąca (umowa od 31 maja 2024 r.: do 27 lutego 2027 r.); to wcześniejsza z możliwych dat.
+    </p>
+    <p>
+      Przy czwartej umowie podajemy dzień jej rozpoczęcia. Przepis mówi o dniu zawarcia czwartej umowy (art. 25<sup>1</sup>
+      § 3): gdy podpisano ją wcześniej, niż się zaczęła, umowa na czas nieokreślony liczy się od dnia podpisania.
     </p>
 
     <h2 id="agencja">Praca przez agencję: 18 miesięcy w 36</h2>
@@ -109,6 +116,8 @@ const faq = [
 <script>
   import { LIMIT_UMOW, sprawdzUmowy, type Umowa } from '../../lib/narzedzia/umowy-okreslone';
   import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { odmiana } from '../../lib/redakcja';
+  import { typografia } from '../../lib/typografia.mjs';
 
   const form = document.querySelector<HTMLFormElement>('[data-umowy]');
   if (form) {
@@ -135,35 +144,36 @@ const faq = [
       }
       const b = form.querySelector<HTMLElement>('[data-blad="umowy"]')!;
       b.hidden = !blad;
-      b.textContent = blad ?? '';
+      b.textContent = typografia(blad ?? '');
       const status = w('status');
       if (blad || !r) {
-        w('data').textContent = '—';
+        for (const k of ['data', 'liczba', 'razem', 'metoda']) w(k).textContent = '—';
+        w('uwaga').hidden = true;
         status.hidden = true;
         return;
       }
       status.hidden = false;
-      w('liczba').textContent = `${r.liczba} z ${LIMIT_UMOW}`;
-      w('razem').textContent = `${r.dniRazem} dni`;
-      w('metoda').textContent = r.ciagle
+      w('liczba').textContent = typografia(`${r.liczba} z ${LIMIT_UMOW}`);
+      w('razem').textContent = typografia(odmiana(r.dniRazem, ['dzień', 'dni', 'dni']));
+      w('metoda').textContent = typografia(r.ciagle
         ? 'umowy bez przerw: 33 miesiące kalendarzowe od początku pierwszej (art. 112 KC)'
-        : 'umowy z przerwami: suma dni, miesiąc za 30 dni, razem 990 dni (art. 114 KC)';
+        : 'umowy z przerwami: suma dni, miesiąc za 30 dni, razem 990 dni (art. 114 KC)');
       let uwaga: string | null = null;
       if (r.wynik.stan === 'nieokreslony') {
         w('naglowek').textContent = 'Umowa na czas nieokreślony od';
-        w('data').textContent = dataPoPolsku(r.wynik.od);
+        w('data').textContent = typografia(dataPoPolsku(r.wynik.od));
         status.dataset.status = 'po-terminie';
         status.textContent = r.wynik.powod === 'czwarta-umowa' ? 'Czwarta umowa na czas określony' : 'Przekroczone 33 miesiące';
-        uwaga = 'Z mocy prawa pracownik jest od tej daty zatrudniony na czas nieokreślony (art. 25¹ § 3 Kodeksu pracy), chyba że umowy należą do wyjątków z § 4, na przykład zastępstwo albo praca sezonowa.';
+        uwaga = `Z mocy prawa pracownik jest od tej daty zatrudniony na czas nieokreślony (art. 25¹ § 3 Kodeksu pracy), chyba że umowy należą do wyjątków z § 4, na przykład zastępstwo albo praca sezonowa.${r.wynik.powod === 'czwarta-umowa' ? ' Liczymy od początku czwartej umowy; gdy podpisano ją wcześniej, umowa jest na czas nieokreślony od dnia podpisania (art. 25¹ § 3).' : ''}`;
       } else {
         w('naglowek').textContent = 'Limit 33 miesięcy mija';
-        w('data').textContent = dataPoPolsku(r.wynik.limitDo);
+        w('data').textContent = typografia(dataPoPolsku(r.wynik.limitDo));
         status.dataset.status = r.wynik.pozostaloDni <= 60 ? 'wkrotce' : 'w-terminie';
-        status.textContent = `W limicie: zostało ${r.wynik.pozostaloDni} ${r.wynik.pozostaloDni === 1 ? 'dzień' : 'dni'} po ostatniej umowie`;
+        status.textContent = typografia(`W limicie: zostało ${odmiana(r.wynik.pozostaloDni, ['dzień', 'dni', 'dni'])} po ostatniej umowie`);
         if (r.liczba === LIMIT_UMOW) uwaga = 'To już trzecia umowa: kolejna umowa na czas określony albo aneks przedłużający będzie umową na czas nieokreślony.';
       }
       w('uwaga').hidden = !uwaga;
-      w('uwaga').textContent = uwaga ?? '';
+      w('uwaga').textContent = typografia(uwaga ?? '');
     };
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);

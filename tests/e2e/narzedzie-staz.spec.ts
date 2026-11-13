@@ -28,7 +28,16 @@ test('ze szkołą zasadniczą ponad 10 lat: 26 dni urlopu', async ({ page }) => 
   await expect(page.locator('[data-w="urlop"]')).toHaveText('26 dni');
 });
 
-test('brak dat: komunikat', async ({ page }) => {
+test('brak dat: komunikat, a wynik nie zostaje z poprzedniego rachunku', async ({ page }) => {
   await page.locator('#s-od-0').fill('2020-01-01');
-  await expect(page.getByText('Okres 1: wpisz obie daty')).toBeVisible();
+  await page.locator('#s-do-0').fill('2020-12-31');
+  await expect(page.locator('[data-w="umowy"]')).toHaveText(/^1\srok/);
+  await page.locator('#s-do-0').fill('');
+  await expect(page.getByText(/Okres\s1: wpisz obie daty/)).toBeVisible();
+  for (const k of ['razem', 'umowy', 'urlopowy', 'urlop']) await expect(page.locator(`[data-w="${k}"]`)).toHaveText('—');
+});
+
+test('lista szkół: odmiana lat', async ({ page }) => {
+  await expect(page.locator('#s-szkola option[value="zasadnicza"]')).toHaveText('Zasadnicza (3 lata)');
+  await expect(page.locator('#s-szkola option[value="technikum-5"]')).toHaveText('Technikum 5-letnie (5 lat)');
 });

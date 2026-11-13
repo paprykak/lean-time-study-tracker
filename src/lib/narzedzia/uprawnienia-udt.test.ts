@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { KONSERWACJA, OBSLUGA, oplataEgzaminu, rodzaj, terminyUdt } from './uprawnienia-udt';
+import { KONSERWACJA, OBSLUGA, kwotaGusMozeNieaktualna, opisRodzaju, oplataEgzaminu, rodzaj, terminyUdt } from './uprawnienia-udt';
 
 describe('rodzaje urządzeń (zał. 3 do rozporządzenia z 2019 r.)', () => {
   it('okresy ważności z kolumny c dla kluczowych urządzeń', () => {
@@ -36,4 +36,17 @@ describe('terminyUdt', () => {
 
 it('opłata za egzamin: 3,75% z 8903,56 zł (GUS za 2025 r.) = 333,88 zł', () => {
   expect(oplataEgzaminu(8903.56)).toBe(333.88);
+});
+
+it('kwota GUS może być nieaktualna po 12 miesiącach od ogłoszenia (10 lutego 2026 r.)', () => {
+  expect(kwotaGusMozeNieaktualna('2026-02-10', '2027-02-09')).toBe(false);
+  expect(kwotaGusMozeNieaktualna('2026-02-10', '2027-02-10')).toBe(false);
+  expect(kwotaGusMozeNieaktualna('2026-02-10', '2027-02-11')).toBe(true);
+});
+
+it('krótkie nazwy do listy: najwyżej 25 znaków, a opis podaje obsługę albo konserwację i okres', () => {
+  for (const r of [...OBSLUGA, ...KONSERWACJA]) expect(r.krotko.length).toBeLessThanOrEqual(25);
+  for (const lista of [OBSLUGA, KONSERWACJA]) expect(new Set(lista.map((r) => r.krotko)).size).toBe(lista.length);
+  expect(opisRodzaju(rodzaj('o-podesty-przejezdne')!)).toBe('Obsługa: Podesty ruchome przejezdne. Zaświadczenie ważne 5 lat.');
+  expect(opisRodzaju(rodzaj('k-wozki')!)).toBe('Konserwacja: Wózki jezdniowe podnośnikowe z mechanicznym napędem podnoszenia. Zaświadczenie ważne 5 lat.');
 });

@@ -33,3 +33,12 @@ test('brak pensji: komunikat', async ({ page }) => {
   await expect(page.getByText('Wpisz pensję miesięczną')).toBeVisible();
   await expect(page.locator('[data-w="kwota"]')).toHaveText('—');
 });
+
+test.describe('po Nowym Roku', () => {
+  test('5 stycznia 2027 r.: domyślny rok przestawia się na 2027', async ({ page }) => {
+    await page.clock.setFixedTime(new Date('2027-01-05T10:00:00+01:00'));
+    await page.goto(NARZEDZIE_EKWIWALENT);
+    await expect(page.getByLabel('Rok odejścia z pracy')).toHaveValue('2027');
+    await expect(page.locator('[data-w="wspolczynnik"]')).toHaveText(/^20,92\s\(251\sdni pracy \/ 12\)$/);
+  });
+});

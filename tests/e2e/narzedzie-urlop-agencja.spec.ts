@@ -27,5 +27,6 @@ test('zmiany 12-godzinne i 3 miesiące: 6 dni, 72 godziny, 2160 zł', async ({ p
 
 test('bez godzin pracy: błąd', async ({ page }) => {
   await page.getByLabel(/Godziny pracy/).fill('0');
-  await expect(page.locator('#a-blad')).toHaveText('Wpisz godziny pracy z 3 miesięcy, na przykład 500.');
+  await expect(page.locator('#a-blad')).toHaveText(/^Wpisz godziny pracy z\s3\smiesięcy, na przykład 500\.$/);
+  await expect(page.locator('[data-w="godzina"]')).toHaveText('—');
 });

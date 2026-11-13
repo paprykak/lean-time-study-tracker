@@ -106,8 +106,10 @@ const faq = [
 </StronaNarzedzia>
 
 <script>
-  import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { dataPoPolsku, dodajMiesiace, dzisWPolsce, poprawnaData } from '../../lib/narzedzia/terminy';
   import { urlopWychowawczy } from '../../lib/narzedzia/urlop-wychowawczy';
+  import { odmiana } from '../../lib/redakcja';
+  import { typografia } from '../../lib/typografia.mjs';
 
   const form = document.querySelector<HTMLFormElement>('[data-wychowawczy]');
   if (form) {
@@ -133,24 +135,29 @@ const faq = [
       }
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
       b.hidden = !blad;
-      b.textContent = blad ?? '';
+      b.textContent = typografia(blad ?? '');
       const uwaga = w('uwaga');
       if (blad || !r) {
-        w('koniec').textContent = '—';
+        for (const k of ['koniec', 'wniosek', 'dostepne', 'limit']) w(k).textContent = '—';
         uwaga.hidden = true;
         return;
       }
-      w('koniec').textContent = r.miesiace > 0 ? dataPoPolsku(r.koniec) : '—';
-      w('wniosek').textContent = dataPoPolsku(r.wniosekDo);
+      w('koniec').textContent = r.miesiace > 0 ? typografia(dataPoPolsku(r.koniec)) : '—';
+      w('wniosek').textContent = typografia(dataPoPolsku(r.wniosekDo));
       w('dostepne').textContent = String(r.dostepne);
-      w('limit').textContent = dataPoPolsku(r.limitDo);
+      w('limit').textContent = typografia(dataPoPolsku(r.limitDo));
       const uwagi = [
-        r.skroconyWymiarem ? `Masz do wykorzystania ${r.dostepne} mies.${r.zarezerwowane ? ', bo 1 miesiąc jest zarezerwowany dla drugiego rodzica (art. 186 § 4)' : ''}.` : '',
+        r.skroconyWymiarem ? `Masz do wykorzystania ${odmiana(r.dostepne, ['miesiąc', 'miesiące', 'miesięcy'])}${r.zarezerwowane ? ', bo 1 miesiąc jest zarezerwowany dla drugiego rodzica (art. 186 § 4)' : ''}.` : '',
         r.skroconyLimitem ? 'Urlop kończy się 31 grudnia roku, w którym dziecko kończy 6 lat (art. 186 § 2).' : '',
       ].filter(Boolean);
       uwaga.hidden = uwagi.length === 0;
-      uwaga.textContent = uwagi.join(' ');
+      uwaga.textContent = typografia(uwagi.join(' '));
     };
+    // Przykład z HTML liczono od dnia budowania strony: przestawiamy go na dziś (dziecko sprzed roku, urlop od 1. dnia
+    // miesiąca za 2 miesiące), chyba że pola już zmieniono.
+    const dzis = dzisWPolsce();
+    if (el('urodzenie').value === el('urodzenie').defaultValue) el('urodzenie').value = dodajMiesiace(dzis, -12);
+    if (el('start').value === el('start').defaultValue) el('start').value = `${dodajMiesiace(dzis, 2).slice(0, 7)}-01`;
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());

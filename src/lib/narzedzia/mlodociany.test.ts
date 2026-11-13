@@ -93,6 +93,13 @@ describe('urlop młodocianego (art. 205 Kp)', () => {
       ['2011-09-01', 20],
     ]);
   });
+  it('urodziny 1 stycznia: 20 dni od 1 stycznia roku 18. urodzin, po wcześniejszych 12 i 26 dniach', () => {
+    expect(urlopMlodocianego('1993-01-01', '2009-09-01').lista.map((u) => [u.data, u.dni])).toEqual([
+      ['2010-03-01', 12],
+      ['2010-09-01', 26],
+      ['2011-01-01', 20],
+    ]);
+  });
   it('rok pracy przed rokiem 18. urodzin: 20 dni 1 stycznia', () => {
     expect(urlopMlodocianego('2008-06-10', '2024-09-01').lista.map((u) => [u.data, u.dni])).toEqual([
       ['2025-03-01', 12],

@@ -3,6 +3,10 @@
 // ostatniego dnia miesiąca), art. 37 (dni na poszukiwanie pracy). Dzień doręczenia nie wlicza się do biegu okresu:
 // tygodnie to pełne tygodnie od niedzieli do soboty po doręczeniu, miesiące to pełne miesiące od 1. dnia następnego
 // miesiąca (przykład gov.pl: wypowiedzenie 22 lipca, okres miesięczny kończy się 31 sierpnia).
+// Staż w pełnych miesiącach według art. 112 KC: 6 miesięcy od 31 marca (wliczonego) mija z końcem 30 września; dnia
+// doręczenia nie wliczamy. Gdy próg 6 miesięcy albo 3 lat stażu przypada w trakcie biegu wypowiedzenia, przepis nie mówi
+// wprost, co wtedy; w praktyce (stanowisko PIP i MRPiPS, część orzecznictwa SN) okres wydłuża się z mocy prawa, więc
+// jako wynik podajemy dłuższy okres, liczony od tego samego doręczenia (wariant bezpieczny dla pracownika).
 import { dodajDni } from './terminy';
 
 export type RodzajUmowy = 'stala' | 'probna-2tyg' | 'probna-ponad-2tyg' | 'probna-3mies';
@@ -42,6 +46,37 @@ export function koniecWypowiedzenia(doreczenie: string, okres: Okres): string | 
   }
   const [r, m] = doreczenie.split('-').map(Number);
   return new Date(Date.UTC(r, m + okres.ile, 0)).toISOString().slice(0, 10);
+}
+
+export interface WypowiedzenieStalej {
+  /** Pełne miesiące stażu w dniu doręczenia. */
+  staz: number;
+  okres: Okres;
+  /** Ostatni dzień umowy. */
+  koniec: string;
+  /** Gdy w trakcie wypowiedzenia staż osiąga próg: który, z końcem jakiego dnia i jaki byłby okres bez wydłużenia. */
+  prog: { miesiace: 6 | 36; dzien: string; krotszy: Okres; krotszyKoniec: string } | null;
+}
+
+/** Umowa na czas nieokreślony albo określony: okres według stażu, wydłużony, gdy próg stażu przypada przed jego końcem. */
+export function wypowiedzenieStalej(od: string, doreczenie: string): WypowiedzenieStalej {
+  const staz = pelneMiesiace(od, doreczenie);
+  const pierwszy = okresWypowiedzenia('stala', staz);
+  let okres = pierwszy;
+  let koniec = koniecWypowiedzenia(doreczenie, okres)!;
+  // Dłuższy okres może sam dojść do kolejnego progu (1 miesiąc do 3 lat), więc liczymy do skutku.
+  for (;;) {
+    const nowy = okresWypowiedzenia('stala', pelneMiesiace(od, dodajDni(koniec, 1)));
+    if (nowy.podstawa === okres.podstawa) break;
+    okres = nowy;
+    koniec = koniecWypowiedzenia(doreczenie, okres)!;
+  }
+  if (okres === pierwszy) return { staz, okres, koniec, prog: null };
+  const miesiace = okres.ile === 3 ? 36 : 6;
+  // Pierwszy dzień, od którego staż ma pełne `miesiace`; próg mija z końcem dnia poprzedniego.
+  let dzien = dodajDni(doreczenie, 1);
+  while (pelneMiesiace(od, dzien) < miesiace) dzien = dodajDni(dzien, 1);
+  return { staz, okres, koniec, prog: { miesiace, dzien: dodajDni(dzien, -1), krotszy: pierwszy, krotszyKoniec: koniecWypowiedzenia(doreczenie, pierwszy)! } };
 }
 
 /** Zwolnienie na poszukiwanie pracy przy wypowiedzeniu przez pracodawcę (art. 37 § 2), w dniach roboczych. */

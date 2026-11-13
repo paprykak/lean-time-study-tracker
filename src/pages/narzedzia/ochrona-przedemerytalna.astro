@@ -91,6 +91,8 @@ const faq = [
 <script>
   import { ochronaPrzedemerytalna } from '../../lib/narzedzia/ochrona-przedemerytalna';
   import { dataPoPolsku, dzisWPolsce, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { odmiana } from '../../lib/redakcja';
+  import { typografia } from '../../lib/typografia.mjs';
 
   const form = document.querySelector<HTMLFormElement>('[data-ochrona]');
   if (form) {
@@ -102,20 +104,21 @@ const faq = [
       const blad = !poprawnaData(urodzenie) || urodzenie > dzis || urodzenie < '1940-01-01' ? 'Wpisz datę urodzenia.' : null;
       const b = form.querySelector<HTMLElement>('[data-blad="urodzenie"]')!;
       b.hidden = !blad;
-      b.textContent = blad ?? '';
+      b.textContent = typografia(blad ?? '');
+      el('urodzenie').setAttribute('aria-invalid', blad ? 'true' : 'false');
       const status = w('status');
       if (blad) {
-        w('od').textContent = '—';
+        for (const k of ['od', 'do', 'wiek']) w(k).textContent = '—';
         status.hidden = true;
         return;
       }
       const r = ochronaPrzedemerytalna(urodzenie, Number(el('wiek').value) as 60 | 65, dzis);
-      w('od').textContent = dataPoPolsku(r.od);
-      w('do').textContent = dataPoPolsku(r.do);
-      w('wiek').textContent = dataPoPolsku(r.wiekEmerytalny);
+      w('od').textContent = typografia(dataPoPolsku(r.od));
+      w('do').textContent = typografia(dataPoPolsku(r.do));
+      w('wiek').textContent = typografia(dataPoPolsku(r.wiekEmerytalny));
       status.hidden = false;
       status.dataset.status = r.stan === 'przed' ? 'wkrotce' : r.stan === 'w-ochronie' ? 'w-terminie' : 'po-terminie';
-      status.textContent = r.stan === 'przed' ? `Za ${r.dniDoOchrony} ${r.dniDoOchrony === 1 ? 'dzień' : 'dni'}` : r.stan === 'w-ochronie' ? 'Ochrona trwa' : 'Wiek emerytalny osiągnięty';
+      status.textContent = r.stan === 'przed' ? typografia(`Za ${odmiana(r.dniDoOchrony, ['dzień', 'dni', 'dni'])}`) : r.stan === 'w-ochronie' ? 'Ochrona trwa' : 'Wiek emerytalny osiągnięty';
     };
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);

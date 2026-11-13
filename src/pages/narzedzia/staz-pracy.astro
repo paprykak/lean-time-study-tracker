@@ -4,6 +4,7 @@
 import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
 import { RODZAJE, obliczStaz, opisStazu, type Okres } from '../../lib/narzedzia/staz-pracy';
 import { SZKOLY } from '../../lib/narzedzia/urlop';
+import { odmiana } from '../../lib/redakcja';
 
 const WIERSZE: (Okres | null)[] = [
   { od: '2014-09-01', do: '2019-08-31', rodzaj: 'umowa' },
@@ -70,7 +71,7 @@ const faq = [
       <div class="mt-4">
         <label for="s-szkola" class="etykieta-pola">Ukończona szkoła (do urlopu)</label>
         <select id="s-szkola" name="szkola" class="pole mt-1">
-          {Object.entries(SZKOLY).map(([k, s]) => <option value={k} selected={k === SZKOLA}>{s.nazwa}{s.lata ? ` (${s.lata} lat)` : ''}</option>)}
+          {Object.entries(SZKOLY).map(([k, s]) => <option value={k} selected={k === SZKOLA}>{s.nazwa}{s.lata ? ` (${odmiana(s.lata, ['rok', 'lata', 'lat'])})` : ''}</option>)}
         </select>
       </div>
     </div>
@@ -83,7 +84,7 @@ const faq = [
       <dl class="wynik-lista">
         <div><dt>W tym same umowy o pracę</dt><dd data-w="umowy">{opisStazu(r.umowy)}</dd></div>
         <div><dt>Staż do urlopu ze szkołą</dt><dd data-w="urlopowy">{opisStazu(r.doUrlopu)}</dd></div>
-        <div><dt>Urlop w roku</dt><dd data-w="urlop">{r.dniUrlopu} dni{r.brakuje ? `, do 26 dni brakuje ${opisStazu(r.brakuje)}` : ''}</dd></div>
+        <div><dt>Urlop w roku</dt><dd data-w="urlop">{odmiana(r.dniUrlopu, ['dzień', 'dni', 'dni'])}{r.brakuje ? `, do 26 dni brakuje ${opisStazu(r.brakuje)}` : ''}</dd></div>
       </dl>
       <p class="wynik-uwaga">Zlecenia i działalność trzeba udokumentować zaświadczeniem z ZUS. Pracodawca uwzględnia je od 1 stycznia 2026 r. w sektorze finansów publicznych i od 1 maja 2026 r. u pozostałych pracodawców.</p>
       <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
@@ -124,6 +125,7 @@ const faq = [
   import { obliczStaz, opisStazu, type Okres, type RodzajOkresu } from '../../lib/narzedzia/staz-pracy';
   import { poprawnaData } from '../../lib/narzedzia/terminy';
   import type { Szkola } from '../../lib/narzedzia/urlop';
+  import { typografia } from '../../lib/typografia.mjs';
 
   const form = document.querySelector<HTMLFormElement>('[data-staz]');
   if (form) {
@@ -143,16 +145,17 @@ const faq = [
       if (!blad && okresy.length === 0) blad = 'Wpisz daty co najmniej jednego okresu pracy.';
       const b = form.querySelector<HTMLElement>('[data-blad="okresy"]')!;
       b.hidden = !blad;
-      b.textContent = blad ?? '';
+      b.textContent = typografia(blad ?? '');
       if (blad) {
-        w('razem').textContent = '—';
+        // Błąd danych: żadne pole wyniku nie zostaje z poprzedniego rachunku.
+        for (const k of ['razem', 'umowy', 'urlopowy', 'urlop']) w(k).textContent = '—';
         return;
       }
       const r = obliczStaz(okresy, el('szkola').value as Szkola);
-      w('razem').textContent = opisStazu(r.razem);
-      w('umowy').textContent = opisStazu(r.umowy);
-      w('urlopowy').textContent = opisStazu(r.doUrlopu);
-      w('urlop').textContent = `${r.dniUrlopu} dni${r.brakuje ? `, do 26 dni brakuje ${opisStazu(r.brakuje)}` : ''}`;
+      w('razem').textContent = typografia(opisStazu(r.razem));
+      w('umowy').textContent = typografia(opisStazu(r.umowy));
+      w('urlopowy').textContent = typografia(opisStazu(r.doUrlopu));
+      w('urlop').textContent = typografia(`${r.dniUrlopu} dni${r.brakuje ? `, do 26 dni brakuje ${opisStazu(r.brakuje)}` : ''}`);
     };
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);

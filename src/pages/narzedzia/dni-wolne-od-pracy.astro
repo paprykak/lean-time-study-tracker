@@ -60,7 +60,7 @@ const faq = [
       <h2 id="kalkulator-tytul" class="tytul-m">Twój plan</h2>
       <div class="mt-4">
         <label for="w-rok" class="etykieta-pola">Rok</label>
-        <select id="w-rok" name="rok" class="pole mt-1 max-w-48">
+        <select id="w-rok" name="rok" class="pole mt-1 max-w-48" data-rok-biezacy="10">
           {LATA.map((r) => <option value={r} selected={r === rok}>{r}</option>)}
         </select>
       </div>
@@ -144,12 +144,14 @@ const faq = [
   import { wymiarMiesiaca } from '../../lib/narzedzia/czas-pracy';
   import { dlugieWeekendy, najlepsza, okazje, podsumowanieRoku, zakres } from '../../lib/narzedzia/dni-wolne';
   import { plikIcs } from '../../lib/narzedzia/kalendarz-ics';
+  import { typografia } from '../../lib/typografia.mjs';
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
 
   const form = document.querySelector<HTMLFormElement>('[data-wolne]');
   if (form) {
     const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
     const el = (n: string) => form.elements.namedItem(n) as HTMLSelectElement;
-    const li = (t: string) => Object.assign(document.createElement('li'), { textContent: t });
+    const li = (t: string) => Object.assign(document.createElement('li'), { textContent: typografia(t) });
     const dniUrlopu = (n: number) => `${n}\u00a0${n === 1 ? 'dzień' : 'dni'} urlopu`;
     const rok = () => Number(el('rok').value);
     const przelicz = () => {
@@ -158,11 +160,11 @@ const faq = [
       const naj = najlepsza(ok);
       const p = podsumowanieRoku(r);
       w('najwiecej').textContent = naj ? `${naj.dniWolnego}\u00a0dni` : '—';
-      w('najlepsza').textContent = naj ? `urlop ${zakres(naj.urlopOd, naj.urlopDo)} (${dniUrlopu(naj.dniUrlopu)}), wolne ${zakres(naj.wolneOd, naj.wolneDo)}` : '';
+      w('najlepsza').textContent = naj ? typografia(`urlop ${zakres(naj.urlopOd, naj.urlopDo)} (${dniUrlopu(naj.dniUrlopu)}), wolne ${zakres(naj.wolneOd, naj.wolneDo)}`) : '';
       w('okazje').replaceChildren(...ok.map((o) => li(`${zakres(o.urlopOd, o.urlopDo)} (${dniUrlopu(o.dniUrlopu)}): ${o.dniWolnego}\u00a0dni wolnego, ${zakres(o.wolneOd, o.wolneDo)}`)));
       w('weekendy').replaceChildren(...dlugieWeekendy(r).map((d) => li(`${zakres(d.od, d.do)}: ${d.dni}\u00a0dni`)));
       w('robocze').textContent = String(p.wDniRobocze.length);
-      w('sobota').textContent = p.wSobote.length ? p.wSobote.map((s) => zakres(s.data, s.data)).join(', ') : 'brak';
+      w('sobota').textContent = p.wSobote.length ? typografia(p.wSobote.map((s) => zakres(s.data, s.data)).join(', ')) : 'brak';
       w('dni-pracy').textContent = String(Array.from({ length: 12 }, (_, i) => wymiarMiesiaca(r, i + 1).godziny).reduce((a, b) => a + b, 0) / 8);
     };
     form.querySelector<HTMLButtonElement>('[data-ics]')!.addEventListener('click', () => {
@@ -183,6 +185,7 @@ const faq = [
     });
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    ustawDzisiejszeWartosci(form);
     przelicz();
   }
 </script>

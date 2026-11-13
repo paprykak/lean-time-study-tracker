@@ -57,7 +57,7 @@ const faq = [
         <label for="w-norma" class="etykieta-pola">Dobowa norma czasu pracy</label>
         <select id="w-norma" name="norma" class="pole mt-1" aria-describedby="w-norma-opis">
           <option value="8" selected>8 godzin</option>
-          <option value="7">7 godzin (niższa norma z odrębnych przepisów)</option>
+          <option value="7">7 godzin</option>
         </select>
         <p id="w-norma-opis" class="meta mt-1">Niższa norma z odrębnych przepisów obniża wymiar godzinowy (art. 148<sup>1</sup> § 5, art. 188 § 4).</p>
       </div>
@@ -111,6 +111,11 @@ const faq = [
       pierwszy wniosek w roku.
     </p>
     <p>
+      Wymiar jest roczny i nie zmniejsza się, gdy pracujesz tylko przez część roku (art. 188 § 1, art. 148<sup>1</sup> § 1).
+      Po zmianie pracy w trakcie roku odlicza się jednak dni i godziny wykorzystane w tym roku u poprzedniego pracodawcy;
+      informację o nich podaje świadectwo pracy.
+    </p>
+    <p>
       Do kiedy przysługują urlop rodzicielski i wychowawczy, praca zdalna przy dziecku do 4 lat i elastyczny czas pracy
       do 8 lat, pokaże <a href="/narzedzia/rodzic-w-pracy">kalkulator uprawnień rodzica</a>.
     </p>
@@ -119,6 +124,7 @@ const faq = [
 
 <script>
   import { godzinyZwolnienia } from '../../lib/narzedzia/wolne-rodzinne';
+  import { typografia } from '../../lib/typografia.mjs';
 
   const form = document.querySelector<HTMLFormElement>('[data-wolne]');
   if (form) {
@@ -126,8 +132,8 @@ const faq = [
     const wartosc = (n: string) => Number((form.elements.namedItem(n) as HTMLSelectElement).value);
     const przelicz = () => {
       const h = godzinyZwolnienia(wartosc('etat'), wartosc('norma'));
-      w('dziecko').textContent = `2 dni albo ${h} h`;
-      w('sila').innerHTML = `2 dni albo ${h} h, płatne 50% (art. 148<sup>1</sup>)`;
+      w('dziecko').textContent = typografia(`2 dni albo ${h} h`);
+      w('sila').textContent = typografia(`2 dni albo ${h} h, płatne 50% (art. 148¹)`);
     };
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());

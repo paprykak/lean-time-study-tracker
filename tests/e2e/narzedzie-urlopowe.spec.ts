@@ -22,3 +22,14 @@ test('brak godzin: komunikat', async ({ page }) => {
   await page.getByLabel('Przepracowane godziny w tych miesiącach').fill('0');
   await expect(page.getByText('Wpisz przepracowane godziny')).toBeVisible();
 });
+
+test('tekst zamiast pensji: komunikat o kwocie i pole oznaczone jako błędne', async ({ page }) => {
+  const stala = page.getByLabel(/Stała pensja miesięczna/);
+  await stala.fill('abc');
+  await expect(page.locator('#wu-blad')).toHaveText(/^Wpisz kwotę cyframi, na przykład 6000\.$/);
+  await expect(stala).toHaveAttribute('aria-invalid', 'true');
+  await expect(stala).toHaveAttribute('aria-describedby', 'wu-blad');
+  await expect(page.locator('[data-w="zmienna"]')).toHaveText('—');
+  await stala.fill('-100');
+  await expect(page.locator('#wu-blad')).toHaveText('Kwoty nie mogą być ujemne.');
+});
