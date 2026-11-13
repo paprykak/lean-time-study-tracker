@@ -809,6 +809,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-13',
   },
   {
+    slug: 'dyzur-kierowcy',
+    nazwa: 'Dyżur i przerwy kierowcy: ile płatne',
+    krotko: 'Ile płatne są dyżur, przerwy w jeździe i czas drugiego kierowcy w załodze: pełna stawka albo połowa.',
+    kategoria: 'czas-pracy',
+    przepisy: ['czasPracyKierowcow', 'rozporzadzenie561', 'kodeksPracy'],
+    sprawdzono: '2026-11-13',
+  },
+  {
     slug: 'zaswiadczenie-adr',
     nazwa: 'Zaświadczenie ADR: ważność i kurs',
     krotko: 'Do kiedy ważne ADR, kiedy kurs doskonalący, żeby nic nie przepadło, i kto płaci za kurs i egzamin.',
