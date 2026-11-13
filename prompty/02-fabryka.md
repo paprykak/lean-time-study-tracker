@@ -95,7 +95,11 @@ Twarde zasady treści (każda wzięła się z błędu, który już raz wyszedł)
 3. Wdrożenie na `main` według AGENTS.md (zgoda „wdrażaj” jest w rozmowie z 2026-11-11), poczekać na koniec przebiegu CI,
    test produkcji nowych adresów, IndexNow.
 4. Decyzje do `DECYZJE.md`, lekcje na koniec `prompty/01-budowa-portalu.md`, sprawy dla Patryka do `STAN.md`.
-5. Następna runda: nowe pakiety z obszarów, które zostały, aż skończy się budżet.
+5. Po każdej rundzie nowych narzędzi: pakiet „audyt jakości” dla narzędzi z tej rundy (audytorzy w partiach dostają pliki
+   i teksty przepisów, każde znalezisko potwierdza drugi podagent, poprawki tylko potwierdzonych, każda z testem; wzór:
+   `raporty/jakosc2/RAPORT.md`). Drugi audyt znalazł średnio prawie dwa realne błędy na narzędzie mimo dwóch weryfikacji
+   w zespołach (DECYZJE.md, 2026-11-13).
+6. Następna runda: nowe pakiety z obszarów, które zostały, aż skończy się budżet.
 
 ## 7. Czego nie robi nikt
 
