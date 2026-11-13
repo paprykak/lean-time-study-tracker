@@ -29,9 +29,11 @@
 //    więc stosujemy niższy próg z pkt 3 i zaznaczamy to w wyniku.
 // 6. W § 3 ust. 1 pkt 2 nie jest jasne, czy „ze względów technologicznych” dotyczy też WBGT; WBGT powyżej 25°C
 //    w pomieszczeniu zamkniętym wystarcza bez względu na przyczynę.
-// 7. W § 4 ust. 1 pkt 4 „powyżej” odnosimy do obu progów (zdanie jest skrócone przy 1000 kcal u kobiet).
+// 7. W § 4 ust. 1 pkt 4 przy 1000 kcal (4187 kJ) u kobiet nie ma słowa „powyżej” (jest przy 1500 kcal u mężczyzn).
+//    Wariant bezpieczny: napoje należą się kobietom od 1000 kcal włącznie (od 4186,8 kJ, czyli 1000 kcal × 4,1868).
 // 8. Wydatku nie szacujemy: bez liczby wynik „zależy” podaje próg. Progi według płci wybiera osoba licząca; bez wyboru
-//    i bez liczby podajemy oba progi, a z liczbą bez wyboru zwracamy błąd danych.
+//    i bez liczby podajemy oba progi, a z liczbą bez wyboru zwracamy błąd danych, chyba że posiłek należy się bez progu
+//    (pod ziemią, klęska): wtedy pomijamy porównanie z progiem.
 // 9. Napoje § 4 ust. 1 pkt 2 (WCI powyżej 1000) nie liczymy: zwykle nikt nie zna tego wskaźnika; tylko uwaga przy
 //    chłodni. Pkt 5 (pogoda powyżej 28°C) liczymy, gdy osoba zaznaczy, że temperaturę powoduje pogoda.
 // 10. Okno wydania posiłku (początek zmiany + 3 do 4 godzin) to zalecenie „w zasadzie” z § 6 ust. 2, liczone przez północ.
@@ -48,7 +50,7 @@ export type Prog = { kcal: number; kJ: number };
 export const MIEJSCA: Record<Miejsce, string> = {
   hala: 'Hala, pomieszczenie',
   chlodnia: 'Chłodnia, mroźnia',
-  goraco: 'Gorące stanowisko (WBGT > 25°C)',
+  goraco: 'Wnętrze z WBGT > 25°C',
   zewnatrz: 'Na zewnątrz',
   mieszane: 'Częściowo na zewnątrz',
   podZiemia: 'Pod ziemią',
@@ -68,6 +70,12 @@ export function przekracza(wartosc: number, jednostka: Jednostka, prog: Prog): b
   const kcal = jednostka === 'kcal' ? wartosc : kJNaKcal(wartosc);
   const kJ = jednostka === 'kJ' ? wartosc : kcalNaKJ(wartosc);
   return kcal > prog.kcal || kJ > prog.kJ;
+}
+
+/** § 4 ust. 1 pkt 4: u mężczyzn powyżej 1500 kcal (6280 kJ), u kobiet od 1000 kcal włącznie (interpretacja 7). */
+export function napojeZWydatku(wartosc: number, jednostka: Jednostka, plec: Plec): boolean {
+  if (plec === 'mezczyzn') return przekracza(wartosc, jednostka, PROGI.obnizony.mezczyzn);
+  return jednostka === 'kcal' ? wartosc >= 1000 : wartosc >= kcalNaKJ(1000);
 }
 
 /** Okres zimowy z § 3 ust. 1 pkt 3: od 1 listopada do 31 marca włącznie. */
@@ -130,8 +138,10 @@ export function ocen(d: Dane): Wynik {
   if (d.wydatek !== null) {
     const kcal = d.jednostka === 'kcal' ? d.wydatek : kJNaKcal(d.wydatek);
     if (!Number.isFinite(d.wydatek) || d.wydatek < 0 || kcal > MAKS_KCAL)
-      throw new RangeError(`Wpisz wydatek energetyczny na zmianę jako liczbę do ${MAKS_KCAL.toLocaleString('pl-PL')} kcal albo zostaw puste.`);
-    if (!d.plec) throw new RangeError('Wybierz, dla kogo liczyć progi: kobiet czy mężczyzn.');
+      throw new RangeError(
+        `Wpisz wydatek energetyczny na zmianę jako liczbę do ${MAKS_KCAL.toLocaleString('pl-PL')} kcal (${Math.round(kcalNaKJ(MAKS_KCAL)).toLocaleString('pl-PL')} kJ) albo zostaw puste.`,
+      );
+    if (!d.plec && d.miejsce !== 'podZiemia' && !d.kleska) throw new RangeError('Wybierz, dla kogo liczyć progi: kobiet czy mężczyzn.');
     przeliczenie = { kcal, kJ: d.jednostka === 'kJ' ? d.wydatek : kcalNaKJ(d.wydatek) };
   }
   if (d.temp != null && !(Number.isFinite(d.temp) && d.temp >= -60 && d.temp <= 60))
@@ -152,7 +162,7 @@ export function ocen(d: Dane): Wynik {
   const napoje: PodstawaNapojow[] = [];
   if (d.miejsce === 'goraco') napoje.push('n1');
   if ((d.miejsce === 'zewnatrz' || d.miejsce === 'mieszane') && d.temp != null && (d.temp < 10 || d.temp > 25)) napoje.push('n3');
-  if (d.wydatek !== null && d.plec && przekracza(d.wydatek, d.jednostka, PROGI.obnizony[d.plec])) napoje.push('n4');
+  if (d.wydatek !== null && d.plec && napojeZWydatku(d.wydatek, d.jednostka, d.plec)) napoje.push('n4');
   if (d.tempZPogody && d.temp != null && d.temp > 28) napoje.push('n5');
 
   return { status, powody, pkt, progi, zima, przeliczenie, napoje, okno };
@@ -162,16 +172,25 @@ export function ocen(d: Dane): Wynik {
 
 const L1 = new Intl.NumberFormat('pl-PL', { maximumFractionDigits: 1 });
 const l = (x: number) => L1.format(x);
+const L2 = new Intl.NumberFormat('pl-PL', { maximumFractionDigits: 2 });
+const l2 = (x: number) => L2.format(x);
 const prog = (p: Prog) => `${l(p.kcal)} kcal (${l(p.kJ)} kJ)`;
 const progiObu = (p: Record<Plec, Prog>, plec: Plec | null) =>
   plec ? prog(p[plec]) : `${prog(p.mezczyzn)} u mężczyzn albo ${prog(p.kobiet)} u kobiet`;
+
+/** Próg napojów z § 4 ust. 1 pkt 4 (interpretacja 7: u kobiet bez „powyżej”). */
+const progN4 = (plec: Plec | null) => {
+  const m = `powyżej ${prog(PROGI.obnizony.mezczyzn)}`;
+  const k = `${prog(PROGI.obnizony.kobiet)} lub więcej`;
+  return plec === 'mezczyzn' ? m : plec === 'kobiet' ? k : `${m} u mężczyzn albo ${k} u kobiet`;
+};
 
 const WARUNEK: Record<Miejsce, string> = {
   hala: 'praca z wysiłkiem fizycznym',
   chlodnia: 'praca w chłodni lub mroźni, gdzie stale jest poniżej 10°C',
   goraco: 'praca w pomieszczeniu zamkniętym z WBGT powyżej 25°C',
-  zewnatrz: 'praca na otwartej przestrzeni w okresie zimowym (od 1 listopada do 31 marca)',
-  mieszane: 'praca na otwartej przestrzeni w okresie zimowym (od 1 listopada do 31 marca)',
+  zewnatrz: 'praca na otwartej przestrzeni w okresie zimowym, od 1 listopada do 31 marca',
+  mieszane: 'praca na otwartej przestrzeni w okresie zimowym, od 1 listopada do 31 marca',
   podZiemia: 'praca z wysiłkiem fizycznym',
 };
 
@@ -189,12 +208,20 @@ export interface Teksty {
 export function opisz(w: Wynik, d: Pick<Dane, 'data' | 'miejsce' | 'plec' | 'start'>): Teksty {
   const pktOpis = `§ 3 ust. 1 pkt ${w.pkt}`;
   const warunek = w.pkt === 1 ? WARUNEK.hala : WARUNEK[d.miejsce];
+  // Gdy wydatek przekracza tylko jedną z dwóch liczb progu (kcal albo kJ z nawiasu), mówimy to wprost (interpretacja 2).
+  const tylkoJedna = (p: Prog) => {
+    const x = w.przeliczenie;
+    if (!x) return '';
+    if (x.kcal <= p.kcal && x.kJ > p.kJ) return ` (${l2(x.kcal)} kcal = ${l2(x.kJ)} kJ, więcej niż ${l(p.kJ)} kJ z nawiasu)`;
+    if (x.kJ <= p.kJ && x.kcal > p.kcal) return ` (${l2(x.kJ)} kJ = ${l2(x.kcal)} kcal, więcej niż ${l(p.kcal)} kcal)`;
+    return '';
+  };
   const prze = (p: PodstawaPosilku) =>
     p === 'p4'
       ? '§ 3 ust. 1 pkt 4: praca pod ziemią, bez progu wydatku'
       : p === 'kleska'
         ? '§ 3 ust. 2: usuwanie skutków klęski żywiołowej lub innego zdarzenia losowego, bez progu wydatku'
-        : `${pktOpis}: ${warunek} i wydatek powyżej ${progiObu(w.progi, d.plec)}`;
+        : `${pktOpis}: ${warunek} i wydatek powyżej ${progiObu(w.progi, d.plec)}${d.plec ? tylkoJedna(w.progi[d.plec]) : ''}`;
   let naglowek: string;
   let status: Teksty['status'];
   let podstawa: string;
@@ -211,21 +238,21 @@ export function opisz(w: Wynik, d: Pick<Dane, 'data' | 'miejsce' | 'plec' | 'sta
     status = { tekst: 'Sprawdź wydatek energetyczny ze zmiany', rodzaj: 'wkrotce' };
     podstawa = `Posiłek należy się, jeśli wydatek na zmianę przekracza ${progiObu(w.progi, d.plec)} (${pktOpis}: ${warunek}).`;
   }
-  const przeliczenie = w.przeliczenie ? `${l(w.przeliczenie.kcal)} kcal = ${l(w.przeliczenie.kJ)} kJ (1 kcal = 4,1868 kJ)` : 'nie podano wydatku';
+  const przeliczenie = w.przeliczenie ? `${l2(w.przeliczenie.kcal)} kcal = ${l2(w.przeliczenie.kJ)} kJ (1 kcal = 4,1868 kJ)` : 'nie podano wydatku';
   const kiedy = `w regulaminowej przerwie, w zasadzie po 3–4 godzinach pracy${
     w.okno ? `, przy zmianie od ${d.start} orientacyjnie ${w.okno.od}–${w.okno.do}` : ''
   } (§ 6 ust. 2); tylko w dniu wykonywania tych prac (§ 6 ust. 1)`;
   const NAPOJE: Record<PodstawaNapojow, string> = {
     n1: '§ 4 ust. 1 pkt 1: WBGT powyżej 25°C, napoje wzbogacone w sole mineralne i witaminy (§ 4 ust. 2)',
     n3: '§ 4 ust. 1 pkt 3: praca na otwartej przestrzeni przy temperaturze poniżej 10°C lub powyżej 25°C',
-    n4: `§ 4 ust. 1 pkt 4: wydatek powyżej ${progiObu(PROGI.obnizony, d.plec)}`,
+    n4: `§ 4 ust. 1 pkt 4: wydatek ${progN4(d.plec)}`,
     n5: '§ 4 ust. 1 pkt 5: temperatura z powodu pogody powyżej 28°C',
   };
   let napoje = w.napoje.length
     ? `należą się, przez całą zmianę (§ 6 ust. 3). Podstawa: ${w.napoje.map((n) => NAPOJE[n]).join('; ')}.`
     : 'z podanych danych nie wynikają (§ 4 ust. 1).';
-  if (!w.przeliczenie && !w.napoje.includes('n4'))
-    napoje += ` Należą się też przy wydatku powyżej ${progiObu(PROGI.obnizony, d.plec)} (§ 4 ust. 1 pkt 4).`;
+  if ((!w.przeliczenie || !d.plec) && !w.napoje.includes('n4'))
+    napoje += ` Należą się też przy wydatku ${progN4(d.plec)} (§ 4 ust. 1 pkt 4).`;
   if (d.miejsce === 'chlodnia') napoje += ' W mikroklimacie zimnym ze wskaźnikiem WCI powyżej 1000 napoje też się należą (§ 4 ust. 1 pkt 2); tego wskaźnika nie liczymy.';
   const uwagi: string[] = [];
   if (d.miejsce === 'mieszane' && w.zima)

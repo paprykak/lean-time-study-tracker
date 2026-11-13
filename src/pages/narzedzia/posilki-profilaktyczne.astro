@@ -36,7 +36,7 @@ const faq = [
   },
   {
     pytanie: 'Czy od posiłku płaci się podatek i składki?',
-    odpowiedz: 'Nie. Świadczenia rzeczowe z przepisów BHP są wolne od podatku dochodowego (art. 21 ust. 1 pkt 11 ustawy o PIT), a bony, talony i kupony wtedy, gdy pracodawca nie ma możliwości wydania posiłków (pkt 11b). Nie wchodzą też do podstawy składek na ubezpieczenia emerytalne i rentowe (§ 2 ust. 1 pkt 6 rozporządzenia o podstawie wymiaru składek).',
+    odpowiedz: 'Nie. Świadczenia rzeczowe z przepisów BHP są wolne od podatku dochodowego (art. 21 ust. 1 pkt 11 ustawy o PIT), a bony, talony i kupony wtedy, gdy pracodawca nie ma możliwości wydania posiłków (pkt 11b). Nie wchodzą też do podstawy składek na ubezpieczenia emerytalne i rentowe (§ 2 ust. 1 pkt 6 rozporządzenia o podstawie wymiaru składek), a więc i składki zdrowotnej (art. 81 ust. 1 ustawy o świadczeniach opieki zdrowotnej).',
   },
 ];
 ---
@@ -103,7 +103,7 @@ const faq = [
           <span>Ciepło z powodu pogody, nie od maszyn</span>
         </label>
       </fieldset>
-      <p id="p-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+      <p id="p-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -123,7 +123,7 @@ const faq = [
         <div><dt>Kiedy</dt><dd data-w="kiedy">{t.kiedy}</dd></div>
         <div><dt>Zamiast dania</dt><dd>produkty albo bony, talony, kupony, tylko gdy danie gorące nie jest możliwe ze względu na rodzaj pracy lub organizację (§ 2 ust. 2)</dd></div>
         <div><dt>Pieniądze</dt><dd>nie, ekwiwalent pieniężny nie przysługuje (§ 8)</dd></div>
-        <div><dt>Podatek i ZUS</dt><dd>bez podatku i składek (art. 21 ust. 1 pkt 11 i 11b ustawy o PIT, § 2 ust. 1 pkt 6 rozporządzenia o podstawie wymiaru składek)</dd></div>
+        <div><dt>Podatek i ZUS</dt><dd>bez podatku i składek (art. 21 ust. 1 pkt 11 i 11b ustawy o PIT, § 2 ust. 1 pkt 6 rozporządzenia o podstawie wymiaru składek, a dla składki zdrowotnej art. 81 ust. 1 ustawy o świadczeniach opieki zdrowotnej)</dd></div>
       </dl>
       <dl class="wynik-lista">
         <div><dt>Napoje</dt><dd data-w="napoje">{t.napoje}</dd></div>
@@ -157,13 +157,14 @@ const faq = [
 
     <h2 id="jak-liczymy">Jak liczymy</h2>
     <ul>
-      <li>Przepis mówi „powyżej”, więc wydatek równy progowi go nie przekracza.</li>
-      <li>Rozporządzenie podaje próg w kcal i w nawiasie w kJ, zaokrąglony przy przeliczeniu 1 kcal = 4,1868 kJ. Nie mówi, która liczba rozstrzyga, więc uznajemy próg za przekroczony, gdy wydatek przekracza którąkolwiek z nich. Dlatego u kobiet 1100 kcal (4605,48 kJ) już przekracza próg 4605 kJ, a 8374 kJ u mężczyzn (2000,1 kcal) przekracza próg 2000 kcal.</li>
+      <li>Przepis mówi „powyżej”, więc wydatek równy progowi go nie przekracza, z wyjątkami opisanymi w dwóch kolejnych punktach.</li>
+      <li>Rozporządzenie podaje próg w kcal i w nawiasie w kJ, zaokrąglony przy przeliczeniu 1 kcal = 4,1868 kJ. Nie mówi, która liczba rozstrzyga, więc uznajemy próg za przekroczony, gdy wydatek przekracza którąkolwiek z nich. Dlatego u kobiet 1100 kcal (4605,48 kJ) już przekracza próg 4605 kJ, a 4187 kJ (1000,05 kcal) próg 1000 kcal; u mężczyzn 1500 kcal (6280,2 kJ) przekracza próg 6280 kJ, a 8374 kJ (2000,1 kcal) próg 2000 kcal. Wynik mówi wtedy, którą liczbę wydatek przekracza.</li>
+      <li>Przy napojach (§ 4 ust. 1 pkt 4) przepis mówi „powyżej 1500 kcal (6280 kJ) u mężczyzn i 1000 kcal (4187 kJ) u kobiet”: przy kobietach brakuje słowa „powyżej”. Przyjmujemy wariant korzystniejszy dla pracownicy: napoje należą się od 1000 kcal (4186,8 kJ) włącznie. Próg posiłku u kobiet nadal wymaga wydatku powyżej 1000 kcal.</li>
       <li>Okres zimowy trwa od 1 listopada do 31 marca, obie daty włącznie. Temperatura na zewnątrz nie ma przy posiłku znaczenia, liczy się data; ma znaczenie przy napojach.</li>
       <li>Przepis nie mówi, jaką część zmiany trzeba pracować na otwartej przestrzeni. Przy pracy częściowo na zewnątrz pokazujemy niższy próg.</li>
       <li>Chłodnia to pomieszczenie zamknięte, w którym ze względów technologicznych stale jest poniżej 10°C. Hala zimna z powodu pogody to inny przypadek i ma ogólny próg. Przy WBGT powyżej 25°C nie jest jasne, czy przepis wymaga przyczyny technologicznej; wystarcza nam samo WBGT w pomieszczeniu zamkniętym.</li>
       <li>Wydatku energetycznego nie szacujemy: wpisz liczbę od pracodawcy albo zostaw puste pole, a pokażemy próg. Przepis nie przewiduje proporcji dla krótszej zmiany ani niepełnego etatu.</li>
-      <li>Rozporządzenie mówi o pracownikach. Przy umowie zlecenia Kodeks pracy nakazuje zapewnić bezpieczne i higieniczne warunki pracy (art. 304 § 1), ale nie mówi wprost o posiłkach.</li>
+      <li>Rozporządzenie mówi o pracownikach. Przy pracy na innej podstawie niż umowa o pracę (np. zlecenie) w zakładzie pracy lub w miejscu wyznaczonym przez pracodawcę, a także przy samozatrudnieniu w takim miejscu, Kodeks pracy nakazuje zapewnić bezpieczne i higieniczne warunki pracy (art. 304 § 1), ale nie mówi wprost o posiłkach.</li>
     </ul>
     <p>
       Napoje (§ 4) liczymy z miejsca pracy, wydatku i temperatury; wskaźnika siły chłodzącej powietrza (WCI) nie liczymy.
@@ -178,6 +179,7 @@ const faq = [
 <script>
   import { ocen, opisz, wpisanaTemperatura, type Jednostka, type Miejsce, type Plec } from '../../lib/narzedzia/posilki-profilaktyczne';
   import { wpisanaLiczba } from '../../lib/narzedzia/format';
+  import { dzisWPolsce } from '../../lib/narzedzia/terminy';
   import { typografia } from '../../lib/typografia.mjs';
 
   const form = document.querySelector<HTMLFormElement>('[data-posilki]');
@@ -185,6 +187,9 @@ const faq = [
     const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
     const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement | HTMLSelectElement;
     const zaznaczone = (n: string) => (form.elements.namedItem(n) as HTMLInputElement).checked;
+    // Data z buildu może być nieaktualna (okres zimowy): podmieniamy ją na dzisiejszą, jeśli nikt jej nie zmienił.
+    const pole = el('data') as HTMLInputElement;
+    if (pole.value === pole.defaultValue) pole.value = dzisWPolsce();
     const pisz = (k: string, tekst: string) => {
       w(k).textContent = typografia(tekst);
     };

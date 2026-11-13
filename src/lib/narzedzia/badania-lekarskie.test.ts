@@ -50,6 +50,21 @@ describe('badanie kontrolne po zwolnieniu (art. 229 § 2 Kp)', () => {
   it('przerwa w święta (25–27.12.2026): 18 + 12 = 30 dni zwolnień, 33 łącznie, nie rozstrzyga', () => {
     expect(k([['2026-12-07', '2026-12-24'], ['2026-12-28', '2027-01-08']])).toMatchObject({ wynik: 'nierozstrzygniete', dniZwolnien: 30, dniLacznie: 33, powrot: '2027-01-09' });
   });
+  it('wcześniejsza niezdolność ponad 30 dni bez dnia pracy w przerwie: badanie potrzebne (44 dni + weekend + 5 dni)', () => {
+    const z: [string, string][] = [['2026-01-01', '2026-02-13'], ['2026-02-16', '2026-02-20']];
+    const r = k(z);
+    expect(r).toMatchObject({ wynik: 'potrzebne', dniOstatniej: 5, dniLacznie: 51, dniZwolnien: 49, powrot: '2026-02-21', wczesniejsza: { od: '2026-01-01', do: '2026-02-13', dni: 44 } });
+    expect(tekstKontrolnego(r, 'choroba').opis).toContain('Wcześniejsza niezdolność do pracy trwała 44 dni');
+    expect(k(z, 'choroba', 'nie')).toMatchObject({ wynik: 'potrzebne', wczesniejsza: { dni: 44 } });
+    expect(k(z, 'choroba', 'tak')).toMatchObject({ wynik: 'niewymagane', wczesniejsza: null });
+    // Poniedziałek 16.02 roboczy: osobna niezdolność 4 dni.
+    expect(k([['2026-01-01', '2026-02-13'], ['2026-02-17', '2026-02-20']])).toMatchObject({ wynik: 'niewymagane', dniOstatniej: 4 });
+    expect(k(z, 'opieka').wynik).toBe('nie-dotyczy');
+  });
+  it('granica wcześniejszej niezdolności: 31 dni i niedziela przerwy potrzebne, 30 dni nie rozstrzyga', () => {
+    expect(k([['2026-01-01', '2026-01-31'], ['2026-02-02', '2026-02-06']])).toMatchObject({ wynik: 'potrzebne', dniLacznie: 37, wczesniejsza: { dni: 31 } });
+    expect(k([['2026-01-02', '2026-01-31'], ['2026-02-02', '2026-02-06']])).toMatchObject({ wynik: 'nierozstrzygniete', dniLacznie: 36, dniZwolnien: 35, wczesniejsza: null });
+  });
   it('jeden dzień zwolnienia; opieka nad kimś nie dotyczy; ciąża i wypadek jak choroba', () => {
     expect(k([['2026-06-01', '2026-06-01']])).toMatchObject({ wynik: 'niewymagane', dniOstatniej: 1, powrot: '2026-06-02' });
     expect(k([['2026-01-01', '2026-02-28']], 'opieka').wynik).toBe('nie-dotyczy');
@@ -97,6 +112,20 @@ describe('badania wstępne (art. 229 § 1–1³ i art. 201 § 1 Kp)', () => {
     expect(badaniaWstepne({ ...B1, nastepne: '2026-11-30' }).wynik).toBe('potrzebne');
     expect(badaniaWstepne({ ...B1, nastepne: '2026-12-01' }).wynik).toBe('warunkowe');
   });
+  it('ten sam pracodawca bez orzeczenia: status „Nie masz orzeczenia”, nie „straciło aktualność”', () => {
+    const r = badaniaWstepne({ ...B1, rodzaj: 'ten-sam', start: '2026-11-15', orzeczenie: 'brak', nastepne: null });
+    expect(r.wynik).toBe('brak-orzeczenia');
+    expect(r.warunki.find((x) => x.nazwa === 'Aktualne orzeczenie')?.opis).toContain('brak orzeczenia: przed pracą potrzebne badanie');
+    const t = tekstWstepnych(r, 'ten-sam');
+    expect(t).toMatchObject({ wynik: 'bez wstępnych, ale z badaniem', status: { tekst: 'Nie masz orzeczenia', rodzaj: 'pilne' } });
+    expect(tekstWstepnych(badaniaWstepne({ ...B1, rodzaj: 'ten-sam', start: '2026-11-15', nastepne: '2026-11-10' }), 'ten-sam').status?.tekst).toBe('Orzeczenie straciło aktualność');
+  });
+  it('opis warunku o pracach szczególnie niebezpiecznych zależy od odpowiedzi', () => {
+    const opis = (s: 'tak' | 'nie' | 'nie-wiem') => badaniaWstepne({ ...B1, szczegolnieNiebezpieczne: s }).warunki.find((x) => x.nazwa === 'Bez prac szczególnie niebezpiecznych')!;
+    expect(opis('nie')).toMatchObject({ stan: 'tak', opis: expect.stringContaining('to nie są prace szczególnie niebezpieczne') });
+    expect(opis('tak')).toMatchObject({ stan: 'nie', opis: expect.stringContaining('przy takich pracach zwolnienia z badań nie ma') });
+    expect(opis('nie-wiem').opis).toContain('§ 80');
+  });
   it('ten sam pracodawca: zwolnienie, a przy nieaktualnym orzeczeniu badanie przed pracą', () => {
     const B8: DaneWstepnych = { ...B1, rodzaj: 'ten-sam', start: '2026-11-15', nastepne: '2027-01-01' };
     expect(badaniaWstepne(B8).wynik).toBe('zwolnienie');
@@ -141,15 +170,18 @@ describe('odwołanie od orzeczenia (§ 5 ust. 3 rozporządzenia) i następne bad
   it('status terminu: zostało, ostatni dzień, minął', () => {
     expect(tekstOdwolania(odwolanie('2026-11-12', '2026-11-12')).status).toEqual({ tekst: 'Zostało: 7 dni', rodzaj: 'w-terminie' });
     expect(tekstOdwolania(odwolanie('2026-11-12', '2026-11-18')).status?.tekst).toBe('Zostało: 1 dzień');
+    // Granica „pilne”: 2 dni do końca terminu tak, 3 dni już nie.
+    expect(tekstOdwolania(odwolanie('2026-11-12', '2026-11-17')).status).toEqual({ tekst: 'Zostało: 2 dni', rodzaj: 'pilne' });
+    expect(tekstOdwolania(odwolanie('2026-11-12', '2026-11-16')).status).toEqual({ tekst: 'Zostało: 3 dni', rodzaj: 'w-terminie' });
+    expect(tekstOdwolania(odwolanie('2026-11-12', '2026-11-12')).opis).toContain('art. 111 § 2 Kodeksu cywilnego');
     expect(tekstOdwolania(odwolanie('2026-11-12', '2026-11-19')).status?.tekst).toBe('Ostatni dzień: dziś');
     expect(tekstOdwolania(odwolanie('2026-11-12', '2026-11-22')).status).toEqual({ tekst: 'Termin minął 3 dni temu', rodzaj: 'po-terminie' });
   });
   it('przypomnienie: 181 dni do badania, wydarzenia 12.04 i 12.05.2027; termin minął bez wydarzeń', () => {
     const p = przypomnienie('2027-05-12', '2026-11-12');
     expect(p.dniDo).toBe(181);
-    expect(p.status).toBe('w-terminie');
     expect(p.wydarzenia.map((w) => w.data)).toEqual(['2027-04-12', '2027-05-12']);
-    expect(przypomnienie('2026-11-01', '2026-11-12')).toMatchObject({ dniDo: -11, status: 'po-terminie', wydarzenia: [] });
+    expect(przypomnienie('2026-11-01', '2026-11-12')).toMatchObject({ dniDo: -11, wydarzenia: [] });
     expect(przypomnienie('2026-12-01', '2026-11-12').wydarzenia.map((w) => w.data)).toEqual(['2026-12-01']);
   });
   it('błędne dane: zła data', () => {

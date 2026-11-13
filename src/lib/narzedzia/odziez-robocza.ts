@@ -27,7 +27,10 @@
 // 2. „Bezpośrednia obsługa maszyn” i „intensywne brudzenie” (art. 237⁷ § 3) nie mają definicji; gdy użytkownik je
 //    zaznacza, wyłączenie działa: własnej odzieży za ekwiwalent nie dopuszczamy. Te warunki, a także skażenie, traktujemy
 //    jednocześnie jako podstawę obowiązku z art. 237⁷ § 1 (intensywne brudzenie i skażenie mieszczą się w „znacznym
-//    zabrudzeniu”, obsługa maszyn w wymaganiach BHP; wariant bezpieczny).
+//    zabrudzeniu”, obsługa maszyn w wymaganiach BHP; wariant bezpieczny). Gdy jedyną podstawą jest obsługa maszyn,
+//    wynik mówi wprost, że § 3 sam obowiązku nie tworzy i że to nasz wariant. „Skażenie” znaczy skażenie samej odzieży
+//    środkami chemicznymi lub promieniotwórczymi albo materiałem biologicznie zakaźnym (art. 237⁷ § 3, 237¹⁰ § 1), nie
+//    samą obecność chemii czy promieniowania w pracy.
 // 3. ŚOI: ekwiwalentu za własne Kodeks nie przewiduje (art. 237⁷ § 2 i 4 dotyczą tylko odzieży i obuwia roboczego),
 //    a ekwiwalent za pranie (art. 237⁹ § 3) dotyczy tylko odzieży roboczej.
 // 4. Umowa zlecenia: art. 237⁶–237¹⁰ mówią o pracowniku (art. 2). Art. 304 § 1 nakazuje bezpieczne i higieniczne
@@ -35,12 +38,17 @@
 //    więc wynik to „nie rozstrzyga”; ekwiwalentów dla zleceniobiorcy Kodeks nie przewiduje, a przy ich wypłacie składki
 //    liczymy według § 5 ust. 2 pkt 2 rozporządzenia, PIT „nie rozstrzyga”. Zakazu z art. 237¹⁰ § 2 (dotyczy
 //    pracownika) dla zlecenia nie wywodzimy.
-// 5. Praca przez agencję: obowiązki ma pracodawca użytkownik (art. 9 ust. 2a); kto wypłaca ekwiwalent, przepis nie mówi.
+// 5. Praca przez agencję: odzież, obuwie i ŚOI dostarcza pracodawca użytkownik (art. 9 ust. 2a); kto zapewnia pranie
+//    i kto wypłaca ekwiwalent, przepis nie mówi (sygnalizujemy). Grzywna z art. 27 ust. 2 pkt 1 dotyczy osoby, która jako
+//    pracodawca użytkownik lub w jego imieniu nie wypełnia obowiązków uzgodnionych na piśmie z agencją.
 // 6. Pranie przy braku obowiązku z art. 237⁷ § 1: gdy pracodawca mimo to daje odzież roboczą, stosujemy art. 237⁹ § 2–3
 //    (przepis mówi o „stosowanej” odzieży roboczej bez zawężenia); gdy jej nie daje, przepisy o praniu nie dotyczą.
-// 7. Czy obok ekwiwalentu za własną odzież należy się ekwiwalent za jej pranie, przepis nie rozstrzyga (sygnalizujemy).
-// 8. PIT: zwolnienie z art. 21 ust. 1 pkt 11 piszemy warunkowo („jeśli wypłacany zgodnie z art. 237⁷ § 4 albo
-//    237⁹ § 3”), bo obejmuje świadczenia „przysługujące” na podstawie przepisów BHP.
+// 7. Czy obok ekwiwalentu za własną odzież należy się ekwiwalent za jej pranie, przepis nie rozstrzyga (sygnalizujemy
+//    tylko tę uwagę, bez uwagi o braku ekwiwalentu za pranie). ŚOI pierze pracodawca (art. 237⁹ § 2): gdy pierze je
+//    pracownik, sygnalizujemy, że § 3 dotyczy tylko odzieży roboczej.
+// 8. PIT: art. 21 ust. 1 pkt 11 zwalnia świadczenia rzeczowe i ekwiwalenty „przysługujące na podstawie przepisów BHP”,
+//    jeżeli zasady ich przyznawania wynikają z ustawy; zwolnienie zakładamy dla ekwiwalentu wypłacanego zgodnie
+//    z art. 237⁷ § 4 albo 237⁹ § 3 Kp (piszemy to w wyniku i w „Jak liczymy”).
 // 9. Rachunki: przepis nie podaje stawki ani wzoru. Koszt prań = liczba prań w miesiącu × koszt jednego prania podany
 //    przez użytkownika (pomoc do udokumentowania kosztów z art. 237⁹ § 3). Orientacyjny ekwiwalent za własne = suma
 //    (aktualna cena ÷ okres użytkowania w miesiącach) — nasze przybliżenie „aktualnych cen” (art. 237⁷ § 4) i okresów
@@ -79,6 +87,7 @@ export type Uwaga =
   | 'wlasne-niedozwolone'
   | 'brak-ekw-wlasne'
   | 'pranie-skazonej'
+  | 'pranie-soi'
   | 'pranie-bez-ekw'
   | 'wlasna-pranie'
   | 'agencja-ekwiwalent';
@@ -140,8 +149,10 @@ export function sprawdzOdziez(d: DaneOdziezy): WynikOdziezy {
   if (pracowniczy && d.teraz === 'wlasna' && wlasne === 'nie') uwagi.push('wlasne-niedozwolone');
   if (d.teraz === 'wlasna' && wlasne === 'za-zgoda' && !d.ekwWlasne) uwagi.push('brak-ekw-wlasne');
   if (pracowniczy && d.pranie === 'ja' && W.has('skazenie')) uwagi.push('pranie-skazonej');
-  if (d.pranie === 'ja' && pranie === 'firma-lub-ty' && !d.ekwPranie) uwagi.push('pranie-bez-ekw');
-  if (d.teraz === 'wlasna' && d.pranie === 'ja' && wlasne === 'za-zgoda') uwagi.push('wlasna-pranie');
+  if (pracowniczy && d.pranie === 'ja' && d.rodzaj === 'soi' && !W.has('skazenie')) uwagi.push('pranie-soi');
+  const wlasnaPranie = d.teraz === 'wlasna' && d.pranie === 'ja' && wlasne === 'za-zgoda'; // interpretacja 7
+  if (d.pranie === 'ja' && pranie === 'firma-lub-ty' && !d.ekwPranie && !wlasnaPranie) uwagi.push('pranie-bez-ekw');
+  if (wlasnaPranie) uwagi.push('wlasna-pranie');
   if (d.umowa === 'tymczasowa' && ((d.teraz === 'wlasna' && wlasne === 'za-zgoda') || (d.pranie === 'ja' && pranie === 'firma-lub-ty')))
     uwagi.push('agencja-ekwiwalent');
 
@@ -154,6 +165,8 @@ export const MAKS_PRAN = 62;
 export const MAKS_KOSZT_PRANIA = 100;
 export const MAKS_CENA = 5000;
 export const MAKS_MIESIECY = 60;
+/** Liczba wierszy rzeczy w rachunku ekwiwalentu za własne (formularz i skrypt strony). */
+export const WIERSZE_RZECZY = 3;
 
 /** Kwota w złotych z najwyżej dwoma miejscami po przecinku → grosze; inaczej NaN. */
 function grosze(zl: number): number {
@@ -220,6 +233,10 @@ export function tekstyWyniku(d: DaneOdziezy, w: WynikOdziezy): TekstyWyniku {
   const soi = d.rodzaj === 'soi';
   const agencja = d.umowa === 'tymczasowa' ? ' Przy pracy przez agencję daje je pracodawca użytkownik, czyli firma, u której pracujesz (art. 9 ust. 2a ustawy o zatrudnianiu pracowników tymczasowych).' : '';
 
+  const W = new Set(d.warunki);
+  const tylkoMaszyny = W.has('maszyny') && !(['brud', 'wymogi', 'intensywne', 'skazenie'] as const).some((x) => W.has(x));
+  const zlecenie304 = `Osobom na zleceniu pracującym w zakładzie pracy lub w miejscu wyznaczonym przez pracodawcę firma zapewnia bezpieczne i higieniczne warunki pracy (art. 304 § 1 i 3), a przy pracach krótkotrwałych i czynnościach inspekcyjnych przydziela niezbędną odzież roboczą i środki ochrony, gdy własna odzież może ulec zniszczeniu lub znacznemu zabrudzeniu, a także ze względu na bezpieczeństwo tych prac (art. 304⁴)`;
+
   let glowny: string;
   let podstawa: string;
   if (w.obowiazek === 'tak') {
@@ -227,11 +244,14 @@ export function tekstyWyniku(d: DaneOdziezy, w: WynikOdziezy): TekstyWyniku {
     podstawa = soi
       ? `Nieodpłatnie, gdy chronią przed niebezpiecznymi lub szkodliwymi czynnikami w środowisku pracy, z informacją, jak ich używać (art. 237⁶ § 1 ${KP}).${agencja}`
       : `Nieodpłatnie, gdy własna odzież może ulec zniszczeniu lub znacznemu zabrudzeniu albo wymagają tego technologia, higiena lub BHP (art. 237⁷ § 1 ${KP}).${agencja}`;
+    if (!soi && tylkoMaszyny)
+      podstawa += ' Zaznaczono tylko bezpośrednią obsługę maszyn: art. 237⁷ § 3 wyklucza wtedy pracę we własnej odzieży za ekwiwalent, ale sam obowiązku nie tworzy. Przyjmujemy, że obowiązek wynika z wymagań BHP (§ 1 pkt 2); to nasz wariant bezpieczny, przepis nie mówi tego wprost.';
   } else if (w.obowiazek === 'nie-rozstrzyga') {
     glowny = 'Przepis nie rozstrzyga wprost';
-    podstawa = soi
-      ? `Art. 237⁶ ${KP} mówi o pracownikach. Osobom na zleceniu firma zapewnia bezpieczne i higieniczne warunki pracy (art. 304 § 1 i 3), a przy pracach krótkotrwałych przydziela niezbędne środki ochrony ze względu na bezpieczeństwo (art. 304⁴).`
-      : `Art. 237⁷ ${KP} mówi o pracownikach. Osobom na zleceniu firma zapewnia bezpieczne i higieniczne warunki pracy (art. 304 § 1 i 3), a przy pracach krótkotrwałych przydziela odzież roboczą, gdy własna może ulec zniszczeniu lub znacznemu zabrudzeniu (art. 304⁴).`;
+    podstawa = `Art. ${soi ? '237⁶' : '237⁷'} ${KP} mówi o pracownikach. ${zlecenie304}.`;
+  } else if (d.umowa === 'zlecenie') {
+    glowny = 'Przepis nie wymaga odzieży roboczej';
+    podstawa = `Art. 237⁷ ${KP} mówi o pracownikach. ${zlecenie304}. Nie zaznaczono żadnego z tych warunków.`;
   } else {
     glowny = 'Przepis nie wymaga odzieży roboczej';
     podstawa = `Obowiązek powstaje, gdy własna odzież może ulec zniszczeniu lub znacznemu zabrudzeniu albo wymagają tego technologia, higiena lub BHP (art. 237⁷ § 1 ${KP}). Nie zaznaczono żadnego z tych warunków.`;
@@ -263,13 +283,17 @@ export function tekstyWyniku(d: DaneOdziezy, w: WynikOdziezy): TekstyWyniku {
     'nie-dotyczy': ['Nie dotyczy', 'Przepisy o praniu (art. 237⁹ § 2–3) dotyczą odzieży roboczej, a przy tych warunkach przepis jej nie wymaga.'],
     'brak-przepisu': ['Kodeks pracy nie mówi', 'Przepisy o praniu i ekwiwalencie za pranie (art. 237⁹–237¹⁰) dotyczą pracowników; dla zlecenia nie ma takiego przepisu.'],
   };
-  wiersze.push({ dt: 'Kto pierze', dd: pranie[w.pranie][0], opis: pranie[w.pranie][1] });
+  const pranieAgencja =
+    w.kto === 'pracodawca-uzytkownik' && (w.pranie === 'tylko-firma' || w.pranie === 'firma' || w.pranie === 'firma-lub-ty')
+      ? ' Przy pracy przez agencję przepis nie mówi, czy pranie zapewnia agencja, czy pracodawca użytkownik (art. 9 ust. 2a ustawy o zatrudnianiu pracowników tymczasowych mówi tylko o dostarczeniu).'
+      : '';
+  wiersze.push({ dt: 'Kto pierze', dd: pranie[w.pranie][0], opis: pranie[w.pranie][1] + pranieAgencja });
 
   if (w.podatki?.pit === 'zwolniony') {
     wiersze.push({
       dt: 'Podatek od ekwiwalentu',
       dd: 'Bez podatku',
-      opis: 'Ekwiwalenty przysługujące na podstawie przepisów BHP są wolne od PIT (art. 21 ust. 1 pkt 11 ustawy o PIT), jeśli są wypłacane zgodnie z art. 237⁷ § 4 albo 237⁹ § 3 Kodeksu pracy.',
+      opis: 'Świadczenia rzeczowe i ekwiwalenty za nie, przysługujące na podstawie przepisów BHP, są wolne od PIT, jeżeli zasady ich przyznawania wynikają z ustawy (art. 21 ust. 1 pkt 11 ustawy o PIT), tu z Kodeksu pracy. Zwolnienie zakładamy dla ekwiwalentu wypłacanego zgodnie z art. 237⁷ § 4 albo 237⁹ § 3 Kodeksu pracy.',
     });
     wiersze.push({
       dt: 'ZUS i zdrowotna od ekwiwalentu',
@@ -290,12 +314,13 @@ export function tekstyWyniku(d: DaneOdziezy, w: WynikOdziezy): TekstyWyniku {
   }
 
   const UWAGI: Record<Uwaga, string> = {
-    'brak-odziezy': `Pracodawca nie może dopuścić Cię do pracy bez środków ochrony indywidualnej oraz odzieży i obuwia roboczego przewidzianych na Twoim stanowisku (art. 237⁹ § 1 ${KP}).${d.umowa === 'tymczasowa' ? ' Pracodawcy użytkownikowi, który ich nie dostarcza, grozi grzywna (art. 27 ust. 2 pkt 1 ustawy o zatrudnianiu pracowników tymczasowych).' : ''}`,
+    'brak-odziezy': `Pracodawca nie może dopuścić Cię do pracy bez środków ochrony indywidualnej oraz odzieży i obuwia roboczego przewidzianych na Twoim stanowisku (art. 237⁹ § 1 ${KP}).${d.umowa === 'tymczasowa' ? ' Kto jako pracodawca użytkownik lub w jego imieniu nie dostarcza ich mimo uzgodnienia na piśmie z agencją, podlega grzywnie od 1000 do 30 000 zł (art. 27 ust. 1–2 pkt 1 ustawy o zatrudnianiu pracowników tymczasowych).' : ''}`,
     'wlasne-niedozwolone': soi
       ? `Środki ochrony indywidualnej pracodawca dostarcza nieodpłatnie (art. 237⁶ § 1 ${KP}), a kosztami BHP nie wolno obciążać pracowników (art. 207 § 2¹).`
       : `Na stanowisku z obsługą maszyn, pracami intensywnie brudzącymi albo skażeniem przepis nie dopuszcza pracy we własnej odzieży za ekwiwalent (art. 237⁷ § 3 ${KP}); odzież i obuwie daje pracodawca (§ 1).`,
     'brak-ekw-wlasne': `Pracownikowi używającemu za zgodą własnej odzieży i obuwia roboczego pracodawca wypłaca ekwiwalent w wysokości uwzględniającej ich aktualne ceny (art. 237⁷ § 4 ${KP}).`,
     'pranie-skazonej': `Odzieży skażonej chemicznie, promieniotwórczo lub materiałem zakaźnym nie wolno powierzyć Ci do prania (art. 237¹⁰ § 2 ${KP}).`,
+    'pranie-soi': `Pranie, konserwację i odkażanie środków ochrony indywidualnej zapewnia pracodawca (art. 237⁹ § 2 ${KP}); pranie przez pracownika za ekwiwalent przepis przewiduje tylko dla odzieży roboczej (§ 3).`,
     'pranie-bez-ekw': `Gdy pracownik pierze odzież roboczą, bo pracodawca nie może zapewnić prania, pracodawca wypłaca ekwiwalent w wysokości kosztów poniesionych przez pracownika (art. 237⁹ § 3 ${KP}).`,
     'wlasna-pranie': 'Przepis nie rozstrzyga, czy obok ekwiwalentu za własną odzież należy się ekwiwalent za jej pranie. Rozporządzenie o składkach wymienia oba ekwiwalenty osobno (§ 2 ust. 1 pkt 6).',
     'agencja-ekwiwalent': 'Przepis nie mówi, czy ekwiwalent wypłaca agencja, czy pracodawca użytkownik.',

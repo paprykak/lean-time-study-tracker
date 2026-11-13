@@ -13,8 +13,9 @@
 // - Kodeks cywilny, t.j. Dz.U. 2026 poz. 795: art. 111 § 2 (termin w dniach liczy się od dnia po zdarzeniu),
 //   art. 115 (przesunięcie z soboty i święta; tu go nie stosujemy, niżej).
 // - Rozporządzenie MZiOS z 30 maja 1996 r. w sprawie badań lekarskich pracowników, t.j. Dz.U. 2023 poz. 607,
-//   ze zmianą Dz.U. 2026 poz. 456 (od 17 kwietnia 2026 r.): § 3 ust. 4a pkt 12 (data następnego badania okresowego
-//   w orzeczeniu), § 2 ust. 2 (lekarz może wyznaczyć krótszy termin), § 5 ust. 1, 3–6 (odwołanie na piśmie,
+//   ze zmianą Dz.U. 2026 poz. 456 (od 17 kwietnia 2026 r., § 2: orzeczenia według dawnych przepisów jeszcze przez
+//   6 miesięcy): § 3 ust. 4a pkt 12 i 15 (data następnego badania okresowego i pouczenie w orzeczeniu; były też
+//   we wzorze sprzed zmiany), § 2 ust. 1 i 2 (wskazówki metodyczne; lekarz może wyznaczyć krótszy termin), § 5 ust. 1, 3–6 (odwołanie na piśmie,
 //   z uzasadnieniem, w 7 dni od otrzymania orzeczenia, przez jednostkę medycyny pracy; przekazanie w 7 dni; badanie
 //   w 14 dni; orzeczenie ostateczne).
 // - Rozporządzenie w sprawie ogólnych przepisów BHP, Dz.U. 2003 poz. 1650, § 80 (wykaz prac szczególnie niebezpiecznych
@@ -29,7 +30,9 @@
 //    zasiłkowej dotyczy tylko zasiłku). Gdy przerwa składa się wyłącznie z dni wolnych (sobota, niedziela, święto)
 //    albo osoba zaznaczy, że w przerwie nie było dnia pracy z grafiku, przepis nie rozstrzyga, czy niezdolność
 //    „trwała”: gdy łącznie z przerwą wychodzi ponad 30 dni, wynik „przepis nie rozstrzyga, bezpieczniej zrobić
-//    badanie”. Odpowiedź „tak, był dzień pracy” rozdziela zwolnienia bez względu na kalendarz.
+//    badanie”. Odpowiedź „tak, był dzień pracy” rozdziela zwolnienia bez względu na kalendarz. Gdy w takim łańcuchu
+//    wcześniejsza niezdolność sama trwała ponad 30 dni, przepis rozstrzyga: pracownik po niej nie wrócił do pracy,
+//    więc badanie kontrolne jest potrzebne bez względu na łączenie zwolnień.
 // 3. Przepis mówi „spowodowanej chorobą”. Zwolnienie w ciąży i po wypadku liczymy tak samo (wariant bezpieczny,
 //    z adnotacją). Opieka nad dzieckiem lub członkiem rodziny to nie niezdolność pracownika: nie dotyczy.
 // 4. Liczymy niezdolność, z której się wraca (ostatnią i połączone z nią). Termin badania kontrolnego przepis nie podaje;
@@ -104,6 +107,8 @@ export interface Kontrolne {
   dniLacznie: number;
   /** Czy jest przerwa między zwolnieniami (pytanie o dzień pracy ma sens). */
   przerwa: boolean;
+  /** Wcześniejsza niezdolność w łańcuchu dłuższa niż 30 dni (ostatnia taka), gdy jest. */
+  wczesniejsza: { od: string; do: string; dni: number } | null;
 }
 
 function przerwaBezPracy(poKoncu: string, przedPoczatkiem: string): boolean {
@@ -131,11 +136,14 @@ export function badanieKontrolne(lista: Zwolnienie[], powod: PowodNiezdolnosci, 
     }
   }
   const lancuch = bloki.slice(poczatek);
+  // Art. 229 § 2: wcześniejsza niezdolność ponad 30 dni, po której nie było dnia pracy (interpretacja 2).
+  const dluga = lancuch.slice(0, -1).filter((z) => dni(z) > PROG_KONTROLNE).pop();
+  const wczesniejsza = dluga ? { od: dluga.od, do: dluga.do, dni: dni(dluga) } : null;
   const dniZwolnien = lancuch.reduce((s, z) => s + dni(z), 0);
   const dniLacznie = dniMiedzy(lancuch[0].od, ost.do) + 1;
   let wynik: WynikKontrolnego;
   if (powod === 'opieka') wynik = 'nie-dotyczy';
-  else if (dniOstatniej > PROG_KONTROLNE) wynik = 'potrzebne';
+  else if (dniOstatniej > PROG_KONTROLNE || wczesniejsza) wynik = 'potrzebne';
   else if (lancuch.length > 1 && dniLacznie > PROG_KONTROLNE) wynik = 'nierozstrzygniete';
   else wynik = 'niewymagane';
   return {
@@ -149,6 +157,7 @@ export function badanieKontrolne(lista: Zwolnienie[], powod: PowodNiezdolnosci, 
     dniZwolnien,
     dniLacznie,
     przerwa: bloki.length > 1,
+    wczesniejsza,
   };
 }
 
@@ -178,7 +187,9 @@ export function tekstKontrolnego(k: Kontrolne, powod: PowodNiezdolnosci): TekstW
       return {
         wynik: 'potrzebne',
         status: { tekst: 'Przed powrotem do pracy', rodzaj: 'pilne' },
-        opis: `Niezdolność do pracy trwała ${dniTekst(k.dniOstatniej)} (${okres}), czyli dłużej niż ${PROG_KONTROLNE} dni (art. 229 § 2 Kodeksu pracy).${adnotacja}`,
+        opis: k.wczesniejsza
+          ? `Wcześniejsza niezdolność do pracy trwała ${dniTekst(k.wczesniejsza.dni)} (od ${dataPoPolsku(k.wczesniejsza.od)} do ${dataPoPolsku(k.wczesniejsza.do)}), czyli dłużej niż ${PROG_KONTROLNE} dni, a do ostatniego zwolnienia (${okres}) nie było dnia pracy. Po takiej niezdolności badanie kontrolne jest potrzebne przed powrotem (art. 229 § 2 Kodeksu pracy).${adnotacja}`
+          : `Niezdolność do pracy trwała ${dniTekst(k.dniOstatniej)} (${okres}), czyli dłużej niż ${PROG_KONTROLNE} dni (art. 229 § 2 Kodeksu pracy).${adnotacja}`,
       };
     case 'nierozstrzygniete':
       return {
@@ -216,7 +227,8 @@ export interface DaneWstepnych {
   mlodociany: boolean;
 }
 
-export type WynikWstepnych = 'potrzebne' | 'warunkowe' | 'zwolnienie' | 'niewymagane' | 'badanie-przed-praca';
+/** 'badanie-przed-praca': orzeczenie straciło aktualność; 'brak-orzeczenia': jak wyżej, ale orzeczenia nie ma. */
+export type WynikWstepnych = 'potrzebne' | 'warunkowe' | 'zwolnienie' | 'niewymagane' | 'badanie-przed-praca' | 'brak-orzeczenia';
 export type StanWarunku = 'tak' | 'nie' | 'sprawdz';
 export interface Warunek {
   nazwa: string;
@@ -288,7 +300,9 @@ export function badaniaWstepne(d: DaneWstepnych): Wstepne {
   const aktualne: StanWarunku = d.orzeczenie === 'brak' ? 'nie' : d.orzeczenie === 'bez-daty' ? 'sprawdz' : d.start! < d.nastepne! ? 'tak' : 'nie';
   const opisOrzeczenia =
     d.orzeczenie === 'brak'
-      ? 'bez orzeczenia potrzebne są badania'
+      ? d.rodzaj === 'ten-sam'
+        ? 'brak orzeczenia: przed pracą potrzebne badanie'
+        : 'bez orzeczenia potrzebne są badania'
       : d.orzeczenie === 'bez-daty'
         ? 'orzeczenie bez daty następnego badania: aktualność sprawdź z pracodawcą'
         : aktualne === 'tak'
@@ -302,9 +316,9 @@ export function badaniaWstepne(d: DaneWstepnych): Wstepne {
       stan: stanWarunkow,
       opis: stanWarunkow === 'sprawdz' ? 'zapytaj pracodawcę, czy warunki pracy są takie same' : 'art. 229 § 1¹ pkt 1',
     });
-    warunki.push({ nazwa: 'Aktualne orzeczenie', stan: aktualne, opis: `${opisOrzeczenia}; bez niego pracodawca nie dopuści do pracy (art. 229 § 4)` });
+    warunki.push({ nazwa: 'Aktualne orzeczenie', stan: aktualne, opis: `${opisOrzeczenia}; bez aktualnego orzeczenia pracodawca nie dopuści do pracy (art. 229 § 4)` });
     if (!w30 || stanWarunkow === 'nie') return { wynik: 'potrzebne', ostatniDzien, warunki };
-    if (aktualne === 'nie') return { wynik: 'badanie-przed-praca', ostatniDzien, warunki };
+    if (aktualne === 'nie') return { wynik: d.orzeczenie === 'brak' ? 'brak-orzeczenia' : 'badanie-przed-praca', ostatniDzien, warunki };
     return { wynik: stanWarunkow === 'tak' && aktualne === 'tak' ? 'zwolnienie' : 'warunkowe', ostatniDzien, warunki };
   }
 
@@ -322,7 +336,9 @@ export function badaniaWstepne(d: DaneWstepnych): Wstepne {
     opis:
       d.szczegolnieNiebezpieczne === 'nie-wiem'
         ? 'zapytaj o wykaz takich prac, który prowadzi pracodawca (§ 80 rozporządzenia o ogólnych przepisach BHP); do tego czasu licz się z badaniami'
-        : 'przy takich pracach zwolnienia z badań nie ma (art. 229 § 1¹ pkt 2)',
+        : d.szczegolnieNiebezpieczne === 'nie'
+          ? 'to nie są prace szczególnie niebezpieczne, przy których zwolnienia z badań nie ma (art. 229 § 1¹ pkt 2)'
+          : 'przy takich pracach zwolnienia z badań nie ma (art. 229 § 1¹ pkt 2)',
   });
   if (!w30 || aktualne === 'nie' || stanWarunkow === 'nie' || prace === 'nie') return { wynik: 'potrzebne', ostatniDzien, warunki };
   return { wynik: 'warunkowe', ostatniDzien, warunki };
@@ -350,9 +366,10 @@ export function tekstWstepnych(w: Wstepne, rodzaj: RodzajPrzyjecia): TekstWyniku
         opis: 'Przy ponownym przyjęciu u tego samego pracodawcy na to samo stanowisko albo o takich samych warunkach w ciągu 30 dni badań wstępnych się nie robi (art. 229 § 1¹ pkt 1 Kodeksu pracy).',
       };
     case 'badanie-przed-praca':
+    case 'brak-orzeczenia':
       return {
         wynik: 'bez wstępnych, ale z badaniem',
-        status: { tekst: 'Orzeczenie straciło aktualność', rodzaj: 'pilne' },
+        status: { tekst: w.wynik === 'brak-orzeczenia' ? 'Nie masz orzeczenia' : 'Orzeczenie straciło aktualność', rodzaj: 'pilne' },
         opis: 'Badań wstępnych przepis nie wymaga (art. 229 § 1¹ pkt 1 Kodeksu pracy), ale bez aktualnego orzeczenia pracodawca nie dopuści do pracy (art. 229 § 4). Potrzebne jest badanie, zanim zaczniesz pracę, na skierowanie od pracodawcy.',
       };
     default:
@@ -400,13 +417,12 @@ export function tekstOdwolania(o: Odwolanie): TekstWyniku {
       : { tekst: o.dniDo === 0 ? 'Ostatni dzień: dziś' : `Zostało: ${dniTekst(o.dniDo)}`, rodzaj: o.dniDo <= 2 ? 'pilne' : 'w-terminie' };
   const opis = o.wolny
     ? `To ${o.wolny.rodzaj === 'swieto' ? `święto (${o.wolny.nazwa})` : o.wolny.nazwa}. Rozporządzenie nie przesuwa terminu, a czy przesuwa go art. 115 Kodeksu cywilnego, przepisy nie rozstrzygają: bezpieczniej złożyć odwołanie wcześniej.`
-    : `${DNI_NA_ODWOLANIE} dni liczymy od dnia po otrzymaniu orzeczenia (§ 5 ust. 3 rozporządzenia o badaniach lekarskich pracowników).`;
+    : `${DNI_NA_ODWOLANIE} dni liczymy od dnia po otrzymaniu orzeczenia (§ 5 ust. 3 rozporządzenia o badaniach lekarskich pracowników, art. 111 § 2 Kodeksu cywilnego).`;
   return { wynik: dataPoPolsku(o.ostatniDzien), status, opis };
 }
 
 export interface Przypomnienie {
   dniDo: number;
-  status: StatusWyniku;
   wydarzenia: Wydarzenie[];
 }
 
@@ -414,12 +430,11 @@ export function przypomnienie(nastepne: string, dzis: string): Przypomnienie {
   sprawdzDate(nastepne, 'następne badanie');
   sprawdzDate(dzis, 'dziś');
   const dniDo = dniMiedzy(dzis, nastepne);
-  const status: StatusWyniku = dniDo < 0 ? 'po-terminie' : dniDo <= PRZYPOMNIENIE_DNI ? 'pilne' : dniDo <= 90 ? 'wkrotce' : 'w-terminie';
   const opis = 'Data następnego badania okresowego z orzeczenia lekarskiego. Badanie na skierowanie od pracodawcy, w miarę możliwości w godzinach pracy, z zachowaniem wynagrodzenia (art. 229 § 3 i 4a Kodeksu pracy).';
   const wczesniej = dodajDni(nastepne, -PRZYPOMNIENIE_DNI);
   const wydarzenia: Wydarzenie[] = [
     ...(wczesniej >= dzis ? [{ data: wczesniej, tytul: `Za ${PRZYPOMNIENIE_DNI} dni badanie okresowe: poproś o skierowanie`, opis }] : []),
     ...(nastepne >= dzis ? [{ data: nastepne, tytul: 'Termin badania okresowego (z orzeczenia)', opis }] : []),
   ];
-  return { dniDo, status, wydarzenia };
+  return { dniDo, wydarzenia };
 }

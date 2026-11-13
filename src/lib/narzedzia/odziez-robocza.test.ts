@@ -15,7 +15,7 @@ describe('sprawdzenie odzieży roboczej (art. 237⁶–237¹⁰ Kp)', () => {
     expect(s({ warunki: ['brud', 'maszyny'], teraz: 'wlasna' })).toMatchObject({ obowiazek: 'tak', wlasne: 'nie', uwagi: ['wlasne-niedozwolone'] });
   });
   it('same maszyny albo samo intensywne brudzenie też są podstawą obowiązku (wariant bezpieczny)', () => {
-    expect(s({ warunki: ['maszyny'] })).toMatchObject({ obowiazek: 'tak', wlasne: 'nie' });
+    expect(s({ warunki: ['maszyny'] })).toEqual({ obowiazek: 'tak', kto: 'pracodawca', wlasne: 'nie', pranie: 'firma-lub-ty', podatki: ZWOLNIONY, uwagi: [] });
     expect(s({ warunki: ['intensywne'] })).toEqual({ obowiazek: 'tak', kto: 'pracodawca', wlasne: 'nie', pranie: 'firma-lub-ty', podatki: ZWOLNIONY, uwagi: [] });
   });
   it('bez warunków (biuro): nie wymaga; pranie nie dotyczy, chyba że firma i tak daje odzież', () => {
@@ -29,10 +29,17 @@ describe('sprawdzenie odzieży roboczej (art. 237⁶–237¹⁰ Kp)', () => {
     expect(s({ warunki: ['wymogi'], teraz: 'wlasna', ekwWlasne: false }).uwagi).toEqual(['brak-ekw-wlasne']);
     expect(s({ pranie: 'ja', ekwPranie: false }).uwagi).toEqual(['pranie-bez-ekw']);
     expect(s({ teraz: 'wlasna', pranie: 'ja' }).uwagi).toEqual(['wlasna-pranie']);
+    // własna odzież prana w domu bez ekwiwalentu za pranie: tylko „przepis nie rozstrzyga” (interpretacja 7), bez sprzecznej uwagi
+    expect(s({ teraz: 'wlasna', pranie: 'ja', ekwPranie: false }).uwagi).toEqual(['wlasna-pranie']);
   });
   it('ŚOI: firma daje, własne nie, pranie firma; brak ŚOI blokuje dopuszczenie do pracy (art. 237⁹ § 1)', () => {
     expect(s({ rodzaj: 'soi', warunki: ['maszyny'], teraz: 'wlasna' })).toEqual({ obowiazek: 'tak', kto: 'pracodawca', wlasne: 'nie', pranie: 'firma', podatki: null, uwagi: ['wlasne-niedozwolone'] });
-    expect(s({ rodzaj: 'soi', warunki: [], teraz: 'nic', pranie: 'ja' }).uwagi).toEqual(['brak-odziezy']);
+    expect(s({ rodzaj: 'soi', warunki: [], teraz: 'nic', pranie: 'ja' }).uwagi).toEqual(['brak-odziezy', 'pranie-soi']);
+  });
+  it('ŚOI prane w domu: uwaga, że pierze pracodawca (art. 237⁹ § 2); przy skażeniu tylko uwaga z art. 237¹⁰', () => {
+    expect(s({ rodzaj: 'soi', teraz: 'daje', pranie: 'ja' })).toEqual({ obowiazek: 'tak', kto: 'pracodawca', wlasne: 'nie', pranie: 'firma', podatki: null, uwagi: ['pranie-soi'] });
+    expect(s({ umowa: 'tymczasowa', rodzaj: 'soi', warunki: ['skazenie'], pranie: 'ja' })).toMatchObject({ kto: 'pracodawca-uzytkownik', pranie: 'tylko-firma', uwagi: ['pranie-skazonej'] });
+    expect(tekstyWyniku({ ...D, rodzaj: 'soi', pranie: 'ja' }, s({ rodzaj: 'soi', pranie: 'ja' })).uwagi[0]).toContain('237⁹ § 2');
   });
   it('agencja: daje pracodawca użytkownik (art. 9 ust. 2a), płatnik ekwiwalentu nierozstrzygnięty', () => {
     expect(s({ umowa: 'tymczasowa', teraz: 'nic', pranie: 'ja' })).toMatchObject({ obowiazek: 'tak', kto: 'pracodawca-uzytkownik', uwagi: ['brak-odziezy', 'agencja-ekwiwalent'] });
@@ -55,6 +62,21 @@ describe('sprawdzenie odzieży roboczej (art. 237⁶–237¹⁰ Kp)', () => {
     for (const w of t.wiersze) expect(w.opis).toMatch(/art\.|§/);
     const z = tekstyWyniku({ ...D, umowa: 'zlecenie' }, s({ umowa: 'zlecenie' }));
     expect(z.glowny).toBe('Przepis nie rozstrzyga wprost');
+    expect(z.podstawa).toContain('ze względu na bezpieczeństwo');
+  });
+  it('teksty: same maszyny to wariant bezpieczny, zlecenie bez warunków cytuje art. 304⁴, agencja i pranie', () => {
+    const m = { ...D, warunki: ['maszyny'] as const };
+    expect(tekstyWyniku(m, s(m)).podstawa).toContain('wariant bezpieczny');
+    expect(tekstyWyniku(D, s({})).podstawa).not.toContain('wariant bezpieczny');
+    const zl = { ...D, umowa: 'zlecenie' as const, warunki: [] };
+    const tz = tekstyWyniku(zl, s(zl));
+    expect(tz.glowny).toBe('Przepis nie wymaga odzieży roboczej');
+    expect(tz.podstawa).toContain('304⁴');
+    expect(tz.podstawa).not.toContain('237⁷ § 1');
+    const ag = { ...D, umowa: 'tymczasowa' as const, teraz: 'nic' as const };
+    const ta = tekstyWyniku(ag, s(ag));
+    expect(ta.wiersze.find((x) => x.dt === 'Kto pierze')?.opis).toContain('czy pranie zapewnia agencja');
+    expect(ta.uwagi[0]).toContain('uzgodnienia na piśmie z agencją');
   });
 });
 

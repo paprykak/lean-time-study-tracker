@@ -52,3 +52,22 @@ test('błąd danych: wydatek bez wyboru progów i liczba z literami', async ({ p
   await expect(page.locator('[data-blad="dane"]')).toBeVisible();
   await expect(page.locator('[data-w="naglowek"]')).toHaveText('—');
 });
+
+test('kobiety: 1000 kcal to napoje (§ 4 bez „powyżej”), ale nie posiłek; 1100 kcal przekracza 4605 kJ', async ({ page }) => {
+  await page.locator('[name="plec"][value="kobiet"]').check();
+  await page.locator('[name="wydatek"]').fill('1000');
+  await expect(page.locator('[data-w="naglowek"]')).toHaveText(/^nie\snależy\ssię$/);
+  await expect(page.locator('[data-w="napoje"]')).toContainText(/1000\skcal\s\(4187\skJ\)\slub\swięcej/);
+  await page.locator('[name="wydatek"]').fill('1100');
+  await expect(page.locator('[data-w="naglowek"]')).toHaveText(/^należy\ssię$/);
+  await expect(page.locator('[data-w="podstawa"]')).toContainText(/4605,48\skJ,\swięcej\sniż\s4605\skJ\sz\snawiasu/);
+});
+
+test('pod ziemią: wydatek bez wyboru progów nie jest błędem; błąd ma role="alert"', async ({ page }) => {
+  await page.getByLabel('Miejsce pracy').selectOption('podZiemia');
+  await page.locator('[name="wydatek"]').fill('500');
+  await expect(page.locator('[data-blad="dane"]')).toBeHidden();
+  await expect(page.locator('[data-w="naglowek"]')).toHaveText(/^należy\ssię$/);
+  await page.getByLabel('Miejsce pracy').selectOption('hala');
+  await expect(page.getByRole('alert')).toContainText(/Wybierz,\sdla\skogo\sliczyć\sprogi/);
+});

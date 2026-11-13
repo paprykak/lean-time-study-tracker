@@ -6,6 +6,7 @@ import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
 import {
   MAKS_KOSZT_PRANIA,
   MAKS_PRAN,
+  WIERSZE_RZECZY,
   ekwiwalentWlasne,
   kosztPran,
   sprawdzOdziez,
@@ -25,16 +26,15 @@ const RZECZY = [
   { cena: 120, miesiace: 12 },
   { cena: 200, miesiace: 24 },
 ];
-const WIERSZE = 3;
 const ekw = ekwiwalentWlasne(RZECZY);
 const kwota = (x: number) => x.toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 const WARUNKI: { v: Warunek; t: string }[] = [
   { v: 'brud', t: 'Ubranie się niszczy lub mocno brudzi' },
   { v: 'wymogi', t: 'Wymogi higieny, technologii lub BHP' },
-  { v: 'maszyny', t: 'Obsługujesz maszyny lub urządzenia' },
+  { v: 'maszyny', t: 'Bezpośrednio obsługujesz maszyny lub urządzenia techniczne' },
   { v: 'intensywne', t: 'Praca intensywnie brudząca' },
-  { v: 'skazenie', t: 'Chemia, promieniowanie, materiał zakaźny' },
+  { v: 'skazenie', t: 'Odzież ulega skażeniu chemicznemu, promieniotwórczemu lub biologicznemu (materiał zakaźny)' },
 ];
 
 const faq = [
@@ -56,11 +56,11 @@ const faq = [
   },
   {
     pytanie: 'Czy od ekwiwalentu płaci się podatek i ZUS?',
-    odpowiedz: 'Świadczenia i ekwiwalenty przysługujące na podstawie przepisów BHP są wolne od podatku (art. 21 ust. 1 pkt 11 ustawy o PIT). Ekwiwalenty za pranie odzieży roboczej i za używanie własnej odzieży i obuwia nie wchodzą do podstawy składek emerytalnej i rentowej (§ 2 ust. 1 pkt 6 rozporządzenia o podstawie wymiaru składek), a więc i składki zdrowotnej (art. 81 ust. 1 ustawy o świadczeniach opieki zdrowotnej).',
+    odpowiedz: 'Świadczenia rzeczowe i ekwiwalenty za nie, przysługujące na podstawie przepisów BHP, są wolne od podatku, jeżeli zasady ich przyznawania wynikają z ustawy (art. 21 ust. 1 pkt 11 ustawy o PIT); dla pracowników to Kodeks pracy. Na zleceniu Kodeks pracy ekwiwalentów nie przyznaje, więc zwolnienie z PIT nie jest pewne. Ekwiwalenty za pranie odzieży roboczej i za używanie własnej odzieży i obuwia nie wchodzą do podstawy składek emerytalnej i rentowej (§ 2 ust. 1 pkt 6 rozporządzenia o podstawie wymiaru składek), a więc i składki zdrowotnej (art. 81 ust. 1 ustawy o świadczeniach opieki zdrowotnej); przy zleceniu stosuje się to odpowiednio (§ 5 ust. 2 pkt 2 rozporządzenia).',
   },
   {
     pytanie: 'Czy na zleceniu należy się odzież robocza?',
-    odpowiedz: 'Kodeks pracy wprost nakazuje ją pracownikom. Osobom na innej umowie pracodawca zapewnia bezpieczne i higieniczne warunki pracy (art. 304 § 1), a odzież roboczą przydziela przy pracach krótkotrwałych, gdy ich własna odzież może ulec zniszczeniu lub znacznemu zabrudzeniu (art. 304⁴). O stałej pracy na zleceniu przepis nie mówi wprost.',
+    odpowiedz: 'Kodeks pracy wprost nakazuje ją pracownikom. Osobom na innej umowie, pracującym w zakładzie pracy lub w miejscu przez niego wyznaczonym, pracodawca zapewnia bezpieczne i higieniczne warunki pracy (art. 304 § 1). Odzież roboczą i środki ochrony przydziela przy pracach krótkotrwałych i czynnościach inspekcyjnych, gdy ich własna odzież może ulec zniszczeniu lub znacznemu zabrudzeniu, albo ze względu na bezpieczeństwo tych prac (art. 304⁴). O stałej pracy na zleceniu przepis nie mówi wprost.',
   },
 ];
 ---
@@ -153,7 +153,7 @@ const faq = [
       <details class="mt-4">
         <summary class="etykieta rozwin">Policz ekwiwalent za własne</summary>
         <p class="meta mt-2">Aktualna cena rzeczy i okres użytkowania, który ustala firma. Puste wiersze pomijamy.</p>
-        {Array.from({ length: WIERSZE }, (_, i) => (
+        {Array.from({ length: WIERSZE_RZECZY }, (_, i) => (
           <fieldset class="mt-3">
             <legend class="etykieta-pola">Rzecz {i + 1}</legend>
             <div class="mt-1 grid grid-cols-2 items-end gap-3">
@@ -169,26 +169,26 @@ const faq = [
           </fieldset>
         ))}
       </details>
-      <p id="o-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+      <p id="o-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
       <h2 id="wynik-tytul" class="etykieta">Według przepisów</h2>
-      <div aria-live="polite" aria-atomic="true">
+      <div aria-live="polite">
         <p class="wynik-data" data-w="glowny">{t.glowny}</p>
         <p class="meta mt-2" data-w="podstawa">{t.podstawa}</p>
-      </div>
-      <dl class="wynik-lista" data-w="wiersze">
-        {t.wiersze.map((r) => (
-          <div><dt>{r.dt}</dt><dd>{r.dd}<span class="wynik-opis">{r.opis}</span></dd></div>
-        ))}
-      </dl>
-      <div data-w="uwagi">
-        {t.uwagi.map((u) => <p class="wynik-uwaga">{u}</p>)}
+        <dl class="wynik-lista" data-w="wiersze">
+          {t.wiersze.map((r) => (
+            <div><dt>{r.dt}</dt><dd>{r.dd}<span class="wynik-opis">{r.opis}</span></dd></div>
+          ))}
+        </dl>
+        <div data-w="uwagi">
+          {t.uwagi.map((u) => <p class="wynik-uwaga">{u}</p>)}
+        </div>
       </div>
 
       <h2 class="etykieta mt-6">Rachunek kosztów</h2>
-      <dl class="wynik-lista">
+      <dl class="wynik-lista" aria-live="polite">
         <div><dt>Koszt Twoich prań</dt><dd><span data-w="pran">{zl(pran.miesiac)} miesięcznie</span><span class="wynik-opis" data-w="pran-opis">{odmiana(PRAN, ['pranie', 'prania', 'prań'])} × {zl(KOSZT)}; rocznie {zl(pran.rok)}</span></dd></div>
         <div><dt>Ekwiwalent za własne, orientacyjnie</dt><dd><span data-w="ekw">{zl(ekw.miesiac)} miesięcznie</span><span class="wynik-opis" data-w="ekw-opis">{odmiana(RZECZY.length, ['rzecz', 'rzeczy', 'rzeczy'])}, suma cen podzielonych przez okres użytkowania; rocznie {zl(ekw.rok)}</span></dd></div>
       </dl>
@@ -206,7 +206,7 @@ const faq = [
     <ul>
       <li>Środki ochrony indywidualnej chroniące przed niebezpiecznymi i szkodliwymi czynnikami pracodawca dostarcza nieodpłatnie i informuje, jak ich używać (art. 237<sup>6</sup> § 1 Kodeksu pracy). Zwykła odzież robocza, która nie jest specjalnie przeznaczona do ochrony, nie jest środkiem ochrony indywidualnej (§ 2 pkt 9 ogólnych przepisów BHP).</li>
       <li>Odzież i obuwie robocze pracodawca daje nieodpłatnie, gdy własna odzież może ulec zniszczeniu lub znacznemu zabrudzeniu albo wymagają tego technologia, higiena lub BHP (art. 237<sup>7</sup> § 1).</li>
-      <li>Rodzaje odzieży, obuwia i środków ochrony na stanowiskach oraz okresy użytkowania odzieży i obuwia ustala pracodawca; to jego własność (art. 237<sup>8</sup>). Za powierzoną odzież odpowiadasz w pełnej wysokości, chyba że szkoda powstała z przyczyn od Ciebie niezależnych (art. 124 § 1 pkt 2 i § 3).</li>
+      <li>Rodzaje odzieży, obuwia i środków ochrony na stanowiskach oraz okresy użytkowania odzieży i obuwia ustala pracodawca; to jego własność (art. 237<sup>8</sup>). Za odzież powierzoną z obowiązkiem zwrotu odpowiadasz w pełnej wysokości; uwolnisz się od tej odpowiedzialności, jeśli wykażesz, że szkoda powstała z przyczyn od Ciebie niezależnych, np. bo pracodawca nie zapewnił warunków do jej zabezpieczenia (art. 124 § 1 pkt 2 i § 3).</li>
       <li>Bez odzieży, obuwia i środków ochrony przewidzianych na stanowisku pracodawca nie może dopuścić do pracy (art. 237<sup>9</sup> § 1), a Ty masz obowiązek ich używać zgodnie z przeznaczeniem (art. 211 pkt 4).</li>
       <li>Koszty BHP w żaden sposób nie mogą obciążać pracowników (art. 207 § 2<sup>1</sup>); zapis umowy mniej korzystny niż przepisy jest nieważny (art. 18 § 2).</li>
       <li>Przy pracy przez agencję odzież, obuwie i środki ochrony dostarcza pracodawca użytkownik (art. 9 ust. 2a ustawy o zatrudnianiu pracowników tymczasowych).</li>
@@ -219,13 +219,24 @@ const faq = [
       rzecz jest środkiem ochrony indywidualnej, czy zwykłą odzieżą roboczą: wynika to z oceny ryzyka na stanowisku,
       dlatego wybór w formularzu należy do Ciebie. Przepis nie definiuje „bezpośredniej obsługi maszyn” ani „prac powodujących
       intensywne brudzenie”. Gdy je zaznaczasz, przyjmujemy wariant bezpieczny dla pracującego: wyłączenie z art.
-      237<sup>7</sup> § 3 działa, a odzież i obuwie daje pracodawca.
+      237<sup>7</sup> § 3 działa, a odzież i obuwie daje pracodawca. Sam § 3 obowiązku nie tworzy, tylko wyklucza
+      pracę we własnej odzieży; obowiązek przy obsłudze maszyn wywodzimy z wymagań BHP (§ 1 pkt 2) i piszemy to
+      w wyniku. „Skażenie” oznacza skażenie samej odzieży środkami chemicznymi lub promieniotwórczymi albo materiałem
+      biologicznie zakaźnym (art. 237<sup>10</sup> § 1), a nie samą obecność chemii czy promieniowania w pracy.
     </p>
     <p>
-      Przepis nie mówi, czy obok ekwiwalentu za własną odzież należy się ekwiwalent za jej pranie, ani kto wypłaca
-      ekwiwalenty przy pracy przez agencję. Nie mówi też wprost o odzieży dla osób na zleceniu pracujących na stałe:
-      art. 304 § 1 nakazuje im zapewnić bezpieczne i higieniczne warunki pracy, a art. 304<sup>4</sup> przydział odzieży
-      przy pracach krótkotrwałych. W tych sprawach narzędzie pokazuje „przepis nie rozstrzyga”.
+      Gdy przepis odzieży roboczej nie wymaga, a pracodawca i tak ją daje, stosujemy zasady prania i ekwiwalentu za
+      pranie z art. 237<sup>9</sup> § 2–3, bo mówią one o „stosowanej” odzieży roboczej. Zwolnienie z PIT (art. 21
+      ust. 1 pkt 11 ustawy o PIT) obejmuje świadczenia przysługujące na podstawie przepisów BHP, jeżeli zasady ich
+      przyznawania wynikają z ustawy; zakładamy je dla ekwiwalentu wypłacanego zgodnie z art. 237<sup>7</sup> § 4 albo
+      237<sup>9</sup> § 3 Kodeksu pracy.
+    </p>
+    <p>
+      Przepis nie mówi, czy obok ekwiwalentu za własną odzież należy się ekwiwalent za jej pranie, ani kto przy pracy
+      przez agencję zapewnia pranie i wypłaca ekwiwalenty (art. 9 ust. 2a ustawy o zatrudnianiu pracowników
+      tymczasowych mówi tylko o dostarczeniu). Nie mówi też wprost o odzieży dla osób na zleceniu pracujących na stałe:
+      art. 304 § 1 nakazuje zapewnić bezpieczne i higieniczne warunki pracy w zakładzie pracy lub w miejscu wyznaczonym
+      przez pracodawcę, a art. 304<sup>4</sup> przydział odzieży przy pracach krótkotrwałych i czynnościach inspekcyjnych. W tych sprawach narzędzie pokazuje „przepis nie rozstrzyga”.
     </p>
     <p>
       Stawki ekwiwalentu przepis nie podaje. Koszt prań to liczba prań w miesiącu razy Twój koszt jednego prania; rok to
@@ -250,6 +261,7 @@ const faq = [
     MAKS_KOSZT_PRANIA,
     MAKS_MIESIECY,
     MAKS_PRAN,
+    WIERSZE_RZECZY,
     ekwiwalentWlasne,
     kosztPran,
     sprawdzOdziez,
@@ -271,8 +283,17 @@ const faq = [
     const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
     const wej = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
     const wyb = (n: string) => form.elements.namedItem(n) as HTMLSelectElement;
+    // Zmieniamy DOM tylko przy innej treści, żeby regiony aria-live nie ogłaszały tego samego przy każdym wpisanym znaku.
     const pisz = (k: string, tekst: string) => {
-      w(k).textContent = typografia(tekst);
+      const t = typografia(tekst);
+      if (w(k).textContent !== t) w(k).textContent = t;
+    };
+    const ostatnie = new Map<string, string>();
+    const zmienione = (k: string, wartosc: unknown) => {
+      const s = JSON.stringify(wartosc);
+      if (ostatnie.get(k) === s) return false;
+      ostatnie.set(k, s);
+      return true;
     };
     const nowy = (tag: string, tekst: string, klasa?: string) => {
       const e = document.createElement(tag);
@@ -305,7 +326,7 @@ const faq = [
 
     const przeliczEkwiwalent = (): string | null => {
       const rzeczy: Rzecz[] = [];
-      for (let i = 1; i <= 3; i++) {
+      for (let i = 1; i <= WIERSZE_RZECZY; i++) {
         const c = wej(`cena${i}`).value.trim();
         const m = wej(`mies${i}`).value.trim();
         if (!c && !m) continue;
@@ -340,27 +361,31 @@ const faq = [
         ekwWlasne: wyb('ekwWlasne').value === 'tak',
         ekwPranie: wyb('ekwPranie').value === 'tak',
       };
-      form.querySelector<HTMLElement>('[data-pole="ekw-wlasne"]')!.hidden = d.teraz !== 'wlasna';
-      form.querySelector<HTMLElement>('[data-pole="ekw-pranie"]')!.hidden = d.pranie !== 'ja';
+      const r = sprawdzOdziez(d);
+      // Pola ekwiwalentów tylko tam, gdzie zmieniają wynik.
+      form.querySelector<HTMLElement>('[data-pole="ekw-wlasne"]')!.hidden = !(d.teraz === 'wlasna' && r.wlasne === 'za-zgoda');
+      form.querySelector<HTMLElement>('[data-pole="ekw-pranie"]')!.hidden = !(d.pranie === 'ja' && r.pranie === 'firma-lub-ty');
 
-      const t = tekstyWyniku(d, sprawdzOdziez(d));
+      const t = tekstyWyniku(d, r);
       pisz('glowny', t.glowny);
       pisz('podstawa', t.podstawa);
-      w('wiersze').replaceChildren(
-        ...t.wiersze.map((r) => {
-          const div = document.createElement('div');
-          const dd = nowy('dd', r.dd);
-          dd.append(nowy('span', r.opis, 'wynik-opis'));
-          div.append(nowy('dt', r.dt), dd);
-          return div;
-        }),
-      );
-      w('uwagi').replaceChildren(...t.uwagi.map((u) => nowy('p', u, 'wynik-uwaga')));
+      if (zmienione('wiersze', t.wiersze))
+        w('wiersze').replaceChildren(
+          ...t.wiersze.map((x) => {
+            const div = document.createElement('div');
+            const dd = nowy('dd', x.dd);
+            dd.append(nowy('span', x.opis, 'wynik-opis'));
+            div.append(nowy('dt', x.dt), dd);
+            return div;
+          }),
+        );
+      if (zmienione('uwagi', t.uwagi)) w('uwagi').replaceChildren(...t.uwagi.map((u) => nowy('p', u, 'wynik-uwaga')));
 
       const bledy = [przeliczPrania(), przeliczEkwiwalent()].filter((x): x is string => !!x);
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      const tekstBledu = typografia(bledy.join(' '));
       b.hidden = !bledy.length;
-      b.textContent = typografia(bledy.join(' '));
+      if (b.textContent !== tekstBledu) b.textContent = tekstBledu;
     };
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
