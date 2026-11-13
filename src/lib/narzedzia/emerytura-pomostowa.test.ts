@@ -2,7 +2,7 @@
 // w roku nieprzestępnym 28 lutego, brakujące miesiące w górę, najwcześniejsza data = późniejsza z daty wieku i dziś +
 // brakujące miesiące.
 import { describe, expect, it } from 'vitest';
-import { emeryturaPomostowa, lat, opisPomostowej, wymagania, type DanePomostowej } from './emerytura-pomostowa';
+import { emeryturaPomostowa, lat, latBrak, opisPomostowej, wymagania, type DanePomostowej } from './emerytura-pomostowa';
 
 const D = (z: Partial<DanePomostowej>): DanePomostowej => ({
   plec: 'm',
@@ -74,11 +74,12 @@ describe('emerytura pomostowa (art. 4, 6–8, 16 i 49 ustawy o emeryturach pomos
 
   it('teksty wyniku: odmiana lat, daty, uwagi o zawieszeniu i rekompensacie', () => {
     expect([lat(1), lat(2), lat(5), lat(22), lat(14.5)]).toEqual(['1 rok', '2 lata', '5 lat', '22 lata', '14,5 roku']);
+    expect([latBrak(1), latBrak(2), latBrak(12), latBrak(0.5)]).toEqual(['1 roku', '2 lat', '12 lat', '0,5 roku']);
     const o = opisPomostowej(D({}));
     expect(o).toMatchObject({ stan: 'Spełniasz warunki', praca: 'tak: 16 lat z wymaganych 15 lat', staz: 'tak: 30 lat z wymaganych 25 lat', koniec: '20 maja 2031 r.' });
     expect(o.uwagi.join(' ')).toContain('art. 103a');
     const b = opisPomostowej(D({ plec: 'k', urodzenie: '1972-02-29', lataSzczegolne: 14.5, przed2009: 5, staz: 19 }));
-    expect(b.opis).toBe('brakuje 6 miesięcy pracy w szczególnych warunkach i 1 rok stażu; przy dalszej pracy w szczególnych warunkach na pełen etat warunki spełnisz najwcześniej 13 listopada 2027 r.');
+    expect(b.opis).toBe('brakuje 6 miesięcy pracy w szczególnych warunkach i 1 roku stażu; przy dalszej pracy w szczególnych warunkach na pełen etat warunki spełnisz najwcześniej 13 listopada 2027 r.');
     expect(opisPomostowej(D({ lataSzczegolne: 16, przed2009: 15, staz: 20 })).uwagi.join(' ')).toContain('rekompensaty');
     expect(opisPomostowej(D({ rodzaj: 'hutnictwo' })).uwagi[0]).toContain('lekarza medycyny pracy');
   });

@@ -1,0 +1,202 @@
+---
+// Renta z tytułu niezdolności do pracy: warunki stażu i okresu powstania niezdolności (art. 5, 12, 57–60 ustawy
+// o emeryturach i rentach z FUS, Dz.U. 2025 poz. 1749; art. 17–18 ustawy wypadkowej, Dz.U. 2025 poz. 1644).
+// Logika i teksty wyniku: src/lib/narzedzia/renta-niezdolnosc.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { opisRenty } from '../../lib/narzedzia/renta-niezdolnosc';
+import { dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+const dzis = dzisWPolsce();
+const URODZENIE = '1985-04-10';
+const start = opisRenty({ plec: 'm', urodzenie: URODZENIE, powstanie: dzis, przyczyna: 'choroba', stopien: 'czesciowa', skladkowe: 6, nieskladkowe: 1, ostatnie10: 6, ubezpieczenie: 'w-trakcie' });
+
+const faq = [
+  {
+    pytanie: 'Ile lat pracy potrzeba do renty?',
+    odpowiedz: 'Zależy od wieku, w którym powstała niezdolność do pracy: 1 rok przed ukończeniem 20 lat, 2 lata w wieku powyżej 20 do 22 lat, 3 lata powyżej 22 do 25 lat, 4 lata powyżej 25 do 30 lat i 5 lat powyżej 30 lat (art. 58 ust. 1 ustawy o emeryturach i rentach z FUS). Liczą się okresy składkowe i nieskładkowe, a nieskładkowe najwyżej w jednej trzeciej okresów składkowych (art. 5 ust. 2).',
+  },
+  {
+    pytanie: 'Co znaczy 5 lat w ostatnich 10 latach?',
+    odpowiedz: 'Przy niezdolności powstałej po 30. roku życia 5 lat okresów składkowych i nieskładkowych musi przypadać w ciągu 10 lat przed złożeniem wniosku o rentę albo przed dniem powstania niezdolności (art. 58 ust. 2). Nie dotyczy to osoby całkowicie niezdolnej do pracy, która ma co najmniej 25 lat (kobieta) albo 30 lat (mężczyzna) okresów składkowych (art. 58 ust. 4).',
+  },
+  {
+    pytanie: 'Czy dostanę rentę, jeśli zachoruję po zwolnieniu z pracy?',
+    odpowiedz: 'Tak, jeśli niezdolność do pracy powstała nie później niż 18 miesięcy po końcu ubezpieczenia albo okresu zasiłku chorobowego, świadczenia rehabilitacyjnego lub innego okresu z listy w art. 57 ust. 1 pkt 3. Później tylko przy całkowitej niezdolności do pracy i stażu co najmniej 20 lat (kobieta) albo 25 lat (mężczyzna) (art. 57 ust. 2).',
+  },
+  {
+    pytanie: 'Czy po wypadku przy pracy potrzebny jest staż?',
+    odpowiedz: 'Nie. Renta z tytułu niezdolności do pracy spowodowanej wypadkiem przy pracy albo chorobą zawodową przysługuje bez względu na długość ubezpieczenia i datę powstania niezdolności (art. 17 ust. 2 ustawy wypadkowej). Przy wypadku w drodze do pracy lub z pracy staż też nie jest wymagany (art. 57a ustawy o FUS), ale niezdolność musi powstać w czasie ubezpieczenia albo do 18 miesięcy po nim.',
+  },
+  {
+    pytanie: 'Czym różni się całkowita i częściowa niezdolność do pracy?',
+    odpowiedz: 'Całkowicie niezdolna do pracy jest osoba, która utraciła zdolność do wykonywania jakiejkolwiek pracy, a częściowo niezdolna osoba, która w znacznym stopniu utraciła zdolność do pracy zgodnej z poziomem swoich kwalifikacji (art. 12 ust. 2–3). Orzeka o tym lekarz orzecznik ZUS, zwykle na najwyżej 5 lat, a dłużej, gdy nie ma rokowań odzyskania zdolności do pracy przed upływem tego okresu (art. 13 ust. 2–3).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="renta-z-tytulu-niezdolnosci-do-pracy"
+  tytul="Renta z tytułu niezdolności do pracy: warunki"
+  opis="Czy masz staż do renty: 1–5 lat zależnie od wieku, 5 lat w ostatnich 10 latach, 18 miesięcy po końcu pracy. Wypadek przy pracy bez stażu."
+  h1="Renta z tytułu niezdolności do pracy: czy masz staż"
+  lead="Wpisz datę powstania niezdolności do pracy i swoje okresy składkowe i nieskładkowe, a sprawdzimy warunki stażu i terminu z ustawy o emeryturach i rentach z FUS."
+  faq={faq}
+>
+  <form class="kalkulator" data-renta novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Niezdolność i staż</h2>
+      <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div>
+          <label for="r-plec" class="etykieta-pola">Płeć</label>
+          <select id="r-plec" name="plec" class="pole mt-1">
+            <option value="m" selected>Mężczyzna</option>
+            <option value="k">Kobieta</option>
+          </select>
+        </div>
+        <div>
+          <label for="r-urodzenie" class="etykieta-pola">Data urodzenia</label>
+          <input id="r-urodzenie" name="urodzenie" type="date" class="pole mt-1" min="1940-01-01" max="2012-12-31" value={URODZENIE} aria-describedby="r-blad" />
+        </div>
+        <div>
+          <label for="r-powstanie" class="etykieta-pola">Niezdolność powstała dnia</label>
+          <input id="r-powstanie" name="powstanie" type="date" class="pole mt-1" min="1960-01-01" max="2100-12-31" value={dzis} data-dzis aria-describedby="r-blad" />
+        </div>
+        <div>
+          <label for="r-ubezpieczenie" class="etykieta-pola">Kiedy powstała</label>
+          <select id="r-ubezpieczenie" name="ubezpieczenie" class="pole mt-1" aria-describedby="r-ubezpieczenie-opis">
+            <option value="w-trakcie" selected>W czasie pracy lub zasiłku</option>
+            <option value="do-18">Do 18 mies. po końcu pracy</option>
+            <option value="pozniej">Później</option>
+          </select>
+        </div>
+      </div>
+      <p id="r-ubezpieczenie-opis" class="meta mt-1">Praca to tu każde ubezpieczenie: umowa o pracę, zlecenie ze składkami, własna firma; zasiłek to także świadczenie rehabilitacyjne.</p>
+      <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div>
+          <label for="r-przyczyna" class="etykieta-pola">Przyczyna</label>
+          <select id="r-przyczyna" name="przyczyna" class="pole mt-1">
+            <option value="choroba" selected>Choroba, wypadek poza pracą</option>
+            <option value="praca">Wypadek przy pracy</option>
+            <option value="zawodowa">Choroba zawodowa</option>
+            <option value="droga">Wypadek w drodze do pracy</option>
+          </select>
+        </div>
+        <div>
+          <label for="r-stopien" class="etykieta-pola">Niezdolność</label>
+          <select id="r-stopien" name="stopien" class="pole mt-1">
+            <option value="czesciowa" selected>Częściowa</option>
+            <option value="calkowita">Całkowita</option>
+          </select>
+        </div>
+      </div>
+      <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <div>
+          <label for="r-skladkowe" class="etykieta-pola">Okresy składkowe (lata)</label>
+          <input id="r-skladkowe" name="skladkowe" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="6" aria-describedby="r-blad r-okresy-opis" />
+        </div>
+        <div>
+          <label for="r-nieskladkowe" class="etykieta-pola">Nieskładkowe (lata)</label>
+          <input id="r-nieskladkowe" name="nieskladkowe" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="1" aria-describedby="r-blad r-okresy-opis" />
+        </div>
+        <div>
+          <label for="r-ostatnie10" class="etykieta-pola">Z tego w ostatnich 10 latach</label>
+          <input id="r-ostatnie10" name="ostatnie10" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value="6" aria-describedby="r-blad r-okresy-opis" />
+        </div>
+      </div>
+      <p id="r-okresy-opis" class="meta mt-1">Składkowe: praca, zlecenie i firma ze składkami. Nieskładkowe: m.in. zasiłek chorobowy, wynagrodzenie za L4, urlop wychowawczy, ukończone studia. Lata możesz wpisać z ułamkiem, na przykład 4,5.</p>
+      <p id="r-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Renta z tytułu niezdolności</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-data" data-w="stan">{start.stan}</p>
+        <p class="meta" data-w="opis">{start.opis}</p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Wiek w dniu powstania</dt><dd data-w="wiek">{start.wiek}</dd></div>
+        <div><dt>Wymagany staż</dt><dd data-w="wymagany">{start.wymagany}</dd></div>
+        <div><dt>Twój staż do renty</dt><dd data-w="staz">{start.staz}</dd></div>
+        <div><dt>W czasie ubezpieczenia lub do 18 mies.</dt><dd data-w="okres">{start.okres}</dd></div>
+      </dl>
+      <p class="wynik-uwaga" data-w="uwaga">{start.uwagi.join(' ')}</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Warunki są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="warunki">Warunki renty</h2>
+    <ul>
+      <li>Renta z tytułu niezdolności do pracy przysługuje osobie ubezpieczonej, która jest niezdolna do pracy, ma wymagany okres składkowy i nieskładkowy, stała się niezdolna do pracy w czasie ubezpieczenia (albo okresów z listy w art. 57 ust. 1 pkt 3) lub nie później niż 18 miesięcy po ich końcu i nie ma prawa do emerytury z FUS ani nie spełnia warunków do niej (art. 57 ust. 1 ustawy o emeryturach i rentach z FUS).</li>
+      <li>Wymagany okres zależy od wieku, w którym powstała niezdolność: 1 rok przed ukończeniem 20 lat, 2 lata w wieku powyżej 20 do 22 lat, 3 lata powyżej 22 do 25 lat, 4 lata powyżej 25 do 30 lat, 5 lat powyżej 30 lat (art. 58 ust. 1).</li>
+      <li>Przy 5 latach te 5 lat musi przypadać w ostatnich 10 latach przed wnioskiem o rentę albo przed powstaniem niezdolności; do 10 lat nie wlicza się okresów pobierania renty z tytułu niezdolności do pracy, szkoleniowej i rodzinnej (art. 58 ust. 2). Nie dotyczy to osoby całkowicie niezdolnej do pracy z 25 latami (kobieta) albo 30 latami (mężczyzna) okresów składkowych (art. 58 ust. 4).</li>
+      <li>Staż uważa się też za spełniony, gdy osobę zgłoszono do ubezpieczenia przed 18. urodzinami albo w ciągu 6 miesięcy po ukończeniu szkoły ponadpodstawowej, ponadgimnazjalnej lub wyższej, a do dnia powstania niezdolności okresy składkowe i nieskładkowe trwały bez przerw dłuższych niż 6 miesięcy (art. 58 ust. 3).</li>
+      <li>Warunku 18 miesięcy nie stosuje się przy całkowitej niezdolności do pracy i stażu co najmniej 20 lat (kobiety) albo 25 lat (mężczyźni) (art. 57 ust. 2). Przy wypadku w drodze do pracy lub z pracy staż nie jest wymagany (art. 57a).</li>
+      <li>Po wypadku przy pracy albo przy chorobie zawodowej renta z ubezpieczenia wypadkowego przysługuje bez względu na długość ubezpieczenia i datę powstania niezdolności, także osobie z prawem do emerytury; wynosi co najmniej 80% podstawy przy całkowitej i 60% przy częściowej niezdolności (art. 17 ust. 1–2 i art. 18 ust. 1 ustawy wypadkowej).</li>
+      <li>Renta jest stała przy trwałej niezdolności i okresowa przy okresowej (art. 59). Gdy orzeczono celowość przekwalifikowania, przysługuje renta szkoleniowa przez 6 miesięcy, z możliwością przedłużenia (art. 60).</li>
+    </ul>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Staż do renty to okresy składkowe plus nieskładkowe, ale nieskładkowe najwyżej w jednej trzeciej składkowych
+      (art. 5 ust. 2). Wiek liczymy od dnia urodzin. Ustawa nie mówi, czy „w wieku powyżej 22 do 25 lat” liczyć od dnia po
+      22. urodzinach, czy w pełnych latach (od 23. urodzin); tak samo przy progach 20 i 30 lat. Liczymy od dnia po
+      urodzinach, a gdy przy liczeniu w pełnych latach wystarczy krótszy staż i Twój staż mieści się między progami,
+      piszemy „zależy”: rozstrzyga ZUS. W sam dzień 20., 22., 25. i 30. urodzin przyjmujemy niższy próg. Okres z ostatnich
+      10 lat wpisujesz sam: liczy się 10 lat przed wnioskiem albo 10 lat przed powstaniem niezdolności, więc możesz
+      sprawdzić oba. Zgłoszenia do ubezpieczenia przed 18. urodzinami albo po szkole (art. 58 ust. 3) kalkulator nie
+      sprawdza. Nie oceniamy niezdolności do pracy (to robi lekarz orzecznik ZUS) i nie liczymy wysokości renty.
+      Ile możesz dorobić do renty, policzy <a href="/narzedzia/dorabianie-do-renty">kalkulator dorabiania do renty i emerytury</a>, a jednorazowe odszkodowanie po wypadku przy pracy <a href="/narzedzia/odszkodowanie-za-wypadek-przy-pracy">kalkulator odszkodowania za wypadek</a>. Gdy niezdolność jest okresowa, a leczenie rokuje powrót do pracy, sprawdź <a href="/narzedzia/swiadczenie-rehabilitacyjne">świadczenie rehabilitacyjne</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { opisRenty, type Plec, type Przyczyna, type Stopien, type Ubezpieczenie } from '../../lib/narzedzia/renta-niezdolnosc';
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
+  import { wpisanaLiczba } from '../../lib/narzedzia/format';
+  import { dzisWPolsce, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { typografia } from '../../lib/typografia.mjs';
+
+  const form = document.querySelector<HTMLFormElement>('[data-renta]');
+  if (form) {
+    ustawDzisiejszeWartosci(form);
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const POLA = ['stan', 'opis', 'wiek', 'wymagany', 'staz', 'okres'] as const;
+    const przelicz = () => {
+      const urodzenie = el('urodzenie').value;
+      const powstanie = el('powstanie').value;
+      const [skladkowe, nieskladkowe, ostatnie10] = ['skladkowe', 'nieskladkowe', 'ostatnie10'].map((n) => wpisanaLiczba(el(n).value));
+      let blad: string | null = null;
+      if (!poprawnaData(urodzenie) || urodzenie > dzisWPolsce() || urodzenie < '1900-01-01') blad = 'Wpisz datę urodzenia.';
+      else if (!poprawnaData(powstanie) || powstanie < urodzenie) blad = 'Wpisz dzień powstania niezdolności do pracy, po dacie urodzenia.';
+      else if (![skladkowe, nieskladkowe, ostatnie10].every((x) => x >= 0 && x <= 70)) blad = 'Wpisz okresy w latach, na przykład 5 albo 4,5.';
+      else if (ostatnie10 > 10 || ostatnie10 > skladkowe + nieskladkowe) blad = 'Okres z ostatnich 10 lat nie może być dłuższy niż 10 lat ani niż wszystkie okresy razem.';
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      b.hidden = !blad;
+      b.textContent = blad ? typografia(blad) : '';
+      if (blad) {
+        for (const k of POLA) w(k).textContent = k === 'opis' ? '' : '—';
+        w('uwaga').textContent = '';
+        return;
+      }
+      const o = opisRenty({
+        plec: el('plec').value as Plec,
+        urodzenie,
+        powstanie,
+        przyczyna: el('przyczyna').value as Przyczyna,
+        stopien: el('stopien').value as Stopien,
+        skladkowe,
+        nieskladkowe,
+        ostatnie10,
+        ubezpieczenie: el('ubezpieczenie').value as Ubezpieczenie,
+      });
+      for (const k of POLA) w(k).textContent = typografia(o[k]);
+      w('uwaga').textContent = typografia(o.uwagi.join(' '));
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>

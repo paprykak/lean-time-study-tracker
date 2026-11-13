@@ -102,12 +102,19 @@ export const lat = (x: number) => {
   return Number.isInteger(n) ? odmiana(n, ['rok', 'lata', 'lat']) : `${liczba(n)} roku`;
 };
 
-const miesiecy = (m: number) => {
+/** Po „brakuje”: „1 roku”, „2 lat”, „14,5 roku”. */
+export const latBrak = (x: number) => {
+  const n = Math.round(x * 100) / 100;
+  return Number.isInteger(n) && n !== 1 ? `${n} lat` : `${liczba(n)} roku`;
+};
+
+/** Brakujące miesiące po „brakuje”: „1 miesiąca”, „6 miesięcy”, „1 roku i 2 miesięcy”. */
+const miesiecyBrak = (m: number) => {
   const l = Math.floor(m / 12);
   const r = m % 12;
-  const mies = (n: number) => odmiana(n, ['miesiąc', 'miesiące', 'miesięcy']);
-  if (!l) return mies(r);
-  return r ? `${lat(l)} i ${mies(r)}` : lat(l);
+  const mies = r === 1 ? '1 miesiąca' : `${r} miesięcy`;
+  if (!l) return mies;
+  return r ? `${latBrak(l)} i ${mies}` : latBrak(l);
 };
 
 export interface OpisPomostowej {
@@ -155,7 +162,7 @@ export function opisPomostowej(d: DanePomostowej): OpisPomostowej {
     o.stan = 'Nie zdążysz';
     o.opis = `brakujące okresy uzbierasz najwcześniej ${dataPoPolsku(r.najwczesniej)}, a emerytura pomostowa przysługuje tylko do ${wiekPowszechny(d.plec)}. urodzin`;
   } else {
-    const braki = [r.brakPracy ? `${miesiecy(r.brakPracy)} pracy w szczególnych warunkach` : '', r.brakStazu ? `${miesiecy(r.brakStazu)} stażu` : ''].filter(Boolean).join(' i ');
+    const braki = [r.brakPracy ? `${miesiecyBrak(r.brakPracy)} pracy w szczególnych warunkach` : '', r.brakStazu ? `${miesiecyBrak(r.brakStazu)} stażu` : ''].filter(Boolean).join(' i ');
     o.stan = 'Jeszcze nie';
     o.opis = `brakuje ${braki}; przy dalszej pracy w szczególnych warunkach na pełen etat warunki spełnisz najwcześniej ${dataPoPolsku(r.najwczesniej)}`;
   }

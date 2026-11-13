@@ -809,6 +809,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-13',
   },
   {
+    slug: 'renta-z-tytulu-niezdolnosci-do-pracy',
+    nazwa: 'Renta z tytułu niezdolności do pracy',
+    krotko: 'Czy masz staż do renty: 1–5 lat zależnie od wieku, 5 z ostatnich 10 lat, 18 miesięcy po pracy, wypadek.',
+    kategoria: 'wynagrodzenie',
+    przepisy: ['emerytury', 'wypadkowa'],
+    sprawdzono: '2026-11-13',
+  },
+  {
     slug: 'przerwy-w-pracy',
     nazwa: 'Przerwy w pracy',
     krotko: 'Ile przerw przy zmianie 8 i 12 godzin, które są płatne, przy monitorze, na karmienie, dla młodocianych.',
