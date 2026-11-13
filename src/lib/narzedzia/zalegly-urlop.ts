@@ -26,7 +26,7 @@
 // 2. Zawieszenie z art. 293¹: przepis nie mówi, jak liczyć termin w latach po zawieszeniu. Liczymy dwiema metodami
 //    (w dniach: dodajemy dni wychowawczego w trakcie biegu; w miesiącach: upływ przed zawieszeniem, reszta od końca
 //    wychowawczego, art. 112 KC) i bierzemy wcześniejszą datę.
-// 3. Ekwiwalent: przepis nie wskazuje dnia wymagalności. Wariant najwcześniejszy: dzień rozwiązania umowy; od niego
+// 3. Ekwiwalent: przepis nie wskazuje dnia wymagalności. Wariant wcześniejszy: dzień rozwiązania umowy; od niego
 //    3 lata (art. 291 § 1, art. 112 KC). Art. 293¹ dotyczy roszczenia o urlop, więc urlopu
 //    wychowawczego przy ekwiwalencie nie uwzględniamy.
 // 4. Nie przesuwamy końca terminu na koniec roku (art. 118 KC) ani na dzień roboczy (art. 115 KC): Kodeks pracy ma

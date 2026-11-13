@@ -3,17 +3,17 @@
 // (art. 291 § 1, zawieszenie w czasie urlopu wychowawczego: art. 293¹), ekwiwalent po końcu umowy (art. 171).
 // Logika i przyjęte interpretacje: src/lib/narzedzia/zalegly-urlop.ts (testy obok).
 import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
-import { opis, zaleglyUrlop } from '../../lib/narzedzia/zalegly-urlop';
+import { WIERSZE, opis, zaleglyUrlop } from '../../lib/narzedzia/zalegly-urlop';
 import { dzisWPolsce } from '../../lib/narzedzia/terminy';
 
 const dzis = dzisWPolsce();
 const rokDzis = Number(dzis.slice(0, 4));
-const WIERSZE = 4;
 const D = [
   { rok: rokDzis - 2, dni: 2 },
   { rok: rokDzis - 1, dni: 6 },
 ];
 const o = opis(zaleglyUrlop({ urlopy: D, naDzien: dzis }));
+const TSUE = 'https://eur-lex.europa.eu/legal-content/PL/TXT/HTML/?uri=CELEX:62021CJ0120';
 
 const faq = [
   {
@@ -26,15 +26,15 @@ const faq = [
   },
   {
     pytanie: 'Kiedy przedawnia się urlop wypoczynkowy?',
-    odpowiedz: 'Po 3 latach od dnia, w którym roszczenie o urlop stało się wymagalne (art. 291 § 1 Kodeksu pracy). Kodeks nie mówi, który to dzień, dlatego kalkulator pokazuje najwcześniejszą możliwą datę: 31 grudnia trzy lata po roku, za który jest urlop, a obok wariant liczony od 30 września następnego roku. Bieg przedawnienia nie rozpoczyna się, a rozpoczęty ulega zawieszeniu na czas urlopu wychowawczego (art. 293^1). Przerywa go pozew albo uznanie roszczenia przez pracodawcę i wtedy biegnie od nowa (art. 295). Terminów nie można skrócić ani przedłużyć umową (art. 291 § 4).',
+    odpowiedz: 'Po 3 latach od dnia, w którym roszczenie o urlop stało się wymagalne (art. 291 § 1 Kodeksu pracy). Kodeks nie mówi, który to dzień. Kalkulator pokazuje jako główną wcześniejszą z dwóch rozważanych dat: 31 grudnia trzy lata po roku, za który jest urlop, a obok wariant liczony od 30 września następnego roku; przepis nie wyklucza innej daty. Po upływie terminu pracodawca może uchylić się od zaspokojenia roszczenia, ale musi powołać się na przedawnienie (art. 292). Trybunał Sprawiedliwości UE w wyroku z 22 września 2022 r. (C-120/21) orzekł, że dyrektywa 2003/88/WE i Karta praw podstawowych UE stoją na przeszkodzie przedawnieniu prawa do urlopu po 3 latach od końca roku, w którym powstało, jeżeli pracodawca nie umożliwił pracownikowi rzeczywistego skorzystania z urlopu. Bieg przedawnienia nie rozpoczyna się, a rozpoczęty ulega zawieszeniu na czas urlopu wychowawczego (art. 293^1). Terminów przedawnienia nie można skracać ani przedłużać przez czynność prawną (art. 291 § 4).',
   },
   {
     pytanie: 'Czy można zamienić urlop na pieniądze?',
-    odpowiedz: 'Nie w trakcie zatrudnienia: pracownik nie może zrzec się prawa do urlopu (art. 152 § 2 Kodeksu pracy). Ekwiwalent pieniężny przysługuje za urlop niewykorzystany z powodu rozwiązania lub wygaśnięcia stosunku pracy (art. 171 § 1). Pracodawca nie musi go wypłacić, gdy strony postanowią, że urlop wykorzystasz w kolejnej umowie z tym samym pracodawcą zawartej bezpośrednio po poprzedniej (art. 171 § 3).',
+    odpowiedz: 'Nie w trakcie zatrudnienia: pracownik nie może zrzec się prawa do urlopu (art. 152 § 2 Kodeksu pracy), a ekwiwalent pieniężny przysługuje tylko za urlop niewykorzystany z powodu rozwiązania lub wygaśnięcia stosunku pracy (art. 171 § 1). Pracodawca nie musi go wypłacić, gdy strony postanowią, że urlop wykorzystasz w kolejnej umowie z tym samym pracodawcą zawartej bezpośrednio po poprzedniej (art. 171 § 3).',
   },
   {
     pytanie: 'Co, jeśli pracodawca nie daje zaległego urlopu?',
-    odpowiedz: 'Kodeks pracy przewiduje karę grzywny od 2000 zł do 60 000 zł dla tego, kto wbrew obowiązkowi nie udziela przysługującego pracownikowi urlopu wypoczynkowego lub bezpodstawnie obniża jego wymiar (art. 282 § 1 pkt 2, w tej wysokości od 8 lipca 2026 r.). Samo roszczenie o urlop przedawnia się po 3 latach od wymagalności (art. 291 § 1); pozew w sądzie pracy przerywa bieg przedawnienia (art. 295 § 1 pkt 1).',
+    odpowiedz: 'Kodeks pracy przewiduje karę grzywny od 2000 zł do 60 000 zł dla tego, kto wbrew obowiązkowi nie udziela przysługującego pracownikowi urlopu wypoczynkowego lub bezpodstawnie obniża jego wymiar (art. 282 § 1 pkt 2, w tej wysokości od 8 lipca 2026 r.). Roszczenie o urlop przedawnia się po 3 latach od wymagalności (art. 291 § 1). Bieg przedawnienia przerywa każda czynność przed organem powołanym do rozstrzygania sporów, na przykład sądem pracy, podjęta bezpośrednio w celu dochodzenia roszczenia, oraz uznanie roszczenia przez pracodawcę. Po przerwie przedawnienie biegnie na nowo, a gdy przerwała je czynność przed sądem, dopiero po zakończeniu postępowania (art. 295).',
   },
   {
     pytanie: 'Co z zaległym urlopem po urlopie macierzyńskim?',
@@ -44,16 +44,16 @@ const faq = [
 ---
 <StronaNarzedzia
   slug="zalegly-urlop"
-  tytul="Zaległy urlop: do kiedy i kiedy przepada"
+  tytul="Zaległy urlop: do kiedy i kiedy się przedawnia"
   opis="Do kiedy pracodawca musi dać zaległy urlop (30 września następnego roku) i kiedy roszczenie o urlop może się przedawnić. Ekwiwalent po końcu umowy."
-  h1="Zaległy urlop: do kiedy wykorzystać i kiedy przepada"
-  lead="Zaległy urlop pracodawca ma udzielić najpóźniej do 30 września następnego roku, a samo roszczenie o urlop przedawnia się po 3 latach. Wpisz, ile dni zostało Ci z poprzednich lat, a pokażemy terminy dla każdego roku."
+  h1="Zaległy urlop: do kiedy pracodawca musi go dać i kiedy roszczenie się przedawnia"
+  lead="Zaległy urlop pracodawca ma udzielić najpóźniej do 30 września następnego roku, a roszczenie o urlop przedawnia się po 3 latach od wymagalności. Wpisz, ile dni zostało Ci z poprzednich lat, a pokażemy terminy dla każdego roku."
   faq={faq}
 >
   <form class="kalkulator" data-zalegly novalidate aria-labelledby="kalkulator-tytul">
     <div class="kalkulator-pola">
       <h2 id="kalkulator-tytul" class="tytul-m">Twój niewykorzystany urlop</h2>
-      <p class="meta mt-1">Rok, za który przysługiwał urlop, i ile dni z niego zostało; puste wiersze pomijamy.</p>
+      <p class="meta mt-1">Rok, za który przysługiwał urlop, i ile pełnych dni z niego zostało; puste wiersze pomijamy.</p>
       {Array.from({ length: WIERSZE }, (_, i) => (
         <fieldset class="mt-4">
           <legend class="etykieta-pola">Wiersz {i + 1}</legend>
@@ -92,7 +92,7 @@ const faq = [
           </div>
         </div>
       </fieldset>
-      <p id="u-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+      <p id="u-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -114,7 +114,9 @@ const faq = [
       </div>
       <p class="wynik-uwaga" data-uwaga="urlop">
         Termin 30 września nie dotyczy części urlopu udzielanego na żądanie (art. 168 i 167<sup>2</sup> Kodeksu pracy).
-        Przepis nie mówi, kiedy roszczenie o urlop staje się wymagalne: główna data to najwcześniejsza możliwa.
+        Przepis nie mówi, kiedy roszczenie o urlop staje się wymagalne: główna data to wcześniejszy z dwóch wariantów,
+        które rozważamy, a przepis nie wyklucza innej daty. Po niej pracodawca może powołać się na przedawnienie
+        (art. 292), co nie oznacza, że urlop na pewno przepadł.
       </p>
       <p class="wynik-uwaga" data-uwaga="ekwiwalent" data-w="ekwiwalent" hidden></p>
       <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Wynik pokazuje przykładowy urlop z dwóch ostatnich lat.</p></noscript>
@@ -127,39 +129,57 @@ const faq = [
       <li>Pracodawca ma udzielić urlopu w tym roku kalendarzowym, w którym pracownik uzyskał do niego prawo (art. 161 Kodeksu pracy). Ile dni przysługuje w roku, policzy <a href="/narzedzia/kalkulator-urlopu">kalkulator urlopu</a>.</li>
       <li>Urlopy udziela się według planu urlopów; gdy pracodawca planu nie ustala, termin urlopu ustala po porozumieniu z pracownikiem (art. 163 § 1 i § 1<sup>1</sup>). Planem nie obejmuje się urlopu na żądanie.</li>
       <li>Urlopu niewykorzystanego w tym terminie należy udzielić najpóźniej do 30 września następnego roku kalendarzowego; nie dotyczy to części urlopu udzielanego na żądanie (art. 168 i 167<sup>2</sup>).</li>
-      <li>Termin urlopu można przesunąć na wniosek pracownika z ważnych przyczyn albo z powodu szczególnych potrzeb pracodawcy, gdy nieobecność spowodowałaby poważne zakłócenia toku pracy (art. 164). Gdy choroba, odosobnienie, ćwiczenia wojskowe albo urlop macierzyński nie pozwalają rozpocząć urlopu, pracodawca musi go przesunąć, a część przerwaną z tych powodów udzielić później (art. 165 i 166).</li>
-      <li>Pracownik nie może zrzec się prawa do urlopu (art. 152 § 2). Ekwiwalent przysługuje dopiero za urlop niewykorzystany z powodu rozwiązania lub wygaśnięcia umowy (art. 171 § 1); jego wysokość policzy <a href="/narzedzia/ekwiwalent-za-urlop">kalkulator ekwiwalentu za urlop</a>. Czy zaległy urlop można wykorzystać w wypowiedzeniu, pokazuje <a href="/narzedzia/urlop-w-okresie-wypowiedzenia">kalkulator urlopu w okresie wypowiedzenia</a>.</li>
-      <li>Roszczenia ze stosunku pracy przedawniają się z upływem 3 lat od dnia, w którym stały się wymagalne (art. 291 § 1). Bieg przedawnienia roszczenia o urlop nie rozpoczyna się, a rozpoczęty ulega zawieszeniu na czas korzystania z urlopu wychowawczego (art. 293<sup>1</sup>).</li>
+      <li>Termin urlopu można przesunąć na wniosek pracownika z ważnych przyczyn albo z powodu szczególnych potrzeb pracodawcy, gdy nieobecność spowodowałaby poważne zakłócenia toku pracy (art. 164).</li>
+      <li>Gdy nie możesz rozpocząć urlopu w ustalonym terminie z przyczyn usprawiedliwiających nieobecność w pracy, w szczególności z powodu choroby, odosobnienia w związku z chorobą zakaźną, ćwiczeń wojskowych w pasywnej rezerwie, terytorialnej służby wojskowej rotacyjnie albo służby w aktywnej rezerwie (na czas do 3 miesięcy) lub urlopu macierzyńskiego, pracodawca musi przesunąć urlop na termin późniejszy (art. 165). Część urlopu niewykorzystaną z powodu choroby, odosobnienia, ćwiczeń lub służby (do 3 miesięcy) albo urlopu macierzyńskiego pracodawca udziela w terminie późniejszym (art. 166).</li>
+      <li>Pracownik nie może zrzec się prawa do urlopu (art. 152 § 2). Ekwiwalent przysługuje za urlop niewykorzystany z powodu rozwiązania lub wygaśnięcia umowy (art. 171 § 1); jego wysokość policzy <a href="/narzedzia/ekwiwalent-za-urlop">kalkulator ekwiwalentu za urlop</a>. Czy zaległy urlop można wykorzystać w wypowiedzeniu, pokazuje <a href="/narzedzia/urlop-w-okresie-wypowiedzenia">kalkulator urlopu w okresie wypowiedzenia</a>.</li>
+      <li>Roszczenia ze stosunku pracy przedawniają się z upływem 3 lat od dnia, w którym stały się wymagalne (art. 291 § 1). Bieg przedawnienia roszczenia o urlop nie rozpoczyna się, a rozpoczęty ulega zawieszeniu na czas korzystania z urlopu wychowawczego (art. 293<sup>1</sup>). Po upływie terminu pracodawca może uchylić się od zaspokojenia roszczenia, chyba że zrzeka się zarzutu przedawnienia (art. 292).</li>
     </ul>
 
     <h2 id="jak-liczymy">Jak liczymy</h2>
     <p>
       Termin udzielenia to 30 września roku następującego po roku, za który przysługiwał urlop (art. 168). Zakładamy,
-      że urlop nie został wykorzystany w terminie z planu ani w terminie uzgodnionym z pracodawcą.
+      że urlop nie został wykorzystany w terminie z planu ani w terminie uzgodnionym z pracodawcą. Wpisujesz pełne dni;
+      części dnia w godzinach kalkulator nie obsługuje.
     </p>
     <p>
       Kodeks pracy nie mówi, kiedy roszczenie o urlop staje się wymagalne, a od tego dnia biegną 3 lata
       przedawnienia (art. 291 § 1). Urzędowego wyjaśnienia nie znaleźliśmy, a orzeczeń Sądu Najwyższego nie
-      sprawdzaliśmy. Dlatego jako główną pokazujemy datę najwcześniejszą: przyjmujemy, że roszczenie jest wymagalne
-      31 grudnia roku, w którym trzeba było udzielić urlopu (art. 161), więc urlop za 2025 r. przedawnia się
-      najwcześniej z upływem 31 grudnia 2028 r. Wariant późniejszy liczymy od 30 września następnego roku (art. 168):
-      dla urlopu za 2025 r. to 30 września 2029 r. Koniec terminu w latach przypada w dniu o tej samej dacie (art. 112
-      Kodeksu cywilnego w związku z art. 300 Kodeksu pracy). Nie przesuwamy go na koniec roku ani na dzień roboczy.
+      sprawdzaliśmy. Rozważamy dwa warianty i jako główną pokazujemy datę wcześniejszą: przyjmujemy, że roszczenie
+      jest wymagalne 31 grudnia roku, w którym trzeba było udzielić urlopu (art. 161), więc urlop za 2025 r. może się
+      przedawnić z upływem 31 grudnia 2028 r. Wariant późniejszy liczymy od 30 września następnego roku (art. 168):
+      dla urlopu za 2025 r. to 30 września 2029 r. Przepis nie wyklucza innej daty. Termin w latach kończy się
+      z upływem dnia, który datą odpowiada początkowemu dniowi, a gdy takiego dnia w ostatnim miesiącu nie ma,
+      w ostatnim dniu tego miesiąca, więc od 29 lutego liczy się do 28 lutego (art. 112 Kodeksu cywilnego w związku
+      z art. 300 Kodeksu pracy). Nie przesuwamy końca terminu na koniec roku ani na dzień roboczy.
     </p>
     <p>
-      Jeśli wpiszesz urlop wychowawczy, do terminu dodajemy liczbę jego dni przypadających po dniu wymagalności
-      (art. 293<sup>1</sup>). Przepis nie mówi, jak dokładnie liczyć termin w latach po takim zawieszeniu; liczenie
-      w dniach daje ten sam albo bardzo zbliżony wynik. Bieg przedawnienia przerywa pozew albo uznanie roszczenia
-      przez pracodawcę i wtedy biegnie on od nowa (art. 295), a po upływie terminu pracodawca musi powołać się na
-      przedawnienie (art. 292). Tego kalkulator nie uwzględnia.
+      Data przedawnienia to dzień, po którym pracodawca może uchylić się od zaspokojenia roszczenia, jeśli powoła się
+      na przedawnienie (art. 292), a nie dzień pewnej utraty urlopu. Trybunał Sprawiedliwości UE w
+      <a href={TSUE} rel="noopener">wyroku z 22 września 2022 r., C-120/21</a> orzekł, że art. 7 dyrektywy 2003/88/WE
+      i art. 31 ust. 2 Karty praw podstawowych UE stoją na przeszkodzie uregulowaniu krajowemu, na mocy którego prawo
+      do corocznego płatnego urlopu ulega przedawnieniu po upływie trzyletniego terminu zaczynającego biec wraz
+      z końcem roku, w którym to prawo powstało, jeżeli pracodawca nie umożliwił pracownikowi rzeczywistego
+      skorzystania z tego prawa.
+    </p>
+    <p>
+      Jeśli wpiszesz urlop wychowawczy, termin przedłużamy o czas zawieszenia (art. 293<sup>1</sup>). Przepis nie mówi,
+      jak liczyć termin w latach po zawieszeniu; pokazujemy wcześniejszą z dwóch metod: w dniach (do terminu dodajemy
+      dni wychowawczego przypadające w trakcie biegu) i w miesiącach (część terminu, która upłynęła przed urlopem
+      wychowawczym, odejmujemy od 3 lat, a resztę liczymy od jego końca według art. 112 Kodeksu cywilnego). Gdy urlop
+      wychowawczy trwa już
+      w dniu wymagalności, bieg rozpoczyna się po jego końcu. Bieg przedawnienia przerywa każda czynność przed organem
+      powołanym do rozstrzygania sporów (na przykład sądem pracy) podjęta bezpośrednio w celu dochodzenia roszczenia albo uznanie roszczenia przez pracodawcę; po uznaniu
+      biegnie od nowa, a po pozwie dopiero po zakończeniu postępowania (art. 295). Tego kalkulator nie uwzględnia.
     </p>
     <p>
       Po końcu umowy pokazujemy ekwiwalent za wszystkie wpisane dni (art. 171 § 1). Przepis nie wskazuje, kiedy
       roszczenie o ekwiwalent staje się wymagalne; wypłata przypada w terminie wypłaty wynagrodzenia albo w ciągu 10
-      dni od rozwiązania umowy (art. 171 § 4–5). Jako najwcześniejszy wariant liczymy 3 lata od dnia rozwiązania umowy.
+      dni od rozwiązania umowy (art. 171 § 4–5). Jako wcześniejszy wariant liczymy 3 lata od dnia rozwiązania umowy.
+      Urlopu wychowawczego przy ekwiwalencie nie uwzględniamy, bo art. 293<sup>1</sup> mówi o roszczeniu o urlop.
       Jak liczy się przedawnienie od dnia wypłaty, pokazuje
       <a href="/narzedzia/przedawnienie-wynagrodzenia">kalkulator przedawnienia wynagrodzenia</a>. Czy roszczenie
-      o urlop przedawnione przed końcem umowy wchodzi do ekwiwalentu, przepis nie mówi; taki rok oznaczamy. Według
+      o urlop, które mogło się przedawnić do dnia końca umowy, wchodzi do ekwiwalentu, przepis nie mówi; taki rok
+      oznaczamy. Według
       <a href="https://www.biznes.gov.pl/pl/portal/00134" rel="noopener">serwisu biznes.gov.pl</a> do zachowania
       terminu z art. 168 wystarczy, by 30 września był pierwszym dniem zaległego urlopu; w przepisie tego nie ma.
     </p>
@@ -167,8 +187,8 @@ const faq = [
 </StronaNarzedzia>
 
 <script>
-  import { MAKS_DNI, MIN_ROK, opis, zaleglyUrlop, type UrlopZaRok } from '../../lib/narzedzia/zalegly-urlop';
-  import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { MAKS_DNI, MIN_ROK, WIERSZE, opis, zaleglyUrlop, type UrlopZaRok } from '../../lib/narzedzia/zalegly-urlop';
+  import { dataPoPolsku, dzisWPolsce, poprawnaData } from '../../lib/narzedzia/terminy';
   import { typografia } from '../../lib/typografia.mjs';
 
   const form = document.querySelector<HTMLFormElement>('[data-zalegly]');
@@ -179,28 +199,60 @@ const faq = [
       w(k).textContent = typografia(tekst);
     };
     const uwaga = (k: string) => form.querySelector<HTMLElement>(`[data-uwaga="${k}"]`)!;
-    const przelicz = () => {
-      const urlopy: UrlopZaRok[] = [];
-      let blad: string | null = null;
-      for (let i = 1; i <= 4 && !blad; i++) {
-        const rok = el(`rok${i}`).value.trim();
-        const dni = el(`dni${i}`).value.trim();
-        if (!rok && !dni) continue;
-        if (!/^\d{4}$/.test(rok)) blad = `Wiersz ${i}: wpisz rok, np. 2025.`;
-        else if (!/^-?\d+$/.test(dni)) blad = `Wiersz ${i}: wpisz liczbę dni (całkowitą).`;
-        else if (Number(rok) < MIN_ROK) blad = `Wiersz ${i}: rok od ${MIN_ROK}.`;
-        else if (Number(dni) <= 0 || Number(dni) > MAKS_DNI) blad = `Wiersz ${i}: dni od 1 do ${MAKS_DNI}.`;
-        else urlopy.push({ rok: Number(rok), dni: Number(dni) });
+
+    // Strona jest zbudowana wcześniej: gdy nikt nie zmienił daty, bierzemy dzisiejszą i przesuwamy domyślne lata.
+    const poleDzis = el('naDzien');
+    const dzis = dzisWPolsce();
+    if (poleDzis.value === poleDzis.defaultValue && poleDzis.value !== dzis) {
+      const przesun = Number(dzis.slice(0, 4)) - Number(poleDzis.value.slice(0, 4));
+      poleDzis.value = dzis;
+      for (let i = 1; i <= WIERSZE; i++) {
+        const r = el(`rok${i}`);
+        if (r.value && r.value === r.defaultValue) r.value = String(Number(r.value) + przesun);
       }
+    }
+
+    const przelicz = () => {
+      for (const p of form.querySelectorAll('input')) p.removeAttribute('aria-invalid');
+      let blad: string | null = null;
+      let zle: HTMLInputElement | null = null;
+      const zglos = (tekst: string, pole: HTMLInputElement) => {
+        blad = tekst;
+        zle = pole;
+      };
       const naDzien = el('naDzien').value;
       const koniec = el('koniecUmowy').value;
       const wOd = el('wychOd').value;
       const wDo = el('wychDo').value;
-      if (!blad && !poprawnaData(naDzien)) blad = 'Wpisz dzień, na który sprawdzamy.';
-      if (!blad && koniec && !poprawnaData(koniec)) blad = 'Popraw datę końca umowy.';
-      if (!blad && (wOd || wDo) && !(poprawnaData(wOd) && poprawnaData(wDo))) blad = 'Uzupełnij obie daty urlopu wychowawczego.';
-      if (!blad && wOd && wDo && wDo < wOd) blad = 'Urlop wychowawczy: koniec przed początkiem.';
-      if (!blad && !urlopy.length) blad = 'Wpisz co najmniej jeden rok i liczbę dni.';
+      if (!poprawnaData(naDzien)) zglos('Wpisz dzień, na który sprawdzamy.', el('naDzien'));
+      else if (koniec && !poprawnaData(koniec)) zglos('Popraw datę końca umowy.', el('koniecUmowy'));
+      else if ((wOd || wDo) && !poprawnaData(wOd)) zglos('Uzupełnij obie daty urlopu wychowawczego.', el('wychOd'));
+      else if ((wOd || wDo) && !poprawnaData(wDo)) zglos('Uzupełnij obie daty urlopu wychowawczego.', el('wychDo'));
+      else if (wOd && wDo && wDo < wOd) zglos('Urlop wychowawczy: koniec przed początkiem.', el('wychDo'));
+
+      const urlopy: UrlopZaRok[] = [];
+      const wiersz = new Map<number, number>();
+      for (let i = 1; i <= WIERSZE && !blad; i++) {
+        const pRok = el(`rok${i}`);
+        const pDni = el(`dni${i}`);
+        const rok = pRok.value.trim();
+        const dni = pDni.value.trim();
+        if (!rok && !dni) continue;
+        const r = Number(rok);
+        if (!/^\d{4}$/.test(rok)) zglos(`Wiersz ${i}: wpisz rok, np. 2025.`, pRok);
+        else if (r < MIN_ROK) zglos(`Wiersz ${i}: rok od ${MIN_ROK}.`, pRok);
+        else if (r > Number(naDzien.slice(0, 4))) zglos(`Wiersz ${i}: rok późniejszy niż dzień sprawdzenia.`, pRok);
+        else if (koniec && r > Number(koniec.slice(0, 4))) zglos(`Wiersz ${i}: rok późniejszy niż koniec umowy.`, pRok);
+        else if (wiersz.has(r)) zglos(`Wiersz ${i}: rok ${r} jest już w wierszu ${wiersz.get(r)}.`, pRok);
+        else if (!/^-?\d+$/.test(dni)) zglos(`Wiersz ${i}: wpisz liczbę pełnych dni.`, pDni);
+        else if (Number(dni) <= 0 || Number(dni) > MAKS_DNI) zglos(`Wiersz ${i}: dni od 1 do ${MAKS_DNI}.`, pDni);
+        else {
+          wiersz.set(r, i);
+          urlopy.push({ rok: r, dni: Number(dni) });
+        }
+      }
+      if (!blad && !urlopy.length) zglos('Wpisz co najmniej jeden rok i liczbę dni.', el('rok1'));
+
       let wynik: ReturnType<typeof zaleglyUrlop> | null = null;
       if (!blad) {
         try {
@@ -212,12 +264,16 @@ const faq = [
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
       b.hidden = !blad;
       b.textContent = blad ? typografia(blad) : '';
+      (zle as HTMLInputElement | null)?.setAttribute('aria-invalid', 'true');
       const status = w('status');
       if (!wynik) {
+        pisz('etykieta', 'Niewykorzystany urlop');
         w('glowny').textContent = '—';
         w('opis').textContent = '';
         status.hidden = true;
         w('lata').replaceChildren();
+        uwaga('urlop').hidden = false;
+        uwaga('ekwiwalent').hidden = true;
         return;
       }
       const o = opis(wynik);
@@ -255,7 +311,7 @@ const faq = [
       if (e)
         pisz(
           'ekwiwalent',
-          `Ekwiwalent wypłaca się w terminie wypłaty wynagrodzenia. Gdy ten termin przypada przed dniem rozwiązania umowy, w ciągu 10 dni od rozwiązania, czyli do ${dataPoPolsku(e.wyplataNajpozniej10)}, a gdy to dzień wolny od pracy, dzień wcześniej (art. 171 § 4–5 Kodeksu pracy).`,
+          `Ekwiwalent wypłaca się w terminie wypłaty wynagrodzenia. Gdy ten termin przypada przed dniem rozwiązania umowy, w ciągu 10 dni od rozwiązania, czyli do ${dataPoPolsku(e.wyplataNajpozniej10)}, a gdy to dzień wolny od pracy, dzień wcześniej (art. 171 § 4–5 Kodeksu pracy). Urlopu wychowawczego przy ekwiwalencie nie uwzględniamy.`,
         );
     };
     form.addEventListener('input', przelicz);
