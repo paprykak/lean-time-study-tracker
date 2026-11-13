@@ -89,11 +89,48 @@ test('czy potrzebujesz: B nie, C+E tak, wyjątek ocenny „jeśli…”, pkt 5 t
   await expect(werdykt).toHaveText('Nie potrzebujesz');
 });
 
+test('przykład startowy liczony od dzisiejszej daty w przeglądarce (zegar: 1 czerwca 2027 r.)', async ({ page }) => {
+  await page.clock.setFixedTime(new Date('2027-06-01T10:00:00+02:00'));
+  await page.goto(ADRES);
+  await expect(page.locator('#k95-data')).toHaveValue('2022-12-04');
+  await expect(page.locator('#k95-szkolenie')).toHaveValue('2027-07-31');
+  await expect(page.locator('[data-w="termin"]')).toHaveText(/4\sgrudnia\s2027\sr\./);
+  await expect(page.locator('[data-w="status"]')).toHaveText(/W\sterminie:\sza\s186\sdni/);
+  await expect(page.locator('[data-w="plan"]')).toContainText(/przepada\s126\sdni\sobecnego\skodu/);
+});
+
+test('błędy: szkolenie przed świadectwem, pusta data, orzeczenie wygasa przed szkoleniem', async ({ page }) => {
+  await page.locator('#k95-data').fill('2034-06-15');
+  await page.locator('#k95-szkolenie').fill('2034-06-01');
+  await expect(page.locator('#k95-szkolenie-blad')).toBeVisible();
+  await expect(page.locator('#k95-szkolenie')).toHaveAttribute('aria-invalid', 'true');
+  await expect(page.locator('[data-w="plan"]')).toHaveText('—');
+  await expect(page.locator('[data-w="termin"]')).toHaveText(/15\sczerwca\s2039\sr\./);
+  await page.locator('#k95-szkolenie').fill('2039-09-01');
+  await page.getByLabel('Lekarskie').fill('2039-03-01');
+  await expect(page.locator('[data-w="plan"]')).toContainText(/nowy\skod\sdo\s1\swrześnia\s2044\sr\./);
+  await expect(page.locator('[data-w="uwaga"]')).toContainText(/potrzebne\snowe\sorzeczenie/);
+  await page.locator('#k95-data').fill('');
+  await expect(page.locator('#k95-data-blad')).toContainText(/Wpisz\sdatę\swydania\sświadectwa/);
+  await expect(page.locator('#k95-data')).toHaveAttribute('aria-invalid', 'true');
+});
+
+test('termin z zapasem w przeszłości: „termin minął”', async ({ page }) => {
+  await page.clock.setFixedTime(new Date('2041-03-01T10:00:00+01:00'));
+  await page.goto(ADRES);
+  await page.getByLabel('Datę kodu 95 z prawa jazdy').check();
+  await page.locator('#k95-data').fill('2041-03-15');
+  await expect(page.locator('[data-w="zapas"]')).toContainText(/termin\sminął/);
+  await expect(page.locator('[data-w="najpozniej"]')).not.toContainText('termin minął');
+});
+
 test.describe('bez JavaScriptu', () => {
   test.use({ javaScriptEnabled: false });
   test('wynik startowy i tabela wyjątków są w HTML', async ({ page }) => {
     await page.goto(ADRES);
     await expect(page.locator('[data-w="termin"]')).toHaveText(/\d{4}\sr\./);
+    // Bez skryptu nie pokazujemy statusu „za N dni” liczonego w dniu budowania.
+    await expect(page.locator('[data-w="status"]')).toBeHidden();
     await expect(page.locator('[data-p="werdykt"]')).toHaveText('Potrzebujesz');
     await expect(page.locator('#kiedy-potrzebny ~ .tabela tr', { hasText: '45 km/h' }).first()).toBeVisible();
   });

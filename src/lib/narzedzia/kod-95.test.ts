@@ -54,10 +54,10 @@ describe('ważność kodu 95 (art. 15 ust. 4 ukp, art. 112 KC)', () => {
 });
 
 describe('przykład startowy (liczony od dzisiejszej daty w przeglądarce)', () => {
-  it('1 czerwca 2027: świadectwo 1.12.2022, szkolenie 31.07.2027, kod do 1.12.2027 (183 dni)', () => {
+  it('1 czerwca 2027: świadectwo 4.12.2022 (1640 dni wcześniej), szkolenie 31.07.2027, kod do 4.12.2027 (186 dni)', () => {
     const s = przykladStartowy('2027-06-01');
-    expect(s).toEqual({ data: '2022-12-01', szkolenie: '2027-07-31' });
-    expect(kod95({ tryb: 'swiadectwo', ...s, dzis: '2027-06-01' })).toMatchObject({ waznyDo: '2027-12-01', dniDoKonca: 183, status: 'w-terminie', plan: { strata: 123 } });
+    expect(s).toEqual({ data: '2022-12-04', szkolenie: '2027-07-31' });
+    expect(kod95({ tryb: 'swiadectwo', ...s, dzis: '2027-06-01' })).toMatchObject({ waznyDo: '2027-12-04', dniDoKonca: 186, status: 'w-terminie', plan: { strata: 126 } });
   });
 });
 

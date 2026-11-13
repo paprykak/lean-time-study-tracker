@@ -3,16 +3,15 @@
 // strata przy szkoleniu wcześniej i sprawdzenie, czy praca wymaga kodu 95 (art. 39a ust. 3 i 4 ustawy o transporcie
 // drogowym). Logika: src/lib/narzedzia/kod-95.ts (testy obok). Bez JavaScriptu: wynik startowy i tabela wyjątków.
 import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
-import { GODZINY_SZKOLENIA, KATEGORIE, LATA_WPISU, OPLATA_PRAWO_JAZDY, WSZYSTKIE_WYJATKI, ZAPAS_DNI, czyPotrzebny, kod95 } from '../../lib/narzedzia/kod-95';
-import { dataPoPolsku, dodajDni, dodajMiesiace, dzisWPolsce, ileDni } from '../../lib/narzedzia/terminy';
+import { GODZINY_SZKOLENIA, KATEGORIE, LATA_WPISU, OPLATA_PRAWO_JAZDY, PRZYKLAD_DNI, WSZYSTKIE_WYJATKI, ZAPAS_DNI, czyPotrzebny, kod95, przykladStartowy } from '../../lib/narzedzia/kod-95';
+import { dataPoPolsku, dzisWPolsce } from '../../lib/narzedzia/terminy';
 import { odmiana } from '../../lib/redakcja';
 
 const dzis = dzisWPolsce();
-const START = { data: dodajMiesiace(dzis, -54), szkolenie: dodajDni(dzis, 60) };
+// Przykład z dnia budowania; skrypt przestawia go na prawdziwe dziś (data-dzis). Bez JavaScriptu: daty bez statusu „za N dni”.
+const START = przykladStartowy(dzis);
 const r = kod95({ tryb: 'swiadectwo', data: START.data, szkolenie: START.szkolenie, dzis });
 const p = czyPotrzebny('C+E', []);
-const STATUS_START = r.status === 'pilne' ? `Pilne: ${ileDni(r.dniDoKonca)}` : r.status === 'wkrotce' ? `Wkrótce: ${ileDni(r.dniDoKonca)}` : `W terminie: ${ileDni(r.dniDoKonca)}`;
-const KLASA_START = r.status === 'wygaslo' ? 'po-terminie' : r.status;
 
 const faq = [
   {
@@ -63,14 +62,14 @@ const faq = [
 
       <div class="mt-4">
         <label for="k95-data" class="etykieta-pola" data-w="data-etykieta">Świadectwo wydane</label>
-        <input id="k95-data" name="data" type="date" class="pole mt-1 max-w-56" min="2008-01-01" max="2100-12-31" value={START.data} aria-describedby="k95-data-opis k95-data-blad" />
+        <input id="k95-data" name="data" type="date" class="pole mt-1 max-w-56" min="2008-01-01" max="2100-12-31" value={START.data} data-dzis={String(PRZYKLAD_DNI.data)} aria-describedby="k95-data-opis k95-data-blad" />
         <p id="k95-data-opis" class="meta mt-1" data-w="data-opis">Świadectwo kwalifikacji zawodowej z ostatniego szkolenia albo kwalifikacji.</p>
         <p id="k95-data-blad" class="blad-pola" data-blad="data" hidden></p>
       </div>
 
       <fieldset class="mt-6">
         <legend class="etykieta-pola">Orzeczenia ważne do (jeśli znasz)</legend>
-        <div class="mt-1 grid grid-cols-2 items-end gap-3">
+        <div class="mt-1 grid grid-cols-1 items-end gap-3 min-[360px]:grid-cols-2">
           <div>
             <label for="k95-lek" class="meta">Lekarskie</label>
             <input id="k95-lek" name="lekarskie" type="date" class="pole mt-1" min="2008-01-01" max="2100-12-31" aria-describedby="k95-orz-blad" />
@@ -85,8 +84,9 @@ const faq = [
 
       <div class="mt-6">
         <label for="k95-szkolenie" class="etykieta-pola">Szkolenie skończysz (opcjonalnie)</label>
-        <input id="k95-szkolenie" name="szkolenie" type="date" class="pole mt-1 max-w-56" min="2008-01-01" max="2100-12-31" value={START.szkolenie} aria-describedby="k95-szkolenie-opis" />
-        <p id="k95-szkolenie-opis" class="meta mt-1">Pokażemy, do kiedy będzie nowy kod i ile dni obecnego przepadnie.</p>
+        <input id="k95-szkolenie" name="szkolenie" type="date" class="pole mt-1 max-w-56" min="2008-01-01" max="2100-12-31" value={START.szkolenie} data-dzis={String(PRZYKLAD_DNI.szkolenie)} aria-describedby="k95-szkolenie-opis k95-szkolenie-blad" />
+        <p id="k95-szkolenie-opis" class="meta mt-1">Pokażemy, do kiedy będzie nowy kod i ile dni obecnego kodu przepadnie.</p>
+        <p id="k95-szkolenie-blad" class="blad-pola" data-blad="szkolenie" hidden></p>
       </div>
     </div>
 
@@ -94,19 +94,19 @@ const faq = [
       <h2 id="wynik-tytul" class="etykieta">Kod 95 ważny do</h2>
       <div aria-live="polite" aria-atomic="true">
         <p class="wynik-data" data-w="termin">{dataPoPolsku(r.waznyDo)}</p>
-        <p class="status-terminu" data-w="status" data-status={KLASA_START}>{STATUS_START}</p>
+        <p class="status-terminu" data-w="status" hidden></p>
       </div>
       <dl class="wynik-lista">
-        <div><dt>Skąd ta data</dt><dd data-w="ograniczenie">5 lat od wydania świadectwa (art. 15 ust. 4 ukp)</dd></div>
+        <div><dt>Skąd ta data</dt><dd data-w="ograniczenie">5 lat od wydania świadectwa (art. 15 ust. 4 ustawy o kierujących pojazdami)</dd></div>
         <div><dt>Szkolenie skończ do (z zapasem na wymianę prawa jazdy)</dt><dd data-w="zapas">{dataPoPolsku(r.zZapasem)} (szacunek redakcji: {ZAPAS_DNI} dni)</dd></div>
-        <div><dt>Ostatni dzień, w którym świadectwo na pewno przyjdzie przed końcem ważności</dt><dd data-w="najpozniej">{dataPoPolsku(r.szkolenieNajpozniej)}<span class="wynik-opis">nasz rachunek z § 21 ust. 5, nie termin z ustawy; bez czasu na wymianę prawa jazdy</span></dd></div>
-        <div><dt>Po szkoleniu w wybranym dniu</dt><dd data-w="plan">{r.plan ? `nowy kod do ${dataPoPolsku(r.plan.nowyKoniec)}; przepada ${odmiana(r.plan.strata, ['dzień', 'dni', 'dni'])} obecnego` : '—'}</dd></div>
+        <div><dt>Ostatni dzień na ukończenie szkolenia (świadectwo zdąży)</dt><dd data-w="najpozniej">{dataPoPolsku(r.szkolenieNajpozniej)}<span class="wynik-opis">nasz rachunek z § 21 ust. 5, nie termin z ustawy; bez czasu na wymianę prawa jazdy</span></dd></div>
+        <div><dt>Po szkoleniu w wybranym dniu</dt><dd data-w="plan">{r.plan ? `nowy kod do ${dataPoPolsku(r.plan.nowyKoniec)}; przepada ${odmiana(r.plan.strata, ['dzień', 'dni', 'dni'])} obecnego kodu` : '—'}</dd></div>
       </dl>
-      <p class="wynik-uwaga" data-w="uwaga">Wiąże data przy kodzie 95 w prawie jazdy. Do jazdy potrzebne jest prawo jazdy z aktualnym wpisem (art. 39f ust. 1 i 3 utd), a ile trwa wymiana u starosty, przepisy nie podają.</p>
+      <p class="wynik-uwaga" data-w="uwaga">Wiąże data przy kodzie 95 w prawie jazdy. Do jazdy potrzebne jest prawo jazdy z aktualnym wpisem (art. 39f ust. 1 i 3 ustawy o transporcie drogowym), a ile trwa wymiana u starosty, przepisy nie podają.</p>
       <p class="mt-5">
         <button type="button" class="przycisk przycisk-grafit" data-ics disabled>Dodaj do kalendarza (.ics)</button>
       </p>
-      <p class="meta mt-2">Przypomnienia: 180 dni przed końcem, szkolenie z zapasem na wymianę, ostatni dzień, w którym świadectwo zdąży, i koniec ważności (tylko te, które jeszcze nie minęły).</p>
+      <p class="meta mt-2">Przypomnienia: 180 dni przed końcem (gdy zostało mniej, dziś), szkolenie z zapasem na wymianę, ostatni dzień, w którym świadectwo zdąży, i koniec ważności (tylko te, które jeszcze nie minęły).</p>
       <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Powyżej przykład, zasady i tabela wyjątków poniżej.</p></noscript>
     </div>
   </form>
@@ -122,7 +122,7 @@ const faq = [
       </div>
       <fieldset class="mt-6" data-wyjatki>
         <legend class="etykieta-pola">Twoja jazda to (zaznacz, jeśli pasuje)</legend>
-        <p class="meta mt-1">Wyjątki z art. 39a ust. 3 i art. 3 ust. 1 pkt 3 utd; pełne warunki w tabeli niżej.</p>
+        <p class="meta mt-1">Wyjątki z art. 39a ust. 3 i art. 3 ust. 1 pkt 3 ustawy o transporcie drogowym; pełne warunki w tabeli niżej.</p>
         <div class="opcje-pionowe mt-2">
           {WSZYSTKIE_WYJATKI.map((w) => <label><input type="checkbox" name="wyjatek" value={w.id} /> {w.krotko}</label>)}
         </div>
@@ -133,7 +133,7 @@ const faq = [
       <h2 id="potrzeba-wynik-tytul" class="etykieta">Kod 95 w Twojej pracy</h2>
       <div aria-live="polite" aria-atomic="true">
         <p class="wynik-data" data-p="werdykt">{p.potrzeba === 'tak' ? 'Potrzebujesz' : 'Nie potrzebujesz'}</p>
-        <p class="mt-3" data-p="opis">Przewóz drogowy pojazdem tej kategorii wymaga kwalifikacji i szkolenia okresowego, czyli aktualnego kodu 95 w prawie jazdy (art. 39a ust. 1 pkt 5 i 6, art. 39f ust. 1 utd). Dotyczy to też przewozu na potrzeby własne firmy (art. 4 pkt 4 i 6a).</p>
+        <p class="mt-3" data-p="opis">Przewóz drogowy pojazdem tej kategorii wymaga kwalifikacji i szkolenia okresowego, czyli aktualnego kodu 95 w prawie jazdy (art. 39a ust. 1 pkt 5 i 6, art. 39f ust. 1 ustawy o transporcie drogowym). Dotyczy to też przewozu na potrzeby własne firmy (art. 4 pkt 4 i 6a).</p>
       </div>
       <p class="wynik-uwaga" data-p="uwaga" hidden></p>
     </div>
@@ -195,7 +195,7 @@ const faq = [
       organizacyjne, żeby je ukończył (art. 39l ust. 1 pkt 1 lit. a i pkt 6). Gdy szkolenie jest z inicjatywy
       pracodawcy albo za jego zgodą, stosuje się przepisy Kodeksu pracy o podnoszeniu kwalifikacji: przysługuje
       zwolnienie z pracy z zachowaniem wynagrodzenia na czas zajęć (art. 103<sup>1</sup> § 2 i 3). Umowę na piśmie
-      pracodawca musi zawrzeć, gdy chce Cię zobowiązać do pozostania w pracy (art. 103<sup>4</sup>). Czy przy kosztach pracodawcy możesz musieć je oddać po odejściu,
+      pracodawca musi zawrzeć, gdy chce Cię zobowiązać do pozostania w pracy (art. 103<sup>4</sup>). Czy przy kosztach pracodawcy będziesz musieć je oddać po odejściu,
       policzy <a href="/narzedzia/zwrot-kosztow-szkolenia">kalkulator lojalki</a>. Terminy badań kierowcy policzy
       <a href="/narzedzia/badania-kierowcy">kalkulator badań kierowcy</a>.
     </p>
@@ -214,8 +214,9 @@ const faq = [
 
 <script>
   import { czyPotrzebny, kod95, ZAPAS_DNI, type Kategoria, type Ograniczenie, type StatusKodu } from '../../lib/narzedzia/kod-95';
-  import { dataPoPolsku, dzisWPolsce, ileDni, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { dataPoPolsku, dniMiedzy, dzisWPolsce, ileDni, poprawnaData } from '../../lib/narzedzia/terminy';
   import { plikIcs, type Wydarzenie } from '../../lib/narzedzia/kalendarz-ics';
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
   import { odmiana } from '../../lib/redakcja';
   import { typografia } from '../../lib/typografia.mjs';
 
@@ -227,20 +228,25 @@ const faq = [
     const ics = form.querySelector<HTMLButtonElement>('[data-ics]')!;
     const bladData = form.querySelector<HTMLElement>('[data-blad="data"]')!;
     const bladOrz = form.querySelector<HTMLElement>('[data-blad="orzeczenia"]')!;
+    const bladSzk = form.querySelector<HTMLElement>('[data-blad="szkolenie"]')!;
     const STATUS: Record<StatusKodu, string> = { wygaslo: 'Wygasł', pilne: 'Pilne', wkrotce: 'Wkrótce', 'w-terminie': 'W terminie' };
     const KLASA: Record<StatusKodu, string> = { wygaslo: 'po-terminie', pilne: 'pilne', wkrotce: 'wkrotce', 'w-terminie': 'w-terminie' };
     const SKAD: Record<Ograniczenie, string> = {
-      'piec-lat': '5 lat od wydania świadectwa (art. 15 ust. 4 ukp)',
+      'piec-lat': '5 lat od wydania świadectwa (art. 15 ust. 4 ustawy o kierujących pojazdami)',
       'prawo-jazdy': 'data z prawa jazdy (wiążąca)',
-      lekarskie: 'koniec orzeczenia lekarskiego (art. 15 ust. 4 ukp)',
-      psychologiczne: 'koniec orzeczenia psychologicznego (art. 15 ust. 4 ukp)',
+      lekarskie: 'koniec orzeczenia lekarskiego (art. 15 ust. 4 ustawy o kierujących pojazdami)',
+      psychologiczne: 'koniec orzeczenia psychologicznego (art. 15 ust. 4 ustawy o kierujących pojazdami)',
     };
+    const NIEPELNA = 'Wpisz pełną datę: dzień, miesiąc i rok.';
     let wydarzenia: Wydarzenie[] = [];
 
     const blad = (el: HTMLElement, t: string | null) => {
       el.hidden = !t;
       el.textContent = t ?? '';
     };
+    const nieprawidlowe = (p: HTMLInputElement, zle: boolean) => p.setAttribute('aria-invalid', zle ? 'true' : 'false');
+    /** Niepełna data (przeglądarka zwraca wtedy pusty tekst) albo data spoza kalendarza. */
+    const niepelna = (p: HTMLInputElement) => p.validity.badInput || (!!p.value && !poprawnaData(p.value));
     const pusto = (t: string) => {
       pisz('termin', t);
       w('status').hidden = true;
@@ -251,46 +257,60 @@ const faq = [
     };
 
     const przelicz = () => {
+      const dzis = dzisWPolsce();
       const tryb = form.querySelector<HTMLInputElement>('input[name="tryb"]:checked')?.value === 'prawo-jazdy' ? 'prawo-jazdy' : 'swiadectwo';
       pisz('data-etykieta', tryb === 'swiadectwo' ? 'Świadectwo wydane' : 'Kod 95 ważny do');
       pisz('data-opis', tryb === 'swiadectwo' ? 'Świadectwo kwalifikacji zawodowej z ostatniego szkolenia albo kwalifikacji.' : 'Data przy kodzie 95 w rubryce 12 prawa jazdy (przy kategorii, którą jeździsz; przy kilku datach najwcześniejsza).');
-      const data = pole('data').value;
-      const lek = pole('lekarskie').value;
-      const psych = pole('psychologiczne').value;
-      const szk = pole('szkolenie').value;
-      const zla = (d: string) => !!d && !poprawnaData(d);
-      const bD = zla(data) ? 'Wpisz pełną datę: dzień, miesiąc i rok.' : null;
-      let bO = zla(lek) || zla(psych) || zla(szk) ? 'Wpisz pełną datę: dzień, miesiąc i rok.' : null;
-      if (!bD && !bO && tryb === 'swiadectwo' && data && ((lek && lek < data) || (psych && psych < data))) bO = 'Orzeczenie kończy się przed wydaniem świadectwa. Sprawdź daty.';
+      const [pData, pLek, pPsych, pSzk] = ['data', 'lekarskie', 'psychologiczne', 'szkolenie'].map(pole);
+      const data = pData.value;
+      const lek = pLek.value;
+      const psych = pPsych.value;
+      const szk = pSzk.value;
+
+      const bD = niepelna(pData) ? NIEPELNA : !data ? (tryb === 'swiadectwo' ? 'Wpisz datę wydania świadectwa.' : 'Wpisz datę ważności kodu 95 z prawa jazdy.') : null;
+      const zlyLek = niepelna(pLek) || (!bD && tryb === 'swiadectwo' && !!lek && lek < data);
+      const zlyPsych = niepelna(pPsych) || (!bD && tryb === 'swiadectwo' && !!psych && psych < data);
+      const bO = niepelna(pLek) || niepelna(pPsych) ? NIEPELNA : zlyLek || zlyPsych ? 'Orzeczenie kończy się przed wydaniem świadectwa. Sprawdź daty.' : null;
+      const bS = niepelna(pSzk) ? NIEPELNA : !bD && tryb === 'swiadectwo' && !!szk && szk < data ? 'Szkolenie nie może skończyć się przed wydaniem obecnego świadectwa.' : null;
       blad(bladData, bD);
       blad(bladOrz, bO);
-      pole('data').setAttribute('aria-invalid', bD ? 'true' : 'false');
-      if (!data || bD || bO) return pusto('Wpisz datę');
+      blad(bladSzk, bS);
+      nieprawidlowe(pData, !!bD);
+      nieprawidlowe(pLek, zlyLek);
+      nieprawidlowe(pPsych, zlyPsych);
+      nieprawidlowe(pSzk, !!bS);
+      if (bD || bO) return pusto('Wpisz datę');
 
-      const r = kod95({ tryb, data, lekarskieDo: lek || undefined, psychologiczneDo: psych || undefined, szkolenie: szk || undefined, dzis: dzisWPolsce() });
+      // Przy błędzie w dacie szkolenia liczymy bez planu.
+      const r = kod95({ tryb, data, lekarskieDo: lek || undefined, psychologiczneDo: psych || undefined, szkolenie: (!bS && szk) || undefined, dzis });
       pisz('termin', dataPoPolsku(r.waznyDo));
       const s = w('status');
       s.hidden = false;
       s.dataset.status = KLASA[r.status];
       pisz('status', `${STATUS[r.status]}: ${ileDni(r.dniDoKonca)}`);
       pisz('ograniczenie', SKAD[r.ograniczenie]);
+      const minal = (d: string) => dniMiedzy(dzis, d) < 0;
       const opisNajpozniej = document.createElement('span');
       opisNajpozniej.className = 'wynik-opis';
       opisNajpozniej.textContent = typografia('nasz rachunek z § 21 ust. 5, nie termin z ustawy; bez czasu na wymianę prawa jazdy');
-      w('najpozniej').replaceChildren(typografia(r.status === 'wygaslo' ? 'termin minął' : dataPoPolsku(r.szkolenieNajpozniej)), ...(r.status === 'wygaslo' ? [] : [opisNajpozniej]));
-      pisz('zapas', r.status === 'wygaslo' ? 'termin minął' : `${dataPoPolsku(r.zZapasem)} (szacunek redakcji: ${ZAPAS_DNI} dni)`);
+      w('najpozniej').replaceChildren(
+        typografia(r.status === 'wygaslo' ? 'termin minął' : `${dataPoPolsku(r.szkolenieNajpozniej)}${minal(r.szkolenieNajpozniej) ? ' (termin minął)' : ''}`),
+        ...(r.status === 'wygaslo' ? [] : [opisNajpozniej]),
+      );
+      pisz('zapas', r.status === 'wygaslo' ? 'termin minął' : `${dataPoPolsku(r.zZapasem)} (${minal(r.zZapasem) ? 'termin minął; ' : ''}szacunek redakcji: ${ZAPAS_DNI} dni)`);
       pisz(
         'plan',
         !r.plan
           ? '—'
           : r.plan.przerwa > 0
             ? `nowy kod do ${dataPoPolsku(r.plan.nowyKoniec)}; wcześniej ${odmiana(r.plan.przerwa, ['dzień', 'dni', 'dni'])} bez kodu 95`
-            : `nowy kod do ${dataPoPolsku(r.plan.nowyKoniec)}${r.plan.nowyOgraniczony ? ' (do końca orzeczenia)' : ''}; przepada ${odmiana(r.plan.strata, ['dzień', 'dni', 'dni'])} obecnego`,
+            : `nowy kod do ${dataPoPolsku(r.plan.nowyKoniec)}${r.plan.nowyOgraniczony ? ' (do końca orzeczenia)' : ''}; przepada ${odmiana(r.plan.strata, ['dzień', 'dni', 'dni'])} obecnego kodu`,
       );
       const uwagi: string[] = [];
-      if (r.status === 'wygaslo') uwagi.push('Bez aktualnego kodu 95 nie wolno wykonywać przewozu drogowego (art. 39a ust. 1 pkt 6 i art. 39f ust. 1 utd). Wystarczy szkolenie okresowe, bez ponownej kwalifikacji i testu (art. 39d ust. 5 utd).');
-      else uwagi.push('Wiąże data przy kodzie 95 w prawie jazdy. Do jazdy potrzebne jest prawo jazdy z aktualnym wpisem (art. 39f ust. 1 i 3 utd), a ile trwa wymiana u starosty, przepisy nie podają.');
-      if (r.orzeczenieWczesniej) uwagi.push('Orzeczenie kończy się przed datą z prawa jazdy, choć wpis nie powinien trwać dłużej niż orzeczenia (art. 15 ust. 4 ukp). Sprawdź daty.');
+      if (r.status === 'wygaslo') uwagi.push('Bez aktualnego kodu 95 nie wolno wykonywać przewozu drogowego (art. 39a ust. 1 pkt 6 i art. 39f ust. 1 ustawy o transporcie drogowym). Wystarczy szkolenie okresowe, bez ponownej kwalifikacji i testu (art. 39d ust. 5).');
+      else uwagi.push('Wiąże data przy kodzie 95 w prawie jazdy. Do jazdy potrzebne jest prawo jazdy z aktualnym wpisem (art. 39f ust. 1 i 3 ustawy o transporcie drogowym), a ile trwa wymiana u starosty, przepisy nie podają.');
+      if (r.orzeczenieWczesniej) uwagi.push('Orzeczenie kończy się przed datą z prawa jazdy, choć wpis nie powinien trwać dłużej niż orzeczenia (art. 15 ust. 4 ustawy o kierujących pojazdami). Sprawdź daty.');
+      if (r.plan?.noweOrzeczenie) uwagi.push('Orzeczenie wygaśnie przed dniem szkolenia: przed wpisem potrzebne nowe orzeczenie (art. 15 ust. 2 ustawy o kierujących pojazdami).');
       w('uwaga').hidden = false;
       pisz('uwaga', uwagi.join(' '));
       wydarzenia = r.wydarzenia;
@@ -311,6 +331,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    ustawDzisiejszeWartosci(form);
     przelicz();
   }
 
@@ -327,20 +348,20 @@ const faq = [
       const pkt = r.wyjatki.map((x) => (x.pkt.startsWith('art.') ? x.pkt : `art. 39a ust. 3 pkt ${x.pkt}`)).join(', ');
       if (bez) {
         pisz('werdykt', 'Nie potrzebujesz');
-        pisz('opis', `Kategoria ${kategoria}: wymogu kwalifikacji i szkolenia okresowego nie stosuje się (art. 39a ust. 4 utd).`);
+        pisz('opis', `Kategoria ${kategoria}: wymogu kwalifikacji i szkolenia okresowego nie stosuje się (art. 39a ust. 4 ustawy o transporcie drogowym).`);
       } else if (r.potrzeba === 'tak') {
         pisz('werdykt', 'Potrzebujesz');
-        pisz('opis', 'Przewóz drogowy pojazdem tej kategorii wymaga kwalifikacji i szkolenia okresowego, czyli aktualnego kodu 95 w prawie jazdy (art. 39a ust. 1 pkt 5 i 6, art. 39f ust. 1 utd). Dotyczy to też przewozu na potrzeby własne firmy (art. 4 pkt 4 i 6a).');
+        pisz('opis', 'Przewóz drogowy pojazdem tej kategorii wymaga kwalifikacji i szkolenia okresowego, czyli aktualnego kodu 95 w prawie jazdy (art. 39a ust. 1 pkt 5 i 6, art. 39f ust. 1 ustawy o transporcie drogowym). Dotyczy to też przewozu na potrzeby własne firmy (art. 4 pkt 4 i 6a).');
       } else if (r.potrzeba === 'nie') {
         pisz('werdykt', 'Nie potrzebujesz');
-        pisz('opis', `Ten przewóz jest wyłączony z obowiązku (${pkt} utd), o ile spełniasz wszystkie warunki z tabeli niżej.`);
+        pisz('opis', `Ten przewóz jest wyłączony z obowiązku (${pkt} ustawy o transporcie drogowym), o ile spełniasz wszystkie warunki z tabeli niżej.`);
       } else {
         pisz('werdykt', 'Nie potrzebujesz, jeśli…');
-        pisz('opis', `Wyjątek (${pkt} utd) działa tylko wtedy, gdy spełniasz wszystkie jego warunki z tabeli niżej. Warunki są ocenne: przy wątpliwości bezpieczniej mieć kod 95.`);
+        pisz('opis', `Wyjątek (${pkt} ustawy o transporcie drogowym) działa tylko wtedy, gdy spełniasz wszystkie jego warunki z tabeli niżej. Warunki są ocenne: przy wątpliwości bezpieczniej mieć kod 95.`);
       }
       const u = el('uwaga');
       u.hidden = r.niedotyczace.length === 0;
-      pisz('uwaga', r.niedotyczace.length ? 'Wyjątek o przejeździe bez pasażerów do serwisu dotyczy tylko kategorii D i D1 (art. 39a ust. 3 pkt 5 utd).' : '');
+      pisz('uwaga', r.niedotyczace.length ? 'Wyjątek o przejeździe bez pasażerów do serwisu dotyczy tylko kategorii D i D1 (art. 39a ust. 3 pkt 5 ustawy o transporcie drogowym).' : '');
     };
     fp.addEventListener('input', przelicz);
     fp.addEventListener('change', przelicz);

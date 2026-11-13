@@ -36,7 +36,7 @@
 //    sanitarnego (to nie jest punkt art. 39a ust. 3).
 import { czyRoboczy } from './dni-robocze';
 import { swieta } from './czas-pracy';
-import { dataPoPolsku, dniMiedzy, dodajDni, dodajLata, dodajMiesiace, poprawnaData } from './terminy';
+import { dataPoPolsku, dniMiedzy, dodajDni, dodajLata, poprawnaData } from './terminy';
 import type { Wydarzenie } from './kalendarz-ics';
 
 /** Wpis na 5 lat (art. 15 ust. 4 ukp). */
@@ -101,8 +101,10 @@ export function ostatniRoboczy(data: string): string {
 /** Najpóźniejszy dzień ukończenia szkolenia: przeddzień ostatniego dnia roboczego ważności (§ 21 ust. 5). */
 export const szkolenieNajpozniej = (waznyDo: string) => dodajDni(ostatniRoboczy(waznyDo), -1);
 
-/** Przykład startowy formularza liczony od dzisiejszej daty: świadectwo sprzed 4,5 roku, szkolenie za 60 dni. */
-export const przykladStartowy = (dzis: string) => ({ data: dodajMiesiace(dzis, -54), szkolenie: dodajDni(dzis, 60) });
+/** Przykład startowy w dniach od dziś (znaczniki data-dzis, src/lib/narzedzia/dzis-w-formularzu.ts):
+ *  świadectwo sprzed ok. 4,5 roku, szkolenie za 60 dni. */
+export const PRZYKLAD_DNI = { data: -1640, szkolenie: 60 } as const;
+export const przykladStartowy = (dzis: string) => ({ data: dodajDni(dzis, PRZYKLAD_DNI.data), szkolenie: dodajDni(dzis, PRZYKLAD_DNI.szkolenie) });
 
 export function kod95({ tryb, data, lekarskieDo, psychologiczneDo, szkolenie, dzis }: DaneKodu): WynikKodu {
   for (const d of [data, dzis, lekarskieDo, psychologiczneDo, szkolenie]) {
