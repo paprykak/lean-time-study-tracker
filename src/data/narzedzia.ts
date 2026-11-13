@@ -163,10 +163,10 @@ export const NARZEDZIA: Narzedzie[] = [
   {
     slug: 'ekwiwalent-za-urlop',
     nazwa: 'Ekwiwalent za niewykorzystany urlop',
-    krotko: 'Ile wynosi ekwiwalent za urlop przy odejściu z pracy. Współczynnik na 2026 i 2027 r., premie, niepełny etat.',
+    krotko: 'Ile wynosi ekwiwalent za urlop przy odejściu z pracy. Współczynnik na każdy rok, premie, niepełny etat.',
     kategoria: 'urlopy',
     przepisy: ['kodeksPracy', 'urlopowe', 'dniWolne'],
-    sprawdzono: '2026-11-11',
+    sprawdzono: '2026-11-13',
   },
   {
     slug: 'kalkulator-l4',
@@ -299,7 +299,7 @@ export const NARZEDZIA: Narzedzie[] = [
   {
     slug: 'delegacja-zagraniczna',
     nazwa: 'Delegacja zagraniczna: dieta i nocleg',
-    krotko: 'Dieta i limit na nocleg za granicą dla 119 państw, 1/3 i 1/2 diety, posiłki 15/30/30%, ryczałty.',
+    krotko: 'Dieta i limit na nocleg za granicą dla 117 państw i terytoriów, 1/3 i 1/2 diety, posiłki 15/30/30%, ryczałty.',
     kategoria: 'wynagrodzenie',
     przepisy: ['kodeksPracy', 'podrozeSluzbowe', 'pit', 'podstawaSkladek'],
     sprawdzono: '2026-11-12',
@@ -341,8 +341,8 @@ export const NARZEDZIA: Narzedzie[] = [
     nazwa: 'Urlop okolicznościowy i zwolnienia od pracy',
     krotko: 'Ile dni wolnego na ślub, narodziny dziecka, pogrzeb, oddanie krwi i wezwanie do sądu, i czy są płatne.',
     kategoria: 'urlopy',
-    przepisy: ['zwolnieniaOdPracy', 'sluzbaKrwi', 'wynagrodzenieRozp', 'kodeksPracy'],
-    sprawdzono: '2026-11-12',
+    przepisy: ['zwolnieniaOdPracy', 'sluzbaKrwi', 'wynagrodzenieRozp', 'kodeksPracy', 'ochotniczeStraze'],
+    sprawdzono: '2026-11-13',
   },
   {
     slug: 'urlop-ojcowski',
@@ -389,8 +389,8 @@ export const NARZEDZIA: Narzedzie[] = [
     nazwa: 'Kalkulator stażu pracy',
     krotko: 'Staż z umów o pracę, zleceń i działalności (od 2026 r.) bez liczenia okresów podwójnie; 20 czy 26 dni urlopu.',
     kategoria: 'umowa',
-    przepisy: ['kodeksPracy', 'kodeksCywilny'],
-    sprawdzono: '2026-11-12',
+    przepisy: ['kodeksPracy', 'kodeksCywilny', 'zmianaStazu2025'],
+    sprawdzono: '2026-11-13',
   },
   {
     slug: 'zasilek-dla-bezrobotnych',

@@ -118,6 +118,13 @@ export const AKTY = {
     adres: 'https://eli.gov.pl/eli/MP/2026/1098/ogl',
     sprawdzono: '2026-11-13',
   },
+  ochotniczeStraze: {
+    nazwa: 'Ustawa o ochotniczych strażach pożarnych',
+    publikator: 'Dz.U. 2025 poz. 244',
+    uwaga: 'tekst jednolity ze zm.: Dz.U. 2025 poz. 900, 2026 poz. 180, 426 i 1159 (zmiany nie dotyczą art. 12 i 15); art. 12: zwolnienie strażaka OSP od pracy na czas działań, akcji, szkoleń i ćwiczeń oraz odpoczynku z art. 132 § 1 Kp; art. 15: ekwiwalent pieniężny z budżetu gminy',
+    adres: eli(2025, 244),
+    sprawdzono: '2026-11-13',
+  },
   budzet2026: {
     nazwa: 'Ustawa budżetowa na rok 2026',
     publikator: 'Dz.U. 2026 poz. 62',
