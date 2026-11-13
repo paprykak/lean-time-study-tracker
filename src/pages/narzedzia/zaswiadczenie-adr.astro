@@ -50,14 +50,14 @@ const faq = [
         <label for="adr-wazne" class="etykieta-pola">Ważne do</label>
         <input id="adr-wazne" name="wazne" type="date" class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" value={START.waznyDo} data-dzis={String(PRZYKLAD_DNI.waznyDo)} aria-describedby="adr-wazne-opis adr-wazne-blad" />
         <p id="adr-wazne-opis" class="meta mt-1">Data z zaświadczenia ADR (pole „ważne do”).</p>
-        <p id="adr-wazne-blad" class="blad-pola" data-blad="wazne" hidden></p>
+        <p id="adr-wazne-blad" class="blad-pola" data-blad="wazne" role="alert" hidden></p>
       </div>
 
       <div class="mt-6">
         <label for="adr-egzamin" class="etykieta-pola">Egzamin po kursie doskonalącym (opcjonalnie)</label>
         <input id="adr-egzamin" name="egzamin" type="date" class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" value={START.egzamin} data-dzis={String(PRZYKLAD_DNI.egzamin)} aria-describedby="adr-egzamin-opis adr-egzamin-blad" />
         <p id="adr-egzamin-opis" class="meta mt-1">Pokażemy, czy egzamin w tym dniu przedłuży zaświadczenie i do kiedy.</p>
-        <p id="adr-egzamin-blad" class="blad-pola" data-blad="egzamin" hidden></p>
+        <p id="adr-egzamin-blad" class="blad-pola" data-blad="egzamin" role="alert" hidden></p>
       </div>
 
       <fieldset class="mt-6">
@@ -137,6 +137,7 @@ const faq = [
   import { plikIcs, type Wydarzenie } from '../../lib/narzedzia/kalendarz-ics';
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
   import { typografia } from '../../lib/typografia.mjs';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-adr]');
   if (form) {
@@ -150,10 +151,6 @@ const faq = [
     const NIEPELNA = 'Wpisz pełną datę: dzień, miesiąc i rok.';
     let wydarzenia: Wydarzenie[] = [];
 
-    const blad = (el: HTMLElement, t: string | null) => {
-      el.hidden = !t;
-      el.textContent = t ? typografia(t) : '';
-    };
     const niepelna = (p: HTMLInputElement) => p.validity.badInput || (!!p.value && !poprawnaData(p.value));
 
     const przelicz = () => {
@@ -164,10 +161,8 @@ const faq = [
       const egz = pE.value;
       const bW = niepelna(pW) ? NIEPELNA : !wazne ? 'Wpisz datę „ważne do” z zaświadczenia.' : null;
       const bE = niepelna(pE) ? NIEPELNA : !bW && !!egz && egz < dodajLata(wazne, -LATA_WAZNOSCI) ? 'Egzamin wypada przed wydaniem obecnego zaświadczenia. Sprawdź daty.' : null;
-      blad(bladWazne, bW);
-      blad(bladEgz, bE);
-      pW.setAttribute('aria-invalid', bW ? 'true' : 'false');
-      pE.setAttribute('aria-invalid', bE ? 'true' : 'false');
+      pokazBlad(bladWazne, bW, pW);
+      pokazBlad(bladEgz, bE, pE);
       if (bW) {
         pisz('termin', 'Wpisz datę');
         w('status').hidden = true;
@@ -207,6 +202,7 @@ const faq = [
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
     ustawDzisiejszeWartosci(form);
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

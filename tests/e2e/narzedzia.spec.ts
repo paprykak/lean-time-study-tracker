@@ -48,7 +48,7 @@ test('błędne dane: komunikat przy polu, aria-invalid, brak kwoty', async ({ pa
   await pole.fill('300');
   await expect(page.getByText(/najwyżej 240\sgodzin\s/)).toBeVisible();
   await pole.fill('8');
-  await expect(pole).toHaveAttribute('aria-invalid', 'false');
+  await expect(pole).not.toHaveAttribute('aria-invalid');
   await expect(kwota(page)).toHaveText('48,08 zł');
 });
 

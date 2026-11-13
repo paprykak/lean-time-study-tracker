@@ -40,7 +40,7 @@ const faq = [
   <form class="kalkulator" data-robocze novalidate aria-labelledby="kalkulator-tytul">
     <div class="kalkulator-pola">
       <h2 id="kalkulator-tytul" class="tytul-m">Daty</h2>
-      <div class="mt-4 grid grid-cols-2 items-end gap-3">
+      <div class="mt-4 grid grid-cols-1 items-end gap-3 min-[380px]:grid-cols-2">
         <div>
           <label for="r-od" class="etykieta-pola">Od</label>
           <input id="r-od" name="od" type="date" data-dzis class="pole mt-1" min="2000-01-01" max="2100-12-31" value={D.od} aria-describedby="r-blad" />
@@ -60,7 +60,7 @@ const faq = [
         <input type="checkbox" name="soboty" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
         <span>Soboty są u mnie dniami pracy</span>
       </label>
-      <p id="r-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+      <p id="r-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -101,6 +101,7 @@ const faq = [
   import { dataPoPolsku, dniMiedzy, poprawnaData } from '../../lib/narzedzia/terminy';
   import { typografia } from '../../lib/typografia.mjs';
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-robocze]');
   if (form) {
@@ -113,19 +114,21 @@ const faq = [
       const n = /^\d{1,4}$/.test(tekstN) ? Number(tekstN) : NaN;
       const soboty = el('soboty').checked;
       let blad: string | null = null;
-      let zleDaty = true;
-      if (!poprawnaData(od) || !poprawnaData(do_)) blad = 'Wpisz obie daty.';
-      else if (do_ < od) blad = 'Data „Do” nie może być przed datą „Od”.';
-      else if (dniMiedzy(od, do_) + 1 > 3660) blad = 'Kalkulator liczy najwyżej 10 lat.';
-      else {
-        zleDaty = false;
-        if (!(n >= 1 && n <= 2000)) blad = 'Liczba dni roboczych: od 1 do 2000.';
+      let zle: HTMLInputElement[] = [];
+      if (!poprawnaData(od) || !poprawnaData(do_)) {
+        blad = 'Wpisz obie daty.';
+        zle = [el('od'), el('do')].filter((p) => !poprawnaData(p.value));
+      } else if (do_ < od) {
+        blad = 'Data „Do” nie może być przed datą „Od”.';
+        zle = [el('do')];
+      } else if (dniMiedzy(od, do_) + 1 > 3660) {
+        blad = 'Kalkulator liczy najwyżej 10 lat.';
+        zle = [el('do')];
+      } else if (!(n >= 1 && n <= 2000)) {
+        blad = 'Liczba dni roboczych: od 1 do 2000.';
+        zle = [el('n')];
       }
-      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
-      b.hidden = !blad;
-      b.textContent = typografia(blad ?? '');
-      for (const p of ['od', 'do']) el(p).setAttribute('aria-invalid', blad && zleDaty ? 'true' : 'false');
-      el('n').setAttribute('aria-invalid', blad && !zleDaty ? 'true' : 'false');
+      pokazBlad(form.querySelector<HTMLElement>('[data-blad="dane"]')!, blad, zle);
       if (blad) {
         w('robocze').textContent = '—';
         w('opis').textContent = '';
@@ -143,6 +146,7 @@ const faq = [
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
     ustawDzisiejszeWartosci(form);
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

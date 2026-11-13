@@ -46,9 +46,9 @@ export type RodzajNieobecnosci =
   "bezplatny" | "inny-pracodawca" | "wychowawczy" | "nieobecnosc";
 export const RODZAJE: Record<RodzajNieobecnosci, string> = {
   bezplatny: "Urlop bezpłatny",
-  "inny-pracodawca": "Do pracy u innego pracodawcy",
+  "inny-pracodawca": "U innego pracodawcy",
   wychowawczy: "Urlop wychowawczy",
-  nieobecnosc: "Nieobecność nieusprawiedliwiona",
+  nieobecnosc: "Bez usprawiedliwienia",
 };
 /** Najdłuższy okres, który liczymy (lata). */
 export const MAKS_LAT = 6;

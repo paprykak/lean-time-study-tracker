@@ -126,7 +126,7 @@ const faq = [
         </div>
         <p class="meta mt-1">Puste pole: liczymy z wymiaru czasu pracy.</p>
       </details>
-      <p id="n-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+      <p id="n-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -189,6 +189,7 @@ const faq = [
   import { liczba, wpisanaLiczba, zl } from '../../lib/narzedzia/format';
   import { odmiana } from '../../lib/redakcja';
   import { typografia } from '../../lib/typografia.mjs';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-niepelny]');
   if (form) {
@@ -220,26 +221,29 @@ const faq = [
       el('hm').placeholder = liczba(wymiarMiesiaca(rok, miesiac).godziny * etat);
       el('hu').placeholder = od >= 1 && do_ <= dniMies && od <= do_ ? liczba(wymiarCzesci(rok, miesiac, od, do_) * etat) : '';
       el('hu').disabled = !czesc;
-      const blad =
-        !(stawka > 0 && stawka < 1_000_000) ? 'Wpisz pensję miesięczną, na przykład 6000.'
-        : !(od >= 1 && do_ <= dniMies && od <= do_) ? `Dni umowy wpisz od 1 do ${dniMies}, pierwszy nie później niż ostatni.`
-        : !(dniL4 >= 0) ? 'Dni L4 wpisz jako liczbę całkowitą.'
-        : dniL4 > do_ - od + 1 ? `W tym miesiącu umowa trwa ${odmiana(do_ - od + 1, ['dzień', 'dni', 'dni'])}: tyle najwyżej może mieć L4.`
-        : !(nieob >= 0) ? 'Godziny nieobecności wpisz jako liczbę, na przykład 16.'
-        : (hm !== undefined && !(hm > 0 && hm <= 744)) || (hu !== undefined && !(hu >= 0 && hu <= 744)) ? 'Godziny z grafiku wpisz jako liczbę od 1 do 744.'
-        : null;
+      const zleGodziny = [hm !== undefined && !(hm > 0 && hm <= 744) ? el('hm') : null, hu !== undefined && !(hu >= 0 && hu <= 744) ? el('hu') : null];
+      const [blad, zle]: [string | null, (Element | null)[]] =
+        !(stawka > 0 && stawka < 1_000_000) ? ['Wpisz pensję miesięczną, na przykład 6000.', [el('stawka')]]
+        : !(od >= 1 && do_ <= dniMies && od <= do_)
+          ? [`Dni umowy wpisz od 1 do ${dniMies}, pierwszy nie później niż ostatni.`, [od >= 1 && od <= dniMies ? null : el('od'), do_ >= 1 && do_ <= dniMies && od <= do_ ? null : el('do')]]
+        : !(dniL4 >= 0) ? ['Dni L4 wpisz jako liczbę całkowitą.', [el('l4')]]
+        : dniL4 > do_ - od + 1 ? [`W tym miesiącu umowa trwa ${odmiana(do_ - od + 1, ['dzień', 'dni', 'dni'])}: tyle najwyżej może mieć L4.`, [el('l4')]]
+        : !(nieob >= 0) ? ['Godziny nieobecności wpisz jako liczbę, na przykład 16.', [el('nieobecnosc')]]
+        : zleGodziny.some((p) => p) ? ['Godziny z grafiku wpisz jako liczbę od 1 do 744.', zleGodziny]
+        : [null, []];
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
       let r: ReturnType<typeof niepelnyMiesiac> | null = null;
       let komunikat = blad;
+      let zlePola = zle;
       if (!komunikat) {
         try {
           r = niepelnyMiesiac({ rok, miesiac, stawka, etat, od, do: do_, dniL4, godzinyNieobecnosci: nieob, godzinyMiesiaca: hm, godzinyUmowy: czesc ? hu : undefined });
         } catch {
           komunikat = 'Godzin nieobecności albo godzin w dniach umowy jest więcej, niż przypada do przepracowania.';
+          zlePola = [el('nieobecnosc'), czesc ? el('hu') : el('hm')];
         }
       }
-      b.hidden = !komunikat;
-      b.textContent = komunikat ? typografia(komunikat) : '';
+      pokazBlad(b, komunikat, zlePola);
       if (!r) {
         for (const k of ['kwota', 'l4', 'nieobecnosc', 'poza', 'godziny']) w(k).textContent = '—';
         w('opis').textContent = '';
@@ -261,6 +265,7 @@ const faq = [
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
     ustawDzisiejszeWartosci(form);
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

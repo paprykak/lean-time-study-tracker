@@ -76,7 +76,7 @@ const faq = [
         <input id="p-wliczane" name="wliczane" class="pole mt-1 max-w-48" type="text" inputmode="decimal" autocomplete="off" value="200" aria-describedby="p-wliczane-opis p-blad" />
         <p id="p-wliczane-opis" class="meta mt-1">Bez składników z listy obok: one się nie liczą.</p>
       </div>
-      <p id="p-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+      <p id="p-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
       <div class="mt-5">
         <p class="etykieta">Nie wlicza się (art. 6 ust. 5)</p>
         <ul class="mt-2 list-disc space-y-1 pl-5 text-[0.9375rem] text-tekst-tresc">
@@ -137,6 +137,7 @@ const faq = [
   import { sprawdzPlace } from '../../lib/narzedzia/placa-minimalna';
   import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-placa]');
   if (form) {
@@ -147,9 +148,8 @@ const faq = [
       const wliczane = wpisanaLiczba(el('wliczane').value || '0');
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
       const blad = !(zasadnicze >= 0) || !(wliczane >= 0) || zasadnicze + wliczane === 0 ? 'Wpisz pensję zasadniczą, na przykład 4500.' : null;
-      b.hidden = !blad;
-      b.textContent = blad ?? '';
-      for (const n of ['zasadnicze', 'wliczane']) el(n).setAttribute('aria-invalid', blad ? 'true' : 'false');
+      const ujemne = [zasadnicze >= 0 ? null : el('zasadnicze'), wliczane >= 0 ? null : el('wliczane')].filter((p) => p);
+      pokazBlad(b, blad, ujemne.length ? ujemne : [el('zasadnicze')]);
       const status = w('status');
       if (blad) {
         w('wyrownanie').textContent = '—';
@@ -169,6 +169,7 @@ const faq = [
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
     ustawDzisiejszeWartosci(form);
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

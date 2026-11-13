@@ -136,6 +136,7 @@ const faq = [
 
 <script>
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
   import { obowiazkiNaStart, type Obowiazek } from '../../lib/narzedzia/start-w-pracy';
   import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
   import { typografia } from '../../lib/typografia.mjs';
@@ -151,8 +152,7 @@ const faq = [
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
       const lista = w('lista');
       const blad = poprawnaData(start) ? null : 'Wpisz pierwszy dzień pracy.';
-      b.hidden = !blad;
-      b.textContent = blad ?? '';
+      pokazBlad(b, blad, form.elements.namedItem('start') as HTMLInputElement);
       if (blad) {
         w('informacja').textContent = '—';
         w('informacja-przesuniecie').hidden = true;
@@ -179,6 +179,7 @@ const faq = [
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
     ustawDzisiejszeWartosci(form);
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

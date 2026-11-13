@@ -37,7 +37,7 @@ const faq = [
       <div class="mt-4">
         <label for="o-urodzenie" class="etykieta-pola">Data urodzenia</label>
         <input id="o-urodzenie" name="urodzenie" type="date" class="pole mt-1 max-w-56" min="1940-01-01" max="2015-12-31" value={URODZENIE} aria-describedby="o-blad" />
-        <p id="o-blad" class="blad-pola" data-blad="urodzenie" hidden></p>
+        <p id="o-blad" class="blad-pola" data-blad="urodzenie" role="alert" hidden></p>
       </div>
       <div class="mt-4">
         <label for="o-wiek" class="etykieta-pola">Wiek emerytalny</label>
@@ -93,6 +93,7 @@ const faq = [
   import { dataPoPolsku, dzisWPolsce, poprawnaData } from '../../lib/narzedzia/terminy';
   import { odmiana } from '../../lib/redakcja';
   import { typografia } from '../../lib/typografia.mjs';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-ochrona]');
   if (form) {
@@ -103,9 +104,7 @@ const faq = [
       const dzis = dzisWPolsce();
       const blad = !poprawnaData(urodzenie) || urodzenie > dzis || urodzenie < '1940-01-01' ? 'Wpisz datę urodzenia.' : null;
       const b = form.querySelector<HTMLElement>('[data-blad="urodzenie"]')!;
-      b.hidden = !blad;
-      b.textContent = typografia(blad ?? '');
-      el('urodzenie').setAttribute('aria-invalid', blad ? 'true' : 'false');
+      pokazBlad(b, blad, el('urodzenie'));
       const status = w('status');
       if (blad) {
         for (const k of ['od', 'do', 'wiek']) w(k).textContent = '—';
@@ -123,6 +122,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

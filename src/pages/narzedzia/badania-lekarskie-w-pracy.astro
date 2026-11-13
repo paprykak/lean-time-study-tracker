@@ -87,7 +87,7 @@ const faq = [
         {Array.from({ length: WIERSZE }, (_, i) => (
           <fieldset class="mt-3">
             <legend class="etykieta-pola">Zwolnienie {i + 1}</legend>
-            <div class="mt-1 grid grid-cols-2 items-end gap-3">
+            <div class="mt-1 grid grid-cols-1 items-end gap-3 min-[380px]:grid-cols-2">
               <div>
                 <label for={`bl-od${i + 1}`} class="meta">Od</label>
                 <input id={`bl-od${i + 1}`} name={`od${i + 1}`} type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={Z[i]?.od} data-dzis={ZD[i] ? String(ZD[i].od) : undefined} aria-describedby="bl-blad" />
@@ -130,7 +130,7 @@ const faq = [
           </select>
           <p id="bp-rodzaj-opis" class="meta mt-1">Ten sam pracodawca: nowa umowa po końcu poprzedniej. Zmiana stanowiska: przeniesienie u obecnego pracodawcy.</p>
         </div>
-        <div class="mt-4 grid grid-cols-2 items-end gap-3">
+        <div class="mt-4 grid grid-cols-1 items-end gap-3 min-[380px]:grid-cols-2">
           <div data-tylko="koniec">
             <label for="bp-koniec" class="etykieta-pola">Koniec umowy</label>
             <input id="bp-koniec" name="koniec" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={P.koniec} data-dzis={String(PD.koniec)} aria-describedby="bp-daty-opis bl-blad" />
@@ -329,6 +329,7 @@ const faq = [
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
   import { dataPoPolsku, dzisWPolsce, ileDni, poprawnaData } from '../../lib/narzedzia/terminy';
   import { typografia } from '../../lib/typografia.mjs';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   type Sytuacja = 'l4' | 'praca' | 'orzeczenie';
   const NAGLOWKI: Record<Sytuacja, string> = { l4: 'Badanie kontrolne', praca: 'Badania wstępne', orzeczenie: 'Odwołanie i następne badanie' };
@@ -346,6 +347,12 @@ const faq = [
     const blad = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
     const ics = form.querySelector<HTMLButtonElement>('[data-ics]')!;
     let wydarzenia: Wydarzenie[] = [];
+    // Pola, których dotyczy bieżący komunikat błędu (dostają aria-invalid).
+    let zle: Element[] = [];
+    const zly = (tekst: string, ...pola: Element[]) => {
+      zle = pola;
+      return tekst;
+    };
 
     const pokazWynik = (prefiks: string, t: TekstWyniku) => {
       pisz(`${prefiks}-wynik`, t.wynik);
@@ -372,11 +379,12 @@ const faq = [
         const od = input(`od${i}`).value;
         const do_ = input(`do${i}`).value;
         if (!od && !do_) continue;
-        if (!poprawnaData(od) || !poprawnaData(do_)) return `Uzupełnij obie daty zwolnienia ${i}.`;
-        if (do_ < od) return `Zwolnienie ${i}: koniec przed początkiem.`;
+        if (!poprawnaData(od) || !poprawnaData(do_))
+          return zly(`Uzupełnij obie daty zwolnienia ${i}.`, ...[input(`od${i}`), input(`do${i}`)].filter((p) => !poprawnaData(p.value)));
+        if (do_ < od) return zly(`Zwolnienie ${i}: koniec przed początkiem.`, input(`do${i}`));
         lista.push({ od, do: do_ });
       }
-      if (!lista.length) return 'Wpisz co najmniej jedno zwolnienie.';
+      if (!lista.length) return zly('Wpisz co najmniej jedno zwolnienie.', input('od1'), input('do1'));
       const powod = select('powod').value as PowodNiezdolnosci;
       const k = badanieKontrolne(lista, powod, select('dzienPracy').value as DzienPracyWPrzerwie);
       tylko('przerwa', k.przerwa && powod !== 'opieka');
@@ -401,11 +409,11 @@ const faq = [
       const koniec = input('koniec').value;
       const start = input('start').value;
       const nastepne = input('nastepne').value;
-      if (rodzaj === 'ten-sam' && !poprawnaData(koniec)) return 'Wpisz ostatni dzień poprzedniej umowy.';
-      if (zKoncem && koniec && !poprawnaData(koniec)) return 'Wpisz ostatni dzień poprzedniej umowy albo zostaw pole puste.';
-      if (!zmiana && !poprawnaData(start)) return 'Wpisz pierwszy dzień nowej pracy.';
-      if (zKoncem && koniec && start <= koniec) return 'Pierwszy dzień nowej pracy musi być po końcu poprzedniej umowy.';
-      if (!zmiana && orzeczenie === 'data' && !poprawnaData(nastepne)) return 'Wpisz datę następnego badania z orzeczenia.';
+      if (rodzaj === 'ten-sam' && !poprawnaData(koniec)) return zly('Wpisz ostatni dzień poprzedniej umowy.', input('koniec'));
+      if (zKoncem && koniec && !poprawnaData(koniec)) return zly('Wpisz ostatni dzień poprzedniej umowy albo zostaw pole puste.', input('koniec'));
+      if (!zmiana && !poprawnaData(start)) return zly('Wpisz pierwszy dzień nowej pracy.', input('start'));
+      if (zKoncem && koniec && start <= koniec) return zly('Pierwszy dzień nowej pracy musi być po końcu poprzedniej umowy.', input('start'));
+      if (!zmiana && orzeczenie === 'data' && !poprawnaData(nastepne)) return zly('Wpisz datę następnego badania z orzeczenia.', input('nastepne'));
       const wynik = badaniaWstepne({
         rodzaj,
         koniec: zKoncem && koniec ? koniec : null,
@@ -442,12 +450,15 @@ const faq = [
       if (zOtrzymaniem) pokazWynik('c', tekstOdwolania(odwolanie(otrzymane, dzis)));
       else {
         wyczysc('c');
-        komunikat = 'Wpisz dzień otrzymania orzeczenia.';
+        komunikat = zly('Wpisz dzień otrzymania orzeczenia.', input('otrzymane'));
       }
       if (!nastepne) pisz('c-nastepne', 'wpisz datę z orzeczenia');
       else if (!poprawnaData(nastepne) || (zOtrzymaniem && nastepne <= otrzymane)) {
         w('c-nastepne').textContent = '—';
-        komunikat ??= poprawnaData(nastepne) ? 'Data następnego badania musi być po dniu otrzymania orzeczenia.' : 'Wpisz pełną datę następnego badania.';
+        komunikat ??= zly(
+          poprawnaData(nastepne) ? 'Data następnego badania musi być po dniu otrzymania orzeczenia.' : 'Wpisz pełną datę następnego badania.',
+          input('nastepneOkresowe'),
+        );
       } else {
         const p = przypomnienie(nastepne, dzis);
         pisz('c-nastepne', `${dataPoPolsku(nastepne)}, ${p.dniDo < 0 ? `termin minął ${ileDni(p.dniDo)}` : ileDni(p.dniDo)}`);
@@ -463,6 +474,7 @@ const faq = [
       form.querySelector<HTMLElement>('[data-uwaga="czas"]')!.hidden = sytuacja === 'praca';
       pisz('naglowek', NAGLOWKI[sytuacja]);
       wydarzenia = [];
+      zle = [];
       let komunikat: string | null;
       let wyjatek = false;
       try {
@@ -470,9 +482,9 @@ const faq = [
       } catch (e) {
         komunikat = e instanceof RangeError ? e.message : 'Sprawdź wpisane dane.';
         wyjatek = true;
+        zle = [...form.querySelectorAll(`[data-sekcja="${sytuacja}"] [aria-describedby~="bl-blad"]`)];
       }
-      blad.hidden = !komunikat;
-      blad.textContent = komunikat ? typografia(komunikat) : '';
+      pokazBlad(blad, komunikat, zle);
       // Przy orzeczeniu wyniki czyści sama funkcja (każdy osobno), chyba że rzuciła wyjątek.
       if (komunikat && (sytuacja !== 'orzeczenie' || wyjatek)) {
         wyczysc(PREFIKS[sytuacja]);
@@ -504,6 +516,7 @@ const faq = [
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
     ustawDzisiejszeWartosci(form);
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

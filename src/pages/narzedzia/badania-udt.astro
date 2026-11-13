@@ -62,13 +62,13 @@ const faq = [
         <label for="utb-badanie" class="etykieta-pola">Ostatnie badanie UDT</label>
         <input id="utb-badanie" name="badanie" type="date" class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" aria-describedby="utb-badanie-opis utb-badanie-blad" />
         <p id="utb-badanie-opis" class="meta mt-1">Przed pierwszym badaniem wpisz datę decyzji zezwalającej na eksploatację (§ 22 ust. 2).</p>
-        <p id="utb-badanie-blad" class="blad-pola" data-blad="badanie" hidden></p>
+        <p id="utb-badanie-blad" class="blad-pola" data-blad="badanie" role="alert" hidden></p>
       </div>
 
       <div class="mt-4" data-tylko-przeglad>
         <label for="utb-przeglad" class="etykieta-pola">Ostatni przegląd konserwacyjny</label>
         <input id="utb-przeglad" name="przeglad" type="date" class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" aria-describedby="utb-przeglad-blad" />
-        <p id="utb-przeglad-blad" class="blad-pola" data-blad="przeglad" hidden></p>
+        <p id="utb-przeglad-blad" class="blad-pola" data-blad="przeglad" role="alert" hidden></p>
       </div>
     </div>
 
@@ -173,6 +173,7 @@ const faq = [
   import { nazwaMiesiaca } from '../../lib/narzedzia/czas-pracy';
   import { dataPoPolsku, dzisWPolsce, ileDni, poprawnaData } from '../../lib/narzedzia/terminy';
   import { plikIcs, type Wydarzenie } from '../../lib/narzedzia/kalendarz-ics';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-utb]');
   if (form) {
@@ -185,10 +186,7 @@ const faq = [
     const sprawdzDate = (nazwa: string) => {
       const v = pole(nazwa).value;
       const blad = v && !poprawnaData(v) ? 'Wpisz pełną datę: dzień, miesiąc i rok.' : null;
-      const b = form.querySelector<HTMLElement>(`[data-blad="${nazwa}"]`)!;
-      b.hidden = !blad;
-      b.textContent = blad ?? '';
-      pole(nazwa).setAttribute('aria-invalid', blad ? 'true' : 'false');
+      pokazBlad(form.querySelector<HTMLElement>(`[data-blad="${nazwa}"]`)!, blad, pole(nazwa));
       return v && !blad ? v : null;
     };
 
@@ -254,6 +252,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

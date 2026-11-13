@@ -115,7 +115,7 @@ const faq = [
           <input id="s-kwota" name="kwota" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" placeholder="maksimum" aria-describedby="s-blad" />
         </div>
       </div>
-      <p id="s-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+      <p id="s-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -192,6 +192,7 @@ const faq = [
   import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
   import { odmiana } from '../../lib/redakcja';
   import { typografia } from '../../lib/typografia.mjs';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-urlopowe]');
   if (form) {
@@ -209,14 +210,12 @@ const faq = [
       const do_ = el('do').value;
       const kwotaTekst = el('kwota').value.trim();
       const kwota = kwotaTekst ? wpisanaLiczba(kwotaTekst) : null;
-      const blad =
-        !poprawnaData(od) || !poprawnaData(do_) ? 'Wpisz pierwszy i ostatni dzień urlopu.'
-        : do_ < od ? 'Ostatni dzień urlopu jest przed pierwszym.'
-        : kwota !== null && !(kwota > 0 && kwota < 1_000_000) ? 'Kwota od pracodawcy musi być liczbą większą od zera, na przykład 2000.'
-        : null;
-      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
-      b.hidden = !blad;
-      b.textContent = blad ? typografia(blad) : '';
+      const [blad, zle]: [string | null, Element[]] =
+        !poprawnaData(od) || !poprawnaData(do_) ? ['Wpisz pierwszy i ostatni dzień urlopu.', [el('od'), el('do')].filter((p) => !poprawnaData(p.value))]
+        : do_ < od ? ['Ostatni dzień urlopu jest przed pierwszym.', [el('do')]]
+        : kwota !== null && !(kwota > 0 && kwota < 1_000_000) ? ['Kwota od pracodawcy musi być liczbą większą od zera, na przykład 2000.', [el('kwota')]]
+        : [null, []];
+      pokazBlad(form.querySelector<HTMLElement>('[data-blad="dane"]')!, blad, zle);
       const m = maksimum(rok, rodzaj, wymiar);
       pisz('maksimum', zl(m.kwota));
       pisz(
@@ -252,6 +251,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

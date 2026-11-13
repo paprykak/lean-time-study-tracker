@@ -85,7 +85,7 @@ const faq = [
         <input type="checkbox" name="po50" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
         <span>50. urodziny były przed tym rokiem kalendarzowym (pracodawca płaci 14 dni)</span>
       </label>
-      <p id="l4-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+      <p id="l4-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -148,12 +148,12 @@ const faq = [
   import { typografia } from '../../lib/typografia.mjs';
   import { odmiana } from '../../lib/redakcja';
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-l4]');
   if (form) {
     const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
     const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
-    const pola = ['brutto', 'dni', 'wykorzystane'];
     const pisz = (k: string, tekst: string) => {
       w(k).textContent = typografia(tekst);
     };
@@ -166,14 +166,12 @@ const faq = [
       const wykorzystane = wpisanaLiczba(el('wykorzystane').value || '0');
       const maks = okresZasilkowy(powod);
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
-      const blad =
-        !(brutto > 0) ? 'Wpisz przeciętne wynagrodzenie brutto, na przykład 6000.'
-        : !(Number.isInteger(ileDni) && ileDni >= 1 && ileDni <= maks) ? `Wpisz liczbę dni zwolnienia od 1 do ${maks}.`
-        : !(Number.isInteger(wykorzystane) && wykorzystane >= 0 && wykorzystane <= 366) ? 'Dni L4 w tym roku: liczba całkowita od 0.'
-        : null;
-      b.hidden = !blad;
-      b.textContent = typografia(blad ?? '');
-      for (const n of pola) el(n).setAttribute('aria-invalid', blad ? 'true' : 'false');
+      const [blad, zle]: [string | null, string | null] =
+        !(brutto > 0) ? ['Wpisz przeciętne wynagrodzenie brutto, na przykład 6000.', 'brutto']
+        : !(Number.isInteger(ileDni) && ileDni >= 1 && ileDni <= maks) ? [`Wpisz liczbę dni zwolnienia od 1 do ${maks}.`, 'dni']
+        : !(Number.isInteger(wykorzystane) && wykorzystane >= 0 && wykorzystane <= 366) ? ['Dni L4 w tym roku: liczba całkowita od 0.', 'wykorzystane']
+        : [null, null];
+      pokazBlad(b, blad, zle ? el(zle) : []);
       if (blad) {
         w('razem').textContent = '—';
         return;
@@ -192,6 +190,7 @@ const faq = [
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
     ustawDzisiejszeWartosci(form);
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

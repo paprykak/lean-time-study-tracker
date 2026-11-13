@@ -52,7 +52,7 @@ const faq = [
         <label for="u-ustanie" class="etykieta-pola">Ostatni dzień zatrudnienia</label>
         <input id="u-ustanie" name="ustanie" type="date" class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" value={D.ustanie} data-dzis={PRZESUNIECIE.ustanie} aria-describedby="u-blad" />
       </div>
-      <div class="mt-4 grid grid-cols-2 items-end gap-3">
+      <div class="mt-4 grid grid-cols-1 items-end gap-3 min-[380px]:grid-cols-2">
         <div>
           <label for="u-poczatek" class="etykieta-pola">L4 od</label>
           <input id="u-poczatek" name="poczatek" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={D.poczatek} data-dzis={PRZESUNIECIE.poczatek} aria-describedby="u-l4-opis u-blad" />
@@ -65,18 +65,19 @@ const faq = [
       <p id="u-l4-opis" class="meta mt-1">Pierwszy i ostatni dzień niezdolności do pracy bez przerwy, także gdy zwolnienie zaczęło się jeszcze w czasie pracy.</p>
       <div class="mt-4">
         <label for="u-przyczyna" class="etykieta-pola">Przyczyna</label>
-        <select id="u-przyczyna" name="przyczyna" class="pole mt-1">
+        <select id="u-przyczyna" name="przyczyna" class="pole mt-1" aria-describedby="u-przyczyna-opis">
           <option value="choroba" selected>Choroba</option>
-          <option value="zakazna">Choroba zakaźna z wylęganiem ponad 14 dni</option>
+          <option value="zakazna">Choroba zakaźna</option>
           <option value="ciaza">Ciąża</option>
           <option value="gruzlica">Gruźlica</option>
         </select>
+        <p id="u-przyczyna-opis" class="meta mt-1">Choroba zakaźna: tylko z okresem wylęgania ponad 14 dni.</p>
       </div>
       <label class="mt-4 flex items-start gap-3 text-[0.9375rem]">
         <input type="checkbox" name="wylaczenie" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
         <span>Mam emeryturę albo rentę z tytułu niezdolności do pracy, nową pracę lub działalność z ubezpieczeniem chorobowym, zasiłek dla bezrobotnych albo świadczenie przedemerytalne, albo ubezpieczenie w KRUS</span>
       </label>
-      <p id="u-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+      <p id="u-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -125,6 +126,7 @@ const faq = [
   import { typografia } from '../../lib/typografia.mjs';
   import { odmiana } from '../../lib/redakcja';
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-po-ustaniu]');
   if (form) {
@@ -138,12 +140,19 @@ const faq = [
       const poczatek = el('poczatek').value;
       const koniec = el('koniec').value;
       let blad: string | null = null;
-      if (![ustanie, poczatek, koniec].every(poprawnaData)) blad = 'Wpisz wszystkie trzy daty.';
-      else if (koniec < poczatek) blad = 'Koniec zwolnienia nie może być przed jego początkiem.';
-      else if (koniec <= ustanie) blad = 'Zwolnienie kończy się w czasie zatrudnienia, więc zasiłek po jego końcu nie przysługuje.';
-      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
-      b.hidden = !blad;
-      b.textContent = typografia(blad ?? '');
+      let zle: Element[] = [];
+      const daty = ['ustanie', 'poczatek', 'koniec'].map((n) => form.elements.namedItem(n) as HTMLInputElement);
+      if (![ustanie, poczatek, koniec].every(poprawnaData)) {
+        blad = 'Wpisz wszystkie trzy daty.';
+        zle = daty.filter((p) => !poprawnaData(p.value));
+      } else if (koniec < poczatek) {
+        blad = 'Koniec zwolnienia nie może być przed jego początkiem.';
+        zle = [daty[2]];
+      } else if (koniec <= ustanie) {
+        blad = 'Zwolnienie kończy się w czasie zatrudnienia, więc zasiłek po jego końcu nie przysługuje.';
+        zle = [daty[2]];
+      }
+      pokazBlad(form.querySelector<HTMLElement>('[data-blad="dane"]')!, blad, zle);
       const status = w('status');
       if (blad) {
         w('dni').textContent = '—';
@@ -172,6 +181,7 @@ const faq = [
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
     ustawDzisiejszeWartosci(form);
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

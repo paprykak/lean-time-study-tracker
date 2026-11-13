@@ -11,7 +11,7 @@ export type RodzajOkresu = 'umowa' | 'zlecenie' | 'dzialalnosc';
 
 export const RODZAJE: Record<RodzajOkresu, string> = {
   umowa: 'Umowa o pracę',
-  zlecenie: 'Zlecenie albo umowa agencyjna',
+  zlecenie: 'Zlecenie lub agencyjna',
   dzialalnosc: 'Działalność gospodarcza',
 };
 
