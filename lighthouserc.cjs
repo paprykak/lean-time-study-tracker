@@ -1,12 +1,13 @@
 // Lighthouse CI: poprzeczki z sekcji 3 promptu na zbudowanej stronie (telefon, ustawienia domyślne Lighthouse).
-// Działa na buildzie testowym (RH_TESTOWE=1): cały portal z fikcyjnymi treściami. Każdy nowy szablon dopisuje tu adres.
+// Działa na buildzie testowym (RH_TESTOWE=1). Każdy nowy szablon dopisuje tu adres; narzędzia mają wspólny szablon,
+// więc jedno reprezentatywne narzędzie wystarcza.
 // SEO ≥ 95 sprawdzamy na stronach indeksowanych. Na stronach z noindex (404, /styleguide) Lighthouse z definicji
 // obniża SEO („strona zablokowana przed indeksowaniem”), więc tam pilnujemy wydajności, dostępności i dobrych praktyk.
 const { chromium } = require('@playwright/test');
 
 const PORT = 4323;
 const adres = (a) => `http://127.0.0.1:${PORT}${a}`;
-const INDEKSOWANE = ['/', '/testowy-mikroprzestoje', '/narzedzia/dodatek-za-prace-w-nocy', '/dzial/produkcja', '/temat/oee', '/o-nas'];
+const INDEKSOWANE = ['/', '/narzedzia', '/narzedzia/dodatek-za-prace-w-nocy', '/o-nas'];
 const WEWNETRZNE = ['/styleguide', '/szukaj', '/404'];
 
 const kategorie = {
@@ -34,7 +35,7 @@ module.exports = {
     },
     assert: {
       assertMatrix: [
-        { matchingUrlPattern: `^${adres('')}(/|/testowy-mikroprzestoje|/dzial/produkcja|/temat/oee|/o-nas)$`, assertions: { ...kategorie, ...metryki, 'categories:seo': ['error', { minScore: 0.95 }] } },
+        { matchingUrlPattern: `^${adres('')}(/|/narzedzia|/narzedzia/dodatek-za-prace-w-nocy|/o-nas)$`, assertions: { ...kategorie, ...metryki, 'categories:seo': ['error', { minScore: 0.95 }] } },
         { matchingUrlPattern: `/(styleguide|szukaj|404)$`, assertions: { ...kategorie, ...metryki } },
       ],
     },

@@ -4,8 +4,8 @@
   "link": "https://example.com/oferta-b?utm_source=partner",
   "od": "2026-01-01T00:00:00+01:00",
   "do": "2099-12-31T00:00:00+01:00",
-  "miejsca": ["glowna-bok"],
-  "kreacje": { "prostokat": "/src/assets/testowe/kampanie/testowa-b-prostokat.png", "mobilnyProstokat": "/src/assets/testowe/kampanie/testowa-b-mobilny-prostokat.png" },
+  "miejsca": ["glowna"],
+  "kreacje": { "billboard": "/src/assets/testowe/kampanie/testowa-b-billboard.png", "prostokat": "/src/assets/testowe/kampanie/testowa-b-prostokat.png", "mobilnyProstokat": "/src/assets/testowe/kampanie/testowa-b-mobilny-prostokat.png" },
   "altKreacji": "Kreacja testowa B fikcyjnego reklamodawcy",
   "aktywna": true
 }

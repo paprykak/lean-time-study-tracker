@@ -91,7 +91,7 @@ describe('formularz kontaktowy (/api/kontakt)', () => {
   }
   const wyslane = [];
   const ENV_POCZTA = { ...ENV, ADRES_REDAKCJI: 'skrzynka@example.com', POCZTA: { send: async (m) => wyslane.push(m) } };
-  const POLA = { imie: 'Anna Nowak', email: 'anna@firma.pl', temat: 'Błąd w tekście', wiadomosc: 'W tekście o OEE jest zły wzór w drugim akapicie.', zgoda: 'tak', strona: '' };
+  const POLA = { imie: 'Anna Nowak', email: 'anna@firma.pl', temat: 'Błąd w narzędziu', wiadomosc: 'Kalkulator nadgodzin liczy dodatek od złej podstawy.', zgoda: 'tak', strona: '' };
 
   it('wysyła wiadomość do redakcji z odpowiedzią do nadawcy i polskimi znakami w temacie', async () => {
     const odp = await kontakt(formularz('/api/kontakt', POLA), ENV_POCZTA, { EmailMessage });
@@ -100,10 +100,10 @@ describe('formularz kontaktowy (/api/kontakt)', () => {
     expect([m.from, m.to]).toEqual(['formularz@rytmhali.pl', 'skrzynka@example.com']);
     expect(m.raw).toContain('Reply-To: <anna@firma.pl>');
     const temat = m.raw.match(/^Subject: =\?UTF-8\?B\?([^?]+)\?=/m)[1];
-    expect(Buffer.from(temat, 'base64').toString('utf8')).toBe('[Rytm Hali] Błąd w tekście');
+    expect(Buffer.from(temat, 'base64').toString('utf8')).toBe('[Rytm Hali] Błąd w narzędziu');
     const tresc = Buffer.from(m.raw.split('\r\n\r\n')[1].replace(/\r\n/g, ''), 'base64').toString('utf8');
     expect(tresc).toContain('Imię i nazwisko: Anna Nowak');
-    expect(tresc).toContain('W tekście o OEE jest zły wzór w drugim akapicie.');
+    expect(tresc).toContain('Kalkulator nadgodzin liczy dodatek od złej podstawy.');
   });
 
   it('temat spoza listy to „Inne”; za krótka wiadomość, brak zgody albo brak poczty: strona błędu', async () => {

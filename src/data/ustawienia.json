@@ -1,26 +1,10 @@
 {
   "nazwa": "Rytm Hali",
-  "opis": "Bezpłatne kalkulatory i ściągi z prawa pracy i BHP dla produkcji, magazynów i logistyki, ze źródłem przy każdej liczbie. Do tego teksty o operacjach.",
+  "opis": "Bezpłatne kalkulatory i ściągi z prawa pracy i BHP dla produkcji, magazynów i logistyki: ile się należy, czy wolno, kiedy mija termin.",
   "haslo": "Narzędzia i przepisy dla ludzi z hali",
   "adres": "https://rytmhali.pl",
   "emailRedakcji": "redakcja@rytmhali.pl",
   "redaktorNaczelny": "Patryk Korpyta",
-  "menuDodatkowe": [
-    {
-      "nazwa": "Do pobrania",
-      "adres": "/do-pobrania"
-    }
-  ],
-  "tematyWyroznione": [
-    "smed",
-    "oee",
-    "kompletacja",
-    "gemba",
-    "standard-pracy",
-    "matryca-kompetencji",
-    "ai-w-planowaniu"
-  ],
-  "polecane": [],
   "pasekGorny": [
     {
       "nazwa": "Raport zmianowy",
@@ -74,14 +58,6 @@
       {
         "nazwa": "Raport zmianowy",
         "adres": "/newsletter"
-      },
-      {
-        "nazwa": "Do pobrania",
-        "adres": "/do-pobrania"
-      },
-      {
-        "nazwa": "Kanał RSS",
-        "adres": "/rss.xml"
       }
     ],
     "prawne": [
@@ -101,7 +77,7 @@
   },
   "newsletter": {
     "nazwa": "Raport zmianowy",
-    "opis": "Newsletter Rytmu Hali: najważniejsze teksty o produkcji, magazynach, lean i danych w jednym mailu.",
+    "opis": "Newsletter Rytmu Hali: zmiany w przepisach, które dotyczą hali, oraz nowe i zaktualizowane narzędzia w jednym mailu.",
     "zgoda": "Chcę otrzymywać newsletter Raport zmianowy na podany adres e-mail. Wypiszę się jednym kliknięciem w każdym wydaniu.",
     "potwierdzenie": "Sprawdź skrzynkę i kliknij link w wiadomości od nas. Bez potwierdzenia nie wyślemy żadnego wydania."
   }

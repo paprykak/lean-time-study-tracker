@@ -5,14 +5,11 @@ import StronaStala from '../components/StronaStala.astro';
 import NaglowekSekcji from '../components/NaglowekSekcji.astro';
 import { FORMATY } from '../lib/reklamy';
 
+// Jedno miejsce od 2026-11-12 (serwis narzędzi bez artykułów i działów; MIEJSCA_REKLAM w src/lib/model.ts).
 const MIEJSCA = [
-  { miejsce: 'Strona główna, pod nagłówkiem', komputer: 'billboard', telefon: 'mobilny' },
-  { miejsce: 'Strona główna, kolumna boczna', komputer: 'prostokat', telefon: 'mobilny-prostokat' },
-  { miejsce: 'Artykuł, w treści po 3. akapicie', komputer: 'baner', telefon: undefined },
-  { miejsce: 'Artykuł, kolumna boczna', komputer: 'polstrona', telefon: undefined },
-  { miejsce: 'Dział, pod nagłówkiem', komputer: 'billboard', telefon: 'mobilny' },
+  { miejsce: 'Strona główna, pod narzędziami', komputer: 'billboard', telefon: 'mobilny-prostokat' },
 ] as const;
-const opis = (f?: keyof typeof FORMATY) => (f ? `${FORMATY[f].nazwa} ${FORMATY[f].szerokosc} × ${FORMATY[f].wysokosc}` : '—');
+const opis = (f?: keyof typeof FORMATY | undefined) => (f ? `${FORMATY[f].nazwa} ${FORMATY[f].szerokosc} × ${FORMATY[f].wysokosc}` : '—');
 ---
 <StronaStala slug="reklama" aktywny="/reklama">
   <section aria-labelledby="formaty" class="mt-10">

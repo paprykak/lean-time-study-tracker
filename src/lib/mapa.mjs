@@ -1,5 +1,6 @@
-// Mapa strony a treści: które artykuły trafiają do sitemap i z jaką datą lastmod. Używa astro.config.mjs (integracja
-// @astrojs/sitemap działa przed kolekcjami treści, więc czyta frontmatter plików Markdown wprost).
+// Mapa strony: daty lastmod. Używa astro.config.mjs; integracja @astrojs/sitemap działa przed kolekcjami treści, a plik
+// konfiguracji nie importuje TypeScriptu, więc czyta pliki wprost: rejestr narzędzi (src/data/narzedzia.ts, data
+// „sprawdzono” = ostatnie sprawdzenie z przepisami) i frontmatter stron stałych (pole „zaktualizowano”).
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { parse } from 'yaml';
@@ -10,64 +11,44 @@ export function frontmatter(tekst) {
   return blok ? (parse(blok[1]) ?? {}) : {};
 }
 
-/**
- * Wpis jest w mapie strony, gdy jest opublikowany, nie testowy i bez noindex (jak doIndeksu w src/lib/tresci.ts).
- * W buildzie testowym szkice i wpisy testowe liczą się jak opublikowane.
- */
-export const doMapy = (fm, testowe = false) => !fm.noindex && (testowe || (!fm.szkic && !fm.testowy));
-
-/** Data ostatniej zmiany: aktualizacja, a bez niej publikacja (ISO 8601). */
-export function lastmod(fm) {
-  const data = fm.zaktualizowano ?? fm.opublikowano;
+/** Data w formacie ISO 8601 albo undefined. */
+const iso = (data) => {
   if (!data) return undefined;
   const d = new Date(data);
   return Number.isNaN(d.valueOf()) ? undefined : d.toISOString();
+};
+
+/**
+ * Narzędzia z tekstu rejestru: slug → data sprawdzenia (ISO). Każdy wpis rejestru ma slug, a po nim sprawdzono
+ * (pilnuje src/lib/narzedzia/rejestr.test.ts); test mapy pilnuje, że liczba dat równa się liczbie slugów.
+ * @param {string} tekst
+ */
+export function narzedziaMapy(tekst) {
+  const czesc = tekst.slice(tekst.indexOf('export const NARZEDZIA'), tekst.indexOf('export const W_PRZYGOTOWANIU'));
+  return new Map([...czesc.matchAll(/slug: '([a-z0-9-]+)'[\s\S]*?sprawdzono: '(\d{4}-\d{2}-\d{2})'/g)].map((m) => [m[1], iso(m[2])]));
 }
 
 /**
- * Artykuły z katalogów treści: slug → { doMapy, lastmod, dzial, tematy, autorzy }.
- * @param {string | string[]} katalogi
- * @param {boolean} [testowe]
+ * Strony stałe: slug → data aktualizacji (ISO). Projekty nowych brzmień (projekt-*.md) nie są stronami serwisu.
+ * @param {string} katalog
  */
-export function artykulyMapy(katalogi, testowe = false) {
+export function stronyMapy(katalog) {
   return new Map(
-    [katalogi].flat().flatMap((katalog) =>
-      readdirSync(katalog)
-        .filter((f) => f.endsWith('.md'))
-        .map((f) => {
-          const fm = frontmatter(readFileSync(join(katalog, f), 'utf8'));
-          return [f.replace(/\.md$/, ''), { doMapy: doMapy(fm, testowe), lastmod: lastmod(fm), dzial: fm.dzial, tematy: fm.tematy ?? [], autorzy: fm.autorzy ?? [] }];
-        }),
-    ),
+    readdirSync(katalog)
+      .filter((f) => f.endsWith('.md') && !f.startsWith('projekt-'))
+      .map((f) => [f.replace(/\.md$/, ''), iso(frontmatter(readFileSync(join(katalog, f), 'utf8')).zaktualizowano)]),
   );
 }
 
 /**
- * Od ilu artykułów strona listy jest indeksowana i trafia do mapy strony. Temat z jednym, dwoma tekstami to cienka
- * strona (powiela artykuł), więc ma noindex, dopóki nie zbierze trzech; dział i autor od pierwszego tekstu.
+ * lastmod adresu: narzędzie ma datę sprawdzenia, strona stała datę aktualizacji, a strona główna i /narzedzia
+ * datę najświeżej sprawdzonego narzędzia. Inne adresy bez daty.
+ * @param {string} sciezka np. /narzedzia/kalkulator-l4
+ * @param {{ narzedzia: Map<string, string | undefined>, strony: Map<string, string | undefined> }} dane
  */
-export const PROGI = { dzial: 1, temat: 3, autor: 1 };
-
-/** Liczba artykułów (z mapy strony) w każdym dziale, temacie i u każdego autora, z datą najnowszej zmiany. */
-export function listy(artykuly) {
-  const wynik = { dzial: new Map(), temat: new Map(), autor: new Map() };
-  const dodaj = (mapa, klucz, lm) => {
-    const b = mapa.get(klucz) ?? { liczba: 0, lastmod: undefined };
-    mapa.set(klucz, { liczba: b.liczba + 1, lastmod: !b.lastmod || (lm && lm > b.lastmod) ? lm : b.lastmod });
-  };
-  for (const a of artykuly.values()) {
-    if (!a.doMapy) continue;
-    if (a.dzial) dodaj(wynik.dzial, a.dzial, a.lastmod);
-    for (const t of a.tematy) dodaj(wynik.temat, t, a.lastmod);
-    for (const x of a.autorzy) dodaj(wynik.autor, x, a.lastmod);
-  }
-  return wynik;
-}
-
-/** Strona listy (/dzial/x, /dzial/x/2, /temat/x, /autor/x): czy w mapie strony i z jaką datą; undefined dla innych stron. */
-export function listaWMapie(sciezka, liczby) {
-  const m = sciezka.match(/^\/(dzial|temat|autor)\/([a-z0-9-]+)(?:\/\d+)?$/);
-  if (!m) return undefined;
-  const dane = liczby[m[1]].get(m[2]);
-  return { doMapy: (dane?.liczba ?? 0) >= PROGI[m[1]], lastmod: dane?.lastmod };
+export function lastmodAdresu(sciezka, { narzedzia, strony }) {
+  if (sciezka === '/' || sciezka === '/narzedzia') return [...narzedzia.values()].filter(Boolean).sort().at(-1);
+  const narzedzie = sciezka.match(/^\/narzedzia\/([a-z0-9-]+)$/);
+  if (narzedzie) return narzedzia.get(narzedzie[1]);
+  return strony.get(sciezka.slice(1));
 }

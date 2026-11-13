@@ -10,11 +10,7 @@ export const DOMYSLNY_ADRES_API = 'https://api.umami.is/v1';
 
 /** Nazwy miejsc dla partnera; klucze to MIEJSCA_REKLAM z src/lib/model.ts (pilnuje test). */
 export const NAZWY_MIEJSC = {
-  'glowna-gora': 'Strona główna, góra',
-  'glowna-bok': 'Strona główna, kolumna boczna',
-  'artykul-tresc': 'Artykuł, w treści',
-  'artykul-bok': 'Artykuł, kolumna boczna',
-  'dzial-gora': 'Strony działów, góra',
+  glowna: 'Strona główna, pod narzędziami',
 };
 
 /**
