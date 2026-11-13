@@ -12,7 +12,7 @@ export const KATEGORIE = {
   urlopy: { nazwa: 'Urlopy i dni wolne', krotko: 'Urlopy' },
   umowa: { nazwa: 'Umowa i jej koniec', krotko: 'Umowa' },
   bhp: { nazwa: 'BHP i badania', krotko: 'BHP' },
-  uprawnienia: { nazwa: 'Uprawnienia UDT i SEP', krotko: 'Uprawnienia' },
+  uprawnienia: { nazwa: 'Uprawnienia i kwalifikacje', krotko: 'Uprawnienia' },
   transport: { nazwa: 'Transport ręczny i magazyn', krotko: 'Magazyn' },
 } as const;
 

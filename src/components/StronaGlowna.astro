@@ -45,8 +45,7 @@ const lead = `Wpisz swoją sprawę. ${odmiana(NARZEDZIA.length, ['kalkulator i �
         <li class="flex gap-2"><Ikona nazwa="sprawdz" rozmiar={18} class="mt-0.5 shrink-0 text-sukces" /><span><Tekst t="Bez logowania i bez ciasteczek" /></span></li>
       </ul>
       <p class="meta mt-4">
-        Ostatnie sprawdzenie z przepisami: <time datetime={ostatnie}>{dataDluga(new Date(`${ostatnie}T12:00:00Z`))}</time>.
-        <a href="/zasady-redakcyjne" class="link">Jak sprawdzamy</a>
+        Ostatnie sprawdzenie z przepisami: <time datetime={ostatnie}>{dataDluga(new Date(`${ostatnie}T12:00:00Z`))}</time>. <a href="/zasady-redakcyjne" class="link">Jak sprawdzamy</a>
       </p>
     </aside>
   </div>

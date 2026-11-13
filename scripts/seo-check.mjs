@@ -97,6 +97,9 @@ for (const plik of strony) {
   // Podwójna kropka po skrócie daty („2026 r..”): data z dataPoPolsku kończy się kropką, więc zdanie nie dostaje drugiej.
   const tekst = html.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>|<[^>]+>/g, ' ');
   if (/\sr\.\.(?!\.)/.test(tekst)) bledy.push(`${gdzie} podwójna kropka po „r.” w tekście strony`);
+  // Kompresja HTML w Astro usuwa łamanie wiersza przed <a>, gdy link zaczyna nowy wiersz szablonu: słowo skleja się z linkiem.
+  const sklejone = html.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/g, '').match(/[\p{L}\p{N},.;:!?]<a[\s>]/gu);
+  if (sklejone) bledy.push(`${gdzie} słowo sklejone z linkiem (${sklejone.length}×, np. „${sklejone[0]}”): link w tym samym wierszu szablonu co tekst przed nim`);
 
   // Adres usunięty z serwisu (410 albo 301 z workera, worker/usuniete.js) nie może mieć zbudowanej strony.
   if (usuniety(adres)) bledy.push(`${gdzie} zbudowana strona pod adresem usuniętym z serwisu (worker/usuniete.js)`);
