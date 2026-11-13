@@ -113,7 +113,7 @@ const faq = [
           <p id="z-inne-opis" class="meta mt-1">W tym roku, z pozostałych ulg z tej listy.</p>
         </div>
       </div>
-      <p id="z-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+      <p id="z-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -173,6 +173,7 @@ const faq = [
   import { wpisanaLiczba } from '../../lib/narzedzia/format';
   import { dzisWPolsce, poprawnaData } from '../../lib/narzedzia/terminy';
   import { typografia } from '../../lib/typografia.mjs';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-zerowy]');
   if (form) {
@@ -206,13 +207,11 @@ const faq = [
             : Number.isNaN(przychody) || Number.isNaN(inne)
               ? 'Wpisz przychody w złotych, na przykład 60000. Puste pole liczymy jako 0.'
               : null;
-      el('urodzenie').setAttribute('aria-invalid', String(blad === 'Wpisz datę urodzenia.'));
-      el('przeniesienie').setAttribute('aria-invalid', String(ulga === 'powrot' && blad?.startsWith('Wpisz rok') === true));
-      el('przychody').setAttribute('aria-invalid', String(Number.isNaN(przychody)));
-      el('inne').setAttribute('aria-invalid', String(Number.isNaN(inne)));
-      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
-      b.hidden = !blad;
-      b.textContent = blad ? typografia(blad) : '';
+      const zle =
+        blad === 'Wpisz datę urodzenia.' ? ['urodzenie']
+        : blad?.startsWith('Wpisz rok') ? ['przeniesienie']
+        : ['przychody', 'inne'].filter((_, i) => Number.isNaN([przychody, inne][i]));
+      pokazBlad(form.querySelector<HTMLElement>('[data-blad="dane"]')!, blad, zle.map(el));
       if (blad) {
         for (const k of ['stan', 'okres', 'limit', 'zwolnione', 'opodatkowane']) w(k).textContent = '—';
         w('opis').textContent = '';
@@ -237,6 +236,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

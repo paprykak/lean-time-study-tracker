@@ -175,6 +175,7 @@ const faq = [
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
   import { dzisWPolsce } from '../../lib/narzedzia/terminy';
   import { typografia } from '../../lib/typografia.mjs';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-urlop-wypowiedzenie]');
   if (form) {
@@ -183,7 +184,6 @@ const faq = [
     const pisz = (k: string, tekst: string) => {
       w(k).textContent = typografia(tekst);
     };
-    const POLA: PoleUrlopu[] = ['koniec', 'od', 'poczatek', 'wymiar', 'wykorzystane', 'zalegly', 'grafik'];
     const etykieta = form.querySelector<HTMLLabelElement>('label[for="uw-wykorzystane"]')!;
     // Pełne dni (do 3 cyfr); puste pole daje wartość `pusty`.
     const liczbaDni = (t: string, pusty: number | undefined) => {
@@ -226,9 +226,7 @@ const faq = [
         }
       }
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
-      b.hidden = !blad;
-      b.textContent = blad ? typografia(blad.tekst) : '';
-      for (const n of POLA) el(n).setAttribute('aria-invalid', blad?.pole === n ? 'true' : 'false');
+      pokazBlad(b, blad?.tekst, blad ? el(blad.pole) : null);
       if (!r) {
         w('wwyp').textContent = '—';
         w('opis').textContent = '';
@@ -256,6 +254,7 @@ const faq = [
     // (pola zmienione przez użytkownika zostają).
     if (el('koniec').value === el('koniec').defaultValue) el('koniec').value = koniecMiesiaca(dzisWPolsce());
     ustawDzisiejszeWartosci(form);
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

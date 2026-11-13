@@ -187,6 +187,7 @@ const faq = [
   import { MAKS_DNI, MIN_ROK, WIERSZE, opis, zaleglyUrlop, type UrlopZaRok } from '../../lib/narzedzia/zalegly-urlop';
   import { dataPoPolsku, dzisWPolsce, poprawnaData } from '../../lib/narzedzia/terminy';
   import { typografia } from '../../lib/typografia.mjs';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-zalegly]');
   if (form) {
@@ -210,7 +211,6 @@ const faq = [
     }
 
     const przelicz = () => {
-      for (const p of form.querySelectorAll('input')) p.removeAttribute('aria-invalid');
       let blad: string | null = null;
       let zle: HTMLInputElement | null = null;
       const zglos = (tekst: string, pole: HTMLInputElement) => {
@@ -259,9 +259,7 @@ const faq = [
         }
       }
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
-      b.hidden = !blad;
-      b.textContent = blad ? typografia(blad) : '';
-      (zle as HTMLInputElement | null)?.setAttribute('aria-invalid', 'true');
+      pokazBlad(b, blad, zle);
       const status = w('status');
       if (!wynik) {
         pisz('etykieta', 'Niewykorzystany urlop');
@@ -314,6 +312,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

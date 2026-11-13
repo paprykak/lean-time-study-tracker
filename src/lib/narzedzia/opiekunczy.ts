@@ -12,7 +12,7 @@ export type RodzajOpieki = 'dziecko' | 'dziecko-orzeczenie' | 'czlonek-rodziny';
 
 export const LIMITY_OPIEKI: Record<RodzajOpieki, { dni: number; nazwa: string }> = {
   dziecko: { dni: 60, nazwa: 'Dziecko do 14 lat' },
-  'dziecko-orzeczenie': { dni: 30, nazwa: 'Dziecko 14–18 z orzeczeniem' },
+  'dziecko-orzeczenie': { dni: 30, nazwa: 'Dziecko 14–18, orzeczenie' },
   'czlonek-rodziny': { dni: 14, nazwa: 'Członek rodziny' },
 };
 /** Pełne opisy rodzajów opieki (art. 32 ust. 1) do tabeli i opisu pod polem. */

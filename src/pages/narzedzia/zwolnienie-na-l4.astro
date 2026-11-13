@@ -66,7 +66,7 @@ const faq = [
         <input type="checkbox" name="rehabilitacyjne" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
         <span>Po zasiłku chorobowym ZUS przyznał świadczenie rehabilitacyjne</span>
       </label>
-      <p id="l-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+      <p id="l-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -119,6 +119,7 @@ const faq = [
   import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
   import { typografia } from '../../lib/typografia.mjs';
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-l4]');
   if (form) {
@@ -127,10 +128,7 @@ const faq = [
     const przelicz = () => {
       const poczatek = el('poczatek').value;
       const blad = poprawnaData(poczatek) ? null : 'Wpisz pierwszy dzień zwolnienia lekarskiego.';
-      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
-      b.hidden = !blad;
-      b.textContent = typografia(blad ?? '');
-      el('poczatek').setAttribute('aria-invalid', blad ? 'true' : 'false');
+      pokazBlad(form.querySelector<HTMLElement>('[data-blad="dane"]')!, blad, el('poczatek'));
       const wiersz = form.querySelector<HTMLElement>('[data-wiersz="zasilek"]')!;
       if (blad) {
         w('ostatni').textContent = '—';
@@ -163,6 +161,7 @@ const faq = [
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
     ustawDzisiejszeWartosci(form);
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

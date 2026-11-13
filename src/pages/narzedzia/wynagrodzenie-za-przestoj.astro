@@ -99,7 +99,7 @@ const faq = [
           </select>
         </div>
       </div>
-      <p id="p-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+      <p id="p-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -149,6 +149,7 @@ const faq = [
   import { godz, wpisanaLiczba, zl } from '../../lib/narzedzia/format';
   import { typografia } from '../../lib/typografia.mjs';
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-przestoj]');
   if (form) {
@@ -172,8 +173,11 @@ const faq = [
         : rodzaj !== 'bez-stawki' && !(stawka > 0) ? 'Wpisz stawkę albo pensję.'
         : rodzaj === 'bez-stawki' && !(liczba('stale') >= 0 && liczba('zmienne') >= 0 && liczba('zgodz') >= 0) ? 'Kwoty i godziny nie mogą być ujemne.'
         : null;
-      b.hidden = !blad;
-      b.textContent = typografia(blad ?? '');
+      const zle =
+        !(godziny > 0 && godziny <= 744) ? ['godziny']
+        : rodzaj !== 'bez-stawki' && !(stawka > 0) ? ['stawka']
+        : ['stale', 'zmienne', 'zgodz'].filter((n) => !(liczba(n) >= 0));
+      pokazBlad(b, blad, zle.map((n) => form.elements.namedItem(n) as HTMLInputElement));
       if (blad) {
         w('kwota').textContent = '—';
         return;
@@ -201,6 +205,7 @@ const faq = [
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
     ustawDzisiejszeWartosci(form);
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

@@ -63,7 +63,7 @@ const faq = [
         <input type="checkbox" name="jedyny" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
         <span>Jestem jedynym uprawnionym rodzicem albo opiekunem (art. 186 § 9 i 10)</span>
       </label>
-      <p id="h-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+      <p id="h-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -110,6 +110,7 @@ const faq = [
   import { urlopWychowawczy } from '../../lib/narzedzia/urlop-wychowawczy';
   import { odmiana } from '../../lib/redakcja';
   import { typografia } from '../../lib/typografia.mjs';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-wychowawczy]');
   if (form) {
@@ -133,9 +134,13 @@ const faq = [
           blad = e instanceof RangeError && e.message.includes('6 lat') ? 'Urlop musi zacząć się najpóźniej w roku, w którym dziecko kończy 6 lat.' : 'Urlop nie może zacząć się przed urodzeniem dziecka.';
         }
       }
-      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
-      b.hidden = !blad;
-      b.textContent = typografia(blad ?? '');
+      const daty = [el('urodzenie'), el('start')].filter((p) => !poprawnaData(p.value));
+      const zleMiesiace = (['miesiace', 'ja', 'drugi'] as const).filter((n, i) => {
+        const x = [miesiace, ja, drugi][i];
+        return !(x >= 0 && x <= 36) || (n === 'miesiace' && x < 1);
+      });
+      const zle = daty.length ? daty : zleMiesiace.length ? zleMiesiace.map(el) : [el('start')];
+      pokazBlad(form.querySelector<HTMLElement>('[data-blad="dane"]')!, blad, zle);
       const uwaga = w('uwaga');
       if (blad || !r) {
         for (const k of ['koniec', 'wniosek', 'dostepne', 'limit']) w(k).textContent = '—';
@@ -161,6 +166,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

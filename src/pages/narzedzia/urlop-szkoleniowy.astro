@@ -182,6 +182,7 @@ const faq = [
   import { wpisanaLiczba } from '../../lib/narzedzia/format';
   import { odmiana } from '../../lib/redakcja';
   import { typografia } from '../../lib/typografia.mjs';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-szkoleniowy]');
   if (form) {
@@ -201,7 +202,6 @@ const faq = [
       const tryb = wybrane('zmiana');
       form.querySelector<HTMLElement>('[data-inna]')!.hidden = tryb !== 'inna';
       for (const x of form.querySelectorAll<HTMLElement>('[data-gdy]')) x.hidden = x.dataset.gdy !== (zaZgoda ? 'tak' : 'nie');
-      for (const x of form.querySelectorAll<HTMLInputElement>('.pole')) x.removeAttribute('aria-invalid');
 
       // Bez zgody pracodawcy liczba egzaminów i długość zmiany nie mają znaczenia: nie sprawdzamy ich.
       let blad: string | null = null;
@@ -225,9 +225,7 @@ const faq = [
         }
       }
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
-      b.hidden = !blad;
-      b.textContent = typografia(blad ?? '');
-      if (zlePole) zlePole.setAttribute('aria-invalid', 'true');
+      pokazBlad(b, blad, zlePole);
       if (blad) {
         w('dni').textContent = '—';
         w('opis').textContent = '';
@@ -254,6 +252,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>

@@ -61,7 +61,7 @@ const faq = [
         </div>
       </div>
       <p id="g-porozumien-opis" class="meta mt-1">Z przyczyn niedotyczących pracowników; porozumienia z inicjatywy pracodawcy.</p>
-      <div class="mt-4 grid grid-cols-2 items-end gap-3">
+      <div class="mt-4 grid grid-cols-1 min-[380px]:grid-cols-2 items-end gap-3">
         <div>
           <label for="g-urzad" class="etykieta-pola">Zawiadomienie urzędu pracy</label>
           <input id="g-urzad" name="urzad" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" aria-describedby="g-blad" />
@@ -72,7 +72,7 @@ const faq = [
         </div>
       </div>
       <p id="g-koniec-opis" class="meta mt-1">Daty są nieobowiązkowe. Dzień rozwiązania to ostatni dzień umowy, także gdy wcześniej zwolniono Cię z obowiązku świadczenia pracy albo był urlop.</p>
-      <p id="g-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+      <p id="g-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
@@ -136,6 +136,7 @@ const faq = [
   import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
   import { typografia } from '../../lib/typografia.mjs';
   import { odmiana } from '../../lib/redakcja';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const OSOBY: [string, string, string] = ['osoba', 'osoby', 'osób'];
   const WYPOWIEDZENIA: [string, string, string] = ['wypowiedzenie', 'wypowiedzenia', 'wypowiedzeń'];
@@ -163,9 +164,13 @@ const faq = [
       if ([zatrudnionych, wypowiedzen, porozumien].some(Number.isNaN)) blad = 'Wpisz liczby osób, bez przecinków.';
       else if (wypowiedzen + porozumien > zatrudnionych) blad = 'Zwalnianych nie może być więcej niż zatrudnionych.';
       else if ((urzad && !poprawnaData(urzad)) || (koniec && !poprawnaData(koniec))) blad = 'Popraw datę.';
-      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
-      b.hidden = !blad;
-      b.textContent = typografia(blad ?? '');
+      const liczby = { zatrudnionych, wypowiedzen, porozumien };
+      const zle = (Object.keys(liczby) as (keyof typeof liczby)[]).filter((n) => Number.isNaN(liczby[n]));
+      const zlePola: string[] =
+        zle.length ? zle
+        : wypowiedzen + porozumien > zatrudnionych ? ['wypowiedzen', 'porozumien']
+        : ['urzad', 'koniec'].filter((n) => el(n).value && !poprawnaData(el(n).value));
+      pokazBlad(form.querySelector<HTMLElement>('[data-blad="dane"]')!, blad, zlePola.map(el));
       if (blad) {
         w('rodzaj').textContent = '—';
         w('opis').textContent = '';
@@ -206,6 +211,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>
