@@ -465,6 +465,13 @@ export const AKTY = {
     adres: 'https://eli.gov.pl/eli/MP/2026/220/ogl',
     sprawdzono: '2026-11-12',
   },
+  systemUbezpieczen2026: {
+    nazwa: 'Ustawa o systemie ubezpieczeń społecznych',
+    publikator: 'Dz.U. 2026 poz. 1474',
+    uwaga: 'tekst jednolity, bez późniejszych zmian do 12 listopada 2026 r.; art. 6 ust. 1 pkt 19 i art. 9 ust. 6 (urlop wychowawczy); o urlopie bezpłatnym nie wspomina',
+    adres: eli(2026, 1474),
+    sprawdzono: '2026-11-13',
+  },
 } as const satisfies Record<string, Akt>;
 
 export type KluczAktu = keyof typeof AKTY;
