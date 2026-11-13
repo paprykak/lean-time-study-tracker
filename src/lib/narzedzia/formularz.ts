@@ -59,7 +59,8 @@ export function pokazBlad(komunikat: HTMLElement, tekst: string | null | undefin
   czekajace.delete(komunikat);
   const t = tekst ? typografia(tekst) : '';
   if (!t) {
-    komunikat.hidden = true;
+    // Bez ponownego ustawiania atrybutu: inaczej każdy ukryty komunikat zmieniałby się przy każdym zdarzeniu input.
+    if (!komunikat.hidden) komunikat.hidden = true;
     if (komunikat.textContent) komunikat.textContent = '';
     oznacz(komunikat, []);
     return;
