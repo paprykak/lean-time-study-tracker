@@ -111,6 +111,13 @@ export const AKTY = {
     adres: eli(2025, 236),
     sprawdzono: '2026-11-12',
   },
+  limitSkladek2027: {
+    nazwa: 'Obwieszczenie w sprawie kwoty ograniczenia rocznej podstawy wymiaru składek na ubezpieczenia emerytalne i rentowe w roku 2027',
+    publikator: 'M.P. 2026 poz. 1098',
+    uwaga: '300 990 zł (prognozowane przeciętne wynagrodzenie 10 033 zł), art. 19 ust. 1 i 10 ustawy o systemie ubezpieczeń społecznych',
+    adres: 'https://eli.gov.pl/eli/MP/2026/1098/ogl',
+    sprawdzono: '2026-11-13',
+  },
   budzet2026: {
     nazwa: 'Ustawa budżetowa na rok 2026',
     publikator: 'Dz.U. 2026 poz. 62',

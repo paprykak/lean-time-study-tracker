@@ -282,11 +282,11 @@ export const NARZEDZIA: Narzedzie[] = [
   },
   {
     slug: 'koszt-pracodawcy',
-    nazwa: 'Koszt pracodawcy 2026',
+    nazwa: 'Koszt pracodawcy 2026 i 2027',
     krotko: 'Ile kosztuje pracownik na etacie: pensja plus składki emerytalna, rentowa, wypadkowa, FP, FS, FGŚP i PPK.',
     kategoria: 'wynagrodzenie',
-    przepisy: ['systemUbezpieczen', 'budzet2026', 'rynekPracy', 'funduszSolidarnosciowy', 'roszczeniaPracownicze', 'wypadkowa', 'wypadkowaStopy', 'ppk', 'placa2026'],
-    sprawdzono: '2026-11-12',
+    przepisy: ['systemUbezpieczen', 'budzet2026', 'limitSkladek2027', 'rynekPracy', 'funduszSolidarnosciowy', 'roszczeniaPracownicze', 'wypadkowa', 'wypadkowaStopy', 'ppk', 'minimalneWynagrodzenie', 'placa2026', 'placa2027'],
+    sprawdzono: '2026-11-13',
   },
   {
     slug: 'delegacja-krajowa',

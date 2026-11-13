@@ -1,22 +1,36 @@
 ---
-// Koszt zatrudnienia na umowę o pracę w 2026 r. Logika: src/lib/narzedzia/koszt-pracodawcy.ts (testy obok).
+// Koszt zatrudnienia na umowę o pracę w 2026 i 2027 r. Logika: src/lib/narzedzia/koszt-pracodawcy.ts (testy obok).
+// Rok domyślny to bieżący (skrypt ustawia go także w przeglądarce, gdy strona jest starsza niż Nowy Rok).
 import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
 import { PLACA_MINIMALNA } from '../../data/prawo';
-import { LIMIT_ROCZNY_2026, WYPADKOWA_DOMYSLNA, kosztPracodawcy } from '../../lib/narzedzia/koszt-pracodawcy';
+import { LATA_KOSZTU, ROKI_KOSZTU, WYPADKOWA_DOMYSLNA, kosztPracodawcy, rokKosztu } from '../../lib/narzedzia/koszt-pracodawcy';
 import { liczba, zl } from '../../lib/narzedzia/format';
+import { dzisWPolsce } from '../../lib/narzedzia/terminy';
 
-const start = kosztPracodawcy({ brutto: 6000 });
-const minimalna = kosztPracodawcy({ brutto: PLACA_MINIMALNA[2026].miesiecznie });
-const PRZYKLADY = [PLACA_MINIMALNA[2026].miesiecznie, 6000, 7000, 8000, 10000];
+const rok = rokKosztu(dzisWPolsce());
+const start = kosztPracodawcy({ brutto: 6000, rok });
+const minimalne = LATA_KOSZTU.map((r) => ({ rok: r, placa: PLACA_MINIMALNA[r].miesiecznie, ...kosztPracodawcy({ brutto: PLACA_MINIMALNA[r].miesiecznie, rok: r }) }));
+const minimalna = minimalne.find((m) => m.rok === rok)!;
+const PRZYKLADY = [PLACA_MINIMALNA[rok].miesiecznie, 6000, 7000, 8000, 10000];
+const LATA_TEKST = LATA_KOSZTU.join(' i ');
+/** Zdanie pod wynikiem: skąd stopy funduszy i jaki limit roczny w wybranym roku. */
+const uwagaRoku = (r: keyof typeof ROKI_KOSZTU) => {
+  const p = ROKI_KOSZTU[r];
+  const stopy = p.stopyZRoku === r
+    ? `Stopy FP, FS i FGŚP z ustawy budżetowej na ${r} r.`
+    : `Stopy FP, FS i FGŚP jak w ${p.stopyZRoku} r.: ustawy budżetowej na ${r} r. jeszcze nie ogłoszono.`;
+  return `${stopy} Składki emerytalną i rentowe płaci się do rocznego limitu ${liczba(p.limitRoczny)} zł podstawy w ${r} r. (${p.limitZrodlo}, art. 19 ustawy systemowej).`;
+};
+const UWAGI = Object.fromEntries(LATA_KOSZTU.map((r) => [r, uwagaRoku(r)]));
 
 const faq = [
   {
-    pytanie: 'Ile kosztuje pracodawcę płaca minimalna w 2026 r.?',
-    odpowiedz: `${zl(minimalna.koszt)} przy stopie wypadkowej ${liczba(WYPADKOWA_DOMYSLNA)}% i bez PPK: ${zl(PLACA_MINIMALNA[2026].miesiecznie)} brutto plus ${zl(minimalna.skladki)} składek pracodawcy.`,
+    pytanie: `Ile kosztuje pracodawcę płaca minimalna w ${LATA_TEKST} r.?`,
+    odpowiedz: `Przy stopie wypadkowej ${liczba(WYPADKOWA_DOMYSLNA)}% i bez PPK: ${minimalne.map((m) => `w ${m.rok} r. ${zl(m.koszt)} (${zl(m.placa)} brutto plus ${zl(m.skladki)} składek pracodawcy)`).join(', ')}.`,
   },
   {
     pytanie: 'Jakie składki płaci pracodawca za pracownika?',
-    odpowiedz: 'Emerytalną 9,76% i rentową 6,5% (art. 16 ustawy o systemie ubezpieczeń społecznych), wypadkową według swojej stopy, a w 2026 r. także 1,0% na Fundusz Pracy, 1,45% na Fundusz Solidarnościowy i 0,10% na Fundusz Gwarantowanych Świadczeń Pracowniczych (art. 25–27 ustawy budżetowej na 2026 r.). Przy PPK dochodzi wpłata podstawowa pracodawcy 1,5%.',
+    odpowiedz: 'Emerytalną 9,76% i rentową 6,5% (art. 16 ustawy o systemie ubezpieczeń społecznych), wypadkową według swojej stopy, a w 2026 r. także 1,0% na Fundusz Pracy, 1,45% na Fundusz Solidarnościowy i 0,10% na Fundusz Gwarantowanych Świadczeń Pracowniczych (art. 25–27 ustawy budżetowej na 2026 r.; stopy na 2027 r. poda ustawa budżetowa na 2027 r.). Przy PPK dochodzi wpłata podstawowa pracodawcy 1,5%.',
   },
   {
     pytanie: 'Ile wynosi składka wypadkowa?',
@@ -30,15 +44,21 @@ const faq = [
 ---
 <StronaNarzedzia
   slug="koszt-pracodawcy"
-  tytul="Koszt pracodawcy 2026: ile kosztuje pracownik"
-  opis={`Policz pełny koszt zatrudnienia na umowę o pracę w 2026 r.: składki emerytalna, rentowa, wypadkowa, FP, FS, FGŚP i PPK. Płaca minimalna kosztuje ${zl(minimalna.koszt)}.`}
-  h1="Koszt pracodawcy: kalkulator 2026"
-  lead={`Pracodawca płaci więcej niż pensja brutto: dochodzą składki ZUS i fundusze. Przy płacy minimalnej ${zl(PLACA_MINIMALNA[2026].miesiecznie)} to ${zl(minimalna.koszt)} miesięcznie. Wpisz pensję brutto, a pokażemy każdą składkę ze źródłem.`}
+  tytul={`Koszt pracodawcy ${LATA_TEKST}: ile kosztuje pracownik`}
+  opis={`Policz pełny koszt zatrudnienia na umowę o pracę w ${LATA_TEKST} r.: składki emerytalna, rentowa, wypadkowa, FP, FS, FGŚP i PPK. Płaca minimalna w ${rok} r. kosztuje ${zl(minimalna.koszt)}.`}
+  h1={`Koszt pracodawcy: kalkulator ${LATA_TEKST}`}
+  lead={`Pracodawca płaci więcej niż pensja brutto: dochodzą składki ZUS i fundusze. Przy płacy minimalnej ${zl(minimalna.placa)} w ${rok} r. to ${zl(minimalna.koszt)} miesięcznie. Wpisz pensję brutto, a pokażemy każdą składkę ze źródłem.`}
   faq={faq}
 >
   <form class="kalkulator" data-koszt novalidate aria-labelledby="kalkulator-tytul">
     <div class="kalkulator-pola">
       <h2 id="kalkulator-tytul" class="tytul-m">Pensja pracownika</h2>
+      <div class="mt-4">
+        <label for="k-rok" class="etykieta-pola">Rok wypłaty</label>
+        <select id="k-rok" name="rok" class="pole mt-1 max-w-48">
+          {LATA_KOSZTU.map((r) => <option value={r} selected={r === rok}>{r}</option>)}
+        </select>
+      </div>
       <div class="mt-4">
         <label for="k-brutto" class="etykieta-pola">Wynagrodzenie brutto w miesiącu (zł)</label>
         <input id="k-brutto" name="brutto" class="pole mt-1 max-w-48" type="text" inputmode="decimal" autocomplete="off" value="6000" aria-describedby="k-blad" />
@@ -70,19 +90,19 @@ const faq = [
         <div><dt>FGŚP 0,10%</dt><dd data-w="fgsp">{zl(start.fgsp)}</dd></div>
         <div><dt>PPK 1,5%</dt><dd data-w="ppk">{zl(start.ppk)}</dd></div>
       </dl>
-      <p class="meta mt-4">Stopy FP, FS i FGŚP z ustawy budżetowej na 2026 r. Składki emerytalną i rentowe płaci się do rocznego limitu {liczba(LIMIT_ROCZNY_2026)} zł podstawy (30-krotność prognozowanego przeciętnego wynagrodzenia, art. 19 ust. 1 ustawy systemowej).</p>
+      <p class="meta mt-4" data-w="uwaga" data-uwagi={JSON.stringify(UWAGI)}>{UWAGI[rok]}</p>
     </div>
   </form>
 
   <Fragment slot="wyjasnienie">
-    <h2 id="tabela">Koszt pracodawcy w 2026 r.: przykłady</h2>
+    <h2 id="tabela">Koszt pracodawcy w {rok} r.: przykłady</h2>
     <div class="tabela">
       <table>
         <caption class="sr-only">Koszt pracodawcy przy wypadkowej 1,67% i bez PPK</caption>
         <thead><tr><th scope="col">Brutto</th><th scope="col">Składki pracodawcy</th><th scope="col">Koszt razem</th></tr></thead>
         <tbody>
           {PRZYKLADY.map((b) => {
-            const r = kosztPracodawcy({ brutto: b });
+            const r = kosztPracodawcy({ brutto: b, rok });
             return <tr><th scope="row">{zl(b)}</th><td>{zl(r.skladki)}</td><td>{zl(r.koszt)}</td></tr>;
           })}
         </tbody>
@@ -100,13 +120,18 @@ const faq = [
 </StronaNarzedzia>
 
 <script>
-  import { kosztPracodawcy } from '../../lib/narzedzia/koszt-pracodawcy';
+  import { kosztPracodawcy, rokKosztu, type RokKosztu } from '../../lib/narzedzia/koszt-pracodawcy';
   import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
+  import { dzisWPolsce } from '../../lib/narzedzia/terminy';
+  import { typografia } from '../../lib/typografia.mjs';
 
   const form = document.querySelector<HTMLFormElement>('[data-koszt]');
   if (form) {
     const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
     const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const uwagi = JSON.parse(w('uwaga').dataset.uwagi ?? '{}') as Record<string, string>;
+    // Strona zbudowana w starym roku: po Nowym Roku domyślnie bieżący rok.
+    (el('rok') as unknown as HTMLSelectElement).value = String(rokKosztu(dzisWPolsce()));
     const przelicz = () => {
       const brutto = wpisanaLiczba(el('brutto').value);
       const wypadkowa = wpisanaLiczba(el('wypadkowa').value);
@@ -121,7 +146,9 @@ const faq = [
         w('koszt').textContent = '—';
         return;
       }
-      const r = kosztPracodawcy({ brutto, wypadkowa, ppk: el('ppk').checked, wiekZwolniony: el('wiek').checked });
+      const rok = Number(el('rok').value) as RokKosztu;
+      w('uwaga').textContent = typografia(uwagi[rok] ?? '');
+      const r = kosztPracodawcy({ brutto, wypadkowa, rok, ppk: el('ppk').checked, wiekZwolniony: el('wiek').checked });
       w('koszt').textContent = zl(r.koszt);
       for (const k of ['emerytalna', 'rentowa', 'wypadkowa', 'fgsp', 'ppk'] as const) w(k).textContent = zl(r[k]);
       w('fp').textContent = zl(r.fp + r.fs);
