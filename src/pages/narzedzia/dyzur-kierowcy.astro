@@ -1,0 +1,210 @@
+---
+// Dyżur i przerwy kierowcy: ile płatne (art. 9 ust. 1–6, art. 10 ust. 2, art. 16 ust. 1–2 i art. 27 ust. 1 i 3 ustawy
+// o czasie pracy kierowców, t.j. Dz.U. 2026 poz. 477). Logika i teksty wyniku: src/lib/narzedzia/dyzur-kierowcy.ts.
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { nazwaMiesiaca } from '../../lib/narzedzia/czas-pracy';
+import { PRZYKLAD, dyzurKierowcy, opisDyzuruKierowcy } from '../../lib/narzedzia/dyzur-kierowcy';
+import { lataKalendarza } from '../../lib/narzedzia/dzis-w-formularzu';
+import { dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+const dzis = dzisWPolsce();
+const LATA = lataKalendarza(dzis);
+const rok = Number(dzis.slice(0, 4));
+const miesiac = Number(dzis.slice(5, 7));
+const d = { rodzaj: PRZYKLAD.rodzaj, stawka: Number(PRZYKLAD.stawka), rok, miesiac, dyzur: Number(PRZYKLAD.dyzur), przerwy: Number(PRZYKLAD.przerwy), zaloga: Number(PRZYKLAD.zaloga), przerywany: Number(PRZYKLAD.przerywany) };
+const o = opisDyzuruKierowcy(dyzurKierowcy(d), d);
+
+const faq = [
+  {
+    pytanie: 'Czy przerwa w jeździe jest płatna?',
+    odpowiedz: 'Tak. Z przerwy w jeździe 15 minut wlicza się do czasu pracy, gdy dobowy wymiar czasu pracy to co najmniej 6 godzin (art. 27 ust. 3 ustawy o czasie pracy kierowców). Reszta przerwy to czas dyżuru (art. 27 ust. 1), za który należy się wynagrodzenie według przepisów u pracodawcy, nie niższe niż połowa stawki z osobistego zaszeregowania (art. 9 ust. 6 w związku z ust. 5). Wyjątek: na liniach regularnych do 50 km przerwy rozlicza się jak czas pracy (art. 31b ust. 4).',
+  },
+  {
+    pytanie: 'Ile płaci się kierowcy za dyżur?',
+    odpowiedz: 'Za dyżur poza domem kierowcy należy się czas wolny w wymiarze równym dyżurowi, a gdy nie można go udzielić, wynagrodzenie ze stawki godzinowej albo miesięcznej z osobistego zaszeregowania, a bez wyodrębnionej stawki 60% wynagrodzenia (art. 9 ust. 5 ustawy o czasie pracy kierowców). Za dyżur w domu nie należy się ani czas wolny, ani wynagrodzenie.',
+  },
+  {
+    pytanie: 'Czy jazda jako drugi kierowca w załodze jest płatna?',
+    odpowiedz: 'Gdy pojazd prowadzi dwóch lub więcej kierowców, czas, w którym kierowca nie prowadzi, jest czasem dyżuru (art. 9 ust. 3). Należy się za niego wynagrodzenie według przepisów u pracodawcy, nie niższe niż połowa stawki z osobistego zaszeregowania (art. 9 ust. 6).',
+  },
+  {
+    pytanie: 'Co to jest przerywany czas pracy kierowcy?',
+    odpowiedz: 'To system stosowany w szczególnie uzasadnionych przypadkach, według z góry ustalonego rozkładu, z jedną przerwą w ciągu doby, najwyżej 5 godzin, a przy przewozach regularnych do 6 godzin, gdy dobowy wymiar nie przekracza 7 godzin. Za czas przerwy należy się połowa wynagrodzenia z osobistego zaszeregowania, a w czasie przerwy kierowca może swobodnie dysponować swoim czasem (art. 16 ust. 1–2). Wprowadza się go w układzie zbiorowym albo regulaminie pracy, a u pracodawcy bez zakładowej organizacji związkowej w umowie o pracę (art. 18 ust. 3).',
+  },
+  {
+    pytanie: 'Czy dyżur wlicza się do odpoczynku?',
+    odpowiedz: 'Nie. Czasu dyżuru nie wlicza się do dobowego nieprzerwanego odpoczynku, a odpoczynek w pojeździe na postoju z miejscem do spania nie jest dyżurem (art. 9 ust. 4). Odpoczynków z rozporządzenia (WE) nr 561/2006 nie można traktować jak czasu dyżuru (art. 27 ust. 2).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="dyzur-kierowcy"
+  tytul="Dyżur i przerwy kierowcy: ile płatne"
+  opis="Ile należy się kierowcy za dyżur, przerwy w jeździe, jazdę w załodze bez prowadzenia i przerwę w przerywanym czasie pracy: pełna stawka albo połowa."
+  h1="Dyżur, przerwy i jazda w załodze: ile należy się kierowcy"
+  lead="Przerwy w jeździe, dyżur i czas drugiego kierowcy w załodze to zwykle nie czas pracy, ale większość z nich jest płatna. Wpisz stawkę i godziny z miesiąca, a policzymy najniższe wynagrodzenie z ustawy o czasie pracy kierowców."
+  faq={faq}
+>
+  <form class="kalkulator" data-dyzur-kierowcy novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Stawka i godziny z miesiąca</h2>
+      <fieldset class="mt-4">
+        <legend class="etykieta-pola">Wynagrodzenie zasadnicze</legend>
+        <div class="opcje-pionowe mt-2">
+          <label><input type="radio" name="rodzaj" value="miesieczna" checked /> Pensja miesięczna</label>
+          <label><input type="radio" name="rodzaj" value="godzinowa" /> Stawka za godzinę</label>
+        </div>
+      </fieldset>
+      <div class="mt-4">
+        <label for="dk-stawka" class="etykieta-pola" data-w="stawka-etykieta">Pensja (zł brutto)</label>
+        <input id="dk-stawka" name="stawka" class="pole mt-1 max-w-56" type="text" inputmode="decimal" autocomplete="off" value={PRZYKLAD.stawka} aria-describedby="dk-stawka-opis dk-blad" />
+        <p id="dk-stawka-opis" class="meta mt-1">Stawka z osobistego zaszeregowania, bez dodatków.</p>
+      </div>
+      <div class="mt-4 grid grid-cols-2 gap-4" data-tylko-miesieczna>
+        <div>
+          <label for="dk-miesiac" class="etykieta-pola">Miesiąc</label>
+          <select id="dk-miesiac" name="miesiac" class="pole mt-1" data-miesiac-biezacy>
+            {Array.from({ length: 12 }, (_, i) => <option value={i + 1} selected={i + 1 === miesiac}>{nazwaMiesiaca(i + 1)}</option>)}
+          </select>
+        </div>
+        <div>
+          <label for="dk-rok" class="etykieta-pola">Rok</label>
+          <select id="dk-rok" name="rok" class="pole mt-1" data-rok-biezacy>
+            {LATA.map((r) => <option value={r} selected={r === rok}>{r}</option>)}
+          </select>
+        </div>
+      </div>
+
+      <fieldset class="mt-6">
+        <legend class="etykieta-pola">Godziny w miesiącu</legend>
+        <div class="mt-2 grid grid-cols-1 gap-4 min-[360px]:grid-cols-2">
+          <div>
+            <label for="dk-dyzur" class="meta">Dyżur poza domem</label>
+            <input id="dk-dyzur" name="dyzur" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value={PRZYKLAD.dyzur} aria-describedby="dk-dyzur-opis dk-blad" />
+            <p id="dk-dyzur-opis" class="meta mt-1">Bez pracy, bez czasu wolnego w zamian; z dyspozycją poza rozkładem.</p>
+          </div>
+          <div>
+            <label for="dk-przerwy" class="meta">Przerwy w jeździe</label>
+            <input id="dk-przerwy" name="przerwy" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value={PRZYKLAD.przerwy} aria-describedby="dk-przerwy-opis dk-blad" />
+            <p id="dk-przerwy-opis" class="meta mt-1">Po 4,5 h jazdy bez 15 min dziennie w czasie pracy, też przerwy po 6 h pracy (art. 13); nie dotyczy linii do 50 km.</p>
+          </div>
+          <div>
+            <label for="dk-zaloga" class="meta">W załodze, bez prowadzenia</label>
+            <input id="dk-zaloga" name="zaloga" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value={PRZYKLAD.zaloga} aria-describedby="dk-blad" />
+          </div>
+          <div>
+            <label for="dk-przerywany" class="meta">Przerwa w przerywanym czasie</label>
+            <input id="dk-przerywany" name="przerywany" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value={PRZYKLAD.przerywany} aria-describedby="dk-blad" />
+          </div>
+        </div>
+        <p class="meta mt-2">Godziny wpisz jako 4, 4,5 albo 4,25. Dyżuru w domu nie wpisuj: nie jest płatny.</p>
+      </fieldset>
+      <p id="dk-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Co najmniej do wypłaty</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-kwota" data-w="razem">{o.razem}</p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Stawka za godzinę</dt><dd data-w="godzina">{o.godzina}</dd></div>
+        <div><dt>Dyżur</dt><dd data-w="dyzur">{o.dyzur}</dd></div>
+        <div><dt>Przerwy w jeździe</dt><dd data-w="przerwy">{o.przerwy}</dd></div>
+        <div><dt>Załoga</dt><dd data-w="zaloga">{o.zaloga}</dd></div>
+        <div><dt>Przerywany czas pracy</dt><dd data-w="przerywany">{o.przerywany}</dd></div>
+      </dl>
+      <p class="wynik-uwaga">Kwoty brutto. Za przerwy i czas w załodze przepisy u pracodawcy mogą dawać więcej; ustawa podaje minimum. Za dyżur zamiast pieniędzy pracodawca udziela czasu wolnego, gdy to możliwe.</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Powyżej wynik dla przykładu, a zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="zasady">Co jest płatne i ile</h2>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Wynagrodzenie kierowcy za czas, który nie jest czasem pracy, według ustawy o czasie pracy kierowców</caption>
+        <thead><tr><th scope="col">Czas</th><th scope="col">Należy się</th><th scope="col">Przepis</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Dyżur poza domem</th><td>czas wolny równy dyżurowi, a gdy niemożliwy: stawka z osobistego zaszeregowania (bez wyodrębnionej stawki 60% wynagrodzenia)</td><td>art. 9 ust. 1 i 5</td></tr>
+          <tr><th scope="row">Dyżur w domu</th><td>nic</td><td>art. 9 ust. 5</td></tr>
+          <tr><th scope="row">Dyspozycja poza rozkładem</th><td>czas dyżuru</td><td>art. 10 ust. 2</td></tr>
+          <tr><th scope="row">Przerwa w jeździe po 4,5 h</th><td>15 min w czasie pracy (przy wymiarze od 6 h), reszta: co najmniej połowa stawki</td><td>art. 27 ust. 1 i 3, art. 9 ust. 6</td></tr>
+          <tr><th scope="row">Przerwa po 6 h pracy</th><td>co najmniej połowa stawki (skracana o 15 min w czasie pracy)</td><td>art. 13, art. 9 ust. 2 i 6</td></tr>
+          <tr><th scope="row">Przerwy na linii do 50 km</th><td>jak czas pracy</td><td>art. 31b ust. 4</td></tr>
+          <tr><th scope="row">Drugi kierowca w załodze</th><td>co najmniej połowa stawki</td><td>art. 9 ust. 3 i 6</td></tr>
+          <tr><th scope="row">Przerwa w przerywanym czasie pracy</th><td>połowa stawki</td><td>art. 16 ust. 2</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Dyżur to pozostawanie poza normalnymi godzinami pracy w gotowości do pracy w zakładzie albo w innym miejscu
+      wyznaczonym przez pracodawcę (art. 9 ust. 1). Do kierowcy, który wykorzystał przerwy w jeździe z art. 7 rozporządzenia
+      (WE) nr 561/2006, nie stosuje się przerwy z art. 13 ustawy (art. 27 ust. 4), a przerwy w jeździe po 4,5 h są czasem
+      dyżuru (art. 27 ust. 1). Czasu dyżuru nie wlicza się do odpoczynku dobowego (art. 9 ust. 4).
+    </p>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <ul>
+      <li><strong>Stawka za godzinę:</strong> przy stawce godzinowej bierzemy ją wprost. Przy pensji ustawa nie mówi, jak ją przeliczyć; dzielimy ją przez godziny do przepracowania w wybranym miesiącu (8 h za każdy dzień od poniedziałku do piątku, minus 8 h za święto w dniu innym niż niedziela), tak jak § 4a rozporządzenia z 29 maja 1996 r. każe liczyć dyżur z Kodeksu pracy.</li>
+      <li><strong>Dyżur:</strong> pełna stawka za godzinę, gdy pracodawca nie udzielił czasu wolnego. Okresy dyspozycji poza rozkładem są czasem dyżuru (art. 10 ust. 2), a przepis nie mówi, który ustęp art. 9 do nich stosować; liczymy jak dyżur z ust. 5, czyli korzystniej dla kierowcy.</li>
+      <li><strong>Przerwy, załoga, przerywany czas pracy:</strong> połowa stawki za godzinę. Przy przerwach i załodze to minimum: przepisy u pracodawcy mogą przewidywać więcej (art. 9 ust. 6).</li>
+      <li><strong>Czego nie liczymy:</strong> wariantu „60% wynagrodzenia” przy braku wyodrębnionej stawki, bo ustawa nie mówi, jak to wynagrodzenie ustalić, ani wynagrodzenia za pracę wykonaną w czasie dyżuru, która jest czasem pracy. Kwoty zaokrąglamy do grosza.</li>
+    </ul>
+    <p>
+      Dyżur pracowników z Kodeksu pracy policzy <a href="/narzedzia/dyzur-w-pracy">kalkulator dyżuru w pracy</a>, a czy w dniu pracy nie ma naruszeń jazdy, przerw i odpoczynków, sprawdzi <a href="/narzedzia/czas-jazdy-kierowcy">kalkulator czasu jazdy kierowcy</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { dyzurKierowcy, opisDyzuruKierowcy, type Stawka } from '../../lib/narzedzia/dyzur-kierowcy';
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
+  import { wpisanaLiczba } from '../../lib/narzedzia/format';
+  import { typografia } from '../../lib/typografia.mjs';
+
+  const form = document.querySelector<HTMLFormElement>('[data-dyzur-kierowcy]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const pisz = (k: string, t: string) => (w(k).textContent = typografia(t));
+    const pole = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+    const GODZINY = ['dyzur', 'przerwy', 'zaloga', 'przerywany'] as const;
+
+    const przelicz = () => {
+      const rodzaj = (form.querySelector<HTMLInputElement>('input[name="rodzaj"]:checked')?.value ?? 'miesieczna') as Stawka;
+      pisz('stawka-etykieta', rodzaj === 'miesieczna' ? 'Pensja (zł brutto)' : 'Stawka za godzinę (zł brutto)');
+      form.querySelector<HTMLElement>('[data-tylko-miesieczna]')!.hidden = rodzaj !== 'miesieczna';
+      const stawka = wpisanaLiczba(pole('stawka').value);
+      const godz = GODZINY.map((k) => (pole(k).value.trim() ? wpisanaLiczba(pole(k).value) : 0));
+      const zlaStawka = !(stawka > 0 && stawka < 1_000_000);
+      const zleGodziny = GODZINY.map((_, i) => !(godz[i] >= 0 && godz[i] <= 744));
+      const blad = zlaStawka ? (rodzaj === 'miesieczna' ? 'Wpisz pensję, na przykład 6000.' : 'Wpisz stawkę za godzinę, na przykład 31,40.') : zleGodziny.some(Boolean) ? 'Wpisz godziny od 0 do 744, na przykład 4 albo 4,5.' : null;
+      pole('stawka').setAttribute('aria-invalid', zlaStawka ? 'true' : 'false');
+      GODZINY.forEach((k, i) => pole(k).setAttribute('aria-invalid', zleGodziny[i] ? 'true' : 'false'));
+      b.hidden = !blad;
+      b.textContent = blad ? typografia(blad) : '';
+      if (blad) {
+        for (const k of ['razem', 'godzina', 'dyzur', 'przerwy', 'zaloga', 'przerywany']) w(k).textContent = '—';
+        return;
+      }
+      const d = {
+        rodzaj,
+        stawka,
+        rok: Number((form.elements.namedItem('rok') as HTMLSelectElement).value),
+        miesiac: Number((form.elements.namedItem('miesiac') as HTMLSelectElement).value),
+        dyzur: godz[0],
+        przerwy: godz[1],
+        zaloga: godz[2],
+        przerywany: godz[3],
+      };
+      const o = opisDyzuruKierowcy(dyzurKierowcy(d), d);
+      for (const k of ['razem', 'godzina', 'dyzur', 'przerwy', 'zaloga', 'przerywany'] as const) pisz(k, o[k]);
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    ustawDzisiejszeWartosci(form);
+    przelicz();
+  }
+</script>

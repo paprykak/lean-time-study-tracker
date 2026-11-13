@@ -1,0 +1,212 @@
+---
+// Zaświadczenie ADR kierowcy: ważność 5 lat (art. 23 ust. 4 ustawy o przewozie towarów niebezpiecznych), kurs
+// doskonalący i egzamin w ostatnich 12 miesiącach (art. 24 ust. 6), kto płaci (art. 39), opłata 50 zł (§ 18
+// rozporządzenia Dz.U. 2024 poz. 964). Logika i teksty wyniku: src/lib/narzedzia/zaswiadczenie-adr.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { DNI_NA_WYDANIE, KARA_FIRMY, LATA_WAZNOSCI, MIESIACE_NA_EGZAMIN, MIESIACE_OKNA, OPLATA, PRZYKLAD_DNI, opisAdr, przykladStartowy, zaswiadczenieAdr } from '../../lib/narzedzia/zaswiadczenie-adr';
+import { dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+const dzis = dzisWPolsce();
+// Przykład z dnia budowania; skrypt przestawia go na prawdziwe dziś (data-dzis).
+const START = przykladStartowy(dzis);
+const o = opisAdr(zaswiadczenieAdr({ waznyDo: START.waznyDo, egzamin: START.egzamin, dzis }), 'firma');
+
+const faq = [
+  {
+    pytanie: 'Na ile lat jest ważne zaświadczenie ADR?',
+    odpowiedz: `Na ${LATA_WAZNOSCI} lat od dnia, w którym kierowca zdał egzamin po kursie ADR (art. 23 ust. 4 ustawy o przewozie towarów niebezpiecznych). Po przedłużeniu nowe zaświadczenie jest ważne kolejne ${LATA_WAZNOSCI} lat od dnia upływu ważności dotychczasowego (art. 24 ust. 6). Wiąże data „ważne do” wpisana na zaświadczeniu.`,
+  },
+  {
+    pytanie: 'Kiedy zrobić kurs ADR doskonalący?',
+    odpowiedz: `W okresie ${MIESIACE_OKNA} miesięcy przed dniem upływu ważności zaświadczenia: wtedy kurs doskonalący i zdany egzamin przedłużają ważność o ${LATA_WAZNOSCI} lat od dnia jej upływu, więc nic nie przepada (art. 24 ust. 6). Egzamin trzeba zdać najpóźniej ${MIESIACE_NA_EGZAMIN} miesięcy po ukończeniu kursu (art. 21 ust. 10).`,
+  },
+  {
+    pytanie: 'Kto płaci za kurs ADR?',
+    odpowiedz: `Koszt kursu ADR i wydania zaświadczenia ponosi uczestnik przewozu towarów niebezpiecznych (np. przewoźnik albo nadawca), na rzecz którego kierowca wykonuje czynności przy przewozie, albo firma, która sama osobiście wykonuje przewóz. W innych przypadkach płaci uczestnik kursu (art. 39 ustawy o przewozie towarów niebezpiecznych). Opłata za wydanie zaświadczenia albo wtórnika wynosi ${OPLATA} zł (§ 18 rozporządzenia w sprawie egzaminów dla kierowców przewożących towary niebezpieczne). Osobnej opłaty za egzamin nie ma: wynagrodzenie komisji pokrywa ośrodek szkolenia (art. 21 ust. 5).`,
+  },
+  {
+    pytanie: 'Co grozi za jazdę bez ważnego zaświadczenia ADR?',
+    odpowiedz: `Pojazdem, dla którego ADR wymaga kursu kierowcy, może kierować tylko osoba z ważnym zaświadczeniem ADR (art. 20 ust. 1). Firma, która dopuści do przewozu towaru niebezpiecznego kierowcę bez wymaganego zaświadczenia, płaci karę ${KARA_FIRMY} zł (art. 107 ust. 1–2 i załącznik nr 1 do ustawy, lp. 2.8). Odpowiedzialności samego kierowcy kalkulator nie opisuje.`,
+  },
+  {
+    pytanie: 'Od ilu lat można zrobić ADR?',
+    odpowiedz: 'Zaświadczenie ADR dostaje osoba, która ukończyła 21 lat (poza kierowcami pojazdów Sił Zbrojnych), spełnia wymagania dla kierowców z przepisów o ruchu drogowym i transporcie drogowym, ukończyła kurs ADR i zdała egzamin (art. 20 ust. 2). Egzamin jest zdany przy co najmniej 2/3 poprawnych odpowiedzi (§ 11 rozporządzenia w sprawie egzaminów).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="zaswiadczenie-adr"
+  tytul="Zaświadczenie ADR: ważność i kurs doskonalący"
+  opis="Do kiedy ważne jest zaświadczenie ADR, kiedy zrobić kurs doskonalący i egzamin, żeby nic nie przepadło, do kiedy nowe i kto płaci za kurs."
+  h1="Zaświadczenie ADR: do kiedy ważne i kiedy kurs doskonalący"
+  lead={`Zaświadczenie ADR jest ważne ${LATA_WAZNOSCI} lat. Wpisz datę „ważne do”, a policzymy, w jakim okresie zrobić kurs doskonalący i egzamin, żeby przedłużyć ważność bez straty, do kiedy będzie ważne nowe i kto płaci za kurs.`}
+  faq={faq}
+>
+  <form class="kalkulator" data-adr novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twoje zaświadczenie ADR</h2>
+
+      <div class="mt-4">
+        <label for="adr-wazne" class="etykieta-pola">Ważne do</label>
+        <input id="adr-wazne" name="wazne" type="date" class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" value={START.waznyDo} data-dzis={String(PRZYKLAD_DNI.waznyDo)} aria-describedby="adr-wazne-opis adr-wazne-blad" />
+        <p id="adr-wazne-opis" class="meta mt-1">Data z zaświadczenia ADR (pole „ważne do”).</p>
+        <p id="adr-wazne-blad" class="blad-pola" data-blad="wazne" hidden></p>
+      </div>
+
+      <div class="mt-6">
+        <label for="adr-egzamin" class="etykieta-pola">Egzamin po kursie doskonalącym (opcjonalnie)</label>
+        <input id="adr-egzamin" name="egzamin" type="date" class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" value={START.egzamin} data-dzis={String(PRZYKLAD_DNI.egzamin)} aria-describedby="adr-egzamin-opis adr-egzamin-blad" />
+        <p id="adr-egzamin-opis" class="meta mt-1">Pokażemy, czy egzamin w tym dniu przedłuży zaświadczenie i do kiedy.</p>
+        <p id="adr-egzamin-blad" class="blad-pola" data-blad="egzamin" hidden></p>
+      </div>
+
+      <fieldset class="mt-6">
+        <legend class="etykieta-pola">Towary niebezpieczne wozisz</legend>
+        <div class="opcje-pionowe mt-2">
+          <label><input type="radio" name="platnik" value="firma" checked /> Dla firmy (praca, zlecenie)</label>
+          <label><input type="radio" name="platnik" value="wlasna-firma" /> We własnej firmie</label>
+          <label><input type="radio" name="platnik" value="sam" /> Jeszcze nie, kurs na własną rękę</label>
+        </div>
+      </fieldset>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Zaświadczenie ADR ważne do</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-data" data-w="termin">{o.termin}</p>
+        <p class="status-terminu" data-w="status" data-status={o.kod === 'wygaslo' ? 'po-terminie' : o.kod === 'okno' ? 'pilne' : 'w-terminie'}>{o.status}</p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Kurs doskonalący i egzamin</dt><dd data-w="okno">{o.okno}</dd></div>
+        <div><dt>Egzamin z zapasem na wydanie</dt><dd data-w="zapas">{o.zapas}</dd></div>
+        <div><dt>Nowe zaświadczenie po przedłużeniu</dt><dd data-w="nowy">{o.nowy}</dd></div>
+        <div><dt>Po egzaminie w wybranym dniu</dt><dd data-w="plan">{o.plan}</dd></div>
+        <div><dt>Kto płaci</dt><dd data-w="placi">{o.placi}</dd></div>
+      </dl>
+      <p class="wynik-uwaga" data-w="uwaga">{o.uwagi.join(' ')}</p>
+      <p class="mt-5">
+        <button type="button" class="przycisk przycisk-grafit" data-ics disabled>Dodaj do kalendarza (.ics)</button>
+      </p>
+      <p class="meta mt-2">Terminy do kalendarza (bez powiadomień): początek okresu na kurs doskonalący, egzamin z zapasem, ostatni dzień na egzamin i koniec ważności (tylko te, które jeszcze nie minęły).</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Powyżej przykład, a zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="zasady">Zasady ważności</h2>
+    <ul>
+      <li>Pojazdem przewożącym towary niebezpieczne, dla którego ADR wymaga kursu kierowcy, może kierować tylko osoba z ważnym zaświadczeniem ADR (art. 20 ust. 1 ustawy o przewozie towarów niebezpiecznych).</li>
+      <li>Zaświadczenie dostaje osoba, która ukończyła 21 lat, spełnia wymagania dla kierowców z przepisów o ruchu drogowym i transporcie drogowym, ukończyła kurs ADR (początkowy przy pierwszym zaświadczeniu, doskonalący przy przedłużeniu) i zdała egzamin (art. 20 ust. 2).</li>
+      <li>Egzamin trzeba zdać najpóźniej {MIESIACE_NA_EGZAMIN} miesięcy po ukończeniu kursu; w tym czasie można też zdawać poprawki (art. 21 ust. 10).</li>
+      <li>Zaświadczenie wydaje marszałek województwa w {DNI_NA_WYDANIE} dni od egzaminu i wysyła je pocztą za potwierdzeniem odbioru (art. 23 ust. 3). Jest ważne {LATA_WAZNOSCI} lat od dnia zdania egzaminu (art. 23 ust. 4).</li>
+      <li>Żeby przedłużyć ważność, trzeba w okresie {MIESIACE_OKNA} miesięcy przed dniem jej upływu ukończyć kurs doskonalący i zdać egzamin. Wtedy marszałek wydaje nowe zaświadczenie na kolejne {LATA_WAZNOSCI} lat od dnia upływu ważności dotychczasowego (art. 24 ust. 6).</li>
+      <li>Kurs specjalistyczny, który rozszerza zakres uprawnień (na przykład o cysterny), nie wydłuża ważności: rozszerzone uprawnienia są ważne najwyżej do końca dotychczasowych (art. 21 ust. 9).</li>
+    </ul>
+
+    <h2 id="kto-placi">Kto płaci</h2>
+    <p>
+      Koszt kursu ADR i wydania zaświadczenia ponosi uczestnik przewozu towarów niebezpiecznych (przewoźnik, nadawca,
+      załadowca i inne firmy z ustawy), gdy kierowca wykonuje czynności na jego rzecz albo gdy ta firma sama osobiście
+      wykonuje przewóz. W innych przypadkach płaci uczestnik kursu (art. 39 ustawy o przewozie towarów niebezpiecznych).
+      Osobnej opłaty za egzamin ADR nie ma: wynagrodzenie komisji egzaminacyjnej pokrywa podmiot prowadzący kurs
+      (art. 21 ust. 5). Opłata za wydanie zaświadczenia albo wtórnika wynosi {OPLATA} zł
+      (§ 18 rozporządzenia Ministra Infrastruktury w sprawie egzaminów dla kierowców przewożących towary niebezpieczne,
+      Dz.U. 2024 poz. 964). Firma, która dopuści do przewozu kierowcę bez wymaganego zaświadczenia ADR, płaci karę {KARA_FIRMY} zł
+      (art. 107 ust. 1–2 i załącznik nr 1 do ustawy, lp. 2.8).
+    </p>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <ul>
+      <li><strong>Okres na kurs doskonalący:</strong> ustawa mówi o {MIESIACE_OKNA} miesiącach „poprzedzających dzień upływu ważności”. Za ten dzień bierzemy datę „ważne do”. Przepis nie mówi, czy ten dzień liczy się do okresu, więc podajemy część wspólną obu odczytań: od dnia po dacie sprzed {MIESIACE_OKNA} miesięcy do dnia przed końcem ważności. Miesiące liczymy jak w art. 112 Kodeksu cywilnego: ten sam dzień miesiąca, a gdy go nie ma, ostatni dzień miesiąca.</li>
+      <li><strong>Nowe zaświadczenie:</strong> {LATA_WAZNOSCI} lat od dnia upływu ważności (przy przedłużeniu) albo od dnia egzaminu może się skończyć w dniu, który datą odpowiada początkowi, albo dzień wcześniej. Podajemy wcześniejszy dzień jako „co najmniej do”; wiąże data, którą wpisze marszałek województwa.</li>
+      <li><strong>Egzamin z zapasem:</strong> marszałek ma {DNI_NA_WYDANIE} dni od egzaminu na wydanie zaświadczenia (art. 23 ust. 3), więc egzamin najpóźniej {DNI_NA_WYDANIE} dni przed końcem ważności daje szansę, że nowy dokument będzie gotowy na czas. To nasz rachunek, bez czasu na pocztę, nie termin z ustawy.</li>
+      <li><strong>Egzamin za wcześnie:</strong> przedłużenie z art. 24 ust. 6 dotyczy tylko kursu i egzaminu w ostatnich {MIESIACE_OKNA} miesiącach. Czy i na jak długo urząd wyda nowe zaświadczenie po wcześniejszym egzaminie, ustawa nie mówi; pokazujemy, do kiedy byłoby ważne, gdyby na {LATA_WAZNOSCI} lat od dnia egzaminu (art. 23 ust. 4), i ile dni obecnego by przepadło.</li>
+      <li><strong>Egzamin w ostatnim dniu ważności:</strong> przepis nie mówi, czy ten dzień należy do okresu z art. 24 ust. 6, więc piszemy, że przedłużenie może nie przysługiwać. Przy egzaminie po końcu ważności dni bez zaświadczenia liczymy od dnia po dacie „ważne do” do dnia przed egzaminem; nowy dokument przychodzi jeszcze później.</li>
+      <li><strong>Po terminie:</strong> po upływie ważności przedłużenie z art. 24 ust. 6 już nie przysługuje. Ustawa wymienia kurs doskonalący przy przedłużeniu, a początkowy przy pierwszym zaświadczeniu i nie mówi wprost, który kurs robi osoba z wygasłym zaświadczeniem, więc tego nie przesądzamy.</li>
+      <li><strong>Czego nie liczymy:</strong> czy dany ładunek wymaga zaświadczenia (o tym decydują ilości i rodzaje towarów w ADR), ani zakresu kursów specjalistycznych. Tekst ADR w Dzienniku Ustaw (Dz.U. 2025 poz. 642) jest opublikowany jako skan, więc opieramy się na ustawie, która przenosi zasady ważności z ADR.</li>
+    </ul>
+    <p>
+      Do kiedy ważny jest kod 95, policzy <a href="/narzedzia/kod-95">kalkulator kodu 95</a> (przy ważnym zaświadczeniu ADR szkolenie okresowe w bloku ciężarówek można skrócić o 14 godzin), a terminy badań lekarskich i psychotestów <a href="/narzedzia/badania-kierowcy">kalkulator badań kierowcy</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { LATA_WAZNOSCI, opisAdr, zaswiadczenieAdr, type Platnik, type StatusAdr } from '../../lib/narzedzia/zaswiadczenie-adr';
+  import { dodajLata, dzisWPolsce, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { plikIcs, type Wydarzenie } from '../../lib/narzedzia/kalendarz-ics';
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
+  import { typografia } from '../../lib/typografia.mjs';
+
+  const form = document.querySelector<HTMLFormElement>('[data-adr]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const pisz = (k: string, t: string) => (w(k).textContent = typografia(t));
+    const pole = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const ics = form.querySelector<HTMLButtonElement>('[data-ics]')!;
+    const bladWazne = form.querySelector<HTMLElement>('[data-blad="wazne"]')!;
+    const bladEgz = form.querySelector<HTMLElement>('[data-blad="egzamin"]')!;
+    const KLASA: Record<StatusAdr, string> = { wygaslo: 'po-terminie', okno: 'pilne', 'przed-oknem': 'w-terminie' };
+    const NIEPELNA = 'Wpisz pełną datę: dzień, miesiąc i rok.';
+    let wydarzenia: Wydarzenie[] = [];
+
+    const blad = (el: HTMLElement, t: string | null) => {
+      el.hidden = !t;
+      el.textContent = t ? typografia(t) : '';
+    };
+    const niepelna = (p: HTMLInputElement) => p.validity.badInput || (!!p.value && !poprawnaData(p.value));
+
+    const przelicz = () => {
+      const dzis = dzisWPolsce();
+      const pW = pole('wazne');
+      const pE = pole('egzamin');
+      const wazne = pW.value;
+      const egz = pE.value;
+      const bW = niepelna(pW) ? NIEPELNA : !wazne ? 'Wpisz datę „ważne do” z zaświadczenia.' : null;
+      const bE = niepelna(pE) ? NIEPELNA : !bW && !!egz && egz < dodajLata(wazne, -LATA_WAZNOSCI) ? 'Egzamin wypada przed wydaniem obecnego zaświadczenia. Sprawdź daty.' : null;
+      blad(bladWazne, bW);
+      blad(bladEgz, bE);
+      pW.setAttribute('aria-invalid', bW ? 'true' : 'false');
+      pE.setAttribute('aria-invalid', bE ? 'true' : 'false');
+      if (bW) {
+        pisz('termin', 'Wpisz datę');
+        w('status').hidden = true;
+        for (const k of ['okno', 'zapas', 'nowy', 'plan', 'placi']) w(k).textContent = '—';
+        w('uwaga').textContent = '';
+        ics.disabled = true;
+        wydarzenia = [];
+        return;
+      }
+      const platnik = (form.querySelector<HTMLInputElement>('input[name="platnik"]:checked')?.value ?? 'firma') as Platnik;
+      // Przy błędzie w dacie egzaminu liczymy bez niej.
+      const r = zaswiadczenieAdr({ waznyDo: wazne, egzamin: (!bE && egz) || undefined, dzis });
+      const o = opisAdr(r, platnik);
+      pisz('termin', o.termin);
+      const s = w('status');
+      s.hidden = false;
+      s.dataset.status = KLASA[o.kod];
+      pisz('status', o.status);
+      for (const k of ['okno', 'zapas', 'nowy', 'plan', 'placi'] as const) pisz(k, o[k]);
+      pisz('uwaga', o.uwagi.join(' '));
+      wydarzenia = r.wydarzenia;
+      ics.disabled = wydarzenia.length === 0;
+    };
+
+    ics.addEventListener('click', () => {
+      if (!wydarzenia.length) return;
+      const blob = new Blob([plikIcs(wydarzenia, 'zaswiadczenie-adr')], { type: 'text/calendar;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'zaswiadczenie-adr.ics';
+      document.body.append(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    });
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    ustawDzisiejszeWartosci(form);
+    przelicz();
+  }
+</script>

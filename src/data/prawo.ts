@@ -724,6 +724,34 @@ export const AKTY = {
     adres: 'https://eli.gov.pl/eli/MP/2026/208/ogl',
     sprawdzono: '2026-11-13',
   },
+  czasPracyKierowcow: {
+    nazwa: 'Ustawa o czasie pracy kierowców',
+    publikator: 'Dz.U. 2026 poz. 477',
+    uwaga: 'tekst jednolity, stan prawny na 25 marca 2026 r., ze zmianą Dz.U. 2025 poz. 1661 (od 13 grudnia 2025 r., tylko art. 8 ust. 3); po tekście jednolitym bez zmian; art. 2 pkt 6a, art. 6 ust. 3, art. 9, 10, 13, 14, 16, 18, 21, 22, 27, 31a–31c',
+    adres: eli(2026, 477),
+    sprawdzono: '2026-11-13',
+  },
+  rozporzadzenie561: {
+    nazwa: 'Rozporządzenie (WE) nr 561/2006 w sprawie harmonizacji niektórych przepisów socjalnych odnoszących się do transportu drogowego',
+    publikator: 'Dz.Urz. UE L 102 z 11.4.2006, s. 1',
+    uwaga: 'tekst skonsolidowany z 31 grudnia 2024 r. (zmiany: 1073/2009, 165/2014, 2020/1054, 2024/1258), bez późniejszych zmian według Urzędu Publikacji UE; art. 2 ust. 1 lit. aa (pojazdy powyżej 2,5 t w przewozie międzynarodowym od 1 lipca 2026 r.), art. 4, 6, 7 i 8',
+    adres: 'https://eur-lex.europa.eu/eli/reg/2006/561/oj',
+    sprawdzono: '2026-11-13',
+  },
+  przewozTowarowNiebezpiecznych: {
+    nazwa: 'Ustawa o przewozie towarów niebezpiecznych',
+    publikator: 'Dz.U. 2024 poz. 643',
+    uwaga: 'tekst jednolity, bez późniejszych zmian; art. 20–24 (zaświadczenie ADR: 21 lat, kurs, egzamin w 6 miesięcy, ważność 5 lat, przedłużenie w ostatnich 12 miesiącach), art. 39 (kto płaci), załącznik nr 1 lp. 2.8',
+    adres: eli(2024, 643),
+    sprawdzono: '2026-11-13',
+  },
+  egzaminyAdr: {
+    nazwa: 'Rozporządzenie w sprawie egzaminów dla kierowców przewożących towary niebezpieczne',
+    publikator: 'Dz.U. 2024 poz. 964',
+    uwaga: '§ 11 (2/3 poprawnych odpowiedzi), § 18 (opłata za zaświadczenie ADR albo wtórnik 50 zł); zmiana Dz.U. 2026 poz. 1491 (od 1 stycznia 2027 r.) dotyczy tylko wynagrodzenia komisji',
+    adres: eli(2024, 964),
+    sprawdzono: '2026-11-13',
+  },
 } as const satisfies Record<string, Akt>;
 
 export type KluczAktu = keyof typeof AKTY;
