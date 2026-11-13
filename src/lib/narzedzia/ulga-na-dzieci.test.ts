@@ -75,3 +75,18 @@ describe('ulga na dzieci (art. 27f ustawy o PIT)', () => {
 function doGr(x: number) {
   return Math.round(x * 100) / 100;
 }
+
+describe('audyt jakości 2: limit samotnego rodzica i część ulgi', () => {
+  const samotny = (dochod: number) => ulgaNaDzieci({ ...baza, sytuacja: 'samotny', dzieci: [caly], dochod });
+  it('ostrzeżenie o limicie dla pełnoletniego dziecka tylko ponad 56 000 zł i w limicie 112 000 zł (art. 27f ust. 2 pkt 1 lit. b)', () => {
+    expect(samotny(56_000).limitMaloletniego).toBe(false);
+    expect(samotny(56_000.01).limitMaloletniego).toBe(true);
+    expect(samotny(80_000)).toMatchObject({ limitMaloletniego: true, przysluguje: 1112.04 });
+    expect(samotny(112_000.01)).toMatchObject({ limitMaloletniego: false, ponadLimit: true });
+    expect(ulgaNaDzieci({ ...baza, sytuacja: 'malzenstwo', dzieci: [caly], dochod: 80_000 }).limitMaloletniego).toBe(false);
+    expect(opisUlgi({ ...baza, sytuacja: 'samotny', dzieci: [caly], dochod: 80_000 }).uwagi.join(' ')).toContain('Gdy jedyne dziecko jest pełnoletnie');
+  });
+  it('część ulgi z ułamkiem z przecinkiem: 33,5%', () => {
+    expect(opisUlgi({ ...baza, dzieci: [caly], czesc: 33.5 }).opis.replace(/\s/g, ' ')).toContain('Twoja część 33,5%');
+  });
+});

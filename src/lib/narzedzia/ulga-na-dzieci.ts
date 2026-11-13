@@ -1,6 +1,6 @@
 // Ulga na dzieci w PIT (art. 27f ustawy o podatku dochodowym od osób fizycznych, t.j. Dz.U. 2026 poz. 592; brzmienie
 // art. 27f takie samo w t.j. Dz.U. 2025 poz. 163, więc za 2025 i 2026 r. liczymy tak samo; zmiany po t.j. z 2026 r.,
-// Dz.U. 2026 poz. 779, 846, 1079, 1098, 1123, 1287 i 1371, nie dotyczą art. 27f):
+// Dz.U. 2026 poz. 779, 846, 1079, 1098, 1123, 1287, 1347, 1354 i 1371, nie dotyczą art. 27f):
 // - odliczenie od podatku za każdy miesiąc, w którym podatnik wykonywał władzę rodzicielską, był opiekunem prawnym
 //   (dziecko z nim mieszkało) albo rodziną zastępczą (ust. 1–2): 92,67 zł na pierwsze i drugie dziecko, 166,67 zł na trzecie,
 //   225 zł na czwarte i każde kolejne; kwota w miesiącu zależy od liczby dzieci w tym miesiącu;
@@ -27,7 +27,7 @@
 // dzieci, przyjmujemy, że choć przez jeden dzień było więcej niż jedno dziecko (ust. 2b). Kwotę ulgi po podziale między
 // rodziców zaokrąglamy do grosza.
 import { doGrosza } from './dodatek-nocny';
-import { zl } from './format';
+import { liczba, zl } from './format';
 import { odmiana } from '../redakcja';
 
 /** Kwoty miesięczne z art. 27f ust. 2 (zł). */
@@ -99,6 +99,8 @@ export interface WynikUlgi {
   /** Limit dochodów, gdy dotyczy (jedno dziecko); null, gdy limitu nie ma. */
   limit: number | null;
   ponadLimit: boolean;
+  /** Samotny rodzic, jedno dziecko, dochód ponad 56 000 zł do 112 000 zł: limit 112 000 zł tylko przy małoletnim dziecku. */
+  limitMaloletniego: boolean;
   /** Twoja część ulgi. */
   przysluguje: number;
   /** Odliczone od podatku. */
@@ -110,6 +112,10 @@ export interface WynikUlgi {
 }
 
 const miesiacOk = (m: number) => Number.isInteger(m) && m >= 1 && m <= 12;
+
+/** Art. 27f ust. 2 pkt 1 lit. b: wyjątek 112 000 zł dotyczy samotnego wychowywania małoletniego dziecka. */
+export const UWAGA_PELNOLETNIE =
+  'Limit 112 000 zł dotyczy samotnego wychowywania małoletniego dziecka. Gdy jedyne dziecko jest pełnoletnie (uczy się), limit wynosi 56 000 zł, a przy wyższych dochodach ulga może nie przysługiwać (art. 27f ust. 2 pkt 1 lit. b).';
 
 export function ulgaNaDzieci(d: DaneUlgi): WynikUlgi {
   for (const x of d.dzieci) {
@@ -126,7 +132,8 @@ export function ulgaNaDzieci(d: DaneUlgi): WynikUlgi {
   const odliczenie = Math.min(przysluguje, doGrosza(d.podatek));
   const reszta = doGrosza(przysluguje - odliczenie);
   const zwrot = Math.min(reszta, doGrosza(d.skladki));
-  return { miesiace, naRodzine, limit, ponadLimit, przysluguje, odliczenie, zwrot, przepada: doGrosza(reszta - zwrot) };
+  const limitMaloletniego = d.sytuacja === 'samotny' && limit !== null && !ponadLimit && d.dochod > LIMIT_INNY;
+  return { miesiace, naRodzine, limit, ponadLimit, limitMaloletniego, przysluguje, odliczenie, zwrot, przepada: doGrosza(reszta - zwrot) };
 }
 
 export interface OpisUlgi {
@@ -168,7 +175,7 @@ export function opisUlgi(d: DaneUlgi, rok: number): OpisUlgi {
     wynik.opis = `bez ulgi: przy jednym dziecku dochody (${NAZWY_LIMITU[d.sytuacja]}) przekraczają ${zl(r.limit)}`;
     uwagi.push('Limit dochodów dotyczy tylko jednego dziecka. Przy dwojgu i więcej dzieciach, a także przy dziecku z orzeczeniem o niepełnosprawności, limitu nie ma (art. 27f ust. 2, 2b i 2e).');
   } else {
-    const czesc = d.czesc === 100 ? '' : `, Twoja część ${d.czesc}%`;
+    const czesc = d.czesc === 100 ? '' : `, Twoja część ${liczba(d.czesc)}%`;
     wynik.opis = `za ${odmiana(miesiecy, ['miesiąc', 'miesiące', 'miesięcy'])} z ulgą${czesc}`;
     if (r.limit !== null) uwagi.push(`Przy jednym dziecku dochody (${NAZWY_LIMITU[d.sytuacja]}) nie mogą przekroczyć ${zl(r.limit)}; wpisane dochody mieszczą się w limicie.`);
   }
@@ -177,6 +184,7 @@ export function opisUlgi(d: DaneUlgi, rok: number): OpisUlgi {
   }
   if (d.sytuacja === 'samotny') {
     uwagi.push('Limit 112 000 zł dla samotnego rodzica dotyczy osoby niezamężnej albo nieżonatej, rozwiedzionej, owdowiałej, w separacji (albo której małżonek jest pozbawiony praw rodzicielskich lub w więzieniu), samotnie wychowującej małoletnie dziecko; nie dotyczy wychowywania dziecka razem z drugim rodzicem, także w pieczy naprzemiennej (art. 6 ust. 4c i 4f).');
+    if (r.limitMaloletniego) uwagi.push(UWAGA_PELNOLETNIE);
   }
   if (r.zwrot > 0) uwagi.push(`Podatek jest niższy niż ulga, więc urząd skarbowy zwróci ${zl(r.zwrot)} z niewykorzystanej części (do wysokości składek, art. 27f ust. 8–9).`);
   if (r.przepada > 0) {

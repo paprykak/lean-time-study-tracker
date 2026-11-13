@@ -29,6 +29,8 @@ import { zl } from './format';
 import { dataPoPolsku, dodajDni, poprawnaData } from './terminy';
 
 export const LIMIT_ZWOLNIEN = 85_528;
+/** Dzień, w którym redakcja sprawdziła przepisy (także akty zmieniające ogłoszone na następny rok). */
+export const PRZEPISY_SPRAWDZONO = '2026-11-13';
 
 export type Zwolnienie = 'mlodzi' | 'powrot' | 'rodzina4' | 'senior';
 
@@ -175,5 +177,7 @@ export function opisZwolnienia(d: DaneZwolnienia): OpisZwolnienia {
   }
   if (d.zwolnienie === 'powrot') uwagi.push('Warunki (art. 21 ust. 43): po przeprowadzce nieograniczony obowiązek podatkowy w Polsce; przez 3 lata przed rokiem przeprowadzki i do jej dnia bez miejsca zamieszkania w Polsce; obywatelstwo polskie albo innego państwa UE, EOG lub Szwajcarii, Karta Polaka, albo zamieszkanie w krajach wymienionych w przepisie lub wcześniej co najmniej 5 lat w Polsce; certyfikat rezydencji lub inny dowód; ulga po raz pierwszy.');
   uwagi.push('Limit 85 528 zł jest wspólny dla ulgi dla młodych, na powrót, dla rodzin 4+ i dla seniorów (art. 21 ust. 44).');
+  if (d.rok > Number(PRZEPISY_SPRAWDZONO.slice(0, 4)))
+    uwagi.push(`Przepisy na ${d.rok} r. sprawdziliśmy ${dataPoPolsku(PRZEPISY_SPRAWDZONO)}: liczymy według ich brzmienia z tego dnia, bez zmian ogłoszonych później.`);
   return o;
 }

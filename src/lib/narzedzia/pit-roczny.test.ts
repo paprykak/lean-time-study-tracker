@@ -114,3 +114,21 @@ describe('błędne dane', () => {
     expect(opisPit(dane(), false)).toMatchObject({ wynik: 'Dopłata 2,00 zł', opis: 'do zapłaty do 30 kwietnia 2026 r.' });
   });
 });
+
+describe('audyt jakości 2: próg, termin dopłaty, ostrzeżenie o limicie', () => {
+  it('próg 120 000 zł + 1 zł: 10 800,32 zł', () => {
+    expect(podatekSkala(120_000)).toBe(10_800);
+    expect(podatekSkala(120_001)).toBeCloseTo(10_800.32, 2);
+  });
+  it('termin dopłaty przesuwa się z soboty i dnia wolnego (art. 12 § 5 Ordynacji): 30.04.2028 to niedziela, 1.05 święto', () => {
+    const doplata = (rok: number) => opisPit(dane({ rok, ty: { ...minimalna, zaliczki: 0 } }), false).opis.replace(/\s/g, ' ');
+    expect(doplata(2025)).toBe('do zapłaty do 30 kwietnia 2026 r.');
+    expect(doplata(2026)).toBe('do zapłaty do 30 kwietnia 2027 r.');
+    expect(doplata(2027)).toBe('do zapłaty do 2 maja 2028 r.');
+  });
+  it('samotny rodzic, jedno dziecko, dochód ponad 56 000 zł: ostrzeżenie o limicie dla pełnoletniego dziecka', () => {
+    const ty: Pit11 = { przychodPraca: 90_000, kosztyPraca: 3000, skladki: 7000, zdrowotna: 7000, zaliczki: 8000 };
+    expect(opisPit(dane({ rok: 2026, ty, sytuacja: 'samotny', dzieci: [caly] }), false).uwagi.join(' ')).toContain('Gdy jedyne dziecko jest pełnoletnie');
+    expect(opisPit(dane({ rok: 2026, sytuacja: 'samotny', dzieci: [caly] }), false).uwagi.join(' ')).not.toContain('Gdy jedyne dziecko jest pełnoletnie');
+  });
+});

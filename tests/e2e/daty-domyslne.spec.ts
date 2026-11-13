@@ -46,3 +46,10 @@ test('dodatek wyrównawczy: rozliczenie za bieżący miesiąc, przeniesienie od 
   await expect(page.locator('#d-miesiac')).toHaveValue('1');
   await expect(page.locator('#d-od')).toHaveValue('2026-12-01');
 });
+
+test('zerowy PIT: po Nowym Roku bieżący rok i zeszłoroczna przeprowadzka (15.01.2027)', async ({ page }) => {
+  await page.clock.setFixedTime(new Date('2027-01-15T10:00:00+01:00'));
+  await page.goto('/narzedzia/zerowy-pit');
+  await expect(page.locator('#z-rok')).toHaveValue('2027');
+  await expect(page.locator('#z-przeniesienie')).toHaveValue('2026');
+});

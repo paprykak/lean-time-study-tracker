@@ -629,7 +629,7 @@ export const AKTY = {
   pit2025: {
     nazwa: 'Ustawa o podatku dochodowym od osób fizycznych (brzmienie na 2025 r.)',
     publikator: 'Dz.U. 2025 poz. 163',
-    uwaga: 'tekst jednolity ogłoszony 10 stycznia 2025 r.; art. 6, 21 ust. 1 pkt 148 i 152–154, ust. 39 i 43–48, art. 22 ust. 2, 26 ust. 1, 27 ust. 1 i 27f brzmią tak samo jak w t.j. Dz.U. 2026 poz. 592; zmiany po t.j. z 2026 r. (Dz.U. 2026 poz. 779, 846, 1079, 1098, 1123, 1287, 1371) tych przepisów nie dotyczą',
+    uwaga: 'tekst jednolity ogłoszony 10 stycznia 2025 r.; art. 6, 21 ust. 1 pkt 148 i 152–154, ust. 39 i 43–48, art. 22 ust. 2, 26 ust. 1, 27 ust. 1 i 27f brzmią tak samo jak w t.j. Dz.U. 2026 poz. 592; zmiany po t.j. z 2026 r. (Dz.U. 2026 poz. 779, 846, 1079, 1098, 1123, 1287, 1347, 1354, 1371; 1347 od 1 grudnia 2026 r. i 1354 od 1 stycznia 2027 r. zmieniają tylko art. 14 ust. 2) tych przepisów nie dotyczą',
     adres: eli(2025, 163),
     sprawdzono: '2026-11-13',
   },

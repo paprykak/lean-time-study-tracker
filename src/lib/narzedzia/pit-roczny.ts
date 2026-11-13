@@ -22,8 +22,10 @@
 // rozliczenie zakłada wspólne dzieci (cała ulga od wspólnego podatku). Nie liczymy dochodów spoza PIT-11 (działalność,
 // najem, kapitały), ulg od podatku innych niż na dzieci, strat z lat ubiegłych ani rozliczenia z zagranicy.
 import { doGrosza } from './dodatek-nocny';
-import { zl } from './format';
-import { ulgaNaDzieci, type Sytuacja, type WynikUlgi } from './ulga-na-dzieci';
+import { liczba, zl } from './format';
+import { UWAGA_PELNOLETNIE, ulgaNaDzieci, type Sytuacja, type WynikUlgi } from './ulga-na-dzieci';
+import { przesunZDniaWolnego } from './termin-odwolania';
+import { dataPoPolsku } from './terminy';
 
 export const PROG_SKALI = 120_000;
 export const KWOTA_ZMNIEJSZAJACA = 3600;
@@ -222,7 +224,7 @@ export function opisPit(d: DanePit, wspolnieWybrane: boolean): OpisPit {
   const s = saldo(r);
   const uwagi: string[] = [];
   const kto = r === w.wspolnie ? 'razem z małżonkiem' : 'Twoje';
-  let opis = s > 0 ? `urząd skarbowy odda ${kto === 'Twoje' ? 'Ci' : 'Wam'} nadpłatę` : s < 0 ? `do zapłaty do 30 kwietnia ${d.rok + 1} r.` : 'zaliczki były równe podatkowi';
+  let opis = s > 0 ? `urząd skarbowy odda ${kto === 'Twoje' ? 'Ci' : 'Wam'} nadpłatę` : s < 0 ? `do zapłaty do ${dataPoPolsku(przesunZDniaWolnego(`${d.rok + 1}-04-30`).koniec)}` : 'zaliczki były równe podatkowi';
   if (r.ulga.zwrot > 0) opis += `, w tym ${zl(r.ulga.zwrot)} niewykorzystanej ulgi na dzieci`;
   let porownanie = '';
   if (w.wspolnie && w.malzonek && w.zyskWspolnego !== null) {
@@ -231,7 +233,7 @@ export function opisPit(d: DanePit, wspolnieWybrane: boolean): OpisPit {
     porownanie = `Osobno: Ty ${opisSalda(saldo(w.ty)).toLowerCase()}, małżonek ${opisSalda(saldo(w.malzonek)).toLowerCase()}, razem ${opisSalda(osobno).toLowerCase()}. Wspólnie: ${opisSalda(saldo(w.wspolnie)).toLowerCase()}. ${
       zysk > 0 ? `Rozliczenie wspólne daje rodzinie ${zl(zysk)} więcej.` : zysk < 0 ? `Rozliczenie osobno daje rodzinie ${zl(-zysk)} więcej.` : 'Oba sposoby dają tyle samo.'
     }`;
-    if (d.dzieci.length) porownanie += ` Osobno liczymy z Twoją częścią ulgi ${d.czescUlgi}%, resztę ma małżonek; inny podział może dać inny wynik.`;
+    if (d.dzieci.length) porownanie += ` Osobno liczymy z Twoją częścią ulgi ${liczba(d.czescUlgi)}%, resztę ma małżonek; inny podział może dać inny wynik.`;
   } else if ((d.sytuacja === 'malzenstwo' || d.sytuacja === 'slub') && !d.malzonek) {
     porownanie = 'Wpisz dane małżonka z jego PIT-11, a porównamy rozliczenie osobno i wspólne.';
     if (d.sytuacja === 'malzenstwo' && d.dzieci.length === 1 && !d.orzeczenie) {
@@ -243,6 +245,7 @@ export function opisPit(d: DanePit, wspolnieWybrane: boolean): OpisPit {
   if (d.sytuacja === 'samotny' && !d.dzieci.length) uwagi.push('Dodaj dziecko: bez niego nie liczymy preferencji dla osoby samotnie wychowującej dziecko.');
   if (d.sytuacja === 'samotny' && d.dzieci.length && r === w.ty) uwagi.push('Jako osoba samotnie wychowująca dziecko płacisz dwukrotność podatku od połowy dochodu (art. 6 ust. 4c–4d).');
   if (r.ulga.ponadLimit && r.ulga.limit !== null) uwagi.push(`Ulga na jedno dziecko nie przysługuje: dochody przekraczają ${zl(r.ulga.limit)} (art. 27f ust. 2 pkt 1).`);
+  if (r.ulga.limitMaloletniego) uwagi.push(UWAGA_PELNOLETNIE);
   if (r.ulga.przepada > 0) uwagi.push(`${zl(r.ulga.przepada)} ulgi na dzieci przepada: zwrot nie może przekroczyć sumy składek (art. 27f ust. 9).`);
   const polowa = r === w.wspolnie || (r === w.ty && d.sytuacja === 'samotny' && d.dzieci.length > 0);
   if ((polowa ? r.podstawa / 2 : r.podstawa) > PROG_SKALI) uwagi.push('Część dochodu jest powyżej progu 120 000 zł i ma podatek 32%.');

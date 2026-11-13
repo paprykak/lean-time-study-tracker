@@ -71,4 +71,11 @@ describe('opis i błędne dane', () => {
     expect(() => zwolnienie(d({ dataUrodzenia: '2000-01-01', przychody: -1 }))).toThrow(RangeError);
     expect(() => zwolnienie(d({ zwolnienie: 'powrot' }))).toThrow(RangeError);
   });
+  it('rok po dacie sprawdzenia przepisów: uwaga o brzmieniu z dnia sprawdzenia; 29 lutego w opisie', () => {
+    const bez = (t: string) => t.replace(/\s/g, ' ');
+    const d = { zwolnienie: 'mlodzi' as const, dataUrodzenia: '2001-06-15', przychody: 60_000 };
+    expect(opisZwolnienia({ ...d, rok: 2027 }).uwagi.map(bez).join(' ')).toContain('Przepisy na 2027 r. sprawdziliśmy 13 listopada 2026 r.');
+    expect(opisZwolnienia({ ...d, rok: 2026 }).uwagi.join(' ')).not.toContain('sprawdziliśmy');
+    expect(bez(opisZwolnienia({ ...d, rok: 2026, dataUrodzenia: '2000-02-29' }).stan)).toBe('Do 28 lutego 2026 r.');
+  });
 });

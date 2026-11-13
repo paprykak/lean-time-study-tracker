@@ -10,7 +10,9 @@ import { dzisWPolsce } from '../../lib/narzedzia/terminy';
 
 const dzis = dzisWPolsce();
 const rokTeraz = Number(dzis.slice(0, 4));
-const lata = [...new Set([...LATA_PIT, rokTeraz])].sort((a, b) => a - b);
+// Także następny rok: limit 85 528 zł jest kwotą z ustawy, a nie z komunikatu na dany rok. Strona zbudowana
+// w grudniu ma po Nowym Roku bieżący rok na liście (skrypt go wybiera).
+const lata = [...new Set([...LATA_PIT, rokTeraz, rokTeraz + 1])].sort((a, b) => a - b);
 const rok = rokTeraz;
 const start = opisZwolnienia({ rok, zwolnienie: 'mlodzi', dataUrodzenia: '2001-06-15', przychody: 60_000 });
 const limit = zl(LIMIT_ZWOLNIEN);
@@ -153,6 +155,7 @@ const faq = [
       <li>Ulga na powrót trwa 4 kolejne lata od roku przeprowadzki albo od roku następnego, do wyboru (pkt 152), i dotyczy osób, które przeniosły miejsce zamieszkania do Polski po 31 grudnia 2021 r. (art. 53 ustawy z 29 października 2021 r.). Warunki z art. 21 ust. 43: po przeprowadzce nieograniczony obowiązek podatkowy w Polsce; przez 3 lata przed rokiem przeprowadzki i do jej dnia bez miejsca zamieszkania w Polsce; obywatelstwo polskie, innego państwa UE, EOG lub Szwajcarii albo Karta Polaka, albo zamieszkanie w krajach wymienionych w przepisie lub wcześniej co najmniej 5 lat w Polsce; certyfikat rezydencji lub inny dowód miejsca zamieszkania; ulga po raz pierwszy. Spełnienia warunków nie sprawdzamy.</li>
       <li>Ulga dla rodzin 4+ wymaga, by w roku podatkowym podatnik wykonywał władzę rodzicielską, był opiekunem prawnym albo rodziną zastępczą co najmniej czworga dzieci; liczą się dzieci małoletnie, pełnoletnie z zasiłkiem pielęgnacyjnym albo rentą socjalną i uczące się do 25 lat z dochodem w limicie (pkt 153 w zw. z art. 6 ust. 4c i 4e), bez dzieci umieszczonych przez sąd w instytucji całodobowej (ust. 45) i bez dzieci rozliczających się podatkiem liniowym albo ryczałtem (art. 6 ust. 8). Przepis nie mówi, przez jaką część roku dzieci ma być czworo; liczymy cały rok, w którym warunek był spełniony. To odczytanie korzystne dla podatnika, więc gdy czworo dzieci było tylko przez część roku, sprawdź je w urzędzie skarbowym.</li>
       <li>Do wspólnego limitu {limit} (ust. 44) nie wliczają się przychody z ryczałtem, zwolnione na innej podstawie i z zaniechanym poborem podatku (ust. 39). Gdy w tym samym roku masz dwie z tych ulg, na przykład najpierw dla młodych, a potem dla rodzin 4+, wpisz przychody zwolnione z pierwszej w polu „Zwolnione z innej ulgi”.</li>
+      <li>Rok następny liczymy według przepisów sprawdzonych w dniu podanym pod wynikiem: zmian ogłoszonych później kalkulator nie zna.</li>
       <li>Przy zwolnieniu koszty uzyskania przychodów z pracy i zlecenia odlicza się najwyżej do części opodatkowanej (art. 22 ust. 3b), a składek społecznych od przychodu zwolnionego nie odlicza się od dochodu (art. 26 ust. 1 pkt 2).</li>
       <li>Pracodawca stosuje ulgę dla młodych w zaliczkach sam, chyba że złożysz wniosek o jej niestosowanie (art. 32 ust. 6); ZUS od zasiłku macierzyńskiego na Twój wniosek (art. 34 ust. 4b). Ulgi na powrót, dla rodzin 4+ i dla seniorów płatnik stosuje po Twoim oświadczeniu, przy uldze na powrót z rokiem początku i końca (art. 31a ust. 8). Przy kilku płatnikach limit pilnujesz sam: przekroczenie oznacza dopłatę w zeznaniu.</li>
     </ul>
@@ -168,7 +171,7 @@ const faq = [
   import { opisZwolnienia, type Zwolnienie } from '../../lib/narzedzia/zerowy-pit';
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
   import { wpisanaLiczba } from '../../lib/narzedzia/format';
-  import { poprawnaData } from '../../lib/narzedzia/terminy';
+  import { dzisWPolsce, poprawnaData } from '../../lib/narzedzia/terminy';
   import { typografia } from '../../lib/typografia.mjs';
 
   const form = document.querySelector<HTMLFormElement>('[data-zerowy]');
@@ -181,7 +184,7 @@ const faq = [
     ustawDzisiejszeWartosci(form);
     // Domyślny rok przeprowadzki z budowania strony: przestawiamy na zeszły rok według dzisiejszej daty.
     const przeniesienie = el('przeniesienie');
-    if (przeniesienie.value === przeniesienie.defaultValue) przeniesienie.value = String(Number(el('rok').value) - 1);
+    if (przeniesienie.value === przeniesienie.defaultValue) przeniesienie.value = String(Number(dzisWPolsce().slice(0, 4)) - 1);
     const kwota = (n: string) => {
       const t = el(n).value.trim();
       if (!t) return 0;
