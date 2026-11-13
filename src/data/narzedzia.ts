@@ -469,7 +469,7 @@ export const NARZEDZIA: Narzedzie[] = [
     nazwa: 'Kalkulator dni roboczych',
     krotko: 'Ile dni roboczych między datami bez weekendów i świąt i jaka data wypada po N dniach roboczych.',
     kategoria: 'czas-pracy',
-    przepisy: ['dniWolne', 'kodeksCywilny'],
+    przepisy: ['dniWolne', 'kodeksPracy', 'kodeksCywilny'],
     sprawdzono: '2026-11-12',
   },
   {

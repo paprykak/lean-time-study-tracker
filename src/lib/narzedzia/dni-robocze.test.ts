@@ -22,3 +22,10 @@ describe('dni robocze (od poniedziałku do piątku bez świąt)', () => {
     expect(() => poDniachRoboczych('2026-12-18', 0)).toThrow(RangeError);
   });
 });
+
+describe('lata spoza 2026–2027', () => {
+  it('2028: 251 dni roboczych; styczeń 2010 bez Trzech Króli: 20', () => {
+    expect(dniRobocze('2028-01-01', '2028-12-31').robocze).toBe(251);
+    expect(dniRobocze('2010-01-01', '2010-01-31').robocze).toBe(20);
+  });
+});
