@@ -55,11 +55,13 @@ test('lista ma krótkie nazwy, a pełna nazwa z załącznika jest w opisie pod p
 test.describe('telefon 320 px', () => {
   test.use({ viewport: { width: 320, height: 640 } });
   test('żadna opcja listy urządzeń nie jest szersza niż pole', async ({ page }) => {
-    const uciete = await page.locator('#utb-rodzaj').evaluate((el) => {
+    const uciete = await page.locator('#utb-rodzaj').evaluate(async (el) => {
       const s = el as HTMLSelectElement;
       const styl = getComputedStyle(s);
       const ctx = document.createElement('canvas').getContext('2d')!;
       ctx.font = `${styl.fontWeight} ${styl.fontSize} ${styl.fontFamily}`;
+      // Mierzymy fontem strony, nie zastępczym: bez tego wynik zależy od fontów systemu (w CI szersze).
+      await document.fonts.load(ctx.font, [...s.options].map((o) => o.text).join(''));
       const miejsce = s.clientWidth - 40;
       return [...s.options].filter((o) => ctx.measureText(o.text).width > miejsce).map((o) => o.text);
     });

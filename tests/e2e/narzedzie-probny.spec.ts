@@ -41,11 +41,13 @@ test.describe('po Nowym Roku', () => {
 test.describe('telefon 320 px', () => {
   test.use({ viewport: { width: 320, height: 640 } });
   test('żadna opcja planowanej umowy nie jest szersza niż pole', async ({ page }) => {
-    const uciete = await page.locator('#p-plan').evaluate((el) => {
+    const uciete = await page.locator('#p-plan').evaluate(async (el) => {
       const s = el as HTMLSelectElement;
       const styl = getComputedStyle(s);
       const ctx = document.createElement('canvas').getContext('2d')!;
       ctx.font = `${styl.fontWeight} ${styl.fontSize} ${styl.fontFamily}`;
+      // Mierzymy fontem strony, nie zastępczym: bez tego wynik zależy od fontów systemu (w CI szersze).
+      await document.fonts.load(ctx.font, [...s.options].map((o) => o.text).join(''));
       return [...s.options].filter((o) => ctx.measureText(o.text).width > s.clientWidth - 40).map((o) => o.text);
     });
     expect(uciete).toEqual([]);
