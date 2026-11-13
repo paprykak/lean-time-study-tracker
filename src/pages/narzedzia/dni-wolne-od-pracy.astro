@@ -60,7 +60,7 @@ const faq = [
       <h2 id="kalkulator-tytul" class="tytul-m">Twój plan</h2>
       <div class="mt-4">
         <label for="w-rok" class="etykieta-pola">Rok</label>
-        <select id="w-rok" name="rok" class="pole mt-1 max-w-48" data-rok-biezacy="10">
+        <select id="w-rok" name="rok" class="pole mt-1 max-w-48" data-rok-biezacy="10" data-lata-kalendarza="0 2">
           {LATA.map((r) => <option value={r} selected={r === rok}>{r}</option>)}
         </select>
       </div>

@@ -69,7 +69,7 @@ const faq = [
         </div>
         <div>
           <label for="dk-rok" class="etykieta-pola">Rok</label>
-          <select id="dk-rok" name="rok" class="pole mt-1" data-rok-biezacy>
+          <select id="dk-rok" name="rok" class="pole mt-1" data-rok-biezacy data-lata-kalendarza="-1 1">
             {LATA.map((r) => <option value={r} selected={r === rok}>{r}</option>)}
           </select>
         </div>

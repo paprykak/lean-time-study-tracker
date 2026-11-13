@@ -84,7 +84,7 @@ const faq = [
             {Array.from({ length: 12 }, (_, i) => <option value={i + 1} selected={i + 1 === miesiac}>{nazwaMiesiaca(i + 1)}</option>)}
           </select>
           <label class="sr-only" for="r-rok">Rok</label>
-          <select id="r-rok" name="rok" class="pole">
+          <select id="r-rok" name="rok" class="pole" data-lata-kalendarza="-1 1">
             {ROKI.map((x) => <option value={x} selected={x === rok}>{x}</option>)}
           </select>
         </div>
@@ -191,6 +191,7 @@ const faq = [
 </StronaNarzedzia>
 
 <script>
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
   import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
   import { KOLOR_STATUSU, SYSTEMY, opisWyniku, planOkresu, type SystemRownowazny } from '../../lib/narzedzia/rownowazny';
   import { wpisanaLiczba } from '../../lib/narzedzia/format';
@@ -247,6 +248,7 @@ const faq = [
     });
     form.addEventListener('input', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    ustawDzisiejszeWartosci(form);
     liczPoPowrocie(przelicz);
     przelicz();
   }

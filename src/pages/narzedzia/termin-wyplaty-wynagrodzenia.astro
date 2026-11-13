@@ -58,7 +58,7 @@ const faq = [
       </div>
       <div class="mt-4">
         <label for="p-rok" class="etykieta-pola">Rok</label>
-        <select id="p-rok" name="rok" class="pole mt-1 max-w-56" data-rok-biezacy="12">
+        <select id="p-rok" name="rok" class="pole mt-1 max-w-56" data-rok-biezacy="12" data-lata-kalendarza="0 1">
           {LATA.map((r) => <option value={r} selected={r === rok}>{r}</option>)}
         </select>
       </div>

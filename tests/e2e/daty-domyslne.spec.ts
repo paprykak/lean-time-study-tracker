@@ -89,3 +89,21 @@ test('komunikaty błędów UDT i SEP są ogłaszane czytnikowi (role="alert")', 
   await expect(page.getByRole('alert')).toHaveText(/Wpisz\sudźwig/);
   await expect(page.locator('#sep-wniosek-blad, #cu-udzwig-blad').first()).toHaveAttribute('role', 'alert');
 });
+
+// Pakiet „spójność UX”: listy lat narzędzi liczących z samego kalendarza (data-lata-kalendarza) uzupełnia przeglądarka,
+// więc strona nieprzebudowana przez ponad rok nadal ma bieżący rok (tu: czytana w 2029 r.).
+for (const [slug, lista, lata] of [
+  ['wymiar-czasu-pracy', '#w-rok', ['2029', '2030']],
+  ['kalkulator-nadgodzin', '#n-rok', ['2028', '2029', '2030']],
+  ['dni-wolne-od-pracy', '#w-rok', ['2029', '2030', '2031']],
+  ['rownowazny-czas-pracy', '#r-rok', ['2028', '2029', '2030']],
+] as const) {
+  test(`${slug}: lista lat ma bieżący rok także w 2029 r.`, async ({ page }) => {
+    await page.clock.setFixedTime(new Date('2029-03-14T10:00:00+01:00'));
+    await page.goto(`/narzedzia/${slug}`);
+    const opcje = await page.locator(`${lista} option`).evaluateAll((o) => o.map((x) => (x as HTMLOptionElement).value));
+    for (const r of lata) expect(opcje).toContain(r);
+    if (slug !== 'rownowazny-czas-pracy') await expect(page.locator(lista)).toHaveValue('2029');
+    expect([...opcje].sort()).toEqual(opcje);
+  });
+}

@@ -62,7 +62,7 @@ const faq = [
             {Array.from({ length: 12 }, (_, i) => <option value={i + 1} selected={i + 1 === START.miesiac}>{nazwaMiesiaca(i + 1)}</option>)}
           </select>
           <label class="sr-only" for="no-rok">Rok</label>
-          <select id="no-rok" name="rok" class="pole">
+          <select id="no-rok" name="rok" class="pole" data-lata-kalendarza="-1 1">
             {latDoWyboru.map((x) => <option value={x} selected={x === START.rok}>{x}</option>)}
           </select>
         </div>
@@ -170,6 +170,7 @@ const faq = [
   import { nadgodzinyOkresu, tekstyWyniku, ulamekEtatu } from '../../lib/narzedzia/nadgodziny-okres';
   import { wpisanaLiczba } from '../../lib/narzedzia/format';
   import { typografia } from '../../lib/typografia.mjs';
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
   import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
   const form = document.querySelector<HTMLFormElement>('[data-nadgodziny-okres]');
@@ -249,6 +250,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    ustawDzisiejszeWartosci(form);
     liczPoPowrocie(przelicz);
     przelicz();
   }

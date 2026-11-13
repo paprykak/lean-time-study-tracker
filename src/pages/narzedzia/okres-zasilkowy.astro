@@ -54,7 +54,7 @@ const faq = [
       {Array.from({ length: WIERSZE }, (_, i) => (
         <fieldset class="mt-4">
           <legend class="etykieta-pola">Zwolnienie {i + 1}</legend>
-          <div class="mt-1 grid grid-cols-2 items-end gap-3">
+          <div class="mt-1 grid grid-cols-1 min-[380px]:grid-cols-2 items-end gap-3">
             <div>
               <label for={`z-od${i + 1}`} class="meta">Od</label>
               <input id={`z-od${i + 1}`} name={`od${i + 1}`} type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={D[i]?.od} data-dzis={PRZESUNIECIA[i]?.od} aria-describedby="z-blad" />

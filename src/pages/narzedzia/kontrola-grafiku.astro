@@ -58,7 +58,7 @@ const faq = [
             {Array.from({ length: 12 }, (_, i) => <option value={i + 1} selected={i + 1 === miesiac}>{nazwaMiesiaca(i + 1)}</option>)}
           </select>
           <label class="sr-only" for="g-rok">Rok</label>
-          <select id="g-rok" name="rok" class="pole" data-rok-biezacy>
+          <select id="g-rok" name="rok" class="pole" data-rok-biezacy data-lata-kalendarza="-1 1">
             {LATA.map((r) => <option value={r} selected={r === rok}>{r}</option>)}
           </select>
         </div>
