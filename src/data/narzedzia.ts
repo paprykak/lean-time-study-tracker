@@ -873,6 +873,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-13',
   },
   {
+    slug: 'sad-pracy-czy-pip',
+    nazwa: 'Sąd pracy czy PIP: koszty i który sąd',
+    krotko: 'Co może inspekcja pracy, a co tylko sąd. Pozew pracownika bez opłat, ile za apelację, który sąd.',
+    kategoria: 'umowa',
+    przepisy: ['kodeksPracy', 'kpc', 'kosztySadowe', 'pip', 'zmianaPip2026', 'zmianaMobbing2026'],
+    sprawdzono: '2026-11-13',
+  },
+  {
     slug: 'przerwy-w-pracy',
     nazwa: 'Przerwy w pracy',
     krotko: 'Ile przerw przy zmianie 8 i 12 godzin, które są płatne, przy monitorze, na karmienie, dla młodocianych.',

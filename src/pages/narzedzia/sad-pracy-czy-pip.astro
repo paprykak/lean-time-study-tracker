@@ -1,0 +1,144 @@
+---
+// Sąd pracy czy PIP: co może inspekcja, który sąd i ile kosztuje sprawa pracownika (art. 13, 21, 35, 96–97 ustawy
+// o kosztach sądowych, art. 17, 461, 466 KPC, art. 10–11, 23 i 44 ustawy o PIP). Logika i teksty wyniku:
+// src/lib/narzedzia/sad-pracy.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { SPRAWY_PRACOWNICZE, opisSadu, type SprawaPracownicza } from '../../lib/narzedzia/sad-pracy';
+
+const SPRAWA: SprawaPracownicza = 'wynagrodzenie';
+const WARTOSC = 12000;
+const start = opisSadu(SPRAWA, WARTOSC);
+
+const faq = [
+  {
+    pytanie: 'Czy pozew do sądu pracy jest płatny?',
+    odpowiedz: 'Nie. Pracownik, który wnosi powództwo, nie ma obowiązku uiszczania kosztów sądowych (art. 96 ust. 1 pkt 4 ustawy o kosztach sądowych w sprawach cywilnych), a wydatki w toku sprawy tymczasowo ponosi Skarb Państwa (art. 97). Opłatę płaci się dopiero od apelacji w sprawie o wartości ponad 50 000 zł, i to tylko od nadwyżki ponad tę kwotę (art. 35 ust. 1).',
+  },
+  {
+    pytanie: 'Do którego sądu pracy złożyć pozew?',
+    odpowiedz: 'Do sądu właściwego dla pracodawcy (miejsce zamieszkania albo siedziba) albo do sądu, w którego okręgu praca jest, była albo miała być wykonywana (art. 461 § 1 Kodeksu postępowania cywilnego, art. 27 i 30). Zwykle to sąd rejonowy; sąd okręgowy rozpoznaje roszczenia majątkowe powyżej 100 000 zł, poza sprawami, które zawsze należą do sądu rejonowego (art. 17 pkt 4 i art. 461 § 1¹).',
+  },
+  {
+    pytanie: 'Czy pracodawca dowie się, kto złożył skargę do PIP?',
+    odpowiedz: 'Inspektorzy nie mogą ujawniać, że kontrola odbywa się po skardze, chyba że osoba skarżąca zgodzi się na to na piśmie (art. 44 ust. 3 ustawy o Państwowej Inspekcji Pracy). Gdy udzielenie informacji mogłoby narazić pracownika na szkodę, inspektor może postanowić o zachowaniu w tajemnicy jego tożsamości (art. 23 ust. 2–3). Ustawa o PIP nie reguluje skargi bez podpisu.',
+  },
+  {
+    pytanie: 'Czy PIP może przywrócić mnie do pracy?',
+    odpowiedz: 'Nie. O bezskuteczności wypowiedzenia, przywróceniu do pracy i odszkodowaniu orzeka sąd pracy (art. 45 § 1 i art. 56 § 1 Kodeksu pracy). Inspektor może natomiast nakazać wypłatę zaległego wynagrodzenia (art. 11 ust. 1 pkt 7 ustawy o PIP), a od 8 lipca 2026 r. okręgowy inspektor pracy może decyzją stwierdzić stosunek pracy przy umowie zlecenia, która powinna być umową o pracę (art. 11 ust. 1 pkt 7a).',
+  },
+  {
+    pytanie: 'Czy do sądu pracy potrzebny jest adwokat?',
+    odpowiedz: 'Nie. Pracownik bez adwokata albo radcy prawnego może zgłosić pozew ustnie do protokołu w sądzie (art. 466 Kodeksu postępowania cywilnego). Pełnomocnikiem pracownika może być też przedstawiciel związku zawodowego, inspektor pracy albo pracownik tego samego zakładu (art. 465 § 1).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="sad-pracy-czy-pip"
+  tytul="Sąd pracy czy PIP: koszty i który sąd"
+  opis="Kiedy pomoże PIP, a kiedy tylko sąd pracy. Pozew pracownika bez opłat, apelacja płatna dopiero ponad 50 000 zł, który sąd i czy skarga do PIP jest poufna."
+  h1="Sąd pracy czy PIP"
+  lead="Wybierz sprawę i wpisz kwotę, której żądasz od pracodawcy, a pokażemy, co może zrobić inspekcja pracy, który sąd rozpozna sprawę i ile zapłacisz za pozew i apelację."
+  faq={faq}
+>
+  <form class="kalkulator" data-sad-pracy novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twoja sprawa</h2>
+      <div class="mt-4">
+        <label for="s-sprawa" class="etykieta-pola">Sprawa</label>
+        <select id="s-sprawa" name="sprawa" class="pole mt-1">
+          {Object.entries(SPRAWY_PRACOWNICZE).map(([k, s]) => <option value={k} selected={k === SPRAWA}>{s.krotko}</option>)}
+        </select>
+      </div>
+      <div class="mt-4">
+        <label for="s-wartosc" class="etykieta-pola">Kwota, której żądasz (zł)</label>
+        <input id="s-wartosc" name="wartosc" class="pole mt-1 max-w-56" type="text" inputmode="decimal" autocomplete="off" value={String(WARTOSC)} aria-describedby="s-wartosc-opis s-blad" />
+        <p id="s-wartosc-opis" class="meta mt-1">Bez kwoty wpisz 0. Przy wypowiedzeniu wartość sporu to wynagrodzenie za rok albo za sporny okres umowy terminowej.</p>
+        <p id="s-blad" class="blad-pola mt-1" data-blad="dane" hidden></p>
+      </div>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Sąd i koszty</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-data" data-w="sad">{start.sad}</p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Opłata od pozwu</dt><dd data-w="pozew">{start.pozew}</dd></div>
+        <div><dt>Opłata od apelacji</dt><dd data-w="apelacja">{start.apelacja}</dd></div>
+      </dl>
+      <p class="wynik-uwaga"><strong>PIP:</strong> <span data-w="pip">{start.pip}</span></p>
+      <p class="wynik-uwaga"><strong>Sąd:</strong> <span data-w="droga">{start.droga}</span></p>
+      <p class="wynik-uwaga" data-w="uwaga">{start.uwagi.join(' ')}</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="pip">Co może inspekcja pracy</h2>
+    <ul>
+      <li>Kontroluje przestrzeganie prawa pracy, w tym BHP i legalności zatrudnienia, oraz udziela porad (art. 10 ustawy o Państwowej Inspekcji Pracy).</li>
+      <li>Nakazuje wypłatę należnego wynagrodzenia i innych świadczeń, usunięcie uchybień BHP, wstrzymanie prac albo maszyn przy bezpośrednim zagrożeniu życia lub zdrowia (art. 11 ust. 1 pkt 1–7). Przy innych naruszeniach kieruje do pracodawcy wystąpienie albo polecenie (pkt 8).</li>
+      <li>Od 8 lipca 2026 r. może polecić zawarcie umowy o pracę zamiast umowy cywilnoprawnej, a gdy pracodawca tego nie zrobi, okręgowy inspektor pracy stwierdza stosunek pracy decyzją (art. 11 ust. 1 pkt 7a i ust. 2; ustawa z 11 marca 2026 r., Dz.U. 2026 poz. 473). Od decyzji obu stronom przysługuje odwołanie do sądu (art. 34 ust. 5a).</li>
+      <li>Inspektorzy nie ujawniają, że kontrola jest po skardze, bez pisemnej zgody osoby skarżącej (art. 44 ust. 3), a tożsamość pracownika, który udziela informacji, inspektor może utajnić postanowieniem (art. 23 ust. 2–3).</li>
+    </ul>
+
+    <h2 id="sad">Sąd pracy</h2>
+    <ul>
+      <li>Spory o roszczenia ze stosunku pracy rozstrzygają sądy pracy (art. 262 § 1 Kodeksu pracy). Pozew składasz w sądzie właściwym dla pracodawcy albo w sądzie miejsca pracy (art. 461 § 1 Kodeksu postępowania cywilnego).</li>
+      <li>Sąd rejonowy rozpoznaje bez względu na kwotę sprawy o ustalenie stosunku pracy, wypowiedzenie, przywrócenie do pracy, odszkodowanie za rozwiązanie umowy, kary porządkowe i świadectwo pracy, a od 5 listopada 2026 r. także o dobra osobiste, mobbing i równe traktowanie (art. 461 § 1¹). Inne roszczenia majątkowe powyżej 100 000 zł trafiają do sądu okręgowego (art. 17 pkt 4).</li>
+      <li>Pozew pracownika jest bez opłaty (art. 96 ust. 1 pkt 4 ustawy o kosztach sądowych). Od apelacji w sprawie o wartości ponad 50 000 zł pobiera się opłatę od nadwyżki według art. 13: od 30 do 1000 zł przy nadwyżce do 20 000 zł, powyżej 5% (art. 35 ust. 1 i art. 13).</li>
+      <li>Przy zasądzeniu należności sąd z urzędu nadaje wyrokowi rygor natychmiastowej wykonalności do wysokości pełnego miesięcznego wynagrodzenia (art. 477² § 1 Kodeksu postępowania cywilnego).</li>
+    </ul>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Opłatę od apelacji liczymy od kwoty ponad 50 000 zł według progów art. 13 ust. 1 ustawy o kosztach sądowych (30 zł
+      do 500 zł, 100 zł do 1500 zł, 200 zł do 4000 zł, 400 zł do 7500 zł, 500 zł do 10 000 zł, 750 zł do 15 000 zł, 1000 zł
+      do 20 000 zł), a powyżej 20 000 zł jako 5%, najwyżej 100 000 zł (ust. 2), z zaokrągleniem w górę do pełnego złotego
+      (art. 21). Kwotę zaokrąglamy w górę do pełnego złotego (art. 126¹ § 3 Kodeksu postępowania cywilnego). Pokazujemy
+      opłatę od apelacji co do całości; gdy apelacja dotyczy części wyroku, opłata liczy się od tej części (art. 126¹ § 2).
+      W sprawach o nawiązanie, istnienie albo rozwiązanie stosunku pracy wartością sporu jest wynagrodzenie za rok, a przy
+      umowie na czas określony za sporny okres, najwyżej rok (art. 23¹).
+    </p>
+    <p>
+      Termin na odwołanie od wypowiedzenia albo dyscyplinarki policzy <a href="/narzedzia/odwolanie-do-sadu-pracy">kalkulator odwołania do sądu pracy</a>, ile odszkodowania
+      może zasądzić sąd, <a href="/narzedzia/odszkodowanie-za-zwolnienie">kalkulator odszkodowania za zwolnienie</a>, a do kiedy upomnieć się o zaległą pensję, <a href="/narzedzia/przedawnienie-wynagrodzenia">kalkulator przedawnienia wynagrodzenia</a>.
+      Najniższe zadośćuczynienie za mobbing i dyskryminację pokaże <a href="/narzedzia/mobbing-i-dyskryminacja">kalkulator zadośćuczynienia za mobbing</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { opisSadu, type SprawaPracownicza } from '../../lib/narzedzia/sad-pracy';
+  import { wpisanaLiczba } from '../../lib/narzedzia/format';
+  import { typografia } from '../../lib/typografia.mjs';
+
+  const form = document.querySelector<HTMLFormElement>('[data-sad-pracy]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const pisz = (k: string, tekst: string) => {
+      w(k).textContent = typografia(tekst);
+    };
+    const przelicz = () => {
+      const tekst = el('wartosc').value.trim();
+      const wartosc = tekst === '' ? 0 : wpisanaLiczba(tekst);
+      const blad = !(wartosc >= 0 && wartosc < 1_000_000_000) ? 'Wpisz kwotę w złotych, na przykład 12000, albo 0.' : null;
+      const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+      b.hidden = !blad;
+      b.textContent = blad ? typografia(blad) : '';
+      if (blad) {
+        for (const k of ['sad', 'pozew', 'apelacja']) w(k).textContent = '—';
+        for (const k of ['pip', 'droga', 'uwaga']) w(k).textContent = '';
+        return;
+      }
+      const o = opisSadu(el('sprawa').value as SprawaPracownicza, wartosc);
+      for (const k of ['sad', 'pozew', 'apelacja', 'pip', 'droga'] as const) pisz(k, o[k]);
+      pisz('uwaga', o.uwagi.join(' '));
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>
