@@ -1,0 +1,122 @@
+{
+ "partia": "X1",
+ "werdykty": [
+  {
+   "id": "X1-1",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Błąd był prawdziwy i jest już naprawiony w commicie ff220b3 (powstał równolegle w trakcie weryfikacji). Według art. 259 ust. 1 ustawy o rynku pracy składki na FP płaci się od podstawy, która „w przeliczeniu na okres miesiąca” wynosi „co najmniej minimalne wynagrodzenie za pracę”. Chodzi o płacę minimalną obowiązującą w miesiącu, za który płaci się składkę, a od 1.01.2027 r. jest to 4950 zł. Na FS ten sam próg nakłada art. 26 ustawy budżetowej na 2026 r. (Dz.U. 2026 poz. 62): podstawa „określona w art. 259 ust. 1”. FGŚP nie ma progu płacy minimalnej (art. 29 ust. 1 ustawy o ochronie roszczeń, DU_2026_186 l. 693). Ma tylko próg wieku (art. 9b ust. 2), więc stara logika była tu poprawna. Stopy ustala ustawa budżetowa: art. 260 ustawy o rynku pracy i art. 29 ust. 2 ustawy o FGŚP. Ustawy budżetowej na 2027 r. nie ma w API Sejmu (wyszukiwanie DU 2026 „budżetowa” zwraca tylko poz. 62). Obwieszczenie M.P. 2026 poz. 1098 sprawdziłem w API Sejmu: z dnia 3.11.2026 r., ogłoszone 4.11.2026 r., na podstawie art. 19 ust. 10 ustawy systemowej. Kwota ograniczenia w roku 2027 to 300 990 zł, prognozowane przeciętne wynagrodzenie 10 033 zł (30 × 10 033 = 300 990). Obowiązuje dla roku 2027, czyli od 1.01.2027 r.",
+   "dowod": "Przed poprawką kosztPracodawcy({brutto:4900}) dawał fp 49 + fs 71,05 i koszt 5903,52 zł. Po ff220b3 jiti dla {brutto:4900, rok:2027} daje fp 0, fs 0, koszt 5783,47 zł, a dla 4950 zł fp 49,50, fs 71,78, koszt 5963,77 zł. Python (Decimal, ROUND_HALF_UP) daje te same kwoty. vitest koszt-pracodawcy.test.ts: 8/8 zielonych. Strona ustawia select roku po stronie klienta: rokKosztu(dzisWPolsce()), l. 134.",
+   "poprawka": "Już zrobione w ff220b3: ROKI_KOSZTU {2026, 2027}, próg z PLACA_MINIMALNA[rok], limit 300 990 zł z M.P. 2026 poz. 1098, komunikat o stopach z 2026 r. Zostaje do zrobienia: (1) FAQ l. 33 i akapit l. 112–113 strony koszt-pracodawcy mówią na sztywno „w 2026 r.”, a powinny brać rok z obliczenia. (2) Po ogłoszeniu ustawy budżetowej na 2027 r. wpisać stopy i stopyZRoku: 2027. (3) Patrz nowe X1-W1 (rok 2028).",
+   "testy": "Są już: 4900 zł w 2027 r.: 5783,47 zł; 4950 zł w 2027 r.: 5963,77 zł; limit 300990. Dodać próg ±1 grosz: 4949,99 zł w 2027 r. daje fp 0, fs 0, koszt 5842,47 zł; 4949,99 zł w 2026 r. daje fp 49,50, fs 71,77, koszt 5963,74 zł."
+  },
+  {
+   "id": "X1-2",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Błąd był prawdziwy i jest już naprawiony w commicie b6b2a13. Komunikat GUS M.P. 2026 poz. 1122 sprawdziłem w API Sejmu: z dnia 9.11.2026 r., ogłoszony 10.11.2026 r., przeciętne wynagrodzenie w III kw. 2026 r. wyniosło 9317,01 zł. Według § 19 ust. 1 rozporządzenia Dz.U. 2018 poz. 2010 kwota obowiązuje „od pierwszego dnia następnego miesiąca po ogłoszeniu”, czyli od 1.12.2026 r.",
+   "dowod": "mlodociany.ts ma wpis { od: '2026-12-01', kwota: 9317.01, publikator: 'M.P. 2026 poz. 1122' }. prawo.ts przecietneKwartalne wskazuje poz. 1122 (sprawdzono 2026-11-13). Test l. 62 dla 2026-12-01 oczekuje 745,37 zł. vitest mlodociany.test.ts: 17/17. Python (zaokrąglenie w górę do grosza): 8% 745,37, 9% 838,54, 10% 931,71, 7% 652,20 zł.",
+   "poprawka": "Wykonana. Zostaje wdrożenie produkcji przed 1.12.2026 r. (na słowo „wdrażaj”), bo strona jest statyczna.",
+   "testy": "Są: 2026-11-12 daje 738,66 zł (poz. 779), 2026-12-01 daje 745,37 zł (poz. 1122). Warto dodać 2026-11-30: 738,66 zł oraz 9%, 10% i 7% na 2026-12-01: 838,54, 931,71 i 652,20 zł."
+  },
+  {
+   "id": "X1-3",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Strony są statyczne. Opcja selected w <select> roku pochodzi z dzisWPolsce() w chwili buildu, a skrypt czyta Number(el('rok').value) i go nie poprawia. Sprawdziłem placa-minimalna (l. 10–11, 60 i 155) oraz kalkulator-l4 (l. 10 i 73). Bieżący rok ustawiają w przeglądarce tylko dodatek-za-prace-w-nocy (l. 263–264) i, po ff220b3, koszt-pracodawcy (l. 134). W kalkulator-ppk skrypt liczy na bieżący rok (l. 127–128), ale tekst SSR (l. 22, 26, 54, 102, 111) podaje rok buildu.",
+   "dowod": "grep getFullYear i value w src/pages/narzedzia/*.astro; kod skryptów w placa-minimalna.astro l. 140–167. Podglądu z Playwrightem nie uruchamiałem.",
+   "poprawka": "W skrypcie każdej strony z selectem roku (placa-minimalna, kalkulator-l4, stawka-godzinowa, wynagrodzenie-za-przestoj, zasilek-opiekunczy, zasilek-macierzynski, kalkulator-nadgodzin, kontrola-grafiku, dyzur-w-pracy, wyplata-z-nadgodzinami, ekwiwalent-za-urlop) dodać przy starcie: const r = Number(dzisWPolsce().slice(0,4)); if (LATA.includes(r)) select.value = String(r); i dopiero potem przelicz(). Tak samo jak w koszt-pracodawcy, l. 134. Do tego przebudować i wdrożyć portal 1.01.2027 r., żeby zaktualizować teksty SSR (wpis w STAN.md; ewentualny cron w CI z deploy hookiem wymaga decyzji Patryka).",
+   "testy": "E2E z page.clock.setFixedTime('2027-01-05'): placa-minimalna ma select #p-rok = 2027, minimum 4950,00 zł; kalkulator-l4 i pozostałe mają wybrany rok 2027."
+  },
+  {
+   "id": "X1-4",
+   "werdykt": "czesciowo",
+   "uzasadnienie": "Luka jest prawdziwa: rejestr.test.ts sprawdza od daty tylko PLACA_MINIMALNA[bieżący rok] (l. 38–40) i wiek pola sprawdzono < 455 dni. Proponowane pole „nastepnaOgloszenieDo” w każdej tabeli to jednak dużo ręcznie wpisywanych dat. W kodzie jest już lżejszy wzorzec: mozeNieaktualna w mlodociany.ts l. 46 (ostatnia kwota + okres ogłaszania).",
+   "dowod": "rejestr.test.ts l. 10, 24, 38–53. mlodociany.ts l. 43–46.",
+   "poprawka": "W rejestr.test.ts dodać jeden test na tablicę [tabela, okres w miesiącach, zapas w dniach] dla PRZECIETNE_KWARTALNE (3 mies.), WSKAZNIKI rehabilitacyjnego (3), KWOTY_ODSZKODOWAN (12, liczone od .od ostatniego wpisu), KWOTY_ZASILKU (12), PRZECIETNE_WYNAGRODZENIE (ogloszono + 12 mies.) i ROKI_KOSZTU (rok bieżący w kluczach). Warunek: dzis < ostatnia.od + okres + 14 dni, inaczej błąd „sprawdź M.P.”. Tak samo zasiłek pogrzebowy po przeniesieniu do stałej (X1-9).",
+   "testy": "Z dzisiejszą datą (2026-11-13) test przechodzi. Z vi.setSystemTime('2027-03-20') musi wskazać PRZECIETNE_KWARTALNE (ostatnia od 2026-12-01)."
+  },
+  {
+   "id": "X1-5",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Art. 23 ust. 4 ustawy o dozorze technicznym wiąże opłatę z kwotą GUS „obowiązującą w dniu złożenia wniosku”. PRZECIETNE_WYNAGRODZENIE = { zaRok: 2025, kwota: 8903.56, ogloszono: '2026-02-10' } (prawo.ts l. 493) nie ma daty ważności. Komunikat za 2025 r. wyszedł 10.02.2026 r. (M.P. 2026 poz. 192), więc za 2026 r. wyjdzie około 10.02.2027 r. Strona (l. 9, 31, 160) poda wtedy po cichu starą opłatę 333,88 zł (3,75% × 8903,56 = 333,8835).",
+   "dowod": "prawo.ts l. 493; waznosc-uprawnien-udt.astro l. 9–10, 31, 160; wyszukiwanie w API Sejmu (M.P. 2026, „przeciętnego wynagrodzenia”): poz. 192 z 10.02.2026 r.",
+   "poprawka": "Zostaje jak w raporcie audytora, ale termin liczyć z pola ogloszono (ogloszono + 12 miesięcy) zamiast wpisywać nastepneDo ręcznie. Po tej dacie strona dopisuje „GUS mógł już ogłosić kwotę za {zaRok+1} r.”. Test w ramach X1-4.",
+   "testy": "Funkcja nieaktualności: dla 2027-02-09 false, dla 2027-02-11 true."
+  },
+  {
+   "id": "X1-6",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "W brutto-netto.astro rok 2026 jest wpisany na sztywno: l. 10 (minimalna2026), l. 14–15 (FAQ) i l. 38 (opis meta).",
+   "dowod": "grep 2026 w brutto-netto.astro.",
+   "poprawka": "const rokBiezacy = Number(dzisWPolsce().slice(0,4)); const rok = LATA.includes(rokBiezacy) ? rokBiezacy : LATA.at(-1). W l. 10, 14, 15 i 38 użyć PLACA_MINIMALNA[rok] i ${rok}.",
+   "testy": "Build w 2027 r.: FAQ „Ile to netto z płacy minimalnej w 2027 r.?” z 4950 zł brutto. Netto policzyć funkcją netto() i zapisać w teście jednostkowym."
+  },
+  {
+   "id": "X1-7",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Odpowiedź w FAQ zlecenie-netto.astro (l. 30) jest wpisana na sztywno: „w 2026 r. 31,40 zł”. Stawka na 2027 r. to 32,30 zł (PLACA_MINIMALNA[2027].stawkaGodzinowa = 32.3, Dz.U. 2026 poz. 1213).",
+   "dowod": "zlecenie-netto.astro l. 30; prawo.ts l. 507.",
+   "poprawka": "Zbudować tekst z PLACA_MINIMALNA dla lat z LATA od bieżącego, np. „w 2026 r. 31,40 zł, w 2027 r. 32,30 zł brutto za każdą godzinę…”, przez zl() i typografia().",
+   "testy": "Treść FAQ zawiera „32,30 zł” i „2027 r.”."
+  },
+  {
+   "id": "X1-8",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Komunikat błędu w l. 146 ma daty wpisane na sztywno („od 1 kwietnia 2025 r. do 31 marca 2027 r.”). Atrybuty min i max (l. 62) i tabela (l. 89) biorą je już z KWOTY_ODSZKODOWAN.",
+   "dowod": "odszkodowanie-za-wypadek-przy-pracy.astro l. 62, 89 i 146.",
+   "poprawka": "Komunikat budować z dataPoPolsku(KWOTY_ODSZKODOWAN[0].od) i dataPoPolsku(KWOTY_ODSZKODOWAN.at(-1).do). W skrypcie przekazać te teksty z SSR przez data-atrybut albo zaimportować tablicę.",
+   "testy": "Po dopisaniu kwot 2027/2028 komunikat kończy się na 31 marca 2028 r."
+  },
+  {
+   "id": "X1-9",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Waga niska. Treść jest dziś poprawna: art. 80 ust. 1 w brzmieniu od 1.01.2026 r. daje 7000 zł (przypis 10 w DU_2025_1749 l. 1513–1514), a komunikat M.P. 2026 poz. 150 potwierdza 7000 zł od 1.03.2026 r. Kwota jest jednak wpisana ręcznie w trzech miejscach (l. 30, 110, 112), bez stałej i bez daty przeglądu. Ust. 2–6 przewidują waloryzację od 1 marca przy wskaźniku CPI powyżej 105 i komunikat ZUS co najmniej 7 dni roboczych wcześniej.",
+   "dowod": "DU_2025_1749.txt l. 1486–1498; MP_2026_150.txt.",
+   "poprawka": "W prawo.ts dodać ZASILEK_POGRZEBOWY = [{ od: '2026-01-01', kwota: 7000, akt: 'emerytury' }] (marzec 2026 r. potwierdzony M.P. 2026 poz. 150) i użyć go w l. 30, 110 i 112. Po komunikacie ZUS z lutego 2027 r. dopisać wpis od 2027-03-01 (kwota bez zmian albo zwaloryzowana i zaokrąglona w górę do pełnych złotych, ust. 5).",
+   "testy": "Test z X1-4: po 2027-03-01 musi istnieć wpis z rokiem 2027 albo potwierdzenie."
+  },
+  {
+   "id": "X1-10",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Sprawdziłem w API Sejmu. DU 2026 poz. 1474 (ogłoszone 9.11.2026 r.) to obwieszczenie Marszałka Sejmu z 9.10.2026 r. o tekście jednolitym ustawy o systemie ubezpieczeń społecznych. DU 2026 poz. 1240 (ogłoszone 23.09.2026 r.) to obwieszczenie z 1.09.2026 r. o tekście jednolitym ustawy o świadczeniach rodzinnych. Rejestr nadal wskazuje Dz.U. 2026 poz. 199 (prawo.ts l. 179–181) i Dz.U. 2025 poz. 1208 (l. 165–167). Komentarz w zasilek-zlecenie.ts l. 4 też powołuje poz. 199.",
+   "dowod": "curl api.sejm.gov.pl/eli/acts/DU/2026/1474 i /1240.",
+   "poprawka": "W prawo.ts zmienić publikator, adres (eli(2026,1474), eli(2026,1240)) i sprawdzono. Wcześniej porównać art. 16, 19, 22 (ustawa systemowa) i art. 17c (świadczenia rodzinne) z DU_2026_1474.txt i pobranym DU_2026_1240. Zaktualizować komentarze w chorobowe.ts, netto.ts, koszt-pracodawcy.ts i zasilek-zlecenie.ts.",
+   "testy": "Bez nowych testów rachunku; wystarczy rejestr.test.ts."
+  },
+  {
+   "id": "X1-11",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Waga niska. W narzedzia.ts kalkulator-ppk ma w przepisach tylko 'placa2026' (l. 280), a liczy z PLACA_MINIMALNA[rok bieżący], od 2027 r. z 4950 zł. Klucze placa2025 i placa2027 są już w AKTY (prawo.ts l. 401 i 413). Tak samo koszt-pracodawcy (l. 288) po ff220b3 liczy też 2027, a przepisy mają tylko 'placa2026' i 'budzet2026'.",
+   "dowod": "narzedzia.ts l. 280 i 288; prawo.ts l. 401, 413, 505–507.",
+   "poprawka": "Dopisać 'placa2027' do przepisów kalkulator-ppk i koszt-pracodawcy. Do koszt-pracodawcy dopisać też akt M.P. 2026 poz. 1098 (nowy klucz, np. limit2027).",
+   "testy": "rejestr.test.ts sprawdza istnienie kluczy."
+  }
+ ],
+ "do_stanu_weryfikacja": [
+  "M.P. 2026 poz. 1122: potwierdzone w API Sejmu. Komunikat Prezesa GUS z 9.11.2026 r., ogłoszony 10.11.2026 r.: przeciętne wynagrodzenie w III kw. 2026 r. 9317,01 zł; dla płac młodocianych od 1.12.2026 r. (§ 19 ust. 1). Już w kodzie (b6b2a13).",
+  "M.P. 2026 poz. 1098: potwierdzone w API Sejmu. Obwieszczenie MRPiPS z 3.11.2026 r., ogłoszone 4.11.2026 r., na podstawie art. 19 ust. 10 ustawy systemowej: limit rocznej podstawy w roku 2027 to 300 990 zł, prognozowane przeciętne wynagrodzenie 10 033 zł (30 × 10 033 = 300 990); obowiązuje od 1.01.2027 r. Już w kodzie (ff220b3).",
+  "Wskaźnik waloryzacji świadczenia rehabilitacyjnego na I kw. 2027 r.: w API Sejmu jeszcze go nie ma (ostatnie obwieszczenie ZUS w tej sprawie to M.P. 2026 poz. 858 z 24.08.2026 r.)."
+ ],
+ "nowe": [
+  {
+   "id": "X1-W1",
+   "slug": "koszt-pracodawcy",
+   "wymiar": "rachunek",
+   "waga": "niska",
+   "plik": "src/lib/narzedzia/koszt-pracodawcy.ts",
+   "linia": 33,
+   "problem": "rokKosztu() dla dat po 2027 r. po cichu zwraca 2027 (test l. 51: rokKosztu('2028-03-01') === 2027). Od 1.01.2028 r. strona policzy próg FP/FS z płacy minimalnej 2027 r. i limit 300 990 zł, bez ostrzeżenia. Rejestr.test.ts nie zatrzyma buildu, bo sprawdza tylko PLACA_MINIMALNA, a nie ROKI_KOSZTU.",
+   "dowod": "koszt-pracodawcy.ts l. 31–34; koszt-pracodawcy.test.ts l. 51.",
+   "poprawka": "Dodać do rejestr.test.ts: ROKI_KOSZTU zawiera bieżący rok (tak jak PLACA_MINIMALNA). Na stronie, gdy rok z daty jest późniejszy niż ostatni w ROKI_KOSZTU, pokazać „parametry z {rok} r.; nowe jeszcze niewpisane”."
+  },
+  {
+   "id": "X1-W2",
+   "slug": "koszt-pracodawcy",
+   "wymiar": "tresc-ux",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/koszt-pracodawcy.astro",
+   "linia": 112,
+   "problem": "Po ff220b3 FAQ (l. 33) i akapit (l. 112–113) nadal mówią „w 2026 r.” o FP i FS, choć kalkulator liczy 2027 r. Treść nie jest błędna, ale w 2027 r. będzie nieaktualna.",
+   "dowod": "grep 2026 w koszt-pracodawcy.astro.",
+   "poprawka": "Rok w tych zdaniach brać z ROKI_KOSZTU[rok].stopyZRoku (np. „Stopy z ustawy budżetowej na {stopyZRoku} r.”)."
+  }
+ ]
+}

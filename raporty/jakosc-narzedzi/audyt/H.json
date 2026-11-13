@@ -1,0 +1,241 @@
+{
+ "partia": "H",
+ "sprawdzone": [
+  {
+   "slug": "waznosc-uprawnien-udt",
+   "pliki": [
+    "src/lib/narzedzia/uprawnienia-udt.ts",
+    "src/lib/narzedzia/uprawnienia-udt.test.ts",
+    "src/pages/narzedzia/waznosc-uprawnien-udt.astro"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "badania-udt",
+   "pliki": [
+    "src/lib/narzedzia/badania-utb.ts",
+    "src/lib/narzedzia/badania-utb.test.ts",
+    "src/pages/narzedzia/badania-udt.astro"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "pracownik-mlodociany",
+   "pliki": [
+    "src/lib/narzedzia/mlodociany.ts",
+    "src/lib/narzedzia/mlodociany.test.ts",
+    "src/pages/narzedzia/pracownik-mlodociany.astro"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "pracownik-niepelnosprawny",
+   "pliki": [
+    "src/lib/narzedzia/niepelnosprawny.ts",
+    "src/lib/narzedzia/niepelnosprawny.test.ts",
+    "src/pages/narzedzia/pracownik-niepelnosprawny.astro"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "kontrola-trzezwosci",
+   "pliki": [
+    "src/lib/narzedzia/trzezwosc.ts",
+    "src/lib/narzedzia/trzezwosc.test.ts",
+    "src/pages/narzedzia/kontrola-trzezwosci.astro"
+   ],
+   "wynik": "ok"
+  },
+  {
+   "slug": "praca-w-ciazy",
+   "pliki": [
+    "src/lib/narzedzia/praca-w-ciazy.ts",
+    "src/lib/narzedzia/praca-w-ciazy.test.ts",
+    "src/pages/narzedzia/praca-w-ciazy.astro"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "rodzic-w-pracy",
+   "pliki": [
+    "src/lib/narzedzia/rodzic.ts",
+    "src/lib/narzedzia/rodzic.test.ts",
+    "src/pages/narzedzia/rodzic-w-pracy.astro",
+    "src/lib/narzedzia/urlop-ojcowski.ts"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "delegacja-krajowa",
+   "pliki": [
+    "src/lib/narzedzia/delegacja.ts",
+    "src/lib/narzedzia/delegacja.test.ts",
+    "src/pages/narzedzia/delegacja-krajowa.astro"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "delegacja-zagraniczna",
+   "pliki": [
+    "src/lib/narzedzia/delegacja-zagraniczna.ts",
+    "src/lib/narzedzia/delegacja-zagraniczna.test.ts",
+    "src/data/diety-zagraniczne.ts",
+    "src/pages/narzedzia/delegacja-zagraniczna.astro"
+   ],
+   "wynik": "problemy"
+  }
+ ],
+ "znaleziska": [
+  {
+   "id": "H-1",
+   "slug": "pracownik-niepelnosprawny",
+   "wymiar": "tresc-ux",
+   "waga": "srednia",
+   "plik": "src/pages/narzedzia/pracownik-niepelnosprawny.astro",
+   "linia": 176,
+   "problem": "Wymiar w miesiącu jest wypisywany jako `${r.godziny} godzin` (tak samo w SSR, linia 95), bez odmiana(). Przy normie 7 h i 22 dniach wychodzi „154 godzin” zamiast „154 godziny”, a sam SSR w miesiącu budowania może pokazać zły przypadek.",
+   "dowod": "Niezależny rachunek w Pythonie (dni pon.–pt. minus święta poza niedzielą, z Wigilią). Złe formy wychodzą w: 2026-03, 2026-09, 2026-10 przy 7 h (154), 2026-07 przy 8 h (184), 2027-01 (133 przy 7 h i 152 przy 8 h), 2027-05 przy 8 h (144) oraz 2027-03/04/06/07/08/09 przy 7 h (154).",
+   "poprawka": "W skrypcie i w SSR: `${odmiana(r.godziny, ['godzina','godziny','godzin'])} (${r.dni} × ${r.doba} godzin)` z importem odmiana z src/lib/redakcja.ts. Do testów E2E dodać miesiąc z 154 h, np. marzec 2027 przy stopniu umiarkowanym."
+  },
+  {
+   "id": "H-2",
+   "slug": "pracownik-mlodociany",
+   "wymiar": "tresc-ux",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/pracownik-mlodociany.astro",
+   "linia": 216,
+   "problem": "Tekst „Masz ${r.lata} lat.” (linie 105, 216, 222, 223) nie przechodzi przez odmiana(). Pole urodzenia ma min=1990-01-01, więc wiek 22–24 lata daje „Masz 22 lat”, a wiek 2–4 lata i 1 rok daje „Masz 3 lat” i „Masz 1 lat”.",
+   "dowod": "Kod: pisz('opis', `Masz ${r.lata} lat. Od ${dataPoPolsku(r.osiemnascie)} przepisy o młodocianych już Cię nie dotyczą.`). Urodzenie 2003-06-01 przy dniu 2026-11-13 daje wiek 23.",
+   "poprawka": "`Masz ${odmiana(r.lata, ['rok','lata','lat'])}.` we wszystkich czterech miejscach."
+  },
+  {
+   "id": "H-3",
+   "slug": "badania-udt",
+   "wymiar": "tresc-ux",
+   "waga": "srednia",
+   "plik": "src/pages/narzedzia/badania-udt.astro",
+   "linia": 61,
+   "problem": "Opcje listy „Urządzenie” to pełne nazwy z URZADZENIA.nazwa, do 657 px tekstu przy polu szerokim na 244 px (320 px) i 336 px (412 px), więc na telefonie są ucięte (zasada 7). W waznosc-uprawnien-udt (linie 56 i 59, „Konserwacja: …”) jest tak samo: do 485 px tekstu. W delegacja-zagraniczna (linia 61) jest to opcja „Stany Zjednoczone Ameryki (poza Nowym Jorkiem i Waszyngtonem)”, a w delegacja-krajowa przy 320 px „Auto ponad 900 cm³”, „Auto do 900 cm³” i „Motorower” w polu o szerokości 115 px.",
+   "dowod": "Playwright przy 320×640 zmierzył szerokość tekstu opcji (canvas, font pola) i szerokość pola: utb-rodzaj 657/244, udt-rodzaj 485/244, z-panstwo 508/244, d-pojazd 152/115. Przy 412 px te same pola są nadal za wąskie (poza d-pojazd: 152/161). Zrzuty: /tmp/claude-0/-home-user-lean-time-study-tracker/85e7a3e9-bef9-5b60-93fa-46f6f146f579/scratchpad/audyt/H/badania-udt-320.png i *-412.png.",
+   "poprawka": "Dodać pole `krotko` w URZADZENIA (np. „Wózek z siedziskiem”, „Wózek prowadzony”, „Suwnica mechaniczna”) i wypisywać je w <option>, a pełną nazwę zostawić w opisie pod polem. W UDT skrócić opcje konserwacji (optgroup już mówi „Konserwacja”, więc przedrostek jest zbędny) i usunąć „(N lat)” z opcji. W zagranicznej opcje „USA”, „USA: Nowy Jork” i „USA: Waszyngton”. W krajowej pole pojazdu w osobnym wierszu albo opcje „Auto >900 cm³”."
+  },
+  {
+   "id": "H-4",
+   "slug": "delegacja-krajowa",
+   "wymiar": "tresc-ux",
+   "waga": "srednia",
+   "plik": "src/pages/narzedzia/delegacja-krajowa.astro",
+   "linia": 52,
+   "problem": "Lead używa form rodzajowych „które dostałeś albo dostałaś za darmo”, a zasada 6 wymaga formy neutralnej.",
+   "dowod": "lead=\"… zaznacz posiłki, które dostałeś albo dostałaś za darmo, a policzymy, ile się należy.\"",
+   "poprawka": "„… zaznacz posiłki zapewnione za darmo, a policzymy, ile się należy.”"
+  },
+  {
+   "id": "H-5",
+   "slug": "delegacja-krajowa",
+   "wymiar": "spojnosc",
+   "waga": "srednia",
+   "plik": "src/pages/narzedzia/delegacja-krajowa.astro",
+   "linia": 49,
+   "problem": "Rok 2026 jest wpisany na stałe w tytule („Delegacja krajowa 2026: …”) i w pytaniu FAQ („… w 2026 roku?”, linia 22). Tak samo w delegacja-zagraniczna.astro, linia 49 („Dieta zagraniczna 2026: …”). Od 1 stycznia 2027 r. tytuł i FAQ pokażą stary rok, choć stawki się nie zmieniają.",
+   "dowod": "Wynik grep '2026' w obu plikach. API Sejmu: DU/2013/167 nie ma aktów zmieniających po DU/2022/2302 (stawki od 2023 r.), a DU/2002/271 ostatnio zmieniał DU/2023/5. Wyszukiwanie DU 2025–2026 po tytułach „podróży służbowej” i „należności” nie znalazło nowego rozporządzenia dla pracowników.",
+   "poprawka": "Rok brać z dzisWPolsce() (`Delegacja krajowa ${rok}: …`, `w ${rok} roku`) albo go usunąć. Tytuł musi się zmieścić w 48 znakach."
+  },
+  {
+   "id": "H-6",
+   "slug": "rodzic-w-pracy",
+   "wymiar": "spojnosc",
+   "waga": "srednia",
+   "plik": "src/lib/narzedzia/rodzic.ts",
+   "linia": 47,
+   "problem": "Urlop ojcowski wychodzi jako „dostępny”, dopóki start <= dzień przed 1. urodzinami. Urlop trwa jednak co najmniej tydzień i musi się skończyć przed 1. urodzinami. Przy starcie na 3 dni przed urodzinami narzędzie pokazuje uprawnienie i termin wniosku, a urlop-ojcowski.ts liczy ostatniStart = koniec − 13 dni.",
+   "dowod": "Art. 182^3 § 1 i § 1^1 Kp (.cache/narzedzia/prawo/DU_2026_1245.txt, linie 3377–3383): „niedłużej jednak niż do ukończenia przez dziecko 12 miesiąca życia … jednorazowo albo niewięcej niż w 2 częściach, z których żadna nie może być krótsza niż tydzień”. planRodzica('2024-03-15','2025-03-12') daje ojcowski.dostepne=true.",
+   "poprawka": "Dla ojcowskiego dostepne = start <= do − 6 dni (część co najmniej tydzień), a w opisie podać ostatni dzień rozpoczęcia całych 2 tygodni (do − 13), tak jak w urlop-ojcowski.ts. Test brzegowy: start = do − 6 (dostępny) i do − 5 (niedostępny)."
+  },
+  {
+   "id": "H-7",
+   "slug": "pracownik-mlodociany",
+   "wymiar": "prawo",
+   "waga": "niska",
+   "plik": "src/lib/narzedzia/mlodociany.ts",
+   "linia": 77,
+   "problem": "Gdy rok pracy mija w roku 18. urodzin, ale po nich, kod przyznaje 20 dni „po roku pracy, w roku 18. urodzin” (art. 205 § 2 zd. 2). Przepis tego nie rozstrzyga: z § 2 zd. 1 korzysta tylko młodociany, a nie wiadomo, o które „prawo do urlopu uzyskane przed 18 lat” chodzi. „Jak liczymy” o tym milczy. To samo przy urodzinach 1 stycznia: wpis 1 stycznia roku 18. urodzin powstaje w dniu pełnoletności, a nie przed nią.",
+   "dowod": "Art. 205 § 2 (DU_2026_1245.txt, linie 3771–3773): „w roku kalendarzowym, w którym kończy on 18 lat, ma prawo do urlopu w wymiarze 20 dni roboczych, jeżeli prawo do urlopu uzyskał przed ukończeniem 18 lat”. Test urlopMlodocianego('1993-05-20','2010-09-01') oczekuje ['2011-09-01', 20], choć 18 lat mijają 2011-05-20.",
+   "poprawka": "Zostawić wariant korzystny dla pracownika, ale dopisać w „Jak liczymy”, że przy roku pracy mijającym po 18. urodzinach przepis nie mówi tego wprost. Dodać test z urodzeniem 1 stycznia."
+  },
+  {
+   "id": "H-8",
+   "slug": "delegacja-zagraniczna",
+   "wymiar": "tresc-ux",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/delegacja-zagraniczna.astro",
+   "linia": 83,
+   "problem": "Link do innego narzędzia (kalkulator delegacji krajowej) jest w opisie pola formularza, który czytniki dostają przez aria-describedby, a nie w sekcji wyjaśnienia (zasada 5).",
+   "dowod": "<p id=\"z-czas-opis\" …>… Czas w kraju policzy <a href=\"/narzedzia/delegacja-krajowa\">kalkulator delegacji krajowej</a> (§ 21).</p>. Ten sam link jest już w wyjaśnieniu (lista „Zasady”).",
+   "poprawka": "Usunąć link z opisu pola i zostawić zdanie „Czas w kraju rozlicza się jak delegację krajową (§ 21).”"
+  },
+  {
+   "id": "H-9",
+   "slug": "delegacja-zagraniczna",
+   "wymiar": "tresc-ux",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/delegacja-zagraniczna.astro",
+   "linia": 50,
+   "problem": "Opis mówi „stawki dla 119 państw”. Załącznik ma 114 państw w tabeli i 3 pod nią (Gibraltar, Hongkong, Tajwan), czyli 117 państw. Liczba 119 bierze się z rozbicia USA na trzy wiersze (Nowy Jork, Waszyngton).",
+   "dowod": "Porównanie skryptem z PDF Dz.U. 2023 poz. 2190 (załącznik, lp. 1–115) zgadza się dla wszystkich 114 wierszy (waluta, dieta, nocleg); USA to jeden wiersz lp. 93 z uwagami o Nowym Jorku i Waszyngtonie.",
+   "poprawka": "„stawki dla 117 państw” albo „dla wszystkich państw z tabeli”."
+  },
+  {
+   "id": "H-10",
+   "slug": "praca-w-ciazy",
+   "wymiar": "prawo",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/praca-w-ciazy.astro",
+   "linia": 13,
+   "problem": "FAQ i wyjaśnienie (linie 13 i 88) nazywają akt „rozporządzeniem w sprawie prac wzbronionych kobietom w ciąży”. To nazwa aktu uchylonego w 2017 r. Obecny tytuł brzmi „w sprawie wykazu prac uciążliwych, niebezpiecznych lub szkodliwych dla zdrowia kobiet w ciąży i kobiet karmiących dziecko piersią”.",
+   "dowod": "Metadane .cache/narzedzia/prawo/DU_2017_796.json, tytuł: „Rozporządzenie Rady Ministrów z dnia 3 kwietnia 2017 r. w sprawie wykazu prac uciążliwych, niebezpiecznych lub szkodliwych dla zdrowia kobiet w ciąży i kobiet karmiących dziecko piersią”. W API ma „Akty uznane za uchylone: DU/2016/2057”.",
+   "poprawka": "Zastąpić nazwę skrótem „rozporządzenie w sprawie prac uciążliwych dla kobiet w ciąży (Dz.U. 2017 poz. 796)”."
+  },
+  {
+   "id": "H-11",
+   "slug": "delegacja-krajowa",
+   "wymiar": "prawo",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/delegacja-krajowa.astro",
+   "linia": 42,
+   "problem": "FAQ o kilometrówce pisze ogólnie „Stawkę za kilometr ustala pracodawca, ale nie wyżej niż 1,15 zł …”. Ten limit wynika z § 3 ust. 4 rozporządzenia, które obowiązuje wprost sferę budżetową. Firma prywatna może w regulaminie (art. 77^5 § 3 Kp) ustalić wyższą stawkę; nadwyżka nie jest wtedy zwolniona z PIT. To samo zdanie, że stawka jest „nie wyższa”, jest w opisie pola pojazdu (linia 141).",
+   "dowod": "DU_2023_2190.txt, § 3 ust. 4: stawka „ustaloną przez pracodawcę, która nie może być wyższa niż określona w przepisach …”, w akcie dla sfery budżetowej. Strona sama pisze w sekcji „Prywatna firma”, że zasady ustala regulamin (art. 77^5 § 3).",
+   "poprawka": "Dopisać w FAQ: „W sferze budżetowej nie wyżej niż …; w firmie prywatnej stawkę ustala regulamin, a nadwyżka ponad te kwoty nie jest zwolniona z podatku.”"
+  },
+  {
+   "id": "H-12",
+   "slug": "badania-udt",
+   "wymiar": "spojnosc",
+   "waga": "niska",
+   "plik": "src/lib/narzedzia/badania-utb.ts",
+   "linia": 90,
+   "problem": "Plik ma własną funkcję odmianaMiesiecy, a funkcja co() wypisuje „co ${lat} lata” bez odmiany. Wspólna odmiana() z src/lib/redakcja.ts nie jest używana, wbrew zasadzie 4 standardu. Dziś to działa, bo okresy to tylko 1, 2 i 3 lata, ale okres 5 lat dałby „co 5 lata”.",
+   "dowod": "const odmianaMiesiecy = (n) => …; export const co = (lat) => (lat === 1 ? 'co rok' : `co ${lat} lata`).",
+   "poprawka": "ileMiesiecy oprzeć na odmiana(m, ['miesiąc','miesiące','miesięcy']), a co() na odmiana(lat, ['rok','lata','lat'])."
+  }
+ ],
+ "do_stanu": [
+  {
+   "sprawa": "Komunikat Prezesa GUS o przeciętnym wynagrodzeniu w IV kwartale 2026 r. (M.P., zwykle ok. 9–10 lutego), dla płac młodocianych od 1 marca 2027 r.; bez niego od 2027-03-01 narzędzie pokazuje ostrzeżenie mozeNieaktualna przy kwocie 9317,01 zł",
+   "kiedy_sprawdzic": "2027-02-12",
+   "gdzie_w_kodzie": "src/lib/narzedzia/mlodociany.ts PRZECIETNE_KWARTALNE oraz test w mlodociany.test.ts"
+  },
+  {
+   "sprawa": "Dieta krajowa 45 zł i kilometrówka (Dz.U. 2002 poz. 271 w brzmieniu z Dz.U. 2023 poz. 5): w API Sejmu brak zmian i brak nowego rozporządzenia na 2026–2027; sprawdzić ponownie, czy nie wyszło rozporządzenie zmieniające",
+   "kiedy_sprawdzic": "2027-01-15",
+   "gdzie_w_kodzie": "src/lib/narzedzia/delegacja.ts DIETA i STAWKI_KM, src/data/diety-zagraniczne.ts"
+  }
+ ],
+ "poza_zakresem": [],
+ "nie_sprawdzono": [
+  "Testy E2E (tests/e2e/narzedzie-*.spec.ts) przeczytane tylko pobieżnie, nie uruchomione (zakaz playwright test).",
+  "Czytnik ekranu i obsługa klawiaturą: sprawdzono tylko aria-live, etykiety i brak przewijania w bok przy 320/412 px (scrollWidth = clientWidth na wszystkich 9 stronach, bez błędów w konsoli). Nie było przejścia tabulatorem.",
+  "Interpretacja UDT, że zaświadczenia bez daty ważności straciły ją 1 stycznia 2024 r.: art. 3 ustawy Dz.U. 2018 poz. 2518 mówi tylko „5 lat”, bez punktu startu; do sprawdzenia ręcznie na udt.gov.pl.",
+  "Akty zmieniające z 2026 r.: DU/2026/1046 (Kp, od 2026-11-05) dotyczy art. 18^3a–18^3g, 94, 94^3 i 104^1, więc nie partii H. DU/2026/26 (ustawa o rehabilitacji od 2027-01-01) zmienia tylko art. 5, DU/2026/1102 (od 2029-01-01) nie dotyczy art. 15–20, DU/2026/875 (ustawa o wychowaniu w trzeźwości od 2027-01-01) zmienia tylko art. 18. Wszystko zweryfikowane w tekstach aktów, bez wpływu na narzędzia."
+ ]
+}

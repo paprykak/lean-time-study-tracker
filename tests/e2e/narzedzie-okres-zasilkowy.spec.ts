@@ -28,3 +28,10 @@ test('przerwa 61 dni zaczyna nowy okres; brak daty końca to błąd', async ({ p
   await page.locator('[name="do2"]').fill('');
   await expect(page.locator('[data-blad="dane"]')).toBeVisible();
 });
+
+test('strona sprzed Nowego Roku otwarta 5 stycznia 2027 r.: ostatnie zwolnienie kończy się tego dnia', async ({ page }) => {
+  await page.clock.setFixedTime(new Date('2027-01-05T10:00:00+01:00'));
+  await page.goto(NARZEDZIE_OKRES_ZASILKOWY);
+  await expect(page.locator('[name="do2"]')).toHaveValue('2027-01-05');
+  await expect(page.locator('[name="od1"]')).toHaveValue('2026-09-07');
+});

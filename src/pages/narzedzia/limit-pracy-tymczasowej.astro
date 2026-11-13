@@ -113,6 +113,8 @@ const faq = [
 <script>
   import { LIMIT_DNI, podsumowanie, sprawdzLimit, type Skierowanie } from '../../lib/narzedzia/praca-tymczasowa';
   import { dataPoPolsku, dzisWPolsce, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { odmiana } from '../../lib/redakcja';
+  import { typografia } from '../../lib/typografia.mjs';
 
   const form = document.querySelector<HTMLFormElement>('[data-agencja]');
   if (form) {
@@ -140,27 +142,30 @@ const faq = [
       }
       const b = form.querySelector<HTMLElement>('[data-blad="skierowania"]')!;
       b.hidden = !blad;
-      b.textContent = blad ?? '';
+      b.textContent = typografia(blad ?? '');
       const status = w('status');
       if (blad || !r) {
-        w('data').textContent = '—';
+        for (const k of ['data', 'razem', 'okno', 'dalej', 'potem']) w(k).textContent = '—';
+        w('okno-opis').textContent = 'W 36 miesiącach';
         status.hidden = true;
+        w('uwaga').hidden = true;
         return;
       }
       status.hidden = false;
-      w('razem').textContent = `${r.dniRazem} ${r.dniRazem === 1 ? 'dzień' : 'dni'}`;
-      w('okno').textContent = `${r.dniWOknie} z ${LIMIT_DNI} dni`;
-      w('okno-opis').textContent = `W 36 miesiącach od ${dataPoPolsku(r.oknoOd)} do ${dataPoPolsku(r.oknoDo)}`;
-      w('dalej').textContent = `od ${dataPoPolsku(r.dalejOd)} do ${dataPoPolsku(r.dalejDo)}`;
-      w('potem').textContent = dataPoPolsku(r.potemOd);
+      const pisz = (k: string, t: string) => (w(k).textContent = typografia(t));
+      pisz('razem', odmiana(r.dniRazem, ['dzień', 'dni', 'dni']));
+      pisz('okno', `${r.dniWOknie} z ${LIMIT_DNI} dni`);
+      pisz('okno-opis', `W 36 miesiącach od ${dataPoPolsku(r.oknoOd)} do ${dataPoPolsku(r.oknoDo)}`);
+      pisz('dalej', `od ${dataPoPolsku(r.dalejOd)} do ${dataPoPolsku(r.dalejDo)}`);
+      pisz('potem', dataPoPolsku(r.potemOd));
       const p = podsumowanie(r);
-      w('naglowek').textContent = p.naglowek;
-      w('data').textContent = p.data;
+      pisz('naglowek', p.naglowek);
+      pisz('data', p.data);
       status.dataset.status = p.status;
-      status.textContent = p.opis;
+      pisz('status', p.opis);
       const uwaga = p.uwaga;
       w('uwaga').hidden = !uwaga;
-      w('uwaga').textContent = uwaga ?? '';
+      pisz('uwaga', uwaga ?? '');
     };
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);

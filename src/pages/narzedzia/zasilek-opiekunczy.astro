@@ -2,9 +2,10 @@
 // Zasiłek opiekuńczy (art. 32–35 i 47 ustawy zasiłkowej). Logika: src/lib/narzedzia/opiekunczy.ts (testy obok).
 import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
 import { LATA } from '../../data/prawo';
-import { LIMITY_OPIEKI, LIMIT_LACZNY, zasilekOpiekunczy, type RodzajOpieki } from '../../lib/narzedzia/opiekunczy';
+import { LIMITY_OPIEKI, LIMIT_LACZNY, LIMIT_LACZNY_BEZ_DZIECKA, OPISY_OPIEKI, zasilekOpiekunczy, type RodzajOpieki } from '../../lib/narzedzia/opiekunczy';
 import { zl } from '../../lib/narzedzia/format';
 import { dzisWPolsce } from '../../lib/narzedzia/terminy';
+import { odmiana } from '../../lib/redakcja';
 
 const rokBiezacy = Number(dzisWPolsce().slice(0, 4));
 const rok = LATA.includes(rokBiezacy) ? rokBiezacy : LATA[LATA.length - 1];
@@ -17,7 +18,7 @@ const faq = [
   },
   {
     pytanie: 'Ile dni opieki na dziecko w roku?',
-    odpowiedz: 'Na chore dziecko do 14 lat albo na zdrowe dziecko do 8 lat, gdy nieprzewidzianie zamknięto żłobek, przedszkole lub szkołę, zachorowała niania albo rodzic stale opiekujący się dzieckiem jest w szpitalu lub rodzi: 60 dni w roku. Na dziecko z orzeczeniem do 18 lat 30 dni, na innego chorego członka rodziny 14 dni, łącznie najwyżej 60 dni (art. 33 ustawy zasiłkowej).',
+    odpowiedz: 'Na chore dziecko do 14 lat albo na zdrowe dziecko do 8 lat, gdy nieprzewidzianie zamknięto żłobek, przedszkole lub szkołę, zachorowała niania albo rodzic stale opiekujący się dzieckiem jest w szpitalu lub rodzi: 60 dni w roku. Na dziecko od 14 do 18 lat z orzeczeniem o znacznej niepełnosprawności 30 dni, na innego chorego członka rodziny 14 dni. Łącznie najwyżej 60 dni, a gdy w roku opieka dotyczy tylko dziecka z orzeczeniem i innych członków rodziny, łącznie 30 dni (art. 33 ustawy zasiłkowej).',
   },
   {
     pytanie: 'Czy oboje rodzice mają po 60 dni?',
@@ -46,9 +47,10 @@ const faq = [
       </div>
       <div class="mt-4">
         <label for="o-rodzaj" class="etykieta-pola">Nad kim opieka</label>
-        <select id="o-rodzaj" name="rodzaj" class="pole mt-1">
-          {(Object.keys(LIMITY_OPIEKI) as RodzajOpieki[]).map((r) => <option value={r}>{LIMITY_OPIEKI[r].nazwa} ({LIMITY_OPIEKI[r].dni} dni)</option>)}
+        <select id="o-rodzaj" name="rodzaj" class="pole mt-1" aria-describedby="o-rodzaj-opis">
+          {(Object.keys(LIMITY_OPIEKI) as RodzajOpieki[]).map((r) => <option value={r}>{LIMITY_OPIEKI[r].nazwa}</option>)}
         </select>
+        <p id="o-rodzaj-opis" class="meta mt-1" data-w="rodzaj-opis">{OPISY_OPIEKI.dziecko}: {LIMITY_OPIEKI.dziecko.dni} dni w roku.</p>
       </div>
       <div class="mt-4 grid gap-4 sm:grid-cols-3">
         <div>
@@ -65,10 +67,14 @@ const faq = [
         </div>
       </div>
       <p id="o-lacznie-opis" class="meta mt-1">Dni zasiłku opiekuńczego w tym roku w całej rodzinie, także drugiego rodzica.</p>
+      <label class="mt-3 flex items-start gap-3 text-[0.9375rem]" data-tylko-bez-dziecka hidden>
+        <input type="checkbox" name="bylaOpieka60" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+        <span>W tym opieka nad dzieckiem do 14 lat albo do 8 lat (łączny limit 60, a nie 30 dni)</span>
+      </label>
       <div class="mt-4 grid grid-cols-2 gap-4">
         <div>
           <label for="o-rok" class="etykieta-pola">Rok</label>
-          <select id="o-rok" name="rok" class="pole mt-1">
+          <select id="o-rok" name="rok" class="pole mt-1" data-rok-biezacy>
             {LATA.map((r) => <option value={r} selected={r === rok}>{r}</option>)}
           </select>
         </div>
@@ -86,7 +92,7 @@ const faq = [
       <dl class="wynik-lista">
         <div><dt>Za jeden dzień (80%)</dt><dd data-w="za-dzien">{zl(start.zaDzien)}</dd></div>
         <div><dt>Dni płatne</dt><dd data-w="dni">{start.dniPlatne}</dd></div>
-        <div><dt>Zostało do limitu przed tą opieką</dt><dd data-w="pozostalo">{start.pozostalo} dni</dd></div>
+        <div><dt>Zostało do limitu przed tą opieką</dt><dd data-w="pozostalo">{odmiana(start.pozostalo, ['dzień', 'dni', 'dni'])}</dd></div>
         <div><dt>Podstawa miesięczna</dt><dd data-w="podstawa">{zl(start.podstawa)}</dd></div>
       </dl>
       <p class="wynik-uwaga" data-w="uwaga" hidden></p>
@@ -100,14 +106,16 @@ const faq = [
         <caption class="sr-only">Limity dni zasiłku opiekuńczego w roku kalendarzowym</caption>
         <thead><tr><th scope="col">Opieka nad</th><th scope="col">Dni w roku</th></tr></thead>
         <tbody>
-          {(Object.keys(LIMITY_OPIEKI) as RodzajOpieki[]).map((r) => <tr><th scope="row">{LIMITY_OPIEKI[r].nazwa}</th><td>{LIMITY_OPIEKI[r].dni}</td></tr>)}
-          <tr><th scope="row">łącznie na wszystkie rodzaje opieki</th><td>{LIMIT_LACZNY} (30, gdy opieka dotyczy tylko dziecka z orzeczeniem i innych członków rodziny)</td></tr>
+          {(Object.keys(LIMITY_OPIEKI) as RodzajOpieki[]).map((r) => <tr><th scope="row">{OPISY_OPIEKI[r]}</th><td>{LIMITY_OPIEKI[r].dni}</td></tr>)}
+          <tr><th scope="row">łącznie na wszystkie rodzaje opieki</th><td>{LIMIT_LACZNY} ({LIMIT_LACZNY_BEZ_DZIECKA}, gdy opieka dotyczy tylko dziecka z orzeczeniem i innych członków rodziny)</td></tr>
         </tbody>
       </table>
     </div>
     <p>
       Limity z art. 33 ustawy zasiłkowej obowiązują w roku kalendarzowym, bez względu na liczbę uprawnionych i liczbę
-      dzieci. Zasiłek wynosi 80% podstawy (art. 35 ust. 1), a podstawę liczy się jak przy zasiłku chorobowym: z przeciętnego
+      dzieci. Chore dziecko do 14 lat z orzeczeniem ma limit 60 dni, jak każde chore dziecko w tym wieku (art. 32 ust. 1
+      pkt 2 i art. 33 ust. 1 pkt 1). Łączny limit 30 dni stosujemy, gdy nie zaznaczysz, że w roku była też opieka nad
+      dzieckiem do 14 lat albo do 8 lat (art. 33 ust. 2). Zasiłek wynosi 80% podstawy (art. 35 ust. 1), a podstawę liczy się jak przy zasiłku chorobowym: z przeciętnego
       wynagrodzenia z 12 miesięcy po odjęciu 13,71% składek pracownika, przy pełnym etacie nie mniej niż od płacy
       minimalnej (art. 36, 45 i 47). Zasiłek przysługuje za każdy dzień, także wolny od pracy (art. 35 ust. 2 w związku
       z art. 11 ust. 4). Policz też <a href="/narzedzia/wolne-na-dziecko">2 dni wolnego na dziecko z art. 188 Kodeksu pracy</a>,
@@ -117,27 +125,37 @@ const faq = [
 </StronaNarzedzia>
 
 <script>
-  import { zasilekOpiekunczy, type RodzajOpieki } from '../../lib/narzedzia/opiekunczy';
+  import { LIMITY_OPIEKI, OPISY_OPIEKI, zasilekOpiekunczy, type RodzajOpieki } from '../../lib/narzedzia/opiekunczy';
   import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
+  import { typografia } from '../../lib/typografia.mjs';
+  import { odmiana } from '../../lib/redakcja';
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
 
   const form = document.querySelector<HTMLFormElement>('[data-opiekunczy]');
   if (form) {
     const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
     const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
     const calk = (n: string) => wpisanaLiczba(el(n).value || '0');
+    const pisz = (k: string, tekst: string) => {
+      w(k).textContent = typografia(tekst);
+    };
+    const dni = (n: number) => odmiana(n, ['dzień', 'dni', 'dni']);
     const przelicz = () => {
+      const rodzaj = el('rodzaj').value as RodzajOpieki;
+      pisz('rodzaj-opis', `${OPISY_OPIEKI[rodzaj]}: ${LIMITY_OPIEKI[rodzaj].dni} dni w roku.`);
+      form.querySelector<HTMLElement>('[data-tylko-bez-dziecka]')!.hidden = rodzaj === 'dziecko';
       const brutto = calk('brutto');
-      const dni = calk('dni');
+      const ileDni = calk('dni');
       const ten = calk('ten');
       const lacznie = calk('lacznie');
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
       const blad =
         !(brutto > 0) ? 'Wpisz przeciętne wynagrodzenie brutto, na przykład 6000.'
-        : !(Number.isInteger(dni) && dni >= 1 && dni <= 366) ? 'Wpisz liczbę dni opieki, na przykład 5.'
+        : !(Number.isInteger(ileDni) && ileDni >= 1 && ileDni <= 366) ? 'Wpisz liczbę dni opieki, na przykład 5.'
         : !(Number.isInteger(ten) && ten >= 0 && Number.isInteger(lacznie) && lacznie >= 0) ? 'Wcześniejsze dni: liczby całkowite od 0.'
         : null;
       b.hidden = !blad;
-      b.textContent = blad ?? '';
+      b.textContent = typografia(blad ?? '');
       if (blad) {
         w('kwota').textContent = '—';
         return;
@@ -146,23 +164,25 @@ const faq = [
         rok: Number(el('rok').value),
         brutto,
         pelnyEtat: el('pelnyEtat').checked,
-        rodzaj: el('rodzaj').value as RodzajOpieki,
-        dni,
+        rodzaj,
+        dni: ileDni,
         wykorzystaneTenRodzaj: ten,
         wykorzystaneLacznie: lacznie,
+        bylaOpiekaNadDzieckiem60: el('bylaOpieka60').checked,
       });
-      w('kwota').textContent = zl(r.kwota);
-      w('za-dzien').textContent = zl(r.zaDzien);
-      w('dni').textContent = String(r.dniPlatne);
-      w('pozostalo').textContent = `${r.pozostalo} dni`;
-      w('podstawa').textContent = zl(r.podstawa);
-      const uwaga = r.dniPonadLimit > 0 ? `Za ${r.dniPonadLimit} dni ponad roczny limit zasiłek nie przysługuje (art. 33 ustawy zasiłkowej).` : null;
+      pisz('kwota', zl(r.kwota));
+      pisz('za-dzien', zl(r.zaDzien));
+      pisz('dni', String(r.dniPlatne));
+      pisz('pozostalo', dni(r.pozostalo));
+      pisz('podstawa', zl(r.podstawa));
+      const uwaga = r.dniPonadLimit > 0 ? `Za ${dni(r.dniPonadLimit)} ponad roczny limit zasiłek nie przysługuje (art. 33 ustawy zasiłkowej${r.limitLaczny < 60 ? `; łącznie ${r.limitLaczny} dni, gdy opieka dotyczy tylko dziecka z orzeczeniem i innych członków rodziny` : ''}).` : null;
       w('uwaga').hidden = !uwaga;
-      w('uwaga').textContent = uwaga ?? '';
+      pisz('uwaga', uwaga ?? '');
     };
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    ustawDzisiejszeWartosci(form);
     przelicz();
   }
 </script>

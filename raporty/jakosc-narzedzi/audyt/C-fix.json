@@ -1,0 +1,331 @@
+{
+ "partia": "C+F",
+ "werdykty": [
+  {
+   "id": "C-1",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Art. 22 ustawy zasiłkowej odsyła do art. 11 ust. 4 i 5. Art. 11 ust. 5 mówi o okresie oznaczonym w miesiącach przy ustalaniu prawa do zasiłku i jego wysokości: „za miesiąc uważa się 30 dni”. Przy odpowiednim stosowaniu obejmuje to oba okresy świadczenia: maksimum 12 miesięcy z art. 18 ust. 2 (prawo) i „pierwsze trzy miesiące” po 90% z art. 19 ust. 1 (wysokość). Kod liczy kalendarzowo (dodajMiesiace).",
+   "dowod": "DU_2026_854.txt w. 354: „Art. 22. Do świadczenia rehabilitacyjnego stosuje się odpowiednio przepisy art. 11 ust. 4 i 5, art. 12, art. 13 ust. 1, art. 15 i 17.”; w. 199–200, art. 11 ust. 5; art. 18 ust. 2 („niedłużej jednak niż przez 12 miesięcy”); art. 19 ust. 1 („za okres pierwszych trzech miesięcy”). Wynik kodu z jiti: start 2026-11-12 daje od75 2027-02-12 i koniec 2027-11-11; start 2027-12-01 daje 2028-03-01 i 2028-11-30. Python (+90 dni, +359 dni): 2027-02-10 / 2027-11-06 i 2028-02-29 / 2028-11-24.",
+   "poprawka": "W src/lib/narzedzia/swiadczenie-rehabilitacyjne.ts: od75 = dodajDni(d.start, 90); koniecNajpozniej = dodajDni(d.start, 359); koniecPrzyznanego = dodajDni(d.start, 30 * d.miesiace - 1). Import dodajMiesiace usunąć. Komentarz w pliku i „Jak liczymy” uzupełnić o zdanie: „Miesiąc to 30 dni (art. 22 w związku z art. 11 ust. 5 ustawy zasiłkowej): 90% przez pierwsze 90 dni, najwyżej 360 dni”. „razem” bez zmian. Praktykę ZUS warto jeszcze sprawdzić ręcznie na zus.pl (nie blokuje poprawki).",
+   "testy": "start 2026-11-12, 12 mies.: od75 '2027-02-10', koniecNajpozniej '2027-11-06', razem 49122.12 (bez zmian); start 2027-12-01: od75 '2028-02-29', koniecNajpozniej '2028-11-24'; start 2026-11-12, miesiace 6: koniecPrzyznanego '2027-05-10'."
+  },
+  {
+   "id": "C-2",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Art. 33 ust. 2 zd. 2 jest jednoznaczny, a kod zawsze stosuje LIMIT_LACZNY = 60. FAQ (linia 20) też podaje tylko „łącznie najwyżej 60 dni”. Tabela wspomina o 30 dniach, ale wynik ich nie uwzględnia. Test „wykorzystaneLacznie: 55 → 5” jest poprawny tylko wtedy, gdy wśród tych 55 dni była opieka z pkt 1–2.",
+   "dowod": "DU_2026_854.txt, art. 33 ust. 2: „W przypadku gdy opieka jest sprawowana wyłącznie nad osobami, o których mowa w art. 32 ust. 1 pkt 2a, 2b i 3, zasiłek opiekuńczy przysługuje łącznie za okres niedłuższy niż 30 dni w roku kalendarzowym.” jiti: czlonek-rodziny, dni 14, wykorzystaneLacznie 20 daje dniPlatne 14 (kwota 1932,84 zł); dziecko-orzeczenie, dni 30, lacznie 14 daje 30.",
+   "poprawka": "opiekunczy.ts: dodać pole DaneOpiekunczego.bylaOpiekaNadDzieckiem60?: boolean (wcześniej w roku opieka z art. 32 ust. 1 pkt 1–2). limitLaczny = d.rodzaj === 'dziecko' || d.bylaOpiekaNadDzieckiem60 ? 60 : 30 i użyć go zamiast LIMIT_LACZNY w obliczeniu pozostalo. Na stronie zasilek-opiekunczy.astro dodać checkbox przy polu „Wcześniej w roku: łącznie” (np. „w tym opieka nad dzieckiem do 14 lat albo do 8 lat”). W FAQ (linia 20) dopisać „…łącznie najwyżej 60 dni, a gdy opieka dotyczy tylko dziecka z orzeczeniem i innych członków rodziny, łącznie 30 dni (art. 33 ust. 2)”.",
+   "testy": "6000 zł 2026: czlonek-rodziny, dni 14, wykorzystaneLacznie 20, bez flagi: dniPlatne 10, kwota 1380.60; dziecko-orzeczenie, dni 30, lacznie 14, bez flagi: dniPlatne 16; czlonek-rodziny, dni 14, lacznie 55, flaga true: dniPlatne 5 (dotychczasowy test, z flagą); dziecko, dni 7, wykorzystaneTenRodzaj 57: 3 (bez zmian)."
+  },
+  {
+   "id": "C-3",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Art. 9 ust. 4 ma odnośnik 4: dodany przez art. 13 pkt 1 ustawy z 18 grudnia 2025 r., wchodzi w życie 1 stycznia 2027 r. Strona podaje go jako obowiązujący już dziś.",
+   "dowod": "DU_2026_854.txt w. 186 („4.4) Niezależnie od liczby tytułów…”) i odnośnik 4 w w. 219; okres-zasilkowy.astro:98.",
+   "poprawka": "Jak proponuje audytor: „Od 1 stycznia 2027 r. przy kilku tytułach ubezpieczenia okres zasiłkowy jest jeden (art. 9 ust. 4)”.",
+   "testy": "brak (tekst)"
+  },
+  {
+   "id": "C-4",
+   "werdykt": "czesciowo",
+   "uzasadnienie": "Błąd jest: zasilek-macierzynski.astro:136 zawiera dosłownie `Najwyżej ${maks} tygodni`, więc dla 32 i 34 wychodzą błędne formy. Proponowana poprawka podaje jednak złą sygnaturę funkcji odmiana().",
+   "dowod": "src/lib/redakcja.ts:80: export function odmiana(n: number, [jeden, kilka, wiele]: [string, string, string]); odmiana() zwraca liczbę razem ze słowem.",
+   "poprawka": "w('tyg-opis').textContent = typografia(`Najwyżej ${odmiana(maks, ['tydzień', 'tygodnie', 'tygodni'])}: z ${tygodnieRodzicielskiego(dzieci)} tygodni 9 przysługuje wyłącznie ojcu.`); import odmiana z '../../lib/redakcja'.",
+   "testy": "E2E: 1 dziecko → „Najwyżej 32 tygodnie”, 2 dzieci → „Najwyżej 34 tygodnie”."
+  },
+  {
+   "id": "C-5",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Gdy matka bierze 0 tygodni rodzicielskiego, w pierwszym roku życia dziecka nie wykorzystuje ani dnia zasiłku za ten urlop. Art. 31 ust. 4 daje wtedy na wniosek jednorazowe wyrównanie do 100%. FAQ to opisuje, ale wynik porównania pokazuje wariant 81,5% bez wyrównania.",
+   "dowod": "DU_2026_854.txt, art. 31 ust. 4 (cytat jak u audytora). jiti: wariant '81,5', tygodnie 0, 6000 zł: razem 19691; '100-70': 24161.2.",
+   "poprawka": "macierzynski.ts: przy d.wariant === '81,5' i tygRodz === 0 liczyć razemMac po 100% (dziennie z miesiecznie(podstawa, 100)) i zwrócić flagę wyrownanie: true. Na stronie przy razem-b dopisać „(z wyrównaniem do 100% na wniosek, art. 31 ust. 4)”, gdy flaga jest ustawiona. Ewentualnie pokazać 19 691,00 zł plus wyrównanie 4470,20 zł.",
+   "testy": "rok 2026, brutto 6000, wariant '81,5', tygodnieRodzicielskiego 0: razem 24161.20, wyrownanie true (bez wyrównania 19691.00, różnica 4470.20); tygodnie 1: bez wyrównania."
+  },
+  {
+   "id": "C-6",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "przestoj() dzieli pensję przez wymiar razy etat, ale strona nie ma pola etatu i nie przekazuje etat, więc zawsze przyjmuje pełny etat. Strona nigdzie nie mówi, że liczy dla pełnego etatu (grep 'etat' w .astro: 0 trafień). Minimum za godzinę jest liczone dobrze (płaca minimalna / pełny wymiar).",
+   "dowod": "jiti: rok 2026, miesiąc 11 (wymiar 160 h), 8 h, miesieczna, 3000 zł: zaGodzine 18.75, podniesione do minimum 30.04, kwota 240.30. Z etat 0.5: zaGodzine 37.5, kwota 300.",
+   "poprawka": "wynagrodzenie-za-przestoj.astro: dodać select „Wymiar etatu” (1, 3/4, 1/2, 1/4; krótkie opcje) i przekazywać etat do przestoj() (dotyczy też wariantu 60%: stale / (wymiar × etat)). „Godzin do przepracowania w miesiącu” pokazać jako wymiar × etat.",
+   "testy": "przestoj({rok:2026,miesiac:11,godziny:8,rodzaj:'miesieczna',stawka:3000,etat:0.5}) → {zaGodzine:37.5, podniesioneDoMinimum:false, kwota:300}; bez-stawki, stale 2500, etat 0.5, 8 h: 0,6×2500/80 = 18,75 zł/h, poniżej 30,04, więc kwota 240.30."
+  },
+  {
+   "id": "C-7",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Legenda w wynagrodzenie-za-przestoj.astro:47 brzmi „Jak jesteś wynagradzany”.",
+   "dowod": "grep",
+   "poprawka": "„Forma wynagrodzenia”. To samo w dyzur-w-pracy.astro:65 (zob. nowe).",
+   "testy": "brak"
+  },
+  {
+   "id": "C-8",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "FAQ w l4-po-zwolnieniu.astro:28 ma formy „nabyłeś lub nie nabyłaś”.",
+   "dowod": "grep",
+   "poprawka": "Jak proponuje audytor.",
+   "testy": "brak"
+  },
+  {
+   "id": "C-9",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Limit 33 albo 14 dni od pracodawcy liczy się w roku kalendarzowym (art. 92 § 1 Kp). Kalkulator ma tylko pola „Rok” i „Dni”, więc zwolnienie przez Nowy Rok liczy w całości w jednym roku.",
+   "dowod": "jiti: chorobowe({rok:2026, dni:27, wykorzystane:30}) daje dniPracodawca 3, dniZus 24. Poprawnie: 12 dni w 2026 r. (3 od pracodawcy, 9 z ZUS) i 15 dni w 2027 r. (15 od pracodawcy).",
+   "poprawka": "Minimum: uwaga pod polem „Dni zwolnienia”: „Zwolnienie przez Nowy Rok policz osobno dla każdego roku: limit 33/14 dni od pracodawcy liczy się od 1 stycznia”. Wersja pełniejsza: daty od–do i podział na lata.",
+   "testy": "Jeśli powstaną daty: 2026-12-20..2027-01-15, wykorzystane 30 → 2026 r.: 3 dni od pracodawcy i 9 z ZUS; 2027 r.: 15 dni od pracodawcy, 0 z ZUS."
+  },
+  {
+   "id": "C-10",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Wszystkie 3 opcje o-rodzaj są ucięte przy 320 px (miejsce na tekst ok. 220 px), a 2 z nich także przy 412 px.",
+   "dowod": "Własny pomiar Playwright (canvas measureText wobec clientWidth minus padding), plik CF-wer/sel.cjs.",
+   "poprawka": "Jak proponuje audytor; łącznie z C-11 nazwa „Dziecko 14–18 lat z orzeczeniem (30 dni)”, jeśli się mieści (ok. 220 px), w przeciwnym razie „Dziecko z orzecz. 14–18 (30 dni)”.",
+   "testy": "E2E: szerokość tekstu opcji nie większa niż szerokość selecta przy 320 px."
+  },
+  {
+   "id": "C-11",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Chore dziecko poniżej 14 lat z orzeczeniem mieści się w art. 32 ust. 1 pkt 2, więc limit to 60 dni (art. 33 ust. 1 pkt 1). Etykieta sugeruje 30 dni.",
+   "dowod": "DU_2026_854.txt, art. 32 ust. 1 pkt 2 i 2a, art. 33 ust. 1 pkt 1 i 1a.",
+   "poprawka": "Jak proponuje audytor.",
+   "testy": "brak"
+  },
+  {
+   "id": "C-12",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Przy 320 px ucięte są wszystkie 4 opcje l4-powod, przy 412 px 2.",
+   "dowod": "sel.cjs",
+   "poprawka": "Jak proponuje audytor (skrócić POWODY.nazwa).",
+   "testy": "jak C-10"
+  },
+  {
+   "id": "C-13",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Potwierdzone przekrojowo, bez dalszej pracy (zgodnie z poleceniem).",
+   "dowod": "-",
+   "poprawka": "Jak proponuje audytor.",
+   "testy": "-"
+  },
+  {
+   "id": "C-14",
+   "werdykt": "czesciowo",
+   "uzasadnienie": "Wynik już mówi „Kto płaci: ZUS”, więc z proponowanej uwagi ta część jest zbędna. Brakuje tylko limitu podstawy z art. 46. Do tego ta sama uwaga stoi w polu wyniku i zawiera link do kalkulatora L4, co łamie zasadę „linki tylko w wyjaśnieniu” (zob. nowe).",
+   "dowod": "DU_2026_854.txt w. 687–690 (art. 46); l4-po-zwolnieniu.astro:81 i 84.",
+   "poprawka": "Uwaga w wyniku: „Zasiłek wynosi 80% podstawy, w ciąży 100% (art. 11); podstawa nie może przekroczyć przeciętnego wynagrodzenia z poprzedniego kwartału (art. 46).” Link do kalkulatora L4 przenieść do wyjaśnienia.",
+   "testy": "brak"
+  },
+  {
+   "id": "C-15",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "W l4-po-zwolnieniu.astro:95 zdanie wymienia wyłączenia z pkt 1–5, a cytuje tylko pkt 3.",
+   "dowod": "DU_2026_854.txt w. 223–234.",
+   "poprawka": "„(art. 13 ust. 1)”.",
+   "testy": "brak"
+  },
+  {
+   "id": "C-16",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Art. 182^1a § 2 Kp przewiduje 65 i 67 tygodni dla dziecka z zaświadczeniem „Za życiem”. Strona tego nie wspomina i nie ma sekcji „Jak liczymy”.",
+   "dowod": "DU_2026_1245.txt w. 3302–3306.",
+   "poprawka": "Jak proponuje audytor.",
+   "testy": "brak"
+  },
+  {
+   "id": "C-17",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Pola p-stale, p-zmienne i p-zgodz nie mają aria-describedby. FAQ wspomina kalkulator wymiaru bez linku; slug wymiar-czasu-pracy istnieje (narzedzia.ts:124).",
+   "dowod": "kod strony w. 58–71",
+   "poprawka": "Jak proponuje audytor.",
+   "testy": "brak"
+  },
+  {
+   "id": "C-18",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "API Sejmu potwierdza oba punkty. Ustawa Dz.U. 2026 poz. 1123 (ogłoszona 2026-08-25) art. 9 zmienia art. 32 ust. 1 pkt 1 lit. a ustawy zasiłkowej od 1.01.2028 r.: art. 48 wymienia wyjątki od tej daty, art. 9 do nich nie należy. Nowe brzmienie dodaje m.in. punkt opieki dziennej i oddział przedszkolny, a usuwa dziennego opiekuna. Ustawa o świadczeniach rodzinnych ma nowy tekst jednolity Dz.U. 2026 poz. 1240 (obwieszczenie z 1.09.2026), a art. 17c ust. 5 nadal mówi 1000,00 zł.",
+   "dowod": "API DU/1999/636 references „Akty zmieniające”: DU/2026/1123 z datą 2028-01-01; pobrany DU_2026_1123.txt w. 1663–1669 (art. 9) i w. 2376 (art. 48). DU/2003/2255 „Inf. o tekście jednolitym”: DU/2026/1240; DU_2026_1240.txt w. 893.",
+   "poprawka": "Jak proponuje audytor. W prawo.ts swiadczeniaRodzinne: publikator 'Dz.U. 2026 poz. 1240', adres eli(2026, 1240). Przy okazji SWIADCZENIE_RODZICIELSKIE w macierzynski.ts nadal 1000.",
+   "testy": "brak"
+  },
+  {
+   "id": "C-19",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Luki w testach są realne. Poprawne wartości oczekiwane podaję po poprawce C-1.",
+   "dowod": "Plik testu ma tylko starty 2026-11-12, 2026-07-01 i 2027-01-15.",
+   "poprawka": "Dodać przypadki z C-1. Start 2028-02-29 ma rzucać RangeError („Brak płacy minimalnej na 2028 r.”), dopóki nie ma płacy 2028. Gdy ukaże się obwieszczenie na I kw. 2027 r. (termin z art. 19 ust. 3: do 31.12.2026 r.), dopisać WSKAZNIKI['2027-1'].",
+   "testy": "jak w C-1 oraz expect(() => swiadczenieRehabilitacyjne({start:'2028-02-29',brutto:6000,przyczyna:'choroba',miesiace:12})).toThrow(RangeError)."
+  },
+  {
+   "id": "C-20",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Kod daje poprawne wyniki, ale testy ich nie pilnują.",
+   "dowod": "jiti: 2027-09-01, choroba → koniecLimitu 2028-02-29; 2027-12-01, gruzlica → 2028-08-26. Python: 2027-09-01 + 181 dni = 2028-02-29 i 2027-12-01 + 269 dni = 2028-08-26.",
+   "poprawka": "Jak proponuje audytor.",
+   "testy": "jak u audytora"
+  },
+  {
+   "id": "F-1",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Potwierdzone przekrojowo, bez dalszej pracy.",
+   "dowod": "-",
+   "poprawka": "Jak proponuje audytor.",
+   "testy": "-"
+  },
+  {
+   "id": "F-2",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Potwierdzone przekrojowo, bez dalszej pracy.",
+   "dowod": "-",
+   "poprawka": "Jak proponuje audytor.",
+   "testy": "-"
+  },
+  {
+   "id": "F-3",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Art. 265 § 1 obejmuje tylko czynności z art. 97 § 2^1 (oba terminy przy sprostowaniu świadectwa) i z art. 264. Sprzeciw z art. 112 § 1 i pozew z art. 112 § 2 do nich nie należą. Status po terminie (odwolanie-do-sadu-pracy.astro:134) zawsze pisze „możliwy tylko wniosek o przywrócenie terminu (art. 265…)”. Przy kara-sprzeciw to obietnica bez podstawy: termin biegnie u pracodawcy, nie w sądzie. Przy kara-sad Kodeks pracy przywrócenia wprost nie przewiduje; analogię z art. 265 może ocenić tylko sąd.",
+   "dowod": "DU_2026_1245.txt w. 4533–4534 (art. 265 § 1), w. 2304–2312 (art. 112 § 1–2), w. 2095–2099 (art. 97 § 2^1).",
+   "poprawka": "termin-odwolania.ts: dodać do SPRAWY pole przywrocenie: boolean, true dla wypowiedzenie, bez-wypowiedzenia, odmowa-przyjecia, sprostowanie-wniosek i sprostowanie-sad; false dla kara-sprzeciw i kara-sad. W skrypcie po terminie: przywrocenie ? 'Termin minął: możliwy tylko wniosek o przywrócenie terminu do sądu pracy, 7 dni od ustania przyczyny (art. 265 Kodeksu pracy)' : 'Termin minął'. Dla kara-sad można dodać: „Kodeks pracy nie przewiduje wprost przywrócenia tego terminu”.",
+   "testy": "Jednostkowy: SPRAWY['kara-sprzeciw'].przywrocenie === false, SPRAWY['wypowiedzenie'].przywrocenie === true. E2E: kara-sprzeciw, data 2026-10-01 → status bez „art. 265”."
+  },
+  {
+   "id": "F-4",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Art. 103^5 pkt 2–4 dotyczą rozwiązania umowy „w trakcie podnoszenia kwalifikacji lub po jego ukończeniu”. Wypowiedzenie przez pracodawcę, porozumienie, koniec umowy terminowej i odejście z powodu mobbingu (pkt 3: wyjątek) nie dają zwrotu także w trakcie nauki. Kod zwraca 'w-trakcie' przed sprawdzeniem ZWROT[...].zwrot, a strona pisze wtedy, że „przepis każe liczyć zwrot proporcjonalnie”.",
+   "dowod": "jiti: lojalka({koszt:10000, ukonczenie:'2026-03-31', miesiecy:24, koniecPracy:'2026-03-01', rozwiazanie:'wypowiedzenie-pracodawcy'}) daje {stan:'w-trakcie', kwota:null}. DU_2026_1245.txt w. 2193–2205.",
+   "poprawka": "lojalka.ts: przed `if (d.koniecPracy <= d.ukonczenie)` dodać `if (!zwrot) return { stan: 'bez-zwrotu' as const, koniecZobowiazania, okres, przepracowane: Math.max(0, Math.min(okres, dniMiedzy(d.ukonczenie, d.koniecPracy))), kwota: 0, podstawa };`.",
+   "testy": "rozwiazanie 'wypowiedzenie-pracodawcy', 'porozumienie', 'koniec-umowy', 'mobbing' z koniecPracy '2026-03-20' (przed ukończeniem z D) → stan 'bez-zwrotu', kwota 0; 'wypowiedzenie-pracownika' z koniecPracy '2026-03-20' → nadal 'w-trakcie', kwota null (dotychczasowy test)."
+  },
+  {
+   "id": "F-5",
+   "werdykt": "czesciowo",
+   "uzasadnienie": "Problem jest: pkt 4 wymaga „braku przyczyn”, a opcja „Odchodzę bez wypowiedzenia” tego nie mówi. Uzasadnione odejście z art. 55 § 1 albo § 1^1 nie daje zwrotu, a nie ma dla niego opcji. Proponowane nazwy są jednak za długie: już „Odchodzę bez wypowiedzenia” jest ucinana przy 320 px (F-7), a „Odchodzę z winy pracodawcy” jest ucinana w odszkodowanie-za-zwolnienie przy 320 px (mój pomiar).",
+   "dowod": "DU_2026_1245.txt w. 2203–2204 (pkt 4: „mimo braku przyczyn określonych w tych przepisach”); sel.cjs.",
+   "poprawka": "lojalka.ts: dodać Rozwiazanie 'art55-z-podstawa' z ZWROT { zwrot: false, podstawa: 'art. 103⁵ pkt 4 (a contrario)' }. Opcje mają mieścić się w ok. 220 px przy 320 px, np. „Odejście bez podstaw” (art55-bez-podstaw) i „Odejście z winy firmy” (art55-z-podstawa). W tabeli wyjaśnienia dodać wiersz „Odchodzisz bez wypowiedzenia z winy pracodawcy (art. 55 § 1, § 1¹) | nie”.",
+   "testy": "lojalka({...D, koniecPracy:'2027-03-31', rozwiazanie:'art55-z-podstawa'}) → stan 'bez-zwrotu', kwota 0."
+  },
+  {
+   "id": "F-6",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Przy 320 px ucięte są wszystkie opcje o-sprawa poza „Odmowa przyjęcia do pracy”, przy 412 px 3.",
+   "dowod": "sel.cjs",
+   "poprawka": "Jak proponuje audytor (skrócić SPRAWY.nazwa).",
+   "testy": "jak C-10"
+  },
+  {
+   "id": "F-7",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Mój pomiar to potwierdza: w l-rozwiazanie ucięte są 3 opcje, w o-sytuacja 4. Do tego w o-umowa (wąska kolumna, ok. 91 px) ucięty jest „Nieokreślony”.",
+   "dowod": "sel.cjs, 320 px",
+   "poprawka": "Jak proponuje audytor; dla o-umowa poszerzyć pole albo nazwać opcję „Bezterminowa”.",
+   "testy": "jak C-10"
+  },
+  {
+   "id": "F-8",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Potwierdzone przekrojowo, bez dalszej pracy.",
+   "dowod": "-",
+   "poprawka": "Jak proponuje audytor.",
+   "testy": "-"
+  },
+  {
+   "id": "F-9",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "odprawa-posmiertna.astro:135–136 ma lokalną funkcję odmiana, a w. 146 komunikat „co najmniej 1” przy warunku 1–20.",
+   "dowod": "kod",
+   "poprawka": "Import odmiana z '../../lib/redakcja' z sygnaturą odmiana(n, ['x','y','z']), która zwraca liczbę ze słowem (dostosować wywołania). Komunikat: „Wpisz liczbę uprawnionych osób: od 1 do 20.”",
+   "testy": "E2E: 22 → komunikat „od 1 do 20”."
+  },
+  {
+   "id": "F-10",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Link stoi w .wynik-uwaga wewnątrz formularza. Audytor pisze, że to jedyne takie miejsce, ale to samo jest w l4-po-zwolnieniu.astro:84 (partia C, zob. nowe).",
+   "dowod": "odszkodowanie-za-zwolnienie.astro:97",
+   "poprawka": "Jak proponuje audytor.",
+   "testy": "brak"
+  },
+  {
+   "id": "F-11",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Art. 109 § 1 ogranicza prawo pracodawcy do ukarania („kara nie może być zastosowana po upływie”). Czy to „termin do wykonania czynności” z art. 115 KC, przepis nie rozstrzyga. Kod wybiera wariant korzystny dla pracodawcy, a „Jak liczymy” podaje art. 115 jako pewny, bez wzmianki o sporze. To narusza zasadę serwisu: wariant bezpieczny dla pracownika i opis tego, czego przepis nie rozstrzyga.",
+   "dowod": "DU_2026_1245.txt w. 2293–2294; kara-porzadkowa.ts:21–22; kara-porzadkowa.astro:85–88. jiti: naruszenie 2026-11-30, wiadomość 2027-02-20, ukaranie 2027-03-01 → do3miesiecy '2027-03-01', wTerminie true. Bez przesunięcia termin kończy się 2027-02-28 (niedziela), więc kara byłaby spóźniona.",
+   "poprawka": "kara-porzadkowa.ts: do2tygodni = dodajDni(d.wiadomosc, 14), do3miesiecy = dodajMiesiace(d.naruszenie, 3), bez przesunZDniaWolnego (sprzeciw pracownika dalej z przesunięciem). W „Jak liczymy”: „Terminów pracodawcy na ukaranie (art. 109 § 1) nie przesuwamy z soboty i dnia wolnego: czy stosuje się do nich art. 115 KC, przepis nie rozstrzyga, więc pokazujemy wcześniejszą datę”.",
+   "testy": "naruszenie '2026-11-30', wiadomosc '2027-02-20', ukaranie '2027-03-01' → do3miesiecy '2027-02-28', wTerminie false; sprzeciw.koniec dla ukarania 2027-03-01 → '2027-03-08' (bez zmian)."
+  },
+  {
+   "id": "F-12",
+   "werdykt": "czesciowo",
+   "uzasadnienie": "Art. 80 ust. 2–6 jest zgodny z opisem audytora. Wskaźnikiem jest jednak średnioroczny CPI z poprzedniego roku (ust. 3). Przy CPI za 2026 r. wyraźnie poniżej 105 waloryzacji od 1.03.2027 r. najpewniej nie będzie, więc tekst nie zdezaktualizuje się. Ryzyko jest niskie. Wystarczy zdanie o zasadzie i pozycja w do_stanu.",
+   "dowod": "DU_2025_1749.txt w. 1486–1498.",
+   "poprawka": "Dopisać: „Kwota rośnie od 1 marca, gdy średnioroczna inflacja z poprzedniego roku przekroczy 5% (art. 80 ust. 2–3)”. Do STAN.md: po komunikacie Prezesa ZUS (koniec lutego 2027 r.) sprawdzić kwotę.",
+   "testy": "brak"
+  },
+  {
+   "id": "F-13",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "§ 2 ust. 1 pkt 7 rozporządzenia urlopowego dotyczy tylko odprawy emerytalnej i rentowej. Odprawę z ustawy o zwolnieniach grupowych liczy się z art. 8 ust. 3 tej ustawy.",
+   "dowod": "Pobrany DU_2017_927.txt w. 120–121: „7) odprawy pieniężnej przysługującej pracownikowi w związku z przejściem na emeryturę lub rentę (art. 92¹ § 1 Kodeksu pracy)”.",
+   "poprawka": "Jak proponuje audytor (FAQ kalkulator-odprawy.astro:32 i komentarz odprawy.ts:3–4).",
+   "testy": "brak"
+  },
+  {
+   "id": "F-14",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Potwierdzone przekrojowo, bez dalszej pracy.",
+   "dowod": "-",
+   "poprawka": "Jak proponuje audytor.",
+   "testy": "-"
+  },
+  {
+   "id": "F-15",
+   "werdykt": "potwierdzone",
+   "uzasadnienie": "Przeliczyłem wartości niezależnie i zgadzają się. 2027-03-08 + 21 = 29.03 (Poniedziałek Wielkanocny, Wielkanoc 28.03.2027) → 30.03; 2027-12-03 + 21 = 24.12 (Wigilia) → 27.12; 2027-12-11 + 21 = 1.01.2028 (sobota, święto) → 3.01; 2027-05-06 + 21 = 27.05 (Boże Ciało) → 28.05; 2028-12-10 + 21 = 31.12 (niedziela) → 2.01.2029; limity odpraw 15 × 4806 = 72 090 i 15 × 4950 = 74 250.",
+   "dowod": "Rachunek ręczny i Python; jiti dla kary.",
+   "poprawka": "Jak proponuje audytor. Przypadek kary po F-11 ma oczekiwać do3miesiecy '2027-02-28', a nie '2027-03-01'.",
+   "testy": "jak u audytora, z korektą dla F-11"
+  }
+ ],
+ "nowe": [
+  {
+   "id": "CF-wer-1",
+   "slug": "dyzur-w-pracy",
+   "wymiar": "tresc-ux",
+   "waga": "srednia",
+   "plik": "src/pages/narzedzia/dyzur-w-pracy.astro",
+   "linia": 65,
+   "problem": "Legenda „Jak jesteś wynagradzany” ma formę męską (zasada 6), ten sam błąd co w C-7.",
+   "dowod": "grep 'wynagradzany' src/pages/narzedzia/*.astro",
+   "poprawka": "„Forma wynagrodzenia”."
+  },
+  {
+   "id": "CF-wer-2",
+   "slug": "l4-po-zwolnieniu",
+   "wymiar": "tresc-ux",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/l4-po-zwolnieniu.astro",
+   "linia": 84,
+   "problem": "Link do kalkulatora L4 stoi w polu wyniku (.wynik-uwaga w formularzu), a nie w wyjaśnieniu (zasada 5). To samo co F-10.",
+   "dowod": "awk po blokach kalkulator-wynik we wszystkich stronach narzędzi: tylko l4-po-zwolnieniu:84 i odszkodowanie-za-zwolnienie:97.",
+   "poprawka": "Przenieść link do slotu wyjaśnienia; w wyniku zostawić zdanie o 80/100% i limicie z art. 46 (C-14)."
+  },
+  {
+   "id": "CF-wer-3",
+   "slug": "zwolnienie-na-l4",
+   "wymiar": "spojnosc",
+   "waga": "niska",
+   "plik": "src/lib/narzedzia/ochrona-l4.ts",
+   "linia": 46,
+   "problem": "Po poprawce C-1 świadczenie rehabilitacyjne liczy „pierwsze 3 miesiące” jako 90 dni, a ochrona z art. 53 § 1 pkt 1 lit. b Kp dalej kalendarzowo. Strona świadczenia odsyła do tego kalkulatora, więc daty mogą się różnić o 1–2 dni. Kalendarzowe liczenie w Kp jest do obrony (Kp nie ma reguły 30 dni; art. 114 KC dotyczy tylko okresu, który nie musi biec w sposób ciągły), a późniejsza data jest bezpieczna dla pracownika.",
+   "dowod": "ochrona-l4.ts:46: dodajMiesiace(dodajDni(koniecZasilku, 1), 3); swiadczenie-rehabilitacyjne.astro:104–105 (link).",
+   "poprawka": "Nie zmieniać rachunku. W „Jak liczymy” kalkulatora ochrony na L4 dopisać: „3 miesiące świadczenia rehabilitacyjnego z art. 53 liczymy kalendarzowo; ZUS liczy 90% świadczenia przez 90 dni (art. 22 i art. 11 ust. 5 ustawy zasiłkowej)”."
+  },
+  {
+   "id": "CF-wer-4",
+   "slug": "zasilek-opiekunczy",
+   "wymiar": "prawo",
+   "waga": "niska",
+   "plik": "src/lib/narzedzia/opiekunczy.ts",
+   "linia": 13,
+   "problem": "Od 1.01.2028 r. (Dz.U. 2026 poz. 1123, art. 9) art. 32 ust. 1 pkt 1 lit. a obejmuje też punkt opieki dziennej, oddział przedszkolny i inne formy wychowania przedszkolnego, a nie wymienia już dziennego opiekuna. Opisy na stronie trzeba będzie wtedy zaktualizować.",
+   "dowod": "Pobrany DU_2026_1123.txt w. 1663–1669 i art. 48.",
+   "poprawka": "Pozycja do STAN.md: przed 1.01.2028 r. zaktualizować opis opieki nad dzieckiem do 8 lat."
+  }
+ ]
+}

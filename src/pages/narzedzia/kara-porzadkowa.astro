@@ -41,15 +41,15 @@ const faq = [
       <h2 id="kalkulator-tytul" class="tytul-m">Daty</h2>
       <div class="mt-4">
         <label for="k-naruszenie" class="etykieta-pola">Dzień naruszenia</label>
-        <input id="k-naruszenie" name="naruszenie" type="date" class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" value={D.naruszenie} aria-describedby="k-blad" />
+        <input id="k-naruszenie" name="naruszenie" type="date" data-dzis="-10" class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" value={D.naruszenie} aria-describedby="k-blad" />
       </div>
       <div class="mt-4">
         <label for="k-wiadomosc" class="etykieta-pola">Kiedy pracodawca się o nim dowiedział</label>
-        <input id="k-wiadomosc" name="wiadomosc" type="date" class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" value={D.wiadomosc} aria-describedby="k-blad" />
+        <input id="k-wiadomosc" name="wiadomosc" type="date" data-dzis="-8" class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" value={D.wiadomosc} aria-describedby="k-blad" />
       </div>
       <div class="mt-4">
         <label for="k-ukaranie" class="etykieta-pola">Dzień zawiadomienia o karze</label>
-        <input id="k-ukaranie" name="ukaranie" type="date" class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" value={D.ukaranie} aria-describedby="k-blad" />
+        <input id="k-ukaranie" name="ukaranie" type="date" data-dzis class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" value={D.ukaranie} aria-describedby="k-blad" />
       </div>
       <p id="k-blad" class="blad-pola mt-3" data-blad="dane" hidden></p>
     </div>
@@ -84,8 +84,9 @@ const faq = [
     <h2 id="jak-liczymy">Jak liczymy</h2>
     <p>
       Terminy liczymy według Kodeksu cywilnego (art. 300 Kodeksu pracy): 2 tygodnie i 3 miesiące kalendarzowo (art. 112),
-      7 dni na sprzeciw bez dnia zawiadomienia (art. 111 § 2), a gdy koniec wypada w sobotę albo dzień wolny od pracy,
-      przechodzi na najbliższy dzień roboczy (art. 115). Termin na pozew do sądu pracy po odrzuceniu sprzeciwu policzy
+      7 dni na sprzeciw bez dnia zawiadomienia (art. 111 § 2). Gdy koniec terminu na sprzeciw wypada w sobotę albo dzień
+      wolny od pracy, przechodzi na najbliższy dzień roboczy (art. 115). Terminów pracodawcy na ukaranie (art. 109 § 1)
+      nie przesuwamy: przepis nie rozstrzyga, czy stosuje się do nich art. 115, więc pokazujemy wcześniejszą datę. Termin na pozew do sądu pracy po odrzuceniu sprzeciwu policzy
       <a href="/narzedzia/odwolanie-do-sadu-pracy">kalkulator terminów do sądu pracy</a> (sprawa „Uchylenie kary porządkowej w sądzie”).
     </p>
     <p>
@@ -98,6 +99,8 @@ const faq = [
 <script>
   import { karaPorzadkowa } from '../../lib/narzedzia/kara-porzadkowa';
   import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { typografia } from '../../lib/typografia.mjs';
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
 
   const form = document.querySelector<HTMLFormElement>('[data-kara]');
   if (form) {
@@ -111,7 +114,7 @@ const faq = [
       else if (d.ukaranie < d.wiadomosc) blad = 'Zawiadomienie o karze nie może być wcześniejsze niż dowiedzenie się o naruszeniu.';
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
       b.hidden = !blad;
-      b.textContent = blad ?? '';
+      b.textContent = typografia(blad ?? '');
       const status = w('status');
       if (blad) {
         w('sprzeciw').textContent = '—';
@@ -119,18 +122,19 @@ const faq = [
         return;
       }
       const r = karaPorzadkowa(d);
-      w('sprzeciw').textContent = dataPoPolsku(r.sprzeciw.koniec);
-      w('ostatni').textContent = dataPoPolsku(r.ostatniDzienKary);
-      w('2tyg').textContent = dataPoPolsku(r.do2tygodni);
-      w('3mies').textContent = dataPoPolsku(r.do3miesiecy);
-      w('zatarcie').textContent = dataPoPolsku(r.zatarcie);
+      w('sprzeciw').textContent = typografia(dataPoPolsku(r.sprzeciw.koniec));
+      w('ostatni').textContent = typografia(dataPoPolsku(r.ostatniDzienKary));
+      w('2tyg').textContent = typografia(dataPoPolsku(r.do2tygodni));
+      w('3mies').textContent = typografia(dataPoPolsku(r.do3miesiecy));
+      w('zatarcie').textContent = typografia(dataPoPolsku(r.zatarcie));
       status.hidden = false;
       status.dataset.status = r.wTerminie ? 'w-terminie' : 'po-terminie';
-      status.textContent = r.wTerminie ? 'Kara nałożona w terminie' : 'Kara nałożona po terminie z art. 109 § 1';
+      status.textContent = typografia(r.wTerminie ? 'Kara nałożona w terminie' : 'Kara nałożona po terminie z art. 109 § 1');
     };
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    ustawDzisiejszeWartosci(form);
     przelicz();
   }
 </script>

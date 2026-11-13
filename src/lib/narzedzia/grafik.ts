@@ -18,9 +18,10 @@ export type KodDnia = KodZmiany | 'W';
 
 /** Wzory rotacji: kolejne dni cyklu. */
 export const WZORY = {
-  'czterobrygadowy-12': { nazwa: 'Czterobrygadowy 12 h: 2 dni, 2 noce, 4 wolne', cykl: ['D', 'D', 'N', 'N', 'W', 'W', 'W', 'W'] as KodDnia[] },
-  'dzien-noc-12': { nazwa: '12 h: dzień, noc, 2 wolne', cykl: ['D', 'N', 'W', 'W'] as KodDnia[] },
-  'trzyzmianowy-8': { nazwa: 'Trzyzmianowy 8 h: tydzień rano, tydzień popołudnie, tydzień noc', cykl: [...'RRRRRWW', ...'PPPPPWW', ...'OOOOOWW'] as KodDnia[] },
+  // `krotko` do listy wyboru (telefon ucina długie opcje), `nazwa` w opisie pod polem i w FAQ.
+  'czterobrygadowy-12': { krotko: '12 h: 2 dni, 2 noce, 4 wolne', nazwa: 'Czterobrygadowy 12 h: 2 dni, 2 noce, 4 wolne', cykl: ['D', 'D', 'N', 'N', 'W', 'W', 'W', 'W'] as KodDnia[] },
+  'dzien-noc-12': { krotko: '12 h: dzień, noc, 2 wolne', nazwa: '12 h: dzień, noc, 2 wolne', cykl: ['D', 'N', 'W', 'W'] as KodDnia[] },
+  'trzyzmianowy-8': { krotko: '8 h: trzy zmiany tygodniami', nazwa: 'Trzyzmianowy 8 h: tydzień rano, tydzień popołudnie, tydzień noc', cykl: [...'RRRRRWW', ...'PPPPPWW', ...'OOOOOWW'] as KodDnia[] },
 } as const;
 
 export type Wzor = keyof typeof WZORY;

@@ -38,7 +38,12 @@ export function dyzur(d: DaneDyzuru) {
   let zaGodzine: number;
   if (d.rodzaj === 'godzinowa') zaGodzine = d.stawka ?? NaN;
   else if (d.rodzaj === 'miesieczna') zaGodzine = (d.stawka ?? NaN) / wymiar;
-  else zaGodzine = 0.6 * ((d.stale ?? 0) / wymiar + (d.zmienneSuma && d.zmienneGodziny ? d.zmienneSuma / d.zmienneGodziny : 0));
+  else {
+    // Zmienne składniki dzieli się przez godziny przepracowane w miesiącach, z których je liczymy (§ 4 ust. 2 pkt 2):
+    // bez tych godzin nie da się ich policzyć, a pominięcie zaniżyłoby stawkę.
+    if ((d.zmienneSuma ?? 0) > 0 && !((d.zmienneGodziny ?? 0) > 0)) throw new RangeError('Podaj godziny przepracowane w miesiącach ze zmiennymi składnikami');
+    zaGodzine = 0.6 * ((d.stale ?? 0) / wymiar + (d.zmienneSuma && d.zmienneGodziny ? d.zmienneSuma / d.zmienneGodziny : 0));
+  }
   if (!(zaGodzine >= 0)) throw new RangeError('Podaj stawkę');
   return { domowy: false, bezPracy, praca, wymiar, zaGodzine: doGrosza(zaGodzine), kwota: doGrosza(zaGodzine * bezPracy), czasWolny: bezPracy };
 }

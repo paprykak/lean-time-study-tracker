@@ -34,6 +34,9 @@ export function wielkanoc(rok: number): string {
 /** Pierwszy rok, w którym 24 grudnia jest dniem wolnym (Dz.U. 2024 poz. 1965, w mocy od 1 lutego 2025 r.). */
 export const WIGILIA_OD = 2025;
 
+/** Pierwszy rok, w którym 6 stycznia jest dniem wolnym (Dz.U. 2010 nr 224 poz. 1459, w mocy od 1 stycznia 2011 r.). */
+export const TRZECH_KROLI_OD = 2011;
+
 /** Dni wolne od pracy z art. 1 pkt 1 ustawy o dniach wolnych od pracy (bez niedziel z pkt 2), posortowane. */
 export function swieta(rok: number): Swieto[] {
   const w = Date.parse(`${wielkanoc(rok)}T00:00:00Z`);
@@ -41,7 +44,7 @@ export function swieta(rok: number): Swieto[] {
   const stale = (m: number, d: number) => iso(utc(rok, m, d));
   const lista: Swieto[] = [
     { data: stale(1, 1), nazwa: 'Nowy Rok' },
-    { data: stale(1, 6), nazwa: 'Święto Trzech Króli' },
+    ...(rok >= TRZECH_KROLI_OD ? [{ data: stale(1, 6), nazwa: 'Święto Trzech Króli' }] : []),
     { data: ruchome(0), nazwa: 'Wielkanoc' },
     { data: ruchome(1), nazwa: 'Poniedziałek Wielkanocny' },
     { data: stale(5, 1), nazwa: 'Święto Państwowe' },

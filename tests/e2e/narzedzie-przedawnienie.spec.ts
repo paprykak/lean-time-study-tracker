@@ -32,3 +32,9 @@ test('wypłata w następnym miesiącu po 10. dniu to błąd', async ({ page }) =
   await expect(page.locator('[data-blad="dane"]')).toBeVisible();
   await expect(page.locator('[data-w="najstarsza"]')).toHaveText('—');
 });
+
+test('strona sprzed Nowego Roku otwarta 15 marca 2027 r.: pole „Sprawdź na dzień” to dziś', async ({ page }) => {
+  await page.clock.setFixedTime(new Date('2027-03-15T10:00:00+01:00'));
+  await page.goto(NARZEDZIE_PRZEDAWNIENIE);
+  await expect(page.locator('#p-dzis')).toHaveValue('2027-03-15');
+});

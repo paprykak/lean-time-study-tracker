@@ -7,6 +7,7 @@ import { czasPodrozy, delegacja, DIETA, ileDiet, LIMIT_HOTELU, MAKS_DOB, opisChw
 import { dodajDni, dzisWPolsce } from '../../lib/narzedzia/terminy';
 
 const dzis = dzisWPolsce();
+const rok = Number(dzis.slice(0, 4));
 const D = { wyjazd: { data: dzis, godzina: '06:00' }, powrot: { data: dodajDni(dzis, 1), godzina: '18:30' } };
 const r = delegacja(D);
 const POSILKI = [
@@ -19,7 +20,7 @@ const opisDiety = (x: typeof r) => (x.liczbaDiet ? `${zl(x.dietaPrzedPotraceniem
 
 const faq = [
   {
-    pytanie: 'Ile wynosi dieta z delegacji krajowej w 2026 roku?',
+    pytanie: `Ile wynosi dieta z delegacji krajowej w ${rok} roku?`,
     odpowiedz: `${zl(DIETA)} za dobę podróży, bez zmian od 1 stycznia 2023 r. (§ 7 ust. 1 rozporządzenia w sprawie należności z tytułu podróży służbowej). Przy podróży do doby: poniżej 8 godzin dieta nie przysługuje, od 8 do 12 godzin przysługuje połowa, czyli ${zl(DIETA / 2)}, a ponad 12 godzin cała. Przy dłuższej podróży za każdą pełną dobę ${zl(DIETA)}, a za rozpoczętą dobę do 8 godzin ${zl(DIETA / 2)}, ponad 8 godzin ${zl(DIETA)} (§ 7 ust. 2).`,
   },
   {
@@ -32,11 +33,11 @@ const faq = [
   },
   {
     pytanie: 'Czy prywatna firma może płacić dietę niższą niż 45 zł?',
-    odpowiedz: `Nie. U pracodawcy spoza sfery budżetowej zasady ustala układ zbiorowy, regulamin wynagradzania albo umowa o pracę, ale dieta za dobę podróży w kraju i za granicą nie może być niższa niż dieta krajowa z rozporządzenia, czyli ${zl(DIETA)} (art. 77⁵ § 3–4 Kodeksu pracy). Gdy takich postanowień nie ma, należności przysługują według rozporządzenia (art. 77⁵ § 5).`,
+    odpowiedz: `Nie. U pracodawcy spoza sfery budżetowej zasady ustala układ zbiorowy, regulamin wynagradzania albo umowa o pracę, ale dieta za dobę podróży w kraju i za granicą nie może być niższa niż dieta krajowa z rozporządzenia, czyli ${zl(DIETA)} (art. 77^5 § 3–4 Kodeksu pracy). Gdy takich postanowień nie ma, należności przysługują według rozporządzenia (art. 77^5 § 5).`,
   },
   {
     pytanie: 'Ile wynosi kilometrówka za delegację własnym autem?',
-    odpowiedz: `Stawkę za kilometr ustala pracodawca, ale nie wyżej niż ${zl(STAWKI_KM['auto-ponad-900'])} dla samochodu z silnikiem ponad 900 cm³, ${zl(STAWKI_KM['auto-do-900'])} do 900 cm³, ${zl(STAWKI_KM.motocykl)} dla motocykla i ${zl(STAWKI_KM.motorower)} dla motoroweru (§ 2 rozporządzenia Ministra Infrastruktury z 25 marca 2002 r. w brzmieniu od 17 stycznia 2023 r.). Przejazd własnym pojazdem wymaga Twojego wniosku i zgody pracodawcy (§ 3 ust. 3–4 rozporządzenia o podróżach służbowych).`,
+    odpowiedz: `W sferze budżetowej stawkę za kilometr ustala pracodawca, nie wyżej niż ${zl(STAWKI_KM['auto-ponad-900'])} dla samochodu z silnikiem ponad 900 cm³, ${zl(STAWKI_KM['auto-do-900'])} do 900 cm³, ${zl(STAWKI_KM.motocykl)} dla motocykla i ${zl(STAWKI_KM.motorower)} dla motoroweru (§ 3 ust. 4 rozporządzenia w sprawie należności z tytułu podróży służbowej, stawki z rozporządzenia Ministra Infrastruktury z 25 marca 2002 r. w brzmieniu od 17 stycznia 2023 r.). Przejazd własnym pojazdem wymaga Twojego wniosku i zgody pracodawcy (§ 3 ust. 3). W firmie prywatnej stawkę ustala układ zbiorowy, regulamin albo umowa (art. 77^5 § 3 Kodeksu pracy); nadwyżka ponad te kwoty nie jest zwolniona z podatku.`,
   },
   {
     pytanie: 'Czy od diety z delegacji płaci się podatek i składki?',
@@ -46,10 +47,10 @@ const faq = [
 ---
 <StronaNarzedzia
   slug="delegacja-krajowa"
-  tytul="Delegacja krajowa 2026: dieta 45 zł i ryczałty"
-  opis="Policz dietę z delegacji w kraju: 45 zł za dobę, połowa za 8–12 godzin, potrącenie za śniadanie, obiad i kolację, ryczałt za nocleg 67,50 zł i komunikację 9 zł."
+  tytul={`Delegacja krajowa ${rok}: dieta 45 zł i ryczałty`}
+  opis="Policz dietę z delegacji w kraju: 45 zł za dobę, połowa za 8–12 godzin, potrącenie za posiłki, ryczałt za nocleg 67,50 zł i komunikację 9 zł."
   h1="Delegacja krajowa: dieta i ryczałty"
-  lead="Za delegację w kraju należy się dieta 45 zł za dobę, a do tego ryczałty za nocleg i dojazdy na miejscu. Wpisz wyjazd i powrót, zaznacz posiłki, które dostałeś albo dostałaś za darmo, a policzymy, ile się należy."
+  lead="Za delegację w kraju należy się dieta 45 zł za dobę, a do tego ryczałty za nocleg i dojazdy na miejscu. Wpisz wyjazd i powrót, zaznacz posiłki zapewnione za darmo, a policzymy, ile się należy."
   faq={faq}
 >
   <form class="kalkulator" data-delegacja novalidate aria-labelledby="kalkulator-tytul">
@@ -58,7 +59,7 @@ const faq = [
       <div class="mt-4 grid grid-cols-2 items-end gap-3">
         <div>
           <label for="d-wyjazd" class="etykieta-pola">Wyjazd: dzień</label>
-          <input id="d-wyjazd" name="wyjazd" type="date" class="pole mt-1" min="2023-01-01" max="2100-12-31" value={D.wyjazd.data} aria-describedby="d-blad" />
+          <input id="d-wyjazd" name="wyjazd" type="date" class="pole mt-1" min="2023-01-01" max="2100-12-31" value={D.wyjazd.data} data-dzis aria-describedby="d-blad" />
         </div>
         <div>
           <label for="d-wyjazd-g" class="etykieta-pola">Godzina wyjazdu</label>
@@ -68,7 +69,7 @@ const faq = [
       <div class="mt-4 grid grid-cols-2 items-end gap-3">
         <div>
           <label for="d-powrot" class="etykieta-pola">Powrót: dzień</label>
-          <input id="d-powrot" name="powrot" type="date" class="pole mt-1" min="2023-01-01" max="2100-12-31" value={D.powrot.data} aria-describedby="d-blad" />
+          <input id="d-powrot" name="powrot" type="date" class="pole mt-1" min="2023-01-01" max="2100-12-31" value={D.powrot.data} data-dzis="1" aria-describedby="d-blad" />
         </div>
         <div>
           <label for="d-powrot-g" class="etykieta-pola">Godzina powrotu</label>
@@ -110,23 +111,21 @@ const faq = [
         <input type="checkbox" name="komunikacja" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
         <span>Płacę za dojazdy komunikacją miejscową na miejscu (ryczałt {zl(RYCZALT_KOMUNIKACJA)} za każdą rozpoczętą dobę, § 9)</span>
       </label>
-      <div class="mt-4 grid grid-cols-2 items-end gap-3">
-        <div>
-          <label for="d-pojazd" class="etykieta-pola">Własny pojazd</label>
-          <select id="d-pojazd" name="pojazd" class="pole mt-1" aria-describedby="d-pojazd-opis">
-            <option value="" selected>Nie</option>
-            <option value="auto-ponad-900">Auto ponad 900 cm³</option>
-            <option value="auto-do-900">Auto do 900 cm³</option>
-            <option value="motocykl">Motocykl</option>
-            <option value="motorower">Motorower</option>
-          </select>
-        </div>
-        <div data-pole="km" hidden>
-          <label for="d-km" class="etykieta-pola">Kilometry</label>
-          <input id="d-km" name="km" class="pole mt-1" type="text" inputmode="numeric" autocomplete="off" value="0" aria-describedby="d-pojazd-opis d-blad-km" />
-        </div>
+      <div class="mt-4">
+        <label for="d-pojazd" class="etykieta-pola">Własny pojazd</label>
+        <select id="d-pojazd" name="pojazd" class="pole mt-1 max-w-64" aria-describedby="d-pojazd-opis">
+          <option value="" selected>Nie</option>
+          <option value="auto-ponad-900">Auto ponad 900 cm³</option>
+          <option value="auto-do-900">Auto do 900 cm³</option>
+          <option value="motocykl">Motocykl</option>
+          <option value="motorower">Motorower</option>
+        </select>
       </div>
-      <p id="d-pojazd-opis" class="meta mt-1">Tylko za zgodą pracodawcy. Stawkę za kilometr ustala pracodawca, najwyżej {zl(STAWKI_KM['auto-ponad-900'])} dla auta ponad 900 cm³ (§ 3 ust. 3–4).</p>
+      <div class="mt-4" data-pole="km" hidden>
+        <label for="d-km" class="etykieta-pola">Kilometry</label>
+        <input id="d-km" name="km" class="pole mt-1 max-w-32" type="text" inputmode="numeric" autocomplete="off" value="0" aria-describedby="d-pojazd-opis d-blad-km" />
+      </div>
+      <p id="d-pojazd-opis" class="meta mt-1">Tylko za zgodą pracodawcy. W sferze budżetowej najwyżej {zl(STAWKI_KM['auto-ponad-900'])} za kilometr autem ponad 900 cm³ (§ 3 ust. 4); kalkulator liczy tę stawkę.</p>
       <p id="d-blad-km" class="blad-pola mt-1" data-blad="km" hidden></p>
     </div>
 
@@ -192,7 +191,7 @@ const faq = [
       <li>Diety nie ma przy delegacji do miejscowości, w której mieszkasz stale albo czasowo, przy całodziennym bezpłatnym wyżywieniu (§ 7 ust. 3) i za czas przejazdu do domu w dniu wolnym, który pracodawca zwraca przy podróży od 10 dni (§ 10).</li>
       <li>Ryczałt na komunikację miejscową nie przysługuje, gdy nie płacisz za dojazdy, albo gdy pracodawca na Twój wniosek zwraca udokumentowane bilety (§ 9 ust. 2–3).</li>
       <li>Na wniosek pracodawca daje zaliczkę na koszty podróży według wstępnego wyliczenia (§ 11).</li>
-      <li>Przejazd własnym samochodem, motocyklem albo motorowerem tylko na Twój wniosek i za zgodą pracodawcy, za kilometr według jego stawki, nie wyższej niż w rozporządzeniu Ministra Infrastruktury z 25 marca 2002 r. (§ 3 ust. 3–4; stawki od 17 stycznia 2023 r., Dz.U. 2023 poz. 5).</li>
+      <li>Przejazd własnym samochodem, motocyklem albo motorowerem tylko na Twój wniosek i za zgodą pracodawcy, za kilometr według jego stawki, w sferze budżetowej nie wyższej niż w rozporządzeniu Ministra Infrastruktury z 25 marca 2002 r. (§ 3 ust. 3–4; stawki od 17 stycznia 2023 r., Dz.U. 2023 poz. 5).</li>
     </ul>
 
     <p>
@@ -247,6 +246,7 @@ const faq = [
     type PosilkiDoby,
   } from '../../lib/narzedzia/delegacja';
   import { poprawnaData } from '../../lib/narzedzia/terminy';
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
 
   const form = document.querySelector<HTMLFormElement>('[data-delegacja]');
   const wzor = document.querySelector<HTMLTemplateElement>('[data-wzor-doby]');
@@ -354,6 +354,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    ustawDzisiejszeWartosci(form);
     przelicz();
   }
 </script>

@@ -135,4 +135,4 @@ export const DIETY_ZAGRANICZNE: DietaZagraniczna[] = [
 ];
 
 /** Lp. 115: państwa inne niż wymienione w tabeli. */
-export const INNE_PANSTWA: DietaZagraniczna = { panstwo: 'Inne państwo (spoza tabeli)', waluta: 'EUR', dieta: 41, nocleg: 140 };
+export const INNE_PANSTWA: DietaZagraniczna = { panstwo: 'Inne państwo', waluta: 'EUR', dieta: 41, nocleg: 140 };

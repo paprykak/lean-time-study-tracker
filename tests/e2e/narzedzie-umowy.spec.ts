@@ -19,6 +19,7 @@ test('czwarta umowa: czas nieokreślony od dnia jej zawarcia', async ({ page }) 
   await expect(page.locator('[data-w="naglowek"]')).toHaveText('Umowa na czas nieokreślony od');
   await expect(page.locator('[data-w="data"]')).toHaveText('1 kwietnia 2027 r.');
   await expect(page.locator('[data-w="status"]')).toHaveText('Czwarta umowa na czas określony');
+  await expect(page.locator('[data-w="uwaga"]')).toContainText(/gdy podpisano ją wcześniej, umowa jest na czas nieokreślony od dnia podpisania/);
 });
 
 test('przerwa między umowami: liczymy 990 dni', async ({ page }) => {
@@ -29,4 +30,5 @@ test('przerwa między umowami: liczymy 990 dni', async ({ page }) => {
 test('zachodzące umowy: komunikat', async ({ page }) => {
   await page.locator('#u-od-1').fill('2025-06-01');
   await expect(page.getByText('Umowy nie mogą na siebie zachodzić')).toBeVisible();
+  await expect(page.locator('[data-w="razem"]')).toHaveText('—');
 });

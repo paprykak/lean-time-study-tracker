@@ -69,6 +69,14 @@ for (const plik of strony) {
   const opis = html.match(/<meta name="description" content="([^"]*)"/)?.[1];
   if (!opis) bledy.push(`${gdzie} brak meta description`);
   else if (opis.length > 165) ostrzezenia.push(`${gdzie} opis ma ${opis.length} znaków (zalecane do 155)`);
+  // Strony narzędzi: twarde limity ze standardu narzędzia (prompty/02-fabryka.md, sekcja 4, zasada 9): tytuł bez
+  // sufiksu do 48 znaków, opis do 155. Liczymy po zdekodowaniu encji, bo tyle widzi wyszukiwarka.
+  if (/^\/narzedzia\/[a-z0-9-]+$/.test(adres) && tytul && opis) {
+    const tekst = (t) => t.replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+    const goly = tekst(tytul).replace(/ \| Rytm Hali$/, '');
+    if ([...goly].length > 48) bledy.push(`${gdzie} tytuł narzędzia ma ${[...goly].length} znaków (najwyżej 48 bez „ | Rytm Hali”)`);
+    if ([...tekst(opis)].length > 155) bledy.push(`${gdzie} opis narzędzia ma ${[...tekst(opis)].length} znaków (najwyżej 155)`);
+  }
   const h1 = (html.match(/<h1[\s>]/g) ?? []).length;
   if (h1 !== 1) bledy.push(`${gdzie} liczba nagłówków H1: ${h1} (ma być 1)`);
   if (!/<html lang="pl"[\s>]/.test(html)) bledy.push(`${gdzie} brak <html lang="pl">`);

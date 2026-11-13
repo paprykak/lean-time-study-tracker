@@ -15,6 +15,8 @@ export interface DanePrzerw {
   niepelnosprawny?: boolean;
   /** Praca przy monitorze co najmniej przez połowę dobowego wymiaru. */
   monitor?: boolean;
+  /** Godziny pracy przy monitorze na zmianie (domyślnie cała zmiana); przerwa po każdej z nich (§ 7 pkt 2). */
+  monitorGodzin?: number;
   /** Karmienie piersią: brak, jedno dziecko, więcej dzieci. */
   karmienie?: 'nie' | 'jedno' | 'wiecej';
   /** Przerwa niewliczana do czasu pracy z art. 141 (minuty, 0–60). */
@@ -28,7 +30,7 @@ export interface Przerwa {
   podstawa: string;
 }
 
-export function przerwy({ godziny, mlodociany = false, niepelnosprawny = false, monitor = false, karmienie = 'nie', niewliczana = 0 }: DanePrzerw): {
+export function przerwy({ godziny, mlodociany = false, niepelnosprawny = false, monitor = false, monitorGodzin = godziny, karmienie = 'nie', niewliczana = 0 }: DanePrzerw): {
   lista: Przerwa[];
   wliczane: number;
   niewliczane: number;
@@ -42,9 +44,11 @@ export function przerwy({ godziny, mlodociany = false, niepelnosprawny = false, 
   if (godziny > 16) lista.push({ minuty: 15, wliczana: true, opis: 'Kolejna przerwa przy wymiarze dłuższym niż 16 godzin', podstawa: 'art. 134 § 1 pkt 3 Kp' });
   if (mlodociany && godziny > 4.5) lista.push({ minuty: 30, wliczana: true, opis: 'Przerwa dla młodocianego, nieprzerwanie 30 minut', podstawa: 'art. 202 § 3^1 Kp' });
   if (niepelnosprawny) lista.push({ minuty: 15, wliczana: true, opis: 'Dodatkowa przerwa dla osoby z niepełnosprawnością', podstawa: 'art. 17 ustawy o rehabilitacji' });
-  const godzinMonitora = Math.ceil(godziny) - 1;
+  if (monitor && !(monitorGodzin >= godziny / 2 && monitorGodzin <= godziny)) throw new RangeError('Godziny przy monitorze: od połowy do całej zmiany');
+  // Przerwa po każdej pełnej godzinie przy monitorze, ale nie po ostatniej godzinie zmiany (wtedy praca się kończy).
+  const godzinMonitora = Math.min(Math.floor(monitorGodzin), Math.ceil(godziny) - 1);
   if (monitor && godzinMonitora > 0) {
-    lista.push({ minuty: 5 * godzinMonitora, wliczana: true, opis: `Przy monitorze: co najmniej 5 minut po każdej godzinie (${godzinMonitora} × 5 min)`, podstawa: '§ 7 rozporządzenia o monitorach ekranowych' });
+    lista.push({ minuty: 5 * godzinMonitora, wliczana: true, opis: `Przy monitorze: co najmniej 5 minut po każdej godzinie pracy przy nim (${godzinMonitora} × 5 min)`, podstawa: '§ 7 rozporządzenia o monitorach ekranowych' });
   }
   if (karmienie !== 'nie' && godziny >= 4) {
     const min = karmienie === 'wiecej' ? 45 : 30;

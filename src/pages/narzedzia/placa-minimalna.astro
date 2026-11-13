@@ -45,7 +45,7 @@ const faq = [
 <StronaNarzedzia
   slug="placa-minimalna"
   tytul={`Płaca minimalna ${rok}: sprawdź swój pasek`}
-  opis={`Płaca minimalna w ${rok} r.: ${zl(p.miesiecznie)} brutto, na zleceniu ${zl(p.stawkaGodzinowa)} za godzinę. Sprawdź pasek: co się wlicza, czego nie (nadgodziny, noc, staż), ile wyrównania.`}
+  opis={`Płaca minimalna w ${rok} r.: ${zl(p.miesiecznie)} brutto, na zleceniu ${zl(p.stawkaGodzinowa)} za godzinę. Sprawdź pasek: co się wlicza, czego nie i ile wyrównania.`}
   h1="Płaca minimalna: sprawdź swój pasek"
   lead={`W ${rok} r. pensja na pełny etat nie może być niższa niż ${zl(p.miesiecznie)} brutto. Nadgodzin, dodatku nocnego ani stażowego nie wolno do niej wliczać. Wpisz pensję zasadniczą i premie, a policzymy, czy należy się wyrównanie.`}
   faq={faq}
@@ -56,7 +56,7 @@ const faq = [
       <div class="mt-4 grid gap-4 sm:grid-cols-2">
         <div>
           <label for="p-rok" class="etykieta-pola">Rok</label>
-          <select id="p-rok" name="rok" class="pole mt-1">
+          <select id="p-rok" name="rok" class="pole mt-1" data-rok-biezacy>
             {LATA.map((r) => <option value={r} selected={r === rok}>{r} ({zl(PLACA_MINIMALNA[r].miesiecznie)})</option>)}
           </select>
         </div>
@@ -127,12 +127,16 @@ const faq = [
       Przy niepełnym etacie minimum jest proporcjonalne do godzin do przepracowania w miesiącu (art. 8 ust. 1). Gdy
       wynagrodzenie jest niższe, pracodawca dopłaca wyrównanie co miesiąc, razem z wypłatą (art. 7 ust. 1 i 2).
     </p>
+    <p>
+      Ile wychodzi za godzinę z pensji w danym miesiącu, pokaże <a href="/narzedzia/stawka-godzinowa">kalkulator stawki godzinowej</a>, a ile z płacy minimalnej zostaje na rękę <a href="/narzedzia/brutto-netto">kalkulator brutto–netto</a>.
+    </p>
   </Fragment>
 </StronaNarzedzia>
 
 <script>
   import { sprawdzPlace } from '../../lib/narzedzia/placa-minimalna';
   import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
 
   const form = document.querySelector<HTMLFormElement>('[data-placa]');
   if (form) {
@@ -164,6 +168,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    ustawDzisiejszeWartosci(form);
     przelicz();
   }
 </script>

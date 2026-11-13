@@ -22,3 +22,10 @@ test('pół etatu: minimum 2403 zł', async ({ page }) => {
   await page.getByLabel('Wymiar etatu').selectOption('0.5');
   await expect(page.locator('[data-w="minimum"]')).toHaveText('2403,00 zł');
 });
+
+test('w styczniu 2027 r. rok przestawia się na 2027 (strona zbudowana wcześniej)', async ({ page }) => {
+  await page.clock.setFixedTime(new Date('2027-01-05T10:00:00+01:00'));
+  await page.goto(NARZEDZIE_PLACA);
+  await expect(page.getByLabel('Rok', { exact: true })).toHaveValue('2027');
+  await expect(page.locator('[data-w="minimum"]')).toHaveText('4950,00 zł');
+});

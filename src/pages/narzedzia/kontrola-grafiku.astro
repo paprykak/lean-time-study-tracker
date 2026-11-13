@@ -4,18 +4,22 @@
 import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
 import { ZMIANY, WZORY, grafikZWzoru, sprawdzGrafik, type Wzor } from '../../lib/narzedzia/grafik';
 import { nazwaMiesiaca } from '../../lib/narzedzia/czas-pracy';
-import { LATA } from '../../data/prawo';
+import { lataKalendarza } from '../../lib/narzedzia/dzis-w-formularzu';
+import { dzisWPolsce } from '../../lib/narzedzia/terminy';
+import { odmiana } from '../../lib/redakcja';
 
-const teraz = new Date();
-const rok = LATA.includes(teraz.getUTCFullYear()) ? teraz.getUTCFullYear() : LATA[LATA.length - 1];
-const miesiac = teraz.getUTCMonth() + 1;
+// Rok i miesiąc w Polsce w chwili budowania; skrypt przestawia je na dziś (ustawDzisiejszeWartosci).
+const dzis = dzisWPolsce();
+const LATA = lataKalendarza(dzis);
+const rok = Number(dzis.slice(0, 4));
+const miesiac = Number(dzis.slice(5, 7));
 const wzory = Object.keys(WZORY) as Wzor[];
 const czterobrygadowy = sprawdzGrafik(rok, miesiac, grafikZWzoru(rok, miesiac, 'czterobrygadowy-12'));
 
 const faq = [
   {
     pytanie: 'Ile nadgodzin daje system czterobrygadowy 12 h?',
-    odpowiedz: `Przy rotacji 2 dni, 2 noce, 4 wolne brygada pracuje 4 zmiany po 12 godzin na 8 dni, czyli przeciętnie 42 godziny tygodniowo. W ${nazwaMiesiaca(miesiac, 'miejscownik')} ${rok} r. wychodzi ${czterobrygadowy.godziny} godzin przy wymiarze ${czterobrygadowy.wymiar}; liczba zmian zależy od dnia cyklu na początku miesiąca. Godziny ponad wymiar to nadgodziny z dodatkiem.`,
+    odpowiedz: `Przy rotacji 2 dni, 2 noce, 4 wolne brygada pracuje 4 zmiany po 12 godzin na 8 dni, czyli przeciętnie 42 godziny tygodniowo. W ${nazwaMiesiaca(miesiac, 'miejscownik')} ${rok} r. wychodzi ${odmiana(czterobrygadowy.godziny, ['godzina', 'godziny', 'godzin'])} przy wymiarze ${czterobrygadowy.wymiar}; liczba zmian zależy od dnia cyklu na początku miesiąca. Godziny ponad wymiar to nadgodziny z dodatkiem.`,
   },
   {
     pytanie: 'Ile godzin odpoczynku między zmianami?',
@@ -37,7 +41,7 @@ const faq = [
 ---
 <StronaNarzedzia
   slug="kontrola-grafiku"
-  tytul="Kontrola grafiku zmian: 12 h, odpoczynek, niedziele"
+  tytul="Kontrola grafiku zmian: 12 h, odpoczynek"
   opis="Sprawdź grafik zmian na miesiąc: system czterobrygadowy 12 h i trzyzmianowy, odpoczynek 11 i 35 godzin, wolne niedziele, dni wolne i godziny a wymiar."
   h1="Kontrola grafiku zmian"
   lead="Wybierz miesiąc i wzór rotacji albo ustaw zmiany dzień po dniu. Sprawdzimy grafik z Kodeksem pracy: odpoczynek dobowy i tygodniowy, wolne niedziele, dni wolne, 12 godzin na dobę i godziny a wymiar."
@@ -50,11 +54,11 @@ const faq = [
         <legend class="etykieta">Miesiąc</legend>
         <div class="mt-2 grid grid-cols-[minmax(0,3fr)_minmax(0,2fr)] gap-3">
           <label class="sr-only" for="g-miesiac">Miesiąc</label>
-          <select id="g-miesiac" name="miesiac" class="pole">
+          <select id="g-miesiac" name="miesiac" class="pole" data-miesiac-biezacy>
             {Array.from({ length: 12 }, (_, i) => <option value={i + 1} selected={i + 1 === miesiac}>{nazwaMiesiaca(i + 1)}</option>)}
           </select>
           <label class="sr-only" for="g-rok">Rok</label>
-          <select id="g-rok" name="rok" class="pole">
+          <select id="g-rok" name="rok" class="pole" data-rok-biezacy>
             {LATA.map((r) => <option value={r} selected={r === rok}>{r}</option>)}
           </select>
         </div>
@@ -62,9 +66,10 @@ const faq = [
       <div class="mt-4 grid gap-4 sm:grid-cols-[minmax(0,3fr)_minmax(0,1fr)]">
         <div>
           <label for="g-wzor" class="etykieta-pola">Wzór rotacji</label>
-          <select id="g-wzor" name="wzor" class="pole mt-1">
-            {wzory.map((w) => <option value={w} selected={w === 'czterobrygadowy-12'}>{WZORY[w].nazwa}</option>)}
+          <select id="g-wzor" name="wzor" class="pole mt-1" aria-describedby="g-wzor-opis">
+            {wzory.map((w) => <option value={w} selected={w === 'czterobrygadowy-12'}>{WZORY[w].krotko}</option>)}
           </select>
+          <p id="g-wzor-opis" class="meta mt-1" data-w="wzor-opis">{WZORY['czterobrygadowy-12'].nazwa}</p>
         </div>
         <div>
           <label for="g-start" class="etykieta-pola">Start cyklu</label>
@@ -128,12 +133,18 @@ const faq = [
       dni wolnych w zamian. Wyjątkiem jest system dla pracy w ruchu ciągłym, który pozwala na przeciętnie 43 godziny
       tygodniowo w okresie do 4 tygodni (art. 138 § 1).
     </p>
+    <p>
+      Wymiar godzin w miesiącu i okresie rozliczeniowym pokaże <a href="/narzedzia/wymiar-czasu-pracy">kalkulator wymiaru czasu pracy</a>, a przerwy na zmianie <a href="/narzedzia/przerwy-w-pracy">kalkulator przerw w pracy</a>.
+    </p>
   </Fragment>
 </StronaNarzedzia>
 
 <script>
   import { ZMIANY, WZORY, grafikZWzoru, sprawdzGrafik, type KodDnia, type Wzor } from '../../lib/narzedzia/grafik';
   import { dniWMiesiacu, nazwaMiesiaca } from '../../lib/narzedzia/czas-pracy';
+  import { odmiana } from '../../lib/redakcja';
+  import { typografia } from '../../lib/typografia.mjs';
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
 
   const form = document.querySelector<HTMLFormElement>('[data-grafik]');
   if (form) {
@@ -210,17 +221,17 @@ const faq = [
       const bledy = wynik.kontrole.filter((k) => k.stan === 'blad').length;
       const uwagi = wynik.kontrole.filter((k) => k.stan === 'uwaga').length;
       w('naglowek').textContent = bledy ? `Naruszenia: ${bledy}` : uwagi ? `Bez naruszeń, uwagi: ${uwagi}` : 'Grafik zgodny';
-      w('podsumowanie').textContent = `${wynik.zmian} zmian, ${wynik.godziny} h przy wymiarze ${wynik.wymiar} h, dni wolnych: ${wynik.dniWolnych}`;
+      w('podsumowanie').textContent = typografia(`${odmiana(wynik.zmian, ['zmiana', 'zmiany', 'zmian'])}, ${wynik.godziny} h przy wymiarze ${wynik.wymiar} h, dni wolnych: ${wynik.dniWolnych}`);
       const lista = w('lista');
       lista.replaceChildren(
         ...wynik.kontrole.map((k) => {
           const li = document.createElement('li');
           li.dataset.stan = k.stan;
           const t = document.createElement('strong');
-          t.textContent = `${STAN[k.stan]}: ${k.tytul}`;
+          t.textContent = typografia(`${STAN[k.stan]}: ${k.tytul}`);
           const o = document.createElement('span');
           o.className = 'lista-opis';
-          o.textContent = `${k.opis}${k.dni.length ? ` Dni: ${k.dni.join(', ')}.` : ''}`;
+          o.textContent = typografia(`${k.opis}${k.dni.length ? ` Dni: ${k.dni.join(', ')}.` : ''}`);
           const p = document.createElement('span');
           p.className = 'lista-podstawa';
           p.textContent = k.podstawa.replace(/\^(\d+)/g, (_, d: string) => [...d].map((c) => '⁰¹²³⁴⁵⁶⁷⁸⁹'[Number(c)]).join(''));
@@ -240,13 +251,18 @@ const faq = [
 
     form.addEventListener('change', (e) => {
       const t = e.target as HTMLElement;
-      if (t.getAttribute('name') === 'wzor') odswiezStart();
+      if (t.getAttribute('name') === 'wzor') {
+        odswiezStart();
+        w('wzor-opis').textContent = WZORY[sel('wzor').value as Wzor].nazwa;
+      }
       if (['miesiac', 'rok', 'wzor'].includes(t.getAttribute('name') ?? '')) wyrownaj();
       if (['miesiac', 'rok', 'wzor', 'start'].includes(t.getAttribute('name') ?? '')) wypelnij();
       else sprawdz();
     });
     form.querySelector('[data-wypelnij]')!.addEventListener('click', wypelnij);
     form.addEventListener('submit', (e) => e.preventDefault());
+    ustawDzisiejszeWartosci(form);
+    wyrownaj();
     wypelnij();
   }
 </script>

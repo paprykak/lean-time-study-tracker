@@ -46,3 +46,14 @@ test('błąd, gdy praca zaczyna się przed urodzeniem', async ({ page }) => {
   await expect(page.locator('[data-blad="dane"]')).toBeVisible();
   await expect(page.locator('[data-w="doba"]')).toHaveText('—');
 });
+
+test('wiek z odmianą: 22 lata, 18 lat, 15 lat', async ({ page }) => {
+  await page.getByLabel('Sprawdź na dzień').fill('2026-11-13');
+  await page.getByLabel('Początek pierwszej pracy').fill('2026-09-01');
+  await page.getByLabel('Data urodzenia').fill('2004-01-01');
+  await expect(page.locator('[data-w="opis"]')).toHaveText(/^Masz\s22\slata\./);
+  await page.getByLabel('Data urodzenia').fill('2008-05-01');
+  await expect(page.locator('[data-w="opis"]')).toHaveText(/^Masz\s18\slat\./);
+  await page.getByLabel('Data urodzenia').fill('2011-01-01');
+  await expect(page.locator('[data-w="opis"]')).toHaveText(/^Masz\s15\slat\./);
+});

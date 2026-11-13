@@ -14,6 +14,7 @@ export type Rozwiazanie =
   | 'wypowiedzenie-pracownika'
   | 'dyscyplinarka'
   | 'art55-bez-podstaw'
+  | 'art55-z-podstawa'
   | 'wypowiedzenie-pracodawcy'
   | 'porozumienie'
   | 'koniec-umowy'
@@ -24,6 +25,8 @@ export const ZWROT: Record<Rozwiazanie, { zwrot: boolean; podstawa: string }> = 
   'wypowiedzenie-pracownika': { zwrot: true, podstawa: 'art. 103⁵ pkt 3' },
   dyscyplinarka: { zwrot: true, podstawa: 'art. 103⁵ pkt 2' },
   'art55-bez-podstaw': { zwrot: true, podstawa: 'art. 103⁵ pkt 4' },
+  // Odejście bez wypowiedzenia z winy pracodawcy, gdy przyczyny z art. 55 § 1 albo § 1^1 są: pkt 4 dotyczy tylko braku przyczyn.
+  'art55-z-podstawa': { zwrot: false, podstawa: 'art. 103⁵ pkt 4' },
   'wypowiedzenie-pracodawcy': { zwrot: false, podstawa: 'art. 103⁵' },
   porozumienie: { zwrot: false, podstawa: 'art. 103⁵' },
   'koniec-umowy': { zwrot: false, podstawa: 'art. 103⁵' },
@@ -49,10 +52,11 @@ export function lojalka(d: DaneLojalki) {
   const koniecZobowiazania = dodajMiesiace(d.ukonczenie, d.miesiecy);
   const okres = dniMiedzy(d.ukonczenie, koniecZobowiazania);
   const { zwrot, podstawa } = ZWROT[d.rozwiazanie];
+  // Sposoby rozwiązania spoza art. 103^5 pkt 2–4 nie dają zwrotu także w trakcie nauki.
+  if (!zwrot) return { stan: 'bez-zwrotu' as const, koniecZobowiazania, okres, przepracowane: Math.max(0, Math.min(okres, dniMiedzy(d.ukonczenie, d.koniecPracy))), kwota: 0, podstawa };
   if (d.koniecPracy <= d.ukonczenie) return { stan: 'w-trakcie' as const, koniecZobowiazania, okres, przepracowane: 0, kwota: null, podstawa: 'art. 103⁵' };
   const przepracowane = Math.min(okres, dniMiedzy(d.ukonczenie, d.koniecPracy));
   if (przepracowane >= okres) return { stan: 'po-okresie' as const, koniecZobowiazania, okres, przepracowane, kwota: 0, podstawa };
-  if (!zwrot) return { stan: 'bez-zwrotu' as const, koniecZobowiazania, okres, przepracowane, kwota: 0, podstawa };
   const grosze = Math.round(d.koszt * 100);
   return { stan: 'zwrot' as const, koniecZobowiazania, okres, przepracowane, kwota: Math.round((grosze * (okres - przepracowane)) / okres) / 100, podstawa };
 }

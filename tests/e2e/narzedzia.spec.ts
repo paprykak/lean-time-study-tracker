@@ -46,10 +46,25 @@ test('błędne dane: komunikat przy polu, aria-invalid, brak kwoty', async ({ pa
   await expect(pole).toHaveAttribute('aria-invalid', 'true');
   await expect(kwota(page)).toHaveText('—');
   await pole.fill('300');
-  await expect(page.getByText('najwyżej 240 godzin')).toBeVisible();
+  await expect(page.getByText(/najwyżej 240\sgodzin\s/)).toBeVisible();
   await pole.fill('8');
   await expect(pole).toHaveAttribute('aria-invalid', 'false');
   await expect(kwota(page)).toHaveText('48,08 zł');
+});
+
+test('luty 2027: limit 224 godziny z odmianą', async ({ page }) => {
+  await page.getByLabel('Rok').selectOption('2027');
+  await page.getByLabel('Miesiąc', { exact: true }).selectOption('2');
+  await page.getByLabel('Godziny nocne w miesiącu').fill('300');
+  await expect(page.locator('[data-blad="godziny"]')).toHaveText(/^W\slutym\s2027\sr\. pora nocna ma razem najwyżej 224\sgodziny \(8\sgodzin na dobę\)\.$/);
+});
+
+test('rok i miesiąc przestawiają się na dziś w przeglądarce', async ({ page }) => {
+  await page.clock.setFixedTime(new Date('2027-01-05T10:00:00+01:00'));
+  await page.goto(NARZEDZIE);
+  await expect(page.getByLabel('Rok')).toHaveValue('2027');
+  await expect(page.getByLabel('Miesiąc', { exact: true })).toHaveValue('1');
+  await expect(page.locator('[data-w="okres"]')).toHaveText('styczeń 2027');
 });
 
 test('wyższy dodatek z regulaminu: 25% → 7,51 zł za godzinę', async ({ page }) => {

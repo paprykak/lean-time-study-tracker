@@ -8,6 +8,10 @@ describe('ekwiwalent za urlop (§ 15–19 rozporządzenia z 1997 r.)', () => {
     expect(dniPracyWRoku(2025)).toBe(249);
     expect(dniPracyWRoku(2027)).toBe(251);
   });
+  it('2028 (rok przestępny): 249 dni, bo 1 stycznia i 11 listopada wypadają w sobotę; współczynnik 20,75 (Python, Wielkanoc z algorytmu Meeusa)', () => {
+    expect(dniPracyWRoku(2028)).toBe(249);
+    expect(wspolczynnik(2028)).toBeCloseTo(20.75, 4);
+  });
   it('6000 zł, pełny etat, 5 dni (40 h) w 2026 r.', () => {
     const r = ekwiwalent({ rok: 2026, stale: 6000, godzinyUrlopu: 40 });
     // 6000 / (251/12) = 286,85 za dzień; / 8 = 35,86 za godzinę; × 40 = 1434,26

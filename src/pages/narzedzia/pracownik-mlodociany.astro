@@ -6,6 +6,7 @@ import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
 import { PROCENT_NAUKI, PROCENT_PRZYUCZENIA, mlodociany, placaMlodocianego, podstawaNaDzien } from '../../lib/narzedzia/mlodociany';
 import { dataPoPolsku, dodajMiesiace, dzisWPolsce } from '../../lib/narzedzia/terminy';
 import { zl } from '../../lib/narzedzia/format';
+import { odmiana } from '../../lib/redakcja';
 
 const dzis = dzisWPolsce();
 const D = {
@@ -89,7 +90,7 @@ const faq = [
       </div>
       <div class="mt-4">
         <label for="m-dzien" class="etykieta-pola">Sprawdź na dzień</label>
-        <input id="m-dzien" name="naDzien" type="date" class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" value={D.naDzien} aria-describedby="m-blad" />
+        <input id="m-dzien" name="naDzien" type="date" class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" value={D.naDzien} data-dzis aria-describedby="m-blad" />
       </div>
       <label class="mt-4 flex items-start gap-3 text-[0.9375rem]">
         <input type="checkbox" name="bezSzkoly" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
@@ -102,7 +103,7 @@ const faq = [
       <h2 id="wynik-tytul" class="etykieta">Czas pracy na dobę</h2>
       <div aria-live="polite" aria-atomic="true">
         <p class="wynik-kwota" data-w="doba">do {r.limitDoby} godzin</p>
-        <p class="meta" data-w="opis">Masz {r.lata} lat. Od 16. urodzin, {dataPoPolsku(r.szesnascie)}, do 8 godzin.</p>
+        <p class="meta" data-w="opis">Masz {odmiana(r.lata, ['rok', 'lata', 'lat'])}. Od 16. urodzin, {dataPoPolsku(r.szesnascie)}, do 8 godzin.</p>
       </div>
       <p class="wynik-uwaga" data-w="uwaga" hidden></p>
       <dl class="wynik-lista">
@@ -149,7 +150,8 @@ const faq = [
       obowiązuje od dnia 16. urodzin. Pół roku i rok pracy liczymy kalendarzowo od pierwszego dnia pierwszej pracy.
       Urlop 12 dni i 26 dni to osobne uprawnienia; kolejne urlopy powstają 1 stycznia (art. 205 § 5 i art. 153 § 2).
       Wymiar 20 dni w roku 18. urodzin traktujemy jak zmniejszony wymiar 26 dni: należy się 1 stycznia tego roku albo
-      po roku pracy, gdy rok mija w tym roku kalendarzowym. Przy zatrudnieniu przed 15. urodzinami przepis nie mówi
+      po roku pracy, gdy rok mija w tym roku kalendarzowym. Przepis nie mówi wprost, czy 20 dni należy się, gdy rok pracy
+      mija już po 18. urodzinach; przyjmujemy wariant korzystny dla pracownika. Przy zatrudnieniu przed 15. urodzinami przepis nie mówi
       wprost, czy pora nocna 20:00–6:00 trwa po 15. urodzinach; pokazujemy wtedy 22:00–6:00. Ile urlopu przysługuje
       po 18. urodzinach, policzy <a href="/narzedzia/kalkulator-urlopu">kalkulator urlopu</a>.
     </p>
@@ -172,6 +174,8 @@ const faq = [
   import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
   import { zl } from '../../lib/narzedzia/format';
   import { typografia } from '../../lib/typografia.mjs';
+  import { odmiana } from '../../lib/redakcja';
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
 
   const form = document.querySelector<HTMLFormElement>('[data-mlodociany]');
   if (form) {
@@ -213,14 +217,14 @@ const faq = [
       uwaga.hidden = r.status !== 'ponizej-15';
       if (dorosly) {
         pisz('doba', 'zasady ogólne');
-        pisz('opis', `Masz ${r.lata} lat. Od ${dataPoPolsku(r.osiemnascie)} przepisy o młodocianych już Cię nie dotyczą.`);
+        pisz('opis', `Masz ${odmiana(r.lata, ['rok', 'lata', 'lat'])}. Od ${dataPoPolsku(r.osiemnascie)} przepisy o młodocianych już Cię nie dotyczą.`);
       } else {
         pisz('doba', `do ${r.limitDoby} godzin`);
         pisz(
           'opis',
           r.limitDoby === 6
-            ? `Masz ${r.lata} lat. Od 16. urodzin, ${dataPoPolsku(r.szesnascie)}, do 8 godzin.`
-            : `Masz ${r.lata} lat. Pełnoletność: ${dataPoPolsku(r.osiemnascie)}`,
+            ? `Masz ${odmiana(r.lata, ['rok', 'lata', 'lat'])}. Od 16. urodzin, ${dataPoPolsku(r.szesnascie)}, do 8 godzin.`
+            : `Masz ${odmiana(r.lata, ['rok', 'lata', 'lat'])}. Pełnoletność: ${dataPoPolsku(r.osiemnascie)}`,
         );
         if (r.status === 'ponizej-15') {
           pisz(
@@ -261,6 +265,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    ustawDzisiejszeWartosci(form);
     przelicz();
   }
 </script>

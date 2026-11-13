@@ -65,3 +65,26 @@ test('własne auto ponad 900 cm³, 250 km: 287,50 zł kilometrówki', async ({ p
   await expect(page.locator('[data-w="km"]')).toHaveText(/^287,50\szł\s\(250\skm\)$/);
   await expect(page.locator('[data-w="razem"]')).toHaveText(/^377,50\szł$/);
 });
+
+test('strona czytana w styczniu 2027 r.: wyjazd dziś, powrót jutro, dwie diety', async ({ page }) => {
+  await page.clock.setFixedTime(new Date('2027-01-05T10:00:00+01:00'));
+  await page.goto(NARZEDZIE_DELEGACJA);
+  await expect(page.getByLabel('Wyjazd: dzień')).toHaveValue('2027-01-05');
+  await expect(page.getByLabel('Powrót: dzień')).toHaveValue('2027-01-06');
+  await expect(page.locator('[data-w="dieta"]')).toHaveText(/^90,00\szł\s\(2\sdiety\)$/);
+});
+
+test.describe('telefon 320 px', () => {
+  test.use({ viewport: { width: 320, height: 640 } });
+  test('żadna opcja listy pojazdów nie jest szersza niż pole', async ({ page }) => {
+    const uciete = await page.locator('#d-pojazd').evaluate((el) => {
+      const s = el as HTMLSelectElement;
+      const styl = getComputedStyle(s);
+      const ctx = document.createElement('canvas').getContext('2d')!;
+      ctx.font = `${styl.fontWeight} ${styl.fontSize} ${styl.fontFamily}`;
+      const miejsce = s.clientWidth - 40;
+      return [...s.options].filter((o) => ctx.measureText(o.text).width > miejsce).map((o) => o.text);
+    });
+    expect(uciete).toEqual([]);
+  });
+});

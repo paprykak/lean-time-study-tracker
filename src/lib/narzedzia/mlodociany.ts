@@ -23,6 +23,7 @@ export const PRZECIETNE_KWARTALNE = [
   { od: '2026-03-01', kwota: 9197.79, kwartal: 'IV kwartał 2025 r.', publikator: 'M.P. 2026 poz. 194' },
   { od: '2026-06-01', kwota: 9562.88, kwartal: 'I kwartał 2026 r.', publikator: 'M.P. 2026 poz. 457' },
   { od: '2026-09-01', kwota: 9233.13, kwartal: 'II kwartał 2026 r.', publikator: 'M.P. 2026 poz. 779' },
+  { od: '2026-12-01', kwota: 9317.01, kwartal: 'III kwartał 2026 r.', publikator: 'M.P. 2026 poz. 1122' },
 ] as const;
 
 /** Najniższa płaca w procentach przeciętnego wynagrodzenia: nauka zawodu w 1., 2. i 3. roku (§ 19 ust. 2), przyuczenie (§ 20). */

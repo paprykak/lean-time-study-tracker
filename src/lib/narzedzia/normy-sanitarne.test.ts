@@ -27,6 +27,13 @@ describe('normy sanitarne (załącznik nr 3 do ogólnych przepisów BHP)', () =>
     const r = normySanitarne({ kobiety: 0, mezczyzni: 6, praca: 'zwykla', natryski: 'brak' });
     expect(r).toMatchObject({ umywalki: { minimum: 1, ostroznie: 1 }, miskiKobiety: { minimum: 0, ostroznie: 0 }, jadalnia: false });
   });
+  it('jadalnia przy 20 i mniej osobach przy pracach brudzących i szkodliwych (§ 29 ust. 2)', () => {
+    expect(normySanitarne({ kobiety: 0, mezczyzni: 10, praca: 'brudzaca', natryski: 'brak' })).toMatchObject({ jadalnia: true, jadalniaZ: 'praca' });
+    expect(normySanitarne({ kobiety: 0, mezczyzni: 10, praca: 'zwykla', natryski: 'przepustowa' })).toMatchObject({ jadalnia: true, jadalniaZ: 'praca' });
+    expect(normySanitarne({ kobiety: 0, mezczyzni: 10, praca: 'zwykla', natryski: 'brak' })).toMatchObject({ jadalnia: false, jadalniaZ: null });
+    expect(normySanitarne({ kobiety: 0, mezczyzni: 20, praca: 'zwykla', natryski: 'brak' }).jadalnia).toBe(false);
+    expect(normySanitarne({ kobiety: 0, mezczyzni: 21, praca: 'zwykla', natryski: 'brak' })).toMatchObject({ jadalnia: true, jadalniaZ: 'liczba' });
+  });
   it('błędy', () => {
     expect(() => normySanitarne({ kobiety: 0, mezczyzni: 0, praca: 'zwykla', natryski: 'brak' })).toThrow(RangeError);
   });
