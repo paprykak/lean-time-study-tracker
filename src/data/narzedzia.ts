@@ -609,6 +609,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-12',
   },
   {
+    slug: 'urlop-bezplatny',
+    nazwa: 'Urlop bezpłatny: skutki',
+    krotko: 'Ile urlopu wypoczynkowego zostaje po urlopie bezpłatnym, o ile przesuwa się staż, co z zasiłkiem i NFZ.',
+    kategoria: 'urlopy',
+    przepisy: ['kodeksPracy', 'kodeksCywilny', 'zasilkowa', 'swiadczeniaZdrowotne', 'emerytury'],
+    sprawdzono: '2026-11-12',
+  },
+  {
     slug: 'zalegly-urlop',
     nazwa: 'Zaległy urlop',
     krotko: 'Do kiedy pracodawca musi dać zaległy urlop i kiedy roszczenie o urlop może się przedawnić.',
