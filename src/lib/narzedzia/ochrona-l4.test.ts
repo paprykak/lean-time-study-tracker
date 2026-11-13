@@ -10,6 +10,10 @@ describe('ochrona na długim L4 (art. 41 i 53 § 1 pkt 1 Kp)', () => {
       odKiedy: '2026-04-01',
     });
   });
+  it('3 miesiące od końca miesiąca (konwencja terminy.ts, Python): od 30 listopada do 28 lutego', () => {
+    expect(ochronaNaL4({ poczatek: '2026-11-30', szescMiesiecy: false, przyczyna: 'choroba', rehabilitacyjne: false })).toMatchObject({ ostatniDzien: '2027-02-28', odKiedy: '2027-03-01' });
+    expect(ochronaNaL4({ poczatek: '2027-11-30', szescMiesiecy: false, przyczyna: 'choroba', rehabilitacyjne: false })).toMatchObject({ ostatniDzien: '2028-02-29' });
+  });
   it('staż od 6 miesięcy: 182 dni okresu zasiłkowego (lit. b)', () => {
     expect(ochronaNaL4({ poczatek: '2026-01-01', szescMiesiecy: true, przyczyna: 'choroba', rehabilitacyjne: false })).toMatchObject({
       litera: 'b',

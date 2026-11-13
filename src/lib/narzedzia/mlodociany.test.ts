@@ -87,6 +87,12 @@ describe('urlop młodocianego (art. 205 Kp)', () => {
       przedOsiemnastka: true,
     });
   });
+  it('praca od 31 marca: 6 miesięcy mija z końcem 30 września, prawo od 1 października (konwencja terminy.ts, Python)', () => {
+    expect(urlopMlodocianego('2010-03-15', '2025-03-31').lista.slice(0, 2).map((u) => [u.data, u.dni])).toEqual([
+      ['2025-10-01', 12],
+      ['2026-03-31', 26],
+    ]);
+  });
   it('rok pracy mija w roku 18. urodzin: 12 i 20 dni', () => {
     expect(urlopMlodocianego('1993-05-20', '2010-09-01').lista.map((u) => [u.data, u.dni])).toEqual([
       ['2011-03-01', 12],

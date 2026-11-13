@@ -83,7 +83,11 @@ export interface PrzedluzenieDoPorodu {
   uplyw3Miesiaca: string;
 }
 
-/** Upływ trzeciego miesiąca ciąży (wariant B, wcześniejszy): dzień przed dniem, który datą odpowiada początkowi ciąży. */
+/**
+ * Upływ trzeciego miesiąca ciąży (wariant B, wcześniejszy): dzień przed dniem, który datą odpowiada początkowi ciąży.
+ * Świadome odstępstwo od `koniecOkresu` (terminy.ts) przy starcie 29.–31. dnia: wcześniejszy upływ obejmuje
+ * przedłużeniem więcej umów (wariant bezpieczny dla pracownicy, interpretacja 1 wyżej).
+ */
 export const uplywTrzeciegoMiesiaca = (poczatekCiazy: string) => dodajDni(dodajMiesiace(poczatekCiazy, 3), -1);
 
 export function przedluzenieDoPorodu(rodzaj: RodzajUmowyWCiazy, koniecUmowy: string, poczatekCiazy: string): PrzedluzenieDoPorodu {

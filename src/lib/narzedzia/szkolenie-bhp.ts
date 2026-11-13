@@ -1,7 +1,7 @@
 // Termin szkolenia okresowego BHP: rozporządzenie w sprawie szkolenia w dziedzinie BHP (t.j. Dz.U. 2024 poz. 1327),
 // § 14 ust. 2 (kto) i § 15 ust. 1, 2 i 4 (jak często i kiedy pierwsze), oraz art. 237^3 § 2^2 Kodeksu pracy
 // (zwolnienie stanowisk administracyjno-biurowych). Termin liczymy jak w art. 112 Kodeksu cywilnego (terminy.ts).
-import { dniMiedzy, dodajDni, dodajLata, dodajMiesiace, dataPoPolsku } from './terminy';
+import { dniMiedzy, dodajDni, dodajLata, koniecOkresu, dataPoPolsku } from './terminy';
 import type { Wydarzenie } from './kalendarz-ics';
 
 export const GRUPY = {
@@ -112,7 +112,8 @@ export function terminSzkolenia(d: DaneSzkolenia): WynikSzkolenia {
     termin = dodajLata(d.ostatnie, g.coIleLat);
   } else if (d.poczatekPracy) {
     rodzaj = 'pierwsze';
-    termin = dodajMiesiace(d.poczatekPracy, g.pierwszeMiesiecy);
+    // „W okresie pierwszych 6 (12) miesięcy” pracy: okres liczony z pierwszym dniem pracy (`koniecOkresu`, terminy.ts).
+    termin = koniecOkresu(d.poczatekPracy, g.pierwszeMiesiecy);
   } else {
     throw new RangeError('Podaj datę ostatniego szkolenia okresowego albo datę rozpoczęcia pracy');
   }

@@ -29,7 +29,7 @@ describe('terminy pracodawcy na start (art. 29 § 2–3, 229, 237³, 104³, 22²
   it('PPK: 3 miesiące od 1. dnia miesiąca kończą się z końcem miesiąca (1 listopada → 31 stycznia → 10 lutego)', () => {
     expect(koniecTrzechMiesiecy('2026-11-01')).toBe('2027-01-31');
     expect(terminPpk('2026-11-01')).toBe('2027-02-10');
-    expect(koniecTrzechMiesiecy('2026-11-30')).toBe('2027-02-27');
+    expect(koniecTrzechMiesiecy('2026-11-30')).toBe('2027-02-28');
     expect(terminPpk('2026-11-30')).toBe('2027-03-10');
     expect(terminPpk('2026-12-01')).toBe('2027-03-10');
     expect(koniecTrzechMiesiecy('2028-02-29')).toBe('2028-05-28');

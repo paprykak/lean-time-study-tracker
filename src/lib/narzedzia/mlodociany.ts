@@ -12,7 +12,7 @@
 //   pierwszego dnia miesiąca po ogłoszeniu w Monitorze Polskim (§ 19–20 rozporządzenia z 28 maja 1996 r., tekst jednolity
 //   Dz.U. 2018 poz. 2010, stawki z Dz.U. 2023 poz. 1348 od 1 września 2023 r.); zaokrąglamy w górę do grosza, bo stawka
 //   to minimum („nie mniej niż”).
-import { dodajLata, dodajMiesiace } from './terminy';
+import { dodajDni, dodajLata, dodajMiesiace, koniecOkresu } from './terminy';
 
 export type CelZatrudnienia = 'nauka-zawodu' | 'przyuczenie' | 'lekkie-prace';
 export type StatusMlodocianego = 'ponizej-15' | 'mlodociany' | 'pelnoletni';
@@ -71,10 +71,11 @@ export function urlopMlodocianego(urodzenie: string, poczatekPracy: string) {
   const osiemnascie = dodajLata(urodzenie, 18);
   const rok18 = Number(osiemnascie.slice(0, 4));
   const zasadyOgolneOd = `${rok18 + 1}-01-01`;
-  const po6 = dodajMiesiace(poczatekPracy, 6);
+  // Prawo powstaje w dniu po upływie 6 (12) miesięcy pracy liczonych od pierwszego dnia (`koniecOkresu`, terminy.ts).
+  const po6 = dodajDni(koniecOkresu(poczatekPracy, 6), 1);
   if (po6 >= osiemnascie) return { lista: [] as Uprawnienie[], zasadyOgolneOd, przedOsiemnastka: false };
   const lista: Uprawnienie[] = [{ data: po6, dni: 12, podstawa: 'art. 205 § 1', opis: 'po 6 miesiącach pierwszej pracy' }];
-  const po12 = dodajMiesiace(poczatekPracy, 12);
+  const po12 = dodajDni(koniecOkresu(poczatekPracy, 12), 1);
   const rok12 = Number(po12.slice(0, 4));
   if (rok12 <= rok18) {
     lista.push(

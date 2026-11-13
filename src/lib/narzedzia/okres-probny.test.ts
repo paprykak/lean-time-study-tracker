@@ -18,10 +18,13 @@ describe('okres próbny (art. 25 § 2–2³ i art. 34 Kp)', () => {
     expect(okresProbny('2027-03-01', 'nieokreslony', '3m')).toMatchObject({ koniec: '2027-05-31', dozwolony: true, wypowiedzenie: '2 tygodnie' });
     expect(okresProbny('2027-03-02', 'nieokreslony', '2t').koniec).toBe('2027-03-15');
   });
-  it('początek 29.–31. dnia miesiąca: koniec dzień przed ostatnim dniem krótszego miesiąca (konwencja terminy.ts, Python)', () => {
-    expect(okresProbny('2026-01-31', 'okreslony-ponizej-6', '1m').koniec).toBe('2026-02-27');
-    expect(okresProbny('2026-11-30', 'nieokreslony', '3m').koniec).toBe('2027-02-27');
-    expect(okresProbny('2027-01-29', 'okreslony-ponizej-6', '1m').koniec).toBe('2027-02-27');
+  it('początek 29.–31. dnia miesiąca: gdy dnia o tej dacie nie ma, ostatni dzień miesiąca (konwencja terminy.ts, Python)', () => {
+    expect(okresProbny('2026-01-31', 'okreslony-ponizej-6', '1m').koniec).toBe('2026-02-28');
+    expect(okresProbny('2026-11-30', 'nieokreslony', '3m').koniec).toBe('2027-02-28');
+    expect(okresProbny('2027-11-30', 'nieokreslony', '3m').koniec).toBe('2028-02-29');
+    expect(okresProbny('2027-01-29', 'okreslony-ponizej-6', '1m').koniec).toBe('2027-02-28');
+    expect(okresProbny('2026-03-31', 'nieokreslony', '3m').koniec).toBe('2026-06-30');
+    expect(okresProbny('2026-01-28', 'okreslony-ponizej-6', '1m').koniec).toBe('2026-02-27');
   });
   it('3 miesiące przed umową na 4 miesiące: niedozwolone', () => {
     expect(okresProbny('2027-03-01', 'okreslony-ponizej-6', '3m').dozwolony).toBe(false);

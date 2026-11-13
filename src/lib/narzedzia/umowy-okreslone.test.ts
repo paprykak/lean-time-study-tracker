@@ -37,8 +37,10 @@ describe('umowy na czas określony (art. 25^1 Kp)', () => {
     // 990 − 366 = 624 dni drugiej umowy: od 1 marca 2025 r. ostatni dzień to 14 listopada 2026 r.
     expect(r.wynik).toEqual({ stan: 'nieokreslony', od: '2026-11-15', powod: '33-miesiace' });
   });
-  it('początek 31. dnia albo 29 lutego bez przerw: dzień przed dniem o tym numerze, przycięty do końca miesiąca (Python)', () => {
-    expect(sprawdzUmowy([{ od: '2024-05-31', do: '2024-12-31' }]).wynik).toMatchObject({ stan: 'w-limicie', limitDo: '2027-02-27' });
+  it('początek 31. dnia albo 29 lutego bez przerw: dzień przed dniem o tym numerze, a gdy go nie ma, koniec miesiąca (Python)', () => {
+    expect(sprawdzUmowy([{ od: '2024-05-31', do: '2024-12-31' }]).wynik).toMatchObject({ stan: 'w-limicie', limitDo: '2027-02-28' });
+    expect(sprawdzUmowy([{ od: '2024-05-31', do: '2027-02-28' }]).wynik).toMatchObject({ stan: 'w-limicie', limitDo: '2027-02-28', pozostaloDni: 0 });
+    expect(sprawdzUmowy([{ od: '2024-05-31', do: '2027-03-01' }]).wynik).toEqual({ stan: 'nieokreslony', od: '2027-03-01', powod: '33-miesiace' });
     expect(sprawdzUmowy([{ od: '2024-02-29', do: '2024-12-31' }]).wynik).toMatchObject({ stan: 'w-limicie', limitDo: '2026-11-28' });
   });
   it('jeden dzień przerwy: suma 990 dni zamiast 1003 dni kalendarzowych, limit o 12 dni wcześniej', () => {

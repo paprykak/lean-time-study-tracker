@@ -5,8 +5,9 @@
 // łączny okres wynagrodzenia i zasiłku oraz pierwsze 3 miesiące świadczenia rehabilitacyjnego (lit. b). Okres zasiłkowy:
 // 182 dni, przy gruźlicy 270 (art. 8 ust. 1 ustawy zasiłkowej; przy wypadku przy pracy przez art. 7 ustawy wypadkowej).
 // W ciąży umowy nie można ani wypowiedzieć, ani rozwiązać, poza winą pracownicy za zgodą związku i upadłością albo
-// likwidacją (art. 177 § 1 i 4). Miesiące kalendarzowo (art. 112 KC): 3 miesiące od 1 stycznia trwają do 31 marca.
-import { dodajDni, dodajMiesiace } from './terminy';
+// likwidacją (art. 177 § 1 i 4). Miesiące kalendarzowo (art. 112 KC, `koniecOkresu`): 3 miesiące od 1 stycznia trwają do 31 marca,
+// od 30 listopada do 28 lutego (w roku przestępnym 29 lutego).
+import { dodajDni, koniecOkresu } from './terminy';
 
 export type PrzyczynaL4 = 'choroba' | 'gruzlica' | 'wypadek' | 'ciaza';
 
@@ -38,11 +39,11 @@ export type WynikL4 =
 export function ochronaNaL4(d: DaneL4): WynikL4 {
   if (d.przyczyna === 'ciaza') return { ciaza: true };
   if (!d.szescMiesiecy && d.przyczyna !== 'wypadek') {
-    const ostatniDzien = dodajDni(dodajMiesiace(d.poczatek, 3), -1);
+    const ostatniDzien = koniecOkresu(d.poczatek, 3);
     return { ciaza: false, litera: 'a', ostatniDzien, odKiedy: dodajDni(ostatniDzien, 1) };
   }
   const dniZasilku = d.przyczyna === 'gruzlica' ? 270 : 182;
   const koniecZasilku = dodajDni(d.poczatek, dniZasilku - 1);
-  const ostatniDzien = d.rehabilitacyjne ? dodajDni(dodajMiesiace(dodajDni(koniecZasilku, 1), 3), -1) : koniecZasilku;
+  const ostatniDzien = d.rehabilitacyjne ? koniecOkresu(dodajDni(koniecZasilku, 1), 3) : koniecZasilku;
   return { ciaza: false, litera: 'b', dniZasilku, koniecZasilku, ostatniDzien, odKiedy: dodajDni(ostatniDzien, 1) };
 }

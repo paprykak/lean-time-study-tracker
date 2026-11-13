@@ -24,7 +24,7 @@
 //   także w dniu granicy, bo przepis go nie rozstrzyga);
 // - 3 lata z art. 41 kończą się 4 marca 2029 r. (dzień przed rocznicą wejścia w życie); możliwe też liczenie do 5 marca.
 import { przesunZDniaWolnego } from './termin-odwolania';
-import { dataPoPolsku, dodajDni, dodajMiesiace, poprawnaData } from './terminy';
+import { dataPoPolsku, dodajDni, dodajMiesiace, koniecOkresu, poprawnaData } from './terminy';
 
 export type Tryb = 'oswiadczenie' | 'zezwolenie' | 'ochrona';
 
@@ -51,7 +51,11 @@ function wDniach(od: string, dni: number) {
   return { data, ...(koniec !== data ? { przesunieta: koniec } : {}) };
 }
 
-/** Ostatni dzień okresu N miesięcy liczonego z dniem początku włącznie (wariant najwcześniejszy: okno na podjęcie pracy). */
+/**
+ * Ostatni dzień okresu N miesięcy liczonego z dniem początku włącznie, w wariancie najwcześniejszym (okno na podjęcie
+ * pracy): gdy dnia o tej dacie nie ma, dzień przed ostatnim dniem miesiąca. Świadome odstępstwo od `koniecOkresu`
+ * (terminy.ts) na korzyść bezpiecznego terminu powiadomienia; różni się tylko przy starcie 29.–31. dnia miesiąca.
+ */
 export const ostatniDzienMiesiecy = (od: string, miesiace: number) => dodajDni(dodajMiesiace(od, miesiace), -1);
 
 /**
@@ -59,10 +63,7 @@ export const ostatniDzienMiesiecy = (od: string, miesiace: number) => dodajDni(d
  * początkowi; gdy takiego dnia w miesiącu końcowym nie ma (start 29 lutego, 31 stycznia), ostatni dzień tego miesiąca
  * (art. 112 KC). Nie zaniżamy limitu, żeby nie oznaczać jako błąd okresu zgodnego z przepisem.
  */
-export function koniecLimitu(od: string, miesiace: number): string {
-  const koniec = dodajMiesiace(od, miesiace);
-  return Number(od.slice(8)) > Number(koniec.slice(8)) ? koniec : dodajDni(koniec, -1);
-}
+export const koniecLimitu = (od: string, miesiace: number) => koniecOkresu(od, miesiace);
 
 const OD_USTAWY = '2025-06-01';
 const OD_ART_5A = '2026-03-05';
