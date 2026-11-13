@@ -30,7 +30,7 @@
 // 4. Liczy się data wydania, nie egzaminu (§ 13: do 14 dni później). Gdy znana jest tylko data egzaminu, liczymy od niej:
 //    wynik wychodzi najwyżej 14 dni za wcześnie, czyli bezpiecznie.
 // 5. Przedłużenia przepis nie zna: po nowym egzaminie nowe 5 lat biegnie od nowej daty wydania.
-// 6. Przypomnienia w pliku .ics (3 miesiące i 1 miesiąc przed końcem) to propozycja redakcji, nie termin z przepisu:
+// 6. Terminy w pliku .ics (3 miesiące i 1 miesiąc przed końcem; bez alarmów) to propozycja redakcji, nie termin z przepisu:
 //    zawiadomienie o egzaminie przychodzi co najmniej 14 dni wcześniej (§ 10 ust. 2), a świadectwo do 14 dni po nim (§ 13).
 // 7. Opłata: dokładnie 10% (rozporządzenie, nie „do 10%” z ustawy), z płacy minimalnej z dnia złożenia wniosku,
 //    za jeden egzamin (wniosek). Liczby wniosków przy E i D albo kilku grupach przepis nie ustala, więc nie mnożymy.
@@ -47,14 +47,14 @@ export const KONIEC_STARYCH_KC = dodajLata(NOWE_ZASADY_OD, 5);
 export const LATA_WAZNOSCI = 5;
 /** Status „wkrótce” na tyle dni przed końcem (propozycja redakcji: egzamin trzeba umówić z wyprzedzeniem). */
 export const WKROTCE_DNI = 90;
-/** Przypomnienia w kalendarzu: tyle miesięcy przed ostatnim dniem ważności. */
+/** Terminy do kalendarza: tyle miesięcy przed ostatnim dniem ważności. */
 export const PRZYPOMNIENIA_MIESIACE = [3, 1] as const;
 /** Opłata: procent minimalnego wynagrodzenia (§ 14 ust. 1 rozporządzenia z 2022 r.). */
 export const PROCENT_OPLATY = 10;
 /** Komisja wydaje świadectwo najpóźniej tyle dni po egzaminie (§ 13). */
 export const DNI_NA_WYDANIE = 14;
 
-export type StatusSep = 'wazne' | 'wkrotce' | 'ostatni-dzien-kc' | 'wygaslo';
+export type StatusSep = 'wazne' | 'wkrotce' | 'ostatni-dzien' | 'ostatni-dzien-kc' | 'wygaslo';
 export type PodstawaSep = 'nowe' | 'stare-bez-terminu' | 'stare-z-terminem';
 
 export interface DaneSep {
@@ -105,10 +105,11 @@ export function waznoscSep({ wydano, wpis, zDatyEgzaminu = false, dzis }: DaneSe
     wyliczone = ostatniDzien(wydano);
     const rocznica = dodajLata(wydano, LATA_WAZNOSCI);
     if (maWpis) {
-      waznoDo = wpis!;
       // Zgodny wpis: dzień przed rocznicą albo rocznica; od daty egzaminu wydanie mogło nastąpić do 14 dni później.
+      // Wpis późniejszy niż 5 lat (art. 54 ust. 1aa) nie wydłuża ważności: bierzemy wcześniejszą datę.
       const najpozniej = zDatyEgzaminu ? dodajDni(rocznica, DNI_NA_WYDANIE) : rocznica;
       rozbieznosc = wpis! < wyliczone || wpis! > najpozniej;
+      waznoDo = wpis! > najpozniej ? najpozniej : wpis!;
     } else {
       waznoDo = wyliczone;
       wedlugKc = rocznica;
@@ -127,8 +128,16 @@ export function waznoscSep({ wydano, wpis, zDatyEgzaminu = false, dzis }: DaneSe
 
   const dniDoKonca = dniMiedzy(dzis, waznoDo);
   const status: StatusSep =
-    dniDoKonca < 0 ? (wedlugKc === dzis ? 'ostatni-dzien-kc' : 'wygaslo') : dniDoKonca <= WKROTCE_DNI ? 'wkrotce' : 'wazne';
-  const opis = `${wedlugKc ? `Świadectwo kwalifikacyjne ważne z zapasem do ${dataPoPolsku(waznoDo)} (według art. 110–112 Kodeksu cywilnego do końca ${dataPoPolsku(wedlugKc)}).` : `Świadectwo kwalifikacyjne ważne do ${dataPoPolsku(waznoDo)}`} Przepis nie przewiduje przedłużenia: potrzebny nowy egzamin w komisji kwalifikacyjnej, a nowe świadectwo jest ważne 5 lat od dnia jego wydania. Przypomnienie z wyprzedzeniem to propozycja redakcji, nie termin z przepisu. Policzone na rytmhali.pl/narzedzia/waznosc-uprawnien-sep.`;
+    dniDoKonca < 0
+      ? wedlugKc === dzis
+        ? 'ostatni-dzien-kc'
+        : 'wygaslo'
+      : dniDoKonca === 0
+        ? 'ostatni-dzien'
+        : dniDoKonca <= WKROTCE_DNI
+          ? 'wkrotce'
+          : 'wazne';
+  const opis = `${wedlugKc ? `Świadectwo kwalifikacyjne ważne z zapasem do ${dataPoPolsku(waznoDo)} (według art. 110–112 Kodeksu cywilnego do końca ${dataPoPolsku(wedlugKc)}).` : `Świadectwo kwalifikacyjne ważne do ${dataPoPolsku(waznoDo)}`} Przepis nie przewiduje przedłużenia: potrzebny nowy egzamin w komisji kwalifikacyjnej, a nowe świadectwo jest ważne 5 lat od dnia jego wydania. Termin z wyprzedzeniem to propozycja redakcji, nie termin z przepisu. Policzone na rytmhali.pl/narzedzia/waznosc-uprawnien-sep.`;
   const kandydaci: Wydarzenie[] = [
     ...PRZYPOMNIENIA_MIESIACE.map((m) => ({
       data: dodajMiesiace(waznoDo, -m),

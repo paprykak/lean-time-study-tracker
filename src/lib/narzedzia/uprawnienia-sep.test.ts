@@ -33,6 +33,10 @@ describe('ważność po 3 lipca 2021 r. (art. 54 ust. 1aa PE, art. 112 KC)', () 
     expect(waznoscSep({ wydano: '2015-06-10', dzis: '2026-07-03' }).status).toBe('ostatni-dzien-kc');
     expect(waznoscSep({ wydano: '2015-06-10', dzis: '2026-07-04' }).status).toBe('wygaslo');
   });
+  it('wpis równy dziś: „ostatni dzień”', () => {
+    expect(waznoscSep({ wydano: '2021-11-13', wpis: DZIS, dzis: DZIS })).toMatchObject({ dniDoKonca: 0, status: 'ostatni-dzien' });
+    expect(waznoscSep({ wydano: '2021-11-13', dzis: DZIS })).toMatchObject({ waznoDo: DZIS, status: 'ostatni-dzien' });
+  });
   it('próg „wkrótce”: 90 dni tak, 91 dni nie', () => {
     expect(waznoscSep({ wydano: '2022-02-11', dzis: DZIS })).toMatchObject({ waznoDo: '2027-02-10', status: 'wkrotce' });
     expect(waznoscSep({ wydano: '2022-02-12', dzis: DZIS })).toMatchObject({ waznoDo: '2027-02-11', status: 'wazne' });
@@ -48,7 +52,12 @@ describe('wpis „ważne do” (wzór, zał. 3)', () => {
     expect(waznoscSep({ wydano: '2022-09-15', wpis: '2027-09-14', dzis: DZIS }).rozbieznosc).toBe(false);
   });
   it('wpis niezgodny: wynik z wpisu, rozbieżność', () => {
-    expect(waznoscSep({ wydano: '2022-09-15', wpis: '2027-10-01', dzis: DZIS })).toMatchObject({ waznoDo: '2027-10-01', rozbieznosc: true });
+    expect(waznoscSep({ wydano: '2022-09-15', wpis: '2027-09-01', dzis: DZIS })).toMatchObject({ waznoDo: '2027-09-01', rozbieznosc: true });
+  });
+  it('wpis późniejszy niż 5 lat: bierzemy rocznicę (art. 54 ust. 1aa), rozbieżność', () => {
+    expect(waznoscSep({ wydano: '2022-09-15', wpis: '2027-10-01', dzis: DZIS })).toMatchObject({ waznoDo: '2027-09-15', rozbieznosc: true });
+    expect(waznoscSep({ wydano: '2024-03-10', wpis: '2035-01-01', dzis: DZIS })).toMatchObject({ waznoDo: '2029-03-10', rozbieznosc: true });
+    expect(waznoscSep({ wydano: '2022-09-15', wpis: '2027-10-15', zDatyEgzaminu: true, dzis: DZIS }).waznoDo).toBe('2027-09-29');
   });
   it('od daty egzaminu: wpis do 14 dni po rocznicy jest zgodny', () => {
     expect(waznoscSep({ wydano: '2022-09-15', wpis: '2027-09-29', zDatyEgzaminu: true, dzis: DZIS }).rozbieznosc).toBe(false);

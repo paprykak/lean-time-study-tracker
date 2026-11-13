@@ -35,11 +35,24 @@ test('bezterminowe sprzed 3 lipca 2021 r.: wygasło 2 lipca 2026 r., bez kalenda
   await expect(page.getByRole('button', { name: 'Dodaj do kalendarza (.ics)' })).toBeDisabled();
 });
 
-test('wpis niezgodny z wyliczeniem: wynik z wpisu i uwaga', async ({ page }) => {
+test('wpis późniejszy niż 5 lat: bierzemy rocznicę, obie daty w uwadze', async ({ page }) => {
   await page.getByLabel('Data wydania świadectwa').fill('2024-03-10');
-  await page.getByLabel('Wpis „ważne do” (jeśli jest)').fill('2029-04-01');
-  await expect(page.locator('[data-w="termin"]')).toHaveText(/^1\skwietnia\s2029\sr\.$/);
-  await expect(page.locator('[data-w="uwaga"]')).toContainText(/9\smarca\s2029/);
+  await page.getByLabel('Wpis „ważne do” (jeśli jest)').fill('2035-01-01');
+  await expect(page.locator('[data-w="termin"]')).toHaveText(/^10\smarca\s2029\sr\.$/);
+  await expect(page.locator('[data-w="uwaga"]')).toContainText(/1\sstycznia\s2035/);
+  await expect(page.locator('[data-w="uwaga"]')).toContainText(/art\.\s54\sust\.\s1aa/);
+});
+
+test('data egzaminu: etykieta pola się zmienia', async ({ page }) => {
+  await page.getByLabel('Znam tylko datę egzaminu').check();
+  await expect(page.getByLabel('Data egzaminu', { exact: true })).toBeVisible();
+});
+
+test('domyślna data wniosku to prawdziwe dziś: 5.01.2027 → 495,00 zł', async ({ page }) => {
+  await page.clock.setFixedTime(new Date('2027-01-05T10:00:00+01:00'));
+  await page.reload();
+  await expect(page.getByLabel('Data wniosku o egzamin')).toHaveValue('2027-01-05');
+  await expect(page.locator('[data-w="oplata"]')).toContainText(/495,00\szł/);
 });
 
 test('opłata: wniosek 30.12.2026 → 480,60 zł, 4.01.2027 → 495,00 zł', async ({ page }) => {

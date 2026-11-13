@@ -12,17 +12,15 @@ import {
   WKROTCE_DNI,
   oplataSep,
   waznoscSep,
-  type StatusSep,
 } from '../../lib/narzedzia/uprawnienia-sep';
-import { dataPoPolsku, dodajLata, dzisWPolsce, ileDni } from '../../lib/narzedzia/terminy';
+import { dataPoPolsku, dodajDni, dzisWPolsce } from '../../lib/narzedzia/terminy';
 import { zl } from '../../lib/narzedzia/format';
 
 const dzis = dzisWPolsce();
-const startWydano = dodajLata(dzis, -4);
+// Przykład startowy: skrypt przestawia go względem prawdziwego dnia (data-dzis); bez JS wynik nie zależy od „za N dni”.
+const PRZYKLAD_DNI = -1400;
+const startWydano = dodajDni(dzis, PRZYKLAD_DNI);
 const start = waznoscSep({ wydano: startWydano, dzis });
-const startOplata = oplataSep(dzis);
-const KLASA: Record<StatusSep, string> = { wazne: 'w-terminie', wkrotce: 'wkrotce', 'ostatni-dzien-kc': 'pilne', wygaslo: 'po-terminie' };
-const STATUS: Record<StatusSep, string> = { wazne: 'Ważne', wkrotce: 'Wkrótce koniec', 'ostatni-dzien-kc': 'Ostatni dzień', wygaslo: 'Wygasło' };
 // Lata z aktami w podstawie prawnej tego narzędzia (placa2026, placa2027).
 const lataPlacy = Object.keys(PLACA_MINIMALNA).map(Number).filter((r) => r >= 2026).sort((a, b) => a - b);
 const oplatyLat = lataPlacy.map((rok) => oplataSep(`${rok}-01-01`));
@@ -30,7 +28,6 @@ const oplataRok = (rok: number) => oplatyLat.find((o) => o.rok === rok);
 const o2026 = oplataRok(2026)!;
 const o2027 = oplataRok(2027);
 const koniecStarych = dataPoPolsku(KONIEC_STARYCH);
-const DZIS_KC = 'Dziś ostatni dzień ważności według art. 112 KC; nasz bezpieczny termin minął wczoraj';
 
 const faq = [
   {
@@ -39,7 +36,7 @@ const faq = [
   },
   {
     pytanie: 'Czy uprawnienia SEP są bezterminowe?',
-    odpowiedz: `Nie. Świadectwa wydane przed 3 lipca 2021 r., także te bez terminu, zachowały ważność przez okres, na jaki je wydano, ale najdłużej przez 5 lat od tego dnia (art. 25 pkt 2 ustawy z 20 maja 2021 r.). Bez tego limitu, przez okres z wpisu, zostały tylko świadectwa osób świadczących usługi konsumentom i mikro-, małym i średnim przedsiębiorcom (art. 25 pkt 1); ich kwalifikacje sprawdzano co pięć lat. Bezterminowe wygasły najpóźniej 2 albo 3 lipca 2026 r. Żeby dalej samodzielnie zajmować się eksploatacją (poza samą obsługą z § 5), trzeba zdać egzamin od nowa.`,
+    odpowiedz: `Nie. Świadectwa wydane przed 3 lipca 2021 r., także te bez terminu, zachowały ważność przez okres, na jaki je wydano, ale najdłużej przez 5 lat od tego dnia (art. 25 pkt 2 ustawy z 20 maja 2021 r.). Bez tego limitu, przez okres z wpisu, zostały tylko świadectwa osób świadczących usługi konsumentom i mikro-, małym i średnim przedsiębiorcom (art. 25 pkt 1); ich kwalifikacje sprawdzano co pięć lat. Bezterminowe wygasły 3 lipca 2026 r. z końcem dnia (bezpiecznie przyjmujemy 2 lipca). Żeby dalej samodzielnie zajmować się eksploatacją (poza samą obsługą z § 5), trzeba zdać egzamin od nowa.`,
   },
   {
     pytanie: 'Jak przedłużyć uprawnienia SEP?',
@@ -62,19 +59,19 @@ const faq = [
 <StronaNarzedzia
   slug="waznosc-uprawnien-sep"
   tytul="Uprawnienia SEP: ważność i koszt egzaminu"
-  opis="Do kiedy ważne są uprawnienia SEP (świadectwo E lub D, G1, G2, G3), czy stare bezterminowe jeszcze działają i ile kosztuje egzamin w 2026 i 2027 r."
+  opis="Do kiedy ważne są uprawnienia SEP (świadectwo E lub D, G1, G2, G3), czy stare bezterminowe jeszcze działają i ile kosztuje egzamin: 10% płacy minimalnej."
   h1="Do kiedy ważne są uprawnienia SEP i ile kosztuje egzamin"
-  lead="Świadectwo kwalifikacyjne, potocznie „uprawnienia SEP”, jest ważne 5 lat od dnia wydania. Dawne bezterminowe już wygasły. Wpisz datę ze świadectwa, a policzymy, do kiedy świadectwo jest ważne i ile kosztuje nowy egzamin."
+  lead="Świadectwo kwalifikacyjne, potocznie „uprawnienia SEP”, jest ważne 5 lat od dnia wydania. Dawne bezterminowe już wygasły. Wpisz datę ze świadectwa, a policzymy, do kiedy jest ważne i ile kosztuje nowy egzamin."
   faq={faq}
 >
-  <form class="kalkulator" data-sep novalidate aria-labelledby="kalkulator-tytul">
+  <form class="kalkulator" data-sep data-lata={lataPlacy.join(',')} novalidate aria-labelledby="kalkulator-tytul">
     <div class="kalkulator-pola">
       <h2 id="kalkulator-tytul" class="tytul-m">Twoje świadectwo</h2>
 
       <div class="mt-4">
-        <label for="sep-wydano" class="etykieta-pola">Data wydania świadectwa</label>
-        <input id="sep-wydano" name="wydano" type="date" class="pole mt-1 max-w-56" min="1990-01-01" max={dzis} value={startWydano} aria-describedby="sep-wydano-opis sep-wydano-blad" />
-        <p id="sep-wydano-opis" class="meta mt-1">Na ostatniej stronie, obok miejsca wystawienia.</p>
+        <label for="sep-wydano" class="etykieta-pola" data-w="etykieta-wydano">Data wydania świadectwa</label>
+        <input id="sep-wydano" name="wydano" type="date" class="pole mt-1 max-w-56" min="1990-01-01" max="2100-12-31" value={startWydano} data-dzis={PRZYKLAD_DNI} aria-describedby="sep-wydano-opis sep-wydano-blad" />
+        <p id="sep-wydano-opis" class="meta mt-1" data-w="opis-wydano">Na ostatniej stronie, obok miejsca wystawienia.</p>
         <p id="sep-wydano-blad" class="blad-pola" data-blad="wydano" hidden></p>
       </div>
 
@@ -90,7 +87,7 @@ const faq = [
 
       <div class="mt-6">
         <label for="sep-wniosek" class="etykieta-pola">Data wniosku o egzamin</label>
-        <input id="sep-wniosek" name="wniosek" type="date" class="pole mt-1 max-w-56" min={`${lataPlacy[0]}-01-01`} max={`${lataPlacy[lataPlacy.length - 1]}-12-31`} value={dzis} aria-describedby="sep-wniosek-opis sep-wniosek-blad" />
+        <input id="sep-wniosek" name="wniosek" type="date" class="pole mt-1 max-w-56" min={`${lataPlacy[0]}-01-01`} max={`${lataPlacy[lataPlacy.length - 1]}-12-31`} value={dzis} data-dzis aria-describedby="sep-wniosek-opis sep-wniosek-blad" />
         <p id="sep-wniosek-opis" class="meta mt-1">Opłata zależy od dnia złożenia wniosku, nie egzaminu.</p>
         <p id="sep-wniosek-blad" class="blad-pola" data-blad="wniosek" hidden></p>
       </div>
@@ -100,19 +97,19 @@ const faq = [
       <h2 id="wynik-tytul" class="etykieta" data-w="naglowek">Ważne (z zapasem) do</h2>
       <div aria-live="polite" aria-atomic="true">
         <p class="wynik-data" data-w="termin">{dataPoPolsku(start.waznoDo)}</p>
-        <p class="status-terminu" data-w="status" data-status={KLASA[start.status]}>{start.status === 'ostatni-dzien-kc' ? DZIS_KC : `${STATUS[start.status]}: ${ileDni(start.dniDoKonca)}`}</p>
+        <p class="status-terminu" data-w="status" hidden></p>
       </div>
       <dl class="wynik-lista">
         <div><dt>Według Kodeksu cywilnego</dt><dd data-w="kc">do końca {dataPoPolsku(start.wedlugKc!)} (rocznica wydania, art. 110–112 KC)</dd></div>
         <div><dt>Podstawa</dt><dd data-w="podstawa">5 lat od dnia wydania (art. 54 ust. 1aa); dzień przed rocznicą to nasz zapas</dd></div>
-        <div><dt>Nowe świadectwo</dt><dd data-w="nowe">po nowym egzaminie; wydane dziś byłoby ważne do {dataPoPolsku(start.noweOdDzis)}</dd></div>
-        <div><dt>Opłata za egzamin</dt><dd data-w="oplata">{zl(startOplata.kwota)} (10% z {zl(startOplata.placa)}, płaca minimalna w {startOplata.rok} r.)</dd></div>
+        <div><dt>Nowe świadectwo</dt><dd data-w="nowe">po nowym egzaminie, 5 lat od dnia jego wydania</dd></div>
+        <div><dt>Opłata za egzamin</dt><dd data-w="oplata">{oplatyLat.map((o) => `${zl(o.kwota)} przy wniosku w ${o.rok} r.`).join('; ')}</dd></div>
       </dl>
       <p class="wynik-uwaga" data-w="uwaga" hidden></p>
       <p class="mt-5">
-        <button type="button" class="przycisk przycisk-grafit" data-ics disabled={start.wydarzenia.length === 0}>Dodaj do kalendarza (.ics)</button>
+        <button type="button" class="przycisk przycisk-grafit" data-ics disabled>Dodaj do kalendarza (.ics)</button>
       </p>
-      <p class="meta mt-2">Przypomnienia 3 miesiące i miesiąc przed końcem oraz w ostatnim dniu ważności z zapasem. Wyprzedzenie to nasza propozycja, nie termin z przepisu.</p>
+      <p class="meta mt-2">Terminy do kalendarza: 3 miesiące i miesiąc przed końcem oraz ostatni dzień ważności z zapasem. Plik dodaje same wydarzenia, bez powiadomień. Wyprzedzenie to nasza propozycja, nie termin z przepisu.</p>
       <noscript><p class="wynik-uwaga">Wynik powyżej to przykład. Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu; zasady i tabele są opisane poniżej.</p></noscript>
     </div>
   </form>
@@ -150,7 +147,7 @@ const faq = [
       przesądza. Gdy znasz tylko datę egzaminu, liczymy od niej: świadectwo mogło zostać wydane do 14 dni
       później, więc wynik wyjdzie najwyżej o tyle za wcześnie. Status „wkrótce koniec” pokazujemy
       na {WKROTCE_DNI} dni przed ostatnim dniem. Przepis nie podaje, kiedy złożyć wniosek przed końcem ważności;
-      zawiadomienie o egzaminie przychodzi co najmniej 14 dni wcześniej (§ 10 ust. 2), dlatego przypomnienia
+      zawiadomienie o egzaminie przychodzi co najmniej 14 dni wcześniej (§ 10 ust. 2), dlatego terminy do kalendarza
       w kalendarzu ustawiamy na 3 miesiące i miesiąc przed końcem.
     </p>
     <p>
@@ -173,7 +170,7 @@ const faq = [
     </div>
     <ul>
       <li>Wniosek złożony w grudniu, a egzamin w styczniu: płacisz według stawki z grudnia.</li>
-      <li>Opłatę zwraca się, gdy wniosek złożył ktoś nieuprawniony albo nie spełnia on wymagań (§ 7 ust. 6) albo gdy nie przystąpiono do niego z przyczyn niezależnych (§ 12 ust. 3).</li>
+      <li>Opłatę zwraca się, gdy wniosek złożył ktoś nieuprawniony albo nie spełnia on wymagań (§ 7 ust. 6) albo gdy nie przystąpiono do egzaminu z przyczyn niezależnych (§ 12 ust. 3).</li>
       <li>Bez opłaty: w komisjach Ministra Obrony Narodowej i Ministra Sprawiedliwości na wniosek kierownika podległej lub nadzorowanej jednostki (art. 54 ust. 4a i 4b).</li>
       <li>Przepis nie mówi, czy osobne świadectwa E i D albo kilka grup to jeden wniosek, czy kilka. Podajemy kwotę za jeden egzamin; o resztę zapytaj komisję.</li>
       <li>Kurs przygotowawczy to cena rynkowa, której przepisy nie regulują.</li>
@@ -236,6 +233,7 @@ const faq = [
 <script>
   import { KONIEC_STARYCH, oplataSep, waznoscSep, type StatusSep, type WynikSep } from '../../lib/narzedzia/uprawnienia-sep';
   import { dataPoPolsku, dzisWPolsce, ileDni, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
   import { plikIcs } from '../../lib/narzedzia/kalendarz-ics';
   import { zl } from '../../lib/narzedzia/format';
   import { typografia } from '../../lib/typografia.mjs';
@@ -248,8 +246,9 @@ const faq = [
     };
     const pole = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
     const ics = form.querySelector<HTMLButtonElement>('[data-ics]')!;
-    const KLASA: Record<StatusSep, string> = { wazne: 'w-terminie', wkrotce: 'wkrotce', 'ostatni-dzien-kc': 'pilne', wygaslo: 'po-terminie' };
-    const STATUS: Record<StatusSep, string> = { wazne: 'Ważne', wkrotce: 'Wkrótce koniec', 'ostatni-dzien-kc': 'Ostatni dzień', wygaslo: 'Wygasło' };
+    const KLASA: Record<StatusSep, string> = { wazne: 'w-terminie', wkrotce: 'wkrotce', 'ostatni-dzien': 'pilne', 'ostatni-dzien-kc': 'pilne', wygaslo: 'po-terminie' };
+    const STATUS: Record<StatusSep, string> = { wazne: 'Ważne', wkrotce: 'Wkrótce koniec', 'ostatni-dzien': 'Dziś ostatni dzień ważności', 'ostatni-dzien-kc': 'Ostatni dzień', wygaslo: 'Wygasło' };
+    const LATA = (form.dataset.lata ?? '').split(',').map(Number);
     const DZIS_KC = 'Dziś ostatni dzień ważności według art. 112 KC; nasz bezpieczny termin minął wczoraj';
     let wydarzenia: WynikSep['wydarzenia'] = [];
 
@@ -271,14 +270,15 @@ const faq = [
         pisz('oplata', '—');
         return;
       }
-      try {
-        const o = oplataSep(d);
-        blad('wniosek', null);
-        pisz('oplata', `${zl(o.kwota)} (10% z ${zl(o.placa)}, płaca minimalna w ${o.rok} r.)`);
-      } catch {
-        blad('wniosek', `Nie znamy jeszcze płacy minimalnej na ${d.slice(0, 4)} r.`);
+      const rok = Number(d.slice(0, 4));
+      if (!LATA.includes(rok)) {
+        blad('wniosek', `Nie mamy płacy minimalnej na ${rok} r. (są lata ${LATA[0]}–${LATA[LATA.length - 1]}).`);
         pisz('oplata', '—');
+        return;
       }
+      const o = oplataSep(d);
+      blad('wniosek', null);
+      pisz('oplata', `${zl(o.kwota)} (10% z ${zl(o.placa)}, płaca minimalna w ${o.rok} r.)`);
     };
 
     const przelicz = () => {
@@ -288,13 +288,18 @@ const faq = [
       const wpis = pole('wpis').value;
       const zDatyEgzaminu = pole('egzamin').checked;
       const status = w('status');
+      pisz('etykieta-wydano', zDatyEgzaminu ? 'Data egzaminu' : 'Data wydania świadectwa');
+      pisz(
+        'opis-wydano',
+        zDatyEgzaminu ? 'Też na świadectwie: „na podstawie wyniku egzaminu złożonego w dniu…”.' : 'Na ostatniej stronie, obok miejsca wystawienia.',
+      );
       wydarzenia = [];
       ics.disabled = true;
 
       let bladWydano: string | null = null;
       let bladWpis: string | null = null;
       if (wydano && !poprawnaData(wydano)) bladWydano = 'Wpisz pełną datę: dzień, miesiąc i rok.';
-      else if (wydano > dzis) bladWydano = 'Data wydania nie może być późniejsza niż dziś.';
+      else if (wydano > dzis) bladWydano = zDatyEgzaminu ? 'Data egzaminu nie może być późniejsza niż dziś.' : 'Data wydania nie może być późniejsza niż dziś.';
       if (wpis && !poprawnaData(wpis)) bladWpis = 'Wpisz pełną datę albo zostaw puste.';
       else if (wpis && wydano && !bladWydano && wpis < wydano) bladWpis = 'Data ważności nie może być wcześniejsza niż data wydania.';
       blad('wydano', bladWydano);
@@ -313,9 +318,27 @@ const faq = [
       pisz('termin', dataPoPolsku(r.waznoDo));
       status.hidden = false;
       status.dataset.status = KLASA[r.status];
-      pisz('status', r.status === 'ostatni-dzien-kc' ? DZIS_KC : `${STATUS[r.status]}: ${ileDni(r.dniDoKonca)}`);
+      pisz(
+        'status',
+        r.status === 'ostatni-dzien-kc'
+          ? DZIS_KC
+          : r.status === 'ostatni-dzien'
+            ? r.wedlugKc
+              ? 'Dziś ostatni dzień ważności z zapasem (według KC jutro)'
+              : STATUS['ostatni-dzien']
+            : `${STATUS[r.status]}: ${ileDni(r.dniDoKonca)}`,
+      );
       pisz('naglowek', r.wedlugKc ? 'Ważne (z zapasem) do' : 'Ważne do');
-      pisz('kc', r.wedlugKc ? `do końca ${dataPoPolsku(r.wedlugKc)} (rocznica wydania, art. 110–112 KC)` : 'rozstrzyga wpis albo limit z art. 25');
+      pisz(
+        'kc',
+        r.podstawa === 'stare-bez-terminu'
+          ? `do końca ${dataPoPolsku(r.wedlugKc!)} (rocznica 3 lipca 2021 r., art. 25 pkt 2)`
+          : r.podstawa === 'stare-z-terminem'
+            ? 'rozstrzyga wpis, najdłużej limit z art. 25 pkt 2'
+            : r.wedlugKc
+              ? `do końca ${dataPoPolsku(r.wedlugKc)} (rocznica ${zDatyEgzaminu ? 'egzaminu' : 'wydania'}, art. 110–112 KC)`
+              : 'rozstrzyga wpis na świadectwie',
+      );
       pisz('nowe', `po nowym egzaminie; wydane dziś byłoby ważne do ${dataPoPolsku(r.noweOdDzis)}`);
 
       const uwagi: string[] = [];
@@ -326,14 +349,16 @@ const faq = [
             ? `wpis na świadectwie; z daty ${zDatyEgzaminu ? 'egzaminu' : 'wydania'} wychodzi ${dataPoPolsku(r.wyliczone!)}`
             : '5 lat od dnia wydania (art. 54 ust. 1aa); dzień przed rocznicą to nasz zapas',
         );
-        if (r.rozbieznosc) uwagi.push(`Wpis różni się od wyliczenia (${dataPoPolsku(r.wyliczone!)}). Sprawdź daty na świadectwie albo zapytaj komisję, która je wydała.`);
+        if (r.rozbieznosc && wpis > r.waznoDo)
+          uwagi.push(`Wpis (${dataPoPolsku(wpis)}) jest późniejszy niż 5 lat od ${zDatyEgzaminu ? 'egzaminu' : 'wydania'}, a świadectwo traci ważność po 5 latach (art. 54 ust. 1aa). Przyjmujemy wcześniejszą datę: ${dataPoPolsku(r.waznoDo)} Sprawdź daty na świadectwie albo zapytaj komisję, która je wydała.`);
+        else if (r.rozbieznosc) uwagi.push(`Wpis (${dataPoPolsku(wpis)}) różni się od wyliczenia (${dataPoPolsku(r.wyliczone!)}). Sprawdź daty na świadectwie albo zapytaj komisję, która je wydała.`);
       } else if (r.podstawa === 'stare-bez-terminu') {
         pisz('podstawa', 'wydane przed 3 lipca 2021 r. bez terminu: limit 5 lat od 3 lipca 2021 r. (art. 25 pkt 2 ustawy z 2021 r.)');
       } else {
         pisz('podstawa', `wydane przed 3 lipca 2021 r.: termin z wpisu, ale nie dłużej niż do ${dataPoPolsku(KONIEC_STARYCH)} (art. 25 pkt 2 ustawy z 2021 r.; wyjątek z pkt 1 pomijamy, bo nie wiemy, czy Cię dotyczy)`);
         if (r.rozbieznosc) uwagi.push('Termin na świadectwie jest późniejszy niż limit z art. 25 pkt 2 ustawy z 2021 r., więc przyjmujemy limit. Nie dotyczy on osób świadczących usługi konsumentom i mikro-, małym i średnim przedsiębiorcom (art. 25 pkt 1); w razie wątpliwości zapytaj komisję.');
       }
-      if (zDatyEgzaminu) uwagi.push('Liczymy od daty egzaminu. Świadectwo wydaje się do 14 dni później (§ 13), więc faktyczny koniec może być do 14 dni dalej.');
+      if (zDatyEgzaminu && r.podstawa === 'nowe') uwagi.push('Liczymy od daty egzaminu. Świadectwo wydaje się do 14 dni później (§ 13), więc faktyczny koniec może być do 14 dni dalej.');
       if (r.status === 'wygaslo') uwagi.push('Świadectwo straciło ważność. Przedłużenia nie ma: żeby dalej samodzielnie zajmować się eksploatacją (poza samą obsługą z § 5), trzeba zdać egzamin od nowa.');
       else if (r.status === 'ostatni-dzien-kc') uwagi.push('Od jutra świadectwo nie jest ważne. Przedłużenia nie ma: żeby dalej samodzielnie zajmować się eksploatacją (poza samą obsługą z § 5), trzeba zdać egzamin od nowa.');
       else if (r.status === 'wkrotce') uwagi.push('Zostało niewiele czasu: zawiadomienie o egzaminie przychodzi co najmniej 14 dni przed nim, a świadectwo do 14 dni po nim.');
@@ -355,6 +380,10 @@ const faq = [
       setTimeout(() => URL.revokeObjectURL(a.href), 1000);
     });
 
+    ustawDzisiejszeWartosci(form);
+    const wniosek = pole('wniosek');
+    if (!LATA.includes(Number(wniosek.value.slice(0, 4)))) wniosek.value = `${LATA[LATA.length - 1]}-12-31`;
+    pole('wydano').max = dzisWPolsce();
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
