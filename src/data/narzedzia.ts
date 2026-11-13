@@ -613,7 +613,7 @@ export const NARZEDZIA: Narzedzie[] = [
     nazwa: 'Urlop bezpłatny: skutki',
     krotko: 'Ile urlopu wypoczynkowego zostaje po urlopie bezpłatnym, o ile przesuwa się staż, co z zasiłkiem i NFZ.',
     kategoria: 'urlopy',
-    przepisy: ['kodeksPracy', 'kodeksCywilny', 'zasilkowa', 'swiadczeniaZdrowotne', 'emerytury'],
+    przepisy: ['kodeksPracy', 'kodeksCywilny', 'zasilkowa', 'swiadczeniaZdrowotne', 'emerytury', 'systemUbezpieczen2026'],
     sprawdzono: '2026-11-12',
   },
   {

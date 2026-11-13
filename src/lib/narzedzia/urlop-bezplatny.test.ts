@@ -1,17 +1,17 @@
 import { describe, expect, it } from 'vitest';
-import { koniecMiesiecy, miesiacePracy, tekstyWyniku, urlopBezplatny } from './urlop-bezplatny';
+import { koniecMiesiecy, miesiacePracy, tekstyWyniku, urlopBezplatny, type DaneUrlopuBezplatnego } from './urlop-bezplatny';
 
-// Oczekiwane wartości sprawdzone niezależnie w Pythonie (datetime, calendar).
-const lata = (d: Parameters<typeof urlopBezplatny>[0]) => urlopBezplatny(d).lata.map((r) => [r.rok, r.miesiacePracy, r.dni]);
+// Oczekiwane wartości sprawdzone niezależnie w Pythonie (datetime, calendar), skrypt urlop-bezplatny.py.
+const lata = (d: DaneUrlopuBezplatnego) => urlopBezplatny(d).lata.map((r) => [r.rok, r.miesiacePracy, r.dni, r.podstawa, r.drugieOdczytanie?.dni ?? null]);
 
 describe('urlop bezpłatny a urlop wypoczynkowy (art. 155^2, 155^2a, 155^3 Kp)', () => {
-  it('1.03–31.05.2026: 9 miesięcy pracy, 26 × 9/12 = 19,5 → 20 dni; 92 dni poza stażem, 10 lat przesuwa się na 15.09.2027', () => {
+  it('1.03–31.05.2026: powrót w tym samym roku, 26 × 9/12 = 19,5 → 20 dni; 10 lat przesuwa się na 15.09.2027', () => {
     const r = urlopBezplatny({ od: '2026-03-01', do: '2026-05-31', rodzaj: 'bezplatny', wymiar: 26, data10Lat: '2027-06-15' });
     expect(r).toMatchObject({
       dni: 92,
       coNajmniejMiesiac: true,
-      lata: [{ rok: 2026, miesiacePracy: 9, dni: 20, podstawa: 'proporcja' }],
-      doWykorzystaniaWRokuRozpoczecia: 20,
+      lata: [{ rok: 2026, miesiacePracy: 9, proporcja: 20, dni: 20, podstawa: 'obnizenie', drugieOdczytanie: null }],
+      zostalo: { dni: 20, drugieOdczytanie: null },
       dluzszyNiz3Miesiace: false,
       nieWliczaSieDoStazu: 92,
       przesuniecie10Lat: 92,
@@ -20,42 +20,52 @@ describe('urlop bezpłatny a urlop wypoczynkowy (art. 155^2, 155^2a, 155^3 Kp)',
     });
   });
   it('15.03–14.05.2026: tylko kwiecień bez pracy, 11/12 → 24 dni', () => {
-    expect(lata({ od: '2026-03-15', do: '2026-05-14', rodzaj: 'bezplatny', wymiar: 26 })).toEqual([[2026, 11, 24]]);
+    expect(lata({ od: '2026-03-15', do: '2026-05-14', rodzaj: 'bezplatny', wymiar: 26 })).toEqual([[2026, 11, 24, 'obnizenie', null]]);
   });
-  it('przełom roku 1.11.2026–28.02.2027: po 10/12 w każdym roku, 22 dni; dłuższy niż 3 miesiące', () => {
+  it('przełom roku 1.11.2026–28.02.2027: bez powrotu w 2026 bez obniżenia (26), w 2027 10/12 → 22', () => {
     const r = urlopBezplatny({ od: '2026-11-01', do: '2027-02-28', rodzaj: 'bezplatny', wymiar: 26 });
-    expect(r.lata.map((x) => [x.rok, x.miesiacePracy, x.dni])).toEqual([[2026, 10, 22], [2027, 10, 22]]);
-    expect(r).toMatchObject({ dni: 120, dluzszyNiz3Miesiace: true, swiadczeniaZdrowotneDo: '2026-12-01' });
+    expect(r.lata.map((x) => [x.rok, x.dni, x.podstawa])).toEqual([[2026, 26, 'brak-powrotu'], [2027, 22, 'powrot']]);
+    expect(r).toMatchObject({ dni: 120, dluzszyNiz3Miesiace: true, swiadczeniaZdrowotneDo: '2026-12-01', zostalo: null });
   });
-  it('rok w całości na urlopie: 0 miesięcy, 0 dni; wymiar 20', () => {
-    expect(lata({ od: '2026-06-01', do: '2028-03-15', rodzaj: 'bezplatny', wymiar: 20 })).toEqual([[2026, 5, 9], [2027, 0, 0], [2028, 10, 17]]);
+  it('urlop do 31 grudnia: brak powrotu w tym roku, 26 dni', () => {
+    expect(lata({ od: '2026-06-01', do: '2026-12-31', rodzaj: 'bezplatny', wymiar: 26 })).toEqual([[2026, 5, 26, 'brak-powrotu', null]]);
   });
-  it('29 lutego 2028: miesiąc kończy się 28 marca; 28 dni to mniej niż miesiąc', () => {
-    expect(koniecMiesiecy('2028-02-29', 1)).toBe('2028-03-28');
-    expect(urlopBezplatny({ od: '2028-02-29', do: '2028-03-28', rodzaj: 'bezplatny', wymiar: 26 })).toMatchObject({ dni: 29, coNajmniejMiesiac: true });
-    expect(urlopBezplatny({ od: '2028-02-29', do: '2028-03-27', rodzaj: 'bezplatny', wymiar: 26 })).toMatchObject({ dni: 28, coNajmniejMiesiac: false });
+  it('rok w całości na urlopie: 0 dni, drugie odczytanie pełny wymiar; wymiar 20', () => {
+    expect(lata({ od: '2026-06-01', do: '2028-03-15', rodzaj: 'bezplatny', wymiar: 20 })).toEqual([
+      [2026, 5, 20, 'brak-powrotu', null],
+      [2027, 0, 0, 'caly-rok', 20],
+      [2028, 10, 17, 'powrot', null],
+    ]);
   });
-  it('krótszy niż miesiąc od 31 stycznia: do 27 lutego bez zmian, do 28 lutego już miesiąc (Kc art. 112)', () => {
-    expect(urlopBezplatny({ od: '2026-01-31', do: '2026-02-27', rodzaj: 'bezplatny', wymiar: 26 }).lata).toEqual([{ rok: 2026, miesiacePracy: 12, proporcja: 26, dni: 26, podstawa: 'bez-zmian' }]);
-    expect(lata({ od: '2026-01-31', do: '2026-02-28', rodzaj: 'bezplatny', wymiar: 26 })).toEqual([[2026, 11, 24]]);
+  it('miesiąc liczony od dnia po rozpoczęciu: 1.03–31.03 krócej, 1.03–1.04 już miesiąc (24 dni)', () => {
+    expect(koniecMiesiecy('2026-03-01', 1)).toBe('2026-04-01');
+    expect(lata({ od: '2026-03-01', do: '2026-03-31', rodzaj: 'bezplatny', wymiar: 26 })).toEqual([[2026, 11, 26, 'bez-zmian', null]]);
+    expect(lata({ od: '2026-03-01', do: '2026-04-01', rodzaj: 'bezplatny', wymiar: 26 })).toEqual([[2026, 11, 24, 'obnizenie', null]]);
   });
-  it('wykorzystany przed urlopem ≥ obniżony wymiar: bez obniżenia; o dzień mniej: obniżenie', () => {
+  it('29 lutego 2028: miesiąc do 29 marca; 31 stycznia: miesiąc do 28 lutego', () => {
+    expect(urlopBezplatny({ od: '2028-02-29', do: '2028-03-28', rodzaj: 'bezplatny', wymiar: 26 })).toMatchObject({ dni: 29, coNajmniejMiesiac: false });
+    expect(urlopBezplatny({ od: '2028-02-29', do: '2028-03-29', rodzaj: 'bezplatny', wymiar: 26 })).toMatchObject({ dni: 30, coNajmniejMiesiac: true, lata: [{ dni: 26 }] });
+    expect(lata({ od: '2026-01-31', do: '2026-02-27', rodzaj: 'bezplatny', wymiar: 26 })).toEqual([[2026, 12, 26, 'bez-zmian', null]]);
+    expect(lata({ od: '2026-01-31', do: '2026-02-28', rodzaj: 'bezplatny', wymiar: 26 })).toEqual([[2026, 11, 24, 'obnizenie', null]]);
+  });
+  it('wyjątek „chyba że”: wykorzystane 20 ≥ 20 → 0 do wykorzystania, drugie odczytanie 26 (zostaje 6); 19 → 1', () => {
     const a = urlopBezplatny({ od: '2026-03-01', do: '2026-05-31', rodzaj: 'bezplatny', wymiar: 26, wykorzystanePrzed: 20 });
-    expect(a.lata[0]).toMatchObject({ dni: 26, podstawa: 'wykorzystany' });
-    expect(a.doWykorzystaniaWRokuRozpoczecia).toBe(6);
+    expect(a.lata[0]).toMatchObject({ dni: 20, drugieOdczytanie: { dni: 26, powod: 'wyjatek' } });
+    expect(a.zostalo).toEqual({ dni: 0, drugieOdczytanie: 6 });
     const b = urlopBezplatny({ od: '2026-03-01', do: '2026-05-31', rodzaj: 'bezplatny', wymiar: 26, wykorzystanePrzed: 19 });
-    expect(b.lata[0]).toMatchObject({ dni: 20, podstawa: 'proporcja' });
-    expect(b.doWykorzystaniaWRokuRozpoczecia).toBe(1);
+    expect(b.lata[0]).toMatchObject({ dni: 20, drugieOdczytanie: null });
+    expect(b.zostalo).toEqual({ dni: 1, drugieOdczytanie: null });
   });
-  it('urlop wychowawczy: w roku rozpoczęcia bez obniżenia, w roku powrotu proporcja; staż bez przesunięcia', () => {
-    expect(lata({ od: '2026-03-01', do: '2026-05-31', rodzaj: 'wychowawczy', wymiar: 26 })).toEqual([[2026, 9, 26]]);
-    const r = urlopBezplatny({ od: '2026-06-01', do: '2027-05-31', rodzaj: 'wychowawczy', wymiar: 26, data10Lat: '2027-06-15' });
-    expect(r.lata.map((x) => [x.rok, x.dni, x.podstawa])).toEqual([[2026, 26, 'wychowawczy'], [2027, 16, 'proporcja']]);
-    expect(r).toMatchObject({ nieWliczaSieDoStazu: 0, przesuniecie10Lat: 0, nowaData10Lat: '2027-06-15', swiadczeniaZdrowotneDo: null });
+  it('urlop wychowawczy: rok rozpoczęcia bez obniżenia, rok powrotu 7/12 → 16; 10 lat w czasie urlopu → dzień zakończenia', () => {
+    expect(lata({ od: '2026-03-01', do: '2026-05-31', rodzaj: 'wychowawczy', wymiar: 26 })).toEqual([[2026, 9, 26, 'wychowawczy', null]]);
+    const r = urlopBezplatny({ od: '2026-06-01', do: '2027-05-31', rodzaj: 'wychowawczy', wymiar: 26, data10Lat: '2027-03-10' });
+    expect(r.lata.map((x) => [x.rok, x.dni, x.podstawa])).toEqual([[2026, 26, 'wychowawczy'], [2027, 16, 'powrot']]);
+    expect(r).toMatchObject({ nieWliczaSieDoStazu: 0, nowaData10Lat: '2027-05-31', przesuniecie10Lat: 82, swiadczeniaZdrowotneDo: null });
+    expect(urlopBezplatny({ od: '2026-06-01', do: '2027-05-31', rodzaj: 'wychowawczy', wymiar: 26, data10Lat: '2027-06-15' }).nowaData10Lat).toBe('2027-06-15');
   });
-  it('art. 174^1: bez obniżenia i bez przesunięcia stażu', () => {
+  it('art. 174^1: obniżenie jak przy urlopie bezpłatnym, drugie odczytanie 26; staż bez przesunięcia', () => {
     const r = urlopBezplatny({ od: '2026-03-01', do: '2026-05-31', rodzaj: 'inny-pracodawca', wymiar: 26, data10Lat: '2027-06-15' });
-    expect(r.lata).toEqual([{ rok: 2026, miesiacePracy: 9, proporcja: 20, dni: 26, podstawa: 'inny-pracodawca' }]);
+    expect(r.lata[0]).toMatchObject({ dni: 20, drugieOdczytanie: { dni: 26, powod: 'art-174-1' } });
     expect(r).toMatchObject({ nieWliczaSieDoStazu: 0, nowaData10Lat: '2027-06-15', swiadczeniaZdrowotneDo: null });
   });
   it('nieobecność nieusprawiedliwiona: obniżenie jak przy urlopie bezpłatnym, staż nieliczony', () => {
@@ -63,17 +73,18 @@ describe('urlop bezpłatny a urlop wypoczynkowy (art. 155^2, 155^2a, 155^3 Kp)',
     expect(r.lata[0].dni).toBe(20);
     expect(r.przesuniecie10Lat).toBe(0);
   });
-  it('3 miesiące: 1.03–31.05 nie jest dłuższy, 1.03–1.06 jest (93 dni, nadal 9 miesięcy pracy)', () => {
-    expect(koniecMiesiecy('2026-03-01', 3)).toBe('2026-05-31');
-    expect(urlopBezplatny({ od: '2026-03-01', do: '2026-06-01', rodzaj: 'bezplatny', wymiar: 26 })).toMatchObject({ dni: 93, dluzszyNiz3Miesiace: true, lata: [{ dni: 20 }] });
+  it('3 miesiące: 1.03–1.06 nie jest dłuższy, 1.03–2.06 jest', () => {
+    expect(urlopBezplatny({ od: '2026-03-01', do: '2026-06-01', rodzaj: 'bezplatny', wymiar: 26 })).toMatchObject({ dni: 93, dluzszyNiz3Miesiace: false, lata: [{ dni: 20 }] });
+    expect(urlopBezplatny({ od: '2026-03-01', do: '2026-06-02', rodzaj: 'bezplatny', wymiar: 26 })).toMatchObject({ dni: 94, dluzszyNiz3Miesiace: true });
   });
-  it('urlop od 1 stycznia: proporcja z § 1 także dla wychowawczego; urlop zaczęty po dacie 10 lat jej nie przesuwa', () => {
-    expect(lata({ od: '2026-01-01', do: '2026-03-31', rodzaj: 'wychowawczy', wymiar: 26 })).toEqual([[2026, 9, 20]]);
+  it('urlop od 1 stycznia: proporcja z § 1 także dla wychowawczego; urlop po dacie 10 lat jej nie przesuwa', () => {
+    expect(lata({ od: '2026-01-01', do: '2026-03-31', rodzaj: 'wychowawczy', wymiar: 26 })).toEqual([[2026, 9, 20, 'powrot', null]]);
     expect(urlopBezplatny({ od: '2026-03-01', do: '2026-05-31', rodzaj: 'bezplatny', wymiar: 26, data10Lat: '2026-02-01' })).toMatchObject({ nieWliczaSieDoStazu: 92, przesuniecie10Lat: 0 });
   });
-  it('miesiące pracy liczy po kalendarzu, 1 maja (święto) liczy się jak każdy dzień', () => {
+  it('1 maja (święto) liczy się jak każdy dzień; cały maj to mniej niż miesiąc od dnia po rozpoczęciu', () => {
     expect(miesiacePracy(2026, '2026-05-01', '2026-05-31')).toBe(11);
-    expect(miesiacePracy(2026, '2026-05-02', '2026-05-31')).toBe(12);
+    expect(urlopBezplatny({ od: '2026-05-01', do: '2026-05-31', rodzaj: 'bezplatny', wymiar: 26 }).coNajmniejMiesiac).toBe(false);
+    expect(lata({ od: '2026-05-02', do: '2026-06-02', rodzaj: 'bezplatny', wymiar: 26 })).toEqual([[2026, 12, 26, 'obnizenie', null]]);
   });
   it('błędne dane: RangeError', () => {
     const ok = { od: '2026-03-01', do: '2026-05-31', rodzaj: 'bezplatny' as const, wymiar: 26 };
@@ -81,19 +92,31 @@ describe('urlop bezpłatny a urlop wypoczynkowy (art. 155^2, 155^2a, 155^3 Kp)',
     expect(() => urlopBezplatny({ ...ok, od: '2026-02-30' })).toThrow(RangeError);
     expect(() => urlopBezplatny({ ...ok, do: '2032-03-01' })).toThrow(RangeError);
     expect(() => urlopBezplatny({ ...ok, wymiar: 27 })).toThrow(RangeError);
+    expect(() => urlopBezplatny({ ...ok, wymiar: 1.5 })).toThrow(RangeError);
     expect(() => urlopBezplatny({ ...ok, wykorzystanePrzed: 27 })).toThrow(RangeError);
     expect(() => urlopBezplatny({ ...ok, data10Lat: '2027-13-01' })).toThrow(RangeError);
   });
-  it('teksty wyniku: rok po roku, staż, 10 lat i świadczenia zdrowotne', () => {
+  it('teksty wyniku: przełom roku, staż, odwołanie, świadczenia zdrowotne, art. 41', () => {
     const t = tekstyWyniku({ od: '2026-11-01', do: '2027-02-28', rodzaj: 'bezplatny', wymiar: 26, wykorzystanePrzed: 5, data10Lat: '2030-01-10' });
-    expect(t.glowna).toBe('22 dni');
-    expect(t.lata.map((x) => x.wartosc)).toEqual(['22 dni (praca w 10 z 12 miesięcy)', '22 dni (praca w 10 z 12 miesięcy)']);
+    expect(t.glowna).toBe('26 dni');
+    expect(t.lata.map((x) => x.wartosc)).toEqual([
+      '26 dni, bez obniżenia: brak powrotu w tym samym roku (art. 155^2 § 2)',
+      '22 dni, praca w 10 z 12 miesięcy, do końca roku (art. 155^2 § 1)',
+    ]);
     expect(t.pozycje.map((x) => x.wartosc)).toEqual([
-      '17 dni po odjęciu 5 dni',
-      '120 dni nie wlicza się (art. 174 § 2)',
+      '120 dni nie wlicza się do okresu pracy, od którego zależą uprawnienia (art. 174 § 2)',
       '10 maja 2030 r., później o 120 dni',
-      'możliwe z ważnych przyczyn, jeśli strony przewidziały to przy udzielaniu urlopu (art. 174 § 3)',
+      'Kodeks przewiduje je przy urlopie dłuższym niż 3 miesiące, jeśli strony to przewidziały (art. 174 § 3)',
     ]);
     expect(t.ubezpieczenia[2]).toContain('po 1 grudnia 2026 r.');
+    expect(t.ochrona).toMatch(/^„Pracodawca nie może wypowiedzieć/);
+  });
+  it('teksty: „po odjęciu 1 dnia”, drugie odczytanie wyjątku; nieobecność bez cytatu art. 41', () => {
+    const t = tekstyWyniku({ od: '2026-03-01', do: '2026-05-31', rodzaj: 'bezplatny', wymiar: 26, wykorzystanePrzed: 1 });
+    expect(t.pozycje[0].wartosc).toBe('19 dni po odjęciu 1 dnia wykorzystanego urlopu');
+    const u = tekstyWyniku({ od: '2026-03-01', do: '2026-05-31', rodzaj: 'bezplatny', wymiar: 26, wykorzystanePrzed: 20 });
+    expect(u.lata.map((x) => x.etykieta)).toEqual(['Urlop wypoczynkowy za 2026', 'Drugie odczytanie za 2026']);
+    expect(u.pozycje.slice(0, 2).map((x) => x.wartosc)).toEqual(['0 dni po odjęciu 20 dni wykorzystanego urlopu', '6 dni']);
+    expect(tekstyWyniku({ od: '2026-03-01', do: '2026-05-31', rodzaj: 'nieobecnosc', wymiar: 26 }).ochrona).toContain('nie obejmuje');
   });
 });
