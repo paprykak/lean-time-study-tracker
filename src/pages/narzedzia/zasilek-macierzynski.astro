@@ -175,11 +175,9 @@ const faq = [
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
     ustawDzisiejszeWartosci(form);
-    // Po powrocie przeglądarka przywraca liczbę dzieci razem z tygodniami: tygodni nie ustawiamy wtedy od nowa.
-    liczPoPowrocie(() => {
-      poprzednieDzieci = Number(el('dzieci').value);
-      przelicz();
-    });
+    // Pole tygodni ma autocomplete="off" (przeglądarka go nie przywraca), więc po powrocie przelicz ustawia je od nowa
+    // na maksimum dla przywróconej liczby dzieci, tak jak przy zmianie listy.
+    liczPoPowrocie(przelicz);
     przelicz();
   }
 </script>
