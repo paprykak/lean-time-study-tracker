@@ -184,7 +184,7 @@ export const AKTY = {
   zasilkowa: {
     nazwa: 'Ustawa o świadczeniach pieniężnych z ubezpieczenia społecznego w razie choroby i macierzyństwa',
     publikator: 'Dz.U. 2026 poz. 854',
-    uwaga: 'tekst jednolity (stan prawny na 17 czerwca 2026 r.); art. 3 pkt 3, art. 4, 8, 11, 36–38, 42 i 45; dopiero od 1 stycznia 2027 r. obowiązują art. 9 ust. 4, art. 17 ust. 1d–1e, art. 18 ust. 3–6, art. 23 ust. 6 i art. 59 ust. 4a (zmiana Dz.U. 2026 poz. 26); późniejsza zmiana Dz.U. 2026 poz. 1123 (od 1 stycznia 2028 r.) dotyczy tylko art. 32 ust. 1 pkt 1 lit. a',
+    uwaga: 'tekst jednolity (stan prawny na 17 czerwca 2026 r.); art. 3 pkt 3, art. 4, 8, 11, 36–38, 42 i 45; od 1 stycznia 2027 r. dochodzą art. 9 ust. 4, art. 17 ust. 1d–1e i art. 59 ust. 4a, nowe brzmienie dostają art. 18 ust. 3 i art. 23 ust. 6, a art. 18 ust. 4–6 zostają uchylone (zmiana Dz.U. 2026 poz. 26); późniejsza zmiana Dz.U. 2026 poz. 1123 (od 1 stycznia 2028 r.) dotyczy tylko art. 32 ust. 1 pkt 1 lit. a',
     adres: eli(2026, 854),
     sprawdzono: '2026-11-13',
   },

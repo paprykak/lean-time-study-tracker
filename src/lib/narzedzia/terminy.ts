@@ -1,7 +1,7 @@
 // Terminy w latach i miesiącach (art. 112 Kodeksu cywilnego, w prawie pracy przez art. 300 Kodeksu pracy). Daty jako
 // RRRR-MM-DD, liczone w UTC. Jedna konwencja dla wszystkich narzędzi (pakiet „wspólny kod”, 2026-11-13; decyzja w DECYZJE.md):
 //
-// 1. Termin od zdarzenia (dzień zdarzenia się nie wlicza, art. 111 § 2 KC: „3 miesiące od naruszenia”, „15 miesięcy od
+// 1. Termin od zdarzenia (dzień zdarzenia się nie wlicza: „3 miesiące od naruszenia”, „15 miesięcy od
 //    rozwiązania umowy”, „5 lat od dnia wydania”): kończy się z upływem dnia, który datą odpowiada dniowi zdarzenia,
 //    a gdy takiego dnia w ostatnim miesiącu nie ma, z upływem ostatniego dnia tego miesiąca (art. 112 zd. 1 KC):
 //    `dodajMiesiace` (31 sierpnia + 6 miesięcy = 28 lutego, 29 lutego + 1 rok = 28 lutego).
@@ -14,9 +14,11 @@
 //    to przepis szczególny, liczy go `wypowiedzenie.ts`.
 // 4. Wiek: kolejny rok życia kończy się z początkiem dnia urodzin (art. 112 zd. 2 KC): `dodajLata(urodzenie, n)` to
 //    pierwszy dzień po ukończeniu n lat.
-// Regułę „dzień przed dniem odpowiadającym datą” stosuje praktyka i orzecznictwo prawa pracy (np. SN II PK 223/09,
-// pismo GIP z 17.01.2011); przypadku, gdy takiego dnia w ostatnim miesiącu nie ma, żadne znalezione źródło nie
-// rozstrzyga wprost: przyjmujemy literę art. 112 zd. 1 KC (ostatni dzień miesiąca).
+// Regułę „dzień przed dniem odpowiadającym datą” stosuje praktyka prawa pracy (np. A. Kuźniar, „Kiedy zakończyć terminową
+// umowę o pracę”, rp.pl 2012; G. Ordak, rp.pl 2016; kadry.infor.pl „Terminy w prawie pracy”). W przypadku, gdy takiego dnia
+// w ostatnim miesiącu nie ma, żadne znalezione źródło nie rozstrzyga wprost: przyjmujemy literę art. 112 zd. 1 KC
+// (ostatni dzień miesiąca). Drugie odczytanie (dzień przed ostatnim dniem, np. 27 lutego) strony narzędzi podają tam,
+// gdzie byłoby korzystniejsze dla pracownika (limit 33 miesięcy, okres próbny).
 // Odstępstwa od pkt 2 są w narzędziach opisane jako wariant bezpieczny dla pracownika, gdy przepis nie rozstrzyga
 // (umowa na zastępstwo: upływ 3. miesiąca ciąży; praca cudzoziemca: okno na podjęcie pracy), a w drugą stronę szkolenie
 // okresowe BHP: „do 6 (12) miesięcy od rozpoczęcia pracy” liczymy jak okres z pierwszym dniem (pkt 2), bo wychodzi wcześniej.
