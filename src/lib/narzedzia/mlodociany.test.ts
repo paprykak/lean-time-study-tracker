@@ -56,8 +56,17 @@ describe('płaca w przygotowaniu zawodowym (§ 19–20 rozporządzenia)', () => 
     expect(placaMlodocianego('nauka-zawodu', 3, '2026-02-28')).toMatchObject({ kwota: 877.17, podstawa: { kwartal: 'III kwartał 2025 r.' } });
     expect(placaMlodocianego('przyuczenie', 1, '2026-06-15')).toMatchObject({ procent: 7, kwota: 669.41 });
   });
+  it('III kwartał 2026 r. (M.P. 2026 poz. 1122, ogłoszony 10 listopada): 9317,01 zł od 1 grudnia 2026 r.', () => {
+    // Niezależnie: 9317,01 × 8/9/10/7% w górę do grosza = 745,37 / 838,54 / 931,71 / 652,20 zł.
+    expect(placaMlodocianego('nauka-zawodu', 1, '2026-11-30')).toMatchObject({ kwota: 738.66, podstawa: { kwartal: 'II kwartał 2026 r.' } });
+    expect(placaMlodocianego('nauka-zawodu', 1, '2026-12-01')).toMatchObject({ kwota: 745.37, podstawa: { publikator: 'M.P. 2026 poz. 1122', mozeNieaktualna: false } });
+    expect(placaMlodocianego('nauka-zawodu', 2, '2026-12-01')?.kwota).toBe(838.54);
+    expect(placaMlodocianego('nauka-zawodu', 3, '2027-01-04')?.kwota).toBe(931.71);
+    expect(placaMlodocianego('przyuczenie', 1, '2026-12-01')?.kwota).toBe(652.2);
+  });
   it('po 3 miesiącach od ostatniej kwoty ostrzegamy, że GUS mógł ogłosić nową', () => {
-    expect(placaMlodocianego('nauka-zawodu', 1, '2026-12-01')?.podstawa.mozeNieaktualna).toBe(true);
+    expect(placaMlodocianego('nauka-zawodu', 1, '2027-02-28')?.podstawa.mozeNieaktualna).toBe(false);
+    expect(placaMlodocianego('nauka-zawodu', 1, '2027-03-01')?.podstawa.mozeNieaktualna).toBe(true);
   });
   it('lekkie prace i daty bez kwoty: brak', () => {
     expect(placaMlodocianego('lekkie-prace', 1, '2026-11-12')).toBeNull();
@@ -82,6 +91,13 @@ describe('urlop młodocianego (art. 205 Kp)', () => {
     expect(urlopMlodocianego('1993-05-20', '2010-09-01').lista.map((u) => [u.data, u.dni])).toEqual([
       ['2011-03-01', 12],
       ['2011-09-01', 20],
+    ]);
+  });
+  it('urodziny 1 stycznia: 20 dni od 1 stycznia roku 18. urodzin, po wcześniejszych 12 i 26 dniach', () => {
+    expect(urlopMlodocianego('1993-01-01', '2009-09-01').lista.map((u) => [u.data, u.dni])).toEqual([
+      ['2010-03-01', 12],
+      ['2010-09-01', 26],
+      ['2011-01-01', 20],
     ]);
   });
   it('rok pracy przed rokiem 18. urodzin: 20 dni 1 stycznia', () => {

@@ -1,0 +1,282 @@
+{
+ "partia": "F",
+ "sprawdzone": [
+  {
+   "slug": "kalkulator-odprawy",
+   "pliki": [
+    "src/pages/narzedzia/kalkulator-odprawy.astro",
+    "src/lib/narzedzia/odprawy.ts",
+    "src/lib/narzedzia/odprawy.test.ts",
+    "tests/e2e/narzedzie-odprawy.spec.ts",
+    "src/data/prawo.ts"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "odprawa-posmiertna",
+   "pliki": [
+    "src/pages/narzedzia/odprawa-posmiertna.astro",
+    "src/lib/narzedzia/odprawa-posmiertna.ts",
+    "src/lib/narzedzia/odprawa-posmiertna.test.ts",
+    "tests/e2e/narzedzie-odprawa-posmiertna.spec.ts"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "odszkodowanie-za-zwolnienie",
+   "pliki": [
+    "src/pages/narzedzia/odszkodowanie-za-zwolnienie.astro",
+    "src/lib/narzedzia/odszkodowanie-zwolnienie.ts",
+    "src/lib/narzedzia/odszkodowanie-zwolnienie.test.ts",
+    "src/lib/narzedzia/ekwiwalent.ts",
+    "tests/e2e/narzedzie-odszkodowanie-zwolnienie.spec.ts"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "odwolanie-do-sadu-pracy",
+   "pliki": [
+    "src/pages/narzedzia/odwolanie-do-sadu-pracy.astro",
+    "src/lib/narzedzia/termin-odwolania.ts",
+    "src/lib/narzedzia/termin-odwolania.test.ts",
+    "src/lib/narzedzia/czas-pracy.ts (swieta)",
+    "tests/e2e/narzedzie-odwolanie.spec.ts"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "kara-porzadkowa",
+   "pliki": [
+    "src/pages/narzedzia/kara-porzadkowa.astro",
+    "src/lib/narzedzia/kara-porzadkowa.ts",
+    "src/lib/narzedzia/kara-porzadkowa.test.ts",
+    "tests/e2e/narzedzie-kara.spec.ts"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "przedawnienie-wynagrodzenia",
+   "pliki": [
+    "src/pages/narzedzia/przedawnienie-wynagrodzenia.astro",
+    "src/lib/narzedzia/przedawnienie.ts",
+    "src/lib/narzedzia/termin-wyplaty.ts",
+    "src/lib/narzedzia/przedawnienie.test.ts",
+    "tests/e2e/narzedzie-przedawnienie.spec.ts"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "zakaz-konkurencji",
+   "pliki": [
+    "src/pages/narzedzia/zakaz-konkurencji.astro",
+    "src/lib/narzedzia/zakaz-konkurencji.ts",
+    "src/lib/narzedzia/zakaz-konkurencji.test.ts",
+    "tests/e2e/narzedzie-zakaz.spec.ts"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "zwrot-kosztow-szkolenia",
+   "pliki": [
+    "src/pages/narzedzia/zwrot-kosztow-szkolenia.astro",
+    "src/lib/narzedzia/lojalka.ts",
+    "src/lib/narzedzia/lojalka.test.ts",
+    "tests/e2e/narzedzie-lojalka.spec.ts"
+   ],
+   "wynik": "problemy"
+  }
+ ],
+ "znaleziska": [
+  {
+   "id": "F-1",
+   "slug": "przedawnienie-wynagrodzenia",
+   "wymiar": "rachunek",
+   "waga": "wysoka",
+   "plik": "src/pages/narzedzia/przedawnienie-wynagrodzenia.astro",
+   "linia": 68,
+   "problem": "Pole „Sprawdź na dzień” ma wpisaną na stałe datę z dnia buildu (value={dzis}), a skrypt liczy z tej wartości i nie podstawia dzisiejszej daty. Bez codziennego przebudowania (w repo nie ma żadnego workflow z harmonogramem) strona po kilku tygodniach pokazuje jako „najstarszą wypłatę, o którą możesz wystąpić” miesiąc, który już się przedawnił, a „Zostało: N dni” liczy od daty buildu.",
+   "dowod": "Linia 68: value={dzis}. Skrypt, linia 140: naDzien = el('naDzien').value, bez dzisWPolsce(). Na podglądzie zbudowanym 2026-11-12 domyślny wynik to „za listopad 2023 r., przedawnia się z końcem dnia 8 grudnia 2026 r.”. Ktoś, kto otworzy stronę w marcu 2027 r., zobaczy to samo, choć ta wypłata jest już przedawniona.",
+   "poprawka": "W skrypcie, przed pierwszym przelicz(), ustawić el('naDzien').value = dzisWPolsce(), jeśli użytkownik niczego nie zmienił. Tak samo przestawić datę w F-2. Dodać test E2E z page.clock.setFixedTime('2027-03-15') i sprawdzić, że domyślna najstarsza wypłata to „za marzec 2024 r.”."
+  },
+  {
+   "id": "F-2",
+   "slug": "odwolanie-do-sadu-pracy",
+   "wymiar": "rachunek",
+   "waga": "srednia",
+   "plik": "src/pages/narzedzia/odwolanie-do-sadu-pracy.astro",
+   "linia": 50,
+   "problem": "Domyślny dzień doręczenia to data buildu, a status „Zostało X dni” skrypt liczy od prawdziwego dzisiaj (dzisWPolsce()). Po 21 dniach od buildu strona od razu po wejściu pokazuje „Termin minął”, choć użytkownik nie wpisał jeszcze swojej daty.",
+   "dowod": "Linia 50: value={dzis}. Linia 126: zostalo = dniMiedzy(dzisWPolsce(), t.koniec). Domyślna data (build 12.11.2026) daje koniec 3.12.2026, więc od 4.12.2026 domyślny widok to „Termin minął: możliwy tylko wniosek o przywrócenie terminu”.",
+   "poprawka": "W skrypcie przy starcie ustawić el('data').value = dzisWPolsce(). To samo dotyczy kara-porzadkowa (daty liczone wstecz od buildu) i kalkulator-odprawy (dzień rozwiązania = data buildu): warto ujednolicić w całej partii."
+  },
+  {
+   "id": "F-3",
+   "slug": "odwolanie-do-sadu-pracy",
+   "wymiar": "prawo",
+   "waga": "srednia",
+   "plik": "src/pages/narzedzia/odwolanie-do-sadu-pracy.astro",
+   "linia": 135,
+   "problem": "Po terminie skrypt przy każdej sprawie pisze „możliwy tylko wniosek o przywrócenie terminu (art. 265 Kodeksu pracy)”, także przy sprzeciwie od kary porządkowej i pozwie o jej uchylenie. Art. 265 obejmuje tylko czynności z art. 97 § 2¹ i art. 264, a sprzeciw z art. 112 § 1 składa się pracodawcy, nie sądowi.",
+   "dowod": ".cache/narzedzia/prawo/DU_2026_1245.txt, art. 265 § 1: „Jeżeli pracownik nie dokonał – bez swojej winy – w terminie czynności, o których mowa w art. 97 § 2[1] i w art. 264, sąd pracy na jego wniosek postanowi przywrócenie uchybionego terminu.” Playwright na podglądzie: sprawa kara-sprzeciw, data 2026-10-01, status „Termin minął: możliwy tylko wniosek o przywrócenie terminu (art. 265 Kodeksu pracy)”.",
+   "poprawka": "Dodać w SPRAWY pole, czy przywrócenie terminu z art. 265 jest możliwe (true dla 264 § 1–3 i 97 § 2¹, false dla kara-sprzeciw i kara-sad). Dla kar porządkowych pisać tylko „Termin minął”, bez obietnicy przywrócenia. Dodać test jednostkowy lub E2E."
+  },
+  {
+   "id": "F-4",
+   "slug": "zwrot-kosztow-szkolenia",
+   "wymiar": "rachunek",
+   "waga": "srednia",
+   "plik": "src/lib/narzedzia/lojalka.ts",
+   "linia": 52,
+   "problem": "Gdy praca kończy się przed końcem nauki, funkcja zwraca stan 'w-trakcie' jeszcze przed sprawdzeniem, czy dany sposób rozwiązania umowy w ogóle daje zwrot. Przy wypowiedzeniu przez pracodawcę, porozumieniu, końcu umowy i mobbingu strona pisze więc, że „przepis każe liczyć zwrot proporcjonalnie”, choć zwrot się nie należy.",
+   "dowod": "Art. 103⁵ (DU_2026_1245.txt) wymienia tylko pkt 1–4. Playwright: rozwiązanie „Pracodawca ją wypowiada”, ostatni dzień 2026-03-01, koniec nauki 2026-03-31. Wynik: kwota „—” i opis „Odchodzisz przed końcem nauki: przepis każe liczyć zwrot proporcjonalnie…”. Ten sam opis przy „Porozumienie stron”.",
+   "poprawka": "W lojalka() sprawdzić `if (!zwrot)` (stan 'bez-zwrotu', kwota 0) przed warunkiem koniecPracy <= ukonczenie. Dodać test: rozwiazanie 'wypowiedzenie-pracodawcy', koniecPracy '2026-03-20' daje stan 'bez-zwrotu'."
+  },
+  {
+   "id": "F-5",
+   "slug": "zwrot-kosztow-szkolenia",
+   "wymiar": "prawo",
+   "waga": "srednia",
+   "plik": "src/pages/narzedzia/zwrot-kosztow-szkolenia.astro",
+   "linia": 71,
+   "problem": "Opcja „Odchodzę bez wypowiedzenia” zawsze daje zwrot (art. 103⁵ pkt 4), a w liście nie ma opcji uzasadnionego odejścia bez wypowiedzenia z art. 55 § 1 albo § 1¹. Kto odchodzi zgodnie z prawem z winy pracodawcy, wybierze tę opcję i dostanie błędną informację, że musi oddać pieniądze.",
+   "dowod": "Art. 103⁵ pkt 4: „…rozwiąże stosunek pracy bez wypowiedzenia na podstawie art. 55 lub art. 94[3], mimo braku przyczyn określonych w tych przepisach”. Tabela na stronie (linia 106) mówi „bez podstaw”, ale opcja w select tego nie mówi. ZWROT['art55-bez-podstaw'].zwrot = true.",
+   "poprawka": "Opcję nazwać krótko „Odchodzę bez wypowiedzenia bez podstaw” i dodać opcję „Odchodzę z winy pracodawcy” (nowy klucz w ZWROT: zwrot false, podstawa 'art. 103⁵ pkt 4'). Uzupełnić test i tabelę."
+  },
+  {
+   "id": "F-6",
+   "slug": "odwolanie-do-sadu-pracy",
+   "wymiar": "tresc-ux",
+   "waga": "srednia",
+   "plik": "src/lib/narzedzia/termin-odwolania.ts",
+   "linia": 12,
+   "problem": "Opcje listy wyboru są za długie i na telefonie zostają ucięte (zasada 7).",
+   "dowod": "Playwright, zmierzona szerokość tekstu opcji wobec szerokości selecta (412 px: 336 px, 320 px: 244 px). Przy 412 px ucięte są „Zwolnienie bez wypowiedzenia albo wygaśnięcie umowy” (422 px), „Wniosek o sprostowanie świadectwa pracy” (319 px) i „Sprostowanie świadectwa w sądzie po odmowie” (359 px); przy 320 px wszystkie 7 opcji. Zrzut: odwolanie-select-412.png w katalogu roboczym.",
+   "poprawka": "Skrócić nazwy, np. „Dyscyplinarka albo wygaśnięcie”, „Sprostowanie świadectwa”, „Świadectwo: pozew po odmowie”, „Sprzeciw od kary”, „Kara: pozew do sądu”. Pełne opisy zostawić w tabeli wyjaśnienia."
+  },
+  {
+   "id": "F-7",
+   "slug": "zwrot-kosztow-szkolenia",
+   "wymiar": "tresc-ux",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/zwrot-kosztow-szkolenia.astro",
+   "linia": 69,
+   "problem": "Przy 320 px ucięte są opcje selecta „Jak kończy się umowa”. To samo dzieje się w odszkodowanie-za-zwolnienie (SYTUACJE.nazwa, src/lib/narzedzia/odszkodowanie-zwolnienie.ts linie 35–75).",
+   "dowod": "Playwright, 320 px, select 244 px. W lojalce ucięte są 3 opcje: „Odchodzę bez wypowiedzenia” (235 px), „Odchodzę z powodu mobbingu”, „Kończy się umowa terminowa”. W odszkodowaniu 4 z 6: „Dyscyplinarka w wypowiedzeniu” i „Wypowiedzenie okresu próbnego” (251 px), „Bezprawne wypowiedzenie” (241 px), „Pracodawca żąda odszkodowania”. Przy 412 px wszystko się mieści.",
+   "poprawka": "Skrócić, np. „Mobbing”, „Umowa terminowa minęła”, „Dyscyplinarka w okresie wyp.”, „Okres próbny”, „Roszczenie pracodawcy”."
+  },
+  {
+   "id": "F-8",
+   "slug": "kalkulator-odprawy, odprawa-posmiertna, odszkodowanie-za-zwolnienie, odwolanie-do-sadu-pracy, kara-porzadkowa, zakaz-konkurencji",
+   "wymiar": "tresc-ux",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/odwolanie-do-sadu-pracy.astro",
+   "linia": 127,
+   "problem": "Skrypty sześciu narzędzi wpisują tekst wyniku przez textContent bez typografia() (zasada 4). Twarde spacje z SSR (typografiaWHtml w StronaNarzedzia) znikają po pierwszym przeliczeniu.",
+   "dowod": "Playwright: bez JS [data-w=termin] = „21⍽dni (art.⍽264 §⍽1…)” i [data-w=koniec] = „3 grudnia 2026⍽r.”. Z JS te same pola mają zwykłe spacje: „21 dni (art. 264 § 1 Kodeksu pracy)”, „3 grudnia 2026 r.”. Tak samo w kara-porzadkowa [data-w=sprzeciw]. grep: typografia występuje 0 razy w kalkulator-odprawy, odprawa-posmiertna, odszkodowanie-za-zwolnienie, odwolanie-do-sadu-pracy, kara-porzadkowa i zakaz-konkurencji.",
+   "poprawka": "Dodać helper pisz(k, t) => w(k).textContent = typografia(t), jak w przedawnienie-wynagrodzenia.astro i zwrot-kosztow-szkolenia.astro, i użyć go do wszystkich tekstów i dat wyniku. Przykład testu E2E: toHaveText(/2026\\u00a0r\\./)."
+  },
+  {
+   "id": "F-9",
+   "slug": "odprawa-posmiertna",
+   "wymiar": "tresc-ux",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/odprawa-posmiertna.astro",
+   "linia": 136,
+   "problem": "Skrypt ma własną funkcję odmiana zamiast odmiana() z src/lib/redakcja.ts (zasada 4). Komunikat błędu dla liczby osób ponad 20 brzmi „co najmniej 1”, co wprowadza w błąd.",
+   "dowod": "Linie 136–137: lokalna odmiana. Linia 147: warunek osoby >= 1 && osoby <= 20 i komunikat „Wpisz liczbę uprawnionych osób, co najmniej 1.”. Playwright: wpisanie 22 pokazuje ten komunikat.",
+   "poprawka": "Importować odmiana z '../../lib/redakcja'. Komunikat zmienić na „Wpisz liczbę uprawnionych osób: od 1 do 20.”."
+  },
+  {
+   "id": "F-10",
+   "slug": "odszkodowanie-za-zwolnienie",
+   "wymiar": "tresc-ux",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/odszkodowanie-za-zwolnienie.astro",
+   "linia": 97,
+   "problem": "Link do innego narzędzia stoi w polu wyniku, a nie w sekcji wyjaśnienia (zasada 5). To jedyne takie miejsce w partii.",
+   "dowod": "Linia 97: <p class=\"wynik-uwaga\">… termin policzy <a href=\"/narzedzia/odwolanie-do-sadu-pracy\">…</a></p> wewnątrz .kalkulator-wynik.",
+   "poprawka": "W wyniku zostawić „Pozew: 21 dni od doręczenia pisma (art. 264).”, a link przenieść do slotu wyjaśnienia (np. sekcja „Odszkodowanie albo powrót do pracy”)."
+  },
+  {
+   "id": "F-11",
+   "slug": "kara-porzadkowa",
+   "wymiar": "prawo",
+   "waga": "niska",
+   "plik": "src/lib/narzedzia/kara-porzadkowa.ts",
+   "linia": 21,
+   "problem": "Terminy pracodawcy z art. 109 § 1 (2 tygodnie i 3 miesiące na ukaranie) kod przesuwa z soboty i świąt (art. 115 KC). To wariant mniej korzystny dla pracownika: kara nałożona w poniedziałek po sobotnim końcu terminu dostaje status „w terminie”. Strona nie pisze, że przepis tego nie rozstrzyga (zasada 2).",
+   "dowod": "Linie 21–22: przesunZDniaWolnego(...) dla do2tygodni i do3miesiecy. Przykład: naruszenie 2026-11-30, 3 miesiące = 2027-02-28 (niedziela), kod daje 2027-03-01. Art. 109 § 1 (DU_2026_1245.txt): „Kara nie może być zastosowana po upływie 2 tygodni … i po upływie 3 miesięcy…”.",
+   "poprawka": "Zgodnie z zasadą 2 liczyć terminy pracodawcy bez przesunięcia (najwcześniejsze) albo pokazać oba warianty. W „Jak liczymy” napisać, że stosowanie art. 115 KC do terminu na ukaranie jest sporne. Dodać test z końcem w niedzielę."
+  },
+  {
+   "id": "F-12",
+   "slug": "odprawa-posmiertna",
+   "wymiar": "prawo",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/odprawa-posmiertna.astro",
+   "linia": 110,
+   "problem": "Kwota zasiłku pogrzebowego 7000 zł jest wpisana na stałe, bez wzmianki o waloryzacji od 1 marca (art. 80 ust. 2–6). Jeśli wskaźnik CPI za 2026 r. przekroczy 105, od 1 marca 2027 r. tekst będzie nieaktualny.",
+   "dowod": ".cache/narzedzia/prawo/DU_2025_1749.txt, art. 80 ust. 2: „Kwota zasiłku pogrzebowego podlega waloryzacji od dnia 1 marca, jeżeli wskaźnik waloryzacji … jest wyższy niż 105”; ust. 6: komunikat Prezesa ZUS w M.P. co najmniej 7 dni roboczych przed terminem. MP_2026_150: 7000 zł od 1.03.2026 r. Komunikatu na 2027 r. jeszcze nie ma.",
+   "poprawka": "Dopisać zdanie o waloryzacji od 1 marca (gdy CPI > 105) i zapisać kwotę w prawo.ts jako stałą z datą, którą używa FAQ i lista. Pozycja w do_stanu."
+  },
+  {
+   "id": "F-13",
+   "slug": "kalkulator-odprawy",
+   "wymiar": "prawo",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/kalkulator-odprawy.astro",
+   "linia": 32,
+   "problem": "FAQ „Od czego liczy się odprawę?” wskazuje dla odprawy z ustawy o zwolnieniach § 2 ust. 1 pkt 7 rozporządzenia z 1996 r., ale ten punkt dotyczy wyłącznie odprawy emerytalnej i rentowej (art. 92¹). Dla odprawy z ustawy podstawą jest art. 8 ust. 3 ustawy. Ten sam błąd jest w komentarzu src/lib/narzedzia/odprawy.ts, linia 4.",
+   "dowod": "Dz.U. 2017 poz. 927 (pobrane z API Sejmu, pdftotext), § 2 ust. 1 pkt 7: „odprawy pieniężnej przysługującej pracownikowi w związku z przejściem na emeryturę lub rentę (art. 92¹ § 1 Kodeksu pracy)”. DU_2026_1195.txt, art. 8 ust. 3: „Odprawę pieniężną ustala się według zasad obowiązujących przy obliczaniu ekwiwalentu…”.",
+   "poprawka": "W FAQ zostawić samo „art. 8 ust. 3 ustawy”, a § 2 ust. 1 pkt 7 przypisać tylko odprawie emerytalnej (tak jak w sekcji „Odprawa emerytalna i rentowa”). Poprawić też komentarz w odprawy.ts."
+  },
+  {
+   "id": "F-14",
+   "slug": "odszkodowanie-za-zwolnienie",
+   "wymiar": "spojnosc",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/odszkodowanie-za-zwolnienie.astro",
+   "linia": 149,
+   "problem": "Skrypt bierze rok współczynnika z daty w przeglądarce, a „Jak liczymy” i SSR podają współczynnik i liczbę dni z roku buildu. Jeśli 1.01.2027 r. nie będzie nowego buildu, tekst mówi o 2026 r., a kwota za dzień jest liczona dla 2027 r.",
+   "dowod": "Linia 10: ROK z dzisWPolsce() przy buildzie, linie 136–137 w tekście. Linia 149: ROK z dzisWPolsce() w przeglądarce, przekazany do odszkodowanieZaZwolnienie.",
+   "poprawka": "Zapisać rok buildu w atrybucie data-rok formularza i użyć go w skrypcie, albo przebudować portal 1.01.2027 r. (pozycja w do_stanu)."
+  },
+  {
+   "id": "F-15",
+   "slug": "kalkulator-odprawy",
+   "wymiar": "testy",
+   "waga": "niska",
+   "plik": "src/lib/narzedzia/odprawy.test.ts",
+   "linia": 11,
+   "problem": "Testom brakuje przypadków brzegowych przełomu roku i lat przestępnych. Odprawy: limit 2026-12-31 wobec 2027-01-01 i obcięcie do 74 250 zł w 2027 r. Terminy (termin-odwolania.test.ts): święta 2027 r. i przełom 2027/2028. Kara: 3 miesiące od 30 listopada z końcem w niedzielę, zatarcie od 29 lutego. Lojalka: koniec nauki 28/29 lutego.",
+   "dowod": "Niezależny rachunek w Pythonie (nz.py) zgodny z kodem: 2027-03-08 + 21 dni → 30.03.2027 (Poniedziałek Wielkanocny); 2027-12-03 → 27.12.2027; 2027-12-11 → 3.01.2028 (1.01 sobota); 2027-05-06 → 28.05.2027 (Boże Ciało); 2028-12-10 → 2.01.2029. Kod (jiti): naruszenie 2026-11-30 → do3miesiecy 2027-03-01; limitOdprawy('2026-12-31') = 72090, ('2027-01-01') = 74250; zatarcie od 2028-02-29 → 2029-02-28. Żadnej z tych wartości nie ma w testach.",
+   "poprawka": "Dopisać te przypadki do odprawy.test.ts, termin-odwolania.test.ts, kara-porzadkowa.test.ts i lojalka.test.ts, z wartościami jak wyżej."
+  }
+ ],
+ "do_stanu": [
+  {
+   "sprawa": "Waloryzacja zasiłku pogrzebowego od 1.03.2027 r.: następuje tylko, gdy średnioroczny CPI za 2026 r. > 105 (komunikat GUS w M.P. w styczniu 2027 r.). Komunikat Prezesa ZUS z kwotą ma się ukazać w M.P. co najmniej 7 dni roboczych przed 1.03.2027 r.; na dziś nieogłoszony.",
+   "kiedy_sprawdzic": "2027-02-15",
+   "gdzie_w_kodzie": "src/pages/narzedzia/odprawa-posmiertna.astro (FAQ linia 30, lista linie 110 i 112), src/data/prawo.ts zasilekPogrzebowy2026"
+  },
+  {
+   "sprawa": "Płaca minimalna 2027: 4950 zł / 32,30 zł (Dz.U. 2026 poz. 1213, od 1.01.2027 r.) jest już w prawo.ts; limit odprawy 2027 = 74 250 zł liczony poprawnie według roku rozwiązania. Potrzebny build portalu 1.01.2027 r., żeby teksty SSR (lead, opis, FAQ „w 2026 r. 72 090 zł”, rok współczynnika w odszkodowaniu) przeszły na 2027 r.",
+   "kiedy_sprawdzic": "2027-01-01",
+   "gdzie_w_kodzie": "src/pages/narzedzia/kalkulator-odprawy.astro linie 10–15, src/pages/narzedzia/odszkodowanie-za-zwolnienie.astro linia 10"
+  },
+  {
+   "sprawa": "Płaca minimalna 2028 (rozporządzenie RM do 15.09.2027 r.); LATA kończy się na 2027, więc rozwiązanie umowy w 2028 r. daje w kalkulatorze odprawy błąd.",
+   "kiedy_sprawdzic": "2027-09-16",
+   "gdzie_w_kodzie": "src/data/prawo.ts PLACA_MINIMALNA, src/lib/narzedzia/odprawy.ts limitOdprawy"
+  }
+ ],
+ "poza_zakresem": [
+  "Wpis kodeksPracy w src/data/prawo.ts (uwaga „stan prawny na 27 sierpnia 2026 r.”) nie wspomina, że t.j. Dz.U. 2026 poz. 1245 obejmuje już zmianę Dz.U. 2026 poz. 1046 (nowy art. 94³ o mobbingu, w mocy od 5.11.2026 r.). Lojalka odwołuje się do art. 94³ w art. 103⁵ pkt 3–4 i odwołanie nadal działa, ale definicja mobbingu jest nowa. Warto dopisać to w uwadze (dopisek w prawo.ts)."
+ ],
+ "nie_sprawdzono": [
+  "Orzecznictwo SN (sn.pl blokuje automaty): czy art. 115 KC stosuje się do terminów z art. 109 § 1 Kp, czy art. 265 Kp można stosować w drodze analogii do art. 112 § 2 Kp, od którego dnia liczyć rok do zatarcia kary (art. 113 § 1).",
+  "Czytnik ekranu i obsługa samą klawiaturą (sprawdzono tylko etykiety, aria-describedby, aria-live i kolejność nagłówków w DOM; wszystko poprawne).",
+  "Art. 77–79 ustawy emerytalnej (komu zasiłek pogrzebowy i jak go dzielić) sprawdzone tylko pobieżnie.",
+  "Pełny przebieg E2E Playwright w repo (zgodnie z zasadami audytu nie uruchamiano). Unit testy 8 plików: 45/45 zielonych; zrzuty 320/412 px wszystkich 8 stron bez przewijania w bok i bez błędów w konsoli; wynik SSR zgodny z wynikiem skryptu dla wartości domyślnych."
+ ]
+}

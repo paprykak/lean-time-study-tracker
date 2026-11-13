@@ -27,7 +27,7 @@ test('młodociany 5 h: 30 minut', async ({ page }) => {
 
 test('8 godzin przy monitorze i z orzeczeniem: 15 + 35 + 15 minut', async ({ page }) => {
   await page.getByLabel('Dobowy wymiar czasu pracy (godziny)').fill('8');
-  await page.getByLabel(/przy monitorze/).check();
+  await page.getByLabel(/przy monitorze co najmniej/).check();
   await expect(page.locator('[data-w="wliczane"]')).toHaveText('50 min');
   await page.getByLabel(/Mam orzeczenie/).check();
   await expect(page.locator('[data-w="wliczane"]')).toHaveText('65 min');
@@ -36,4 +36,13 @@ test('8 godzin przy monitorze i z orzeczeniem: 15 + 35 + 15 minut', async ({ pag
 test('zły wymiar: komunikat', async ({ page }) => {
   await page.getByLabel('Dobowy wymiar czasu pracy (godziny)').fill('30');
   await expect(page.getByText('Wpisz wymiar od 1 do 24 godzin')).toBeVisible();
+});
+
+test('8 godzin, w tym 4 przy monitorze: 15 + 20 minut', async ({ page }) => {
+  await page.getByLabel('Dobowy wymiar czasu pracy (godziny)').fill('8');
+  await page.getByLabel(/przy monitorze co najmniej/).check();
+  await page.getByLabel('Godziny przy monitorze na zmianie').fill('4');
+  await expect(page.locator('[data-w="wliczane"]')).toHaveText('35 min');
+  await page.getByLabel('Godziny przy monitorze na zmianie').fill('3');
+  await expect(page.getByText(/od\społowy\sdo\scałej\szmiany/)).toBeVisible();
 });

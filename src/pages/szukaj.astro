@@ -1,51 +1,56 @@
 ---
-// Wyszukiwarka: Pagefind (statyczny indeks w /pagefind, bez serwera i bez zewnętrznych usług). Formularz GET ?q=
-// działa z nagłówka i ze stron błędów; wyniki dociąga skrypt dopiero po wpisaniu zapytania. Bez JavaScriptu
-// strona prowadzi do działów i tematów. Noindex: strona wyników nie jest treścią.
+// Wyszukiwarka: najpierw narzędzia z indeksu wyszukiwarki (nazwy, opisy i pytania z FAQ, src/lib/szukaj-narzedzi.ts,
+// ten sam ranking co pod polem na stronie głównej), pod nimi pełny tekst stron narzędzi z Pagefind (statyczny indeks
+// w /pagefind, bez serwera i bez zewnętrznych usług). Formularz GET ?q= działa z nagłówka i ze stron błędów.
+// Bez JavaScriptu strona prowadzi do kategorii narzędzi. Noindex: strona wyników nie jest treścią.
 // CSP tej strony: Pagefind liczy wyniki w WebAssembly, więc script-src dostaje 'wasm-unsafe-eval' (tylko WebAssembly,
 // bez eval()); reszta polityki jak na całym serwisie.
 import Uklad from '../layouts/Uklad.astro';
 import Okruszki from '../components/Okruszki.astro';
 import Ikona from '../components/Ikona.astro';
-import { DZIALY, TEMATY } from '../lib/dane';
+import { KATEGORIE, NARZEDZIA, type KategoriaNarzedzia } from '../data/narzedzia';
 
 Astro.csp?.insertScriptResource("'self'");
 Astro.csp?.insertScriptResource("'wasm-unsafe-eval'");
+const kategorie = (Object.keys(KATEGORIE) as KategoriaNarzedzia[]).filter((k) => NARZEDZIA.some((n) => n.kategoria === k));
 ---
-<Uklad tytul="Szukaj w Rytmie Hali" opis="Wyszukiwarka artykułów i materiałów do pobrania Rytmu Hali: produkcja, magazyn i logistyka, lean, dane i AI, ludzie i szkolenia." noindex>
+<Uklad tytul="Szukaj w Rytmie Hali" opis="Wyszukiwarka narzędzi Rytmu Hali: kalkulatory i ściągi z prawa pracy, wynagrodzeń, urlopów, BHP i uprawnień UDT dla ludzi z hali." noindex bezSzukania>
   <div class="kontener">
     <Okruszki class="mt-4" pozycje={[{ nazwa: 'Szukaj' }]} />
     <h1 class="tytul-xl mt-4">Szukaj</h1>
     <form action="/szukaj" method="get" role="search" class="mt-6 flex max-w-2xl items-stretch" data-formularz>
-      <label for="szukaj-pole" class="sr-only">Czego szukasz?</label>
-      <input id="szukaj-pole" name="q" type="search" class="pole rounded-r-none border-r-0" placeholder="np. przezbrojenie, OEE, kompletacja" autocomplete="off" />
+      <label for="szukaj-pole" class="sr-only">Wpisz pytanie albo nazwę narzędzia</label>
+      <input id="szukaj-pole" name="q" type="search" class="pole min-h-12 rounded-r-none border-r-0 text-[1.0625rem]" placeholder="np. ile za nadgodziny, L4, urlop" autocomplete="off" spellcheck="false" enterkeyhint="search" />
       <button type="submit" class="przycisk przycisk-grafit rounded-l-none"><Ikona nazwa="szukaj" />Szukaj</button>
     </form>
     <p class="meta mt-4 min-h-6" role="status" aria-live="polite" data-status></p>
-    <ol class="max-w-3xl" data-wyniki></ol>
+
+    <section aria-labelledby="wyniki-narzedzia" class="mt-4 max-w-3xl" hidden data-sekcja-narzedzia>
+      <h2 id="wyniki-narzedzia" class="naglowek-wynikow">Narzędzia</h2>
+      <ol class="lista-narzedzi" data-narzedzia></ol>
+    </section>
+    <section aria-labelledby="wyniki-tekst" class="mt-10 max-w-3xl" hidden data-sekcja-tekst>
+      <h2 id="wyniki-tekst" class="naglowek-wynikow">W pełnym tekście stron</h2>
+      <ol data-wyniki></ol>
+    </section>
     <noscript>
-      <p class="mt-4 max-w-2xl">Wyszukiwarka działa w przeglądarce z włączonym JavaScriptem. Bez niego zacznij od działów i tematów poniżej.</p>
+      <p class="mt-4 max-w-2xl">Wyszukiwarka działa w przeglądarce z włączonym JavaScriptem. Bez niego zacznij od kategorii narzędzi poniżej.</p>
     </noscript>
 
-    <div class="mt-12 grid max-w-4xl gap-8 md:grid-cols-2">
-      <section aria-labelledby="dzialy">
-        <h2 id="dzialy" class="font-sans text-kategoria font-bold tracking-[0.08em] text-tekst-drugi uppercase">Działy</h2>
-        <ul class="mt-2 flex flex-wrap gap-2">
-          {DZIALY.map((d) => <li><a href={d.adres} class="przycisk przycisk-obrys">{d.nazwa}</a></li>)}
-        </ul>
-      </section>
-      <section aria-labelledby="tematy">
-        <h2 id="tematy" class="font-sans text-kategoria font-bold tracking-[0.08em] text-tekst-drugi uppercase">Tematy</h2>
-        <ul class="mt-2 flex flex-wrap gap-2">
-          {TEMATY.map((t) => <li><a href={t.adres} class="przycisk przycisk-obrys">{t.nazwa}</a></li>)}
-        </ul>
-      </section>
-    </div>
+    <section aria-labelledby="kategorie" class="mt-12 max-w-4xl">
+      <h2 id="kategorie" class="font-sans text-kategoria font-bold tracking-[0.08em] text-tekst-drugi uppercase">Kategorie narzędzi</h2>
+      <ul class="mt-2 flex flex-wrap gap-2">
+        {kategorie.map((k) => <li><a href={`/narzedzia#${k}`} class="przycisk przycisk-obrys">{KATEGORIE[k].nazwa}</a></li>)}
+        <li><a href="/narzedzia" class="przycisk przycisk-obrys">Wszystkie narzędzia ({NARZEDZIA.length})</a></li>
+      </ul>
+    </section>
   </div>
 </Uklad>
 
 <script>
-  type Wynik = { url: string; excerpt: string; meta: { title?: string; rodzaj?: string } };
+  import { ileNarzedzi, slowa, szukaj as szukajNarzedzi, wierszWyniku, zaladujIndeks } from '../lib/szukaj-klient';
+
+  type Wynik = { url: string; excerpt: string; meta: { title?: string; kategoria?: string } };
   type Pagefind = { search: (q: string) => Promise<{ results: { data: () => Promise<Wynik> }[] }>; options: (o: object) => Promise<void> };
 
   const NA_STRONIE = 20;
@@ -84,12 +89,30 @@ Astro.csp?.insertScriptResource("'wasm-unsafe-eval'");
   /** Fragment z Pagefind ma tekst ze strony (już zakodowany) i znaczniki <mark>; inne znaczniki nie przechodzą. */
   const bezpieczny = (html: string) => html.replace(/<(?!\/?mark>)/g, '&lt;');
 
+  const sekcjaNarzedzia = document.querySelector<HTMLElement>('[data-sekcja-narzedzia]')!;
+  const listaNarzedzi = document.querySelector<HTMLOListElement>('[data-narzedzia]')!;
+  const sekcjaTekst = document.querySelector<HTMLElement>('[data-sekcja-tekst]')!;
+
+  /** Narzędzia z indeksu wyszukiwarki (nazwy, opisy, pytania z FAQ); liczba trafionych albo -1, gdy indeks niedostępny. */
+  async function narzedzia(): Promise<number> {
+    try {
+      const indeks = await zaladujIndeks();
+      const lista = szukajNarzedzi(indeks, q);
+      listaNarzedzi.replaceChildren(...lista.map((w) => wierszWyniku(w, slowa(q), 'wiersz')));
+      sekcjaNarzedzia.hidden = lista.length === 0;
+      return lista.length;
+    } catch {
+      return -1;
+    }
+  }
+
   async function szukaj() {
     if (!q) {
-      status.textContent = 'Wpisz, czego szukasz: zagadnienie, metodę albo wskaźnik.';
+      status.textContent = 'Wpisz pytanie albo nazwę narzędzia, np. ile za nadgodziny, L4, urlop.';
       return;
     }
     status.textContent = 'Szukam…';
+    const ileNarz = await narzedzia();
     try {
       const adres = '/pagefind/pagefind.js';
       const pagefind: Pagefind = await import(/* @vite-ignore */ adres);
@@ -100,13 +123,14 @@ Astro.csp?.insertScriptResource("'wasm-unsafe-eval'");
       const wszystkie = await Promise.all(wynik.results.slice(0, DO_SPRAWDZENIA).map((r) => r.data()));
       const trafione = wszystkie.filter((d) => trafienie(d.excerpt, q));
       const dane = trafione.slice(0, NA_STRONIE);
+      sekcjaTekst.hidden = dane.length === 0;
       lista.replaceChildren(
         ...dane.map((d) => {
           const li = document.createElement('li');
           li.className = 'border-b border-linia py-5';
           const rodzaj = document.createElement('p');
           rodzaj.className = 'kategoria';
-          rodzaj.textContent = d.meta.rodzaj ?? 'Artykuł';
+          rodzaj.textContent = d.meta.kategoria ?? 'Narzędzie';
           const tytul = document.createElement('h2');
           tytul.className = 'tytul-m mt-1';
           const link = document.createElement('a');
@@ -122,17 +146,27 @@ Astro.csp?.insertScriptResource("'wasm-unsafe-eval'");
         }),
       );
       const ile = trafione.length;
-      status.textContent = ile
-        ? `${wyniki(ile)} dla „${q}”${ile > NA_STRONIE ? `, pokazujemy ${NA_STRONIE} najtrafniejszych` : ''}.`
-        : `Brak wyników dla „${q}”. Spróbuj innego słowa albo zajrzyj do działów i tematów poniżej.`;
+      status.textContent =
+        ileNarz > 0 || ile
+          ? `${ileNarz > 0 ? ileNarzedzi(ileNarz) : 'Brak narzędzi w nazwach i pytaniach'} i ${wyniki(ile)} w pełnym tekście dla „${q}”.`
+          : `Brak wyników dla „${q}”. Spróbuj prostszego słowa, np. urlop albo L4, albo zajrzyj do kategorii poniżej.`;
     } catch {
-      status.textContent = 'Wyszukiwarka jest chwilowo niedostępna. Zajrzyj do działów i tematów poniżej.';
+      status.textContent = ileNarz > 0 ? `${ileNarzedzi(ileNarz)} dla „${q}”. Pełny tekst jest chwilowo niedostępny.` : 'Wyszukiwarka jest chwilowo niedostępna. Zajrzyj do kategorii narzędzi poniżej.';
     }
   }
   szukaj();
 </script>
 
 <style>
+  .naglowek-wynikow {
+    margin-bottom: 0.25rem;
+    padding-top: 0.75rem;
+    border-top: 2px solid var(--color-grafit);
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-tekst);
+  }
   /* Wyniki dodaje skrypt, więc bez atrybutu zakresu Astro: reguła globalna. */
   :global(.wynik-fragment mark) {
     background: var(--color-tlo-szare);

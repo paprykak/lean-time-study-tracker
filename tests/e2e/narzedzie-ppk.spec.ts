@@ -17,3 +17,13 @@ test('obniżona wpłata przy wysokiej pensji: komunikat', async ({ page }) => {
   await page.getByLabel('Twoja wpłata podstawowa').selectOption('0.5');
   await expect(page.locator('[data-blad="dane"]')).toContainText('tylko przy pensji do');
 });
+
+test('w 2027 r. próg obniżonej wpłaty z płacy minimalnej 2027 r. (strona zbudowana wcześniej)', async ({ page }) => {
+  await page.clock.setFixedTime(new Date('2027-01-05T10:00:00+01:00'));
+  await page.goto(NARZEDZIE_PPK);
+  await expect(page.locator('#k-pracownik-opis')).toHaveText(/5940,00\szł w\s2027\sr\./);
+  await expect(page.locator('[data-w="rok-placy"]')).toHaveText(/2027\sr\.: 4950,00\szł/);
+  await page.getByLabel('Pensja brutto miesięcznie (zł)').fill('5900');
+  await page.getByLabel('Twoja wpłata podstawowa').selectOption('0.5');
+  await expect(page.locator('[data-blad="dane"]')).toBeHidden();
+});

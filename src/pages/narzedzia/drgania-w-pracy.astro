@@ -30,14 +30,14 @@ const faq = [
   },
   {
     pytanie: 'Czy kobieta w ciąży może pracować przy drganiach?',
-    odpowiedz: `Przy drganiach o ogólnym działaniu na organizm nie może wcale; przy drganiach działających przez ręce tylko do ekspozycji dziennej 1 m/s² i krótkiej 4 m/s² (rozporządzenie w sprawie prac wzbronionych kobietom w ciąży, załącznik, cz. III pkt 4–5). Młodocianym wolno do 1 i 4 m/s² przy drganiach miejscowych oraz ${ms(LIMITY_DRGAN.ogolne.mlodociany.a8!)} i ${ms(LIMITY_DRGAN.ogolne.mlodociany.krotka!)} przy ogólnych.`,
+    odpowiedz: `Przy drganiach o ogólnym działaniu na organizm nie może wcale; przy drganiach działających przez ręce tylko do ekspozycji dziennej 1 m/s² i krótkiej 4 m/s² (rozporządzenie w sprawie prac uciążliwych dla kobiet w ciąży i karmiących, załącznik, cz. III pkt 4–5). Młodocianym wolno do 1 i 4 m/s² przy drganiach miejscowych oraz ${ms(LIMITY_DRGAN.ogolne.mlodociany.a8!)} i ${ms(LIMITY_DRGAN.ogolne.mlodociany.krotka!)} przy ogólnych.`,
   },
 ];
 ---
 <StronaNarzedzia
   slug="drgania-w-pracy"
   tytul="Drgania w pracy: normy i ekspozycja A(8)"
-  opis="Policz ekspozycję dzienną na drgania A(8) przy szlifierce, młocie albo wózku i porównaj z normą: 2,8 m/s² dla rąk, 0,8 m/s² dla całego ciała, próg 2,5 i 0,5 m/s²."
+  opis="Policz dzienną dawkę drgań A(8) przy szlifierce, młocie lub wózku i porównaj z normą: 2,8 m/s² dla rąk, 0,8 m/s² dla całego ciała, próg 2,5 i 0,5 m/s²."
   h1="Drgania w pracy: ekspozycja i normy"
   lead="Drgania z narzędzi i maszyn ocenia się dla całej zmiany. Wybierz rodzaj drgań, wpisz przyspieszenia z pomiaru albo z deklaracji producenta i czas pracy, a policzymy ekspozycję dzienną A(8)."
   faq={faq}
@@ -49,7 +49,7 @@ const faq = [
         <label for="d-rodzaj" class="etykieta-pola">Rodzaj drgań</label>
         <select id="d-rodzaj" name="rodzaj" class="pole mt-1">
           <option value="miejscowe" selected>Przez ręce (narzędzia ręczne)</option>
-          <option value="ogolne">Na całe ciało (siedzisko, podest)</option>
+          <option value="ogolne">Na całe ciało (siedzisko)</option>
         </select>
       </div>
       <div class="mt-4">
@@ -109,7 +109,7 @@ const faq = [
     <h2 id="zasady">Normy i obowiązki pracodawcy</h2>
     <ul>
       <li>Drgania przez kończyny górne: A(8) do {ms(lm.a8!)}, ekspozycja do 30 minut do {ms(lm.krotka!)}; drgania ogólne: {ms(lo.a8!)} i {ms(lo.krotka!)} (załącznik do rozporządzenia z 12 czerwca 2018 r., część B, pkt B).</li>
-      <li>Próg działania: {ms(PROG_DZIALANIA_DRGAN.miejscowe)} dla drgań miejscowych, {ms(PROG_DZIALANIA_DRGAN.ogolne)} dla ogólnych (załącznik do rozporządzenia z 5 sierpnia 2005 r.). Od progu: program ograniczenia narażenia (§ 5 ust. 2 pkt 2), a przy zimnie i wilgoci odzież ochronna przy drganiach ogólnych i rękawice przy miejscowych (§ 8).</li>
+      <li>Próg działania: {ms(PROG_DZIALANIA_DRGAN.miejscowe)} dla drgań miejscowych, {ms(PROG_DZIALANIA_DRGAN.ogolne)} dla ogólnych (załącznik do rozporządzenia z 5 sierpnia 2005 r.). Od osiągnięcia progu: program ograniczenia narażenia (§ 5 ust. 2 pkt 2); powyżej progu przy zimnie i wilgoci także odzież ochronna przy drganiach ogólnych i rękawice przy miejscowych (§ 8).</li>
       <li>Powyżej NDN: niezwłoczne ograniczenie narażenia, ustalenie przyczyn, dobór środków ochronnych i działań zapobiegawczych (§ 9 ust. 2).</li>
       <li>Kobiety w ciąży: drgania przez ręce do 1 i 4 m/s², drgania ogólne wcale; młodociani: przez ręce do 1 i 4 m/s², ogólne do {ms(LIMITY_DRGAN.ogolne.mlodociany.a8!)} i {ms(LIMITY_DRGAN.ogolne.mlodociany.krotka!)}.</li>
     </ul>
@@ -120,13 +120,15 @@ const faq = [
       A(8) to pierwiastek z sumy (przyspieszenie² · czas w godzinach) podzielonej przez 8. Dla drgań przez ręce wpisz
       sumę wektorową z trzech kierunków (a<sub>hv</sub>), dla drgań ogólnych przyspieszenie dominujące spośród 1,4·a<sub>wx</sub>,
       1,4·a<sub>wy</sub> i a<sub>wz</sub>, tak jak opisuje je załącznik. Definicje i metody pomiaru określają Polskie Normy.
-      Wynik porównujemy z NDN (nie może być przekroczone) i z progiem działania (obowiązki zaczynają się po jego
-      przekroczeniu).
+      Wynik porównujemy z NDN (nie może być przekroczone) i z progiem działania: program ograniczania drgań trzeba
+      wprowadzić już po osiągnięciu progu (§ 5 ust. 2), a rękawice i odzież ochronną po jego przekroczeniu (§ 8).
+      Z normami porównujemy wartość przed zaokrągleniem do 0,01 m/s².
     </p>
   </Fragment>
 </StronaNarzedzia>
 
 <script>
+  import { typografia } from '../../lib/typografia.mjs';
   import { wpisanaLiczba } from '../../lib/narzedzia/format';
   import { ocenaDrgan, PROG_DZIALANIA_DRGAN, type GrupaDrgan, type OkresDrgan, type RodzajDrgan } from '../../lib/narzedzia/drgania';
 
@@ -134,8 +136,12 @@ const faq = [
   if (form) {
     const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
     const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
-    const ms = (x: number) => `${x.toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} m/s²`;
+    const ms = (x: number) => `${x.toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} m/s²`;
+    const oznacz = (zle: string[]) => {
+      for (const p of form.querySelectorAll<HTMLInputElement>('input[type="text"]')) p.setAttribute('aria-invalid', zle.includes(p.name) ? 'true' : 'false');
+    };
     const przelicz = () => {
+      const zle: string[] = [];
       const rodzaj = el('rodzaj').value as RodzajDrgan;
       const grupa = el('grupa').value as GrupaDrgan;
       const okresy: OkresDrgan[] = [];
@@ -147,16 +153,19 @@ const faq = [
         const a = wpisanaLiczba(ta);
         const godziny = wpisanaLiczba(tc);
         if (!(a >= 0 && a <= 100) || !(godziny > 0 && godziny <= 24)) {
-          blad = `Drgania ${i + 1}: wpisz przyspieszenie od 0 do 100 m/s² i czas w godzinach, na przykład 5 i 2.`;
+          if (!(a >= 0 && a <= 100)) zle.push(`a-${i}`);
+          if (!(godziny > 0 && godziny <= 24)) zle.push(`czas-${i}`);
+          blad = `Drgania ${i + 1}: wpisz przyspieszenie od 0 do 100 m/s² i czas w godzinach, na przykład 5 i 2.`;
           break;
         }
         okresy.push({ a, godziny });
       }
-      if (!blad && !okresy.length) blad = 'Wpisz co najmniej jedno przyspieszenie drgań i czas.';
+      if (!blad && !okresy.length) (blad = 'Wpisz co najmniej jedno przyspieszenie drgań i czas.'), zle.push('a-0', 'czas-0');
       else if (!blad && okresy.reduce((s, o) => s + o.godziny, 0) > 24) blad = 'Łączny czas nie może przekroczyć 24 godzin.';
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
       b.hidden = !blad;
-      b.textContent = blad ?? '';
+      b.textContent = typografia(blad ?? '');
+      oznacz(zle);
       const status = w('status');
       if (blad) {
         w('a8').textContent = '—';
@@ -165,28 +174,30 @@ const faq = [
       }
       const r = ocenaDrgan(okresy, rodzaj, grupa);
       const szczegolna = grupa !== 'dorosly';
-      w('a8').textContent = ms(r.a8);
+      w('a8').textContent = typografia(ms(r.a8));
       status.hidden = false;
       if (r.wzbronione) {
         status.dataset.status = 'po-terminie';
-        status.textContent = 'Praca wzbroniona w ciąży';
-        w('obowiazki').textContent = 'Kobiecie w ciąży nie wolno pracować przy drganiach o ogólnym działaniu na organizm (wykaz prac wzbronionych).';
+        status.textContent = typografia('Praca wzbroniona w ciąży');
+        w('obowiazki').textContent = typografia('Kobiecie w ciąży nie wolno pracować przy drganiach o ogólnym działaniu na organizm (wykaz prac wzbronionych).');
       } else if (r.przekroczone) {
         status.dataset.status = 'po-terminie';
-        status.textContent = szczegolna ? 'Praca wzbroniona przy takich drganiach' : r.przekroczoneKrotkie ? 'Przekroczona norma dla ekspozycji do 30 minut' : `Przekroczona norma ${ms(r.limit.a8!)}`;
-        w('obowiazki').textContent = szczegolna
+        status.textContent = typografia(szczegolna ? 'Praca wzbroniona przy takich drganiach' : r.przekroczoneKrotkie ? 'Przekroczona norma dla ekspozycji do 30 minut' : `Przekroczona norma ${ms(r.limit.a8!)}`);
+        w('obowiazki').textContent = typografia(szczegolna
           ? 'Pracodawca nie może zatrudniać tej osoby przy takich drganiach (wykaz prac wzbronionych).'
-          : 'Niezwłocznie ograniczyć narażenie poniżej NDN, ustalić przyczyny, dobrać środki ochronne i działania zapobiegawcze (§ 9 ust. 2).';
-      } else if (r.powyzejProgu && !szczegolna) {
+          : 'Niezwłocznie ograniczyć narażenie poniżej NDN, ustalić przyczyny, dobrać środki ochronne i działania zapobiegawcze (§ 9 ust. 2).');
+      } else if (r.osiagaProg && !szczegolna) {
         status.dataset.status = 'wkrotce';
-        status.textContent = `Powyżej progu działania ${ms(PROG_DZIALANIA_DRGAN[rodzaj])}`;
-        w('obowiazki').textContent = 'Wprowadzić program ograniczenia narażenia na drgania (§ 5 ust. 2 pkt 2).';
+        status.textContent = typografia(`${r.powyzejProgu ? 'Powyżej progu' : 'Osiągnięty próg'} działania ${ms(PROG_DZIALANIA_DRGAN[rodzaj])}`);
+        w('obowiazki').textContent = typografia(r.powyzejProgu
+          ? 'Wprowadzić program ograniczenia narażenia na drgania (§ 5 ust. 2 pkt 2), a przy zimnie i wilgoci dać rękawice albo odzież ochronną (§ 8).'
+          : 'Wprowadzić program ograniczenia narażenia na drgania (§ 5 ust. 2 pkt 2).');
       } else {
         status.dataset.status = 'w-terminie';
-        status.textContent = szczegolna ? 'W limicie dla tej osoby' : `Poniżej progu działania ${ms(PROG_DZIALANIA_DRGAN[rodzaj])}`;
-        w('obowiazki').textContent = 'Ograniczać ryzyko do najniższego możliwego poziomu (§ 5 ust. 1).';
+        status.textContent = typografia(szczegolna ? 'W limicie dla tej osoby' : `Poniżej progu działania ${ms(PROG_DZIALANIA_DRGAN[rodzaj])}`);
+        w('obowiazki').textContent = typografia('Ograniczać ryzyko do najniższego możliwego poziomu (§ 5 ust. 1).');
       }
-      w('limit').textContent = r.limit.a8 === null ? 'każda praca wzbroniona' : `A(8) ${ms(r.limit.a8)}, do 30 minut ${ms(r.limit.krotka!)}`;
+      w('limit').textContent = typografia(r.limit.a8 === null ? 'każda praca wzbroniona' : `A(8) ${ms(r.limit.a8)}, do 30 minut ${ms(r.limit.krotka!)}`);
     };
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);

@@ -1,0 +1,248 @@
+---
+// Praca w dniu wolnym z przeciętnie pięciodniowego tygodnia (zwykle w wolną sobotę): dzień wolny do końca okresu
+// rozliczeniowego (art. 151^3 Kp) albo nadgodziny z dodatkiem 100% (art. 151^1 § 2). Logika: src/lib/narzedzia/praca-w-sobote.ts.
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { PORY_NOCNE, opisWyniku, pracaWSobote } from '../../lib/narzedzia/praca-w-sobote';
+
+const D = { data: '2026-11-21', od: '06:00', do: '16:00', okres: 1, poraNocna: '22:00', stawka: 35 };
+const o = opisWyniku(pracaWSobote(D), D.data);
+
+const faq = [
+  {
+    pytanie: 'Czy za pracę w sobotę należy się dzień wolny?',
+    odpowiedz: 'Tak, jeśli sobota jest Twoim dniem wolnym z grafiku w przeciętnie pięciodniowym tygodniu, a pracujesz w niej z powodu akcji ratowniczej, awarii albo szczególnych potrzeb pracodawcy. Wtedy przysługuje inny dzień wolny od pracy (art. 151^3 Kodeksu pracy w związku z art. 151 § 1).',
+  },
+  {
+    pytanie: 'Praca w sobotę: 50 czy 100%?',
+    odpowiedz: 'Gdy dostaniesz dzień wolny, pierwsze 8 godzin rozlicza ten dzień, a za godziny po 8. godzinie przysługuje dodatek 50%, w porze nocnej 100% (art. 151^1 § 1 Kodeksu pracy). Gdy dnia wolnego nie dostaniesz do końca okresu rozliczeniowego i przez to przekroczysz przeciętnie 40 godzin w tygodniu w okresie, te godziny są nadgodzinami z dodatkiem 100% (art. 151^1 § 2). Jeśli przez nieobecności normy nie przekroczysz, należy się tylko normalne wynagrodzenie.',
+  },
+  {
+    pytanie: 'Do kiedy odebrać dzień wolny za sobotę?',
+    odpowiedz: 'Do końca okresu rozliczeniowego, w terminie uzgodnionym z Tobą (art. 151^3 Kodeksu pracy). Przy okresie miesięcznym to ostatni dzień miesiąca, w którym pracujesz w sobotę.',
+  },
+  {
+    pytanie: 'Czy za 2 godziny pracy w sobotę należy się cały dzień wolny?',
+    odpowiedz: 'Przepis mówi o innym dniu wolnym od pracy, a nie o czasie wolnym w liczbie przepracowanych godzin (art. 151^3 Kodeksu pracy). Nie uzależnia go od liczby godzin pracy w dniu wolnym.',
+  },
+  {
+    pytanie: 'Czy zamiast dnia wolnego można dostać pieniądze?',
+    odpowiedz: 'Przepis przewiduje za pracę w dniu wolnym inny dzień wolny (art. 151^3 Kodeksu pracy). Pracodawca nie może zamiast niego po prostu zapłacić. Gdy go nie udzieli do końca okresu rozliczeniowego, a przez to przekroczysz przeciętną normę tygodniową, te godziny są nadgodzinami. Należy się za nie normalne wynagrodzenie oraz dodatek 100% (art. 151^1 § 1 i 2). Bez przekroczenia normy, np. przez nieobecności, należy się tylko normalne wynagrodzenie.',
+  },
+  {
+    pytanie: 'Czym to się różni od dnia wolnego za święto w sobotę?',
+    odpowiedz: 'Święto przypadające w dniu innym niż niedziela, także w sobotę, obniża wymiar czasu pracy w okresie rozliczeniowym o 8 godzin (art. 130 § 2 Kodeksu pracy). W okresie masz więc o 8 godzin pracy mniej. To nie jest rekompensata za pracę w sobotę. Praca w samo święto ma osobne zasady (art. 151^11).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="praca-w-sobote"
+  tytul="Praca w sobotę: dzień wolny, 50 czy 100%"
+  opis="Praca w wolną sobotę: do kiedy dzień wolny w zamian, kiedy dodatek 50%, a kiedy 100%, i ile to złotych, gdy dnia wolnego nie dostaniesz."
+  h1="Praca w wolną sobotę: dzień wolny i dodatki"
+  lead="Za pracę w dzień wolny z pięciodniowego tygodnia, zwykle w sobotę, zleconą jako nadgodziny, należy się inny dzień wolny do końca okresu rozliczeniowego. Godziny po 8. godzinie to nadgodziny z dodatkiem. Wpisz datę i godziny, a pokażemy termin i dodatki w obu wariantach."
+  faq={faq}
+  objasnienia={['mrpipsRozliczanie', 'rodzinaipracaSobota']}
+>
+  <form class="kalkulator" data-sobota novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twój dzień pracy</h2>
+      <div class="mt-4">
+        <label for="s-data" class="etykieta-pola">Data pracy (dzień wolny z grafiku)</label>
+        <input id="s-data" name="data" type="date" class="pole mt-1 max-w-56" min="2025-01-01" max="2030-12-31" value={D.data} aria-describedby="s-blad-data" />
+        <p id="s-blad-data" class="blad-pola" data-blad="data" hidden></p>
+      </div>
+      <div class="mt-4 grid grid-cols-2 gap-4">
+        <div>
+          <label for="s-od" class="etykieta-pola">Od</label>
+          <input id="s-od" name="od" type="time" class="pole mt-1" value={D.od} aria-describedby="s-blad-godziny" />
+        </div>
+        <div>
+          <label for="s-do" class="etykieta-pola">Do</label>
+          <input id="s-do" name="do" type="time" class="pole mt-1" value={D.do} aria-describedby="s-blad-godziny" />
+        </div>
+      </div>
+      <p class="meta mt-1">Zmiana może kończyć się po północy.</p>
+      <p id="s-blad-godziny" class="blad-pola" data-blad="godziny" hidden></p>
+      <div class="mt-4">
+        <label for="s-okres" class="etykieta-pola">Okres rozliczeniowy (od stycznia)</label>
+        <select id="s-okres" name="okres" class="pole mt-1">
+          <option value="1" selected>1 miesiąc</option>
+          <option value="2">2 miesiące</option>
+          <option value="3">3 miesiące</option>
+          <option value="4">4 miesiące</option>
+          <option value="6">6 miesięcy</option>
+          <option value="12">12 miesięcy</option>
+        </select>
+      </div>
+      <div class="mt-4 grid grid-cols-2 gap-4">
+        <div>
+          <label for="s-pora" class="etykieta-pola">Pora nocna od</label>
+          <select id="s-pora" name="pora" class="pole mt-1">
+            {PORY_NOCNE.map((p) => <option value={p} selected={p === D.poraNocna}>{p}</option>)}
+          </select>
+        </div>
+        <div>
+          <label for="s-stawka" class="etykieta-pola">Stawka za godzinę (zł)</label>
+          <input id="s-stawka" name="stawka" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value={String(D.stawka)} aria-describedby="s-stawka-opis s-blad-stawka" />
+        </div>
+      </div>
+      <p id="s-stawka-opis" class="meta mt-1">Puste pole: bez kwot, same procenty.</p>
+      <p id="s-blad-stawka" class="blad-pola" data-blad="stawka" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <div aria-live="polite">
+        <h2 id="wynik-tytul" class="etykieta" data-w="naglowek">{o.naglowek}</h2>
+        <p class="wynik-data" data-w="data">{o.data}</p>
+        <p class="meta mt-1" data-w="pod-data">{o.podData}</p>
+        <dl class="wynik-lista">
+          <div><dt>Godziny pracy</dt><dd data-w="godziny">{o.godziny}</dd></div>
+        </dl>
+        <div data-w="warianty">
+          <h3 class="etykieta mt-6">Gdy dostaniesz dzień wolny</h3>
+          <dl class="wynik-lista mt-2" data-w="a">
+            {o.a.map(([dt, dd]) => <div><dt>{dt}</dt><dd>{dd}</dd></div>)}
+          </dl>
+          <h3 class="etykieta mt-6" data-w="b-tytul">{o.bTytul}</h3>
+          <dl class="wynik-lista mt-2" data-w="b">
+            {o.b.map(([dt, dd]) => <div><dt>{dt}</dt><dd>{dd}</dd></div>)}
+          </dl>
+        </div>
+        <div data-w="uwagi">
+          {o.uwagi.map((u) => <p class="wynik-uwaga">{u}</p>)}
+        </div>
+      </div>
+      <p class="meta mt-4">Dotyczy pracy w dniu wolnym z grafiku przy przeciętnie pięciodniowym tygodniu. Okres liczymy od stycznia; jeśli Twój zaczyna się w innym miesiącu, sprawdź jego koniec w regulaminie pracy.</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Powyżej przykład: sobota 21 listopada 2026 r., 6:00–16:00, stawka 35 zł. Zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Za pracę w dniu wolnym z rozkładu czasu pracy w przeciętnie pięciodniowym tygodniu pracy przysługuje inny dzień wolny
+      od pracy. Dotyczy to pracy z powodu akcji ratowniczej, awarii albo szczególnych potrzeb pracodawcy. Dzień wolny
+      pracodawca udziela do końca okresu rozliczeniowego, w terminie uzgodnionym z pracownikiem (art. 151<sup>3</sup>
+      w związku z art. 151 § 1 Kodeksu pracy).
+      Przy szczególnych potrzebach pracodawcy nadgodzin może być najwyżej 150 w roku kalendarzowym, chyba że układ zbiorowy
+      albo regulamin pracy ustala inną liczbę, a gdy pracodawca nie ma układu ani obowiązku regulaminu, umowa o pracę
+      (art. 151 § 3 i 4).
+    </p>
+    <p>
+      <strong>Termin.</strong> Pokazujemy ostatni dzień okresu rozliczeniowego liczonego od stycznia. Przepis wskazuje tylko
+      koniec okresu i uzgodnienie terminu z Tobą. Nie mówi, czy dzień wolny można dać przed pracą w dniu wolnym. <strong>Cały dzień.</strong> Przepis mówi o „innym dniu wolnym od pracy”, a nie o czasie wolnym w liczbie przepracowanych
+      godzin, i nie uzależnia go od liczby godzin.
+    </p>
+    <p>
+      <strong>Kolejność godzin.</strong> Czas pracy nie może przekraczać 8 godzin na dobę (art. 129 § 1). Pierwsze 8 godzin pracy
+      tego dnia rozlicza dzień wolny. Godziny po 8. godzinie to nadgodziny dobowe: oprócz normalnego wynagrodzenia dodatek 100%
+      za te, które przypadają w porze nocnej, i 50% za pozostałe (art. 151<sup>1</sup> § 1 pkt 1 lit. a i pkt 2). Pora nocna
+      to 8 godzin między 21:00 a 7:00 (art. 151<sup>7</sup> § 1); które dokładnie, ustala pracodawca w regulaminie pracy (art. 104<sup>1</sup> § 1 pkt 4).
+      Domyślnie liczymy od 22:00.
+      Wolna sobota nie jest niedzielą, świętem ani dniem wolnym za nie, więc dodatek 100% z pkt 1 lit. b i c jej nie dotyczy.
+    </p>
+    <p>
+      <strong>Gdy dnia wolnego nie dostaniesz.</strong> Pierwsze 8 godzin wychodzi wtedy ponad wymiar okresu rozliczeniowego.
+      To nadgodziny z przekroczenia przeciętnej tygodniowej normy, za które przysługuje normalne wynagrodzenie i dodatek 100%
+      (art. 151<sup>1</sup> § 1 i 2). Godziny po 8. godzinie mają już dodatek za nadgodziny dobowe, więc § 2 go nie podwaja.
+      Zakładamy, że w pozostałe dni okresu pracujesz według grafiku, bez godzin niedopracowanych.
+    </p>
+    <p>
+      <strong>Inne założenia.</strong> Zmiana zaczyna się co najmniej 24 godziny po początku poprzedniej (doba pracownicza,
+      art. 128 § 3 pkt 1); inaczej część godzin może być nadgodzinami w dobie z dnia poprzedniego. Kwoty liczymy od stawki
+      za godzinę, którą wpiszesz; podstawą dodatku jest wynagrodzenie z osobistego zaszeregowania (art. 151<sup>1</sup> § 3).
+      Dodatku za pracę w nocy (art. 151<sup>8</sup>) tu nie doliczamy; policzysz go w <a href="/narzedzia/dodatek-za-prace-w-nocy">kalkulatorze dodatku za pracę w nocy</a>. Praca w sobotę może skrócić
+      odpoczynek tygodniowy: przysługuje co najmniej 35 godzin nieprzerwanego odpoczynku w tygodniu (art. 133 § 1).
+    </p>
+    <p>
+      Niedziele i święta mają osobne zasady (art. 151<sup>9</sup>–151<sup>11</sup>): sprawdzisz je w <a href="/narzedzia/praca-w-niedziele">kalkulatorze pracy w niedzielę i święto</a>. Nadgodziny z całego dnia policzysz
+      w <a href="/narzedzia/kalkulator-nadgodzin">kalkulatorze nadgodzin</a>, nadgodziny ponad wymiar okresu w narzędziu <a href="/narzedzia/nadgodziny-sredniotygodniowe">nadgodziny średniotygodniowe</a>, a święta i wymiar czasu pracy
+      w <a href="/narzedzia/dni-wolne-od-pracy">kalendarzu dni wolnych od pracy</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { opisWyniku, pracaWSobote, type Wiersz } from '../../lib/narzedzia/praca-w-sobote';
+  import { minuty } from '../../lib/narzedzia/czas-pracy';
+  import { poprawnaData } from '../../lib/narzedzia/terminy';
+  import { wpisanaLiczba } from '../../lib/narzedzia/format';
+  import { typografia } from '../../lib/typografia.mjs';
+
+  const form = document.querySelector<HTMLFormElement>('[data-sobota]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const bledy = (k: string, tekst: string | null, pola: string[]) => {
+      const b = form.querySelector<HTMLElement>(`[data-blad="${k}"]`)!;
+      b.hidden = !tekst;
+      b.textContent = tekst ?? '';
+      for (const p of pola) {
+        if (tekst) el(p).setAttribute('aria-invalid', 'true');
+        else el(p).removeAttribute('aria-invalid');
+      }
+    };
+    const lista = (dl: HTMLElement, wiersze: Wiersz[]) => {
+      dl.replaceChildren(
+        ...wiersze.map(([t, d]) => {
+          const div = document.createElement('div');
+          const dt = document.createElement('dt');
+          const dd = document.createElement('dd');
+          dt.textContent = typografia(t);
+          dd.textContent = typografia(d);
+          div.append(dt, dd);
+          return div;
+        }),
+      );
+    };
+    const przelicz = () => {
+      const data = el('data').value;
+      const od = el('od').value;
+      const doG = el('do').value;
+      const stawkaTxt = el('stawka').value.trim();
+      const stawka = stawkaTxt ? wpisanaLiczba(stawkaTxt) : null;
+      const bladData = !poprawnaData(data) || data < '2025-01-01' || data > '2030-12-31' ? 'Wpisz datę z lat 2025–2030.' : null;
+      const mOd = minuty(od);
+      const mDo = minuty(doG);
+      const bladGodzin = mOd === null || mDo === null ? 'Wpisz godziny pracy, np. 6:00 i 16:00.' : mOd === mDo ? 'Koniec pracy musi być inny niż początek.' : null;
+      const bladStawki = stawka !== null && Number.isNaN(stawka) ? 'Wpisz stawkę jako liczbę nieujemną, np. 35,50.' : null;
+      const zlaGodzina = [mOd === null ? 'od' : null, mDo === null ? 'do' : null].filter((x): x is string => x !== null);
+      bledy('data', bladData, ['data']);
+      bledy('godziny', bladGodzin, []);
+      for (const p of ['od', 'do']) el(p).removeAttribute('aria-invalid');
+      if (bladGodzin) for (const p of zlaGodzina.length ? zlaGodzina : ['od', 'do']) el(p).setAttribute('aria-invalid', 'true');
+      bledy('stawka', bladStawki, ['stawka']);
+      if (bladData || bladGodzin || bladStawki) {
+        w('naglowek').textContent = typografia('Dzień wolny za tę pracę do');
+        w('data').textContent = '—';
+        w('pod-data').textContent = typografia('Popraw dane w formularzu.');
+        w('godziny').textContent = '—';
+        w('warianty').hidden = true;
+        w('uwagi').replaceChildren();
+        return;
+      }
+      const r = pracaWSobote({ data, od, do: doG, okres: Number(el('okres').value), poraNocna: el('pora').value, stawka });
+      const o = opisWyniku(r, data);
+      w('naglowek').textContent = typografia(o.naglowek);
+      w('data').textContent = typografia(o.data);
+      w('pod-data').textContent = typografia(o.podData);
+      w('godziny').textContent = typografia(o.godziny);
+      w('warianty').hidden = r.innaZasada;
+      lista(w('a'), o.a);
+      lista(w('b'), o.b);
+      w('b-tytul').textContent = typografia(o.bTytul);
+      w('uwagi').replaceChildren(
+        ...o.uwagi.map((u) => {
+          const p = document.createElement('p');
+          p.className = 'wynik-uwaga';
+          p.textContent = typografia(u);
+          return p;
+        }),
+      );
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    przelicz();
+  }
+</script>

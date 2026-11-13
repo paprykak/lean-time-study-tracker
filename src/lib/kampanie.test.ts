@@ -3,7 +3,7 @@ import { kampanieDlaMiejsca, POLE_KREACJI, trwa, widocznaBezSkryptu, wybierz } f
 import { FORMATY } from './reklamy';
 
 const d = (s: string) => new Date(s);
-const k = (id: string, od: string, doDaty: string, miejsca = ['glowna-gora'], aktywna = true) => ({ id, od: d(od), do: d(doDaty), miejsca, aktywna });
+const k = (id: string, od: string, doDaty: string, miejsca = ['glowna'], aktywna = true) => ({ id, od: d(od), do: d(doDaty), miejsca, aktywna });
 const TERAZ = d('2026-11-06T12:00:00+01:00');
 
 describe('kampanie w slocie', () => {
@@ -23,11 +23,11 @@ describe('kampanie w slocie', () => {
       k('zakonczona', '2026-10-01', '2026-11-01'),
       k('za-tydzien', '2026-11-13', '2026-12-13'),
       k('za-rok', '2027-11-01', '2027-12-01'),
-      k('inne-miejsce', '2026-11-01', '2026-12-01', ['artykul-bok']),
-      k('wylaczona', '2026-11-01', '2026-12-01', ['glowna-gora'], false),
+      k('inne-miejsce', '2026-11-01', '2026-12-01', ['inne']),
+      k('wylaczona', '2026-11-01', '2026-12-01', ['glowna'], false),
       k('a-trwa-tez', '2026-11-01', '2026-11-20'),
     ];
-    expect(kampanieDlaMiejsca(wpisy, 'glowna-gora', TERAZ).map((x) => x.id)).toEqual(['a-trwa-tez', 'trwa', 'za-tydzien']);
+    expect(kampanieDlaMiejsca(wpisy, 'glowna', TERAZ).map((x) => x.id)).toEqual(['a-trwa-tez', 'trwa', 'za-tydzien']);
   });
 
   it('bez JavaScriptu widać pierwszą trwającą, a gdy żadna nie trwa, autopromocję (-1)', () => {

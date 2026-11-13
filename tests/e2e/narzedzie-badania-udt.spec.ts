@@ -46,3 +46,23 @@ test('tabela z rozporządzenia działa bez JavaScriptu', async ({ browser }) => 
   await expect(p.getByRole('row', { name: /Układnica magazynowa/ })).toContainText('co rok');
   await ctx.close();
 });
+
+test('lista ma krótkie nazwy, a pełna nazwa z załącznika jest w opisie pod polem', async ({ page }) => {
+  await expect(page.getByLabel('Urządzenie', { exact: true }).locator('option:checked')).toHaveText('Wózek z siedziskiem');
+  await expect(page.locator('[data-w="rodzaj-opis"]')).toHaveText(/^Wózek\swidłowy\si\sinny\spodnośnikowy\sz\ssiedziskiem\salbo\spodestem\soperatora\.\sDozór\spełny/);
+});
+
+test.describe('telefon 320 px', () => {
+  test.use({ viewport: { width: 320, height: 640 } });
+  test('żadna opcja listy urządzeń nie jest szersza niż pole', async ({ page }) => {
+    const uciete = await page.locator('#utb-rodzaj').evaluate((el) => {
+      const s = el as HTMLSelectElement;
+      const styl = getComputedStyle(s);
+      const ctx = document.createElement('canvas').getContext('2d')!;
+      ctx.font = `${styl.fontWeight} ${styl.fontSize} ${styl.fontFamily}`;
+      const miejsce = s.clientWidth - 40;
+      return [...s.options].filter((o) => ctx.measureText(o.text).width > miejsce).map((o) => o.text);
+    });
+    expect(uciete).toEqual([]);
+  });
+});

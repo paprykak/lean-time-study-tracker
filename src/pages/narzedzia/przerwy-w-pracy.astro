@@ -76,6 +76,11 @@ const faq = [
         <input type="checkbox" name="monitor" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
         <span>Pracuję przy monitorze co najmniej połowę zmiany</span>
       </label>
+      <div class="mt-3" data-tylko-monitor hidden>
+        <label for="pr-monitor-h" class="etykieta-pola">Godziny przy monitorze na zmianie</label>
+        <input id="pr-monitor-h" name="monitorGodzin" class="pole mt-1 max-w-32" type="text" inputmode="decimal" autocomplete="off" value="" aria-describedby="pr-monitor-opis pr-blad" />
+        <p id="pr-monitor-opis" class="meta mt-1">Puste pole: cała zmiana. Przerwa należy się po każdej godzinie pracy przy monitorze.</p>
+      </div>
       <label class="mt-3 flex items-start gap-3 text-[0.9375rem]">
         <input type="checkbox" name="niepelnosprawny" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
         <span>Mam orzeczenie o niepełnosprawności</span>
@@ -118,13 +123,23 @@ const faq = [
     <p>
       Przy pracy przy monitorze przez co najmniej połowę zmiany należy się co najmniej 5 minut przerwy po każdej godzinie,
       chyba że pracodawca przeplata ją z inną pracą (§ 7 rozporządzenia w sprawie stanowisk z monitorami ekranowymi).
-      Liczymy przerwę po każdej pełnej godzinie zmiany poza ostatnią: przy 8 godzinach to 7 przerw po 5 minut. Osoba
+      Liczymy przerwę po każdej pełnej godzinie pracy przy monitorze, ale nie po ostatniej godzinie zmiany: przy 8 godzinach
+      przy monitorze to 7 przerw po 5 minut, przy 4 godzinach 4 przerwy. Osoba
       z niepełnosprawnością ma dodatkowe 15 minut (art. 17 ustawy o rehabilitacji), a jej czas pracy i urlop policzy
       <a href="/narzedzia/pracownik-niepelnosprawny">kalkulator dla pracownika z niepełnosprawnością</a>.
     </p>
     <p>
       W ciąży przy monitorze przerwa należy się po każdych 50 minutach, a przy pracy na stojąco po 15 minutach; policzy je
       <a href="/narzedzia/praca-w-ciazy">kalkulator pracy w ciąży</a>.
+    </p>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Przerwy z art. 134 zależą od dobowego wymiaru czasu pracy na tej zmianie: 15 minut od 6 godzin, kolejne 15 minut
+      ponad 9 i ponad 16 godzin. Przepis nie mówi, czy 30 minut dla młodocianego (art. 202 § 3<sup>1</sup>) zastępuje
+      15 minut z art. 134. Pokazujemy obie przerwy, czyli wariant korzystniejszy dla pracownika; część komentatorów uważa,
+      że należy się tylko 30 minut. Przerwy na karmienie liczymy przy pracy od 4 godzin, a przerwę niewliczaną z art. 141
+      tylko wtedy, gdy ją wpiszesz.
     </p>
   </Fragment>
 </StronaNarzedzia>
@@ -133,6 +148,7 @@ const faq = [
   import { przerwy } from '../../lib/narzedzia/przerwy';
   import { godzinyIMinuty } from '../../lib/narzedzia/czas-pracy';
   import { wpisanaLiczba } from '../../lib/narzedzia/format';
+  import { typografia } from '../../lib/typografia.mjs';
 
   const form = document.querySelector<HTMLFormElement>('[data-przerwy]');
   if (form) {
@@ -142,10 +158,18 @@ const faq = [
       const h = wpisanaLiczba(pole('godziny').value);
       const n = wpisanaLiczba(pole('niewliczana').value || '0');
       const b = form.querySelector<HTMLElement>('[data-blad="godziny"]')!;
-      const blad = !(h > 0 && h <= 24) ? 'Wpisz wymiar od 1 do 24 godzin, na przykład 8 albo 12.' : !(n >= 0 && n <= 60) ? 'Przerwa niewliczana: od 0 do 60 minut.' : null;
+      const monitor = pole('monitor').checked;
+      form.querySelector<HTMLElement>('[data-tylko-monitor]')!.hidden = !monitor;
+      const mh = wpisanaLiczba(pole('monitorGodzin').value || String(h));
+      const zlyMonitor = monitor && h > 0 && h <= 24 && !(mh >= h / 2 && mh <= h);
+      const blad = !(h > 0 && h <= 24) ? 'Wpisz wymiar od 1 do 24 godzin, na przykład 8 albo 12.'
+        : !(n >= 0 && n <= 60) ? 'Przerwa niewliczana: od 0 do 60 minut.'
+        : zlyMonitor ? 'Godziny przy monitorze: od połowy do całej zmiany (poniżej połowy ta przerwa nie przysługuje).'
+        : null;
       b.hidden = !blad;
-      b.textContent = blad ?? '';
-      pole('godziny').setAttribute('aria-invalid', blad ? 'true' : 'false');
+      b.textContent = typografia(blad ?? '');
+      pole('godziny').setAttribute('aria-invalid', blad && !zlyMonitor ? 'true' : 'false');
+      pole('monitorGodzin').setAttribute('aria-invalid', zlyMonitor ? 'true' : 'false');
       if (blad) {
         w('wliczane').textContent = '—';
         return;
@@ -154,7 +178,8 @@ const faq = [
         godziny: h,
         niewliczana: n,
         mlodociany: pole('mlodociany').checked,
-        monitor: pole('monitor').checked,
+        monitor,
+        monitorGodzin: monitor ? mh : h,
         niepelnosprawny: pole('niepelnosprawny').checked,
         karmienie: (form.elements.namedItem('karmienie') as HTMLSelectElement).value as 'nie' | 'jedno' | 'wiecej',
       });
@@ -163,7 +188,7 @@ const faq = [
         ...(r.lista.length
           ? r.lista.map((p) => {
               const li = document.createElement('li');
-              li.textContent = `${p.minuty} min: ${p.opis} (${p.podstawa.replace('^1', '¹')})`;
+              li.textContent = typografia(`${p.minuty} min: ${p.opis} (${p.podstawa.replace('^1', '¹')})`);
               return li;
             })
           : [Object.assign(document.createElement('li'), { textContent: 'Przy tym wymiarze przerwy z Kodeksu pracy nie przysługują.' })]),

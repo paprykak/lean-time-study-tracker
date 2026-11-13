@@ -4,14 +4,19 @@
 import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
 import { dzienMiesiaca, nazwaMiesiaca, swieta, swietaWSobote, wymiarMiesiaca, wymiarOkresu } from '../../lib/narzedzia/czas-pracy';
 import { LATA } from '../../data/prawo';
+import { dzisWPolsce } from '../../lib/narzedzia/terminy';
+import { odmiana } from '../../lib/redakcja';
 
-const rokBudowy = new Date().getUTCFullYear();
+// Rok i miesiąc w Polsce w chwili budowania (nie w UTC); skrypt przestawia wybór na dziś (ustawDzisiejszeWartosci).
+const dzis = dzisWPolsce();
+const rokBudowy = Number(dzis.slice(0, 4));
 const lata = [rokBudowy, rokBudowy + 1];
 const tabele = lata.map((rok) => ({ rok, miesiace: Array.from({ length: 12 }, (_, i) => wymiarMiesiaca(rok, i + 1)), rocznie: wymiarOkresu(rok, 1, 12) }));
 const DNI = ['niedziela', 'poniedziałek', 'wtorek', 'środa', 'czwartek', 'piątek', 'sobota'];
 const dzienTygodnia = (data: string) => DNI[new Date(`${data}T00:00:00Z`).getUTCDay()];
 const latDoWyboru = [...new Set([...LATA, ...lata])].sort((a, b) => a - b);
-const start = wymiarMiesiaca(rokBudowy, new Date().getUTCMonth() + 1);
+const start = wymiarMiesiaca(rokBudowy, Number(dzis.slice(5, 7)));
+const godzin = (n: number) => odmiana(n, ['godzina', 'godziny', 'godzin']);
 const ETATY = [
   ['1', 'pełny etat'],
   ['7/8', '7/8 etatu'],
@@ -28,7 +33,7 @@ const okres = (n: number) => (n === 1 ? '1 miesiąc' : n === 12 ? '12 miesięcy 
 const faq = [
   ...tabele.map((t) => ({
     pytanie: `Ile godzin do przepracowania w ${t.rok} r.?`,
-    odpowiedz: `Na pełny etat ${t.rocznie.godziny} godzin, czyli ${t.rocznie.godziny / 8} dni pracy po 8 godzin. W ${t.rok} r. wymiar obniża ${t.rocznie.swietaObnizajace.length} świąt, które nie wypadają w niedzielę${swietaWSobote(t.rok).length ? `, w tym ${swietaWSobote(t.rok).length === 1 ? 'jedno' : swietaWSobote(t.rok).length} w sobotę (${swietaWSobote(t.rok).map((s) => dzienMiesiaca(s.data)).join(', ')})` : ''}.`,
+    odpowiedz: `Na pełny etat ${godzin(t.rocznie.godziny)}, czyli ${t.rocznie.godziny / 8} dni pracy po 8 godzin. W ${t.rok} r. wymiar obniża ${t.rocznie.swietaObnizajace.length} świąt, które nie wypadają w niedzielę${swietaWSobote(t.rok).length ? `, w tym ${swietaWSobote(t.rok).length === 1 ? 'jedno' : swietaWSobote(t.rok).length} w sobotę (${swietaWSobote(t.rok).map((s) => dzienMiesiaca(s.data)).join(', ')})` : ''}.`,
   })),
   {
     pytanie: 'Jak obliczyć wymiar czasu pracy?',
@@ -50,8 +55,8 @@ const faq = [
 ---
 <StronaNarzedzia
   slug="wymiar-czasu-pracy"
-  tytul={`Wymiar czasu pracy ${lata.join(' i ')}: kalkulator i tabela`}
-  opis={`Ile godzin do przepracowania w ${lata[0]} i ${lata[1]} r.: wymiar czasu pracy w każdym miesiącu, w okresie rozliczeniowym i na niepełny etat, ze świętami i dniami wolnymi.`}
+  tytul={`Wymiar czasu pracy ${lata.join(' i ')}: kalkulator`}
+  opis={`Ile godzin do przepracowania w ${lata[0]} i ${lata[1]} r.: wymiar czasu pracy w każdym miesiącu, w okresie rozliczeniowym i na niepełny etat, ze świętami.`}
   h1="Wymiar czasu pracy: kalkulator"
   lead="Ile godzin i dni trzeba przepracować w miesiącu, kwartale albo roku. Wybierz początek i długość okresu rozliczeniowego oraz etat, a policzymy wymiar ze wszystkimi świętami. Niżej tabele na cały rok."
   faq={faq}
@@ -64,11 +69,11 @@ const faq = [
         <legend class="etykieta">Początek okresu</legend>
         <div class="mt-2 grid grid-cols-[minmax(0,3fr)_minmax(0,2fr)] gap-3">
           <label class="sr-only" for="w-miesiac">Miesiąc</label>
-          <select id="w-miesiac" name="miesiac" class="pole">
+          <select id="w-miesiac" name="miesiac" class="pole" data-miesiac-biezacy>
             {Array.from({ length: 12 }, (_, i) => <option value={i + 1} selected={i + 1 === start.miesiac}>{nazwaMiesiaca(i + 1)}</option>)}
           </select>
           <label class="sr-only" for="w-rok">Rok</label>
-          <select id="w-rok" name="rok" class="pole">
+          <select id="w-rok" name="rok" class="pole" data-rok-biezacy>
             {latDoWyboru.map((r) => <option value={r} selected={r === rokBudowy}>{r}</option>)}
           </select>
         </div>
@@ -111,7 +116,7 @@ const faq = [
     {tabele.map((t) => (
       <>
         <h2 id={`wymiar-${t.rok}`}>Wymiar czasu pracy {t.rok}: tabela</h2>
-        <p>Pełny etat: {t.rocznie.godziny} godzin w roku, {t.rocznie.godziny / 8} dni pracy.</p>
+        <p>Pełny etat: {godzin(t.rocznie.godziny)} w roku, {t.rocznie.godziny / 8} dni pracy.</p>
         <div class="tabela">
           <table>
             <caption class="sr-only">Wymiar czasu pracy w {t.rok} r. według miesięcy</caption>
@@ -161,6 +166,7 @@ const faq = [
 
 <script>
   import { dzienMiesiaca, godzinyIMinuty, nazwaMiesiaca, wymiarOkresu } from '../../lib/narzedzia/czas-pracy';
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
 
   const form = document.querySelector<HTMLFormElement>('[data-wymiar]');
   if (form) {
@@ -200,6 +206,7 @@ const faq = [
     };
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    ustawDzisiejszeWartosci(form);
     przelicz();
   }
 </script>

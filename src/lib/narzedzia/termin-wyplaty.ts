@@ -3,6 +3,8 @@
 // od pracy, wynagrodzenie wypłaca się w dniu poprzedzającym (§ 3). Przepis nie mówi, co gdy i ten dzień jest wolny:
 // pokazujemy najbliższy wcześniejszy dzień pracy (dni wolne: niedziele, święta z ustawy o dniach wolnych od pracy
 // i, gdy tak jest w zakładzie, soboty).
+// Najbliższa wypłata liczy się od dzisiejszej daty, a nie z roku wybranego na liście: po ostatniej wypłacie roku jest nią
+// pierwsza wypłata następnego roku.
 import { swieta } from './czas-pracy';
 import { dodajDni } from './terminy';
 
@@ -40,4 +42,11 @@ export function terminyWyplaty(rok: number, dzien: DzienWyplaty, sobotaWolna = t
     }
     return { miesiac: m, ustalony, wyplata, powod };
   });
+}
+
+/** Najbliższa wypłata od dnia `dzis` (YYYY-MM-DD) włącznie: z bieżącego albo następnego roku. */
+export function najblizszaWyplata(dzis: string, dzien: DzienWyplaty, sobotaWolna = true): TerminWyplaty {
+  const rok = Number(dzis.slice(0, 4));
+  const pula = [...terminyWyplaty(rok, dzien, sobotaWolna), ...terminyWyplaty(rok + 1, dzien, sobotaWolna)];
+  return pula.find((t) => t.wyplata >= dzis)!;
 }

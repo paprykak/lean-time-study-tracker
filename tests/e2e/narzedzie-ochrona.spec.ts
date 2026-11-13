@@ -25,3 +25,12 @@ test('młodsza osoba: ochrona dopiero za kilka lat', async ({ page }) => {
   await expect(page.locator('[data-w="od"]')).toHaveText('1 czerwca 2051 r.');
   await expect(page.locator('[data-w="status"]')).toContainText('Za ');
 });
+
+test('błędna data po poprawnej: żadna data wyniku nie zostaje z poprzedniego rachunku', async ({ page }) => {
+  await expect(page.locator('[data-w="do"]')).toHaveText(/^14\smarca\s2029\sr\.$/);
+  await page.getByLabel('Data urodzenia').fill('1930-01-11');
+  await expect(page.locator('#o-blad')).toHaveText('Wpisz datę urodzenia.');
+  await expect(page.locator('[data-w="do"]')).toHaveText('—');
+  await expect(page.locator('[data-w="wiek"]')).toHaveText('—');
+  await expect(page.getByLabel('Data urodzenia')).toHaveAttribute('aria-invalid', 'true');
+});

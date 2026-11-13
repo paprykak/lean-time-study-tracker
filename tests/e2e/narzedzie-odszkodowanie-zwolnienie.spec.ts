@@ -27,7 +27,7 @@ test('dyscyplinarka, 3 miesiące: 18 000 zł i powrót od 1 do 3 miesięcy', asy
 });
 
 test('umowa na czas określony pyta o dni pracy do końca umowy', async ({ page }) => {
-  await page.getByLabel('Umowa na czas').selectOption('okreslona');
+  await page.getByLabel('Umowa', { exact: true }).selectOption('okreslona');
   await expect(page.getByLabel('Dni pracy do końca umowy')).toBeVisible();
   await expect(page.locator('[data-wiersz="koniec"]')).toBeVisible();
 });

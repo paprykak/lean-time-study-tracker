@@ -76,7 +76,7 @@ const faq = [
         <div><dt>Umywalki w przedsionkach ustępów</dt><dd data-w="przedsionek">{pokaz(start.umywalkiPrzyUstepach)}</dd></div>
         <div><dt>Kabiny natryskowe</dt><dd data-w="natryski">{pokaz(start.natryski)}</dd></div>
         <div><dt>Miski ustępowe przy natryskach</dt><dd data-w="miski-natryski">{pokaz(start.miskiPrzyNatryskach)}</dd></div>
-        <div><dt>Jadalnia</dt><dd data-w="jadalnia">{start.jadalnia ? 'wymagana (ponad 20 osób na zmianie)' : 'niewymagana przy tej liczbie osób'}</dd></div>
+        <div><dt>Jadalnia</dt><dd data-w="jadalnia">{start.jadalniaZ === 'liczba' ? 'wymagana (ponad 20 osób na zmianie)' : start.jadalniaZ === 'praca' ? 'wymagana przy pracach brudzących lub szkodliwych (§ 29 ust. 2)' : 'niewymagana przy tej liczbie osób i rodzaju pracy'}</dd></div>
         <div><dt>Miejsca do leżenia dla kobiet w ciąży i karmiących</dt><dd data-w="ciaza">{start.miejscaDlaKobietWCiazy}</dd></div>
       </dl>
       <p class="meta mt-4">„Ostrożnie”: każda rozpoczęta grupa osób. Przepis mówi „na każdych 30” i nie rozstrzyga, czy liczyć rozpoczętą grupę; pełne grupy to minimum z jego brzmienia.</p>
@@ -117,6 +117,7 @@ const faq = [
 </StronaNarzedzia>
 
 <script>
+  import { typografia } from '../../lib/typografia.mjs';
   import { normySanitarne, type Natryski, type RodzajPracy } from '../../lib/narzedzia/normy-sanitarne';
   import { wpisanaLiczba } from '../../lib/narzedzia/format';
 
@@ -131,7 +132,8 @@ const faq = [
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
       const blad = !(Number.isInteger(m) && m >= 0 && Number.isInteger(k) && k >= 0) || m + k === 0 ? 'Wpisz liczbę mężczyzn i kobiet na najliczniejszej zmianie.' : null;
       b.hidden = !blad;
-      b.textContent = blad ?? '';
+      b.textContent = typografia(blad ?? '');
+      for (const n of ['mezczyzni', 'kobiety']) el(n).setAttribute('aria-invalid', blad ? 'true' : 'false');
       if (blad) return;
       const praca = (form.querySelector<HTMLInputElement>('input[name="praca"]:checked')?.value ?? 'zwykla') as RodzajPracy;
       const natryski = (form.querySelector<HTMLInputElement>('input[name="natryski"]:checked')?.value ?? 'brak') as Natryski;
@@ -143,7 +145,7 @@ const faq = [
       w('przedsionek').textContent = pokaz(r.umywalkiPrzyUstepach);
       w('natryski').textContent = pokaz(r.natryski);
       w('miski-natryski').textContent = pokaz(r.miskiPrzyNatryskach);
-      w('jadalnia').textContent = r.jadalnia ? 'wymagana (ponad 20 osób na zmianie)' : 'niewymagana przy tej liczbie osób';
+      w('jadalnia').textContent = typografia(r.jadalniaZ === 'liczba' ? 'wymagana (ponad 20 osób na zmianie)' : r.jadalniaZ === 'praca' ? 'wymagana przy pracach brudzących lub szkodliwych (§ 29 ust. 2)' : 'niewymagana przy tej liczbie osób i rodzaju pracy');
       w('ciaza').textContent = String(r.miejscaDlaKobietWCiazy);
     };
     form.addEventListener('input', przelicz);

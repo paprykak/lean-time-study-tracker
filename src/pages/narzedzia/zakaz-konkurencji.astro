@@ -81,10 +81,14 @@ const faq = [
       Kalkulator mnoży przeciętną pensję brutto przez liczbę miesięcy zakazu i procent. Przepis mówi o wynagrodzeniu
       otrzymanym przed ustaniem pracy za okres równy okresowi zakazu, więc przy zmiennej pensji wpisz średnią z tego okresu.
     </p>
+    <p>
+      Ile wynosi okres wypowiedzenia przed odejściem, pokaże <a href="/narzedzia/okres-wypowiedzenia">kalkulator okresu wypowiedzenia</a>.
+    </p>
   </Fragment>
 </StronaNarzedzia>
 
 <script>
+  import { typografia } from '../../lib/typografia.mjs';
   import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
   import { MINIMUM_PROCENT, odszkodowanieZaZakaz } from '../../lib/narzedzia/zakaz-konkurencji';
 
@@ -102,7 +106,7 @@ const faq = [
       else if (!(procent > 0 && procent <= 100)) blad = 'Procent: od 1 do 100.';
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
       b.hidden = !blad;
-      b.textContent = blad ?? '';
+      b.textContent = typografia(blad ?? '');
       const status = w('status');
       if (blad) {
         w('razem').textContent = '—';
@@ -110,12 +114,12 @@ const faq = [
         return;
       }
       const r = odszkodowanieZaZakaz({ pensja, miesiace, procent });
-      w('razem').textContent = zl(r.razem);
-      w('miesiecznie').textContent = zl(r.miesiecznie);
-      w('minimum').textContent = zl(r.minimum);
+      w('razem').textContent = typografia(zl(r.razem));
+      w('miesiecznie').textContent = typografia(zl(r.miesiecznie));
+      w('minimum').textContent = typografia(zl(r.minimum));
       status.hidden = false;
       status.dataset.status = r.zgodne ? 'w-terminie' : 'po-terminie';
-      status.textContent = r.zgodne ? `Zgodne z minimum ${MINIMUM_PROCENT}%` : `Poniżej minimum ${MINIMUM_PROCENT}% (art. 101² § 3 Kodeksu pracy)`;
+      status.textContent = typografia(r.zgodne ? `Zgodne z minimum ${MINIMUM_PROCENT}%` : `Poniżej minimum ${MINIMUM_PROCENT}% (art. 101² § 3 Kodeksu pracy)`);
     };
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);

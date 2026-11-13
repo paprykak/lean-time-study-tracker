@@ -8,13 +8,12 @@ import { frontmatter } from '../../src/lib/mapa.mjs';
 // Panel redakcji (Sveltia CMS) z prawdziwą konfiguracją public/admin/config.yml. Skrypt panelu z node_modules
 // (ta sama wersja i plik co na unpkg.com, suma SRI sprawdzana w src/lib/panel.test.ts), bez sieci.
 // Logowania do GitHuba nie da się sprawdzić automatycznie, więc druga część używa wbudowanego testowego repozytorium
-// Sveltia (w pamięci przeglądarki) wypełnionego plikami z tego repozytorium: próba z F2 „od szkicu do zapisu”.
+// Sveltia (w pamięci przeglądarki) wypełnionego plikami z tego repozytorium: zmiana strony stałej i zapis pliku.
 const REPO = process.cwd();
 const TYPY: Record<string, string> = { '.js': 'text/javascript', '.json': 'application/json', '.md': 'text/markdown', '.jpg': 'image/jpeg', '.webp': 'image/webp', '.svg': 'image/svg+xml' };
 const plik = (sciezka: string) => ({ status: 200, contentType: TYPY[extname(sciezka)] ?? 'application/octet-stream', body: readFileSync(sciezka) });
 const ZASIEW = [
-  ...['artykuly', 'zdjecia', 'dzialy', 'tematy', 'autorzy'].flatMap((k) => readdirSync(join(REPO, 'src/content', k)).map((f) => `src/content/${k}/${f}`)),
-  ...readdirSync(join(REPO, 'src/assets/zdjecia')).map((f) => `src/assets/zdjecia/${f}`),
+  ...readdirSync(join(REPO, 'src/content/strony')).map((f) => `src/content/strony/${f}`),
   'src/data/ustawienia.json',
 ];
 
@@ -69,61 +68,34 @@ test.describe('panel redakcji', () => {
     expect(bledy).toEqual([]);
   });
 
-  test('próba F2: nowy wpis testowy od szkicu do zapisu, plik zgodny ze schematem treści', async ({ page, context }) => {
+  test('zmiana strony stałej w panelu: zapisany plik zgodny ze schematem treści, treść nietknięta', async ({ page, context }) => {
     test.setTimeout(120_000);
     await przygotuj(context, 'testowe');
     await page.goto('/admin/');
     await page.getByRole('button', { name: /demo|test/i }).first().click({ timeout: 30_000 });
-    await expect(page.getByText('Artykuły').first()).toBeVisible({ timeout: 30_000 });
+    await expect(page.getByText('Strony stałe').first()).toBeVisible({ timeout: 30_000 });
     // Tryb testowy wita oknem „Welcome to Sveltia CMS Demo”; zamykamy je jak redaktor (Esc).
     await expect(page.getByRole('dialog')).toBeVisible();
     await page.keyboard.press('Escape');
     await expect(page.getByRole('dialog')).toBeHidden();
 
-    // Zasiane wpisy z repozytorium otwierają się z rozwiązanymi relacjami (dział, autor, zdjęcie z rejestru).
-    await page.goto('/admin/#/collections/artykuly/entries/testowy-przezbrojenie-smed');
-    await expect(page.getByRole('radio', { name: 'Produkcja' })).toBeChecked({ timeout: 30_000 });
-    await expect(page.getByRole('checkbox', { name: 'Patryk Korpyta' })).toBeChecked();
-    await expect(page.getByRole('combobox', { name: 'Zdjęcie główne' })).toContainText('Robot spawalniczy');
-
-    const start = Date.now();
-    await page.goto('/admin/#/collections/artykuly/new');
-    await page.getByRole('textbox', { name: 'Tytuł', exact: true }).fill('[TEST] Próba panelu: od szkicu do podglądu');
-    await page.getByRole('textbox', { name: 'Lead', exact: true }).fill('Wpis testowy (fikcyjny) z próby panelu redakcyjnego. Sprawdza, czy tekst zapisany w panelu ma poprawny format.');
-    await page.getByRole('radio', { name: 'Lean i ciągłe doskonalenie' }).click();
-    const zdjecie = page.getByRole('combobox', { name: 'Zdjęcie główne' });
-    await zdjecie.focus();
-    await page.keyboard.press('ArrowDown');
-    await page.locator('[role=option]', { hasText: /karteczek/i }).first().click();
-    for (let i = 0; i < 12; i++) {
-      await page.mouse.move(300, 600);
-      await page.mouse.wheel(0, 1200);
-    }
-    const tresc = page.locator('[contenteditable=true]').last();
-    await tresc.click();
-    for (const akapit of ['Pierwszy akapit.', 'Drugi akapit.', 'Trzeci akapit.', 'Czwarty akapit.']) {
-      await page.keyboard.type(akapit);
-      await page.keyboard.press('Enter');
-    }
-    await page.getByRole('switch', { name: 'Szkic (nie publikuj na produkcji)' }).click();
-    await page.getByRole('switch', { name: 'Wpis testowy (fikcyjny)' }).click();
+    const nazwa = 'src/content/strony/kontakt.md';
+    const przed = frontmatter(readFileSync(join(REPO, nazwa), 'utf8'));
+    await page.goto('/admin/#/collections/strony/entries/kontakt');
+    const tytul = page.getByRole('textbox', { name: 'Tytuł', exact: true });
+    await expect(tytul).toHaveValue(przed.tytul, { timeout: 30_000 });
+    await tytul.fill('Kontakt z redakcją');
     await page.getByRole('button', { name: 'Zapisz', exact: true }).click();
 
     // Testowe repozytorium Sveltia trzyma pliki w OPFS przeglądarki pod tymi samymi ścieżkami co w repozytorium.
-    const nazwa = 'src/content/artykuly/test-proba-panelu-od-szkicu-do-podgladu.md';
     const czytaj = () => page.evaluate(czytajZPamieci, nazwa);
-    await expect.poll(czytaj, { timeout: 15_000 }).toMatch(/^---\n/);
+    await expect.poll(czytaj, { timeout: 15_000 }).toMatch(/tytul: Kontakt z redakcją/);
     const tekst = (await czytaj())!;
-    expect(Date.now() - start, 'od nowego wpisu do zapisu').toBeLessThan(10 * 60_000);
-
-    // Zapisany plik spełnia schemat kolekcji (ten sam, który sprawdza build), a puste pola opcjonalne są pominięte.
     const dane = frontmatter(tekst);
-    expect(dane).toMatchObject({ dzial: 'lean-i-ciagle-doskonalenie', format: 'Poradnik', autorzy: ['patryk-korpyta'], zdjecie: 'sciana-karteczek', szkic: true, testowy: true });
-    expect(dane.opublikowano).toMatch(/^\d{4}-\d{2}-\d{2}$/);
-    expect(Object.keys(dane)).not.toContain('tytulSeo');
-    const schemat = JSON.parse(readFileSync(join(REPO, '.astro/collections/artykuly.schema.json'), 'utf8'));
+    expect(dane).toMatchObject({ tytul: 'Kontakt z redakcją', opis: przed.opis });
+    const schemat = JSON.parse(readFileSync(join(REPO, '.astro/collections/strony.schema.json'), 'utf8'));
     const sprawdz = new Ajv2020({ strict: false, validateFormats: false }).compile(schemat);
     expect(sprawdz(dane), JSON.stringify(sprawdz.errors)).toBe(true);
-    expect(tekst).toContain('Pierwszy akapit.\n\nDrugi akapit.');
+    expect(tekst).toContain('redakcja@rytmhali.pl');
   });
 });

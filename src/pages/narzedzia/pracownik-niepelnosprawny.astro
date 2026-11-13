@@ -5,12 +5,14 @@ import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
 import { NORMY, PRZERWA_MIN, TURNUS_DNI, URLOP_DODATKOWY, wymiarNiepelnosprawnego } from '../../lib/narzedzia/niepelnosprawny';
 import { nazwaMiesiaca } from '../../lib/narzedzia/czas-pracy';
 import { dzisWPolsce } from '../../lib/narzedzia/terminy';
+import { lataKalendarza } from '../../lib/narzedzia/dzis-w-formularzu';
+import { odmiana } from '../../lib/redakcja';
 
 const dzis = dzisWPolsce();
 const rok = Number(dzis.slice(0, 4));
 const miesiac = Number(dzis.slice(5, 7));
 const w = wymiarNiepelnosprawnego(rok, miesiac, 'umiarkowany');
-const lata = [rok, rok + 1];
+const lata = lataKalendarza(dzis);
 
 const faq = [
   {
@@ -57,13 +59,13 @@ const faq = [
       <div class="mt-4 grid grid-cols-2 items-end gap-3">
         <div>
           <label for="n-miesiac" class="etykieta-pola">Miesiąc</label>
-          <select id="n-miesiac" name="miesiac" class="pole mt-1">
+          <select id="n-miesiac" name="miesiac" class="pole mt-1" data-miesiac-biezacy>
             {Array.from({ length: 12 }, (_, i) => <option value={i + 1} selected={i + 1 === miesiac}>{nazwaMiesiaca(i + 1)}</option>)}
           </select>
         </div>
         <div>
           <label for="n-rok" class="etykieta-pola">Rok</label>
-          <select id="n-rok" name="rok" class="pole mt-1">
+          <select id="n-rok" name="rok" class="pole mt-1" data-rok-biezacy>
             {lata.map((x) => <option value={x} selected={x === rok}>{x}</option>)}
           </select>
         </div>
@@ -92,7 +94,7 @@ const faq = [
         <p class="meta" data-w="opis">na dobę i {NORMY.umiarkowany.tydzien} w tygodniu, bez pracy w nocy i nadgodzin (art. 15 ustawy o rehabilitacji)</p>
       </div>
       <dl class="wynik-lista">
-        <div><dt data-w="wymiar-etykieta">Wymiar: {nazwaMiesiaca(miesiac)} {rok}</dt><dd data-w="wymiar">{w.godziny} godzin ({w.dni} × {w.doba} godzin)</dd></div>
+        <div><dt data-w="wymiar-etykieta">Wymiar: {nazwaMiesiaca(miesiac)} {rok}</dt><dd data-w="wymiar">{odmiana(w.godziny, ['godzina', 'godziny', 'godzin'])} ({w.dni} × {w.doba} godzin)</dd></div>
         <div data-wiersz="przerwa"><dt>Dodatkowa przerwa</dt><dd>{PRZERWA_MIN} minut wliczanych do czasu pracy, obok zwykłych przerw (art. 17)</dd></div>
         <div data-wiersz="stawka" hidden><dt>Stawka za godzinę</dt><dd data-w="stawka"></dd></div>
         <div data-wiersz="urlop"><dt>Dodatkowy urlop</dt><dd data-w="urlop">{URLOP_DODATKOWY} dni roboczych w roku (art. 19)</dd></div>
@@ -139,6 +141,8 @@ const faq = [
   import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
   import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
   import { typografia } from '../../lib/typografia.mjs';
+  import { odmiana } from '../../lib/redakcja';
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
 
   const form = document.querySelector<HTMLFormElement>('[data-niepelnosprawny]');
   if (form) {
@@ -173,7 +177,7 @@ const faq = [
           : `na dobę i ${NORMY[stopien].tydzien} w tygodniu, bez pracy w nocy i nadgodzin (art. 15 ustawy o rehabilitacji)`,
       );
       pisz('wymiar-etykieta', `Wymiar: ${nazwaMiesiaca(miesiac)} ${rok}`);
-      pisz('wymiar', `${r.godziny} godzin (${r.dni} × ${r.doba} godzin)`);
+      pisz('wymiar', `${odmiana(r.godziny, ['godzina', 'godziny', 'godzin'])} (${r.dni} × ${r.doba} godzin)`);
       wiersz('stawka').hidden = !(stawka !== null && krotsza);
       if (stawka !== null && krotsza) pisz('stawka', `${zl(stawkaPoSkroceniu(stawka))} zamiast ${zl(stawka)} (razy 8/7, art. 18 ust. 2)`);
       const dodatkowe = krotszaNorma(stopien);
@@ -191,6 +195,7 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    ustawDzisiejszeWartosci(form);
     przelicz();
   }
 </script>

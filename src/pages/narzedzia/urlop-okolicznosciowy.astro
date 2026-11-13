@@ -1,8 +1,8 @@
 ---
-// Urlop okolicznościowy i inne zwolnienia od pracy (§ 6, 9, 11, 15 i 16 rozporządzenia z 15 maja 1996 r., art. 9 ustawy
-// o publicznej służbie krwi). Dane: src/lib/narzedzia/zwolnienia.ts (testy obok).
+// Urlop okolicznościowy i inne zwolnienia od pracy (§ 6, 9, 15 i 16 rozporządzenia z 15 maja 1996 r., art. 9 ustawy
+// o publicznej służbie krwi, art. 12 i 15 ustawy o ochotniczych strażach pożarnych). Dane: src/lib/narzedzia/zwolnienia.ts (testy obok).
 import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
-import { OPIS_PLATNOSCI, ZWOLNIENIA, zwolnienie } from '../../lib/narzedzia/zwolnienia';
+import { OPIS_PLATNOSCI, PLATNOSC_KROTKO, ZWOLNIENIA, zwolnienie } from '../../lib/narzedzia/zwolnienia';
 
 const START = 'slub';
 const z = zwolnienie(START);
@@ -39,9 +39,10 @@ const faq = [
       <h2 id="kalkulator-tytul" class="tytul-m">Twoja sytuacja</h2>
       <div class="mt-4">
         <label for="z-sytuacja" class="etykieta-pola">Co się wydarzyło</label>
-        <select id="z-sytuacja" name="sytuacja" class="pole mt-1">
-          {ZWOLNIENIA.map((x) => <option value={x.klucz} selected={x.klucz === START}>{x.nazwa}</option>)}
+        <select id="z-sytuacja" name="sytuacja" class="pole mt-1" aria-describedby="z-sytuacja-opis">
+          {ZWOLNIENIA.map((x) => <option value={x.klucz} selected={x.klucz === START}>{x.krotko}</option>)}
         </select>
+        <p id="z-sytuacja-opis" class="meta mt-1" data-w="nazwa">{z.nazwa}</p>
       </div>
     </div>
 
@@ -68,7 +69,7 @@ const faq = [
           {ZWOLNIENIA.map((x) => (
             <tr>
               <th scope="row">{x.nazwa}</th>
-              <td>{x.wymiar}, {x.platnosc === 'platne' ? 'płatne' : 'bez wynagrodzenia od pracodawcy, z rekompensatą'}<span class="meta block">{x.podstawa}</span></td>
+              <td>{x.wymiar}, {PLATNOSC_KROTKO[x.platnosc]}<span class="meta block">{x.podstawa}</span></td>
             </tr>
           ))}
         </tbody>
@@ -78,7 +79,9 @@ const faq = [
       Chodzi o rozporządzenie Ministra Pracy i Polityki Socjalnej z 15 maja 1996 r. w sprawie sposobu
       usprawiedliwiania nieobecności w pracy oraz udzielania pracownikom zwolnień od pracy (tekst jednolity Dz.U. 2014
       poz. 1632). Rozporządzenie nie określa terminu wykorzystania dni z § 15; przysługują w związku z danym wydarzeniem.
-      Zwolnienie jest „od pracy”, więc obejmuje dni, w które według grafiku pracujesz.
+      Zwolnienie jest „od pracy”, więc obejmuje dni, w które według grafiku pracujesz. Zwolnienie strażaka OSP na czas
+      akcji, szkoleń i ćwiczeń wynika z ustawy o ochotniczych strażach pożarnych (art. 12 i 15, tekst jednolity Dz.U. 2025
+      poz. 244) i nie ma limitu dni.
     </p>
 
     <h2 id="inne">Inne wolne z Kodeksu pracy</h2>
@@ -92,6 +95,7 @@ const faq = [
 
 <script>
   import { OPIS_PLATNOSCI, zwolnienie } from '../../lib/narzedzia/zwolnienia';
+  import { typografia } from '../../lib/typografia.mjs';
 
   const form = document.querySelector<HTMLFormElement>('[data-okolicznosciowy]');
   if (form) {
@@ -99,9 +103,10 @@ const faq = [
     const el = form.elements.namedItem('sytuacja') as HTMLSelectElement;
     const pokaz = () => {
       const z = zwolnienie(el.value);
-      w('wymiar').textContent = z.wymiar;
-      w('platnosc').textContent = OPIS_PLATNOSCI[z.platnosc];
-      w('podstawa').textContent = z.podstawa;
+      w('nazwa').textContent = typografia(z.nazwa);
+      w('wymiar').textContent = typografia(z.wymiar);
+      w('platnosc').textContent = typografia(OPIS_PLATNOSCI[z.platnosc]);
+      w('podstawa').textContent = typografia(z.podstawa);
     };
     form.addEventListener('change', pokaz);
     form.addEventListener('submit', (e) => e.preventDefault());

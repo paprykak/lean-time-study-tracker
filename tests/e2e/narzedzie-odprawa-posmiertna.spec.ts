@@ -35,5 +35,5 @@ test('15 lat: 6 pensji', async ({ page }) => {
 
 test('bez osób: błąd', async ({ page }) => {
   await page.getByLabel('Uprawnione osoby').fill('0');
-  await expect(page.locator('#p-blad')).toHaveText('Wpisz liczbę uprawnionych osób, co najmniej 1.');
+  await expect(page.locator('#p-blad')).toHaveText(/Wpisz\sliczbę\suprawnionych\sosób:\sod\s1\sdo\s20\./);
 });

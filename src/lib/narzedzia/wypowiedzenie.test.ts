@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { dniNaPoszukiwanie, koniecWypowiedzenia, okresWypowiedzenia, pelneMiesiace } from './wypowiedzenie';
+import { dniNaPoszukiwanie, koniecWypowiedzenia, okresWypowiedzenia, pelneMiesiace, wypowiedzenieStalej } from './wypowiedzenie';
 
 describe('okres wypowiedzenia (art. 34 i 36 Kp)', () => {
   it('według stażu u pracodawcy', () => {
@@ -14,6 +14,13 @@ describe('okres wypowiedzenia (art. 34 i 36 Kp)', () => {
     expect(pelneMiesiace('2026-05-15', '2026-11-14')).toBe(5);
     expect(pelneMiesiace('2026-05-15', '2026-11-15')).toBe(6);
     expect(pelneMiesiace('2023-11-11', '2026-11-11')).toBe(36);
+  });
+  it('pełne miesiące na końcu miesiąca według art. 112 KC (6 miesięcy od 31 marca mija z końcem 30 września)', () => {
+    expect(pelneMiesiace('2026-03-31', '2026-09-30')).toBe(5);
+    expect(pelneMiesiace('2026-03-31', '2026-10-01')).toBe(6);
+    expect(pelneMiesiace('2024-02-29', '2027-02-28')).toBe(35);
+    expect(pelneMiesiace('2024-02-29', '2027-03-01')).toBe(36);
+    expect(pelneMiesiace('2026-08-31', '2027-03-01')).toBe(6);
   });
 });
 
@@ -39,5 +46,27 @@ describe('koniec wypowiedzenia (art. 30 § 2^1 Kp)', () => {
     expect(dniNaPoszukiwanie(okresWypowiedzenia('stala', 7))).toBe(2);
     expect(dniNaPoszukiwanie(okresWypowiedzenia('stala', 2))).toBe(2);
     expect(dniNaPoszukiwanie(okresWypowiedzenia('probna-ponad-2tyg', 0))).toBe(0);
+  });
+});
+
+describe('próg stażu w trakcie wypowiedzenia (wartości z niezależnego rachunku w Pythonie)', () => {
+  it('6 miesięcy mija w trakcie dwutygodniowego okresu: 1 miesiąc', () => {
+    const w = wypowiedzenieStalej('2026-03-01', '2026-08-20');
+    expect(w).toMatchObject({ staz: 5, koniec: '2026-09-30', okres: { opis: '1 miesiąc' } });
+    expect(w.prog).toMatchObject({ miesiace: 6, dzien: '2026-08-31', krotszy: { opis: '2 tygodnie' }, krotszyKoniec: '2026-09-05' });
+  });
+  it('koniec miesiąca: 31 marca i 29 lutego', () => {
+    expect(wypowiedzenieStalej('2026-03-31', '2026-09-30')).toMatchObject({ staz: 5, koniec: '2026-10-31', okres: { opis: '1 miesiąc' } });
+    const w = wypowiedzenieStalej('2024-02-29', '2027-02-28');
+    expect(w).toMatchObject({ staz: 35, koniec: '2027-05-31', okres: { opis: '3 miesiące' } });
+    expect(w.prog).toMatchObject({ miesiace: 36, dzien: '2027-02-28', krotszy: { opis: '1 miesiąc' }, krotszyKoniec: '2027-03-31' });
+  });
+  it('1 miesiąc dochodzi do 3 lat: 3 miesiące; 2 tygodnie z doręczeniem w sobotę dochodzą do 6 miesięcy', () => {
+    expect(wypowiedzenieStalej('2023-09-15', '2026-08-10')).toMatchObject({ staz: 34, koniec: '2026-11-30', okres: { opis: '3 miesiące' } });
+    expect(wypowiedzenieStalej('2026-05-15', '2026-11-14')).toMatchObject({ staz: 5, koniec: '2026-12-31', okres: { opis: '1 miesiąc' } });
+  });
+  it('próg po końcu okresu: bez zmian', () => {
+    expect(wypowiedzenieStalej('2026-03-01', '2026-08-01')).toEqual({ staz: 5, okres: okresWypowiedzenia('stala', 5), koniec: '2026-08-15', prog: null });
+    expect(wypowiedzenieStalej('2022-03-01', '2026-07-22')).toMatchObject({ koniec: '2026-10-31', prog: null });
   });
 });

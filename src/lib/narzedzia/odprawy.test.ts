@@ -31,4 +31,9 @@ describe('odprawy (art. 8 ustawy o zwolnieniach grupowych, art. 92^1 Kp)', () =>
     expect(() => odprawa({ rodzaj: 'zwolnienie', stale: 6000 })).toThrow(RangeError);
     expect(() => odprawa({ rodzaj: 'zwolnienie', stale: 6000, zatrudnienieOd: '2026-01-01', rozwiazanie: '2025-01-01' })).toThrow(RangeError);
   });
+  it('limit na przełomie 2026/2027: 72 090 i 74 250 zł (15 × 4806 i 15 × 4950)', () => {
+    expect(limitOdprawy('2026-12-31')).toBe(72090);
+    expect(limitOdprawy('2027-01-01')).toBe(74250);
+    expect(odprawa({ rodzaj: 'zwolnienie', stale: 30000, zatrudnienieOd: '2010-01-01', rozwiazanie: '2027-01-04' })).toMatchObject({ kwota: 74250, ograniczona: true });
+  });
 });

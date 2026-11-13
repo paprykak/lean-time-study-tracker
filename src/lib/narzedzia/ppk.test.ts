@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { kalkulatorPpk, progDoplaty, progObnizenia } from './ppk';
+import { LATA } from '../../data/prawo';
+import { kalkulatorPpk, progDoplaty, progObnizenia, rokPlacy } from './ppk';
 
 // Wartości policzone ręcznie z zasad netto.ts (składki, zaliczka w pełnych złotych) i art. 26–32 ustawy o PPK.
 describe('PPK (art. 26, 27, 31 i 32 ustawy o PPK)', () => {
@@ -7,6 +8,15 @@ describe('PPK (art. 26, 27, 31 i 32 ustawy o PPK)', () => {
     expect(progObnizenia(2026)).toBe(5767.2);
     expect(progDoplaty(2026, false)).toBe(1009.26);
     expect(progDoplaty(2026, true)).toBe(252.32);
+  });
+  it('progi 2027 (płaca minimalna 4950 zł): obniżenie do 5940 zł, dopłata od 1039,50 zł albo 259,88 zł', () => {
+    expect(progObnizenia(2027)).toBe(5940);
+    expect(progDoplaty(2027, false)).toBe(1039.5);
+    expect(progDoplaty(2027, true)).toBe(259.88);
+  });
+  it('rok płacy: bieżący z rejestru, a po ostatnim znanym roku ostatni znany z oznaczeniem', () => {
+    expect(rokPlacy(2027)).toEqual({ rok: 2027, zastepczy: false });
+    expect(rokPlacy(LATA[LATA.length - 1] + 1)).toEqual({ rok: LATA[LATA.length - 1], zastepczy: true });
   });
   it('6000 zł, 2% i 1,5%, cały rok: 131 zł mniej na rękę, 3010 zł na koncie po roku', () => {
     expect(kalkulatorPpk({ rok: 2026, brutto: 6000, pracownik: 2, pracownikDodatkowa: 0, pracodawcaDodatkowa: 0, miesiace: 12 })).toMatchObject({

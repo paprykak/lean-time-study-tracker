@@ -37,6 +37,17 @@ describe('umowy na czas określony (art. 25^1 Kp)', () => {
     // 990 − 366 = 624 dni drugiej umowy: od 1 marca 2025 r. ostatni dzień to 14 listopada 2026 r.
     expect(r.wynik).toEqual({ stan: 'nieokreslony', od: '2026-11-15', powod: '33-miesiace' });
   });
+  it('początek 31. dnia albo 29 lutego bez przerw: dzień przed dniem o tym numerze, przycięty do końca miesiąca (Python)', () => {
+    expect(sprawdzUmowy([{ od: '2024-05-31', do: '2024-12-31' }]).wynik).toMatchObject({ stan: 'w-limicie', limitDo: '2027-02-27' });
+    expect(sprawdzUmowy([{ od: '2024-02-29', do: '2024-12-31' }]).wynik).toMatchObject({ stan: 'w-limicie', limitDo: '2026-11-28' });
+  });
+  it('jeden dzień przerwy: suma 990 dni zamiast 1003 dni kalendarzowych, limit o 12 dni wcześniej', () => {
+    const ciagle = sprawdzUmowy([{ od: '2025-01-01', do: '2025-12-31' }, { od: '2026-01-01', do: '2027-12-31' }]);
+    const zPrzerwa = sprawdzUmowy([{ od: '2025-01-01', do: '2025-12-31' }, { od: '2026-01-02', do: '2027-12-31' }]);
+    expect(ciagle.wynik).toEqual({ stan: 'nieokreslony', od: '2027-10-01', powod: '33-miesiace' });
+    expect(zPrzerwa.ciagle).toBe(false);
+    expect(zPrzerwa.wynik).toEqual({ stan: 'nieokreslony', od: '2027-09-19', powod: '33-miesiace' });
+  });
   it('błędy: zachodzące umowy, koniec przed początkiem', () => {
     expect(() => sprawdzUmowy([{ od: '2025-01-01', do: '2025-06-30' }, { od: '2025-06-01', do: '2025-12-31' }])).toThrow(RangeError);
     expect(() => sprawdzUmowy([{ od: '2025-02-01', do: '2025-01-01' }])).toThrow(RangeError);

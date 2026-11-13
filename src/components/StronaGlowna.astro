@@ -1,141 +1,266 @@
 ---
-// Strona główna: najpierw narzędzia (profil serwisu od 2026-11-11, DECYZJE.md; rejestr src/data/narzedzia.ts),
-// niżej biblioteka artykułów w układzie z podglądu zaakceptowanego w F1. Dobór artykułów: src/lib/redakcja.ts
-// (ukladGlownej): wyróżnione ręcznie w panelu, najnowsze, działy bez powtórzeń. „Polecane” to lista redakcji
-// z ustawień serwisu; gdy dojdą statystyki (Umami), w tym miejscu pojawią się „Najczęściej czytane”.
+// Strona główna: centrum narzędzi (projekt z 2026-11-12, raport pakietu „porządki i nowy układ”). Kolejność według
+// tego, jak człowiek z hali szuka odpowiedzi: (1) wpisuje swoją sprawę w pole i widzi narzędzie z pytaniem z FAQ,
+// (2) gdy nie wie, co wpisać, wybiera jedną z najczęstszych spraw, (3) albo temat (kategorię) opisany słowami z hali,
+// (4) na końcu pełny spis nazw dla przeglądających i robotów (na telefonie ukryty: tam prowadzi do niego kafel
+// „Wszystkie narzędzia” i pasek kategorii, a strona nie rośnie o kilka ekranów). Jedno oznaczone miejsce reklamowe dopiero pod
+// odpowiedziami, nigdy nad polem ani w wynikach. Dane: rejestr src/data/narzedzia.ts i język hali src/data/sprawy.ts.
 import SlotReklamowy from './SlotReklamowy.astro';
-import NaglowekSekcji from './NaglowekSekcji.astro';
-import NajczesciejCzytane from './NajczesciejCzytane.astro';
-import Newsletter from './Newsletter.astro';
-import KartaGlowna from './karty/KartaGlowna.astro';
-import KartaBoczna from './karty/KartaBoczna.astro';
-import KartaSiatka from './karty/KartaSiatka.astro';
-import KartaLista from './karty/KartaLista.astro';
-import KartaNarzedzia from './narzedzia/KartaNarzedzia.astro';
+import Ikona from './Ikona.astro';
 import Tekst from './Tekst.astro';
-import { KATEGORIE, NA_GLOWNEJ, NARZEDZIA, W_PRZYGOTOWANIU, adresNarzedzia, narzedzie, type KategoriaNarzedzia } from '../data/narzedzia';
-import ustawienia from '../data/ustawienia.json';
-import { DZIALY, dzial } from '../lib/dane';
-import { artykuly, karta } from '../lib/tresci';
-import { ukladGlownej } from '../lib/redakcja';
-import { formularzAktywny } from '../lib/srodowisko.mjs';
+import Wyszukiwarka from './narzedzia/Wyszukiwarka.astro';
+import { KATEGORIE, NARZEDZIA, W_PRZYGOTOWANIU, adresNarzedzia, narzedzie, type KategoriaNarzedzia } from '../data/narzedzia';
+import { CZESTO_SZUKANE, NAJCZESTSZE, SLOWA_KATEGORII } from '../data/sprawy';
+import { indeksNarzedzi } from '../lib/indeks-narzedzi';
+import { odmiana } from '../lib/redakcja';
+import { dataDluga } from '../lib/daty';
 
-const wszystkie = await artykuly();
-const u = ukladGlownej(
-  wszystkie.map((a) => ({ id: a.id, dzial: a.data.dzial.id, opublikowano: a.data.opublikowano, wyrozniony: a.data.wyrozniony, a })),
-  DZIALY.map((d) => d.slug),
-);
-const k = (x: { a: (typeof wszystkie)[number] }) => karta(x.a);
-const wyroznione = NA_GLOWNEJ.map(narzedzie);
 const kategorie = (Object.keys(KATEGORIE) as KategoriaNarzedzia[])
-  .map((k) => ({ klucz: k, nazwa: KATEGORIE[k].nazwa, narzedzia: NARZEDZIA.filter((n) => n.kategoria === k) }))
+  .map((k) => ({ klucz: k, ...KATEGORIE[k], narzedzia: NARZEDZIA.filter((n) => n.kategoria === k) }))
   .filter((k) => k.narzedzia.length > 0);
-const polecane = ustawienia.polecane
-  .map((slug) => wszystkie.find((a) => a.id === slug))
-  .filter((a) => a !== undefined)
-  .map((a) => ({ tytul: a.data.tytul, adres: `/${a.id}` }));
+const sprawy = NAJCZESTSZE.map((s) => ({ ...s, narzedzie: narzedzie(s.slug) }));
+const pytan = indeksNarzedzi().reduce((suma, w) => suma + w.p.length, 0);
+const ostatnie = NARZEDZIA.map((n) => n.sprawdzono).sort().at(-1)!;
+const lead = `Wpisz swoją sprawę. ${odmiana(NARZEDZIA.length, ['kalkulator i ściąga', 'kalkulatory i ściągi', 'kalkulatorów i ściąg'])} z prawa pracy i BHP dla produkcji, magazynu i logistyki, a w nich ${odmiana(pytan, ['odpowiedź', 'odpowiedzi', 'odpowiedzi'])} na pytania z hali.`;
 ---
-<div class="kontener">
-  <section aria-labelledby="glowna-tytul" class="mt-8 md:mt-10">
-    <p class="kategoria">Bezpłatnie, bez logowania</p>
-    <h1 id="glowna-tytul" class="tytul-xl mt-2 max-w-[22ch]">{ustawienia.haslo}</h1>
-    <p class="lead mt-4 max-w-[52ch]">
-      <Tekst t="Kalkulatory i ściągi z prawa pracy i BHP dla produkcji, magazynów i logistyki. Liczymy według przepisów, a przy każdym narzędziu podajemy źródło w Dzienniku Ustaw i datę sprawdzenia." />
-    </p>
-    <div class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-      {wyroznione.map((n) => <KartaNarzedzia narzedzie={n} poziom="h2" />)}
-    </div>
-  </section>
-
-  <section aria-labelledby="wszystkie-narzedzia" class="mt-10 border-t-2 border-grafit pt-5">
-    <h2 id="wszystkie-narzedzia" class="tytul-m">Wszystkie narzędzia ({NARZEDZIA.length})</h2>
-    <div class="mt-4 grid gap-x-8 gap-y-6 sm:grid-cols-2 lg:grid-cols-4">
-      {kategorie.map((k) => (
-        <div>
-          <h3 class="kategoria">{k.nazwa}</h3>
-          <ul class="mt-2">
-            {k.narzedzia.map((n) => (
-              <li class="border-b border-linia"><a href={adresNarzedzia(n.slug)} class="block py-2 text-[0.9375rem] font-semibold text-tekst underline-offset-[3px] najazd:text-akcent-tekst najazd:underline">{n.nazwa}</a></li>
-            ))}
-          </ul>
-        </div>
-      ))}
-    </div>
-    {W_PRZYGOTOWANIU.length > 0 && (
-      <p class="meta mt-4">Wkrótce: {W_PRZYGOTOWANIU.slice(0, 4).map((w) => w.nazwa).join(', ')}.</p>
-    )}
-    <p class="mt-4"><a href="/narzedzia" class="link">Narzędzia z opisami</a></p>
-  </section>
-
-  <SlotReklamowy komputer="billboard" telefon="mobilny" miejsce="glowna-gora" class="mt-12" />
-
-  <NaglowekSekcji tytul="Artykuły" id="artykuly" class="mt-12" />
-  {u.glowny ? (
-    <section aria-label="Najważniejsze artykuły" class="mt-6 grid gap-6 lg:grid-cols-12">
-      <KartaGlowna artykul={k(u.glowny)} priorytet class="lg:col-span-8" />
-      {u.obok.length > 0 && (
-        <div class="grid content-start gap-4 lg:col-span-4 [&>article+article]:border-t [&>article+article]:border-linia [&>article+article]:pt-4">
-          {u.obok.map((x) => <KartaBoczna artykul={k(x)} poziom="h2" />)}
-        </div>
-      )}
-    </section>
-  ) : (
-    <p class="lead mt-10">{formularzAktywny('newsletter') ? 'Pierwsze teksty już wkrótce. Zapisz się na newsletter, a dostaniesz je od razu.' : 'Pierwsze teksty już wkrótce.'}</p>
-  )}
-
-  {u.najnowsze.length > 0 && (
-    <section aria-labelledby="najnowsze" class="mt-12">
-      <NaglowekSekcji tytul="Najnowsze" id="najnowsze" />
-      <div class="mt-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {u.najnowsze.map((x) => <KartaSiatka artykul={k(x)} zLeadem szerokosc={290} />)}
+<section aria-labelledby="glowna-tytul" class="bg-tlo-szare">
+  <div class="kontener grid gap-8 py-8 md:py-12 lg:grid-cols-[minmax(0,8fr)_minmax(0,4fr)] lg:gap-12">
+    <div class="min-w-0">
+      <p class="kategoria">Bezpłatnie, bez logowania</p>
+      <h1 id="glowna-tytul" class="tytul-xl mt-2 max-w-[22ch]">Czy wolno, czy muszę, ile mi się należy?</h1>
+      <p class="lead mt-4 max-w-[52ch]"><Tekst t={lead} /></p>
+      <Wyszukiwarka id="szukaj-glowna" class="mt-6 max-w-[40rem]" />
+      <div class="mt-4 flex flex-wrap items-center gap-2">
+        <span class="text-[0.875rem] text-tekst-drugi">Często szukane:</span>
+        <ul class="contents">
+          {CZESTO_SZUKANE.map((s) => <li><a href={`/szukaj?q=${encodeURIComponent(s)}`} class="podpowiedz" data-podpowiedz={s}>{s}</a></li>)}
+        </ul>
       </div>
-    </section>
-  )}
-
-  <div class="mt-12 grid gap-10 lg:grid-cols-12 lg:gap-6">
-    <div class="space-y-12 lg:col-span-8">
-      {u.sekcje.map((s) => {
-        const d = dzial(s.dzial);
-        return (
-          <section aria-labelledby={`sekcja-${s.dzial}`}>
-            <NaglowekSekcji tytul={d.nazwa} id={`sekcja-${s.dzial}`} link={{ nazwa: 'Więcej z działu', adres: d.adres }} />
-            <div class="mt-4 grid gap-6 md:grid-cols-2">
-              <KartaSiatka artykul={k(s.wiodacy)} zLeadem szerokosc={400} />
-              {s.lista.length > 0 && (
-                <div class="[&>article:first-child]:border-t-0 [&>article:first-child]:pt-0">
-                  {s.lista.map((x) => <KartaLista artykul={k(x)} bezDzialu />)}
-                </div>
-              )}
-            </div>
-          </section>
-        );
-      })}
     </div>
-    <aside class="space-y-10 lg:col-span-4" aria-label="Kolumna boczna">
-      {polecane.length > 0 && <NajczesciejCzytane tytul="Polecane przez redakcję" artykuly={polecane} />}
-      <div class="lg:sticky lg:top-6">
-        <SlotReklamowy komputer="prostokat" telefon="mobilny-prostokat" miejsce="glowna-bok" />
-      </div>
+    <aside aria-labelledby="zaufanie" class="zaufanie self-start">
+      <h2 id="zaufanie" class="font-display text-[1.0625rem] font-bold text-tekst">Skąd bierzemy liczby</h2>
+      <ul class="mt-3 space-y-2.5 text-[0.9375rem] leading-snug">
+        <li class="flex gap-2"><Ikona nazwa="sprawdz" rozmiar={18} class="mt-0.5 shrink-0 text-sukces" /><span><Tekst t="Przy każdym narzędziu przepis z Dziennika Ustaw i data sprawdzenia" /></span></li>
+        <li class="flex gap-2"><Ikona nazwa="sprawdz" rozmiar={18} class="mt-0.5 shrink-0 text-sukces" /><span><Tekst t="Liczy w Twoim telefonie: niczego nie wysyłamy ani nie zapisujemy" /></span></li>
+        <li class="flex gap-2"><Ikona nazwa="sprawdz" rozmiar={18} class="mt-0.5 shrink-0 text-sukces" /><span><Tekst t="Bez logowania i bez ciasteczek" /></span></li>
+      </ul>
+      <p class="meta mt-4">
+        Ostatnie sprawdzenie z przepisami: <time datetime={ostatnie}>{dataDluga(new Date(`${ostatnie}T12:00:00Z`))}</time>.
+        <a href="/zasady-redakcyjne" class="link">Jak sprawdzamy</a>
+      </p>
     </aside>
   </div>
+</section>
 
-  <div class="mt-14">
-    <Newsletter id="glowna-newsletter" wariant="pasek" miejsce="glowna-pasek" />
-  </div>
+<div class="kontener">
+  <section aria-labelledby="najczestsze" class="mt-10 md:mt-12">
+    <h2 id="najczestsze" class="naglowek-sekcji">Najczęstsze sprawy z hali</h2>
+    <ul class="mt-2 grid gap-x-8 md:grid-cols-2">
+      {sprawy.map((s) => (
+        <li class="border-b border-linia">
+          <a href={adresNarzedzia(s.slug)} class="sprawa">
+            <span class="min-w-0">
+              <span class="sprawa-pytanie"><Tekst t={s.pytanie} /></span>
+              <span class="sprawa-narzedzie">{s.narzedzie.nazwa}</span>
+            </span>
+            <Ikona nazwa="strzalka" rozmiar={20} class="shrink-0 text-akcent-tekst" />
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
 
-  {u.kolumny.length > 0 && (
-    <div class="mt-14 grid gap-10 md:grid-cols-3 md:gap-6">
-      {u.kolumny.map((kol) => {
-        const d = dzial(kol.dzial);
-        return (
-          <section aria-labelledby={`kolumna-${kol.dzial}`}>
-            <NaglowekSekcji tytul={d.nazwa} id={`kolumna-${kol.dzial}`} link={{ nazwa: 'Więcej', adres: d.adres }} />
-            <div class="mt-2 [&>article:first-child]:border-t-0">
-              {kol.lista.map((x) => <KartaLista artykul={k(x)} bezDzialu />)}
-            </div>
-          </section>
-        );
-      })}
+  <section aria-labelledby="tematy" class="mt-12">
+    <h2 id="tematy" class="naglowek-sekcji">Sprawy według tematu</h2>
+    <ul class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      {kategorie.map((k) => (
+        <li>
+          <a href={`/narzedzia#${k.klucz}`} class="temat">
+            <span class="temat-nazwa">{k.nazwa} <span class="temat-liczba">({k.narzedzia.length})</span></span>
+            <span class="temat-slowa">{SLOWA_KATEGORII[k.klucz]}</span>
+          </a>
+        </li>
+      ))}
+      <li>
+        <a href="/narzedzia" class="temat temat-wszystkie">
+          <span class="temat-nazwa">Wszystkie narzędzia <span class="temat-liczba">({NARZEDZIA.length})</span></span>
+          <span class="temat-slowa">Lista z opisami i filtrem</span>
+        </a>
+      </li>
+    </ul>
+  </section>
+
+  <SlotReklamowy komputer="billboard" telefon="mobilny-prostokat" miejsce="glowna" class="mt-12" />
+
+  <section aria-labelledby="spis" class="mt-12 max-md:hidden">
+    <div class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
+      <h2 id="spis" class="naglowek-sekcji">Wszystkie narzędzia ({NARZEDZIA.length})</h2>
+      <a href="/narzedzia" class="link inline-flex min-h-11 items-center text-[0.9375rem]">Z opisami i filtrem</a>
     </div>
-  )}
+    <div class="spis mt-4">
+      {kategorie.map((k) => (
+        <section aria-labelledby={`spis-${k.klucz}`} class="spis-kategoria">
+          <h3 id={`spis-${k.klucz}`} class="kategoria">{k.nazwa}</h3>
+          <ul class="mt-1">
+            {k.narzedzia.map((n) => (
+              <li class="border-b border-linia"><a href={adresNarzedzia(n.slug)} class="spis-link">{n.nazwa}</a></li>
+            ))}
+          </ul>
+        </section>
+      ))}
+    </div>
+    {W_PRZYGOTOWANIU.length > 0 && <p class="meta mt-4">W przygotowaniu: {W_PRZYGOTOWANIU.map((w) => w.nazwa).join(', ')}.</p>}
+  </section>
 </div>
+
+<script>
+  // Podpowiedź („Często szukane”) wpisuje słowo w pole i pokazuje wyniki na miejscu; bez skryptu prowadzi do /szukaj.
+  const pole = document.querySelector<HTMLInputElement>('#szukaj-glowna');
+  for (const a of document.querySelectorAll<HTMLAnchorElement>('[data-podpowiedz]')) {
+    a.addEventListener('click', (e) => {
+      if (!pole || e.metaKey || e.ctrlKey || e.shiftKey) return;
+      e.preventDefault();
+      pole.value = a.dataset.podpowiedz!;
+      pole.focus();
+      pole.dispatchEvent(new Event('input'));
+    });
+  }
+</script>
+
+<style>
+  .naglowek-sekcji {
+    padding-top: 0.75rem;
+    border-top: 2px solid var(--color-grafit);
+    font-family: var(--font-display);
+    font-size: 1.375rem;
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--color-tekst);
+  }
+  .zaufanie {
+    padding: 1.25rem;
+    border: 1px solid var(--color-linia);
+    border-top: 3px solid var(--color-grafit);
+    background: var(--color-tlo);
+  }
+  .podpowiedz {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    padding: 0 0.875rem;
+    border: 1px solid var(--color-linia-mocna);
+    border-radius: var(--radius-przycisk);
+    background: var(--color-tlo);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--color-tekst);
+  }
+  .podpowiedz:hover {
+    border-color: var(--color-akcent);
+    color: var(--color-akcent-tekst);
+  }
+  .sprawa {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 3.75rem;
+    padding: 0.75rem 0;
+  }
+  .sprawa-pytanie {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 1.0625rem;
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--color-tekst);
+  }
+  .sprawa-narzedzie {
+    display: block;
+    margin-top: 0.125rem;
+    font-size: 0.875rem;
+    color: var(--color-tekst-drugi);
+  }
+  .sprawa:hover .sprawa-pytanie {
+    color: var(--color-akcent-tekst);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .temat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    height: 100%;
+    min-height: 4.75rem;
+    padding: 0.875rem 1rem;
+    border: 1px solid var(--color-linia);
+    border-top: 3px solid var(--color-grafit);
+    background: var(--color-tlo);
+  }
+  .temat:hover {
+    border-top-color: var(--color-akcent);
+  }
+  .temat-nazwa {
+    font-family: var(--font-display);
+    font-size: 1.0625rem;
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--color-tekst);
+  }
+  .temat-liczba {
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    font-weight: 400;
+    color: var(--color-tekst-drugi);
+  }
+  .temat-slowa {
+    font-size: 0.875rem;
+    line-height: 1.4;
+    color: var(--color-tekst-tresc);
+  }
+  .temat-wszystkie {
+    border-color: var(--color-grafit);
+    background: var(--color-grafit);
+  }
+  .temat-wszystkie .temat-nazwa,
+  .temat-wszystkie .temat-slowa,
+  .temat-wszystkie .temat-liczba {
+    color: var(--color-tekst-na-ciemnym);
+  }
+  .temat-wszystkie:hover {
+    border-top-color: var(--color-akcent);
+  }
+  .spis {
+    columns: 1;
+    column-gap: 2rem;
+  }
+  @media (min-width: 40rem) {
+    .spis {
+      columns: 2;
+    }
+  }
+  @media (min-width: 64rem) {
+    .spis {
+      columns: 4;
+    }
+  }
+  .spis-kategoria {
+    break-inside: avoid;
+    margin-bottom: 1.5rem;
+  }
+  .spis-link {
+    display: flex;
+    align-items: center;
+    min-height: 2.75rem;
+    padding: 0.375rem 0;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--color-tekst);
+  }
+  .spis-link:hover {
+    color: var(--color-akcent-tekst);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+</style>

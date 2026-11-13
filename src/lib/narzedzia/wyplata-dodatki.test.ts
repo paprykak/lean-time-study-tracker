@@ -22,4 +22,8 @@ describe('wypłata z nadgodzinami i dodatkiem nocnym', () => {
   it('z PPK 2% i 1,5%', () => {
     expect(wyplataZDodatkami({ rok: 2026, miesiac: 11, pensja: 6000, godziny50: 10, godziny100: 0, godzinyNocne: 40, ppk: true })).toMatchObject({ netto: 4818.85, nettoSamaPensja: 4289.43 });
   });
+  it('20 000 zł i 10 nadgodzin 50% w listopadzie 2026 r.: 21 875 zł brutto, próg 120 000 zł w lipcu (B-fix/netto.py)', () => {
+    expect(wyplataZDodatkami({ rok: 2026, miesiac: 11, pensja: 20000, godziny50: 10, godziny100: 0, godzinyNocne: 0 })).toMatchObject({ brutto: 21875, progPrzekroczony: true, miesiacProgu: 7 });
+    expect(wyplataZDodatkami({ rok: 2026, miesiac: 11, pensja: 6000, godziny50: 10, godziny100: 0, godzinyNocne: 40 }).miesiacProgu).toBeNull();
+  });
 });

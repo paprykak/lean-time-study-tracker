@@ -6,7 +6,7 @@ describe('tryby budowania', () => {
   it('main i build lokalny to produkcja, inne gałęzie w Cloudflare to podgląd', () => {
     expect(trybBudowania({})).toBe('produkcja');
     expect(trybBudowania({ WORKERS_CI_BRANCH: 'main' })).toBe('produkcja');
-    expect(trybBudowania({ WORKERS_CI_BRANCH: 'cms/artykuly/nowy-tekst' })).toBe('podglad');
+    expect(trybBudowania({ WORKERS_CI_BRANCH: 'cms/strony/kontakt' })).toBe('podglad');
     expect(trybBudowania({ RH_PODGLAD: '1' })).toBe('podglad');
   });
 
@@ -49,8 +49,8 @@ describe('produkcja przed startem', () => {
     }
   });
 
-  it('znikają strony portalu, kanały, okładki i indeks wyszukiwarki', () => {
-    for (const p of ['dzial/produkcja.html', 'testowy-przezbrojenie-smed.html', 'styleguide.html', 'szukaj.html', 'rss.xml', 'okladki/x.jpg', 'pagefind/pagefind.js', 'o-nas.html']) {
+  it('znikają strony portalu, narzędzia, projekty stron, llms.txt i indeks wyszukiwarki', () => {
+    for (const p of ['narzedzia.html', 'narzedzia/kalkulator-l4.html', 'podglad/o-nas.html', 'styleguide.html', 'szukaj.html', 'llms.txt', 'pagefind/pagefind.js', 'o-nas.html']) {
       expect(zostaje(p), p).toBe(false);
     }
   });

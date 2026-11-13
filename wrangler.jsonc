@@ -1,6 +1,6 @@
 // Cloudflare Workers + Assets: statyczny portal z dist/ (build: npm run check:szybki, Workers Builds z GitHuba).
-// Kod workera (worker/index.js) obsługuje tylko /api/*: logowanie do panelu (F2), dalej zapis na newsletter (F6)
-// i 410 dla usuniętych adresów (F8). Wszystko inne Cloudflare serwuje z dist/ bez uruchamiania workera.
+// Kod workera (worker/index.js) obsługuje /api/*: logowanie do panelu (F2), zapis na newsletter i kontakt (F6),
+// oraz 410 i 301 dla adresów usuniętych z serwisu (worker/usuniete.js). Wszystko inne Cloudflare serwuje z dist/ bez uruchamiania workera.
 // Sekrety logowania (GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET) ustawia Patryk: npx wrangler secret put <NAZWA>.
 {
   "$schema": "node_modules/wrangler/config-schema.json",
@@ -27,7 +27,8 @@
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",
-    "run_worker_first": ["/api/*"],
+    // Worker najpierw: /api/* i adresy usunięte z serwisu (410 albo 301, lista w worker/usuniete.js; zgodność pilnuje test).
+    "run_worker_first": ["/api/*", "/grafik-zmian-wypadki", "/inwentaryzacja-ciagla", "/kompletacja-droga", "/krzywa-uczenia", "/oee-85-procent", "/prognozowanie-popytu", "/smed-przezbrojenia", "/wycieki-sprezonego-powietrza", "/rss.xml", "/do-pobrania", "/dzial/*", "/temat/*", "/autor/*", "/do-pobrania/*", "/pobierz/*", "/okladki/*"],
     "not_found_handling": "404-page",
     "html_handling": "auto-trailing-slash"
   }

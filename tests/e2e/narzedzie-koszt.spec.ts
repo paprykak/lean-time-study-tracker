@@ -22,3 +22,18 @@ test('kobieta 55+ albo mężczyzna 60+: bez FP, FS i FGŚP', async ({ page }) =>
   await expect(page.locator('[data-w="fp"]')).toHaveText('0,00 zł');
   await expect(page.locator('[data-w="fgsp"]')).toHaveText('0,00 zł');
 });
+
+test('2027: próg FP i FS to płaca minimalna 4950 zł, limit 300 990 zł', async ({ page }) => {
+  await page.getByLabel('Rok wypłaty').selectOption('2027');
+  await page.getByLabel('Wynagrodzenie brutto w miesiącu (zł)').fill('4900');
+  await expect(page.locator('[data-w="fp"]')).toHaveText('0,00 zł');
+  await expect(page.locator('[data-w="koszt"]')).toHaveText('5783,47 zł');
+  await expect(page.locator('[data-w="uwaga"]')).toContainText(/300\s990\szł/);
+  await expect(page.locator('[data-w="uwaga"]')).toContainText(/nie\sogłoszono/);
+});
+
+test('strona zbudowana w 2026 r. otwarta w styczniu 2027 r. liczy 2027 r.', async ({ page }) => {
+  await page.clock.setFixedTime(new Date('2027-01-05T10:00:00+01:00'));
+  await page.goto(NARZEDZIE_KOSZT);
+  await expect(page.getByLabel('Rok wypłaty')).toHaveValue('2027');
+});

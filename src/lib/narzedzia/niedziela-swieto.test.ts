@@ -22,4 +22,8 @@ describe('praca w niedzielę i święto (art. 151^9–151^11 Kp)', () => {
   it('dodatek 100%: 12 h × 35 zł = 420 zł', () => {
     expect(dodatekZaNiedziele(12, 35)).toBe(420);
   });
+  it('2028 r.: niedziela 2 stycznia i święto 11 listopada w sobotę', () => {
+    expect(wolneZaNiedzieleSwieto('2028-01-02', 1)).toMatchObject({ rodzaj: 'niedziela', okno: { od: '2027-12-27', do: '2028-01-08' }, okres: { od: '2028-01-01', do: '2028-01-31' } });
+    expect(wolneZaNiedzieleSwieto('2028-11-11', 1)).toMatchObject({ rodzaj: 'swieto', okno: null, okres: { do: '2028-11-30' } });
+  });
 });

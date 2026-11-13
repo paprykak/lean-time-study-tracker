@@ -1,0 +1,14 @@
+---
+// Projekty nowego brzmienia stron stałych (src/content/strony/projekt-<slug>.md, projekt: true) do lektury Patryka:
+// /podglad/<slug> obok obowiązującej strony /<slug>. Tylko podgląd gałęzi i build testowy (kolekcja „strony” na
+// produkcji nie ładuje projektów: src/content.config.ts), zawsze noindex i poza mapą strony.
+import { getCollection } from 'astro:content';
+import StronaStala from '../../components/StronaStala.astro';
+
+export async function getStaticPaths() {
+  const projekty = await getCollection('strony', (s) => s.id.startsWith('projekt-') && s.data.projekt);
+  return projekty.map((s) => ({ params: { slug: s.id.replace(/^projekt-/, '') }, props: { id: s.id } }));
+}
+const { id } = Astro.props;
+---
+<StronaStala slug={id} noindex />

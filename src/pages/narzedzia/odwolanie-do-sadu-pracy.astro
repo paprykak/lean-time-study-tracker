@@ -41,13 +41,14 @@ const faq = [
       <h2 id="kalkulator-tytul" class="tytul-m">Twoja sprawa</h2>
       <div class="mt-4">
         <label for="o-sprawa" class="etykieta-pola">Sprawa</label>
-        <select id="o-sprawa" name="sprawa" class="pole mt-1">
-          {Object.entries(SPRAWY).map(([k, s]) => <option value={k} selected={k === SPRAWA}>{s.nazwa}</option>)}
+        <select id="o-sprawa" name="sprawa" class="pole mt-1" aria-describedby="o-sprawa-opis">
+          {Object.entries(SPRAWY).map(([k, s]) => <option value={k} selected={k === SPRAWA}>{s.krotko}</option>)}
         </select>
+        <p id="o-sprawa-opis" class="meta mt-1" data-w="sprawa-opis">{SPRAWY[SPRAWA].nazwa}</p>
       </div>
       <div class="mt-4">
         <label for="o-data" class="etykieta-pola" data-w="etykieta-daty">{SPRAWY[SPRAWA].zdarzenie}</label>
-        <input id="o-data" name="data" type="date" class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" value={dzis} aria-describedby="o-blad" />
+        <input id="o-data" name="data" type="date" data-dzis class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" value={dzis} aria-describedby="o-blad" />
         <p id="o-blad" class="blad-pola" data-blad="data" hidden></p>
       </div>
     </div>
@@ -102,6 +103,8 @@ const faq = [
 <script>
   import { SPRAWY, terminCzynnosci, type Sprawa } from '../../lib/narzedzia/termin-odwolania';
   import { dataPoPolsku, dniMiedzy, dzisWPolsce, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { typografia } from '../../lib/typografia.mjs';
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
 
   const form = document.querySelector<HTMLFormElement>('[data-odwolanie]');
   if (form) {
@@ -111,6 +114,7 @@ const faq = [
       const sprawa = el('sprawa').value as Sprawa;
       const s = SPRAWY[sprawa];
       w('etykieta-daty').textContent = s.zdarzenie;
+      w('sprawa-opis').textContent = typografia(s.nazwa);
       const data = el('data').value;
       const blad = poprawnaData(data) ? null : 'Wpisz datę.';
       const b = form.querySelector<HTMLElement>('[data-blad="data"]')!;
@@ -124,22 +128,26 @@ const faq = [
       }
       const t = terminCzynnosci(data, sprawa);
       const zostalo = dniMiedzy(dzisWPolsce(), t.koniec);
-      w('koniec').textContent = dataPoPolsku(t.koniec);
+      w('koniec').textContent = typografia(dataPoPolsku(t.koniec));
       w('gdzie').textContent = s.gdzie;
-      w('termin').textContent = `${s.dni} dni (${s.przepis})`;
-      w('przesuniecie').textContent = t.przesuniecie.length ? `z ${dataPoPolsku(t.pierwotny)}: ${t.przesuniecie.map((p) => p.powod).join(', ')}` : 'brak';
+      w('termin').textContent = typografia(`${s.dni} dni (${s.przepis})`);
+      w('przesuniecie').textContent = typografia(t.przesuniecie.length ? `z ${dataPoPolsku(t.pierwotny)}: ${t.przesuniecie.map((p) => p.powod).join(', ')}` : 'brak');
       status.hidden = false;
       status.dataset.status = zostalo < 0 ? 'po-terminie' : zostalo <= 3 ? 'wkrotce' : 'w-terminie';
-      status.textContent =
+      status.textContent = typografia(
         zostalo < 0
-          ? 'Termin minął: możliwy tylko wniosek o przywrócenie terminu (art. 265 Kodeksu pracy)'
+          ? s.przywrocenie
+            ? 'Termin minął: możliwy tylko wniosek do sądu pracy o przywrócenie terminu, 7 dni od ustania przyczyny (art. 265 Kodeksu pracy)'
+            : 'Termin minął: Kodeks pracy nie przewiduje przywrócenia tego terminu'
           : zostalo === 0
             ? 'To dziś: złóż albo nadaj pismo dzisiaj'
-            : `Zostało ${zostalo} ${zostalo === 1 ? 'dzień' : 'dni'}`;
+            : `Zostało ${zostalo} ${zostalo === 1 ? 'dzień' : 'dni'}`,
+      );
     };
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    ustawDzisiejszeWartosci(form);
     przelicz();
   }
 </script>

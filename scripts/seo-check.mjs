@@ -7,18 +7,15 @@ import { join, relative, sep } from 'node:path';
 import { ADRES, FORMULARZE, PODGLAD, PORTAL, START, TESTOWE } from '../src/lib/srodowisko.mjs';
 import { POLITYKI } from '../src/lib/polityki.mjs';
 import { PLIK_KLUCZA } from '../src/lib/indexnow.mjs';
+import { usuniety } from '../worker/usuniete.js';
 
 const DIST = new URL('../dist/', import.meta.url).pathname;
 // Strony, które celowo nie trafiają do wyszukiwarek: techniczne, wyniki wyszukiwania, strony wzorów.
 const NOINDEX_OK = new Set(['/404', '/410', '/styleguide', '/szukaj', '/newsletter/potwierdz', '/newsletter/potwierdzono', '/newsletter/wypisano', '/newsletter/blad', '/kontakt/wyslano', '/kontakt/blad']);
-// Noindex z danych: listy poniżej progu artykułów (src/lib/mapa.mjs, PROGI) i artykuły z polem noindex.
-const NOINDEX_Z_DANYCH = /^\/(dzial|temat|autor)\//;
-// Pole zastępcze zamiast zdjęcia wolno pokazać tylko na stronie wzorów (zasady wyglądu: bez szarych prostokątów na produkcji).
-const POLE_ZASTEPCZE_OK = new Set(['/styleguide']);
+// Projekty nowych brzmień stron stałych (src/pages/podglad/[slug].astro): tylko podgląd i build testowy, zawsze noindex.
+const NOINDEX_PROJEKTY = /^\/podglad\//;
 // Trasy z planu kolejnych faz, których jeszcze nie ma: link do nich to ostrzeżenie, nie błąd. Pusta od F3.
 const PLANOWANE = [];
-// Adresy fikcyjnych artykułów na stronie wzorów (src/data/przyklady.ts).
-const PRZYKLADOWE = /^\/przyklad-/;
 // Prawdziwa produkcja (nie podgląd i nie build testowy): bez treści testowych i projektów tekstów.
 const PRODUKCJA = !PODGLAD && !TESTOWE;
 const POMIN_KATALOGI = new Set(['_astro', 'admin']);
@@ -72,6 +69,14 @@ for (const plik of strony) {
   const opis = html.match(/<meta name="description" content="([^"]*)"/)?.[1];
   if (!opis) bledy.push(`${gdzie} brak meta description`);
   else if (opis.length > 165) ostrzezenia.push(`${gdzie} opis ma ${opis.length} znaków (zalecane do 155)`);
+  // Strony narzędzi: twarde limity ze standardu narzędzia (prompty/02-fabryka.md, sekcja 4, zasada 9): tytuł bez
+  // sufiksu do 48 znaków, opis do 155. Liczymy po zdekodowaniu encji, bo tyle widzi wyszukiwarka.
+  if (/^\/narzedzia\/[a-z0-9-]+$/.test(adres) && tytul && opis) {
+    const tekst = (t) => t.replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+    const goly = tekst(tytul).replace(/ \| Rytm Hali$/, '');
+    if ([...goly].length > 48) bledy.push(`${gdzie} tytuł narzędzia ma ${[...goly].length} znaków (najwyżej 48 bez „ | Rytm Hali”)`);
+    if ([...tekst(opis)].length > 155) bledy.push(`${gdzie} opis narzędzia ma ${[...tekst(opis)].length} znaków (najwyżej 155)`);
+  }
   const h1 = (html.match(/<h1[\s>]/g) ?? []).length;
   if (h1 !== 1) bledy.push(`${gdzie} liczba nagłówków H1: ${h1} (ma być 1)`);
   if (!/<html lang="pl"[\s>]/.test(html)) bledy.push(`${gdzie} brak <html lang="pl">`);
@@ -93,8 +98,8 @@ for (const plik of strony) {
   const tekst = html.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>|<[^>]+>/g, ' ');
   if (/\sr\.\.(?!\.)/.test(tekst)) bledy.push(`${gdzie} podwójna kropka po „r.” w tekście strony`);
 
-  // Pole zastępcze zamiast zdjęcia tylko na stronie wzorów
-  if (html.includes('data-brak-zdjecia') && !POLE_ZASTEPCZE_OK.has(adres)) bledy.push(`${gdzie} pole zastępcze zamiast zdjęcia (zasady wyglądu: prawdziwe zdjęcia na produkcji)`);
+  // Adres usunięty z serwisu (410 albo 301 z workera, worker/usuniete.js) nie może mieć zbudowanej strony.
+  if (usuniety(adres)) bledy.push(`${gdzie} zbudowana strona pod adresem usuniętym z serwisu (worker/usuniete.js)`);
 
   // CSP: każdy skrypt i styl w kodzie strony ma swój hash w <meta http-equiv="content-security-policy">
   const csp = html.match(/<meta http-equiv="content-security-policy" content="([^"]*)"/)?.[1];
@@ -114,8 +119,11 @@ for (const plik of strony) {
 
   // Linki wewnętrzne prowadzą do istniejących stron
   for (const [, href] of html.matchAll(/<a\b[^>]*\shref="(\/[^"#]*)(?:#[^"]*)?"/g)) {
+    if (usuniety(href.split('?')[0])) {
+      bledy.push(`${gdzie} link do adresu usuniętego z serwisu ${href} (worker/usuniete.js)`);
+      continue;
+    }
     if (href.startsWith('//') || istnieje(href)) continue;
-    if (adres === '/styleguide' && PRZYKLADOWE.test(href)) continue;
     if (PLANOWANE.some((w) => w.test(href.split('?')[0]))) planowane.set(href, (planowane.get(href) ?? 0) + 1);
     else bledy.push(`${gdzie} link do nieistniejącej strony ${href}`);
   }
@@ -125,7 +133,7 @@ for (const plik of strony) {
   if (og?.startsWith(ADRES) && !istnieje(og.slice(ADRES.length))) bledy.push(`${gdzie} og:image ${og} nie istnieje w dist/`);
 
   // Produkcja: bez treści testowych; projekt strony stałej blokuje start (przed startem tylko ostrzega).
-  if (PRODUKCJA && (adres.startsWith('/testowy-') || html.includes('Tekst testowy (fikcyjny)'))) bledy.push(`${gdzie} treść testowa na produkcji`);
+  if (PRODUKCJA && (adres.startsWith('/testowy-') || adres.startsWith('/podglad/') || html.includes('Tekst testowy (fikcyjny)'))) bledy.push(`${gdzie} treść testowa na produkcji`);
   if (PRODUKCJA && html.includes('data-projekt')) (START ? bledy : ostrzezenia).push(`${gdzie} projekt tekstu do akceptacji Patryka${START ? '' : ' (przed startem i przed uruchomieniem zapisu na listę musi być zatwierdzony)'}`);
   // Formularz bez skonfigurowanej usługi kończy się stroną błędu: na produkcji go nie pokazujemy (FORMULARZE).
   // Wyjątek: strona wzorów (noindex) pokazuje stany formularza dla redakcji.
@@ -139,8 +147,7 @@ for (const plik of strony) {
   }
 
   if (noindex) {
-    const artykul = /<meta property="og:type" content="article"/.test(html);
-    if (!NOINDEX_OK.has(adres) && !NOINDEX_Z_DANYCH.test(adres) && !artykul) bledy.push(`${gdzie} ma noindex, a nie jest na liście wyjątków`);
+    if (!NOINDEX_OK.has(adres) && !NOINDEX_PROJEKTY.test(adres)) bledy.push(`${gdzie} ma noindex, a nie jest na liście wyjątków`);
     if (mapa.has(pelny(adres))) bledy.push(`${gdzie} ma noindex, a jest w mapie strony`);
     continue;
   }

@@ -28,3 +28,19 @@ test('koniec roku 6. urodzin skraca urlop', async ({ page }) => {
   await expect(page.locator('[data-w="koniec"]')).toHaveText('31 grudnia 2031 r.');
   await expect(page.locator('[data-w="uwaga"]')).toContainText('6 lat');
 });
+
+test('drugi rodzic wykorzystał 2 miesiące: „34 miesiące”, bez podwójnej kropki', async ({ page }) => {
+  await page.getByLabel('Na ile miesięcy').fill('36');
+  await page.getByLabel('Już wykorzystane przez drugiego rodzica (miesiące)').fill('2');
+  await expect(page.locator('[data-w="uwaga"]')).toHaveText(/^Masz do wykorzystania 34\smiesiące\.$/);
+});
+
+test.describe('po Nowym Roku', () => {
+  test('5 stycznia 2027 r.: przykład liczony od dziś (dziecko z 5 stycznia 2026 r., urlop od 1 marca 2027 r.)', async ({ page }) => {
+    await page.clock.setFixedTime(new Date('2027-01-05T10:00:00+01:00'));
+    await page.goto(NARZEDZIE_WYCHOWAWCZY);
+    await expect(page.getByLabel('Data urodzenia dziecka')).toHaveValue('2026-01-05');
+    await expect(page.getByLabel('Początek urlopu')).toHaveValue('2027-03-01');
+    await expect(page.locator('[data-w="koniec"]')).toHaveText(/^29\slutego\s2028\sr\.$/);
+  });
+});

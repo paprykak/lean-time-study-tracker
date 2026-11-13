@@ -1,0 +1,244 @@
+{
+ "partia": "E",
+ "sprawdzone": [
+  {
+   "slug": "okres-wypowiedzenia",
+   "pliki": [
+    "src/pages/narzedzia/okres-wypowiedzenia.astro",
+    "src/lib/narzedzia/wypowiedzenie.ts",
+    "src/lib/narzedzia/wypowiedzenie.test.ts",
+    "tests/e2e/narzedzie-wypowiedzenie.spec.ts"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "okres-probny",
+   "pliki": [
+    "src/pages/narzedzia/okres-probny.astro",
+    "src/lib/narzedzia/okres-probny.ts",
+    "src/lib/narzedzia/okres-probny.test.ts",
+    "tests/e2e/narzedzie-probny.spec.ts"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "umowa-na-czas-okreslony",
+   "pliki": [
+    "src/pages/narzedzia/umowa-na-czas-okreslony.astro",
+    "src/lib/narzedzia/umowy-okreslone.ts",
+    "src/lib/narzedzia/umowy-okreslone.test.ts",
+    "tests/e2e/narzedzie-umowy.spec.ts"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "limit-pracy-tymczasowej",
+   "pliki": [
+    "src/pages/narzedzia/limit-pracy-tymczasowej.astro",
+    "src/lib/narzedzia/praca-tymczasowa.ts",
+    "src/lib/narzedzia/praca-tymczasowa.test.ts",
+    "tests/e2e/narzedzie-agencja.spec.ts"
+   ],
+   "wynik": "ok"
+  },
+  {
+   "slug": "staz-pracy",
+   "pliki": [
+    "src/pages/narzedzia/staz-pracy.astro",
+    "src/lib/narzedzia/staz-pracy.ts",
+    "src/lib/narzedzia/staz-pracy.test.ts",
+    "tests/e2e/narzedzie-staz.spec.ts"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "ochrona-przedemerytalna",
+   "pliki": [
+    "src/pages/narzedzia/ochrona-przedemerytalna.astro",
+    "src/lib/narzedzia/ochrona-przedemerytalna.ts",
+    "src/lib/narzedzia/ochrona-przedemerytalna.test.ts",
+    "tests/e2e/narzedzie-ochrona.spec.ts"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "zwolnienie-na-l4",
+   "pliki": [
+    "src/pages/narzedzia/zwolnienie-na-l4.astro",
+    "src/lib/narzedzia/ochrona-l4.ts",
+    "src/lib/narzedzia/ochrona-l4.test.ts",
+    "tests/e2e/narzedzie-zwolnienie-l4.spec.ts"
+   ],
+   "wynik": "problemy"
+  },
+  {
+   "slug": "zwolnienia-grupowe",
+   "pliki": [
+    "src/pages/narzedzia/zwolnienia-grupowe.astro",
+    "src/lib/narzedzia/zwolnienia-grupowe.ts",
+    "src/lib/narzedzia/zwolnienia-grupowe.test.ts",
+    "tests/e2e/narzedzie-zwolnienia-grupowe.spec.ts"
+   ],
+   "wynik": "problemy"
+  }
+ ],
+ "znaleziska": [
+  {
+   "id": "E-1",
+   "slug": "okres-wypowiedzenia",
+   "wymiar": "rachunek",
+   "waga": "wysoka",
+   "plik": "src/lib/narzedzia/wypowiedzenie.ts",
+   "linia": 22,
+   "problem": "pelneMiesiace() odejmuje miesiąc, gdy dzień doręczenia ma niższy numer niż dzień rozpoczęcia pracy. Na końcu miesiąca zaniża więc staż i daje za krótki okres wypowiedzenia. Jest to niezgodne z konwencją terminy.ts (dodajMiesiace(od, n) − 1 dzień), której używają staz-pracy i reszta portalu.",
+   "dowod": "Wynik sondy (node, kopie lib) i podgląd: początek 2026-03-31, doręczenie 2026-09-30 → pelne=5, '2 tygodnie' (koniec 17 października 2026 r.), a według terminy.ts 6 miesięcy mija z końcem 2026-09-29, więc należy się 1 miesiąc. Początek 2024-02-29, doręczenie 2027-02-28 → pelne=35, '1 miesiąc', a 36 miesięcy mija 2027-02-27, więc należą się 3 miesiące (art. 36 § 1 pkt 3 Kp, DU_2026_1245.txt). Początek 2026-08-31, doręczenie 2027-02-28 → 5, a powinno być 6. staz-pracy miesiaceIDni dla tych samych dat daje 6 m 1 d i 36 m 1 d.",
+   "poprawka": "pelneMiesiace: `let m = 0; while (dodajMiesiace(od, m + 1) <= do_) m++; return m;` (import z terminy.ts). Obecne testy (05-15→11-14 = 5, 05-15→11-15 = 6, 2023-11-11→2026-11-11 = 36) nadal przechodzą. Dopisać testy 2026-03-31→2026-09-30 = 6 i 2024-02-29→2027-02-28 = 36 oraz test E2E z jednym takim przypadkiem."
+  },
+  {
+   "id": "E-2",
+   "slug": "okres-wypowiedzenia",
+   "wymiar": "prawo",
+   "waga": "wysoka",
+   "plik": "src/pages/narzedzia/okres-wypowiedzenia.astro",
+   "linia": 53,
+   "problem": "Staż liczony jest kalendarzowo od 'Pierwszego dnia pierwszej umowy z tym pracodawcą' do doręczenia, więc wlicza przerwy między umowami. Strona sama pisze w FAQ, że liczy się suma okresów zatrudnienia 'bez względu na przerwy'. Przy przerwach narzędzie zawyża staż i okres wypowiedzenia. Nie uwzględnia też zleceń na rzecz tego pracodawcy (art. 302^1 § 8).",
+   "dowod": "Przykład: umowa 2020-01-01–2020-03-31, ponowne zatrudnienie 2026-05-01, doręczenie 2026-09-15 → narzędzie liczy ok. 80 miesięcy i pokazuje '3 miesiące'. Faktyczny staż to ok. 7,5 miesiąca, czyli 1 miesiąc (art. 36 § 1 Kp: 'okres zatrudnienia u danego pracodawcy'; art. 302^1 § 8 w DU_2025_1423.txt).",
+   "poprawka": "Dodać tryb 'staż u tego pracodawcy (lata i miesiące)' albo listę okresów liczoną przez staz() z staz-pracy.ts. Co najmniej zmienić opis pola na: 'Gdy między umowami były przerwy, policz staż w kalkulatorze stażu pracy' i dodać link do /narzedzia/staz-pracy w sekcji wyjaśnienia."
+  },
+  {
+   "id": "E-3",
+   "slug": "okres-wypowiedzenia",
+   "wymiar": "rachunek",
+   "waga": "srednia",
+   "plik": "src/pages/narzedzia/okres-wypowiedzenia.astro",
+   "linia": 109,
+   "problem": "Narzędzie nie wykrywa sytuacji, w której pracownik osiąga próg 6 miesięcy albo 3 lat w trakcie biegu wypowiedzenia. Pokazuje krótszy okres bez konkretnego ostrzeżenia, a w sekcji wyjaśnienia jest tylko ogólne 'sprawdź w kadrach'. Zasada 2 z prompty/02-fabryka.md wymaga wariantu bezpiecznego dla pracownika.",
+   "dowod": "Podgląd 320 px: początek 2026-03-01, doręczenie 2026-08-20 → '2 tygodnie', '5 września 2026 r. (sobota)', [data-w=uwaga] ukryte. 6 miesięcy mija z końcem 2026-08-31, czyli przed końcem wypowiedzenia.",
+   "poprawka": "Po wyliczeniu końca porównać pelneMiesiace(od, dodajDni(koniec, 1)) z progami 6 i 36. Gdy próg przypada przed końcem, pokazać uwagę: 'W trakcie wypowiedzenia staż przekroczy N; wtedy okres może się wydłużyć do X (do <data>) – sprawdź w kadrach'. Dodać test jednostkowy i E2E."
+  },
+  {
+   "id": "E-4",
+   "slug": "staz-pracy",
+   "wymiar": "tresc-ux",
+   "waga": "srednia",
+   "plik": "src/pages/narzedzia/staz-pracy.astro",
+   "linia": 73,
+   "problem": "Opcje listy szkół mają złą odmianę liczebnika i dublują informację: 'Zasadnicza (branżowa) szkoła zawodowa (3 lat)', 'Liceum ogólnokształcące (4 lat)', 'Średnia szkoła zawodowa, 4 lata nauki (4 lat)'. Na 320 px i 412 px są ucięte.",
+   "dowod": "Playwright 320×640 i 412×915: opcje #s-szkola szersze niż pole (244/336 px). Zrzut sel-staz-szkola.png. Kalkulator urlopu (kalkulator-urlopu.astro:75) używa w tym miejscu funkcji lata().",
+   "poprawka": "Użyć odmiana(s.lata, ['rok','lata','lat']) i skrócić nazwy w tej liście, np. 'Zasadnicza zawodowa (3 lata)', 'Technikum 4-letnie (4 lata)', 'Liceum (4 lata)', 'Studia (8 lat)'."
+  },
+  {
+   "id": "E-5",
+   "slug": "okres-probny",
+   "wymiar": "tresc-ux",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/okres-probny.astro",
+   "linia": 47,
+   "problem": "Opcje list wyboru są za długie na telefon i wybrana wartość się ucina. Dotyczy też okres-wypowiedzenia (#wy-rodzaj, 320 px) i zwolnienie-na-l4 (#l-przyczyna 'Wypadek przy pracy, choroba zawodowa').",
+   "dowod": "Playwright 320 px: #p-plan 'Na czas określony, od 6 do mniej niż 12 miesięcy' przy szerokości pola 244 px (ucięte także na 412 px); #wy-rodzaj 'Na okres próbny dłuższy niż 2 tygodnie'. Zrzuty sel-probny-plan.png i sel-wyp-rodzaj.png.",
+   "poprawka": "Skrócić etykiety, np. 'Nieokreślony', 'Określony 12 mies. i dłużej', 'Określony 6–12 mies.', 'Określony do 6 mies.'; 'Stała (określony/nieokreślony)', 'Próbna do 2 tyg.', 'Próbna ponad 2 tyg.', 'Próbna 3 mies.'; 'Wypadek, choroba zawodowa'."
+  },
+  {
+   "id": "E-6",
+   "slug": "ochrona-przedemerytalna",
+   "wymiar": "tresc-ux",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/ochrona-przedemerytalna.astro",
+   "linia": 108,
+   "problem": "Przy błędzie danych skrypt czyści tylko pole główne, a reszta wyniku zostaje ze starymi wartościami. Ten sam wzór występuje w zwolnienie-na-l4 (podstawa, koniec zasiłku), okres-probny (maks, wypowiedzenie), staz-pracy (umowy, urlopowy, urlop) i zwolnienia-grupowe (wiersz odprawy pozostaje widoczny).",
+   "dowod": "Podgląd: data urodzenia 1930-01-11 → komunikat 'Wpisz datę urodzenia.', a [data-w=do] nadal pokazuje '10 stycznia 2031 r.' z poprzedniego wpisu. L4 z pustą datą: '—', ale nadal 'art. 41 i 53 § 1 pkt 1 lit. b' i '12 kwietnia 2027 r. (182 dni)'. Staż z błędem okresu 1: '9 lat, 9 miesięcy i 22 dni' w [data-w=umowy].",
+   "poprawka": "W gałęzi błędu ustawić '—' we wszystkich polach data-w wyniku i ukryć wiersze warunkowe (data-wiersz)."
+  },
+  {
+   "id": "E-7",
+   "slug": "okres-wypowiedzenia",
+   "wymiar": "tresc-ux",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/okres-wypowiedzenia.astro",
+   "linia": 57,
+   "problem": "Komunikat błędu #wy-blad nie jest powiązany z polami dat: brak aria-describedby i aria-invalid. Czytnik ekranu nie odczyta błędu przy polu.",
+   "dowod": "Playwright: #wy-dor aria-describedby = null, #wy-od aria-describedby = 'wy-od-opis' (bez wy-blad).",
+   "poprawka": "Ustawić aria-describedby='wy-blad' na #wy-dor i 'wy-od-opis wy-blad' na #wy-od."
+  },
+  {
+   "id": "E-8",
+   "slug": "umowa-na-czas-okreslony",
+   "wymiar": "prawo",
+   "waga": "niska",
+   "plik": "src/lib/narzedzia/umowy-okreslone.ts",
+   "linia": 60,
+   "problem": "Przy czwartej umowie wynik 'Umowa na czas nieokreślony od' pokazuje dzień rozpoczęcia tej umowy (czwarta.od). Art. 25^1 § 3 mówi o 'dniu zawarcia czwartej umowy', a dzień zawarcia bywa wcześniejszy niż rozpoczęcie. FAQ i uwaga mówią o 'dniu jej zawarcia'.",
+   "dowod": "DU_2026_1245.txt, art. 25[1] § 3: 'od dnia zawarcia czwartej umowy o pracę na czas określony'. Formularz zbiera tylko daty od–do.",
+   "poprawka": "W uwadze dopisać: 'Liczymy od początku czwartej umowy; gdy podpisano ją wcześniej, umowa jest na czas nieokreślony od dnia podpisania (art. 25¹ § 3)'."
+  },
+  {
+   "id": "E-9",
+   "slug": "umowa-na-czas-okreslony",
+   "wymiar": "testy",
+   "waga": "niska",
+   "plik": "src/lib/narzedzia/umowy-okreslone.test.ts",
+   "linia": 1,
+   "problem": "Brakuje testów brzegowych: początek 29.02 albo 31. dnia miesiąca w trybie ciągłym (art. 112 KC) oraz przejście z trybu ciągłego na sumowanie dni. Już jeden dzień przerwy skraca limit o 12 dni, co jest zgodne z opisaną metodą, ale nieintuicyjne i nieprzetestowane.",
+   "dowod": "Sonda: 2025-01-01–2025-12-31 i 2026-01-01–2027-12-31 → nieokreślony od 2027-10-01; po przesunięciu drugiej umowy na 2026-01-02 → od 2027-09-19. Umowa od 2024-05-31 → limitDo 2027-02-27.",
+   "poprawka": "Dodać testy: start 2024-05-31 → limitDo 2027-02-27; start 2024-02-29; para z przerwą jednego dnia. W wyniku dla trybu z przerwami pokazać zdanie, że przy przerwach limit liczy się jako 990 dni."
+  },
+  {
+   "id": "E-10",
+   "slug": "zwolnienia-grupowe",
+   "wymiar": "tresc-ux",
+   "waga": "niska",
+   "plik": "src/pages/narzedzia/zwolnienia-grupowe.astro",
+   "linia": 70,
+   "problem": "Pole nazywa się 'Twój ostatni dzień pracy', a terminy z art. 9 biegną 'od dnia rozwiązania stosunku pracy'. Te dni się różnią przy zwolnieniu z obowiązku świadczenia pracy (art. 36^2 Kp) albo urlopie na koniec umowy.",
+   "dowod": "DU_2026_1195.txt art. 9 ust. 1–2: 'w ciągu roku od dnia rozwiązania z nim stosunku pracy', 'w okresie 15 miesięcy od dnia rozwiązania'.",
+   "poprawka": "Zmienić etykietę na 'Dzień rozwiązania umowy' (ostatni dzień umowy)."
+  },
+  {
+   "id": "E-11",
+   "slug": "staz-pracy",
+   "wymiar": "spojnosc",
+   "waga": "niska",
+   "plik": "src/data/narzedzia.ts",
+   "linia": 392,
+   "problem": "Wpis staz-pracy w rejestrze ma przepisy ['kodeksPracy','kodeksCywilny'], a strona opiera się na ustawie z 26 września 2025 r. (art. 5, 9, 10; Dz.U. 2025 poz. 1423), która jest w prawo.ts jako 'zmianaStazu2025'. Wpis okres-wypowiedzenia tę pozycję ma.",
+   "dowod": "staz-pracy.astro:104 cytuje 'art. 5, 9 i 10 ustawy z 26 września 2025 r., Dz.U. 2025 poz. 1423'.",
+   "poprawka": "Dopisać 'zmianaStazu2025' do przepisy wpisu staz-pracy (tylko dopisanie)."
+  },
+  {
+   "id": "E-12",
+   "slug": "okres-probny",
+   "wymiar": "testy",
+   "waga": "niska",
+   "plik": "src/lib/narzedzia/okres-probny.test.ts",
+   "linia": 17,
+   "problem": "Brakuje testów końca okresu próbnego przy starcie 29–31. dnia miesiąca i 29.02. Kod (dodajMiesiace − 1) daje wtedy umowę krótszą niż miesiąc kalendarzowy, a 'Jak liczymy' tego nie wyjaśnia.",
+   "dowod": "Sonda: start 2026-01-31, 1 miesiąc → 2026-02-27; start 2026-11-30, 3 miesiące → 2027-02-27; start 2027-01-29, 1 miesiąc → 2027-02-27. Art. 112 KC (DU_2026_795.txt) nie rozstrzyga terminu liczonego od dnia, który sam się wlicza.",
+   "poprawka": "Dopisać testy tych dat i jedno zdanie w 'Jak liczymy': 'Gdy w ostatnim miesiącu nie ma dnia odpowiadającego dniowi początku, umowa kończy się dzień przed ostatnim dniem tego miesiąca – sprawdź datę w umowie'. Albo świadomie zmienić konwencję w terminy.ts dla całego portalu (decyzja w DECYZJE.md)."
+  }
+ ],
+ "do_stanu": [
+  {
+   "sprawa": "Termin na udokumentowanie okresów z art. 302^1 mija: 24 miesiące od 1.01.2026 (sektor finansów publicznych) i od 1.05.2026 (pozostali pracodawcy), art. 5 ustawy Dz.U. 2025 poz. 1423. Po tych datach zdanie o 24 miesiącach trzeba przeredagować na czas przeszły (pracownicy zatrudnieni w tych dniach) i dodać informację o nowych pracownikach.",
+   "kiedy_sprawdzic": "2027-12-31",
+   "gdzie_w_kodzie": "src/pages/narzedzia/staz-pracy.astro:104, wynik-uwaga w staz-pracy.astro"
+  },
+  {
+   "sprawa": "Drugi termin dokumentowania okresów (pracodawcy spoza sektora finansów publicznych).",
+   "kiedy_sprawdzic": "2028-04-30",
+   "gdzie_w_kodzie": "src/pages/narzedzia/staz-pracy.astro"
+  },
+  {
+   "sprawa": "Kp ma zmianę Dz.U. 2026 poz. 1046 (w mocy od 2026-11-05: mobbing, art. 18^3a i 94^3), wydaną po tekście jednolitym Dz.U. 2026 poz. 1245. Nie dotyczy przepisów partii E. Przy kolejnym tekście jednolitym trzeba zaktualizować publikator w prawo.ts.",
+   "kiedy_sprawdzic": "2027-03-01",
+   "gdzie_w_kodzie": "src/data/prawo.ts kodeksPracy"
+  }
+ ],
+ "poza_zakresem": [
+  "Kary w ustawie o pracy tymczasowej (art. 27a i 27b: 1000–30 000 zł) są nadal aktualne. Dz.U. 2026 poz. 473 podwoiła grzywny w Kp (art. 281–283) od 2026-07-08, ale ustawy o zatrudnianiu pracowników tymczasowych nie zmieniła. Ewentualne narzędzia z kwotami grzywien z Kp (poza partią E) warto porównać z nowymi kwotami 2000–60 000 zł."
+ ],
+ "nie_sprawdzono": [
+  "Orzecznictwo SN (sn.pl blokuje automaty): czy okres wypowiedzenia wydłuża się, gdy próg stażu zostanie osiągnięty w trakcie wypowiedzenia (E-3); jak traktować przerwy w niezdolności przy art. 53 § 1 pkt 1 lit. a; czy 'wiek emerytalny' z art. 39 Kp obejmuje obniżony wiek (art. 46, 50, 184 ustawy emerytalnej); dzień urodzin osoby urodzonej 29 lutego (praktyka ZUS: 28 lutego czy 1 marca).",
+  "Czytnik ekranu (NVDA/VoiceOver) i nawigacja klawiaturą: sprawdzono tylko atrybuty ARIA przez Playwright.",
+  "Przy 320 i 412 px nie ma przewijania w bok na żadnej z 8 stron (scrollWidth = clientWidth). Nie znaleziono podwójnej kropki 'r..'. 44 testy jednostkowe partii przechodzą. Testów E2E nie uruchamiano (zakaz z WSPOLNE.md)."
+ ]
+}

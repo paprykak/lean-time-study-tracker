@@ -3,15 +3,18 @@
 // (art. 155^1, 155^2a, 155^3), pierwsza praca: 1/12 po każdym miesiącu (art. 153 § 1), dzień urlopu = 8 godzin
 // (art. 154^2 § 2). Okresy z art. 302^1 (zlecenia, działalność) wlicza się do stażu od 2026 r.
 
+// Krótkie nazwy do listy wyboru (telefon ucina długie; pełne nazwy w tabeli kalkulatora urlopu): „Zasadnicza” to zasadnicza
+// (branżowa) szkoła zawodowa, „Technikum” każda średnia szkoła zawodowa o danym czasie nauki, „Po zasadniczej” średnia
+// szkoła zawodowa dla absolwentów zasadniczych. Liczba lat w nawiasie to lata wliczane do stażu (art. 155 § 1).
 export const SZKOLY = {
-  brak: { nazwa: 'Bez szkoły ponadpodstawowej albo nieukończona', lata: 0 },
-  zasadnicza: { nazwa: 'Zasadnicza (branżowa) szkoła zawodowa', lata: 3 },
-  'technikum-4': { nazwa: 'Średnia szkoła zawodowa, 4 lata nauki', lata: 4 },
-  'technikum-5': { nazwa: 'Średnia szkoła zawodowa, 5 lat nauki', lata: 5 },
-  'srednia-po-zasadniczej': { nazwa: 'Średnia szkoła zawodowa po zasadniczej', lata: 5 },
-  liceum: { nazwa: 'Liceum ogólnokształcące', lata: 4 },
-  policealna: { nazwa: 'Szkoła policealna', lata: 6 },
-  wyzsza: { nazwa: 'Szkoła wyższa', lata: 8 },
+  brak: { nazwa: 'Brak lub nieukończona', lata: 0 },
+  zasadnicza: { nazwa: 'Zasadnicza', lata: 3 },
+  'technikum-4': { nazwa: 'Technikum 4-letnie', lata: 4 },
+  'technikum-5': { nazwa: 'Technikum 5-letnie', lata: 5 },
+  'srednia-po-zasadniczej': { nazwa: 'Po zasadniczej', lata: 5 },
+  liceum: { nazwa: 'Liceum', lata: 4 },
+  policealna: { nazwa: 'Policealna', lata: 6 },
+  wyzsza: { nazwa: 'Wyższa', lata: 8 },
 } as const;
 
 export type Szkola = keyof typeof SZKOLY;

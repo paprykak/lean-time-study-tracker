@@ -9,7 +9,7 @@ test('start 16 listopada 2026 r.: informacja do 23 listopada, PPK do 10 marca', 
   await page.getByLabel('Pierwszy dzień pracy').fill('2026-11-16');
   await expect(page.locator('[data-w="informacja"]')).toHaveText(/^23\slistopada\s2026\sr\.$/);
   const lista = page.locator('[data-w="lista"]');
-  await expect(lista).toContainText(/Zgłoszenie do ubezpieczeń w ZUS.*23\slistopada\s2026\sr\./);
+  await expect(lista).toContainText(/Zgłoszenie\sdo\subezpieczeń\sw\sZUS.*23\slistopada\s2026\sr\./);
   await expect(lista).toContainText(/16\sgrudnia\s2026\sr\./);
   await expect(lista).toContainText(/10\smarca\s2027\sr\./);
 });

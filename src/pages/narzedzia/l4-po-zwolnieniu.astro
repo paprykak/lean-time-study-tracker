@@ -4,9 +4,17 @@
 import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
 import { zasilekPoUstaniu } from '../../lib/narzedzia/zasilek-po-ustaniu';
 import { dataPoPolsku, dodajDni, dzisWPolsce } from '../../lib/narzedzia/terminy';
+import { odmiana } from '../../lib/redakcja';
 
 const dzis = dzisWPolsce();
-const D = { ustanie: dodajDni(dzis, -20), poczatek: dodajDni(dzis, -30), koniec: dodajDni(dzis, 40), przyczyna: 'choroba' as const };
+// Przesunięcia względem dziś; te same liczby stoją w data-dzis, więc przeglądarka przestawia daty na prawdziwe dziś.
+const PRZESUNIECIE = { ustanie: -20, poczatek: -30, koniec: 40 };
+const D = {
+  ustanie: dodajDni(dzis, PRZESUNIECIE.ustanie),
+  poczatek: dodajDni(dzis, PRZESUNIECIE.poczatek),
+  koniec: dodajDni(dzis, PRZESUNIECIE.koniec),
+  przyczyna: 'choroba' as const,
+};
 const r = zasilekPoUstaniu(D);
 if (!r.przysluguje) throw new Error('Wartości domyślne powinny dawać zasiłek');
 
@@ -25,7 +33,7 @@ const faq = [
   },
   {
     pytanie: 'Kiedy zasiłek po ustaniu zatrudnienia nie przysługuje?',
-    odpowiedz: 'Gdy masz ustalone prawo do emerytury albo renty z tytułu niezdolności do pracy, pracujesz albo prowadzisz działalność z ubezpieczeniem chorobowym, masz prawo do zasiłku dla bezrobotnych albo świadczenia przedemerytalnego, podlegasz ubezpieczeniu rolników albo w czasie ubezpieczenia nie nabyłeś lub nie nabyłaś prawa do zasiłku z powodu okresu wyczekiwania (art. 13 ust. 1 i art. 4 ust. 1 ustawy zasiłkowej). Nie przysługuje też, gdy ubezpieczenie ustało po wyczerpaniu prawa do zasiłku (art. 13 ust. 2).',
+    odpowiedz: 'Gdy masz ustalone prawo do emerytury albo renty z tytułu niezdolności do pracy, pracujesz albo prowadzisz działalność z ubezpieczeniem chorobowym, masz prawo do zasiłku dla bezrobotnych albo świadczenia przedemerytalnego, podlegasz ubezpieczeniu rolników albo prawo do zasiłku nie powstało w czasie ubezpieczenia z powodu okresu wyczekiwania (art. 13 ust. 1 i art. 4 ust. 1 ustawy zasiłkowej). Nie przysługuje też, gdy ubezpieczenie ustało po wyczerpaniu prawa do zasiłku (art. 13 ust. 2).',
   },
 ];
 ---
@@ -42,16 +50,16 @@ const faq = [
       <h2 id="kalkulator-tytul" class="tytul-m">Koniec pracy i L4</h2>
       <div class="mt-4">
         <label for="u-ustanie" class="etykieta-pola">Ostatni dzień zatrudnienia</label>
-        <input id="u-ustanie" name="ustanie" type="date" class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" value={D.ustanie} aria-describedby="u-blad" />
+        <input id="u-ustanie" name="ustanie" type="date" class="pole mt-1 max-w-56" min="2000-01-01" max="2100-12-31" value={D.ustanie} data-dzis={PRZESUNIECIE.ustanie} aria-describedby="u-blad" />
       </div>
       <div class="mt-4 grid grid-cols-2 items-end gap-3">
         <div>
           <label for="u-poczatek" class="etykieta-pola">L4 od</label>
-          <input id="u-poczatek" name="poczatek" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={D.poczatek} aria-describedby="u-l4-opis u-blad" />
+          <input id="u-poczatek" name="poczatek" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={D.poczatek} data-dzis={PRZESUNIECIE.poczatek} aria-describedby="u-l4-opis u-blad" />
         </div>
         <div>
           <label for="u-koniec" class="etykieta-pola">L4 do</label>
-          <input id="u-koniec" name="koniec" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={D.koniec} aria-describedby="u-l4-opis u-blad" />
+          <input id="u-koniec" name="koniec" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" value={D.koniec} data-dzis={PRZESUNIECIE.koniec} aria-describedby="u-l4-opis u-blad" />
         </div>
       </div>
       <p id="u-l4-opis" class="meta mt-1">Pierwszy i ostatni dzień niezdolności do pracy bez przerwy, także gdy zwolnienie zaczęło się jeszcze w czasie pracy.</p>
@@ -74,14 +82,14 @@ const faq = [
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
       <h2 id="wynik-tytul" class="etykieta">Zasiłek po końcu zatrudnienia</h2>
       <div aria-live="polite" aria-atomic="true">
-        <p class="wynik-kwota"><span data-w="dni">{r.dni} dni</span></p>
+        <p class="wynik-kwota"><span data-w="dni">{odmiana(r.dni, ['dzień', 'dni', 'dni'])}</span></p>
         <p class="status-terminu" data-w="status" data-status="w-terminie">Od {dataPoPolsku(r.od)} do {dataPoPolsku(r.do)}</p>
       </div>
       <dl class="wynik-lista">
         <div><dt>Kto płaci</dt><dd>ZUS (art. 61 ust. 1 pkt 2 lit. d)</dd></div>
         <div><dt>Podstawa</dt><dd data-w="podstawa">art. 8 ust. 2 ustawy zasiłkowej</dd></div>
       </dl>
-      <p class="wynik-uwaga">Zasiłek wynosi 80% podstawy, w ciąży 100% (art. 11). Kwotę dzienną policzy <a href="/narzedzia/kalkulator-l4">kalkulator L4</a>.</p>
+      <p class="wynik-uwaga">Zasiłek wynosi 80% podstawy, w ciąży 100% (art. 11); podstawa nie może przekroczyć przeciętnego wynagrodzenia z poprzedniego kwartału (art. 46).</p>
       <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
     </div>
   </form>
@@ -92,11 +100,14 @@ const faq = [
       <li>Niezdolność z czasu zatrudnienia, która trwa dalej: zasiłek za okres po ustaniu, najwyżej przez 91 dni (art. 8 ust. 2 ustawy zasiłkowej).</li>
       <li>Niezdolność, która zaczęła się po ustaniu: musi trwać bez przerwy co najmniej 30 dni i powstać najpóźniej w ciągu 14 dni od ustania, a przy chorobie zakaźnej o wylęganiu dłuższym niż 14 dni albo chorobie z objawami po ponad 14 dniach w ciągu 3 miesięcy (art. 7).</li>
       <li>Całość nie może przekroczyć okresu zasiłkowego: 182 dni, przy gruźlicy i w ciąży 270 dni, liczonych od początku niezdolności (art. 8 ust. 1); limit 91 dni nie dotyczy gruźlicy i ciąży (art. 8 ust. 2).</li>
-      <li>Bez zasiłku po ustaniu przy emeryturze albo rencie z tytułu niezdolności, pracy lub działalności z ubezpieczeniem chorobowym, zasiłku dla bezrobotnych, świadczeniach przedemerytalnych, ubezpieczeniu rolników i gdy w czasie ubezpieczenia nie nabyto prawa do zasiłku z powodu okresu wyczekiwania (art. 13 ust. 1 pkt 3).</li>
+      <li>Bez zasiłku po ustaniu przy emeryturze albo rencie z tytułu niezdolności, pracy lub działalności z ubezpieczeniem chorobowym, zasiłku dla bezrobotnych, świadczeniach przedemerytalnych, ubezpieczeniu rolników i gdy w czasie ubezpieczenia nie nabyto prawa do zasiłku z powodu okresu wyczekiwania (art. 13 ust. 1).</li>
       <li>Zasiłek wypłaca ZUS (art. 61 ust. 1 pkt 2 lit. d).</li>
     </ul>
     <p>
-      Do kiedy na długim zwolnieniu w czasie pracy pracodawca nie może rozwiązać umowy, policzy
+      Kwotę dzienną zasiłku policzy <a href="/narzedzia/kalkulator-l4">kalkulator L4</a>. Po ustaniu zatrudnienia całość
+      płaci ZUS, a podstawa nie może przekroczyć przeciętnego wynagrodzenia z poprzedniego kwartału (art. 46 ustawy
+      zasiłkowej), czego kalkulator L4 nie uwzględnia. Do kiedy na długim zwolnieniu w czasie pracy pracodawca nie może
+      rozwiązać umowy, policzy
       <a href="/narzedzia/zwolnienie-na-l4">kalkulator ochrony na L4</a>.
     </p>
 
@@ -112,11 +123,17 @@ const faq = [
 <script>
   import { zasilekPoUstaniu, type PrzyczynaPo } from '../../lib/narzedzia/zasilek-po-ustaniu';
   import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { typografia } from '../../lib/typografia.mjs';
+  import { odmiana } from '../../lib/redakcja';
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
 
   const form = document.querySelector<HTMLFormElement>('[data-po-ustaniu]');
   if (form) {
     const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
     const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const pisz = (k: string, tekst: string) => {
+      w(k).textContent = typografia(tekst);
+    };
     const przelicz = () => {
       const ustanie = el('ustanie').value;
       const poczatek = el('poczatek').value;
@@ -127,7 +144,7 @@ const faq = [
       else if (koniec <= ustanie) blad = 'Zwolnienie kończy się w czasie zatrudnienia, więc zasiłek po jego końcu nie przysługuje.';
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
       b.hidden = !blad;
-      b.textContent = blad ?? '';
+      b.textContent = typografia(blad ?? '');
       const status = w('status');
       if (blad) {
         w('dni').textContent = '—';
@@ -137,24 +154,25 @@ const faq = [
       const r = zasilekPoUstaniu({ ustanie, poczatek, koniec, przyczyna: el('przyczyna').value as PrzyczynaPo, wylaczenie: el('wylaczenie').checked });
       status.hidden = false;
       if (r.przysluguje) {
-        w('dni').textContent = `${r.dni} ${r.dni === 1 ? 'dzień' : 'dni'}`;
+        pisz('dni', odmiana(r.dni, ['dzień', 'dni', 'dni']));
         status.dataset.status = 'w-terminie';
-        status.textContent = `Od ${dataPoPolsku(r.od)} do ${dataPoPolsku(r.do)}`;
-        w('podstawa').textContent = r.powstalaWCzasiePracy ? 'art. 8 ustawy zasiłkowej' : 'art. 7 i 8 ustawy zasiłkowej';
+        pisz('status', `Od ${dataPoPolsku(r.od)} do ${dataPoPolsku(r.do)}`);
+        pisz('podstawa', r.powstalaWCzasiePracy ? 'art. 8 ustawy zasiłkowej' : 'art. 7 i 8 ustawy zasiłkowej');
       } else {
-        w('dni').textContent = 'Nie przysługuje';
+        pisz('dni', 'Nie przysługuje');
         status.dataset.status = 'po-terminie';
-        status.textContent =
+        status.textContent = typografia(
           r.powod === 'wylaczenie' ? 'Wyłączenie z art. 13 ust. 1 ustawy zasiłkowej.'
           : r.powod === 'za-pozno' ? `Niezdolność powstała za późno: najpóźniej ${dataPoPolsku(r.ostatniDzienPowstania!)} (art. 7).`
           : r.powod === 'za-krotko' ? 'Niezdolność po ustaniu musi trwać bez przerwy co najmniej 30 dni (art. 7).'
-          : 'Okres zasiłkowy skończył się przed końcem zatrudnienia (art. 8 ust. 1).';
-        w('podstawa').textContent = r.powod === 'wylaczenie' ? 'art. 13 ust. 1 ustawy zasiłkowej' : 'art. 7 i 8 ustawy zasiłkowej';
+          : 'Okres zasiłkowy skończył się przed końcem zatrudnienia (art. 8 ust. 1).');
+        pisz('podstawa', r.powod === 'wylaczenie' ? 'art. 13 ust. 1 ustawy zasiłkowej' : 'art. 7 i 8 ustawy zasiłkowej');
       }
     };
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    ustawDzisiejszeWartosci(form);
     przelicz();
   }
 </script>

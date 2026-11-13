@@ -13,10 +13,10 @@ export const SKLADKI_PRACOWNIKA = 13.71;
 export type Powod = 'choroba' | 'ciaza' | 'wypadek-w-drodze' | 'dawca';
 
 export const POWODY: Record<Powod, { nazwa: string; procent: number; podstawa: string }> = {
-  choroba: { nazwa: 'Choroba (także pobyt w szpitalu)', procent: 80, podstawa: 'art. 92 § 1 pkt 1 Kp, art. 11 ust. 1 ustawy zasiłkowej' },
-  ciaza: { nazwa: 'Choroba w czasie ciąży', procent: 100, podstawa: 'art. 92 § 1 pkt 2 Kp, art. 11 ust. 2 pkt 1 ustawy zasiłkowej' },
-  'wypadek-w-drodze': { nazwa: 'Wypadek w drodze do pracy lub z pracy', procent: 100, podstawa: 'art. 92 § 1 pkt 2 Kp, art. 11 ust. 2 pkt 3 ustawy zasiłkowej' },
-  dawca: { nazwa: 'Badania i zabieg dawcy komórek, tkanek, narządów', procent: 100, podstawa: 'art. 92 § 1 pkt 3 Kp, art. 11 ust. 2 pkt 2 ustawy zasiłkowej' },
+  choroba: { nazwa: 'Choroba', procent: 80, podstawa: 'art. 92 § 1 pkt 1 Kp, art. 11 ust. 1 ustawy zasiłkowej' },
+  ciaza: { nazwa: 'Ciąża', procent: 100, podstawa: 'art. 92 § 1 pkt 2 Kp, art. 11 ust. 2 pkt 1 ustawy zasiłkowej' },
+  'wypadek-w-drodze': { nazwa: 'Wypadek w drodze', procent: 100, podstawa: 'art. 92 § 1 pkt 2 Kp, art. 11 ust. 2 pkt 3 ustawy zasiłkowej' },
+  dawca: { nazwa: 'Dawca narządów', procent: 100, podstawa: 'art. 92 § 1 pkt 3 Kp, art. 11 ust. 2 pkt 2 ustawy zasiłkowej' },
 };
 
 /** Najdłuższy okres zasiłkowy w dniach (art. 8 ust. 1): 182, w ciąży 270. */

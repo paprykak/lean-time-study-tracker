@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { terminyWyplaty } from './termin-wyplaty';
+import { najblizszaWyplata, terminyWyplaty } from './termin-wyplaty';
 
 // Oczekiwane daty z niezależnego rachunku w Pythonie (własny algorytm Wielkanocy, dni wolne: sobota, niedziela, święta).
 describe('terminy wypłaty wynagrodzenia (art. 85 Kp)', () => {
@@ -25,6 +25,13 @@ describe('terminy wypłaty wynagrodzenia (art. 85 Kp)', () => {
   });
   it('sobota jako dzień pracy w zakładzie', () => {
     expect(terminyWyplaty(2027, 10, false)[0]).toMatchObject({ ustalony: '2027-01-10', wyplata: '2027-01-09', powod: ['niedziela'] });
+  });
+  it('najbliższa wypłata od dziś, także po ostatniej wypłacie roku', () => {
+    expect(najblizszaWyplata('2026-12-15', 10).wyplata).toBe('2027-01-08');
+    expect(najblizszaWyplata('2026-12-15', 10, false).wyplata).toBe('2027-01-09');
+    expect(najblizszaWyplata('2026-12-10', 10).wyplata).toBe('2026-12-10');
+    expect(najblizszaWyplata('2026-12-11', 10).wyplata).toBe('2027-01-08');
+    expect(najblizszaWyplata('2026-12-24', 25).wyplata).toBe('2027-01-25');
   });
   it('błędy', () => {
     expect(() => terminyWyplaty(2027, 30)).toThrow(RangeError);

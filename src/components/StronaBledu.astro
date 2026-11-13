@@ -1,7 +1,8 @@
 ---
-// Treść strony błędu: 404 (nie ma takiej strony) i 410 (artykuł usunięty na stałe). Szablon dla /404 i workera (410).
+// Treść strony błędu: 404 (nie ma takiej strony) i 410 (strona usunięta na stałe). Szablon dla /404 i workera (410,
+// lista usuniętych adresów w worker/usuniete.js). Zamiast działów: kategorie narzędzi z rejestru.
 import Ikona from './Ikona.astro';
-import { DZIALY } from '../lib/dane';
+import { KATEGORIE, NARZEDZIA, type KategoriaNarzedzia } from '../data/narzedzia';
 import { PORTAL } from '../lib/srodowisko.mjs';
 interface Props {
   kod: 404 | 410;
@@ -12,10 +13,11 @@ const { kod, poziom = 'h1' } = Astro.props;
 const Tytul = poziom;
 const Podtytul = poziom === 'h1' ? 'h2' : poziom === 'h2' ? 'h3' : 'h4';
 const prefiks = poziom === 'h1' ? 'szukaj-blad' : `szukaj-blad-${kod}`;
-// Przed startem portalu (produkcja z samą stroną „Wkrótce”) bez wyszukiwarki i działów: tych stron jeszcze nie ma.
+// Przed startem portalu (produkcja z samą stroną „Wkrótce”) bez wyszukiwarki i narzędzi: tych stron jeszcze nie ma.
+const kategorie = (Object.keys(KATEGORIE) as KategoriaNarzedzia[]).filter((k) => NARZEDZIA.some((n) => n.kategoria === k));
 const tresc = {
-  404: { tytul: 'Nie ma takiej strony', opis: PORTAL ? 'Adres mógł się zmienić albo zawiera literówkę. Poszukaj tekstu w wyszukiwarce albo zacznij od działów.' : 'Adres mógł się zmienić albo zawiera literówkę. Rytm Hali startuje wkrótce.' },
-  410: { tytul: 'Ten artykuł został usunięty', opis: PORTAL ? 'Redakcja wycofała ten tekst na stałe. Poszukaj aktualnych artykułów w wyszukiwarce albo w działach.' : 'Redakcja wycofała ten tekst na stałe.' },
+  404: { tytul: 'Nie ma takiej strony', opis: PORTAL ? 'Adres mógł się zmienić albo zawiera literówkę. Wpisz, czego szukasz, albo wybierz kategorię narzędzi.' : 'Adres mógł się zmienić albo zawiera literówkę. Rytm Hali startuje wkrótce.' },
+  410: { tytul: 'Tej strony już nie ma', opis: PORTAL ? 'Redakcja usunęła ją na stałe: Rytm Hali to teraz narzędzia i przepisy dla ludzi z hali. Wpisz, czego szukasz, albo wybierz kategorię narzędzi.' : 'Redakcja usunęła tę stronę na stałe.' },
 }[kod];
 ---
 <section class="kontener py-12 md:py-20">
@@ -26,13 +28,13 @@ const tresc = {
     {PORTAL && <>
     <form action="/szukaj" method="get" role="search" class="mt-8 flex max-w-md items-stretch">
       <label for={prefiks} class="sr-only">Szukaj w Rytmie Hali</label>
-      <input id={prefiks} name="q" type="search" class="pole rounded-r-none border-r-0" placeholder="Czego szukasz?" />
+      <input id={prefiks} name="q" type="search" class="pole rounded-r-none border-r-0" placeholder="np. nadgodziny, L4, urlop" />
       <button type="submit" class="przycisk przycisk-grafit rounded-l-none"><Ikona nazwa="szukaj" />Szukaj</button>
     </form>
-    <Podtytul class="mt-10 font-sans text-kategoria font-bold tracking-[0.08em] text-tekst-drugi uppercase">Działy</Podtytul>
+    <Podtytul class="mt-10 font-sans text-kategoria font-bold tracking-[0.08em] text-tekst-drugi uppercase">Kategorie narzędzi</Podtytul>
     <ul class="mt-2 flex flex-wrap gap-2">
-      {DZIALY.map((d) => (
-        <li><a href={d.adres} class="przycisk przycisk-obrys">{d.nazwa}</a></li>
+      {kategorie.map((k) => (
+        <li><a href={`/narzedzia#${k}`} class="przycisk przycisk-obrys">{KATEGORIE[k].nazwa}</a></li>
       ))}
     </ul>
     </>}
