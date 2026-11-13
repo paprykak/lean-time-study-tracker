@@ -6,13 +6,16 @@ import { LATA, PLACA_MINIMALNA } from '../../data/prawo';
 import { dodatekNocny, tabelaRoku, PROCENT_USTAWOWY } from '../../lib/narzedzia/dodatek-nocny';
 import { nazwaMiesiaca, opisWymiaru } from '../../lib/narzedzia/czas-pracy';
 import { godz, zl } from '../../lib/narzedzia/format';
+import { dzisWPolsce } from '../../lib/narzedzia/terminy';
+import { odmiana } from '../../lib/redakcja';
 
-const teraz = new Date();
-const rokBudowy = teraz.getUTCFullYear();
+// Rok i miesiąc budowania w czasie polskim; w przeglądarce skrypt przestawia je na dziś (dzis-w-formularzu.ts).
+const dzis = dzisWPolsce();
+const rokBudowy = Number(dzis.slice(0, 4));
 const lataTabel = LATA.filter((r) => r >= rokBudowy);
 const tabele = (lataTabel.length ? lataTabel : LATA.slice(-1)).map((rok) => ({ rok, wiersze: tabelaRoku(rok) }));
 const rokDomyslny = LATA.includes(rokBudowy) ? rokBudowy : LATA[LATA.length - 1];
-const miesiacDomyslny = LATA.includes(rokBudowy) ? teraz.getUTCMonth() + 1 : 1;
+const miesiacDomyslny = LATA.includes(rokBudowy) ? Number(dzis.slice(5, 7)) : 1;
 const przyklad = dodatekNocny({ rok: rokDomyslny, miesiac: miesiacDomyslny, godziny: 8 });
 const okresPrzykladu = `${nazwaMiesiaca(miesiacDomyslny)} ${rokDomyslny}`;
 
@@ -70,13 +73,13 @@ const faq = [
         <legend class="etykieta">Miesiąc</legend>
         <div class="mt-2 grid grid-cols-[minmax(0,3fr)_minmax(0,2fr)] gap-3">
           <label class="sr-only" for="dn-miesiac">Miesiąc</label>
-          <select id="dn-miesiac" name="miesiac" class="pole">
+          <select id="dn-miesiac" name="miesiac" class="pole" data-miesiac-biezacy>
             {Array.from({ length: 12 }, (_, i) => (
               <option value={i + 1} selected={i + 1 === miesiacDomyslny}>{nazwaMiesiaca(i + 1)}</option>
             ))}
           </select>
           <label class="sr-only" for="dn-rok">Rok</label>
-          <select id="dn-rok" name="rok" class="pole">
+          <select id="dn-rok" name="rok" class="pole" data-rok-biezacy>
             {LATA.map((r) => <option value={r} selected={r === rokDomyslny}>{r}</option>)}
           </select>
         </div>
@@ -145,8 +148,8 @@ const faq = [
         <div class="wynik-suma"><dt>Dodatek w miesiącu</dt><dd data-w="wynik">8 × {zl(przyklad.zaGodzine)} = {zl(przyklad.kwota)}</dd></div>
       </dl>
       <p class="wynik-uwaga" data-w="pracujacy-w-nocy" hidden>
-        Zmiana ma co najmniej 3 godziny w porze nocnej. Jeśli tak wygląda Twój rozkład w każdej dobie, jesteś w rozumieniu
-        Kodeksu pracy pracującym w nocy (art. 151<sup>7</sup> § 2): przy pracach szczególnie niebezpiecznych albo z dużym
+        Zmiana ma co najmniej 3 godziny w porze nocnej. Jeśli tak wygląda Twój rozkład w każdej dobie, Kodeks pracy uznaje
+        Cię za osobę pracującą w nocy (art. 151<sup>7</sup> § 2): przy pracach szczególnie niebezpiecznych albo z dużym
         wysiłkiem Twoja doba pracy nie może przekroczyć 8 godzin.
       </p>
       <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Tabela stawek poniżej działa bez niego.</p></noscript>
@@ -170,7 +173,7 @@ const faq = [
       <li><strong>Dodatek w miesiącu:</strong> dodatek za godzinę razy liczba godzin w porze nocnej.</li>
     </ol>
     <p>
-      Przykład: {okresPrzykladu} r. ma {przyklad.wymiar.godziny} godzin do przepracowania ({opisWymiaru(przyklad.wymiar)}).{' '}
+      Przykład: {okresPrzykladu} r. ma {odmiana(przyklad.wymiar.godziny, ['godzinę', 'godziny', 'godzin'])} do przepracowania ({opisWymiaru(przyklad.wymiar)}).{' '}
       {zl(przyklad.placaMinimalna)} : {przyklad.wymiar.godziny} h = {zl(przyklad.stawka)}, a 20% z tego to {zl(przyklad.zaGodzine)}.
       Jedna ośmiogodzinna noc daje więc {zl(przyklad.kwota)} brutto dodatku.
     </p>
@@ -243,6 +246,9 @@ const faq = [
   import { dodatekNocny } from '../../lib/narzedzia/dodatek-nocny';
   import { dniWMiesiacu, minuty, minutyNocneZmiany, nazwaMiesiaca, opisWymiaru } from '../../lib/narzedzia/czas-pracy';
   import { godz, liczba, wpisanaLiczba, zl } from '../../lib/narzedzia/format';
+  import { typografia } from '../../lib/typografia.mjs';
+  import { odmiana } from '../../lib/redakcja';
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
 
   const form = document.querySelector<HTMLFormElement>('[data-dodatek-nocny]');
   if (form) {
@@ -257,13 +263,7 @@ const faq = [
       for (const p of pola) p.setAttribute('aria-invalid', tekst ? 'true' : 'false');
     };
 
-    // Domyślnie bieżący miesiąc, jeśli rok jest w danych (strona jest budowana raz, a czytana przez cały rok).
-    const dzis = new Date();
     const rokSelect = pole<HTMLSelectElement>('rok');
-    if ([...rokSelect.options].some((o) => Number(o.value) === dzis.getFullYear())) {
-      rokSelect.value = String(dzis.getFullYear());
-      pole<HTMLSelectElement>('miesiac').value = String(dzis.getMonth() + 1);
-    }
 
     const przelicz = () => {
       const rok = Number(rokSelect.value);
@@ -282,7 +282,7 @@ const faq = [
         const tekst = Number.isNaN(godziny)
           ? 'Wpisz liczbę godzin, na przykład 8 albo 7,5.'
           : godziny > maks
-            ? `W ${nazwaMiesiaca(miesiac, 'miejscownik')} ${rok} r. pora nocna ma razem najwyżej ${maks} godzin (8 godzin na dobę).`
+            ? typografia(`W ${nazwaMiesiaca(miesiac, 'miejscownik')} ${rok} r. pora nocna ma razem najwyżej ${odmiana(maks, ['godzinę', 'godziny', 'godzin'])} (8 godzin na dobę).`)
             : null;
         pokazBlad('godziny', [p], tekst);
         ok = !tekst;
@@ -296,7 +296,7 @@ const faq = [
         const zmiany = wpisanaLiczba(zm.value);
         let tekst: string | null = null;
         if (a === null || b === null) tekst = 'Wpisz początek i koniec zmiany, na przykład 22:00 i 6:00.';
-        else if (!Number.isInteger(zmiany) || zmiany > dniWMiesiacu(rok, miesiac)) tekst = `Wpisz liczbę zmian od 0 do ${dniWMiesiacu(rok, miesiac)}.`;
+        else if (!Number.isInteger(zmiany) || zmiany > dniWMiesiacu(rok, miesiac)) tekst = typografia(`Wpisz liczbę zmian od 0 do ${dniWMiesiacu(rok, miesiac)}.`);
         pokazBlad('zmiana', tekst === null ? [od, do_, zm] : a === null || b === null ? [od, do_] : [zm], tekst);
         if (tekst === null && a !== null && b !== null) {
           nocNaZmianie.min = minutyNocneZmiany(a, b, pora);
@@ -334,6 +334,8 @@ const faq = [
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    // Domyślnie bieżący rok i miesiąc (strona jest budowana raz, a czytana przez cały rok).
+    ustawDzisiejszeWartosci(form);
     przelicz();
   }
 </script>

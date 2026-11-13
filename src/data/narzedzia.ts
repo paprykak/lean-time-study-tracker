@@ -99,7 +99,7 @@ export const NARZEDZIA: Narzedzie[] = [
   {
     slug: 'normy-sanitarne',
     nazwa: 'Toalety, umywalki, natryski: normy',
-    krotko: 'Ile misek ustępowych, pisuarów, umywalek i natrysków na zmianę według przepisów BHP. Jadalnia od 21 osób.',
+    krotko: 'Ile misek ustępowych, umywalek i natrysków na zmianę według BHP. Jadalnia od 21 osób albo przy brudnej pracy.',
     kategoria: 'bhp',
     przepisy: ['ogolneBhp'],
     sprawdzono: '2026-11-12',
@@ -205,7 +205,7 @@ export const NARZEDZIA: Narzedzie[] = [
     nazwa: 'Brutto na netto: umowa o pracę',
     krotko: 'Ile na rękę z pensji brutto: składki ZUS, zdrowotna i zaliczka na PIT, z PIT-2 i ulgą do 26 lat.',
     kategoria: 'wynagrodzenie',
-    przepisy: ['pit', 'systemUbezpieczen', 'swiadczeniaZdrowotne', 'ordynacja'],
+    przepisy: ['pit', 'systemUbezpieczen', 'swiadczeniaZdrowotne', 'ordynacja', 'minimalneWynagrodzenie', 'placa2026', 'placa2027'],
     sprawdzono: '2026-11-11',
   },
   {
@@ -237,7 +237,7 @@ export const NARZEDZIA: Narzedzie[] = [
     nazwa: 'Umowa zlecenie: netto',
     krotko: 'Ile netto ze zlecenia: student do 26 lat, zlecenie obok etatu albo jako jedyne źródło, chorobowe, PIT-2.',
     kategoria: 'wynagrodzenie',
-    przepisy: ['pit', 'systemUbezpieczen', 'swiadczeniaZdrowotne', 'ordynacja', 'minimalneWynagrodzenie'],
+    przepisy: ['pit', 'systemUbezpieczen', 'swiadczeniaZdrowotne', 'ordynacja', 'minimalneWynagrodzenie', 'placa2026', 'placa2027'],
     sprawdzono: '2026-11-12',
   },
   {
@@ -269,7 +269,7 @@ export const NARZEDZIA: Narzedzie[] = [
     nazwa: 'Wypłata z nadgodzinami i nockami',
     krotko: 'Wypłata za miesiąc z nadgodzinami 50% i 100% i dodatkiem nocnym: brutto, na rękę i ile zostaje z dodatków.',
     kategoria: 'wynagrodzenie',
-    przepisy: ['kodeksPracy', 'wynagrodzenieRozp', 'dniWolne', 'placa2026', 'pit', 'systemUbezpieczen', 'swiadczeniaZdrowotne'],
+    przepisy: ['kodeksPracy', 'wynagrodzenieRozp', 'dniWolne', 'placa2026', 'pit', 'systemUbezpieczen', 'swiadczeniaZdrowotne', 'minimalneWynagrodzenie', 'placa2025', 'placa2027'],
     sprawdzono: '2026-11-12',
   },
   {
@@ -277,7 +277,7 @@ export const NARZEDZIA: Narzedzie[] = [
     nazwa: 'Kalkulator PPK',
     krotko: 'Ile PPK zabiera z pensji na rękę, ile dokłada pracodawca i państwo i ile masz na koncie po roku.',
     kategoria: 'wynagrodzenie',
-    przepisy: ['ppk', 'pit', 'systemUbezpieczen', 'swiadczeniaZdrowotne', 'placa2026'],
+    przepisy: ['ppk', 'pit', 'systemUbezpieczen', 'swiadczeniaZdrowotne', 'placa2026', 'minimalneWynagrodzenie', 'placa2027'],
     sprawdzono: '2026-11-12',
   },
   {

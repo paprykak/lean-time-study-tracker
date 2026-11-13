@@ -23,3 +23,18 @@ test('student do 26 lat: całe 3000 zł, bez pól PIT', async ({ page }) => {
   await expect(page.locator('[data-w="netto"]')).toHaveText('3000,00 zł');
   await expect(page.getByLabel(/Złożony PIT-2/)).toBeHidden();
 });
+
+test('umowa do 200 zł: podatek zryczałtowany 12% całej kwoty, 150 zł → 103,13 zł', async ({ page }) => {
+  await page.getByLabel('Kwota brutto z umowy w miesiącu (zł)').fill('150');
+  await page.getByLabel(/Dobrowolne ubezpieczenie chorobowe/).uncheck();
+  await expect(page.locator('[data-w="zaliczka"]')).toHaveText('18,00 zł');
+  await expect(page.locator('[data-w="netto"]')).toHaveText('103,13 zł');
+  await expect(page.locator('[data-w="uwaga"]')).toContainText(/podatek zryczałtowany 12%/);
+  await page.getByLabel('Kwota brutto z umowy w miesiącu (zł)').fill('200,01');
+  await expect(page.locator('[data-w="netto"]')).toHaveText('144,52 zł');
+  await expect(page.locator('[data-w="uwaga"]')).toBeHidden();
+});
+
+test('FAQ: minimalna stawka godzinowa na 2027 r. z rejestru płacy minimalnej', async ({ page }) => {
+  await expect(page.getByText(/2027\sr\.\s32,30\szł/).first()).toBeAttached();
+});

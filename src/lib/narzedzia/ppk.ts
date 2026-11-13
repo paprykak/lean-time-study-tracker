@@ -4,7 +4,7 @@
 // Wpłata powitalna 250 zł po 3 pełnych miesiącach uczestnictwa i 3 miesiącach wpłat (art. 31), dopłata roczna 240 zł, gdy
 // wpłaty w roku sięgną wpłat podstawowych od 6-krotności płacy minimalnej, a przy obniżonej wpłacie 25% tej kwoty (art. 32).
 // Koszt dla pracownika: jego wpłata plus wyższa zaliczka na PIT od wpłaty pracodawcy (netto.ts).
-import { PLACA_MINIMALNA } from '../../data/prawo';
+import { LATA, PLACA_MINIMALNA } from '../../data/prawo';
 import { doGrosza } from './dodatek-nocny';
 import { netto } from './netto';
 
@@ -23,6 +23,15 @@ const placa = (rok: number) => {
   if (!p) throw new RangeError(`Brak płacy minimalnej na ${rok} r.`);
   return p.miesiecznie;
 };
+
+/**
+ * Rok płacy minimalnej do rachunku: bieżący, a gdy na bieżący rok płaca nie jest jeszcze w rejestrze, ostatni znany
+ * (`zastepczy`: strona mówi wtedy, z której kwoty liczy).
+ */
+export function rokPlacy(rokBiezacy: number): { rok: number; zastepczy: boolean } {
+  if (LATA.includes(rokBiezacy)) return { rok: rokBiezacy, zastepczy: false };
+  return { rok: LATA[LATA.length - 1], zastepczy: true };
+}
 
 /** Do tej kwoty miesięcznego wynagrodzenia wolno obniżyć wpłatę podstawową pracownika (art. 27 ust. 2). */
 export const progObnizenia = (rok: number) => doGrosza(1.2 * placa(rok));

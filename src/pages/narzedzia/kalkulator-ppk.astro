@@ -2,13 +2,13 @@
 // PPK: wpłaty pracownika i pracodawcy, koszt na rękę, dopłaty państwa (ustawa o PPK, art. 26, 27, 31, 32, 105).
 // Logika: src/lib/narzedzia/ppk.ts i netto.ts (testy obok).
 import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
-import { LATA, PLACA_MINIMALNA } from '../../data/prawo';
+import { PLACA_MINIMALNA } from '../../data/prawo';
 import { liczba, zl } from '../../lib/narzedzia/format';
-import { PPK, kalkulatorPpk, progDoplaty, progObnizenia } from '../../lib/narzedzia/ppk';
+import { PPK, kalkulatorPpk, progDoplaty, progObnizenia, rokPlacy } from '../../lib/narzedzia/ppk';
 import { dzisWPolsce } from '../../lib/narzedzia/terminy';
 
-const rokBiezacy = Number(dzisWPolsce().slice(0, 4));
-const rok = LATA.includes(rokBiezacy) ? rokBiezacy : LATA[LATA.length - 1];
+// Tekst strony podaje progi z roku budowania; pod formularzem skrypt podaje je dla roku, z którego liczy (dziś w przeglądarce).
+const { rok } = rokPlacy(Number(dzisWPolsce().slice(0, 4)));
 const BRUTTO = 6000;
 const r = kalkulatorPpk({ rok, brutto: BRUTTO, pracownik: 2, pracownikDodatkowa: 0, pracodawcaDodatkowa: 0, miesiace: 12 });
 
@@ -51,7 +51,7 @@ const faq = [
         <select id="k-pracownik" name="pracownik" class="pole mt-1 max-w-48" aria-describedby="k-pracownik-opis">
           {[2, 1.5, 1, 0.5].map((p) => <option value={p} selected={p === 2}>{liczba(p)}%</option>)}
         </select>
-        <p id="k-pracownik-opis" class="meta mt-1">Mniej niż 2% tylko przy pensji do {zl(progObnizenia(rok))} (art. 27 ust. 2).</p>
+        <p id="k-pracownik-opis" class="meta mt-1" data-w="pracownik-opis">Mniej niż 2% tylko przy pensji do {zl(progObnizenia(rok))} w {rok} r. (art. 27 ust. 2).</p>
       </div>
       <div class="mt-4 grid grid-cols-2 gap-3">
         <div>
@@ -90,6 +90,7 @@ const faq = [
         <div><dt>Dopłata roczna i powitalna</dt><dd data-w="doplaty">{zl(r.doplata + r.powitalna)}</dd></div>
         <div><dt>Za każdą złotówkę mniej na rękę</dt><dd data-w="mnoznik">{zl(r.mnoznik)} na koncie</dd></div>
       </dl>
+      <p class="meta mt-4" data-w="rok-placy">Płaca minimalna w {rok} r.: {zl(PLACA_MINIMALNA[rok].miesiecznie)}.</p>
       <p class="wynik-uwaga">Bez zysków i strat z inwestycji. Wpłata powitalna jest jednorazowa, a dopłata roczna co roku po spełnieniu warunku.</p>
       <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
     </div>
@@ -115,9 +116,10 @@ const faq = [
 
 <script>
   import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
-  import { kalkulatorPpk, progObnizenia } from '../../lib/narzedzia/ppk';
+  import { kalkulatorPpk, progObnizenia, rokPlacy } from '../../lib/narzedzia/ppk';
   import { dzisWPolsce } from '../../lib/narzedzia/terminy';
-  import { LATA } from '../../data/prawo';
+  import { PLACA_MINIMALNA } from '../../data/prawo';
+  import { typografia } from '../../lib/typografia.mjs';
 
   const form = document.querySelector<HTMLFormElement>('[data-ppk]');
   if (form) {
@@ -125,12 +127,19 @@ const faq = [
     const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
     const przelicz = () => {
       const rokBiezacy = Number(dzisWPolsce().slice(0, 4));
-      const rok = LATA.includes(rokBiezacy) ? rokBiezacy : LATA[LATA.length - 1];
+      const { rok, zastepczy } = rokPlacy(rokBiezacy);
+      // Progi pod polem i rok płacy minimalnej z roku, z którego liczymy (strona mogła być zbudowana w poprzednim roku).
+      w('pracownik-opis').textContent = typografia(`Mniej niż 2% tylko przy pensji do ${zl(progObnizenia(rok))} w ${rok} r. (art. 27 ust. 2).`);
+      w('rok-placy').textContent = typografia(
+        zastepczy
+          ? `Płaca minimalna na ${rokBiezacy} r. nie jest jeszcze w naszych danych: liczymy z płacą minimalną ${rok} r., ${zl(PLACA_MINIMALNA[rok].miesiecznie)}.`
+          : `Płaca minimalna w ${rok} r.: ${zl(PLACA_MINIMALNA[rok].miesiecznie)}.`,
+      );
       const brutto = wpisanaLiczba(el('brutto').value);
       const pracownik = Number(el('pracownik').value);
       let blad: string | null = null;
       if (!(brutto > 0 && brutto < 1_000_000)) blad = 'Wpisz pensję brutto, na przykład 6000.';
-      else if (pracownik < 2 && brutto > progObnizenia(rok)) blad = `Wpłatę poniżej 2% można wybrać tylko przy pensji do ${zl(progObnizenia(rok))}.`;
+      else if (pracownik < 2 && brutto > progObnizenia(rok)) blad = typografia(`Wpłatę poniżej 2% można wybrać tylko przy pensji do ${zl(progObnizenia(rok))}.`);
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
       b.hidden = !blad;
       b.textContent = blad ?? '';

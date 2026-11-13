@@ -44,13 +44,13 @@ const faq = [
       <div class="mt-4 grid grid-cols-2 items-end gap-3">
         <div>
           <label for="x-miesiac" class="etykieta-pola">Miesiąc</label>
-          <select id="x-miesiac" name="miesiac" class="pole mt-1">
+          <select id="x-miesiac" name="miesiac" class="pole mt-1" data-miesiac-biezacy>
             {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => <option value={m} selected={m === miesiac}>{nazwaMiesiaca(m)}</option>)}
           </select>
         </div>
         <div>
           <label for="x-rok" class="etykieta-pola">Rok</label>
-          <select id="x-rok" name="rok" class="pole mt-1">
+          <select id="x-rok" name="rok" class="pole mt-1" data-rok-biezacy>
             {LATA.map((y) => <option value={y} selected={y === rok}>{y}</option>)}
           </select>
         </div>
@@ -66,9 +66,10 @@ const faq = [
         </div>
         <div>
           <label for="x-g100" class="etykieta-pola">Nadgodziny z dodatkiem 100%</label>
-          <input id="x-g100" name="g100" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value={D.godziny100} aria-describedby="x-blad" />
+          <input id="x-g100" name="g100" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value={D.godziny100} aria-describedby="x-g100-opis x-blad" />
         </div>
       </div>
+      <p id="x-g100-opis" class="meta mt-1">100%: w nocy, w niedziele i święta, w dniu wolnym za niedzielę lub święto i za przekroczenie normy tygodniowej, na przykład wolna sobota bez oddanego dnia wolnego.</p>
       <div class="mt-4">
         <label for="x-noc" class="etykieta-pola">Godziny pracy w nocy</label>
         <input id="x-noc" name="noc" class="pole mt-1 max-w-48" type="text" inputmode="decimal" autocomplete="off" value={D.godzinyNocne} aria-describedby="x-blad" />
@@ -104,7 +105,7 @@ const faq = [
     <h2 id="jak-liczymy">Jak liczymy</h2>
     <ul>
       <li>Stawka za godzinę: pensja zasadnicza podzielona przez liczbę godzin do przepracowania w wybranym miesiącu (§ 4a rozporządzenia z 29 maja 1996 r., art. 130 Kodeksu pracy).</li>
-      <li>Nadgodziny: normalna stawka i dodatek 100% (w nocy, w niedziele i święta wolne według rozkładu, w dniu wolnym za niedzielę lub święto) albo 50% w pozostałe dni (art. 151<sup>1</sup> § 1).</li>
+      <li>Nadgodziny: normalna stawka i dodatek 100% (w nocy, w niedziele i święta wolne według rozkładu, w dniu wolnym za niedzielę lub święto) albo 50% w pozostałe dni (art. 151<sup>1</sup> § 1). Dodatek 100% należy się też za przekroczenie przeciętnej normy tygodniowej w okresie rozliczeniowym, na przykład za pracę w wolną sobotę, za którą nie oddano dnia wolnego (art. 151<sup>1</sup> § 2).</li>
       <li>Dodatek nocny: 20% stawki z płacy minimalnej za godzinę (art. 151<sup>8</sup> § 1, § 4b rozporządzenia).</li>
       <li>Na rękę: składki, składka zdrowotna i zaliczka na podatek od całej wypłaty, koszty 250 zł, tak jak w <a href="/narzedzia/brutto-netto">kalkulatorze brutto–netto</a>.</li>
     </ul>
@@ -120,6 +121,13 @@ const faq = [
 <script>
   import { wpisanaLiczba, zl } from '../../lib/narzedzia/format';
   import { wyplataZDodatkami } from '../../lib/narzedzia/wyplata-dodatki';
+  import { dniWMiesiacu, nazwaMiesiaca } from '../../lib/narzedzia/czas-pracy';
+  import { typografia } from '../../lib/typografia.mjs';
+  import { odmiana } from '../../lib/redakcja';
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
+
+  // „w czerwcu”, „we wrześniu”
+  const wMiesiacu = (m: number) => `${m === 9 ? 'we' : 'w'} ${nazwaMiesiaca(m, 'miejscownik')}`;
 
   const form = document.querySelector<HTMLFormElement>('[data-wyplata-dodatki]');
   if (form) {
@@ -131,9 +139,16 @@ const faq = [
       const g50 = godziny('g50');
       const g100 = godziny('g100');
       const noc = godziny('noc');
+      const rok = Number(el('rok').value);
+      const miesiac = Number(el('miesiac').value);
+      // Pora nocna to 8 godzin na dobę (art. 151^7 § 1 Kp): tak samo jak w kalkulatorze dodatku nocnego.
+      const maksNoc = 8 * dniWMiesiacu(rok, miesiac);
       let blad: string | null = null;
       if (!(pensja > 0 && pensja < 1_000_000)) blad = 'Wpisz pensję brutto, na przykład 6000.';
-      else if (![g50, g100, noc].every((g) => g >= 0 && g <= 400)) blad = 'Godziny: liczby od 0 do 400.';
+      else if (![g50, g100].every((g) => g >= 0 && g <= 400)) blad = 'Godziny: liczby od 0 do 400.';
+      else if (!(noc >= 0)) blad = 'Godziny pracy w nocy: wpisz liczbę, na przykład 40.';
+      else if (noc > maksNoc)
+        blad = typografia(`W ${nazwaMiesiaca(miesiac, 'miejscownik')} ${rok} r. pora nocna ma razem najwyżej ${odmiana(maksNoc, ['godzinę', 'godziny', 'godzin'])} (8 godzin na dobę).`);
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
       b.hidden = !blad;
       b.textContent = blad ?? '';
@@ -144,8 +159,8 @@ const faq = [
         return;
       }
       const r = wyplataZDodatkami({
-        rok: Number(el('rok').value),
-        miesiac: Number(el('miesiac').value),
+        rok,
+        miesiac,
         pensja,
         godziny50: g50,
         godziny100: g100,
@@ -160,12 +175,15 @@ const faq = [
       w('dodatki').textContent = zl(r.dodatkiNaReke);
       w('pensja-netto').textContent = zl(r.nettoSamaPensja);
       w('stawka').textContent = `${zl(r.stawka)} (${r.wymiar} h)`;
-      uwaga.hidden = !r.progPrzekroczony;
-      uwaga.textContent = r.progPrzekroczony ? 'Przy takiej wypłacie co miesiąc dochód przekroczy w roku 120 000 zł i w ostatnich miesiącach zaliczka wyniesie 32%.' : '';
+      uwaga.hidden = !r.miesiacProgu;
+      uwaga.textContent = r.miesiacProgu
+        ? typografia(`Przy takiej wypłacie co miesiąc dochód od początku roku przekroczy 120 000 zł ${wMiesiacu(r.miesiacProgu)}: od nadwyżki zaliczka wyniesie 32%, więc od tego miesiąca netto będzie niższe.`)
+        : '';
     };
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    ustawDzisiejszeWartosci(form);
     przelicz();
   }
 </script>

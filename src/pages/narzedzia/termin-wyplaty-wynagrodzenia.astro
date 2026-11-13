@@ -3,7 +3,7 @@
 // Logika: src/lib/narzedzia/termin-wyplaty.ts (testy obok).
 import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
 import { dzienMiesiaca, nazwaMiesiaca } from '../../lib/narzedzia/czas-pracy';
-import { terminyWyplaty } from '../../lib/narzedzia/termin-wyplaty';
+import { najblizszaWyplata, terminyWyplaty } from '../../lib/narzedzia/termin-wyplaty';
 import { dataPoPolsku, dzisWPolsce } from '../../lib/narzedzia/terminy';
 
 const DNI = ['niedziela', 'poniedziałek', 'wtorek', 'środa', 'czwartek', 'piątek', 'sobota'];
@@ -14,7 +14,7 @@ const rok = Number(dzis.slice(5, 7)) >= 12 ? rokBiezacy + 1 : rokBiezacy;
 const LATA = [rokBiezacy, rokBiezacy + 1];
 const DZIEN = 10;
 const lista = terminyWyplaty(rok, DZIEN);
-const najblizsza = lista.find((t) => t.wyplata >= dzis) ?? lista[0];
+const najblizsza = najblizszaWyplata(dzis, DZIEN);
 const opis = (t: (typeof lista)[number]) =>
   `${nazwaMiesiaca(t.miesiac)}: ${dzienMiesiaca(t.wyplata)} (${dzien(t.wyplata)})${t.powod.length ? `, zamiast ${dzienMiesiaca(t.ustalony)} (${t.powod[0]})` : ''}`;
 const grudzien25 = terminyWyplaty(rok, 25)[11];
@@ -58,7 +58,7 @@ const faq = [
       </div>
       <div class="mt-4">
         <label for="p-rok" class="etykieta-pola">Rok</label>
-        <select id="p-rok" name="rok" class="pole mt-1 max-w-56">
+        <select id="p-rok" name="rok" class="pole mt-1 max-w-56" data-rok-biezacy="12">
           {LATA.map((r) => <option value={r} selected={r === rok}>{r}</option>)}
         </select>
       </div>
@@ -114,8 +114,10 @@ const faq = [
 <script>
   import { dzienMiesiaca, nazwaMiesiaca } from '../../lib/narzedzia/czas-pracy';
   import { plikIcs } from '../../lib/narzedzia/kalendarz-ics';
-  import { terminyWyplaty, type DzienWyplaty } from '../../lib/narzedzia/termin-wyplaty';
+  import { najblizszaWyplata, terminyWyplaty, type DzienWyplaty } from '../../lib/narzedzia/termin-wyplaty';
   import { dataPoPolsku, dzisWPolsce } from '../../lib/narzedzia/terminy';
+  import { typografia } from '../../lib/typografia.mjs';
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
 
   const DNI = ['niedziela', 'poniedziałek', 'wtorek', 'środa', 'czwartek', 'piątek', 'sobota'];
   const dzien = (d: string) => DNI[new Date(`${d}T00:00:00Z`).getUTCDay()];
@@ -126,18 +128,19 @@ const faq = [
     const dane = () => {
       const d = el('dzien').value;
       const rok = Number(el('rok').value);
-      return { rok, lista: terminyWyplaty(rok, (d === 'ostatni' ? 'ostatni' : Number(d)) as DzienWyplaty, el('sobota').checked) };
+      const dzien = (d === 'ostatni' ? 'ostatni' : Number(d)) as DzienWyplaty;
+      return { rok, dzien, lista: terminyWyplaty(rok, dzien, el('sobota').checked) };
     };
     const przelicz = () => {
-      const { lista } = dane();
-      const dzis = dzisWPolsce();
-      const najblizsza = lista.find((t) => t.wyplata >= dzis) ?? lista[0];
-      w('najblizsza').textContent = dataPoPolsku(najblizsza.wyplata);
+      const { dzien: dzienWyplaty, lista } = dane();
+      // Najbliższa wypłata od dziś, niezależnie od roku wybranego dla listy.
+      const najblizsza = najblizszaWyplata(dzisWPolsce(), dzienWyplaty, el('sobota').checked);
+      w('najblizsza').textContent = typografia(dataPoPolsku(najblizsza.wyplata));
       w('dzien-tygodnia').textContent = dzien(najblizsza.wyplata);
       w('lista').replaceChildren(
         ...lista.map((t) =>
           Object.assign(document.createElement('li'), {
-            textContent: `${nazwaMiesiaca(t.miesiac)}: ${dzienMiesiaca(t.wyplata)} (${dzien(t.wyplata)})${t.powod.length ? `, zamiast ${dzienMiesiaca(t.ustalony)} (${t.powod[0]})` : ''}`,
+            textContent: typografia(`${nazwaMiesiaca(t.miesiac)}: ${dzienMiesiaca(t.wyplata)} (${dzien(t.wyplata)})${t.powod.length ? `, zamiast ${dzienMiesiaca(t.ustalony)} (${t.powod[0]})` : ''}`),
           }),
         ),
       );
@@ -156,6 +159,7 @@ const faq = [
     });
     form.addEventListener('change', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
+    ustawDzisiejszeWartosci(form);
     przelicz();
   }
 </script>
