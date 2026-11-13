@@ -1,0 +1,82 @@
+{
+  "partia": "D",
+  "sprawdzone": [
+    {"slug": "dorabianie-do-renty", "pliki": ["src/pages/narzedzia/dorabianie-do-renty.astro", "src/lib/narzedzia/dorabianie.ts", "src/lib/narzedzia/dorabianie.test.ts", "tests/e2e/narzedzie-dorabianie.spec.ts", "src/data/narzedzia.ts", "src/data/prawo.ts"], "wynik": "problemy: kwoty 70%/130% (M.P. 2025 poz. 1196, M.P. 2026 poz. 209, 499, 839) i maksymalne zmniejszenia (M.P. 2025 poz. 152, M.P. 2026 poz. 220) zgodne z komunikatami; art. 103, 103a, 104 ust. 1–10, 127, 138 zgodne; rachunek zgodny z Pythonem (progi ±0,01 zł, przełom grudzień–luty); SSR = wynik skryptu; od 1.12.2026 pojawia się ostrzeżenie o nowszym komunikacie. Do poprawy: 4 z 5 opcji listy „Świadczenie” ucięte na 320 px, brak aria-invalid, okres nadpisywany bez względu na wybór użytkownika"},
+    {"slug": "emerytura-pomostowa", "pliki": ["src/pages/narzedzia/emerytura-pomostowa.astro", "src/lib/narzedzia/emerytura-pomostowa.ts", "src/lib/narzedzia/emerytura-pomostowa.test.ts", "tests/e2e/narzedzie-emerytura-pomostowa.spec.ts", "src/data/narzedzia.ts", "src/data/prawo.ts"], "wynik": "problemy: tylko brak aria-invalid. Art. 3, 4 (pkt 5 i 7 uchylone), 6–8, 12, 15–17, 21–23, 49 i numery z załączników 1–2 zgodne z Dz.U. 2024 poz. 1696; brak aktów zmieniających po 2024/1243 (API Sejmu, także 2025–2026); wiek 29 lutego, najwcześniejsza data i art. 49 zgodne z niezależnym rachunkiem"},
+    {"slug": "renta-z-tytulu-niezdolnosci-do-pracy", "pliki": ["src/pages/narzedzia/renta-z-tytulu-niezdolnosci-do-pracy.astro", "src/lib/narzedzia/renta-niezdolnosc.ts", "src/lib/narzedzia/renta-niezdolnosc.test.ts", "tests/e2e/narzedzie-renta-niezdolnosc.spec.ts", "src/data/narzedzia.ts", "src/data/prawo.ts"], "wynik": "problemy: art. 57, 57a, 58, 5 ust. 2, 24, 27–28 i art. 17 ustawy wypadkowej zgodne; progi wieku art. 58 ust. 1 i przełom 2026/2027 policzone niezależnie. Do poprawy: limit 1/3 nieskładkowych nie stosowany do 5 lat w ostatnich 10 latach i nieopisany na stronie; od 1.01.2027 cytat „art. 14 ust. 1” o lekarzu orzeczniku nieaktualny (Dz.U. 2026 poz. 26); brak aria-invalid"},
+    {"slug": "swiadczenie-przedemerytalne", "pliki": ["src/pages/narzedzia/swiadczenie-przedemerytalne.astro", "src/lib/narzedzia/swiadczenie-przedemerytalne.ts", "src/lib/narzedzia/swiadczenie-przedemerytalne.test.ts", "tests/e2e/narzedzie-swiadczenie-przedemerytalne.spec.ts", "src/data/narzedzia.ts", "src/data/prawo.ts"], "wynik": "problemy: art. 2 ust. 1–6, 3, 4, 5, 6, 7 i art. 2 ust. 1 pkt 38 ustawy o rynku pracy zgodne; kwoty M.P. 2025 poz. 142 i M.P. 2026 poz. 208 zgodne. Do poprawy: od 1.03.2027 po cichu kwoty przychodu z 2026 r. (bez ostrzeżenia i bez testu-strażnika); granica „nie zdąży się zacząć” o 2 dni za późno; brak aria-invalid"}
+  ],
+  "znaleziska": [
+    {
+      "id": "D-1", "slug": "swiadczenie-przedemerytalne", "wymiar": "prawo", "waga": "srednia",
+      "plik": "src/lib/narzedzia/swiadczenie-przedemerytalne.ts", "linia": 54,
+      "problem": "kwotyNaDzien(dzis) zwraca ostatni wpis (od 1 marca 2026 r.) także po 1 marca 2027 r., gdy obowiązują już nowe kwoty z komunikatu Prezesa ZUS. Wynik, uwaga, FAQ i meta opis pokażą wtedy 2225,90 i 6232,50 zł bez żadnego ostrzeżenia. Dorabianie ma flagę mozeNieaktualne i test-strażnika, a to narzędzie nie ma ani jednego, ani drugiego.",
+      "dowod": "art. 6 ust. 4 ustawy o świadczeniach przedemerytalnych (.cache/narzedzia/prawo/DU_2026_115.txt): Prezes ZUS ogłasza kwoty „co najmniej na 7 dni roboczych przed najbliższym terminem waloryzacji, obowiązujące w kolejnym roku rozliczeniowym”, a rok rozliczeniowy trwa od 1 marca (art. 6 ust. 1). Playwright z zegarem ustawionym na 2027-03-15: data-w=przychod „bez zmniejszenia do 2225,90 zł, zawieszenie powyżej 6232,50 zł” i uwaga „kwoty od 1 marca 2026 r., M.P. 2026 poz. 208”, bez ostrzeżenia.",
+      "poprawka": "W kwotyNaDzien dodać flagę mozeNieaktualne, gdy data >= (od ostatniego wpisu + 12 miesięcy), i dopisać w uwagach zdanie jak w dorabianiu („mogą być już nieaktualne: sprawdź nowszy komunikat”). Dodać test-strażnika: ostatni KWOTY_PRZYCHODU.od ma być >= ostatni MAKS_ZMNIEJSZENIA.od z dorabianie.ts (oba komunikaty są od 1 marca). Wpisać kwoty od 1 marca 2027 r. po ich ogłoszeniu (luty 2027)."
+    },
+    {
+      "id": "D-2", "slug": "renta-z-tytulu-niezdolnosci-do-pracy", "wymiar": "prawo", "waga": "srednia",
+      "plik": "src/lib/narzedzia/renta-niezdolnosc.ts", "linia": 96,
+      "problem": "Warunek 5 lat w ostatnich 10 latach porównuje wpisaną sumę okresów składkowych i nieskładkowych z tego dziesięciolecia bez limitu 1/3 dla nieskładkowych. Strona tego nie mówi: interpretacja jest tylko w komentarzu w kodzie, a pole każe „wpisać oba rodzaje razem”. Przykład: 3,5 roku składkowych i 1,5 roku nieskładkowych w dziesięcioleciu daje w kalkulatorze „spełnia”, a według art. 5 ust. 2 wychodzi 3,5 + 1,17 = 4,67 roku, czyli za mało.",
+      "dowod": "art. 5 ust. 2 ustawy o FUS (.cache/narzedzia/prawo/DU_2025_1749.txt): „Przy ustalaniu prawa do emerytury i renty […] okresy nieskładkowe uwzględnia się w wymiarze nieprzekraczającym jednej trzeciej udowodnionych okresów składkowych”. Przepis nie wyłącza warunku z art. 58 ust. 2. Kod: okStaz porównuje d.ostatnie10 >= 5 wprost; komentarz w kodzie: „Okres z ostatnich 10 lat bierzemy wprost, bez limitu 1/3”. „Jak liczymy” (astro, l. 140–150) tego nie podaje.",
+      "poprawka": "Najprościej dopisać w opisie pola r-okresy-opis i w „Jak liczymy”: „W ostatnich 10 latach okresy nieskładkowe też liczą się najwyżej do 1/3 składkowych z tych lat (art. 5 ust. 2); kalkulator bierze wpisaną sumę wprost, ZUS może policzyć mniej”. Lepiej rozdzielić pole ostatnie10 na składkowe i nieskładkowe i zastosować min(n, s/3). Dodać test z 3,5 + 1,5 roku."
+    },
+    {
+      "id": "D-3", "slug": "dorabianie-do-renty", "wymiar": "tresc-ux", "waga": "srednia",
+      "plik": "src/pages/narzedzia/dorabianie-do-renty.astro", "linia": 53,
+      "problem": "Na telefonie 320 px lista „Świadczenie” ucina 4 z 5 opcji, także domyślną. Użytkownik nie widzi, czy wybrał emeryturę przed, czy po 60/65 latach, a od tego zależy cały wynik („Bez limitu” albo zmniejszenie).",
+      "dowod": "Playwright, viewport 320×640, zrzuty w katalogu roboczym (sel-renta-calkowita.png: „Renta, całkowita niezdolno”, sel-renta-czesciowa.png: „Renta, częściowa niezdolnc”, sel-emer.png: „Emerytura, poniżej 60/65 la”, sel-emer-wiek.png: „Emerytura, ukończone 60/6”). Szerokości tekstu przy foncie 16px Noto Sans: 215, 220, 211 i 239 px; w polu o clientWidth 244 px mieści się około 206 px. Zasada 7 w prompty/02-fabryka.md, sekcja 4.",
+      "poprawka": "Skrócić opcje, np. „Renta całkowita”, „Renta częściowa”, „Renta rodzinna, 1 osoba”, „Emerytura przed 60/65”, „Emerytura od 60/65”. Etykietę pola uzupełnić opisem (aria-describedby), że chodzi o rentę z tytułu niezdolności do pracy. W E2E selectOption działa po value, więc nic nie trzeba zmieniać."
+    },
+    {
+      "id": "D-4", "slug": "renta-z-tytulu-niezdolnosci-do-pracy", "wymiar": "prawo", "waga": "niska",
+      "plik": "src/lib/narzedzia/renta-niezdolnosc.ts", "linia": 131,
+      "problem": "Od 1 stycznia 2027 r. art. 14 ust. 1 ustawy o FUS mówi już tylko, że ocenę niezdolności zawiera orzeczenie wydane w trybie ustawy o systemie ubezpieczeń społecznych, a nie kto orzeka. Nowy art. 85d ust. 1 ustawy o sus mówi, że orzeczenia wydają „lekarze orzecznicy oraz osoby wykonujące samodzielny zawód medyczny” (fizjoterapeuta, pielęgniarka, art. 4 pkt 21). Uwaga w wyniku („orzeka lekarz orzecznik ZUS (art. 14 ust. 1)”) i FAQ będą wtedy cytować przepis, który tego nie mówi.",
+      "dowod": ".cache/narzedzia/prawo/DU_2026_26.txt: art. 12 pkt 3 (nowe art. 14 ust. 1 ustawy o FUS: „jest dokonywana w formie orzeczenia wydanego na zasadach i w trybie określonych w ustawie […] o systemie ubezpieczeń społecznych”); art. 1 pkt 1 (art. 4 pkt 21 ustawy o sus); art. 85d ust. 1; art. 43 pkt 3: art. 12 pkt 2, 3, 6–8 wchodzą w życie z dniem 1 stycznia 2027 r. Komentarz w kodzie (l. 3–4) przyznaje zmianę, ale twierdzi „orzeka nadal lekarz orzecznik ZUS”.",
+      "poprawka": "Zmienić ORZECZENIE na tekst niezależny od daty, np. „O niezdolności do pracy i jej stopniu rozstrzyga orzeczenie wydane w ZUS (art. 14 ust. 1 ustawy o FUS; od 1 stycznia 2027 r. orzeczenia wydają lekarze orzecznicy i inne osoby z art. 85d ustawy o systemie ubezpieczeń społecznych)”. Tak samo poprawić FAQ (l. 32) i „Jak liczymy” (l. 149) i dopisać ustawę o sus (Dz.U. 2026 poz. 26) w przepisach wpisu rejestru."
+    },
+    {
+      "id": "D-5", "slug": "swiadczenie-przedemerytalne", "wymiar": "rachunek", "waga": "niska",
+      "plik": "src/lib/narzedzia/swiadczenie-przedemerytalne.ts", "linia": 104,
+      "problem": "Warunek „nie zdąży się zacząć” (data + 180 dni >= 60./65. urodziny) przepuszcza 2 skrajne dni. Gdy 180. dzień zasiłku wypada dzień albo 2 dni przed urodzinami, świadczenie nie może się zacząć przed dniem, w którym prawo ustaje, a wynik mimo to brzmi „Spełniasz warunki”. Test (data 2029-12-16, 65. urodziny 2030-06-15) utrwala ten przypadek jako „spelnia”.",
+      "dowod": "art. 218 ust. 1 ustawy o rynku pracy (DU_2025_620.txt): zasiłek „od dnia zarejestrowania”, a rejestracja jest możliwa najwcześniej dzień po rozwiązaniu. Art. 2 ust. 3 ustawy o świadczeniach przedemerytalnych: „po upływie co najmniej 180 dni pobierania”. Art. 7 ust. 1: „od następnego dnia po dniu złożenia wniosku”. Art. 4 ust. 1 pkt 3: prawo ustaje „z dniem osiągnięcia wieku 60 lat […] i 65 lat”. Python (niezal.py): rozwiązanie 2029-12-16, 180. dzień zasiłku 2030-06-14, świadczenie najwcześniej od 2030-06-16, 65. urodziny 2030-06-15.",
+      "poprawka": "Zmienić warunek na dodajDni(d.data, 182) >= koniec (pierwszy dzień świadczenia: dzień po rozwiązaniu + 180 dni zasiłku + wniosek następnego dnia) albo opisać to w „Jak liczymy” jako wariant przybliżony. Poprawić test: 2029-12-16 i 2029-12-15 dają „nie-zdazy”, 2029-12-14 daje „spelnia”."
+    },
+    {
+      "id": "D-6", "slug": "dorabianie-do-renty", "wymiar": "tresc-ux", "waga": "niska",
+      "plik": "src/pages/narzedzia/dorabianie-do-renty.astro", "linia": 162,
+      "problem": "Komunikat błędu jest powiązany z polem przez aria-describedby, ale pole nie dostaje aria-invalid. Tak samo jest w pozostałych narzędziach partii (emerytura-pomostowa l. 214, renta-z-tytulu-niezdolnosci-do-pracy l. 178, swiadczenie-przedemerytalne l. 185). Połowa narzędzi serwisu ustawia aria-invalid, np. brutto-netto.astro l. 141.",
+      "dowod": "grep aria-invalid: brak w 4 plikach partii, obecny w 50 z 108 stron narzędzi. Wymóg z WSPOLNE.md, wymiar 3 („komunikat błędu powiązany z polem przez aria-describedby/aria-invalid”).",
+      "poprawka": "W każdym przelicz() ustawiać setAttribute('aria-invalid', String(błąd dotyczy pola)) na polu z błędem (przychód; data urodzenia, data, okresy) i usuwać po poprawie, jak w brutto-netto.astro. Dodać asercję toHaveAttribute('aria-invalid','true') w teście „błędne dane” w każdym E2E."
+    },
+    {
+      "id": "D-7", "slug": "dorabianie-do-renty", "wymiar": "tresc-ux", "waga": "niska",
+      "plik": "src/pages/narzedzia/dorabianie-do-renty.astro", "linia": 157,
+      "problem": "Skrypt ustawia el('okres').value = okresNaDzien(dzis) zawsze. Okres wybrany przez użytkownika, który przeglądarka przywraca po powrocie na stronę, zostaje więc nadpisany, wbrew konwencji z dzis-w-formularzu.ts (przestawiamy tylko wartość domyślną z HTML).",
+      "dowod": "src/lib/narzedzia/dzis-w-formularzu.ts, komentarz l. 8–9: „Pole zmienione przez użytkownika (przywrócone przez przeglądarkę przy powrocie) zostaje: przestawiamy tylko wartość domyślną z HTML”. W dorabianie-do-renty.astro l. 157 nie ma takiego warunku.",
+      "poprawka": "Przestawiać tylko wtedy, gdy wartość listy równa się opcji defaultSelected: `const s = el('okres') as unknown as HTMLSelectElement; if (s.value === [...s.options].find(o => o.defaultSelected)?.value) s.value = okresNaDzien(dzis);`."
+    },
+    {
+      "id": "D-8", "slug": "swiadczenie-przedemerytalne", "wymiar": "testy", "waga": "niska",
+      "plik": "src/lib/narzedzia/swiadczenie-przedemerytalne.test.ts", "linia": 63,
+      "problem": "Test kwot przychodu sprawdza tylko stałe daty z 2026 r. Brakuje testu-strażnika jak w dorabianie.test.ts (porównanie z rokiem waloryzacji), więc brak wpisu z 2027 r. nie zatrzyma checku po 1 marca 2027 r.",
+      "dowod": "dorabianie.test.ts l. 34–37 ma strażnika MAKS_ZMNIEJSZENIA, a swiadczenie-przedemerytalne.test.ts l. 63–66 tylko kwotyNaDzien('2026-02-28') i ('2026-11-13').",
+      "poprawka": "Dodać test: KWOTY_PRZYCHODU[ostatni].od >= MAKS_ZMNIEJSZENIA[ostatni].od (oba z komunikatów ZUS od 1 marca), żeby oba wpisy aktualizować razem."
+    }
+  ],
+  "do_stanu": [
+    {"sprawa": "Komunikat Prezesa ZUS o kwotach 70% i 130% od 1 grudnia 2026 r. (za III kwartał 2026 r.; GUS M.P. 2026 poz. 1122: 9317,01 zł, więc oczekiwane 6522,00 i 12 112,20 zł po zaokrągleniu w górę do 10 gr). Termin ogłoszenia: do 14. dnia roboczego listopada (art. 104 ust. 10 pkt 1), czyli 2026-11-20; na 2026-11-13 jeszcze nie ma go w API Sejmu", "kiedy_sprawdzic": "2026-11-23", "gdzie_w_kodzie": "src/lib/narzedzia/dorabianie.ts PROGI_PRZYCHODU; src/data/prawo.ts dorabianieProgi2026; e2e narzedzie-dorabianie.spec.ts (komentarz)"},
+    {"sprawa": "Komunikat Prezesa ZUS o kwotach 70% i 130% od 1 marca 2027 r. (za IV kwartał 2026 r.)", "kiedy_sprawdzic": "2027-02-22", "gdzie_w_kodzie": "src/lib/narzedzia/dorabianie.ts PROGI_PRZYCHODU"},
+    {"sprawa": "Komunikat Prezesa ZUS o kwotach maksymalnych zmniejszeń od 1 marca 2027 r. (waloryzacja 2027, art. 104 ust. 9, art. 94 ust. 2)", "kiedy_sprawdzic": "2027-02-25", "gdzie_w_kodzie": "src/lib/narzedzia/dorabianie.ts MAKS_ZMNIEJSZENIA; src/data/prawo.ts dorabianieZmniejszenia2026"},
+    {"sprawa": "Komunikat Prezesa ZUS o dopuszczalnej (25%) i granicznej (70%) kwocie przychodu przy świadczeniach przedemerytalnych od 1 marca 2027 r. (z przeciętnego wynagrodzenia w 2026 r.; GUS ogłasza w lutym 2027 r.)", "kiedy_sprawdzic": "2027-02-25", "gdzie_w_kodzie": "src/lib/narzedzia/swiadczenie-przedemerytalne.ts KWOTY_PRZYCHODU; src/data/prawo.ts przychodPrzedemerytalne2026"},
+    {"sprawa": "Komunikat Prezesa ZUS o kwotach granicznych przychodu za 2026 r. (art. 104 ust. 10 pkt 2, do 14. dnia roboczego listopada); kod go nie używa, ale tekst strony o rozliczeniu rocznym się do niego odwołuje", "kiedy_sprawdzic": "2026-11-23", "gdzie_w_kodzie": "src/pages/narzedzia/dorabianie-do-renty.astro (Jak liczymy)"},
+    {"sprawa": "Od 1 stycznia 2027 r. nowe orzecznictwo ZUS (Dz.U. 2026 poz. 26: art. 14 ust. 1 ustawy o FUS, art. 85d ustawy o sus); poprawić cytat w rencie (D-4)", "kiedy_sprawdzic": "2026-12-31", "gdzie_w_kodzie": "src/lib/narzedzia/renta-niezdolnosc.ts ORZECZENIE; renta-z-tytulu-niezdolnosci-do-pracy.astro FAQ l. 32"}
+  ],
+  "poza_zakresem": [],
+  "nie_sprawdzono": [
+    "Orzecznictwo SN o tym, czy limit 1/3 okresów nieskładkowych (art. 5 ust. 2) stosuje się w dziesięcioleciu z art. 58 ust. 2 (sn.pl blokuje automaty). Trzeba sprawdzić ręcznie przed wyborem poprawki D-2.",
+    "Praktyka ZUS (zus.pl blokuje automaty): czy przy art. 7 ustawy o emeryturach pomostowych ZUS uznaje hutnictwo szkła (zał. 1 pkt 8) i kuźnie (pkt 9) za „hutnictwo”, jak pisze strona.",
+    "Wpływ renty wdowiej (Dz.U. 2024 poz. 1243) na limity dorabiania przy rencie rodzinnej pobieranej razem z własnym świadczeniem: strona tego nie opisuje, nie badano.",
+    "Czytnik ekranu: nie sprawdzono ogłaszania wyników aria-live (sprawdzono tylko strukturę atrybutów w HTML). Nie uruchamiano pełnych testów E2E (zgodnie z WSPOLNE.md); vitest dla 4 plików testów: 43/43 zaliczone."
+  ]
+}

@@ -1,0 +1,144 @@
+{
+  "partia": "E",
+  "sprawdzone": [
+    {
+      "slug": "ulga-na-dzieci",
+      "pliki": [
+        "src/pages/narzedzia/ulga-na-dzieci.astro",
+        "src/lib/narzedzia/ulga-na-dzieci.ts",
+        "src/lib/narzedzia/ulga-na-dzieci.test.ts",
+        "tests/e2e/narzedzie-ulga-na-dzieci.spec.ts",
+        "src/data/narzedzia.ts",
+        "src/data/prawo.ts"
+      ],
+      "wynik": "problemy: art. 27f (kwoty 92,67/166,67/225 zł, limity 112 000/56 000 zł, ust. 2a–2e, 4, 8–10) i art. 6 ust. 4c–4e zgodne z DU_2026_592; renta socjalna 1878,91/1978,49 zł zgodna z MP_2025_152 i MP_2026_220; SSR = skrypt (320 i 412 px, bez przewijania w bok); błędy danych z aria-invalid; drobne: ułamek procentu z kropką, niepełna lista nowelizacji w komentarzu"
+    },
+    {
+      "slug": "zerowy-pit",
+      "pliki": [
+        "src/pages/narzedzia/zerowy-pit.astro",
+        "src/lib/narzedzia/zerowy-pit.ts",
+        "src/lib/narzedzia/zerowy-pit.test.ts",
+        "tests/e2e/narzedzie-zerowy-pit.spec.ts",
+        "src/data/narzedzia.ts",
+        "src/data/prawo.ts"
+      ],
+      "wynik": "problemy: art. 21 ust. 1 pkt 148, 152–154, ust. 39, 43–48 i art. 53 Dz.U. 2021 poz. 2105 zgodne; 29 lutego → 28 lutego (art. 12 § 4 Ordynacji) poprawnie; SSR = skrypt; lista lat zależna od daty buildu: po 1.01.2027 strona z 2026 r. nie ma roku 2027 i liczy 2026"
+    },
+    {
+      "slug": "zwrot-podatku-pit-37",
+      "pliki": [
+        "src/pages/narzedzia/zwrot-podatku-pit-37.astro",
+        "src/lib/narzedzia/pit-roczny.ts",
+        "src/lib/narzedzia/pit-roczny.test.ts",
+        "tests/e2e/narzedzie-zwrot-podatku.spec.ts",
+        "src/data/narzedzia.ts",
+        "src/data/prawo.ts"
+      ],
+      "wynik": "problemy: skala 12/32%, 3600 zł, próg 120 000 zł (art. 27 ust. 1), koszty art. 22 ust. 2, art. 6 ust. 2/4c–4f, zaokrąglenia art. 63 § 1, terminy art. 45 ust. 1 i art. 77 § 1 pkt 5/5a Ordynacji (bez zmian po Dz.U. 2026 poz. 846) zgodne; niezależny rachunek 6 przypadków (SSR, samotny 300 000 zł, ślub w roku, 0,50 zł, 4 dzieci małżonkowie osobno) zgodny; limit 112 000 zł samotnego rodzica stosowany także przy pełnoletnim dziecku; termin dopłaty na sztywno 30 kwietnia"
+    }
+  ],
+  "znaleziska": [
+    {
+      "id": "E-1",
+      "slug": "zerowy-pit",
+      "wymiar": "rachunek",
+      "waga": "srednia",
+      "plik": "src/pages/narzedzia/zerowy-pit.astro",
+      "linia": 13,
+      "problem": "Lista lat powstaje przy buildzie (LATA_PIT ∪ rok buildu = [2025, 2026]); skrypt (ustawDzisiejszeWartosci, data-rok-biezacy) wybiera bieżący rok tylko, gdy jest na liście. Po 1.01.2027 strona zbudowana w 2026 r. domyślnie liczy rok 2026 („Cały 2026 r.”), roku 2027 nie da się wybrać, a domyślny rok przeprowadzki (linia 184: rok z listy − 1) to 2025 zamiast 2026.",
+      "dowod": "Playwright na podglądzie z page.clock.setFixedTime(2027-01-15): #z-rok = \"2026\", opcje [\"2025\",\"2026\"], #z-przeniesienie = \"2025\", stan „Cały 2026 r.”, okres „1 stycznia 2026 r.–31 grudnia 2026 r.”. Limit 85 528 zł (art. 21 ust. 44) nie zależy od roku, więc nic nie blokuje roku następnego.",
+      "poprawka": "W zerowy-pit.astro: const lata = [...new Set([...LATA_PIT, rokTeraz, rokTeraz + 1])] (albo lataKalendarza() z dzis-w-formularzu.ts połączone z LATA_PIT); domyślny rok przeprowadzki liczyć od roku z dzisWPolsce(), nie od wartości listy. Test E2E z page.clock na 2027-01-15: rok 2027 wybrany, przeprowadzka 2026."
+    },
+    {
+      "id": "E-2",
+      "slug": "zwrot-podatku-pit-37",
+      "wymiar": "prawo",
+      "waga": "srednia",
+      "plik": "src/lib/narzedzia/ulga-na-dzieci.ts",
+      "linia": 122,
+      "problem": "Preferencja dla samotnego rodzica (art. 6 ust. 4c pkt 1–3) obejmuje też pełnoletnie dzieci uczące się, ale limit 112 000 zł w uldze na jedno dziecko dotyczy tylko samotnie wychowującego MAŁOLETNIE dziecko; przy jednym pełnoletnim uczącym się dziecku limit to 56 000 zł. Kod (ulgaNaDzieci wywołane z sytuacja 'samotny') zawsze bierze 112 000 zł, a strona zwrotu nie ostrzega o tym (opis „Samotny rodzic” mówi tylko „sama wychowuje dziecko”).",
+      "dowod": "DU_2026_592.txt, art. 27f ust. 2 pkt 1 lit. b: „niepozostającego w związku małżeńskim … nie przekroczyły … kwoty 56 000 zł, za wyjątkiem podatnika samotnie wychowującego małoletnie dziecko wymienionego w art. 6 ust. 4c i 4g, do którego ma zastosowanie kwota dochodu określona w lit. a”; art. 6 ust. 4c pkt 3: preferencja także dla pełnoletnich uczących się do 25 lat. ulga-na-dzieci.ts linia 122: limit = sytuacja 'samotny' → LIMIT_MALZENSTWO bez względu na wiek dziecka. Kalkulator ulgi ma o tym tylko uwagę tekstową (linia 179), kalkulator zwrotu nie ma żadnej.",
+      "poprawka": "W obu formularzach pole „Jedyne dziecko jest pełnoletnie (uczy się)” albo co najmniej w opisPit przy sytuacji 'samotny', jednym dziecku i dochodzie w przedziale 56 000–112 000 zł uwaga: „Limit 112 000 zł dotyczy samotnego wychowywania małoletniego dziecka; przy pełnoletnim uczącym się dziecku limit to 56 000 zł (art. 27f ust. 2 pkt 1 lit. b)”. Test jednostkowy: samotny, 1 dziecko, dochód 80 000 zł."
+    },
+    {
+      "id": "E-3",
+      "slug": "zwrot-podatku-pit-37",
+      "wymiar": "prawo",
+      "waga": "niska",
+      "plik": "src/lib/narzedzia/pit-roczny.ts",
+      "linia": 225,
+      "problem": "Termin dopłaty jest na sztywno „30 kwietnia ${rok + 1} r.”. Za 2027 r. (po dopisaniu roku do LATA_PIT, czego wymaga test ulga-na-dzieci.test.ts w 2028 r.) 30 kwietnia 2028 r. to niedziela, 1 maja święto, więc termin to 2 maja 2028 r.; kalkulator napisze 30 kwietnia 2028 r.",
+      "dowod": "Harness esbuild: opisPit({rok: 2027, …dopłata}).opis = „do zapłaty do 30 kwietnia 2028 r.”; python: 2028-04-30 = Sunday. DU_2026_622.txt art. 12 § 5: „Jeżeli ostatni dzień terminu przypada na sobotę lub dzień ustawowo wolny od pracy, za ostatni dzień terminu uważa się następny dzień po dniu lub dniach wolnych od pracy”.",
+      "poprawka": "Liczyć termin funkcją przesuwającą na następny dzień roboczy (wspólny kalendarz świąt z innych narzędzi) i formatować dataPoPolsku; test: rok 2026 → „30 kwietnia 2027 r.”, rok 2027 → „2 maja 2028 r.”."
+    },
+    {
+      "id": "E-4",
+      "slug": "ulga-na-dzieci",
+      "wymiar": "tresc-ux",
+      "waga": "niska",
+      "plik": "src/lib/narzedzia/ulga-na-dzieci.ts",
+      "linia": 171,
+      "problem": "Część ulgi z ułamkiem (pole przyjmuje „33,5”, art. 27f ust. 4 pozwala na dowolną proporcję) wypisuje się z kropką: „Twoja część 33.5%”.",
+      "dowod": "Playwright: #u-czesc = „33,5” → data-w=opis „za 12 miesięcy z ulgą, Twoja część 33.5%”.",
+      "poprawka": "`, Twoja część ${liczba(d.czesc)}%` (liczba() z format.ts, przecinek dziesiętny) i przypadek w teście opisUlgi."
+    },
+    {
+      "id": "E-5",
+      "slug": "ulga-na-dzieci",
+      "wymiar": "prawo",
+      "waga": "niska",
+      "plik": "src/data/prawo.ts",
+      "linia": 632,
+      "problem": "Lista nowelizacji ustawy o PIT po t.j. Dz.U. 2026 poz. 592 w prawo.ts (pit2025.uwaga) i w komentarzu ulga-na-dzieci.ts (linia 3) pomija Dz.U. 2026 poz. 1347 (od 1.12.2026) i poz. 1354 (od 1.01.2027). Wniosek „nie dotyczą” jest prawdziwy (obie zmieniają tylko art. 14 ust. 2), ale wykaz jest niepełny.",
+      "dowod": "api.sejm.gov.pl/eli/acts/DU/1991/350, references „Akty zmieniające”: DU/2026/1347 (2026-12-01), DU/2026/1354 (2027-01-01). t_1354.txt art. 2: zmiana art. 14 ust. 2 pkt 10 lit. a; t_1347.txt art. 2: uchylenie art. 14 ust. 2 pkt 14 lit. b.",
+      "poprawka": "Dopisać „1347, 1354” w pit2025.uwaga i w komentarzach ulga-na-dzieci.ts, pit-roczny.ts, zerowy-pit.ts; sprawdzono → data sprawdzenia."
+    },
+    {
+      "id": "E-6",
+      "slug": "zwrot-podatku-pit-37",
+      "wymiar": "spojnosc",
+      "waga": "niska",
+      "plik": "src/lib/narzedzia/pit-roczny.ts",
+      "linia": 28,
+      "problem": "Kwoty skali są zdublowane: PROG_SKALI/KWOTA_ZMNIEJSZAJACA w pit-roczny.ts, PROG_PIT/KWOTA_ZMNIEJSZAJACA/LIMIT_ULGI_MLODYCH w netto.ts (linie 14–16) i LIMIT_ZWOLNIEN w zerowy-pit.ts (linia 31). Zmiana kwoty wolnej albo limitu (art. 27 ust. 1d przewiduje coroczną weryfikację) wymaga poprawki w trzech plikach; łatwo o rozjazd brutto–netto i PIT-37.",
+      "dowod": "grep: netto.ts:14 KWOTA_ZMNIEJSZAJACA = 3600, :15 PROG_PIT = 120_000, :16 LIMIT_ULGI_MLODYCH = 85_528; pit-roczny.ts:28–29; zerowy-pit.ts:31.",
+      "poprawka": "Jedno źródło (np. stałe w pit-roczny.ts albo src/data/prawo.ts) importowane przez netto.ts i zerowy-pit.ts."
+    },
+    {
+      "id": "E-7",
+      "slug": "zwrot-podatku-pit-37",
+      "wymiar": "testy",
+      "waga": "niska",
+      "plik": "src/lib/narzedzia/pit-roczny.test.ts",
+      "linia": 13,
+      "problem": "Luki w testach wartości brzegowych: brak progu 120 000 zł + 1 zł, brak wspólnego limitu składek małżonków przy rozliczeniu osobno (art. 27f ust. 10: małżonek dostaje resztę po zwrocie u Ciebie), brak roku 2026 i terminu dopłaty, brak testów z page.clock (domyślny rok po Nowym Roku) w E2E trzech narzędzi, brak 29 lutego w zwolnienie()/opisZwolnienia (testowana tylko funkcja urodziny).",
+      "dowod": "Niezależny rachunek (harness esbuild, zgodny z ręcznym): podatekSkala(120001) = 10 800,32 zł; małżonkowie cały rok, 4 dzieci, część 50%, Ty 40 000/3000/5484/zdrowotna 3100/zaliczki 1000, małżonek 20 000/3000/2742/1500/0 → Ty zwrot 4280,14 zł (ulga 181,92 + zwrot 3280,14), małżonek 3462,06 zł, wspólnie 7924,12 zł; zwolnienie(rok 2026, mlodzi, 2000-02-29) → do 2026-02-28 (stan „Do 28 lutego 2026 r.”).",
+      "poprawka": "Dopisać te przypadki do pit-roczny.test.ts i zerowy-pit.test.ts oraz test E2E z page.clock.setFixedTime('2027-01-15') sprawdzający domyślny rok w trzech narzędziach."
+    }
+  ],
+  "do_stanu": [
+    {
+      "sprawa": "Najniższa renta z tytułu całkowitej niezdolności od 1 marca 2027 r. (komunikat Prezesa ZUS, M.P., zwykle połowa lutego) = renta socjalna z grudnia 2027 r. do limitu dochodu pełnoletniego dziecka; bez niej rok 2027 nie trafi do LATA_PIT",
+      "kiedy_sprawdzic": "2027-02-28",
+      "gdzie_w_kodzie": "src/lib/narzedzia/ulga-na-dzieci.ts RENTA_SOCJALNA_GRUDZIEN, src/data/prawo.ts (najnizszaRenta2027)"
+    },
+    {
+      "sprawa": "Skala PIT i kwota zmniejszająca na 2027 r.: w API Sejmu brak aktu zmieniającego art. 27 ust. 1, 27f, 21 ust. 1 pkt 148/152–154 na 2027 r. (sprawdzone 2026-11-13: poz. 1098, 1123, 1347, 1354, 1371 tych przepisów nie dotyczą); sprawdzić ponownie przed końcem roku",
+      "kiedy_sprawdzic": "2026-12-31",
+      "gdzie_w_kodzie": "src/lib/narzedzia/pit-roczny.ts PROG_SKALI/KWOTA_ZMNIEJSZAJACA, netto.ts, zerowy-pit.ts LIMIT_ZWOLNIEN, ulga-na-dzieci.ts KWOTY_ULGI"
+    },
+    {
+      "sprawa": "Termin zeznania za 2027 r.: 30 kwietnia 2028 r. to niedziela, termin 2 maja 2028 r. (art. 12 § 5 Ordynacji) — poprawić przed dopisaniem 2027 do LATA_PIT (E-3)",
+      "kiedy_sprawdzic": "2027-03-01",
+      "gdzie_w_kodzie": "src/lib/narzedzia/pit-roczny.ts opisPit"
+    }
+  ],
+  "poza_zakresem": [],
+  "nie_sprawdzono": [
+    "Objaśnienia MF z 30 grudnia 2022 r. (ulga dla młodych, dzień 26. urodzin) i komunikat MF o seniorach (przychód z dnia 60./65. urodzin) na gov.pl: nie pobierałem, ocena oparta na brzmieniu art. 21 ust. 1 pkt 148 i 154 oraz art. 12 § 4 Ordynacji.",
+    "Czytnik ekranu (NVDA/VoiceOver) i WebKit: sprawdzone tylko atrybuty aria-live, aria-invalid, aria-describedby i etykiety w Chromium.",
+    "Zaokrąglenie kwoty zwrotu niewykorzystanej ulgi w formularzu PIT-37 (grosze czy pełne złote): wzór formularza nie był pobrany.",
+    "Ustawa o systemie ubezpieczeń i art. 79/81 ustawy o świadczeniach opieki zdrowotnej: kwoty składek w przykładzie startowym przeliczone ręcznie (13,71%, 9% od podstawy po składkach), przepisów nie cytowałem, bo kalkulatory przyjmują składki z PIT-11."
+  ]
+}
