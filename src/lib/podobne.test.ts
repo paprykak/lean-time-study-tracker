@@ -43,6 +43,7 @@ describe('podobne narzędzia', () => {
     ['limit-pracy-tymczasowej', 'dorabianie-do-renty'],
     ['urlop-szkoleniowy', 'dni-wolne-od-pracy'],
     ['emerytura-pomostowa', 'doba-pracownicza'],
+    ['odziez-robocza', 'dni-robocze'],
   ])('%s ≁ %s', (a, b) => {
     expect(podobne(a, NARZEDZIA)).not.toContain(b);
   });
