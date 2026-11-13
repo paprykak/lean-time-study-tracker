@@ -160,9 +160,6 @@
   .kategoria {
     @apply inline-block text-kategoria font-bold tracking-[0.08em] text-akcent-tekst uppercase;
   }
-  .kategoria-na-ciemnym {
-    @apply text-tekst-na-ciemnym;
-  }
   .tytul-xl {
     @apply font-display text-[1.75rem] leading-[1.15] font-bold tracking-[-0.01em] text-tekst sm:text-[2.25rem] lg:text-[2.625rem];
   }
@@ -218,20 +215,6 @@
     @apply font-semibold text-akcent-tekst underline decoration-1 underline-offset-[3px] najazd:text-akcent-ciemny najazd:decoration-2;
   }
 
-  /* Zdjęcia: proporcje stałe, więc miejsce jest zarezerwowane zanim obraz się wczyta (CLS) */
-  .zdjecie {
-    @apply block w-full overflow-hidden rounded-[var(--radius-karta)] bg-tlo-szare object-cover;
-  }
-  .proporcja-16-9 {
-    aspect-ratio: 16 / 9;
-  }
-  .proporcja-16-10 {
-    aspect-ratio: 16 / 10;
-  }
-  .proporcja-1-1 {
-    aspect-ratio: 1 / 1;
-  }
-
   /* Rozciągnięty link: cała karta klika się jednym linkiem w tytule (jedno miejsce w kolejności Tab) */
   .karta {
     position: relative;
@@ -250,10 +233,6 @@
     outline: 3px solid var(--color-akcent);
     outline-offset: 4px;
   }
-  .karta-nad {
-    position: relative;
-    z-index: 2;
-  }
   .karta .karta-tytul {
     text-decoration-line: underline;
     text-decoration-color: transparent;
@@ -270,9 +249,6 @@
     text-decoration-color: currentColor;
   }
 
-  .sr-tylko {
-    @apply sr-only;
-  }
 }
 
 /* Podświetlenie trafionych słów w wynikach wyszukiwarki narzędzi (src/lib/szukaj-klient.ts): jasny akcent, tekst bez zmian. */

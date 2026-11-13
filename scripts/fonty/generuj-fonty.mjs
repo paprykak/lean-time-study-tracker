@@ -59,11 +59,6 @@ const pliki = {
 };
 for (const [nazwa, buf] of Object.entries(pliki)) writeFileSync(join(WYJSCIE, nazwa), buf);
 
-// Fonty TTF do okładek udostępnień (satori przy buildzie nie czyta WOFF2): Display 700 na tytuł, Sans 600 na etykiety.
-const OG = join(WYJSCIE, 'og');
-mkdirSync(OG, { recursive: true });
-writeFileSync(join(OG, 'noto-sans-display-700.ttf'), await podzbior(display.buf, { wdth: 100, wght: 700 }, 'truetype'));
-writeFileSync(join(OG, 'noto-sans-600.ttf'), await podzbior(sans.buf, { wdth: 100, wght: 600 }, 'truetype'));
 mkdirSync(LICENCJA, { recursive: true });
 copyFileSync(join(CACHE, 'OFL.txt'), join(WYJSCIE, 'OFL.txt'));
 copyFileSync(join(CACHE, 'OFL.txt'), join(LICENCJA, 'OFL.txt'));
