@@ -57,7 +57,7 @@ test('błędne dane: koniec przed początkiem i zły wymiar, komunikat role="ale
     await wymiar.fill(zly);
     await expect(blad).toBeVisible();
     await expect(wymiar).toHaveAttribute('aria-invalid', 'true');
-    await expect(page.getByLabel('Od', { exact: true })).toHaveAttribute('aria-invalid', 'false');
+    await expect(page.getByLabel('Od', { exact: true })).not.toHaveAttribute('aria-invalid');
     await expect(page.locator('[data-w="glowna"]')).toHaveText('—');
   }
 });

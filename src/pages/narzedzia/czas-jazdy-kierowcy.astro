@@ -78,7 +78,7 @@ const faq = [
           {Array.from({ length: WIERSZE }, (_, i) => {
             const w = PRZYKLAD.wiersze[i];
             return (
-              <li class="grid grid-cols-1 gap-1 min-[360px]:grid-cols-[minmax(0,1fr)_7rem] min-[360px]:items-center min-[360px]:gap-2">
+              <li class="grid grid-cols-1 gap-1 min-[360px]:grid-cols-[minmax(0,1fr)_8.5rem] min-[360px]:items-center min-[360px]:gap-2">
                 <label class="sr-only" for={`cj-r${i}`}>Okres {i + 1}: rodzaj</label>
                 <select id={`cj-r${i}`} name={`r${i}`} class="pole">
                   {RODZAJE.map((x) => <option value={x.id} selected={x.id === (w?.rodzaj ?? 'jazda')}>{x.nazwa}</option>)}
@@ -123,7 +123,7 @@ const faq = [
 
       <fieldset class="mt-6">
         <legend class="etykieta-pola">Ostatni odpoczynek tygodniowy skończył się</legend>
-        <div class="mt-2 grid grid-cols-[minmax(0,3fr)_minmax(0,2fr)] gap-3">
+        <div class="mt-2 grid grid-cols-1 gap-3 min-[380px]:grid-cols-[minmax(0,1fr)_8.5rem]">
           <label class="sr-only" for="cj-tyg-data">Data</label>
           <input id="cj-tyg-data" name="tygData" type="date" class="pole" min="2000-01-01" max="2100-12-31" value={dodajDni(dzis, TYGODNIOWY.dni)} data-dzis={String(TYGODNIOWY.dni)} />
           <label class="sr-only" for="cj-tyg-godzina">Godzina</label>
@@ -215,7 +215,7 @@ const faq = [
 
 <style>
   /* Wąski ekran (poniżej 360 px): rodzaj w pełnym wierszu, godzina pod nim, żeby nie ucinać ani „Odpoczynek”, ani
-     godziny z ikoną; większy odstęp oddziela wtedy okresy. */
+     godziny z ikoną (także w zapisie 12-godzinnym „10:15 AM”); większy odstęp oddziela wtedy okresy. */
   .okresy {
     display: grid;
     gap: 0.875rem;
