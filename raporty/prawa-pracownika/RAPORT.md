@@ -2,7 +2,7 @@
 
 Gałąź `fabryka/prawa-pracownika`. Dwa narzędzia w kategorii „Umowa”: `/narzedzia/swiadectwo-pracy` i `/narzedzia/monitoring-w-pracy`.
 Proces: badacz prawa, budowniczy, weryfikator prawny i weryfikator kodu/UX (niezależnie, pliki bez wniosków), audytor.
-Wynik: `npm run -s check:szybki` i `BEZ_WEBKIT=1 npm run check` EXIT 0 (szczegóły w ostatnim commicie: „pełny check zielony”).
+Wynik: `npm run -s check:szybki` i `BEZ_WEBKIT=1 npm run check` EXIT 0 (E2E 2285 zaliczonych, 337 pominiętych z założenia; unit 1989; Lighthouse i check:start zielone).
 Zrzuty z telefonu 412 i 320 px (formularz z wynikiem): `*-412.png`, `*-320.png` w tym katalogu; bez ucięć i bez przewijania w bok.
 
 ## Przepisy
