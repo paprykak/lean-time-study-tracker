@@ -25,8 +25,8 @@ export type RodzajPrzejscia = 'obsluga' | 'obsluga-dwa' | 'wozki' | 'gasnica';
 export type WynikSprawdzenia = 'tak' | 'nie' | 'warunkowo' | 'brak-liczby';
 
 export const RODZAJE: Record<RodzajPrzejscia, string> = {
-  obsluga: 'Przejście do obsługi, jeden kierunek',
-  'obsluga-dwa': 'Przejście do obsługi, dwa kierunki',
+  obsluga: 'Przejście (1 kierunek)',
+  'obsluga-dwa': 'Przejście (2 kierunki)',
   wozki: 'Droga dla wózków',
   gasnica: 'Dostęp do gaśnicy',
 };
