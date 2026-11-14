@@ -226,7 +226,7 @@ export function opisMonitoringu(d: DaneMonitoringu, dzis: string): OpisMonitorin
     const r = dniMiedzy(dzis, koniec);
     przechowywanie =
       r >= 0
-        ? `Najpóźniej do ${dataPoPolsku(koniec)} (zostało ${dni(r)}), 3 miesiące od dnia nagrania (art. 22² § 3). Pracodawca może je usunąć wcześniej. Dłużej tylko, gdy nagranie jest dowodem w postępowaniu albo pracodawca dowiedział się, że może nim być: do prawomocnego końca postępowania (§ 4).`
+        ? `Najpóźniej do ${dataPoPolsku(koniec)} (${r === 0 ? 'to dziś' : `zostało ${dni(r)}`}), 3 miesiące od dnia nagrania (art. 22² § 3). Pracodawca może je usunąć wcześniej. Dłużej tylko, gdy nagranie jest dowodem w postępowaniu albo pracodawca dowiedział się, że może nim być: do prawomocnego końca postępowania (§ 4).`
         : `Okres minął ${dataPoPolsku(koniec)}: nagranie z danymi osobowymi powinno być zniszczone (art. 22² § 3 i 5), chyba że jest dowodem w postępowaniu albo pracodawca dowiedział się, że może nim być (§ 4), lub przepisy odrębne stanowią inaczej (§ 5).`;
     przechowywanieKlasa = r < 0 ? 'po-terminie' : r <= 14 ? 'pilne' : 'w-terminie';
   } else {
