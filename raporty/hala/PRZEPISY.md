@@ -53,7 +53,7 @@ Cytaty (brzmienie z t.j.):
 ## Uchylony przepis, z którego pochodzi „szerokość wózka + 60 cm”
 - Rozporządzenie z 1 kwietnia 1953 r. o ręcznym dźwiganiu i przenoszeniu ciężarów (Dz.U. 1953 nr 22 poz. 89), § 46:
   drogi do przewozu wózkami (poruszanymi ręcznie): ruch jednokierunkowy o 60 cm szersze od naładowanego wózka,
-  dwukierunkowy o 90 cm szersze od podwójnej szerokości. Uchylone 11.10.2000 r. przez Dz.U. 2000 nr 26 poz. 313.
+  dwukierunkowy o 90 cm szersze od podwójnej szerokości. Uchylone przez § 34 Dz.U. 2000 nr 26 poz. 313, które weszło w życie 1.01.2002 r. (§ 35 w brzmieniu Dz.U. 2000 nr 82 poz. 930; data 2000-10-11 w metadanych API jest nieaktualna).
 
 ## Ochrona przeciwpożarowa (Dz.U. 2010 nr 109 poz. 719, t.j. Dz.U. 2023 poz. 822; zmiany Dz.U. 2024 poz. 1716 i 2026 poz. 1276)
 Zmiany po t.j.: 2024 (§ 3 ust. 3a, § 4 ust. 2 pkt 6, tytuł rozdz. 6, § 28a, § 37 ust. 8, załączniki), 2026 (§ 4 ust. 2 pkt 7). Używane przepisy bez zmian.

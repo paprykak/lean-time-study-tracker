@@ -51,7 +51,7 @@ describe('pochylnia (§ 5 ust. 1: najwyżej 8%)', () => {
     expect(wynik({ rodzaj: 'wozki', roznica: 100, dlugosc: 12.49 }, 'pochylnia')?.wynik).toBe('nie');
   });
   it('15 cm na 1,5 m: 10%, najkrótsza pochylnia 1,88 m; 12,5 cm na 1,2 m: 10,5%, 1,57 m', () => {
-    expect(wynik({ rodzaj: 'obsluga', roznica: 15, dlugosc: 1.5 }, 'pochylnia')?.tekst).toBe('Nachylenie 10% (ok. 5,7°): więcej niż 8% (§ 5 ust. 1). Przy różnicy 15 cm pochylnia musi mieć w poziomie co najmniej 1,88 m.');
+    expect(wynik({ rodzaj: 'obsluga', roznica: 15, dlugosc: 1.5 }, 'pochylnia')?.tekst).toBe('Nachylenie 10% (ok. 5,7°): więcej niż 8% dopuszczalnych na drogach transportowych i w magazynach (§ 5 ust. 1). Przy różnicy 15 cm pochylnia musi mieć w poziomie co najmniej 1,88 m.');
     expect(wynik({ rodzaj: 'obsluga', roznica: 12.5, dlugosc: 1.2 }, 'pochylnia')?.tekst).toContain('10,5% (ok. 5,9°)');
     expect(najkrotszaPochylnia(12.5)).toBe(1.57);
     expect(najkrotszaPochylnia(30)).toBe(3.75);

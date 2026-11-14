@@ -891,7 +891,7 @@ export const NARZEDZIA: Narzedzie[] = [
   {
     slug: 'drogi-i-przejscia',
     nazwa: 'Drogi i przejścia w hali: wymiary',
-    krotko: 'Przejście 0,75 albo 1 m, dojście 2 m wysokości, pochylnia do 8%. Ile ma mieć droga dla wózka widłowego.',
+    krotko: 'Przejście do obsługi 0,75 albo 1 m, dojście 2 m wysokości, pochylnia do 8%. Ile ma mieć droga dla wózka.',
     kategoria: 'bhp',
     przepisy: ['ogolneBhpHala', 'wozkiJezdniowe', 'recznePrace', 'ochronaPpoz'],
     sprawdzono: '2026-11-14',

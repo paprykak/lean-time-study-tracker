@@ -111,8 +111,8 @@ export function sprawdzSkladowanie(d: DaneSkladowania): WynikSkladowania {
       const limitG = g(d.limitSekcji);
       sprawdzenia.push(
         sekcjaG <= limitG
-          ? { klucz: 'sekcja', co: 'Obciążenie sekcji', wynik: 'tak', tekst: `${kg(sekcjaG / 1000)} ${naPoziomach(d.poziomy)}, dopuszczalne ${kg(d.limitSekcji)}.` }
-          : { klucz: 'sekcja', co: 'Obciążenie sekcji', wynik: 'nie', tekst: `${kg(sekcjaG / 1000)} ${naPoziomach(d.poziomy)}: o ${kg((sekcjaG - limitG) / 1000)} więcej niż ${kg(d.limitSekcji)} z tabliczki.` },
+          ? { klucz: 'sekcja', co: 'Obciążenie sekcji', wynik: 'tak', tekst: `${kg(sekcjaG / 1000)} ${naPoziomach(d.poziomy)}, dopuszczalne ${kg(d.limitSekcji)} (§ 68 ust. 2 pkt 2 ogólnych przepisów BHP).` }
+          : { klucz: 'sekcja', co: 'Obciążenie sekcji', wynik: 'nie', tekst: `${kg(sekcjaG / 1000)} ${naPoziomach(d.poziomy)}: o ${kg((sekcjaG - limitG) / 1000)} więcej niż ${kg(d.limitSekcji)} z tabliczki (§ 68 ust. 2 pkt 2 ogólnych przepisów BHP).` },
       );
     }
   }

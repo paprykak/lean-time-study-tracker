@@ -10,7 +10,7 @@
 //   i przejść „określają Polskie Normy”. Szerokości drogi dla wózków przepis nie podaje (także rozporządzenie o wózkach
 //   jezdniowych, t.j. Dz.U. 2020 poz. 852, § 8). Reguła „szerokość wózka + 60 cm, w obu kierunkach dwie szerokości
 //   + 90 cm” to § 46 rozporządzenia z 1953 r. (Dz.U. 1953 nr 22 poz. 89) o wózkach pchanych ręcznie, uchylonego
-//   11 października 2000 r. (Dz.U. 2000 nr 26 poz. 313): nie liczymy jej.
+//   1 stycznia 2002 r. (§ 34–35 Dz.U. 2000 nr 26 poz. 313 w brzmieniu Dz.U. 2000 nr 82 poz. 930): nie liczymy jej.
 // Rozporządzenie w sprawie ochrony przeciwpożarowej budynków (t.j. Dz.U. 2023 poz. 822; zmiany 2024 poz. 1716 i 2026
 // poz. 1276 nie dotyczą § 33): § 33 ust. 2 pkt 2: dostęp do gaśnicy o szerokości co najmniej 1 m.
 //
@@ -147,12 +147,12 @@ export function sprawdzPrzejscie(d: DanePrzejscia): WynikPrzejscia {
     const opis = `${proc.toLocaleString('pl-PL', { maximumFractionDigits: 1 })}% (ok. ${kat.toLocaleString('pl-PL', { maximumFractionDigits: 1 })}°)`;
     sprawdzenia.push(
       ok
-        ? { klucz: 'pochylnia', co: 'Pochylnia', wynik: 'tak', tekst: `Nachylenie ${opis}, dopuszczalne najwyżej ${MAKS_NACHYLENIE}% (§ 5 ust. 1).` }
+        ? { klucz: 'pochylnia', co: 'Pochylnia', wynik: 'tak', tekst: `Nachylenie ${opis}, na drogach transportowych i w magazynach dopuszczalne najwyżej ${MAKS_NACHYLENIE}% (§ 5 ust. 1).` }
         : {
             klucz: 'pochylnia',
             co: 'Pochylnia',
             wynik: 'nie',
-            tekst: `Nachylenie ${opis}: więcej niż ${MAKS_NACHYLENIE}% (§ 5 ust. 1). Przy różnicy ${cm(hMm)} pochylnia musi mieć w poziomie co najmniej ${metry(najkrotszaPochylnia(d.roznica))}.`,
+            tekst: `Nachylenie ${opis}: więcej niż ${MAKS_NACHYLENIE}% dopuszczalnych na drogach transportowych i w magazynach (§ 5 ust. 1). Przy różnicy ${cm(hMm)} pochylnia musi mieć w poziomie co najmniej ${metry(najkrotszaPochylnia(d.roznica))}.`,
           },
     );
   }
@@ -171,7 +171,7 @@ export function sprawdzPrzejscie(d: DanePrzejscia): WynikPrzejscia {
   const uwaga =
     d.rodzaj === 'wozki'
       ? d.piesi
-        ? 'Gdy piesi chodzą drogą wózków: pasy wyznaczające drogę z bezpieczną odległością między pieszymi a pojazdami (załącznik nr 1 § 13), barierki albo inne środki ochronne tam, gdzie piesi mogą niespodziewanie wejść na drogę, zwłaszcza przed bramami, drzwiami i przejściami (§ 6 ust. 5), oraz środki zapobiegające wtargnięciu osób na teren pracy wózków (§ 8 ust. 2 rozporządzenia o wózkach jezdniowych).'
+        ? 'Gdy piesi chodzą drogą wózków: pasy wyznaczające drogę z bezpieczną odległością między pieszymi a pojazdami (załącznik nr 1 § 13), barierki albo inne środki ochronne tam, gdzie piesi mogą niespodziewanie wejść na drogę, zwłaszcza przed bramami, drzwiami i przejściami (§ 6 ust. 5), oraz środki organizatora pracy zapobiegające wtargnięciu osób na teren pracy wózków (§ 8 ust. 2 rozporządzenia o wózkach jezdniowych).'
         : 'Między regałami odstęp ma pozwalać bezpiecznie jeździć wózkiem i operować ładunkiem (§ 69 ust. 2), a prędkość wózków zależy od szerokości dróg (§ 66 ust. 2). Liczb szukaj w dokumentacji wózka i regałów oraz w normach.'
       : d.rodzaj === 'gasnica'
         ? 'Z każdego miejsca, w którym może przebywać człowiek, do najbliższej gaśnicy najwyżej 30 m (§ 33 ust. 2 pkt 1 rozporządzenia o ochronie przeciwpożarowej).'

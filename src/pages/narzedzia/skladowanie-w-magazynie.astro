@@ -9,7 +9,7 @@ const D = { limitPoziomu: '2000', ladunki: '2', masa: '800', limitSekcji: '6000'
 const start = sprawdzSkladowanie({ limitPoziomu: 2000, ladunki: 2, masa: 800, limitSekcji: 6000, poziomy: 4, palne: true, linia: 'brak' });
 
 const ODLEGLOSCI = [
-  { co: 'Materiały palne od urządzeń i instalacji nagrzewających się powyżej 100°C, kabli powyżej 1 kV, czynnych rozdzielnic, przewodów i gniazd siłowych powyżej 400 V', ile: `co najmniej ${OD_GORACYCH.toLocaleString('pl-PL')} m`, przepis: '§ 4 ust. 1 pkt 8 ppoż.' },
+  { co: 'Materiały palne od urządzeń i instalacji nagrzewających się powyżej 100°C, kabli powyżej 1 kV, przewodów uziemiających i odprowadzających instalacji piorunochronnej, czynnych rozdzielnic, przewodów i gniazd siłowych powyżej 400 V', ile: `co najmniej ${OD_GORACYCH.toLocaleString('pl-PL')} m`, przepis: '§ 4 ust. 1 pkt 8 ppoż.' },
   { co: 'Osłona punktu świetlnego z materiału trudno zapalnego albo niezapalnego', ile: 'co najmniej 0,05 m od żarówki; z materiału palnego zakazana', przepis: '§ 4 ust. 1 pkt 9 ppoż.' },
   { co: 'Dostęp do gaśnicy', ile: `co najmniej ${DOSTEP_DO_GASNICY} m szerokości`, przepis: '§ 33 ust. 2 pkt 2 ppoż.' },
   { co: 'Z każdego miejsca, w którym może być człowiek, do najbliższej gaśnicy', ile: `najwyżej ${DO_GASNICY} m`, przepis: '§ 33 ust. 2 pkt 1 ppoż.' },
@@ -96,7 +96,7 @@ const faq = [
       <div class="mt-4">
         <label for="s-od-goracych" class="etykieta-pola">Od gorących urządzeń i kabli</label>
         <input id="s-od-goracych" name="odGoracych" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" aria-describedby="s-gorace-opis s-blad" />
-        <p id="s-gorace-opis" class="meta mt-1">Urządzenia i instalacje nagrzewające się powyżej 100°C, kable powyżej 1 kV, rozdzielnice, przewody i gniazda siłowe powyżej 400 V.</p>
+        <p id="s-gorace-opis" class="meta mt-1">Urządzenia i instalacje nagrzewające się powyżej 100°C, kable powyżej 1 kV, przewody uziemiające i piorunochronne, rozdzielnice, przewody i gniazda siłowe powyżej 400 V.</p>
       </div>
       <div class="mt-4 grid grid-cols-2 items-end gap-3">
         <div>
@@ -108,7 +108,7 @@ const faq = [
           <input id="s-do-gasnicy" name="doGasnicy" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" aria-describedby="s-gasnica-opis s-blad" />
         </div>
       </div>
-      <p id="s-gasnica-opis" class="meta mt-1">Szerokość wolnego miejsca przed gaśnicą i droga do niej z najdalszego miejsca pracy.</p>
+      <p id="s-gasnica-opis" class="meta mt-1">Szerokość wolnego miejsca przed gaśnicą i droga dojścia do niej z najdalszego miejsca, w którym może być człowiek.</p>
       <div class="mt-4">
         <label for="s-linia" class="etykieta-pola">Linia napowietrzna</label>
         <select id="s-linia" name="linia" class="pole mt-1">
@@ -133,7 +133,7 @@ const faq = [
           {start.sprawdzenia.map((s) => <div><dt>{s.co}: {ETYKIETA_WYNIKU[s.wynik]}</dt><dd>{s.tekst}</dd></div>)}
         </dl>
       </div>
-      <p class="wynik-uwaga">Masa ładunku razem z regałem i wózkiem nie może też przekraczać dopuszczalnego obciążenia podłogi albo stropu (§ 68 ust. 2 pkt 3); informacja o nim wisi w magazynie (§ 17).</p>
+      <p class="wynik-uwaga">Masa ładunku razem z regałem i wózkiem nie może też przekraczać dopuszczalnego obciążenia podłogi albo stropu (§ 68 ust. 2 pkt 3); informacje o tych obciążeniach muszą wisieć czytelnie (§ 68 ust. 2 pkt 4, przy stropach także § 17).</p>
       <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Odległości z przepisów są w tabeli poniżej.</p></noscript>
     </div>
   </form>
@@ -143,7 +143,7 @@ const faq = [
     <p>Rozporządzenie w sprawie ogólnych przepisów bezpieczeństwa i higieny pracy:</p>
     <ul>
       <li>Materiały składuje się w pomieszczeniach i miejscach do tego przeznaczonych, a pracodawca określa dla każdego rodzaju materiału miejsce, sposób i dopuszczalną wysokość składowania (§ 68 ust. 1 i ust. 2 pkt 1).</li>
-      <li>Masa ładunku nie może przekraczać dopuszczalnego obciążenia regałów i podestów, a razem z masą urządzeń do składowania i transportu dopuszczalnego obciążenia podłóg i stropów; informacje o dopuszczalnym obciążeniu wiszą czytelnie (§ 68 ust. 2 pkt 2–4, § 17).</li>
+      <li>Masa ładunku nie może przekraczać dopuszczalnego obciążenia regałów i podestów, a razem z masą urządzeń do składowania i transportu dopuszczalnego obciążenia podłóg i stropów; informacje o dopuszczalnym obciążeniu wiszą czytelnie (§ 68 ust. 2 pkt 2–4; o stropach także § 17).</li>
       <li>Regały mają wytrzymałą i stabilną konstrukcję i zabezpieczenie przed przewróceniem, a odstępy między nimi odpowiadają środkom transportu (§ 69); tak samo przy paletach i kontenerach (§ 73).</li>
       <li>Układanie i zdejmowanie nie może stwarzać zagrożeń, a na najniższych półkach leżą przedmioty łatwo tłukące się, substancje i mieszaniny stwarzające zagrożenie i materiały najcięższe (§ 70).</li>
       <li>Przedmioty o nietypowych wymiarach, kształcie albo masie ustawia się stabilnie, z uwzględnieniem środka ciężkości (§ 71).</li>
@@ -169,8 +169,8 @@ const faq = [
     <p>
       Oba rozporządzenia nie podają najwyższej wysokości regału ani stosu, kilogramów na półkę, szerokości alejki dla
       wózka ani odległości towaru od tryskaczy. Kilogramy są na tabliczce regału, a wysokość składowania ustala
-      pracodawca (§ 68 ust. 2 pkt 1). Użytkowanie i przeglądy regałów opisuje norma PN-EN 15635; norma nie jest
-      przepisem. Ile ma mieć przejście w hali i pochylnia, sprawdzi <a href="/narzedzia/drogi-i-przejscia">narzędzie o drogach i przejściach</a>, a ile wolno podnieść na półkę ręcznie, <a href="/narzedzia/ile-kg-wolno-dzwigac">kalkulator dźwigania</a>.
+      pracodawca (§ 68 ust. 2 pkt 1). Użytkowanie i przeglądy regałów opisuje norma PN-EN 15635; przepisy BHP odsyłają
+      do Polskich Norm ogólnie (§ 4 ust. 2), bez wskazania tej normy. Ile ma mieć przejście w hali i pochylnia, sprawdzi <a href="/narzedzia/drogi-i-przejscia">narzędzie o drogach i przejściach</a>, a ile wolno podnieść na półkę ręcznie, <a href="/narzedzia/ile-kg-wolno-dzwigac">kalkulator dźwigania</a>.
     </p>
 
     <h2 id="jak-liczymy">Jak liczymy</h2>
@@ -179,7 +179,8 @@ const faq = [
       zajętych poziomów, czyli tak, jakby na każdym poziomie leżało to samo; gdy poziomy są różne, porównaj z tabliczką
       sumę ich mas. Porównujemy na liczbach całkowitych (gramy i milimetry), więc 2000 kg na tabliczce mieści dokładnie
       2000 kg. Odstęp 0,5 m sprawdzamy tylko dla materiałów palnych, bo tylko ich dotyczy przepis. Odległość od linii
-      napowietrznej mierzy się w poziomie od skrajnego przewodu, a 0 m oznacza składowanie pod linią.
+      napowietrznej mierzy się w poziomie od skrajnego przewodu, a 0 m oznacza składowanie pod linią. Przepis nie mówi,
+      czy 30 m do gaśnicy liczyć w linii prostej, czy drogą dojścia; prosimy o drogę dojścia, bo to wariant bezpieczniejszy.
     </p>
   </Fragment>
 </StronaNarzedzia>

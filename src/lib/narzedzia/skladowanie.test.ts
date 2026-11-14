@@ -20,7 +20,7 @@ describe('obciążenie regału z tabliczki (§ 68 ust. 2 pkt 2)', () => {
   });
   it('sekcja: 4 poziomy po 2000 kg to 8000 kg; przy 7999 kg o 1 kg za dużo; 812,5 kg × 2 × 4 = 6500 kg', () => {
     expect(s({ ladunki: 2, masa: 1000, limitSekcji: 8000, poziomy: 4 }, 'sekcja')?.wynik).toBe('tak');
-    expect(s({ ladunki: 2, masa: 1000, limitSekcji: 7999, poziomy: 4 }, 'sekcja')?.tekst).toBe('8000 kg na 4 poziomach: o 1 kg więcej niż 7999 kg z tabliczki.');
+    expect(s({ ladunki: 2, masa: 1000, limitSekcji: 7999, poziomy: 4 }, 'sekcja')?.tekst).toBe('8000 kg na 4 poziomach: o 1 kg więcej niż 7999 kg z tabliczki (§ 68 ust. 2 pkt 2 ogólnych przepisów BHP).');
     expect(s({ ladunki: 2, masa: 812.5, limitSekcji: 6000, poziomy: 4 }, 'sekcja')?.tekst).toContain('6500 kg na 4 poziomach: o 500 kg');
     expect(s({ ladunki: 1, masa: 500, limitSekcji: 6000, poziomy: 1 }, 'sekcja')?.tekst).toContain('na 1 poziomie');
   });
