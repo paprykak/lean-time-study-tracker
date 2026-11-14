@@ -113,8 +113,10 @@ export const HASLA: Record<string, string[]> = {
   'czas-jazdy-kierowcy': ['ile może jechać kierowca', 'tachograf', 'pauza kierowcy', 'przerwa kierowcy', 'odpoczynek tygodniowy', 'czas pracy kierowcy'],
   'dyzur-kierowcy': ['dyżur kierowcy', 'podwójna obsada', 'drugi kierowca'],
   'zaswiadczenie-adr': ['ADR', 'kurs ADR', 'uprawnienia ADR', 'przedłużenie ADR', 'towary niebezpieczne'],
-  // Pakiet „odpowiedzialność” (2026-11-14): frazy z podpowiedzi wyszukiwarki Google (pl).
-  'odpowiedzialnosc-materialna': ['manko w kasie', 'braki w towarze', 'potrącenie z wypłaty za szkodę', 'zniszczenie mienia pracodawcy', 'uszkodzenie wózka widłowego', 'uszkodzenie samochodu służbowego', 'przedawnienie roszczeń pracodawcy', 'umowa o współodpowiedzialności materialnej'],
+  // Pakiet „odpowiedzialność” (2026-11-14): frazy z podpowiedzi wyszukiwarki Google (pl), a „niedobór”, „inwentaryzacja”,
+  // „szkoda”, „uszkodzenie wózka”, „kara za zniszczenie” i „pozew od pracodawcy” z audytu wyszukiwarki i podobnych narzędzi
+  // (bez nich zapytania z hali nie trafiały w to narzędzie, a podobne były przypadkowe).
+  'odpowiedzialnosc-materialna': ['manko w kasie', 'niedobór', 'inwentaryzacja', 'szkoda', 'braki w towarze', 'potrącenie z wypłaty za szkodę', 'zniszczenie mienia pracodawcy', 'uszkodzenie wózka', 'kara za zniszczenie', 'pozew od pracodawcy', 'uszkodzenie samochodu służbowego', 'przedawnienie roszczeń pracodawcy', 'umowa o współodpowiedzialności materialnej'],
 };
 
 /**

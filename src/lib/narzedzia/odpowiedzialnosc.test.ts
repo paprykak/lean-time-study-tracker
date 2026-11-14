@@ -1,4 +1,5 @@
-// Oczekiwane wartości policzone niezależnie w Pythonie (decimal, calendar; skrypt w raporcie pakietu):
+// Oczekiwane wartości policzone niezależnie w Pythonie (decimal, calendar) przez budowniczego, weryfikatora i audytora
+// (20 000 losowych dat i kwot bez rozbieżności; skrypty poza repozytorium, opis w raporcie pakietu):
 // nieumyślna 20 000 zł przy 5200 zł → 15 600 zł; 3000 zł → 3000 zł; 20 000 − 8000 zł przy 3000 zł → 9000 zł;
 // wspólne 9000,50 zł × 33,33% → 2999,87 zł; powierzone 12 000 − 1500 zł → 10 500 zł;
 // art. 291 § 2: szkoda 10.03.2026, wiedza 2.04.2026 → 2.04.2027; szkoda 30.06.2023, wiedza 15.01.2026 → 30.06.2026
@@ -114,7 +115,7 @@ describe('teksty wyniku', () => {
     expect(roboczy.status).toBe('Dziś jest ostatni dzień terminu pracodawcy');
     expect(roboczy.przedawnienieOpis).not.toContain('art. 115');
     const jeden = opisOdpowiedzialnosci(dane({ dataSzkody: '2025-11-15', dataWiedzy: '2025-11-15' }), DZIS);
-    expect(jeden.status).toBe('Pracodawcy zostało: 1 dzień');
+    expect(jeden.status).toBe('Pracodawcy zostało: 1 dzień, a może do 16 listopada 2026 r.');
     const minal = opisOdpowiedzialnosci(dane({ dataSzkody: '2025-11-13', dataWiedzy: '2025-11-13' }), DZIS);
     expect(minal.status).toBe('Termin pracodawcy minął 1 dzień temu');
   });
@@ -176,5 +177,32 @@ describe('poprawki po weryfikacji', () => {
     expect(bladDanych(dane({ sytuacja: 'wspolne', udzial: 33.335 }), DZIS)?.pole).toBe('udzial');
     expect(bladDanych(dane({ sytuacja: 'wspolne', udzial: 0.01 }), DZIS)).toBeNull();
     expect(bladDanych(dane({ dataSzkody: '1985-05-01', dataWiedzy: '1985-05-01' }), DZIS)?.tekst).toBe('Dzień szkody: najwcześniej 1 stycznia 1990 r.');
+  });
+});
+
+describe('poprawki po audycie', () => {
+  it('bez „r..”, bez mediacji jako przerwania, brzmienie art. 442¹', () => {
+    const n = opisOdpowiedzialnosci(dane({ dataSzkody: '2025-11-21', dataWiedzy: '2025-11-21' }), DZIS);
+    expect(n.przedawnienieOpis).not.toMatch(/r\.\./);
+    expect(n.przedawnienieOpis).toContain('to 23 listopada 2026 r. Bieg');
+    const u = opisOdpowiedzialnosci(dane({ sytuacja: 'umyslna', dataSzkody: '2023-12-01', dataWiedzy: '2023-12-01' }), DZIS);
+    expect(u.przedawnienieOpis).not.toMatch(/r\.\./);
+    expect(u.przedawnienieOpis).not.toMatch(/przerywa[^.]*mediacji/);
+    expect(u.przedawnienieOpis).toContain('art. 121 pkt 5');
+    expect(u.przedawnienieOpis).toContain('o osobie obowiązanej do jej naprawienia');
+  });
+  it('„zostało” z datą późniejszą i kolorem według niej', () => {
+    // 21.11.2026 to sobota → 23.11.2026; 7 dni do wcześniejszej.
+    const n = opisOdpowiedzialnosci(dane({ dataSzkody: '2025-11-21', dataWiedzy: '2025-11-21' }), DZIS);
+    expect(n.status).toBe('Pracodawcy zostało: 7 dni, a może do 23 listopada 2026 r.');
+    // Umyślna: 1.12.2026 (17 dni), koniec roku 31.12.2026 (47 dni) → kolor „wkrotce”.
+    const u = opisOdpowiedzialnosci(dane({ sytuacja: 'umyslna', dataSzkody: '2023-12-01', dataWiedzy: '2023-12-01' }), DZIS);
+    expect(u.status).toBe('Pracodawcy zostało: 17 dni, a może do 31 grudnia 2026 r.');
+    expect(u.statusKlasa).toBe('wkrotce');
+    expect(opisOdpowiedzialnosci(dane({}), DZIS).status).toBe('Pracodawcy zostało: 139 dni');
+  });
+  it('po 20 latach bez dopisku o przestępstwie', () => {
+    const u = opisOdpowiedzialnosci(dane({ sytuacja: 'umyslna', dataSzkody: '2005-01-10', dataWiedzy: '2005-01-10' }), DZIS);
+    expect(u.status).toMatch(/^Termin pracodawcy minął \d+ dni temu$/);
   });
 });

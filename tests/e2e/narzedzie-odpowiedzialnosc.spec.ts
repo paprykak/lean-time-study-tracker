@@ -95,8 +95,9 @@ test('dwa błędy naraz: kwota i data', async ({ page }) => {
   await expect(page.getByLabel('Pracodawca wie od')).toHaveAttribute('aria-invalid', 'true');
 });
 
-test('daty domyślne liczone w przeglądarce', async ({ page }) => {
+test('daty domyślne liczone w przeglądarce, nie w dniu budowania', async ({ page }) => {
+  await page.clock.setFixedTime(new Date('2027-01-05T10:00:00+01:00'));
   await page.goto(adresNarzedzia('odpowiedzialnosc-materialna'));
-  await expect(page.getByLabel('Dzień szkody')).toHaveValue('2026-10-15');
-  await expect(page.getByLabel('Pracodawca wie od')).toHaveValue('2026-10-25');
+  await expect(page.getByLabel('Dzień szkody')).toHaveValue('2026-12-06');
+  await expect(page.getByLabel('Pracodawca wie od')).toHaveValue('2026-12-16');
 });
