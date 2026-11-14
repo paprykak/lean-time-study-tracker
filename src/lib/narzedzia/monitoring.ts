@@ -45,7 +45,7 @@ export const MIEJSCA: Record<Miejsce, { krotko: string; dopelniacz: string }> = 
   szatnia: { krotko: 'Szatnia', dopelniacz: 'szatni' },
   stolowka: { krotko: 'Stołówka', dopelniacz: 'stołówki' },
   palarnia: { krotko: 'Palarnia', dopelniacz: 'palarni' },
-  zwiazek: { krotko: 'Pokój związku zawodowego', dopelniacz: 'pomieszczeń związku zawodowego' },
+  zwiazek: { krotko: 'Pokój związku', dopelniacz: 'pomieszczeń związku zawodowego' },
 };
 
 export const INFORMACJE: Record<Informacja, string> = {
@@ -185,7 +185,7 @@ export function opisMonitoringu(d: DaneMonitoringu, dzis: string): OpisMonitorin
     informacja = 'Informacja nie zmienia wyniku: monitoringu w tych pomieszczeniach nie wolno prowadzić.';
   } else if (!puste(d.uruchomienie)) {
     const t = terminyInformacji(d.uruchomienie!);
-    const podstawa = `Informacja najpóźniej ${dataPoPolsku(t.informacja)}, oznaczenie terenu najpóźniej ${dataPoPolsku(t.oznaczenie)}.`;
+    const podstawa = `Informacja najpóźniej ${dataPoPolsku(t.informacja)}, oznaczenie terenu najpóźniej ${dataPoPolsku(t.oznaczenie)}`;
     if (d.informacja === 'tak') {
       const spoznienie = dniMiedzy(t.informacja, d.dataInformacji!);
       if (spoznienie <= 0) {
@@ -210,7 +210,7 @@ export function opisMonitoringu(d: DaneMonitoringu, dzis: string): OpisMonitorin
     informacja = 'Pracodawca musi poinformować pracowników najpóźniej 2 tygodnie przed uruchomieniem monitoringu (art. 22² § 7); bez tego obowiązek nie jest spełniony.';
     informacjaKlasa = 'po-terminie';
   } else if (d.informacja === 'tak') {
-    informacja = `Poinformowano ${dataPoPolsku(d.dataInformacji!)}. Wpisz dzień uruchomienia, a sprawdzimy, czy co najmniej 2 tygodnie wcześniej.`;
+    informacja = `Poinformowano ${dataPoPolsku(d.dataInformacji!)} Wpisz dzień uruchomienia, a sprawdzimy, czy co najmniej 2 tygodnie wcześniej.`;
   }
 
   // Przechowywanie nagrań (art. 22² § 3–5).

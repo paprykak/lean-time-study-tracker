@@ -57,11 +57,14 @@ export interface DaneSwiadectwa {
 const puste = (x?: string) => x === undefined || x === '';
 
 /** Sprawdza dane; zwraca nazwę pola i komunikat albo null. */
-export function bladSwiadectwa(d: DaneSwiadectwa): { pole: keyof DaneSwiadectwa; tekst: string } | null {
+export function bladSwiadectwa(d: DaneSwiadectwa, dzis: string): { pole: keyof DaneSwiadectwa; tekst: string } | null {
   if (!poprawnaData(d.ustanie)) return { pole: 'ustanie', tekst: 'Wpisz dzień ustania stosunku pracy, czyli ostatni dzień umowy.' };
   if (d.ustanie < NAJWCZESNIEJ) return { pole: 'ustanie', tekst: 'Dzień ustania stosunku pracy: najwcześniej 1 stycznia 2000 r.' };
   for (const [pole, nazwa] of [['otrzymanie', 'otrzymania świadectwa'], ['wniosek', 'doręczenia wniosku'], ['odmowa', 'zawiadomienia o odmowie']] as const) {
     if (!puste(d[pole]) && !poprawnaData(d[pole]!)) return { pole, tekst: `Wpisz pełną datę ${nazwa} albo zostaw pole puste.` };
+  }
+  for (const [pole, nazwa] of [['otrzymanie', 'otrzymania świadectwa'], ['wniosek', 'doręczenia wniosku'], ['odmowa', 'zawiadomienia o odmowie']] as const) {
+    if (!puste(d[pole]) && d[pole]! > dzis) return { pole, tekst: `Dzień ${nazwa} nie może być późniejszy niż dziś.` };
   }
   if (!puste(d.otrzymanie) && d.otrzymanie! < d.ustanie) return { pole: 'otrzymanie', tekst: 'Świadectwo wydaje się w dniu ustania stosunku pracy albo później, więc data otrzymania nie może być wcześniejsza.' };
   if (!puste(d.wniosek) && !puste(d.otrzymanie) && d.wniosek! < d.otrzymanie!) return { pole: 'wniosek', tekst: 'Wniosek o sprostowanie składa się po otrzymaniu świadectwa.' };
@@ -84,8 +87,8 @@ export function terminDni(zdarzenie: string, dni: number) {
 /** Górna granica odszkodowania z art. 99 § 2 (zł, w groszach zaokrąglona połówką w górę). */
 export const granicaOdszkodowania = (wynagrodzenie: number) => Math.round(Math.round(wynagrodzenie * 100) * MNOZNIK_6_TYGODNI) / 100;
 
-export function terminySwiadectwa(d: DaneSwiadectwa) {
-  const blad = bladSwiadectwa(d);
+export function terminySwiadectwa(d: DaneSwiadectwa, dzis = '2100-12-31') {
+  const blad = bladSwiadectwa(d, dzis);
   if (blad) throw new RangeError(blad.tekst);
   return {
     wydanie: d.kolejnaUmowa ? null : d.ustanie,
@@ -139,7 +142,7 @@ const PRZYWROCENIE = 'Gdy termin minął bez Twojej winy, sąd pracy może go pr
 
 /** Teksty wyniku: te same w HTML ze strony i w skrypcie przeglądarki. Rzuca RangeError przy błędnych danych. */
 export function opisSwiadectwa(d: DaneSwiadectwa, dzis: string): OpisSwiadectwa {
-  const t = terminySwiadectwa(d);
+  const t = terminySwiadectwa(d, dzis);
   const pozycje: PozycjaWyniku[] = [];
   const uwagi: string[] = [];
 
@@ -147,7 +150,7 @@ export function opisSwiadectwa(d: DaneSwiadectwa, dzis: string): OpisSwiadectwa 
     pozycje.push({
       klucz: 'wydanie',
       etykieta: 'Wydanie świadectwa',
-      wartosc: `${dataPoPolsku(t.wydanie)}, w dniu ustania stosunku pracy (art. 97 § 1). Gdy z przyczyn obiektywnych nie da się go wtedy wydać, pracodawca wysyła je pocztą albo doręcza inaczej do ${dataPoPolsku(t.wysylka!)}.`,
+      wartosc: `${dataPoPolsku(t.wydanie)}, w dniu ustania stosunku pracy (art. 97 § 1). Gdy z przyczyn obiektywnych nie da się go wtedy wydać, pracodawca wysyła je pocztą albo doręcza inaczej najpóźniej ${dataPoPolsku(t.wysylka!)}`,
     });
   } else {
     pozycje.push({
@@ -204,7 +207,7 @@ export function opisSwiadectwa(d: DaneSwiadectwa, dzis: string): OpisSwiadectwa 
   pozycje.push({
     klucz: 'wydanie-sad',
     etykieta: 'Gdy nie wyda świadectwa',
-    wartosc: `pozew o zobowiązanie pracodawcy do wydania świadectwa (art. 97¹ § 1), w każdym czasie przed przedawnieniem (§ 3): 3 lata (art. 291 § 1), licząc od dnia ustania stosunku pracy do ${dataPoPolsku(t.przedawnienie)}. Gdy pracodawca nie istnieje, pozew o ustalenie prawa do świadectwa (§ 2).`,
+    wartosc: `pozew o zobowiązanie pracodawcy do wydania świadectwa (art. 97¹ § 1), w każdym czasie przed przedawnieniem (§ 3): 3 lata (art. 291 § 1), licząc od dnia ustania stosunku pracy do ${dataPoPolsku(t.przedawnienie)} Gdy pracodawca nie istnieje, pozew o ustalenie prawa do świadectwa (§ 2).`,
   });
 
   pozycje.push({

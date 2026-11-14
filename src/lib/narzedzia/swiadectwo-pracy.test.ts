@@ -39,7 +39,7 @@ describe('terminy świadectwa pracy', () => {
     const t = terminySwiadectwa(dane({ otrzymanie: '2026-10-31', wniosek: '2026-11-10', odmowa: '2026-12-10' }));
     expect(t.pozew).toEqual({ koniec: '2026-12-24', poPrzesunieciu: '2026-12-28', powod: 'Wigilia Bożego Narodzenia' });
     expect(t.pozewBezOdpowiedzi).toBeNull();
-    const o = opisSwiadectwa(dane({ otrzymanie: '2026-10-31', wniosek: '2026-11-10', odmowa: '2026-12-10' }), DZIS);
+    const o = opisSwiadectwa(dane({ otrzymanie: '2026-10-31', wniosek: '2026-11-10', odmowa: '2026-12-10' }), '2026-12-14');
     expect(sp(o.glowny)).toBe('24 grudnia 2026 r.');
     expect(sp(o.pozycje.find((p) => p.klucz === 'pozew')!.wartosc)).toContain('dzień wolny od pracy; czy termin przesuwa się na 28 grudnia 2026 r.');
   });
@@ -87,15 +87,17 @@ describe('status i termin główny', () => {
 
 describe('błędne dane', () => {
   it('daty w złej kolejności i puste pola', () => {
-    expect(bladSwiadectwa(dane({ ustanie: '' }))?.pole).toBe('ustanie');
-    expect(bladSwiadectwa(dane({ ustanie: '1999-12-31' }))?.pole).toBe('ustanie');
-    expect(bladSwiadectwa(dane({ otrzymanie: '2026-10-29' }))?.pole).toBe('otrzymanie');
-    expect(bladSwiadectwa(dane({ otrzymanie: '2026-11-05', wniosek: '2026-11-04' }))?.pole).toBe('wniosek');
-    expect(bladSwiadectwa(dane({ wniosek: '2026-11-05', odmowa: '2026-11-04' }))?.pole).toBe('odmowa');
-    expect(bladSwiadectwa(dane({ otrzymanie: '2026-02-30' }))?.pole).toBe('otrzymanie');
-    expect(bladSwiadectwa(dane({ wynagrodzenie: Number.NaN }))?.pole).toBe('wynagrodzenie');
-    expect(bladSwiadectwa(dane({ wynagrodzenie: 0 }))?.pole).toBe('wynagrodzenie');
-    expect(bladSwiadectwa(dane({ otrzymanie: '', wniosek: '', odmowa: '' }))).toBeNull();
+    expect(bladSwiadectwa(dane({ ustanie: '' }), DZIS)?.pole).toBe('ustanie');
+    expect(bladSwiadectwa(dane({ ustanie: '1999-12-31' }), DZIS)?.pole).toBe('ustanie');
+    expect(bladSwiadectwa(dane({ otrzymanie: '2026-10-29' }), DZIS)?.pole).toBe('otrzymanie');
+    expect(bladSwiadectwa(dane({ otrzymanie: '2026-11-05', wniosek: '2026-11-04' }), DZIS)?.pole).toBe('wniosek');
+    expect(bladSwiadectwa(dane({ wniosek: '2026-11-05', odmowa: '2026-11-04' }), DZIS)?.pole).toBe('odmowa');
+    expect(bladSwiadectwa(dane({ otrzymanie: '2026-02-30' }), DZIS)?.pole).toBe('otrzymanie');
+    expect(bladSwiadectwa(dane({ wynagrodzenie: Number.NaN }), DZIS)?.pole).toBe('wynagrodzenie');
+    expect(bladSwiadectwa(dane({ wynagrodzenie: 0 }), DZIS)?.pole).toBe('wynagrodzenie');
+    expect(bladSwiadectwa(dane({ otrzymanie: '', wniosek: '', odmowa: '' }), DZIS)).toBeNull();
+    expect(bladSwiadectwa(dane({ otrzymanie: '2026-11-15' }), DZIS)?.pole).toBe('otrzymanie');
+    expect(bladSwiadectwa(dane({ ustanie: '2027-01-31' }), DZIS)).toBeNull();
     expect(() => opisSwiadectwa(dane({ ustanie: 'x' }), DZIS)).toThrow(RangeError);
   });
 });

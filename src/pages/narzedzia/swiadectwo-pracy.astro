@@ -169,7 +169,8 @@ const faq = [
       };
       // Pole daty z niepełną datą ma pustą wartość, ale nie jest puste: traktujemy to jako błąd.
       const niepelne = (['ustanie', 'otrzymanie', 'wniosek', 'odmowa'] as const).find((n) => el(n).validity.badInput);
-      const b = niepelne ? { pole: niepelne, tekst: 'Wpisz pełną datę albo wyczyść pole.' } : bladSwiadectwa(dane);
+      const dzis = dzisWPolsce();
+      const b = niepelne ? { pole: niepelne, tekst: 'Wpisz pełną datę albo wyczyść pole.' } : bladSwiadectwa(dane, dzis);
       pokazBlad(blad, b?.tekst, b ? el(b.pole) : []);
       const status = w('status');
       if (b) {
@@ -179,7 +180,7 @@ const faq = [
         for (const k of ['wydanie', 'sprostowanie', 'odpowiedz', 'pozew', 'wydanie-sad', 'odszkodowanie']) w(k).textContent = '—';
         return;
       }
-      const o = opisSwiadectwa(dane, dzisWPolsce());
+      const o = opisSwiadectwa(dane, dzis);
       pisz('glowny', o.glowny);
       pisz('glowny-opis', o.glownyOpis);
       status.hidden = false;
