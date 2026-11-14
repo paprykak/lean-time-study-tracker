@@ -1,11 +1,14 @@
-# Pełna kontrola jakości (npm run check) na każdym pushu do gałęzi i na pull requestach:
-# astro check, testy jednostkowe, build, kontrola SEO, budżet rozmiaru, E2E na komputerze, Androidzie i iPhonie
-# (WebKit), dostępność (axe) i Lighthouse. Wdrożenie robi Cloudflare Workers Builds z poleceniem `npm run check:szybki`,
-# więc błąd testów szybkich blokuje produkcję także przy zmianach z panelu CMS.
+# Pełna kontrola jakości na każdym pushu do gałęzi i na pull requestach: to samo co `npm run check`, rozłożone na
+# równoległe zadania, bo jeden przebieg z iPhone'em przekroczył 20 minut (2026-11-14, runda 5):
+# - „szybka”: astro check, testy jednostkowe, build testowy, kontrola SEO, budżet rozmiaru, Lighthouse i build produkcji
+#   przed startem (check:start);
+# - „e2e 1/3…3/3”: build testowy i jedna trzecia testów E2E (komputer, Android, iPhone przez WebKit, axe).
+# Wdrożenie robi Cloudflare Workers Builds z poleceniem `npm run check:szybki`, więc błąd testów szybkich blokuje
+# produkcję także przy zmianach z panelu CMS. Lokalnie dalej jedno polecenie: `npm run check`.
 #
-# Zadanie działa w oficjalnym obrazie Playwrighta w tej samej wersji co @playwright/test (package.json): przeglądarki
+# Zadania działają w oficjalnym obrazie Playwrighta w tej samej wersji co @playwright/test (package.json): przeglądarki
 # i biblioteki systemowe są w obrazie, więc nie ma instalacji przez apt (2026-11-06 lustro Ubuntu zawiesiło CI na 25 min).
-# Przy aktualizacji @playwright/test zmień tag obrazu na tę samą wersję.
+# Przy aktualizacji @playwright/test zmień tag obrazu na tę samą wersję (w obu zadaniach).
 name: Kontrola jakości
 
 on:
@@ -20,7 +23,8 @@ permissions:
   contents: read
 
 jobs:
-  kontrola:
+  szybka:
+    name: Typy, jednostkowe, build, SEO, budżet, Lighthouse
     runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/playwright:v1.63.0-noble
@@ -33,13 +37,45 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
-      - run: npm run check
+      - run: npm run check:szybki
+        env:
+          RH_TESTOWE: '1'
+      - run: npx lhci autorun
+      - run: npm run check:start
       - if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: raporty-testow
+          name: raporty-szybka
+          path: .lighthouseci/
+          retention-days: 7
+
+  e2e:
+    name: E2E ${{ matrix.czesc }}/3
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-noble
+      options: --ipc=host
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        czesc: [1, 2, 3]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx astro build
+        env:
+          RH_TESTOWE: '1'
+      - run: npx playwright test --shard=${{ matrix.czesc }}/3
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: raporty-e2e-${{ matrix.czesc }}
           path: |
             playwright-report/
             test-results/
-            .lighthouseci/
           retention-days: 7
