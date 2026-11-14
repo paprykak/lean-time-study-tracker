@@ -62,6 +62,9 @@ Twarde zasady treści (każda wzięła się z błędu, który już raz wyszedł)
 2. Gdy przepis czegoś nie rozstrzyga, narzędzie nie zgaduje: liczy według brzmienia przepisu, wybiera wariant bezpieczny
    dla pracownika (np. najwcześniejszy termin) i pisze w „Jak liczymy”, czego przepis nie mówi. Bez porad prawnych.
 3. Serwisy, które blokują automaty (np. sn.pl), zostawiasz: bez obchodzenia blokad; zapisujesz w raporcie, co sprawdzić ręcznie.
+   Orzeczenia Sądu Najwyższego z lat 1994–2016 i wiele wyroków sądów powszechnych mają pełne teksty w otwartym API SAOS
+   (`https://www.saos.org.pl/api/search/judgments?caseNumber=…`, potem `/api/judgments/<id>`): sygnaturę i tezę, na którą
+   powołuje się strona, sprawdzasz tam w uzasadnieniu, a nie w streszczeniu. Nowsze i starsze orzeczenia idą do raportu.
 4. Teksty w skryptach przeglądarki idą przez `typografia()` z `src/lib/typografia.mjs` (twarde spacje), liczby z
    rzeczownikiem przez `odmiana()` z `src/lib/redakcja.ts`, daty przez `dataPoPolsku` (kończy się „r.”, bez drugiej kropki).
 5. FAQ to czysty tekst (bez HTML); linki do innych narzędzi tylko w sekcji wyjaśnienia.
