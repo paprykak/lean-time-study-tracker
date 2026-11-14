@@ -74,7 +74,11 @@ export function pokazBlad(komunikat: HTMLElement, tekst: string | null | undefin
   };
   // Ten sam widoczny komunikat: nic nie ogłaszamy ponownie, najwyżej poprawiamy oznaczenie pól.
   if (!komunikat.hidden && komunikat.textContent === t) zastosuj();
-  else czekajace.set(komunikat, setTimeout(zastosuj, OPOZNIENIE_BLEDU));
+  else {
+    // Widoczny komunikat czeka na nową treść: pola, których nowy błąd już nie dotyczy, tracą aria-invalid od razu.
+    if (!komunikat.hidden) oznacz(komunikat, [...(oznaczone.get(komunikat) ?? [])].filter((p) => cele.includes(p)));
+    czekajace.set(komunikat, setTimeout(zastosuj, OPOZNIENIE_BLEDU));
+  }
 }
 
 /**

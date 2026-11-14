@@ -141,22 +141,23 @@ const faq = [
 
       <div class="mt-5" data-pole="typDzwigu" hidden={ukryj('typDzwigu')}>
         <label for="cu-dzwig" class="etykieta-pola">Rodzaj dźwigu</label>
-        <select id="cu-dzwig" name="typDzwigu" class="pole mt-1">
+        <select id="cu-dzwig" name="typDzwigu" class="pole mt-1" aria-describedby="cu-dzwig-opis">
           <option value="towarowy" selected>Towarowy</option>
           <option value="towarowy-maly">Towarowy mały</option>
           <option value="osobowy">Osobowy</option>
-          <option value="towarowo-osobowy-wewn">Tow.-osobowy, z kabiny</option>
-          <option value="towarowo-osobowy-zewn">Tow.-osobowy, z przystanków</option>
+          <option value="towarowo-osobowy-wewn">Tow.-osob., z kabiny</option>
+          <option value="towarowo-osobowy-zewn">Tow.-osob., z przystanku</option>
           <option value="szpitalny">Szpitalny</option>
           <option value="budowlany">Budowlany</option>
         </select>
+        <p id="cu-dzwig-opis" class="meta mt-1">„Tow.-osob.” to dźwig towarowo-osobowy, sterowany z kabiny albo z przystanków.</p>
       </div>
 
       <div class="mt-5" data-pole="napedDzwigu" hidden={ukryj('napedDzwigu')}>
         <label for="cu-naped-dzwigu" class="etykieta-pola">Napęd dźwigu</label>
         <select id="cu-naped-dzwigu" name="napedDzwigu" class="pole mt-1" aria-describedby="cu-naped-dzwigu-opis">
           <option value="elektryczny" selected>Elektryczny (liny)</option>
-          <option value="hydrauliczny">Hydrauliczny, pneumatyczny</option>
+          <option value="hydrauliczny">Hydraulika, pneumatyka</option>
         </select>
         <p id="cu-naped-dzwigu-opis" class="meta mt-1">Zmienia tylko rodzaj zaświadczenia konserwatora.</p>
       </div>
@@ -181,7 +182,7 @@ const faq = [
         <label for="cu-przeznaczenie" class="etykieta-pola">Przeznaczenie</label>
         <select id="cu-przeznaczenie" name="przeznaczenie" class="pole mt-1">
           <option value="ogolne" selected>Ogólne (hak)</option>
-          <option value="specjalne">Specjalne (chwytak, magnes)</option>
+          <option value="specjalne">Specjalne (np. chwytak)</option>
           <option value="nie-wiem">Nie wiem</option>
         </select>
       </div>

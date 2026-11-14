@@ -283,6 +283,7 @@ const faq = [
             ? `W ${nazwaMiesiaca(miesiac, 'miejscownik')} ${rok} r. pora nocna ma razem najwyżej ${odmiana(maks, ['godzinę', 'godziny', 'godzin'])} (8 godzin na dobę).`
             : null;
         pokazBlad('godziny', [p], tekst);
+        pokazBlad('zmiana', [], null);
         ok = !tekst;
       } else {
         const od = pole('od');
@@ -292,6 +293,7 @@ const faq = [
         const b = minuty(do_.value);
         const pora = minuty(pole<HTMLSelectElement>('pora').value) as number;
         const zmiany = wpisanaLiczba(zm.value);
+        pokazBlad('godziny', [], null);
         let tekst: string | null = null;
         if (a === null || b === null) tekst = 'Wpisz początek i koniec zmiany, na przykład 22:00 i 6:00.';
         else if (!Number.isInteger(zmiany) || zmiany > dniWMiesiacu(rok, miesiac)) tekst = `Wpisz liczbę zmian od 0 do ${dniWMiesiacu(rok, miesiac)}.`;

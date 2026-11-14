@@ -106,6 +106,17 @@ describe('pokazBlad', () => {
     expect(k.hidden).toBe(true);
   });
 
+  it('zmiana treści widocznego komunikatu od razu zdejmuje aria-invalid z pól, których już nie dotyczy', () => {
+    const { a, b, el } = nowy();
+    pokazBlad(el, 'Błąd A.', [a, b] as unknown as Element[]);
+    vi.advanceTimersByTime(OPOZNIENIE_BLEDU);
+    pokazBlad(el, 'Błąd B.', [b as unknown as Element]);
+    expect(a.getAttribute('aria-invalid')).toBeNull();
+    expect(b.getAttribute('aria-invalid')).toBe('true');
+    vi.advanceTimersByTime(OPOZNIENIE_BLEDU);
+    expect(b.getAttribute('aria-invalid')).toBe('true');
+  });
+
   it('ten sam komunikat dla innego pola przenosi tylko aria-invalid', () => {
     const { a, b, k, el } = nowy();
     pokazBlad(el, 'Błąd.', a as unknown as Element);

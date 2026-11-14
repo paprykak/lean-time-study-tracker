@@ -147,9 +147,13 @@ const faq = [
       const zasadnicze = wpisanaLiczba(el('zasadnicze').value);
       const wliczane = wpisanaLiczba(el('wliczane').value || '0');
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
-      const blad = !(zasadnicze >= 0) || !(wliczane >= 0) || zasadnicze + wliczane === 0 ? 'Wpisz pensję zasadniczą, na przykład 4500.' : null;
+      const blad = !(zasadnicze >= 0) || zasadnicze + wliczane === 0
+        ? 'Wpisz pensję zasadniczą, na przykład 4500.'
+        : !(wliczane >= 0)
+          ? 'Składniki wliczane wpisz liczbą, na przykład 300, albo zostaw puste.'
+          : null;
       const ujemne = [zasadnicze >= 0 ? null : el('zasadnicze'), wliczane >= 0 ? null : el('wliczane')].filter((p) => p);
-      pokazBlad(b, blad, ujemne.length ? ujemne : [el('zasadnicze')]);
+      pokazBlad(b, blad, !(zasadnicze >= 0) || zasadnicze + wliczane === 0 ? [el('zasadnicze')] : ujemne);
       const status = w('status');
       if (blad) {
         w('wyrownanie').textContent = '—';

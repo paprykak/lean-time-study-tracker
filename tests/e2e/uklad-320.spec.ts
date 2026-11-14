@@ -4,7 +4,8 @@ import { NARZEDZIA, adresNarzedzia } from '../../src/data/narzedzia';
 // Telefon 320 px na wszystkich narzędziach z rejestru (pakiet „spójność UX”, 2026-11-13): brak przewijania w bok,
 // żadna opcja listy nie jest ucięta po wybraniu (np. „październik”, „Odpoczynek”), pole daty i godziny mieści wartość
 // z ikoną, tekst nie jest ucięty przez overflow ani nie wychodzi poza swój element. Pomijamy elementy sr-only,
-// pułapkę na boty w newsletterze i tabele w przewijanym pojemniku (.tabela), które przewijają się celowo.
+// pułapkę na boty w newsletterze i tabele w przewijanym pojemniku (.tabela), które przewijają się celowo. Sprawdzamy
+// stan domyślny i każdy tryb formularza (opcje list, pola wyboru), bo tryby odsłaniają inne pola.
 // Szerokość tekstu mierzymy fontem strony (jak w jakosc2-uklad.spec.ts); strzałka listy i ikona pola to stałe zapasy.
 test.use({ viewport: { width: 320, height: 700 } });
 test.beforeEach(({}, info) => test.skip(info.project.name !== 'komputer', 'układ 320 px sprawdzamy w jednym projekcie'));
@@ -13,7 +14,7 @@ for (const n of NARZEDZIA) {
   test(`${n.slug}: nic nie jest ucięte przy 320 px`, async ({ page }) => {
     await page.goto(adresNarzedzia(n.slug));
     await page.evaluate(() => document.fonts.ready);
-    const problemy = await page.evaluate(async () => {
+    const sprawdz = () => page.evaluate(async () => {
       const p: string[] = [];
       const de = document.documentElement;
       if (de.scrollWidth > de.clientWidth + 1) p.push(`przewijanie w bok: ${de.scrollWidth} > ${de.clientWidth}`);
@@ -69,6 +70,36 @@ for (const n of NARZEDZIA) {
       }
       return p;
     });
-    expect(problemy).toEqual([]);
+    // Stan domyślny, a potem każdy tryb formularza: każda opcja list i każde pole wyboru odsłaniają inne pola
+    // (np. rodzaj dźwigu w uprawnieniach UDT). Najwyżej 80 stanów na stronę.
+    const problemy = new Map<string, string>();
+    const dopisz = async (stan: string) => {
+      for (const x of await sprawdz()) if (!problemy.has(x)) problemy.set(x, stan);
+    };
+    await dopisz('domyślnie');
+    let stany = 0;
+    const listy = await page.locator('form.kalkulator select:visible').all();
+    for (const lista of listy) {
+      if (!(await lista.isVisible()) || !(await lista.isEnabled())) continue;
+      const pierwotna = await lista.inputValue();
+      const wartosci = await lista.evaluate((el) => [...(el as HTMLSelectElement).options].map((o) => o.value));
+      if (wartosci.length > 14) continue;
+      for (const v of wartosci) {
+        if (v === pierwotna || stany++ >= 80) continue;
+        await lista.selectOption(v);
+        await dopisz(`${(await lista.getAttribute('id')) ?? 'lista'}=${v}`);
+      }
+      await lista.selectOption(pierwotna);
+    }
+    for (const radio of await page.locator('form.kalkulator input[type="radio"]:visible').all()) {
+      if ((await radio.isChecked()) || !(await radio.isVisible()) || stany++ >= 80) continue;
+      const nazwa = await radio.getAttribute('name');
+      const zaznaczone = page.locator(`form.kalkulator input[type="radio"][name="${nazwa}"]:checked`);
+      const pierwotne = (await zaznaczone.count()) ? zaznaczone.first() : null;
+      await radio.check();
+      await dopisz(`${nazwa}=${await radio.getAttribute('value')}`);
+      if (pierwotne && (await pierwotne.isVisible())) await pierwotne.check();
+    }
+    expect([...problemy].map(([x, stan]) => `${stan}: ${x}`)).toEqual([]);
   });
 }

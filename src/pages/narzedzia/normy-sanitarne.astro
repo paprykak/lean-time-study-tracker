@@ -130,8 +130,16 @@ const faq = [
       const m = wpisanaLiczba(el('mezczyzni').value || '0');
       const k = wpisanaLiczba(el('kobiety').value || '0');
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
-      const blad = !(Number.isInteger(m) && m >= 0 && Number.isInteger(k) && k >= 0) || m + k === 0 ? 'Wpisz liczbę mężczyzn i kobiet na najliczniejszej zmianie.' : null;
-      const zle = [m, k].some((x) => !(Number.isInteger(x) && x >= 0)) ? [Number.isInteger(m) && m >= 0 ? null : el('mezczyzni'), Number.isInteger(k) && k >= 0 ? null : el('kobiety')] : [el('mezczyzni'), el('kobiety')];
+      // Limit 100 000 osób jak w normySanitarne (src/lib/narzedzia/normy-sanitarne.ts); większa liczba rzuca wyjątek.
+      const dobra = (x: number) => Number.isInteger(x) && x >= 0 && x <= 100_000;
+      const zakres = (x: number) => Number.isInteger(x) && x > 100_000;
+      const blad =
+        zakres(m) || zakres(k)
+          ? 'Liczba osób: od 0 do 100 000.'
+          : !(dobra(m) && dobra(k)) || m + k === 0
+            ? 'Wpisz liczbę mężczyzn i kobiet na najliczniejszej zmianie.'
+            : null;
+      const zle = [m, k].some((x) => !dobra(x)) ? [dobra(m) ? null : el('mezczyzni'), dobra(k) ? null : el('kobiety')] : [el('mezczyzni'), el('kobiety')];
       pokazBlad(b, blad, zle);
       if (blad) return;
       const praca = (form.querySelector<HTMLInputElement>('input[name="praca"]:checked')?.value ?? 'zwykla') as RodzajPracy;

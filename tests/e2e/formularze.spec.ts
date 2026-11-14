@@ -20,6 +20,16 @@ const tekstWyniku = (page: Page) =>
     return czesci.map((el) => el.innerText).join('\n');
   });
 
+// Strony, na których żadna prosta zła wartość nie wywołuje komunikatu (brak komunikatów albo błędy tylko w innych
+// trybach), i strony, których pól przeglądarka nie przywraca (autocomplete="off"). Każda inna strona musi przejść pełne
+// sprawdzenie; nowa strona bez niego oblewa test, dopóki nie trafi tu z uzasadnieniem.
+const BEZ_PROSTEGO_BLEDU = new Set([
+  'szkolenie-okresowe-bhp', 'waznosc-uprawnien-udt', 'badania-udt', 'wymiar-czasu-pracy', 'dni-wolne-od-pracy',
+  'wolne-na-dziecko', 'urlop-okolicznosciowy', 'termin-wyplaty-wynagrodzenia', 'kontrola-grafiku', 'okres-wypowiedzenia',
+  'odziez-robocza', 'praca-cudzoziemca',
+]);
+const BEZ_PRZYWRACANYCH_POL = new Set(['urlop-w-agencji-pracy', 'wynagrodzenie-za-urlop', 'zakaz-konkurencji', 'odprawa-posmiertna']);
+
 const POLA_TEKSTOWE = 'input[type="number"], input[type="text"], input:not([type]), input[type="date"], input[type="time"]';
 
 for (const n of NARZEDZIA) {
@@ -78,7 +88,7 @@ for (const n of NARZEDZIA) {
       await pole.fill(oryginal);
     }
     if (!sprawdzone) {
-      test.info().annotations.push({ type: 'bez błędu', description: 'żadna prosta zła wartość nie wywołała komunikatu' });
+      expect(BEZ_PROSTEGO_BLEDU.has(n.slug), 'żadna prosta zła wartość nie wywołała komunikatu').toBe(true);
       return;
     }
     await page.waitForTimeout(PRZERWA);
@@ -172,7 +182,7 @@ for (const n of NARZEDZIA) {
       przed = po;
     }
     if (!sonda) {
-      test.info().annotations.push({ type: 'bez sondy', description: 'żadne przywracane pole nie zmienia wyniku' });
+      expect(BEZ_PRZYWRACANYCH_POL.has(n.slug), 'żadne przywracane pole nie zmienia wyniku').toBe(true);
       return;
     }
     await page.waitForTimeout(PRZERWA);
