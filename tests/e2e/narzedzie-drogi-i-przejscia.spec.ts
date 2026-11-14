@@ -19,7 +19,7 @@ test('dwa kierunki 1 m, wysokość 1,9 m tylko wyjątkowo', async ({ page }) => 
   await page.getByLabel('Szerokość (m)').fill('1');
   await page.getByLabel('Wysokość (m)').fill('1,9');
   await expect(page.locator('[data-w="minimum"]')).toHaveText(/^co\snajmniej\s1\sm$/);
-  await expect(page.locator('[data-w="status"]')).toHaveText(/^Zgodne\stylko\swyjątkowo$/);
+  await expect(page.locator('[data-w="status"]')).toHaveText(/^Zgodne\stylko\spod\swarunkiem$/);
   await expect(page.locator('[data-w="lista"]')).toContainText('§ 47 ust. 2');
 });
 

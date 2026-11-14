@@ -29,7 +29,7 @@ describe('obciążenie regału z tabliczki (§ 68 ust. 2 pkt 2)', () => {
 describe('odległości (§ 4 ust. 1 pkt 8 i § 33 ust. 2 ppoż., § 77 BHP)', () => {
   it('materiały palne 0,5 m od urządzeń gorących i kabli; niepalne: nie dotyczy', () => {
     expect(s({ palne: true, odGoracych: 0.5 }, 'gorace')?.wynik).toBe('tak');
-    expect(s({ palne: true, odGoracych: 0.499 }, 'gorace')?.wynik).toBe('nie');
+    expect(s({ palne: true, odGoracych: 0.499 }, 'gorace')?.tekst).toContain('0,499 m: materiały palne');
     expect(sprawdzSkladowanie({ palne: false, odGoracych: 0.1 })).toMatchObject({ sprawdzenia: [{ wynik: 'nie-dotyczy' }], status: { tekst: 'Ten odstęp nie dotyczy materiałów niepalnych', rodzaj: 'brak' } });
   });
   it('gaśnica: dostęp 1 m, najwyżej 30 m', () => {

@@ -10,14 +10,14 @@ const start = sprawdzPrzejscie({ rodzaj: D.rodzaj, szerokosc: 0.7, wysokosc: 2.1
 
 const WYMIARY = [
   { co: 'Przejście tylko do obsługi maszyn i urządzeń (alejkę pieszą między regałami liczymy tak samo)', ile: 'co najmniej 0,75 m, przy ruchu w obu kierunkach 1 m', przepis: '§ 47 ust. 3' },
-  { co: 'Wysokość dojścia do stanowiska pracy', ile: 'co najmniej 2 m w świetle na całej długości; 1,8 m tylko wtedy, gdy wymusza to konstrukcja maszyn, z zabezpieczeniem i znakami', przepis: '§ 47 ust. 1–2' },
+  { co: 'Wysokość dojścia do stanowiska pracy', ile: 'co najmniej 2 m w świetle na całej długości; 1,8 m tylko w przypadkach uzasadnionych konstrukcją maszyn i innych urządzeń, z zabezpieczeniem i znakami', przepis: '§ 47 ust. 1–2' },
   { co: 'Droga dla wózków', ile: 'bez liczby: według wózków, ładunków i liczby użytkowników; przepis odsyła ogólnie do Polskich Norm', przepis: '§ 4 ust. 2, § 69 ust. 2' },
   { co: 'Pochylnia na drodze transportowej i w magazynie', ile: `najwyżej ${MAKS_NACHYLENIE}%, bez progów i stopni`, przepis: '§ 5 ust. 1' },
   { co: 'Ręczne przenoszenie i przetaczanie po pochylni niezwiązanej na stałe z budynkiem', ile: 'kąt najwyżej 15°', przepis: '§ 12 ust. 1 rozporządzenia o ręcznych pracach transportowych' },
   { co: 'Ręczne przenoszenie po schodach', ile: 'kąt najwyżej 60°', przepis: '§ 12 ust. 1 rozporządzenia o ręcznych pracach transportowych' },
   { co: 'Wózek pchany ręcznie', ile: 'teren o nachyleniu najwyżej 8%, odległość najwyżej 200 m', przepis: '§ 21 ust. 3 rozporządzenia o ręcznych pracach transportowych' },
   { co: 'Pomost, antresola, podest wyżej niż 1 m', ile: 'balustrada: poręcz co najmniej 1,1 m, krawężnik co najmniej 0,15 m, w połowie poprzeczka albo wypełnienie; nie dotyczy ramp przeładunkowych', przepis: '§ 106 ust. 1 i 3' },
-  { co: 'Niebezpieczne ruchome części maszyn', ile: 'osłonięte do 2,5 m od podłogi, chyba że nie pozwala na to funkcja maszyny; pasy, łańcuchy, koła zębate i inne części napędów albo grożące spadnięciem nad stanowiskami i przejściami wyżej niż 2,5 m osłonięte co najmniej od dołu', przepis: '§ 55 ust. 1–2' },
+  { co: 'Ruchome i inne niebezpieczne części maszyn', ile: 'osłonięte albo z innym skutecznym zabezpieczeniem co najmniej do 2,5 m od podłogi, chyba że nie pozwala na to funkcja maszyny; pasy, łańcuchy, koła zębate i inne części napędów albo grożące spadnięciem nad stanowiskami i przejściami wyżej niż 2,5 m osłonięte co najmniej od dołu', przepis: '§ 55 ust. 1–2' },
   { co: 'Dostęp do gaśnicy', ile: 'co najmniej 1 m szerokości; do najbliższej gaśnicy najwyżej 30 m', przepis: '§ 33 ust. 2 rozporządzenia o ochronie przeciwpożarowej' },
   { co: 'Rampa i pomost przeładunkowy', ile: 'bez liczby: odpowiednie do wymiarów i masy ładunków, co najmniej jedno wejście', przepis: '§ 64a' },
   { co: 'Schody i pochylnie w budynku', ile: 'wymagania w przepisach techniczno-budowlanych', przepis: '§ 21 ust. 4' },
@@ -26,7 +26,7 @@ const WYMIARY = [
 const faq = [
   {
     pytanie: 'Jaka szerokość drogi dla wózka widłowego?',
-    odpowiedz: 'Przepisy BHP nie podają tej liczby. Drogi mają mieć wymiary odpowiednie do liczby użytkowników oraz rodzajów i wielkości urządzeń transportowych i ładunków, a minimalne wymiary dróg i przejść określają Polskie Normy (§ 4 ust. 2 rozporządzenia w sprawie ogólnych przepisów BHP). Odstęp między regałami ma pozwalać bezpiecznie operować wózkiem i ładunkiem (§ 69 ust. 2). Reguła „szerokość wózka naładowanego wózka plus 60 cm, w obu kierunkach dwie szerokości plus 90 cm” pochodzi z rozporządzenia z 1953 r. o wózkach poruszanych ręcznie, które nie obowiązuje od 1 stycznia 2002 r.',
+    odpowiedz: 'Przepisy BHP nie podają tej liczby. Drogi mają mieć wymiary odpowiednie do liczby użytkowników oraz rodzajów i wielkości urządzeń transportowych i ładunków, a minimalne wymiary dróg i przejść określają Polskie Normy (§ 4 ust. 2 rozporządzenia w sprawie ogólnych przepisów BHP). Odstęp między regałami ma pozwalać bezpiecznie operować wózkiem i ładunkiem (§ 69 ust. 2). Reguła „szerokość naładowanego wózka plus 60 cm, w obu kierunkach dwie szerokości plus 90 cm” pochodzi z § 46 rozporządzenia z 1953 r. o ręcznym dźwiganiu i przenoszeniu ciężarów (z części o wózkach poruszanych ręcznie), które nie obowiązuje od 1 stycznia 2002 r.',
   },
   {
     pytanie: 'Ile musi mieć przejście między maszynami?',
@@ -55,7 +55,7 @@ const faq = [
   tytul="Drogi i przejścia w hali: szerokość i wysokość"
   opis="Przejście do obsługi maszyn 0,75 albo 1 m, wysokość dojścia 2 m, pochylnia do 8% i czy przepis podaje szerokość drogi dla wózka widłowego."
   h1="Drogi i przejścia w hali: wymiary z przepisów BHP"
-  lead="Wybierz rodzaj przejścia i wpisz zmierzone wymiary, a sprawdzimy je z przepisami BHP. Przy drodze dla wózków powiemy wprost, czego przepis nie podaje."
+  lead="Wybierz rodzaj przejścia i wpisz zmierzone wymiary, a sprawdzimy je z przepisami BHP i przeciwpożarowymi. Przy drodze dla wózków powiemy wprost, czego przepis nie podaje."
   faq={faq}
 >
   <form class="kalkulator" data-przejscie novalidate aria-labelledby="kalkulator-tytul">
@@ -150,7 +150,7 @@ const faq = [
       <li>Drogi w budynkach wyznacza się ciągłymi pasami, najlepiej żółtymi albo białymi, z bezpieczną odległością między pieszymi a pojazdami (załącznik nr 1 § 13).</li>
       <li>Przed bramami, drzwiami i przejściami, gdzie piesi mogą niespodziewanie wejść na drogę, stoją barierki albo inne środki ochronne (§ 6 ust. 5).</li>
       <li>Na skrzyżowaniach dróg musi być dobra widoczność (§ 7 ust. 2), a pracodawca ustala zasady ruchu i prędkości zależne od szerokości dróg, natężenia ruchu i widoczności (§ 66 ust. 1–2).</li>
-      <li>Organizator pracy, czyli pracodawca albo inny przedsiębiorca organizujący pracę wózków, zapobiega wtargnięciu osób na teren ich pracy, a gdy się nie da, stosuje środki chroniące ludzi (§ 8 ust. 2–3 rozporządzenia o wózkach jezdniowych).</li>
+      <li>Organizator pracy, czyli pracodawca albo inny przedsiębiorca organizujący pracę wózków, podejmuje środki zapobiegające wtargnięciu osób na teren ich pracy, a gdy się nie da, stosuje środki chroniące ludzi (§ 8 ust. 2–3 rozporządzenia o wózkach jezdniowych).</li>
     </ul>
     <p>
       Czy na wózek potrzebne są uprawnienia UDT, sprawdzi <a href="/narzedzia/czy-potrzebne-uprawnienia-udt">narzędzie o uprawnieniach UDT</a>, a regały i odległości w magazynie <a href="/narzedzia/skladowanie-w-magazynie">narzędzie o składowaniu</a>.

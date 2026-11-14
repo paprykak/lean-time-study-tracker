@@ -22,7 +22,7 @@
 // - porównujemy w milimetrach na liczbach całkowitych, więc 0,75 m to dokładnie 0,75 m.
 
 export type RodzajPrzejscia = 'obsluga' | 'obsluga-dwa' | 'wozki' | 'gasnica';
-export type WynikSprawdzenia = 'tak' | 'nie' | 'warunkowo' | 'brak-liczby';
+export type WynikSprawdzenia = 'tak' | 'nie' | 'warunkowo' | 'zalezy' | 'brak-liczby';
 
 export const RODZAJE: Record<RodzajPrzejscia, string> = {
   obsluga: 'Przejście (1 kierunek)',
@@ -80,7 +80,7 @@ export interface WynikPrzejscia {
 }
 
 const mm = (m: number) => Math.round(m * 1000);
-export const metry = (x: number) => `${x.toLocaleString('pl-PL', { maximumFractionDigits: 2 })} m`;
+export const metry = (x: number) => `${x.toLocaleString('pl-PL', { maximumFractionDigits: 3 })} m`;
 const cm = (milimetry: number) => `${(milimetry / 10).toLocaleString('pl-PL', { maximumFractionDigits: 1 })} cm`;
 
 /** Nachylenie w procentach zaokrąglone w górę do 0,1 (różnica w mm, długość w mm). */
@@ -123,7 +123,7 @@ export function sprawdzPrzejscie(d: DanePrzejscia): WynikPrzejscia {
       wynik === 'tak'
         ? `${metry(d.wysokosc)}, wymagane co najmniej ${metry(WYSOKOSC_DOJSCIA)} w świetle na całej długości (§ 47 ust. 1).`
         : wynik === 'warunkowo'
-          ? `${metry(d.wysokosc)}: mniej niż ${metry(WYSOKOSC_DOJSCIA)}. Do ${metry(WYSOKOSC_WYJATEK)} tylko wtedy, gdy wymusza to konstrukcja maszyn, z zabezpieczeniem i znakami bezpieczeństwa (§ 47 ust. 2).`
+          ? `${metry(d.wysokosc)}: mniej niż ${metry(WYSOKOSC_DOJSCIA)}. Do ${metry(WYSOKOSC_WYJATEK)} tylko w przypadkach uzasadnionych konstrukcją maszyn i innych urządzeń, z zabezpieczeniem i znakami bezpieczeństwa (§ 47 ust. 2).`
           : `${metry(d.wysokosc)}: za nisko, przepis dopuszcza najmniej ${metry(WYSOKOSC_WYJATEK)} i to tylko wyjątkowo (§ 47 ust. 1–2).`;
     sprawdzenia.push({ klucz: 'wysokosc', co: 'Wysokość dojścia', wynik, tekst });
   } else if (d.wysokosc !== undefined) {
@@ -144,15 +144,18 @@ export function sprawdzPrzejscie(d: DanePrzejscia): WynikPrzejscia {
     const ok = hMm * 100 <= MAKS_NACHYLENIE * lMm;
     const proc = nachylenieWGore(hMm, lMm);
     const kat = (Math.atan(hMm / lMm) * 180) / Math.PI;
-    const opis = `${proc.toLocaleString('pl-PL', { maximumFractionDigits: 1 })}% (ok. ${kat.toLocaleString('pl-PL', { maximumFractionDigits: 1 })}°)`;
+    const opis = `${proc.toLocaleString('pl-PL', { maximumFractionDigits: 1 })}%${kat >= 0.05 ? ` (ok. ${kat.toLocaleString('pl-PL', { maximumFractionDigits: 1 })}°)` : ''}`;
+    // § 5 ust. 1 dotyczy dróg transportowych i magazynów: przy drodze wózków to naruszenie, przy przejściu pieszym
+    // i dostępie do gaśnicy tylko wtedy, gdy są w magazynie albo na drodze transportowej.
+    const naDrodze = d.rodzaj === 'wozki';
     sprawdzenia.push(
       ok
         ? { klucz: 'pochylnia', co: 'Pochylnia', wynik: 'tak', tekst: `Nachylenie ${opis}, na drogach transportowych i w magazynach dopuszczalne najwyżej ${MAKS_NACHYLENIE}% (§ 5 ust. 1).` }
         : {
             klucz: 'pochylnia',
             co: 'Pochylnia',
-            wynik: 'nie',
-            tekst: `Nachylenie ${opis}: więcej niż ${MAKS_NACHYLENIE}% dopuszczalnych na drogach transportowych i w magazynach (§ 5 ust. 1). Przy różnicy ${cm(hMm)} pochylnia musi mieć w poziomie co najmniej ${metry(najkrotszaPochylnia(d.roznica))}.`,
+            wynik: naDrodze ? 'nie' : 'zalezy',
+            tekst: `Nachylenie ${opis}: więcej niż ${MAKS_NACHYLENIE}% dopuszczalnych na drogach transportowych i w magazynach (§ 5 ust. 1)${naDrodze ? '' : '; za stromo, jeśli to przejście jest w magazynie albo na drodze transportowej'}. Przy różnicy ${cm(hMm)} pochylnia musi mieć w poziomie co najmniej ${metry(najkrotszaPochylnia(d.roznica))}.`,
           },
     );
   }
@@ -160,8 +163,8 @@ export function sprawdzPrzejscie(d: DanePrzejscia): WynikPrzejscia {
   const wyniki = sprawdzenia.map((s) => s.wynik);
   const status: WynikPrzejscia['status'] = wyniki.includes('nie')
     ? { tekst: 'Niezgodne z przepisem', rodzaj: 'po-terminie' }
-    : wyniki.includes('warunkowo')
-      ? { tekst: 'Zgodne tylko wyjątkowo', rodzaj: 'wkrotce' }
+    : wyniki.includes('warunkowo') || wyniki.includes('zalezy')
+      ? { tekst: 'Zgodne tylko pod warunkiem', rodzaj: 'wkrotce' }
       : wyniki.includes('tak')
         ? { tekst: wyniki.includes('brak-liczby') ? 'Liczby z przepisu spełnione' : 'Zgodne z przepisem', rodzaj: 'w-terminie' }
         : wyniki.length
@@ -175,7 +178,7 @@ export function sprawdzPrzejscie(d: DanePrzejscia): WynikPrzejscia {
         : 'Między regałami odstęp ma pozwalać bezpiecznie jeździć wózkiem i operować ładunkiem (§ 69 ust. 2), a prędkość wózków zależy od szerokości dróg (§ 66 ust. 2). Liczb szukaj w dokumentacji wózka i regałów oraz w normach.'
       : d.rodzaj === 'gasnica'
         ? 'Z każdego miejsca, w którym może przebywać człowiek, do najbliższej gaśnicy najwyżej 30 m (§ 33 ust. 2 pkt 1 rozporządzenia o ochronie przeciwpożarowej).'
-        : 'Przejścia nie wolno zastawiać (§ 7 ust. 1), a stopnie i inne miejsca, o które można się potknąć, maluje się barwami bezpieczeństwa (§ 6 ust. 4).';
+        : 'Przejścia nie wolno zastawiać (§ 7 ust. 1), a stopnie i inne miejsca, w których można się potknąć, upaść albo uderzyć, maluje się barwami bezpieczeństwa (§ 6 ust. 4).';
 
   return { minimum: min === null ? 'brak liczby w przepisie' : `co najmniej ${metry(min)}`, status, sprawdzenia, uwaga };
 }
@@ -184,6 +187,7 @@ export const ETYKIETA_WYNIKU: Record<WynikSprawdzenia, string> = {
   tak: 'zgodne',
   nie: 'niezgodne',
   warunkowo: 'tylko wyjątkowo',
+  zalezy: 'zależy od miejsca',
   'brak-liczby': 'brak liczby',
 };
 

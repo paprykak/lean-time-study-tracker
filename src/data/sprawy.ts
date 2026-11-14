@@ -119,7 +119,7 @@ export const HASLA: Record<string, string[]> = {
   'odpowiedzialnosc-materialna': ['manko w kasie', 'niedobór', 'inwentaryzacja', 'szkoda', 'braki w towarze', 'potrącenie z wypłaty za szkodę', 'zniszczenie mienia pracodawcy', 'uszkodzenie wózka', 'kara za zniszczenie', 'pozew od pracodawcy', 'uszkodzenie samochodu służbowego', 'przedawnienie roszczeń pracodawcy', 'umowa o współodpowiedzialności materialnej'],
   // Pakiet „hala” (2026-11-14): frazy z podpowiedzi wyszukiwarki Google (pl) do zapytań „szerokość drogi dla wózka”,
   // „odległość między regałami”, „obciążenie regału”, „wysokość składowania”, „pochylnia nachylenie”.
-  'drogi-i-przejscia': ['szerokość drogi dla wózka widłowego', 'droga transportowa', 'ciąg komunikacyjny na hali', 'przejście między regałami', 'odległość między regałami w magazynie', 'szerokość przejścia bhp', 'pochylnia maksymalne nachylenie', 'wózek widłowy', 'piesi i wózki'],
+  'drogi-i-przejscia': ['droga transportowa', 'ciąg komunikacyjny na hali', 'przejście między regałami', 'odległość między regałami w magazynie', 'szerokość przejścia bhp', 'pochylnia maksymalne nachylenie', 'wózek widłowy', 'piesi i wózki'],
   'skladowanie-w-magazynie': ['dopuszczalne obciążenie regału', 'tabliczka obciążenie regału', 'obciążenie półki regału', 'wysokość składowania palet', 'składowanie materiałów bhp', 'regał magazynowy', 'palety', 'odległość od lamp', 'odległość towaru od tryskaczy', 'gaśnica w magazynie'],
 };
 

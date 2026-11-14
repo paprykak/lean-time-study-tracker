@@ -83,7 +83,7 @@ export interface WynikSkladowania {
 const g = (kg: number) => Math.round(kg * 1000);
 const mm = (m: number) => Math.round(m * 1000);
 export const kg = (x: number) => `${x.toLocaleString('pl-PL', { maximumFractionDigits: 3 })} kg`;
-export const metry = (x: number) => `${x.toLocaleString('pl-PL', { maximumFractionDigits: 2 })} m`;
+export const metry = (x: number) => `${x.toLocaleString('pl-PL', { maximumFractionDigits: 3 })} m`;
 // Liczba pojedyncza czasownika poza 2–4 (12–14): „zmieści się 1 / 5 / 12”, „zmieszczą się 2 / 22”.
 const zmiesciSie = (ile: string) => `Na poziomie ${ile.endsWith('takie ładunki') ? 'zmieszczą' : 'zmieści'} się najwyżej ${ile}.`;
 const naPoziomach = (n: number) => `na ${n} ${n === 1 ? 'poziomie' : 'poziomach'}`;
