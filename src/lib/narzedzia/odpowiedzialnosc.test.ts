@@ -6,7 +6,7 @@
 // art. 442¹: szkoda 29.02.2020, wiedza 29.02.2024 → 28.02.2027, koniec roku 31.12.2027, przestępstwo 29.02.2040;
 // szkoda 15.05.2016, wiedza 10.01.2025 → 15.05.2026 (10 lat), koniec roku 31.12.2026, przestępstwo 15.05.2036.
 import { describe, expect, it } from 'vitest';
-import { bladDanych, granicaOdszkodowania, opisOdpowiedzialnosci, przedawnienieRoszczenia, type DaneOdpowiedzialnosci } from './odpowiedzialnosc';
+import { bladDanych, granicaOdszkodowania, opisOdpowiedzialnosci, przedawnienieRoszczenia, przesunietyKoniec, type DaneOdpowiedzialnosci } from './odpowiedzialnosc';
 
 const DZIS = '2026-11-14';
 const dane = (x: Partial<DaneOdpowiedzialnosci>): DaneOdpowiedzialnosci => ({
@@ -101,9 +101,18 @@ describe('teksty wyniku', () => {
     expect(o.statusKlasa).toBe('po-terminie');
     expect(o.przedawnienieOpis).toContain('3 lata od szkody');
     expect(o.uwagi.join(' ')).toContain('halą spedycyjną');
+    expect(o.uwagi.join(' ')).toContain('§ 6 ust. 1');
+    expect(o.uwagi.join(' ')).toContain('wybierz wtedy „Szkoda umyślna”');
+    expect(o.przedawnienieOpis).toContain('art. 292');
+    expect(o.przedawnienieOpis).toContain('art. 295');
+    // 14.11.2026 to sobota: termin może przesunąć się na poniedziałek 16.11.2026 (art. 115 KC).
     const ostatni = opisOdpowiedzialnosci(dane({ dataSzkody: '2025-11-14', dataWiedzy: '2025-11-14' }), DZIS);
-    expect(ostatni.status).toBe('Dziś jest ostatni dzień terminu pracodawcy');
+    expect(ostatni.status).toBe('Termin kończy się dziś albo 16 listopada 2026 r.');
     expect(ostatni.statusKlasa).toBe('pilne');
+    expect(ostatni.przedawnienieOpis).toContain('14 listopada 2026 r. to sobota albo dzień wolny od pracy');
+    const roboczy = opisOdpowiedzialnosci(dane({ dataSzkody: '2025-11-13', dataWiedzy: '2025-11-13' }), '2026-11-13');
+    expect(roboczy.status).toBe('Dziś jest ostatni dzień terminu pracodawcy');
+    expect(roboczy.przedawnienieOpis).not.toContain('art. 115');
     const jeden = opisOdpowiedzialnosci(dane({ dataSzkody: '2025-11-15', dataWiedzy: '2025-11-15' }), DZIS);
     expect(jeden.status).toBe('Pracodawcy zostało: 1 dzień');
     const minal = opisOdpowiedzialnosci(dane({ dataSzkody: '2025-11-13', dataWiedzy: '2025-11-13' }), DZIS);
@@ -116,15 +125,56 @@ describe('teksty wyniku', () => {
     expect(o.przedawnienieOpis).toContain('31 grudnia 2027 r.');
     expect(o.przedawnienieOpis).toContain('29 lutego 2040 r.');
     expect(o.granicaOpis).toContain('bez limitu');
-    expect(o.uwagi.join(' ')).not.toContain('art. 121');
+    expect(o.przedawnienieOpis).toContain('art. 123–124 Kodeksu cywilnego');
+    expect(o.przedawnienieOpis).not.toContain('art. 292');
     const dziesiec = opisOdpowiedzialnosci(dane({ sytuacja: 'umyslna', dataSzkody: '2016-05-15', dataWiedzy: '2025-01-10' }), DZIS);
-    expect(dziesiec.przedawnienieOpis).toMatch(/^10 lat od szkody/);
+    expect(dziesiec.przedawnienieOpis).toMatch(/^Termin: 10 lat od zdarzenia/);
     expect(dziesiec.przedawnienie).toBe('15 maja 2026 r.');
   });
   it('wspólne mienie: procent po polsku i przyczynienie w opisie', () => {
     const o = opisOdpowiedzialnosci(dane({ sytuacja: 'wspolne', szkoda: 9000.5, udzial: 33.33, przyczynienie: 0.5 }), DZIS);
     expect(bezSpacji(o.granica)).toBe('2999,70 zł');
-    expect(bezSpacji(o.granicaOpis)).toContain('33,33% szkody po odjęciu 0,50 zł');
+    expect(bezSpacji(o.granicaOpis)).toBe('33,33% z 9000,00 zł (po odjęciu 0,50 zł, do których przyczynił się pracodawca albo inna osoba), według części z umowy (art. 125 § 2)');
     expect(o.przepisy).toBe('art. 125 Kodeksu pracy');
+  });
+});
+
+describe('poprawki po weryfikacji', () => {
+  it('art. 115 KC: sobota, niedziela, święta, Wigilia', () => {
+    expect(przesunietyKoniec('2026-11-14')).toBe('2026-11-16');
+    expect(przesunietyKoniec('2026-11-13')).toBe('2026-11-13');
+    expect(przesunietyKoniec('2027-01-01')).toBe('2027-01-04');
+    expect(przesunietyKoniec('2026-12-24')).toBe('2026-12-28');
+  });
+  it('wina umyślna: status od końca roku, a po nim „chyba że przestępstwo”', () => {
+    const trwa = opisOdpowiedzialnosci(dane({ sytuacja: 'umyslna', dataSzkody: '2023-03-10', dataWiedzy: '2023-03-10' }), DZIS);
+    expect(trwa.przedawnienie).toBe('10 marca 2026 r.');
+    expect(trwa.status).toBe('Termin mógł minąć, ale może trwać do 31 grudnia 2026 r.');
+    expect(trwa.statusKlasa).toBe('wkrotce');
+    const minal = opisOdpowiedzialnosci(dane({ sytuacja: 'umyslna', dataSzkody: '2022-05-05', dataWiedzy: '2022-05-05' }), DZIS);
+    expect(minal.status).toBe('Termin pracodawcy minął 318 dni temu, chyba że szkoda wynikła z przestępstwa');
+    expect(minal.statusKlasa).toBe('po-terminie');
+    // Koniec terminu 31 grudnia: bez zdania o końcu roku.
+    const grudzien = opisOdpowiedzialnosci(dane({ sytuacja: 'umyslna', dataSzkody: '2025-12-31', dataWiedzy: '2025-12-31' }), DZIS);
+    expect(grudzien.przedawnienieOpis).not.toContain('118 zd. 2');
+  });
+  it('granice statusu 30/31 i 90/91 dni', () => {
+    const z = (wiedza: string) => opisOdpowiedzialnosci(dane({ dataSzkody: '2025-12-01', dataWiedzy: wiedza }), DZIS).statusKlasa;
+    // wiedza + 1 rok: 14.12.2026 to 30 dni, 15.12.2026 to 31 dni, 12.02.2027 to 90 dni, 13.02.2027 to 91 dni.
+    expect([z('2025-12-14'), z('2025-12-15'), z('2026-02-12'), z('2026-02-13')]).toEqual(['pilne', 'wkrotce', 'wkrotce', 'w-terminie']);
+  });
+  it('teksty gałęzi: bez limitu i rok od wiedzy', () => {
+    const o = opisOdpowiedzialnosci(dane({ szkoda: 3000 }), DZIS);
+    expect(bezSpacji(o.granicaOpis)).toBe('cała szkoda; limit trzech pensji to 15 600,00 zł');
+    expect(o.przedawnienieOpis).toMatch(/^Termin: rok od dnia/);
+    expect(o.uwagi.join(' ')).toContain('art. 121');
+  });
+  it('ułamki, które po zaokrągleniu dają zero, i daty sprzed 1990 r.', () => {
+    expect(bladDanych(dane({ szkoda: 0.004 }), DZIS)?.pole).toBe('szkoda');
+    expect(bladDanych(dane({ wynagrodzenie: 0.004 }), DZIS)?.pole).toBe('wynagrodzenie');
+    expect(bladDanych(dane({ sytuacja: 'wspolne', udzial: 0.004 }), DZIS)?.pole).toBe('udzial');
+    expect(bladDanych(dane({ sytuacja: 'wspolne', udzial: 33.335 }), DZIS)?.pole).toBe('udzial');
+    expect(bladDanych(dane({ sytuacja: 'wspolne', udzial: 0.01 }), DZIS)).toBeNull();
+    expect(bladDanych(dane({ dataSzkody: '1985-05-01', dataWiedzy: '1985-05-01' }), DZIS)?.tekst).toBe('Dzień szkody: najwcześniej 1 stycznia 1990 r.');
   });
 });

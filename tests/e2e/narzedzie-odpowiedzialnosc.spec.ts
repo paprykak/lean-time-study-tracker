@@ -22,7 +22,7 @@ test('wina nieumyślna: limit trzech pensji i rok na roszczenie', async ({ page 
   await expect(page.locator('[data-w="przedawnienie"]')).toHaveText(/^2\skwietnia\s2027\sr\.$/);
   await expect(page.locator('[data-w="status"]')).toHaveText(/^Pracodawcy\szostało:\s139\sdni$/);
   await expect(page.locator('[data-w="potracenie"]')).toContainText(/art\.\s91\s§\s1/);
-  await page.getByLabel('Z winy pracodawcy (zł)').fill('8000');
+  await page.getByLabel('Przyczynienie innych (zł)').fill('8000');
   await page.getByLabel('Pensja w dniu szkody (zł brutto)').fill('3000');
   await expect(page.locator('[data-w="granica"]')).toHaveText(/^9\s?000,00\szł$/);
 });
@@ -31,13 +31,13 @@ test('mienie powierzone: pełna kwota, termin minął; pole pensji znika', async
   await page.getByLabel('Sytuacja', { exact: true }).selectOption('powierzone');
   await expect(page.getByLabel('Pensja w dniu szkody (zł brutto)')).toBeHidden();
   await page.getByLabel('Kwota szkody (zł)').fill('12000');
-  await page.getByLabel('Z winy pracodawcy (zł)').fill('1500');
+  await page.getByLabel('Przyczynienie innych (zł)').fill('1500');
   await page.getByLabel('Dzień szkody').fill('2023-06-30');
   await page.getByLabel('Pracodawca wie od').fill('2026-01-15');
   await expect(page.locator('[data-w="granica"]')).toHaveText(/^10\s?500,00\szł$/);
   await expect(page.locator('[data-w="przedawnienie"]')).toHaveText(/^30\sczerwca\s2026\sr\.$/);
   await expect(page.locator('[data-w="status"]')).toHaveText(/^Termin\spracodawcy\sminął\s137\sdni\stemu$/);
-  await expect(page.locator('[data-w="uwaga"]')).toContainText(/halą\sspedycyjną/);
+  await expect(page.locator('[data-w="uwagi"]')).toContainText(/halą\sspedycyjną/);
 });
 
 test('wina umyślna i wspólne mienie', async ({ page }) => {
@@ -48,6 +48,11 @@ test('wina umyślna i wspólne mienie', async ({ page }) => {
   await expect(page.locator('[data-w="przedawnienie"]')).toHaveText(/^28\slutego\s2027\sr\.$/);
   await expect(page.locator('[data-w="przedawnienie-opis"]')).toContainText(/31\sgrudnia\s2027\sr\./);
   await expect(page.locator('[data-w="przedawnienie-opis"]')).toContainText(/29\slutego\s2040\sr\./);
+  // Termin z art. 442¹ § 1 minął, ale przy końcu roku i przestępstwie mógł jeszcze nie minąć: bez „minął” na czerwono.
+  await page.getByLabel('Dzień szkody').fill('2023-03-10');
+  await page.getByLabel('Pracodawca wie od').fill('2023-03-10');
+  await expect(page.locator('[data-w="status"]')).toHaveText(/^Termin\smógł\sminąć,\sale\smoże\strwać\sdo\s31\sgrudnia\s2026\sr\.$/);
+  await expect(page.locator('[data-w="status"]')).toHaveAttribute('data-status', 'wkrotce');
   await page.getByLabel('Sytuacja', { exact: true }).selectOption('wspolne');
   await page.getByLabel('Kwota szkody (zł)').fill('9000,50');
   await page.getByLabel('Twoja część z umowy (%)').fill('33,33');
@@ -55,13 +60,43 @@ test('wina umyślna i wspólne mienie', async ({ page }) => {
 });
 
 test('błędne dane', async ({ page }) => {
-  await page.getByLabel('Z winy pracodawcy (zł)').fill('25000');
+  await page.getByLabel('Przyczynienie innych (zł)').fill('25000');
   await expect(page.locator('[data-blad="kwoty"]')).toBeVisible();
-  await expect(page.getByLabel('Z winy pracodawcy (zł)')).toHaveAttribute('aria-invalid', 'true');
+  await expect(page.getByLabel('Przyczynienie innych (zł)')).toHaveAttribute('aria-invalid', 'true');
   await expect(page.locator('[data-w="granica"]')).toHaveText('—');
-  await page.getByLabel('Z winy pracodawcy (zł)').fill('0');
+  await page.getByLabel('Przyczynienie innych (zł)').fill('0');
   await page.getByLabel('Pracodawca wie od').fill('2026-03-01');
   await expect(page.locator('[data-blad="daty"]')).toBeVisible();
   await expect(page.locator('[data-blad="kwoty"]')).toBeHidden();
   await expect(page.locator('[data-w="przedawnienie"]')).toHaveText('—');
+});
+
+test('pola zależne od sytuacji: błąd ukrytego pola znika razem z aria-invalid', async ({ page }) => {
+  const pensja = page.getByLabel('Pensja w dniu szkody (zł brutto)');
+  const procent = page.getByLabel('Twoja część z umowy (%)');
+  await expect(procent).toBeHidden();
+  await pensja.fill('');
+  await expect(page.locator('[data-blad="kwoty"]')).toBeVisible();
+  await expect(pensja).toHaveAttribute('aria-invalid', 'true');
+  await page.getByLabel('Sytuacja', { exact: true }).selectOption('umyslna');
+  await expect(page.locator('[data-blad="kwoty"]')).toBeHidden();
+  await expect(page.locator('[aria-invalid="true"]')).toHaveCount(0);
+  await expect(page.locator('[data-w="granica"]')).toHaveText(/^20\s?000,00\szł$/);
+  await page.getByLabel('Sytuacja', { exact: true }).selectOption('wspolne');
+  await expect(procent).toBeVisible();
+  await expect(pensja).toBeHidden();
+});
+
+test('dwa błędy naraz: kwota i data', async ({ page }) => {
+  await page.getByLabel('Kwota szkody (zł)').fill('');
+  await page.getByLabel('Pracodawca wie od').fill('2026-03-01');
+  await expect(page.locator('[data-blad="kwoty"]')).toBeVisible();
+  await expect(page.locator('[data-blad="daty"]')).toBeVisible();
+  await expect(page.getByLabel('Pracodawca wie od')).toHaveAttribute('aria-invalid', 'true');
+});
+
+test('daty domyślne liczone w przeglądarce', async ({ page }) => {
+  await page.goto(adresNarzedzia('odpowiedzialnosc-materialna'));
+  await expect(page.getByLabel('Dzień szkody')).toHaveValue('2026-10-15');
+  await expect(page.getByLabel('Pracodawca wie od')).toHaveValue('2026-10-25');
 });

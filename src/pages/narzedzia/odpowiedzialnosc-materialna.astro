@@ -22,11 +22,11 @@ const faq = [
   },
   {
     pytanie: 'Czy pracodawca może potrącić szkodę z wypłaty?',
-    odpowiedz: 'Tylko za pisemną zgodą pracownika (art. 91 § 1 Kodeksu pracy). Odszkodowania za szkodę nie ma wśród należności, które pracodawca może potrącić bez zgody: alimentów i innych sum egzekwowanych na mocy tytułów wykonawczych, zaliczek pieniężnych i kar porządkowych (art. 87 § 1). Bez zgody pracodawca musi wystąpić do sądu pracy. Także przy zgodzie część wynagrodzenia jest wolna od potrąceń (art. 91 § 2 pkt 1).',
+    odpowiedz: 'Tylko za pisemną zgodą pracownika (art. 91 § 1 Kodeksu pracy). Odszkodowania za szkodę nie ma wśród należności, które można potrącić bez zgody: alimentów i innych sum egzekwowanych na mocy tytułów wykonawczych, zaliczek pieniężnych i kar pieniężnych za naruszenie porządku pracy (art. 87 § 1). Bez zgody pracodawca musi uzyskać wyrok sądu pracy albo ugodę z klauzulą wykonalności i skierować sprawę do komornika. Także przy zgodzie część wynagrodzenia jest wolna od potrąceń (art. 91 § 2 pkt 1).',
   },
   {
     pytanie: 'Kto odpowiada za manko w magazynie?',
-    odpowiedz: 'Pracownik, któremu powierzono mienie z obowiązkiem zwrotu albo wyliczenia się, odpowiada w pełnej wysokości za szkodę w tym mieniu, także przy winie nieumyślnej (art. 124 § 1–2 Kodeksu pracy). Uwolni się, gdy wykaże, że szkoda powstała z przyczyn od niego niezależnych, w szczególności gdy pracodawca nie zapewnił warunków do zabezpieczenia mienia (art. 124 § 3). Kilka osób odpowiada wspólnie tylko na podstawie pisemnej umowy o współodpowiedzialności materialnej, w częściach określonych w umowie (art. 125).',
+    odpowiedz: 'Pracownik, któremu powierzono mienie z obowiązkiem zwrotu albo wyliczenia się, odpowiada w pełnej wysokości za szkodę w tym mieniu, także przy winie nieumyślnej (art. 124 § 1–2 Kodeksu pracy). Odpowiedzialności nie ma, gdy pracownik wykaże, że szkoda powstała z przyczyn od niego niezależnych, w szczególności gdy pracodawca nie zapewnił warunków do zabezpieczenia mienia (art. 124 § 3). Kilka osób odpowiada wspólnie tylko na podstawie pisemnej umowy o współodpowiedzialności materialnej, w częściach określonych w umowie (art. 125).',
   },
   {
     pytanie: 'Kto musi udowodnić winę pracownika?',
@@ -34,11 +34,11 @@ const faq = [
   },
   {
     pytanie: 'Do kiedy pracodawca może żądać odszkodowania?',
-    odpowiedz: 'Roszczenie o szkodę z winy nieumyślnej przedawnia się z upływem roku od dnia, w którym pracodawca dowiedział się o szkodzie, ale nie później niż 3 lata od jej wyrządzenia (art. 291 § 2 Kodeksu pracy). Przy szkodzie umyślnej stosuje się Kodeks cywilny (art. 291 § 3): 3 lata od dnia, w którym pracodawca dowiedział się o szkodzie i o osobie, która ją wyrządziła, najwyżej 10 lat od zdarzenia, a przy przestępstwie 20 lat od jego popełnienia (art. 442¹ Kodeksu cywilnego).',
+    odpowiedz: 'Roszczenie o szkodę z winy nieumyślnej przedawnia się z upływem roku od dnia, w którym pracodawca dowiedział się o szkodzie, ale nie później niż 3 lata od jej wyrządzenia (art. 291 § 2 Kodeksu pracy). Przy szkodzie umyślnej, także w powierzonym mieniu, stosuje się Kodeks cywilny (art. 291 § 3): 3 lata od dnia, w którym pracodawca dowiedział się albo przy należytej staranności mógł się dowiedzieć o szkodzie i o osobie, która ją wyrządziła, najwyżej 10 lat od zdarzenia, a przy przestępstwie 20 lat od jego popełnienia (art. 442¹ Kodeksu cywilnego).',
   },
   {
     pytanie: 'Kto płaci, gdy w pracy uszkodzę cudzą rzecz?',
-    odpowiedz: 'Gdy pracownik przy wykonywaniu obowiązków wyrządził szkodę osobie trzeciej, na przykład klientowi albo przewoźnikowi, naprawić ją musi wyłącznie pracodawca (art. 120 § 1 Kodeksu pracy). Potem pracodawca może żądać zwrotu od pracownika, ale tylko na zasadach odpowiedzialności materialnej, w tym z limitem trzech pensji przy winie nieumyślnej (art. 120 § 2).',
+    odpowiedz: 'Gdy pracownik przy wykonywaniu obowiązków wyrządził szkodę osobie trzeciej, na przykład klientowi albo przewoźnikowi, naprawić ją musi wyłącznie pracodawca (art. 120 § 1 Kodeksu pracy). Potem pracodawca może żądać zwrotu od pracownika, ale tylko według przepisów o odpowiedzialności materialnej (art. 114–122), w tym z limitem trzech pensji przy winie nieumyślnej (art. 120 § 2).',
   },
 ];
 ---
@@ -67,9 +67,9 @@ const faq = [
           <input id="o-szkoda" name="szkoda" class="pole mt-1" type="text" inputmode="decimal" value="20000" aria-describedby="o-blad" />
         </div>
         <div>
-          <label for="o-przyczynienie" class="etykieta-pola">Z winy pracodawcy (zł)</label>
+          <label for="o-przyczynienie" class="etykieta-pola">Przyczynienie innych (zł)</label>
           <input id="o-przyczynienie" name="przyczynienie" class="pole mt-1" type="text" inputmode="decimal" value="0" aria-describedby="o-przyczynienie-opis o-blad" />
-          <p id="o-przyczynienie-opis" class="meta mt-1">Część szkody, do której przyczynił się pracodawca albo inna osoba; 0, gdy nie wiesz.</p>
+          <p id="o-przyczynienie-opis" class="meta mt-1">Część szkody, do której przyczynił się pracodawca albo inna osoba (art. 117 § 1); 0, gdy nie wiesz.</p>
         </div>
         <div data-pole="wynagrodzenie" hidden={SYTUACJA !== 'nieumyslna'}>
           <label for="o-wynagrodzenie" class="etykieta-pola">Pensja w dniu szkody (zł brutto)</label>
@@ -109,7 +109,7 @@ const faq = [
       </div>
       <p class="wynik-uwaga" data-w="przedawnienie-opis">{start.przedawnienieOpis}</p>
       <p class="wynik-uwaga" data-w="potracenie">{start.potracenie}</p>
-      <p class="wynik-uwaga" data-w="uwaga">{start.uwagi.join(' ')}</p>
+      <div data-w="uwagi">{start.uwagi.map((u) => <p class="wynik-uwaga">{u}</p>)}</div>
       <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
     </div>
   </form>
@@ -117,43 +117,50 @@ const faq = [
   <Fragment slot="wyjasnienie">
     <h2 id="zasady">Zasady odpowiedzialności materialnej</h2>
     <ul>
-      <li>Pracownik, który z własnej winy, przez niewykonanie albo złe wykonanie obowiązków, wyrządził pracodawcy szkodę, odpowiada według przepisów Kodeksu pracy (art. 114), a nie Kodeksu cywilnego. Winę i wysokość szkody musi wykazać pracodawca (art. 116).</li>
+      <li>Pracownik, który z własnej winy, przez niewykonanie albo złe wykonanie obowiązków, wyrządził pracodawcy szkodę, odpowiada według przepisów rozdziału Kodeksu pracy o odpowiedzialności materialnej (art. 114). Winę i wysokość szkody musi wykazać pracodawca (art. 116).</li>
       <li>Wina nieumyślna: tylko rzeczywista strata i normalne następstwa (art. 115), najwyżej trzykrotność wynagrodzenia z dnia szkody (art. 119). Pracownik nie odpowiada za szkodę w granicach dopuszczalnego ryzyka ani za ryzyko działalności pracodawcy (art. 117 § 2).</li>
       <li>Wina umyślna: naprawienie szkody w pełnej wysokości (art. 122).</li>
       <li>Mienie powierzone z obowiązkiem zwrotu albo wyliczenia się (pieniądze, narzędzia, odzież i obuwie robocze, środki ochrony, a także inne mienie, np. towar): odpowiedzialność w pełnej wysokości (art. 124 § 1–2). Pracownik uwalnia się, gdy wykaże przyczyny od siebie niezależne, w szczególności brak warunków do zabezpieczenia mienia (art. 124 § 3).</li>
-      <li>Wspólna odpowiedzialność za mienie powierzone kilku osobom łącznie wymaga pisemnej umowy o współodpowiedzialności materialnej, pod rygorem nieważności; odpowiada się w częściach z umowy, a gdy ustalono sprawców, za ich część odpowiadają tylko oni (art. 125). Umowę można zawrzeć przy najwyżej 8 osobach na jednej zmianie, 12 na dwóch i 16 na trzech (§ 2 rozporządzenia z 4 października 1974 r.).</li>
-      <li>Przy każdej z tych sytuacji pracownik nie odpowiada w zakresie, w jakim do szkody przyczynił się pracodawca albo inna osoba (art. 117 § 1, przy mieniu powierzonym przez art. 127). Odszkodowanie może obniżyć ugoda z pracodawcą albo sąd pracy (art. 121), a niewykonaną ugodę sąd może zaopatrzyć w klauzulę wykonalności (art. 121¹).</li>
-      <li>Szkodę wyrządzoną przy pracy komuś spoza zakładu naprawia wyłącznie pracodawca, który potem może żądać zwrotu od pracownika na tych samych zasadach (art. 120).</li>
+      <li>Wspólna odpowiedzialność za mienie powierzone kilku osobom łącznie wymaga pisemnej umowy o współodpowiedzialności materialnej, pod rygorem nieważności; odpowiada się w częściach z umowy, a gdy ustalono sprawców, za ich część odpowiadają tylko oni (art. 125). Umowę można zawrzeć w magazynie przy najwyżej 8 osobach na jednej zmianie, 12 na dwóch i 16 na trzech, nie licząc m.in. osób dorywczych, nowo przyjętych do najbliższej inwentaryzacji, młodocianych i praktykantów, i tylko za zgodą wszystkich pracowników z miejsca powierzenia mienia (§ 2 ust. 1 i 3 oraz § 4 ust. 1 rozporządzenia z 4 października 1974 r.).</li>
+      <li>Pracownik nie odpowiada w zakresie, w jakim do szkody przyczynił się pracodawca albo inna osoba (art. 117 § 1, przy mieniu powierzonym przez art. 127). Odszkodowanie może obniżyć ugoda z pracodawcą albo sąd pracy (art. 121; przy mieniu powierzonym przez art. 127), a niewykonaną ugodę sąd może zaopatrzyć w klauzulę wykonalności (art. 121¹).</li>
+      <li>Szkodę, którą pracownik przy wykonywaniu obowiązków wyrządził osobie trzeciej, naprawia wyłącznie pracodawca; potem może żądać zwrotu od pracownika według art. 114–122 (art. 120).</li>
+      <li>Przy mieniu powierzonym odszkodowanie obniża się, gdy nadzór nad mieniem jest utrudniony, w szczególności w magazynie, w którym pracuje się dłużej niż na jedną zmianę albo w obsadzie co najmniej 5 osób. Dotyczy to towaru i innego mienia z art. 124 § 2 oraz mienia wspólnego, a nie pieniędzy, narzędzi, odzieży ani środków ochrony (§ 6 ust. 1 rozporządzenia z 10 października 1975 r.). Obniżenie ustala pracodawca po wysłuchaniu pracownika, z uwzględnieniem m.in. stopnia utrudnienia nadzoru, winy i sytuacji rodzinnej (§ 8–9).</li>
     </ul>
 
     <h2 id="jak-liczymy">Jak liczymy</h2>
     <p>
-      Od kwoty szkody odejmujemy część, do której przyczynił się pracodawca albo inna osoba. Przy winie nieumyślnej
-      wynik to mniejsza z dwóch kwot: tej różnicy i trzykrotności wpisanego wynagrodzenia. Wynagrodzenie do art. 119
-      ustala się według zasad ekwiwalentu za urlop, bez zmian wprowadzonych po dniu szkody (§ 3 rozporządzenia z 29 maja
-      1996 r., Dz.U. 2017 poz. 927): stałe składniki miesięczne w obecnej wysokości, a zmienne, na przykład premie
-      i nadgodziny, w średniej z 3 miesięcy (§ 15–16 rozporządzenia urlopowego, Dz.U. 1997 nr 2 poz. 14). Przepisy nie
-      mówią, który miesiąc jest tu „miesiącem nabycia prawa”, więc przyjmujemy miesiąc szkody. Rozporządzenia nie używają
-      słowa „brutto”, ale liczą wynagrodzenie przed potrąceniami, więc wpisujesz kwotę brutto. Podwyżka obowiązująca już
-      w dniu szkody się liczy, bo wynagrodzenie „przysługuje” wtedy w nowej wysokości; podwyżka od następnego dnia nie.
+      Od kwoty szkody odejmujemy część, do której przyczynił się pracodawca albo inna osoba (art. 117 § 1); przepis stoi
+      w tym samym rozdziale co art. 122 i nie wyłącza winy umyślnej, więc odejmujemy ją w każdej sytuacji. Przy winie
+      nieumyślnej wynik to mniejsza z dwóch kwot: tej różnicy i trzykrotności wpisanego wynagrodzenia. Wynagrodzenie do
+      art. 119 ustala się według zasad ekwiwalentu za urlop, bez zmian wprowadzonych po dniu szkody (§ 3 rozporządzenia
+      z 29 maja 1996 r., Dz.U. 2017 poz. 927): stałe składniki w wysokości z dnia szkody, zmienne za okresy do miesiąca,
+      na przykład premie miesięczne i nadgodziny, ze średniej z 3 miesięcy, a za okresy dłuższe, na przykład premie
+      kwartalne, ze średniej z 12 miesięcy (§ 14–17 rozporządzenia urlopowego, Dz.U. 1997 nr 2 poz. 14). Przepisy nie mówią,
+      który miesiąc jest tu „miesiącem nabycia prawa”, więc przyjmujemy miesiąc szkody. Rozporządzenia nie używają słowa
+      „brutto”, ale liczą wynagrodzenie przed potrąceniami, więc wpisujesz kwotę brutto. Podwyżka obowiązująca już w dniu
+      szkody się liczy, bo wynagrodzenie „przysługuje” wtedy w nowej wysokości; podwyżka od następnego dnia nie.
     </p>
     <p>
-      Przy winie umyślnej i mieniu powierzonym limitu trzech pensji nie ma: art. 127 odsyła do art. 117, 121, 121¹ i 122,
-      ale nie do art. 119. Przy umowie o współodpowiedzialności liczymy wpisaną część z umowy. Wyjątek dla magazynu:
-      w magazynie z wydzieloną halą spedycyjną i dozorem ruchu mienia i osób, albo z automatycznym przeładunkiem, za
-      powierzony towar odpowiada się na zasadach art. 114–116 i 118 Kodeksu pracy, po pisemnym zawiadomieniu
-      i inwentaryzacji (§ 2 rozporządzenia z 10 października 1975 r., Dz.U. 1996 nr 143 poz. 662), a odszkodowanie
-      może być obniżone, gdy nadzór nad mieniem jest utrudniony, np. przy pracy na kilka zmian albo w obsadzie od
-      5 osób (§ 6–8). Rozporządzenie nie mówi wprost, czy obowiązuje wtedy limit z art. 119, więc go nie liczymy:
-      pokazujemy kwotę najwyższą.
+      Przy winie umyślnej limitu nie ma, bo art. 122 nakazuje naprawić szkodę w pełnej wysokości. Przy mieniu powierzonym
+      też go nie ma: art. 124 mówi o pełnej wysokości, a art. 127 odsyła do art. 117, 121, 121¹ i 122, ale nie do art. 119.
+      Przy umowie o współodpowiedzialności liczymy wpisaną część z umowy. Obowiązkowego obniżenia przy utrudnionym nadzorze
+      (§ 6 rozporządzenia z 10 października 1975 r.) nie liczymy, bo przepis nie podaje kwoty: pokazujemy kwotę przed
+      obniżeniem. W magazynie z wydzieloną halą spedycyjną i dozorem ruchu mienia i osób, albo z automatycznym
+      przeładunkiem, za powierzony towar odpowiada się na zasadach art. 114–116 i 118 Kodeksu pracy, po pisemnym
+      zawiadomieniu i inwentaryzacji, najpóźniej w miesiąc od zaistnienia tych warunków (§ 2 rozporządzenia z 1975 r.);
+      w magazynie bez hali spedycyjnej pracodawca może zastosować te zasady po opinii związku zawodowego (§ 3), a przy
+      wspólnej odpowiedzialności te przepisy nie działają (§ 5). Wtedy odszkodowanie można obniżyć tylko w wyjątkowych
+      wypadkach (§ 7). Rozporządzenie odsyła do art. 114–116 i 118, ale nie do art. 119 (art. 126 § 2 pkt 2 Kodeksu
+      pracy), więc limitu trzech pensji tu nie liczymy.
     </p>
     <p>
       Przedawnienie liczymy jak inne terminy w latach: koniec przypada w dniu, który datą odpowiada dniowi początkowemu,
-      a 29 lutego odpowiada 28 lutego (art. 112 Kodeksu cywilnego przez art. 300 Kodeksu pracy), bez przesunięcia na dzień
-      roboczy. Przy szkodzie umyślnej termin z art. 442¹ Kodeksu cywilnego trwa co najmniej 2 lata, więc część sądów
-      może przesunąć jego koniec na ostatni dzień roku (art. 118 zd. 2); przepisy nie przesądzają tego wprost, dlatego
-      podajemy obie daty. Kalkulator nie ocenia, czy była wina, jaka i czy szkoda jest prawdziwa: o tym rozstrzyga sąd
-      pracy. Nie liczymy kwoty wolnej od potrąceń. Jak zgłosić sprawę sądowi albo inspekcji pracy, pokaże <a href="/narzedzia/sad-pracy-czy-pip">strona o sądzie pracy i PIP</a>.
+      a 29 lutego odpowiada 28 lutego (art. 112 Kodeksu cywilnego przez art. 300 Kodeksu pracy). To roszczenie przeciw
+      Tobie, więc gdy przepisy nie przesądzają, która data jest właściwa, podajemy też późniejszą: gdy koniec wypada
+      w sobotę albo dzień wolny, następny dzień roboczy (art. 115 Kodeksu cywilnego), a przy szkodzie umyślnej ostatni
+      dzień roku (art. 118 zd. 2), bo termin z art. 442¹ trwa co najmniej 2 lata. Status pod datą liczymy od daty
+      późniejszej. Kalkulator nie ocenia, czy była wina, jaka i czy szkoda jest prawdziwa: o tym rozstrzyga sąd pracy.
+      Nie liczymy kwoty wolnej od potrąceń. Jak zgłosić sprawę sądowi albo inspekcji pracy, pokaże <a href="/narzedzia/sad-pracy-czy-pip">strona o sądzie pracy i PIP</a>.
     </p>
   </Fragment>
 </StronaNarzedzia>
@@ -171,7 +178,8 @@ const faq = [
     const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
     const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
     const pisz = (k: string, tekst: string) => {
-      w(k).textContent = typografia(tekst);
+      const t = typografia(tekst);
+      if (w(k).textContent !== t) w(k).textContent = t;
     };
     const bladKwot = form.querySelector<HTMLElement>('[data-blad="kwoty"]')!;
     const bladDat = form.querySelector<HTMLElement>('[data-blad="daty"]')!;
@@ -193,13 +201,15 @@ const faq = [
       };
       const dzis = dzisWPolsce();
       const blad = bladDanych(dane, dzis);
-      const dotyczyDat = !!blad && POLA_DAT.has(blad.pole);
-      pokazBlad(bladKwot, blad && !dotyczyDat ? blad.tekst : null, blad && !dotyczyDat ? el(blad.pole) : []);
-      pokazBlad(bladDat, blad && dotyczyDat ? blad.tekst : null, blad && dotyczyDat ? el(blad.pole) : []);
+      // Dwa komunikaty: błąd kwot i, niezależnie od niego, błąd dat (sprawdzany z poprawnymi kwotami zastępczymi).
+      const bladK = blad && !POLA_DAT.has(blad.pole) ? blad : null;
+      const bladD = bladK ? bladDanych({ ...dane, sytuacja: 'umyslna', szkoda: 1, przyczynienie: 0 }, dzis) : blad;
+      pokazBlad(bladKwot, bladK?.tekst, bladK ? el(bladK.pole) : []);
+      pokazBlad(bladDat, bladD?.tekst, bladD ? el(bladD.pole) : []);
       const status = w('status');
       if (blad) {
         for (const k of ['granica', 'przepisy', 'przedawnienie']) w(k).textContent = '—';
-        for (const k of ['granica-opis', 'przedawnienie-opis', 'potracenie', 'uwaga']) w(k).textContent = '';
+        for (const k of ['granica-opis', 'przedawnienie-opis', 'potracenie', 'uwagi']) w(k).replaceChildren();
         status.hidden = true;
         return;
       }
@@ -210,7 +220,19 @@ const faq = [
       pisz('przedawnienie', o.przedawnienie);
       pisz('przedawnienie-opis', o.przedawnienieOpis);
       pisz('potracenie', o.potracenie);
-      pisz('uwaga', o.uwagi.join(' '));
+      const uwagi = w('uwagi');
+      const teksty = o.uwagi.map((u) => typografia(u));
+      // Akapity wymieniamy tylko przy zmianie treści, żeby nie przebudowywać wyniku przy każdym znaku.
+      if ([...uwagi.children].map((p) => p.textContent).join('\n') !== teksty.join('\n')) {
+        uwagi.replaceChildren(
+          ...teksty.map((t) => {
+            const p = document.createElement('p');
+            p.className = 'wynik-uwaga';
+            p.textContent = t;
+            return p;
+          }),
+        );
+      }
       status.hidden = false;
       status.dataset.status = o.statusKlasa;
       pisz('status', o.status);

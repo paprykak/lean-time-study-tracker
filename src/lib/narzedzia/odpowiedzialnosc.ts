@@ -19,14 +19,19 @@
 // - przedawnienie przy winie nieumyślnej i mieniu powierzonym: rok od dnia, w którym pracodawca dowiedział się o szkodzie,
 //   najpóźniej 3 lata od szkody (art. 291 § 2); przy winie umyślnej przepisy KC (art. 291 § 3): 3 lata od dowiedzenia się,
 //   najpóźniej 10 lat od zdarzenia (art. 442¹ § 1), 20 lat od przestępstwa (§ 2); końce lat według art. 112 KC jak
-//   w przedawnienie.ts (29 lutego → 28 lutego), bez przesunięć z art. 115 KC; przy winie umyślnej podajemy też koniec roku
-//   z art. 118 zd. 2 KC, bo nie jest przesądzone, czy dotyczy terminu z art. 442¹ (późniejsza data: bezpieczniej nie
-//   zakładać, że roszczenie wygasło przed nią).
+//   w przedawnienie.ts (29 lutego → 28 lutego). Roszczenie jest przeciw pracownikowi, więc bezpieczna jest data późniejsza:
+//   status („zostało”, „minął”) liczymy od dnia po przesunięciu z soboty i dnia wolnego (art. 115 KC), a przy winie
+//   umyślnej od końca roku z art. 118 zd. 2 KC; oba przesunięcia nie są przesądzone, więc strona podaje obie daty;
+// - mienie powierzone: § 6 ust. 1 rozporządzenia z 1975 r. każe obniżyć odszkodowanie przy utrudnionym nadzorze (art. 124
+//   § 2 i 125); kwoty obniżenia przepis nie podaje, więc pokazujemy kwotę przed obniżeniem i piszemy o nim w uwagach;
+// - zarzut i przerwanie przedawnienia: art. 292 i 295 Kp, przy winie umyślnej art. 117 § 2 i 123–124 KC (art. 291 § 3).
 // Nie liczymy kwoty wolnej od potrąceń (art. 87¹ § 1 pkt 1 i art. 91 § 2): sprawa składki zdrowotnej jest otwarta (STAN.md).
 
 import { liczba, zl } from './format';
 import { odmiana } from '../redakcja';
-import { dataPoPolsku, dniMiedzy, dodajLata, poprawnaData } from './terminy';
+import { swieta } from './czas-pracy';
+import { dzienTygodnia } from './dni-wolne';
+import { dataPoPolsku, dniMiedzy, dodajDni, dodajLata, poprawnaData } from './terminy';
 
 export type Sytuacja = 'nieumyslna' | 'umyslna' | 'powierzone' | 'wspolne';
 
@@ -38,7 +43,7 @@ export const SYTUACJE: Record<Sytuacja, { krotko: string; opis: string; przepis:
   },
   umyslna: {
     krotko: 'Szkoda umyślna',
-    opis: 'Pracownik chciał wyrządzić szkodę albo się na nią godził, np. kradzież albo celowe zniszczenie.',
+    opis: 'Szkoda wyrządzona celowo albo przy świadomym godzeniu się na nią, np. przywłaszczenie towaru albo celowe zniszczenie.',
     przepis: 'art. 122 Kodeksu pracy',
   },
   powierzone: {
@@ -72,15 +77,18 @@ const gr = (x: number) => Math.round(x * 100);
 
 /** Sprawdza dane; zwraca komunikat błędu i nazwę pola albo null. */
 export function bladDanych(d: DaneOdpowiedzialnosci, dzis: string): { pole: string; tekst: string } | null {
-  if (!(d.szkoda > 0 && d.szkoda < 100_000_000)) return { pole: 'szkoda', tekst: 'Wpisz kwotę szkody w złotych, na przykład 12000.' };
+  if (!(gr(d.szkoda) > 0 && d.szkoda < 100_000_000)) return { pole: 'szkoda', tekst: 'Wpisz kwotę szkody w złotych, na przykład 12000.' };
   const p = d.przyczynienie ?? 0;
-  if (!(p >= 0 && p < 100_000_000)) return { pole: 'przyczynienie', tekst: 'Wpisz część szkody z winy pracodawcy w złotych albo 0.' };
-  if (gr(p) > gr(d.szkoda)) return { pole: 'przyczynienie', tekst: 'Część szkody z winy pracodawcy nie może być większa niż cała szkoda.' };
-  if (d.sytuacja === 'nieumyslna' && !((d.wynagrodzenie ?? Number.NaN) > 0 && (d.wynagrodzenie ?? 0) < 10_000_000))
+  if (!(p >= 0 && p < 100_000_000)) return { pole: 'przyczynienie', tekst: 'Wpisz w złotych część szkody, do której przyczynił się pracodawca albo inna osoba, albo 0.' };
+  if (gr(p) > gr(d.szkoda)) return { pole: 'przyczynienie', tekst: 'Przyczynienie pracodawcy albo innej osoby nie może być większe niż cała szkoda.' };
+  if (d.sytuacja === 'nieumyslna' && !(gr(d.wynagrodzenie ?? Number.NaN) > 0 && (d.wynagrodzenie ?? 0) < 10_000_000))
     return { pole: 'wynagrodzenie', tekst: 'Wpisz wynagrodzenie miesięczne brutto, na przykład 5200.' };
-  if (d.sytuacja === 'wspolne' && !((d.udzial ?? Number.NaN) > 0 && (d.udzial ?? 0) <= 100))
-    return { pole: 'udzial', tekst: 'Wpisz część z umowy w procentach: więcej niż 0, najwyżej 100.' };
-  if (!poprawnaData(d.dataSzkody) || d.dataSzkody < '1990-01-01') return { pole: 'dataSzkody', tekst: 'Wpisz dzień szkody.' };
+  if (d.sytuacja === 'wspolne' && !(Math.round((d.udzial ?? Number.NaN) * 100) > 0 && (d.udzial ?? 0) <= 100))
+    return { pole: 'udzial', tekst: 'Wpisz część z umowy w procentach: od 0,01 do 100.' };
+  if (d.sytuacja === 'wspolne' && Math.abs((d.udzial ?? 0) * 100 - Math.round((d.udzial ?? 0) * 100)) > 1e-6)
+    return { pole: 'udzial', tekst: 'Wpisz część z umowy z najwyżej dwoma miejscami po przecinku, na przykład 33,33.' };
+  if (!poprawnaData(d.dataSzkody)) return { pole: 'dataSzkody', tekst: 'Wpisz dzień szkody.' };
+  if (d.dataSzkody < '1990-01-01') return { pole: 'dataSzkody', tekst: 'Dzień szkody: najwcześniej 1 stycznia 1990 r.' };
   if (d.dataSzkody > dzis) return { pole: 'dataSzkody', tekst: 'Dzień szkody nie może być późniejszy niż dziś.' };
   if (!poprawnaData(d.dataWiedzy)) return { pole: 'dataWiedzy', tekst: 'Wpisz dzień, w którym pracodawca dowiedział się o szkodzie.' };
   if (d.dataWiedzy < d.dataSzkody) return { pole: 'dataWiedzy', tekst: 'Pracodawca nie mógł dowiedzieć się o szkodzie przed dniem szkody.' };
@@ -128,6 +136,14 @@ export function przedawnienieRoszczenia(sytuacja: Sytuacja, dataSzkody: string, 
   return { koniec: wczesniejsza(odWiedzy, maks), odWiedzy, maks, koniecRoku: null, przestepstwo: null };
 }
 
+/** Art. 115 KC: koniec terminu w sobotę albo dzień ustawowo wolny przesuwa się na następny dzień, który nim nie jest. */
+export function przesunietyKoniec(data: string): string {
+  let d = data;
+  const wolne = (x: string) => dzienTygodnia(x) === 0 || dzienTygodnia(x) === 6 || swieta(Number(x.slice(0, 4))).some((s) => s.data === x);
+  while (wolne(d)) d = dodajDni(d, 1);
+  return d;
+}
+
 export interface OpisOdpowiedzialnosci {
   granica: string;
   granicaOpis: string;
@@ -137,17 +153,27 @@ export interface OpisOdpowiedzialnosci {
   status: string;
   statusKlasa: 'po-terminie' | 'pilne' | 'wkrotce' | 'w-terminie';
   potracenie: string;
+  /** Uwagi zależne od sytuacji: każda w osobnym akapicie. */
   uwagi: string[];
 }
 
 const POTRACENIE =
-  'Pracodawca może potrącić odszkodowanie z pensji tylko za Twoją zgodą wyrażoną na piśmie (art. 91 § 1 Kodeksu pracy): nie ma go wśród potrąceń dozwolonych bez zgody (art. 87 § 1). Bez zgody musi uzyskać wyrok albo inny tytuł wykonawczy. Także przy zgodzie część pensji jest wolna od potrąceń (art. 91 § 2 pkt 1 i art. 87¹ § 1 pkt 1).';
+  'Potrącić odszkodowanie z pensji pracodawca może tylko za Twoją zgodą na piśmie (art. 91 § 1 Kodeksu pracy): nie ma go wśród potrąceń bez zgody (art. 87 § 1). Bez zgody musi uzyskać wyrok sądu pracy albo ugodę z klauzulą wykonalności (art. 121¹) i skierować sprawę do komornika. Także przy zgodzie część pensji jest wolna od potrąceń (art. 91 § 2 pkt 1).';
 
-const MAGAZYN =
-  'W magazynie z wydzieloną halą spedycyjną i dozorem ruchu mienia i osób (albo z automatycznym przeładunkiem) za powierzony towar odpowiada się na zasadach art. 114–116 i 118 Kodeksu pracy, po pisemnym zawiadomieniu i inwentaryzacji (§ 2 rozporządzenia z 10 października 1975 r.): wtedy pracodawca musi udowodnić winę. Rozporządzenie nie mówi wprost, czy obowiązuje wtedy limit trzech pensji z art. 119.';
+const OBNIZENIE_1975 =
+  'Gdy nadzór nad mieniem jest utrudniony, na przykład w magazynie, w którym pracuje się dłużej niż na jedną zmianę albo w obsadzie co najmniej 5 osób, odszkodowanie za towar i inne mienie z art. 124 § 2 oraz za mienie wspólne obniża się stosownie do utrudnienia; nie dotyczy to pieniędzy, narzędzi, odzieży i obuwia roboczego ani środków ochrony (§ 6 ust. 1 rozporządzenia z 10 października 1975 r.). Obniżenie ustala pracodawca po wysłuchaniu pracownika (§ 8–9). Kwota wyżej jest przed obniżeniem.';
 
-const PRZERWANIE =
-  'Bieg przedawnienia przerywa pozew albo inna czynność przed sądem, a także uznanie roszczenia, na przykład podpisanie ugody albo zgody na potrącenie; potem termin biegnie od nowa (art. 295 Kodeksu pracy). Przedawnienie trzeba podnieść: kto płaci, może uchylić się od zapłaty po terminie (art. 117 § 2 Kodeksu cywilnego).';
+const MAGAZYN_1975 =
+  'W magazynie z wydzieloną halą spedycyjną i dozorem ruchu mienia i osób (albo z automatycznym przeładunkiem) za powierzony towar odpowiada się na zasadach art. 114–116 i 118 Kodeksu pracy, czyli pracodawca musi udowodnić winę, a odpowiada się tylko za rzeczywistą stratę; obowiązuje to po pisemnym zawiadomieniu i inwentaryzacji (§ 2 rozporządzenia z 10 października 1975 r.). Rozporządzenie nie odsyła do limitu trzech pensji z art. 119.';
+
+const UMYSLNIE_POWIERZONE =
+  'Gdy pracodawca zarzuca, że szkodę wyrządzono umyślnie, na przykład przez przywłaszczenie towaru, odpowiada się w pełnej wysokości (art. 122 przez art. 127), a przedawnienie liczy się jak przy szkodzie umyślnej (art. 291 § 3): wybierz wtedy „Szkoda umyślna”.';
+
+const RYZYKO = 'Pracownik nie odpowiada za szkodę w granicach dopuszczalnego ryzyka ani za ryzyko działalności pracodawcy (art. 117 § 2).';
+
+const UGODA = 'W ugodzie z pracodawcą odszkodowanie może być niższe, z uwzględnieniem m.in. stopnia winy i stosunku do obowiązków; może je obniżyć także sąd pracy (art. 121).';
+
+const STATUS_DNI = (zostalo: number): OpisOdpowiedzialnosci['statusKlasa'] => (zostalo <= 30 ? 'pilne' : zostalo <= 90 ? 'wkrotce' : 'w-terminie');
 
 /** Teksty wyniku: te same w HTML ze strony i w skrypcie przeglądarki. Rzuca RangeError przy błędnych danych. */
 export function opisOdpowiedzialnosci(d: DaneOdpowiedzialnosci, dzis: string): OpisOdpowiedzialnosci {
@@ -155,66 +181,83 @@ export function opisOdpowiedzialnosci(d: DaneOdpowiedzialnosci, dzis: string): O
   if (blad) throw new RangeError(blad.tekst);
   const g = granicaOdszkodowania(d);
   const p = przedawnienieRoszczenia(d.sytuacja, d.dataSzkody, d.dataWiedzy);
+  const umyslna = d.sytuacja === 'umyslna';
   const uwagi: string[] = [];
   const przyczynienie = d.przyczynienie ?? 0;
-  const zPrzyczynieniem = przyczynienie > 0 ? ` po odjęciu ${zl(przyczynienie)}, za które odpowiada pracodawca albo inna osoba` : '';
+  const poOdjeciu = przyczynienie > 0 ? ` (po odjęciu ${zl(przyczynienie)}, do których przyczynił się pracodawca albo inna osoba)` : '';
 
   let granicaOpis: string;
   if (d.sytuacja === 'nieumyslna') {
     granicaOpis = g.limitDziala
-      ? `limit: 3 × ${zl(d.wynagrodzenie ?? 0)} wynagrodzenia z dnia szkody; szkoda${zPrzyczynieniem} to ${zl(g.poPrzyczynieniu)}`
-      : `cała szkoda${zPrzyczynieniem}; limit trzech pensji to ${zl(g.limit ?? 0)}`;
-    uwagi.push('Odpowiadasz tylko za rzeczywistą stratę i normalne następstwa, bez utraconych zysków pracodawcy (art. 115), i nie odpowiadasz za szkodę w granicach dopuszczalnego ryzyka (art. 117 § 2). Gdy szkodę wyrządziło kilka osób, każda odpowiada za część według przyczynienia się i stopnia winy, a gdy nie da się ich ustalić, w częściach równych (art. 118).');
-  } else if (d.sytuacja === 'umyslna') {
-    granicaOpis = `pełna wysokość szkody${zPrzyczynieniem}, bez limitu trzech pensji`;
-    uwagi.push('Przy winie umyślnej pracodawca może żądać także utraconych zysków, a nie tylko rzeczywistej straty: limit z art. 115 dotyczy winy nieumyślnej. Winę umyślną musi udowodnić pracodawca (art. 116).');
+      ? `limit: 3 × ${zl(d.wynagrodzenie ?? 0)} pensji z dnia szkody, mniej niż szkoda${poOdjeciu}: ${zl(g.poPrzyczynieniu)}`
+      : `cała szkoda${poOdjeciu}; limit trzech pensji to ${zl(g.limit ?? 0)}`;
+    uwagi.push(`Odpowiadasz tylko za rzeczywistą stratę i normalne następstwa, bez utraconych zysków pracodawcy (art. 115). ${RYZYKO} Gdy szkodę wyrządziło kilka osób, każda odpowiada za część według przyczynienia się i stopnia winy, a gdy nie da się ich ustalić, w częściach równych (art. 118).`);
+    uwagi.push(UGODA);
+  } else if (umyslna) {
+    granicaOpis = `pełna wysokość szkody${poOdjeciu}, bez limitu trzech pensji (art. 122)`;
+    uwagi.push('Winę umyślną musi udowodnić pracodawca (art. 116). Przy pełnej wysokości przyjmuje się, że pracodawca może żądać także utraconych korzyści, a nie tylko rzeczywistej straty. Przepis o obniżeniu odszkodowania w ugodzie albo przez sąd (art. 121) nie wyłącza wprost szkody umyślnej.');
   } else if (d.sytuacja === 'powierzone') {
-    granicaOpis = `pełna wysokość szkody w powierzonym mieniu${zPrzyczynieniem}`;
-    uwagi.push('Pracodawca musi wykazać, że prawidłowo powierzył mienie, i wysokość szkody. Uwolnisz się od odpowiedzialności, gdy wykażesz, że szkoda powstała z przyczyn od Ciebie niezależnych, w szczególności gdy pracodawca nie zapewnił warunków do zabezpieczenia mienia (art. 124 § 3).');
-    uwagi.push(MAGAZYN);
+    granicaOpis = `pełna wysokość szkody w powierzonym mieniu${poOdjeciu} (art. 124)`;
+    uwagi.push(`Uwolnisz się od odpowiedzialności, gdy wykażesz, że szkoda powstała z przyczyn od Ciebie niezależnych, w szczególności gdy pracodawca nie zapewnił warunków do zabezpieczenia mienia (art. 124 § 3). ${RYZYKO} ${UGODA}`);
+    uwagi.push(OBNIZENIE_1975, MAGAZYN_1975, UMYSLNIE_POWIERZONE);
   } else {
-    granicaOpis = `${liczba(d.udzial ?? 0)}% szkody${zPrzyczynieniem} (${zl(g.poPrzyczynieniu)}), według części z umowy`;
-    uwagi.push('Gdy ustalono, że niedobór spowodowały tylko niektóre osoby, za tę część odpowiadają tylko one (art. 125 § 2). Umowa musi być pisemna, pod rygorem nieważności (art. 125 § 1), a każda zmiana składu zespołu wymaga nowej umowy (§ 5 rozporządzenia z 4 października 1974 r.). W 3 dni od wiadomości o niedoborze możesz na piśmie odstąpić od umowy na przyszłość (§ 11).');
-    uwagi.push('Uwolnisz się od odpowiedzialności, gdy wykażesz, że szkoda powstała z przyczyn od Ciebie niezależnych, w szczególności gdy pracodawca nie zapewnił warunków do zabezpieczenia mienia (art. 124 § 3 przez art. 125 § 1).');
-  }
-  if (d.sytuacja !== 'umyslna') {
-    uwagi.push('W ugodzie z pracodawcą odszkodowanie może być niższe, z uwzględnieniem m.in. stopnia winy i stosunku do obowiązków; może je obniżyć także sąd pracy (art. 121).');
+    granicaOpis = `${liczba(d.udzial ?? 0)}% z ${zl(g.poPrzyczynieniu)}${poOdjeciu}, według części z umowy (art. 125 § 2)`;
+    uwagi.push('Gdy ustalono, że niedobór spowodowały tylko niektóre osoby, za tę część odpowiadają tylko one, a za resztę nadal wspólnie z pozostałymi (art. 125 § 2 i § 6 rozporządzenia z 4 października 1974 r.). Umowa musi być pisemna, pod rygorem nieważności (art. 125 § 1), a każda zmiana składu zespołu wymaga nowej umowy (§ 5).');
+    uwagi.push(`Uwolnisz się od odpowiedzialności, gdy wykażesz, że szkoda powstała z przyczyn od Ciebie niezależnych, w szczególności gdy pracodawca nie zapewnił warunków do zabezpieczenia mienia (art. 124 § 3 przez art. 125 § 1). W 3 dni od wiadomości o niedoborze możesz na piśmie odstąpić od umowy na przyszłość; za niedobór stwierdzony do końca inwentaryzacji odpowiadasz nadal (§ 11 i 20 rozporządzenia z 1974 r.). ${UGODA}`);
+    uwagi.push(OBNIZENIE_1975, UMYSLNIE_POWIERZONE);
   }
 
-  let przedawnienieOpis: string;
-  if (d.sytuacja === 'umyslna') {
-    const naKoniecRoku = p.koniecRoku && p.koniecRoku !== p.koniec ? ` Jeśli sąd przesunie koniec terminu na ostatni dzień roku (art. 118 zd. 2 Kodeksu cywilnego), to ${dataPoPolsku(p.koniecRoku)}: do tego dnia nie zakładaj, że roszczenie wygasło.` : '';
-    przedawnienieOpis =
-      (p.koniec === p.maks
-        ? `10 lat od szkody, bo to wcześniej niż 3 lata od dnia, w którym pracodawca się dowiedział (art. 291 § 3 Kodeksu pracy i art. 442¹ § 1 Kodeksu cywilnego).`
-        : `3 lata od dnia, w którym pracodawca dowiedział się o szkodzie i o osobie, która ją wyrządziła, najpóźniej 10 lat od szkody (art. 291 § 3 Kodeksu pracy i art. 442¹ § 1 Kodeksu cywilnego).`) +
-      naKoniecRoku +
-      ` Gdy szkoda wynikła z przestępstwa, na przykład z kradzieży, termin to 20 lat od jego popełnienia: ${dataPoPolsku(p.przestepstwo!)} (art. 442¹ § 2).`;
-  } else {
-    przedawnienieOpis =
+  // Ostatni dzień, w którym roszczenie może jeszcze nie być przedawnione: przy winie umyślnej koniec roku (art. 118 zd. 2
+  // KC), w każdej sytuacji z przesunięciem z soboty i dnia wolnego (art. 115 KC). Status liczymy od niego.
+  const najpozniej = przesunietyKoniec(umyslna ? (p.koniecRoku ?? p.koniec) : p.koniec);
+  const czesci: string[] = [];
+  if (umyslna) {
+    czesci.push(
       p.koniec === p.maks
-        ? `3 lata od szkody, bo to wcześniej niż rok od dnia, w którym pracodawca się dowiedział (art. 291 § 2 Kodeksu pracy).`
-        : `rok od dnia, w którym pracodawca dowiedział się o szkodzie, najpóźniej 3 lata od szkody (art. 291 § 2 Kodeksu pracy).`;
+        ? 'Termin: 10 lat od zdarzenia, które wywołało szkodę, bo to wcześniej niż 3 lata od dnia, w którym pracodawca się dowiedział (art. 291 § 3 Kodeksu pracy i art. 442¹ § 1 Kodeksu cywilnego).'
+        : 'Termin: 3 lata od dnia, w którym pracodawca dowiedział się albo przy należytej staranności mógł się dowiedzieć o szkodzie i o osobie, która ją wyrządziła, najpóźniej 10 lat od zdarzenia (art. 291 § 3 Kodeksu pracy i art. 442¹ § 1 Kodeksu cywilnego).',
+    );
+    if (p.koniecRoku && p.koniecRoku !== p.koniec) czesci.push(`Jeśli koniec terminu przypada na ostatni dzień roku (art. 118 zd. 2 Kodeksu cywilnego; przepisy tego nie przesądzają), to ${dataPoPolsku(p.koniecRoku)}.`);
+  } else {
+    czesci.push(
+      p.koniec === p.maks
+        ? 'Termin: 3 lata od szkody, bo to wcześniej niż rok od dnia, w którym pracodawca się dowiedział (art. 291 § 2 Kodeksu pracy).'
+        : 'Termin: rok od dnia, w którym pracodawca dowiedział się o szkodzie, najpóźniej 3 lata od szkody (art. 291 § 2 Kodeksu pracy).',
+    );
   }
+  const bezPrzesuniecia = umyslna ? (p.koniecRoku ?? p.koniec) : p.koniec;
+  if (najpozniej !== bezPrzesuniecia) czesci.push(`${dataPoPolsku(bezPrzesuniecia)} to sobota albo dzień wolny od pracy; jeśli termin przesuwa się na następny dzień (art. 115 Kodeksu cywilnego), to ${dataPoPolsku(najpozniej)}.`);
+  if (umyslna) czesci.push(`Gdy szkoda wynikła z przestępstwa, na przykład z kradzieży, która nie jest wykroczeniem, termin to 20 lat od jego popełnienia: ${dataPoPolsku(p.przestepstwo!)} (art. 442¹ § 2).`);
+  czesci.push(
+    umyslna
+      ? 'Bieg przedawnienia przerywa pozew albo inna czynność przed sądem lub komornikiem, wszczęcie mediacji i uznanie roszczenia; potem termin biegnie od nowa (art. 123–124 Kodeksu cywilnego). Po terminie można odmówić zapłaty (art. 117 § 2).'
+      : 'Bieg przedawnienia przerywa pozew albo inna czynność przed sądem lub komornikiem i uznanie roszczenia; potem termin biegnie od nowa (art. 295 Kodeksu pracy). Po terminie można odmówić zapłaty (art. 292).',
+  );
 
   const zostalo = dniMiedzy(dzis, p.koniec);
-  const statusKlasa: OpisOdpowiedzialnosci['statusKlasa'] = zostalo < 0 ? 'po-terminie' : zostalo <= 30 ? 'pilne' : zostalo <= 90 ? 'wkrotce' : 'w-terminie';
-  const status =
-    zostalo < 0
-      ? `Termin pracodawcy minął ${odmiana(-zostalo, ['dzień', 'dni', 'dni'])} temu`
-      : zostalo === 0
-        ? 'Dziś jest ostatni dzień terminu pracodawcy'
-        : `Pracodawcy zostało: ${odmiana(zostalo, ['dzień', 'dni', 'dni'])}`;
-
-  uwagi.push(PRZERWANIE);
-  uwagi.push('To górna granica z przepisów, a nie ocena sprawy: o winie, szkodzie i kwocie rozstrzyga sąd pracy.');
+  const doNajpozniej = dniMiedzy(dzis, najpozniej);
+  let status: string;
+  let statusKlasa: OpisOdpowiedzialnosci['statusKlasa'];
+  if (zostalo === 0) {
+    status = doNajpozniej > 0 ? `Termin kończy się dziś albo ${dataPoPolsku(najpozniej)}` : 'Dziś jest ostatni dzień terminu pracodawcy';
+    statusKlasa = 'pilne';
+  } else if (zostalo > 0) {
+    status = `Pracodawcy zostało: ${odmiana(zostalo, ['dzień', 'dni', 'dni'])}`;
+    statusKlasa = STATUS_DNI(zostalo);
+  } else if (doNajpozniej >= 0) {
+    status = `Termin mógł minąć, ale może trwać do ${dataPoPolsku(najpozniej)}`;
+    statusKlasa = STATUS_DNI(doNajpozniej);
+  } else {
+    status = `Termin pracodawcy minął ${odmiana(-doNajpozniej, ['dzień', 'dni', 'dni'])} temu${umyslna ? ', chyba że szkoda wynikła z przestępstwa' : ''}`;
+    statusKlasa = 'po-terminie';
+  }
 
   return {
     granica: zl(g.kwota),
     granicaOpis,
     przepisy: SYTUACJE[d.sytuacja].przepis,
     przedawnienie: dataPoPolsku(p.koniec),
-    przedawnienieOpis,
+    przedawnienieOpis: czesci.join(' '),
     status,
     statusKlasa,
     potracenie: POTRACENIE,
