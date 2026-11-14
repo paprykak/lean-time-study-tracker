@@ -100,6 +100,9 @@ Poprawione 31 stron:
 - `daty-domyslne.spec.ts`: listy lat w 2029 r.
 - `formularz.test.ts`, `dzis-w-formularzu.test.ts`: testy jednostkowe.
 
+## Wynik
+`npm run -s check:szybki` EXIT 0. `BEZ_WEBKIT=1 npm run check` EXIT 0: E2E 2222 zaliczone, 328 pominiętych (testy rejestru działają tylko w projekcie „komputer”); testy jednostkowe 1936 zaliczone; Lighthouse i `check:start` zielone.
+
 ## Czego nie sprawdzono
 - Prawdziwy czytnik ekranu (NVDA, VoiceOver) i Safari/iOS lokalnie. Sprawdzone atrybuty ARIA i zachowanie w Chromium; iPhone (WebKit) sprawdza CI. VoiceOver bywa zawodny przy alercie odkrywanym z `hidden`; gdyby to wyszło w teście z czytnikiem, wariantem jest stale wyrenderowany pusty region.
 - Format godzin AM/PM w innych językach przeglądarki: test zakłada „00:00”.
