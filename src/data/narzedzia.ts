@@ -881,6 +881,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-13',
   },
   {
+    slug: 'odpowiedzialnosc-materialna',
+    nazwa: 'Odpowiedzialność materialna: szkoda i manko',
+    krotko: 'Ile najwyżej zapłacisz za szkodę lub manko: limit 3 pensji, mienie powierzone, potrącenie, przedawnienie.',
+    kategoria: 'umowa',
+    przepisy: ['kodeksPracy', 'kodeksCywilny', 'wynagrodzenieRozp', 'urlopowe', 'mieniePowierzone', 'wspolnaOdpowiedzialnosc'],
+    sprawdzono: '2026-11-14',
+  },
+  {
     slug: 'przerwy-w-pracy',
     nazwa: 'Przerwy w pracy',
     krotko: 'Ile przerw przy zmianie 8 i 12 godzin, które są płatne, przy monitorze, na karmienie, dla młodocianych.',

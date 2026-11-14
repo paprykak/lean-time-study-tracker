@@ -1,0 +1,225 @@
+---
+// Odpowiedzialność materialna pracownika: szkoda w mieniu pracodawcy (art. 114–122 Kodeksu pracy), mienie powierzone
+// i manko (art. 124–127), potrącenie z pensji (art. 91) i przedawnienie roszczenia pracodawcy (art. 291 § 2–3 Kp,
+// art. 442¹ KC). Logika i teksty wyniku: src/lib/narzedzia/odpowiedzialnosc.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { SYTUACJE, opisOdpowiedzialnosci, type Sytuacja } from '../../lib/narzedzia/odpowiedzialnosc';
+import { dodajDni, dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+const dzis = dzisWPolsce();
+const SYTUACJA = 'nieumyslna' as Sytuacja;
+// Przykład startowy: szkoda 30 dni temu, pracodawca wie od 20 dni (skrypt przestawia daty na prawdziwe dziś: data-dzis).
+const DNI_SZKODY = -30;
+const DNI_WIEDZY = -20;
+const dataSzkody = dodajDni(dzis, DNI_SZKODY);
+const dataWiedzy = dodajDni(dzis, DNI_WIEDZY);
+const start = opisOdpowiedzialnosci({ sytuacja: SYTUACJA, szkoda: 20000, przyczynienie: 0, wynagrodzenie: 5200, udzial: 50, dataSzkody, dataWiedzy }, dzis);
+
+const faq = [
+  {
+    pytanie: 'Ile pracownik płaci za szkodę wyrządzoną pracodawcy?',
+    odpowiedz: 'Przy winie nieumyślnej, na przykład z niedbalstwa, odszkodowanie nie może przewyższać trzykrotności wynagrodzenia miesięcznego przysługującego w dniu wyrządzenia szkody (art. 119 Kodeksu pracy), a pracownik odpowiada tylko za rzeczywistą stratę i normalne następstwa (art. 115). Gdy pracownik wyrządził szkodę umyślnie, naprawia ją w pełnej wysokości (art. 122). Pracownik nie odpowiada w zakresie, w jakim do szkody przyczynił się pracodawca albo inna osoba (art. 117 § 1).',
+  },
+  {
+    pytanie: 'Czy pracodawca może potrącić szkodę z wypłaty?',
+    odpowiedz: 'Tylko za pisemną zgodą pracownika (art. 91 § 1 Kodeksu pracy). Odszkodowania za szkodę nie ma wśród należności, które pracodawca może potrącić bez zgody: alimentów i innych sum egzekwowanych na mocy tytułów wykonawczych, zaliczek pieniężnych i kar porządkowych (art. 87 § 1). Bez zgody pracodawca musi wystąpić do sądu pracy. Także przy zgodzie część wynagrodzenia jest wolna od potrąceń (art. 91 § 2 pkt 1).',
+  },
+  {
+    pytanie: 'Kto odpowiada za manko w magazynie?',
+    odpowiedz: 'Pracownik, któremu powierzono mienie z obowiązkiem zwrotu albo wyliczenia się, odpowiada w pełnej wysokości za szkodę w tym mieniu, także przy winie nieumyślnej (art. 124 § 1–2 Kodeksu pracy). Uwolni się, gdy wykaże, że szkoda powstała z przyczyn od niego niezależnych, w szczególności gdy pracodawca nie zapewnił warunków do zabezpieczenia mienia (art. 124 § 3). Kilka osób odpowiada wspólnie tylko na podstawie pisemnej umowy o współodpowiedzialności materialnej, w częściach określonych w umowie (art. 125).',
+  },
+  {
+    pytanie: 'Kto musi udowodnić winę pracownika?',
+    odpowiedz: 'Pracodawca musi wykazać okoliczności uzasadniające odpowiedzialność pracownika i wysokość szkody (art. 116 Kodeksu pracy). Przy mieniu powierzonym sądy przyjmują, że wystarczy wykazać prawidłowe powierzenie mienia i szkodę z braku rozliczenia się z niego, a wtedy to pracownik musi wykazać przyczyny od niego niezależne (art. 124 § 3; np. wyrok Sądu Najwyższego z 19 kwietnia 2010 r., II PK 307/09).',
+  },
+  {
+    pytanie: 'Do kiedy pracodawca może żądać odszkodowania?',
+    odpowiedz: 'Roszczenie o szkodę z winy nieumyślnej przedawnia się z upływem roku od dnia, w którym pracodawca dowiedział się o szkodzie, ale nie później niż 3 lata od jej wyrządzenia (art. 291 § 2 Kodeksu pracy). Przy szkodzie umyślnej stosuje się Kodeks cywilny (art. 291 § 3): 3 lata od dnia, w którym pracodawca dowiedział się o szkodzie i o osobie, która ją wyrządziła, najwyżej 10 lat od zdarzenia, a przy przestępstwie 20 lat od jego popełnienia (art. 442¹ Kodeksu cywilnego).',
+  },
+  {
+    pytanie: 'Kto płaci, gdy w pracy uszkodzę cudzą rzecz?',
+    odpowiedz: 'Gdy pracownik przy wykonywaniu obowiązków wyrządził szkodę osobie trzeciej, na przykład klientowi albo przewoźnikowi, naprawić ją musi wyłącznie pracodawca (art. 120 § 1 Kodeksu pracy). Potem pracodawca może żądać zwrotu od pracownika, ale tylko na zasadach odpowiedzialności materialnej, w tym z limitem trzech pensji przy winie nieumyślnej (art. 120 § 2).',
+  },
+];
+---
+
+<StronaNarzedzia
+  slug="odpowiedzialnosc-materialna"
+  tytul="Odpowiedzialność materialna: szkoda i manko"
+  opis="Ile zapłacisz za szkodę u pracodawcy: limit 3 pensji przy winie nieumyślnej, pełna kwota za manko i umyślną szkodę, potrącenie z pensji, przedawnienie."
+  h1="Odpowiedzialność materialna pracownika: szkoda i manko"
+  lead="Wybierz sytuację, wpisz kwotę szkody i daty, a pokażemy, ile najwyżej pracodawca może od Ciebie żądać, do kiedy może to zrobić i czy wolno mu potrącić to z pensji."
+  faq={faq}
+>
+  <form class="kalkulator" data-odpowiedzialnosc novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Szkoda</h2>
+      <div class="mt-4">
+        <label for="o-sytuacja" class="etykieta-pola">Sytuacja</label>
+        <select id="o-sytuacja" name="sytuacja" class="pole mt-1" aria-describedby="o-sytuacja-opis">
+          {Object.entries(SYTUACJE).map(([k, s]) => <option value={k} selected={k === SYTUACJA}>{s.krotko}</option>)}
+        </select>
+        <p id="o-sytuacja-opis" class="meta mt-1" data-w="sytuacja-opis">{SYTUACJE[SYTUACJA].opis}</p>
+      </div>
+      <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div>
+          <label for="o-szkoda" class="etykieta-pola">Kwota szkody (zł)</label>
+          <input id="o-szkoda" name="szkoda" class="pole mt-1" type="text" inputmode="decimal" value="20000" aria-describedby="o-blad" />
+        </div>
+        <div>
+          <label for="o-przyczynienie" class="etykieta-pola">Z winy pracodawcy (zł)</label>
+          <input id="o-przyczynienie" name="przyczynienie" class="pole mt-1" type="text" inputmode="decimal" value="0" aria-describedby="o-przyczynienie-opis o-blad" />
+          <p id="o-przyczynienie-opis" class="meta mt-1">Część szkody, do której przyczynił się pracodawca albo inna osoba; 0, gdy nie wiesz.</p>
+        </div>
+        <div data-pole="wynagrodzenie" hidden={SYTUACJA !== 'nieumyslna'}>
+          <label for="o-wynagrodzenie" class="etykieta-pola">Pensja w dniu szkody (zł brutto)</label>
+          <input id="o-wynagrodzenie" name="wynagrodzenie" class="pole mt-1" type="text" inputmode="decimal" value="5200" aria-describedby="o-wynagrodzenie-opis o-blad" />
+          <p id="o-wynagrodzenie-opis" class="meta mt-1">Miesięcznie: stałe składniki i średnia zmiennych, jak przy ekwiwalencie za urlop.</p>
+        </div>
+        <div data-pole="udzial" hidden={SYTUACJA !== 'wspolne'}>
+          <label for="o-udzial" class="etykieta-pola">Twoja część z umowy (%)</label>
+          <input id="o-udzial" name="udzial" class="pole mt-1" type="text" inputmode="decimal" value="50" aria-describedby="o-blad" />
+        </div>
+      </div>
+      <p id="o-blad" class="blad-pola mt-3" data-blad="kwoty" role="alert" hidden></p>
+      <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div>
+          <label for="o-data-szkody" class="etykieta-pola">Dzień szkody</label>
+          <input id="o-data-szkody" name="dataSzkody" type="date" data-dzis={String(DNI_SZKODY)} class="pole mt-1" min="1990-01-01" max="2100-12-31" value={dataSzkody} aria-describedby="o-blad-daty" />
+        </div>
+        <div>
+          <label for="o-data-wiedzy" class="etykieta-pola">Pracodawca wie od</label>
+          <input id="o-data-wiedzy" name="dataWiedzy" type="date" data-dzis={String(DNI_WIEDZY)} class="pole mt-1" min="1990-01-01" max="2100-12-31" value={dataWiedzy} aria-describedby="o-data-wiedzy-opis o-blad-daty" />
+          <p id="o-data-wiedzy-opis" class="meta mt-1">Dzień, w którym pracodawca dowiedział się o szkodzie, np. z inwentaryzacji.</p>
+        </div>
+      </div>
+      <p id="o-blad-daty" class="blad-pola mt-3" data-blad="daty" role="alert" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Najwyżej do zapłaty</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-data" data-w="granica">{start.granica}</p>
+        <p class="meta" data-w="granica-opis">{start.granicaOpis}</p>
+        <dl class="wynik-lista">
+          <div><dt>Przepis</dt><dd data-w="przepisy">{start.przepisy}</dd></div>
+          <div><dt>Przedawnienie</dt><dd data-w="przedawnienie">{start.przedawnienie}</dd></div>
+        </dl>
+        <p class="status-terminu" data-w="status" data-status={start.statusKlasa}>{start.status}</p>
+      </div>
+      <p class="wynik-uwaga" data-w="przedawnienie-opis">{start.przedawnienieOpis}</p>
+      <p class="wynik-uwaga" data-w="potracenie">{start.potracenie}</p>
+      <p class="wynik-uwaga" data-w="uwaga">{start.uwagi.join(' ')}</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="zasady">Zasady odpowiedzialności materialnej</h2>
+    <ul>
+      <li>Pracownik, który z własnej winy, przez niewykonanie albo złe wykonanie obowiązków, wyrządził pracodawcy szkodę, odpowiada według przepisów Kodeksu pracy (art. 114), a nie Kodeksu cywilnego. Winę i wysokość szkody musi wykazać pracodawca (art. 116).</li>
+      <li>Wina nieumyślna: tylko rzeczywista strata i normalne następstwa (art. 115), najwyżej trzykrotność wynagrodzenia z dnia szkody (art. 119). Pracownik nie odpowiada za szkodę w granicach dopuszczalnego ryzyka ani za ryzyko działalności pracodawcy (art. 117 § 2).</li>
+      <li>Wina umyślna: naprawienie szkody w pełnej wysokości (art. 122).</li>
+      <li>Mienie powierzone z obowiązkiem zwrotu albo wyliczenia się (pieniądze, narzędzia, odzież i obuwie robocze, środki ochrony, a także inne mienie, np. towar): odpowiedzialność w pełnej wysokości (art. 124 § 1–2). Pracownik uwalnia się, gdy wykaże przyczyny od siebie niezależne, w szczególności brak warunków do zabezpieczenia mienia (art. 124 § 3).</li>
+      <li>Wspólna odpowiedzialność za mienie powierzone kilku osobom łącznie wymaga pisemnej umowy o współodpowiedzialności materialnej, pod rygorem nieważności; odpowiada się w częściach z umowy, a gdy ustalono sprawców, za ich część odpowiadają tylko oni (art. 125). Umowę można zawrzeć przy najwyżej 8 osobach na jednej zmianie, 12 na dwóch i 16 na trzech (§ 2 rozporządzenia z 4 października 1974 r.).</li>
+      <li>Przy każdej z tych sytuacji pracownik nie odpowiada w zakresie, w jakim do szkody przyczynił się pracodawca albo inna osoba (art. 117 § 1, przy mieniu powierzonym przez art. 127). Odszkodowanie może obniżyć ugoda z pracodawcą albo sąd pracy (art. 121), a niewykonaną ugodę sąd może zaopatrzyć w klauzulę wykonalności (art. 121¹).</li>
+      <li>Szkodę wyrządzoną przy pracy komuś spoza zakładu naprawia wyłącznie pracodawca, który potem może żądać zwrotu od pracownika na tych samych zasadach (art. 120).</li>
+    </ul>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Od kwoty szkody odejmujemy część, do której przyczynił się pracodawca albo inna osoba. Przy winie nieumyślnej
+      wynik to mniejsza z dwóch kwot: tej różnicy i trzykrotności wpisanego wynagrodzenia. Wynagrodzenie do art. 119
+      ustala się według zasad ekwiwalentu za urlop, bez zmian wprowadzonych po dniu szkody (§ 3 rozporządzenia z 29 maja
+      1996 r., Dz.U. 2017 poz. 927): stałe składniki miesięczne w obecnej wysokości, a zmienne, na przykład premie
+      i nadgodziny, w średniej z 3 miesięcy (§ 15–16 rozporządzenia urlopowego, Dz.U. 1997 nr 2 poz. 14). Przepisy nie
+      mówią, który miesiąc jest tu „miesiącem nabycia prawa”, więc przyjmujemy miesiąc szkody. Rozporządzenia nie używają
+      słowa „brutto”, ale liczą wynagrodzenie przed potrąceniami, więc wpisujesz kwotę brutto. Podwyżka obowiązująca już
+      w dniu szkody się liczy, bo wynagrodzenie „przysługuje” wtedy w nowej wysokości; podwyżka od następnego dnia nie.
+    </p>
+    <p>
+      Przy winie umyślnej i mieniu powierzonym limitu trzech pensji nie ma: art. 127 odsyła do art. 117, 121, 121¹ i 122,
+      ale nie do art. 119. Przy umowie o współodpowiedzialności liczymy wpisaną część z umowy. Wyjątek dla magazynu:
+      w magazynie z wydzieloną halą spedycyjną i dozorem ruchu mienia i osób, albo z automatycznym przeładunkiem, za
+      powierzony towar odpowiada się na zasadach art. 114–116 i 118 Kodeksu pracy, po pisemnym zawiadomieniu
+      i inwentaryzacji (§ 2 rozporządzenia z 10 października 1975 r., Dz.U. 1996 nr 143 poz. 662), a odszkodowanie
+      może być obniżone, gdy nadzór nad mieniem jest utrudniony, np. przy pracy na kilka zmian albo w obsadzie od
+      5 osób (§ 6–8). Rozporządzenie nie mówi wprost, czy obowiązuje wtedy limit z art. 119, więc go nie liczymy:
+      pokazujemy kwotę najwyższą.
+    </p>
+    <p>
+      Przedawnienie liczymy jak inne terminy w latach: koniec przypada w dniu, który datą odpowiada dniowi początkowemu,
+      a 29 lutego odpowiada 28 lutego (art. 112 Kodeksu cywilnego przez art. 300 Kodeksu pracy), bez przesunięcia na dzień
+      roboczy. Przy szkodzie umyślnej termin z art. 442¹ Kodeksu cywilnego trwa co najmniej 2 lata, więc część sądów
+      może przesunąć jego koniec na ostatni dzień roku (art. 118 zd. 2); przepisy nie przesądzają tego wprost, dlatego
+      podajemy obie daty. Kalkulator nie ocenia, czy była wina, jaka i czy szkoda jest prawdziwa: o tym rozstrzyga sąd
+      pracy. Nie liczymy kwoty wolnej od potrąceń. Jak zgłosić sprawę sądowi albo inspekcji pracy, pokaże <a href="/narzedzia/sad-pracy-czy-pip">strona o sądzie pracy i PIP</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { SYTUACJE, bladDanych, opisOdpowiedzialnosci, type Sytuacja } from '../../lib/narzedzia/odpowiedzialnosc';
+  import { wpisanaLiczba } from '../../lib/narzedzia/format';
+  import { dzisWPolsce } from '../../lib/narzedzia/terminy';
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
+  import { typografia } from '../../lib/typografia.mjs';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
+
+  const form = document.querySelector<HTMLFormElement>('[data-odpowiedzialnosc]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const pisz = (k: string, tekst: string) => {
+      w(k).textContent = typografia(tekst);
+    };
+    const bladKwot = form.querySelector<HTMLElement>('[data-blad="kwoty"]')!;
+    const bladDat = form.querySelector<HTMLElement>('[data-blad="daty"]')!;
+    const POLA_DAT = new Set(['dataSzkody', 'dataWiedzy']);
+    const przelicz = () => {
+      const sytuacja = el('sytuacja').value as Sytuacja;
+      pisz('sytuacja-opis', SYTUACJE[sytuacja].opis);
+      form.querySelector<HTMLElement>('[data-pole="wynagrodzenie"]')!.hidden = sytuacja !== 'nieumyslna';
+      form.querySelector<HTMLElement>('[data-pole="udzial"]')!.hidden = sytuacja !== 'wspolne';
+      const przyczynienie = el('przyczynienie').value.trim() === '' ? 0 : wpisanaLiczba(el('przyczynienie').value);
+      const dane = {
+        sytuacja,
+        szkoda: wpisanaLiczba(el('szkoda').value),
+        przyczynienie,
+        wynagrodzenie: wpisanaLiczba(el('wynagrodzenie').value),
+        udzial: wpisanaLiczba(el('udzial').value),
+        dataSzkody: el('dataSzkody').value,
+        dataWiedzy: el('dataWiedzy').value,
+      };
+      const dzis = dzisWPolsce();
+      const blad = bladDanych(dane, dzis);
+      const dotyczyDat = !!blad && POLA_DAT.has(blad.pole);
+      pokazBlad(bladKwot, blad && !dotyczyDat ? blad.tekst : null, blad && !dotyczyDat ? el(blad.pole) : []);
+      pokazBlad(bladDat, blad && dotyczyDat ? blad.tekst : null, blad && dotyczyDat ? el(blad.pole) : []);
+      const status = w('status');
+      if (blad) {
+        for (const k of ['granica', 'przepisy', 'przedawnienie']) w(k).textContent = '—';
+        for (const k of ['granica-opis', 'przedawnienie-opis', 'potracenie', 'uwaga']) w(k).textContent = '';
+        status.hidden = true;
+        return;
+      }
+      const o = opisOdpowiedzialnosci(dane, dzis);
+      pisz('granica', o.granica);
+      pisz('granica-opis', o.granicaOpis);
+      pisz('przepisy', o.przepisy);
+      pisz('przedawnienie', o.przedawnienie);
+      pisz('przedawnienie-opis', o.przedawnienieOpis);
+      pisz('potracenie', o.potracenie);
+      pisz('uwaga', o.uwagi.join(' '));
+      status.hidden = false;
+      status.dataset.status = o.statusKlasa;
+      pisz('status', o.status);
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    ustawDzisiejszeWartosci(form);
+    liczPoPowrocie(przelicz);
+    przelicz();
+  }
+</script>

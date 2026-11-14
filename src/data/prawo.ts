@@ -787,6 +787,20 @@ export const AKTY = {
     adres: eli(2026, 473),
     sprawdzono: '2026-11-13',
   },
+  mieniePowierzone: {
+    nazwa: 'Rozporządzenie Rady Ministrów w sprawie warunków odpowiedzialności materialnej pracowników za szkodę w powierzonym mieniu',
+    publikator: 'Dz.U. 1996 nr 143 poz. 662',
+    uwaga: 'tekst jednolity rozporządzenia z 10 października 1975 r.; zmiana Dz.U. 1996 nr 60 poz. 276; § 2–3: magazyny z halą spedycyjną i dozorem na zasadach art. 114–116 i 118 Kp, § 6–9: obniżenie odszkodowania',
+    adres: eli(1996, 662),
+    sprawdzono: '2026-11-14',
+  },
+  wspolnaOdpowiedzialnosc: {
+    nazwa: 'Rozporządzenie Rady Ministrów w sprawie wspólnej odpowiedzialności materialnej pracowników za powierzone mienie',
+    publikator: 'Dz.U. 1996 nr 143 poz. 663',
+    uwaga: 'tekst jednolity rozporządzenia z 4 października 1974 r.; zmiana Dz.U. 1996 nr 60 poz. 275; § 2: najwyżej 8, 12 albo 16 osób, § 5–6: nowa umowa przy zmianie składu, części z umowy, § 10–11 i 20: wypowiedzenie, odstąpienie, inwentaryzacja',
+    adres: eli(1996, 663),
+    sprawdzono: '2026-11-14',
+  },
 } as const satisfies Record<string, Akt>;
 
 export type KluczAktu = keyof typeof AKTY;
