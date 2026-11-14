@@ -17,6 +17,8 @@
 // - przy linii „bezpośrednio pod linią” to odległość 0 m, czyli zakaz bez względu na napięcie;
 // - porównujemy na liczbach całkowitych (gramy, milimetry), więc 2000 kg to dokładnie 2000 kg.
 
+import { odmiana } from '../redakcja';
+
 export type Linia = 'brak' | 'nn' | 'do15' | 'do30' | 'ponad30';
 
 export const LINIE: Record<Linia, string> = {
@@ -72,6 +74,8 @@ export interface WynikSkladowania {
   /** Ile takich ładunków zmieści się na poziomie. */
   ileZmiesci: number | null;
   glowny: string;
+  /** „Na poziomie zmieszczą się najwyżej 2 takie ładunki.” (1 i 5+: „zmieści się”) albo pusty tekst. */
+  zmiesciOpis: string;
   status: { tekst: string; rodzaj: 'w-terminie' | 'po-terminie' | 'brak' };
   sprawdzenia: Sprawdzenie[];
 }
@@ -80,6 +84,8 @@ const g = (kg: number) => Math.round(kg * 1000);
 const mm = (m: number) => Math.round(m * 1000);
 export const kg = (x: number) => `${x.toLocaleString('pl-PL', { maximumFractionDigits: 3 })} kg`;
 export const metry = (x: number) => `${x.toLocaleString('pl-PL', { maximumFractionDigits: 2 })} m`;
+// Liczba pojedyncza czasownika poza 2–4 (12–14): „zmieści się 1 / 5 / 12”, „zmieszczą się 2 / 22”.
+const zmiesciSie = (ile: string) => `Na poziomie ${ile.endsWith('takie ładunki') ? 'zmieszczą' : 'zmieści'} się najwyżej ${ile}.`;
 const naPoziomach = (n: number) => `na ${n} ${n === 1 ? 'poziomie' : 'poziomach'}`;
 const PPOZ = 'rozporządzenia o ochronie przeciwpożarowej';
 
@@ -153,5 +159,65 @@ export function sprawdzSkladowanie(d: DaneSkladowania): WynikSkladowania {
       ? { tekst: 'Zgodne z przepisem', rodzaj: 'w-terminie' }
       : { tekst: 'Wpisz dane z tabliczki regału albo odległości', rodzaj: 'brak' };
 
-  return { naPoziomie, ileZmiesci, glowny: naPoziomie === null ? '—' : kg(naPoziomie), status, sprawdzenia };
+  const zmiesciOpis =
+    ileZmiesci === null
+      ? ''
+      : ileZmiesci === 0
+        ? 'Jeden taki ładunek jest cięższy niż dopuszczalne obciążenie poziomu.'
+        : zmiesciSie(odmiana(ileZmiesci, ['taki ładunek', 'takie ładunki', 'takich ładunków']));
+  return { naPoziomie, ileZmiesci, glowny: naPoziomie === null ? '—' : kg(naPoziomie), zmiesciOpis, status, sprawdzenia };
+}
+
+export const ETYKIETA_WYNIKU: Record<WynikSprawdzenia, string> = { tak: 'zgodne', nie: 'niezgodne', 'nie-dotyczy': 'nie dotyczy' };
+
+export type PoleSkladowania = 'limitPoziomu' | 'ladunki' | 'masa' | 'limitSekcji' | 'poziomy' | 'odGoracych' | 'dostepGasnicy' | 'doGasnicy' | 'odLinii';
+
+const POLA: Record<PoleSkladowania, { miejsca: number; min: number; maks: number; blad: string }> = {
+  limitPoziomu: { miejsca: 3, min: 0, maks: 100_000, blad: 'Wpisz dopuszczalne obciążenie poziomu z tabliczki w kilogramach, na przykład 2000.' },
+  ladunki: { miejsca: 0, min: 1, maks: 1000, blad: 'Wpisz liczbę ładunków na poziomie: liczbę całkowitą, na przykład 2.' },
+  masa: { miejsca: 3, min: 0, maks: 100_000, blad: 'Wpisz masę jednego ładunku razem z paletą w kilogramach, na przykład 800.' },
+  limitSekcji: { miejsca: 3, min: 0, maks: 1_000_000, blad: 'Wpisz dopuszczalne obciążenie sekcji z tabliczki w kilogramach, na przykład 6000.' },
+  poziomy: { miejsca: 0, min: 1, maks: 100, blad: 'Wpisz liczbę zajętych poziomów: liczbę całkowitą, na przykład 4.' },
+  odGoracych: { miejsca: 3, min: 0, maks: 1000, blad: 'Wpisz odległość w metrach, na przykład 0,6 (najwyżej z dokładnością do 1 mm).' },
+  dostepGasnicy: { miejsca: 3, min: 0, maks: 1000, blad: 'Wpisz szerokość dostępu w metrach, na przykład 1,2 (najwyżej z dokładnością do 1 mm).' },
+  doGasnicy: { miejsca: 3, min: 0, maks: 10_000, blad: 'Wpisz odległość do gaśnicy w metrach, na przykład 25.' },
+  odLinii: { miejsca: 3, min: 0, maks: 10_000, blad: 'Wpisz odległość od linii w metrach, na przykład 6.' },
+};
+
+/** Liczba z pola tekstowego: undefined dla pustego pola, NaN dla błędnej (najwyżej `miejsca` cyfr po przecinku). */
+export function liczbaZPola(tekst: string, miejsca: number): number | undefined {
+  const t = tekst.trim().replace(/\s/g, '').replace(',', '.');
+  if (t === '') return undefined;
+  const wzor = miejsca === 0 ? /^\d+$/ : new RegExp(`^\\d+(\\.\\d{1,${miejsca}})?$`);
+  return wzor.test(t) ? Number(t) : Number.NaN;
+}
+
+/** Dane z formularza albo pierwszy błąd (pole i komunikat). Masy i limity muszą być dodatnie, odległości mogą być zerem. */
+export function odczytajSkladowanie(
+  teksty: Record<PoleSkladowania, string>,
+  palne: boolean,
+  linia: Linia,
+): { dane: DaneSkladowania; blad: null } | { dane: null; blad: { pole: PoleSkladowania; tekst: string } } {
+  const dane: DaneSkladowania = { palne, linia };
+  const odleglosci = new Set<PoleSkladowania>(['odGoracych', 'dostepGasnicy', 'doGasnicy', 'odLinii']);
+  for (const pole of Object.keys(POLA) as PoleSkladowania[]) {
+    if (pole === 'odLinii' && linia === 'brak') continue;
+    const { miejsca, min, maks, blad } = POLA[pole];
+    const x = liczbaZPola(teksty[pole], miejsca);
+    if (x === undefined) continue;
+    const ok = (odleglosci.has(pole) ? x >= 0 : min === 0 ? x > 0 : x >= min) && x <= maks;
+    if (!ok) return { dane: null, blad: { pole, tekst: blad } };
+    dane[pole] = x;
+  }
+  const brak = (pole: PoleSkladowania, tekst: string) => ({ dane: null, blad: { pole, tekst } }) as const;
+  if ((dane.ladunki === undefined) !== (dane.masa === undefined)) {
+    return brak(dane.ladunki === undefined ? 'ladunki' : 'masa', 'Wpisz i liczbę ładunków na poziomie, i masę jednego ładunku.');
+  }
+  if ((dane.limitSekcji === undefined) !== (dane.poziomy === undefined)) {
+    return brak(dane.limitSekcji === undefined ? 'limitSekcji' : 'poziomy', 'Do sekcji wpisz i jej dopuszczalne obciążenie, i liczbę zajętych poziomów.');
+  }
+  if ((dane.limitPoziomu !== undefined || dane.limitSekcji !== undefined) && dane.ladunki === undefined) {
+    return brak('ladunki', 'Wpisz liczbę ładunków na poziomie i masę jednego ładunku, a porównamy je z tabliczką.');
+  }
+  return { dane, blad: null };
 }

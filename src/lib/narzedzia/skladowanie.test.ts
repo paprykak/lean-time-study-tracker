@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { sprawdzSkladowanie } from './skladowanie';
+import { odczytajSkladowanie, sprawdzSkladowanie } from './skladowanie';
 
 // Oczekiwane wartości policzone niezależnie w Pythonie (decimal.Decimal): raporty/hala/RAPORT.md.
 const s = (d: Parameters<typeof sprawdzSkladowanie>[0], klucz: string) => sprawdzSkladowanie(d).sprawdzenia.find((x) => x.klucz === klucz);
@@ -53,5 +53,37 @@ describe('odległości (§ 4 ust. 1 pkt 8 i § 33 ust. 2 ppoż., § 77 BHP)', ()
   });
   it('jedno „nie” spośród kilku daje status niezgodny', () => {
     expect(sprawdzSkladowanie({ limitPoziomu: 2000, ladunki: 2, masa: 900, palne: true, odGoracych: 0.3, dostepGasnicy: 1.2 }).status).toEqual({ tekst: 'Niezgodne z przepisem', rodzaj: 'po-terminie' });
+  });
+});
+
+describe('odczyt formularza', () => {
+  const puste = { limitPoziomu: '', ladunki: '', masa: '', limitSekcji: '', poziomy: '', odGoracych: '', dostepGasnicy: '', doGasnicy: '', odLinii: '' };
+  it('poprawne dane; odległość 0 m wolno wpisać; odległość od linii pomijana bez linii', () => {
+    expect(odczytajSkladowanie({ ...puste, limitPoziomu: '2 000', ladunki: '2', masa: '812,5', odGoracych: '0', odLinii: '3' }, true, 'brak')).toEqual({
+      dane: { palne: true, linia: 'brak', limitPoziomu: 2000, ladunki: 2, masa: 812.5, odGoracych: 0 },
+      blad: null,
+    });
+    expect(odczytajSkladowanie({ ...puste, odLinii: '0' }, true, 'nn').dane).toMatchObject({ odLinii: 0 });
+  });
+  it('błędy: ułamek ładunków, masa 0, brak pary, limit bez ładunków', () => {
+    expect(odczytajSkladowanie({ ...puste, ladunki: '1,5', masa: '100' }, true, 'brak').blad?.pole).toBe('ladunki');
+    expect(odczytajSkladowanie({ ...puste, ladunki: '0', masa: '100' }, true, 'brak').blad?.pole).toBe('ladunki');
+    expect(odczytajSkladowanie({ ...puste, ladunki: '2', masa: '0' }, true, 'brak').blad?.pole).toBe('masa');
+    expect(odczytajSkladowanie({ ...puste, ladunki: '2' }, true, 'brak').blad?.pole).toBe('masa');
+    expect(odczytajSkladowanie({ ...puste, ladunki: '2', masa: '100', poziomy: '3' }, true, 'brak').blad?.pole).toBe('limitSekcji');
+    expect(odczytajSkladowanie({ ...puste, limitPoziomu: '2000' }, true, 'brak').blad?.pole).toBe('ladunki');
+    expect(odczytajSkladowanie({ ...puste, doGasnicy: 'dużo' }, true, 'brak').blad?.pole).toBe('doGasnicy');
+  });
+});
+
+describe('ile ładunków zmieści się na poziomie', () => {
+  it('odmiana i ładunek cięższy niż limit', () => {
+    expect(sprawdzSkladowanie({ limitPoziomu: 2000, ladunki: 1, masa: 900 }).zmiesciOpis).toBe('Na poziomie zmieszczą się najwyżej 2 takie ładunki.');
+    expect(sprawdzSkladowanie({ limitPoziomu: 1000, ladunki: 1, masa: 900 }).zmiesciOpis).toBe('Na poziomie zmieści się najwyżej 1 taki ładunek.');
+    expect(sprawdzSkladowanie({ limitPoziomu: 5000, ladunki: 1, masa: 200 }).zmiesciOpis).toBe('Na poziomie zmieści się najwyżej 25 takich ładunków.');
+    expect(sprawdzSkladowanie({ limitPoziomu: 500, ladunki: 1, masa: 900 })).toMatchObject({ ileZmiesci: 0, zmiesciOpis: 'Jeden taki ładunek jest cięższy niż dopuszczalne obciążenie poziomu.' });
+    expect(sprawdzSkladowanie({ limitPoziomu: 2200, ladunki: 1, masa: 100 }).zmiesciOpis).toBe('Na poziomie zmieszczą się najwyżej 22 takie ładunki.');
+    expect(sprawdzSkladowanie({ limitPoziomu: 1200, ladunki: 1, masa: 100 }).zmiesciOpis).toBe('Na poziomie zmieści się najwyżej 12 takich ładunków.');
+    expect(sprawdzSkladowanie({ ladunki: 1, masa: 900 }).zmiesciOpis).toBe('');
   });
 });

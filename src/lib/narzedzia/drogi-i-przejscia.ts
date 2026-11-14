@@ -167,3 +167,50 @@ export function sprawdzPrzejscie(d: DanePrzejscia): WynikPrzejscia {
 
   return { minimum: min === null ? 'brak liczby w przepisie' : `co najmniej ${metry(min)}`, status, sprawdzenia, uwaga };
 }
+
+export const ETYKIETA_WYNIKU: Record<WynikSprawdzenia, string> = {
+  tak: 'zgodne',
+  nie: 'niezgodne',
+  warunkowo: 'tylko wyjątkowo',
+  'brak-liczby': 'brak liczby',
+};
+
+export type PolePrzejscia = 'szerokosc' | 'wysokosc' | 'roznica' | 'dlugosc';
+
+const POLA: Record<PolePrzejscia, { miejsca: number; maks: number; blad: string }> = {
+  szerokosc: { miejsca: 3, maks: 50, blad: 'Wpisz szerokość w metrach, na przykład 0,8 (najwyżej z dokładnością do 1 mm).' },
+  wysokosc: { miejsca: 3, maks: 30, blad: 'Wpisz wysokość w metrach, na przykład 2,1 (najwyżej z dokładnością do 1 mm).' },
+  roznica: { miejsca: 1, maks: 1000, blad: 'Wpisz różnicę poziomów w centymetrach, na przykład 15 (najwyżej z dokładnością do 1 mm).' },
+  dlugosc: { miejsca: 3, maks: 1000, blad: 'Wpisz długość pochylni w metrach, na przykład 1,5 (najwyżej z dokładnością do 1 mm).' },
+};
+
+/**
+ * Liczba z pola tekstowego: undefined dla pustego pola, NaN dla błędnej. Przecinek albo kropka, spacje pomijamy,
+ * najwyżej `miejsca` cyfr po przecinku.
+ */
+export function liczbaZPola(tekst: string, miejsca: number): number | undefined {
+  const t = tekst.trim().replace(/\s/g, '').replace(',', '.');
+  if (t === '') return undefined;
+  return new RegExp(`^\\d+(\\.\\d{1,${miejsca}})?$`).test(t) ? Number(t) : Number.NaN;
+}
+
+/** Dane z formularza albo pierwszy błąd (pole i komunikat). */
+export function odczytajPrzejscie(
+  teksty: Record<PolePrzejscia, string>,
+  rodzaj: RodzajPrzejscia,
+  piesi: boolean,
+): { dane: DanePrzejscia; blad: null } | { dane: null; blad: { pole: PolePrzejscia; tekst: string } } {
+  const dane: DanePrzejscia = { rodzaj, piesi };
+  for (const pole of Object.keys(POLA) as PolePrzejscia[]) {
+    const { miejsca, maks, blad } = POLA[pole];
+    const x = liczbaZPola(teksty[pole], miejsca);
+    if (x === undefined) continue;
+    if (!(x > 0 && x <= maks)) return { dane: null, blad: { pole, tekst: blad } };
+    dane[pole] = x;
+  }
+  if ((dane.roznica === undefined) !== (dane.dlugosc === undefined)) {
+    const pole = dane.roznica === undefined ? 'roznica' : 'dlugosc';
+    return { dane: null, blad: { pole, tekst: 'Do pochylni wpisz i różnicę poziomów, i długość w poziomie.' } };
+  }
+  return { dane, blad: null };
+}

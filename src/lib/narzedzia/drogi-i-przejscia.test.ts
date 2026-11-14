@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { najkrotszaPochylnia, nachylenieWGore, sprawdzPrzejscie } from './drogi-i-przejscia';
+import { liczbaZPola, najkrotszaPochylnia, nachylenieWGore, odczytajPrzejscie, sprawdzPrzejscie } from './drogi-i-przejscia';
 
 // Oczekiwane wartości policzone niezależnie w Pythonie (decimal.Decimal, math.atan): raporty/hala/RAPORT.md.
 const wynik = (d: Parameters<typeof sprawdzPrzejscie>[0], klucz: string) => sprawdzPrzejscie(d).sprawdzenia.find((s) => s.klucz === klucz);
@@ -71,5 +71,30 @@ describe('wynik ogólny', () => {
     expect(sprawdzPrzejscie({ rodzaj: 'wozki', piesi: true }).uwaga).toContain('§ 6 ust. 5');
     expect(sprawdzPrzejscie({ rodzaj: 'wozki' }).uwaga).toContain('§ 69 ust. 2');
     expect(sprawdzPrzejscie({ rodzaj: 'gasnica' }).uwaga).toContain('30 m');
+  });
+});
+
+describe('odczyt formularza', () => {
+  const puste = { szerokosc: '', wysokosc: '', roznica: '', dlugosc: '' };
+  it('przecinek, spacje, puste pola pomijane', () => {
+    expect(odczytajPrzejscie({ ...puste, szerokosc: ' 0,75 ', roznica: '12,5', dlugosc: '1,2' }, 'obsluga', false)).toEqual({
+      dane: { rodzaj: 'obsluga', piesi: false, szerokosc: 0.75, roznica: 12.5, dlugosc: 1.2 },
+      blad: null,
+    });
+  });
+  it('błędy: zero, litery, za dużo miejsc po przecinku, pochylnia bez długości', () => {
+    expect(odczytajPrzejscie({ ...puste, szerokosc: '0' }, 'obsluga', false).blad?.pole).toBe('szerokosc');
+    expect(odczytajPrzejscie({ ...puste, wysokosc: '2 m' }, 'obsluga', false).blad?.pole).toBe('wysokosc');
+    expect(odczytajPrzejscie({ ...puste, szerokosc: '0,7495' }, 'obsluga', false).blad?.pole).toBe('szerokosc');
+    expect(odczytajPrzejscie({ ...puste, roznica: '12,55', dlugosc: '2' }, 'obsluga', false).blad?.pole).toBe('roznica');
+    expect(odczytajPrzejscie({ ...puste, roznica: '15' }, 'obsluga', false).blad).toEqual({ pole: 'dlugosc', tekst: 'Do pochylni wpisz i różnicę poziomów, i długość w poziomie.' });
+    expect(odczytajPrzejscie({ ...puste, dlugosc: '2' }, 'obsluga', false).blad?.pole).toBe('roznica');
+    expect(odczytajPrzejscie({ ...puste, szerokosc: '51' }, 'obsluga', false).blad?.pole).toBe('szerokosc');
+  });
+  it('liczbaZPola', () => {
+    expect(liczbaZPola('', 3)).toBeUndefined();
+    expect(liczbaZPola('1 000,5', 3)).toBe(1000.5);
+    expect(liczbaZPola('-1', 3)).toBeNaN();
+    expect(liczbaZPola('1.', 3)).toBeNaN();
   });
 });

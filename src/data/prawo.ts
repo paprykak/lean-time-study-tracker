@@ -801,6 +801,27 @@ export const AKTY = {
     adres: eli(1996, 663),
     sprawdzono: '2026-11-14',
   },
+  ogolneBhpHala: {
+    nazwa: 'Rozporządzenie w sprawie ogólnych przepisów bezpieczeństwa i higieny pracy',
+    publikator: 'Dz.U. 2003 poz. 1650',
+    uwaga: 'tekst jednolity; zmiany 2007 poz. 330, 2008 poz. 690, 2011 poz. 1034, 2021 poz. 2088 (§ 70 ust. 2) i 2026 poz. 927; drogi i składowanie: § 4–7, 47, 55, 66, 68–77, 106, załącznik nr 1 § 13',
+    adres: eli(2003, 1650),
+    sprawdzono: '2026-11-14',
+  },
+  wozkiJezdniowe: {
+    nazwa: 'Rozporządzenie w sprawie bezpieczeństwa i higieny pracy przy użytkowaniu wózków jezdniowych z napędem silnikowym',
+    publikator: 'Dz.U. 2020 poz. 852',
+    uwaga: 'tekst jednolity; § 8: prędkość i ochrona przed wtargnięciem osób, bez szerokości dróg',
+    adres: eli(2020, 852),
+    sprawdzono: '2026-11-14',
+  },
+  ochronaPpoz: {
+    nazwa: 'Rozporządzenie w sprawie ochrony przeciwpożarowej budynków, innych obiektów budowlanych i terenów',
+    publikator: 'Dz.U. 2023 poz. 822',
+    uwaga: 'tekst jednolity; zmiany Dz.U. 2024 poz. 1716 i 2026 poz. 1276 nie dotyczą § 4 ust. 1, 3 i 4 ani § 33',
+    adres: eli(2023, 822),
+    sprawdzono: '2026-11-14',
+  },
 } as const satisfies Record<string, Akt>;
 
 export type KluczAktu = keyof typeof AKTY;

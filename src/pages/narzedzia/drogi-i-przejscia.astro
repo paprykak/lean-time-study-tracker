@@ -1,0 +1,234 @@
+---
+// Drogi i przejścia w hali: szerokość przejścia (§ 47 ust. 3 ogólnych przepisów BHP), wysokość dojścia (§ 47 ust. 1–2),
+// pochylnia do 8% (§ 5 ust. 1), droga dla wózków bez liczby w przepisie (§ 4 ust. 2), dostęp do gaśnicy (§ 33 ust. 2
+// rozporządzenia o ochronie przeciwpożarowej). Logika i teksty wyniku: src/lib/narzedzia/drogi-i-przejscia.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { ETYKIETA_WYNIKU, MAKS_NACHYLENIE, RODZAJE, sprawdzPrzejscie, type RodzajPrzejscia } from '../../lib/narzedzia/drogi-i-przejscia';
+
+const D = { rodzaj: 'obsluga' as RodzajPrzejscia, szerokosc: '0,7', wysokosc: '2,1' };
+const start = sprawdzPrzejscie({ rodzaj: D.rodzaj, szerokosc: 0.7, wysokosc: 2.1 });
+
+const WYMIARY = [
+  { co: 'Przejście do obsługi maszyn, urządzeń i regałów', ile: 'co najmniej 0,75 m, przy ruchu w obu kierunkach 1 m', przepis: '§ 47 ust. 3' },
+  { co: 'Wysokość dojścia do stanowiska pracy', ile: 'co najmniej 2 m w świetle na całej długości; 1,8 m tylko wtedy, gdy wymusza to konstrukcja maszyn, z zabezpieczeniem i znakami', przepis: '§ 47 ust. 1–2' },
+  { co: 'Droga dla wózków', ile: 'bez liczby: według wózków, ładunków i liczby użytkowników; minimalne wymiary w Polskich Normach', przepis: '§ 4 ust. 2, § 69 ust. 2' },
+  { co: 'Pochylnia na drodze transportowej i w magazynie', ile: `najwyżej ${MAKS_NACHYLENIE}%, bez progów i stopni`, przepis: '§ 5 ust. 1' },
+  { co: 'Ręczne przenoszenie i przetaczanie po pochylni niezwiązanej na stałe z budynkiem', ile: 'kąt najwyżej 15°', przepis: '§ 12 ust. 1 rozporządzenia o ręcznych pracach transportowych' },
+  { co: 'Ręczne przenoszenie po schodach', ile: 'kąt najwyżej 60°', przepis: '§ 12 ust. 1 rozporządzenia o ręcznych pracach transportowych' },
+  { co: 'Wózek pchany ręcznie', ile: 'teren o nachyleniu najwyżej 8%, odległość najwyżej 200 m', przepis: '§ 21 ust. 3 rozporządzenia o ręcznych pracach transportowych' },
+  { co: 'Pomost, antresola, podest wyżej niż 1 m', ile: 'balustrada: poręcz co najmniej 1,1 m, krawężnik co najmniej 0,15 m, w połowie poprzeczka albo wypełnienie; nie dotyczy ramp przeładunkowych', przepis: '§ 106 ust. 1 i 3' },
+  { co: 'Ruchome części maszyn', ile: 'osłonięte do 2,5 m od podłogi; nad przejściami wyżej niż 2,5 m osłonięte co najmniej od dołu', przepis: '§ 55 ust. 1–2' },
+  { co: 'Dostęp do gaśnicy', ile: 'co najmniej 1 m szerokości; do najbliższej gaśnicy najwyżej 30 m', przepis: '§ 33 ust. 2 rozporządzenia o ochronie przeciwpożarowej' },
+  { co: 'Rampa i pomost przeładunkowy', ile: 'bez liczby: odpowiednie do wymiarów i masy ładunków, co najmniej jedno wejście', przepis: '§ 64a' },
+  { co: 'Schody i pochylnie w budynku', ile: 'wymagania w przepisach techniczno-budowlanych', przepis: '§ 21 ust. 4' },
+];
+
+const faq = [
+  {
+    pytanie: 'Jaka szerokość drogi dla wózka widłowego?',
+    odpowiedz: 'Przepisy BHP nie podają tej liczby. Drogi mają mieć wymiary odpowiednie do liczby użytkowników oraz rodzajów i wielkości urządzeń transportowych i ładunków, a minimalne wymiary dróg i przejść określają Polskie Normy (§ 4 ust. 2 rozporządzenia w sprawie ogólnych przepisów BHP). Odstęp między regałami ma pozwalać bezpiecznie operować wózkiem i ładunkiem (§ 69 ust. 2). Reguła „szerokość wózka plus 60 cm, w obu kierunkach dwie szerokości plus 90 cm” pochodzi z rozporządzenia z 1953 r. o wózkach poruszanych ręcznie, które nie obowiązuje od 11 października 2000 r.',
+  },
+  {
+    pytanie: 'Ile musi mieć przejście między maszynami?',
+    odpowiedz: 'Przejście między maszynami a innymi urządzeniami albo ścianami, służące tylko do obsługi tych urządzeń, musi mieć co najmniej 0,75 m szerokości, a gdy ludzie chodzą nim w obu kierunkach, co najmniej 1 m (§ 47 ust. 3 rozporządzenia w sprawie ogólnych przepisów BHP).',
+  },
+  {
+    pytanie: 'Jaka jest najmniejsza wysokość przejścia?',
+    odpowiedz: 'Dojście do stanowiska pracy musi mieć w świetle co najmniej 2 m wysokości na całej długości (§ 47 ust. 1). Do 1,8 m wolno je obniżyć tylko wtedy, gdy wymaga tego konstrukcja maszyn albo innych urządzeń, i tylko z odpowiednim zabezpieczeniem i znakami bezpieczeństwa (§ 47 ust. 2).',
+  },
+  {
+    pytanie: 'Jakie może być nachylenie pochylni w magazynie?',
+    odpowiedz: 'Na drogach transportowych i w magazynach nie powinno być progów ani stopni, a różnice poziomów podłogi wyrównuje się pochylniami o nachyleniu dostosowanym do środka transportu, ale nie większym niż 8% (§ 5 ust. 1 rozporządzenia w sprawie ogólnych przepisów BHP). Przy ręcznym przenoszeniu albo przetaczaniu po pochylni niezwiązanej na stałe z budynkiem kąt nie może przekraczać 15° (§ 12 ust. 1 rozporządzenia o ręcznych pracach transportowych).',
+  },
+  {
+    pytanie: 'Jak oznakować drogi w hali?',
+    odpowiedz: 'Drogi w budynkach wyznacza się ciągłymi pasami o dobrze widocznej barwie, najlepiej żółtej albo białej, z bezpieczną odległością między pojazdami a przeszkodami i między pieszymi a pojazdami (załącznik nr 1 § 13 do rozporządzenia w sprawie ogólnych przepisów BHP). Drogi oznacza się też znakami drogowymi (§ 66 ust. 3), a przed bramami, drzwiami i przejściami, gdzie piesi mogą niespodziewanie wejść na drogę, ustawia się barierki albo stosuje inne środki ochronne (§ 6 ust. 5).',
+  },
+  {
+    pytanie: 'Czy wolno zastawić przejście paletą?',
+    odpowiedz: 'Nie. Dróg, przejść i dojazdów pożarowych nie wolno zastawiać materiałami, środkami transportu, sprzętem ani innymi przedmiotami (§ 7 ust. 1 rozporządzenia w sprawie ogólnych przepisów BHP). Nie wolno też utrudniać dostępu do gaśnic, wyjść ewakuacyjnych ani tablic rozdzielczych (§ 4 ust. 1 pkt 18 rozporządzenia o ochronie przeciwpożarowej).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="drogi-i-przejscia"
+  tytul="Drogi i przejścia w hali: szerokość i wysokość"
+  opis="Ile ma mieć przejście w hali (0,75 albo 1 m), jaka wysokość dojścia (2 m), jakie nachylenie pochylni (8%) i czy przepis podaje szerokość drogi dla wózka."
+  h1="Drogi i przejścia w hali: wymiary z przepisów BHP"
+  lead="Wybierz rodzaj przejścia i wpisz zmierzone wymiary, a sprawdzimy je z przepisami BHP. Przy drodze dla wózków powiemy wprost, czego przepis nie podaje."
+  faq={faq}
+>
+  <form class="kalkulator" data-przejscie novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Przejście albo droga</h2>
+      <div class="mt-4">
+        <label for="p-rodzaj" class="etykieta-pola">Rodzaj</label>
+        <select id="p-rodzaj" name="rodzaj" class="pole mt-1" aria-describedby="p-rodzaj-opis">
+          {Object.entries(RODZAJE).map(([k, nazwa]) => <option value={k} selected={k === D.rodzaj}>{nazwa}</option>)}
+        </select>
+        <p id="p-rodzaj-opis" class="meta mt-1">Przejście do obsługi: między maszynami, urządzeniami, regałami albo ścianą, tylko dla pieszych.</p>
+      </div>
+      <label class="mt-3 flex items-start gap-3 text-[0.9375rem]" data-pole="piesi" hidden>
+        <input type="checkbox" name="piesi" class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+        <span>Tą drogą chodzą też piesi</span>
+      </label>
+      <div class="mt-4 grid grid-cols-2 items-end gap-3">
+        <div>
+          <label for="p-szerokosc" class="etykieta-pola">Szerokość (m)</label>
+          <input id="p-szerokosc" name="szerokosc" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value={D.szerokosc} aria-describedby="p-blad" />
+        </div>
+        <div>
+          <label for="p-wysokosc" class="etykieta-pola">Wysokość (m)</label>
+          <input id="p-wysokosc" name="wysokosc" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value={D.wysokosc} aria-describedby="p-wymiary-opis p-blad" />
+        </div>
+      </div>
+      <p id="p-wymiary-opis" class="meta mt-1">W świetle: w najwęższym i najniższym miejscu, na przykład pod rurą albo belką.</p>
+      <fieldset class="mt-4">
+        <legend class="etykieta-pola">Pochylnia (jeśli jest)</legend>
+        <div class="mt-1 grid grid-cols-2 items-end gap-3">
+          <div>
+            <label for="p-roznica" class="meta">Różnica poziomów (cm)</label>
+            <input id="p-roznica" name="roznica" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" aria-describedby="p-blad" />
+          </div>
+          <div>
+            <label for="p-dlugosc" class="meta">Długość w poziomie (m)</label>
+            <input id="p-dlugosc" name="dlugosc" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" aria-describedby="p-blad" />
+          </div>
+        </div>
+      </fieldset>
+      <p id="p-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Najmniejsza szerokość</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-data" data-w="minimum">{start.minimum}</p>
+        <p class="status-terminu" data-w="status" data-status={start.status.rodzaj}>{start.status.tekst}</p>
+        <dl class="wynik-lista" data-w="lista">
+          {start.sprawdzenia.map((s) => <div><dt>{s.co}: {ETYKIETA_WYNIKU[s.wynik]}</dt><dd>{s.tekst}</dd></div>)}
+        </dl>
+      </div>
+      <p class="wynik-uwaga" data-w="uwaga">{start.uwaga}</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Wymiary z przepisów są w tabeli poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="wymiary">Wymiary z przepisów BHP</h2>
+    <p>Liczby z rozporządzenia w sprawie ogólnych przepisów bezpieczeństwa i higieny pracy (paragrafy bez nazwy aktu) i z innych rozporządzeń, gdy je podajemy:</p>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Wymiary dróg, przejść, pochylni i balustrad z przepisów BHP</caption>
+        <thead>
+          <tr><th scope="col">Co</th><th scope="col">Wymiar</th><th scope="col">Przepis</th></tr>
+        </thead>
+        <tbody>
+          {WYMIARY.map((w) => <tr><th scope="row">{w.co}</th><td>{w.ile}</td><td>{w.przepis}</td></tr>)}
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="wozki">Szerokość drogi dla wózka widłowego</h2>
+    <p>
+      Obowiązujące przepisy nie podają najmniejszej szerokości drogi dla wózków. Drogi i przejścia mają mieć wymiary
+      odpowiednie do liczby użytkowników oraz rodzajów i wielkości urządzeń transportowych i przemieszczanych ładunków,
+      a minimalne wymiary określają Polskie Normy (§ 4 ust. 2). Odstępy między regałami mają odpowiadać środkom transportu
+      i pozwalać bezpiecznie nimi operować (§ 69 ust. 2), także przy paletach i kontenerach (§ 73). Rozporządzenie
+      o wózkach jezdniowych z napędem silnikowym mówi tylko, że dopuszczalną prędkość ustala się między innymi według
+      szerokości dróg (§ 8 ust. 1).
+    </p>
+    <p>
+      Reguła „szerokość wózka plus 60 cm, a przy ruchu w obu kierunkach dwie szerokości plus 90 cm” to § 46 rozporządzenia
+      z 1 kwietnia 1953 r. o ręcznym dźwiganiu i przenoszeniu ciężarów (Dz.U. 1953 nr 22 poz. 89). Dotyczyła wózków
+      poruszanych ręcznie i przestała obowiązywać 11 października 2000 r., gdy weszło w życie rozporządzenie o ręcznych
+      pracach transportowych. Szerokość korytarza roboczego dla konkretnego wózka podaje zwykle jego producent, a luzy
+      i tolerancje regałów paletowych opisuje norma PN-EN 15620, ich użytkowanie i przeglądy norma PN-EN 15635.
+    </p>
+
+    <h2 id="piesi">Piesi i wózki na jednej drodze</h2>
+    <ul>
+      <li>Drogi w budynkach wyznacza się ciągłymi pasami, najlepiej żółtymi albo białymi, z bezpieczną odległością między pieszymi a pojazdami (załącznik nr 1 § 13).</li>
+      <li>Przed bramami, drzwiami i przejściami, gdzie piesi mogą niespodziewanie wejść na drogę, stoją barierki albo inne środki ochronne (§ 6 ust. 5).</li>
+      <li>Na skrzyżowaniach dróg musi być dobra widoczność (§ 7 ust. 2), a pracodawca ustala zasady ruchu i prędkości zależne od szerokości dróg, natężenia ruchu i widoczności (§ 66 ust. 1–2).</li>
+      <li>Pracodawca zapobiega wtargnięciu osób na teren pracy wózków, a gdy się nie da, stosuje środki chroniące ludzi (§ 8 ust. 2–3 rozporządzenia o wózkach jezdniowych).</li>
+    </ul>
+    <p>
+      Czy na wózek potrzebne są uprawnienia UDT, sprawdzi <a href="/narzedzia/czy-potrzebne-uprawnienia-udt">narzędzie o uprawnieniach UDT</a>, a regały i odległości w magazynie <a href="/narzedzia/skladowanie-w-magazynie">narzędzie o składowaniu</a>.
+    </p>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Szerokość i wysokość porównujemy w milimetrach, więc 0,75 m to dokładnie 0,75 m, a 0,749 m już nie. Regał jest
+      urządzeniem do składowania (§ 68 ust. 2 pkt 2), więc alejkę między regałami, którą chodzi się tylko pieszo, liczymy
+      jak przejście do obsługi z § 47 ust. 3; alejkę, którą jeżdżą wózki, jak drogę transportową bez liczby w przepisie.
+      Wysokość z § 47 ust. 1 sprawdzamy dla przejść pieszych i dla drogi wózków, którą chodzą piesi; przy dostępie do
+      gaśnicy przepis podaje tylko szerokość. Nachylenie pochylni to różnica poziomów podzielona przez długość
+      w poziomie, razy 100; pokazujemy je zaokrąglone w górę do 0,1%, a najkrótszą pochylnię w górę do pełnego
+      centymetra. Kąt w stopniach jest tylko orientacyjny.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { ETYKIETA_WYNIKU, odczytajPrzejscie, sprawdzPrzejscie, type PolePrzejscia, type RodzajPrzejscia } from '../../lib/narzedzia/drogi-i-przejscia';
+  import { typografia } from '../../lib/typografia.mjs';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
+
+  const OPISY: Record<RodzajPrzejscia, string> = {
+    obsluga: 'Przejście do obsługi: między maszynami, urządzeniami, regałami albo ścianą, tylko dla pieszych.',
+    'obsluga-dwa': 'Przejście do obsługi, którym ludzie chodzą w obu kierunkach naraz.',
+    wozki: 'Droga, którą jeżdżą wózki, także alejka między regałami.',
+    gasnica: 'Wolne miejsce przed gaśnicą, przez które można do niej podejść; wysokości przepis tu nie podaje.',
+  };
+
+  const form = document.querySelector<HTMLFormElement>('[data-przejscie]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const pisz = (e: HTMLElement, tekst: string) => {
+      const t = typografia(tekst);
+      if (e.textContent !== t) e.textContent = t;
+    };
+    const przelicz = () => {
+      const rodzaj = el('rodzaj').value as RodzajPrzejscia;
+      pisz(form.querySelector<HTMLElement>('#p-rodzaj-opis')!, OPISY[rodzaj]);
+      form.querySelector<HTMLElement>('[data-pole="piesi"]')!.hidden = rodzaj !== 'wozki';
+      const teksty = Object.fromEntries((['szerokosc', 'wysokosc', 'roznica', 'dlugosc'] as PolePrzejscia[]).map((p) => [p, el(p).value])) as Record<PolePrzejscia, string>;
+      const { dane, blad } = odczytajPrzejscie(teksty, rodzaj, el('piesi').checked);
+      pokazBlad(form.querySelector<HTMLElement>('[data-blad="dane"]')!, blad?.tekst, blad ? el(blad.pole) : []);
+      const status = w('status');
+      pisz(w('minimum'), sprawdzPrzejscie({ rodzaj }).minimum);
+      if (!dane) {
+        status.hidden = true;
+        w('lista').replaceChildren();
+        return;
+      }
+      const r = sprawdzPrzejscie(dane);
+      status.hidden = false;
+      status.dataset.status = r.status.rodzaj;
+      pisz(status, r.status.tekst);
+      const lista = w('lista');
+      const wiersze = r.sprawdzenia.map((s) => [typografia(`${s.co}: ${ETYKIETA_WYNIKU[s.wynik]}`), typografia(s.tekst)]);
+      // Wiersze wymieniamy tylko przy zmianie treści, żeby czytnik nie ogłaszał wyniku przy każdym znaku.
+      if ([...lista.children].map((d) => d.textContent).join('\n') !== wiersze.map((x) => x.join('')).join('\n')) {
+        lista.replaceChildren(
+          ...wiersze.map(([co, tekst]) => {
+            const div = document.createElement('div');
+            const dt = document.createElement('dt');
+            const dd = document.createElement('dd');
+            dt.textContent = co;
+            dd.textContent = tekst;
+            div.append(dt, dd);
+            return div;
+          }),
+        );
+      }
+      pisz(w('uwaga'), r.uwaga);
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    liczPoPowrocie(przelicz);
+    przelicz();
+  }
+</script>

@@ -889,6 +889,22 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-14',
   },
   {
+    slug: 'drogi-i-przejscia',
+    nazwa: 'Drogi i przejścia w hali: wymiary',
+    krotko: 'Przejście 0,75 albo 1 m, dojście 2 m wysokości, pochylnia do 8%. Ile ma mieć droga dla wózka widłowego.',
+    kategoria: 'bhp',
+    przepisy: ['ogolneBhpHala', 'wozkiJezdniowe', 'recznePrace', 'ochronaPpoz'],
+    sprawdzono: '2026-11-14',
+  },
+  {
+    slug: 'skladowanie-w-magazynie',
+    nazwa: 'Składowanie w magazynie: regał i odległości',
+    krotko: 'Czy regał nie jest przeciążony, 0,5 m od gorących urządzeń i kabli, dostęp do gaśnicy, odstęp od linii.',
+    kategoria: 'bhp',
+    przepisy: ['ogolneBhpHala', 'ochronaPpoz'],
+    sprawdzono: '2026-11-14',
+  },
+  {
     slug: 'przerwy-w-pracy',
     nazwa: 'Przerwy w pracy',
     krotko: 'Ile przerw przy zmianie 8 i 12 godzin, które są płatne, przy monitorze, na karmienie, dla młodocianych.',

@@ -1,0 +1,245 @@
+---
+// Składowanie w magazynie: obciążenie regału z tabliczki (§ 68 ust. 2 pkt 2 i 4 ogólnych przepisów BHP), odległości
+// materiałów palnych (§ 4 ust. 1 pkt 8 rozporządzenia o ochronie przeciwpożarowej), gaśnica (§ 33 ust. 2) i linie
+// napowietrzne (§ 77). Logika i teksty wyniku: src/lib/narzedzia/skladowanie.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { DOSTEP_DO_GASNICY, DO_GASNICY, ETYKIETA_WYNIKU, LINIE, OD_GORACYCH, ODLEGLOSC_OD_LINII, sprawdzSkladowanie } from '../../lib/narzedzia/skladowanie';
+
+const D = { limitPoziomu: '2000', ladunki: '2', masa: '800', limitSekcji: '6000', poziomy: '4' };
+const start = sprawdzSkladowanie({ limitPoziomu: 2000, ladunki: 2, masa: 800, limitSekcji: 6000, poziomy: 4, palne: true, linia: 'brak' });
+
+const ODLEGLOSCI = [
+  { co: 'Materiały palne od urządzeń i instalacji nagrzewających się powyżej 100°C, kabli powyżej 1 kV, czynnych rozdzielnic, przewodów i gniazd siłowych powyżej 400 V', ile: `co najmniej ${OD_GORACYCH.toLocaleString('pl-PL')} m`, przepis: '§ 4 ust. 1 pkt 8 ppoż.' },
+  { co: 'Osłona punktu świetlnego z materiału trudno zapalnego albo niezapalnego', ile: 'co najmniej 0,05 m od żarówki; z materiału palnego zakazana', przepis: '§ 4 ust. 1 pkt 9 ppoż.' },
+  { co: 'Dostęp do gaśnicy', ile: `co najmniej ${DOSTEP_DO_GASNICY} m szerokości`, przepis: '§ 33 ust. 2 pkt 2 ppoż.' },
+  { co: 'Z każdego miejsca, w którym może być człowiek, do najbliższej gaśnicy', ile: `najwyżej ${DO_GASNICY} m`, przepis: '§ 33 ust. 2 pkt 1 ppoż.' },
+  { co: 'Od linii napowietrznej niskiego napięcia (w poziomie od skrajnego przewodu)', ile: `co najmniej ${ODLEGLOSC_OD_LINII.nn} m, pod linią zakaz`, przepis: '§ 77 pkt 1' },
+  { co: 'Od linii wysokiego napięcia do 15 kV', ile: `co najmniej ${ODLEGLOSC_OD_LINII.do15} m`, przepis: '§ 77 pkt 2' },
+  { co: 'Od linii wysokiego napięcia do 30 kV', ile: `co najmniej ${ODLEGLOSC_OD_LINII.do30} m`, przepis: '§ 77 pkt 3' },
+  { co: 'Od linii wysokiego napięcia powyżej 30 kV', ile: `co najmniej ${ODLEGLOSC_OD_LINII.ponad30} m`, przepis: '§ 77 pkt 4' },
+  { co: 'Pas ochronny wokół placów składowych i składowisk przy obiektach', ile: 'co najmniej 2 m, nawierzchnia niepalna albo oczyszczony grunt', przepis: '§ 4 ust. 3 ppoż.' },
+  { co: 'Materiały palne poza budynkami od granicy sąsiedniej działki', ile: 'co najmniej 4 m', przepis: '§ 4 ust. 1 pkt 6 ppoż.' },
+  { co: 'Materiały pylące składowane luzem', ile: 'szczelne ogrodzenie co najmniej 0,5 m wyżej niż materiał', przepis: '§ 75 ust. 1' },
+];
+
+const faq = [
+  {
+    pytanie: 'Ile kilogramów można położyć na regał?',
+    odpowiedz: 'Nie więcej, niż wynosi dopuszczalne obciążenie regału: masa składowanego ładunku nie może go przekraczać (§ 68 ust. 2 pkt 2 rozporządzenia w sprawie ogólnych przepisów BHP), a pracodawca wywiesza czytelne informacje o dopuszczalnym obciążeniu urządzeń do składowania, podłóg i stropów (§ 68 ust. 2 pkt 4). Samej liczby kilogramów przepis nie podaje: wynika z konstrukcji regału i jest na tabliczce.',
+  },
+  {
+    pytanie: 'Jaka jest dopuszczalna wysokość składowania?',
+    odpowiedz: 'Przepis nie podaje jednej liczby. Pracodawca określa dla każdego rodzaju materiału miejsce, sposób i dopuszczalną wysokość składowania (§ 68 ust. 2 pkt 1). Przy stosach wysokość zależy od rodzaju materiału, jego wymiarów, masy i kształtu oraz od wytrzymałości opakowań, warstwy trzeba wiązać, a środek ciężkości ma zostać wewnątrz obrysu stosu (§ 72 ust. 1).',
+  },
+  {
+    pytanie: 'Co kładzie się na najniższych półkach regału?',
+    odpowiedz: 'Przedmioty łatwo tłukące się, substancje i mieszaniny stwarzające zagrożenie oraz materiały o największej masie (§ 70 ust. 2 rozporządzenia w sprawie ogólnych przepisów BHP, w brzmieniu od 20 listopada 2021 r.).',
+  },
+  {
+    pytanie: 'Jak daleko od lamp i grzejników składować towar?',
+    odpowiedz: 'Materiałów palnych, na przykład kartonów, folii i palet drewnianych, nie wolno przechowywać bliżej niż 0,5 m od urządzeń i instalacji, których powierzchnie mogą nagrzewać się powyżej 100°C, oraz od kabli powyżej 1 kV, czynnych rozdzielnic i przewodów siłowych powyżej 400 V (§ 4 ust. 1 pkt 8 rozporządzenia o ochronie przeciwpożarowej). Lampy dotyczy to wtedy, gdy jej powierzchnia może nagrzać się powyżej 100°C.',
+  },
+  {
+    pytanie: 'Ile miejsca trzeba zostawić przy gaśnicy?',
+    odpowiedz: 'Do gaśnicy musi prowadzić dostęp o szerokości co najmniej 1 m, a z każdego miejsca, w którym może przebywać człowiek, do najbliższej gaśnicy ma być najwyżej 30 m (§ 33 ust. 2 rozporządzenia o ochronie przeciwpożarowej). Utrudnianie dostępu do gaśnic jest zakazane (§ 4 ust. 1 pkt 18).',
+  },
+  {
+    pytanie: 'Czy wolno wyjmować towar ze środka stosu?',
+    odpowiedz: 'Nie. Stosy rozładowuje się kolejno od najwyższych warstw, a wyjmowanie materiałów ze środka stosu jest niedopuszczalne (§ 72 ust. 2 rozporządzenia w sprawie ogólnych przepisów BHP).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="skladowanie-w-magazynie"
+  tytul="Składowanie w magazynie: regał i odległości"
+  opis="Czy regał nie jest przeciążony według tabliczki, 0,5 m materiałów palnych od gorących urządzeń i kabli, dostęp do gaśnicy 1 m, odstęp od linii napowietrznej."
+  h1="Składowanie w magazynie: obciążenie regału i odległości"
+  lead="Wpisz dane z tabliczki regału i masę palet, a sprawdzimy, czy poziom i sekcja nie są przeciążone. Dopisz odległości, a porównamy je z przepisami BHP i przeciwpożarowymi."
+  faq={faq}
+>
+  <form class="kalkulator" data-skladowanie novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Regał</h2>
+      <p class="meta mt-1">Dopuszczalne obciążenie przepisz z tabliczki na regale.</p>
+      <div class="mt-4">
+        <label for="s-limit-poziomu" class="etykieta-pola">Na poziom z tabliczki (kg)</label>
+        <input id="s-limit-poziomu" name="limitPoziomu" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value={D.limitPoziomu} aria-describedby="s-blad" />
+      </div>
+      <div class="mt-4 grid grid-cols-2 items-end gap-3">
+        <div>
+          <label for="s-ladunki" class="etykieta-pola">Palety na poziomie</label>
+          <input id="s-ladunki" name="ladunki" class="pole mt-1" type="text" inputmode="numeric" autocomplete="off" value={D.ladunki} aria-describedby="s-blad" />
+        </div>
+        <div>
+          <label for="s-masa" class="etykieta-pola">Masa palety (kg)</label>
+          <input id="s-masa" name="masa" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value={D.masa} aria-describedby="s-masa-opis s-blad" />
+        </div>
+      </div>
+      <p id="s-masa-opis" class="meta mt-1">Najcięższej palety albo innego ładunku, razem z paletą.</p>
+      <div class="mt-4 grid grid-cols-2 items-end gap-3">
+        <div>
+          <label for="s-limit-sekcji" class="etykieta-pola">Na sekcję (kg)</label>
+          <input id="s-limit-sekcji" name="limitSekcji" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value={D.limitSekcji} aria-describedby="s-sekcja-opis s-blad" />
+        </div>
+        <div>
+          <label for="s-poziomy" class="etykieta-pola">Zajęte poziomy</label>
+          <input id="s-poziomy" name="poziomy" class="pole mt-1" type="text" inputmode="numeric" autocomplete="off" value={D.poziomy} aria-describedby="s-sekcja-opis s-blad" />
+        </div>
+      </div>
+      <p id="s-sekcja-opis" class="meta mt-1">Sekcja to pole między dwiema ramami. Liczymy tak, jakby na każdym zajętym poziomie leżało to samo.</p>
+
+      <h2 class="tytul-m mt-6">Odległości (m)</h2>
+      <label class="mt-3 flex items-start gap-3 text-[0.9375rem]">
+        <input type="checkbox" name="palne" checked class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+        <span>Materiały palne (karton, folia, drewno, tworzywa)</span>
+      </label>
+      <div class="mt-4">
+        <label for="s-od-goracych" class="etykieta-pola">Od gorących urządzeń i kabli</label>
+        <input id="s-od-goracych" name="odGoracych" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" aria-describedby="s-gorace-opis s-blad" />
+        <p id="s-gorace-opis" class="meta mt-1">Urządzenia i instalacje nagrzewające się powyżej 100°C, kable powyżej 1 kV, rozdzielnice, przewody i gniazda siłowe powyżej 400 V.</p>
+      </div>
+      <div class="mt-4 grid grid-cols-2 items-end gap-3">
+        <div>
+          <label for="s-dostep" class="etykieta-pola">Dostęp do gaśnicy</label>
+          <input id="s-dostep" name="dostepGasnicy" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" aria-describedby="s-blad" />
+        </div>
+        <div>
+          <label for="s-do-gasnicy" class="etykieta-pola">Do gaśnicy</label>
+          <input id="s-do-gasnicy" name="doGasnicy" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" aria-describedby="s-gasnica-opis s-blad" />
+        </div>
+      </div>
+      <p id="s-gasnica-opis" class="meta mt-1">Szerokość wolnego miejsca przed gaśnicą i droga do niej z najdalszego miejsca pracy.</p>
+      <div class="mt-4 grid grid-cols-2 items-end gap-3">
+        <div>
+          <label for="s-linia" class="etykieta-pola">Linia napowietrzna</label>
+          <select id="s-linia" name="linia" class="pole mt-1">
+            {Object.entries(LINIE).map(([k, nazwa]) => <option value={k} selected={k === 'brak'}>{nazwa}</option>)}
+          </select>
+        </div>
+        <div data-pole="odLinii" hidden>
+          <label for="s-od-linii" class="etykieta-pola">Od linii w poziomie</label>
+          <input id="s-od-linii" name="odLinii" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" aria-describedby="s-blad" />
+        </div>
+      </div>
+      <p id="s-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Na jednym poziomie</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-data" data-w="glowny">{start.glowny}</p>
+        <p class="meta" data-w="zmiesci">{start.zmiesciOpis}</p>
+        <p class="status-terminu" data-w="status" data-status={start.status.rodzaj}>{start.status.tekst}</p>
+        <dl class="wynik-lista" data-w="lista">
+          {start.sprawdzenia.map((s) => <div><dt>{s.co}: {ETYKIETA_WYNIKU[s.wynik]}</dt><dd>{s.tekst}</dd></div>)}
+        </dl>
+      </div>
+      <p class="wynik-uwaga">Masa ładunku razem z regałem i wózkiem nie może też przekraczać dopuszczalnego obciążenia podłogi albo stropu (§ 68 ust. 2 pkt 3); informacja o nim wisi w magazynie (§ 17).</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Odległości z przepisów są w tabeli poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="zasady">Zasady składowania z przepisów BHP</h2>
+    <p>Rozporządzenie w sprawie ogólnych przepisów bezpieczeństwa i higieny pracy:</p>
+    <ul>
+      <li>Materiały składuje się w pomieszczeniach i miejscach do tego przeznaczonych, a pracodawca określa dla każdego rodzaju materiału miejsce, sposób i dopuszczalną wysokość składowania (§ 68 ust. 1 i ust. 2 pkt 1).</li>
+      <li>Masa ładunku nie może przekraczać dopuszczalnego obciążenia regałów i podestów, a razem z masą urządzeń do składowania i transportu dopuszczalnego obciążenia podłóg i stropów; informacje o dopuszczalnym obciążeniu wiszą czytelnie (§ 68 ust. 2 pkt 2–4, § 17).</li>
+      <li>Regały mają wytrzymałą i stabilną konstrukcję i zabezpieczenie przed przewróceniem, a odstępy między nimi odpowiadają środkom transportu (§ 69); tak samo przy paletach i kontenerach (§ 73).</li>
+      <li>Układanie i zdejmowanie nie może stwarzać zagrożeń, a na najniższych półkach leżą przedmioty łatwo tłukące się, substancje i mieszaniny stwarzające zagrożenie i materiały najcięższe (§ 70).</li>
+      <li>Przedmioty o nietypowych wymiarach, kształcie albo masie ustawia się stabilnie, z uwzględnieniem środka ciężkości (§ 71).</li>
+      <li>W stosach: wysokość zależna od materiału i wytrzymałości opakowań, wiązanie warstw, środek ciężkości wewnątrz obrysu, odstępy między stosami; rozładunek od najwyższych warstw, bez wyjmowania ze środka (§ 72).</li>
+      <li>Na stanowisku pracy tylko tyle materiałów, ile trzeba na daną zmianę, a odpady usuwa się na bieżąco (§ 46 ust. 2).</li>
+    </ul>
+
+    <h2 id="odleglosci">Odległości z przepisów</h2>
+    <p>„Ppoż.” to rozporządzenie w sprawie ochrony przeciwpożarowej budynków, innych obiektów budowlanych i terenów; paragrafy bez dopisku są z ogólnych przepisów BHP.</p>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Odległości przy składowaniu z przepisów BHP i przeciwpożarowych</caption>
+        <thead>
+          <tr><th scope="col">Co</th><th scope="col">Ile</th><th scope="col">Przepis</th></tr>
+        </thead>
+        <tbody>
+          {ODLEGLOSCI.map((o) => <tr><th scope="row">{o.co}</th><td>{o.ile}</td><td>{o.przepis}</td></tr>)}
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="czego-nie-ma">Czego przepisy nie podają</h2>
+    <p>
+      Oba rozporządzenia nie podają najwyższej wysokości regału ani stosu, kilogramów na półkę, szerokości alejki dla
+      wózka ani odległości towaru od tryskaczy. Kilogramy są na tabliczce regału, a wysokość składowania ustala
+      pracodawca (§ 68 ust. 2 pkt 1). Użytkowanie i przeglądy regałów opisuje norma PN-EN 15635; norma nie jest
+      przepisem. Ile ma mieć przejście w hali i pochylnia, sprawdzi <a href="/narzedzia/drogi-i-przejscia">narzędzie o drogach i przejściach</a>, a ile wolno podnieść na półkę ręcznie, <a href="/narzedzia/ile-kg-wolno-dzwigac">kalkulator dźwigania</a>.
+    </p>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Masa na poziomie to liczba palet razy masa jednej palety z ładunkiem. Na sekcję liczymy masę jednego poziomu razy liczba
+      zajętych poziomów, czyli tak, jakby na każdym poziomie leżało to samo; gdy poziomy są różne, porównaj z tabliczką
+      sumę ich mas. Porównujemy na liczbach całkowitych (gramy i milimetry), więc 2000 kg na tabliczce mieści dokładnie
+      2000 kg. Odstęp 0,5 m sprawdzamy tylko dla materiałów palnych, bo tylko ich dotyczy przepis. Odległość od linii
+      napowietrznej mierzy się w poziomie od skrajnego przewodu, a 0 m oznacza składowanie pod linią.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { ETYKIETA_WYNIKU, odczytajSkladowanie, sprawdzSkladowanie, type Linia, type PoleSkladowania } from '../../lib/narzedzia/skladowanie';
+  import { typografia } from '../../lib/typografia.mjs';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
+
+  const POLA: PoleSkladowania[] = ['limitPoziomu', 'ladunki', 'masa', 'limitSekcji', 'poziomy', 'odGoracych', 'dostepGasnicy', 'doGasnicy', 'odLinii'];
+  const form = document.querySelector<HTMLFormElement>('[data-skladowanie]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const pisz = (e: HTMLElement, tekst: string) => {
+      const t = typografia(tekst);
+      if (e.textContent !== t) e.textContent = t;
+    };
+    const przelicz = () => {
+      const linia = el('linia').value as Linia;
+      form.querySelector<HTMLElement>('[data-pole="odLinii"]')!.hidden = linia === 'brak';
+      const teksty = Object.fromEntries(POLA.map((p) => [p, el(p).value])) as Record<PoleSkladowania, string>;
+      const { dane, blad } = odczytajSkladowanie(teksty, el('palne').checked, linia);
+      pokazBlad(form.querySelector<HTMLElement>('[data-blad="dane"]')!, blad?.tekst, blad ? el(blad.pole) : []);
+      const status = w('status');
+      if (!dane) {
+        w('glowny').textContent = '—';
+        w('zmiesci').textContent = '';
+        status.hidden = true;
+        w('lista').replaceChildren();
+        return;
+      }
+      const r = sprawdzSkladowanie(dane);
+      pisz(w('glowny'), r.glowny);
+      pisz(w('zmiesci'), r.zmiesciOpis);
+      status.hidden = false;
+      status.dataset.status = r.status.rodzaj;
+      pisz(status, r.status.tekst);
+      const lista = w('lista');
+      const wiersze = r.sprawdzenia.map((s) => [typografia(`${s.co}: ${ETYKIETA_WYNIKU[s.wynik]}`), typografia(s.tekst)]);
+      // Wiersze wymieniamy tylko przy zmianie treści, żeby czytnik nie ogłaszał wyniku przy każdym znaku.
+      if ([...lista.children].map((d) => d.textContent).join('\n') !== wiersze.map((x) => x.join('')).join('\n')) {
+        lista.replaceChildren(
+          ...wiersze.map(([co, tekst]) => {
+            const div = document.createElement('div');
+            const dt = document.createElement('dt');
+            const dd = document.createElement('dd');
+            dt.textContent = co;
+            dd.textContent = tekst;
+            div.append(dt, dd);
+            return div;
+          }),
+        );
+      }
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    liczPoPowrocie(przelicz);
+    przelicz();
+  }
+</script>
