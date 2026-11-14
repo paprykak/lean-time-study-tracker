@@ -29,7 +29,7 @@ test('trzy poziomy mieszczą się; 0,4 m od grzejnika przy materiałach palnych 
 test('gaśnica i linia do 15 kV', async ({ page }) => {
   await page.getByLabel('Zajęte poziomy').fill('3');
   await page.getByLabel('Dostęp do gaśnicy').fill('0,9');
-  await page.getByLabel('Do gaśnicy', { exact: true }).fill('25');
+  await page.getByLabel('Odległość do gaśnicy').fill('25');
   await expect(page.locator('[data-w="lista"]')).toContainText(/dostęp\smusi\smieć\sco\snajmniej\s1\sm/);
   await page.getByLabel('Linia napowietrzna').selectOption('do15');
   await page.getByLabel('Od linii w poziomie').fill('4');
@@ -47,4 +47,13 @@ test('błąd: liczba palet z ułamkiem, potem sekcja bez poziomów', async ({ pa
   await expect(blad).toContainText(/liczbę\szajętych\spoziomów/);
   await page.getByLabel('Na sekcję (kg)').fill('');
   await expect(blad).toBeHidden();
+});
+
+test('pole odległości od linii pojawia się tylko przy wybranej linii', async ({ page }) => {
+  const pole = page.getByLabel('Od linii w poziomie');
+  await expect(pole).toBeHidden();
+  await page.getByLabel('Linia napowietrzna').selectOption('nn');
+  await expect(pole).toBeVisible();
+  await page.getByLabel('Linia napowietrzna').selectOption('brak');
+  await expect(pole).toBeHidden();
 });

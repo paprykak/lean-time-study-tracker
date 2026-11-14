@@ -75,7 +75,7 @@ const faq = [
       <div class="mt-4 grid grid-cols-2 items-end gap-3">
         <div>
           <label for="p-szerokosc" class="etykieta-pola">Szerokość (m)</label>
-          <input id="p-szerokosc" name="szerokosc" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value={D.szerokosc} aria-describedby="p-blad" />
+          <input id="p-szerokosc" name="szerokosc" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value={D.szerokosc} aria-describedby="p-wymiary-opis p-blad" />
         </div>
         <div>
           <label for="p-wysokosc" class="etykieta-pola">Wysokość (m)</label>
@@ -164,7 +164,9 @@ const faq = [
       Wysokość z § 47 ust. 1 sprawdzamy dla przejść pieszych i dla drogi wózków, którą chodzą piesi; przy dostępie do
       gaśnicy przepis podaje tylko szerokość. Nachylenie pochylni to różnica poziomów podzielona przez długość
       w poziomie, razy 100; pokazujemy je zaokrąglone w górę do 0,1%, a najkrótszą pochylnię w górę do pełnego
-      centymetra. Kąt w stopniach jest tylko orientacyjny.
+      centymetra. Granica 8% dotyczy dróg transportowych i magazynów (§ 5 ust. 1); w innych miejscach hali traktuj ją
+      jako wskazówkę, bo pochylnie w budynku opisują przepisy techniczno-budowlane (§ 21 ust. 4). Kąt w stopniach jest
+      tylko orientacyjny.
     </p>
   </Fragment>
 </StronaNarzedzia>
@@ -177,7 +179,7 @@ const faq = [
   const OPISY: Record<RodzajPrzejscia, string> = {
     obsluga: 'Przejście tylko do obsługi: między maszynami, urządzeniami, regałami albo ścianą, dla pieszych.',
     'obsluga-dwa': 'Przejście tylko do obsługi, którym ludzie chodzą w obu kierunkach.',
-    wozki: 'Droga, którą jeżdżą wózki, także alejka między regałami.',
+    wozki: 'Droga, którą jeżdżą wózki, także alejka między regałami; szerokości przepis tu nie podaje.',
     gasnica: 'Wolne miejsce przed gaśnicą, przez które można do niej podejść; wysokości przepis tu nie podaje.',
   };
 

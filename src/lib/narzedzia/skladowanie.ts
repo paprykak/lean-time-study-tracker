@@ -102,7 +102,7 @@ export function sprawdzSkladowanie(d: DaneSkladowania): WynikSkladowania {
       ileZmiesci = g(d.masa) > 0 ? Math.floor(limitG / g(d.masa)) : null;
       sprawdzenia.push(
         sumaG <= limitG
-          ? { klucz: 'poziom', co: 'Obciążenie poziomu', wynik: 'tak', tekst: `${kg(naPoziomie)} z ${kg(d.limitPoziomu)} dopuszczalnych (§ 68 ust. 2 pkt 2 ogólnych przepisów BHP).` }
+          ? { klucz: 'poziom', co: 'Obciążenie poziomu', wynik: 'tak', tekst: `${kg(naPoziomie)}, dopuszczalne ${kg(d.limitPoziomu)} (§ 68 ust. 2 pkt 2 ogólnych przepisów BHP).` }
           : { klucz: 'poziom', co: 'Obciążenie poziomu', wynik: 'nie', tekst: `${kg(naPoziomie)}: o ${kg((sumaG - limitG) / 1000)} więcej niż ${kg(d.limitPoziomu)} z tabliczki (§ 68 ust. 2 pkt 2 ogólnych przepisów BHP).` },
       );
     }
@@ -111,7 +111,7 @@ export function sprawdzSkladowanie(d: DaneSkladowania): WynikSkladowania {
       const limitG = g(d.limitSekcji);
       sprawdzenia.push(
         sekcjaG <= limitG
-          ? { klucz: 'sekcja', co: 'Obciążenie sekcji', wynik: 'tak', tekst: `${kg(sekcjaG / 1000)} ${naPoziomach(d.poziomy)} z ${kg(d.limitSekcji)} dopuszczalnych.` }
+          ? { klucz: 'sekcja', co: 'Obciążenie sekcji', wynik: 'tak', tekst: `${kg(sekcjaG / 1000)} ${naPoziomach(d.poziomy)}, dopuszczalne ${kg(d.limitSekcji)}.` }
           : { klucz: 'sekcja', co: 'Obciążenie sekcji', wynik: 'nie', tekst: `${kg(sekcjaG / 1000)} ${naPoziomach(d.poziomy)}: o ${kg((sekcjaG - limitG) / 1000)} więcej niż ${kg(d.limitSekcji)} z tabliczki.` },
       );
     }
@@ -122,7 +122,7 @@ export function sprawdzSkladowanie(d: DaneSkladowania): WynikSkladowania {
       !d.palne
         ? { klucz: 'gorace', co: 'Od urządzeń gorących i kabli', wynik: 'nie-dotyczy', tekst: `Odstęp ${metry(OD_GORACYCH)} dotyczy materiałów palnych (§ 4 ust. 1 pkt 8 ${PPOZ}).` }
         : mm(d.odGoracych) >= mm(OD_GORACYCH)
-          ? { klucz: 'gorace', co: 'Od urządzeń gorących i kabli', wynik: 'tak', tekst: `${metry(d.odGoracych)}: co najmniej ${metry(OD_GORACYCH)} jest (§ 4 ust. 1 pkt 8 ${PPOZ}).` }
+          ? { klucz: 'gorace', co: 'Od urządzeń gorących i kabli', wynik: 'tak', tekst: `${metry(d.odGoracych)}, wymagane co najmniej ${metry(OD_GORACYCH)} (§ 4 ust. 1 pkt 8 ${PPOZ}).` }
           : { klucz: 'gorace', co: 'Od urządzeń gorących i kabli', wynik: 'nie', tekst: `${metry(d.odGoracych)}: materiały palne trzymaj co najmniej ${metry(OD_GORACYCH)} od nich (§ 4 ust. 1 pkt 8 ${PPOZ}).` },
     );
   }
@@ -130,7 +130,7 @@ export function sprawdzSkladowanie(d: DaneSkladowania): WynikSkladowania {
   if (d.dostepGasnicy !== undefined) {
     sprawdzenia.push(
       mm(d.dostepGasnicy) >= mm(DOSTEP_DO_GASNICY)
-        ? { klucz: 'dostep', co: 'Dostęp do gaśnicy', wynik: 'tak', tekst: `${metry(d.dostepGasnicy)}: co najmniej ${metry(DOSTEP_DO_GASNICY)} jest (§ 33 ust. 2 pkt 2 ${PPOZ}).` }
+        ? { klucz: 'dostep', co: 'Dostęp do gaśnicy', wynik: 'tak', tekst: `${metry(d.dostepGasnicy)}, wymagane co najmniej ${metry(DOSTEP_DO_GASNICY)} (§ 33 ust. 2 pkt 2 ${PPOZ}).` }
         : { klucz: 'dostep', co: 'Dostęp do gaśnicy', wynik: 'nie', tekst: `${metry(d.dostepGasnicy)}: dostęp musi mieć co najmniej ${metry(DOSTEP_DO_GASNICY)} szerokości (§ 33 ust. 2 pkt 2 ${PPOZ}).` },
     );
   }
@@ -138,7 +138,7 @@ export function sprawdzSkladowanie(d: DaneSkladowania): WynikSkladowania {
   if (d.doGasnicy !== undefined) {
     sprawdzenia.push(
       mm(d.doGasnicy) <= mm(DO_GASNICY)
-        ? { klucz: 'gasnica', co: 'Do najbliższej gaśnicy', wynik: 'tak', tekst: `${metry(d.doGasnicy)}: najwyżej ${DO_GASNICY} m jest (§ 33 ust. 2 pkt 1 ${PPOZ}).` }
+        ? { klucz: 'gasnica', co: 'Do najbliższej gaśnicy', wynik: 'tak', tekst: `${metry(d.doGasnicy)}, dopuszczalne najwyżej ${DO_GASNICY} m (§ 33 ust. 2 pkt 1 ${PPOZ}).` }
         : { klucz: 'gasnica', co: 'Do najbliższej gaśnicy', wynik: 'nie', tekst: `${metry(d.doGasnicy)}: z każdego miejsca, w którym może być człowiek, do gaśnicy najwyżej ${DO_GASNICY} m (§ 33 ust. 2 pkt 1 ${PPOZ}).` },
     );
   }
@@ -147,7 +147,7 @@ export function sprawdzSkladowanie(d: DaneSkladowania): WynikSkladowania {
     const min = ODLEGLOSC_OD_LINII[d.linia];
     sprawdzenia.push(
       mm(d.odLinii) >= mm(min)
-        ? { klucz: 'linia', co: 'Od linii napowietrznej', wynik: 'tak', tekst: `${metry(d.odLinii)} w poziomie: co najmniej ${metry(min)} jest (§ 77 ogólnych przepisów BHP).` }
+        ? { klucz: 'linia', co: 'Od linii napowietrznej', wynik: 'tak', tekst: `${metry(d.odLinii)} w poziomie, wymagane co najmniej ${metry(min)} (§ 77 ogólnych przepisów BHP).` }
         : { klucz: 'linia', co: 'Od linii napowietrznej', wynik: 'nie', tekst: `${metry(d.odLinii)} w poziomie: przy tej linii nie wolno składować bliżej niż ${metry(min)} od skrajnego przewodu (§ 77 ogólnych przepisów BHP).` },
     );
   }
@@ -157,7 +157,9 @@ export function sprawdzSkladowanie(d: DaneSkladowania): WynikSkladowania {
     ? { tekst: 'Niezgodne z przepisem', rodzaj: 'po-terminie' }
     : wyniki.includes('tak')
       ? { tekst: 'Zgodne z przepisem', rodzaj: 'w-terminie' }
-      : { tekst: 'Wpisz dane z tabliczki regału albo odległości', rodzaj: 'brak' };
+      : wyniki.length
+        ? { tekst: 'Ten odstęp nie dotyczy materiałów niepalnych', rodzaj: 'brak' }
+        : { tekst: 'Wpisz dane z tabliczki regału albo odległości', rodzaj: 'brak' };
 
   const zmiesciOpis =
     ileZmiesci === null

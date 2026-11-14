@@ -110,7 +110,7 @@ export function sprawdzPrzejscie(d: DanePrzejscia): WynikPrzejscia {
     const brak = mm(min) - mm(d.szerokosc);
     sprawdzenia.push(
       brak <= 0
-        ? { klucz: 'szerokosc', co: 'Szerokość', wynik: 'tak', tekst: `${metry(d.szerokosc)}: co najmniej ${metry(min)} jest (${PRZEPIS_SZEROKOSCI[d.rodzaj]}).` }
+        ? { klucz: 'szerokosc', co: 'Szerokość', wynik: 'tak', tekst: `${metry(d.szerokosc)}, wymagane co najmniej ${metry(min)} (${PRZEPIS_SZEROKOSCI[d.rodzaj]}).` }
         : { klucz: 'szerokosc', co: 'Szerokość', wynik: 'nie', tekst: `${metry(d.szerokosc)}: brakuje ${cm(brak)} do ${metry(min)} (${PRZEPIS_SZEROKOSCI[d.rodzaj]}).` },
     );
   }
@@ -121,11 +121,21 @@ export function sprawdzPrzejscie(d: DanePrzejscia): WynikPrzejscia {
     const wynik: WynikSprawdzenia = h >= mm(WYSOKOSC_DOJSCIA) ? 'tak' : h >= mm(WYSOKOSC_WYJATEK) ? 'warunkowo' : 'nie';
     const tekst =
       wynik === 'tak'
-        ? `${metry(d.wysokosc)}: co najmniej ${metry(WYSOKOSC_DOJSCIA)} w świetle na całej długości (§ 47 ust. 1).`
+        ? `${metry(d.wysokosc)}, wymagane co najmniej ${metry(WYSOKOSC_DOJSCIA)} w świetle na całej długości (§ 47 ust. 1).`
         : wynik === 'warunkowo'
           ? `${metry(d.wysokosc)}: mniej niż ${metry(WYSOKOSC_DOJSCIA)}. Do ${metry(WYSOKOSC_WYJATEK)} tylko wtedy, gdy wymusza to konstrukcja maszyn, z zabezpieczeniem i znakami bezpieczeństwa (§ 47 ust. 2).`
           : `${metry(d.wysokosc)}: za nisko, przepis dopuszcza najmniej ${metry(WYSOKOSC_WYJATEK)} i to tylko wyjątkowo (§ 47 ust. 1–2).`;
     sprawdzenia.push({ klucz: 'wysokosc', co: 'Wysokość dojścia', wynik, tekst });
+  } else if (d.wysokosc !== undefined) {
+    sprawdzenia.push({
+      klucz: 'wysokosc',
+      co: 'Wysokość',
+      wynik: 'brak-liczby',
+      tekst:
+        d.rodzaj === 'wozki'
+          ? 'Wysokości drogi dla wózków przepis nie podaje; 2 m z § 47 ust. 1 sprawdzamy, gdy tą drogą chodzą piesi.'
+          : 'Przy dostępie do gaśnicy przepis podaje tylko szerokość.',
+    });
   }
 
   if (d.roznica !== undefined && d.dlugosc !== undefined) {
@@ -137,7 +147,7 @@ export function sprawdzPrzejscie(d: DanePrzejscia): WynikPrzejscia {
     const opis = `${proc.toLocaleString('pl-PL', { maximumFractionDigits: 1 })}% (ok. ${kat.toLocaleString('pl-PL', { maximumFractionDigits: 1 })}°)`;
     sprawdzenia.push(
       ok
-        ? { klucz: 'pochylnia', co: 'Pochylnia', wynik: 'tak', tekst: `Nachylenie ${opis}: najwyżej ${MAKS_NACHYLENIE}% jest (§ 5 ust. 1).` }
+        ? { klucz: 'pochylnia', co: 'Pochylnia', wynik: 'tak', tekst: `Nachylenie ${opis}, dopuszczalne najwyżej ${MAKS_NACHYLENIE}% (§ 5 ust. 1).` }
         : {
             klucz: 'pochylnia',
             co: 'Pochylnia',
@@ -154,7 +164,9 @@ export function sprawdzPrzejscie(d: DanePrzejscia): WynikPrzejscia {
       ? { tekst: 'Zgodne tylko wyjątkowo', rodzaj: 'wkrotce' }
       : wyniki.includes('tak')
         ? { tekst: wyniki.includes('brak-liczby') ? 'Liczby z przepisu spełnione' : 'Zgodne z przepisem', rodzaj: 'w-terminie' }
-        : { tekst: 'Wpisz wymiary, a sprawdzimy je z przepisem', rodzaj: 'brak' };
+        : wyniki.length
+          ? { tekst: 'Przepis nie podaje liczby do porównania', rodzaj: 'brak' }
+          : { tekst: 'Wpisz wymiary, a sprawdzimy je z przepisem', rodzaj: 'brak' };
 
   const uwaga =
     d.rodzaj === 'wozki'

@@ -8,7 +8,7 @@ describe('obciążenie regału z tabliczki (§ 68 ust. 2 pkt 2)', () => {
   it('2 palety po 900 kg na poziomie 2000 kg: 1800 kg, zmieszczą się 2', () => {
     const r = sprawdzSkladowanie({ limitPoziomu: 2000, ladunki: 2, masa: 900 });
     expect(r).toMatchObject({ naPoziomie: 1800, ileZmiesci: 2, status: { rodzaj: 'w-terminie' } });
-    expect(r.sprawdzenia[0].tekst).toContain('1800 kg z 2000 kg');
+    expect(r.sprawdzenia[0].tekst).toBe('1800 kg, dopuszczalne 2000 kg (§ 68 ust. 2 pkt 2 ogólnych przepisów BHP).');
   });
   it('dokładnie na granicy jest w porządku; 3 po 700 kg to 100 kg za dużo', () => {
     expect(s({ limitPoziomu: 2000, ladunki: 2, masa: 1000 }, 'poziom')?.wynik).toBe('tak');
@@ -30,12 +30,12 @@ describe('odległości (§ 4 ust. 1 pkt 8 i § 33 ust. 2 ppoż., § 77 BHP)', ()
   it('materiały palne 0,5 m od urządzeń gorących i kabli; niepalne: nie dotyczy', () => {
     expect(s({ palne: true, odGoracych: 0.5 }, 'gorace')?.wynik).toBe('tak');
     expect(s({ palne: true, odGoracych: 0.499 }, 'gorace')?.wynik).toBe('nie');
-    expect(sprawdzSkladowanie({ palne: false, odGoracych: 0.1 })).toMatchObject({ sprawdzenia: [{ wynik: 'nie-dotyczy' }], status: { rodzaj: 'brak' } });
+    expect(sprawdzSkladowanie({ palne: false, odGoracych: 0.1 })).toMatchObject({ sprawdzenia: [{ wynik: 'nie-dotyczy' }], status: { tekst: 'Ten odstęp nie dotyczy materiałów niepalnych', rodzaj: 'brak' } });
   });
   it('gaśnica: dostęp 1 m, najwyżej 30 m', () => {
     expect(s({ dostepGasnicy: 1 }, 'dostep')?.wynik).toBe('tak');
     expect(s({ dostepGasnicy: 0.9 }, 'dostep')?.wynik).toBe('nie');
-    expect(s({ doGasnicy: 30 }, 'gasnica')?.wynik).toBe('tak');
+    expect(s({ doGasnicy: 30 }, 'gasnica')?.tekst).toBe('30 m, dopuszczalne najwyżej 30 m (§ 33 ust. 2 pkt 1 rozporządzenia o ochronie przeciwpożarowej).');
     expect(s({ doGasnicy: 30.01 }, 'gasnica')?.wynik).toBe('nie');
   });
   it.each([

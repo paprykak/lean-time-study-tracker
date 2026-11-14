@@ -104,22 +104,21 @@ const faq = [
           <input id="s-dostep" name="dostepGasnicy" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" aria-describedby="s-blad" />
         </div>
         <div>
-          <label for="s-do-gasnicy" class="etykieta-pola">Do gaśnicy</label>
+          <label for="s-do-gasnicy" class="etykieta-pola">Odległość do gaśnicy</label>
           <input id="s-do-gasnicy" name="doGasnicy" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" aria-describedby="s-gasnica-opis s-blad" />
         </div>
       </div>
       <p id="s-gasnica-opis" class="meta mt-1">Szerokość wolnego miejsca przed gaśnicą i droga do niej z najdalszego miejsca pracy.</p>
-      <div class="mt-4 grid grid-cols-2 items-end gap-3">
-        <div>
-          <label for="s-linia" class="etykieta-pola">Linia napowietrzna</label>
-          <select id="s-linia" name="linia" class="pole mt-1">
-            {Object.entries(LINIE).map(([k, nazwa]) => <option value={k} selected={k === 'brak'}>{nazwa}</option>)}
-          </select>
-        </div>
-        <div data-pole="odLinii" hidden>
-          <label for="s-od-linii" class="etykieta-pola">Od linii w poziomie</label>
-          <input id="s-od-linii" name="odLinii" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" aria-describedby="s-blad" />
-        </div>
+      <div class="mt-4">
+        <label for="s-linia" class="etykieta-pola">Linia napowietrzna</label>
+        <select id="s-linia" name="linia" class="pole mt-1">
+          {Object.entries(LINIE).map(([k, nazwa]) => <option value={k} selected={k === 'brak'}>{nazwa}</option>)}
+        </select>
+      </div>
+      <div class="mt-4" data-pole="odLinii" hidden>
+        <label for="s-od-linii" class="etykieta-pola">Od linii w poziomie</label>
+        <input id="s-od-linii" name="odLinii" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" aria-describedby="s-linia-opis s-blad" />
+        <p id="s-linia-opis" class="meta mt-1">Od skrajnego przewodu, mierzone w poziomie; 0 m to składowanie pod linią.</p>
       </div>
       <p id="s-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
     </div>

@@ -6,7 +6,7 @@ const wynik = (d: Parameters<typeof sprawdzPrzejscie>[0], klucz: string) => spra
 
 describe('szerokość przejścia (§ 47 ust. 3) i dostępu do gaśnicy (§ 33 ust. 2 pkt 2 ppoż.)', () => {
   it('0,75 m w jednym kierunku: 0,75 m wystarcza, 0,7 m brakuje 5 cm, 0,749 m brakuje 0,1 cm', () => {
-    expect(wynik({ rodzaj: 'obsluga', szerokosc: 0.75 }, 'szerokosc')?.wynik).toBe('tak');
+    expect(wynik({ rodzaj: 'obsluga', szerokosc: 0.75 }, 'szerokosc')).toMatchObject({ wynik: 'tak', tekst: '0,75 m, wymagane co najmniej 0,75 m (§ 47 ust. 3 ogólnych przepisów BHP).' });
     expect(wynik({ rodzaj: 'obsluga', szerokosc: 0.7 }, 'szerokosc')).toMatchObject({ wynik: 'nie', tekst: expect.stringContaining('brakuje 5 cm do 0,75 m') });
     expect(wynik({ rodzaj: 'obsluga', szerokosc: 0.749 }, 'szerokosc')?.tekst).toContain('brakuje 0,1 cm');
   });
@@ -20,7 +20,7 @@ describe('szerokość przejścia (§ 47 ust. 3) i dostępu do gaśnicy (§ 33 us
     const r = sprawdzPrzejscie({ rodzaj: 'wozki', szerokosc: 1.5 });
     expect(r.minimum).toBe('brak liczby w przepisie');
     expect(r.sprawdzenia).toEqual([expect.objectContaining({ klucz: 'szerokosc', wynik: 'brak-liczby' })]);
-    expect(r.status.rodzaj).toBe('brak');
+    expect(r.status).toEqual({ tekst: 'Przepis nie podaje liczby do porównania', rodzaj: 'brak' });
     expect(r.sprawdzenia[0].tekst).toContain('Polskie Normy');
   });
 });
@@ -34,10 +34,12 @@ describe('wysokość dojścia (§ 47 ust. 1–2)', () => {
     expect(sprawdzPrzejscie({ rodzaj: 'obsluga', szerokosc: 0.8, wysokosc: 1.9 }).status).toEqual({ tekst: 'Zgodne tylko wyjątkowo', rodzaj: 'wkrotce' });
   });
   it('droga wózków: wysokość tylko wtedy, gdy chodzą nią piesi; dostęp do gaśnicy bez wysokości', () => {
-    expect(wynik({ rodzaj: 'wozki', wysokosc: 1.7 }, 'wysokosc')).toBeUndefined();
+    expect(wynik({ rodzaj: 'wozki', wysokosc: 1.7 }, 'wysokosc')).toMatchObject({ wynik: 'brak-liczby', tekst: expect.stringContaining('gdy tą drogą chodzą piesi') });
+    expect(sprawdzPrzejscie({ rodzaj: 'wozki', szerokosc: 3, wysokosc: 1.9 }).status.tekst).toBe('Przepis nie podaje liczby do porównania');
     expect(wynik({ rodzaj: 'wozki', wysokosc: 1.7, piesi: true }, 'wysokosc')?.wynik).toBe('nie');
     expect(sprawdzPrzejscie({ rodzaj: 'wozki', wysokosc: 2.2, piesi: true }).status).toEqual({ tekst: 'Liczby z przepisu spełnione', rodzaj: 'w-terminie' });
-    expect(wynik({ rodzaj: 'gasnica', wysokosc: 1.5 }, 'wysokosc')).toBeUndefined();
+    expect(wynik({ rodzaj: 'gasnica', wysokosc: 1.5 }, 'wysokosc')).toMatchObject({ wynik: 'brak-liczby', tekst: 'Przy dostępie do gaśnicy przepis podaje tylko szerokość.' });
+    expect(sprawdzPrzejscie({ rodzaj: 'gasnica', wysokosc: 1.5 }).status.tekst).toBe('Przepis nie podaje liczby do porównania');
   });
 });
 
@@ -54,6 +56,9 @@ describe('pochylnia (§ 5 ust. 1: najwyżej 8%)', () => {
     expect(najkrotszaPochylnia(12.5)).toBe(1.57);
     expect(najkrotszaPochylnia(30)).toBe(3.75);
     expect(najkrotszaPochylnia(1)).toBe(0.13);
+    expect(wynik({ rodzaj: 'obsluga', roznica: 15, dlugosc: 1.88 }, 'pochylnia')?.wynik).toBe('tak');
+    expect(wynik({ rodzaj: 'obsluga', roznica: 15, dlugosc: 1.875 }, 'pochylnia')?.wynik).toBe('tak');
+    expect(wynik({ rodzaj: 'obsluga', roznica: 15, dlugosc: 1.87 }, 'pochylnia')?.wynik).toBe('nie');
   });
   it('nachylenie zaokrąglone w górę do 0,1%', () => {
     expect(nachylenieWGore(200, 2500)).toBe(8);

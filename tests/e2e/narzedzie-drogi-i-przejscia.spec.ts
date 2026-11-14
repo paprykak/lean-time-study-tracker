@@ -57,3 +57,13 @@ test('błąd: pochylnia bez długości, litery w szerokości', async ({ page }) 
   await expect(blad).toBeHidden();
   await expect(page.locator('[data-w="status"]')).toHaveText(/^Zgodne\sz\sprzepisem$/);
 });
+
+test('pole „piesi” tylko przy drodze dla wózków', async ({ page }) => {
+  const piesi = page.getByLabel('Tą drogą chodzą też piesi');
+  await expect(piesi).toBeHidden();
+  await page.getByLabel('Rodzaj').selectOption('wozki');
+  await expect(piesi).toBeVisible();
+  await page.getByLabel('Rodzaj').selectOption('gasnica');
+  await expect(piesi).toBeHidden();
+  await expect(page.locator('[data-w="lista"]')).toContainText('podaje tylko szerokość');
+});
