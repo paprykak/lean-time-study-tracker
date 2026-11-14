@@ -72,6 +72,9 @@ describe('status i termin główny', () => {
     expect(stanTerminu('2026-11-13', DZIS)).toEqual({ tekst: 'termin minął 1 dzień temu', klasa: 'po-terminie' });
     expect(stanTerminu('2026-11-20', DZIS).klasa).toBe('wkrotce');
     expect(stanTerminu('2026-12-20', DZIS)).toEqual({ tekst: 'zostało 36 dni', klasa: 'w-terminie' });
+    expect(stanTerminu('2026-11-15', DZIS).tekst).toBe('został 1 dzień');
+    expect(stanTerminu('2026-11-17', DZIS).tekst).toBe('zostały 3 dni');
+    expect(stanTerminu('2026-12-06', DZIS).tekst).toBe('zostały 22 dni');
   });
   it('najbliższy termin pracownika: wniosek o sprostowanie', () => {
     const o = opisSwiadectwa(dane({ otrzymanie: '2026-11-05' }), DZIS);

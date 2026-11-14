@@ -32,6 +32,7 @@ describe('czy wolno', () => {
     expect(o.werdykt).toBe('Nie wolno');
     expect(o.werdyktOpis).toContain('udostępnianych zakładowej organizacji związkowej');
     expect(o.warunki).toHaveLength(1);
+    expect(o.zakazy.join(' ')).not.toContain('Nie wolno uruchomić');
     expect(o.przechowywanieKlasa).toBe('po-terminie');
   });
   it('sanitariaty: wyjątkowo i za zgodą związku albo przedstawicieli (§ 2 zd. 2)', () => {
@@ -71,11 +72,14 @@ describe('informacja i przechowywanie', () => {
     expect(opisMonitoringu(dane({ uruchomienie: '2026-11-10', informacja: 'tak', dataInformacji: '2026-10-28' }), DZIS).informacjaKlasa).toBe('po-terminie');
   });
   it('brak informacji: jeszcze czas, dziś ostatni dzień, po terminie; bez dnia uruchomienia bez oceny', () => {
-    expect(sp(opisMonitoringu(dane({ uruchomienie: '2026-12-15', informacja: 'nie' }), DZIS).informacjaStatus!)).toBe('Pracodawca ma jeszcze 16 dni');
+    expect(sp(opisMonitoringu(dane({ uruchomienie: '2026-12-15', informacja: 'nie' }), DZIS).informacjaStatus!)).toBe('Pracodawcy zostało 16 dni');
     const dzisOstatni = opisMonitoringu(dane({ uruchomienie: '2026-11-29', informacja: 'nie' }), DZIS);
     expect(dzisOstatni.informacjaStatus).toBe('Dziś ostatni dzień na informację');
     expect(dzisOstatni.informacjaKlasa).toBe('pilne');
     expect(opisMonitoringu(dane({ uruchomienie: '2026-11-20', informacja: 'nie' }), DZIS).informacjaKlasa).toBe('po-terminie');
+    const blisko = opisMonitoringu(dane({ uruchomienie: '2026-11-30', informacja: 'nie' }), DZIS);
+    expect(blisko.informacjaStatus).toBe('Pracodawcy został 1 dzień');
+    expect(blisko.informacjaKlasa).toBe('pilne');
     const bez = opisMonitoringu(dane({ informacja: 'nie' }), DZIS);
     expect(bez.informacjaStatus).toBeNull();
     expect(bez.informacjaKlasa).toBeNull();

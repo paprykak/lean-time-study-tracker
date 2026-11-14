@@ -29,6 +29,7 @@
 // - poczta i inne formy: Kodeks pracy nie podaje okresu przechowywania (art. 22³ § 3 nie odsyła do art. 22² § 3–5),
 //   więc go nie liczymy; RODO cytujemy tylko tam, gdzie odsyła Kodeks pracy (art. 22² § 10).
 import { odmiana } from '../redakcja';
+import { zaIle } from './choroba-zawodowa';
 import { dataPoPolsku, dniMiedzy, dodajDni, dodajMiesiace, koniecOkresu, poprawnaData } from './terminy';
 
 export type Rodzaj = 'kamery' | 'poczta' | 'inne';
@@ -133,7 +134,7 @@ export interface OpisMonitoringu {
 const dni = (n: number) => odmiana(n, ['dzień', 'dni', 'dni']);
 
 const CELE_KAMERY = 'bezpieczeństwo pracowników, ochrona mienia, kontrola produkcji albo zachowanie w tajemnicy informacji, których ujawnienie mogłoby narazić pracodawcę na szkodę';
-const CELE_POCZTA = 'organizacja pracy umożliwiająca pełne wykorzystanie czasu pracy i właściwe używanie udostępnionych narzędzi pracy';
+const CELE_POCZTA = 'organizacja pracy umożliwiająca pełne wykorzystanie czasu pracy, a także właściwe używanie udostępnionych pracownikowi narzędzi pracy';
 
 export const ZGLOSZENIE_KROTKO =
   'Naruszenie przepisów o monitoringu możesz zgłosić okręgowemu inspektoratowi pracy (art. 10 ust. 1 pkt 1 ustawy o Państwowej Inspekcji Pracy), a w sprawie danych osobowych z nagrań Prezesowi Urzędu Ochrony Danych Osobowych (art. 34 ust. 1 i art. 60 ustawy o ochronie danych osobowych).';
@@ -187,9 +188,9 @@ export function opisMonitoringu(d: DaneMonitoringu, dzis: string): OpisMonitorin
   const par = (n: string) => (kamery ? `art. 22² § ${n}` : `art. 22² § ${n} przez art. 22³ § 3`);
   if (kamery && miejsce === 'zwiazek') warunki.push('Żadne: w pomieszczeniach udostępnianych zakładowej organizacji związkowej monitoringu nie wolno prowadzić (art. 22² § 1¹).');
   else {
-    warunki.push(`Cele, zakres i sposób monitoringu są zapisane w układzie zbiorowym pracy albo w regulaminie pracy, a gdy pracodawca ich nie ma, w obwieszczeniu (${par('6')}).`);
+    warunki.push(`Cele, zakres i sposób monitoringu są zapisane w układzie zbiorowym pracy albo w regulaminie pracy, a gdy pracodawca nie jest objęty układem ani nie musi mieć regulaminu, w obwieszczeniu (${par('6')}).`);
     warunki.push(`Pracownicy dowiadują się o monitoringu w sposób przyjęty u pracodawcy najpóźniej 2 tygodnie przed jego uruchomieniem (${par('7')}).`);
-    warunki.push(`Każda nowa osoba dostaje te informacje na papierze albo elektronicznie, zanim zacznie pracę (${par('8')}).`);
+    warunki.push(`Każda nowa osoba dostaje cele, zakres i sposób monitoringu na papierze albo elektronicznie, zanim zacznie pracę (${par('8')}).`);
     warunki.push(
       kamery
         ? 'Teren i pomieszczenia objęte monitoringiem są oznaczone widocznie i czytelnie, znakami albo ogłoszeniami dźwiękowymi, najpóźniej dzień przed uruchomieniem (art. 22² § 9). Oznaczenie nie zastępuje informacji o przetwarzaniu danych z art. 12 i 13 RODO (§ 10).'
@@ -224,8 +225,8 @@ export function opisMonitoringu(d: DaneMonitoringu, dzis: string): OpisMonitorin
     } else if (d.informacja === 'nie') {
       const r = dniMiedzy(dzis, t.informacja);
       if (r > 0) {
-        informacjaStatus = `Pracodawca ma jeszcze ${dni(r)}`;
-        informacjaKlasa = 'wkrotce';
+        informacjaStatus = `Pracodawcy ${zaIle(r)}`;
+        informacjaKlasa = r <= 3 ? 'pilne' : r <= 7 ? 'wkrotce' : 'w-terminie';
       } else if (r === 0) {
         informacjaStatus = 'Dziś ostatni dzień na informację';
         informacjaKlasa = 'pilne';
@@ -259,8 +260,8 @@ export function opisMonitoringu(d: DaneMonitoringu, dzis: string): OpisMonitorin
       r >= 0
         ? `Najpóźniej do ${dataPoPolsku(koniec)}, 3 miesiące od dnia nagrania z tym dniem włącznie (art. 22² § 3); pracodawca może je usunąć wcześniej. Dłużej tylko, gdy nagranie jest dowodem w postępowaniu albo pracodawca dowiedział się, że może nim być (§ 4).`
         : `Okres minął ${dataPoPolsku(koniec)} Nagranie z danymi osobowymi powinno być zniszczone (art. 22² § 5), chyba że jest dowodem w postępowaniu albo pracodawca dowiedział się, że może nim być (§ 4), lub przepisy odrębne stanowią inaczej (§ 5).`;
-    przechowywanieStatus = r < 0 ? `Okres minął ${dni(-r)} temu` : r === 0 ? 'Dziś ostatni dzień' : `Zostało ${dni(r)}`;
-    przechowywanieKlasa = r < 0 ? 'po-terminie' : r <= 14 ? 'pilne' : 'w-terminie';
+    przechowywanieStatus = r < 0 ? `Okres minął ${dni(-r)} temu` : r === 0 ? 'Dziś ostatni dzień' : `${zaIle(r).charAt(0).toUpperCase()}${zaIle(r).slice(1)}`;
+    przechowywanieKlasa = r < 0 ? 'po-terminie' : r <= 3 ? 'pilne' : r <= 7 ? 'wkrotce' : 'w-terminie';
   } else {
     przechowywanie = 'Nagrania obrazu najwyżej 3 miesiące od dnia nagrania (art. 22² § 3); wpisz datę nagrania, a policzymy dzień.';
   }
@@ -274,7 +275,8 @@ export function opisMonitoringu(d: DaneMonitoringu, dzis: string): OpisMonitorin
   } else {
     zakazy.push('Nie wolno stosować innej formy monitoringu, gdy nie jest konieczna do celu z art. 22³ § 1, ani naruszać tajemnicy korespondencji i dóbr osobistych (art. 22³ § 2 i 4).');
   }
-  zakazy.push(`Nie wolno uruchomić monitoringu bez zapisania go w układzie, regulaminie albo obwieszczeniu, bez informacji 2 tygodnie wcześniej i bez oznaczenia dzień wcześniej (art. 22² § 6, 7 i 9${kamery ? '' : ' przez art. 22³ § 3'}).`);
+  if (!(kamery && miejsce === 'zwiazek'))
+    zakazy.push(`Nie wolno uruchomić monitoringu bez zapisania go w układzie, regulaminie albo obwieszczeniu, bez informacji 2 tygodnie wcześniej i bez oznaczenia dzień wcześniej (art. 22² § 6, 7 i 9${kamery ? '' : ' przez art. 22³ § 3'}).`);
 
   return { werdykt, werdyktOpis, werdyktKlasa, przepis, warunki, informacja, informacjaStatus, informacjaKlasa, przechowywanie, przechowywanieStatus, przechowywanieKlasa, zakazy, zgloszenie: ZGLOSZENIE_KROTKO };
 }

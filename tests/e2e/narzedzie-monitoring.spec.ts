@@ -16,8 +16,8 @@ test('kamery w hali: warunki, termin uprzedzenia i przechowywania', async ({ pag
   await page.getByLabel('Czy pracodawca uprzedził?').selectOption('nie');
   await expect(page.getByLabel('Dzień informacji')).toBeHidden();
   await expect(page.locator('[data-w="informacja"]')).toContainText(/najpóźniej\s30\slistopada\s2026\sr\.,\soznaczenie\sterenu\snajpóźniej\s14\sgrudnia\s2026\sr\./);
-  await expect(page.locator('[data-w="informacja-status"]')).toHaveText(/^Pracodawca\sma\sjeszcze\s16\sdni$/);
-  await expect(page.locator('[data-w="informacja-status"]')).toHaveAttribute('data-status', 'wkrotce');
+  await expect(page.locator('[data-w="informacja-status"]')).toHaveText(/^Pracodawcy\szostało\s16\sdni$/);
+  await expect(page.locator('[data-w="informacja-status"]')).toHaveAttribute('data-status', 'w-terminie');
   await page.getByLabel('Uruchomienie monitoringu').fill('2026-08-01');
   await page.getByLabel('Dzień nagrania').fill('2026-11-10');
   await expect(page.locator('[data-w="przechowywanie"]')).toContainText(/Najpóźniej\sdo\s9\slutego\s2027\sr\./);

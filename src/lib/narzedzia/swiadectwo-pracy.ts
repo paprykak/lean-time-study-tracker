@@ -29,6 +29,7 @@
 import { zl } from './format';
 import { odmiana } from '../redakcja';
 import { przesunZDniaWolnego } from './termin-odwolania';
+import { zaIle } from './choroba-zawodowa';
 import { dataPoPolsku, dniMiedzy, dodajDni, dodajLata, poprawnaData } from './terminy';
 
 export const DNI_SPROSTOWANIE = 14;
@@ -126,12 +127,12 @@ export interface OpisSwiadectwa {
 
 const dni = (n: number) => odmiana(n, ['dzień', 'dni', 'dni']);
 
-/** „zostało 5 dni”, „dziś ostatni dzień”, „minął 3 dni temu”. */
+/** „został 1 dzień”, „zostały 2 dni”, „zostało 5 dni”, „dziś ostatni dzień”, „termin minął 3 dni temu”. */
 export function stanTerminu(koniec: string, dzis: string): { tekst: string; klasa: KlasaStatusu } {
   const r = dniMiedzy(dzis, koniec);
   if (r < 0) return { tekst: `termin minął ${dni(-r)} temu`, klasa: 'po-terminie' };
   if (r === 0) return { tekst: 'dziś ostatni dzień', klasa: 'pilne' };
-  return { tekst: `zostało ${dni(r)}`, klasa: r <= 3 ? 'pilne' : r <= 7 ? 'wkrotce' : 'w-terminie' };
+  return { tekst: zaIle(r), klasa: r <= 3 ? 'pilne' : r <= 7 ? 'wkrotce' : 'w-terminie' };
 }
 
 const NAZWA_WOLNEGO = (powod: string | null) => (powod === 'sobota' ? 'sobota' : powod === 'niedziela' ? 'niedziela' : 'dzień wolny od pracy');
@@ -235,7 +236,7 @@ export function opisSwiadectwa(d: DaneSwiadectwa, dzis: string): OpisSwiadectwa 
           klucz: 'wydanie-sad',
           etykieta: 'Gdy nie wyda świadectwa',
           wartosc: `pozew do ${dataPoPolsku(t.przedawnienie)}`,
-          opis: 'Pozew o zobowiązanie pracodawcy do wydania świadectwa, w każdym czasie przed przedawnieniem (art. 97¹ § 1 i 3): 3 lata (art. 291 § 1), liczone od ostatniego dnia umowy. Gdy pracodawca nie istnieje, pozew o ustalenie prawa do świadectwa (art. 97¹ § 2).',
+          opis: 'Pozew o zobowiązanie pracodawcy do wydania świadectwa, w każdym czasie przed przedawnieniem (art. 97¹ § 1 i 3): 3 lata (art. 291 § 1), liczone od ostatniego dnia umowy. Gdy pracodawca nie istnieje albo z innych przyczyn pozew przeciw niemu jest niemożliwy, pozew o ustalenie prawa do świadectwa (art. 97¹ § 2).',
         },
   );
 
@@ -250,7 +251,7 @@ export function opisSwiadectwa(d: DaneSwiadectwa, dzis: string): OpisSwiadectwa 
         },
   );
 
-  uwagi.push('Pracodawca nie może uzależniać wydania świadectwa od wcześniejszego rozliczenia się z nim, np. ze zwrotu odzieży roboczej (art. 97 § 1³). Za niewydanie świadectwa w terminie grozi mu grzywna od 2000 do 60 000 zł (art. 282 § 1 pkt 3).');
+  uwagi.push('Pracodawca nie może uzależniać wydania świadectwa od wcześniejszego rozliczenia się z nim, np. ze zwrotu odzieży roboczej (art. 97 § 1³). Za niewydanie świadectwa w terminie grozi grzywna od 2000 do 60 000 zł (art. 282 § 1 pkt 3).');
   uwagi.push('Odszkodowanie wymaga wykazania związku między pozostawaniem bez pracy a niewydaniem w terminie albo wydaniem niewłaściwego świadectwa. Inną szkodę niż utracone zarobki można dochodzić na zasadach ogólnych, z art. 471 Kodeksu cywilnego przez art. 300 Kodeksu pracy (wyrok Sądu Najwyższego z 13 października 2004 r., II PK 36/04).');
   if (!uwagi.some((u) => u.includes('art. 265'))) uwagi.push(PRZYWROCENIE);
 
@@ -293,7 +294,7 @@ export function opisSwiadectwa(d: DaneSwiadectwa, dzis: string): OpisSwiadectwa 
   return { glowny, glownyOpis, status, statusKlasa, pozycje, uwagi };
 }
 
-/** Co musi być w świadectwie (art. 97 § 2 Kp, § 2 ust. 1 rozporządzenia): lista do sprawdzenia własnego świadectwa. */
+/** Co musi być w świadectwie (art. 97 § 2 Kp, § 2 ust. 1–2 rozporządzenia): lista do sprawdzenia własnego świadectwa. */
 export const TRESC_SWIADECTWA: string[] = [
   'okresy zatrudnienia i wymiar czasu pracy (etat)',
   'rodzaj pracy, stanowiska albo funkcje',
@@ -306,9 +307,9 @@ export const TRESC_SWIADECTWA: string[] = [
   'zwolnienie na opiekę nad dzieckiem do 14 lat (art. 188) w roku odejścia',
   'dni pracy zdalnej okazjonalnej (art. 67³³) w roku odejścia',
   'liczba dni wynagrodzenia chorobowego (art. 92) w roku odejścia',
-  'czynna służba wojskowa, praca w szczególnych warunkach lub w szczególnym charakterze',
+  'czynna służba wojskowa lub jej formy zastępcze, praca w szczególnych warunkach lub w szczególnym charakterze',
   'wykorzystany dodatkowy urlop albo inne uprawnienie lub świadczenie z przepisów prawa pracy',
-  'okresy nieskładkowe w czasie zatrudnienia',
+  'okresy nieskładkowe w czasie zatrudnienia, uwzględniane przy ustalaniu prawa do emerytury lub renty',
   'zajęcie wynagrodzenia w postępowaniu egzekucyjnym',
   'należności uznane, a niewypłacone z braku pieniędzy',
   'na Twoje żądanie: wysokość i składniki wynagrodzenia oraz zdobyte kwalifikacje',
