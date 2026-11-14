@@ -110,12 +110,13 @@ const faq = [
 
       <div class="mt-5" data-pole="typZurawia" hidden={ukryj('typZurawia')}>
         <label for="cu-zuraw" class="etykieta-pola">Rodzaj żurawia</label>
-        <select id="cu-zuraw" name="typZurawia" class="pole mt-1">
+        <select id="cu-zuraw" name="typZurawia" class="pole mt-1" aria-describedby="cu-zuraw-opis">
           <option value="stacjonarny" selected>Stacjonarny, słupowy</option>
           <option value="przewozny">Przewoźny, przenośny</option>
           <option value="samojezdny">Samojezdny</option>
-          <option value="wiezowy">Wieżowy, szybkomontujący</option>
+          <option value="wiezowy">Wieżowy</option>
         </select>
+        <p id="cu-zuraw-opis" class="meta mt-1">Żuraw szybkomontujący: wybierz „Wieżowy”.</p>
       </div>
 
       <div class="mt-5" data-pole="typPodestu" hidden={ukryj('typPodestu')}>
