@@ -3,7 +3,7 @@
 Gałąź `fabryka/hala`. Dwa narzędzia BHP (kategoria „bhp”): `/narzedzia/drogi-i-przejscia` i `/narzedzia/skladowanie-w-magazynie`.
 Proces: badacz prawa (`raporty/hala/PRZEPISY.md`), budowniczy, weryfikator prawny i weryfikator kodu/UX (niezależnie, pliki
 i teksty przepisów bez wniosków), audytor. Wynik: `npm run -s check:szybki` EXIT 0 (unit 1992) i `BEZ_WEBKIT=1 npm run check` EXIT 0
-(liczby w ostatnim commicie). Zrzuty formularzy 412 i 320 px: `raporty/hala/zrzuty/` (bez przewijania w bok, nic nie ucięte).
+(E2E 2285 zaliczonych, 337 pominiętych z założenia; Lighthouse i kontrola SEO produkcji bez błędów). Zrzuty formularzy 412 i 320 px: `raporty/hala/zrzuty/` (bez przewijania w bok, nic nie ucięte).
 
 ## Przepisy
 Ogólne przepisy BHP (t.j. Dz.U. 2003 poz. 1650; zmiany 2007/330, 2008/690, 2011/1034, 2021/2088, 2026/927 sprawdzone, dotyczy
