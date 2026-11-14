@@ -16,7 +16,7 @@ const start = opisSwiadectwa({ ustanie, otrzymanie: ustanie, wynagrodzenie: 5200
 const faq = [
   {
     pytanie: 'Kiedy pracodawca musi wydać świadectwo pracy?',
-    odpowiedz: 'W dniu, w którym kończy się stosunek pracy, jeśli nie zawiera z Tobą kolejnej umowy w ciągu 7 dni. Gdy z przyczyn obiektywnych nie może go wtedy wydać Tobie albo osobie przez Ciebie upoważnionej, w ciągu 7 dni wysyła je pocztą albo doręcza w inny sposób (art. 97 § 1 Kodeksu pracy). Nie może uzależniać wydania świadectwa od rozliczenia się z nim (art. 97 § 1³).',
+    odpowiedz: 'W dniu, w którym kończy się stosunek pracy, jeśli pracodawca nie zamierza nawiązać z Tobą kolejnego stosunku pracy w ciągu 7 dni. Gdy z przyczyn obiektywnych nie może go wtedy wydać Tobie albo osobie przez Ciebie upoważnionej, w ciągu 7 dni wysyła je pocztą albo doręcza w inny sposób (art. 97 § 1 Kodeksu pracy). Nie może uzależniać wydania świadectwa od rozliczenia się z nim (art. 97 § 1³).',
   },
   {
     pytanie: 'Ile mam czasu na sprostowanie świadectwa pracy?',
@@ -32,7 +32,7 @@ const faq = [
   },
   {
     pytanie: 'Czy pozew o świadectwo pracy kosztuje?',
-    odpowiedz: 'Pracownik, który wnosi pozew do sądu pracy, nie płaci kosztów sądowych (art. 96 ust. 1 pkt 4 ustawy o kosztach sądowych w sprawach cywilnych). Sprawy o świadectwo pracy rozpatruje sąd rejonowy, a pozew można złożyć w sądzie właściwym dla pracodawcy albo dla miejsca, w którym praca była wykonywana (art. 461 § 1 i § 1¹ Kodeksu postępowania cywilnego).',
+    odpowiedz: 'Pracownik, który wnosi pozew do sądu pracy, nie musi uiszczać kosztów sądowych (art. 96 ust. 1 pkt 4 ustawy o kosztach sądowych w sprawach cywilnych). Nie dotyczy to kosztów pełnomocnika pracodawcy, gdy sprawa zostanie przegrana. Sprawy o świadectwo pracy rozpatruje sąd rejonowy, a pozew można złożyć w sądzie właściwym dla pracodawcy albo dla miejsca, w którym praca była wykonywana (art. 461 § 1 i § 1¹ Kodeksu postępowania cywilnego).',
   },
 ];
 ---
@@ -89,7 +89,7 @@ const faq = [
         <p class="status-terminu" data-w="status" data-status={start.statusKlasa}>{start.status}</p>
       </div>
       <dl class="wynik-lista">
-        {start.pozycje.map((p) => <div><dt>{p.etykieta}</dt><dd data-w={p.klucz}>{p.wartosc}</dd></div>)}
+        {start.pozycje.map((p) => <div><dt>{p.etykieta}</dt><dd><span data-w={p.klucz}>{p.wartosc}</span><span class="block font-normal" data-w={`${p.klucz}-opis`}>{p.opis}</span></dd></div>)}
       </dl>
       <div data-w="uwagi">{start.uwagi.map((u) => <p class="wynik-uwaga">{u}</p>)}</div>
       <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
@@ -116,10 +116,11 @@ const faq = [
     <h2 id="jak-liczymy">Jak liczymy</h2>
     <p>
       Terminy w dniach liczymy od dnia po zdarzeniu, na przykład po dniu otrzymania świadectwa (art. 111 § 2 Kodeksu
-      cywilnego przez art. 300 Kodeksu pracy). Gdy ostatni dzień wypada w sobotę, niedzielę albo święto, nie jest
+      cywilnego przez art. 300 Kodeksu pracy). Wniosek do pracodawcy bezpieczniej uznać za złożony dopiero wtedy, gdy do
+      niego dotrze, więc ostatni dzień to dzień, w którym wniosek powinien już być u pracodawcy. Gdy ostatni dzień wypada w sobotę, niedzielę albo święto, nie jest
       przesądzone, czy termin z Kodeksu pracy przesuwa się na następny dzień roboczy (art. 115 Kodeksu cywilnego). Dlatego
       jako ostatni dzień podajemy datę bez przesunięcia, czyli najwcześniejszą, której dotrzymanie jest bezpieczne, a datę
-      po przesunięciu tylko w dopisku. Kalkulator terminów do sądu pracy przesuwa takie terminy; tu liczymy ostrożniej.
+      po przesunięciu tylko w dopisku. Kalkulator <a href="/narzedzia/odwolanie-do-sadu-pracy">odwołania do sądu pracy</a> przesuwa takie terminy; tu liczymy ostrożniej.
     </p>
     <p>
       Gdy pracodawca nie zawiadomi o odmowie sprostowania, przepis nie podaje terminu na pozew, a art. 97¹ § 3–4 pozwala
@@ -168,16 +169,20 @@ const faq = [
         wynagrodzenie: pensja === '' ? undefined : wpisanaLiczba(pensja),
       };
       // Pole daty z niepełną datą ma pustą wartość, ale nie jest puste: traktujemy to jako błąd.
+      const NIEPELNA = { ustanie: 'Wpisz pełną datę ostatniego dnia umowy.', otrzymanie: 'Wpisz pełną datę otrzymania świadectwa albo wyczyść pole.', wniosek: 'Wpisz pełną datę doręczenia wniosku albo wyczyść pole.', odmowa: 'Wpisz pełną datę odmowy albo wyczyść pole.' };
       const niepelne = (['ustanie', 'otrzymanie', 'wniosek', 'odmowa'] as const).find((n) => el(n).validity.badInput);
       const dzis = dzisWPolsce();
-      const b = niepelne ? { pole: niepelne, tekst: 'Wpisz pełną datę albo wyczyść pole.' } : bladSwiadectwa(dane, dzis);
+      const b = niepelne ? { pole: niepelne, tekst: NIEPELNA[niepelne] } : bladSwiadectwa(dane, dzis);
       pokazBlad(blad, b?.tekst, b ? el(b.pole) : []);
       const status = w('status');
       if (b) {
         w('glowny').textContent = '—';
         w('glowny-opis').textContent = '';
         status.hidden = true;
-        for (const k of ['wydanie', 'sprostowanie', 'odpowiedz', 'pozew', 'wydanie-sad', 'odszkodowanie']) w(k).textContent = '—';
+        for (const k of ['wydanie', 'sprostowanie', 'odpowiedz', 'pozew', 'wydanie-sad', 'odszkodowanie']) {
+          w(k).textContent = '—';
+          w(`${k}-opis`).textContent = '';
+        }
         return;
       }
       const o = opisSwiadectwa(dane, dzis);
@@ -186,10 +191,27 @@ const faq = [
       status.hidden = false;
       status.dataset.status = o.statusKlasa;
       pisz('status', o.status);
-      for (const p of o.pozycje) pisz(p.klucz, p.wartosc);
+      for (const p of o.pozycje) {
+        pisz(p.klucz, p.wartosc);
+        pisz(`${p.klucz}-opis`, p.opis);
+      }
+      const uwagi = w('uwagi');
+      const teksty = o.uwagi.map((u) => typografia(u));
+      if ([...uwagi.children].map((x) => x.textContent).join('\n') !== teksty.join('\n')) {
+        uwagi.replaceChildren(
+          ...teksty.map((tekst) => {
+            const p = document.createElement('p');
+            p.className = 'wynik-uwaga';
+            p.textContent = tekst;
+            return p;
+          }),
+        );
+      }
     };
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
+    // Niepełna data w pustym polu nie wywołuje input ani change (Chromium): sprawdzamy przy opuszczeniu pola.
+    form.addEventListener('focusout', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
     ustawDzisiejszeWartosci(form);
     liczPoPowrocie(przelicz);

@@ -893,7 +893,7 @@ export const NARZEDZIA: Narzedzie[] = [
     nazwa: 'Świadectwo pracy: terminy i sprostowanie',
     krotko: 'Kiedy pracodawca wydaje świadectwo, do kiedy sprostowanie i pozew, ile odszkodowania, co ma w nim być.',
     kategoria: 'umowa',
-    przepisy: ['kodeksPracy', 'swiadectwoPracy', 'wynagrodzenieRozp', 'urlopowe', 'kodeksCywilny', 'kpc', 'kosztySadowe', 'pip'],
+    przepisy: ['kodeksPracy', 'swiadectwoPracy', 'wynagrodzenieRozp', 'urlopowe', 'kodeksCywilny', 'kpc', 'zmianaMobbing2026', 'kosztySadowe', 'pip'],
     sprawdzono: '2026-11-14',
   },
   {
@@ -901,7 +901,7 @@ export const NARZEDZIA: Narzedzie[] = [
     nazwa: 'Monitoring w pracy: kamery, poczta, GPS',
     krotko: 'Czy pracodawca może nagrywać, gdzie kamer być nie może, ile trzyma nagrania i kiedy musi uprzedzić.',
     kategoria: 'umowa',
-    przepisy: ['kodeksPracy', 'kodeksCywilny', 'pip', 'ochronaDanych'],
+    przepisy: ['kodeksPracy', 'kodeksCywilny', 'pip', 'zmianaPip2026', 'ochronaDanych'],
     sprawdzono: '2026-11-14',
   },
   {

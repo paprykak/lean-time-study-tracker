@@ -108,7 +108,10 @@ export type KlasaStatusu = 'po-terminie' | 'pilne' | 'wkrotce' | 'w-terminie';
 export interface PozycjaWyniku {
   klucz: string;
   etykieta: string;
+  /** Krótko: data albo kwota i stan terminu (pogrubione). */
   wartosc: string;
+  /** Objaśnienie z przepisem (zwykłą czcionką). */
+  opis: string;
 }
 
 export interface OpisSwiadectwa {
@@ -140,6 +143,8 @@ const dopiskPrzesuniecia = (t: { koniec: string; poPrzesunieciu: string | null; 
 
 const PRZYWROCENIE = 'Gdy termin minął bez Twojej winy, sąd pracy może go przywrócić na wniosek złożony w 7 dni od ustania przyczyny spóźnienia (art. 265 Kodeksu pracy).';
 
+const wielka = (t: string) => t.charAt(0).toUpperCase() + t.slice(1);
+
 /** Teksty wyniku: te same w HTML ze strony i w skrypcie przeglądarki. Rzuca RangeError przy błędnych danych. */
 export function opisSwiadectwa(d: DaneSwiadectwa, dzis: string): OpisSwiadectwa {
   const t = terminySwiadectwa(d, dzis);
@@ -150,38 +155,50 @@ export function opisSwiadectwa(d: DaneSwiadectwa, dzis: string): OpisSwiadectwa 
     pozycje.push({
       klucz: 'wydanie',
       etykieta: 'Wydanie świadectwa',
-      wartosc: `${dataPoPolsku(t.wydanie)}, w dniu ustania stosunku pracy (art. 97 § 1). Gdy z przyczyn obiektywnych nie da się go wtedy wydać, pracodawca wysyła je pocztą albo doręcza inaczej najpóźniej ${dataPoPolsku(t.wysylka!)}`,
+      wartosc: dataPoPolsku(t.wydanie),
+      opis: `W dniu ustania stosunku pracy (art. 97 § 1). Gdy z przyczyn obiektywnych nie da się go wtedy wydać, pracodawca wysyła je pocztą albo doręcza inaczej najpóźniej ${dataPoPolsku(t.wysylka!)}`,
     });
   } else {
     pozycje.push({
       klucz: 'wydanie',
       etykieta: 'Wydanie świadectwa',
-      wartosc: 'Przy nowej umowie u tego samego pracodawcy w ciągu 7 dni świadectwo dostajesz tylko na wniosek, papierowy albo elektroniczny, złożony w każdym czasie; pracodawca wydaje je w 7 dni od złożenia wniosku (art. 97 § 1¹–1²).',
+      wartosc: 'Na Twój wniosek',
+      opis: 'Przy nowej umowie u tego samego pracodawcy w ciągu 7 dni świadectwo dostajesz tylko na wniosek, papierowy albo elektroniczny, złożony w każdym czasie; pracodawca wydaje je w 7 dni od złożenia wniosku (art. 97 § 1¹–1²).',
     });
   }
 
   // Terminy pracownika: wniosek o sprostowanie, pozew po odmowie albo wariant ostrożny bez odpowiedzi.
-  const terminyPracownika: { koniec: string; nazwa: string }[] = [];
+  const terminyPracownika: { koniec: string; nazwa: string; przesuniety: boolean }[] = [];
   if (t.sprostowanie) {
     const s = stanTerminu(t.sprostowanie.koniec, dzis);
     pozycje.push({
       klucz: 'sprostowanie',
       etykieta: 'Wniosek o sprostowanie',
-      wartosc: `do ${dataPoPolsku(t.sprostowanie.koniec)}, 14 dni od otrzymania świadectwa (art. 97 § 2¹); ${s.tekst}.${dopiskPrzesuniecia(t.sprostowanie)}`,
+      wartosc: puste(d.wniosek) ? `do ${dataPoPolsku(t.sprostowanie.koniec)}: ${s.tekst}` : `do ${dataPoPolsku(t.sprostowanie.koniec)}`,
+      opis: `14 dni od otrzymania świadectwa (art. 97 § 2¹); do tego dnia wniosek powinien dotrzeć do pracodawcy.${dopiskPrzesuniecia(t.sprostowanie)}`,
     });
-    if (puste(d.wniosek) && puste(d.odmowa)) terminyPracownika.push({ koniec: t.sprostowanie.koniec, nazwa: 'Wniosek o sprostowanie' });
+    if (puste(d.wniosek) && puste(d.odmowa)) terminyPracownika.push({ koniec: t.sprostowanie.koniec, nazwa: 'Wniosek o sprostowanie', przesuniety: !!t.sprostowanie.poPrzesunieciu });
+    if (!puste(d.wniosek) && d.wniosek! > t.sprostowanie.koniec) {
+      const wPrzesunietym = !!t.sprostowanie.poPrzesunieciu && d.wniosek! <= t.sprostowanie.poPrzesunieciu;
+      uwagi.push(
+        wPrzesunietym
+          ? `Wniosek dotarł po ${dataPoPolsku(t.sprostowanie.koniec)} Jest w terminie tylko wtedy, gdy termin przesuwa się z dnia wolnego na następny dzień roboczy (art. 115 Kodeksu cywilnego). ${PRZYWROCENIE}`
+          : `Wniosek dotarł po terminie 14 dni z art. 97 § 2¹. ${PRZYWROCENIE}`,
+      );
+    }
   } else {
-    pozycje.push({ klucz: 'sprostowanie', etykieta: 'Wniosek o sprostowanie', wartosc: 'w 14 dni od dnia otrzymania świadectwa (art. 97 § 2¹); wpisz datę otrzymania, a policzymy dzień.' });
+    pozycje.push({ klucz: 'sprostowanie', etykieta: 'Wniosek o sprostowanie', wartosc: '14 dni od otrzymania', opis: 'Termin z art. 97 § 2¹; wpisz datę otrzymania świadectwa, a policzymy dzień.' });
   }
 
   if (t.odpowiedz) {
     pozycje.push({
       klucz: 'odpowiedz',
       etykieta: 'Odpowiedź pracodawcy',
-      wartosc: `do ${dataPoPolsku(t.odpowiedz.koniec)}: w 7 dni od otrzymania wniosku pracodawca zawiadamia o odmowie albo wydaje nowe świadectwo (§ 7 ust. 1 rozporządzenia w sprawie świadectwa pracy).`,
+      wartosc: `do ${dataPoPolsku(t.odpowiedz.koniec)}`,
+      opis: 'W 7 dni od otrzymania wniosku pracodawca zawiadamia o odmowie albo wydaje nowe świadectwo (§ 7 ust. 1 rozporządzenia w sprawie świadectwa pracy).',
     });
   } else {
-    pozycje.push({ klucz: 'odpowiedz', etykieta: 'Odpowiedź pracodawcy', wartosc: 'w 7 dni od dnia, w którym otrzymał wniosek (§ 7 ust. 1 rozporządzenia w sprawie świadectwa pracy).' });
+    pozycje.push({ klucz: 'odpowiedz', etykieta: 'Odpowiedź pracodawcy', wartosc: '7 dni od otrzymania wniosku', opis: 'Zawiadomienie o odmowie albo nowe świadectwo (§ 7 ust. 1 rozporządzenia w sprawie świadectwa pracy).' });
   }
 
   if (t.pozew) {
@@ -189,39 +206,53 @@ export function opisSwiadectwa(d: DaneSwiadectwa, dzis: string): OpisSwiadectwa 
     pozycje.push({
       klucz: 'pozew',
       etykieta: 'Pozew o sprostowanie',
-      wartosc: `do ${dataPoPolsku(t.pozew.koniec)}, 14 dni od zawiadomienia o odmowie (art. 97 § 2¹); ${s.tekst}.${dopiskPrzesuniecia(t.pozew)}`,
+      wartosc: `do ${dataPoPolsku(t.pozew.koniec)}: ${s.tekst}`,
+      opis: `14 dni od zawiadomienia o odmowie, do sądu pracy (art. 97 § 2¹).${dopiskPrzesuniecia(t.pozew)}`,
     });
-    terminyPracownika.push({ koniec: t.pozew.koniec, nazwa: 'Pozew o sprostowanie' });
+    terminyPracownika.push({ koniec: t.pozew.koniec, nazwa: 'Pozew o sprostowanie', przesuniety: !!t.pozew.poPrzesunieciu });
   } else if (t.pozewBezOdpowiedzi) {
     const s = stanTerminu(t.pozewBezOdpowiedzi.koniec, dzis);
     pozycje.push({
       klucz: 'pozew',
       etykieta: 'Pozew o sprostowanie',
-      wartosc: `Gdy pracodawca nie zawiadomi o odmowie, przepis nie podaje terminu: pozew wnosi się do sądu pracy (art. 97 § 2¹), w każdym czasie przed przedawnieniem (art. 97¹ § 3–4). Ostrożnie: do ${dataPoPolsku(t.pozewBezOdpowiedzi.koniec)}, 14 dni od końca terminu pracodawcy; ${s.tekst}.`,
+      wartosc: `ostrożnie do ${dataPoPolsku(t.pozewBezOdpowiedzi.koniec)}: ${s.tekst}`,
+      opis: 'Gdy pracodawca nie zawiadomi o odmowie, przepis nie podaje terminu: pozew wnosi się do sądu pracy (art. 97 § 2¹), w każdym czasie przed przedawnieniem (art. 97¹ § 3–4). Ostrożnie liczymy 14 dni od końca terminu pracodawcy, jak po odmowie.',
     });
-    terminyPracownika.push({ koniec: t.pozewBezOdpowiedzi.koniec, nazwa: 'Pozew o sprostowanie (ostrożnie)' });
+    terminyPracownika.push({ koniec: t.pozewBezOdpowiedzi.koniec, nazwa: 'Pozew o sprostowanie (ostrożnie)', przesuniety: !!t.pozewBezOdpowiedzi.poPrzesunieciu });
   } else {
-    pozycje.push({ klucz: 'pozew', etykieta: 'Pozew o sprostowanie', wartosc: 'w 14 dni od zawiadomienia o odmowie sprostowania; gdy pracodawca nie zawiadomi, pozew wnosi się do sądu pracy bez terminu w przepisie (art. 97 § 2¹).' });
+    pozycje.push({ klucz: 'pozew', etykieta: 'Pozew o sprostowanie', wartosc: '14 dni od odmowy', opis: 'Termin od zawiadomienia o odmowie sprostowania; gdy pracodawca nie zawiadomi, pozew wnosi się do sądu pracy bez terminu w przepisie (art. 97 § 2¹).' });
   }
 
-  pozycje.push({
-    klucz: 'wydanie-sad',
-    etykieta: 'Gdy nie wyda świadectwa',
-    wartosc: `pozew o zobowiązanie pracodawcy do wydania świadectwa (art. 97¹ § 1), w każdym czasie przed przedawnieniem (§ 3): 3 lata (art. 291 § 1), licząc od dnia ustania stosunku pracy do ${dataPoPolsku(t.przedawnienie)} Gdy pracodawca nie istnieje, pozew o ustalenie prawa do świadectwa (§ 2).`,
-  });
+  pozycje.push(
+    d.kolejnaUmowa
+      ? {
+          klucz: 'wydanie-sad',
+          etykieta: 'Gdy nie wyda świadectwa',
+          wartosc: 'Pozew o wydanie',
+          opis: 'Pozew o zobowiązanie pracodawcy do wydania świadectwa (art. 97¹ § 1), w każdym czasie przed przedawnieniem (art. 97¹ § 3). Przy wydaniu na wniosek 3 lata przedawnienia (art. 291 § 1) liczą się dopiero od końca 7 dni na wydanie po złożeniu wniosku (art. 97 § 1²).',
+        }
+      : {
+          klucz: 'wydanie-sad',
+          etykieta: 'Gdy nie wyda świadectwa',
+          wartosc: `pozew do ${dataPoPolsku(t.przedawnienie)}`,
+          opis: 'Pozew o zobowiązanie pracodawcy do wydania świadectwa, w każdym czasie przed przedawnieniem (art. 97¹ § 1 i 3): 3 lata (art. 291 § 1), liczone od ostatniego dnia umowy. Gdy pracodawca nie istnieje, pozew o ustalenie prawa do świadectwa (art. 97¹ § 2).',
+        },
+  );
 
-  pozycje.push({
-    klucz: 'odszkodowanie',
-    etykieta: 'Odszkodowanie',
-    wartosc:
-      t.odszkodowanie === null
-        ? 'wynagrodzenie za czas bez pracy z powodu niewydania w terminie albo wydania złego świadectwa, najwyżej za 6 tygodni (art. 99 § 2); wpisz pensję, a policzymy górną granicę.'
-        : `najwyżej ${zl(t.odszkodowanie)}: wynagrodzenie za czas bez pracy z tego powodu, nie dłuższy niż 6 tygodni (art. 99 § 2), liczone jak ekwiwalent za urlop (§ 2 ust. 1 pkt 9 rozporządzenia z 29 maja 1996 r.); przyjmujemy 1,5 × ${zl(d.wynagrodzenie!)}.`,
-  });
+  pozycje.push(
+    t.odszkodowanie === null
+      ? { klucz: 'odszkodowanie', etykieta: 'Odszkodowanie', wartosc: 'najwyżej za 6 tygodni', opis: 'Wynagrodzenie za czas bez pracy z powodu niewydania w terminie albo wydania niewłaściwego świadectwa (art. 99 § 1–2); wpisz pensję, a policzymy górną granicę.' }
+      : {
+          klucz: 'odszkodowanie',
+          etykieta: 'Odszkodowanie',
+          wartosc: `najwyżej ${zl(t.odszkodowanie)}`,
+          opis: `Wynagrodzenie za czas bez pracy z tego powodu, nie dłuższy niż 6 tygodni (art. 99 § 2), liczone jak ekwiwalent za urlop (§ 2 ust. 1 pkt 9 rozporządzenia z 29 maja 1996 r.): 1,5 × ${zl(d.wynagrodzenie!)}.`,
+        },
+  );
 
   uwagi.push('Pracodawca nie może uzależniać wydania świadectwa od wcześniejszego rozliczenia się z nim, np. ze zwrotu odzieży roboczej (art. 97 § 1³). Za niewydanie świadectwa w terminie grozi mu grzywna od 2000 do 60 000 zł (art. 282 § 1 pkt 3).');
-  uwagi.push('Odszkodowanie należy się, gdy wykażesz, że pozostawanie bez pracy wynikało właśnie ze świadectwa: Sąd Najwyższy nie przyznał go osobie, która w tym czasie nie szukała pracy ani nie zarejestrowała się w urzędzie pracy (wyrok z 11 czerwca 1997 r., I PKN 145/97). Inne szkody niż utracone zarobki można dochodzić na zasadach ogólnych, bez limitu 6 tygodni (wyrok Sądu Najwyższego z 13 października 2004 r., II PK 36/04).');
-  uwagi.push(PRZYWROCENIE);
+  uwagi.push('Odszkodowanie wymaga wykazania związku między pozostawaniem bez pracy a niewydaniem w terminie albo wydaniem niewłaściwego świadectwa. Inną szkodę niż utracone zarobki można dochodzić na zasadach ogólnych, z art. 471 Kodeksu cywilnego przez art. 300 Kodeksu pracy (wyrok Sądu Najwyższego z 13 października 2004 r., II PK 36/04).');
+  if (!uwagi.some((u) => u.includes('art. 265'))) uwagi.push(PRZYWROCENIE);
 
   // Najbliższy termin pracownika, który jeszcze nie minął; gdy wszystkie minęły, ostatni.
   let glowny: string;
@@ -233,15 +264,26 @@ export function opisSwiadectwa(d: DaneSwiadectwa, dzis: string): OpisSwiadectwa 
     const wybrany = przyszle[0] ?? terminyPracownika[terminyPracownika.length - 1];
     const s = stanTerminu(wybrany.koniec, dzis);
     glowny = dataPoPolsku(wybrany.koniec);
-    glownyOpis = `${wybrany.nazwa}: ostatni dzień, liczony bez przesunięcia z soboty i dnia wolnego`;
-    status = s.tekst.charAt(0).toUpperCase() + s.tekst.slice(1);
+    glownyOpis = `${wybrany.nazwa}: ostatni dzień${wybrany.przesuniety ? ', bez przesunięcia z dnia wolnego' : ''}`;
+    status = wielka(s.tekst);
     statusKlasa = s.klasa;
   } else if (t.wydanie) {
     glowny = dataPoPolsku(t.wydanie);
     glownyOpis = 'Wydanie świadectwa: w dniu ustania stosunku pracy (art. 97 § 1)';
     const r = dniMiedzy(dzis, t.wydanie);
-    status = r > 0 ? `Do ustania stosunku pracy: ${dni(r)}` : r === 0 ? 'Świadectwo należy się dziś' : `Pracodawca miał wydać świadectwo ${dni(-r)} temu`;
-    statusKlasa = r >= 0 ? 'w-terminie' : 'po-terminie';
+    if (r > 0) {
+      status = `Do ustania stosunku pracy: ${dni(r)}`;
+      statusKlasa = 'w-terminie';
+    } else if (r === 0) {
+      status = 'Świadectwo należy się dziś';
+      statusKlasa = 'pilne';
+    } else if (dzis <= t.wysylka!) {
+      status = `Wysyłka z przyczyn obiektywnych: najpóźniej ${dataPoPolsku(t.wysylka!)}`;
+      statusKlasa = 'wkrotce';
+    } else {
+      status = `Pracodawca miał wydać świadectwo ${dni(-r)} temu`;
+      statusKlasa = 'po-terminie';
+    }
   } else {
     glowny = 'Na wniosek';
     glownyOpis = 'Świadectwo w 7 dni od złożenia wniosku (art. 97 § 1²)';
@@ -257,14 +299,17 @@ export const TRESC_SWIADECTWA: string[] = [
   'rodzaj pracy, stanowiska albo funkcje',
   'tryb i podstawa prawna rozwiązania umowy albo podstawa jej wygaśnięcia, a przy wypowiedzeniu: kto wypowiedział',
   'okres, za który należy się odszkodowanie za skrócone wypowiedzenie (art. 36¹ § 1)',
-  'urlop wypoczynkowy przysługujący i wykorzystany w roku odejścia, w tym urlop na żądanie',
+  'urlop wypoczynkowy przysługujący i wykorzystany w roku odejścia (wzór świadectwa wymienia osobno urlop na żądanie)',
   'wolne z powodu siły wyższej (art. 148¹) i urlop opiekuńczy (art. 173¹) w roku odejścia',
-  'urlop bezpłatny, ojcowski, rodzicielski i wychowawczy z podstawą prawną',
+  'urlop bezpłatny, rodzicielski i wychowawczy z podstawą prawną oraz urlop ojcowski',
+  'okres ochrony stosunku pracy z art. 186⁸ § 1 pkt 2',
   'zwolnienie na opiekę nad dzieckiem do 14 lat (art. 188) w roku odejścia',
   'dni pracy zdalnej okazjonalnej (art. 67³³) w roku odejścia',
   'liczba dni wynagrodzenia chorobowego (art. 92) w roku odejścia',
-  'służba wojskowa, praca w szczególnych warunkach lub charakterze, okresy nieskładkowe',
-  'zajęcie wynagrodzenia przez komornika',
+  'czynna służba wojskowa, praca w szczególnych warunkach lub w szczególnym charakterze',
+  'wykorzystany dodatkowy urlop albo inne uprawnienie lub świadczenie z przepisów prawa pracy',
+  'okresy nieskładkowe w czasie zatrudnienia',
+  'zajęcie wynagrodzenia w postępowaniu egzekucyjnym',
   'należności uznane, a niewypłacone z braku pieniędzy',
   'na Twoje żądanie: wysokość i składniki wynagrodzenia oraz zdobyte kwalifikacje',
   'pouczenie o prawie do sprostowania (14 dni) i do pozwu w sądzie pracy',

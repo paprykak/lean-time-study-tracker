@@ -20,7 +20,12 @@ describe('terminy świadectwa pracy', () => {
   it('kolejna umowa w 7 dni: bez terminu wydania (art. 97 § 1¹)', () => {
     const t = terminySwiadectwa(dane({ kolejnaUmowa: true }));
     expect(t.wydanie).toBeNull();
-    expect(sp(opisSwiadectwa(dane({ kolejnaUmowa: true }), DZIS).pozycje[0].wartosc)).toContain('tylko na wniosek');
+    const o = opisSwiadectwa(dane({ kolejnaUmowa: true }), DZIS);
+    expect(sp(o.pozycje[0].opis)).toContain('tylko na wniosek');
+    // Przedawnienie pozwu o wydanie nie liczy się wtedy od ostatniego dnia umowy (art. 97 § 1², art. 291 § 1).
+    const sad = o.pozycje.find((p) => p.klucz === 'wydanie-sad')!;
+    expect(sad.wartosc).toBe('Pozew o wydanie');
+    expect(sp(sad.opis)).toContain('od końca 7 dni na wydanie po złożeniu wniosku');
   });
   it('wniosek o sprostowanie 14 dni, bez przesunięcia jako termin główny', () => {
     expect(terminySwiadectwa(dane({ otrzymanie: '2026-10-30' })).sprostowanie).toEqual({ koniec: '2026-11-13', poPrzesunieciu: null, powod: null });
@@ -41,7 +46,8 @@ describe('terminy świadectwa pracy', () => {
     expect(t.pozewBezOdpowiedzi).toBeNull();
     const o = opisSwiadectwa(dane({ otrzymanie: '2026-10-31', wniosek: '2026-11-10', odmowa: '2026-12-10' }), '2026-12-14');
     expect(sp(o.glowny)).toBe('24 grudnia 2026 r.');
-    expect(sp(o.pozycje.find((p) => p.klucz === 'pozew')!.wartosc)).toContain('dzień wolny od pracy; czy termin przesuwa się na 28 grudnia 2026 r.');
+    expect(sp(o.pozycje.find((p) => p.klucz === 'pozew')!.opis)).toContain('dzień wolny od pracy; czy termin przesuwa się na 28 grudnia 2026 r.');
+    expect(o.glownyOpis).toBe('Pozew o sprostowanie: ostatni dzień, bez przesunięcia z dnia wolnego');
   });
   it('przedawnienie pozwu o wydanie: 3 lata, 29 lutego → 28 lutego (art. 112 KC)', () => {
     expect(terminySwiadectwa(dane({ ustanie: '2024-02-29' })).przedawnienie).toBe('2027-02-28');
@@ -77,6 +83,24 @@ describe('status i termin główny', () => {
     const o = opisSwiadectwa(dane({ otrzymanie: '2026-10-31', wniosek: '2026-11-10' }), DZIS);
     expect(sp(o.glowny)).toBe('1 grudnia 2026 r.');
     expect(o.glownyOpis).toContain('ostrożnie');
+  });
+  it('dopisek o przesunięciu tylko przy dniu wolnym', () => {
+    expect(opisSwiadectwa(dane({ otrzymanie: '2026-11-05' }), DZIS).glownyOpis).toBe('Wniosek o sprostowanie: ostatni dzień');
+  });
+  it('wniosek po 14 dniach: uwaga o przywróceniu terminu, a przy sobocie o art. 115 KC', () => {
+    const po = opisSwiadectwa(dane({ ustanie: '2026-10-01', otrzymanie: '2026-10-01', wniosek: '2026-11-01' }), DZIS);
+    expect(po.uwagi[0]).toContain('po terminie 14 dni');
+    expect(po.uwagi.filter((u) => u.includes('art. 265'))).toHaveLength(1);
+    const pon = opisSwiadectwa(dane({ otrzymanie: '2026-10-31', wniosek: '2026-11-16' }), '2026-11-20');
+    expect(pon.uwagi[0]).toContain('art. 115 Kodeksu cywilnego');
+    expect(opisSwiadectwa(dane({ otrzymanie: '2026-10-31', wniosek: '2026-11-14' }), DZIS).uwagi.some((u) => u.startsWith('Wniosek dotarł'))).toBe(false);
+  });
+  it('bez świadectwa w 7 dniach po umowie: legalna wysyłka, nie „po terminie”', () => {
+    const o = opisSwiadectwa(dane({ ustanie: '2026-11-12' }), DZIS);
+    expect(o.statusKlasa).toBe('wkrotce');
+    expect(sp(o.status)).toBe('Wysyłka z przyczyn obiektywnych: najpóźniej 19 listopada 2026 r.');
+    expect(opisSwiadectwa(dane({ ustanie: '2026-11-07' }), DZIS).statusKlasa).toBe('wkrotce');
+    expect(opisSwiadectwa(dane({ ustanie: '2026-11-06' }), DZIS).statusKlasa).toBe('po-terminie');
   });
   it('bez dat świadectwa: termin wydania', () => {
     const o = opisSwiadectwa(dane({ ustanie: '2026-11-30' }), DZIS);

@@ -18,15 +18,18 @@
 // - Kodeks cywilny, t.j. Dz.U. 2026 poz. 795: art. 112 (termin w miesiącach).
 //
 // Interpretacje (opisane w „Jak liczymy”):
-// - 3 miesiące od dnia nagrania liczymy jak termin od zdarzenia (art. 112 KC przez art. 300 Kp, `dodajMiesiace`):
-//   nagranie z 14 listopada najpóźniej do 14 lutego, z 30 listopada do 28 (29) lutego; to granica najwyższa, pracodawca
-//   może usunąć nagranie wcześniej; art. 115 KC nie przesuwa granicy (to nie termin do wykonania czynności przez pracownika);
-// - „nie później niż 2 tygodnie przed uruchomieniem”: najpóźniej dzień, który datą odpowiada dniowi uruchomienia
-//   2 tygodnie wcześniej (uruchomienie 15 grudnia → informacja do 1 grudnia), „jeden dzień przed”: dzień poprzedni;
+// - 3 miesiące „od dnia nagrania” liczymy z dniem nagrania włącznie (`koniecOkresu`, art. 112 KC przez art. 300 Kp):
+//   nagranie z 14 listopada najpóźniej do 13 lutego, z 30 listopada do 28 (29) lutego; to wariant wcześniejszy (drugie
+//   odczytanie bez dnia nagrania: 14 lutego, opisane na stronie); to granica najwyższa, pracodawca może usunąć nagranie
+//   wcześniej; art. 115 KC nie przesuwa granicy (to nie termin do wykonania czynności przez pracownika);
+// - „nie później niż 2 tygodnie przed uruchomieniem”: pełne 2 tygodnie między dniem informacji a dniem uruchomienia
+//   (art. 112 KC: 2 tygodnie od 30 listopada mijają z końcem 14 grudnia), więc uruchomienie 15 grudnia → informacja do
+//   30 listopada; informacja 1 grudnia (ten sam dzień tygodnia) jest sporna i tak ją opisujemy; „jeden dzień przed”:
+//   dzień poprzedni;
 // - poczta i inne formy: Kodeks pracy nie podaje okresu przechowywania (art. 22³ § 3 nie odsyła do art. 22² § 3–5),
 //   więc go nie liczymy; RODO cytujemy tylko tam, gdzie odsyła Kodeks pracy (art. 22² § 10).
 import { odmiana } from '../redakcja';
-import { dataPoPolsku, dniMiedzy, dodajDni, dodajMiesiace, poprawnaData } from './terminy';
+import { dataPoPolsku, dniMiedzy, dodajDni, dodajMiesiace, koniecOkresu, poprawnaData } from './terminy';
 
 export type Rodzaj = 'kamery' | 'poczta' | 'inne';
 export type Miejsce = 'hala' | 'teren' | 'sanitariat' | 'szatnia' | 'stolowka' | 'palarnia' | 'zwiazek';
@@ -45,7 +48,7 @@ export const MIEJSCA: Record<Miejsce, { krotko: string; dopelniacz: string }> = 
   szatnia: { krotko: 'Szatnia', dopelniacz: 'szatni' },
   stolowka: { krotko: 'Stołówka', dopelniacz: 'stołówki' },
   palarnia: { krotko: 'Palarnia', dopelniacz: 'palarni' },
-  zwiazek: { krotko: 'Pokój związku', dopelniacz: 'pomieszczeń związku zawodowego' },
+  zwiazek: { krotko: 'Pokój związku', dopelniacz: 'pomieszczeń udostępnianych zakładowej organizacji związkowej' },
 };
 
 export const INFORMACJE: Record<Informacja, string> = {
@@ -94,12 +97,17 @@ export function bladMonitoringu(d: DaneMonitoringu, dzis: string): { pole: keyof
 
 /** Najpóźniejszy dzień informacji (2 tygodnie przed) i oznaczenia (dzień przed) dla dnia uruchomienia. */
 export const terminyInformacji = (uruchomienie: string) => ({
-  informacja: dodajDni(uruchomienie, -7 * TYGODNIE_PRZED),
+  /** Pełne 2 tygodnie między informacją a uruchomieniem (art. 112 KC): 15 grudnia → 30 listopada. */
+  informacja: dodajDni(uruchomienie, -7 * TYGODNIE_PRZED - 1),
+  /** Drugie odczytanie: ten sam dzień tygodnia 2 tygodnie wcześniej (15 grudnia → 1 grudnia). */
+  informacjaLagodniej: dodajDni(uruchomienie, -7 * TYGODNIE_PRZED),
   oznaczenie: dodajDni(uruchomienie, -1),
 });
 
 /** Ostatni dzień, w którym pracodawca może przechowywać nagranie obrazu (art. 22² § 3, art. 112 KC). */
-export const koniecPrzechowywania = (nagranie: string) => dodajMiesiace(nagranie, OKRES_NAGRAN_MIESIACE);
+export const koniecPrzechowywania = (nagranie: string) => koniecOkresu(nagranie, OKRES_NAGRAN_MIESIACE);
+/** Drugie odczytanie: dzień nagrania się nie wlicza (14 listopada → 14 lutego). */
+export const koniecPrzechowywaniaPozniej = (nagranie: string) => dodajMiesiace(nagranie, OKRES_NAGRAN_MIESIACE);
 
 export type Werdykt = 'wolno' | 'wyjatkowo' | 'nie';
 export type KlasaStatusu = 'po-terminie' | 'pilne' | 'wkrotce' | 'w-terminie';
@@ -112,8 +120,11 @@ export interface OpisMonitoringu {
   /** Warunki, które pracodawca musi spełnić (lista). */
   warunki: string[];
   informacja: string;
+  /** Krótki status (np. „Za późno o 5 dni”) i jego klasa; null, gdy nie ma czego oceniać. */
+  informacjaStatus: string | null;
   informacjaKlasa: KlasaStatusu | null;
   przechowywanie: string;
+  przechowywanieStatus: string | null;
   przechowywanieKlasa: KlasaStatusu | null;
   zakazy: string[];
   zgloszenie: string;
@@ -123,6 +134,9 @@ const dni = (n: number) => odmiana(n, ['dzień', 'dni', 'dni']);
 
 const CELE_KAMERY = 'bezpieczeństwo pracowników, ochrona mienia, kontrola produkcji albo zachowanie w tajemnicy informacji, których ujawnienie mogłoby narazić pracodawcę na szkodę';
 const CELE_POCZTA = 'organizacja pracy umożliwiająca pełne wykorzystanie czasu pracy i właściwe używanie udostępnionych narzędzi pracy';
+
+export const ZGLOSZENIE_KROTKO =
+  'Naruszenie przepisów o monitoringu możesz zgłosić okręgowemu inspektoratowi pracy (art. 10 ust. 1 pkt 1 ustawy o Państwowej Inspekcji Pracy), a w sprawie danych osobowych z nagrań Prezesowi Urzędu Ochrony Danych Osobowych (art. 34 ust. 1 i art. 60 ustawy o ochronie danych osobowych).';
 
 export const ZGLOSZENIE =
   'Naruszenie przepisów prawa pracy możesz zgłosić okręgowemu inspektoratowi pracy: Państwowa Inspekcja Pracy nadzoruje i kontroluje przestrzeganie prawa pracy (art. 10 ust. 1 pkt 1 ustawy o Państwowej Inspekcji Pracy), a po kontroli może skierować do pracodawcy wystąpienie albo wydać polecenie (art. 11 ust. 1 pkt 8). Nagrania i inne dane z monitoringu to dane osobowe: organem właściwym w sprawie ich ochrony jest Prezes Urzędu Ochrony Danych Osobowych (art. 34 ust. 1 ustawy o ochronie danych osobowych), który prowadzi postępowanie w sprawie naruszenia przepisów o ochronie danych (art. 60).';
@@ -143,7 +157,7 @@ export function opisMonitoringu(d: DaneMonitoringu, dzis: string): OpisMonitorin
   if (kamery) {
     if (miejsce === 'zwiazek') {
       werdykt = 'Nie wolno';
-      werdyktOpis = 'Monitoring nie obejmuje pomieszczeń udostępnionych zakładowej organizacji związkowej, bez wyjątków (art. 22² § 1¹).';
+      werdyktOpis = 'Monitoring nie obejmuje pomieszczeń udostępnianych zakładowej organizacji związkowej, bez wyjątków (art. 22² § 1¹).';
       werdyktKlasa = 'po-terminie';
       przepis = 'art. 22² § 1¹ Kodeksu pracy';
     } else if (miejsce === 'hala' || miejsce === 'teren') {
@@ -169,66 +183,83 @@ export function opisMonitoringu(d: DaneMonitoringu, dzis: string): OpisMonitorin
     werdyktKlasa = 'w-terminie';
   }
 
-  const zasady = kamery ? 'art. 22²' : 'art. 22² przez art. 22³ § 3';
-  if (kamery && miejsce === 'zwiazek') warunki.push('Żadne: w pomieszczeniach udostępnionych związkowi zawodowemu monitoringu nie wolno prowadzić (art. 22² § 1¹).');
+  // Paragrafy art. 22² § 6–10 przy poczcie i innych formach stosuje się odpowiednio (art. 22³ § 3).
+  const par = (n: string) => (kamery ? `art. 22² § ${n}` : `art. 22² § ${n} przez art. 22³ § 3`);
+  if (kamery && miejsce === 'zwiazek') warunki.push('Żadne: w pomieszczeniach udostępnianych zakładowej organizacji związkowej monitoringu nie wolno prowadzić (art. 22² § 1¹).');
   else {
-    warunki.push(`Cele, zakres i sposób monitoringu są zapisane w układzie zbiorowym pracy albo w regulaminie pracy, a gdy pracodawca ich nie ma, w obwieszczeniu (${zasady} § 6).`);
-    warunki.push(`Pracownicy dowiadują się o monitoringu w sposób przyjęty u pracodawcy najpóźniej 2 tygodnie przed jego uruchomieniem (§ 7).`);
-    warunki.push('Każda nowa osoba dostaje te informacje na papierze albo elektronicznie, zanim zacznie pracę (§ 8).');
-    warunki.push('Teren i pomieszczenia objęte monitoringiem są oznaczone widocznie i czytelnie, znakami albo ogłoszeniami dźwiękowymi, najpóźniej dzień przed uruchomieniem (§ 9). Oznaczenie nie zastępuje informacji o przetwarzaniu danych z art. 12 i 13 RODO (§ 10).');
+    warunki.push(`Cele, zakres i sposób monitoringu są zapisane w układzie zbiorowym pracy albo w regulaminie pracy, a gdy pracodawca ich nie ma, w obwieszczeniu (${par('6')}).`);
+    warunki.push(`Pracownicy dowiadują się o monitoringu w sposób przyjęty u pracodawcy najpóźniej 2 tygodnie przed jego uruchomieniem (${par('7')}).`);
+    warunki.push(`Każda nowa osoba dostaje te informacje na papierze albo elektronicznie, zanim zacznie pracę (${par('8')}).`);
+    warunki.push(
+      kamery
+        ? 'Teren i pomieszczenia objęte monitoringiem są oznaczone widocznie i czytelnie, znakami albo ogłoszeniami dźwiękowymi, najpóźniej dzień przed uruchomieniem (art. 22² § 9). Oznaczenie nie zastępuje informacji o przetwarzaniu danych z art. 12 i 13 RODO (§ 10).'
+        : 'Monitoring jest oznaczony widocznie i czytelnie najpóźniej dzień przed uruchomieniem; przepis o znakach i ogłoszeniach stosuje się tu odpowiednio (art. 22² § 9 przez art. 22³ § 3). Oznaczenie nie zastępuje informacji o przetwarzaniu danych z art. 12 i 13 RODO (art. 22² § 10).',
+    );
   }
 
   // Informacja przed uruchomieniem (art. 22² § 7 i § 9).
-  let informacja = 'Wpisz dzień uruchomienia monitoringu, a policzymy, do kiedy pracodawca musiał poinformować pracowników i oznaczyć teren.';
+  let informacja = 'Wpisz dzień uruchomienia monitoringu, a policzymy, do kiedy pracodawca musiał poinformować pracowników i oznaczyć monitoring.';
+  let informacjaStatus: string | null = null;
   let informacjaKlasa: KlasaStatusu | null = null;
+  const oznaczenie = kamery ? 'oznaczenie terenu' : 'oznaczenie';
   if (kamery && miejsce === 'zwiazek') {
-    informacja = 'Informacja nie zmienia wyniku: monitoringu w tych pomieszczeniach nie wolno prowadzić.';
+    informacja = 'Uprzedzenie nie zmienia wyniku: monitoringu w tych pomieszczeniach nie wolno prowadzić.';
   } else if (!puste(d.uruchomienie)) {
     const t = terminyInformacji(d.uruchomienie!);
-    const podstawa = `Informacja najpóźniej ${dataPoPolsku(t.informacja)}, oznaczenie terenu najpóźniej ${dataPoPolsku(t.oznaczenie)}`;
+    informacja = `Informacja najpóźniej ${dataPoPolsku(t.informacja)}, ${oznaczenie} najpóźniej ${dataPoPolsku(t.oznaczenie)}`;
     if (d.informacja === 'tak') {
       const spoznienie = dniMiedzy(t.informacja, d.dataInformacji!);
+      informacja += ` Poinformowano ${dataPoPolsku(d.dataInformacji!)}`;
       if (spoznienie <= 0) {
-        informacja = `${podstawa} Poinformowano ${dataPoPolsku(d.dataInformacji!)}, czyli w terminie.`;
+        informacjaStatus = 'W terminie';
         informacjaKlasa = 'w-terminie';
+      } else if (d.dataInformacji === t.informacjaLagodniej) {
+        informacjaStatus = 'Sporne: dzień za późno albo w terminie';
+        informacjaKlasa = 'wkrotce';
+        informacja += ` Jeśli wystarczy ten sam dzień tygodnia 2 tygodnie przed uruchomieniem, to w terminie; przy pełnych 2 tygodniach dzień za późno.`;
       } else {
-        informacja = `${podstawa} Poinformowano ${dataPoPolsku(d.dataInformacji!)}, czyli ${dni(spoznienie)} za późno (art. 22² § 7).`;
+        informacjaStatus = `Za późno o ${dni(spoznienie)}`;
         informacjaKlasa = 'po-terminie';
       }
     } else if (d.informacja === 'nie') {
-      if (dzis <= t.informacja) {
-        informacja = `${podstawa} Pracodawca ma jeszcze czas: ${dni(dniMiedzy(dzis, t.informacja))}.`;
+      const r = dniMiedzy(dzis, t.informacja);
+      if (r > 0) {
+        informacjaStatus = `Pracodawca ma jeszcze ${dni(r)}`;
         informacjaKlasa = 'wkrotce';
+      } else if (r === 0) {
+        informacjaStatus = 'Dziś ostatni dzień na informację';
+        informacjaKlasa = 'pilne';
       } else {
-        informacja = `${podstawa} Bez informacji pracodawca nie spełnił obowiązku z art. 22² § 7.`;
+        informacjaStatus = 'Obowiązek niespełniony';
         informacjaKlasa = 'po-terminie';
+        informacja += ` Bez informacji pracodawca nie spełnił obowiązku z ${par('7')}.`;
       }
-    } else {
-      informacja = podstawa;
     }
   } else if (d.informacja === 'nie') {
-    informacja = 'Pracodawca musi poinformować pracowników najpóźniej 2 tygodnie przed uruchomieniem monitoringu (art. 22² § 7); bez tego obowiązek nie jest spełniony.';
-    informacjaKlasa = 'po-terminie';
+    informacja = `Pracodawca musi poinformować pracowników najpóźniej 2 tygodnie przed uruchomieniem monitoringu (${par('7')}); wpisz dzień uruchomienia, a sprawdzimy termin.`;
   } else if (d.informacja === 'tak') {
     informacja = `Poinformowano ${dataPoPolsku(d.dataInformacji!)} Wpisz dzień uruchomienia, a sprawdzimy, czy co najmniej 2 tygodnie wcześniej.`;
   }
 
   // Przechowywanie nagrań (art. 22² § 3–5).
   let przechowywanie: string;
+  let przechowywanieStatus: string | null = null;
   let przechowywanieKlasa: KlasaStatusu | null = null;
   if (!kamery) {
     przechowywanie =
       'Kodeks pracy nie podaje okresu przechowywania danych z monitoringu poczty ani z innych form monitoringu: przepis o 3 miesiącach dotyczy tylko nagrań obrazu (art. 22³ § 3 odsyła do art. 22² § 6–10, a nie do § 3–5).';
   } else if (miejsce === 'zwiazek') {
     przechowywanie = 'Takich nagrań w ogóle nie powinno być (art. 22² § 1¹).';
+    przechowywanieStatus = 'Nagranie niedozwolone';
     przechowywanieKlasa = 'po-terminie';
   } else if (!puste(d.nagranie)) {
     const koniec = koniecPrzechowywania(d.nagranie!);
     const r = dniMiedzy(dzis, koniec);
     przechowywanie =
       r >= 0
-        ? `Najpóźniej do ${dataPoPolsku(koniec)} (${r === 0 ? 'to dziś' : `zostało ${dni(r)}`}), 3 miesiące od dnia nagrania (art. 22² § 3). Pracodawca może je usunąć wcześniej. Dłużej tylko, gdy nagranie jest dowodem w postępowaniu albo pracodawca dowiedział się, że może nim być: do prawomocnego końca postępowania (§ 4).`
-        : `Okres minął ${dataPoPolsku(koniec)}: nagranie z danymi osobowymi powinno być zniszczone (art. 22² § 3 i 5), chyba że jest dowodem w postępowaniu albo pracodawca dowiedział się, że może nim być (§ 4), lub przepisy odrębne stanowią inaczej (§ 5).`;
+        ? `Najpóźniej do ${dataPoPolsku(koniec)}, 3 miesiące od dnia nagrania z tym dniem włącznie (art. 22² § 3); pracodawca może je usunąć wcześniej. Dłużej tylko, gdy nagranie jest dowodem w postępowaniu albo pracodawca dowiedział się, że może nim być (§ 4).`
+        : `Okres minął ${dataPoPolsku(koniec)} Nagranie z danymi osobowymi powinno być zniszczone (art. 22² § 5), chyba że jest dowodem w postępowaniu albo pracodawca dowiedział się, że może nim być (§ 4), lub przepisy odrębne stanowią inaczej (§ 5).`;
+    przechowywanieStatus = r < 0 ? `Okres minął ${dni(-r)} temu` : r === 0 ? 'Dziś ostatni dzień' : `Zostało ${dni(r)}`;
     przechowywanieKlasa = r < 0 ? 'po-terminie' : r <= 14 ? 'pilne' : 'w-terminie';
   } else {
     przechowywanie = 'Nagrania obrazu najwyżej 3 miesiące od dnia nagrania (art. 22² § 3); wpisz datę nagrania, a policzymy dzień.';
@@ -237,14 +268,13 @@ export function opisMonitoringu(d: DaneMonitoringu, dzis: string): OpisMonitorin
   if (kamery) {
     zakazy.push('Nie wolno używać nagrań do innych celów niż te, dla których je zebrano (art. 22² § 3).');
     zakazy.push('Nie wolno trzymać nagrań dłużej niż 3 miesiące od dnia nagrania, poza postępowaniem, w którym są albo mogą być dowodem (§ 3–4); potem nagrania z danymi osobowymi trzeba zniszczyć, o ile przepisy odrębne nie stanowią inaczej (§ 5).');
-    zakazy.push('Nie wolno monitorować pomieszczeń związku zawodowego (§ 1¹), a sanitariatów, szatni, stołówek i palarni tylko wyjątkowo (§ 2).');
+    zakazy.push('Nie wolno monitorować pomieszczeń udostępnianych zakładowej organizacji związkowej (§ 1¹), a sanitariatów, szatni, stołówek i palarni tylko wyjątkowo (§ 2).');
   } else if (d.rodzaj === 'poczta') {
     zakazy.push('Nie wolno naruszać tajemnicy korespondencji ani innych dóbr osobistych pracownika (art. 22³ § 2).');
-    zakazy.push('Przepis dotyczy służbowej poczty elektronicznej; o prywatnej poczcie nie mówi (art. 22³ § 1).');
   } else {
     zakazy.push('Nie wolno stosować innej formy monitoringu, gdy nie jest konieczna do celu z art. 22³ § 1, ani naruszać tajemnicy korespondencji i dóbr osobistych (art. 22³ § 2 i 4).');
   }
   zakazy.push(`Nie wolno uruchomić monitoringu bez zapisania go w układzie, regulaminie albo obwieszczeniu, bez informacji 2 tygodnie wcześniej i bez oznaczenia dzień wcześniej (art. 22² § 6, 7 i 9${kamery ? '' : ' przez art. 22³ § 3'}).`);
 
-  return { werdykt, werdyktOpis, werdyktKlasa, przepis, warunki, informacja, informacjaKlasa, przechowywanie, przechowywanieKlasa, zakazy, zgloszenie: ZGLOSZENIE };
+  return { werdykt, werdyktOpis, werdyktKlasa, przepis, warunki, informacja, informacjaStatus, informacjaKlasa, przechowywanie, przechowywanieStatus, przechowywanieKlasa, zakazy, zgloszenie: ZGLOSZENIE_KROTKO };
 }

@@ -27,7 +27,7 @@ const faq = [
   },
   {
     pytanie: 'Czy w szatni i toalecie mogą być kamery?',
-    odpowiedz: 'Co do zasady nie. Monitoring nie obejmuje pomieszczeń sanitarnych, szatni, stołówek i palarni, chyba że jest niezbędny do celu z art. 22² § 1 i nie narusza godności ani innych dóbr osobistych pracowników, w szczególności dzięki technikom, które nie pozwalają rozpoznać osób. W pomieszczeniach sanitarnych potrzebna jest też wcześniejsza zgoda zakładowej organizacji związkowej albo przedstawicieli pracowników (art. 22² § 2 Kodeksu pracy). Pomieszczeń udostępnionych związkowi zawodowemu monitorować nie wolno w ogóle (art. 22² § 1¹).',
+    odpowiedz: 'Co do zasady nie. Monitoring nie obejmuje pomieszczeń sanitarnych, szatni, stołówek i palarni, chyba że jest niezbędny do celu z art. 22² § 1 i nie narusza godności ani innych dóbr osobistych pracowników, w szczególności dzięki technikom, które nie pozwalają rozpoznać osób. W pomieszczeniach sanitarnych potrzebna jest też wcześniejsza zgoda zakładowej organizacji związkowej albo przedstawicieli pracowników (art. 22² § 2 Kodeksu pracy). Pomieszczeń udostępnianych zakładowej organizacji związkowej monitorować nie wolno w ogóle (art. 22² § 1¹).',
   },
   {
     pytanie: 'Jak długo pracodawca może przechowywać nagrania z kamer?',
@@ -101,17 +101,29 @@ const faq = [
       <div aria-live="polite" aria-atomic="true">
         <p class="wynik-data" data-w="werdykt">{start.werdykt}</p>
         <p class="status-terminu" data-w="przepis" data-status={start.werdyktKlasa}>{start.przepis}</p>
-        <p class="meta mt-2" data-w="werdykt-opis">{start.werdyktOpis}</p>
       </div>
+      <p class="meta mt-2" data-w="werdykt-opis">{start.werdyktOpis}</p>
       <dl class="wynik-lista">
-        <div><dt>Uprzedzenie</dt><dd data-w="informacja">{start.informacja}</dd></div>
-        <div><dt>Przechowywanie</dt><dd data-w="przechowywanie">{start.przechowywanie}</dd></div>
+        <div>
+          <dt>Uprzedzenie</dt>
+          <dd>
+            <span class="status-terminu" data-w="informacja-status" data-status={start.informacjaKlasa ?? undefined} hidden={!start.informacjaStatus} aria-live="polite">{start.informacjaStatus}</span>
+            <span class="block font-normal" data-w="informacja">{start.informacja}</span>
+          </dd>
+        </div>
+        <div>
+          <dt>Przechowywanie</dt>
+          <dd>
+            <span class="status-terminu" data-w="przechowywanie-status" data-status={start.przechowywanieKlasa ?? undefined} hidden={!start.przechowywanieStatus} aria-live="polite">{start.przechowywanieStatus}</span>
+            <span class="block font-normal" data-w="przechowywanie">{start.przechowywanie}</span>
+          </dd>
+        </div>
       </dl>
       <h3 class="etykieta mt-4">Warunki</h3>
       <ul class="mt-1 list-disc space-y-1 pl-5 text-[0.9375rem]" data-w="warunki">{start.warunki.map((t) => <li>{t}</li>)}</ul>
       <h3 class="etykieta mt-4">Czego nie wolno</h3>
       <ul class="mt-1 list-disc space-y-1 pl-5 text-[0.9375rem]" data-w="zakazy">{start.zakazy.map((t) => <li>{t}</li>)}</ul>
-      <p class="wynik-uwaga">{ZGLOSZENIE}</p>
+      <p class="wynik-uwaga">{start.zgloszenie}</p>
       <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
     </div>
   </form>
@@ -120,24 +132,30 @@ const faq = [
     <h2 id="zasady">Zasady monitoringu w pracy</h2>
     <ul>
       <li>Kamery: tylko gdy są niezbędne do bezpieczeństwa pracowników, ochrony mienia, kontroli produkcji albo ochrony tajemnicy, na terenie zakładu i wokół niego (art. 22² § 1 Kodeksu pracy).</li>
-      <li>Bez kamer w pomieszczeniach związku zawodowego (§ 1¹). W sanitariatach, szatniach, stołówkach i palarniach tylko wyjątkowo, bez naruszania godności, np. z technikami, które nie pozwalają rozpoznać osób; w sanitariatach za wcześniejszą zgodą związku albo przedstawicieli pracowników (§ 2).</li>
+      <li>Bez kamer w pomieszczeniach udostępnianych zakładowej organizacji związkowej (§ 1¹). W sanitariatach, szatniach, stołówkach i palarniach tylko wyjątkowo, bez naruszania godności, np. z technikami, które nie pozwalają rozpoznać osób; w sanitariatach za wcześniejszą zgodą związku albo przedstawicieli pracowników (§ 2).</li>
       <li>Nagrania tylko do celów, dla których je zebrano, najwyżej 3 miesiące od dnia nagrania; dłużej, gdy są dowodem w postępowaniu; potem zniszczenie (§ 3–5).</li>
       <li>Cele, zakres i sposób monitoringu w układzie zbiorowym, regulaminie pracy albo obwieszczeniu (§ 6); informacja dla pracowników najpóźniej 2 tygodnie przed uruchomieniem (§ 7); informacja na papierze albo elektronicznie dla nowej osoby przed dopuszczeniem do pracy (§ 8, w tym brzmieniu od 27 stycznia 2026 r.); oznaczenie terenu najpóźniej dzień przed uruchomieniem (§ 9).</li>
       <li>Służbowa poczta elektroniczna: kontrola, gdy jest niezbędna do organizacji pracy i właściwego używania narzędzi pracy, bez naruszania tajemnicy korespondencji (art. 22³ § 1–2). Inne formy, np. GPS: na tych samych zasadach, gdy są konieczne do tych celów (art. 22³ § 4). Obowiązki z art. 22² § 6–10 stosuje się odpowiednio (art. 22³ § 3).</li>
     </ul>
 
+    <h2 id="zgloszenie">Gdzie zgłosić naruszenie</h2>
+    <p>{ZGLOSZENIE}</p>
+
     <h2 id="jak-liczymy">Jak liczymy</h2>
     <p>
-      Termin uprzedzenia liczymy od dnia uruchomienia wstecz: 2 tygodnie przed to dzień, który datą odpowiada dniowi
-      uruchomienia 14 dni wcześniej (uruchomienie 15 grudnia: informacja najpóźniej 1 grudnia), a oznaczenie najpóźniej
-      w dniu poprzedzającym uruchomienie. Gdy regulamin pracy dopiero wprowadza monitoring, sam regulamin wchodzi w życie
+      Termin uprzedzenia liczymy tak, żeby między dniem informacji a dniem uruchomienia minęły pełne 2 tygodnie: termin
+      2 tygodni od 30 listopada kończy się z upływem 14 grudnia (art. 112 Kodeksu cywilnego przez art. 300 Kodeksu pracy),
+      więc przy uruchomieniu 15 grudnia informacja najpóźniej 30 listopada. Informację 1 grudnia, w ten sam dzień tygodnia
+      2 tygodnie wcześniej, część osób uzna za wystarczającą; przepis tego nie przesądza, więc oznaczamy ją jako sporną.
+      Oznaczenie najpóźniej w dniu poprzedzającym uruchomienie. Gdy regulamin pracy dopiero wprowadza monitoring, sam regulamin wchodzi w życie
       po upływie 2 tygodni od podania go do wiadomości pracowników (art. 104³ § 1).
     </p>
     <p>
-      Okres przechowywania nagrań liczymy jak termin w miesiącach: kończy się w dniu, który datą odpowiada dniowi nagrania,
-      a gdy takiego dnia w ostatnim miesiącu nie ma, w ostatnim dniu miesiąca (art. 112 Kodeksu cywilnego przez art. 300
-      Kodeksu pracy): nagranie z 30 listopada najpóźniej do 28 lutego, a w roku przestępnym do 29 lutego. Kodeks pracy nie
-      mówi, jak liczyć ten okres, a 3 miesiące to granica najwyższa: pracodawca może skasować nagranie wcześniej. Przy
+      Okres przechowywania liczymy „od dnia nagrania” z tym dniem włącznie, jak okres, który zaczyna się z początkiem dnia:
+      nagranie z 14 listopada najpóźniej do 13 lutego, a z 30 listopada do 28 lutego, w roku przestępnym do 29 lutego
+      (art. 112 Kodeksu cywilnego przez art. 300 Kodeksu pracy). Kodeks pracy nie mówi, jak liczyć ten okres; gdyby dnia
+      nagrania nie wliczać, koniec wypadłby dzień później (14 lutego), więc podajemy datę wcześniejszą. 3 miesiące to
+      granica najwyższa: pracodawca może skasować nagranie wcześniej. Przy
       poczcie i innych formach Kodeks pracy nie podaje okresu przechowywania, bo art. 22³ § 3 odsyła tylko do art. 22²
       § 6–10, więc go nie liczymy.
     </p>
@@ -194,26 +212,33 @@ const faq = [
       };
       const dzis = dzisWPolsce();
       const widoczne = ['uruchomienie', ...(informacja === 'tak' ? ['dataInformacji'] : []), ...(kamery ? ['nagranie'] : [])];
+      const NAZWY: Record<string, string> = { uruchomienie: 'uruchomienia', dataInformacji: 'informacji', nagranie: 'nagrania' };
       const niepelne = widoczne.find((n) => el(n).validity.badInput) as keyof DaneMonitoringu | undefined;
-      const b = niepelne ? { pole: niepelne, tekst: 'Wpisz pełną datę albo wyczyść pole.' } : bladMonitoringu(dane, dzis);
+      const b = niepelne ? { pole: niepelne, tekst: `Wpisz pełną datę ${NAZWY[niepelne]} albo wyczyść pole.` } : bladMonitoringu(dane, dzis);
       pokazBlad(blad, b?.tekst, b ? el(b.pole) : []);
-      if (b) {
-        for (const k of ['werdykt', 'przepis', 'informacja', 'przechowywanie']) w(k).textContent = '—';
-        w('werdykt-opis').textContent = '';
-        return;
-      }
-      const o = opisMonitoringu(dane, dzis);
+      // Werdykt i listy nie zależą od dat: przy błędzie daty liczymy je bez dat, a terminy chowamy.
+      const o = opisMonitoringu(b ? { rodzaj, miejsce: dane.miejsce } : dane, dzis);
       pisz('werdykt', o.werdykt);
       pisz('przepis', o.przepis);
       w('przepis').dataset.status = o.werdyktKlasa;
       pisz('werdykt-opis', o.werdyktOpis);
-      pisz('informacja', o.informacja);
-      pisz('przechowywanie', o.przechowywanie);
       lista('warunki', o.warunki);
       lista('zakazy', o.zakazy);
+      for (const k of ['informacja', 'przechowywanie'] as const) {
+        const st = w(`${k}-status`);
+        const tekst = b ? null : o[`${k}Status`];
+        st.hidden = !tekst;
+        if (tekst) {
+          st.dataset.status = o[`${k}Klasa`] ?? '';
+          pisz(`${k}-status`, tekst);
+        }
+        pisz(k, b ? '—' : o[k]);
+      }
     };
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
+    // Niepełna data w pustym polu nie wywołuje input ani change (Chromium): sprawdzamy przy opuszczeniu pola.
+    form.addEventListener('focusout', przelicz);
     form.addEventListener('submit', (e) => e.preventDefault());
     ustawDzisiejszeWartosci(form);
     liczPoPowrocie(przelicz);
