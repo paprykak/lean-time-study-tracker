@@ -88,7 +88,7 @@ Twarde zasady treści (każda wzięła się z błędu, który już raz wyszedł)
 2. Badacz prawa: teksty aktów, zmiany, cytaty. Bez źródła nie ma narzędzia: zamiast zgadywać, wybierz inny temat z obszaru.
 3. Budowniczy: logika z testami (niezależny rachunek), strona, test E2E, wpisy w rejestrach.
 4. Weryfikator prawny i weryfikator kodu działają niezależnie; poprawiasz wszystko, co znajdą.
-5. `npm run -s check:szybki`, potem `BEZ_WEBKIT=1 npm run check` (ok. 11 minut) aż do EXIT 0; zrzut z telefonu.
+5. `npm run -s check:szybki`, potem `BEZ_WEBKIT=1 npm run check` (ok. 10 minut na 4 rdzeniach) aż do EXIT 0; zrzut z telefonu.
 6. Commit na gałęzi `fabryka/<pakiet>` (stopka commitów z instrukcji sesji) i `git push -u origin fabryka/<pakiet>`.
    **Nigdy nie wypychaj na `main`** i nie twórz pull requestów.
 7. Ostatnia wiadomość to raport do orkiestratora: gałąź i ostatni commit, lista narzędzi (slug, przepisy, wynik checku),

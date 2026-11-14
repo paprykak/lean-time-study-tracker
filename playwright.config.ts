@@ -9,6 +9,9 @@ const BASE_URL = process.env.BASE_URL;
 export default defineConfig({
   testDir: 'tests/e2e',
   fullyParallel: true,
+  // Testy głównie czekają (przerwa 400 ms we wzorcu błędów, nawigacja „Wstecz”), a nie liczą: przy 4 rdzeniach 4 wątki
+  // skróciły E2E z 12,8 do 7,2 min bez niestabilnych testów (2026-11-14). Domyślne 50% rdzeni marnowało połowę maszyny.
+  workers: '100%',
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? [['github'], ['html', { open: 'never' }]] : [['list']],
