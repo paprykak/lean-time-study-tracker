@@ -801,6 +801,20 @@ export const AKTY = {
     adres: eli(1996, 663),
     sprawdzono: '2026-11-14',
   },
+  swiadectwoPracy: {
+    nazwa: 'Rozporządzenie w sprawie świadectwa pracy',
+    publikator: 'Dz.U. 2024 poz. 1016',
+    uwaga: 'tekst jednolity rozporządzenia z 30 grudnia 2016 r.; § 2 ust. 1–2: treść świadectwa i pouczenie (siła wyższa, urlop opiekuńczy i praca zdalna od 23 maja 2023 r., Dz.U. 2023 poz. 912), § 7 ust. 1: odmowa sprostowania albo nowe świadectwo w 7 dni od otrzymania wniosku; § 4 (termin wydania) uchylony, termin jest w art. 97 § 1 Kp; po tekście jednolitym bez zmian',
+    adres: eli(2024, 1016),
+    sprawdzono: '2026-11-14',
+  },
+  ochronaDanych: {
+    nazwa: 'Ustawa o ochronie danych osobowych',
+    publikator: 'Dz.U. 2019 poz. 1781',
+    uwaga: 'tekst jednolity ustawy z 10 maja 2018 r.; art. 34 ust. 1–2: Prezes UODO organem właściwym i nadzorczym, art. 60: postępowanie w sprawie naruszenia; zmiany Dz.U. 2026 poz. 252, 548 i 1003 nie dotyczą tych przepisów',
+    adres: eli(2019, 1781),
+    sprawdzono: '2026-11-14',
+  },
 } as const satisfies Record<string, Akt>;
 
 export type KluczAktu = keyof typeof AKTY;

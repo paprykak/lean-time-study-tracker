@@ -1,0 +1,222 @@
+---
+// Monitoring w pracy: kamery (art. 22² Kodeksu pracy), poczta służbowa i inne formy, np. GPS (art. 22³), zakazane miejsca,
+// przechowywanie nagrań, obowiązki informacyjne, gdzie zgłosić naruszenie (ustawa o PIP, ustawa o ochronie danych
+// osobowych). Logika i teksty wyniku: src/lib/narzedzia/monitoring.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { INFORMACJE, MIEJSCA, RODZAJE, ZGLOSZENIE, opisMonitoringu, type Informacja, type Miejsce, type Rodzaj } from '../../lib/narzedzia/monitoring';
+import { dodajDni, dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+const dzis = dzisWPolsce();
+// Przykład startowy: kamery w hali, uruchomione 60 dni temu, informacja 80 dni temu, nagranie sprzed 10 dni
+// (skrypt przestawia daty na prawdziwe dziś: data-dzis).
+const RODZAJ = 'kamery' as Rodzaj;
+const MIEJSCE = 'hala' as Miejsce;
+const INFORMACJA = 'tak' as Informacja;
+const DNI_URUCHOMIENIA = -60;
+const DNI_INFORMACJI = -80;
+const DNI_NAGRANIA = -10;
+const start = opisMonitoringu(
+  { rodzaj: RODZAJ, miejsce: MIEJSCE, uruchomienie: dodajDni(dzis, DNI_URUCHOMIENIA), informacja: INFORMACJA, dataInformacji: dodajDni(dzis, DNI_INFORMACJI), nagranie: dodajDni(dzis, DNI_NAGRANIA) },
+  dzis,
+);
+
+const faq = [
+  {
+    pytanie: 'Czy pracodawca może nagrywać pracowników kamerą?',
+    odpowiedz: 'Tak, gdy jest to niezbędne do zapewnienia bezpieczeństwa pracowników, ochrony mienia, kontroli produkcji albo zachowania w tajemnicy informacji, których ujawnienie mogłoby narazić pracodawcę na szkodę. Monitoring może obejmować teren zakładu pracy i teren wokół niego (art. 22² § 1 Kodeksu pracy). Cele, zakres i sposób monitoringu muszą być zapisane w układzie zbiorowym, regulaminie pracy albo obwieszczeniu (art. 22² § 6).',
+  },
+  {
+    pytanie: 'Czy w szatni i toalecie mogą być kamery?',
+    odpowiedz: 'Co do zasady nie. Monitoring nie obejmuje pomieszczeń sanitarnych, szatni, stołówek i palarni, chyba że jest niezbędny do celu z art. 22² § 1 i nie narusza godności ani innych dóbr osobistych pracowników, w szczególności dzięki technikom, które nie pozwalają rozpoznać osób. W pomieszczeniach sanitarnych potrzebna jest też wcześniejsza zgoda zakładowej organizacji związkowej albo przedstawicieli pracowników (art. 22² § 2 Kodeksu pracy). Pomieszczeń udostępnionych związkowi zawodowemu monitorować nie wolno w ogóle (art. 22² § 1¹).',
+  },
+  {
+    pytanie: 'Jak długo pracodawca może przechowywać nagrania z kamer?',
+    odpowiedz: 'Najwyżej 3 miesiące od dnia nagrania i tylko do celów, dla których je zebrano (art. 22² § 3 Kodeksu pracy). Gdy nagranie jest dowodem w postępowaniu albo pracodawca dowiedział się, że może nim być, termin przedłuża się do prawomocnego zakończenia postępowania (§ 4). Potem nagrania z danymi osobowymi niszczy się, o ile przepisy odrębne nie stanowią inaczej (§ 5).',
+  },
+  {
+    pytanie: 'Kiedy pracodawca musi uprzedzić o monitoringu?',
+    odpowiedz: 'Pracowników informuje w sposób przyjęty w firmie najpóźniej 2 tygodnie przed uruchomieniem monitoringu, a teren i pomieszczenia oznacza znakami albo ogłoszeniami dźwiękowymi najpóźniej dzień przed uruchomieniem (art. 22² § 7 i 9 Kodeksu pracy). Nowej osobie przekazuje te informacje na papierze albo elektronicznie, zanim dopuści ją do pracy (art. 22² § 8).',
+  },
+  {
+    pytanie: 'Czy pracodawca może czytać moją służbową pocztę i śledzić auto przez GPS?',
+    odpowiedz: 'Może kontrolować służbową pocztę elektroniczną, gdy jest to niezbędne do organizacji pracy umożliwiającej pełne wykorzystanie czasu pracy i właściwego używania narzędzi pracy, ale bez naruszania tajemnicy korespondencji i innych dóbr osobistych (art. 22³ § 1–2 Kodeksu pracy). Te same zasady dotyczą innych form monitoringu, np. GPS w aucie albo wózku, gdy są konieczne do tych celów (art. 22³ § 4). Obowiązują też zasady informowania jak przy kamerach (art. 22³ § 3).',
+  },
+  {
+    pytanie: 'Gdzie zgłosić nielegalny monitoring w pracy?',
+    odpowiedz: 'Do okręgowego inspektoratu pracy: Państwowa Inspekcja Pracy kontroluje przestrzeganie prawa pracy (art. 10 ust. 1 pkt 1 ustawy o Państwowej Inspekcji Pracy). W sprawie ochrony danych osobowych, także z nagrań, organem właściwym jest Prezes Urzędu Ochrony Danych Osobowych (art. 34 ust. 1 i art. 60 ustawy o ochronie danych osobowych).',
+  },
+];
+---
+
+<StronaNarzedzia
+  slug="monitoring-w-pracy"
+  tytul="Monitoring w pracy: kamery, poczta, GPS"
+  opis="Czy pracodawca może Cię nagrywać, gdzie kamer być nie może, ile trzyma nagrania i kiedy musi uprzedzić o monitoringu. Kamery, poczta służbowa i GPS."
+  h1="Monitoring w pracy: czy wolno i na jakich warunkach"
+  lead="Wybierz rodzaj monitoringu i miejsce, wpisz daty, a pokażemy, czy pracodawcy wolno, czy uprzedził w terminie, do kiedy może trzymać nagranie i czego mu nie wolno."
+  faq={faq}
+>
+  <form class="kalkulator" data-monitoring novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Monitoring</h2>
+      <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div>
+          <label for="m-rodzaj" class="etykieta-pola">Rodzaj</label>
+          <select id="m-rodzaj" name="rodzaj" class="pole mt-1">
+            {Object.entries(RODZAJE).map(([k, r]) => <option value={k} selected={k === RODZAJ}>{r.krotko}</option>)}
+          </select>
+        </div>
+        <div data-pole="miejsce" hidden={RODZAJ !== 'kamery'}>
+          <label for="m-miejsce" class="etykieta-pola">Miejsce kamery</label>
+          <select id="m-miejsce" name="miejsce" class="pole mt-1">
+            {Object.entries(MIEJSCA).map(([k, m]) => <option value={k} selected={k === MIEJSCE}>{m.krotko}</option>)}
+          </select>
+        </div>
+        <div>
+          <label for="m-uruchomienie" class="etykieta-pola">Uruchomienie monitoringu</label>
+          <input id="m-uruchomienie" name="uruchomienie" type="date" data-dzis={String(DNI_URUCHOMIENIA)} class="pole mt-1" min="2000-01-01" max="2100-12-31" value={dodajDni(dzis, DNI_URUCHOMIENIA)} aria-describedby="m-uruchomienie-opis m-blad" />
+          <p id="m-uruchomienie-opis" class="meta mt-1">Puste, gdy nie wiesz.</p>
+        </div>
+        <div>
+          <label for="m-informacja" class="etykieta-pola">Czy pracodawca uprzedził?</label>
+          <select id="m-informacja" name="informacja" class="pole mt-1">
+            {Object.entries(INFORMACJE).map(([k, t]) => <option value={k} selected={k === INFORMACJA}>{t}</option>)}
+          </select>
+        </div>
+        <div data-pole="dataInformacji" hidden={INFORMACJA !== 'tak'}>
+          <label for="m-data-informacji" class="etykieta-pola">Dzień informacji</label>
+          <input id="m-data-informacji" name="dataInformacji" type="date" data-dzis={String(DNI_INFORMACJI)} class="pole mt-1" min="2000-01-01" max="2100-12-31" value={dodajDni(dzis, DNI_INFORMACJI)} aria-describedby="m-blad" />
+        </div>
+        <div data-pole="nagranie" hidden={RODZAJ !== 'kamery'}>
+          <label for="m-nagranie" class="etykieta-pola">Dzień nagrania</label>
+          <input id="m-nagranie" name="nagranie" type="date" data-dzis={String(DNI_NAGRANIA)} class="pole mt-1" min="2000-01-01" max="2100-12-31" value={dodajDni(dzis, DNI_NAGRANIA)} aria-describedby="m-nagranie-opis m-blad" />
+          <p id="m-nagranie-opis" class="meta mt-1">Do kiedy pracodawca może je trzymać; puste, gdy nie dotyczy.</p>
+        </div>
+      </div>
+      <p id="m-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Czy wolno</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-data" data-w="werdykt">{start.werdykt}</p>
+        <p class="status-terminu" data-w="przepis" data-status={start.werdyktKlasa}>{start.przepis}</p>
+        <p class="meta mt-2" data-w="werdykt-opis">{start.werdyktOpis}</p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Uprzedzenie</dt><dd data-w="informacja">{start.informacja}</dd></div>
+        <div><dt>Przechowywanie</dt><dd data-w="przechowywanie">{start.przechowywanie}</dd></div>
+      </dl>
+      <h3 class="etykieta mt-4">Warunki</h3>
+      <ul class="mt-1 list-disc space-y-1 pl-5 text-[0.9375rem]" data-w="warunki">{start.warunki.map((t) => <li>{t}</li>)}</ul>
+      <h3 class="etykieta mt-4">Czego nie wolno</h3>
+      <ul class="mt-1 list-disc space-y-1 pl-5 text-[0.9375rem]" data-w="zakazy">{start.zakazy.map((t) => <li>{t}</li>)}</ul>
+      <p class="wynik-uwaga">{ZGLOSZENIE}</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="zasady">Zasady monitoringu w pracy</h2>
+    <ul>
+      <li>Kamery: tylko gdy są niezbędne do bezpieczeństwa pracowników, ochrony mienia, kontroli produkcji albo ochrony tajemnicy, na terenie zakładu i wokół niego (art. 22² § 1 Kodeksu pracy).</li>
+      <li>Bez kamer w pomieszczeniach związku zawodowego (§ 1¹). W sanitariatach, szatniach, stołówkach i palarniach tylko wyjątkowo, bez naruszania godności, np. z technikami, które nie pozwalają rozpoznać osób; w sanitariatach za wcześniejszą zgodą związku albo przedstawicieli pracowników (§ 2).</li>
+      <li>Nagrania tylko do celów, dla których je zebrano, najwyżej 3 miesiące od dnia nagrania; dłużej, gdy są dowodem w postępowaniu; potem zniszczenie (§ 3–5).</li>
+      <li>Cele, zakres i sposób monitoringu w układzie zbiorowym, regulaminie pracy albo obwieszczeniu (§ 6); informacja dla pracowników najpóźniej 2 tygodnie przed uruchomieniem (§ 7); informacja na papierze albo elektronicznie dla nowej osoby przed dopuszczeniem do pracy (§ 8, w tym brzmieniu od 27 stycznia 2026 r.); oznaczenie terenu najpóźniej dzień przed uruchomieniem (§ 9).</li>
+      <li>Służbowa poczta elektroniczna: kontrola, gdy jest niezbędna do organizacji pracy i właściwego używania narzędzi pracy, bez naruszania tajemnicy korespondencji (art. 22³ § 1–2). Inne formy, np. GPS: na tych samych zasadach, gdy są konieczne do tych celów (art. 22³ § 4). Obowiązki z art. 22² § 6–10 stosuje się odpowiednio (art. 22³ § 3).</li>
+    </ul>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Termin uprzedzenia liczymy od dnia uruchomienia wstecz: 2 tygodnie przed to dzień, który datą odpowiada dniowi
+      uruchomienia 14 dni wcześniej (uruchomienie 15 grudnia: informacja najpóźniej 1 grudnia), a oznaczenie najpóźniej
+      w dniu poprzedzającym uruchomienie. Gdy regulamin pracy dopiero wprowadza monitoring, sam regulamin wchodzi w życie
+      po upływie 2 tygodni od podania go do wiadomości pracowników (art. 104³ § 1).
+    </p>
+    <p>
+      Okres przechowywania nagrań liczymy jak termin w miesiącach: kończy się w dniu, który datą odpowiada dniowi nagrania,
+      a gdy takiego dnia w ostatnim miesiącu nie ma, w ostatnim dniu miesiąca (art. 112 Kodeksu cywilnego przez art. 300
+      Kodeksu pracy): nagranie z 30 listopada najpóźniej do 28 lutego, a w roku przestępnym do 29 lutego. Kodeks pracy nie
+      mówi, jak liczyć ten okres, a 3 miesiące to granica najwyższa: pracodawca może skasować nagranie wcześniej. Przy
+      poczcie i innych formach Kodeks pracy nie podaje okresu przechowywania, bo art. 22³ § 3 odsyła tylko do art. 22²
+      § 6–10, więc go nie liczymy.
+    </p>
+    <p>
+      Kalkulator nie ocenia, czy monitoring jest naprawdę niezbędny ani czy techniki chronią godność: o tym rozstrzyga
+      inspekcja pracy, Prezes UODO albo sąd. Jakie informacje pracodawca musi przekazać na start pracy, pokaże <a href="/narzedzia/informacja-o-warunkach-zatrudnienia">lista obowiązków przy zatrudnieniu</a>, a gdzie zgłosić sprawę, <a href="/narzedzia/sad-pracy-czy-pip">strona o sądzie pracy i PIP</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { bladMonitoringu, opisMonitoringu, type DaneMonitoringu, type Informacja, type Miejsce, type Rodzaj } from '../../lib/narzedzia/monitoring';
+  import { dzisWPolsce } from '../../lib/narzedzia/terminy';
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
+  import { typografia } from '../../lib/typografia.mjs';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
+
+  const form = document.querySelector<HTMLFormElement>('[data-monitoring]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const pole = (k: string) => form.querySelector<HTMLElement>(`[data-pole="${k}"]`)!;
+    const pisz = (k: string, tekst: string) => {
+      const t = typografia(tekst);
+      if (w(k).textContent !== t) w(k).textContent = t;
+    };
+    const lista = (k: string, teksty: string[]) => {
+      const ul = w(k);
+      const t = teksty.map((x) => typografia(x));
+      if ([...ul.children].map((li) => li.textContent).join('\n') === t.join('\n')) return;
+      ul.replaceChildren(
+        ...t.map((x) => {
+          const li = document.createElement('li');
+          li.textContent = x;
+          return li;
+        }),
+      );
+    };
+    const blad = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+    const przelicz = () => {
+      const rodzaj = el('rodzaj').value as Rodzaj;
+      const informacja = el('informacja').value as Informacja;
+      const kamery = rodzaj === 'kamery';
+      pole('miejsce').hidden = !kamery;
+      pole('nagranie').hidden = !kamery;
+      pole('dataInformacji').hidden = informacja !== 'tak';
+      const dane: DaneMonitoringu = {
+        rodzaj,
+        miejsce: el('miejsce').value as Miejsce,
+        uruchomienie: el('uruchomienie').value,
+        informacja,
+        dataInformacji: el('dataInformacji').value,
+        nagranie: el('nagranie').value,
+      };
+      const dzis = dzisWPolsce();
+      const widoczne = ['uruchomienie', ...(informacja === 'tak' ? ['dataInformacji'] : []), ...(kamery ? ['nagranie'] : [])];
+      const niepelne = widoczne.find((n) => el(n).validity.badInput) as keyof DaneMonitoringu | undefined;
+      const b = niepelne ? { pole: niepelne, tekst: 'Wpisz pełną datę albo wyczyść pole.' } : bladMonitoringu(dane, dzis);
+      pokazBlad(blad, b?.tekst, b ? el(b.pole) : []);
+      if (b) {
+        for (const k of ['werdykt', 'przepis', 'informacja', 'przechowywanie']) w(k).textContent = '—';
+        w('werdykt-opis').textContent = '';
+        return;
+      }
+      const o = opisMonitoringu(dane, dzis);
+      pisz('werdykt', o.werdykt);
+      pisz('przepis', o.przepis);
+      w('przepis').dataset.status = o.werdyktKlasa;
+      pisz('werdykt-opis', o.werdyktOpis);
+      pisz('informacja', o.informacja);
+      pisz('przechowywanie', o.przechowywanie);
+      lista('warunki', o.warunki);
+      lista('zakazy', o.zakazy);
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    ustawDzisiejszeWartosci(form);
+    liczPoPowrocie(przelicz);
+    przelicz();
+  }
+</script>

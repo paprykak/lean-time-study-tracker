@@ -889,6 +889,22 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-14',
   },
   {
+    slug: 'swiadectwo-pracy',
+    nazwa: 'Świadectwo pracy: terminy i sprostowanie',
+    krotko: 'Kiedy pracodawca wydaje świadectwo, do kiedy sprostowanie i pozew, ile odszkodowania, co ma w nim być.',
+    kategoria: 'umowa',
+    przepisy: ['kodeksPracy', 'swiadectwoPracy', 'wynagrodzenieRozp', 'urlopowe', 'kodeksCywilny', 'kpc', 'kosztySadowe', 'pip'],
+    sprawdzono: '2026-11-14',
+  },
+  {
+    slug: 'monitoring-w-pracy',
+    nazwa: 'Monitoring w pracy: kamery, poczta, GPS',
+    krotko: 'Czy pracodawca może nagrywać, gdzie kamer być nie może, ile trzyma nagrania i kiedy musi uprzedzić.',
+    kategoria: 'umowa',
+    przepisy: ['kodeksPracy', 'kodeksCywilny', 'pip', 'ochronaDanych'],
+    sprawdzono: '2026-11-14',
+  },
+  {
     slug: 'przerwy-w-pracy',
     nazwa: 'Przerwy w pracy',
     krotko: 'Ile przerw przy zmianie 8 i 12 godzin, które są płatne, przy monitorze, na karmienie, dla młodocianych.',

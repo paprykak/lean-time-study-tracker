@@ -27,7 +27,7 @@ describe('czy wolno', () => {
   it('pomieszczenia związku: nigdy (§ 1¹)', () => {
     const o = opisMonitoringu(dane({ miejsce: 'zwiazek', nagranie: '2026-11-01' }), DZIS);
     expect(o.werdykt).toBe('Nie wolno');
-    expect(o.warunki).toEqual([]);
+    expect(o.warunki).toHaveLength(1);
     expect(o.przechowywanieKlasa).toBe('po-terminie');
   });
   it('sanitariaty: wyjątkowo i za zgodą związku albo przedstawicieli (§ 2 zd. 2)', () => {

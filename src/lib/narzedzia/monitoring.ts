@@ -170,7 +170,8 @@ export function opisMonitoringu(d: DaneMonitoringu, dzis: string): OpisMonitorin
   }
 
   const zasady = kamery ? 'art. 22²' : 'art. 22² przez art. 22³ § 3';
-  if (!(kamery && miejsce === 'zwiazek')) {
+  if (kamery && miejsce === 'zwiazek') warunki.push('Żadne: w pomieszczeniach udostępnionych związkowi zawodowemu monitoringu nie wolno prowadzić (art. 22² § 1¹).');
+  else {
     warunki.push(`Cele, zakres i sposób monitoringu są zapisane w układzie zbiorowym pracy albo w regulaminie pracy, a gdy pracodawca ich nie ma, w obwieszczeniu (${zasady} § 6).`);
     warunki.push(`Pracownicy dowiadują się o monitoringu w sposób przyjęty u pracodawcy najpóźniej 2 tygodnie przed jego uruchomieniem (§ 7).`);
     warunki.push('Każda nowa osoba dostaje te informacje na papierze albo elektronicznie, zanim zacznie pracę (§ 8).');
