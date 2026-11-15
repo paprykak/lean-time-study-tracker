@@ -24,8 +24,13 @@
 //   wcześniej; art. 115 KC nie przesuwa granicy (to nie termin do wykonania czynności przez pracownika);
 // - „nie później niż 2 tygodnie przed uruchomieniem”: pełne 2 tygodnie między dniem informacji a dniem uruchomienia
 //   (art. 112 KC: 2 tygodnie od 30 listopada mijają z końcem 14 grudnia), więc uruchomienie 15 grudnia → informacja do
-//   30 listopada; informacja 1 grudnia (ten sam dzień tygodnia) jest sporna i tak ją opisujemy; „jeden dzień przed”:
-//   dzień poprzedni;
+//   30 listopada; informacja 1 grudnia (ten sam dzień tygodnia) jest sporna i tak ją opisujemy; „jeden dzień przed”
+//   liczymy tak samo, z pełnym dniem przerwy (15 grudnia → 13 grudnia), i podajemy też dzień poprzedni (14 grudnia)
+//   jako łagodniejsze odczytanie (zasada 2: wariant bezpieczny dla pracownika, audyt jakosc3, B-3);
+// - termin 2 tygodni (§ 7) dotyczy osób zatrudnionych przed uruchomieniem; osoba przyjęta później dostaje informację
+//   przed dopuszczeniem do pracy (§ 8), więc dla niej terminu z § 7 nie oceniamy (odpowiedź „Przyjęto mnie później”);
+// - art. 22² i 22³ dodał art. 111 ustawy z 10 maja 2018 r. o ochronie danych osobowych (Dz.U. 2018 poz. 1000) z mocą
+//   od 25 maja 2018 r., bez przepisu przejściowego: gdy termin informacji wypadałby wcześniej, nie oceniamy go;
 // - poczta i inne formy: Kodeks pracy nie podaje okresu przechowywania (art. 22³ § 3 nie odsyła do art. 22² § 3–5),
 //   więc go nie liczymy; RODO cytujemy tylko tam, gdzie odsyła Kodeks pracy (art. 22² § 10).
 import { odmiana } from '../redakcja';
@@ -34,7 +39,7 @@ import { dataPoPolsku, dniMiedzy, dodajDni, dodajMiesiace, koniecOkresu, poprawn
 
 export type Rodzaj = 'kamery' | 'poczta' | 'inne';
 export type Miejsce = 'hala' | 'teren' | 'sanitariat' | 'szatnia' | 'stolowka' | 'palarnia' | 'zwiazek';
-export type Informacja = 'tak' | 'nie' | 'nie-wiem';
+export type Informacja = 'tak' | 'nie' | 'pozniej' | 'nie-wiem';
 
 export const RODZAJE: Record<Rodzaj, { krotko: string; przepis: string }> = {
   kamery: { krotko: 'Kamery (obraz)', przepis: 'art. 22² Kodeksu pracy' },
@@ -55,11 +60,14 @@ export const MIEJSCA: Record<Miejsce, { krotko: string; dopelniacz: string }> = 
 export const INFORMACJE: Record<Informacja, string> = {
   tak: 'Tak, wpiszę kiedy',
   nie: 'Nie poinformowano',
+  pozniej: 'Przyjęto mnie później',
   'nie-wiem': 'Nie wiem',
 };
 
 export const OKRES_NAGRAN_MIESIACE = 3;
 export const TYGODNIE_PRZED = 2;
+/** Od tego dnia obowiązuje art. 22² Kodeksu pracy (art. 111 i 176 ustawy z 10 maja 2018 r., Dz.U. 2018 poz. 1000). */
+export const OD_KIEDY_ART_22_2 = '2018-05-25';
 
 export interface DaneMonitoringu {
   rodzaj: Rodzaj;
@@ -96,13 +104,16 @@ export function bladMonitoringu(d: DaneMonitoringu, dzis: string): { pole: keyof
   return null;
 }
 
-/** Najpóźniejszy dzień informacji (2 tygodnie przed) i oznaczenia (dzień przed) dla dnia uruchomienia. */
+/** Najpóźniejszy dzień informacji (2 tygodnie przed) i oznaczenia (jeden dzień przed) dla dnia uruchomienia. */
 export const terminyInformacji = (uruchomienie: string) => ({
   /** Pełne 2 tygodnie między informacją a uruchomieniem (art. 112 KC): 15 grudnia → 30 listopada. */
   informacja: dodajDni(uruchomienie, -7 * TYGODNIE_PRZED - 1),
   /** Drugie odczytanie: ten sam dzień tygodnia 2 tygodnie wcześniej (15 grudnia → 1 grudnia). */
   informacjaLagodniej: dodajDni(uruchomienie, -7 * TYGODNIE_PRZED),
-  oznaczenie: dodajDni(uruchomienie, -1),
+  /** Pełny dzień przerwy między oznaczeniem a uruchomieniem, jak przy informacji: 15 grudnia → 13 grudnia. */
+  oznaczenie: dodajDni(uruchomienie, -2),
+  /** Drugie odczytanie: dzień poprzedni (15 grudnia → 14 grudnia). */
+  oznaczenieLagodniej: dodajDni(uruchomienie, -1),
 });
 
 /** Ostatni dzień, w którym pracodawca może przechowywać nagranie obrazu (art. 22² § 3, art. 112 KC). */
@@ -205,10 +216,14 @@ export function opisMonitoringu(d: DaneMonitoringu, dzis: string): OpisMonitorin
   const oznaczenie = kamery ? 'oznaczenie terenu' : 'oznaczenie';
   if (kamery && miejsce === 'zwiazek') {
     informacja = 'Uprzedzenie nie zmienia wyniku: monitoringu w tych pomieszczeniach nie wolno prowadzić.';
+  } else if (d.informacja === 'pozniej') {
+    informacja = `Termin 2 tygodni (${par('7')}) dotyczy osób zatrudnionych przed uruchomieniem monitoringu. Osobie przyjętej później pracodawca przekazuje cele, zakres i sposób monitoringu na papierze albo elektronicznie przed dopuszczeniem do pracy (${par('8')}); bez tej informacji nie spełnia tego obowiązku.`;
   } else if (!puste(d.uruchomienie)) {
     const t = terminyInformacji(d.uruchomienie!);
-    informacja = `Informacja najpóźniej ${dataPoPolsku(t.informacja)}, ${oznaczenie} najpóźniej ${dataPoPolsku(t.oznaczenie)}`;
-    if (d.informacja === 'tak') {
+    informacja = `Informacja najpóźniej ${dataPoPolsku(t.informacja)}, ${oznaczenie} najpóźniej ${dataPoPolsku(t.oznaczenie)}, a jeśli wystarczy dzień poprzedni, ${dataPoPolsku(t.oznaczenieLagodniej)}`;
+    if (t.informacja < OD_KIEDY_ART_22_2 && (d.informacja === 'tak' || d.informacja === 'nie')) {
+      informacja = `Termin uprzedzenia (${par('7')}) obowiązuje od 25 maja 2018 r., a przy tym dniu uruchomienia wypadałby wcześniej, więc go nie oceniamy. Dziś monitoring musi mieć podstawę w układzie, regulaminie albo obwieszczeniu (${par('6')}), a każda nowa osoba dostaje informację przed dopuszczeniem do pracy (${par('8')}).`;
+    } else if (d.informacja === 'tak') {
       const spoznienie = dniMiedzy(t.informacja, d.dataInformacji!);
       informacja += ` Poinformowano ${dataPoPolsku(d.dataInformacji!)}`;
       if (spoznienie <= 0) {
@@ -221,6 +236,8 @@ export function opisMonitoringu(d: DaneMonitoringu, dzis: string): OpisMonitorin
       } else {
         informacjaStatus = `Za późno o ${dni(spoznienie)}`;
         informacjaKlasa = 'po-terminie';
+        if (d.dataInformacji! >= d.uruchomienie!)
+          informacja += ` Jeśli przyjęto Cię do pracy po uruchomieniu monitoringu, wybierz „Przyjęto mnie później”: wtedy obowiązuje ${par('8')}, a nie termin 2 tygodni.`;
       }
     } else if (d.informacja === 'nie') {
       const r = dniMiedzy(dzis, t.informacja);
@@ -233,7 +250,7 @@ export function opisMonitoringu(d: DaneMonitoringu, dzis: string): OpisMonitorin
       } else {
         informacjaStatus = 'Obowiązek niespełniony';
         informacjaKlasa = 'po-terminie';
-        informacja += ` Bez informacji pracodawca nie spełnił obowiązku z ${par('7')}.`;
+        informacja += ` Bez informacji pracodawca nie spełnił obowiązku z ${par('7')}. Jeśli przyjęto Cię do pracy po uruchomieniu, wybierz „Przyjęto mnie później”.`;
       }
     }
   } else if (d.informacja === 'nie') {

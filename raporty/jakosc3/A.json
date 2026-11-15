@@ -1,0 +1,159 @@
+{
+  "partia": "A",
+  "sprawdzone": [
+    {
+      "slug": "odpowiedzialnosc-materialna",
+      "pliki": [
+        "src/lib/narzedzia/odpowiedzialnosc.ts",
+        "src/lib/narzedzia/odpowiedzialnosc.test.ts",
+        "src/pages/narzedzia/odpowiedzialnosc-materialna.astro",
+        "tests/e2e/narzedzie-odpowiedzialnosc.spec.ts",
+        "src/data/narzedzia.ts",
+        "src/data/prawo.ts",
+        "src/data/sprawy.ts"
+      ],
+      "wynik": "problemy: wszystkie zdania strony, 6 FAQ, „Jak liczymy”, każdy wariant tekstu skryptu i etykiety pól porównane z Kp art. 87, 87¹, 91, 108, 114–127, 291–295, 300 (DU_2026_1245; DU_2026_1046 tych przepisów nie zmienia), KC art. 112, 115, 117, 118, 121, 123–124, 361, 442¹ (DU_2026_795; DU_2026_507 zmienia tylko art. 860), rozp. DU_2017_927 § 3, urlopowe § 14–17, DU_1996_662 § 2–9 i DU_1996_663 § 2, 4–6, 10–11, 20 (strony 3–4 PDF to skan bez warstwy tekstu, odczytane z obrazu). Rachunek: własny model w Pythonie (Decimal, calendar, święta z Wielkanocą, Wigilia od 2025) na 30 000 losowych przypadkach z datami 29.02, 24–31.12, 1.01, sobotami i dziś od 14.11.2026 do 2030: 0 rozbieżności (kwota, koniec, data po art. 115/118, status, klasa); 20/20 testów vitest. Playwright: 320 i 412 px bez przewijania w bok i bez uciętych opcji (najdłuższa 190/220 px), ariaSnapshot, 11 błędnych danych (aria-invalid, role=alert, dwa komunikaty naraz), SSR = skrypt. Sygnatura II PK 307/09 zgodna w SAOS. Wyszukiwarka: 37 zapytań, 7 poza pierwszą trójką albo kradnących innym narzędziom. 7 znalezisk (2 średnie, 5 niskich) + 2 w wyszukiwarce."
+    }
+  ],
+  "znaleziska": [
+    {
+      "id": "A-1",
+      "slug": "odpowiedzialnosc-materialna",
+      "wymiar": "prawo",
+      "waga": "srednia",
+      "plik": "src/pages/narzedzia/odpowiedzialnosc-materialna.astro",
+      "linia": 93,
+      "zdanie": "Dzień, w którym pracodawca dowiedział się o szkodzie, np. z inwentaryzacji. / „Termin: rok od dnia, w którym pracodawca dowiedział się o szkodzie, najpóźniej 3 lata od szkody (art. 291 § 2 Kodeksu pracy).” (odpowiedzialnosc.ts:225, FAQ linia 37)",
+      "problem": "Art. 291 § 2 liczy rok od dnia, w którym pracodawca dowiedział się, że szkodę wyrządził pracownik, a nie od samego dowiedzenia się o szkodzie. Przy mankach z inwentaryzacji osobę często ustala się później. Podpowiedź każe wpisać wcześniejszą datę, więc narzędzie może napisać „Termin pracodawcy minął”, choć jeszcze trwa. To odwrotność wariantu bezpiecznego, który strona deklaruje w „Jak liczymy”.",
+      "dowod": "DU_2026_1245.txt, art. 291 § 2: „ulegają przedawnieniu z upływem 1 roku od dnia, w którym pracodawca powziął wiadomość o wyrządzeniu przez pracownika szkody, niepóźniej jednak niż z upływem 3 lat od jej wyrządzenia”.",
+      "poprawka": "Podpowiedź pola: „Dzień, w którym pracodawca dowiedział się o szkodzie i o tym, że wyrządził ją pracownik (np. po inwentaryzacji i wyjaśnieniach).” W tekście skryptu (linia 225) i w FAQ (linia 37): „…od dnia, w którym pracodawca dowiedział się, że pracownik wyrządził szkodę…”. Test: przedawnienieOpis zawiera „że pracownik wyrządził szkodę”."
+    },
+    {
+      "id": "A-2",
+      "slug": "odpowiedzialnosc-materialna",
+      "wymiar": "prawo",
+      "waga": "srednia",
+      "plik": "src/pages/narzedzia/odpowiedzialnosc-materialna.astro",
+      "linia": 25,
+      "zdanie": "Odszkodowania za szkodę nie ma wśród należności, które można potrącić bez zgody: alimentów i innych sum egzekwowanych na mocy tytułów wykonawczych, zaliczek pieniężnych i kar pieniężnych za naruszenie porządku pracy (art. 87 § 1).",
+      "problem": "Za naruszenie porządku pracy art. 108 § 1 przewiduje tylko upomnienie i naganę. Karę pieniężną (art. 87 § 1 pkt 4 odsyła do art. 108) wolno nałożyć tylko za BHP, ppoż., opuszczenie pracy bez usprawiedliwienia albo alkohol (art. 108 § 2). FAQ sugeruje, że kara pieniężna za „porządek pracy” jest dozwolona. Strona kara-porzadkowa opisuje to poprawnie, więc serwis mówi dwie różne rzeczy.",
+      "dowod": "DU_2026_1245.txt, art. 87 § 1 pkt 4: „kary pieniężne przewidziane w art. 108”; art. 108 § 1: „Za nieprzestrzeganie przez pracownika ustalonej organizacji i porządku w procesie pracy (…) pracodawca może stosować: 1) karę upomnienia; 2) karę nagany.”; § 2: „Za nieprzestrzeganie przez pracownika przepisów bezpieczeństwa i higieny pracy lub przepisów przeciwpożarowych, opuszczenie pracy bez usprawiedliwienia, stawienie się do pracy w stanie nietrzeźwości (…) pracodawca może również stosować karę pieniężną.” src/pages/narzedzia/kara-porzadkowa.astro:15: „Karę pieniężną tylko za naruszenie przepisów BHP lub przeciwpożarowych, opuszczenie pracy bez usprawiedliwienia, przyjście do pracy po alkoholu…”.",
+      "poprawka": "„…zaliczek pieniężnych i kar pieniężnych z art. 108 (za naruszenie przepisów BHP lub przeciwpożarowych, nieusprawiedliwione opuszczenie pracy albo alkohol) (art. 87 § 1).” Opcjonalnie dodać zdanie, że kara pieniężna nie zastępuje odszkodowania za szkodę."
+    },
+    {
+      "id": "A-3",
+      "slug": "odpowiedzialnosc-materialna",
+      "wymiar": "prawo",
+      "waga": "niska",
+      "plik": "src/lib/narzedzia/odpowiedzialnosc.ts",
+      "linia": 252,
+      "zdanie": "Szkoda umyślna, szkoda 1.12.2006, dziś 10.12.2026: „Termin pracodawcy minął 6188 dni temu” (bez „chyba że szkoda wynikła z przestępstwa”)",
+      "problem": "Strona stosuje art. 118 zd. 2 KC (koniec roku) i art. 115 KC do terminu z art. 442¹ § 1, ale do 20 lat z art. 442¹ § 2 już nie. Dopisek o przestępstwie znika dokładnie po 20 latach od szkody, choć według tej samej przyjętej zasady termin mógłby trwać do 31 grudnia tego roku. To niespójne z zasadą „podajemy też późniejszą datę”.",
+      "dowod": "node z hookiem rozwiązywania importów: opisOdpowiedzialnosci({sytuacja:'umyslna', szkoda:100, dataSzkody:'2006-12-01', dataWiedzy:'2006-12-01'}, '2026-12-10').status → „Termin pracodawcy minął 6188 dni temu”; przedawnienieOpis podaje „20 lat (…): 1 grudnia 2026 r.” bez wariantu 31 grudnia 2026 r. DU_2026_795.txt art. 118: „Jednakże koniec terminu przedawnienia przypada na ostatni dzień roku kalendarzowego, chyba że termin przedawnienia jest krótszy niż dwa lata.”",
+      "poprawka": "Warunek dopisku w linii 252 liczyć od przesunietyKoniec(koniecRoku(p.przestepstwo)), a nie od p.przestepstwo. W zdaniu o przestępstwie podać też „albo 31 grudnia RRRR r. (art. 118 zd. 2)”. Test: szkoda 2006-12-01, dziś 2026-12-10 → status kończy się na „, chyba że szkoda wynikła z przestępstwa”."
+    },
+    {
+      "id": "A-4",
+      "slug": "odpowiedzialnosc-materialna",
+      "wymiar": "prawo",
+      "waga": "niska",
+      "plik": "src/lib/narzedzia/odpowiedzialnosc.ts",
+      "linia": 233,
+      "zdanie": "Bieg przedawnienia przerywa pozew albo inna czynność przed sądem lub komornikiem, i uznanie roszczenia; potem termin biegnie od nowa (art. 123–124 Kodeksu cywilnego). Mediacja wstrzymuje bieg przedawnienia na czas jej trwania (art. 121 pkt 5).",
+      "problem": "W obecnym KC zawezwanie do próby ugodowej, czyli najczęstszą „czynność przed sądem” przed pozwem, art. 121 pkt 6 traktuje jako zawieszenie, a nie przerwanie. Ogólne „inna czynność przed sądem” sugeruje, że termin biegnie wtedy od nowa. Strona wymienia mediację z pkt 5, a pomija pkt 6. Są też dwie różne interpunkcje tego samego zdania: przecinek przed „i uznanie” tylko w wariancie umyślnym.",
+      "dowod": "DU_2026_795.txt, art. 121: „Bieg przedawnienia nie rozpoczyna się, a rozpoczęty ulega zawieszeniu: (…) 5) co do roszczeń objętych umową o mediację – przez czas trwania mediacji; 6) co do roszczeń objętych wnioskiem o zawezwanie do próby ugodowej – przez czas trwania postępowania pojednawczego.”",
+      "poprawka": "„…Mediacja i zawezwanie do próby ugodowej wstrzymują bieg przedawnienia na czas ich trwania (art. 121 pkt 5–6).” W linii 233 usunąć przecinek przed „i uznanie roszczenia” (jak w linii 234). Test: przedawnienieOpis (umyślna) zawiera „art. 121 pkt 5–6”."
+    },
+    {
+      "id": "A-5",
+      "slug": "odpowiedzialnosc-materialna",
+      "wymiar": "prawo",
+      "waga": "niska",
+      "plik": "src/lib/narzedzia/odpowiedzialnosc.ts",
+      "linia": 164,
+      "zdanie": "…odszkodowanie za towar i inne mienie z art. 124 § 2 oraz za mienie wspólne obniża się stosownie do utrudnienia; nie dotyczy to pieniędzy, narzędzi, odzieży i obuwia roboczego ani środków ochrony (§ 6 ust. 1 rozporządzenia z 10 października 1975 r.).",
+      "problem": "Tekst pokazuje się także przy „Wspólne mienie (umowa)”. § 6 ust. 1 obejmuje całe mienie z art. 125, bez wyłączenia pieniędzy, a wspólna odpowiedzialność to typowo kasa albo sklep. Zdanie mówi osobie ze wspólnej kasy, że obniżenia nie ma, choć przepis je nakazuje.",
+      "dowod": "DU_1996_662.txt, § 6 ust. 1: „Wysokość odszkodowania za szkody w mieniu powierzonym pracownikowi ponoszącemu odpowiedzialność materialną na zasadach określonych w art. 124 § 2 oraz art. 125 Kodeksu pracy obniża się stosownie, gdy sprawowanie nadzoru nad tym mieniem jest utrudnione…”. Kp art. 125 § 1 (DU_2026_1245): wspólna odpowiedzialność „na zasadach określonych w art. 124” obejmuje mienie z art. 124 § 1 i § 2.",
+      "poprawka": "„…odszkodowanie za mienie z art. 124 § 2 (towar i inne mienie, ale nie pieniądze, narzędzia, odzież i obuwie robocze ani środki ochrony) oraz za każde mienie powierzone wspólnie (art. 125) obniża się stosownie do utrudnienia…”. Analogicznie w „Zasadach” (astro linia 127)."
+    },
+    {
+      "id": "A-6",
+      "slug": "odpowiedzialnosc-materialna",
+      "wymiar": "tresc-ux",
+      "waga": "niska",
+      "plik": "src/lib/narzedzia/odpowiedzialnosc.ts",
+      "linia": 249,
+      "zdanie": "Nieumyślna, koniec 14.11.2026 (sobota), dziś 16.11.2026: „Termin mógł minąć, ale może trwać do 16 listopada 2026 r.” (klasa „pilne”)",
+      "problem": "Gdy data późniejsza to dziś, wynik nie mówi, że to ostatni możliwy dzień. Przy wariancie „zostało 0” strona pisze „dziś”, a tu zostawia samą datę, którą trzeba porównać z kalendarzem.",
+      "dowod": "opisOdpowiedzialnosci({sytuacja:'nieumyslna', szkoda:100, wynagrodzenie:10, dataSzkody:'2025-11-14', dataWiedzy:'2025-11-14'}, '2026-11-16').status → „Termin mógł minąć, ale może trwać do 16 listopada 2026 r.”",
+      "poprawka": "Gdy doNajpozniej === 0: „Termin mógł minąć, ale może trwać do dziś (16 listopada 2026 r.)”. Test na tę gałąź."
+    },
+    {
+      "id": "A-7",
+      "slug": "odpowiedzialnosc-materialna",
+      "wymiar": "spojnosc",
+      "waga": "niska",
+      "plik": "src/pages/narzedzia/odpowiedzialnosc-materialna.astro",
+      "linia": 163,
+      "zdanie": "Jak zgłosić sprawę sądowi albo inspekcji pracy, pokaże <a href=\"/narzedzia/sad-pracy-czy-pip\">strona o sądzie pracy i PIP</a>.",
+      "problem": "Jedyny link w wyjaśnieniu. Brakuje oczywistych: kara-porzadkowa (FAQ o karach pieniężnych z art. 108, częste mylenie „kary za zniszczenie” z karą porządkową) i odziez-robocza (odzież i obuwie robocze to mienie powierzone z art. 124 § 1 pkt 2). Żadna z tych stron ani przedawnienie-wynagrodzenia (ma FAQ o roszczeniu pracodawcy o szkodę) nie linkuje z powrotem.",
+      "dowod": "grep -c odpowiedzialnosc-materialna w przedawnienie-wynagrodzenia.astro, kara-porzadkowa.astro, odziez-robocza.astro → 0, 0, 0; w odpowiedzialnosc-materialna.astro jedyny <a> to /narzedzia/sad-pracy-czy-pip.",
+      "poprawka": "W „Jak liczymy” albo „Zasadach” dopisać w tym samym wierszu co tekst: „Kara pieniężna to co innego niż odszkodowanie: zasady pokaże <a href=\"/narzedzia/kara-porzadkowa\">kalkulator kary porządkowej</a>.” Przy mieniu powierzonym: „…odzież i obuwie robocze (<a href=\"/narzedzia/odziez-robocza\">odzież robocza</a>)…”."
+    },
+    {
+      "id": "A-8",
+      "slug": "odpowiedzialnosc-materialna",
+      "wymiar": "wyszukiwarka",
+      "waga": "srednia",
+      "plik": "src/data/sprawy.ts",
+      "linia": 119,
+      "zdanie": "Zapytania z hali poza pierwszą trójką: „zniszczylem wozek widlowy kto placi” (brak w 5), „zepsulem maszyne w pracy musze zaplacic” (brak), „zgubilem narzedzia firmowe” (brak), „pracodawca obciazyl mnie kosztami naprawy” (brak), „zgoda na potracenie z wynagrodzenia” (tylko wypowiedzenie-zmieniajace), „rozbilem auto sluzbowe” (4. miejsce).",
+      "problem": "Hasła mają rzeczowniki („zniszczenie”, „uszkodzenie samochodu”), a ludzie piszą czasownikami w 1. osobie i potocznie („zniszczyłem”, „rozbiłem auto”). Dopasowanie po wspólnym początku nie łączy „zniszczylem” z „zniszczenie”, bo końcówka „ylem” ma 4 znaki.",
+      "dowod": "node szukaj.mjs na indeksie z podglądu (wyniki w opisie). Na kopii indeksu z dodanymi hasłami (scratchpad/audyt/A/podglad) wszystkie 6 zapytań daje to narzędzie na 1. miejscu, a „wozek widlowy”, „uprawnienia na wozek”, „koszty szkolenia zwrot” i „maszyna w pracy bhp” bez zmian (UDT, zwrot kosztów szkolenia, BHP).",
+      "poprawka": "Dopisać do 'odpowiedzialnosc-materialna': 'zniszczyłem wózek', 'zepsułem maszynę', 'rozbiłem auto służbowe', 'zgubione narzędzia', 'koszty naprawy', 'zgoda na potrącenie z wynagrodzenia'."
+    },
+    {
+      "id": "A-9",
+      "slug": "odpowiedzialnosc-materialna",
+      "wymiar": "wyszukiwarka",
+      "waga": "niska",
+      "plik": "src/data/sprawy.ts",
+      "linia": 119,
+      "zdanie": "„szkoda na zdrowiu w pracy” → 1. odpowiedzialnosc-materialna (216), odszkodowanie-za-wypadek-przy-pracy (216, 2. miejsce); „potracenie kary” → 1. odpowiedzialnosc-materialna (111), kara-porzadkowa (105).",
+      "problem": "Ogólne hasła 'szkoda' i 'kara za zniszczenie' wypychają z 1. miejsca narzędzia, które lepiej odpowiadają na zapytanie (wypadek przy pracy, kara porządkowa).",
+      "dowod": "node szukaj.mjs (indeks z podglądu). Na kopii indeksu z hasłem 'szkoda na zdrowiu' dla odszkodowanie-za-wypadek-przy-pracy i 'potrącenie kary pieniężnej' dla kara-porzadkowa: 1. odszkodowanie-za-wypadek (333) i 1. kara-porzadkowa (222). Zapytania tego narzędzia („potracenie z wyplaty za szkode”, „kara za zniszczenie”) zostają na 1. miejscu.",
+      "poprawka": "W src/data/sprawy.ts dopisać 'szkoda na zdrowiu' do 'odszkodowanie-za-wypadek-przy-pracy' i 'potrącenie kary pieniężnej' do 'kara-porzadkowa'. Obie zmiany w liniach innych narzędzi tego samego pliku; dopisać oba zapytania do testu 82 zapytań z hali."
+    },
+    {
+      "id": "A-10",
+      "slug": "odpowiedzialnosc-materialna",
+      "wymiar": "testy",
+      "waga": "niska",
+      "plik": "src/lib/narzedzia/odpowiedzialnosc.test.ts",
+      "linia": 144,
+      "zdanie": "Testy art. 115 KC obejmują 14.11.2026, 13.11.2026, 1.01.2027 i 24.12.2026; testy statusu mają tylko DZIS = 14.11.2026 i 13.11.2026.",
+      "problem": "Brakuje świąt ruchomych i dat po 2026 r. w przesunięciu (Wielkanoc 2027, Boże Ciało 2027, Wigilia 2027 w piątek, Trzech Króli) oraz gałęzi z A-3 i A-6. Mój model w Pythonie zgadza się na 30 000 przypadkach, ale te wartości nie są zabezpieczone testem.",
+      "dowod": "Model Python vs TS: przesunietyKoniec 2027-03-27 → 2027-03-30, 2027-03-29 → 2027-03-30, 2027-05-27 → 2027-05-28, 2027-12-24 → 2027-12-27, 2027-01-06 → 2027-01-07, 2028-04-15 → 2028-04-18 (zgodne, nietestowane).",
+      "poprawka": "Dodać te sześć par do testu „art. 115 KC” oraz testy statusu przy DZIS w 2027 r. (np. dziś 2027-12-27, umyślna z koniecRoku 2027-12-31)."
+    }
+  ],
+  "orzeczenia": [
+    {
+      "sygnatura": "II PK 307/09",
+      "saos_id": 76440,
+      "wynik": "zgodne",
+      "fragment": "SN, wyrok z 19.04.2010 r.: „w sporze sądowym wystarczające jest wykazanie przez pracodawcę prawidłowego powierzenia mienia pracownikowi i szkody powstałej wskutek nierozliczenia się z niego, by przyjąć domniemanie zawinionego przez pracownika naruszenia obowiązku pieczy nad tymże mieniem” oraz „W myśl art. 124 § 3 k.p. pracownik może uwolnić się od odpowiedzialności za niedobór (…), jeżeli wykaże, że mimo dołożenia należytej staranności, szkoda powstała z przyczyn od niego niezależnych.”"
+    }
+  ],
+  "do_stanu": [],
+  "poza_zakresem": [
+    "src/pages/narzedzia/przedawnienie-wynagrodzenia.astro: FAQ „Kiedy przedawnia się roszczenie pracodawcy o szkodę?” (linia 29) nie linkuje do /narzedzia/odpowiedzialnosc-materialna (link w sekcji wyjaśnienia); w odpowiedzi to samo uproszczenie co A-1 („dowiedział się o szkodzie” zamiast „o wyrządzeniu przez pracownika szkody”).",
+    "Wyniki „Podobne narzędzia” (src/lib/podobne.ts) dla odpowiedzialnosc-materialna: „Brutto na netto” zamiast oczywistych kara-porzadkowa i odziez-robocza."
+  ],
+  "nie_sprawdzono": [
+    "Które przepisy KC stosuje się przez art. 291 § 3 Kp (art. 442¹ czy art. 118 i 120 KC przy zbiegu z art. 471): pełnotekstowe wyszukiwanie SAOS zwracało „Przerwa techniczna”. Strona przyjmuje art. 442¹ bez wzmianki o drugim odczytaniu; do sprawdzenia ręcznie w orzecznictwie SN (sn.pl blokuje automaty).",
+    "Zastosowanie art. 115 i art. 118 zd. 2 KC do terminów przedawnienia (strona podaje obie daty; orzecznictwo SN, np. III CZP 8/03, niesprawdzone).",
+    "Zmiany rozporządzenia urlopowego po 2009 r. i rozporządzenia DU_2017_927 po tekście jednolitym (nie pobierałem; § 3 i § 14–17 cytowane na stronie zgodne z pobranymi tekstami).",
+    "Prawdziwy czytnik ekranu (VoiceOver, NVDA): sprawdzone tylko ariaSnapshot i atrybuty; WebKit/iPhone nieuruchamiany."
+  ]
+}

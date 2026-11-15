@@ -67,3 +67,10 @@ test('pole „piesi” tylko przy drodze dla wózków', async ({ page }) => {
   await expect(piesi).toBeHidden();
   await expect(page.locator('[data-w="lista"]')).toContainText('podaje tylko szerokość');
 });
+
+test('błąd w polu i zmiana rodzaju: uwaga pasuje do nowego rodzaju (audyt jakosc3, C-5)', async ({ page }) => {
+  await page.getByLabel('Szerokość (m)').fill('0,7a');
+  await expect(page.locator('[data-blad="dane"]')).toBeVisible();
+  await page.getByLabel('Rodzaj').selectOption('gasnica');
+  await expect(page.locator('[data-w="uwaga"]')).toContainText(/30\sm/);
+});

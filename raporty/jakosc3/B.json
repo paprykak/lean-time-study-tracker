@@ -1,0 +1,107 @@
+{
+  "partia": "B",
+  "sprawdzone": [
+    {
+      "slug": "monitoring-w-pracy",
+      "pliki": ["src/lib/narzedzia/monitoring.ts", "src/lib/narzedzia/monitoring.test.ts", "src/pages/narzedzia/monitoring-w-pracy.astro", "tests/e2e/narzedzie-monitoring.spec.ts", "src/data/narzedzia.ts", "src/data/prawo.ts", "src/data/sprawy.ts"],
+      "wynik": "problemy: art. 22² § 1–10 i art. 22³ § 1–4 Kp (DU_2026_1245, stan na 27.08.2026; po t.j. tylko DU_2026_1046, które ich nie zmienia; § 8 z DU_2026_25), art. 104³ § 1 i 300 Kp, art. 111–112 i 115 KC (DU_2026_795), art. 10 ust. 1 pkt 1 i art. 11 ust. 1 pkt 8 ustawy o PIP (DU_2024_1712 + DU_2026_473), art. 34 ust. 1–2 i art. 60 ustawy o ochronie danych (DU_2019_1781 + 252, 548, 1003 bez wpływu); 6 FAQ, lead, opis, krotko, 5 punktów zasad, 3 akapity „Jak liczymy”, wszystkie warianty wyniku w kodzie: treść zgodna z przepisami. Rachunek: niezależny Python dla 11 323 dni (2000–2030: koniec przechowywania z dniem nagrania i bez, termin informacji, oznaczenia) = 0 rozbieżności (29 lutego, 30/31 listopada, przełom 2026/2027 i 2027/2028); vitest 10/10. Podgląd: SSR = skrypt, 320 i 412 px bez przewijania w bok, błędy z aria-invalid i role=alert. 37 zapytań w wyszukiwarce. Znaleziska: nowa osoba po uruchomieniu dostaje „Za późno”, data sprzed 25.05.2018, oznaczenie liczone wariantem niekorzystnym, luki w hasłach i kradzież zapytań o szatnię/toaletę."
+    }
+  ],
+  "znaleziska": [
+    {
+      "id": "B-1",
+      "slug": "monitoring-w-pracy",
+      "wymiar": "prawo",
+      "waga": "srednia",
+      "plik": "src/lib/narzedzia/monitoring.ts",
+      "linia": 214,
+      "zdanie": "Uruchomienie 1.06.2026, „Tak, wpiszę kiedy”, dzień informacji 1.12.2026 (osoba zatrudniona po uruchomieniu) → status „Za późno o 198 dni”; przy „Nie poinformowano” → „Obowiązek niespełniony… Bez informacji pracodawca nie spełnił obowiązku z art. 22² § 7.”",
+      "problem": "Termin 2 tygodni z § 7 dotyczy pracowników zatrudnionych w chwili wprowadzenia monitoringu. Osobę przyjętą po uruchomieniu obowiązuje § 8 (informacja przed dopuszczeniem do pracy). W hali to częsty przypadek (nowe osoby, agencje), a narzędzie pokazuje wtedy fałszywe naruszenie z kwotą dni.",
+      "dowod": "DU_2026_1245, art. 22² § 7: „Pracodawca informuje pracowników o wprowadzeniu monitoringu […] nie później niż 2 tygodnie przed jego uruchomieniem.” § 8: „Pracodawca przed dopuszczeniem pracownika do pracy przekazuje mu w postaci papierowej lub elektronicznej informacje, o których mowa w § 6.” Playwright na podglądzie (zegar 1.01.2027): uruchomienie 2026-06-01, informacja 2026-12-01 → „Za późno o 198 dni”, klasa po-terminie.",
+      "poprawka": "W opisMonitoringu, gdy dataInformacji >= uruchomienie (i przy „nie”, gdy uruchomienie < dzis), dopisać zdanie: „Jeśli zaczynasz pracę po uruchomieniu monitoringu, termin 2 tygodni Cię nie dotyczy: pracodawca przekazuje informację przed dopuszczeniem do pracy (art. 22² § 8).” i zmienić status na „Za późno albo nie dotyczy (nowa osoba)” z klasą 'wkrotce'; ewentualnie dodać do pytania „Czy pracodawca uprzedził?” opcję „Zaczynam po uruchomieniu”. Test jednostkowy i E2E na ten przypadek."
+    },
+    {
+      "id": "B-2",
+      "slug": "monitoring-w-pracy",
+      "wymiar": "prawo",
+      "waga": "niska",
+      "plik": "src/lib/narzedzia/monitoring.ts",
+      "linia": 107,
+      "zdanie": "const NAJWCZESNIEJ = '2000-01-01' — uruchomienie np. 2015-03-01 z „Nie poinformowano” daje „Obowiązek niespełniony … art. 22² § 7”.",
+      "problem": "Art. 22² i 22³ Kp obowiązują od 25 maja 2018 r. (dodane przez art. 111 ustawy o ochronie danych osobowych z 10 maja 2018 r., bez przepisu przejściowego o monitoringu już działającym). Dla wcześniejszego uruchomienia narzędzie przypisuje naruszenie przepisu, którego wtedy nie było.",
+      "dowod": "DU_2018_1000 (pobrany z API Sejmu): art. 111 „W ustawie z dnia 26 czerwca 1974 r. – Kodeks pracy […] po art. 22¹ dodaje się art. 22² i art. 22³”; art. 176 „Ustawa wchodzi w życie z dniem 25 maja 2018 r.”",
+      "poprawka": "Gdy uruchomienie < 2018-05-25: bez statusu, tekst „Monitoring uruchomiony przed 25 maja 2018 r.: Kodeks pracy nie przewidywał wtedy terminu uprzedzenia (art. 22² dodano z mocą od 25 maja 2018 r.). Dziś obowiązują go warunki z § 6, 8 i 9.” Test dla 2018-05-24 i 2018-05-25."
+    },
+    {
+      "id": "B-3",
+      "slug": "monitoring-w-pracy",
+      "wymiar": "prawo",
+      "waga": "niska",
+      "plik": "src/pages/narzedzia/monitoring-w-pracy.astro",
+      "linia": 150,
+      "zdanie": "Oznaczenie liczymy łagodniej, według zwykłego znaczenia słów „jeden dzień przed”: najpóźniej w dniu poprzedzającym uruchomienie; przy liczeniu jak dla informacji, z pełnym dniem przerwy, byłyby to 2 dni przed uruchomieniem.",
+      "problem": "Strona sama mówi, że przepis nie rozstrzyga, i bierze wariant łagodniejszy dla pracodawcy (14 grudnia), choć dla informacji z § 7 przyjmuje wariant ścisły. Zasada 2 każe pokazać wariant bezpieczny dla pracownika albo oba, jak przy informacji („sporne”). W wyniku pokazujemy jedną datę „oznaczenie terenu najpóźniej 14 grudnia 2026 r.” bez wzmianki o drugim odczytaniu.",
+      "dowod": "DU_2026_1245, art. 22² § 9: „…niepóźniej niż jeden dzień przed jego uruchomieniem.”; § 7 „nie później niż 2 tygodnie przed”. terminyInformacji: informacja = uruchomienie − 15 dni (pełne 2 tygodnie), oznaczenie = uruchomienie − 1 dzień (bez pełnego dnia przerwy).",
+      "poprawka": "W tekście wyniku: „oznaczenie terenu najpóźniej 13 grudnia 2026 r. (przy łagodniejszym odczytaniu 14 grudnia 2026 r.)” (oznaczenie = −2 dni, oznaczenieLagodniej = −1) albo przynajmniej dopisek o drugim odczytaniu w wyniku. Poprawić akapit „Jak liczymy”, testy terminyInformacji i E2E."
+    },
+    {
+      "id": "B-4",
+      "slug": "monitoring-w-pracy",
+      "wymiar": "wyszukiwarka",
+      "waga": "srednia",
+      "plik": "src/data/sprawy.ts",
+      "linia": 121,
+      "zdanie": "Zapytania „szatnia” i „toaleta w pracy”",
+      "problem": "Hasła 'kamera w szatni' i 'kamera w toalecie' (słowa „szatni”, „toalecie” pasują odmianą) plus premia FAQ wypychają z pierwszego miejsca narzędzie normy-sanitarne, które odpowiada na te zapytania. „wymiary szatni” daje normy-sanitarne dopiero na 3. miejscu.",
+      "dowod": "szukaj.mjs: „szatnia” → 112 monitoring-w-pracy, 111 normy-sanitarne; „toaleta w pracy” → 221 monitoring-w-pracy, 215 normy-sanitarne; „wymiary szatni” → 111 drogi-i-przejscia, 111 monitoring-w-pracy, 110 normy-sanitarne.",
+      "poprawka": "Usunąć z haseł monitoringu 'kamera w szatni' i 'kamera w toalecie' (FAQ „Czy w szatni i toalecie mogą być kamery?” i hasło 'kamery w pracy' nadal dają 1. miejsce dla „kamera w szatni”: kamera z hasła 10 + szatni z FAQ 5), a do 'normy-sanitarne' dopisać 'toaleta w pracy' i 'szatnia w pracy'. Sprawdzić ponownie oba kierunki."
+    },
+    {
+      "id": "B-5",
+      "slug": "monitoring-w-pracy",
+      "wymiar": "wyszukiwarka",
+      "waga": "niska",
+      "plik": "src/data/sprawy.ts",
+      "linia": 121,
+      "zdanie": "Zapytania bez narzędzia w pierwszej trójce: „monitoring komputera”, „kamera nad stanowiskiem”, „podsluch w pracy”, „monitoring bez informacji”, „czy pracodawca moze mnie podgladac”, „zgloszenie monitoringu do pip”, „nagranie jako dowod zwolnienie”; słabo: „sledzenie pracownika” (2., 112 pkt), „kamery w magazynie” (2., remis 111).",
+      "problem": "Typowe sformułowania z hali nie trafiają do narzędzia albo trafiają do innych (np. „monitoring komputera” → przerwy-w-pracy, „monitoring bez informacji” → informacja-o-warunkach-zatrudnienia).",
+      "dowod": "szukaj.mjs: „monitoring komputera” → 219 przerwy-w-pracy, 215 praca-w-ciazy, 111 monitoring-w-pracy; „kamera nad stanowiskiem” i „nagranie jako dowod zwolnienie” → brak wyników; „podsluch w pracy” → brak monitoringu w 5; „monitoring bez informacji” → tylko informacja-o-warunkach-zatrudnienia; „zgloszenie monitoringu do pip” → tylko sad-pracy-czy-pip.",
+      "poprawka": "Dopisać hasła: 'monitoring komputera', 'kamera nad stanowiskiem', 'kamery w magazynie', 'śledzenie pracownika', 'pracodawca podgląda', 'monitoring bez uprzedzenia', 'nielegalny monitoring', 'nagranie jako dowód'. Podsłuch (nagrywanie dźwięku) Kodeks pracy nie reguluje; jeśli dodawać 'podsłuch w pracy', to z jednym zdaniem w wyjaśnieniu, że art. 22² dotyczy tylko obrazu."
+    },
+    {
+      "id": "B-6",
+      "slug": "monitoring-w-pracy",
+      "wymiar": "tresc-ux",
+      "waga": "niska",
+      "plik": "src/pages/narzedzia/monitoring-w-pracy.astro",
+      "linia": 110,
+      "zdanie": "<span … data-w=\"informacja-status\" … aria-live=\"polite\"> obok <span class=\"block font-normal\" data-w=\"informacja\"> (to samo dla przechowywania)",
+      "problem": "Czytnik ekranu ogłasza tylko krótki status („Zostało 81 dni”), a nie datę („Najpóźniej do 4 lutego 2027 r.”) ani nowy termin informacji. Gdy status się nie zmienia (np. „W terminie” po zmianie dnia uruchomienia), zmiana terminu nie jest ogłaszana wcale. Ponadto aria-live leży na elemencie przełączanym `hidden`, więc pierwsze pojawienie się bywa pomijane.",
+      "dowod": "ariaSnapshot na 412 px: region aria-live obejmuje tylko werdykt i przepis; definicje „Uprzedzenie” i „Przechowywanie” poza regionem; w interakcji zmiana uruchomienia z 2026-09-16 na 2027-01-15 zmienia tekst daty przy niezmienionym statusie „W terminie”.",
+      "poprawka": "Przenieść aria-live (aria-atomic=true) na <dd> obu pozycji zamiast na ukrywany span statusu, tak by ogłaszany był status z datą."
+    },
+    {
+      "id": "B-7",
+      "slug": "monitoring-w-pracy",
+      "wymiar": "testy",
+      "waga": "niska",
+      "plik": "src/lib/narzedzia/monitoring.test.ts",
+      "linia": 18,
+      "zdanie": "Testy koniecPrzechowywania i statusów",
+      "problem": "Brak testów: nagranie 29 lutego (2028-02-29 → 2028-05-28), nagranie 31 dnia miesiąca przed miesiącem 30-dniowym (2027-03-31 → 2027-06-30), statusy przy dzis na przełomie roku (np. dzis 2026-12-31 i 2027-01-01, granice klas 3/4 i 7/8 dni), osoba poinformowana po uruchomieniu (B-1), uruchomienie przed 25.05.2018 (B-2).",
+      "dowod": "Niezależny rachunek (Python, 2000–2030) zgadza się z kodem, więc dziś bez błędu; luki dotyczą zabezpieczenia przed regresją.",
+      "poprawka": "Dopisać przypadki: koniecPrzechowywania('2028-02-29') = '2028-05-28', ('2027-03-31') = '2027-06-30', ('2027-01-31') = '2027-04-30'; opisMonitoringu z dzis '2027-01-01' i nagraniem '2026-10-01' → koniec 2026-12-31, status „Okres minął 1 dzień temu”; klasy dla r = 3, 4, 7, 8."
+    }
+  ],
+  "orzeczenia": [],
+  "do_stanu": [],
+  "poza_zakresem": [
+    "src/lib/narzedzia/start-w-pracy.ts i informacja-o-warunkach-zatrudnienia.astro: opis monitoringu (art. 22² § 8, art. 22³ § 3–4) spójny z narzędziem; bez uwag."
+  ],
+  "nie_sprawdzono": [
+    "RODO (rozporządzenie 2016/679, EUR-Lex blokuje automaty): strona powołuje się tylko na art. 12 i 13 RODO przez art. 22² § 10 Kp („Oznaczenie nie zastępuje informacji o przetwarzaniu danych z art. 12 i 13 RODO”). Treść art. 12–13 RODO trzeba sprawdzić ręcznie; zgodność z brzmieniem § 10 Kp potwierdzona.",
+    "Strona nie powołuje się na żadne orzeczenie, więc SAOS nie był potrzebny.",
+    "Czytnik ekranu tylko przez ariaSnapshot (bez NVDA/VoiceOver); nie sprawdzono, czy aria-live na ukrywanym spanie faktycznie ogłasza zmianę w prawdziwych czytnikach.",
+    "WebKit/iPhone: nie uruchamiano (tylko Chromium)."
+  ]
+}

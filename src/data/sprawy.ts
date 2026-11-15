@@ -114,15 +114,21 @@ export const HASLA: Record<string, string[]> = {
   'dyzur-kierowcy': ['dyżur kierowcy', 'podwójna obsada', 'drugi kierowca'],
   'zaswiadczenie-adr': ['ADR', 'kurs ADR', 'uprawnienia ADR', 'przedłużenie ADR', 'towary niebezpieczne'],
   // Pakiet „odpowiedzialność” (2026-11-14): frazy z podpowiedzi wyszukiwarki Google (pl), a „niedobór”, „inwentaryzacja”,
-  // „szkoda”, „uszkodzenie wózka”, „kara za zniszczenie” i „pozew od pracodawcy” z audytu wyszukiwarki i podobnych narzędzi
+  // „uszkodzenie wózka” i „pozew od pracodawcy” z audytu wyszukiwarki i podobnych narzędzi
   // (bez nich zapytania z hali nie trafiały w to narzędzie, a podobne były przypadkowe).
-  'odpowiedzialnosc-materialna': ['manko w kasie', 'niedobór', 'inwentaryzacja', 'szkoda', 'braki w towarze', 'potrącenie z wypłaty za szkodę', 'zniszczenie mienia pracodawcy', 'uszkodzenie wózka', 'kara za zniszczenie', 'pozew od pracodawcy', 'uszkodzenie samochodu służbowego', 'przedawnienie roszczeń pracodawcy', 'umowa o współodpowiedzialności materialnej'],
+  // Audyt „jakosc3” (2026-11-15): bez „szkoda” (słowo jest w nazwie) i „kara za zniszczenie” (zabierało zapytania o karę
+  // pieniężną narzędziu o karach porządkowych); imiesłowy zamiast czasowników („zniszczony”, nie „zniszczyłem”), bo
+  // „zniszczyłem sobie kręgosłup” to choroba zawodowa, a „zepsułem sobie zdrowie” to wypadek przy pracy.
+  'odpowiedzialnosc-materialna': ['manko w kasie', 'niedobór', 'inwentaryzacja', 'braki w towarze', 'potrącenie z wypłaty za szkodę', 'zgoda na potrącenie z wynagrodzenia', 'zniszczenie mienia pracodawcy', 'uszkodzenie wózka', 'zniszczony wózek', 'zepsuty sprzęt', 'zgubiony sprzęt firmowy', 'rozbity samochód służbowy', 'koszty naprawy', 'pozew od pracodawcy', 'uszkodzenie samochodu służbowego', 'przedawnienie roszczeń pracodawcy', 'umowa o współodpowiedzialności materialnej'],
   'swiadectwo-pracy': ['brak świadectwa pracy', 'świadectwo pracy ile dni', 'sprostowanie świadectwa', 'błąd w świadectwie pracy', 'pracodawca nie wydał świadectwa', 'świadectwo pracy po zwolnieniu', 'co musi być w świadectwie pracy', 'świadectwo pracy pozew', 'odszkodowanie za świadectwo pracy'],
-  'monitoring-w-pracy': ['kamery w pracy', 'nagrywanie pracowników', 'kamera w szatni', 'kamera w toalecie', 'nagrania z kamer', 'GPS w aucie służbowym', 'lokalizator w wózku', 'kontrola maila służbowego', 'RODO w pracy', 'monitoring wizyjny'],
+  // Audyt „jakosc3” (2026-11-15): bez „kamera w szatni” i „kamera w toalecie”, bo zabierały zapytania o szatnię i toaletę
+  // narzędziu o normach sanitarnych (kamerę w szatni znajduje pytanie z FAQ); dopisane potoczne zapytania z hali.
+  'monitoring-w-pracy': ['kamery w pracy', 'nagrywanie pracowników', 'nagrania z kamer', 'GPS w aucie służbowym', 'lokalizator w wózku', 'kontrola maila służbowego', 'RODO w pracy', 'monitoring wizyjny', 'monitoring komputerów', 'kamera nad stanowiskiem', 'śledzenie pracownika', 'pracodawca podgląda', 'monitoring bez uprzedzenia', 'nielegalny monitoring'],
   // Pakiet „hala” (2026-11-14): frazy z podpowiedzi wyszukiwarki Google (pl) do zapytań „szerokość drogi dla wózka”,
-  // „odległość między regałami”, „obciążenie regału”, „wysokość składowania”, „pochylnia nachylenie”.
-  'drogi-i-przejscia': ['droga transportowa', 'ciąg komunikacyjny na hali', 'przejście między regałami', 'odległość między regałami w magazynie', 'szerokość przejścia bhp', 'pochylnia maksymalne nachylenie', 'wózek widłowy', 'piesi i wózki'],
-  'skladowanie-w-magazynie': ['dopuszczalne obciążenie regału', 'tabliczka obciążenie regału', 'obciążenie półki regału', 'wysokość składowania palet', 'składowanie materiałów bhp', 'regał magazynowy', 'palety', 'odległość od lamp', 'odległość towaru od tryskaczy', 'gaśnica w magazynie'],
+  // „odległość między regałami”, „obciążenie regału”, „wysokość składowania”, „pochylnia nachylenie”. Audyt „jakosc3”
+  // (2026-11-15): dopisane zapytania z hali o rampę, linie, regał w kilogramach i gaśnicę, które trafiały do innych narzędzi.
+  'drogi-i-przejscia': ['droga transportowa', 'ciąg komunikacyjny na hali', 'przejście między regałami', 'odległość między regałami w magazynie', 'szerokość przejścia bhp', 'pochylnia maksymalne nachylenie', 'wózek widłowy', 'piesi i wózki', 'dojście do stanowiska', 'rampa załadunkowa', 'nachylenie rampy', 'żółte linie na posadzce', 'barierki dla pieszych', 'prędkość wózka na hali'],
+  'skladowanie-w-magazynie': ['dopuszczalne obciążenie regału', 'tabliczka obciążenie regału', 'obciążenie półki regału', 'wysokość składowania palet', 'składowanie materiałów bhp', 'regał magazynowy', 'palety', 'odległość od lamp', 'odległość towaru od tryskaczy', 'gaśnica w magazynie', 'ile kg na regał', 'ile kg na półkę regału', 'nośność regału', 'odległość do gaśnicy', 'ile metrów do gaśnicy', 'rozmieszczenie gaśnic', 'najniższa półka regału', 'co na dolnej półce regału'],
   // Pakiet „l4” (2026-11-15): frazy z podpowiedzi wyszukiwarki Google (pl) do zapytań „co wolno na l4”, „czy na l4 można”,
   // „kontrola zus l4”, „praca na l4”, „wyjazd na l4”, „l4 chory może chodzić”.
   'co-wolno-na-l4': ['czy na L4 można wychodzić z domu', 'praca na L4', 'praca na L4 u innego pracodawcy', 'praca na L4 nowe przepisy', 'kontrola ZUS L4', 'kontrola ZUS jak wygląda', 'wyjazd na L4', 'chory może chodzić', 'chory powinien leżeć', 'utrata zasiłku chorobowego', 'odwołanie od decyzji ZUS'],

@@ -1,0 +1,100 @@
+{
+  "partia": "C",
+  "sprawdzone": [
+    {
+      "slug": "drogi-i-przejscia",
+      "pliki": ["src/lib/narzedzia/drogi-i-przejscia.ts", "src/lib/narzedzia/drogi-i-przejscia.test.ts", "src/pages/narzedzia/drogi-i-przejscia.astro", "tests/e2e/narzedzie-drogi-i-przejscia.spec.ts", "src/data/narzedzia.ts", "src/data/prawo.ts", "src/data/sprawy.ts"],
+      "wynik": "problemy (drobne): prawo zgodne. Sprawdzone zdanie po zdaniu: lead, 12 wierszy tabeli, 3 akapity i 4 punkty wyjaśnienia, „Jak liczymy”, 6 FAQ, wszystkie warianty tekstów wyniku i uwag, etykiety, opisy pól, wpis w rejestrze. Przepisy: § 4–7, 21 ust. 4, 47, 55, 64a, 66, 68, 69, 73, 106, zał. 1 § 13 DU_2003_1650; § 8 DU_2020_852; § 12 ust. 1, § 21 ust. 3, § 34–35 DU_2018_1139; § 4 ust. 1 pkt 18, § 33 ust. 2 DU_2023_822. Wszystkie nowelizacje sprawdzone: DU_2007_330, 2008_690, 2011_1034 i 2021_2088 nie zmieniają tych paragrafów; DU_2026_927 (od 11.01.2027) dodaje tylko § 30a; DU_2024_1716 i 2026_1276 zmieniają § 3, § 4 ust. 2, § 28a i § 37, a § 4 ust. 1 i § 33 zostają bez zmian. § 46 rozporządzenia z 1953 r. (DU/1953/89, pobrany z API) potwierdzony: 60 cm i 90 cm, wózki poruszane ręcznie. Porównania: < i ≤ zgodne z „co najmniej” / „nie większym niż 8 %”. Decyzja z Rundy 7 przestrzegana: wózki bez liczby w logice, w tekście, w tabeli i w FAQ. Rachunek: 30 000 przypadków (w tym 9363 bez błędu formularza) z niezależnym modelem w Pythonie (Decimal), 0 rozbieżności (werdykty, status, „brakuje X cm”, nachylenie zaokrąglone w górę, najkrótsza pochylnia, błędy pól). SSR i skrypt dają ten sam wynik. Na 320 i 412 px nic nie jest ucięte, strona nie przewija się w bok, a tabela przewija się w swoim kontenerze. Aria, aria-invalid i role=alert działają. 22 zapytania w wyszukiwarce."
+    },
+    {
+      "slug": "skladowanie-w-magazynie",
+      "pliki": ["src/lib/narzedzia/skladowanie.ts", "src/lib/narzedzia/skladowanie.test.ts", "src/pages/narzedzia/skladowanie-w-magazynie.astro", "tests/e2e/narzedzie-skladowanie-w-magazynie.spec.ts", "src/data/narzedzia.ts", "src/data/prawo.ts", "src/data/sprawy.ts"],
+      "wynik": "problemy (drobne): prawo zgodne. Sprawdzone: lead, 12 wierszy tabeli, 7 punktów zasad, „Czego przepisy nie podają”, „Jak liczymy”, 6 FAQ, wszystkie warianty wyniku i uwaga stała. Przepisy: § 17, 46 ust. 2, 68–77 DU_2003_1650 (§ 70 ust. 2 w brzmieniu DU_2021_2088 od 20.11.2021, data zgodna z FAQ); § 4 ust. 1 pkt 6, 8, 9 i 18, § 4 ust. 3, § 33 ust. 2 DU_2023_822, nowelizacje bez wpływu. Rachunek: 70 000 przypadków (ok. 38 000 bez błędu), niezależny model w Decimal, 0 rozbieżności (masa na poziomie i w sekcji, ile się zmieści, ±1 g i ±1 mm na progach 0,5, 1, 30, 2, 5, 10 i 15 m, maksima pól, liczby do 1e8 kg). Odmiana „zmieści/zmieszczą się” poprawna dla 1, 2–4, 5+, 12–14 i 22. SSR jest równy wynikowi skryptu. Na 320 i 412 px nic nie jest ucięte, a lista linii ma krótkie opcje. 23 zapytania w wyszukiwarce."
+    }
+  ],
+  "znaleziska": [
+    {
+      "id": "C-1", "slug": "skladowanie-w-magazynie", "wymiar": "wyszukiwarka", "waga": "srednia",
+      "plik": "src/data/sprawy.ts", "linia": 125,
+      "zdanie": "zapytanie „ile kg na regal” (i „ile kg na polke”)",
+      "problem": "Pierwsze miejsce zajmuje kalkulator dźwigania, a pytanie dotyczy obciążenia regału. Pytanie z FAQ „Ile kilogramów można położyć na regał?” nie łapie skrótu „kg”.",
+      "dowod": "szukaj.mjs: „ile kg na regal” → 218 ile-kg-wolno-dzwigac, 111 skladowanie-w-magazynie; „ile kg na polke” → 115 ile-kg-wolno-dzwigac, 110 skladowanie-w-magazynie; „nosnosc regalu” → skladowanie tylko 111 pkt",
+      "poprawka": "Dopisać do HASLA['skladowanie-w-magazynie'] hasła 'ile kg na regał', 'ile kg na półkę regału' i 'nośność regału'."
+    },
+    {
+      "id": "C-2", "slug": "skladowanie-w-magazynie", "wymiar": "wyszukiwarka", "waga": "srednia",
+      "plik": "src/data/sprawy.ts", "linia": 125,
+      "zdanie": "zapytania „ile metrow do gasnicy”, „gasnica co ile metrow”",
+      "problem": "Pierwsze miejsce zajmuje praca-na-wysokosci (przez „metrów”). Narzędzie z 30 m do gaśnicy (§ 33 ust. 2 pkt 1) jest dopiero trzecie albo drugie, z jednym punktem przewagi nad kolejnym.",
+      "dowod": "szukaj.mjs: „ile metrow do gasnicy” → 111 praca-na-wysokosci, 110 powierzchnia-na-pracownika, 110 skladowanie-w-magazynie; „gasnica co ile metrow” → 111 praca-na-wysokosci, 111 skladowanie-w-magazynie",
+      "poprawka": "Dopisać do HASLA['skladowanie-w-magazynie'] hasła 'odległość do gaśnicy', 'ile metrów do gaśnicy' i 'rozmieszczenie gaśnic'."
+    },
+    {
+      "id": "C-3", "slug": "drogi-i-przejscia", "wymiar": "wyszukiwarka", "waga": "srednia",
+      "plik": "src/data/sprawy.ts", "linia": 124,
+      "zdanie": "zapytania „wysokosc dojscia do stanowiska pracy”, „rampa zaladunkowa”, „ile procent rampa”, „prog na hali”, „pasy na hali zolte”, „barierki dla pieszych hala”",
+      "problem": "Narzędzia nie ma w pierwszej piątce albo nie ma żadnego wyniku, choć strona odpowiada na każde z tych pytań: § 47 ust. 1, § 64a, § 5 ust. 1, załącznik 1 § 13 i § 6 ust. 5.",
+      "dowod": "szukaj.mjs: „wysokosc dojscia do stanowiska pracy” → wypowiedzenie-zmieniajace, dodatek-wyrownawczy, praca-na-wysokosci, halas-w-pracy, pracownik-mlodociany (bez drogi-i-przejscia); „rampa zaladunkowa”, „pasy na hali zolte”, „barierki dla pieszych hala” → brak wyników; „ile procent rampa” → odszkodowanie-za-wypadek-przy-pracy; „prog na hali” → temperatura-w-pracy",
+      "poprawka": "Dopisać do HASLA['drogi-i-przejscia'] hasła 'wysokość dojścia', 'rampa załadunkowa', 'nachylenie rampy', 'próg na hali', 'pasy na posadzce', 'barierki dla pieszych' i 'prędkość wózka na hali'."
+    },
+    {
+      "id": "C-4", "slug": "skladowanie-w-magazynie", "wymiar": "wyszukiwarka", "waga": "niska",
+      "plik": "src/data/sprawy.ts", "linia": 125,
+      "zdanie": "zapytanie „co na najnizszej polce”",
+      "problem": "Pierwsze miejsce zajmuje placa-minimalna (przez „najniższa krajowa”), drugie mobbing. Narzędzie z FAQ o § 70 ust. 2 jest trzecie.",
+      "dowod": "szukaj.mjs: 110 placa-minimalna, 107 mobbing-i-dyskryminacja, 107 skladowanie-w-magazynie [Co kładzie się na najniższych półkach regału?]",
+      "poprawka": "Dopisać hasła 'najniższa półka' i 'co na dolnej półce regału'."
+    },
+    {
+      "id": "C-5", "slug": "drogi-i-przejscia", "wymiar": "tresc-ux", "waga": "niska",
+      "plik": "src/pages/narzedzia/drogi-i-przejscia.astro", "linia": 206,
+      "zdanie": "if (!dane) { status.hidden = true; w('lista').replaceChildren(); return; } (bez aktualizacji uwagi)",
+      "problem": "Gdy w polu jest błąd, a zmieniamy rodzaj, nagłówek się aktualizuje („co najmniej 1 m” przy gaśnicy), a uwaga zostaje od poprzedniego rodzaju, np. o zastawianiu przejść zamiast o 30 m do gaśnicy.",
+      "dowod": "Playwright 412 px: szerokość „0,7a”, potem rodzaj „gasnica” → minimum „co najmniej 1 m”, uwaga „Przejścia nie wolno zastawiać (§ 7 ust. 1)…”",
+      "poprawka": "Przed `if (!dane)` wpisać uwagę dla samego rodzaju: `pisz(w('uwaga'), sprawdzPrzejscie({ rodzaj, piesi: el('piesi').checked }).uwaga);`"
+    },
+    {
+      "id": "C-6", "slug": "drogi-i-przejscia", "wymiar": "tresc-ux", "waga": "niska",
+      "plik": "src/lib/narzedzia/drogi-i-przejscia.ts", "linia": 158,
+      "zdanie": "…; za stromo, jeśli to przejście jest w magazynie albo na drodze transportowej. Przy różnicy 15 cm pochylnia musi mieć w poziomie co najmniej 1,88 m.",
+      "problem": "Wariant „zależy od miejsca” kończy się bezwarunkowym „musi mieć”, a „Jak liczymy” mówi, że poza drogami transportowymi i magazynami 8% to tylko wskazówka (§ 21 ust. 4 odsyła do przepisów techniczno-budowlanych). Przy dostępie do gaśnicy tekst nazywa ten dostęp „przejściem”.",
+      "dowod": "DU_2003_1650 § 5 ust. 1: „Na drogach transportowych i w magazynach … nie większym niż 8 %”; wynik dla {rodzaj:'obsluga', roznica:15, dlugosc:1.5}",
+      "poprawka": "W wariancie bez drogi wózków napisać „…pochylnia o nachyleniu 8% ma w poziomie co najmniej X m” zamiast „musi mieć”, a „przejście” zastąpić słowami „to miejsce”."
+    },
+    {
+      "id": "C-7", "slug": "skladowanie-w-magazynie", "wymiar": "tresc-ux", "waga": "niska",
+      "plik": "src/lib/narzedzia/skladowanie.ts", "linia": 164,
+      "zdanie": "Na poziomie zmieszczą się najwyżej 2 takie ładunki. (przykład startowy, a obok „Obciążenie sekcji: niezgodne, 6400 kg … o 400 kg więcej niż 6000 kg”)",
+      "problem": "Liczba „zmieści się” bierze pod uwagę tylko limit poziomu. W przykładzie startowym sekcja jest już przeciążona przy 2 paletach na każdym z 4 poziomów, więc zdanie, że 2 się zmieszczą, można odczytać jako zgodę.",
+      "dowod": "SSR i skrypt (Playwright): „1600 kg / Na poziomie zmieszczą się najwyżej 2 takie ładunki. / Niezgodne z przepisem / Obciążenie sekcji: niezgodne”",
+      "poprawka": "Gdy sekcja ma wynik „nie”, dopisać do zmiesciOpis zdanie „ale przy N zajętych poziomach sekcja pozwala najwyżej na floor(limitSekcji/(masa·N)) na poziomie” albo liczyć ileZmiesci jako minimum z obu limitów. Dodać test."
+    },
+    {
+      "id": "C-8", "slug": "drogi-i-przejscia", "wymiar": "spojnosc", "waga": "niska",
+      "plik": "src/pages/narzedzia/drogi-i-przejscia.astro", "linia": 19,
+      "zdanie": "Pomost, antresola, podest wyżej niż 1 m — balustrada … (§ 106 ust. 1 i 3)",
+      "problem": "Brakuje oczywistych linków: z drogi-i-przejscia do praca-na-wysokosci, które opisuje tę samą balustradę z § 106, i do ile-kg-wolno-dzwigac przy wierszach o wózkach ręcznych i pochylni (§ 12, § 21). Żadne inne narzędzie (praca-na-wysokosci, czy-potrzebne-uprawnienia-udt, ile-kg-wolno-dzwigac) nie linkuje do drogi-i-przejscia ani do skladowanie-w-magazynie.",
+      "dowod": "grep -rl 'drogi-i-przejscia\\|skladowanie-w-magazynie' src/pages → tylko te dwie strony",
+      "poprawka": "W wyjaśnieniu drogi-i-przejscia dodać zdanie z linkiem do /narzedzia/praca-na-wysokosci (balustrady) i do /narzedzia/ile-kg-wolno-dzwigac (wózki ręczne, 8% i 200 m). W wyjaśnieniach praca-na-wysokosci i czy-potrzebne-uprawnienia-udt dodać link zwrotny."
+    },
+    {
+      "id": "C-9", "slug": "drogi-i-przejscia", "wymiar": "testy", "waga": "niska",
+      "plik": "src/lib/narzedzia/drogi-i-przejscia.test.ts", "linia": 96,
+      "zdanie": "testy odczytu: szerokość 51 m",
+      "problem": "Brak testów górnych granic pól wysokość (30 / 30,001 m), różnica (1000 / 1000,1 cm) i długość (1000 / 1000,001 m) oraz progu 1 m przy dwóch kierunkach ±1 mm (0,999 / 1,001). W składowaniu nie ma testów ±1 mm dla dostępu do gaśnicy (0,999), dla 30,001 m (jest tylko 30,01), dla linii (jest min−0,01) ani maksimów pól (100 000,001 kg, 1 000 000,001 kg, 1001 ładunków, 101 poziomów).",
+      "dowod": "Niezależny model potwierdza poprawne działanie tych granic (0 rozbieżności), ale testy jednostkowe ich nie pilnują.",
+      "poprawka": "Dopisać te przypadki w drogi-i-przejscia.test.ts i skladowanie.test.ts (oczekiwane wartości: 'tak' przy równej granicy, 'nie' albo błąd pola o 1 mm lub 1 g dalej)."
+    }
+  ],
+  "orzeczenia": [],
+  "do_stanu": [],
+  "poza_zakresem": [
+    "src/lib/typografia.mjs: lista jednostek nie ma V, kV (ani dB), więc „400 V”, „1 kV”, „15 kV” nie dostają twardej spacji. Na 320 px w opisie pola składowania „powyżej 400” jest na końcu wiersza, a „V.” w następnym (zrzut skladowanie-w-magazynie-form320.png). Poprawka: dopisać V|kV|dB do wzorca jednostek.",
+    "API Sejmu dla DU/1953/89 i DU/2000/313 podaje repealDate i datę uchylenia 2000-10-11. Tekst jednolity DU_2018_1139 (§ 35 w brzmieniu Dz.U. 2000 poz. 930) daje wejście w życie, a więc i uchylenie z § 34, 1.01.2002 r. Strona słusznie podaje 1.01.2002 r.; metadane API są niespójne, nic nie trzeba zmieniać."
+  ],
+  "nie_sprawdzono": [
+    "Polskie Normy (PN-EN 15620, PN-EN 15635), na które powołuje się strona, nie są w otwartym dostępie: sprawdziłem tylko, że strona nie podaje z nich liczb.",
+    "Czytnik ekranu: tylko ariaSnapshot i atrybuty (aria-live polite i atomic, role=alert z opóźnieniem z formularz.ts, aria-invalid). Bez prawdziwego NVDA ani VoiceOver.",
+    "Przepisy techniczno-budowlane (warunki techniczne budynków), na które odsyłają § 9 ust. 2 i § 21 ust. 4: strona nie podaje z nich liczb, więc ich nie pobierałem."
+  ]
+}

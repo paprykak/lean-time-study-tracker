@@ -74,6 +74,21 @@ describe('odczyt formularza', () => {
     expect(odczytajSkladowanie({ ...puste, limitPoziomu: '2000' }, true, 'brak').blad?.pole).toBe('ladunki');
     expect(odczytajSkladowanie({ ...puste, doGasnicy: 'dużo' }, true, 'brak').blad?.pole).toBe('doGasnicy');
   });
+  it('progi ±1 mm i maksima pól (audyt jakosc3, C-9)', () => {
+    expect(s({ dostepGasnicy: 0.999 }, 'dostep')?.wynik).toBe('nie');
+    expect(s({ dostepGasnicy: 1 }, 'dostep')?.wynik).toBe('tak');
+    expect(s({ doGasnicy: 30 }, 'gasnica')?.wynik).toBe('tak');
+    expect(s({ doGasnicy: 30.001 }, 'gasnica')?.wynik).toBe('nie');
+    expect(s({ linia: 'nn', odLinii: 1.999 }, 'linia')?.wynik).toBe('nie');
+    expect(s({ palne: true, odGoracych: 0.499 }, 'gorace')?.wynik).toBe('nie');
+    expect(odczytajSkladowanie({ ...puste, limitPoziomu: '100000', ladunki: '1000', masa: '100000' }, true, 'brak').blad).toBeNull();
+    expect(odczytajSkladowanie({ ...puste, limitPoziomu: '100000,001', ladunki: '1', masa: '1' }, true, 'brak').blad?.pole).toBe('limitPoziomu');
+    expect(odczytajSkladowanie({ ...puste, ladunki: '1', masa: '100000,001' }, true, 'brak').blad?.pole).toBe('masa');
+    expect(odczytajSkladowanie({ ...puste, ladunki: '1001', masa: '1' }, true, 'brak').blad?.pole).toBe('ladunki');
+    expect(odczytajSkladowanie({ ...puste, ladunki: '1', masa: '1', limitSekcji: '1000000,001', poziomy: '1' }, true, 'brak').blad?.pole).toBe('limitSekcji');
+    expect(odczytajSkladowanie({ ...puste, ladunki: '1', masa: '1', limitSekcji: '1000', poziomy: '101' }, true, 'brak').blad?.pole).toBe('poziomy');
+    expect(odczytajSkladowanie({ ...puste, doGasnicy: '10000,001' }, true, 'brak').blad?.pole).toBe('doGasnicy');
+  });
 });
 
 describe('ile ładunków zmieści się na poziomie', () => {
@@ -84,6 +99,17 @@ describe('ile ładunków zmieści się na poziomie', () => {
     expect(sprawdzSkladowanie({ limitPoziomu: 500, ladunki: 1, masa: 900 })).toMatchObject({ ileZmiesci: 0, zmiesciOpis: 'Jeden taki ładunek jest cięższy niż dopuszczalne obciążenie poziomu.' });
     expect(sprawdzSkladowanie({ limitPoziomu: 2200, ladunki: 1, masa: 100 }).zmiesciOpis).toBe('Na poziomie zmieszczą się najwyżej 22 takie ładunki.');
     expect(sprawdzSkladowanie({ limitPoziomu: 1200, ladunki: 1, masa: 100 }).zmiesciOpis).toBe('Na poziomie zmieści się najwyżej 12 takich ładunków.');
+  });
+  it('limit sekcji ogranicza liczbę ładunków na każdym zajętym poziomie (audyt jakosc3, C-7)', () => {
+    const sp = (t: string) => t.replace(/\s/g, ' ');
+    const r = sprawdzSkladowanie({ limitPoziomu: 2000, ladunki: 2, masa: 800, limitSekcji: 6000, poziomy: 4 });
+    expect(r.ileZmiesci).toBe(1);
+    expect(sp(r.zmiesciOpis)).toBe('Na poziomie zmieści się najwyżej 1 taki ładunek, bo przy 4 zajętych poziomach ogranicza obciążenie sekcji (sam poziom uniesie 2).');
+    expect(sprawdzSkladowanie({ limitPoziomu: 2000, ladunki: 1, masa: 900, limitSekcji: 8000, poziomy: 4 })).toMatchObject({ ileZmiesci: 2, zmiesciOpis: 'Na poziomie zmieszczą się najwyżej 2 takie ładunki.' });
+    const zero = sprawdzSkladowanie({ limitPoziomu: 2000, ladunki: 1, masa: 900, limitSekcji: 3000, poziomy: 4 });
+    expect(zero.ileZmiesci).toBe(0);
+    expect(sp(zero.zmiesciOpis)).toBe('Przy 4 zajętych poziomach obciążenie sekcji nie pozwala na ani jeden taki ładunek na każdym poziomie (sam poziom uniesie 2).');
+    expect(sp(sprawdzSkladowanie({ limitPoziomu: 2000, ladunki: 1, masa: 800, limitSekcji: 1000, poziomy: 1 }).zmiesciOpis)).toBe('Na poziomie zmieści się najwyżej 1 taki ładunek, bo przy 1 zajętym poziomie ogranicza obciążenie sekcji (sam poziom uniesie 2).');
     expect(sprawdzSkladowanie({ ladunki: 1, masa: 900 }).zmiesciOpis).toBe('');
   });
 });

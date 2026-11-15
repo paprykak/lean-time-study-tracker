@@ -79,9 +79,10 @@ const faq = [
         </div>
         <div>
           <label for="m-informacja" class="etykieta-pola">Czy pracodawca uprzedził?</label>
-          <select id="m-informacja" name="informacja" class="pole mt-1">
+          <select id="m-informacja" name="informacja" class="pole mt-1" aria-describedby="m-informacja-opis">
             {Object.entries(INFORMACJE).map(([k, t]) => <option value={k} selected={k === INFORMACJA}>{t}</option>)}
           </select>
+          <p id="m-informacja-opis" class="meta mt-1">„Przyjęto mnie później”, gdy zaczynasz pracę po uruchomieniu.</p>
         </div>
         <div data-pole="dataInformacji" hidden={INFORMACJA !== 'tak'}>
           <label for="m-data-informacji" class="etykieta-pola">Dzień informacji</label>
@@ -106,15 +107,15 @@ const faq = [
       <dl class="wynik-lista">
         <div>
           <dt>Uprzedzenie</dt>
-          <dd>
-            <span class="status-terminu" data-w="informacja-status" data-status={start.informacjaKlasa ?? undefined} hidden={!start.informacjaStatus} aria-live="polite">{start.informacjaStatus}</span>
+          <dd aria-live="polite" aria-atomic="true">
+            <span class="status-terminu" data-w="informacja-status" data-status={start.informacjaKlasa ?? undefined} hidden={!start.informacjaStatus}>{start.informacjaStatus}</span>
             <span class="block font-normal" data-w="informacja">{start.informacja}</span>
           </dd>
         </div>
         <div>
           <dt>Przechowywanie</dt>
-          <dd>
-            <span class="status-terminu" data-w="przechowywanie-status" data-status={start.przechowywanieKlasa ?? undefined} hidden={!start.przechowywanieStatus} aria-live="polite">{start.przechowywanieStatus}</span>
+          <dd aria-live="polite" aria-atomic="true">
+            <span class="status-terminu" data-w="przechowywanie-status" data-status={start.przechowywanieKlasa ?? undefined} hidden={!start.przechowywanieStatus}>{start.przechowywanieStatus}</span>
             <span class="block font-normal" data-w="przechowywanie">{start.przechowywanie}</span>
           </dd>
         </div>
@@ -147,9 +148,13 @@ const faq = [
       2 tygodni od 30 listopada kończy się z upływem 14 grudnia (art. 112 Kodeksu cywilnego przez art. 300 Kodeksu pracy),
       więc przy uruchomieniu 15 grudnia informacja najpóźniej 30 listopada. Informację 1 grudnia, w ten sam dzień tygodnia
       2 tygodnie wcześniej, część osób uzna za wystarczającą; przepis tego nie przesądza, więc oznaczamy ją jako sporną.
-      Oznaczenie liczymy łagodniej, według zwykłego znaczenia słów „jeden dzień przed”: najpóźniej w dniu poprzedzającym
-      uruchomienie; przy liczeniu jak dla informacji, z pełnym dniem przerwy, byłyby to 2 dni przed uruchomieniem. Gdy regulamin pracy dopiero wprowadza monitoring, sam regulamin wchodzi w życie
-      po upływie 2 tygodni od podania go do wiadomości pracowników (art. 104³ § 1).
+      Oznaczenie „jeden dzień przed” liczymy tak samo, z pełnym dniem przerwy: przy uruchomieniu 15 grudnia najpóźniej
+      13 grudnia. Według zwykłego znaczenia słów wystarczy dzień poprzedni (14 grudnia); przepis tego nie przesądza, więc
+      podajemy obie daty. Termin 2 tygodni dotyczy osób zatrudnionych przed uruchomieniem monitoringu: osoba przyjęta
+      później dostaje informację przed dopuszczeniem do pracy (art. 22² § 8). Art. 22² obowiązuje od 25 maja 2018 r.
+      (dodała go ustawa o ochronie danych osobowych), więc wcześniejszego terminu uprzedzenia nie oceniamy. Gdy regulamin
+      pracy dopiero wprowadza monitoring, sam regulamin wchodzi w życie po upływie 2 tygodni od podania go do wiadomości
+      pracowników (art. 104³ § 1).
     </p>
     <p>
       Okres przechowywania liczymy „od dnia nagrania” z tym dniem włącznie, jak okres, który zaczyna się z początkiem dnia:
