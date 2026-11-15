@@ -181,7 +181,7 @@ export const NARZEDZIA: Narzedzie[] = [
     nazwa: 'Kalkulator odprawy',
     krotko: 'Odprawa przy zwolnieniu z przyczyn pracodawcy (1, 2 albo 3 pensje, z limitem) i odprawa emerytalna.',
     kategoria: 'umowa',
-    przepisy: ['zwolnieniaGrupowe', 'kodeksPracy', 'wynagrodzenieRozp', 'urlopowe', 'minimalneWynagrodzenie', 'placa2025', 'placa2026', 'placa2027'],
+    przepisy: ['zwolnieniaGrupowe', 'kodeksPracy', 'wynagrodzenieRozp', 'urlopowe', 'minimalneWynagrodzenie', 'placa2025', 'placa2026', 'placa2027', 'rynekPracy', 'zmianaStazu2025'],
     sprawdzono: '2026-11-11',
   },
   {
@@ -461,7 +461,7 @@ export const NARZEDZIA: Narzedzie[] = [
     nazwa: 'Okres wypowiedzenia',
     krotko: 'Ile trwa wypowiedzenie i który dzień jest ostatnim dniem umowy: 2 tygodnie, miesiąc albo 3 miesiące.',
     kategoria: 'umowa',
-    przepisy: ['kodeksPracy', 'zmianaStazu2025'],
+    przepisy: ['kodeksPracy', 'zmianaStazu2025', 'kodeksCywilny'],
     sprawdzono: '2026-11-11',
   },
   {

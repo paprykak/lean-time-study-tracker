@@ -73,7 +73,7 @@ describe('próg stażu w trakcie wypowiedzenia (wartości z niezależnego rachun
     expect(w).toMatchObject({ staz: 35, koniec: '1998-05-31', okres: { opis: '3 miesiące' } });
     expect(w.prog).toMatchObject({ miesiace: 36, krotszy: { opis: '1 miesiąc' }, krotszyKoniec: '1998-03-31' });
   });
-  it('stan faktyczny II PK 12/11 (SN, 6.07.2011): praca od 1.08.2006, doręczenie w lipcu 2009, sąd: 3 miesiące, nie 1 miesiąc', () => {
+  it('próg 3 lat w trakcie wypowiedzenia: praca od 1.08.2006, doręczenie w lipcu 2009, 3 miesiące, nie 1 miesiąc', () => {
     for (const dor of ['2009-07-01', '2009-07-15', '2009-07-31']) {
       expect(wypowiedzenieStalej('2006-08-01', dor)).toMatchObject({ staz: 35, koniec: '2009-10-31', okres: { opis: '3 miesiące' } });
     }

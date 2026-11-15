@@ -22,6 +22,20 @@ describe('jakosc4: zapytania z hali trafiają w narzędzie', () => {
     ['zapoznanie z regulaminem pracy', 'informacja-o-warunkach-zatrudnienia'],
     ['kiedy dostane umowe', 'informacja-o-warunkach-zatrudnienia'],
   ])('„%s” → %s w pierwszej trójce', (q, slug) => expect(wsrod(q)).toContain(slug));
+  it.each([
+    // B-10, B-11, B-12
+    ['wymowienie', 'okres-wypowiedzenia'],
+    ['wypowiedzenie umowy na czas okreslony', 'okres-wypowiedzenia'],
+    ['wolne na poszukiwanie pracy', 'okres-wypowiedzenia'],
+    ['odejscie z pracy', 'okres-wypowiedzenia'],
+    ['odprawa po 8 latach', 'kalkulator-odprawy'],
+    ['odprawa przy porozumieniu stron', 'kalkulator-odprawy'],
+    ['czy nalezy mi sie odprawa', 'kalkulator-odprawy'],
+    ['ile pensji odprawy', 'kalkulator-odprawy'],
+    ['dostalem nagane', 'kara-porzadkowa'],
+    ['dostalam nagane', 'kara-porzadkowa'],
+    ['dostalem upomnienie', 'kara-porzadkowa'],
+  ])('„%s” → %s na pierwszym miejscu', (q, slug) => expect(pierwszy(q)).toBe(slug));
 });
 
 describe('jakosc4: hasła nie zabierają innych spraw', () => {
@@ -35,5 +49,13 @@ describe('jakosc4: hasła nie zabierają innych spraw', () => {
     ['kara porzadkowa', 'kara-porzadkowa'],
     ['nowa praca', 'informacja-o-warunkach-zatrudnienia'],
     ['praca bez umowy', 'informacja-o-warunkach-zatrudnienia'],
+    ['umowa na czas okreslony', 'umowa-na-czas-okreslony'],
+    ['czas okreslony', 'umowa-na-czas-okreslony'],
+    ['wypowiedzenie przed emerytura', 'ochrona-przedemerytalna'],
+    ['redukcja etatow', 'zwolnienia-grupowe'],
+    ['porozumienie stron', 'zasilek-dla-bezrobotnych'],
+    ['ile lat pracy', 'staz-pracy'],
+    ['odprawa posmiertna', 'odprawa-posmiertna'],
+    ['dostalem l4', 'kalkulator-l4'],
   ])('„%s” → %s na pierwszym miejscu', (q, slug) => expect(pierwszy(q)).toBe(slug));
 });

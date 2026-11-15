@@ -51,3 +51,16 @@ describe('kara porządkowa (art. 108–113 Kp)', () => {
     expect(() => karaPorzadkowa({ naruszenie: '2026-11-05', wiadomosc: '2026-11-04', ukaranie: '2026-11-12' })).toThrow(RangeError);
   });
 });
+
+// Audyt jakości 4 (B-13): sobota przed 1.01.2017 r. i Wigilia (wolna od 2025 r.) na przykładzie sprzeciwu.
+describe('audyt jakosc4: sprzeciw przy progach art. 115 KC', () => {
+  it.each([
+    ['2016-12-17', '2016-12-24', '2016-12-24', false],
+    ['2016-10-29', '2016-11-05', '2016-11-05', false],
+    ['2024-12-17', '2024-12-24', '2024-12-24', false],
+    ['2025-12-17', '2025-12-24', '2025-12-29', true],
+    ['2026-12-17', '2026-12-24', '2026-12-28', true],
+  ])('ukaranie %s: zdąż do %s, według art. 115 KC %s', (ukaranie, zdazDo, wedlugArt115, rozne) => {
+    expect(karaPorzadkowa({ naruszenie: ukaranie, wiadomosc: ukaranie, ukaranie }).sprzeciw).toMatchObject({ zdazDo, wedlugArt115, rozne });
+  });
+});

@@ -39,3 +39,9 @@ test('3 miesiące kończą się w niedzielę 28 lutego 2027 r.: kara 1 marca jes
   await page.getByLabel('Dzień zawiadomienia o karze').fill('2027-03-02');
   await expect(page.locator('[data-w="status"]')).toHaveText(/^Kara\snałożona\spo\sterminie\sz\sart\.\s109\s§\s1$/);
 });
+
+// Audyt jakości 4 (B-9): kara pieniężna to nie odszkodowanie za szkodę.
+test('link do odpowiedzialności materialnej w wyjaśnieniu', async ({ page }) => {
+  await expect(page.locator('main a[href="/narzedzia/odpowiedzialnosc-materialna"]').first()).toBeAttached();
+  await expect(page.locator('main')).toContainText(/pokaże\skalkulator\sodpowiedzialności\smaterialnej/);
+});
