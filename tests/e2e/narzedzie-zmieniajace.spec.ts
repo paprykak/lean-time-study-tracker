@@ -43,5 +43,6 @@ test('odprawa po odmowie: kryterium z orzecznictwa SN z sygnaturami', async ({ p
   await expect(sekcja).toContainText(/Odmowa nowych warunków sama nie odbiera odprawy/);
   await expect(sekcja).toContainText(/I\sPK\s144\/11/);
   await expect(sekcja).toContainText(/II\sPK\s38\/09,\sIII\sPK\s55\/14/);
-  await expect(sekcja).toContainText(/I\sPKN\s521\/00/);
+  await expect(sekcja).toContainText(/I\sPKN\s79\/00/);
+  await expect(sekcja).toContainText(/zarówno\sprzy zwolnieniu grupowym, jak i\sindywidualnym/);
 });
