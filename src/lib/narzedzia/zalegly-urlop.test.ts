@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { UDZIELENIE_BEZ_PRZESUNIECIA, koniecPrzedawnienia, opis, zaleglyUrlop } from './zalegly-urlop';
+import { UWAGA_ART_115_LISTA } from './terminy';
 
 // Daty i liczby dni sprawdzone niezależnie w Pythonie (datetime, calendar): skrypt zalegly-urlop.py.
 const NA = '2026-11-12';
@@ -168,5 +169,20 @@ describe('koniec przedawnienia w dzień wolny (art. 115 KC)', () => {
     expect(r.udzielenie.data).toBe('2028-09-30');
     expect(r.udzielenie.art115).toBeUndefined();
     expect(UDZIELENIE_BEZ_PRZESUNIECIA).toContain('bez przesunięcia');
+  });
+});
+
+// Audyt jakości 4 (raporty/jakosc4/C-wer.json), daty z niezależnego rachunku w Pythonie.
+describe('audyt jakosc4', () => {
+  it('C-3: ostrzeżenie, gdy główna data to dzień roboczy, a wiersz ma datę według art. 115 KC', () => {
+    expect(opis(zaleglyUrlop({ urlopy: [{ rok: 2024, dni: 2 }, { rok: 2025, dni: 6 }], naDzien: '2026-11-15' })).zdanie).toBe(UWAGA_ART_115_LISTA);
+    // 2022: 31.12.2025 środa, 30.09.2026 środa: bez przesunięć, bez zdania.
+    expect(opis(zaleglyUrlop({ urlopy: [{ rok: 2022, dni: 3 }], naDzien: '2026-11-15' })).zdanie).toBe('');
+    // Główna data w dzień wolny: zostaje zdanie o tej dacie.
+    expect(opis(zaleglyUrlop({ urlopy: [{ rok: 2025, dni: 6 }], naDzien: '2026-11-15' })).zdanie).toMatch(/^31 grudnia 2028 r\. to niedziela/);
+  });
+  it('C-5: „30 września” w art. 168 od 1.01.2012 r., więc urlop od roku 2011', () => {
+    expect(() => zaleglyUrlop({ urlopy: [{ rok: 2010, dni: 2 }], naDzien: '2026-11-15' })).toThrow(RangeError);
+    expect(zaleglyUrlop({ urlopy: [{ rok: 2011, dni: 2 }], naDzien: '2026-11-15' }).lata[0].udzielenie.data).toBe('2012-09-30');
   });
 });

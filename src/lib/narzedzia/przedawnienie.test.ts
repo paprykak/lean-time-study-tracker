@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { koniecPrzedawnienia, opisPrzedawnienia, przedawnienie, wyplatyDoDochodzenia } from './przedawnienie';
+import { koniecPrzedawnienia, opisPrzedawnienia, przedawnienie, uwagaListy, wyplatyDoDochodzenia } from './przedawnienie';
+import { UWAGA_ART_115_LISTA } from './terminy';
 
 const sp = (t: string) => t.replace(/\s/g, ' ');
 
@@ -65,7 +66,7 @@ describe('koniec przedawnienia w sobotę albo dzień wolny (art. 115 KC)', () =>
     expect(sp(o.zdanie)).toMatch(/^14 listopada 2026 r\. to sobota: .*\(art\. 115 Kodeksu cywilnego\)\. /);
     expect(o.status).toBe('Zostało: 4 dni');
     expect(sp(o.krotko)).toBe('14 listopada 2026 r. (według art. 115 KC: 16 listopada 2026 r.)');
-    expect(sp(o.zDniami)).toBe('14 listopada 2026 r. (za 4 dni); według art. 115 KC: 16 listopada 2026 r.');
+    expect(sp(o.inna)).toBe('14 listopada 2026 r. (za 4 dni); według art. 115 KC: 16 listopada 2026 r. (to przesunięcie jest wątpliwe, zdąż do pierwszej daty)');
     expect(opisPrzedawnienia(p, '2026-11-15').status).toBe('Pierwsza data minęła, więc roszczenie jest prawdopodobnie przedawnione; tylko gdy sąd przesunie koniec według art. 115 KC, zostało: 1 dzień');
     expect(opisPrzedawnienia(p, '2026-11-16').status).toBe('Pierwsza data minęła, więc roszczenie jest prawdopodobnie przedawnione; tylko gdy sąd przesunie koniec według art. 115 KC, ostatni dzień to dziś');
     expect(opisPrzedawnienia(p, '2026-11-18').status).toBe('Termin minął 2 dni temu');
@@ -74,5 +75,29 @@ describe('koniec przedawnienia w sobotę albo dzień wolny (art. 115 KC)', () =>
     expect(sp(bez.opis)).toBe('Wypłata z 10 listopada 2023 r. przedawnia się z końcem dnia 10 listopada 2026 r.');
     expect(bez.zdanie).toBe('');
     expect(bez.status).toBe('Ostatni dzień: dziś');
+  });
+});
+
+// Audyt jakości 4 (raporty/jakosc4/C-wer.json): wartości z niezależnego rachunku w Pythonie (własny kalendarz świąt).
+describe('audyt jakosc4: ostrzeżenie przy datach z art. 115 KC, stan „innej należności”, styczeń cofnięty na grudzień', () => {
+  it('C-1: lista „Kolejne terminy” z datą według art. 115 KC ma ostrzeżenie', () => {
+    const lista = wyplatyDoDochodzenia('2026-11-15', 'nastepny', 10).slice(1, 6);
+    expect(lista.some((x) => x.za === '2023-12' && x.koniec === '2027-01-10' && x.art115 === '2027-01-11')).toBe(true);
+    expect(uwagaListy(lista)).toBe(UWAGA_ART_115_LISTA);
+    expect(uwagaListy([{ koniec: '2027-02-09', art115: '2027-02-09' }])).toBe('');
+  });
+  it('C-2: „inna należność” mówi, w jakiej fazie jest termin', () => {
+    const inna = (wym: string, dzis: string) => sp(opisPrzedawnienia(przedawnienie(wym, dzis), dzis).inna);
+    expect(inna('2023-11-14', '2026-11-15')).toBe('14 listopada 2026 r. (wczoraj). Pierwsza data minęła, więc roszczenie jest prawdopodobnie przedawnione; tylko gdy sąd przesunie koniec według art. 115 KC: 16 listopada 2026 r.');
+    expect(inna('2020-01-15', '2026-11-15')).toBe('15 stycznia 2023 r. (1400 dni temu); po tym dniu pracodawca może powołać się na przedawnienie (art. 292)');
+    expect(inna('2023-11-15', '2026-11-15')).toBe('15 listopada 2026 r. (dziś); według art. 115 KC: 16 listopada 2026 r. (to przesunięcie jest wątpliwe, zdąż do pierwszej daty)');
+    expect(inna('2024-01-10', '2026-11-15')).toBe('10 stycznia 2027 r. (za 56 dni); według art. 115 KC: 11 stycznia 2027 r. (to przesunięcie jest wątpliwe, zdąż do pierwszej daty)');
+  });
+  it('C-4: wypłata 1. dnia „w tym samym miesiącu” za styczeń, cofnięta na grudzień, jest na liście', () => {
+    const l = wyplatyDoDochodzenia('2019-12-31', 'ten', 1);
+    expect(l).toHaveLength(36);
+    expect(l.at(-1)).toMatchObject({ za: '2020-01', wymagalna: '2019-12-31', koniec: '2022-12-31', art115: '2023-01-02' });
+    expect(wyplatyDoDochodzenia('2017-12-29', 'ten', 1).at(-1)).toMatchObject({ za: '2018-01', wymagalna: '2017-12-29', koniec: '2020-12-29' });
+    expect(wyplatyDoDochodzenia('2019-12-30', 'ten', 1).some((x) => x.za === '2020-01')).toBe(false);
   });
 });

@@ -35,10 +35,12 @@
 //    (pakiet „terminy”, 2026-11-15), czyli „zdąż do” (`data`) i ostatni dzień według art. 115 KC (`art115`). Termin
 //    udzielenia urlopu (30 września, art. 168) to obowiązek pracodawcy: bez przesunięcia.
 import { odmiana } from '../redakcja';
-import { ETYKIETA_ART_115, dataPoPolsku, dniMiedzy, dodajDni, dodajLata, dodajMiesiace, ileDni, poprawnaData, terminPracownika, zdanieArt115 } from './terminy';
+import { ETYKIETA_ART_115, UWAGA_ART_115_LISTA, dataPoPolsku, dniMiedzy, dodajDni, dodajLata, dodajMiesiace, ileDni, poprawnaData, terminPracownika, zdanieArt115 } from './terminy';
 
 export const LATA_PRZEDAWNIENIA = 3;
-export const MIN_ROK = 2000;
+// Art. 168 w brzmieniu z „30 września” obowiązuje od 1.01.2012 r. (Dz.U. 2011 nr 232 poz. 1378, art. 1 pkt 1 i art. 29):
+// urlop za 2011 r. to pierwszy rok z tym terminem; wcześniej koniec pierwszego kwartału (audyt jakości 4, C-5).
+export const MIN_ROK = 2011;
 export const MAKS_DNI = 100;
 /** Liczba wierszy „Rok + dni” w formularzu. */
 export const WIERSZE = 4;
@@ -298,7 +300,8 @@ export function opis(w: Wynik): Opis {
     opis: `Pierwszy termin przedawnienia (wariant wcześniejszy): urlop za ${najblizszy.rok} r., ${dataPoPolsku(p.data)}${art115(p)}`,
     status: p.status,
     statusTekst: stan(p),
-    zdanie: zdanie(p),
+    // Ostrzeżenie także wtedy, gdy główna data to dzień roboczy, a datę z art. 115 KC ma któryś wiersz (audyt jakości 4, C-3).
+    zdanie: zdanie(p) || (w.lata.some((r) => r.przedawnienie.art115 || r.przedawnieniePozniej.art115) ? UWAGA_ART_115_LISTA : ''),
     lata,
   };
 }

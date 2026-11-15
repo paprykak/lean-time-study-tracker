@@ -709,7 +709,7 @@ export const NARZEDZIA: Narzedzie[] = [
     nazwa: 'Zaległy urlop',
     krotko: 'Do kiedy pracodawca musi dać zaległy urlop i kiedy roszczenie o urlop może się przedawnić.',
     kategoria: 'urlopy',
-    przepisy: ['kodeksPracy', 'kodeksCywilny'],
+    przepisy: ['kodeksPracy', 'kodeksCywilny', 'dniWolne'],
     sprawdzono: '2026-11-13',
   },
   {
