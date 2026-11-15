@@ -1,0 +1,247 @@
+{
+  "partia": "C",
+  "sprawdzone": [
+    {
+      "slug": "przedawnienie-wynagrodzenia",
+      "pliki": ["src/lib/narzedzia/przedawnienie.ts", "src/lib/narzedzia/przedawnienie.test.ts", "src/lib/narzedzia/termin-wyplaty.ts", "src/pages/narzedzia/przedawnienie-wynagrodzenia.astro", "tests/e2e/narzedzie-przedawnienie.spec.ts", "src/data/narzedzia.ts", "src/data/sprawy.ts"],
+      "wynik": "problemy: art. 85 § 1–3, 291 § 1–5, 292, 293, 293¹, 295 Kp (t.j. DU_2026_1245) i art. 112, 115, 118 KC (DU_2026_795) zgodne z brzmieniem we wszystkich ok. 30 zdaniach strony i FAQ; niezależny rachunek w Pythonie (własny kalendarz świąt, Wielkanoc z dateutil): 9496 dat końca terminu i art. 115 KC (2010–2035), 798 kalendarzy wypłat, 32 564 list wypłat do dochodzenia (dni 2016–2032, 7 wariantów dnia wypłaty, soboty wolne i pracujące) – 36 rozbieżności w jednym przypadku brzegowym (C-4); SSR = skrypt; 320/412 px bez przewijania; po Nowym Roku (zegar 4.01.2027 i 1.03.2028) data i wynik poprawne; 17 zapytań wyszukiwarki (1 chybione). Wiersze listy i „inna należność” pokazują datę z art. 115 KC bez ostrzeżenia (C-1, C-2)."
+    },
+    {
+      "slug": "zalegly-urlop",
+      "pliki": ["src/lib/narzedzia/zalegly-urlop.ts", "src/lib/narzedzia/zalegly-urlop.test.ts", "src/pages/narzedzia/zalegly-urlop.astro", "tests/e2e/narzedzie-zalegly-urlop.spec.ts", "src/data/narzedzia.ts", "src/data/sprawy.ts"],
+      "wynik": "problemy: art. 152 § 2, 161, 163 § 1, 1¹, 3, 164, 165, 166, 167², 168, 171 § 1, 3–5 (w mocy od 27.01.2026, Dz.U. 2026 poz. 25), 282 § 1 pkt 2 (2000–60 000 zł od 8.07.2026, Dz.U. 2026 poz. 473), 291–293¹, 295 Kp zgodne z brzmieniem; wyrok TSUE C-120/21 (data i teza) zgodny; teza biznes.gov.pl (30 września jako pierwszy dzień urlopu) potwierdzona na stronie 00134; niezależny rachunek: 116 lat × dni sprawdzenia (udzielenie, oba warianty przedawnienia, art. 115 KC, status), 3924 okresy urlopu wychowawczego (metoda w dniach symulacją dzień po dniu i w miesiącach), 4018 dat końca umowy (ekwiwalent, 10 dni, oznaczenie lat) – 0 rozbieżności; błędne dane z role=alert i aria-invalid; przesunięcie lat po Nowym Roku działa; 20 zapytań (4 chybione). Wiersze z datą z art. 115 KC bez ostrzeżenia (C-3)."
+    },
+    {
+      "slug": "informacja-o-warunkach-zatrudnienia",
+      "pliki": ["src/lib/narzedzia/start-w-pracy.ts", "src/lib/narzedzia/start-w-pracy.test.ts", "src/pages/narzedzia/informacja-o-warunkach-zatrudnienia.astro", "tests/e2e/narzedzie-start-pracy.spec.ts", "src/data/narzedzia.ts", "src/data/sprawy.ts"],
+      "wynik": "problemy drobne: art. 22¹c § 10–12, 22¹e § 2, 22² § 6–8, 22³ § 3–4, 25¹ § 5, 26, 29 § 1–4, 29¹ § 2, 104³ § 2, 229 § 1, 1¹, 4, 4a, 237³ § 2 Kp; art. 13 pkt 1 i 36 ust. 2 i 4 ustawy systemowej (t.j. DU_2026_1474, bez nowelizacji po t.j.); art. 2 pkt 18, 15, 16 ust. 1–2, 23 ust. 2 ustawy o PPK (DU_2026_192; zmiana DU_2026_989 dotyczy tylko art. 8); § 8–11 rozporządzenia o szkoleniu BHP (DU_2024_1327) – zgodne; konwencja: wszystkie terminy pracodawcy bez przesunięcia ze zdaniem BEZ_PRZESUNIECIA.pracodawca – poprawnie; niezależny rachunek 4749 dat startu (7 dni, 30 dni, ZUS, PPK z 3 miesiącami liczonymi z pierwszym dniem) – 0 rozbieżności; SSR = skrypt; 320/412 px ok; 20 zapytań (4 chybione, 3 hasła zabierają pierwsze miejsce innym narzędziom)."
+    },
+    {
+      "slug": "terminy.ts (terminPracownika, dzienWolnyArt115, SOBOTA_ART_115_OD, JEDNORAZOWE_WOLNE, zdanieArt115, ZDANIE_ART_115, BEZ_PRZESUNIECIA, fazaTerminu) i swieta w czas-pracy.ts",
+      "pliki": ["src/lib/narzedzia/terminy.ts", "src/lib/narzedzia/terminy.test.ts", "src/lib/narzedzia/czas-pracy.ts"],
+      "wynik": "ok: art. 115 KC (DU_2026_795) dosłownie zgodny z komentarzem; zmiana DU_2016_2255 art. 1 pkt 3 („lub na sobotę”), art. 21 (terminy, które nie upłynęły przed dniem wejścia w życie) i art. 35 (w mocy od 1.01.2017) – SOBOTA_ART_115_OD = '2017-01-01' poprawne (sobota 31.12.2016 r. upłynęła przed 1.01.2017, więc bez przesunięcia); Wigilia: art. 1 pkt 1 lit. ka ustawy o dniach wolnych dodana przez Dz.U. 2024 poz. 1965, w mocy od 1.02.2025 (obwieszczenie DU_2025_296, przypis 1 i pkt 2), więc pierwsza wolna Wigilia to 24.12.2025 – WIGILIA_OD = 2025 poprawne; 12.11.2018 jednorazowo; niezależny kalendarz w Pythonie na 9496 dniach 2010–2035 (soboty przed i po 1.01.2017, Wigilia 2024 i 2025, przełom 2026/27 i 2028/29, 29 lutego, Wielkanoc, Boże Ciało, 12.11.2018) – 0 rozbieżności; rodzaj terminu w partii: przedawnienie → 'przedawnienie' (przedawnienie.ts:44, zalegly-urlop.ts:232), start-w-pracy → BEZ_PRZESUNIECIA.pracodawca – dobrany właściwie; sygnatury w ZDANIE_ART_115 i komentarzach niesprawdzone (SAOS w przerwie technicznej przez cały audyt, Portal Orzeczeń MS zrywa połączenie przy wyszukiwaniu)."
+    }
+  ],
+  "znaleziska": [
+    {
+      "id": "C-1",
+      "slug": "przedawnienie-wynagrodzenia",
+      "wymiar": "spojnosc",
+      "waga": "srednia",
+      "plik": "src/pages/narzedzia/przedawnienie-wynagrodzenia.astro",
+      "linia": 92,
+      "zdanie": "za grudzień 2023 r.: do 10 stycznia 2027 r. (według art. 115 KC: 11 stycznia 2027 r.)",
+      "problem": "Lista „Kolejne terminy” pokazuje drugą datę przedawnienia według art. 115 KC bez ostrzeżenia, że przy przedawnieniu przesunięcie jest wątpliwe; zdanie ZDANIE_ART_115.przedawnienie pojawia się tylko pod najstarszą wypłatą. W domyślnym widoku (15.11.2026 r., najstarsza 8.12.2026 r. to dzień roboczy) ostrzeżenia nie ma wcale, a na liście są dwie takie pozycje.",
+      "dowod": "Playwright na podglądzie (412 px, 15.11.2026): wynik „Wypłata z 8 grudnia 2023 r. przedawnia się z końcem dnia 8 grudnia 2026 r. | Zostało: 23 dni | KOLEJNE TERMINY | za grudzień 2023 r.: do 10 stycznia 2027 r. (według art. 115 KC: 11 stycznia 2027 r.) | … | za marzec 2024 r.: do 10 kwietnia 2027 r. (według art. 115 KC: 12 kwietnia 2027 r.)”, element [data-w=zdanie] ukryty. DECYZJE.md, Runda 8 (część 1): „Przy przedawnieniu strony pokazują drugą datę z ostrzeżeniem, że przesunięcie jest wątpliwe … a ostrzeżenie nie pozwala na tej dacie polegać”.",
+      "poprawka": "Gdy którakolwiek pozycja listy (albo „inna należność”) ma art115 ≠ koniec, pokazać pod listą jedno zdanie ZDANIE_ART_115.przedawnienie (np. „Daty „według art. 115 KC” przy przedawnieniu są wątpliwe: …”) w SSR i w skrypcie; test jednostkowy i E2E na 15.11.2026 r. (lista z 10.01.2027 r.) sprawdzający widoczne ostrzeżenie."
+    },
+    {
+      "id": "C-2",
+      "slug": "przedawnienie-wynagrodzenia",
+      "wymiar": "tresc-ux",
+      "waga": "srednia",
+      "plik": "src/lib/narzedzia/przedawnienie.ts",
+      "linia": 56,
+      "zdanie": "Inna należność przedawnia się: 15 stycznia 2023 r. (1400 dni temu); według art. 115 KC: 16 stycznia 2023 r.",
+      "problem": "Pole „inna należność” nie ma stanu terminu: po upływie (i między datami) wynik mówi „przedawnia się … (wczoraj); według art. 115 KC: 16 listopada 2026 r.” bez informacji, że pierwsza data minęła i roszczenie jest prawdopodobnie przedawnione, i bez ostrzeżenia o wątpliwym przesunięciu; czas teraźniejszy „przedawnia się … 1400 dni temu”.",
+      "dowod": "Playwright: inna = 2020-01-15 → „15 stycznia 2023 r. (1400 dni temu); według art. 115 KC: 16 stycznia 2023 r.”; inna = 2023-11-14 przy dniu 2026-11-15 → „14 listopada 2026 r. (wczoraj); według art. 115 KC: 16 listopada 2026 r.” (dla najstarszej wypłaty w tej samej sytuacji strona pisze „Pierwsza data minęła, więc roszczenie jest prawdopodobnie przedawnione; …”). opisPrzedawnienia.zDniami (przedawnienie.ts:56) nie korzysta z fazaTerminu.",
+      "poprawka": "Dla „inna należność” dopisać stan z opisPrzedawnienia().status (tylko-art-115: „Pierwsza data minęła…”, po terminie: „Termin minął … temu; pracodawca może powołać się na przedawnienie (art. 292)”) i zdanie ostrzeżenia z C-1; etykietę zmienić na „Inna należność: koniec przedawnienia”; testy jednostkowe dla trzech faz."
+    },
+    {
+      "id": "C-3",
+      "slug": "zalegly-urlop",
+      "wymiar": "spojnosc",
+      "waga": "srednia",
+      "plik": "src/lib/narzedzia/zalegly-urlop.ts",
+      "linia": 276,
+      "zdanie": "Wariant późniejszy: 30 września 2028 r.; według art. 115 KC: 2 października 2028 r.",
+      "problem": "Zdanie ostrzeżenia o art. 115 KC (zdanieArt115 'przedawnienie') dotyczy tylko głównej daty; wiersze „Wariant późniejszy” i „Przedawnienie, wariant wcześniejszy” innych lat pokazują datę według art. 115 KC bez ostrzeżenia. W domyślnym widoku 15.11.2026 r. główna data 31.12.2027 r. to piątek, więc ostrzeżenia nie ma, a w wierszach są trzy daty z art. 115 KC.",
+      "dowod": "Playwright (SSR i skrypt, 15.11.2026): „Pierwszy termin przedawnienia (wariant wcześniejszy): urlop za 2024 r., 31 grudnia 2027 r. | … Wariant późniejszy 30 września 2028 r.; według art. 115 KC: 2 października 2028 r. | URLOP ZA 2025 R.: 6 DNI | … 31 grudnia 2028 r. (za 777 dni); według art. 115 KC: 2 stycznia 2029 r. | Wariant późniejszy 30 września 2029 r.; według art. 115 KC: 1 października 2029 r.”, [data-w=zdanie] ukryty. DECYZJE.md, Runda 8 (część 1): drugą datę przy przedawnieniu pokazuje się z ostrzeżeniem.",
+      "poprawka": "W opis(): gdy główna data jest dniem roboczym, a którykolwiek wiersz ma art115, ustawić `zdanie` na krótkie ostrzeżenie (ZDANIE_ART_115.przedawnienie z ogólnym wstępem zamiast konkretnej daty) albo dopisać je w wierszu; test dla domyślnego przykładu (2024 i 2025 na 15.11.2026)."
+    },
+    {
+      "id": "C-4",
+      "slug": "przedawnienie-wynagrodzenia",
+      "wymiar": "rachunek",
+      "waga": "niska",
+      "plik": "src/lib/narzedzia/przedawnienie.ts",
+      "linia": 91,
+      "zdanie": "Wypłata „W tym samym miesiącu”, dzień 1: brak wypłaty za styczeń następnego roku cofniętej z 1 stycznia na grudzień",
+      "problem": "Pętla wyniku kończy się na miesiącach roku `naDzien` (r <= rok), choć mapa terminów sięga rok + 1. Przy wypłacie 1. dnia tego samego miesiąca wypłata za styczeń jest cofana z Nowego Roku na grudzień (art. 85 § 3) i bywa już wymagalna w dniu sprawdzenia, ale nie trafia na listę.",
+      "dowod": "Niezależny rachunek (Python) vs wyplatyDoDochodzenia na 32 564 przypadkach: 36 rozbieżności, wszystkie 'ten', dzień 1, naDzien 29–31 grudnia, np. 2019-12-31|ten|1|soboty wolne: kod 36 pozycji, model 37, brakuje [\"2020-01\", \"2019-12-31\", \"2022-12-31\"]; 2017-12-29|ten|1: brakuje [\"2018-01\", \"2017-12-29\", \"2020-12-29\"]. Pozostałe 32 528 list identyczne.",
+      "poprawka": "W pętli wyniku `for (let r = rok - LATA_PRZEDAWNIENIA - 1; r <= rok + 1; r++)` (warunek wymagalna > naDzien i tak odfiltruje resztę); test: wyplatyDoDochodzenia('2019-12-31', 'ten', 1).at(-1) to za '2020-01', wymagalna '2019-12-31'."
+    },
+    {
+      "id": "C-5",
+      "slug": "zalegly-urlop",
+      "wymiar": "prawo",
+      "waga": "niska",
+      "plik": "src/lib/narzedzia/zalegly-urlop.ts",
+      "linia": 41,
+      "zdanie": "MIN_ROK = 2000; terminUdzielenia = (rok) => `${rok + 1}-09-30`",
+      "problem": "Formularz przyjmuje urlop za lata od 2000, a dla każdego roku podaje termin udzielenia 30 września następnego roku. W brzmieniu art. 168 nadanym ustawą z 26.07.2002 r. (w mocy od 29.11.2002 r.) termin to koniec pierwszego kwartału następnego roku, więc dla lat około 2000–2002 data „Udzielić najpóźniej” jest błędna (roszczenia są dawno przedawnione, więc skutek niewielki).",
+      "dowod": "Dz.U. 2002 nr 135 poz. 1146 (api.sejm.gov.pl/eli/acts/DU/2002/1146, entryIntoForce 2002-11-29), art. 1 pkt 38: „Art. 168. Urlopu niewykorzystanego w terminie ustalonym zgodnie z art. 163 należy pracownikowi udzielić najpóźniej do końca pierwszego kwartału następnego roku kalendarzowego; nie dotyczy to części urlopu udzielanego zgodnie z art. 167².” Akt, który wprowadził „30 września”, nie został ustalony w audycie (nie ma go w DU/2003/2081 ani DU/2003/1608).",
+      "poprawka": "Ustalić datę zmiany art. 168 na „30 września” i podnieść MIN_ROK do pierwszego roku, dla którego obowiązuje nowe brzmienie (albo dla starszych lat pokazywać 31 marca), z testem i zdaniem w „Jak liczymy”."
+    },
+    {
+      "id": "C-6",
+      "slug": "przedawnienie-wynagrodzenia",
+      "wymiar": "prawo",
+      "waga": "niska",
+      "plik": "src/pages/narzedzia/przedawnienie-wynagrodzenia.astro",
+      "linia": 19,
+      "zdanie": "Bieg przedawnienia przerywa pozew w sądzie pracy albo uznanie długu przez pracodawcę, a potem termin biegnie od nowa (art. 295).",
+      "problem": "Po przerwie spowodowanej pozwem przedawnienie nie biegnie od razu od nowa, tylko dopiero po zakończeniu postępowania; FAQ 1 sugeruje, że biegnie od razu (FAQ 2 i sekcja zasad mówią poprawnie).",
+      "dowod": ".cache/narzedzia/prawo/DU_2026_1245.txt, art. 295 § 2: „Po każdym przerwaniu przedawnienia biegnie ono na nowo. Jeżeli przerwa biegu przedawnienia nastąpiła wskutek jednej z przyczyn przewidzianych w § 1 pkt 1, przedawnienie nie biegnie na nowo, dopóki postępowanie … nie zostanie zakończone.”",
+      "poprawka": "„… a potem termin biegnie od nowa, po pozwie dopiero po zakończeniu sprawy (art. 295).”"
+    },
+    {
+      "id": "C-7",
+      "slug": "przedawnienie-wynagrodzenia",
+      "wymiar": "prawo",
+      "waga": "niska",
+      "plik": "src/pages/narzedzia/przedawnienie-wynagrodzenia.astro",
+      "linia": 35,
+      "zdanie": "Roszczenie stwierdzone prawomocnym wyrokiem sądu pracy albo ugodą zawartą przed sądem przedawnia się po 10 latach od uprawomocnienia się wyroku lub zawarcia ugody (art. 291 § 5 Kodeksu pracy).",
+      "problem": "Art. 291 § 5 obejmuje ugodę zawartą w trybie Kodeksu przed organem powołanym do rozstrzygania sporów, czyli także przed komisją pojednawczą; FAQ zawęża do ugody przed sądem.",
+      "dowod": "DU_2026_1245.txt, art. 291 § 5: „Roszczenie stwierdzone prawomocnym orzeczeniem organu powołanego do rozstrzygania sporów, jak również roszczenie stwierdzone ugodą zawartą w trybie określonym w kodeksie przed takim organem, ulega przedawnieniu z upływem 10 lat …”; art. 282 § 2 wymienia „ugody zawartej przed komisją pojednawczą lub sądem pracy”.",
+      "poprawka": "„… albo ugodą zawartą przed sądem pracy lub komisją pojednawczą …”."
+    },
+    {
+      "id": "C-8",
+      "slug": "przedawnienie-wynagrodzenia",
+      "wymiar": "prawo",
+      "waga": "niska",
+      "plik": "src/pages/narzedzia/przedawnienie-wynagrodzenia.astro",
+      "linia": 111,
+      "zdanie": "Dzień wypłaty przesuwamy na wcześniejszy dzień pracy, gdy wypada w niedzielę, w święto albo, jeśli tak jest w Twoim zakładzie, w sobotę.",
+      "problem": "Art. 85 § 3 mówi o „dniu poprzedzającym”, a nie o „wcześniejszym dniu pracy”; gdy i ten dzień jest wolny, przepis nie rozstrzyga. Narzędzie cofa do pierwszego dnia pracy (wariant wcześniejszy, bezpieczny), ale strona nie mówi, że przepis tego nie rozstrzyga (zasada 2 standardu), choć komentarz w termin-wyplaty.ts to opisuje.",
+      "dowod": "DU_2026_1245.txt, art. 85 § 3: „Jeżeli ustalony dzień wypłaty wynagrodzenia za pracę jest dniem wolnym od pracy, wynagrodzenie wypłaca się w dniu poprzedzającym.”; termin-wyplaty.ts:3–5: „Przepis nie mówi, co gdy i ten dzień jest wolny”.",
+      "poprawka": "Dopisać w „Jak liczymy”: „Przepis mówi o dniu poprzedzającym; gdy i on jest wolny, nie rozstrzyga, co dalej. Bierzemy najbliższy wcześniejszy dzień pracy, co daje najwcześniejszą datę przedawnienia.”"
+    },
+    {
+      "id": "C-9",
+      "slug": "przedawnienie-wynagrodzenia",
+      "wymiar": "spojnosc",
+      "waga": "niska",
+      "plik": "src/pages/narzedzia/przedawnienie-wynagrodzenia.astro",
+      "linia": 44,
+      "zdanie": "Wpisz, kiedy dostajesz wypłatę, a pokażemy najstarszy miesiąc, o który możesz jeszcze wystąpić, i kolejne terminy.",
+      "problem": "Lead i nagłówek wyniku („Najstarsza wypłata, o którą możesz wystąpić”) sugerują, że o starsze miesiące wystąpić nie można, a po upływie terminu pracodawca musi sam powołać się na przedawnienie (art. 292; FAQ 3 strony). Zaległy urlop opisuje to ostrożnie („nie oznacza, że urlop na pewno przepadł”).",
+      "dowod": "DU_2026_1245.txt, art. 292: „Po upływie terminu przedawnienia … ten, przeciwko komu przysługuje roszczenie, może uchylić się od jego zaspokojenia, chyba że zrzeka się korzystania z zarzutu przedawnienia.”",
+      "poprawka": "„… najstarszy miesiąc, którego pracodawca nie może jeszcze odmówić z powodu przedawnienia …” albo „najstarsza wypłata jeszcze nieprzedawniona”."
+    },
+    {
+      "id": "C-10",
+      "slug": "informacja-o-warunkach-zatrudnienia",
+      "wymiar": "prawo",
+      "waga": "niska",
+      "plik": "src/pages/narzedzia/informacja-o-warunkach-zatrudnienia.astro",
+      "linia": 27,
+      "zdanie": "Badań wstępnych nie robi się, gdy wracasz do tego samego pracodawcy na to samo stanowisko … albo gdy w tym czasie przechodzisz do innego pracodawcy z aktualnym orzeczeniem, a ten stwierdzi, że warunki są takie same; nie dotyczy to prac szczególnie niebezpiecznych (art. 229 § 1¹).",
+      "problem": "Wyłączenie prac szczególnie niebezpiecznych dotyczy tylko zmiany pracodawcy (pkt 2); po średniku czyta się je jako dotyczące obu przypadków, także powrotu do tego samego pracodawcy.",
+      "dowod": "DU_2026_1245.txt, art. 229 § 1¹ pkt 1 (bez wyłączenia) i pkt 2: „… jeżeli posiadają aktualne orzeczenie lekarskie … i pracodawca ten stwierdzi, że warunki te odpowiadają warunkom występującym na danym stanowisku pracy, z wyłączeniem osób przyjmowanych do wykonywania prac szczególnie niebezpiecznych.”",
+      "poprawka": "„… albo gdy w tym czasie przechodzisz do innego pracodawcy z aktualnym orzeczeniem, a ten stwierdzi, że warunki są takie same (z wyjątkiem prac szczególnie niebezpiecznych) (art. 229 § 1¹).”"
+    },
+    {
+      "id": "C-11",
+      "slug": "informacja-o-warunkach-zatrudnienia",
+      "wymiar": "tresc-ux",
+      "waga": "niska",
+      "plik": "src/pages/narzedzia/informacja-o-warunkach-zatrudnienia.astro",
+      "linia": 111,
+      "zdanie": "Aktualne orzeczenie lekarskie o braku przeciwwskazań na stanowisku (art. 229 § 4); … Informacja o celach, zakresie i sposobie monitoringu … Informacja o kontroli trzeźwości …",
+      "problem": "Brak oczywistych linków w wyjaśnieniu do istniejących narzędzi, które te sprawy rozwijają: badania-lekarskie-w-pracy, monitoring-w-pracy, kontrola-trzezwosci. Podobnie przedawnienie-wynagrodzenia nie linkuje sad-pracy-czy-pip (pozew) ani zalegly-urlop/ekwiwalent-za-urlop (pole „inna należność” wymienia ekwiwalent), a zalegly-urlop nie linkuje urlop-wychowawczy.",
+      "dowod": "Slugi istnieją w src/data/narzedzia.ts; w wyjaśnieniu strony są linki tylko do kalkulator-ppk, szkolenie-okresowe-bhp i umowa-na-czas-okreslony (przedawnienie: termin-wyplaty-wynagrodzenia, kalkulator-nadgodzin).",
+      "poprawka": "Dodać w tych samych wierszach szablonu linki: „… na stanowisku (art. 229 § 4); kiedy kolejne badania, policzy <a href=\"/narzedzia/badania-lekarskie-w-pracy\">…</a>”, monitoring → /narzedzia/monitoring-w-pracy, trzeźwość → /narzedzia/kontrola-trzezwosci; w przedawnieniu → /narzedzia/sad-pracy-czy-pip i /narzedzia/ekwiwalent-za-urlop; w zaległym urlopie → /narzedzia/urlop-wychowawczy."
+    },
+    {
+      "id": "C-12",
+      "slug": "zalegly-urlop",
+      "wymiar": "wyszukiwarka",
+      "waga": "niska",
+      "plik": "src/data/sprawy.ts",
+      "linia": 96,
+      "zdanie": "„przedawnienie urlopu”, „niewykorzystany urlop z 2024”, „stary urlop”, „nie dostalem urlopu”",
+      "problem": "Narzędzie, które liczy właśnie przedawnienie urlopu, nie trafia do pierwszej piątki przy rzeczowniku „przedawnienie” (działa tylko „czy urlop się przedawnia”) ani przy „niewykorzystany urlop z …” i „stary urlop”.",
+      "dowod": "szukaj.mjs: „przedawnienie urlopu” → kalkulator-urlopu 115, odpowiedzialnosc-materialna 111, przedawnienie-wynagrodzenia 111, swiadczenie-urlopowe 111, ekwiwalent-za-urlop 110 (brak zalegly-urlop); „niewykorzystany urlop z 2024” → ekwiwalent-za-urlop, urlop-w-agencji-pracy, …; „stary urlop” → kalkulator-urlopu, …; „nie dostalem urlopu” → urlop-bezplatny, wynagrodzenie-za-urlop, …",
+      "poprawka": "Dopisać hasła: 'przedawnienie urlopu', 'stary urlop', 'niewykorzystany urlop z zeszłego roku', 'nie dają urlopu'; dopisać zapytania do testu wyszukiwarki."
+    },
+    {
+      "id": "C-13",
+      "slug": "przedawnienie-wynagrodzenia",
+      "wymiar": "wyszukiwarka",
+      "waga": "niska",
+      "plik": "src/data/sprawy.ts",
+      "linia": 22,
+      "zdanie": "„do kiedy moge pozwac pracodawce o kase”",
+      "problem": "Zapytanie o termin pozwu o pieniądze nie daje narzędzia w pierwszej piątce (hasło 'pozew' nie łapie „pozwać”). Pozostałe 16 zapytań w pierwszej trójce.",
+      "dowod": "szukaj.mjs: → sad-pracy-czy-pip 111, co-wolno-na-l4 110, koszt-pracodawcy 110, monitoring-w-pracy 110, informacja-o-warunkach-zatrudnienia 110.",
+      "poprawka": "Dopisać hasło 'pozwać pracodawcę o pieniądze' (albo 'pozwać o wypłatę') i zapytanie do testu."
+    },
+    {
+      "id": "C-14",
+      "slug": "informacja-o-warunkach-zatrudnienia",
+      "wymiar": "wyszukiwarka",
+      "waga": "niska",
+      "plik": "src/data/sprawy.ts",
+      "linia": 85,
+      "zdanie": "hasła 'pierwszy dzień pracy', 'umowa na piśmie', 'zgłoszenie do ZUS nowego pracownika'; zapytania „na czarno”, „dokumenty na start w pracy”, „zapoznanie z regulaminem pracy”, „kiedy dostane umowe”",
+      "problem": "W obie strony: (1) hasła zabierają pierwsze miejsce narzędziom lepiej pasującym: „wynagrodzenie za pierwszy dzien pracy” → informacja 333 przed wynagrodzenie-za-niepelny-miesiac 332; „umowa zlecenie na pismie” → informacja 222 ex aequo z zlecenie-netto (strona dotyczy tylko umowy o pracę); „zgloszenie cudzoziemca do zus” → informacja 222 ex aequo z zgloszenie-pracy-cudzoziemca; (2) cztery zapytania bez narzędzia w pierwszej piątce.",
+      "dowod": "szukaj.mjs: „na czarno” → brak wyników; „dokumenty na start w pracy” → doba-pracownicza, kod-95, …; „zapoznanie z regulaminem pracy” → okres-wypowiedzenia, przerwy-w-pracy, …; „kiedy dostane umowe” → brutto-netto, zasilek-chorobowy-na-zleceniu, …",
+      "poprawka": "Zmienić 'umowa na piśmie' na 'umowa o pracę na piśmie', 'pierwszy dzień pracy' na 'pierwszy dzień w nowej pracy'; dopisać 'praca na czarno', 'start w nowej pracy', 'regulamin pracy', 'kiedy podpisać umowę'; test w obie strony (wynagrodzenie-za-niepelny-miesiac, zlecenie-netto, zgloszenie-pracy-cudzoziemca na pierwszym miejscu)."
+    },
+    {
+      "id": "C-15",
+      "slug": "zalegly-urlop",
+      "wymiar": "spojnosc",
+      "waga": "niska",
+      "plik": "src/data/narzedzia.ts",
+      "linia": 712,
+      "zdanie": "przepisy: ['kodeksPracy', 'kodeksCywilny']",
+      "problem": "Strona przesuwa koniec przedawnienia z dni ustawowo wolnych (kalendarz z ustawy o dniach wolnych, np. 31.12.2028 → 2.01.2029) i powołuje się na wyrok TSUE C-120/21 i dyrektywę 2003/88/WE, a w rejestrze brak 'dniWolne' (przedawnienie-wynagrodzenia ma go przy tej samej konwencji).",
+      "dowod": "src/data/narzedzia.ts:496 (przedawnienie-wynagrodzenia: ['kodeksPracy', 'kodeksCywilny', 'dniWolne']) vs :712.",
+      "poprawka": "Dopisać 'dniWolne' do przepisy zaległego urlopu."
+    },
+    {
+      "id": "C-16",
+      "slug": "przedawnienie-wynagrodzenia",
+      "wymiar": "testy",
+      "waga": "niska",
+      "plik": "src/lib/narzedzia/przedawnienie.test.ts",
+      "linia": 52,
+      "zdanie": "Brak testów: ostrzeżenie przy datach z art. 115 KC na liście i w „inna należność”, wypłata 'ten' dnia 1 w grudniu, wypłata cofnięta przez Wigilię i święta (np. ustalony 26.12.2025 → 23.12.2025), zegar po Nowym Roku dla zaległego urlopu i nowej pracy",
+      "problem": "Luki, które przepuściły C-1–C-4: testy sprawdzają tylko pierwszą pozycję listy i pole „inna” w terminie; e2e zaległego urlopu i nowej pracy nie mają testu z page.clock po Nowym Roku (skrypt zaległego urlopu sam przesuwa lata domyślnych wierszy, zalegly-urlop.astro:205–215).",
+      "dowod": "grep it(/test( w przedawnienie.test.ts, narzedzie-zalegly-urlop.spec.ts, narzedzie-start-pracy.spec.ts; ręcznie sprawdzone Playwrightem z zegarem 4.01.2027 i 1.03.2028: dziś działa (wiersze 2025/2026 i 2026/2027).",
+      "poprawka": "Dodać: test listy na 15.11.2026 z widocznym ostrzeżeniem; test inna = 2023-11-14 na 15.11.2026 (stan „pierwsza data minęła”); test 'ten' dzień 1 na 31.12.2019; test wymagalności cofniętej przez Wigilię 2025; e2e z page.clock.setFixedTime('2027-01-04') dla zalegly-urlop (wiersze 2025 i 2026) i informacja-o-warunkach-zatrudnienia (pole startu = dziś)."
+    }
+  ],
+  "orzeczenia": [
+    {"sygnatura": "III CZP 8/03 (uchwała 7 sędziów SN z 25.04.2003 r., sobota nie jest dniem ustawowo wolnym)", "saos_id": 0, "wynik": "niesprawdzone (SAOS: Przerwa techniczna 08:00–08:17, 6 prób)", "fragment": ""},
+    {"sygnatura": "III CZP 21/23 (uchwała 7 sędziów SN z 22.05.2024 r., art. 115 KC a przedawnienie)", "saos_id": 0, "wynik": "niesprawdzone (spoza zakresu SAOS dla SN; sn.pl blokuje automaty)", "fragment": ""},
+    {"sygnatura": "IV P 553/24 (SR dla Wrocławia-Śródmieścia: dni wolne bez znaczenia dla upływu przedawnienia z art. 291 Kp; wymagalność dzień po terminie wypłaty)", "saos_id": 0, "wynik": "niesprawdzone (SAOS w przerwie; Portal Orzeczeń MS zrywa połączenie przy wyszukiwaniu)", "fragment": ""},
+    {"sygnatura": "IV P 24/19 (SR w Jeleniej Górze)", "saos_id": 0, "wynik": "niesprawdzone (SAOS w przerwie; Portal Orzeczeń MS niedostępny dla automatu)", "fragment": ""},
+    {"sygnatura": "IX P 280/20 (SR Szczecin-Centrum)", "saos_id": 0, "wynik": "niesprawdzone (SAOS w przerwie)", "fragment": ""},
+    {"sygnatura": "IX P 666/18 (SR Szczecin-Centrum)", "saos_id": 0, "wynik": "niesprawdzone (SAOS w przerwie)", "fragment": ""},
+    {"sygnatura": "VII Pa 90/16 (SO w Łodzi)", "saos_id": 0, "wynik": "niesprawdzone (SAOS w przerwie)", "fragment": ""},
+    {"sygnatura": "VII P 41/22 (SO Warszawa-Praga, tylko w komentarzu)", "saos_id": 0, "wynik": "niesprawdzone (SAOS w przerwie)", "fragment": ""},
+    {"sygnatura": "TSUE C-120/21 (22.09.2022 r., LB v TO)", "saos_id": 0, "wynik": "zgodne (data i teza z wiedzy ogólnej; EUR-Lex blokuje automaty, pełny tekst nieczytany)", "fragment": ""}
+  ],
+  "do_stanu": [
+    {"sprawa": "Sygnatury w ZDANIE_ART_115 i komentarzach terminy.ts (IV P 553/24, IV P 24/19, IX P 280/20, IX P 666/18, VII Pa 90/16, VII P 41/22, III CZP 8/03) do sprawdzenia w pełnym tekście, gdy SAOS wróci: curl -s 'https://www.saos.org.pl/api/search/judgments?caseNumber=IV%20P%20553%2F24' (i analogicznie); III CZP 21/23 ręcznie na sn.pl", "kiedy_sprawdzic": "2026-11-16", "gdzie_w_kodzie": "src/lib/narzedzia/terminy.ts:128–131 i 183–197; src/pages/narzedzia/przedawnienie-wynagrodzenia.astro:102"},
+    {"sprawa": "Dni wolne od pracy na 2027 r. i dalej: brak nowelizacji ustawy o dniach wolnych po t.j. DU_2025_296 (sprawdzić przed 1.01.2027, czy nie doszedł nowy dzień wolny)", "kiedy_sprawdzic": "2026-12-31", "gdzie_w_kodzie": "src/lib/narzedzia/czas-pracy.ts:41–62"}
+  ],
+  "poza_zakresem": [
+    "Wyszukiwarka (inne narzędzia): „czy moge pracowac bez badan” → praca-na-wysokosci na 1. miejscu, badania-lekarskie-w-pracy poza pierwszą piątką; „pracodawca nie placi nadgodzin” → dodatek-za-prace-w-nocy na 1. miejscu (319), kalkulator-nadgodzin poza piątką; „pracodawca nie zaplacil” i „przedawnienie roszczen pracowniczych” → odpowiedzialnosc-materialna na 1. miejscu (narzędzie o szkodzie wyrządzonej przez pracownika); „praca w nadgodzinach bez zaplaty” → dyzur-w-pracy, praca-w-sobote, informacja-o-warunkach-zatrudnienia (hasła odpowiedzialnosc-materialna i dyzur-w-pracy w src/data/sprawy.ts albo wagi w src/lib/szukaj-narzedzi.ts).",
+    "DIV.newsletter-pulapka ma scrollWidth 173 > clientWidth 1 na wszystkich stronach (ukryta pułapka newslettera w komponencie wspólnym; niewidoczna, bez przewijania strony w bok)."
+  ],
+  "nie_sprawdzono": [
+    "SAOS przez cały audyt w „Przerwie technicznej” (08:00, 08:07, 08:10, 08:13, 08:17 pusta odpowiedź, 08:17; HTML zamiast JSON) – zapytania do powtórzenia: https://www.saos.org.pl/api/search/judgments?caseNumber=III%20CZP%208%2F03, ...=IV%20P%20553%2F24, ...=IV%20P%2024%2F19, ...=IX%20P%20280%2F20, ...=IX%20P%20666%2F18, ...=VII%20Pa%2090%2F16, ...=VII%20P%2041%2F22; potem /api/judgments/<id> (data.textContent).",
+    "Portal Orzeczeń Sądów Powszechnych (orzeczenia.ms.gov.pl): strona główna odpowiada, ale wysłanie formularza wyszukiwania (POST /search.advancedsearchform) kończy się zerwaniem połączenia – bez obchodzenia; sygnatury sądów powszechnych do ręcznego sprawdzenia w przeglądarce.",
+    "Uchwała 7 sędziów SN III CZP 21/23 (22.05.2024 r.): sn.pl blokuje automaty, poza zakresem lat SAOS – ręcznie.",
+    "Wyrok TSUE C-120/21: EUR-Lex blokuje automaty; data i teza zgodne z wiedzą ogólną, brzmienie sentencji nieporównane dosłownie.",
+    "Akt, który zmienił w art. 168 Kp „koniec pierwszego kwartału” na „30 września” (C-5): nie ma go w DU/2003/2081 ani DU/2003/1608, dalszych nie przeszukiwano.",
+    "Czytnik ekranu: tylko drzewo dostępności Playwrighta (ariaSnapshot), bez NVDA/VoiceOver; WebKit nie uruchamiany.",
+    "Art. 115 KC przy zgłoszeniu do ZUS i umowie PPK (art. 12 Ordynacji podatkowej przez art. 31 ustawy systemowej?): strona sama mówi, że tego nie badano."
+  ]
+}
