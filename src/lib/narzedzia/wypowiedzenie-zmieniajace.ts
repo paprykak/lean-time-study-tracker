@@ -13,7 +13,7 @@
 // w środku dnia, więc ten dzień już się nie liczy. Wariant B pokazujemy jako drugą wykładnię.
 import { koniecWypowiedzenia, wypowiedzenieStalej, type Okres } from './wypowiedzenie';
 import { terminCzynnosci } from './termin-odwolania';
-import { dniMiedzy, dodajDni, poprawnaData } from './terminy';
+import { dataPoPolsku, dniMiedzy, dodajDni, poprawnaData } from './terminy';
 
 export interface WypowiedzenieZmieniajace {
   stazMiesiecy: number;
@@ -22,13 +22,13 @@ export interface WypowiedzenieZmieniajace {
   koniec: string;
   /** Pierwszy dzień nowych warunków, gdy pracownik ich nie odrzuci. */
   noweWarunkiOd: string;
-  /** Pierwszy dzień okresu w wariancie B (niedziela albo 1. dzień miesiąca po doręczeniu). */
+  /** Pierwszy dzień okresu w wariancie B (niedziela albo 1. dzień miesiąca po doręczeniu); przy progu stażu z krótszego okresu. */
   poczatekPelnegoOkresu: string;
   /** Ostatni bezpieczny dzień na odmowę (wariant A); bez pouczenia: koniec okresu, a przy progu stażu koniec krótszego. */
   odmowaDo: string;
-  /** Ostatni dzień pierwszej połowy w wariancie B (druga wykładnia). */
+  /** Ostatni dzień pierwszej połowy w wariancie B (druga wykładnia); przy progu stażu z krótszego okresu. */
   odmowaDoWariantB: string;
-  /** Dni okresu w wariantach A i B. */
+  /** Dni okresu w wariantach A i B (przy progu stażu: krótszego okresu, od którego liczymy odmowę). */
   dniA: number;
   dniB: number;
   pouczenie: boolean;
@@ -53,8 +53,10 @@ export function wypowiedzenieZmieniajace(poczatekPracy: string, doreczenie: stri
   const poczatekA = dodajDni(doreczenie, 1);
   // Gdy próg stażu przypada w trakcie wypowiedzenia, okres się wydłuża (jak w wypowiedzenie.ts), ale termin na odmowę
   // liczymy też od krótszego okresu i podajemy wcześniejszy: odmowa złożona do tego dnia jest w terminie w obu wariantach.
+  // Oba warianty połowy (A i B) liczymy od tego samego, krótszego okresu.
   const koniecDoOdmowy = w.prog ? w.prog.krotszyKoniec : koniec;
-  const poczatekB = okres.jednostka === 'tydzien' ? dodajDni(koniec, -7 * okres.ile + 1) : pierwszyDzienMiesiacaPo(doreczenie);
+  const okresDoOdmowy = w.prog ? w.prog.krotszy : okres;
+  const poczatekB = okresDoOdmowy.jednostka === 'tydzien' ? dodajDni(koniecDoOdmowy, -7 * okresDoOdmowy.ile + 1) : pierwszyDzienMiesiacaPo(doreczenie);
   const odmowaA = ostatniDzienPrzedPolowa(poczatekA, koniecDoOdmowy);
   return {
     stazMiesiecy,
@@ -64,13 +66,18 @@ export function wypowiedzenieZmieniajace(poczatekPracy: string, doreczenie: stri
     poczatekPelnegoOkresu: poczatekB,
     // Bez pouczenia odmowa do końca okresu wypowiedzenia (art. 42 § 3 zd. 3); przy progu stażu do końca krótszego okresu.
     odmowaDo: pouczenie ? odmowaA : koniecDoOdmowy,
-    odmowaDoWariantB: ostatniDzienPrzedPolowa(poczatekB, koniec),
-    dniA: dniMiedzy(poczatekA, koniec) + 1,
-    dniB: dniMiedzy(poczatekB, koniec) + 1,
+    odmowaDoWariantB: ostatniDzienPrzedPolowa(poczatekB, koniecDoOdmowy),
+    dniA: dniMiedzy(poczatekA, koniecDoOdmowy) + 1,
+    dniB: dniMiedzy(poczatekB, koniecDoOdmowy) + 1,
     pouczenie,
     prog: w.prog ? { miesiace: w.prog.miesiace, dzien: w.prog.dzien, krotszy: w.prog.krotszy.opis, krotszyKoniec: w.prog.krotszyKoniec } : null,
     odwolanieDo: terminCzynnosci(doreczenie, 'wypowiedzenie').koniec,
   };
+}
+
+/** Wiersz wyniku o progu stażu (jeden tekst dla HTML i skryptu strony). */
+export function tekstProgu(prog: NonNullable<WypowiedzenieZmieniajace['prog']>): string {
+  return `${prog.miesiace === 6 ? '6 miesięcy' : '3 lata'} mija ${dataPoPolsku(prog.dzien)}; odmowę liczymy od krótszego okresu (${prog.krotszy})`;
 }
 
 function pierwszyDzienMiesiacaPo(data: string): string {

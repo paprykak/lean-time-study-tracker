@@ -53,7 +53,7 @@ test('stan faktyczny wyroku SN II PK 12/11: praca od 1 sierpnia 2006 r., doręcz
   await expect(page.locator('[data-w="okres"]')).toHaveText(/^3\smiesiące$/);
   await expect(page.locator('[data-w="koniec"]')).toHaveText(/^31\spaździernika\s2009\sr\.\s\(sobota\)$/);
   await expect(page.locator('[data-w="uwaga"]')).toHaveText(/staż osiągnie 3\slata.*Bez wydłużenia: 1\smiesiąc, do\s31\ssierpnia\s2009\sr\.\s\(poniedziałek\)\./);
-  await expect(page.locator('main')).toContainText(/I\sPKN\s34\/99/);
+  expect((await page.locator('#jak-liczymy ~ p').allInnerTexts()).join(' ')).toMatch(/Sąd Najwyższy\sliczy staż do\sdnia, w\sktórym umowa się rozwiązuje.*I\sPKN\s34\/99/);
 });
 
 test('koniec miesiąca (art. 112 KC): 29 lutego 2024 r. → doręczenie 28 lutego 2027 r., 3 miesiące do 31 maja', async ({ page }) => {
