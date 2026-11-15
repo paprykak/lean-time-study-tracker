@@ -75,12 +75,12 @@ describe('teksty wyniku', () => {
     expect(opisL4('2026-11-13', '2026-11-16', 'inny', DZIS).werdykt).toBe('Tylko w dwóch sytuacjach');
     const za = opisL4('2026-11-13', '2026-11-18', 'inny', DZIS);
     expect(za.werdykt).toBe('Nie, to za daleko od wizyty');
-    expect(za.opis).toBe('To 5 dni po dniu wizyty, a zwolnienie może zacząć się najpóźniej 4. dnia po dniu badania (§ 7 ust. 2). Na zwolnienie od tej daty wizyta musiałaby się odbyć najwcześniej 14 listopada 2026 r. (4 dni przed początkiem).');
+    expect(za.opis).toBe('To 5 dni po dniu wizyty, a zwolnienie może zacząć się najpóźniej 4. dnia po dniu badania (§ 7 ust. 2). Na zwolnienie od tej daty wizyta musiałaby się odbyć najwcześniej 17 listopada 2026 r. (dzień przed początkiem), a przy dniach wolnych zaraz po wizycie albo w trakcie wcześniejszego L4 najwcześniej 14 listopada 2026 r. (4 dni przed początkiem).');
   });
   it('nieobecność dopiero będzie: termin i uprzedzenie z § 2 ust. 1', () => {
     const o = opisL4('2026-11-13', '2026-11-16', 'inny', '2026-11-13');
     expect(o.zawiadomEtykieta).toBe('Zawiadom pracodawcę najpóźniej');
-    expect(o.zawiadom).toBe('wtorek, 17 listopada 2026 r.; gdy przyczynę znasz z góry, uprzedź przed 16 listopada 2026 r. (§ 2 ust. 1)');
+    expect(o.zawiadom).toBe('niezwłocznie, najpóźniej wtorek, 17 listopada 2026 r.; gdy przyczynę znasz z góry, uprzedź przed 16 listopada 2026 r. (§ 2 ust. 1)');
   });
   it('termin minął: zawiadom od razu, § 2 ust. 3; bez uwagi o dniu wolnym', () => {
     const o = opisL4('2026-11-13', '2026-11-10', 'inny', '2026-11-13');

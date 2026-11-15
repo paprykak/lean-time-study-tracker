@@ -39,7 +39,7 @@ test('L4 od poniedziałku po piątkowej wizycie: z warunkiem; termin i uprzedzen
   await page.getByLabel('Nie pracujesz od').fill('2026-11-16');
   await expect(page.locator('[data-w="werdykt"]')).toHaveText('Tylko w dwóch sytuacjach');
   await expect(page.locator('[data-w="zawiadom-etykieta"]')).toHaveText('Zawiadom pracodawcę najpóźniej');
-  await expect(page.locator('[data-w="zawiadom"]')).toHaveText(/^wtorek,\s17\slistopada\s2026\sr\.;\sgdy\sprzyczynę\sznasz\sz\sgóry,\suprzedź\sprzed\s16\slistopada\s2026\sr\.\s\(§\s2\sust\.\s1\)$/);
+  await expect(page.locator('[data-w="zawiadom"]')).toHaveText(/^niezwłocznie,\snajpóźniej\swtorek,\s17\slistopada\s2026\sr\.;\sgdy\sprzyczynę\sznasz\sz\sgóry,\suprzedź\sprzed\s16\slistopada\s2026\sr\.\s\(§\s2\sust\.\s1\)$/);
   await page.getByLabel('Nie pracujesz od').fill('2026-11-18');
   await expect(page.locator('[data-w="werdykt"]')).toHaveText('Nie, to za daleko od wizyty');
   await expect(page.locator('[data-w="opis"]')).toHaveText(/najwcześniej\s14\slistopada\s2026\sr\.\s\(4\sdni\sprzed\spoczątkiem\)\.$/);
@@ -49,7 +49,7 @@ test('nieobecność od dziś: zawiadom do soboty, uwaga o dniu wolnym', async ({
   await page.getByLabel('Nie pracujesz od').fill('2026-11-13');
   await expect(page.locator('[data-w="werdykt"]')).toHaveText('Tak');
   await expect(page.locator('[data-w="zawiadom-etykieta"]')).toHaveText('Zawiadom pracodawcę najpóźniej');
-  await expect(page.locator('[data-w="zawiadom"]')).toContainText(/^sobota,\s14\slistopada\s2026\sr\./);
+  await expect(page.locator('[data-w="zawiadom"]')).toContainText(/^niezwłocznie,\snajpóźniej\ssobota,\s14\slistopada\s2026\sr\.\s\(drugi\sdzień\snieobecności\)$/);
   await expect(page.locator('[data-w="uwaga"]')).toContainText(/14\slistopada\s2026\sr\.\sto\ssobota/);
 });
 

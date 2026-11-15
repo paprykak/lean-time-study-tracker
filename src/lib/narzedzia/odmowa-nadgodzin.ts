@@ -2,8 +2,8 @@
 // zatrudniać, limit roczny i odpoczynek dobowy.
 //
 // Przepisy (teksty z API Sejmu, kopie w .cache/narzedzia/prawo/):
-// - Kodeks pracy (t.j. Dz.U. 2026 poz. 1245, stan na 27.08.2026 r.; późniejsze zmiany Dz.U. 2026 poz. 1046 dotyczą
-//   art. 18³ᵃ i nast., nie tych przepisów):
+// - Kodeks pracy (t.j. Dz.U. 2026 poz. 1245, stan na 27.08.2026 r.; t.j. uwzględnia zmianę Dz.U. 2026 poz. 1046,
+//   która dotyczy art. 18³ᵃ i nast., nie tych przepisów):
 //   art. 100 § 1: polecenia przełożonych dotyczące pracy wykonuje się, jeżeli nie są sprzeczne z prawem lub umową;
 //   art. 151 § 1: nadgodziny dopuszczalne w razie (1) akcji ratowniczej albo usunięcia awarii, (2) szczególnych potrzeb
 //     pracodawcy; § 2: pkt 2 nie stosuje się na stanowiskach z przekroczeniem NDS albo NDN; § 3: z powodu pkt 2 najwyżej
@@ -168,7 +168,7 @@ export function opisNadgodzin(d: DaneNadgodzin, c: CzasDnia): OpisNadgodzin {
 
   // Zakazy bez wyjątku na powód.
   if (d.ciaza) powody.push('W ciąży nie wolno pracować w godzinach nadliczbowych, także przy awarii i nawet za zgodą (art. 178 § 1 Kodeksu pracy).');
-  if (d.mlodociany) powody.push('Pracownika młodocianego nie wolno zatrudniać w godzinach nadliczbowych (art. 203 § 1 Kodeksu pracy).');
+  if (d.mlodociany) powody.push('Osoby młodocianej (poniżej 18 lat) nie wolno zatrudniać w godzinach nadliczbowych (art. 203 § 1 Kodeksu pracy).');
   if (d.niepelnosprawny && !d.zgodaLekarza && !d.pilnowanie) {
     powody.push('Osoba z niepełnosprawnością nie może pracować w godzinach nadliczbowych (art. 15 ust. 3 ustawy o rehabilitacji), chyba że pracuje przy pilnowaniu albo lekarz przeprowadzający badania profilaktyczne na jej wniosek wyraził na to zgodę (art. 16 ust. 1).');
   }
@@ -212,7 +212,7 @@ export function opisNadgodzin(d: DaneNadgodzin, c: CzasDnia): OpisNadgodzin {
         : 'Nadgodziny są dopuszczalne przy szczególnych potrzebach pracodawcy (art. 151 § 1 pkt 2 Kodeksu pracy), w granicach limitu i odpoczynku. Polecenie zgodne z przepisami i umową trzeba wykonać (art. 100 § 1). Przepis nie definiuje „szczególnych potrzeb”; w sporze ocenia to sąd.',
     );
   }
-  if (werdykt === 'brak') powody.push('Praca kończy się z końcem zmiany według grafiku, więc nie ma godzin nadliczbowych (art. 151 § 1 Kodeksu pracy).');
+  if (werdykt === 'brak') powody.push('Praca kończy się z końcem zmiany według grafiku. Jeśli grafik mieści się w normach Twojego systemu czasu pracy, nie ma godzin nadliczbowych (art. 151 § 1 Kodeksu pracy).');
 
   if (awaria && c.odpoczynek < ODPOCZYNEK_MIN && werdykt !== 'zakaz') {
     uwagi.push(`Przy akcji ratowniczej albo awarii 11 godzin odpoczynku nie obowiązuje (zostałoby ${czasMin(c.odpoczynek)}), ale należy się równoważny odpoczynek w okresie rozliczeniowym (art. 132 § 2 pkt 2 i § 3).`);
@@ -224,7 +224,7 @@ export function opisNadgodzin(d: DaneNadgodzin, c: CzasDnia): OpisNadgodzin {
 
   return {
     werdykt,
-    naglowek: NAGLOWKI[werdykt],
+    naglowek: werdykt === 'za-dlugo' && zostalo === 0 && c.odpoczynek >= ODPOCZYNEK_MIN ? 'Nadgodzin z tego powodu już nie' : NAGLOWKI[werdykt],
     powody,
     dzis: c.nadgodzinyMin ? `${czasMin(c.nadgodzinyMin)}, do ${godzina(c.koniecPracy)}` : 'brak',
     najpozniej: awaria
@@ -232,7 +232,7 @@ export function opisNadgodzin(d: DaneNadgodzin, c: CzasDnia): OpisNadgodzin {
         ? `${godzina(c.najpozniej)} przy zwykłej pracy; przy awarii bez tej granicy`
         : 'przy zwykłej pracy nadgodzin dziś być nie może; przy awarii bez tej granicy'
       : c.najpozniej >= c.koniecZmiany
-        ? `${godzina(c.najpozniej)} (11 h odpoczynku${c.nastepna === null ? ' w dobie' : ' przed następną zmianą'})`
+        ? `${godzina(c.najpozniej)} (11 h odpoczynku${c.nastepna !== null && c.nastepna < c.start + DOBA_MIN ? ' przed następną zmianą' : ' w dobie'})`
         : 'nadgodziny dziś naruszyłyby 11 h odpoczynku',
     limit: awaria
       ? 'nie dotyczy akcji ratowniczej ani awarii'

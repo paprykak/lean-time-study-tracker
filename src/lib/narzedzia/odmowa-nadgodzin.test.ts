@@ -73,7 +73,9 @@ describe('werdykt', () => {
     expect(o.werdykt).toBe('obowiazek');
     expect(o.naglowek).toBe('Co do zasady musisz zostać');
     expect(o.powody.join(' ')).toContain('art. 100 § 1');
-    expect(o.najpozniej).toBe('19:00 (11 h odpoczynku przed następną zmianą)');
+    expect(o.najpozniej).toBe('19:00 (11 h odpoczynku w dobie)');
+    expect(opis({ nastepna: '5:00', koniecPracy: '17:00' }).najpozniej).toBe('18:00 (11 h odpoczynku przed następną zmianą)');
+    expect(opis({ nastepna: '10:00' }).najpozniej).toBe('19:00 (11 h odpoczynku w dobie)');
     expect(o.limit).toBe('zostało 110 z 150 h w tym roku, po dzisiejszych 106 h');
     expect(o.dzis).toBe('4 h, do 18:00');
   });
@@ -139,6 +141,13 @@ describe('werdykt', () => {
   it('zmiana nocna 22–6 z pracą do 8:00: najpóźniej 11:00 następnego dnia', () => {
     const o = opis({ start: '22:00', koniecZmiany: '6:00', koniecPracy: '8:00', nastepna: '22:00' });
     expect(o.werdykt).toBe('obowiazek');
-    expect(o.najpozniej).toBe('11:00 następnego dnia (11 h odpoczynku przed następną zmianą)');
+    expect(o.najpozniej).toBe('11:00 następnego dnia (11 h odpoczynku w dobie)');
+  });
+});
+
+describe('nagłówek przy wykorzystanym limicie', () => {
+  it('limit 0 zostało, odpoczynek w porządku', () => {
+    expect(opis({ wRoku: 150, koniecPracy: '15:00' }).naglowek).toBe('Nadgodzin z tego powodu już nie');
+    expect(opis({ wRoku: 148, koniecPracy: '18:00' }).naglowek).toBe('Nie tak długo');
   });
 });

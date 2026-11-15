@@ -12,7 +12,7 @@ const start = opisL4(dzis, dodajDni(dzis, POCZATEK_DNI), 'inny', dzis);
 const faq = [
   {
     pytanie: 'Ile dni wstecz można dostać L4?',
-    odpowiedz: `Najwyżej ${WSTECZ_DNI} dni przed dniem wizyty, jeśli wyniki badania niewątpliwie wykazują, że już wtedy była niezdolność do pracy (§ 7 ust. 3 rozporządzenia o zaświadczeniach lekarskich). Liczą się dni kalendarzowe, także sobota i niedziela: przy wizycie w poniedziałek zwolnienie może zacząć się najwcześniej w piątek.`,
+    odpowiedz: `Najwyżej ${WSTECZ_DNI} dni przed dniem wizyty, jeśli wyniki badania niewątpliwie wykazują, że już wtedy była niezdolność do pracy (§ 7 ust. 3 rozporządzenia o zaświadczeniach lekarskich). Liczą się dni kalendarzowe, także sobota i niedziela: przy wizycie w poniedziałek zwolnienie może zacząć się najwcześniej w piątek. Granica nie dotyczy pobytu w szpitalu: zwolnienie obejmuje go od dnia przyjęcia do dnia wypisu (§ 4 ust. 2, § 10 ust. 1).`,
   },
   {
     pytanie: 'Czy psychiatra może wystawić L4 wstecz na dłużej?',
@@ -24,7 +24,7 @@ const faq = [
   },
   {
     pytanie: 'Czy muszę zanieść L4 do pracodawcy?',
-    odpowiedz: 'Zwykle nie. Lekarz wystawia zwolnienie elektronicznie i wysyła je do ZUS (art. 55 ust. 1–2 ustawy zasiłkowej), a pracodawca z profilem na PUE ZUS ma je najpóźniej w dniu następującym po dniu, w którym otrzymał je ZUS (art. 58 ust. 1). Wydruk dostarczasz pracodawcy, który nie ma profilu; o tym obowiązku musi poinformować na piśmie w pierwszym dniu ubezpieczenia chorobowego (art. 58 ust. 5, art. 62 ust. 1 pkt 2). Papierowe zaświadczenie, wystawione, gdy elektroniczne nie było możliwe, lekarz przesyła do ZUS elektronicznie w ciągu 3 dni roboczych (art. 55a ust. 7 i 9).',
+    odpowiedz: 'Zwykle nie. Lekarz wystawia zwolnienie elektronicznie i wysyła je do ZUS (art. 55 ust. 1–2 ustawy zasiłkowej), a pracodawca z profilem na PUE ZUS ma je najpóźniej w dniu następującym po dniu, w którym otrzymał je ZUS (art. 58 ust. 1). Wydruk albo papierowe zaświadczenie (wystawione, gdy elektroniczne nie było możliwe) dostarczasz pracodawcy, który nie ma profilu; o tym obowiązku musi poinformować na piśmie w pierwszym dniu ubezpieczenia chorobowego (art. 58 ust. 5, art. 62 ust. 1 pkt 2). Gdy zasiłek wypłaca ZUS, dostarczasz je do ZUS, chyba że pracodawca poinformował Cię na piśmie, że masz oddać je jemu (art. 62 ust. 1 pkt 1 i ust. 2). Papierowe zaświadczenie lekarz przesyła też do ZUS elektronicznie w ciągu 3 dni roboczych (art. 55a ust. 7 i 9).',
   },
   {
     pytanie: 'Czy L4 może zacząć się później niż od jutra?',
@@ -32,7 +32,7 @@ const faq = [
   },
   {
     pytanie: 'Co grozi za niezawiadomienie pracodawcy o L4?',
-    odpowiedz: 'Za nieprzestrzeganie przyjętego sposobu usprawiedliwiania nieobecności pracodawca może dać karę upomnienia albo nagany (art. 108 § 1 Kodeksu pracy). Spóźnienie może usprawiedliwić na przykład obłożna choroba połączona z brakiem domowników albo inne zdarzenie losowe; wtedy zawiadamiasz niezwłocznie po ustaniu przeszkody (§ 2 ust. 3 rozporządzenia o usprawiedliwianiu nieobecności).',
+    odpowiedz: 'Kodeks pracy przewiduje za nieprzestrzeganie przyjętego sposobu usprawiedliwiania nieobecności karę upomnienia albo nagany (art. 108 § 1). Czy możliwe są inne skutki, zależy od okoliczności i w sporze ocenia to sąd. Spóźnione zawiadomienie nie zmienia tego, że zwolnienie lekarskie usprawiedliwia nieobecność (§ 3 pkt 1 rozporządzenia o usprawiedliwianiu nieobecności). Spóźnienie może usprawiedliwić na przykład obłożna choroba połączona z brakiem domowników albo inne zdarzenie losowe; wtedy zawiadamiasz niezwłocznie po ustaniu przeszkody (§ 2 ust. 3 rozporządzenia o usprawiedliwianiu nieobecności).',
   },
 ];
 ---
@@ -41,7 +41,7 @@ const faq = [
   tytul="L4 wstecz: ile dni i kiedy zgłosić pracodawcy"
   opis="Ile dni wstecz lekarz może wystawić L4 (3 dni, psychiatra dłużej), od kiedy może zacząć się zwolnienie i do kiedy zawiadomić pracodawcę o nieobecności."
   h1="L4 wstecz: od kiedy zwolnienie i do kiedy zgłosić je pracodawcy"
-  lead="Lekarz może wystawić zwolnienie najwyżej 3 dni wstecz, a pracodawcę trzeba zawiadomić najpóźniej w drugim dniu nieobecności. Wpisz dzień wizyty i pierwszy dzień nieobecności w pracy, a sprawdzimy, czy L4 może objąć ten dzień i do kiedy zawiadomić pracodawcę."
+  lead="Lekarz może wystawić zwolnienie najwyżej 3 dni wstecz, a pracodawcę trzeba zawiadomić niezwłocznie, najpóźniej w drugim dniu nieobecności. Wpisz dzień wizyty i pierwszy dzień nieobecności w pracy, a sprawdzimy, czy L4 może objąć ten dzień i do kiedy zawiadomić pracodawcę."
   faq={faq}
 >
   <form class="kalkulator" data-l4-wstecz novalidate aria-labelledby="kalkulator-tytul">
@@ -57,7 +57,7 @@ const faq = [
           <input id="l4-poczatek" name="poczatek" type="date" class="pole mt-1" min="2016-01-01" max="2100-12-31" value={dodajDni(dzis, POCZATEK_DNI)} data-dzis={POCZATEK_DNI} aria-describedby="l4-poczatek-opis l4-blad" />
         </div>
       </div>
-      <p id="l4-poczatek-opis" class="meta mt-1">Pierwszy dzień, w którym z powodu choroby nie ma Cię w pracy, albo dzień, od którego L4 ma się zacząć.</p>
+      <p id="l4-poczatek-opis" class="meta mt-1">Pierwszy dzień, w którym z powodu choroby nie ma Cię w pracy.</p>
       <div class="mt-4">
         <label for="l4-lekarz" class="etykieta-pola">Lekarz</label>
         <select id="l4-lekarz" name="lekarz" class="pole mt-1">
@@ -91,6 +91,7 @@ const faq = [
       <li>Zaświadczenie lekarskie wystawia się wyłącznie po bezpośrednim badaniu stanu zdrowia (§ 6 ust. 1 rozporządzenia o zaświadczeniach lekarskich, art. 55 ust. 4 pkt 1 ustawy zasiłkowej).</li>
       <li>Zwykle zwolnienie obejmuje okres od dnia badania albo od dnia następnego (§ 7 ust. 1).</li>
       <li>Wstecz najwyżej {WSTECZ_DNI} dni przed dniem badania, jeśli jego wyniki wykazują, że w tym czasie niewątpliwie była niezdolność do pracy (§ 7 ust. 3).</li>
+      <li>Pobyt w szpitalu zwolnienie obejmuje od dnia przyjęcia do dnia wypisu, a zaświadczenie wystawia się najpóźniej w dniu wypisu, na wniosek także później (§ 4 ust. 2, § 10 ust. 1 i 3).</li>
       <li>Psychiatra może sięgnąć dalej wstecz, gdy stwierdza albo podejrzewa zaburzenia psychiczne ograniczające zdolność oceny własnego postępowania (§ 7 ust. 4). Przepis nie podaje granicy w dniach.</li>
       <li>Później niż od dnia po badaniu, ale najpóźniej {PO_BADANIU_MAKS}. dnia po dniu badania, tylko gdy zaraz po dniu badania są dni wolne od pracy albo gdy badanie odbywa się w trakcie wcześniejszego zwolnienia (§ 7 ust. 2).</li>
     </ul>
@@ -100,15 +101,15 @@ const faq = [
       <li>Gdy przyczynę nieobecności znasz z góry, na przykład zaplanowany zabieg, uprzedzasz pracodawcę o niej i o czasie nieobecności (§ 2 ust. 1 rozporządzenia o usprawiedliwianiu nieobecności).</li>
       <li>Gdy choroba przychodzi nagle, zawiadamiasz niezwłocznie, najpóźniej w drugim dniu nieobecności, i podajesz przyczynę i przewidywany czas nieobecności (§ 2 ust. 2).</li>
       <li>Sposób może określać regulamin pracy albo inne przepisy obowiązujące u pracodawcy. Jeśli go nie określają: osobiście, przez inną osobę, telefonicznie, innym środkiem łączności albo pocztą, a wtedy liczy się data stempla pocztowego (§ 2 ust. 2).</li>
-      <li>Spóźnienie może usprawiedliwić na przykład obłożna choroba połączona z brakiem albo nieobecnością domowników albo inne zdarzenie losowe; wtedy zawiadamiasz po ustaniu przeszkody (§ 2 ust. 3).</li>
+      <li>Spóźnienie może usprawiedliwić na przykład obłożna choroba połączona z brakiem albo nieobecnością domowników albo inne zdarzenie losowe; wtedy zawiadamiasz niezwłocznie po ustaniu przeszkody (§ 2 ust. 3).</li>
       <li>Za nieprzestrzeganie przyjętego sposobu usprawiedliwiania nieobecności pracodawca może dać karę upomnienia albo nagany (art. 108 § 1 Kodeksu pracy). Jak odwołać się od kary, sprawdzi <a href="/narzedzia/kara-porzadkowa">kalkulator kary porządkowej</a>.</li>
     </ul>
 
     <h2 id="dostarczenie">Czy trzeba dostarczyć L4</h2>
     <ul>
       <li>Lekarz wystawia zaświadczenie elektronicznie (e-ZLA) i przekazuje je do ZUS (art. 55 ust. 1–2 ustawy zasiłkowej). Pracodawca z profilem na PUE ZUS ma je najpóźniej w dniu następującym po dniu, w którym otrzymał je ZUS (art. 58 ust. 1). Niczego nie zanosisz.</li>
-      <li>Wydruk dostajesz na swoje żądanie albo wtedy, gdy pracodawca nie ma profilu (art. 55a ust. 6). Pracodawcy bez profilu dostarczasz wydruk, a gdy zasiłek wypłaca ZUS, dostarczasz go do ZUS (art. 62 ust. 1). Pracodawca bez profilu informuje na piśmie o obowiązku dostarczania wydruku w pierwszym dniu ubezpieczenia chorobowego (art. 58 ust. 5).</li>
-      <li>Gdy wystawienie elektroniczne nie jest możliwe, na przykład bez internetu, lekarz daje zaświadczenie na formularzu wydrukowanym z systemu w dniu badania (art. 55a ust. 7) i przesyła je do ZUS elektronicznie w ciągu 3 dni roboczych (art. 55a ust. 9).</li>
+      <li>Wydruk dostajesz na swoje żądanie albo wtedy, gdy pracodawca nie ma profilu (art. 55a ust. 6). Pracodawcy bez profilu dostarczasz wydruk, a gdy zasiłek wypłaca ZUS, dostarczasz go do ZUS, chyba że pracodawca poinformował Cię na piśmie, że masz oddać go jemu; wtedy on przekazuje go do ZUS (art. 62 ust. 1–2). Pracodawca bez profilu informuje na piśmie o obowiązku dostarczania wydruku w pierwszym dniu ubezpieczenia chorobowego (art. 58 ust. 5).</li>
+      <li>Gdy wystawienie elektroniczne nie jest możliwe, na przykład bez internetu, lekarz daje zaświadczenie na formularzu wydrukowanym z systemu w dniu badania (art. 55a ust. 7) i przesyła je do ZUS elektronicznie w ciągu 3 dni roboczych (art. 55a ust. 9). Takie zaświadczenie dostarczasz tak samo jak wydruk (art. 62 ust. 1).</li>
       <li>Obecne brzmienie art. 62 ustawy zasiłkowej nie podaje terminu dostarczenia wydruku ani obniżenia zasiłku za spóźnienie.</li>
     </ul>
 
@@ -122,7 +123,7 @@ const faq = [
       tylko granice z przepisu.
     </p>
     <p>
-      Czego przepisy nie mówią: czy zwolnienie elektroniczne, które pracodawca widzi na PUE ZUS, zastępuje zawiadomienie
+      Czego przepisy nie mówią: czy przy dniach wolnych po badaniu zwolnienie musi zacząć się zaraz po nich (§ 7 ust. 2 podaje tylko granicę 4. dnia); § 2 ust. 3 dosłownie odsyła do „terminu przewidzianego w ust. 1”, choć termin podaje ust. 2, a narzędzie stosuje go do terminu z ust. 2, bo to wariant korzystny dla pracownika; czy zwolnienie elektroniczne, które pracodawca widzi na PUE ZUS, zastępuje zawiadomienie
       z § 2 ust. 2. Rozporządzenie o usprawiedliwianiu nieobecności o nim nie wspomina, więc bezpieczniej zawiadomić
       pracodawcę osobno. Ile wyniesie zasiłek, policzy <a href="/narzedzia/kalkulator-l4">kalkulator L4</a>, ile zostało ze 182 dni, <a href="/narzedzia/okres-zasilkowy">kalkulator okresu zasiłkowego</a>, a co wolno w czasie zwolnienia, sprawdzi <a href="/narzedzia/co-wolno-na-l4">narzędzie „Co wolno na L4”</a>.
     </p>

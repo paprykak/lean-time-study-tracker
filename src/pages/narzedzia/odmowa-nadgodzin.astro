@@ -28,7 +28,7 @@ const POLA_WYBORU = [
   { name: 'dziecko8', tekst: 'Wychowujesz dziecko, które nie ma jeszcze 8 lat' },
   { name: 'zgodaDziecko', tekst: 'Zgadzasz się na nadgodziny (przy dziecku do 8 lat)', zalezne: true },
   { name: 'mlodociany', tekst: 'Masz mniej niż 18 lat' },
-  { name: 'niepelnosprawny', tekst: 'Masz orzeczenie o niepełnosprawności' },
+  { name: 'niepelnosprawny', tekst: 'Masz orzeczenie o stopniu niepełnosprawności (albo z ZUS)' },
   { name: 'zgodaLekarza', tekst: 'Lekarz zgodził się na nadgodziny na Twój wniosek', zalezne: true },
   { name: 'pilnowanie', tekst: 'Pracujesz przy pilnowaniu (ochrona, dozór)', zalezne: true },
   { name: 'nds', tekst: 'Na stanowisku są przekroczone normy czynników szkodliwych (NDS, NDN), np. hałasu' },
@@ -37,15 +37,15 @@ const POLA_WYBORU = [
 const faq = [
   {
     pytanie: 'Czy pracodawca może zmusić do nadgodzin?',
-    odpowiedz: 'Może je polecić w dwóch sytuacjach: przy akcji ratowniczej albo usuwaniu awarii i przy szczególnych potrzebach pracodawcy (art. 151 § 1 Kodeksu pracy). Polecenie zgodne z przepisami i umową trzeba wykonać (art. 100 § 1). Nie wolno go wydać osobie w ciąży, młodocianej i, z wyjątkami, osobie z niepełnosprawnością, a rodzicowi dziecka do 8 lat tylko za jego zgodą.',
+    odpowiedz: 'Może je polecić w dwóch sytuacjach: przy akcji ratowniczej albo usuwaniu awarii i przy szczególnych potrzebach pracodawcy (art. 151 § 1 Kodeksu pracy). Polecenie zgodne z przepisami i umową trzeba wykonać (art. 100 § 1). Nie wolno go wydać osobie w ciąży, młodocianej i, z wyjątkami, osobie z niepełnosprawnością, a osobie wychowującej dziecko do 8 lat tylko za jej zgodą.',
   },
   {
     pytanie: 'Kiedy można odmówić nadgodzin?',
-    odpowiedz: `Gdy polecenie jest sprzeczne z przepisami albo umową (art. 100 § 1 Kodeksu pracy): w ciąży (art. 178 § 1), przed ukończeniem 18 lat (art. 203 § 1), przy niepełnosprawności bez zgody lekarza (art. 15 ust. 3 i 16 ustawy o rehabilitacji), przy dziecku do 8 lat bez Twojej zgody (art. 178 § 2), na stanowisku z przekroczonymi normami czynników szkodliwych (art. 151 § 2), po wyczerpaniu limitu ${LIMIT_ROCZNY} godzin (art. 151 § 3) i gdy nie zostanie 11 godzin odpoczynku (art. 132 § 1). Trzy ostatnie powody nie dotyczą akcji ratowniczej ani awarii.`,
+    odpowiedz: `Gdy polecenie jest sprzeczne z przepisami albo umową (art. 100 § 1 Kodeksu pracy): w ciąży (art. 178 § 1), przed ukończeniem 18 lat (art. 203 § 1), przy niepełnosprawności bez zgody lekarza, chyba że pracujesz przy pilnowaniu (art. 15 ust. 3 i 16 ustawy o rehabilitacji), przy dziecku do 8 lat bez Twojej zgody (art. 178 § 2), na stanowisku z przekroczonymi normami czynników szkodliwych (art. 151 § 2), po wyczerpaniu limitu ${LIMIT_ROCZNY} godzin (art. 151 § 3) i gdy nie zostanie 11 godzin odpoczynku (art. 132 § 1). Trzy ostatnie powody nie dotyczą akcji ratowniczej ani awarii.`,
   },
   {
     pytanie: 'Ile nadgodzin można mieć w roku?',
-    odpowiedz: `Z powodu szczególnych potrzeb pracodawcy najwyżej ${LIMIT_ROCZNY} godzin w roku kalendarzowym, chyba że układ zbiorowy, regulamin pracy albo umowa o pracę ustalają inną liczbę (art. 151 § 3–4 Kodeksu pracy). Nadgodzin przy akcji ratowniczej albo awarii limit nie obejmuje. Czas pracy z nadgodzinami nie może przekraczać przeciętnie 48 godzin w tygodniu w okresie rozliczeniowym (art. 131 § 1).`,
+    odpowiedz: `Z powodu szczególnych potrzeb pracodawcy najwyżej ${LIMIT_ROCZNY} godzin w roku kalendarzowym, chyba że układ zbiorowy, regulamin pracy albo, u pracodawcy bez układu i bez obowiązku regulaminu, umowa o pracę ustalają inną liczbę (art. 151 § 3–4 Kodeksu pracy). Nadgodzin przy akcji ratowniczej albo awarii limit nie obejmuje. Czas pracy z nadgodzinami nie może przekraczać przeciętnie 48 godzin w tygodniu w okresie rozliczeniowym (art. 131 § 1).`,
   },
   {
     pytanie: 'Do której najdłużej wolno zostać w pracy?',
@@ -53,7 +53,7 @@ const faq = [
   },
   {
     pytanie: 'Czy mając małe dziecko można odmówić nadgodzin?',
-    odpowiedz: 'Tak, jeśli dziecko nie ma jeszcze 8 lat: bez Twojej zgody pracodawca nie może zatrudniać Cię w godzinach nadliczbowych (art. 178 § 2 Kodeksu pracy). Przepis dotyczy pracownika wychowującego dziecko, więc każdego z rodziców.',
+    odpowiedz: 'Tak, jeśli dziecko nie ma jeszcze 8 lat: bez Twojej zgody pracodawca nie może zatrudniać Cię w godzinach nadliczbowych (art. 178 § 2 Kodeksu pracy). Przepis dotyczy każdej osoby, która wychowuje dziecko, także gdy oboje rodzice pracują.',
   },
   {
     pytanie: 'Co grozi za odmowę nadgodzin?',
@@ -146,7 +146,7 @@ const faq = [
     <ul>
       <li>Nadgodziny to praca ponad normy czasu pracy albo ponad dobowy wymiar z Twojego grafiku. Są dopuszczalne tylko przy akcji ratowniczej w celu ochrony życia, zdrowia, mienia lub środowiska albo usuwaniu awarii i przy szczególnych potrzebach pracodawcy (art. 151 § 1 Kodeksu pracy).</li>
       <li>Polecenie przełożonego dotyczące pracy wykonuje się, jeżeli nie jest sprzeczne z przepisami prawa ani umową o pracę (art. 100 § 1). Kodeks nie wymaga, żeby polecenie nadgodzin było na piśmie.</li>
-      <li>Z powodu szczególnych potrzeb najwyżej {LIMIT_ROCZNY} godzin w roku kalendarzowym, chyba że układ zbiorowy, regulamin pracy albo umowa ustalają inną liczbę (art. 151 § 3–4).</li>
+      <li>Z powodu szczególnych potrzeb najwyżej {LIMIT_ROCZNY} godzin w roku kalendarzowym, chyba że układ zbiorowy, regulamin pracy albo, u pracodawcy bez układu i bez obowiązku regulaminu, umowa o pracę ustalają inną liczbę (art. 151 § 3–4).</li>
       <li>W każdej dobie należy się co najmniej 11 godzin nieprzerwanego odpoczynku, a w tygodniu 35 godzin (art. 132 § 1, art. 133 § 1). Doba to 24 godziny od godziny, w której zaczynasz pracę według grafiku (art. 128 § 3 pkt 1). Przy akcji ratowniczej albo awarii 11 godzin nie obowiązuje, ale należy się równoważny odpoczynek w okresie rozliczeniowym (art. 132 § 2–3).</li>
       <li>Czas pracy z nadgodzinami nie może przekraczać przeciętnie 48 godzin w tygodniu (art. 131 § 1); to sprawdzi <a href="/narzedzia/nadgodziny-sredniotygodniowe">kalkulator nadgodzin średniotygodniowych</a>.</li>
     </ul>
@@ -156,7 +156,7 @@ const faq = [
       <li>Pracownicy w ciąży, bez wyjątków, także za zgodą (art. 178 § 1).</li>
       <li>Pracownika wychowującego dziecko do ukończenia przez nie 8 lat bez jego zgody (art. 178 § 2).</li>
       <li>Pracownika młodocianego, czyli przed ukończeniem 18 lat (art. 203 § 1).</li>
-      <li>Osoby z niepełnosprawnością (art. 15 ust. 3 ustawy o rehabilitacji), chyba że pracuje przy pilnowaniu albo na jej wniosek zgodę wyraził lekarz przeprowadzający badania profilaktyczne, a gdy go nie ma, lekarz sprawujący nad nią opiekę (art. 16 ust. 1).</li>
+      <li>Osoby z niepełnosprawnością (art. 15 ust. 3 ustawy o rehabilitacji), chyba że pracuje przy pilnowaniu albo na jej wniosek zgodę wyraził lekarz przeprowadzający badania profilaktyczne, a gdy go nie ma, lekarz sprawujący nad nią opiekę (art. 16 ust. 1). Bez tych wyjątków jej czas pracy nie może też przekraczać 8 godzin na dobę, a przy znacznym albo umiarkowanym stopniu 7 godzin (art. 15 ust. 1–2).</li>
       <li>Z powodu szczególnych potrzeb pracodawcy: na stanowiskach, na których przekroczone są najwyższe dopuszczalne stężenia albo natężenia czynników szkodliwych dla zdrowia (art. 151 § 2 Kodeksu pracy). Czy hałas przekracza normę, sprawdzi <a href="/narzedzia/halas-w-pracy">kalkulator hałasu w pracy</a>.</li>
     </ul>
 
