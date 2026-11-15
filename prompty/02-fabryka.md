@@ -65,6 +65,8 @@ Twarde zasady treści (każda wzięła się z błędu, który już raz wyszedł)
    Orzeczenia Sądu Najwyższego z lat 1994–2016 i wiele wyroków sądów powszechnych mają pełne teksty w otwartym API SAOS
    (`https://www.saos.org.pl/api/search/judgments?caseNumber=…`, potem `/api/judgments/<id>`): sygnaturę i tezę, na którą
    powołuje się strona, sprawdzasz tam w uzasadnieniu, a nie w streszczeniu. Nowsze i starsze orzeczenia idą do raportu.
+   Gdy SAOS ma przerwę techniczną, wyroki sądów powszechnych czytasz w Portalu Orzeczeń Sądów Powszechnych, a orzeczenia SN
+   znane tylko z przytoczeń opisujesz jako takie i wpisujesz do ręcznego sprawdzenia.
 4. Teksty w skryptach przeglądarki idą przez `typografia()` z `src/lib/typografia.mjs` (twarde spacje), liczby z
    rzeczownikiem przez `odmiana()` z `src/lib/redakcja.ts`, daty przez `dataPoPolsku` (kończy się „r.”, bez drugiej kropki).
 5. FAQ to czysty tekst (bez HTML); linki do innych narzędzi tylko w sekcji wyjaśnienia.

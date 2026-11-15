@@ -15,7 +15,7 @@ import { KATEGORIE, NARZEDZIA, adresNarzedzia, narzedzie } from '../../data/narz
 import { podobne } from '../../lib/podobne';
 import Tekst from '../Tekst.astro';
 import { dataDluga } from '../../lib/daty';
-import { typografiaWHtml } from '../../lib/typografia.mjs';
+import { typografia, typografiaWHtml } from '../../lib/typografia.mjs';
 
 interface Props {
   slug: string;
@@ -83,7 +83,7 @@ const jsonLd = [
               const a = AKTY[k];
               return (
                 <li>
-                  <a href={a.adres} rel="noopener">{a.nazwa}</a> ({a.publikator}{'uwaga' in a ? `, ${a.uwaga}` : ''}), sprawdzono {dataDluga(new Date(`${a.sprawdzono}T12:00:00Z`))}.
+                  <a href={a.adres} rel="noopener">{a.nazwa}</a> ({a.publikator}{'uwaga' in a ? `, ${typografia(a.uwaga)}` : ''}), sprawdzono {dataDluga(new Date(`${a.sprawdzono}T12:00:00Z`))}.
                 </li>
               );
             })}

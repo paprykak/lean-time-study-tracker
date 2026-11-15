@@ -429,9 +429,9 @@ export const AKTY = {
   wynagrodzenieRozp: {
     nazwa: 'Rozporządzenie w sprawie sposobu ustalania wynagrodzenia w okresie niewykonywania pracy oraz wynagrodzenia stanowiącego podstawę obliczania odszkodowań i innych należności z Kodeksu pracy',
     publikator: 'Dz.U. 2017 poz. 927',
-    uwaga: 'tekst jednolity; § 4a: stawka za godzinę z pensji miesięcznej, § 4b: dodatek nocny',
+    uwaga: 'tekst jednolity, bez zmian po nim; § 2 ust. 1–2 i § 2a: odszkodowania i odprawy liczone jak ekwiwalent za urlop (m.in. pkt 9: art. 99 § 2, świadectwo pracy), § 3: wynagrodzenie do granicy z art. 119, § 4a: stawka za godzinę z pensji miesięcznej, § 4b: dodatek nocny',
     adres: eli(2017, 927),
-    sprawdzono: '2026-11-11',
+    sprawdzono: '2026-11-15',
   },
   zmianaStazu2025: {
     nazwa: 'Ustawa z 26 września 2025 r. o zmianie ustawy – Kodeks pracy oraz niektórych innych ustaw (staż pracy)',

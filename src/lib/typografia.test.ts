@@ -20,6 +20,8 @@ describe('typografia: twarde spacje', () => {
   it('liczby: tysiące, jednostki i rok', () => {
     expect(pokaz(typografia('12 500 zł, 47 min, 1 250 000 palet, w 2017 r. i 18,5 %'))).toBe('12~500~zł, 47~min, 1~250~000~palet, w~2017~r. i~18,5~%');
     expect(pokaz(typografia('od 2017 500 osób'))).toBe('od 2017 500~osób');
+    expect(pokaz(typografia('linia 400 V i 15 kV, hałas 85 dB(A), 50 Hz, 200 lx'))).toBe('linia 400~V i~15~kV, hałas 85~dB(A), 50~Hz, 200~lx');
+    expect(pokaz(typografia('w 2026 Volvo, 3 dBy'))).toBe('w~2026 Volvo, 3 dBy');
     expect(pokaz(typografia('średnia z 4 tygodni, 26 tygodnie, 15,2 sztuki, 120 sztuk, 4 okresów, 12 miesięcy'))).toBe('średnia z~4~tygodni, 26~tygodnie, 15,2~sztuki, 120~sztuk, 4~okresów, 12~miesięcy');
   });
 
