@@ -28,7 +28,7 @@ test('bez pouczenia, próg 6 miesięcy w trakcie wypowiedzenia: odmowa do końca
   await page.getByLabel(/pouczenie/).uncheck();
   await expect(page.locator('[data-w="odmowa"]')).toHaveText(/^28\slistopada\s2026\sr\.$/);
   await expect(page.locator('[data-w="koniec"]')).toHaveText(/^31\sgrudnia\s2026\sr\.$/);
-  await expect(page.locator('[data-w="uwaga"]')).toContainText('koniec krótszego okresu');
+  await expect(page.locator('[data-w="uwaga"]')).toContainText(/okres się wydłuża \(Sąd Najwyższy, I\sPKN\s34\/99\), ale bezpieczniej odmówić do\skońca krótszego okresu/);
 });
 
 test('doręczenie przed początkiem pracy: komunikat błędu', async ({ page }) => {
@@ -36,4 +36,12 @@ test('doręczenie przed początkiem pracy: komunikat błędu', async ({ page }) 
   await page.getByLabel('Dzień doręczenia pisma').fill('2026-11-12');
   await expect(page.locator('[data-blad="dane"]')).toBeVisible();
   await expect(page.locator('[data-w="odmowa"]')).toHaveText('—');
+});
+
+test('odprawa po odmowie: kryterium z orzecznictwa SN z sygnaturami', async ({ page }) => {
+  const sekcja = page.locator('main');
+  await expect(sekcja).toContainText(/Odmowa nowych warunków sama nie odbiera odprawy/);
+  await expect(sekcja).toContainText(/I\sPK\s144\/11/);
+  await expect(sekcja).toContainText(/II\sPK\s38\/09,\sIII\sPK\s55\/14/);
+  await expect(sekcja).toContainText(/I\sPKN\s521\/00/);
 });

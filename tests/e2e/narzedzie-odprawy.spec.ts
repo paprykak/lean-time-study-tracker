@@ -27,3 +27,10 @@ test('emerytalna: jedna pensja z premiami, bez pól dat', async ({ page }) => {
   await page.getByLabel('Średnia premii i dodatków zmiennych z 3 miesięcy (zł)').fill('500');
   await expect(page.locator('[data-w="kwota"]')).toHaveText(/^6500,00\szł$/);
 });
+
+test('wyłączny powód i odmowa nowych warunków: orzecznictwo SN z sygnaturami i linkiem', async ({ page }) => {
+  const main = page.locator('main');
+  await expect(main).toContainText(/bez przyczyn niedotyczących pracownika do\szwolnienia by\snie doszło/);
+  await expect(main).toContainText(/I\sPK\s144\/11/);
+  await expect(main.getByRole('link', { name: 'kalkulator wypowiedzenia zmieniającego' })).toHaveAttribute('href', '/narzedzia/wypowiedzenie-zmieniajace');
+});
