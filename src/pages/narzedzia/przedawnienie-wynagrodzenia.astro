@@ -125,7 +125,7 @@ const faq = [
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
   import { opisPrzedawnienia, przedawnienie, wyplatyDoDochodzenia, type RodzajWyplaty } from '../../lib/narzedzia/przedawnienie';
   import { nazwaMiesiaca } from '../../lib/narzedzia/czas-pracy';
-  import { ileDni, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { poprawnaData } from '../../lib/narzedzia/terminy';
   import { typografia } from '../../lib/typografia.mjs';
 
   const form = document.querySelector<HTMLFormElement>('[data-przedawnienie]');
@@ -136,7 +136,6 @@ const faq = [
       w(k).textContent = typografia(tekst);
     };
     const miesiac = (za: string) => `${nazwaMiesiaca(Number(za.slice(5, 7)))} ${za.slice(0, 4)} r.`;
-const o = opisPrzedawnienia({ wymagalne: pierwsza.wymagalna, koniec: pierwsza.koniec, art115: pierwsza.art115 }, dzis);
     const przelicz = () => {
       const rodzaj = el('rodzaj').value as RodzajWyplaty;
       form.querySelector<HTMLElement>('[data-pole="dzien"]')!.hidden = rodzaj === 'ostatni';
@@ -186,7 +185,7 @@ const o = opisPrzedawnienia({ wymagalne: pierwsza.wymagalna, koniec: pierwsza.ko
       wiersz.hidden = !inna;
       if (inna) {
         const r = przedawnienie(inna, naDzien);
-        pisz('inna', `${opisPrzedawnienia(r, naDzien).krotko} (${ileDni(r.zostalo)})`);
+        pisz('inna', opisPrzedawnienia(r, naDzien).zDniami);
       }
     };
     form.addEventListener('input', przelicz);

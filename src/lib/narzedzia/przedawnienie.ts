@@ -11,7 +11,7 @@
 //   której pierwsza data minęła, ale dzień z art. 115 KC jeszcze nie, zostaje na liście ze statusem „pilne”.
 import { odmiana } from '../redakcja';
 import { terminyWyplaty, type DzienWyplaty } from './termin-wyplaty';
-import { ETYKIETA_ART_115, dataPoPolsku, dniMiedzy, dodajLata, fazaTerminu, terminPracownika, zdanieArt115 } from './terminy';
+import { ETYKIETA_ART_115, dataPoPolsku, dniMiedzy, dodajLata, fazaTerminu, ileDni, terminPracownika, zdanieArt115 } from './terminy';
 
 export const LATA_PRZEDAWNIENIA = 3;
 
@@ -51,6 +51,8 @@ export function opisPrzedawnienia(p: { wymagalne: string; koniec: string; art115
             : `Zostało: ${odmiana(f.dni, DNI)}`,
     /** Krótko do listy i pola „inna należność”: „8 grudnia 2026 r.” albo „… (według art. 115 KC: …)”. */
     krotko: t.rozne ? `${dataPoPolsku(p.koniec)} (według art. 115 KC: ${dataPoPolsku(p.art115)})` : dataPoPolsku(p.koniec),
+    /** Pole „inna należność”: „15 listopada 2026 r. (za 3 dni)”, a przy dniu wolnym jeszcze „; według art. 115 KC: …”. */
+    zDniami: `${dataPoPolsku(p.koniec)} (${ileDni(dniMiedzy(naDzien, p.koniec))})${t.rozne ? `; według art. 115 KC: ${dataPoPolsku(p.art115)}` : ''}`,
   };
 }
 

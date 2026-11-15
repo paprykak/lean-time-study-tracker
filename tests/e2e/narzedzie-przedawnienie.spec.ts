@@ -24,7 +24,10 @@ test('wypłata ostatniego dnia miesiąca: bez pola dnia, termin 30 listopada 202
 
 test('inna należność: 3 lata od dnia, w którym miała być zapłacona', async ({ page }) => {
   await page.getByLabel(/Inna należność/).fill('2023-11-15');
-  await expect(page.locator('[data-w="inna"]')).toHaveText(/^15\slistopada\s2026\sr\.\s\(za\s3\sdni\)$/);
+  // 15 listopada 2026 r. to niedziela: według art. 115 KC poniedziałek 16 listopada.
+  await expect(page.locator('[data-w="inna"]')).toHaveText(/^15\slistopada\s2026\sr\.\s\(za\s3\sdni\);\swedług\sart\.\s115\sKC:\s16\slistopada\s2026\sr\.$/);
+  await page.getByLabel(/Inna należność/).fill('2023-11-13');
+  await expect(page.locator('[data-w="inna"]')).toHaveText(/^13\slistopada\s2026\sr\.\s\(jutro\)$/);
 });
 
 test('wypłata w następnym miesiącu po 10. dniu to błąd', async ({ page }) => {
@@ -37,4 +40,16 @@ test('strona sprzed Nowego Roku otwarta 15 marca 2027 r.: pole „Sprawdź na dz
   await page.clock.setFixedTime(new Date('2027-03-15T10:00:00+01:00'));
   await page.goto(NARZEDZIE_PRZEDAWNIENIE);
   await expect(page.locator('#p-dzis')).toHaveValue('2027-03-15');
+});
+
+test('koniec w sobotę 14 listopada 2026 r.: zdąż do i ostatni dzień według art. 115 KC', async ({ page }) => {
+  await page.getByLabel('Kiedy dostajesz wypłatę za miesiąc').selectOption('ten');
+  await page.getByLabel('Dzień wypłaty').fill('14');
+  await page.getByLabel('Sprawdź na dzień').fill('2026-11-15');
+  await expect(page.locator('[data-w="najstarsza"]')).toHaveText(/^za\slistopad\s2023\sr\.$/);
+  await expect(page.locator('[data-w="opis"]')).toHaveText(/zdąż\sdo\s14\slistopada\s2026\sr\.;\sostatni\sdzień\swedług\sart\.\s115\sKC:\s16\slistopada\s2026\sr\./);
+  await expect(page.locator('[data-w="zdanie"]')).toBeVisible();
+  await expect(page.locator('[data-w="status"]')).toHaveText(/^Pierwsza\sdata\sminęła;\swedług\sart\.\s115\sKC\szostało:\s1\sdzień$/);
+  await page.getByLabel('Sprawdź na dzień').fill('2026-11-17');
+  await expect(page.locator('[data-w="najstarsza"]')).toHaveText(/^za\sgrudzień\s2023\sr\.$/);
 });

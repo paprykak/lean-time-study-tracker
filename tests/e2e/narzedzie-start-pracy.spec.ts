@@ -14,9 +14,11 @@ test('start 16 listopada 2026 r.: informacja do 23 listopada, PPK do 10 marca', 
   await expect(lista).toContainText(/10\smarca\s2027\sr\./);
 });
 
-test('Wigilia: 7. dzień 24 grudnia, po przesunięciu 28 grudnia; bez PPK i regulaminu', async ({ page }) => {
+test('Wigilia: 7. dzień 24 grudnia bez przesunięcia (termin pracodawcy); bez PPK i regulaminu', async ({ page }) => {
   await page.getByLabel('Pierwszy dzień pracy').fill('2026-12-17');
-  await expect(page.locator('[data-w="informacja-przesuniecie"]')).toHaveText(/28\sgrudnia\s2026\sr\./);
+  await expect(page.locator('[data-w="informacja"]')).toHaveText(/^24\sgrudnia\s2026\sr\.$/);
+  await expect(page.locator('[data-w="lista"]')).not.toContainText('28 grudnia');
+  await expect(page.locator('[data-w="bez-przesuniecia"]')).toContainText(/art\.\s115\sKodeksu\scywilnego/);
   await page.getByLabel('Są PPK').uncheck();
   await page.getByLabel('Jest regulamin pracy').uncheck();
   const lista = page.locator('[data-w="lista"]');

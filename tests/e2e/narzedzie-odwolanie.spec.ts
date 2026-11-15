@@ -10,14 +10,31 @@ test('wypowiedzenie doręczone 12 listopada 2026 r.: do 3 grudnia', async ({ pag
   await page.getByLabel('Sprawa', { exact: true }).selectOption('wypowiedzenie');
   await page.locator('#o-data').fill('2026-11-12');
   await expect(page.locator('[data-w="koniec"]')).toHaveText(/^3\sgrudnia\s2026\sr\.$/);
-  await expect(page.locator('[data-w="przesuniecie"]')).toHaveText('brak');
+  await expect(page.locator('[data-w="etykieta"]')).toHaveText('Ostatni dzień');
+  await expect(page.locator('[data-wiersz="art115"]')).toBeHidden();
 });
 
-test('dyscyplinarka 3 grudnia 2026 r.: koniec przesunięty przez święta na 28 grudnia', async ({ page }) => {
+test('dyscyplinarka 3 grudnia 2026 r.: zdąż do Wigilii, według art. 115 KC 28 grudnia', async ({ page }) => {
   await page.getByLabel('Sprawa', { exact: true }).selectOption('bez-wypowiedzenia');
   await page.locator('#o-data').fill('2026-12-03');
-  await expect(page.locator('[data-w="koniec"]')).toHaveText(/^28\sgrudnia\s2026\sr\.$/);
-  await expect(page.locator('[data-w="przesuniecie"]')).toContainText('Wigilia Bożego Narodzenia');
+  await expect(page.locator('[data-w="etykieta"]')).toHaveText('Zdąż do');
+  await expect(page.locator('[data-w="koniec"]')).toHaveText(/^24\sgrudnia\s2026\sr\.$/);
+  await expect(page.locator('[data-wiersz="art115"]')).toBeVisible();
+  await expect(page.locator('[data-wiersz="art115"] dt')).toHaveText('Ostatni dzień według art. 115 KC');
+  await expect(page.locator('[data-w="art115"]')).toHaveText(/^28\sgrudnia\s2026\sr\.$/);
+  await expect(page.locator('[data-w="zdanie"]')).toContainText(/Wigilia\sBożego\sNarodzenia/);
+  await page.locator('#o-data').fill('2026-12-08');
+  await expect(page.locator('[data-wiersz="art115"]')).toBeHidden();
+  await expect(page.locator('[data-w="etykieta"]')).toHaveText('Ostatni dzień');
+});
+
+test('między datami: pierwsza minęła, według art. 115 KC termin jeszcze trwa', async ({ page }) => {
+  await page.clock.setFixedTime(new Date('2026-12-27T10:00:00+01:00'));
+  await page.goto(NARZEDZIE_ODWOLANIE);
+  await page.getByLabel('Sprawa', { exact: true }).selectOption('bez-wypowiedzenia');
+  await page.locator('#o-data').fill('2026-12-03');
+  await expect(page.locator('[data-w="status"]')).toHaveText(/^Pierwsza\sdata\sminęła;\sostatni\sdzień\swedług\sart\.\s115\sKC:\s28\sgrudnia\s2026\sr\.$/);
+  await expect(page.locator('[data-w="status"]')).toHaveAttribute('data-status', 'pilne');
 });
 
 test('sprostowanie świadectwa: 14 dni u pracodawcy', async ({ page }) => {

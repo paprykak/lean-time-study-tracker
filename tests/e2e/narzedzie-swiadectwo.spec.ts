@@ -11,10 +11,12 @@ test.beforeEach(async ({ page }) => {
   await page.getByLabel('Świadectwo otrzymane').fill('2026-10-31');
 });
 
-test('sprostowanie: 14 dni bez przesunięcia z soboty, data przesunięta w dopisku', async ({ page }) => {
+test('sprostowanie: zdąż do soboty 14 listopada, ostatni dzień według art. 115 KC 16 listopada', async ({ page }) => {
   await expect(page.locator('[data-w="glowny"]')).toHaveText(/^14\slistopada\s2026\sr\.$/);
+  await expect(page.locator('[data-w="glowny-opis"]')).toHaveText(/zdąż\sdo\stego\sdnia;\sostatni\sdzień\swedług\sart\.\s115\sKC:\s16\slistopada\s2026\sr\./);
   await expect(page.locator('[data-w="status"]')).toHaveText(/^Dziś\sostatni\sdzień$/);
-  await expect(page.locator('[data-w="sprostowanie-opis"]')).toContainText(/sobota;\sczy\stermin\sprzesuwa\ssię\sna\s16\slistopada\s2026\sr\./);
+  await expect(page.locator('[data-w="sprostowanie"]')).toHaveText(/^zdąż\sdo\s14\slistopada\s2026\sr\./);
+  await expect(page.locator('[data-w="sprostowanie-opis"]')).toContainText(/Ostatni\sdzień\swedług\sart\.\s115\sKC:\s16\slistopada\s2026\sr\.\s14\slistopada\s2026\sr\.\sto\ssobota/);
   await expect(page.locator('[data-w="wydanie-opis"]')).toContainText(/najpóźniej\s6\slistopada\s2026\sr\.$/);
   await expect(page.locator('[data-w="odszkodowanie"]')).toContainText(/najwyżej\s7\s?800,00\szł/);
 });
