@@ -125,3 +125,14 @@ test('„Nie wiem” o dniu pracy po zwolnieniu ponad 30 dni i urlopie: bezpiecz
   await page.getByLabel('Między zwolnieniami był dzień pracy?').selectOption('tak');
   await expect(page.locator('[data-w="a-wynik"]')).toHaveText(/nie\sjest\swymagane/);
 });
+
+// Linijka praktyczna (pakiet „terminy3”): odwołanie do 11.11.2026 r. (święto, środa), ostatni dzień roboczy wtorek 10.11.
+test('odwołanie do święta: złóż w przychodni najpóźniej we wtorek 10 listopada', async ({ page }) => {
+  await page.clock.setFixedTime(new Date('2026-11-05T10:00:00+01:00'));
+  await page.goto(ADRES);
+  await page.getByLabel('Mam orzeczenie').check();
+  await page.locator('[name="otrzymane"]').fill('2026-11-04');
+  await expect(page.locator('[data-w="c-praktycznie"]')).toHaveText(/^To\sdzień\swolny\sod\spracy\s\(Narodowe\sŚwięto\sNiepodległości\)\.\sOdwołanie\sw\sprzychodni\smedycyny\spracy,\sktóra\swydała\sorzeczenie,\szłóż\snajpóźniej\sw\sostatnim\sdniu\sroboczym\sprzed\stą\sdatą,\sczyli\swe\swtorek\s10\slistopada\s2026\sr\.:\srozporządzenie\snie\smówi,\sże\swystarczy\snadanie\sna\spoczcie\.$/);
+  await page.locator('[name="otrzymane"]').fill('2026-11-05');
+  await expect(page.locator('[data-w="c-praktycznie"]')).toBeHidden();
+});

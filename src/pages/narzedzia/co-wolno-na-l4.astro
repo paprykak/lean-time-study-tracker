@@ -127,6 +127,7 @@ const faq = [
           <dd>
             <span class="status-terminu" data-w="zastrzezenia-status" data-status={start.zastrzezeniaKlasa ?? undefined} hidden={!start.zastrzezeniaStatus} aria-live="polite">{start.zastrzezeniaStatus}</span>
             <span class="block font-normal" data-w="zastrzezenia">{start.zastrzezenia}</span>
+            <span class="wynik-opis mt-1" data-w="zastrzezenia-praktycznie">{start.zastrzezeniaPraktycznie}</span>
           </dd>
         </div>
         <div>
@@ -134,6 +135,7 @@ const faq = [
           <dd>
             <span class="status-terminu" data-w="odwolanie-status" data-status={start.odwolanieKlasa ?? undefined} hidden={!start.odwolanieStatus} aria-live="polite">{start.odwolanieStatus}</span>
             <span class="block font-normal" data-w="odwolanie">{start.odwolanie}</span>
+            <span class="wynik-opis mt-1" data-w="odwolanie-praktycznie">{start.odwolaniePraktycznie}</span>
           </dd>
         </div>
       </dl>
@@ -276,6 +278,7 @@ const faq = [
         pisz('brzmienie', o.brzmienieTytul);
         lista('cytaty', o.cytaty);
         for (const k of ['skutek', 'zastrzezenia', 'odwolanie']) pisz(k, '—');
+        for (const k of ['zastrzezenia', 'odwolanie']) pisz(`${k}-praktycznie`, '');
         for (const k of ['zastrzezenia', 'odwolanie']) ustaw(w(`${k}-status`), null);
         lista('uwagi', [], 'wynik-uwaga');
         return;
@@ -296,6 +299,7 @@ const faq = [
         ustaw(w(`${k}-status`), tekst ? (o[`${k}Klasa`] ?? '') : null);
         if (tekst) pisz(`${k}-status`, tekst);
         pisz(k, o[k]);
+        pisz(`${k}-praktycznie`, o[`${k}Praktycznie`]);
       }
     };
     form.addEventListener('input', przelicz);

@@ -61,7 +61,7 @@ import { czyRoboczy } from './dni-robocze';
 import { swieta } from './czas-pracy';
 import type { Wydarzenie } from './kalendarz-ics';
 import { scal, type Zwolnienie } from './okres-zasilkowy';
-import { ETYKIETA_ZDAZ_DO, ZDANIE_ART_115, dataPoPolsku, dniMiedzy, dodajDni, fazaTerminu, ileDni, poprawnaData, terminPracownika, zdanieArt115, type TerminPracownika } from './terminy';
+import { ETYKIETA_ZDAZ_DO, ZDANIE_ART_115, dataPoPolsku, dniMiedzy, dodajDni, fazaTerminu, ileDni, linijkaDniaWolnego, poprawnaData, terminPracownika, zdanieArt115, type TerminPracownika } from './terminy';
 import { odmiana } from '../redakcja';
 
 export type { Zwolnienie };
@@ -443,6 +443,8 @@ export interface TekstOdwolania extends TekstWyniku {
   etykieta: string;
   /** Data według art. 115 KC, gdy inna niż `wynik`. */
   art115: string | null;
+  /** Linijka praktyczna pod datą w sobotę albo dzień wolny, dopóki ten dzień nie minął (pakiet „terminy3”). */
+  praktycznie: string;
 }
 
 export function tekstOdwolania(o: Odwolanie): TekstOdwolania {
@@ -459,6 +461,7 @@ export function tekstOdwolania(o: Odwolanie): TekstOdwolania {
     etykieta: o.termin.rozne ? `Odwołanie: ${ETYKIETA_ZDAZ_DO.toLowerCase()}` : 'Odwołanie najpóźniej',
     wynik: dataPoPolsku(o.ostatniDzien),
     art115: o.termin.rozne ? dataPoPolsku(o.termin.wedlugArt115) : null,
+    praktycznie: linijkaDniaWolnego(o.termin, 'orzeczenie-lekarskie', o.dzis),
     status,
     opis: zdanie ? zdanie.replace(ZDANIE_ART_115.pracodawca, ODWOLANIE_ART_115) : liczenie,
   };

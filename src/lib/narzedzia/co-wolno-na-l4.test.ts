@@ -350,3 +350,28 @@ describe('typografia wszystkich wyników', () => {
             }
   });
 });
+
+// Linijka praktyczna (pakiet „terminy3”, daty z raporty/terminy3/linijka.py; raporty/terminy3/PRZEPISY.md, pyt. 3–4).
+describe('terminy3: zastrzeżenia i odwołanie w dzień wolny', () => {
+  const sp = (t: string) => t.replace(/\s/g, ' ');
+  it('odwołanie do ZUS do niedzieli 13 grudnia 2026 r.: nadanie w Poczcie Polskiej do oddziału ZUS', () => {
+    const o = opisL4({ ...baza, protokol: '2026-11-10', decyzja: '2026-11-13' }, DZIS);
+    expect(sp(o.odwolaniePraktycznie)).toBe(
+      'To niedziela. Tego dnia możesz jeszcze nadać odwołanie w placówce Poczty Polskiej (operatora wyznaczonego), jeśli jest czynna, zaadresowane do oddziału ZUS, który wydał decyzję: sądy liczą wtedy termin od dnia nadania (art. 165 § 2 Kodeksu postępowania cywilnego). Zachowaj potwierdzenie nadania; list u kuriera tego skutku nie ma.',
+    );
+    expect(o.zastrzezeniaPraktycznie).toBe('');
+  });
+  it('zastrzeżenia do Wigilii: złóż w środę 23 grudnia, bo nie wiadomo, czy wystarczy nadanie', () => {
+    const w = opisL4({ ...baza, od: '2026-12-01', do: '2026-12-20', dzien: '2026-12-10', protokol: '2026-12-17' }, '2026-12-20');
+    expect(sp(w.zastrzezeniaPraktycznie)).toBe(
+      'To dzień wolny od pracy (Wigilia Bożego Narodzenia). Zastrzeżenia złóż najpóźniej w ostatnim dniu roboczym przed tą datą, czyli w środę 23 grudnia 2026 r.: ustawa nie mówi, czy wystarczy nadanie na poczcie, więc bezpieczniej, żeby w tym dniu dotarły.',
+    );
+  });
+  it('po dniu „zdąż do” bez linijki (status mówi o dniu z art. 115 KC); bez daty bez linijki', () => {
+    expect(opisL4({ ...baza, dzien: '2026-11-05', protokol: '2026-11-07' }, DZIS).zastrzezeniaPraktycznie).toBe('');
+    const pazdz = { ...baza, od: '2026-10-01', do: '2026-10-14', dzien: '2026-10-05', decyzja: '2026-10-11' };
+    expect(opisL4(pazdz, '2026-11-11').odwolaniePraktycznie).toMatch(/^To dzień wolny od pracy \(Narodowe Święto Niepodległości\)\. Tego dnia/);
+    expect(opisL4(pazdz, '2026-11-12').odwolaniePraktycznie).toBe('');
+    expect(opisL4(baza, DZIS)).toMatchObject({ zastrzezeniaPraktycznie: '', odwolaniePraktycznie: '' });
+  });
+});

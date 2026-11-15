@@ -48,7 +48,7 @@
 //   bez przesunięcia i ostatni dzień według art. 115 KC (orzeczeń o tym terminie nie znaleźliśmy).
 import { odmiana } from '../redakcja';
 import { zaIle } from './choroba-zawodowa';
-import { dataPoPolsku, dniMiedzy, dodajDni, dodajMiesiace, fazaTerminu, poprawnaData, terminPracownika, type TerminPracownika } from './terminy';
+import { dataPoPolsku, dniMiedzy, dodajDni, dodajMiesiace, fazaTerminu, linijkaDniaWolnego, poprawnaData, terminPracownika, type TerminPracownika } from './terminy';
 
 export type Czynnosc = 'inna-praca' | 'polecenie' | 'incydentalna' | 'zakupy' | 'lekarz' | 'dom' | 'wyjazd' | 'wysilek';
 export type Wskazanie = 'chodzic' | 'lezec';
@@ -175,9 +175,12 @@ export interface OpisL4 {
   zastrzezenia: string;
   zastrzezeniaStatus: string | null;
   zastrzezeniaKlasa: KlasaStatusu | null;
+  /** Linijki praktyczne pod datą „zdąż do” w sobotę albo dzień wolny, dopóki ten dzień nie minął (pakiet „terminy3”). */
+  zastrzezeniaPraktycznie: string;
   odwolanie: string;
   odwolanieStatus: string | null;
   odwolanieKlasa: KlasaStatusu | null;
+  odwolaniePraktycznie: string;
   /** Uwagi o przepisach przejściowych (puste, gdy nie dotyczą). */
   uwagi: string[];
 }
@@ -430,6 +433,7 @@ export function opisL4(d: DaneL4, dzis: string): OpisL4 {
   let zastrzezenia: string;
   let zastrzezeniaStatus: string | null = null;
   let zastrzezeniaKlasa: KlasaStatusu | null = null;
+  let zastrzezeniaPraktycznie = '';
   if (puste(d.protokol)) {
     zastrzezenia = `Po kontroli dostajesz protokół. Zastrzeżenia składasz w ${DNI_ZASTRZEZEN} dni od otrzymania protokołu albo aneksu do niego, wskazując dowody; rozpatruje je ZUS i odpowiada na piśmie (art. 68e ust. 4–5 ustawy zasiłkowej). Do aneksu sporządzonego po rozpatrzeniu zastrzeżeń nie składa się kolejnych (ust. 6). Wpisz dzień otrzymania protokołu, a policzymy datę.`;
   } else if (dawnaKontrola) {
@@ -439,6 +443,7 @@ export function opisL4(d: DaneL4, dzis: string): OpisL4 {
     const s = stanTerminuPracownika(t, dzis);
     zastrzezeniaStatus = s.tekst;
     zastrzezeniaKlasa = s.klasa;
+    zastrzezeniaPraktycznie = linijkaDniaWolnego(t, 'zastrzezenia-zus', dzis);
     const reszta = 'rozpatruje je ZUS i odpowiada na piśmie (art. 68e ust. 4–5 ustawy zasiłkowej). Do aneksu sporządzonego po rozpatrzeniu zastrzeżeń nie składa się kolejnych (ust. 6).';
     zastrzezenia = t.rozne
       ? `Zdąż do ${dataPoPolsku(t.zdazDo)}: ${DNI_ZASTRZEZEN} dni od otrzymania protokołu albo aneksu do niego. ${wielka(dataPoPolsku(t.zdazDo))} to ${NAZWA_WOLNEGO(t.wolne[0].powod)}: według art. 115 Kodeksu cywilnego ostatni dzień to ${dataPoPolsku(t.wedlugArt115)} Ustawa zasiłkowa nie mówi, jak liczyć ten termin, a przepisy Kodeksu cywilnego o terminach stosuje się, gdy ustawa nie określa sposobu ich obliczania (art. 110 Kodeksu cywilnego); orzeczeń o tym terminie nie znaleźliśmy, więc bezpieczniej zdążyć do pierwszej daty. Zastrzeżenia składasz, wskazując dowody; ${reszta}`
@@ -451,6 +456,7 @@ export function opisL4(d: DaneL4, dzis: string): OpisL4 {
   let odwolanie: string;
   let odwolanieStatus: string | null = null;
   let odwolanieKlasa: KlasaStatusu | null = null;
+  let odwolaniePraktycznie = '';
   if (puste(d.decyzja)) {
     odwolanie = `Gdy ZUS ustali utratę zasiłku, wydaje decyzję (art. 83 ust. 1 pkt 4 ustawy o systemie ubezpieczeń społecznych); protokół kontroli jest podstawą tego postępowania (art. 68e ust. 7 ustawy zasiłkowej). Gdy zasiłek wypłaca pracodawca, wątpliwości po kontroli także rozstrzyga ZUS (art. 68 ust. 1e ustawy zasiłkowej); jeśli pracodawca sam odmówi wypłaty, decyzję ZUS uzyskasz wnioskiem o ustalenie uprawnień (art. 63 ust. 1). Na odwołanie do sądu masz miesiąc od doręczenia decyzji. ${gdzie} Wpisz dzień doręczenia decyzji, a policzymy datę.`;
   } else {
@@ -461,6 +467,7 @@ export function opisL4(d: DaneL4, dzis: string): OpisL4 {
     const s = stanTerminuPracownika(t.termin, dzis);
     odwolanieStatus = s.tekst;
     odwolanieKlasa = s.klasa;
+    odwolaniePraktycznie = linijkaDniaWolnego(t.termin, 'odwolanie-zus', dzis);
     const art115 = 'według art. 115 Kodeksu cywilnego (przez art. 165 § 1 KPC)';
     if (tylkoPrzesuniety && t.poPrzesunieciu! < dzis)
       odwolanie = `Termin minął: miesiąc od doręczenia decyzji przypadł na ${dataPoPolsku(t.koniec)}, a że ten dzień to ${NAZWA_WOLNEGO(t.powod)}, ${art115} termin upłynął ${dataPoPolsku(t.poPrzesunieciu!)} ${gdzie} ${spoznione}`;
@@ -495,9 +502,11 @@ export function opisL4(d: DaneL4, dzis: string): OpisL4 {
     zastrzezenia,
     zastrzezeniaStatus,
     zastrzezeniaKlasa,
+    zastrzezeniaPraktycznie,
     odwolanie,
     odwolanieStatus,
     odwolanieKlasa,
+    odwolaniePraktycznie,
     uwagi,
   };
 }

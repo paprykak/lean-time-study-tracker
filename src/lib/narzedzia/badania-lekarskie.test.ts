@@ -257,3 +257,20 @@ describe('audyt terminy 2 (B-1): „Nie wiem” przy wcześniejszej niezdolnośc
     expect(badanieKontrolne([{ od: '2026-01-01', do: '2026-02-15' }], 'choroba', 'auto').wynik).toBe('potrzebne');
   });
 });
+
+// Linijka praktyczna (pakiet „terminy3”, daty z raporty/terminy3/linijka.py): pismo ma dotrzeć do przychodni.
+describe('terminy3: odwołanie od orzeczenia w dzień wolny', () => {
+  const sp = (t: string) => t.replace(/\s/g, ' ');
+  it('odwołanie do niedzieli 13 grudnia 2026 r.: złóż w przychodni w piątek 11 grudnia', () => {
+    expect(sp(tekstOdwolania(odwolanie('2026-12-06', '2026-12-07')).praktycznie)).toBe(
+      'To niedziela. Odwołanie w przychodni medycyny pracy, która wydała orzeczenie, złóż najpóźniej w ostatnim dniu roboczym przed tą datą, czyli w piątek 11 grudnia 2026 r.: rozporządzenie nie mówi, że wystarczy nadanie na poczcie.',
+    );
+  });
+  it('dziś sobota przed niedzielą: ostatni dzień roboczy minął; po terminie i w dzień roboczy bez linijki', () => {
+    expect(sp(tekstOdwolania(odwolanie('2026-12-06', '2026-12-12')).praktycznie)).toBe(
+      'To niedziela. Ostatni dzień roboczy przed tą datą był w piątek 11 grudnia 2026 r. Odwołanie w przychodni medycyny pracy, która wydała orzeczenie, złóż jak najszybciej, najlepiej osobiście: rozporządzenie nie mówi, że wystarczy nadanie na poczcie.',
+    );
+    expect(tekstOdwolania(odwolanie('2026-12-06', '2026-12-14')).praktycznie).toBe('');
+    expect(tekstOdwolania(odwolanie('2026-12-04', '2026-12-07')).praktycznie).toBe('');
+  });
+});
