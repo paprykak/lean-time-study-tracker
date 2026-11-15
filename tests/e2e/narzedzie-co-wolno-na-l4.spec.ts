@@ -21,7 +21,7 @@ test('dawne brzmienie dla czynności przed 13 kwietnia 2026 r.', async ({ page }
   await page.getByLabel('Zwolnienie od').fill('2026-04-01');
   await page.getByLabel('Zwolnienie do').fill('2026-04-20');
   await page.getByLabel('Dzień czynności').fill('2026-04-12');
-  await expect(page.locator('[data-w="werdykt"]')).toHaveText('Nie wolno');
+  await expect(page.locator('[data-w="werdykt"]')).toHaveText('Ryzyko utraty zasiłku');
   await expect(page.locator('[data-w="brzmienie"]')).toHaveText(/^Przepis\sw\sbrzmieniu\sdo\s12\skwietnia\s2026\sr\.$/);
   await expect(page.locator('[data-w="uwagi"]')).toContainText(/art\.\s39\sustawy\sz\s18\sgrudnia\s2025\sr\./);
   await expect(page.locator('[data-w="skutek"]')).toContainText(/\(20\sdni\)/);

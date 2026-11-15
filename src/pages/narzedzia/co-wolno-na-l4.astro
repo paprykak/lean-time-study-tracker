@@ -27,7 +27,7 @@ const faq = [
   },
   {
     pytanie: 'Czy na L4 można pracować u innego pracodawcy albo na zleceniu?',
-    odpowiedz: 'Co do zasady nie. Praca zarobkowa to każda czynność o charakterze zarobkowym, niezależnie od stosunku prawnego, z wyjątkiem czynności incydentalnych, których wymagają istotne okoliczności (art. 17 ust. 1a ustawy zasiłkowej). Przy kilku tytułach ubezpieczenia niezdolność do pracy dotyczy każdego tytułu, z którego wystawiono zwolnienie (ust. 1c). Od 1 stycznia 2027 r. lekarz może na Twoje żądanie nie wystawić zwolnienia z tytułu, w którym pracę da się wykonywać ze względu na jej rodzaj; wtedy informujesz płatnika składek, który sam wypłaca zasiłki, o okresie zwolnienia z innego tytułu (ust. 1d i 1e).',
+    odpowiedz: 'Co do zasady nie. Praca zarobkowa to każda czynność o charakterze zarobkowym, niezależnie od stosunku prawnego, z wyjątkiem czynności incydentalnych, których wymagają istotne okoliczności (art. 17 ust. 1a ustawy zasiłkowej). Przy kilku tytułach ubezpieczenia niezdolność do pracy dotyczy każdego z nich, a zwolnienie wystawia się odrębnie dla każdego tytułu (ust. 1c). Od 1 stycznia 2027 r. lekarz może na Twoje żądanie nie wystawić zwolnienia z tytułu, w którym pracę da się wykonywać ze względu na jej rodzaj; wtedy informujesz płatnika składek, który sam wypłaca zasiłki, o okresie zwolnienia z innego tytułu (ust. 1d i 1e).',
   },
   {
     pytanie: 'Co grozi za pracę na L4 na polecenie pracodawcy?',
@@ -35,7 +35,7 @@ const faq = [
   },
   {
     pytanie: 'Jak wygląda kontrola ZUS na L4?',
-    odpowiedz: 'Kontrolujący okazuje upoważnienie i legitymację (art. 68b i 68c ust. 3 ustawy zasiłkowej). Kontrola odbywa się w miejscu zamieszkania, pobytu albo pracy, a w innym miejscu, gdy wymaga tego jej cel (art. 68c ust. 1). Masz obowiązek umożliwić kontrolę oraz udzielać informacji i wyjaśnień w jej zakresie (art. 68d). Ustalenia trafiają do protokołu w dwóch egzemplarzach, a zastrzeżenia możesz złożyć w 7 dni od jego otrzymania (art. 68e ust. 2 i 4). Pracodawca może kontrolować, gdy płaci wynagrodzenie chorobowe albo sam wypłaca zasiłek (art. 68 ust. 1a i 1d).',
+    odpowiedz: 'Kontrolujący okazuje upoważnienie i legitymację (art. 68b i 68c ust. 3 ustawy zasiłkowej). Kontrola odbywa się w miejscu zamieszkania, pobytu, pracy albo prowadzenia działalności, a w innym miejscu, gdy wymaga tego jej cel (art. 68c ust. 1). Masz obowiązek umożliwić kontrolę oraz udzielać informacji i wyjaśnień w jej zakresie (art. 68d). Ustalenia trafiają do protokołu w dwóch egzemplarzach, a zastrzeżenia, ze wskazaniem dowodów, możesz złożyć w 7 dni od otrzymania protokołu albo aneksu (art. 68e ust. 2 i 4). Pracodawca może kontrolować, gdy płaci wynagrodzenie chorobowe (art. 68 ust. 1d), a także wtedy, gdy sam wypłaca zasiłek (art. 68 ust. 1a).',
   },
   {
     pytanie: 'Czy na L4 można wyjechać?',
@@ -152,19 +152,21 @@ const faq = [
     <ul>
       <li>Kto w czasie orzeczonej niezdolności do pracy wykonuje pracę zarobkową albo podejmuje aktywność niezgodną z celem zwolnienia, traci zasiłek chorobowy za cały okres zwolnienia (art. 17 ust. 1 ustawy zasiłkowej). Pracownik traci wtedy także wynagrodzenie chorobowe, bo nie przysługuje ono, gdy nie ma prawa do zasiłku (art. 92 § 3 pkt 2 Kodeksu pracy).</li>
       <li>Od 13 kwietnia 2026 r. ustawa definiuje oba pojęcia. Praca zarobkowa to każda czynność o charakterze zarobkowym, niezależnie od stosunku prawnego, bez czynności incydentalnych, których wymagają istotne okoliczności; polecenie pracodawcy taką okolicznością nie jest (ust. 1a). Aktywność niezgodna z celem zwolnienia to działania utrudniające lub wydłużające leczenie albo rekonwalescencję, bez zwykłych czynności dnia codziennego i bez czynności incydentalnych wymaganych istotnymi okolicznościami (ust. 1b).</li>
-      <li>Przy kilku tytułach ubezpieczenia niezdolność do pracy dotyczy każdego tytułu, z którego wystawiono zwolnienie (ust. 1c). Od 1 stycznia 2027 r. lekarz może na żądanie nie wystawić zwolnienia z tytułu, w którym pracę da się wykonywać ze względu na jej rodzaj, a Ty informujesz płatnika składek, który sam wypłaca zasiłki, o okresie zwolnienia z innego tytułu (ust. 1d–1e).</li>
-      <li>Do 12 kwietnia 2026 r. art. 17 ust. 1 mówił o „pracy zarobkowej” i o wykorzystywaniu zwolnienia „w sposób niezgodny z celem tego zwolnienia”, bez definicji. Postępowania i kontrole wszczęte przed 13 kwietnia 2026 r. kończy się według dawnych przepisów (art. 39 i 42 ustawy z 18 grudnia 2025 r., Dz.U. 2026 poz. 26).</li>
+      <li>Przy kilku tytułach ubezpieczenia niezdolność do pracy dotyczy każdego z nich, a zwolnienie wystawia się odrębnie dla każdego tytułu (ust. 1c). Od 1 stycznia 2027 r. lekarz może na żądanie nie wystawić zwolnienia z tytułu, w którym pracę da się wykonywać ze względu na jej rodzaj, a Ty informujesz płatnika składek, który sam wypłaca zasiłki, o okresie zwolnienia z innego tytułu (ust. 1d–1e).</li>
+      <li>Te same zasady dotyczą zasiłku chorobowego za okres po ustaniu ubezpieczenia (art. 17 ust. 4, od 13 kwietnia 2026 r.) i świadczenia rehabilitacyjnego (art. 22).</li>
+      <li>Do 12 kwietnia 2026 r. art. 17 ust. 1 odbierał zasiłek za wykonywanie pracy zarobkowej i za wykorzystywanie zwolnienia „w sposób niezgodny z celem tego zwolnienia”, bez definicji. Okoliczności te ustalał ZUS albo pracodawca, który sam wypłacał zasiłki (ust. 3 i art. 68 w dawnym brzmieniu). Postępowania i kontrole wszczęte przed 13 kwietnia 2026 r. kończy się według dawnych przepisów (art. 39 i 42 ustawy z 18 grudnia 2025 r., Dz.U. 2026 poz. 26).</li>
     </ul>
 
     <h2 id="kontrola">Kontrola i odwołanie</h2>
     <p>
-      Wykorzystywanie zwolnień kontroluje ZUS, a pracodawca wtedy, gdy płaci wynagrodzenie chorobowe albo sam wypłaca zasiłki,
-      bo zgłasza do ubezpieczenia chorobowego ponad 20 osób (art. 61 ust. 1 i art. 68 ustawy zasiłkowej). Przebieg kontroli,
+      Wykorzystywanie zwolnień kontroluje ZUS (art. 68 ust. 1 i 1b ustawy zasiłkowej). Każdy pracodawca może kontrolować,
+      gdy płaci wynagrodzenie chorobowe (ust. 1d), a zasiłek ten, który sam go wypłaca, bo zgłasza do ubezpieczenia
+      chorobowego ponad 20 osób (ust. 1a, art. 61 ust. 1 pkt 1). Przebieg kontroli,
       protokół i zastrzeżenia opisują art. 68a–68e, a wzory upoważnienia i protokołu rozporządzenie z 8 kwietnia 2026 r.
       (Dz.U. 2026 poz. 503). Wątpliwości rozstrzyga ZUS (art. 68 ust. 1e), a od jego decyzji przysługuje odwołanie do sądu
       w terminie miesiąca od doręczenia (art. 83 ust. 2 ustawy o systemie ubezpieczeń społecznych, art. 477⁹ § 1 Kodeksu
-      postępowania cywilnego). Lekarz orzecznik ZUS może też sprawdzić, czy zwolnienie wystawiono prawidłowo, i skierować Cię
-      na badanie (art. 59).
+      postępowania cywilnego). Lekarze orzecznicy ZUS kontrolują też, czy zwolnienie wystawiono prawidłowo (art. 59 ust. 2),
+      a ZUS może skierować Cię do nich na badanie (art. 59 ust. 3 pkt 1).
     </p>
 
     <h2 id="jak-liczymy">Jak liczymy</h2>

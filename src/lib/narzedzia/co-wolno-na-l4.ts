@@ -34,6 +34,11 @@
 //   nie wolno; piszemy to wprost zamiast zgadywać.
 // - Od 1 stycznia 2027 r. praca w tytule, z którego na żądanie nie wystawiono zwolnienia (ust. 1d): ustawa nie mówi wprost,
 //   że nie jest wtedy pracą zarobkową z ust. 1a, choć taki jest sens ust. 1c–1d; werdykt z warunkiem i to zastrzeżenie.
+// - Dawne brzmienie przy pracy na polecenie i jednej pilnej sprawie: przepis nie definiował pracy zarobkowej, więc
+//   werdykt „ryzyko”, a nie „nie wolno” (oceniał ZUS albo płatnik z art. 61 ust. 1 pkt 1, art. 17 ust. 3 dawny).
+// - Przepisy o kontroli wybieramy według dnia otrzymania protokołu (przybliżenie dnia wszczęcia kontroli z art. 42):
+//   protokół sprzed 13 kwietnia 2026 r. to dawna kontrola (art. 68 ust. 1 dawny, § 1, 8–10 rozporządzenia z 1999 r.: uwagi
+//   do protokołu bez terminu), bez terminu 7 dni z art. 68e ust. 4.
 // - Odwołanie: miesiąc od doręczenia (art. 112 KC przez art. 165 § 1 KPC); gdy koniec wypada w sobotę albo dzień wolny,
 //   pokazujemy dwie daty: „zdąż do” bez przesunięcia i ostatni dzień według art. 115 KC (DECYZJE.md, 2026-11-15).
 // - Zastrzeżenia do protokołu: 7 dni od otrzymania, dnia otrzymania nie wliczamy (jak art. 111 § 2 KC); ustawa zasiłkowa
@@ -55,7 +60,7 @@ export type KlasaStatusu = 'po-terminie' | 'pilne' | 'wkrotce' | 'w-terminie';
 export const CZYNNOSCI: Record<Czynnosc, { krotko: string; opis: string; praca: boolean }> = {
   'inna-praca': { krotko: 'Praca w innej firmie', opis: 'Inny pracodawca, zlecenie, dzieło albo własna firma.', praca: true },
   polecenie: { krotko: 'Praca dla pracodawcy', opis: 'Maile, telefony albo przyjście do firmy, bo prosi o to pracodawca.', praca: true },
-  incydentalna: { krotko: 'Jedna pilna sprawa', opis: 'Jednorazowa czynność, której wymagają ważne okoliczności, np. podpis, którego nie da się przełożyć.', praca: false },
+  incydentalna: { krotko: 'Jedna pilna sprawa', opis: 'Jednorazowa czynność, której wymagają istotne okoliczności, np. podpis, którego nie da się przełożyć.', praca: false },
   zakupy: { krotko: 'Zakupy, apteka', opis: 'Zakupy spożywcze, apteka, poczta.', praca: false },
   lekarz: { krotko: 'Lekarz, badania', opis: 'Wizyta u lekarza, badania, zabiegi i rehabilitacja.', praca: false },
   dom: { krotko: 'Dziecko, sprawy domowe', opis: 'Opieka nad dzieckiem, gotowanie, zwykłe sprawy w domu.', praca: false },
@@ -198,7 +203,7 @@ const LEZEC =
 const ADRES =
   'Zmianę adresu pobytu w czasie zwolnienia zgłaszasz pracodawcy (płatnikowi składek) i ZUS najpóźniej w 3 dni; inaczej zawiadomienie o badaniu wysłane na stary adres uznaje się za doręczone (art. 59 ust. 5e–5f ustawy zasiłkowej).';
 const BADANIE =
-  'Jeśli przez wyjazd uniemożliwisz badanie u lekarza orzecznika ZUS, zwolnienie traci ważność od dnia po wyznaczonym terminie (art. 59 ust. 6).';
+  'Jeśli przez wyjazd uniemożliwisz badanie u lekarza orzecznika ZUS, zwolnienie traci ważność od dnia po wyznaczonym terminie, a ZUS wydaje decyzję o braku prawa do zasiłku (art. 59 ust. 6 i 10).';
 
 interface Ocena {
   werdykt: Werdykt;
@@ -228,7 +233,7 @@ export function ocena(czynnosc: Czynnosc, b: Brzmienie, wskazanie: Wskazanie): O
           werdykt: 'nie',
           etykieta: 'Nie wolno',
           przepis: 'art. 17 ust. 1a i 1c ustawy zasiłkowej',
-          opis: 'Praca zarobkowa to każda czynność o charakterze zarobkowym, niezależnie od umowy, na której ją wykonujesz: także praca u innego pracodawcy, zlecenie i własna firma. Przy kilku tytułach ubezpieczenia niezdolność do pracy dotyczy każdego tytułu, z którego wystawiono zwolnienie.',
+          opis: 'Praca zarobkowa to każda czynność o charakterze zarobkowym, niezależnie od umowy, na której ją wykonujesz: także praca u innego pracodawcy, zlecenie i własna firma. Przy kilku tytułach ubezpieczenia niezdolność do pracy dotyczy każdego z nich, a zwolnienie wystawia się odrębnie dla każdego tytułu.',
           warunki: [
             'Wyjątek to tylko czynność incydentalna, której wymagają istotne okoliczności (art. 17 ust. 1a).',
             'Od 1 stycznia 2027 r. lekarz może na Twoje żądanie nie wystawić zwolnienia z tytułu, w którym pracę da się wykonywać ze względu na jej rodzaj (art. 17 ust. 1d).',
@@ -240,7 +245,8 @@ export function ocena(czynnosc: Czynnosc, b: Brzmienie, wskazanie: Wskazanie): O
         przepis: 'art. 17 ust. 1a, 1c i 1d ustawy zasiłkowej',
         opis: 'Praca zarobkowa w czasie zwolnienia odbiera zasiłek. Od 1 stycznia 2027 r. lekarz może na Twoje żądanie nie wystawić zwolnienia z tytułu, w którym pracę da się wykonywać ze względu na jej rodzaj, np. lekką pracę obok tej, której nie możesz wykonywać.',
         warunki: [
-          'Zwolnienie obejmuje tylko tytuły, z których je wystawiono (art. 17 ust. 1c). Jeśli masz zwolnienie także z tej drugiej pracy, praca w niej odbiera zasiłek.',
+          'Niezdolność do pracy dotyczy każdego tytułu ubezpieczenia, a zwolnienie wystawia się odrębnie dla każdego (art. 17 ust. 1c). Jeśli masz zwolnienie także z tej drugiej pracy, praca w niej odbiera zasiłek.',
+          'Wyjątek dotyczy tylko pracy, która jest osobnym tytułem ubezpieczeń społecznych, np. druga umowa o pracę, zlecenie albo własna firma. Praca bez takiego tytułu, np. na umowie o dzieło, nadal jest pracą zarobkową (art. 17 ust. 1a).',
           'Bez zwolnienia z jednego tytułu informujesz płatnika składek, który sam wypłaca zasiłki (zgłasza ponad 20 osób), o okresie zwolnienia z innego tytułu (art. 17 ust. 1e, art. 61 ust. 1 pkt 1).',
           'Ustawa nie mówi wprost, że praca w tytule bez zwolnienia nie jest wtedy pracą zarobkową z art. 17 ust. 1a; taki jest sens ust. 1c i 1d.',
         ],
@@ -248,10 +254,10 @@ export function ocena(czynnosc: Czynnosc, b: Brzmienie, wskazanie: Wskazanie): O
     case 'polecenie':
       if (dawne)
         return {
-          werdykt: 'nie',
-          etykieta: 'Nie wolno',
+          werdykt: 'zalezy',
+          etykieta: 'Ryzyko utraty zasiłku',
           przepis: P_DAWNY,
-          opis: 'Praca zarobkowa w czasie zwolnienia, także dla własnego pracodawcy, odbiera zasiłek chorobowy za cały okres tego zwolnienia. Przepis nie przewidywał wyjątku dla drobnych czynności ani dla pracy na polecenie.',
+          opis: 'Praca zarobkowa w czasie zwolnienia, także dla własnego pracodawcy, odbierała zasiłek chorobowy za cały okres tego zwolnienia. Przepis nie przewidywał wyjątku dla drobnych czynności ani dla pracy na polecenie. Czy pojedynczy mail albo telefon był pracą zarobkową, oceniał ZUS albo pracodawca, który sam wypłacał zasiłek, a w sporze sąd.',
           warunki: [BEZ_DEFINICJI],
         };
       return {
@@ -267,7 +273,7 @@ export function ocena(czynnosc: Czynnosc, b: Brzmienie, wskazanie: Wskazanie): O
           werdykt: 'zalezy',
           etykieta: 'Ryzyko utraty zasiłku',
           przepis: P_DAWNY,
-          opis: 'Dawny przepis mówił tylko o wykonywaniu pracy zarobkowej i o wykorzystywaniu zwolnienia niezgodnie z celem, bez wyjątku dla jednorazowych czynności. Czy pojedyncza czynność odbierała zasiłek, oceniał ZUS, a w sporze sąd.',
+          opis: 'Dawny przepis mówił tylko o wykonywaniu pracy zarobkowej i o wykorzystywaniu zwolnienia niezgodnie z celem, bez wyjątku dla jednorazowych czynności. Czy pojedyncza czynność odbierała zasiłek, oceniał ZUS albo pracodawca, który sam wypłacał zasiłek, a w sporze sąd (art. 17 ust. 3 i art. 68 w dawnym brzmieniu).',
           warunki: [BEZ_DEFINICJI],
         };
       return {
@@ -311,7 +317,7 @@ export function ocena(czynnosc: Czynnosc, b: Brzmienie, wskazanie: Wskazanie): O
         werdykt: 'warunek',
         etykieta: 'Wolno, z warunkami',
         przepis: dawne ? P_DAWNY : 'art. 17 ust. 1b i art. 59 ustawy zasiłkowej',
-        opis: 'Ustawa nie zakazuje wyjazdu w czasie zwolnienia. Wyjazd nie może jednak utrudniać ani wydłużać leczenia, a ZUS musi móc Cię skontrolować.',
+        opis: 'Ustawa nie zakazuje wyjazdu w czasie zwolnienia. Wyjazd nie może jednak utrudniać ani wydłużać leczenia, a Ty masz obowiązek umożliwić kontrolę (art. 68d pkt 1) i podać aktualny adres pobytu (art. 59 ust. 5d–5e).',
         warunki: [
           ADRES,
           BADANIE,
@@ -325,7 +331,7 @@ export function ocena(czynnosc: Czynnosc, b: Brzmienie, wskazanie: Wskazanie): O
         etykieta: 'Ryzyko utraty zasiłku',
         przepis: dawne ? P_DAWNY : 'art. 17 ust. 1b i art. 68 ust. 1e ustawy zasiłkowej',
         opis: dawne
-          ? 'Wykorzystywanie zwolnienia w sposób niezgodny z celem odbierało zasiłek za cały okres zwolnienia. Czy wysiłek był niezgodny z celem, oceniał ZUS, w razie potrzeby z opinią lekarza.'
+          ? 'Wykorzystywanie zwolnienia w sposób niezgodny z celem odbierało zasiłek za cały okres zwolnienia. Czy wysiłek był niezgodny z celem, oceniał ZUS albo pracodawca, który sam wypłacał zasiłek; wątpliwości rozstrzygał ZUS, w razie potrzeby z opinią lekarza leczącego (§ 10 rozporządzenia z 27 lipca 1999 r.).'
           : 'Aktywność niezgodna z celem zwolnienia to wszelkie działania utrudniające lub wydłużające leczenie albo rekonwalescencję. Czy dany wysiłek do nich należy, rozstrzyga ZUS, w razie potrzeby z opinią lekarza, który wystawił zwolnienie, albo lekarza orzecznika.',
         warunki: [
           'Bezpieczniej zapytać lekarza, który wystawił zwolnienie, czy ten wysiłek nie zaszkodzi leczeniu.',
@@ -353,26 +359,34 @@ const okresZwolnienia = (od: string, do_: string) => {
   return od === do_ ? `${dataPoPolsku(od)} (1 dzień)` : `od ${dataPoPolsku(od)} do ${dataPoPolsku(do_)} (${dni(n)})`;
 };
 
-/** Jak przebiega kontrola (art. 59 i 68–68e); zależy tylko od tego, kto kontroluje, i od brzmienia. */
-export function opisKontroli(k: Kontrola, b: Brzmienie): string[] {
+const DAWNA_KONTROLA =
+  'kontrolowali wtedy ZUS i pracodawca, który sam wypłacał zasiłki, bo zgłaszał ponad 20 osób; kontrolujący miał imienne upoważnienie, protokół przedkładano Ci do uwag bez terminu w przepisach, a wątpliwości rozstrzygał ZUS, w razie potrzeby z opinią lekarza leczącego, i w razie sporu wydawał decyzję (art. 68 ust. 1 ustawy zasiłkowej w dawnym brzmieniu, § 1 ust. 1 i § 8–10 rozporządzenia z 27 lipca 1999 r.)';
+
+/**
+ * Jak przebiega kontrola (art. 59 i 68–68e w brzmieniu od 13 kwietnia 2026 r.). `dawnaKontrola`: protokół sprzed
+ * 13 kwietnia 2026 r., czyli kontrola według dawnych przepisów (art. 42 ustawy zmieniającej).
+ */
+export function opisKontroli(k: Kontrola, b: Brzmienie, dawnaKontrola = false): string[] {
+  if (dawnaKontrola)
+    return [`Protokół jest sprzed 13 kwietnia 2026 r., więc kontrolę kończy się według dawnych przepisów (art. 42 ustawy z 18 grudnia 2025 r., Dz.U. 2026 poz. 26): ${DAWNA_KONTROLA}.`];
   const kto =
     k === 'pracodawca'
-      ? 'Pracodawca może kontrolować, gdy płaci Ci wynagrodzenie chorobowe albo sam wypłaca zasiłek, bo zgłasza do ubezpieczenia chorobowego ponad 20 osób (art. 68 ust. 1a i 1d, art. 61 ust. 1 pkt 1 ustawy zasiłkowej). ZUS może skontrolować także wtedy, gdy zasiłek wypłaca pracodawca, z urzędu albo na jego wniosek (art. 68 ust. 1b).'
-      : 'ZUS kontroluje, czy zwolnienie jest wykorzystywane zgodnie z celem, także wtedy, gdy zasiłek wypłaca pracodawca, z urzędu albo na jego wniosek (art. 68 ust. 1 i 1b ustawy zasiłkowej). Pracodawca może kontrolować, gdy płaci Ci wynagrodzenie chorobowe albo sam wypłaca zasiłek (art. 68 ust. 1a i 1d).';
+      ? 'Każdy pracodawca może kontrolować, gdy płaci Ci wynagrodzenie chorobowe (art. 68 ust. 1d ustawy zasiłkowej). Zasiłek kontroluje pracodawca, który sam go wypłaca, bo zgłasza do ubezpieczenia chorobowego ponad 20 osób (art. 68 ust. 1a, art. 61 ust. 1 pkt 1). ZUS może skontrolować także wtedy, gdy zasiłek wypłaca pracodawca, z urzędu albo na jego wniosek (art. 68 ust. 1b).'
+      : 'ZUS kontroluje, czy zwolnienie jest wykorzystywane zgodnie z celem, także wtedy, gdy zasiłek wypłaca pracodawca, z urzędu albo na jego wniosek (art. 68 ust. 1 i 1b ustawy zasiłkowej). Pracodawca może kontrolować, gdy płaci Ci wynagrodzenie chorobowe (art. 68 ust. 1d), a także wtedy, gdy sam wypłaca zasiłek (art. 68 ust. 1a).';
   const legitymacja =
     k === 'pracodawca'
-      ? 'Kontrolujący okazuje upoważnienie i legitymację pracowniczą albo dokument tożsamości (art. 68b ust. 2–3, art. 68c ust. 3 pkt 1).'
-      : 'Kontrolujący okazuje upoważnienie i legitymację służbową ZUS, a gdy kontroluje pracodawca, legitymację pracowniczą albo dokument tożsamości (art. 68b ust. 2–3, art. 68c ust. 3 pkt 1).';
+      ? 'Kontrolujący okazuje upoważnienie i legitymację pracowniczą (art. 68c ust. 3 pkt 1); w upoważnieniu od pracodawcy może być wpisany numer legitymacji albo dokumentu tożsamości (art. 68b ust. 3 pkt 4 lit. b).'
+      : 'Kontrolujący okazuje upoważnienie i legitymację: służbową, gdy kontroluje ZUS, a pracowniczą, gdy pracodawca (art. 68b ust. 2–3, art. 68c ust. 3 pkt 1).';
   const lista = [
     kto,
-    `${legitymacja} Kontrola odbywa się w miejscu zamieszkania, pobytu albo pracy, a w innym miejscu tylko wtedy, gdy wymaga tego jej cel (art. 68c ust. 1).`,
+    `${legitymacja} Kontrola odbywa się w miejscu zamieszkania, pobytu, pracy albo prowadzenia działalności, a w innym miejscu tylko wtedy, gdy wymaga tego jej cel (art. 68c ust. 1).`,
     'Masz obowiązek umożliwić kontrolę oraz udzielać informacji i wyjaśnień w jej zakresie (art. 68d). Kontrola ma być proporcjonalna, z poszanowaniem prywatności i bez ryzyka dla zdrowia (art. 68a ust. 4), a kontrolujący musi pouczyć Cię o prawie do zastrzeżeń (art. 68c ust. 3 pkt 2).',
     'Ustalenia trafiają do protokołu w dwóch egzemplarzach, jeden dostajesz (art. 68e ust. 2). Wątpliwości, czy zwolnienie było wykorzystywane niezgodnie z celem, rozstrzyga ZUS, w razie potrzeby z opinią lekarza, który je wystawił, albo lekarza orzecznika (art. 68 ust. 1e).',
   ];
   if (k !== 'pracodawca')
     lista.push('ZUS może też skierować Cię na badanie do lekarza orzecznika; zwraca koszty przejazdu do ceny najtańszej komunikacji publicznej (art. 59 ust. 3 pkt 1 i ust. 13).');
   if (b === 'dawne')
-    lista.push('Opis dotyczy przepisów o kontroli od 13 kwietnia 2026 r. Kontrolę wszczętą przed tym dniem kończy się według dawnych przepisów (art. 42 ustawy z 18 grudnia 2025 r., Dz.U. 2026 poz. 26).');
+    lista.push(`Opis dotyczy przepisów o kontroli od 13 kwietnia 2026 r. Kontrolę wszczętą przed tym dniem kończy się według dawnych przepisów (art. 42 ustawy z 18 grudnia 2025 r., Dz.U. 2026 poz. 26): ${DAWNA_KONTROLA}.`);
   return lista;
 }
 
@@ -382,12 +396,13 @@ export function opisL4(d: DaneL4, dzis: string): OpisL4 {
   if (blad) throw new RangeError(blad.tekst);
   const b = brzmienie(d.dzien);
   const o = ocena(d.czynnosc, b, d.wskazanie);
+  const dawnaKontrola = !puste(d.protokol) && d.protokol! < OD_NOWEGO;
   const praca = CZYNNOSCI[d.czynnosc].praca;
   const okres = okresZwolnienia(d.od, d.do);
   const utrata = `prawo do zasiłku chorobowego za cały okres zwolnienia, ${okres}, a za dni, za które pracodawca płaci wynagrodzenie chorobowe, także do tego wynagrodzenia (art. 17 ust. 1 ustawy zasiłkowej, art. 92 § 3 pkt 2 Kodeksu pracy). Wypłacony już zasiłek podlega potrąceniu z bieżących świadczeń albo ściągnięciu (art. 66 ust. 2 ustawy zasiłkowej).`;
   const czym = b === 'dawne' ? (praca ? 'pracę zarobkową' : 'wykorzystywanie zwolnienia niezgodnie z celem') : praca ? 'pracę zarobkową' : 'aktywność niezgodną z celem zwolnienia';
   let skutek: string;
-  if (o.werdykt === 'nie') skutek = `Tracisz ${utrata}`;
+  if (o.werdykt === 'nie') skutek = `Gdy ZUS to ustali, tracisz ${utrata}`;
   else if (o.werdykt === 'wolno') skutek = `Ta czynność nie odbiera zasiłku. Utratę za cały okres zwolnienia, ${okres}, powoduje tylko praca zarobkowa albo aktywność niezgodna z celem zwolnienia (art. 17 ust. 1 ustawy zasiłkowej).`;
   else if (d.czynnosc === 'incydentalna' && b !== 'dawne') skutek = `Jeśli ZUS uzna, że to nie był wyjątek, tracisz ${utrata}`;
   else skutek = `Jeśli ZUS uzna to za ${czym}, tracisz ${utrata}`;
@@ -396,7 +411,9 @@ export function opisL4(d: DaneL4, dzis: string): OpisL4 {
   let zastrzezeniaStatus: string | null = null;
   let zastrzezeniaKlasa: KlasaStatusu | null = null;
   if (puste(d.protokol)) {
-    zastrzezenia = `Po kontroli dostajesz protokół. Zastrzeżenia z dowodami składasz w ${DNI_ZASTRZEZEN} dni od jego otrzymania; rozpatruje je ZUS i odpowiada na piśmie (art. 68e ust. 4–5 ustawy zasiłkowej). Wpisz dzień otrzymania protokołu, a policzymy datę.`;
+    zastrzezenia = `Po kontroli dostajesz protokół. Zastrzeżenia składasz w ${DNI_ZASTRZEZEN} dni od otrzymania protokołu albo aneksu do niego, wskazując dowody; rozpatruje je ZUS i odpowiada na piśmie (art. 68e ust. 4–5 ustawy zasiłkowej). Do aneksu sporządzonego po rozpatrzeniu zastrzeżeń nie składa się kolejnych (ust. 6). Wpisz dzień otrzymania protokołu, a policzymy datę.`;
+  } else if (dawnaKontrola) {
+    zastrzezenia = `Protokół jest sprzed 13 kwietnia 2026 r.: termin ${DNI_ZASTRZEZEN} dni z art. 68e ust. 4 nie dotyczy kontroli wszczętej przed tym dniem (art. 42 ustawy z 18 grudnia 2025 r.). Dawne rozporządzenie dawało prawo do uwag do protokołu, bez terminu (§ 9 rozporządzenia z 27 lipca 1999 r.).`;
   } else {
     const t = terminZastrzezen(d.protokol!);
     const s = stanTerminu(t, dzis);
@@ -404,7 +421,7 @@ export function opisL4(d: DaneL4, dzis: string): OpisL4 {
     zastrzezeniaKlasa = s.klasa;
     const wolny = przesunZDniaWolnego(t).przesuniecie[0]?.powod ?? null;
     const sobota = wolny ? ` ${wielka(dataPoPolsku(t))} to ${NAZWA_WOLNEGO(wolny)}; ustawa nie mówi, czy termin przesuwa się wtedy na następny dzień roboczy, więc podajemy datę bez przesunięcia.` : '';
-    zastrzezenia = `Najpóźniej ${dataPoPolsku(t)}: ${DNI_ZASTRZEZEN} dni od otrzymania protokołu, z dowodami na swoje twierdzenia; rozpatruje je ZUS i odpowiada na piśmie (art. 68e ust. 4–5 ustawy zasiłkowej).${sobota}`;
+    zastrzezenia = `Najpóźniej ${dataPoPolsku(t)}: ${DNI_ZASTRZEZEN} dni od otrzymania protokołu (albo aneksu do niego), wskazując dowody; rozpatruje je ZUS i odpowiada na piśmie (art. 68e ust. 4–5 ustawy zasiłkowej). Do aneksu sporządzonego po rozpatrzeniu zastrzeżeń nie składa się kolejnych (ust. 6).${sobota}`;
   }
 
   const gdzie =
@@ -414,7 +431,7 @@ export function opisL4(d: DaneL4, dzis: string): OpisL4 {
   let odwolanieStatus: string | null = null;
   let odwolanieKlasa: KlasaStatusu | null = null;
   if (puste(d.decyzja)) {
-    odwolanie = `O utracie zasiłku ZUS wydaje decyzję. Na odwołanie do sądu masz miesiąc od jej doręczenia. ${gdzie} Wpisz dzień doręczenia decyzji, a policzymy datę.`;
+    odwolanie = `Gdy ZUS ustali utratę zasiłku, wydaje decyzję (art. 83 ust. 1 pkt 4 ustawy o systemie ubezpieczeń społecznych); protokół kontroli jest podstawą tego postępowania (art. 68e ust. 7 ustawy zasiłkowej). Na odwołanie do sądu masz miesiąc od doręczenia decyzji. ${gdzie} Wpisz dzień doręczenia decyzji, a policzymy datę.`;
   } else {
     const t = terminOdwolania(d.decyzja!);
     // Gdy data bez przesunięcia już minęła, a przesunięta jeszcze nie, liczy się tylko ta druga (art. 115 KC).
@@ -434,7 +451,7 @@ export function opisL4(d: DaneL4, dzis: string): OpisL4 {
   }
 
   const uwagi: string[] = [
-    'Gdy zasiłek wypłaca pracodawca i uważasz, że naruszył Twoje prawa, możesz złożyć do ZUS wniosek o ustalenie uprawnień do zasiłku (art. 63 ust. 1 ustawy zasiłkowej). Spór o wynagrodzenie chorobowe to sprawa z pracodawcą w sądzie pracy (art. 476 § 1 pkt 1 KPC); roszczenie przedawnia się po 3 latach (art. 291 § 1 Kodeksu pracy).',
+    'Gdy zasiłek wypłaca pracodawca i uważasz, że naruszył Twoje prawa, możesz złożyć do ZUS wniosek o ustalenie uprawnień do zasiłku (art. 63 ust. 1 ustawy zasiłkowej). Spór o wynagrodzenie chorobowe to sprawa z pracodawcą w sądzie pracy (art. 476 § 1 pkt 1 KPC); roszczenie przedawnia się po 3 latach od dnia, w którym stało się wymagalne (art. 291 § 1 Kodeksu pracy).',
   ];
   if (b === 'dawne')
     uwagi.push(
@@ -450,7 +467,7 @@ export function opisL4(d: DaneL4, dzis: string): OpisL4 {
     brzmienieTytul: TYTUL_BRZMIENIA[b],
     cytaty: cytaty(d.czynnosc, b),
     skutek,
-    kontrola: opisKontroli(d.kontrola, b),
+    kontrola: opisKontroli(d.kontrola, b, dawnaKontrola),
     zastrzezenia,
     zastrzezeniaStatus,
     zastrzezeniaKlasa,

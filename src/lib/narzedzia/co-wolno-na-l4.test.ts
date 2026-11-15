@@ -71,8 +71,8 @@ describe('terminy', () => {
 
 describe('werdykty', () => {
   const W = (c: Czynnosc, dzien: string, wsk: 'chodzic' | 'lezec' = 'chodzic') => ocena(c, brzmienie(dzien), wsk);
-  it('praca na polecenie pracodawcy: nie wolno w obu brzmieniach, od 13.04.2026 z ust. 1a zd. 2', () => {
-    expect(W('polecenie', '2026-04-12')).toMatchObject({ werdykt: 'nie', etykieta: 'Nie wolno' });
+  it('praca na polecenie pracodawcy: dawniej ryzyko (bez definicji), od 13.04.2026 nie wolno z ust. 1a zd. 2', () => {
+    expect(W('polecenie', '2026-04-12')).toMatchObject({ werdykt: 'zalezy', etykieta: 'Ryzyko utraty zasiłku' });
     expect(W('polecenie', '2026-04-13')).toMatchObject({ werdykt: 'nie', etykieta: 'Nie wolno, także na polecenie', przepis: 'art. 17 ust. 1a ustawy zasiłkowej' });
     expect(W('polecenie', '2026-04-13').opis).toContain('istotną okolicznością nie może być polecenie pracodawcy');
   });
@@ -134,7 +134,7 @@ describe('opis wyniku', () => {
     expect(o.werdykt).toBe('Nie wolno, także na polecenie');
     expect(o.werdyktKlasa).toBe('po-terminie');
     expect(o.skutek).toContain('od 3 listopada 2026 r. do 16 listopada 2026 r. (14 dni)');
-    expect(o.skutek).toMatch(/^Tracisz prawo do zasiłku/);
+    expect(o.skutek).toMatch(/^Gdy ZUS to ustali, tracisz prawo do zasiłku/);
     expect(o.skutek).toContain('art. 92 § 3 pkt 2 Kodeksu pracy');
   });
   it('jednodniowe zwolnienie i zwolnienie przez 29 lutego', () => {
@@ -181,6 +181,21 @@ describe('opis wyniku', () => {
     expect(opisL4({ ...baza, protokol: '2026-11-14' }, DZIS).zastrzezenia).toContain('21 listopada 2026 r. to sobota; ustawa nie mówi, czy termin przesuwa się');
     expect(opisL4({ ...baza, protokol: '2026-11-10' }, DZIS).zastrzezenia).not.toContain('przesuwa');
   });
+  it('protokół sprzed 13.04.2026: dawna kontrola, bez terminu 7 dni', () => {
+    const o = opisL4({ ...baza, od: '2026-03-01', do: '2026-03-20', dzien: '2026-03-05', protokol: '2026-03-10' }, DZIS);
+    expect(o.zastrzezeniaStatus).toBeNull();
+    expect(o.zastrzezenia).toMatch(/^Protokół jest sprzed 13 kwietnia 2026 r\.: termin 7 dni z art\. 68e ust\. 4 nie dotyczy/);
+    expect(o.kontrola).toHaveLength(1);
+    expect(o.kontrola[0]).toContain('lekarza leczącego');
+    const nowa = opisL4({ ...baza, od: '2026-03-01', do: '2026-03-20', dzien: '2026-03-05', protokol: '2026-04-13' }, DZIS);
+    expect(nowa.zastrzezenia).toMatch(/^Najpóźniej 20 kwietnia 2026 r\./);
+    expect(nowa.kontrola.length).toBeGreaterThan(3);
+  });
+  it('kontrola pracodawcy: wynagrodzenie (ust. 1d) osobno od zasiłku (ust. 1a), wyjazd z decyzją z art. 59 ust. 10', () => {
+    expect(opisL4({ ...baza, kontrola: 'pracodawca' }, DZIS).kontrola[0]).toMatch(/^Każdy pracodawca może kontrolować, gdy płaci Ci wynagrodzenie chorobowe \(art\. 68 ust\. 1d/);
+    expect(opisL4({ ...baza, czynnosc: 'wyjazd' }, DZIS).warunki.join(' ')).toContain('art. 59 ust. 6 i 10');
+    expect(ocena('inna-praca', 'od2027', 'chodzic').warunki.join(' ')).toContain('umowie o dzieło');
+  });
   it('termin bez przesunięcia: jedna data', () => {
     const o = opisL4({ ...baza, dzien: '2026-11-04', decyzja: '2026-11-04' }, DZIS);
     expect(o.odwolanie).toMatch(/^Zdąż do 4 grudnia 2026 r\.: miesiąc od doręczenia decyzji\. Odwołanie wnosisz/);
@@ -219,7 +234,7 @@ describe('błędne dane', () => {
     expect(bladL4({ ...baza, protokol: DZIS, decyzja: DZIS, dzien: '2026-11-10' }, DZIS)).toBeNull();
   });
   it('werdykt bez dat bierze brzmienie z dnia czynności albo z dziś', () => {
-    expect(werdyktBezDat('polecenie', 'chodzic', 'nikt', '2026-04-12', DZIS).werdykt).toBe('Nie wolno');
+    expect(werdyktBezDat('polecenie', 'chodzic', 'nikt', '2026-04-12', DZIS).werdykt).toBe('Ryzyko utraty zasiłku');
     expect(werdyktBezDat('polecenie', 'chodzic', 'nikt', '', DZIS).werdykt).toBe('Nie wolno, także na polecenie');
     expect(werdyktBezDat('inna-praca', 'chodzic', 'nikt', '', '2027-01-05').werdykt).toBe('Tylko bez zwolnienia z tej pracy');
   });
