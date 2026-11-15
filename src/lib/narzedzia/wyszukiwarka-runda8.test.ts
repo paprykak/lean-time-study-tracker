@@ -39,3 +39,17 @@ describe('runda 9: hasła z audytu jakosc4', () => {
     expect(pierwszy(q)).toBe(slug);
   });
 });
+
+// Runda 10 (2026-11-15): zderzenie nowego algorytmu („wyszukiwarka2”) z nowymi narzędziami („luki”) po scaleniu.
+describe('runda 10: nowe narzędzia nie zabierają cudzych zapytań', () => {
+  it.each([
+    ['czy pracodawca może odmówić urlopu', 'kalkulator-urlopu'],
+    ['co wolno na l4 od psychiatry', 'co-wolno-na-l4'],
+    ['L4 od psychiatry wstecz', 'l4-wstecz'],
+    ['nadgodziny 50 czy 100', 'kalkulator-nadgodzin'],
+    ['czy muszę zostać po godzinach', 'odmowa-nadgodzin'],
+    ['L4 wstecz', 'l4-wstecz'],
+  ])('„%s” → %s na pierwszym miejscu', (q, slug) => {
+    expect(pierwszy(q)).toBe(slug);
+  });
+});

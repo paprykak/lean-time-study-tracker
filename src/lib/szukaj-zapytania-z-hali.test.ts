@@ -80,7 +80,7 @@ const ZAPYTANIA: [string, string | null, Zrodlo][] = [
   ['niewykorzystany urlop do 30 września konsekwencje', 'zalegly-urlop', 'g'],
   ['niewykorzystany urlop przy zmianie pracy', 'ekwiwalent-za-urlop', 'g'],
   ['l4 ile płatne', 'kalkulator-l4', 'g'],
-  ['l4 ile dni wstecz', null, 'g'],
+  ['l4 ile dni wstecz', 'l4-wstecz', 'g'],
   ['chorobowe ile procent', 'kalkulator-l4', 'g'],
   ['chorobowe ile płatne', 'kalkulator-l4', 'g'],
   ['zwolnienie lekarskie po ustaniu zatrudnienia', 'l4-po-zwolnieniu', 'g'],

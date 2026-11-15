@@ -221,7 +221,8 @@ describe('wyszukiwarka narzędzi: algorytm (pakiet „wyszukiwarka2”)', () => 
 
   it('nieznane słowo nie zeruje wyniku („kierownik dał mi upomnienie”)', () => {
     expect(pierwszy('kierownik dał mi upomnienie')).toBe('kara-porzadkowa');
-    expect(pierwszy('szef kazał mi zostać po godzinach nadgodziny')).toBe('kalkulator-nadgodzin');
+    // Od rundy 10 na „czy muszę zostać po godzinach” odpowiada narzędzie o odmowie nadgodzin.
+    expect(pierwszy('szef kazał mi zostać po godzinach nadgodziny')).toBe('odmowa-nadgodzin');
   });
 
   it('remis nie zależy od alfabetu: przy równych punktach wygrywa krótsza nazwa, potem kolejność rejestru', () => {

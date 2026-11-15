@@ -11,10 +11,10 @@
 // który obejmuje cały staż zatrudnienia u tego pracodawcy, liczony od dnia zawarcia umowy o pracę do daty jej
 // rozwiązania z upływem okresu wypowiedzenia” (wyrok z 11.05.1999 r., I PKN 34/99: praca od 20.03.1995 r., pismo
 // z 26.02.1998 r. z okresem miesięcznym do 31.03.1998 r.; sądy obu instancji: 3 miesiące, świadectwo do 31.05.1998 r.,
-// kasacja oddalona; teza potwierdzona w przytoczeniach, np. SO w Poznaniu, VII U 1955/14). Pakiet „orzecznictwo” powoływał
-// się też na II PK 12/11 i I PK 2/13, ale przytoczenia w innych wyrokach podają dla nich inne tezy (II PK 12/11: kolejne
-// wypowiedzenie, I PK 2/13: wliczanie wcześniejszego zatrudnienia), a SAOS był 15.11.2026 w przerwie technicznej, więc
-// strona ich nie podaje (audyt jakości 4, B-wer-1; do ręcznego sprawdzenia).
+// kasacja oddalona; teza potwierdzona w przytoczeniach, np. SO w Poznaniu, VII U 1955/14). Sprawdzone w SAOS
+// 15.11.2026 r. (orkiestrator): I PK 2/13 (id 102031) powtarza tę linię („W judykaturze Sądu Najwyższego przyjmuje się…
+// od chwili nawiązania stosunku pracy do daty jego ustania z upływem okresu wypowiedzenia”, z odesłaniem do I PKN 34/99);
+// II PK 12/11 (id 95376) dotyczy jednego odszkodowania przy kilku wypowiedzeniach i tej tezy nie zawiera, więc go nie cytujemy.
 // Dłuższy okres liczymy od tego samego doręczenia.
 import { dodajDni, koniecOkresu, pelneMiesiace } from './terminy';
 
