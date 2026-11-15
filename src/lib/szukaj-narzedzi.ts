@@ -59,7 +59,7 @@ const POMIJANE = new Set([
   'ta', 'tak', 'te', 'to', 'ten', 'w', 'we', 'z', 'za', 'ze', 'mam', 'musze', 'wolno', 'trzeba', 'u', 'mojej', 'moje', 'moim',
   'hala', 'hali', 'hale', 'robocie', 'zakladzie', 'firmie', 'firma', 'kalkulator',
   // Dopiski z podpowiedzi Google, które nie mówią, o jaką sprawę chodzi („nadgodziny kodeks pracy”, „urlop zasady”).
-  'kodeks', 'kodeksu', 'kp', 'przepisy', 'przepisow', 'zasady', 'polska', 'polsce', 'wzor',
+  'kodeks', 'kodeksu', 'kp', 'przepisy', 'przepisow', 'zasady', 'polska', 'polsce', 'wzor', 'sobie', 'moze', 'mozna', 'musi', 'jakim',
 ]);
 /** Rok w zapytaniu („płaca minimalna 2027”) zwykle nie odróżnia narzędzi, a lata są w tytułach wielu z nich. */
 const ROK = /^20[0-9]{2}$/;
@@ -94,11 +94,16 @@ const wspolnyPoczatek = (a: string, b: string) => {
   return i;
 };
 
-/** Odmiana: wspólny początek co najmniej 4 znaków, a po nim najwyżej 3 znaki w każdym słowie. */
+/**
+ * Odmiana: wspólny początek co najmniej 4 znaków, a po nim najwyżej 3 znaki w każdym słowie. Czas przeszły w pierwszej
+ * osobie ma dłuższą końcówkę, więc przy nim do 4 („zniszczyłem” ~ „zniszczony”), ale „wyrównanie” ≁ „wyrównawczy”.
+ */
+const PRZESZLY = /l[ae]m$/;
 const odmiana = (a: string, b: string) => {
   if (a.length <= 3 || b.length <= 3) return false;
   const w = wspolnyPoczatek(a, b);
-  return w >= 4 && a.length - w <= 3 && b.length - w <= 3;
+  const koncowka = PRZESZLY.test(a) || PRZESZLY.test(b) ? 4 : 3;
+  return w >= 4 && a.length - w <= koncowka && b.length - w <= koncowka;
 };
 
 /** Czy słowo zapytania pasuje do słowa z indeksu (do podświetlania: odmiana albo początek słowa). */
@@ -215,7 +220,7 @@ export function szukaj(indeks: Indeks, zapytanie: string, limit = Infinity): Wyn
     const m = new Map<number, number>();
     const krotkie = s.length <= 3;
     slownik.forEach((w, n) => {
-      const j = krotkie ? (w === s ? 1 : s === ostatnie && w.startsWith(s) ? 0.7 : 0) : jakosc(s, w, s === ostatnie);
+      const j = krotkie ? (w === s ? 1 : w.startsWith(s) ? (w.length === s.length + 1 ? 0.85 : s === ostatnie ? 0.7 : 0) : 0) : jakosc(s, w, s === ostatnie);
       if (j) m.set(n, j);
     });
     if (!m.size && s.length >= 5) slownik.forEach((w, n) => w.length >= 5 && literowka(s, w) && m.set(n, LITEROWKA));
@@ -275,7 +280,7 @@ export function szukaj(indeks: Indeks, zapytanie: string, limit = Infinity): Wyn
       if (ile > ilePytanie) [pytanie, ilePytanie] = [q.tekst, ile];
     }
     const wNazwie = dopasowania.every(({ slowa: m }) => [...x.nazwa].some((n) => m.has(n)));
-    const odPoczatku = (dopasowania[0].slowa.get(x.poczatek) ?? 0) >= 0.85 ? POCZATEK : 0;
+    const odPoczatku = dopasowania.some(({ slowa: m }) => (m.get(x.poczatek) ?? 0) >= 0.85) ? POCZATEK : 0;
     const punkty = pokrycie + FRAZA * fraza + odPoczatku + (x.wpis.o ? 0.02 : 0);
     wyniki.push({ wpis: x.wpis, punkty, fraza, pokrycie, x, pytanie: wNazwie || ilePytanie < Math.min(2, dopasowania.length) ? undefined : pytanie });
   }
