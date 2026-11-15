@@ -86,10 +86,11 @@ const faq = [
       <div aria-live="polite" aria-atomic="true">
         <p class="wynik-data" data-w="glowny">{start.glowny}</p>
         <p class="meta" data-w="glowny-opis">{start.glownyOpis}</p>
+        <p class="meta mt-1" data-w="glowny-praktycznie" hidden={!start.glownyPraktycznie}>{start.glownyPraktycznie}</p>
         <p class="status-terminu" data-w="status" data-status={start.statusKlasa}>{start.status}</p>
       </div>
       <dl class="wynik-lista">
-        {start.pozycje.map((p) => <div><dt>{p.etykieta}</dt><dd><span data-w={p.klucz}>{p.wartosc}</span><span class="block font-normal" data-w={`${p.klucz}-opis`}>{p.opis}</span></dd></div>)}
+        {start.pozycje.map((p) => <div><dt>{p.etykieta}</dt><dd><span data-w={p.klucz}>{p.wartosc}</span><span class="wynik-opis" data-w={`${p.klucz}-praktycznie`}>{p.praktycznie ?? ''}</span><span class="block font-normal" data-w={`${p.klucz}-opis`}>{p.opis}</span></dd></div>)}
       </dl>
       <div data-w="uwagi">{start.uwagi.map((u) => <p class="wynik-uwaga">{u}</p>)}</div>
       <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
@@ -181,21 +182,26 @@ const faq = [
       if (b) {
         w('glowny').textContent = '—';
         w('glowny-opis').textContent = '';
+        w('glowny-praktycznie').hidden = true;
         status.hidden = true;
         for (const k of ['wydanie', 'sprostowanie', 'odpowiedz', 'pozew', 'wydanie-sad', 'odszkodowanie']) {
           w(k).textContent = '—';
           w(`${k}-opis`).textContent = '';
+          w(`${k}-praktycznie`).textContent = '';
         }
         return;
       }
       const o = opisSwiadectwa(dane, dzis);
       pisz('glowny', o.glowny);
       pisz('glowny-opis', o.glownyOpis);
+      pisz('glowny-praktycznie', o.glownyPraktycznie);
+      w('glowny-praktycznie').hidden = !o.glownyPraktycznie;
       status.hidden = false;
       status.dataset.status = o.statusKlasa;
       pisz('status', o.status);
       for (const p of o.pozycje) {
         pisz(p.klucz, p.wartosc);
+        pisz(`${p.klucz}-praktycznie`, p.praktycznie ?? '');
         pisz(`${p.klucz}-opis`, p.opis);
       }
       const uwagi = w('uwagi');

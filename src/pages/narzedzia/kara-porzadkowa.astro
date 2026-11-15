@@ -58,6 +58,7 @@ const faq = [
       <h2 id="wynik-tytul" class="etykieta" data-w="etykieta">{o.etykieta}</h2>
       <div aria-live="polite" aria-atomic="true">
         <p class="wynik-data" data-w="sprzeciw">{o.sprzeciw}</p>
+        <p class="meta mt-1" data-w="praktycznie" hidden={!o.praktycznie}>{o.praktycznie}</p>
         <dl class="wynik-lista" data-wiersz="art115" hidden={!o.art115}>
           <div><dt>{ETYKIETA_ART_115}</dt><dd data-w="art115">{o.art115}</dd></div>
         </dl>
@@ -138,12 +139,15 @@ const faq = [
         status.hidden = true;
         form.querySelector<HTMLElement>('[data-wiersz="art115"]')!.hidden = true;
         w('zdanie').hidden = true;
+        w('praktycznie').hidden = true;
         for (const k of ['ostatni', '2tyg', '3mies', 'zatarcie']) w(k).textContent = '—';
         return;
       }
       const o = opisKary(d);
       w('etykieta').textContent = typografia(o.etykieta);
       w('sprzeciw').textContent = typografia(o.sprzeciw);
+      w('praktycznie').textContent = typografia(o.praktycznie);
+      w('praktycznie').hidden = !o.praktycznie;
       form.querySelector<HTMLElement>('[data-wiersz="art115"]')!.hidden = !o.art115;
       w('art115').textContent = typografia(o.art115 ?? '');
       w('zdanie').textContent = typografia(o.zdanie);

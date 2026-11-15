@@ -39,6 +39,7 @@ import {
   dodajLata,
   fazaTerminu,
   poprawnaData,
+  linijkaDniaWolnego,
   terminPracownika,
   zdanieArt115,
   type RodzajTerminu,
@@ -123,12 +124,16 @@ export interface PozycjaWyniku {
   wartosc: string;
   /** Objaśnienie z przepisem (zwykłą czcionką). */
   opis: string;
+  /** Linijka praktyczna pod datą terminu pracownika w sobotę albo dzień wolny (pakiet „terminy3”); zwykle pusta. */
+  praktycznie?: string;
 }
 
 export interface OpisSwiadectwa {
   /** Najbliższy termin pracownika (data albo opis) i jego status. */
   glowny: string;
   glownyOpis: string;
+  /** Linijka praktyczna pod najbliższym terminem w sobotę albo dzień wolny (puste w dzień roboczy i po tym dniu). */
+  glownyPraktycznie: string;
   status: string;
   statusKlasa: KlasaStatusu;
   pozycje: PozycjaWyniku[];
@@ -188,7 +193,7 @@ export function opisSwiadectwa(d: DaneSwiadectwa, dzis: string): OpisSwiadectwa 
   }
 
   // Terminy pracownika: wniosek o sprostowanie, pozew po odmowie albo wariant ostrożny bez odpowiedzi.
-  const terminyPracownika: { termin: TerminPracownika; nazwa: string; ostrozny?: boolean }[] = [];
+  const terminyPracownika: { termin: TerminPracownika; nazwa: string; rodzaj: RodzajTerminu; ostrozny?: boolean }[] = [];
   if (t.sprostowanie) {
     const s = stanTerminuPracownika(t.sprostowanie, dzis);
     pozycje.push({
@@ -197,8 +202,9 @@ export function opisSwiadectwa(d: DaneSwiadectwa, dzis: string): OpisSwiadectwa 
       wartosc: puste(d.wniosek) ? `${zdaz(t.sprostowanie)}: ${s.tekst}` : zdaz(t.sprostowanie),
       // Po złożeniu wniosku dopisek o art. 115 KC jest zbędny (zostaje tylko data); uwaga niżej mówi, czy zdążył.
       opis: `14 dni od otrzymania świadectwa (art. 97 § 2¹); do tego dnia wniosek powinien dotrzeć do pracodawcy.${puste(d.wniosek) ? dopiskArt115(t.sprostowanie, 'pracodawca') : ''}`,
+      praktycznie: puste(d.wniosek) ? linijkaDniaWolnego(t.sprostowanie, 'pracodawca', dzis) : '',
     });
-    if (puste(d.wniosek) && puste(d.odmowa)) terminyPracownika.push({ termin: t.sprostowanie, nazwa: 'Wniosek o sprostowanie' });
+    if (puste(d.wniosek) && puste(d.odmowa)) terminyPracownika.push({ termin: t.sprostowanie, nazwa: 'Wniosek o sprostowanie', rodzaj: 'pracodawca' });
     if (!puste(d.wniosek) && d.wniosek! > t.sprostowanie.zdazDo) {
       const wPrzesunietym = d.wniosek! <= t.sprostowanie.wedlugArt115;
       uwagi.push(
@@ -229,8 +235,9 @@ export function opisSwiadectwa(d: DaneSwiadectwa, dzis: string): OpisSwiadectwa 
       etykieta: 'Pozew o sprostowanie',
       wartosc: `${zdaz(t.pozew)}: ${s.tekst}`,
       opis: `14 dni od zawiadomienia o odmowie, do sądu pracy (art. 97 § 2¹).${dopiskArt115(t.pozew, 'sad')}`,
+      praktycznie: linijkaDniaWolnego(t.pozew, 'sad', dzis),
     });
-    terminyPracownika.push({ termin: t.pozew, nazwa: 'Pozew o sprostowanie' });
+    terminyPracownika.push({ termin: t.pozew, nazwa: 'Pozew o sprostowanie', rodzaj: 'sad' });
   } else if (t.pozewBezOdpowiedzi) {
     // Ostrożna data nie jest terminem z przepisu (art. 97 § 2¹ zd. 3, art. 97¹ § 3–4): po jej upływie pozew nadal jest możliwy.
     const s = fazaTerminu(t.pozewBezOdpowiedzi, dzis).faza === 'po-terminie' ? OSTROZNA_MINELA : stanTerminuPracownika(t.pozewBezOdpowiedzi, dzis);
@@ -239,8 +246,9 @@ export function opisSwiadectwa(d: DaneSwiadectwa, dzis: string): OpisSwiadectwa 
       etykieta: 'Pozew o sprostowanie',
       wartosc: `ostrożnie ${zdaz(t.pozewBezOdpowiedzi)}: ${s.tekst}`,
       opis: `Gdy pracodawca nie zawiadomi o odmowie, przepis nie podaje terminu: pozew wnosi się do sądu pracy (art. 97 § 2¹), w każdym czasie przed przedawnieniem (art. 97¹ § 3–4). Ostrożnie liczymy 14 dni od końca terminu pracodawcy, jak po odmowie.${dopiskArt115(t.pozewBezOdpowiedzi, 'sad')}`,
+      praktycznie: linijkaDniaWolnego(t.pozewBezOdpowiedzi, 'sad', dzis),
     });
-    terminyPracownika.push({ termin: t.pozewBezOdpowiedzi, nazwa: 'Pozew o sprostowanie (ostrożnie)', ostrozny: true });
+    terminyPracownika.push({ termin: t.pozewBezOdpowiedzi, nazwa: 'Pozew o sprostowanie (ostrożnie)', rodzaj: 'sad', ostrozny: true });
   } else {
     pozycje.push({ klucz: 'pozew', etykieta: 'Pozew o sprostowanie', wartosc: '14 dni od odmowy', opis: 'Termin od zawiadomienia o odmowie sprostowania; gdy pracodawca nie zawiadomi, pozew wnosi się do sądu pracy bez terminu w przepisie (art. 97 § 2¹).' });
   }
@@ -258,6 +266,7 @@ export function opisSwiadectwa(d: DaneSwiadectwa, dzis: string): OpisSwiadectwa 
           etykieta: 'Gdy nie wyda świadectwa',
           wartosc: `pozew ${zdaz(t.przedawnienie)}${dzis > t.przedawnienie.wedlugArt115 ? ': termin minął' : ''}`,
           opis: `Pozew o zobowiązanie pracodawcy do wydania świadectwa, w każdym czasie przed przedawnieniem (art. 97¹ § 1 i 3): 3 lata (art. 291 § 1), liczone od ostatniego dnia umowy. Gdy pracodawca nie istnieje albo z innych przyczyn pozew przeciw niemu jest niemożliwy, pozew o ustalenie prawa do świadectwa (art. 97¹ § 2).${dopiskArt115(t.przedawnienie, 'przedawnienie')}`,
+          praktycznie: linijkaDniaWolnego(t.przedawnienie, 'przedawnienie', dzis),
         },
   );
 
@@ -280,6 +289,7 @@ export function opisSwiadectwa(d: DaneSwiadectwa, dzis: string): OpisSwiadectwa 
   // Najbliższy termin pracownika, który jeszcze nie minął; gdy wszystkie minęły, ostatni.
   let glowny: string;
   let glownyOpis: string;
+  let glownyPraktycznie = '';
   let status: string;
   let statusKlasa: KlasaStatusu;
   if (terminyPracownika.length) {
@@ -290,6 +300,7 @@ export function opisSwiadectwa(d: DaneSwiadectwa, dzis: string): OpisSwiadectwa 
     glownyOpis = wybrany.termin.rozne
       ? `${wybrany.nazwa}: zdąż do tego dnia; ${ETYKIETA_ART_115.charAt(0).toLowerCase()}${ETYKIETA_ART_115.slice(1)}: ${dataPoPolsku(wybrany.termin.wedlugArt115)}`
       : `${wybrany.nazwa}: ostatni dzień`;
+    glownyPraktycznie = linijkaDniaWolnego(wybrany.termin, wybrany.rodzaj, dzis);
     status = wielka(s.tekst);
     statusKlasa = s.klasa;
   } else if (t.wydanie) {
@@ -315,7 +326,7 @@ export function opisSwiadectwa(d: DaneSwiadectwa, dzis: string): OpisSwiadectwa 
     status = 'Wniosek możesz złożyć w każdym czasie';
     statusKlasa = 'w-terminie';
   }
-  return { glowny, glownyOpis, status, statusKlasa, pozycje, uwagi };
+  return { glowny, glownyOpis, glownyPraktycznie, status, statusKlasa, pozycje, uwagi };
 }
 
 /** Co musi być w świadectwie (art. 97 § 2 Kp, § 2 ust. 1–2 rozporządzenia): lista do sprawdzenia własnego świadectwa. */

@@ -100,6 +100,7 @@ const faq = [
       <div aria-live="polite" aria-atomic="true">
         <p class="wynik-kwota" data-w="glowny">{o.glowny}</p>
         <p class="meta" data-w="opis">{o.opis}</p>
+        <p class="meta mt-1" data-w="praktycznie" hidden={!o.praktycznie}>{o.praktycznie}</p>
         <p class="status-terminu" data-w="status" data-status={o.status}>{o.statusTekst}</p>
       </div>
       <p class="meta mt-2" data-w="zdanie" hidden={!o.zdanie}>{o.zdanie}</p>
@@ -270,6 +271,7 @@ const faq = [
         w('glowny').textContent = '—';
         w('opis').textContent = '';
         w('zdanie').hidden = true;
+        w('praktycznie').hidden = true;
         status.hidden = true;
         w('lata').replaceChildren();
         uwaga('urlop').hidden = false;
@@ -280,6 +282,8 @@ const faq = [
       pisz('etykieta', o.etykieta);
       pisz('glowny', o.glowny);
       pisz('opis', o.opis);
+      pisz('praktycznie', o.praktycznie);
+      w('praktycznie').hidden = !o.praktycznie;
       pisz('zdanie', o.zdanie);
       w('zdanie').hidden = !o.zdanie;
       status.hidden = false;

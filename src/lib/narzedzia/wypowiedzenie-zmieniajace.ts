@@ -28,6 +28,7 @@ import {
   dniMiedzy,
   dodajDni,
   fazaTerminu,
+  linijkaDniaWolnego,
   poprawnaData,
   terminPracownika,
   zdanieArt115,
@@ -114,6 +115,8 @@ export interface OpisZmieniajacego {
   odmowa: string;
   /** Data odmowy według art. 115 KC, gdy inna niż `odmowa`. */
   odmowaArt115: string | null;
+  /** Linijka praktyczna pod datą odmowy w sobotę albo dzień wolny (puste w dzień roboczy). */
+  odmowaPraktycznie: string;
   odmowaZdanie: string;
   status: string;
   statusKlasa: 'w-terminie' | 'wkrotce' | 'pilne' | 'po-terminie';
@@ -127,6 +130,7 @@ export interface OpisZmieniajacego {
   odwolanieArt115Etykieta: string;
   odwolanie: string;
   odwolanieArt115: string | null;
+  odwolaniePraktycznie: string;
   odwolanieZdanie: string;
   uwaga: string;
 }
@@ -154,6 +158,8 @@ export function opisZmieniajacego(r: WypowiedzenieZmieniajace, dzis: string): Op
     odmowaEtykieta: r.odmowa.rozne ? `Odmowa: ${ETYKIETA_ZDAZ_DO.toLowerCase()}` : 'Odmowę złóż najpóźniej',
     odmowa: dataPoPolsku(r.odmowa.zdazDo),
     odmowaArt115: r.odmowa.rozne ? dataPoPolsku(r.odmowa.wedlugArt115) : null,
+    /** Linijki praktyczne pod datami w sobotę albo dzień wolny (pakiet „terminy3”), także przy odmowie bez pouczenia. */
+    odmowaPraktycznie: linijkaDniaWolnego(r.odmowa, 'pracodawca', dzis),
     odmowaZdanie: zdanieOdmowy && zdanieOdmowy.replace(ZDANIE_ART_115.pracodawca, ODMOWA_ART_115),
     status,
     statusKlasa,
@@ -166,6 +172,7 @@ export function opisZmieniajacego(r: WypowiedzenieZmieniajace, dzis: string): Op
     odwolanieArt115Etykieta: `Odwołanie: ${ETYKIETA_ART_115.charAt(0).toLowerCase()}${ETYKIETA_ART_115.slice(1)}`,
     odwolanie: dataPoPolsku(r.odwolanie.zdazDo),
     odwolanieArt115: r.odwolanie.rozne ? dataPoPolsku(r.odwolanie.wedlugArt115) : null,
+    odwolaniePraktycznie: linijkaDniaWolnego(r.odwolanie, 'sad', dzis),
     odwolanieZdanie: zdanieArt115(r.odwolanie, 'sad'),
     uwaga: r.pouczenie
       ? UWAGA_POUCZENIE

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { BEZ_PRZESUNIECIA, ETYKIETA_ART_115, ETYKIETA_ZDAZ_DO, ZDANIE_ART_115, dzienWolnyArt115, fazaTerminu, zostaloDni, terminPracownika, zdanieArt115 } from './terminy';
+import { dzienRoboczy, linijkaDniaWolnego, ostatniDzienRoboczyPrzed, wDniu } from './terminy';
 import { dataPoPolsku, dniMiedzy, dodajDni, dodajLata, dodajMiesiace, dzisWPolsce, ileDni, koniecOkresu, pelneMiesiace, poprawnaData } from './terminy';
 import { plikIcs, wyzwalacz } from './kalendarz-ics';
 
@@ -404,4 +405,70 @@ describe('fazaTerminu', () => {
     ['2026-11-17', 'po-terminie', -1],
   ])('%s: %s (%i)', (dzis, faza, dni) => expect(fazaTerminu(t, dzis)).toEqual({ faza, dni }));
   it('bez przesunięcia: od razu po terminie', () => expect(fazaTerminu(terminPracownika('2026-11-16'), '2026-11-17')).toEqual({ faza: 'po-terminie', dni: -1 }));
+});
+
+// Linijka praktyczna pod „Zdąż do” w dzień wolny (pakiet „terminy3”). Oczekiwane daty: raporty/terminy3/linijka.py
+// (niezależny kalendarz z raporty/terminy2/swieta.py, sobota zawsze wolna, 12.11.2018 r.).
+describe('linijkaDniaWolnego i ostatni dzień roboczy', () => {
+  const sp = (t: string) => t.replace(/\s/g, ' ');
+  it.each([
+    ['2026-12-24', '2026-12-23', 'w środę'],
+    ['2026-12-26', '2026-12-23', 'w środę'],
+    ['2026-12-27', '2026-12-23', 'w środę'],
+    ['2027-01-01', '2026-12-31', 'w czwartek'],
+    ['2027-01-02', '2026-12-31', 'w czwartek'],
+    ['2027-01-06', '2027-01-05', 'we wtorek'],
+    ['2026-05-01', '2026-04-30', 'w czwartek'],
+    ['2026-05-03', '2026-04-30', 'w czwartek'],
+    ['2027-05-03', '2027-04-30', 'w piątek'],
+    ['2027-03-28', '2027-03-26', 'w piątek'],
+    ['2027-03-29', '2027-03-26', 'w piątek'],
+    ['2026-04-05', '2026-04-03', 'w piątek'],
+    ['2026-04-06', '2026-04-03', 'w piątek'],
+    ['2016-12-31', '2016-12-30', 'w piątek'],
+    ['2017-01-07', '2017-01-05', 'w czwartek'],
+    ['2016-12-24', '2016-12-23', 'w piątek'],
+    ['2025-12-24', '2025-12-23', 'we wtorek'],
+    ['2018-11-12', '2018-11-09', 'w piątek'],
+    ['2026-11-01', '2026-10-30', 'w piątek'],
+    ['2026-12-13', '2026-12-11', 'w piątek'],
+    ['2027-05-16', '2027-05-14', 'w piątek'],
+    ['2027-05-27', '2027-05-26', 'w środę'],
+    ['2021-01-02', '2020-12-31', 'w czwartek'],
+    ['2028-01-01', '2027-12-31', 'w piątek'],
+  ])('%s to dzień wolny: ostatni dzień roboczy przed nim %s (%s)', (data, roboczy, dzien) => {
+    expect(dzienRoboczy(data)).toBe(false);
+    expect(ostatniDzienRoboczyPrzed(data)).toBe(roboczy);
+    expect(sp(wDniu(roboczy))).toBe(`${dzien} ${sp(dataPoPolsku(roboczy))}`);
+    expect(sp(linijkaDniaWolnego({ zdazDo: data }, 'pracodawca'))).toContain(`czyli ${dzien} ${sp(dataPoPolsku(roboczy))}: liczy się dzień`);
+  });
+  it('dzień roboczy: bez linijki (Wigilia przed 2025 r., zwykły piątek)', () => {
+    for (const d of ['2024-12-24', '2026-12-11', '2026-12-23', '2016-12-30'])
+      for (const r of ['pracodawca', 'sad', 'przedawnienie'] as const) expect(linijkaDniaWolnego({ zdazDo: d }, r)).toBe('');
+    expect(dzienRoboczy('2024-12-24')).toBe(true);
+  });
+  it('sobota przed 2017 r.: art. 115 KC jej nie przesuwa, ale linijka jest (biuro i tak bywa nieczynne)', () => {
+    expect(terminPracownika('2016-12-31').rozne).toBe(false);
+    expect(sp(linijkaDniaWolnego(terminPracownika('2016-12-31'), 'pracodawca'))).toBe(
+      'To sobota. Pismo do pracodawcy złóż najpóźniej w ostatnim dniu roboczym przed tą datą, czyli w piątek 30 grudnia 2016 r.: liczy się dzień, w którym do niego dotrze (art. 61 § 1 Kodeksu cywilnego).',
+    );
+    expect(terminPracownika('2017-01-07')).toMatchObject({ rozne: true, wedlugArt115: '2017-01-09' });
+  });
+  it('pełne brzmienie: pismo do sądu i przedawnienie (Wielkanoc, Boże Narodzenie, 12.11.2018 r.)', () => {
+    expect(sp(linijkaDniaWolnego({ zdazDo: '2027-03-28' }, 'sad'))).toBe(
+      'To dzień wolny od pracy (Wielkanoc). Tego dnia możesz jeszcze nadać pismo w placówce pocztowej operatora wyznaczonego (Poczty Polskiej), jeśli jest czynna: to tak, jakby wnieść je do sądu (art. 165 § 2 Kodeksu postępowania cywilnego).',
+    );
+    expect(sp(linijkaDniaWolnego({ zdazDo: '2026-12-25' }, 'przedawnienie'))).toBe(
+      'To dzień wolny od pracy (Boże Narodzenie). Tego dnia możesz jeszcze nadać pozew w placówce pocztowej operatora wyznaczonego (Poczty Polskiej), jeśli jest czynna: to tak, jakby wnieść go do sądu (art. 165 § 2 Kodeksu postępowania cywilnego). Nie odkładaj go na następny dzień roboczy: przy przedawnieniu przesunięcie z art. 115 Kodeksu cywilnego jest wątpliwe.',
+    );
+    expect(linijkaDniaWolnego({ zdazDo: '2018-11-12' }, 'sad')).toMatch(/^To dzień wolny od pracy\. /);
+    expect(linijkaDniaWolnego({ zdazDo: '2026-12-13' }, 'sad')).toMatch(/^To niedziela\. /);
+  });
+  it('błędna data to RangeError', () => expect(() => ostatniDzienRoboczyPrzed('2026-02-30')).toThrow(RangeError));
+  it('dzienWolnyArt115 bez zmian po wydzieleniu wspólnej reguły (sobota od 2017 r.)', () => {
+    expect(dzienWolnyArt115('2016-12-31')).toBeNull();
+    expect(dzienWolnyArt115('2017-01-07')).toBe('sobota');
+    expect(dzienWolnyArt115('2018-11-12')).toBe('dzień wolny 12 listopada 2018 r.');
+    expect(dzienWolnyArt115('2016-12-25')).toBe('Boże Narodzenie');
+  });
 });

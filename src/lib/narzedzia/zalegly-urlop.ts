@@ -35,7 +35,7 @@
 //    (pakiet „terminy”, 2026-11-15), czyli „zdąż do” (`data`) i ostatni dzień według art. 115 KC (`art115`). Termin
 //    udzielenia urlopu (30 września, art. 168) to obowiązek pracodawcy: bez przesunięcia.
 import { odmiana } from '../redakcja';
-import { ETYKIETA_ART_115, UWAGA_ART_115_LISTA, dataPoPolsku, dniMiedzy, dodajDni, dodajLata, dodajMiesiace, ileDni, poprawnaData, terminPracownika, zdanieArt115 } from './terminy';
+import { ETYKIETA_ART_115, UWAGA_ART_115_LISTA, dataPoPolsku, dniMiedzy, dodajDni, dodajLata, dodajMiesiace, ileDni, linijkaDniaWolnego, poprawnaData, terminPracownika, zdanieArt115 } from './terminy';
 
 export const LATA_PRZEDAWNIENIA = 3;
 // Art. 168 w brzmieniu z „30 września” obowiązuje od 1.01.2012 r. (Dz.U. 2011 nr 232 poz. 1378, art. 1 pkt 1 i art. 29):
@@ -232,6 +232,8 @@ const stan = (t: Termin) =>
         : `Zostało: ${odmiana(t.zostalo, DNI)}`;
 /** Jedno zdanie o art. 115 KC pod głównym terminem przedawnienia (puste, gdy koniec to dzień roboczy). */
 const zdanie = (t: Termin) => zdanieArt115(terminPracownika(t.data), 'przedawnienie');
+/** Linijka praktyczna pod głównym terminem w sobotę albo dzień wolny, dopóki ten dzień nie minął (pakiet „terminy3”). */
+const praktycznie = (t: Termin) => (t.zostalo >= 0 ? linijkaDniaWolnego({ zdazDo: t.data }, 'przedawnienie') : '');
 /** Termin udzielenia (art. 168) to obowiązek pracodawcy: jedno zdanie, dlaczego bez przesunięcia. */
 export const UDZIELENIE_BEZ_PRZESUNIECIA = '30 września to data z przepisu dla pracodawcy, a nie termin liczony od zdarzenia, więc podajemy ją bez przesunięcia z soboty i dnia wolnego.';
 const przedawnienieRoku = (t: Termin) =>
@@ -251,6 +253,8 @@ export interface Opis {
   statusTekst: string;
   /** Jedno zdanie o art. 115 KC, gdy główna data wypada w sobotę albo dzień wolny. */
   zdanie: string;
+  /** Linijka praktyczna pod głównym terminem w sobotę albo dzień wolny (puste w dzień roboczy i po tym dniu). */
+  praktycznie: string;
   lata: OpisRoku[];
 }
 
@@ -289,6 +293,7 @@ export function opis(w: Wynik): Opis {
       status: e.przedawnienie.status,
       statusTekst: stan(e.przedawnienie),
       zdanie: zdanie(e.przedawnienie),
+      praktycznie: praktycznie(e.przedawnienie),
       lata,
     };
   }
@@ -301,6 +306,7 @@ export function opis(w: Wynik): Opis {
     status: p.status,
     statusTekst: stan(p),
     // Ostrzeżenie także wtedy, gdy główna data to dzień roboczy, a datę z art. 115 KC ma któryś wiersz (audyt jakości 4, C-3).
+    praktycznie: praktycznie(p),
     zdanie: zdanie(p) || (w.lata.some((r) => r.przedawnienie.art115 || r.przedawnieniePozniej.art115) ? UWAGA_ART_115_LISTA : ''),
     lata,
   };

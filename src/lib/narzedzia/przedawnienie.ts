@@ -12,7 +12,7 @@
 //   że roszczenie jest prawdopodobnie przedawnione: przesunięcie przy przedawnieniu jest wątpliwe (`ZDANIE_ART_115.przedawnienie`).
 import { odmiana } from '../redakcja';
 import { terminyWyplaty, type DzienWyplaty } from './termin-wyplaty';
-import { ETYKIETA_ART_115, UWAGA_ART_115_LISTA, dataPoPolsku, dniMiedzy, dodajLata, fazaTerminu, ileDni, terminPracownika, zdanieArt115 } from './terminy';
+import { ETYKIETA_ART_115, UWAGA_ART_115_LISTA, dataPoPolsku, dniMiedzy, dodajLata, fazaTerminu, ileDni, linijkaDniaWolnego, terminPracownika, zdanieArt115 } from './terminy';
 
 export const LATA_PRZEDAWNIENIA = 3;
 
@@ -42,6 +42,8 @@ export function opisPrzedawnienia(p: { wymagalne: string; koniec: string; art115
       ? `${co} z ${dataPoPolsku(p.wymagalne)}: zdąż do ${dataPoPolsku(p.koniec)}; ${ETYKIETA_ART_115.charAt(0).toLowerCase()}${ETYKIETA_ART_115.slice(1)}: ${dataPoPolsku(p.art115)}`
       : `${co} z ${dataPoPolsku(p.wymagalne)} przedawnia się z końcem dnia ${dataPoPolsku(p.koniec)}`,
     zdanie: zdanieArt115(t, 'przedawnienie'),
+    /** Linijka praktyczna pod datą, gdy koniec bez przesunięcia wypada w sobotę albo dzień wolny i jeszcze nie minął (pakiet „terminy3”). */
+    praktycznie: linijkaDniaWolnego(t, 'przedawnienie', naDzien),
     status:
       f.faza === 'po-terminie'
         ? `Termin minął ${odmiana(-f.dni, DNI)} temu`

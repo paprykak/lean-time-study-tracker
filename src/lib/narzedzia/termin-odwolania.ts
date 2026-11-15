@@ -66,7 +66,7 @@ export function opisOdwolania(zdarzenie: string, sprawa: Sprawa, dzis: string): 
     etykieta: t.rozne ? ETYKIETA_ZDAZ_DO : 'Ostatni dzień',
     glowny: dataPoPolsku(t.zdazDo),
     art115: t.rozne ? dataPoPolsku(t.wedlugArt115) : null,
-    praktycznie: linijkaDniaWolnego(t, doSadu ? 'sad' : 'pracodawca'),
+    praktycznie: linijkaDniaWolnego(t, doSadu ? 'sad' : 'pracodawca', dzis),
     zdanie: zdanieArt115(t, doSadu ? 'sad' : 'pracodawca'),
     status,
     statusKlasa,

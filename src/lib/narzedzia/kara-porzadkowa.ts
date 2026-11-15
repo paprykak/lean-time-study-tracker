@@ -9,7 +9,7 @@
 // po przesunięciu, wynik mówi, że pracodawca może się powołać na art. 115 KC (`wOknieArt115`). Zatarcie (art. 113 § 1)
 // to koniec okresu, a nie termin do czynności, więc też bez przesunięcia.
 import { doGrosza } from './dodatek-nocny';
-import { BEZ_PRZESUNIECIA, ETYKIETA_ZDAZ_DO, dataPoPolsku, dodajDni, dodajLata, dodajMiesiace, terminPracownika, zdanieArt115 } from './terminy';
+import { BEZ_PRZESUNIECIA, ETYKIETA_ZDAZ_DO, dataPoPolsku, dodajDni, dodajLata, dodajMiesiace, linijkaDniaWolnego, terminPracownika, zdanieArt115 } from './terminy';
 
 export interface DaneKary {
   naruszenie: string;
@@ -44,6 +44,8 @@ export function opisKary(d: DaneKary) {
     etykieta: r.sprzeciw.rozne ? `Sprzeciw do pracodawcy: ${ETYKIETA_ZDAZ_DO.toLowerCase()}` : 'Sprzeciw do pracodawcy najpóźniej',
     sprzeciw: dataPoPolsku(r.sprzeciw.zdazDo),
     art115: r.sprzeciw.rozne ? dataPoPolsku(r.sprzeciw.wedlugArt115) : null,
+    /** Linijka praktyczna pod datą sprzeciwu w sobotę albo dzień wolny (pakiet „terminy3”). */
+    praktycznie: linijkaDniaWolnego(r.sprzeciw, 'pracodawca'),
     zdanie: zdanieArt115(r.sprzeciw, 'pracodawca'),
     status: r.wTerminie
       ? 'Kara nałożona w terminie'

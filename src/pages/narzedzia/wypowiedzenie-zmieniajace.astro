@@ -68,6 +68,7 @@ const faq = [
       <h2 id="wynik-tytul" class="etykieta" data-w="odmowa-etykieta">{o.odmowaEtykieta}</h2>
       <div aria-live="polite" aria-atomic="true">
         <p class="wynik-data" data-w="odmowa">{o.odmowa}</p>
+        <p class="meta mt-1" data-w="odmowa-praktycznie" hidden={!o.odmowaPraktycznie}>{o.odmowaPraktycznie}</p>
         <p class="status-terminu" data-w="status" data-status={o.statusKlasa}>{o.status}</p>
         <dl class="wynik-lista" data-wiersz="odmowa-art115" hidden={!o.odmowaArt115}>
           <div><dt>{ETYKIETA_ART_115}</dt><dd data-w="odmowa-art115">{o.odmowaArt115}</dd></div>
@@ -81,7 +82,7 @@ const faq = [
         <div><dt>Gdy przyjmiesz: nowe warunki od</dt><dd data-w="nowe">{o.nowe}</dd></div>
         <div><dt>Gdy odmówisz: ostatni dzień umowy</dt><dd data-w="ostatni">{o.koniec}</dd></div>
         <div><dt>Połowa od początku pełnego tygodnia albo miesiąca</dt><dd data-w="wariant-b">{o.wariantB}</dd></div>
-        <div><dt data-w="odwolanie-etykieta">{o.odwolanieEtykieta}</dt><dd data-w="odwolanie">{o.odwolanie}</dd></div>
+        <div><dt data-w="odwolanie-etykieta">{o.odwolanieEtykieta}</dt><dd><span data-w="odwolanie">{o.odwolanie}</span><span class="wynik-opis" data-w="odwolanie-praktycznie" hidden={!o.odwolaniePraktycznie}>{o.odwolaniePraktycznie}</span></dd></div>
         <div data-wiersz="odwolanie-art115" hidden={!o.odwolanieArt115}><dt>{o.odwolanieArt115Etykieta}</dt><dd data-w="odwolanie-art115">{o.odwolanieArt115}</dd></div>
       </dl>
       <p class="meta mt-2" data-w="odwolanie-zdanie" hidden={!o.odwolanieZdanie}>{o.odwolanieZdanie}</p>
@@ -195,7 +196,7 @@ const faq = [
     const wiersz = (k: string) => form.querySelector<HTMLElement>(`[data-wiersz="${k}"]`)!;
     const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
     const POLA = ['odmowa', 'okres', 'koniec', 'nowe', 'ostatni', 'wariant-b', 'odwolanie'];
-    const ZDANIA = ['odmowa-zdanie', 'odwolanie-zdanie'];
+    const ZDANIA = ['odmowa-zdanie', 'odwolanie-zdanie', 'odmowa-praktycznie', 'odwolanie-praktycznie'];
     const przelicz = () => {
       const start = el('start').value;
       const doreczenie = el('doreczenie').value;
@@ -223,6 +224,8 @@ const faq = [
       const pisz = (k: string, t: string) => (w(k).textContent = typografia(t));
       pisz('odmowa-etykieta', o.odmowaEtykieta);
       pisz('odmowa', o.odmowa);
+      pisz('odmowa-praktycznie', o.odmowaPraktycznie);
+      w('odmowa-praktycznie').hidden = !o.odmowaPraktycznie;
       wiersz('odmowa-art115').hidden = !o.odmowaArt115;
       pisz('odmowa-art115', o.odmowaArt115 ?? '');
       pisz('odmowa-zdanie', o.odmowaZdanie);
@@ -236,6 +239,8 @@ const faq = [
       pisz('wariant-b', o.wariantB);
       pisz('odwolanie-etykieta', o.odwolanieEtykieta);
       pisz('odwolanie', o.odwolanie);
+      pisz('odwolanie-praktycznie', o.odwolaniePraktycznie);
+      w('odwolanie-praktycznie').hidden = !o.odwolaniePraktycznie;
       wiersz('odwolanie-art115').hidden = !o.odwolanieArt115;
       pisz('odwolanie-art115', o.odwolanieArt115 ?? '');
       pisz('odwolanie-zdanie', o.odwolanieZdanie);

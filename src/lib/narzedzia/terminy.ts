@@ -231,11 +231,12 @@ export const ZDANIE_ART_115: Record<RodzajTerminu, string> = {
  * - `przedawnienie`: jak `sad` (pozew przerywa bieg przedawnienia), z ostrzeżeniem z konwencji: przesunięcie z art. 115 KC
  *   jest przy przedawnieniu wątpliwe.
  * Sobota przed 1.01.2017 r. też dostaje linijkę: art. 115 KC jej wtedy nie przesuwał, ale biuro i tak bywa nieczynne.
+ * Z `dzis` po dniu „Zdąż do” linijki nie ma: rada o tym dniu jest już nieaktualna, a stan terminu podaje status.
  * Ten sam tekst w HTML ze strony i w skrypcie przeglądarki (skrypt przepuszcza go jeszcze przez typografia()).
  */
-export function linijkaDniaWolnego(t: Pick<TerminPracownika, 'zdazDo'>, rodzaj: RodzajTerminu): string {
+export function linijkaDniaWolnego(t: Pick<TerminPracownika, 'zdazDo'>, rodzaj: RodzajTerminu, dzis?: string): string {
   const powod = dzienWolny(t.zdazDo);
-  if (!powod) return '';
+  if (!powod || (dzis !== undefined && dzis > t.zdazDo)) return '';
   const dzien = `To ${powod === 'sobota' || powod === 'niedziela' ? powod : JEDNORAZOWE_WOLNE[t.zdazDo] ? 'dzień wolny od pracy' : `dzień wolny od pracy (${powod})`}.`;
   const poczta = (pismo: string) =>
     `Tego dnia możesz jeszcze nadać ${pismo} w placówce pocztowej operatora wyznaczonego (Poczty Polskiej), jeśli jest czynna: to tak, jakby wnieść ${pismo === 'pozew' ? 'go' : 'je'} do sądu (art. 165 § 2 Kodeksu postępowania cywilnego).`;

@@ -81,11 +81,12 @@ const faq = [
       <div aria-live="polite" aria-atomic="true">
         <p class="wynik-data" data-w="najstarsza">za {miesiac(pierwsza.za)}</p>
         <p class="meta" data-w="opis">{o.opis}</p>
+        <p class="meta mt-1" data-w="praktycznie" hidden={!o.praktycznie}>{o.praktycznie}</p>
         <p class="status-terminu" data-w="status" data-status={pierwsza.status}>{o.status}</p>
       </div>
       <p class="meta mt-2" data-w="zdanie" hidden={!o.zdanie}>{o.zdanie}</p>
       <dl class="wynik-lista">
-        <div data-wiersz="inna" hidden><dt>Inna należność: koniec przedawnienia</dt><dd data-w="inna"></dd></div>
+        <div data-wiersz="inna" hidden><dt>Inna należność: koniec przedawnienia</dt><dd><span data-w="inna"></span><span class="wynik-opis" data-w="inna-praktycznie" hidden></span></dd></div>
       </dl>
       <h3 class="etykieta mt-5">Kolejne terminy</h3>
       <ul class="mt-2 grid gap-1 text-[0.9375rem]" data-w="lista">
@@ -159,6 +160,7 @@ const faq = [
         w('najstarsza').textContent = '—';
         w('opis').textContent = '';
         w('zdanie').hidden = true;
+        w('praktycznie').hidden = true;
         status.hidden = true;
         w('lista').replaceChildren();
         w('uwaga-listy').hidden = true;
@@ -172,6 +174,8 @@ const faq = [
         const o = opisPrzedawnienia({ wymagalne: p.wymagalna, koniec: p.koniec, art115: p.art115 }, naDzien);
         pisz('najstarsza', `za ${miesiac(p.za)}`);
         pisz('opis', o.opis);
+        pisz('praktycznie', o.praktycznie);
+        w('praktycznie').hidden = !o.praktycznie;
         pisz('zdanie', o.zdanie);
         w('zdanie').hidden = !o.zdanie;
         status.dataset.status = p.status;
@@ -180,6 +184,7 @@ const faq = [
         w('najstarsza').textContent = '—';
         pisz('opis', 'W tym dniu nie ma jeszcze wymagalnej wypłaty.');
         w('zdanie').hidden = true;
+        w('praktycznie').hidden = true;
       }
       w('lista').replaceChildren(
         ...lista.slice(1, 6).map((x) => {
@@ -195,7 +200,10 @@ const faq = [
       wiersz.hidden = !inna;
       if (inna) {
         const r = przedawnienie(inna, naDzien);
-        pisz('inna', opisPrzedawnienia(r, naDzien).inna);
+        const oi = opisPrzedawnienia(r, naDzien);
+        pisz('inna', oi.inna);
+        pisz('inna-praktycznie', oi.praktycznie);
+        w('inna-praktycznie').hidden = !oi.praktycznie;
       }
     };
     form.addEventListener('input', przelicz);
