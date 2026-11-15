@@ -108,3 +108,15 @@ test('FAQ: kary pieniężne tylko z art. 108; link do kary porządkowej (audyt j
   await expect(tresc).toContainText(/kar\spieniężnych\sz\sart\.\s108,\sktóre\swolno\snałożyć\stylko\sza\snaruszenie\sprzepisów\sBHP/);
   await expect(page.locator('a[href="/narzedzia/kara-porzadkowa"]')).toHaveCount(1);
 });
+
+test('koniec przedawnienia w sobotę: druga data z art. 115 KC i spór (III CZP 21/23 z przytoczeń)', async ({ page }) => {
+  // Szkoda i wiedza 21.11.2025 → rok do soboty 21.11.2026; po przesunięciu poniedziałek 23.11.2026 (swieta.py).
+  await page.getByLabel('Dzień szkody').fill('2025-11-21');
+  await page.getByLabel('Pracodawca wie od').fill('2025-11-21');
+  await expect(page.locator('[data-w="przedawnienie"]')).toHaveText(/^21\slistopada\s2026\sr\.$/);
+  await expect(page.locator('[data-w="status"]')).toHaveText(/^Pracodawcy\szostało:\s7\sdni, a\smoże do\s23\slistopada\s2026\sr\.$/);
+  const opis = page.locator('[data-w="przedawnienie-opis"]');
+  await expect(opis).toContainText(/21\slistopada\s2026\sr\. to\ssobota\. Czy koniec przedawnienia przesuwa się/);
+  await expect(opis).toContainText(/III\sCZP\s21\/23, znanej nam tylko z\sprzytoczeń/);
+  await expect(opis).toContainText(/trwa do\s23\slistopada\s2026\sr\. Dla Ciebie bezpieczniejsza jest ta późniejsza data/);
+});

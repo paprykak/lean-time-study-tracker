@@ -23,7 +23,10 @@
 //   w przedawnienie.ts (29 lutego → 28 lutego). Roszczenie jest przeciw pracownikowi, więc bezpieczna jest data późniejsza:
 //   status („minął”, kolor; „zostało” pokazuje obie daty) liczymy od dnia po przesunięciu z soboty i dnia wolnego (art. 115 KC), a przy winie
 //   umyślnej od końca roku z art. 118 zd. 2 KC (także dla 20 lat z art. 442¹ § 2); oba przesunięcia nie są przesądzone,
-//   więc strona podaje obie daty;
+//   więc strona podaje obie daty. Konwencja dla przedawnienia (terminy.ts, DECYZJE.md 2026-11-15): druga data z art. 115 KC
+//   z ostrzeżeniem, że przesunięcie jest sporne (`SPOR_ART_115`, uchwała III CZP 21/23 znana z przytoczeń); tu, inaczej niż
+//   przy roszczeniu pracownika, późniejsza data jest bezpieczna, bo to roszczenie przeciw pracownikowi. Dni wolne i sobota
+//   (dopiero od 1.01.2017 r.) według `terminPracownika`;
 // - mienie powierzone: § 6 ust. 1 rozporządzenia z 1975 r. każe obniżyć odszkodowanie przy utrudnionym nadzorze (art. 124
 //   § 2 i 125); kwoty obniżenia przepis nie podaje, więc pokazujemy kwotę przed obniżeniem i piszemy o nim w uwagach;
 // - zarzut i przerwanie przedawnienia: art. 292 i 295 Kp, przy winie umyślnej art. 117 § 2 i 123–124 KC (art. 291 § 3).
@@ -31,9 +34,7 @@
 
 import { liczba, zl } from './format';
 import { odmiana } from '../redakcja';
-import { swieta } from './czas-pracy';
-import { dzienTygodnia } from './dni-wolne';
-import { dataPoPolsku, dniMiedzy, dodajDni, dodajLata, poprawnaData } from './terminy';
+import { dataPoPolsku, dniMiedzy, dodajLata, poprawnaData, terminPracownika } from './terminy';
 
 export type Sytuacja = 'nieumyslna' | 'umyslna' | 'powierzone' | 'wspolne';
 
@@ -139,12 +140,23 @@ export function przedawnienieRoszczenia(sytuacja: Sytuacja, dataSzkody: string, 
 }
 
 /** Art. 115 KC: koniec terminu w sobotę albo dzień ustawowo wolny przesuwa się na następny dzień, który nim nie jest. */
-export function przesunietyKoniec(data: string): string {
-  let d = data;
-  const wolne = (x: string) => dzienTygodnia(x) === 0 || dzienTygodnia(x) === 6 || swieta(Number(x.slice(0, 4))).some((s) => s.data === x);
-  while (wolne(d)) d = dodajDni(d, 1);
-  return d;
+export const przesunietyKoniec = (data: string): string => terminPracownika(data).wedlugArt115;
+
+const NAZWA_DNIA = (powod: string) => (powod === 'sobota' || powod === 'niedziela' ? powod : `dzień wolny od pracy (${powod})`);
+
+/**
+ * Zdanie o sporze, gdy koniec przedawnienia wypada w sobotę albo dzień ustawowo wolny (konwencja z terminy.ts dla
+ * przedawnienia: druga data z ostrzeżeniem). Roszczenie jest przeciw pracownikowi, więc bezpieczna jest data późniejsza.
+ */
+export function sporArt115(koniec: string): string {
+  const t = terminPracownika(koniec);
+  if (!t.rozne) return '';
+  return `${dataPoPolsku(t.zdazDo)} to ${NAZWA_DNIA(t.wolne[0].powod)}. ${SPOR_ART_115} ${dataPoPolsku(t.wedlugArt115)} Dla Ciebie bezpieczniejsza jest ta późniejsza data: do jej końca nie zakładaj, że roszczenie się przedawniło.`;
 }
+
+/** Ostatnie słowa przed datą po przesunięciu (raporty/terminy2/PRZEPISY.md, pytanie 2). */
+export const SPOR_ART_115 =
+  'Czy koniec przedawnienia przesuwa się wtedy na następny dzień, który nie jest dniem wolnym ani sobotą (art. 115 Kodeksu cywilnego), jest sporne: według uchwały 7 sędziów Sądu Najwyższego z 22 maja 2024 r., III CZP 21/23, znanej nam tylko z przytoczeń w wyrokach sądów, art. 115 nie dotyczy upływu przedawnienia; inni przyjmują przesunięcie, a wtedy roszczenie trwa do';
 
 export interface OpisOdpowiedzialnosci {
   granica: string;
@@ -228,7 +240,7 @@ export function opisOdpowiedzialnosci(d: DaneOdpowiedzialnosci, dzis: string): O
     );
   }
   const bezPrzesuniecia = umyslna ? (p.koniecRoku ?? p.koniec) : p.koniec;
-  if (najpozniej !== bezPrzesuniecia) czesci.push(`${dataPoPolsku(bezPrzesuniecia)} to sobota albo dzień wolny od pracy; jeśli termin przesuwa się na następny dzień (art. 115 Kodeksu cywilnego), to ${dataPoPolsku(najpozniej)}`);
+  if (najpozniej !== bezPrzesuniecia) czesci.push(sporArt115(bezPrzesuniecia));
   // 20 lat z art. 442¹ § 2 to też termin z art. 442¹: koniec roku (art. 118 zd. 2 KC) i art. 115 KC jak przy 10 latach.
   const przestepstwoNajpozniej = umyslna ? przesunietyKoniec(koniecRoku(p.przestepstwo!)) : null;
   if (umyslna)

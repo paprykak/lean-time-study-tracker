@@ -17,6 +17,10 @@
 // - wynik: podatek należny minus zaliczki pobrane przez płatników (art. 45 ust. 4 pkt 1): nadpłata do zwrotu albo dopłata;
 //   termin zeznania 15 lutego–30 kwietnia (art. 45 ust. 1), zwrot w 45 dniach od zeznania złożonego elektronicznie, 3
 //   miesiącach od papierowego (art. 77 § 1 pkt 5 i 5a Ordynacji).
+// Termin dopłaty: 30 kwietnia (art. 45 ust. 1 i 4), a gdy to sobota albo dzień ustawowo wolny od pracy, następny dzień
+// po dniu lub dniach wolnych (art. 12 § 5 Ordynacji): przepis szczególny sam przesuwa termin, więc podajemy jedną datę,
+// po przesunięciu (pakiet „terminy 2”). Liczy ją `terminPracownika` z terminy.ts (te same dni wolne i sobota; reguła soboty
+// sprzed 2017 r. dotyczy tylko art. 115 KC, a lata w kalkulatorze zaczynają się od 2025 r.).
 // Przyjęte: przy rozliczeniu osobno małżonków-rodziców Twoja część ulgi to wybrany procent, reszta jest małżonka; zwrot
 // niewykorzystanej ulgi u obojga ograniczamy łączną sumą ich składek (art. 27f ust. 10), najpierw u Ciebie. Wspólne
 // rozliczenie zakłada wspólne dzieci (cała ulga od wspólnego podatku). Nie liczymy dochodów spoza PIT-11 (działalność,
@@ -24,8 +28,7 @@
 import { doGrosza } from './dodatek-nocny';
 import { liczba, zl } from './format';
 import { UWAGA_PELNOLETNIE, ulgaNaDzieci, type Sytuacja, type WynikUlgi } from './ulga-na-dzieci';
-import { przesunZDniaWolnego } from './termin-odwolania';
-import { dataPoPolsku } from './terminy';
+import { dataPoPolsku, terminPracownika } from './terminy';
 
 export const PROG_SKALI = 120_000;
 export const KWOTA_ZMNIEJSZAJACA = 3600;
@@ -215,6 +218,9 @@ export interface OpisPit {
   uwagi: string[];
 }
 
+/** Ostatni dzień zapłaty podatku za `rok` (art. 45 ust. 1 i 4 ustawy o PIT, art. 12 § 5 Ordynacji podatkowej). */
+export const terminZaplaty = (rok: number) => terminPracownika(`${rok + 1}-04-30`).wedlugArt115;
+
 const opisSalda = (s: number) => (s > 0 ? `Zwrot ${zl(s)}` : s < 0 ? `Dopłata ${zl(-s)}` : 'Bez zwrotu i dopłaty');
 
 /** Teksty wyniku: te same w HTML ze strony i w skrypcie przeglądarki. `wspolnie` wybiera rozliczenie wspólne do pokazania. */
@@ -224,7 +230,7 @@ export function opisPit(d: DanePit, wspolnieWybrane: boolean): OpisPit {
   const s = saldo(r);
   const uwagi: string[] = [];
   const kto = r === w.wspolnie ? 'razem z małżonkiem' : 'Twoje';
-  let opis = s > 0 ? `urząd skarbowy odda ${kto === 'Twoje' ? 'Ci' : 'Wam'} nadpłatę` : s < 0 ? `do zapłaty do ${dataPoPolsku(przesunZDniaWolnego(`${d.rok + 1}-04-30`).koniec)}` : 'zaliczki były równe podatkowi';
+  let opis = s > 0 ? `urząd skarbowy odda ${kto === 'Twoje' ? 'Ci' : 'Wam'} nadpłatę` : s < 0 ? `do zapłaty do ${dataPoPolsku(terminZaplaty(d.rok))}` : 'zaliczki były równe podatkowi';
   if (r.ulga.zwrot > 0) opis += `, w tym ${zl(r.ulga.zwrot)} niewykorzystanej ulgi na dzieci`;
   let porownanie = '';
   if (w.wspolnie && w.malzonek && w.zyskWspolnego !== null) {

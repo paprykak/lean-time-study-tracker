@@ -7,7 +7,7 @@
 // art. 442¹: szkoda 29.02.2020, wiedza 29.02.2024 → 28.02.2027, koniec roku 31.12.2027, przestępstwo 29.02.2040;
 // szkoda 15.05.2016, wiedza 10.01.2025 → 15.05.2026 (10 lat), koniec roku 31.12.2026, przestępstwo 15.05.2036.
 import { describe, expect, it } from 'vitest';
-import { bladDanych, granicaOdszkodowania, opisOdpowiedzialnosci, przedawnienieRoszczenia, przesunietyKoniec, type DaneOdpowiedzialnosci } from './odpowiedzialnosc';
+import { bladDanych, granicaOdszkodowania, opisOdpowiedzialnosci, przedawnienieRoszczenia, przesunietyKoniec, SPOR_ART_115, sporArt115, type DaneOdpowiedzialnosci } from './odpowiedzialnosc';
 
 const DZIS = '2026-11-14';
 const dane = (x: Partial<DaneOdpowiedzialnosci>): DaneOdpowiedzialnosci => ({
@@ -110,7 +110,9 @@ describe('teksty wyniku', () => {
     const ostatni = opisOdpowiedzialnosci(dane({ dataSzkody: '2025-11-14', dataWiedzy: '2025-11-14' }), DZIS);
     expect(ostatni.status).toBe('Termin kończy się dziś albo 16 listopada 2026 r.');
     expect(ostatni.statusKlasa).toBe('pilne');
-    expect(ostatni.przedawnienieOpis).toContain('14 listopada 2026 r. to sobota albo dzień wolny od pracy');
+    expect(ostatni.przedawnienieOpis).toContain('14 listopada 2026 r. to sobota. Czy koniec przedawnienia przesuwa się');
+    expect(ostatni.przedawnienieOpis).toContain('III CZP 21/23, znanej nam tylko z przytoczeń');
+    expect(ostatni.przedawnienieOpis).toContain('trwa do 16 listopada 2026 r. Dla Ciebie bezpieczniejsza jest ta późniejsza data');
     const roboczy = opisOdpowiedzialnosci(dane({ dataSzkody: '2025-11-13', dataWiedzy: '2025-11-13' }), '2026-11-13');
     expect(roboczy.status).toBe('Dziś jest ostatni dzień terminu pracodawcy');
     expect(roboczy.przedawnienieOpis).not.toContain('art. 115');
@@ -184,7 +186,7 @@ describe('poprawki po audycie', () => {
   it('bez „r..”, bez mediacji jako przerwania, brzmienie art. 442¹', () => {
     const n = opisOdpowiedzialnosci(dane({ dataSzkody: '2025-11-21', dataWiedzy: '2025-11-21' }), DZIS);
     expect(n.przedawnienieOpis).not.toMatch(/r\.\./);
-    expect(n.przedawnienieOpis).toContain('to 23 listopada 2026 r. Bieg');
+    expect(n.przedawnienieOpis).toContain('trwa do 23 listopada 2026 r. Dla Ciebie bezpieczniejsza jest ta późniejsza data: do jej końca nie zakładaj, że roszczenie się przedawniło. Bieg');
     const u = opisOdpowiedzialnosci(dane({ sytuacja: 'umyslna', dataSzkody: '2023-12-01', dataWiedzy: '2023-12-01' }), DZIS);
     expect(u.przedawnienieOpis).not.toMatch(/r\.\./);
     expect(u.przedawnienieOpis).not.toMatch(/przerywa[^.]*mediacji/);
@@ -249,5 +251,21 @@ describe('audyt jakosc3', () => {
       ['2027-03-27', '2027-03-30'], ['2027-03-29', '2027-03-30'], ['2027-05-27', '2027-05-28'], ['2027-12-24', '2027-12-27'],
       ['2027-01-06', '2027-01-07'], ['2028-04-15', '2028-04-18'], ['2026-12-31', '2026-12-31'], ['2028-12-31', '2029-01-02'],
     ]) expect(przesunietyKoniec(z), z).toBe(na);
+  });
+});
+
+describe('terminy 2: spór o art. 115 KC przy przedawnieniu (daty z raporty/terminy2/swieta.py)', () => {
+  it('sobota przed 2017 r. nie przesuwa (stare brzmienie art. 115 KC), niedziela tak; 12.11.2018 r. jednorazowo wolny', () => {
+    expect(przesunietyKoniec('2016-01-02')).toBe('2016-01-02');
+    expect(przesunietyKoniec('2016-01-03')).toBe('2016-01-04');
+    expect(przesunietyKoniec('2018-11-10')).toBe('2018-11-13');
+    expect(sporArt115('2016-01-02')).toBe('');
+  });
+  it('zdanie: dzień, spór z sygnaturą znaną z przytoczeń, druga data i to, że późniejsza jest bezpieczna', () => {
+    const z = sporArt115('2026-12-25').replace(/\s/g, ' ');
+    expect(z.startsWith('25 grudnia 2026 r. to dzień wolny od pracy (Boże Narodzenie')).toBe(true);
+    expect(z).toContain(SPOR_ART_115);
+    expect(z).toContain('trwa do 28 grudnia 2026 r. Dla Ciebie');
+    expect(sporArt115('2026-12-23')).toBe('');
   });
 });
