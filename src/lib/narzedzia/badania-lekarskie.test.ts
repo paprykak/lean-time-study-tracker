@@ -263,12 +263,12 @@ describe('terminy3: odwołanie od orzeczenia w dzień wolny', () => {
   const sp = (t: string) => t.replace(/\s/g, ' ');
   it('odwołanie do niedzieli 13 grudnia 2026 r.: bezpiecznie w piątek 11 grudnia', () => {
     expect(sp(tekstOdwolania(odwolanie('2026-12-06', '2026-12-07')).praktycznie)).toBe(
-      'To niedziela. Jeśli jednostka medycyny pracy, w której wydano orzeczenie, nie jest czynna tego dnia, bezpieczniej złóż odwołanie najpóźniej w ostatnim dniu roboczym przed tą datą, czyli w piątek 11 grudnia 2026 r.: rozporządzenie nie mówi, że wystarczy nadanie na poczcie.',
+      'To niedziela. Jeśli jednostka medycyny pracy, w której wydano orzeczenie, nie jest czynna tego dnia, bezpieczniej złóż odwołanie najpóźniej w ostatnim dniu roboczym przed tą datą, czyli w piątek 11 grudnia 2026 r.: rozporządzenie nie mówi, czy wystarczy nadanie na poczcie.',
     );
   });
   it('dziś sobota przed niedzielą: ostatni dzień roboczy minął; po terminie i w dzień roboczy bez linijki', () => {
     expect(sp(tekstOdwolania(odwolanie('2026-12-06', '2026-12-12')).praktycznie)).toBe(
-      'To niedziela. Ostatnim dniem roboczym przed tą datą był piątek 11 grudnia 2026 r. Złóż odwołanie jak najszybciej, najlepiej osobiście: rozporządzenie nie mówi, że wystarczy nadanie na poczcie.',
+      'To niedziela. Ostatnim dniem roboczym przed tą datą był piątek 11 grudnia 2026 r. Złóż odwołanie jak najszybciej, najlepiej osobiście: rozporządzenie nie mówi, czy wystarczy nadanie na poczcie. Według art. 115 Kodeksu cywilnego ostatni dzień to poniedziałek 14 grudnia 2026 r.',
     );
     expect(tekstOdwolania(odwolanie('2026-12-06', '2026-12-14')).praktycznie).toBe('');
     expect(tekstOdwolania(odwolanie('2026-12-04', '2026-12-07')).praktycznie).toBe('');

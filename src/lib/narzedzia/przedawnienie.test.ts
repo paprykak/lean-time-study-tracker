@@ -109,7 +109,7 @@ describe('terminy3: koniec przedawnienia w dzień wolny', () => {
   it('koniec w niedzielę 13 grudnia 2026 r.: można nadać pozew tego dnia, z ostrzeżeniem', () => {
     const o = opisPrzedawnienia(p('2023-12-13'), '2026-11-15');
     expect(sp(o.praktycznie)).toBe(
-      'To niedziela. Tego dnia możesz jeszcze nadać pozew w placówce Poczty Polskiej (operatora wyznaczonego), jeśli jest czynna: nadanie jest równoznaczne z wniesieniem pozwu do sądu (art. 165 § 2 Kodeksu postępowania cywilnego). Zachowaj potwierdzenie nadania; list u kuriera tego skutku nie ma. Nie odkładaj pozwu na następny dzień roboczy: przy przedawnieniu przesunięcie z art. 115 Kodeksu cywilnego jest wątpliwe.',
+      'To niedziela. Tego dnia możesz jeszcze nadać pozew w placówce Poczty Polskiej (operatora wyznaczonego), jeśli jest czynna: nadanie jest równoznaczne z wniesieniem pozwu do sądu (art. 165 § 2 Kodeksu postępowania cywilnego). Zachowaj potwierdzenie nadania; przesyłka nadana u kuriera tego skutku nie ma. Nie odkładaj pozwu na następny dzień roboczy: przy przedawnieniu przesunięcie z art. 115 Kodeksu cywilnego jest wątpliwe.',
     );
   });
   it('Wigilia 2026 r. i sobota przed 2017 r. też; dzień roboczy i dzień po terminie bez linijki', () => {

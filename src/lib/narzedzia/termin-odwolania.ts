@@ -7,7 +7,7 @@
 // wolny, linijka praktyczna pod datą (`linijkaDniaWolnego`, pakiet „terminy3”). Dawne `przesunZDniaWolnego`,
 // `terminWDniach` i `terminCzynnosci` (druga implementacja art. 115 KC) usunięte w pakiecie „terminy3”: reguła dni wolnych
 // jest tylko w terminy.ts.
-import { ETYKIETA_ZDAZ_DO, dataPoPolsku, dodajDni, fazaTerminu, linijkaDniaWolnego, terminPracownika, zdanieArt115, zostaloDni, type TerminPracownika } from './terminy';
+import { ETYKIETA_ZDAZ_DO, dataPoPolsku, dodajDni, dzienRoboczy, fazaTerminu, linijkaDniaWolnego, terminPracownika, zdanieArt115, zostaloDni, type TerminPracownika } from './terminy';
 
 export type Sprawa = 'wypowiedzenie' | 'bez-wypowiedzenia' | 'odmowa-przyjecia' | 'sprostowanie-wniosek' | 'sprostowanie-sad' | 'kara-sprzeciw' | 'kara-sad';
 
@@ -50,7 +50,11 @@ export function opisOdwolania(zdarzenie: string, sprawa: Sprawa, dzis: string): 
   let status: string;
   let statusKlasa: OpisOdwolania['statusKlasa'];
   if (f.faza === 'w-terminie') {
-    status = f.dni === 0 ? (doSadu ? 'To dziś: złóż pismo w sądzie albo nadaj je dziś w placówce Poczty Polskiej' : 'To dziś: pismo powinno dziś dotrzeć do pracodawcy') : zostaloDni(f.dni);
+    // Audyt terminy3 A-2: w dzień wolny sąd jest nieczynny, zostaje nadanie w czynnej placówce.
+    const sadDzis = !dzienRoboczy(t.zdazDo)
+      ? 'To dziś: nadaj pismo w placówce Poczty Polskiej, jeśli jest czynna'
+      : 'To dziś: złóż pismo w sądzie albo nadaj je dziś w placówce Poczty Polskiej';
+    status = f.dni === 0 ? (doSadu ? sadDzis : 'To dziś: pismo powinno dziś dotrzeć do pracodawcy') : zostaloDni(f.dni);
     // Progi jak w świadectwie pracy: do 3 dni pilne, do 7 dni wkrótce.
     statusKlasa = f.dni <= 3 ? 'pilne' : f.dni <= 7 ? 'wkrotce' : 'w-terminie';
   } else if (f.faza === 'tylko-art-115') {

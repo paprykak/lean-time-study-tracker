@@ -1,0 +1,72 @@
+{
+  "znaleziska": [
+    {
+      "id": "A-1",
+      "waga": "ryzyko",
+      "plik": "src/lib/narzedzia/terminy.ts (linijkaDniaWolnego, gałąź „dzień roboczy już minął”)",
+      "problem": "Gdy dziś jest dniem wolnym przed „Zdąż do” albo samym tym dniem, a art. 115 KC daje późniejszą datę, linijka mówi tylko „Złóż … jak najszybciej, najlepiej osobiście”. Tuż obok zdanie z ZDANIE_ART_115.pracodawca radzi „zdążyć do pierwszej daty” (w niedzielę, przy nieczynnym zakładzie już niewykonalne), a status mówi „Dziś ostatni dzień” (świadectwo) albo „To dziś: pismo powinno dziś dotrzeć do pracodawcy” (odwołanie, sprostowanie). Osoba w sobotę dostaje trzy różne komunikaty i żaden nie mówi wprost, co zrobić w poniedziałek. „Najlepiej osobiście” w niedzielę też nie daje się wykonać.",
+      "dowod": "opisKary({naruszenie:'2026-12-01',wiadomosc:'2026-12-02',ukaranie:'2026-12-06'}, '2026-12-12'): linijka „To niedziela. Ostatnim dniem roboczym przed tą datą był piątek 11 grudnia 2026 r. Złóż pismo do pracodawcy jak najszybciej, najlepiej osobiście…”, zaraz pod nią zdanie „…bezpieczniej przyjąć, że pismo musi w tym dniu dotrzeć do pracodawcy…, i zdążyć do pierwszej daty”, a wyżej data według art. 115 KC: 14 grudnia. Świadectwo z zegarem 14.11.2026 r. (zrzut z-swi.png): status „Dziś ostatni dzień” i linijka „jak najszybciej”.",
+      "propozycja": "W tej gałęzi, gdy daty się różnią (przekazać pełny TerminPracownika), dopisać: „Złóż … jak najszybciej, najlepiej osobiście w najbliższym dniu, w którym zakład przyjmuje pisma; jeśli to dopiero <wDniu(wedlugArt115)>, to ostatni dzień według art. 115 KC.” Bez drugiej daty (odmowa bez pouczenia) zostawić obecne brzmienie, ale zamiast „najlepiej osobiście” napisać „najlepiej osobiście, gdy tylko zakład będzie czynny”."
+    },
+    {
+      "id": "A-2",
+      "waga": "drobne",
+      "plik": "src/lib/narzedzia/termin-odwolania.ts (status w dniu „Zdąż do”)",
+      "problem": "W dniu „Zdąż do”, który jest sobotą, niedzielą albo świętem, status mówi „To dziś: złóż pismo w sądzie albo nadaj je dziś w placówce Poczty Polskiej”. Sąd jest wtedy nieczynny. Linijka pod spodem powtarza radę o poczcie, więc teraz widać sprzeczność.",
+      "dowod": "opisOdwolania('2026-11-21','wypowiedzenie','2026-12-12'): status „To dziś: złóż pismo w sądzie albo nadaj je dziś w placówce Poczty Polskiej”, linijka „To sobota. Tego dnia możesz jeszcze nadać pismo w placówce Poczty Polskiej…”.",
+      "propozycja": "Gdy !dzienRoboczy(t.zdazDo), status: „To dziś: nadaj pismo w placówce Poczty Polskiej” (bez „złóż w sądzie”)."
+    },
+    {
+      "id": "A-3",
+      "waga": "drobne",
+      "plik": "src/lib/narzedzia/terminy.ts; strony przedawnienie-wynagrodzenia, zalegly-urlop, swiadectwo-pracy, odwolanie, kara, co-wolno-na-l4",
+      "problem": "Te same informacje powtarzają się w dwóch sąsiednich akapitach. Linijka zaczyna się od „To sobota.”, a następne zdanie od „12 grudnia 2026 r. to sobota: …”. W L4 tekst odwołania i zastrzeżeń też mówi już, że to dzień wolny. Przy przedawnieniu ostatnie zdanie linijki („Nie odkładaj pozwu na następny dzień roboczy: …przesunięcie… jest wątpliwe”) powtarza zdanie ZDANIE_ART_115.przedawnienie, które stoi zaraz pod nim („…pozew złóż najpóźniej w pierwszej dacie”).",
+      "dowod": "opisPrzedawnienia(przedawnienie('2023-12-12', '2026-12-11'), '2026-12-11'): pola praktycznie i zdanie. Zrzut z-kara.png: „To niedziela.” i zaraz „13 grudnia 2026 r. to niedziela: …”.",
+      "propozycja": "Ostatnie zdanie linijki przy przedawnieniu dawać tylko wtedy, gdy zdanieArt115 jest puste. Albo: przenieść linijkę pod zdanie o art. 115 i zacząć ją od „W sobotę…” zamiast „To sobota.”."
+    },
+    {
+      "id": "A-4",
+      "waga": "drobne",
+      "plik": "src/lib/narzedzia/terminy.ts (rodzaj „przedawnienie”)",
+      "problem": "Przy sobocie sprzed 1.01.2017 r. linijka ostrzega, że przesunięcie z art. 115 KC przy przedawnieniu jest „wątpliwe”. Wtedy art. 115 KC soboty nie przesuwał w ogóle, a wynik nie podaje drugiej daty. Do tego stanu da się dojść polem „Sprawdź na dzień” w przedawnieniu i „Na dzień” w zaległym urlopie.",
+      "dowod": "opisPrzedawnienia(przedawnienie('2013-12-10','2016-12-01'),'2016-12-01'): w opisie „przedawnia się z końcem dnia 10 grudnia 2016 r.”, zdanie puste, a linijka kończy się „…przy przedawnieniu przesunięcie z art. 115 Kodeksu cywilnego jest wątpliwe.”",
+      "propozycja": "Ostatnie zdanie dodawać tylko wtedy, gdy dzienWolnyArt115(t.zdazDo) !== null."
+    },
+    {
+      "id": "A-5",
+      "waga": "drobne",
+      "plik": "src/lib/narzedzia/terminy.ts (teksty DOTARCIE i „odwolanie-zus”)",
+      "problem": "Język. (a) Przy odwołaniu do ZUS imiesłów stoi daleko od rzeczownika: „nadać odwołanie w placówce Poczty Polskiej (…), jeśli jest czynna, zaadresowane do oddziału ZUS” (czyta się, jakby zaadresowana była placówka). (b) W zastrzeżeniach „bezpieczniej” pada dwa razy w jednym zdaniu, a „ich” wskazuje na rzeczownik, który pojawia się dopiero dalej. (c) „rozporządzenie nie mówi, że wystarczy nadanie” (orzeczenie lekarskie) i „ustawa nie mówi, czy wystarczy” (ZUS): to samo stwierdzenie w dwóch brzmieniach, a „że” sugeruje, że nadanie nie wystarcza. (d) „list u kuriera” brzmi nienaturalnie. (e) W karze i sprostowaniu linijka mówi „pismo do pracodawcy”, choć chodzi o sprzeciw albo wniosek.",
+      "dowod": "Teksty z wyniku narzędzia (harness: js.jsonl); zrzut z-l4.png.",
+      "propozycja": "(a) „Tego dnia możesz jeszcze nadać odwołanie zaadresowane do oddziału ZUS, który wydał decyzję, w placówce Poczty Polskiej (operatora wyznaczonego), jeśli jest czynna: …”. (b) „Jeśli tego dnia nie da się złożyć zastrzeżeń osobiście, złóż je najpóźniej … : ustawa nie mówi, czy wystarczy nadanie na poczcie, więc lepiej, żeby dotarły w terminie.” (c) Oba razy „czy”. (d) „przesyłka nadana u kuriera tego skutku nie ma”. (e) Pole `co` brać z narzędzia (sprzeciw, wniosek o sprostowanie)."
+    },
+    {
+      "id": "A-6",
+      "waga": "drobne",
+      "plik": "src/pages/narzedzia/co-wolno-na-l4.astro, kara-porzadkowa.astro",
+      "problem": "Linijka nie stoi w każdym narzędziu w tym samym miejscu. W karze jest przed statusem, w przedawnieniu, zaległym urlopie i świadectwie po nim. W L4 dochodzi na koniec długiego akapitu (ok. 10 wierszy na 320 px), więc „To niedziela.” odnosi się do daty z początku tego akapitu. Na 320 px linijka w L4 zajmuje 288 px, przy odwołaniu 180 px.",
+      "dowod": "Zrzuty 320 px: z-l4.png, z-kara.png, z-prz.png (katalog scratchpad/au).",
+      "propozycja": "W L4 zacząć linijkę od daty („13 grudnia 2026 r. to niedziela.”) albo postawić ją zaraz po pierwszym zdaniu z datą. W karze przenieść ją za status, jak w pozostałych narzędziach."
+    },
+    {
+      "id": "A-7",
+      "waga": "drobne",
+      "plik": "src/lib/narzedzia/zalegly-urlop.ts:308-310; src/lib/narzedzia/terminy.ts (linijkaDniaWolnego)",
+      "problem": "(a) Komentarz „Ostrzeżenie także wtedy, gdy główna data to dzień roboczy…” dotyczy pola `zdanie`, a po zmianie stoi nad `praktycznie`. (b) linijkaDniaWolnego nie sprawdza daty: przy błędnej rzuca nieczytelny RangeError „Invalid time value” z wielkanoc(), a ostatniDzienRoboczyPrzed rzuca opisowy błąd.",
+      "dowod": "git diff a8b42ca -- src/lib/narzedzia/zalegly-urlop.ts; linijkaDniaWolnego({zdazDo:'abc'},'sad') rzuca RangeError: Invalid time value.",
+      "propozycja": "Przenieść `praktycznie` nad komentarz. Na początku funkcji dodać `if (!poprawnaData(t.zdazDo)) throw new RangeError(...)`."
+    }
+  ],
+  "porownania": "Niezależny model w Pythonie (/tmp/claude-0/-home-user-lean-time-study-tracker/5694ca6a-84a2-50ca-b985-6e131433d479/scratchpad/au/model.py: Wielkanoc algorytmem Meeus/Jones/Butcher, święta z art. 1 ustawy o dniach wolnych, Trzech Króli od 2011, Wigilia od 2025, 12.11.2018, sobota zawsze wolna dla linijki) porównany z bundlami esbuild. linijkaDniaWolnego: 286 356 przypadków (każdy dzień 2014–2029 × 7 rodzajów × dziś: brak, −6, −3, −2, −1, 0, +1). Przez funkcje opisu narzędzi: opisOdwolania (7 spraw, 128 716), opisKary (18 388), tekstOdwolania z badań (18 388), opisPrzedawnienia (18 388), opisZmieniajacego: odmowa, odmowa bez pouczenia, odwołanie (3 × 18 388), opisL4: zastrzeżenia i odwołanie (2 × 3 976), daty 2016-06 – 2028-12. Sprawdzone: warunek pokazania, data i nazwa ostatniego dnia roboczego, wybór gałęzi „już minął”, Poczta przy rodzajach sądowych, zgodność „Zdąż do” z datą główną i brak linijki przy statusie „minął/minęła”. 0 rozbieżności. 487 testów jednostkowych 9 plików przechodzi. Build RH_TESTOWE=1 i podgląd na 320 px z page.clock (7 narzędzi): brak przewijania w bok (scrollWidth 320), nic nie ucięte. Uwaga: build nadpisał dist/ buildem testowym. Podgląd zatrzymany. Strony UKE (operator wyznaczony 2026–2035) blokują automat (Incapsula), więc tego nie sprawdziłem.",
+  "potwierdzone": [
+    "Art. 165 § 2 KPC (t.j. 2026/468): oddanie pisma procesowego w polskiej placówce operatora świadczącego pocztowe usługi powszechne jest równoznaczne z wniesieniem do sądu. Art. 3 pkt 13 Prawa pocztowego (2026/558): operator wyznaczony to operator obowiązany do świadczenia usług powszechnych. Nawias „(operatora wyznaczonego)” jest więc poprawny.",
+    "Art. 477⁹ § 1 KPC i art. 83 ust. 5 ustawy o sus (2026/1474): odwołanie wnosi się do organu albo jednostki ZUS, która wydała decyzję. Linijka „zaadresowane do oddziału ZUS, który wydał decyzję” jest zgodna, a „sądy uznają dzień nadania za dzień wniesienia” jest sformułowane ostrożnie.",
+    "Art. 68e ust. 4 ustawy zasiłkowej (2026/854): 7 dni od otrzymania protokołu albo aneksu. Przepis nic nie mówi o nadaniu na poczcie, więc wariant „ma dotrzeć” jest bezpieczny.",
+    "§ 5 ust. 3 rozporządzenia o badaniach w brzmieniu 2026/456 (od 17.04.2026): odwołanie w 7 dni, za pośrednictwem podstawowej jednostki służby medycyny pracy, w której wydano orzeczenie. Linijka jest zgodna. O nadaniu pocztowym rozporządzenie milczy.",
+    "Art. 1 ustawy o dniach wolnych (t.j. 2025/296, Wigilia od 1.02.2025) zgadza się ze swieta() i JEDNORAZOWE_WOLNE. Sobota przesuwa termin od 1.01.2017 (dzienWolnyArt115), a linijka pokazuje każdą sobotę. Jest to zamierzone i opisane w komentarzu.",
+    "Usunięta druga implementacja art. 115 KC w termin-odwolania.ts nie ma już odwołań w src, tests ani scripts. Reguła dni wolnych dla terminów jest tylko w terminy.ts (pit-roczny ma osobną regułę z Ordynacji podatkowej, poza zakresem).",
+    "Zgoda formy z liczebnikiem i rodzajem („był piątek”, „była środa”). Daty przez dataPoPolsku kończą się „r.”, bez podwójnej kropki. Forma neutralna płciowo („możesz”, „złóż”, „zachowaj”). Skrypty przepuszczają linijkę przez typografia().",
+    "Testy jednostkowe obejmują Wigilię (2025, 2026, 2024 jako dzień roboczy), 1 i 3 maja, Wielkanoc i Poniedziałek Wielkanocny, Boże Ciało, Zielone Świątki, sobotę 31.12.2016 i 7.01.2017, 12.11.2018, przełom roku (1.01.2027, 2.01.2027, 2.01.2021, 1.01.2028). Wszystkie nowe testy E2E zależne od dziś mają stały zegar (page.clock.setFixedTime w teście albo w beforeEach) albo jawne pole „na dzień”.",
+    "Linijka znika po dniu „Zdąż do” we wszystkich narzędziach. W zaległym urlopie pilnuje tego warunek zostalo >= 0, w pozostałych parametr dzis. W świadectwie linijka pokazuje się tylko raz. Pola ukrywają się przy błędzie danych."
+  ]
+}

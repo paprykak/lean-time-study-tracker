@@ -305,8 +305,8 @@ export function opis(w: Wynik): Opis {
     opis: `Pierwszy termin przedawnienia (wariant wcześniejszy): urlop za ${najblizszy.rok} r., ${dataPoPolsku(p.data)}${art115(p)}`,
     status: p.status,
     statusTekst: stan(p),
-    // Ostrzeżenie także wtedy, gdy główna data to dzień roboczy, a datę z art. 115 KC ma któryś wiersz (audyt jakości 4, C-3).
     praktycznie: praktycznie(p),
+    // Ostrzeżenie także wtedy, gdy główna data to dzień roboczy, a datę z art. 115 KC ma któryś wiersz (audyt jakości 4, C-3).
     zdanie: zdanie(p) || (w.lata.some((r) => r.przedawnienie.art115 || r.przedawnieniePozniej.art115) ? UWAGA_ART_115_LISTA : ''),
     lata,
   };

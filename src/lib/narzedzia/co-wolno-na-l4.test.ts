@@ -357,14 +357,14 @@ describe('terminy3: zastrzeżenia i odwołanie w dzień wolny', () => {
   it('odwołanie do ZUS do niedzieli 13 grudnia 2026 r.: nadanie w Poczcie Polskiej do oddziału ZUS', () => {
     const o = opisL4({ ...baza, protokol: '2026-11-10', decyzja: '2026-11-13' }, DZIS);
     expect(sp(o.odwolaniePraktycznie)).toBe(
-      'To niedziela. Tego dnia możesz jeszcze nadać odwołanie w placówce Poczty Polskiej (operatora wyznaczonego), jeśli jest czynna, zaadresowane do oddziału ZUS, który wydał decyzję: sądy uznają wtedy dzień nadania za dzień wniesienia odwołania (art. 165 § 2 Kodeksu postępowania cywilnego). Zachowaj potwierdzenie nadania; list u kuriera tego skutku nie ma.',
+      'To niedziela. Tego dnia możesz jeszcze nadać odwołanie w placówce Poczty Polskiej (operatora wyznaczonego), jeśli jest czynna, w liście do oddziału ZUS, który wydał decyzję: sądy uznają wtedy dzień nadania za dzień wniesienia odwołania (art. 165 § 2 Kodeksu postępowania cywilnego). Zachowaj potwierdzenie nadania; przesyłka nadana u kuriera tego skutku nie ma.',
     );
     expect(o.zastrzezeniaPraktycznie).toBe('');
   });
   it('zastrzeżenia do Wigilii: złóż w środę 23 grudnia, bo nie wiadomo, czy wystarczy nadanie', () => {
     const w = opisL4({ ...baza, od: '2026-12-01', do: '2026-12-20', dzien: '2026-12-10', protokol: '2026-12-17' }, '2026-12-20');
     expect(sp(w.zastrzezeniaPraktycznie)).toBe(
-      'To dzień wolny od pracy (Wigilia Bożego Narodzenia). Jeśli tego dnia nie da się ich złożyć osobiście, bezpieczniej złóż zastrzeżenia najpóźniej w ostatnim dniu roboczym przed tą datą, czyli w środę 23 grudnia 2026 r.: ustawa nie mówi, czy wystarczy nadanie na poczcie, więc bezpieczniej, żeby dotarły w terminie.',
+      'To dzień wolny od pracy (Wigilia Bożego Narodzenia). Jeśli tego dnia nie da się ich złożyć osobiście, bezpieczniej złóż zastrzeżenia najpóźniej w ostatnim dniu roboczym przed tą datą, czyli w środę 23 grudnia 2026 r.: ustawa nie mówi, czy wystarczy nadanie na poczcie, więc przyjmij, że liczy się dzień, w którym dotrą.',
     );
   });
   it('po dniu „zdąż do” bez linijki (status mówi o dniu z art. 115 KC); bez daty bez linijki', () => {

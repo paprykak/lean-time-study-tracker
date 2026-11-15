@@ -266,20 +266,22 @@ const DOTARCIE: Record<Dotarcie, { gdy: string; co: string; bo: string }> = {
   'zastrzezenia-zus': {
     gdy: 'Jeśli tego dnia nie da się ich złożyć osobiście',
     co: 'zastrzeżenia',
-    bo: 'ustawa nie mówi, czy wystarczy nadanie na poczcie, więc bezpieczniej, żeby dotarły w terminie',
+    bo: 'ustawa nie mówi, czy wystarczy nadanie na poczcie, więc przyjmij, że liczy się dzień, w którym dotrą',
   },
   'orzeczenie-lekarskie': {
     gdy: 'Jeśli jednostka medycyny pracy, w której wydano orzeczenie, nie jest czynna tego dnia',
     co: 'odwołanie',
-    bo: 'rozporządzenie nie mówi, że wystarczy nadanie na poczcie',
+    bo: 'rozporządzenie nie mówi, czy wystarczy nadanie na poczcie',
   },
 };
 
 const DZIEN_TYGODNIA = ['niedziela', 'poniedziałek', 'wtorek', 'środa', 'czwartek', 'piątek', 'sobota'];
 
 export function linijkaDniaWolnego(t: Pick<TerminPracownika, 'zdazDo'>, rodzaj: RodzajLinijki, dzis?: string): string {
+  if (!poprawnaData(t.zdazDo)) throw new RangeError(`Błędna data „Zdąż do”: ${t.zdazDo}`);
   const powod = dzienWolny(t.zdazDo);
   if (!powod || (dzis !== undefined && dzis > t.zdazDo)) return '';
+  const art115 = terminPracownika(t.zdazDo);
   const dzien = `To ${powod === 'sobota' || powod === 'niedziela' ? powod : JEDNORAZOWE_WOLNE[t.zdazDo] ? 'dzień wolny od pracy' : `dzień wolny od pracy (${powod})`}.`;
   if (rodzaj === 'pracodawca' || rodzaj === 'odmowa' || rodzaj === 'zastrzezenia-zus' || rodzaj === 'orzeczenie-lekarskie') {
     const d = DOTARCIE[rodzaj];
@@ -287,18 +289,21 @@ export function linijkaDniaWolnego(t: Pick<TerminPracownika, 'zdazDo'>, rodzaj: 
     // Dzień roboczy już minął (dziś to dzień wolny przed „Zdąż do” albo ten dzień): ta sama zasada, bez rady na przeszłość.
     if (dzis !== undefined && dzis > roboczy) {
       const nazwa = DZIEN_TYGODNIA[new Date(`${roboczy}T00:00:00Z`).getUTCDay()];
-      return `${dzien} Ostatnim dniem roboczym przed tą datą był${nazwa === 'środa' ? 'a' : ''} ${nazwa} ${dataPoPolsku(roboczy)} Złóż ${d.co} jak najszybciej, najlepiej osobiście: ${d.bo}.`;
+      // Audyt A-1: rada „zdąż do pierwszej daty” jest już nie do spełnienia, więc wprost dzień z art. 115 KC, gdy jest późniejszy.
+      const dalej = art115.rozne ? ` Według art. 115 Kodeksu cywilnego ostatni dzień to ${DZIEN_TYGODNIA[new Date(`${art115.wedlugArt115}T00:00:00Z`).getUTCDay()]} ${dataPoPolsku(art115.wedlugArt115)}` : '';
+      return `${dzien} Ostatnim dniem roboczym przed tą datą był${nazwa === 'środa' ? 'a' : ''} ${nazwa} ${dataPoPolsku(roboczy)} Złóż ${d.co} jak najszybciej, najlepiej osobiście: ${d.bo}.${dalej}`;
     }
     return `${dzien} ${d.gdy}, bezpieczniej złóż ${d.co} najpóźniej w ostatnim dniu roboczym przed tą datą, czyli ${wDniu(roboczy)}: ${d.bo}.`;
   }
   const pismo = rodzaj === 'przedawnienie' ? 'pozew' : rodzaj === 'odwolanie-zus' ? 'odwołanie' : 'pismo';
   const dokad =
     rodzaj === 'odwolanie-zus'
-      ? ', zaadresowane do oddziału ZUS, który wydał decyzję: sądy uznają wtedy dzień nadania za dzień wniesienia odwołania'
+      ? ', w liście do oddziału ZUS, który wydał decyzję: sądy uznają wtedy dzień nadania za dzień wniesienia odwołania'
       : `: nadanie jest równoznaczne z wniesieniem ${pismo === 'pozew' ? 'pozwu' : 'pisma'} do sądu`;
-  const poczta = `Tego dnia możesz jeszcze nadać ${pismo} w placówce Poczty Polskiej (operatora wyznaczonego), jeśli jest czynna${dokad} (art. 165 § 2 Kodeksu postępowania cywilnego). Zachowaj potwierdzenie nadania; list u kuriera tego skutku nie ma.`;
+  const poczta = `Tego dnia możesz jeszcze nadać ${pismo} w placówce Poczty Polskiej (operatora wyznaczonego), jeśli jest czynna${dokad} (art. 165 § 2 Kodeksu postępowania cywilnego). Zachowaj potwierdzenie nadania; przesyłka nadana u kuriera tego skutku nie ma.`;
+  // Audyt A-4: sobota sprzed 2017 r. nie przesuwała się wcale, więc wtedy bez zdania o wątpliwym przesunięciu.
   if (rodzaj === 'przedawnienie')
-    return `${dzien} ${poczta} Nie odkładaj pozwu na następny dzień roboczy: przy przedawnieniu przesunięcie z art. 115 Kodeksu cywilnego jest wątpliwe.`;
+    return `${dzien} ${poczta}${art115.rozne ? ' Nie odkładaj pozwu na następny dzień roboczy: przy przedawnieniu przesunięcie z art. 115 Kodeksu cywilnego jest wątpliwe.' : ''}`;
   return `${dzien} ${poczta}`;
 }
 

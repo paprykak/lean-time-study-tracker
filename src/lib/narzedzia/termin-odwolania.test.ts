@@ -66,7 +66,7 @@ describe('opis wyniku: zdąż do i art. 115 KC', () => {
     expect(opisOdwolania('2026-11-12', 'wypowiedzenie', '2026-12-02').status).toBe('Został 1 dzień');
   });
   it('dni graniczne: ostatni dzień, okno art. 115 KC, po terminie', () => {
-    expect(opisOdwolania('2026-12-03', 'bez-wypowiedzenia', '2026-12-24')).toMatchObject({ status: 'To dziś: złóż pismo w sądzie albo nadaj je dziś w placówce Poczty Polskiej', statusKlasa: 'pilne' });
+    expect(opisOdwolania('2026-12-03', 'bez-wypowiedzenia', '2026-12-24')).toMatchObject({ status: 'To dziś: nadaj pismo w placówce Poczty Polskiej, jeśli jest czynna', statusKlasa: 'pilne' });
     expect(opisOdwolania('2026-12-03', 'bez-wypowiedzenia', '2026-12-21').statusKlasa).toBe('pilne');
     const okno = opisOdwolania('2026-12-03', 'bez-wypowiedzenia', '2026-12-25');
     expect(sp(okno.status)).toBe('Pierwsza data minęła; ostatni dzień według art. 115 KC: 28 grudnia 2026 r.');
@@ -100,5 +100,12 @@ describe('opis wyniku: zdąż do i art. 115 KC', () => {
   });
   it('sprzeciw od kary w sobotę 2 stycznia 2027 r.: przełom roku, czwartek 31 grudnia 2026 r.', () => {
     expect(sp(opisOdwolania('2026-12-26', 'kara-sprzeciw', '2026-12-28').praktycznie)).toContain('czyli w czwartek 31 grudnia 2026 r.:');
+  });
+});
+
+describe('terminy3, audyt A-2: status „to dziś” w dzień wolny', () => {
+  it('w dzień roboczy sąd albo poczta, w dzień wolny tylko czynna placówka', () => {
+    expect(opisOdwolania('2026-11-12', 'wypowiedzenie', '2026-12-03').status).toBe('To dziś: złóż pismo w sądzie albo nadaj je dziś w placówce Poczty Polskiej');
+    expect(opisOdwolania('2026-12-03', 'bez-wypowiedzenia', '2026-12-24').status).toBe('To dziś: nadaj pismo w placówce Poczty Polskiej, jeśli jest czynna');
   });
 });

@@ -456,10 +456,10 @@ describe('linijkaDniaWolnego i ostatni dzień roboczy', () => {
   });
   it('pełne brzmienie: pismo do sądu i przedawnienie (Wielkanoc, Boże Narodzenie, 12.11.2018 r.)', () => {
     expect(sp(linijkaDniaWolnego({ zdazDo: '2027-03-28' }, 'sad'))).toBe(
-      'To dzień wolny od pracy (Wielkanoc). Tego dnia możesz jeszcze nadać pismo w placówce Poczty Polskiej (operatora wyznaczonego), jeśli jest czynna: nadanie jest równoznaczne z wniesieniem pisma do sądu (art. 165 § 2 Kodeksu postępowania cywilnego). Zachowaj potwierdzenie nadania; list u kuriera tego skutku nie ma.',
+      'To dzień wolny od pracy (Wielkanoc). Tego dnia możesz jeszcze nadać pismo w placówce Poczty Polskiej (operatora wyznaczonego), jeśli jest czynna: nadanie jest równoznaczne z wniesieniem pisma do sądu (art. 165 § 2 Kodeksu postępowania cywilnego). Zachowaj potwierdzenie nadania; przesyłka nadana u kuriera tego skutku nie ma.',
     );
     expect(sp(linijkaDniaWolnego({ zdazDo: '2026-12-25' }, 'przedawnienie'))).toBe(
-      'To dzień wolny od pracy (Boże Narodzenie). Tego dnia możesz jeszcze nadać pozew w placówce Poczty Polskiej (operatora wyznaczonego), jeśli jest czynna: nadanie jest równoznaczne z wniesieniem pozwu do sądu (art. 165 § 2 Kodeksu postępowania cywilnego). Zachowaj potwierdzenie nadania; list u kuriera tego skutku nie ma. Nie odkładaj pozwu na następny dzień roboczy: przy przedawnieniu przesunięcie z art. 115 Kodeksu cywilnego jest wątpliwe.',
+      'To dzień wolny od pracy (Boże Narodzenie). Tego dnia możesz jeszcze nadać pozew w placówce Poczty Polskiej (operatora wyznaczonego), jeśli jest czynna: nadanie jest równoznaczne z wniesieniem pozwu do sądu (art. 165 § 2 Kodeksu postępowania cywilnego). Zachowaj potwierdzenie nadania; przesyłka nadana u kuriera tego skutku nie ma. Nie odkładaj pozwu na następny dzień roboczy: przy przedawnieniu przesunięcie z art. 115 Kodeksu cywilnego jest wątpliwe.',
     );
     expect(linijkaDniaWolnego({ zdazDo: '2018-11-12' }, 'sad')).toMatch(/^To dzień wolny od pracy\. /);
     expect(linijkaDniaWolnego({ zdazDo: '2026-12-13' }, 'sad')).toMatch(/^To niedziela\. /);
@@ -469,7 +469,7 @@ describe('linijkaDniaWolnego i ostatni dzień roboczy', () => {
     expect(sp(linijkaDniaWolnego(t, 'pracodawca', '2026-12-11'))).toContain('bezpieczniej złóż pismo do pracodawcy najpóźniej w ostatnim dniu roboczym przed tą datą, czyli w piątek 11 grudnia 2026 r.:');
     for (const dzis of ['2026-12-12', '2026-12-13'])
       expect(sp(linijkaDniaWolnego(t, 'pracodawca', dzis))).toBe(
-        'To niedziela. Ostatnim dniem roboczym przed tą datą był piątek 11 grudnia 2026 r. Złóż pismo do pracodawcy jak najszybciej, najlepiej osobiście: liczy się dzień, w którym pismo do niego dotrze, a nie dzień nadania (art. 61 § 1 Kodeksu cywilnego).',
+        'To niedziela. Ostatnim dniem roboczym przed tą datą był piątek 11 grudnia 2026 r. Złóż pismo do pracodawcy jak najszybciej, najlepiej osobiście: liczy się dzień, w którym pismo do niego dotrze, a nie dzień nadania (art. 61 § 1 Kodeksu cywilnego). Według art. 115 Kodeksu cywilnego ostatni dzień to poniedziałek 14 grudnia 2026 r.',
       );
     expect(linijkaDniaWolnego(t, 'sad', '2026-12-13')).toMatch(/^To niedziela\. Tego dnia możesz jeszcze nadać pismo/);
     for (const r of ['pracodawca', 'sad', 'przedawnienie'] as const) expect(linijkaDniaWolnego(t, r, '2026-12-14')).toBe('');
@@ -481,4 +481,21 @@ describe('linijkaDniaWolnego i ostatni dzień roboczy', () => {
     expect(dzienWolnyArt115('2018-11-12')).toBe('dzień wolny 12 listopada 2018 r.');
     expect(dzienWolnyArt115('2016-12-25')).toBe('Boże Narodzenie');
   });
+});
+
+// Audyt pakietu terminy3: A-1 (po dniu roboczym wprost dzień z art. 115 KC), A-4 (sobota sprzed 2017 r. przy przedawnieniu).
+describe('terminy3, audyt A-1 i A-4', () => {
+  const sp = (t: string) => t.replace(/\s/g, ' ');
+  it('A-1: w sobotę przed niedzielą 13.12.2026 r. linijka podaje poniedziałek 14 grudnia z art. 115 KC', () => {
+    expect(sp(linijkaDniaWolnego({ zdazDo: '2026-12-13' }, 'pracodawca', '2026-12-12'))).toMatch(/Według art\. 115 Kodeksu cywilnego ostatni dzień to poniedziałek 14 grudnia 2026 r\.$/);
+    // Sobota przed 2017 r.: art. 115 KC nie przesuwa, więc bez drugiej daty.
+    expect(linijkaDniaWolnego({ zdazDo: '2016-12-31' }, 'pracodawca', '2016-12-31')).not.toContain('art. 115');
+    // Przez Wigilię i święta: środa 23.12 była ostatnim dniem roboczym, według art. 115 KC poniedziałek 28.12.
+    expect(sp(linijkaDniaWolnego({ zdazDo: '2026-12-24' }, 'pracodawca', '2026-12-24'))).toMatch(/^To dzień wolny od pracy \(Wigilia Bożego Narodzenia\)\. Ostatnim dniem roboczym przed tą datą była środa 23 grudnia 2026 r\. .*ostatni dzień to poniedziałek 28 grudnia 2026 r\.$/);
+  });
+  it('A-4: przedawnienie w sobotę 2016 r. bez zdania o wątpliwym przesunięciu, w 2026 r. z nim', () => {
+    expect(linijkaDniaWolnego({ zdazDo: '2016-12-31' }, 'przedawnienie')).not.toContain('wątpliwe');
+    expect(linijkaDniaWolnego({ zdazDo: '2026-12-12' }, 'przedawnienie')).toContain('wątpliwe');
+  });
+  it('A-7: błędna data to RangeError', () => expect(() => linijkaDniaWolnego({ zdazDo: '2026-13-01' }, 'sad')).toThrow(RangeError));
 });
