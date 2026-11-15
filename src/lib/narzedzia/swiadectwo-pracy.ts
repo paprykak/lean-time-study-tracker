@@ -156,6 +156,11 @@ export function stanTerminuPracownika(t: TerminPracownika, dzis: string): { teks
 const dopiskArt115 = (t: TerminPracownika, rodzaj: RodzajTerminu) => (t.rozne ? ` ${ETYKIETA_ART_115}: ${dataPoPolsku(t.wedlugArt115)}; ${zdanieArt115(t, rodzaj)}` : '');
 const zdaz = (t: TerminPracownika) => `${t.rozne ? 'zdąż do' : 'do'} ${dataPoPolsku(t.zdazDo)}`;
 
+const OSTROZNA_MINELA: { tekst: string; klasa: KlasaStatusu } = {
+  tekst: 'ostrożna data minęła, ale pozew nadal możesz wnieść przed przedawnieniem (art. 97¹ § 3–4)',
+  klasa: 'wkrotce',
+};
+
 const PRZYWROCENIE = 'Gdy termin minął bez Twojej winy, sąd pracy może go przywrócić na wniosek złożony w 7 dni od ustania przyczyny spóźnienia (art. 265 Kodeksu pracy).';
 
 const wielka = (t: string) => t.charAt(0).toUpperCase() + t.slice(1);
@@ -183,14 +188,15 @@ export function opisSwiadectwa(d: DaneSwiadectwa, dzis: string): OpisSwiadectwa 
   }
 
   // Terminy pracownika: wniosek o sprostowanie, pozew po odmowie albo wariant ostrożny bez odpowiedzi.
-  const terminyPracownika: { termin: TerminPracownika; nazwa: string }[] = [];
+  const terminyPracownika: { termin: TerminPracownika; nazwa: string; ostrozny?: boolean }[] = [];
   if (t.sprostowanie) {
     const s = stanTerminuPracownika(t.sprostowanie, dzis);
     pozycje.push({
       klucz: 'sprostowanie',
       etykieta: 'Wniosek o sprostowanie',
       wartosc: puste(d.wniosek) ? `${zdaz(t.sprostowanie)}: ${s.tekst}` : zdaz(t.sprostowanie),
-      opis: `14 dni od otrzymania świadectwa (art. 97 § 2¹); do tego dnia wniosek powinien dotrzeć do pracodawcy.${dopiskArt115(t.sprostowanie, 'pracodawca')}`,
+      // Po złożeniu wniosku dopisek o art. 115 KC jest zbędny (zostaje tylko data); uwaga niżej mówi, czy zdążył.
+      opis: `14 dni od otrzymania świadectwa (art. 97 § 2¹); do tego dnia wniosek powinien dotrzeć do pracodawcy.${puste(d.wniosek) ? dopiskArt115(t.sprostowanie, 'pracodawca') : ''}`,
     });
     if (puste(d.wniosek) && puste(d.odmowa)) terminyPracownika.push({ termin: t.sprostowanie, nazwa: 'Wniosek o sprostowanie' });
     if (!puste(d.wniosek) && d.wniosek! > t.sprostowanie.zdazDo) {
@@ -226,14 +232,15 @@ export function opisSwiadectwa(d: DaneSwiadectwa, dzis: string): OpisSwiadectwa 
     });
     terminyPracownika.push({ termin: t.pozew, nazwa: 'Pozew o sprostowanie' });
   } else if (t.pozewBezOdpowiedzi) {
-    const s = stanTerminuPracownika(t.pozewBezOdpowiedzi, dzis);
+    // Ostrożna data nie jest terminem z przepisu (art. 97 § 2¹ zd. 3, art. 97¹ § 3–4): po jej upływie pozew nadal jest możliwy.
+    const s = fazaTerminu(t.pozewBezOdpowiedzi, dzis).faza === 'po-terminie' ? OSTROZNA_MINELA : stanTerminuPracownika(t.pozewBezOdpowiedzi, dzis);
     pozycje.push({
       klucz: 'pozew',
       etykieta: 'Pozew o sprostowanie',
       wartosc: `ostrożnie ${zdaz(t.pozewBezOdpowiedzi)}: ${s.tekst}`,
       opis: `Gdy pracodawca nie zawiadomi o odmowie, przepis nie podaje terminu: pozew wnosi się do sądu pracy (art. 97 § 2¹), w każdym czasie przed przedawnieniem (art. 97¹ § 3–4). Ostrożnie liczymy 14 dni od końca terminu pracodawcy, jak po odmowie.${dopiskArt115(t.pozewBezOdpowiedzi, 'sad')}`,
     });
-    terminyPracownika.push({ termin: t.pozewBezOdpowiedzi, nazwa: 'Pozew o sprostowanie (ostrożnie)' });
+    terminyPracownika.push({ termin: t.pozewBezOdpowiedzi, nazwa: 'Pozew o sprostowanie (ostrożnie)', ostrozny: true });
   } else {
     pozycje.push({ klucz: 'pozew', etykieta: 'Pozew o sprostowanie', wartosc: '14 dni od odmowy', opis: 'Termin od zawiadomienia o odmowie sprostowania; gdy pracodawca nie zawiadomi, pozew wnosi się do sądu pracy bez terminu w przepisie (art. 97 § 2¹).' });
   }
@@ -249,7 +256,7 @@ export function opisSwiadectwa(d: DaneSwiadectwa, dzis: string): OpisSwiadectwa 
       : {
           klucz: 'wydanie-sad',
           etykieta: 'Gdy nie wyda świadectwa',
-          wartosc: `pozew ${zdaz(t.przedawnienie)}`,
+          wartosc: `pozew ${zdaz(t.przedawnienie)}${dzis > t.przedawnienie.wedlugArt115 ? ': termin minął' : ''}`,
           opis: `Pozew o zobowiązanie pracodawcy do wydania świadectwa, w każdym czasie przed przedawnieniem (art. 97¹ § 1 i 3): 3 lata (art. 291 § 1), liczone od ostatniego dnia umowy. Gdy pracodawca nie istnieje albo z innych przyczyn pozew przeciw niemu jest niemożliwy, pozew o ustalenie prawa do świadectwa (art. 97¹ § 2).${dopiskArt115(t.przedawnienie, 'przedawnienie')}`,
         },
   );
@@ -261,11 +268,11 @@ export function opisSwiadectwa(d: DaneSwiadectwa, dzis: string): OpisSwiadectwa 
           klucz: 'odszkodowanie',
           etykieta: 'Odszkodowanie',
           wartosc: `najwyżej ${zl(t.odszkodowanie)}`,
-          opis: `Wynagrodzenie za czas bez pracy z tego powodu, nie dłuższy niż 6 tygodni (art. 99 § 2), liczone jak ekwiwalent za urlop (§ 2 ust. 1 pkt 9 rozporządzenia z 29 maja 1996 r.): 1,5 × ${zl(d.wynagrodzenie!)}.`,
+          opis: `Wynagrodzenie za czas bez pracy z tego powodu, nie dłuższy niż 6 tygodni (art. 99 § 2), liczone jak ekwiwalent za urlop (§ 2 ust. 1 pkt 9 rozporządzenia z 29 maja 1996 r.): 1,5 × ${zl(d.wynagrodzenie!)}. To nasza interpretacja; inne odczytanie (30 dni pracy, § 2a) daje mniej, opis w „Jak liczymy”.`,
         },
   );
 
-  uwagi.push('Pracodawca nie może uzależniać wydania świadectwa od wcześniejszego rozliczenia się z nim, np. ze zwrotu odzieży roboczej (art. 97 § 1³). Za niewydanie świadectwa w terminie grozi grzywna od 2000 do 60 000 zł (art. 282 § 1 pkt 3).');
+  uwagi.push('Pracodawca nie może uzależniać wydania świadectwa od wcześniejszego rozliczenia się z nim, np. ze zwrotu odzieży roboczej (art. 97 § 1³). Za niewydanie świadectwa w terminie grozi grzywna od 2000 do 60 000 zł (art. 282 § 1 pkt 3, w tej wysokości od 8 lipca 2026 r.; wcześniej od 1000 do 30 000 zł).');
   uwagi.push('Odszkodowanie wymaga wykazania związku między pozostawaniem bez pracy a niewydaniem w terminie albo wydaniem niewłaściwego świadectwa. Inną szkodę niż utracone zarobki można dochodzić na zasadach ogólnych, z art. 471 Kodeksu cywilnego przez art. 300 Kodeksu pracy (wyrok Sądu Najwyższego z 13 października 2004 r., II PK 36/04).');
   if (!uwagi.some((u) => u.includes('art. 265'))) uwagi.push(PRZYWROCENIE);
   uwagi.push(`Terminy wydania świadectwa i odpowiedzi na wniosek to terminy pracodawcy. ${BEZ_PRZESUNIECIA.pracodawca}`);
@@ -278,7 +285,7 @@ export function opisSwiadectwa(d: DaneSwiadectwa, dzis: string): OpisSwiadectwa 
   if (terminyPracownika.length) {
     const przyszle = terminyPracownika.filter((x) => x.termin.wedlugArt115 >= dzis).sort((a, b) => (a.termin.zdazDo < b.termin.zdazDo ? -1 : 1));
     const wybrany = przyszle[0] ?? terminyPracownika[terminyPracownika.length - 1];
-    const s = stanTerminuPracownika(wybrany.termin, dzis);
+    const s = wybrany.ostrozny && fazaTerminu(wybrany.termin, dzis).faza === 'po-terminie' ? OSTROZNA_MINELA : stanTerminuPracownika(wybrany.termin, dzis);
     glowny = dataPoPolsku(wybrany.termin.zdazDo);
     glownyOpis = wybrany.termin.rozne
       ? `${wybrany.nazwa}: zdąż do tego dnia; ${ETYKIETA_ART_115.charAt(0).toLowerCase()}${ETYKIETA_ART_115.slice(1)}: ${dataPoPolsku(wybrany.termin.wedlugArt115)}`
@@ -299,7 +306,7 @@ export function opisSwiadectwa(d: DaneSwiadectwa, dzis: string): OpisSwiadectwa 
       status = `Wysyłka z przyczyn obiektywnych: najpóźniej ${dataPoPolsku(t.wysylka!)}`;
       statusKlasa = 'wkrotce';
     } else {
-      status = `Pracodawca miał wydać świadectwo ${dni(-r)} temu`;
+      status = `Pracodawca miał wydać świadectwo ${dni(-r)} temu${dzis > t.przedawnienie.wedlugArt115 ? '; pozew o wydanie mógł się już przedawnić (art. 291 § 1)' : ''}`;
       statusKlasa = 'po-terminie';
     }
   } else {

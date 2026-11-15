@@ -67,6 +67,28 @@ describe('terminy świadectwa pracy', () => {
   });
 });
 
+describe('poprawki po audycie (2026-11-15)', () => {
+  it('po ostrożnej dacie pozwu bez zawiadomienia: pozew nadal możliwy, nie „termin minął”', () => {
+    const o = opisSwiadectwa(dane({ ustanie: '2026-09-30', otrzymanie: '2026-09-30', wniosek: '2026-10-01' }), DZIS);
+    expect(o.status).toBe('Ostrożna data minęła, ale pozew nadal możesz wnieść przed przedawnieniem (art. 97¹ § 3–4)');
+    expect(o.statusKlasa).toBe('wkrotce');
+    expect(sp(o.pozycje.find((p) => p.klucz === 'pozew')!.wartosc)).toContain('ostrożna data minęła');
+  });
+  it('przedawnienie pozwu o wydanie po upływie: stan w pozycji i w statusie', () => {
+    const o = opisSwiadectwa(dane({ ustanie: '2020-01-02' }), DZIS);
+    expect(sp(o.pozycje.find((p) => p.klucz === 'wydanie-sad')!.wartosc)).toBe('pozew do 2 stycznia 2023 r.: termin minął');
+    expect(o.status).toContain('mógł się już przedawnić');
+    expect(opisSwiadectwa(dane({}), DZIS).status).not.toContain('przedawnić');
+  });
+  it('grzywna z datą obowiązywania, odszkodowanie jako interpretacja, dopisek o art. 115 KC tylko przed wnioskiem', () => {
+    const o = opisSwiadectwa(dane({ otrzymanie: '2026-10-31', wniosek: '2026-11-10', wynagrodzenie: 5200 }), DZIS);
+    expect(o.uwagi.join(' ')).toContain('od 8 lipca 2026 r.');
+    expect(o.pozycje.find((p) => p.klucz === 'odszkodowanie')!.opis).toContain('inne odczytanie');
+    expect(o.pozycje.find((p) => p.klucz === 'sprostowanie')!.opis).not.toContain('art. 115');
+    expect(opisSwiadectwa(dane({ otrzymanie: '2026-10-31' }), DZIS).pozycje.find((p) => p.klucz === 'sprostowanie')!.opis).toContain('art. 115');
+  });
+});
+
 describe('odszkodowanie z art. 99 § 2', () => {
   it('1,5 miesięcznej kwoty, grosze połówką w górę', () => {
     expect(granicaOdszkodowania(5200)).toBe(7800);
