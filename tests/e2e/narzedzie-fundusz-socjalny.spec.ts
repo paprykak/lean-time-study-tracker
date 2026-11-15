@@ -14,7 +14,7 @@ test('50 etatów: musi tworzyć fundusz, odpis 2943,23 zł, rocznie 147 161,25 z
   await expect(page.locator('[data-w="werdykt"]')).toHaveText('Musi tworzyć fundusz');
   await expect(page.locator('[data-w="opis"]')).toContainText(/art\.\s3\sust\.\s1\s/);
   await expect(page.locator('[data-w="odpis"]')).toHaveText(/^2\s?943,23\szł$/);
-  await expect(page.locator('[data-w="odpis-opis"]')).toContainText(/dokładnie\s2\s?943,225\szł/);
+  await expect(page.locator('[data-w="odpis-opis"]')).toContainText(/37,5%\sz\s7\s?848,60\szł/);
   await expect(page.locator('[data-w="fundusz-etykieta"]')).toHaveText(/^Odpis\sna\s2026\sr\.,\s50\setatów$/);
   await expect(page.locator('[data-w="fundusz"]')).toHaveText(/^147\s161,25\szł$/);
   await expect(page.locator('[data-w="terminy"]')).toContainText(/co\snajmniej\s110\s370,94\szł\sdo\s31\smaja/);
@@ -23,13 +23,15 @@ test('50 etatów: musi tworzyć fundusz, odpis 2943,23 zł, rocznie 147 161,25 z
 test('49,5 etatu bez związku: nie musi, świadczenie urlopowe najwyżej 2943,22 zł; wniosek związku zmienia wynik', async ({ page }) => {
   await page.getByLabel('Etaty 1 stycznia').fill('49,5');
   await expect(page.locator('[data-w="werdykt"]')).toHaveText('Nie musi tworzyć funduszu');
-  await expect(page.locator('[data-w="fundusz-etykieta"]')).toHaveText(/^Fundusz\snajwyżej,\s49,5\setatu$/);
+  await expect(page.locator('[data-w="fundusz-etykieta"]')).toHaveText(/^Odpis\s37,5%,\sgdyby\stworzył\sfundusz,\s49,5\setatu$/);
   await expect(page.locator('[data-w="fundusz"]')).toHaveText(/^145\s689,64\szł$/);
   await expect(page.locator('[data-w="urlopowe"]')).toContainText(/najwyżej\s2\s?943,22\szł/);
-  await expect(page.locator('[data-w="uwaga"]')).toContainText(/art\.\s3\sust\.\s3a–3b/);
+  await expect(page.locator('[data-w="uwaga"]')).toContainText(/art\.\s3\sust\.\s3a\)/);
   await page.getByLabel('Związek zawodowy w firmie').selectOption('wniosek');
   await expect(page.locator('[data-w="werdykt"]')).toHaveText('Musi tworzyć fundusz');
   await expect(page.locator('[data-w="opis"]')).toContainText(/art\.\s3\sust\.\s1c/);
+  await expect(page.locator('[data-w="urlopowe"]')).toContainText(/nie\szastąpi\sgo\sświadczeniem\surlopowym/);
+  await expect(page.locator('[data-w="glos"]')).toHaveText(/^Odpis\sna\s2026\sr\.,\s49,5\setatu:\s145\s689,64\szł$/);
 });
 
 test('12 etatów w jednostce budżetowej: musi bez względu na liczbę; 2025 r. z inną podstawą', async ({ page }) => {
@@ -48,8 +50,10 @@ test('błędna liczba etatów: komunikat, pole oznaczone, po poprawie wynik wrac
   await expect(page.locator('[data-blad="dane"]')).toBeVisible();
   await expect(pole).toHaveAttribute('aria-invalid', 'true');
   await expect(page.locator('[data-w="werdykt"]')).toHaveText('—');
-  await pole.fill('abc');
-  await expect(page.locator('[data-blad="dane"]')).toContainText(/większą\sod\szera/);
+  await expect(page.locator('[data-blad="dane"]')).toContainText(/większa\sod\szera/);
+  await expect(page.locator('[data-w="fundusz-etykieta"]')).toHaveText('Odpis na rok');
+  await pole.fill('1.200');
+  await expect(page.locator('[data-blad="dane"]')).toContainText(/1200\salbo\s1,2/);
   await pole.fill('20');
   await expect(page.locator('[data-blad="dane"]')).toBeHidden();
   await expect(pole).not.toHaveAttribute('aria-invalid', 'true');

@@ -40,9 +40,9 @@ export const ODPISY = {
   mlodociany1: { bp: 500, nazwa: 'Młodociany, 1. rok nauki', przepis: 'art. 5 ust. 2a' },
   mlodociany2: { bp: 600, nazwa: 'Młodociany, 2. rok nauki', przepis: 'art. 5 ust. 2a' },
   mlodociany3: { bp: 700, nazwa: 'Młodociany, 3. rok nauki', przepis: 'art. 5 ust. 2a' },
-  niepelnosprawny: { bp: 625, nazwa: 'Zwiększenie: osoba ze znacznym lub umiarkowanym stopniem niepełnosprawności', przepis: 'art. 5 ust. 4' },
+  niepelnosprawny: { bp: 625, nazwa: 'Zwiększenie: zatrudniona osoba ze znacznym lub umiarkowanym stopniem niepełnosprawności', przepis: 'art. 5 ust. 4' },
   emeryt: { bp: 625, nazwa: 'Zwiększenie: emeryt i rencista pod opieką socjalną', przepis: 'art. 5 ust. 5' },
-  zlobek: { bp: 750, nazwa: 'Zwiększenie: zakładowy żłobek lub klub dziecięcy (na osobę)', przepis: 'art. 5 ust. 5a' },
+  zlobek: { bp: 750, nazwa: 'Zwiększenie: zakładowy żłobek lub klub dziecięcy (na każdego zatrudnionego)', przepis: 'art. 5 ust. 5a' },
 } as const;
 
 export type RodzajOdpisu = keyof typeof ODPISY;
@@ -61,14 +61,35 @@ export function odpisNaEtat(rok: number, rodzaj: RodzajOdpisu = 'zwykly') {
   return { kwota: Number(doCalosci(licznik, 10_000n)) / 100, dokladnie: Number(licznik) / 1_000_000, wGroszach: licznik % 10_000n === 0n };
 }
 
-/** Etaty wpisane przez człowieka: „35”, „49,5”, „12,875”. Tysięczne części etatu jako liczba całkowita; null, gdy błąd. */
-export function etatyWTysiecznych(tekst: string): number | null {
-  const t = tekst.trim().replace(/\s/g, '').replace(',', '.');
-  const m = /^(\d{1,7})(?:\.(\d{1,3}))?$/.exec(t);
-  if (!m) return null;
+export type BladEtatow = 'format' | 'zero' | 'za-duzo' | 'kropka';
+
+/**
+ * Etaty wpisane przez człowieka: „35”, „49,5”, „12,875”, „1 200”. Tysięczne części etatu jako liczba całkowita albo rodzaj
+ * błędu. Kropka z dokładnie trzema cyframi po niej („1.200”) jest niejednoznaczna (tysiące czy ułamek), więc to błąd.
+ */
+export function wczytajEtaty(tekst: string): { tys: number } | { blad: BladEtatow } {
+  const t = tekst.trim().replace(/\s/g, '');
+  if (/^\d{1,3}\.\d{3}$/.test(t)) return { blad: 'kropka' };
+  const m = /^(\d{1,10})(?:[.,](\d{1,3}))?$/.exec(t);
+  if (!m) return { blad: 'format' };
   const tys = Number(m[1]) * 1000 + Number((m[2] ?? '').padEnd(3, '0'));
-  return tys > 0 && tys <= 1_000_000_000 ? tys : null;
+  if (tys <= 0) return { blad: 'zero' };
+  if (tys > 1_000_000_000) return { blad: 'za-duzo' };
+  return { tys };
 }
+
+/** Tysięczne części etatu albo null, gdy wpis jest błędny. */
+export function etatyWTysiecznych(tekst: string): number | null {
+  const w = wczytajEtaty(tekst);
+  return 'tys' in w ? w.tys : null;
+}
+
+export const KOMUNIKATY_ETATOW: Record<BladEtatow, string> = {
+  format: 'Wpisz liczbę etatów, na przykład 35 albo 49,5 (najwyżej trzy miejsca po przecinku).',
+  zero: 'Liczba etatów musi być większa od zera.',
+  'za-duzo': 'Wpisz najwyżej 1 000 000 etatów.',
+  kropka: 'Nie wiadomo, czy to tysiące, czy ułamek: wpisz na przykład 1200 albo 1,2.',
+};
 
 /** Odpis podstawowy na rok przy danej przeciętnej liczbie etatów (37,5%) i kwota do 31 maja (co najmniej 75%). */
 export function funduszNaRok(rok: number, etatyTys: number) {
@@ -125,10 +146,8 @@ export const zlDokladnie = (x: number) => `${DOKLADNIE.format(x)} zł`;
 export const okresPodstawy = (rok: number) =>
   PODSTAWA_ODPISU[rok].zaPolrocze >= PODSTAWA_ODPISU[rok].zaRok ? `drugiego półrocza ${rok - 1} r.` : `${rok - 1} r.`;
 
-export const KTO =
-  'pracownicy i ich rodziny, emeryci i renciści, którzy tu pracowali, i ich rodziny, a także inne osoby, którym regulamin funduszu przyzna to prawo (art. 2 pkt 5)';
-export const OD_CZEGO =
-  'od sytuacji życiowej, rodzinnej i materialnej osoby uprawnionej (art. 8 ust. 1) i od regulaminu funduszu, który podaje rodzaje świadczeń i zasady ich przyznawania (art. 8 ust. 2)';
+export const KTO = 'pracownicy, byli pracownicy na emeryturze lub rencie, rodziny jednych i drugich oraz osoby wskazane w regulaminie (art. 2 pkt 5)';
+export const OD_CZEGO = 'sytuacja życiowa, rodzinna i materialna (art. 8 ust. 1) i regulamin funduszu (art. 8 ust. 2)';
 
 /** Teksty wyniku: te same w HTML ze strony i w skrypcie przeglądarki. */
 export function opisFunduszu(rok: number, etatyTys: number, zwiazek: Zwiazek, pracodawca: Pracodawca): OpisFunduszu {
@@ -141,21 +160,24 @@ export function opisFunduszu(rok: number, etatyTys: number, zwiazek: Zwiazek, pr
     werdykt: musi ? 'Musi tworzyć fundusz' : 'Nie musi tworzyć funduszu',
     opis: '',
     odpis: zl(odpis.kwota),
-    odpisOpis: `37,5% z ${podstawa}, przeciętnego wynagrodzenia z ${okresPodstawy(rok)}${odpis.wGroszach ? '' : `, dokładnie ${zlDokladnie(odpis.dokladnie)}`} (art. 5 ust. 2)`,
-    funduszEtykieta: musi ? `Odpis na ${rok} r., ${etatyTekst(etatyTys)}` : `Fundusz najwyżej, ${etatyTekst(etatyTys)}`,
+    odpisOpis: `37,5% z ${podstawa}, przeciętnego wynagrodzenia z ${okresPodstawy(rok)} (art. 5 ust. 2)`,
+    funduszEtykieta: musi ? `Odpis na ${rok} r., ${etatyTekst(etatyTys)}` : `Odpis 37,5%, gdyby tworzył fundusz, ${etatyTekst(etatyTys)}`,
     fundusz: zl(f.kwota),
     terminy: musi
       ? `co najmniej ${zl(f.do31Maja)} do 31 maja, całość do 30 września ${rok} r. na osobny rachunek funduszu (art. 6 ust. 2, art. 12 ust. 1)`
-      : 'bez ustawowych terminów: dotyczą tylko pracodawców, którzy muszą tworzyć fundusz (art. 6 ust. 2a)',
-    urlopowe: musi
-      ? 'nie zamiast funduszu: świadczenie urlopowe z art. 3 ust. 3 dotyczy tylko pracodawców poniżej 50 etatów'
-      : `najwyżej ${zl(maksimum(rok, 'zwykle').kwota)} na pełny etat raz w roku, przy co najmniej 14 kolejnych dniach urlopu (art. 3 ust. 3–5)`,
+      : 'terminy wpłat i osobny rachunek nie dotyczą pracodawców poniżej 50 etatów (art. 6 ust. 2a)',
+    urlopowe:
+      o === 'prog50'
+        ? 'nie zamiast funduszu: wybór między funduszem a świadczeniem urlopowym mają tylko pracodawcy poniżej 50 etatów (art. 3 ust. 3)'
+        : musi
+          ? `nie zamiast funduszu: pracodawca, który musi tworzyć fundusz (${o === 'wniosek' ? 'art. 3 ust. 1c' : 'art. 3 ust. 2'}), nie zastąpi go świadczeniem urlopowym`
+      : `jeśli pracodawca je wypłaca: najwyżej ${zl(maksimum(rok, 'zwykle').kwota)} na pełny etat raz w roku, przy urlopie wypoczynkowym co najmniej 14 kolejnych dni kalendarzowych (art. 3 ust. 3–5)`,
     kto: KTO,
     odCzego: OD_CZEGO,
     uwagi: [],
   };
   if (o === 'prog50') r.opis = 'co najmniej 50 etatów 1 stycznia (art. 3 ust. 1 ustawy o ZFŚS)';
-  else if (o === 'wniosek') r.opis = 'od 20 do 49 etatów 1 stycznia i wniosek zakładowej organizacji związkowej (art. 3 ust. 1c)';
+  else if (o === 'wniosek') r.opis = 'co najmniej 20 i mniej niż 50 etatów 1 stycznia i wniosek zakładowej organizacji związkowej (art. 3 ust. 1c)';
   else if (o === 'budzetowa') r.opis = 'jednostka budżetowa albo samorządowy zakład budżetowy tworzy fundusz bez względu na liczbę pracowników (art. 3 ust. 2)';
   else r.opis = 'mniej niż 50 etatów 1 stycznia: może utworzyć fundusz, wypłacać świadczenie urlopowe albo nie robić żadnej z tych rzeczy (art. 3 ust. 3)';
 
@@ -168,15 +190,23 @@ export function opisFunduszu(rok: number, etatyTys: number, zwiazek: Zwiazek, pr
     r.uwagi.push(
       zwiazek === 'jest'
         ? 'Zakładowa organizacja związkowa może złożyć wniosek, a wtedy fundusz jest obowiązkowy (art. 3 ust. 1c).'
-        : 'Przy 20–49 etatach fundusz staje się obowiązkowy na wniosek zakładowej organizacji związkowej (art. 3 ust. 1c). Wniosku nie składa pojedynczy pracownik.',
+        : 'Przy co najmniej 20 i mniej niż 50 etatach fundusz staje się obowiązkowy na wniosek zakładowej organizacji związkowej (art. 3 ust. 1c). Wniosku nie składa pojedynczy pracownik.',
     );
   }
   if (o === 'dobrowolny' && etatyTys < 20_000 && zwiazek === 'wniosek') {
-    r.uwagi.push('Poniżej 20 etatów wniosek związku zawodowego nie zobowiązuje do utworzenia funduszu: art. 3 ust. 1c dotyczy pracodawców od 20 do 49 etatów.');
+    r.uwagi.push('Poniżej 20 etatów wniosek związku zawodowego nie zobowiązuje do utworzenia funduszu: art. 3 ust. 1c dotyczy pracodawców z co najmniej 20 i mniej niż 50 etatami.');
   }
   if (o === 'dobrowolny') {
     r.uwagi.push(
-      'Gdy pracodawca nie tworzy funduszu i nie wypłaca świadczenia urlopowego, informuje o tym w pierwszym miesiącu roku, w sposób przyjęty w firmie. Przy co najmniej 50 pracownikach w osobach zapisuje to w układzie zbiorowym albo regulaminie wynagradzania (art. 3 ust. 3a–3b).',
+      'Gdy pracodawca nie tworzy funduszu i nie wypłaca świadczenia urlopowego: jeśli nie obejmuje go układ zbiorowy i nie musi mieć regulaminu wynagradzania, informuje o tym pracowników w pierwszym miesiącu roku, w sposób u siebie przyjęty (art. 3 ust. 3a); jeśli zatrudnia co najmniej 50 pracowników (przepis nie mówi o etatach, liczymy osoby), zapisuje to w układzie zbiorowym, a bez układu w regulaminie wynagradzania, bez związku zawodowego w uzgodnieniu z pracownikami wybranymi przez załogę (art. 3 ust. 3b, art. 4 ust. 3). Innych przypadków ustawa nie rozstrzyga.',
+    );
+  }
+  if (musi && etatyTys < 50_000) {
+    r.terminy += '. Czy obowiązują pracodawcę poniżej 50 etatów, ustawa nie rozstrzyga (art. 6 ust. 2a); pokazujemy je, bo to wariant korzystniejszy dla pracowników';
+  }
+  if (o === 'budzetowa') {
+    r.uwagi.push(
+      'Dla nauczycieli odpis wynika z Karty Nauczyciela, a uczelni publicznych ten sposób liczenia nie dotyczy (art. 5 ust. 8). W jednostkach podległych ministrowi spraw wewnętrznych, w więziennictwie i u pracowników cywilnych wojska odpis może określać rozporządzenie, nie wyżej niż ustawa (art. 1 ust. 2–3). Tego nie liczymy.',
     );
   }
   if (musi) {

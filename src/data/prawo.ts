@@ -868,7 +868,7 @@ export const AKTY = {
   zwiazkiZawodowe: {
     nazwa: 'Ustawa o związkach zawodowych',
     publikator: 'Dz.U. 2026 poz. 549',
-    uwaga: 'tekst jednolity; art. 27 ust. 1–2 (regulamin ZFŚS i przyznawanie świadczeń w uzgodnieniu z zakładową organizacją związkową); zmiana Dz.U. 2026 poz. 1340 dotyczy tylko art. 32',
+    uwaga: 'tekst jednolity; art. 27 ust. 1–2 (regulamin ZFŚS i przyznawanie świadczeń w uzgodnieniu z zakładową organizacją związkową), art. 30 ust. 6 (kilka związków bez wspólnego stanowiska w 30 dni: decyduje pracodawca); zmiana Dz.U. 2026 poz. 1340 zmienia art. 32 ust. 9¹ i dodaje art. 32¹, art. 27 i 30 bez zmian',
     adres: eli(2026, 549),
     sprawdzono: '2026-11-15',
   },

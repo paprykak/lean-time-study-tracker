@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { etatyTekst, etatyWTysiecznych, funduszNaRok, obowiazek, odpisNaEtat, opisFunduszu, procentTekst, type RodzajOdpisu } from './fundusz-socjalny';
+import { etatyTekst, etatyWTysiecznych, wczytajEtaty, funduszNaRok, obowiazek, odpisNaEtat, opisFunduszu, procentTekst, type RodzajOdpisu } from './fundusz-socjalny';
 
 // Oczekiwane kwoty z niezależnego rachunku w Pythonie (raporty/zfss/rachunek.py: Decimal, kwoty GUS przepisane
 // z M.P. 2025 poz. 148 i M.P. 2026 poz. 232; do grosza od połówki w górę, 75% w górę do grosza).
@@ -84,7 +84,16 @@ describe('liczba etatów wpisana przez człowieka', () => {
     expect(etatyWTysiecznych('0,001')).toBe(1);
   });
   it('błędy: zero, ujemne, tekst, cztery miejsca po przecinku, ponad milion', () => {
-    for (const t of ['0', '0,000', '-5', 'abc', '', '12,8755', '1000000,001', '1e3', '5,']) expect(etatyWTysiecznych(t), t).toBeNull();
+    for (const t of ['0', '0,000', '-5', 'abc', '', '12,8755', '1000000,001', '1e3', '5,', '1.200', '12.875']) expect(etatyWTysiecznych(t), t).toBeNull();
+  });
+  it('rodzaj błędu: format, zero, za dużo, niejednoznaczna kropka', () => {
+    expect(wczytajEtaty('abc')).toEqual({ blad: 'format' });
+    expect(wczytajEtaty('0,000')).toEqual({ blad: 'zero' });
+    expect(wczytajEtaty('2000000')).toEqual({ blad: 'za-duzo' });
+    expect(wczytajEtaty('1.200')).toEqual({ blad: 'kropka' });
+    expect(wczytajEtaty('1.25')).toEqual({ tys: 1250 });
+    expect(wczytajEtaty('1200.5')).toEqual({ tys: 1_200_500 });
+    expect(wczytajEtaty('1000000')).toEqual({ tys: 1_000_000_000 });
   });
   it('odmiana: 1 etat, 22 etaty, 12 etatów, 50 etatów, 49,5 etatu, 10 000 etatów', () => {
     expect(etatyTekst(1000)).toBe('1 etat');
@@ -122,28 +131,32 @@ describe('teksty wyniku', () => {
     expect(o.werdykt).toBe('Musi tworzyć fundusz');
     expect(o.opis).toContain('art. 3 ust. 1 ');
     expect(sp(o.odpis)).toBe('2943,23 zł');
-    expect(sp(o.odpisOpis)).toContain('37,5% z 7848,60 zł, przeciętnego wynagrodzenia z drugiego półrocza 2025 r., dokładnie 2943,225 zł');
+    expect(sp(o.odpisOpis)).toBe('37,5% z 7848,60 zł, przeciętnego wynagrodzenia z drugiego półrocza 2025 r. (art. 5 ust. 2)');
     expect(o.funduszEtykieta).toBe('Odpis na 2026 r., 50 etatów');
     expect(sp(o.fundusz)).toBe('147 161,25 zł');
     expect(sp(o.terminy)).toContain('co najmniej 110 370,94 zł do 31 maja, całość do 30 września 2026 r.');
-    expect(o.urlopowe).toContain('nie zamiast funduszu');
+    expect(o.urlopowe).toContain('mają tylko pracodawcy poniżej 50 etatów (art. 3 ust. 3)');
     expect(o.uwagi.join(' ')).toContain('art. 4 ust. 1–2');
     expect(o.uwagi.join(' ')).toContain('art. 8 ust. 3');
   });
   it('35 etatów bez wniosku związku: nie musi, świadczenie urlopowe najwyżej 2943,22 zł, związek może złożyć wniosek', () => {
     const o = opisFunduszu(2026, 35_000, 'jest', 'firma');
     expect(o.werdykt).toBe('Nie musi tworzyć funduszu');
-    expect(o.funduszEtykieta).toBe('Fundusz najwyżej, 35 etatów');
+    expect(o.funduszEtykieta).toBe('Odpis 37,5%, gdyby tworzył fundusz, 35 etatów');
     expect(sp(o.urlopowe)).toContain('najwyżej 2943,22 zł na pełny etat');
-    expect(o.terminy).toContain('art. 6 ust. 2a');
+    expect(o.terminy).toBe('terminy wpłat i osobny rachunek nie dotyczą pracodawców poniżej 50 etatów (art. 6 ust. 2a)');
+    expect(o.uwagi.join(' ')).toContain('Innych przypadków ustawa nie rozstrzyga');
     expect(o.uwagi.join(' ')).toContain('może złożyć wniosek');
-    expect(o.uwagi.join(' ')).toContain('art. 3 ust. 3a–3b');
+    expect(o.uwagi.join(' ')).toContain('(art. 3 ust. 3b, art. 4 ust. 3)');
     expect(o.uwagi.join(' ')).not.toContain('art. 8 ust. 3');
   });
   it('35 etatów z wnioskiem: musi (art. 3 ust. 1c), z możliwością wyłączenia w układzie albo regulaminie', () => {
     const o = opisFunduszu(2026, 35_000, 'wniosek', 'firma');
     expect(o.werdykt).toBe('Musi tworzyć fundusz');
     expect(o.opis).toContain('art. 3 ust. 1c');
+    expect(o.urlopowe).toBe('nie zamiast funduszu: pracodawca, który musi tworzyć fundusz (art. 3 ust. 1c), nie zastąpi go świadczeniem urlopowym');
+    expect(o.terminy).toContain('Czy obowiązują pracodawcę poniżej 50 etatów, ustawa nie rozstrzyga (art. 6 ust. 2a)');
+    expect(opisFunduszu(2026, 50_000, 'wniosek', 'firma').terminy).not.toContain('nie rozstrzyga');
     expect(o.uwagi.join(' ')).toContain('art. 4 ust. 1–2');
   });
   it('12 etatów z „wnioskiem”: wniosek nie działa poniżej 20 etatów', () => {
@@ -160,11 +173,16 @@ describe('teksty wyniku', () => {
     expect(o.opis).toContain('art. 3 ust. 2');
     expect(o.uwagi.join(' ')).not.toContain('art. 4 ust. 1–2');
     expect(o.funduszEtykieta).toBe('Odpis na 2026 r., 8 etatów');
+    expect(o.urlopowe).toContain('(art. 3 ust. 2), nie zastąpi go');
+    expect(o.uwagi.join(' ')).toContain('art. 5 ust. 8');
+    expect(o.terminy).toContain('nie rozstrzyga');
+    expect(opisFunduszu(2026, 80_000, 'brak', 'budzetowa').terminy).not.toContain('nie rozstrzyga');
+    expect(opisFunduszu(2026, 30_000, 'wniosek', 'budzetowa').opis).toContain('art. 3 ust. 2');
   });
   it('2025: podstawa z drugiego półrocza 2024 r., 49,5 etatu', () => {
     const o = opisFunduszu(2025, 49_500, 'brak', 'firma');
-    expect(sp(o.odpisOpis)).toContain('37,5% z 7262,39 zł, przeciętnego wynagrodzenia z drugiego półrocza 2024 r., dokładnie 2723,39625 zł');
-    expect(o.funduszEtykieta).toBe('Fundusz najwyżej, 49,5 etatu');
+    expect(sp(o.odpisOpis)).toContain('37,5% z 7262,39 zł, przeciętnego wynagrodzenia z drugiego półrocza 2024 r.');
+    expect(o.funduszEtykieta).toBe('Odpis 37,5%, gdyby tworzył fundusz, 49,5 etatu');
     expect(sp(o.fundusz)).toBe('134 808,11 zł');
     expect(sp(o.urlopowe)).toContain('2723,39 zł');
   });
