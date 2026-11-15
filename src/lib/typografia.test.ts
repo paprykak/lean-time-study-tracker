@@ -22,7 +22,14 @@ describe('typografia: twarde spacje', () => {
     expect(pokaz(typografia('od 2017 500 osób'))).toBe('od 2017 500~osób');
     expect(pokaz(typografia('linia 400 V i 15 kV, hałas 85 dB(A), 50 Hz, 200 lx'))).toBe('linia 400~V i~15~kV, hałas 85~dB(A), 50~Hz, 200~lx');
     expect(pokaz(typografia('w 2026 Volvo, 3 dBy'))).toBe('w~2026 Volvo, 3 dBy');
+    expect(pokaz(typografia('1 miesiąc, 2 lata, 1 rok, 1 tydzień, 10 dnia, w 2027 roku'))).toBe('1~miesiąc, 2~lata, 1~rok, 1~tydzień, 10~dnia, w~2027~roku');
+    expect(pokaz(typografia('3 latarnie, 2 rokowania, 5 miesiączek'))).toBe('3 latarnie, 2 rokowania, 5 miesiączek');
     expect(pokaz(typografia('średnia z 4 tygodni, 26 tygodnie, 15,2 sztuki, 120 sztuk, 4 okresów, 12 miesięcy'))).toBe('średnia z~4~tygodni, 26~tygodnie, 15,2~sztuki, 120~sztuk, 4~okresów, 12~miesięcy');
+  });
+
+  it('sygnatura orzeczenia nie łamie się w środku', () => {
+    expect(pokaz(typografia('wyrok II PK 340/12 i I PKN 34/99, uchwała III CZP 8/03, IV PR 182/77'))).toBe('wyrok II~PK~340/12 i~I~PKN~34/99, uchwała III~CZP~8/03, IV~PR~182/77');
+    expect(pokaz(typografia('Rozdział II Kodeksu 2/12, VIP PK 1/22'))).toBe('Rozdział II Kodeksu 2/12, VIP PK 1/22');
   });
 
   it('skróty wiążą się z tym, co po nich, a półpauza nie zaczyna wiersza', () => {

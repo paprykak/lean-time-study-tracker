@@ -14,9 +14,11 @@ const JEDNOLITEROWE_NA_KONCU = new RegExp(`(?<=^|[\\s(„"'‚])([aiouwzAIOUWZ])
 const SKROTY = new RegExp(`(?<=(?:^|[\\s(„])(?:np\\.|tzw\\.|m\\.in\\.|[Ll]p\\.|nr|art\\.|ust\\.|pkt|poz\\.|prof\\.|dr|mgr|inż\\.|§))${ODSTEP}(?=\\S)`, 'g');
 const TYSIACE = /(?<=(?<![\d.,])\d{1,3}(?:[  ]\d{3})*) (?=\d{3}(?!\d))/g;
 const JEDNOSTKI = new RegExp(
-  `(?<=\\d)${ODSTEP}(?=(?:r\\.|zł|gr|min|godz\\.|h|s|kg|t|m|mm|cm|km|m²|m³|°C|V|kV|dB|Hz|lx|%|‰|proc\\.|tys\\.|mln|mld|szt\\.|pkt|osób|osoby|dni|lat|zmian|palet|tygodni|tygodnie|miesięcy|miesiące|godzin|godziny|sztuk|sztuki|okresów|okresy|EUR|USD|PLN)(?![\\p{L}]))`,
+  `(?<=\\d)${ODSTEP}(?=(?:r\\.|zł|gr|min|godz\\.|h|s|kg|t|m|mm|cm|km|m²|m³|°C|V|kV|dB|Hz|lx|%|‰|proc\\.|tys\\.|mln|mld|szt\\.|pkt|osób|osoby|dni|dzień|dnia|lat|lata|rok|roku|tydzień|tygodnia|miesiąc|miesiąca|zmian|palet|tygodni|tygodnie|miesięcy|miesiące|godzin|godziny|sztuk|sztuki|okresów|okresy|EUR|USD|PLN)(?![\\p{L}]))`,
   'gu',
 );
+/** Sygnatura orzeczenia („II PK 340/12”, „III CZP 8/03”) nie łamie się w środku. */
+const SYGNATURA = /(?<![\p{L}\p{N}])((?:I{1,3}|IV|VI{0,3}|IX|X))[ \t\n\u00A0]+([A-Z][A-Za-z]{0,5})[ \t\n\u00A0]+(?=\d{1,5}\/\d{2}(?!\d))/gu;
 /** Dzień miesiąca z nazwą miesiąca: „13 listopada”, „1 stycznia 2027 r.”. */
 const DZIEN_MIESIACA = new RegExp(
   `(?<=(?<![\\d.,])\\d{1,2})${ODSTEP}(?=(?:stycznia|lutego|marca|kwietnia|maja|czerwca|lipca|sierpnia|września|października|listopada|grudnia)(?![\\p{L}]))`,
@@ -39,6 +41,7 @@ export function typografia(tekst, { ciagDalszy = false } = {}) {
     .replace(TYSIACE, NBSP)
     .replace(JEDNOSTKI, NBSP)
     .replace(DZIEN_MIESIACA, NBSP)
+    .replace(SYGNATURA, `$1${NBSP}$2${NBSP}`)
     .replace(PAUZA, NBSP);
   // Dwa jednoliterowe słowa z rzędu („a w Faraone”): drugi przebieg łapie to, co pierwszy pominął.
   t = t.replace(JEDNOLITEROWE, `$1${NBSP}`);

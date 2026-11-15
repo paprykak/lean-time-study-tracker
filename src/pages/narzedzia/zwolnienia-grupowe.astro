@@ -115,7 +115,7 @@ const faq = [
     <h2 id="co-ci-przysluguje">Co Ci przysługuje</h2>
     <ul>
       <li>Odprawa: 1 pensja przy pracy u pracodawcy krócej niż 2 lata, 2 przy 2–8 latach, 3 przy ponad 8 latach, liczona jak ekwiwalent za urlop i nie wyższa niż 15-krotność płacy minimalnej (art. 8). Ile wyniesie, policzy <a href="/narzedzia/kalkulator-odprawy">kalkulator odprawy</a>.</li>
-      <li>Ta sama odprawa przy zwolnieniu mniejszej liczby osób, gdy przyczyny niedotyczące pracownika są jedynym powodem, a pracodawca zatrudnia co najmniej 20 osób (art. 10 ust. 1).</li>
+      <li>Ta sama odprawa przy zwolnieniu mniejszej liczby osób, gdy przyczyny niedotyczące pracownika są wyłącznym powodem, a pracodawca zatrudnia co najmniej 20 osób (art. 10 ust. 1).</li>
       <li>Ochrona: wypowiedzenie na długim zwolnieniu lekarskim tylko po okresie z art. 53 Kodeksu pracy, a osobom chronionym, na przykład przed emeryturą, w ciąży albo na urlopie rodzicielskim, wyłącznie wypowiedzenie warunków pracy i płacy z dodatkiem wyrównawczym (art. 5). Do kiedy trwa ochrona przed emeryturą, pokaże <a href="/narzedzia/ochrona-przedemerytalna">kalkulator ochrony przedemerytalnej</a>.</li>
       <li>Pierwszeństwo przy ponownym zatrudnieniu: zgłoś chęć powrotu w ciągu roku od rozwiązania umowy, a pracodawca, który zatrudnia w Twojej grupie zawodowej, powinien Cię przyjąć w ciągu 15 miesięcy (art. 9).</li>
       <li>Okres wypowiedzenia z Kodeksu pracy: 2 tygodnie, miesiąc albo 3 miesiące; 3-miesięczny pracodawca może skrócić najwyżej do miesiąca, płacąc odszkodowanie za resztę okresu (art. 36<sup>1</sup> Kodeksu pracy). Ostatni dzień umowy policzy <a href="/narzedzia/okres-wypowiedzenia">kalkulator okresu wypowiedzenia</a>, a termin na odwołanie <a href="/narzedzia/odwolanie-do-sadu-pracy">kalkulator odwołania do sądu pracy</a>.</li>
@@ -190,7 +190,7 @@ const faq = [
         pisz('opis', `Próg: ${odmiana(r.prog!, OSOBY)}. Liczymy ${r.liczone}: ${odmiana(wypowiedzen, WYPOWIEDZENIA)} i ${odmiana(r.porozumieniaLiczone, POROZUMIENIA)}.${poPorozumieniach}`);
       } else {
         pisz('rodzaj', 'Zwolnienie indywidualne');
-        pisz('opis', `Próg: ${odmiana(r.prog!, OSOBY)}, liczymy ${r.liczone}, brakuje ${r.brakuje}.${poPorozumieniach} Odprawa należy się, gdy przyczyny niedotyczące pracownika są jedynym powodem (art. 10).`);
+        pisz('opis', `Próg: ${odmiana(r.prog!, OSOBY)}, liczymy ${r.liczone}, brakuje ${r.brakuje}.${poPorozumieniach} Odprawa należy się, gdy przyczyny niedotyczące pracownika są wyłącznym powodem (art. 10).`);
       }
       wiersz('odprawa').hidden = r.rodzaj === 'nie-dotyczy';
       w('uwaga').hidden = r.rodzaj !== 'grupowe';
