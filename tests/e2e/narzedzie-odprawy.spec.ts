@@ -28,7 +28,7 @@ test('emerytalna: jedna pensja z premiami, bez pól dat', async ({ page }) => {
   await expect(page.locator('[data-w="kwota"]')).toHaveText(/^6500,00\szł$/);
 });
 
-test('wyłączny powód i odmowa nowych warunków: orzecznictwo SN z sygnaturami i linkiem w sekcji „Kiedy przysługuje”', async ({ page }) => {
+test('wyłączny powód i odmowa nowych warunków: orzecznictwo SN z sygnaturami i linkiem w akapitach po nagłówku „Kiedy przysługuje”', async ({ page }) => {
   const sekcja = page.locator('#kiedy ~ p');
   const tekst = (await sekcja.allInnerTexts()).join(' ');
   expect(tekst).toMatch(/bez przyczyn niedotyczących pracownika do\szwolnienia by\snie doszło/);

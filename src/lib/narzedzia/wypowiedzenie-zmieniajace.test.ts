@@ -30,7 +30,15 @@ describe('wypowiedzenie zmieniające (art. 42 § 1–3, art. 36 § 1, art. 30 §
     expect(wypowiedzenieZmieniajace('2020-01-15', '2026-11-12').prog).toBeNull();
     expect(wypowiedzenieZmieniajace('2023-11-12', '2026-11-12')).toMatchObject({ stazMiesiecy: 36, koniec: '2027-02-28' });
   });
-  it('próg stażu: oba warianty połowy (A i B) liczone od krótszego okresu, więc przed jego końcem (wartości z rachunku w Pythonie)', () => {
+  it('próg stażu, wartości z niezależnego rachunku w Pythonie: doręczenie w sobotę i 3 lata przy końcu lutego', () => {
+    const sobota = wypowiedzenieZmieniajace('2026-05-15', '2026-11-14');
+    expect(sobota.prog).not.toBeNull();
+    expect(sobota).toMatchObject({ odmowaDo: '2026-11-21', odmowaDoWariantB: '2026-11-21' });
+    const luty = wypowiedzenieZmieniajace('2024-02-29', '2027-02-28');
+    expect(luty.prog).toMatchObject({ miesiace: 36, krotszyKoniec: '2027-03-31' });
+    expect(luty).toMatchObject({ koniec: '2027-05-31', odmowaDo: '2027-03-15', odmowaDoWariantB: '2027-03-15' });
+  });
+  it('próg stażu: oba warianty połowy (A i B) liczone od krótszego okresu, więc przed jego końcem (nierówności)', () => {
     for (const [od, dor] of [['2026-05-13', '2026-11-12'], ['2023-11-13', '2026-11-12'], ['2026-06-01', '2026-11-15']]) {
       const w = wypowiedzenieZmieniajace(od, dor);
       expect(w.prog).not.toBeNull();

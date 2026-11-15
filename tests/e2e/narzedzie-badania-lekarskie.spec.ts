@@ -103,8 +103,8 @@ test('strona zbudowana wcześniej, otwarta 5 stycznia 2027 r.: domyślne daty li
 
 test('urlop po L4 i zgłoszenie gotowości: orzecznictwo SN w „Jak liczymy”, podpowiedź przy pytaniu o dzień pracy', async ({ page }) => {
   const jak = (await page.locator('#jak-liczymy ~ ul').first().allInnerTexts()).join(' ');
-  expect(jak).toMatch(/Urlop nie jest dniem pracy.*II\sPK\s214\/07/);
-  expect(jak).toMatch(/zgłaszasz gotowość do\spracy.*I\sPKN\s639\/00 i\sII\sPK\s319\/04/);
+  expect(jak).toMatch(/zaplanowany urlop zaraz po zwolnieniu jest możliwy bez badania.*II\sPK\s214\/07/);
+  expect(jak).toMatch(/zgłaszasz gotowość do\spracy.*I\sPKN\s639\/00 i\sII\sPK\s319\/04\); według II\sPK\s319\/04 nie musisz/);
   expect(jak).toMatch(/I\sPK\s541\/03/);
   await expect(page.locator('#bl-przerwa-opis')).toHaveText(/urlop się nie liczy/);
 });

@@ -42,7 +42,7 @@ const faq = [
   },
   {
     pytanie: 'Czy kilka zwolnień pod rząd się sumuje?',
-    odpowiedz: `Przepis mówi o niezdolności do pracy trwającej dłużej niż ${PROG_KONTROLNE} dni. Zwolnienia, które następują dzień po dniu, to jedna nieprzerwana niezdolność. O sumowaniu zwolnień rozdzielonych przerwą przepis nie mówi, a w bazie orzeczeń SAOS (Sąd Najwyższy, lata 1994–2016) nie znaleźliśmy orzeczeń na ten temat. Gdy wcześniejsze zwolnienie trwało dłużej niż ${PROG_KONTROLNE} dni, a do następnego nie było dnia pracy, badanie kontrolne jest potrzebne: robi się je przed dopuszczeniem do pracy, a urlop nie jest dniem pracy (wyrok Sądu Najwyższego II PK 214/07). Gdy w przerwie są tylko dni wolne, a łącznie wychodzi ponad ${PROG_KONTROLNE} dni, bezpieczniej zrobić badanie: jest na koszt pracodawcy i w miarę możliwości w godzinach pracy (art. 229 § 2, 3 i 6 Kodeksu pracy).`,
+    odpowiedz: `Przepis mówi o niezdolności do pracy trwającej dłużej niż ${PROG_KONTROLNE} dni. Zwolnienia, które następują dzień po dniu, to jedna nieprzerwana niezdolność. O sumowaniu zwolnień rozdzielonych przerwą przepis nie mówi, a w orzeczeniach Sądu Najwyższego z bazy SAOS (lata 1994–2016), które przejrzeliśmy, tego tematu nie znaleźliśmy. Gdy wcześniejsze zwolnienie trwało dłużej niż ${PROG_KONTROLNE} dni, a do następnego nie było dnia pracy, badanie kontrolne jest potrzebne: robi się je przed dopuszczeniem do pracy (art. 229 § 4 Kodeksu pracy), więc urlop w przerwie traktujemy jak brak dnia pracy. Gdy w przerwie są tylko dni wolne, a łącznie wychodzi ponad ${PROG_KONTROLNE} dni, bezpieczniej zrobić badanie: jest na koszt pracodawcy i w miarę możliwości w godzinach pracy (art. 229 § 2, 3 i 6 Kodeksu pracy).`,
   },
   {
     pytanie: 'Czy na badania lekarskie trzeba brać dzień wolny?',
@@ -207,7 +207,7 @@ const faq = [
         </div>
         <dl class="wynik-lista">
           <div data-tylko="kontrolne" hidden={!badanieWidoczne}><dt>Kiedy</dt><dd>przed dopuszczeniem do pracy, bo bez aktualnego orzeczenia pracodawca nie dopuści do pracy (art. 229 § 4 Kodeksu pracy)</dd></div>
-          <div><dt>Powrót do pracy</dt><dd data-w="a-powrot">{dataPoPolsku(kontrolne.powrot)}, dzień po końcu zwolnienia</dd></div>
+          <div><dt>Powrót do pracy</dt><dd data-w="a-powrot">{dataPoPolsku(kontrolne.powrot)}, dzień po końcu zwolnienia (po urlopie: pierwszy dzień pracy)</dd></div>
           <div data-tylko="kontrolne" hidden={!badanieWidoczne}><dt>Skierowanie</dt><dd>od pracodawcy (art. 229 § 4a)</dd></div>
         </dl>
       </div>
@@ -290,8 +290,8 @@ const faq = [
 
     <h2 id="jak-liczymy">Jak liczymy</h2>
     <ul>
-      <li>Liczymy dni kalendarzowe zwolnienia razem z pierwszym i ostatnim. Zwolnienia dzień po dniu albo nachodzące na siebie traktujemy jak jedną niezdolność. Gdy między zwolnieniami są tylko dni wolne, przepis nie mówi, czy to jedna niezdolność; wtedy wskazujemy, że bezpieczniej zrobić badanie. Gdy jednak już wcześniejsze zwolnienie trwało ponad {PROG_KONTROLNE} dni, a do następnego nie było dnia pracy, badanie jest potrzebne. Urlop nie jest dniem pracy: badanie robi się przed dopuszczeniem do pracy, a nie przed urlopem, więc urlop zaraz po zwolnieniu jest możliwy bez badania (wyrok Sądu Najwyższego z 20 marca 2008 r., II PK 214/07). Orzeczeń Sądu Najwyższego o sumowaniu zwolnień rozdzielonych przerwą w bazie SAOS nie znaleźliśmy.</li>
-      <li>Gdy zwolnienie się kończy, stawiasz się w pracy i zgłaszasz gotowość do pracy, a pracodawca kieruje Cię na badanie kontrolne; nie musisz sam przynosić orzeczenia (wyroki Sądu Najwyższego I PKN 639/00 i II PK 319/04). Odmowa badania, gdy jej jedyną przyczyną są okoliczności po Twojej stronie, uzasadnia niedopuszczenie do pracy bez wynagrodzenia (I PK 541/03).</li>
+      <li>Liczymy dni kalendarzowe zwolnienia razem z pierwszym i ostatnim. Zwolnienia dzień po dniu albo nachodzące na siebie traktujemy jak jedną niezdolność. Gdy między zwolnieniami są tylko dni wolne, przepis nie mówi, czy to jedna niezdolność; wtedy wskazujemy, że bezpieczniej zrobić badanie. Gdy jednak już wcześniejsze zwolnienie trwało ponad {PROG_KONTROLNE} dni, a do następnego nie było dnia pracy, badanie jest potrzebne. Urlop w przerwie traktujemy jak brak dnia pracy, bo badanie robi się przed dopuszczeniem do pracy, a nie przed urlopem: zaplanowany urlop zaraz po zwolnieniu jest możliwy bez badania (wyrok Sądu Najwyższego z 20 marca 2008 r., II PK 214/07). Orzeczeń Sądu Najwyższego o sumowaniu zwolnień rozdzielonych przerwą w przejrzanych orzeczeniach z bazy SAOS nie znaleźliśmy.</li>
+      <li>Gdy zwolnienie się kończy, stawiasz się w pracy i zgłaszasz gotowość do pracy, a pracodawca kieruje Cię na badanie kontrolne (wyroki Sądu Najwyższego I PKN 639/00 i II PK 319/04); według II PK 319/04 nie musisz wcześniej sam przynosić orzeczenia. Odmowa badania, gdy jej jedyną przyczyną są okoliczności po Twojej stronie, uzasadnia niedopuszczenie do pracy bez wynagrodzenia (I PK 541/03).</li>
       <li>Przepis mówi o niezdolności spowodowanej chorobą. Zwolnienie w ciąży i po wypadku liczymy tak samo. Terminu badania kontrolnego przepis nie podaje; wynika z zakazu dopuszczenia do pracy bez aktualnego orzeczenia.</li>
       <li>{DNI_NA_PRZYJECIE} dni na zwolnienie z badań wstępnych liczymy od dnia po końcu poprzedniej umowy (art. 111 Kodeksu cywilnego) do pierwszego dnia nowej pracy z umowy (art. 26 Kodeksu pracy).</li>
       <li>Przepis nie definiuje „aktualnego orzeczenia”. Przyjmujemy, że jest aktualne, gdy zaczynasz pracę przed datą następnego badania z orzeczenia; tak samo w pliku kalendarza radzimy zrobić badanie przed tą datą. Przepis nie mówi też, czy przy pracy u tego samego pracodawcy po terminie badania trzeba badań wstępnych, czy innych: piszemy tylko, że potrzebne jest badanie.</li>
@@ -391,7 +391,7 @@ const faq = [
       tylko('przerwa', k.przerwa && powod !== 'opieka');
       tylko('kontrolne', k.wynik === 'potrzebne' || k.wynik === 'nierozstrzygniete');
       pokazWynik('a', tekstKontrolnego(k, powod));
-      pisz('a-powrot', `${dataPoPolsku(k.powrot)}, dzień po końcu zwolnienia`);
+      pisz('a-powrot', `${dataPoPolsku(k.powrot)}, dzień po końcu zwolnienia (po urlopie: pierwszy dzień pracy)`);
       return null;
     };
 
