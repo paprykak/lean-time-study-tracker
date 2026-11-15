@@ -119,6 +119,10 @@ export const HASLA: Record<string, string[]> = {
   'odpowiedzialnosc-materialna': ['manko w kasie', 'niedobór', 'inwentaryzacja', 'szkoda', 'braki w towarze', 'potrącenie z wypłaty za szkodę', 'zniszczenie mienia pracodawcy', 'uszkodzenie wózka', 'kara za zniszczenie', 'pozew od pracodawcy', 'uszkodzenie samochodu służbowego', 'przedawnienie roszczeń pracodawcy', 'umowa o współodpowiedzialności materialnej'],
   'swiadectwo-pracy': ['brak świadectwa pracy', 'świadectwo pracy ile dni', 'sprostowanie świadectwa', 'błąd w świadectwie pracy', 'pracodawca nie wydał świadectwa', 'świadectwo pracy po zwolnieniu', 'co musi być w świadectwie pracy', 'świadectwo pracy pozew', 'odszkodowanie za świadectwo pracy'],
   'monitoring-w-pracy': ['kamery w pracy', 'nagrywanie pracowników', 'kamera w szatni', 'kamera w toalecie', 'nagrania z kamer', 'GPS w aucie służbowym', 'lokalizator w wózku', 'kontrola maila służbowego', 'RODO w pracy', 'monitoring wizyjny'],
+  // Pakiet „hala” (2026-11-14): frazy z podpowiedzi wyszukiwarki Google (pl) do zapytań „szerokość drogi dla wózka”,
+  // „odległość między regałami”, „obciążenie regału”, „wysokość składowania”, „pochylnia nachylenie”.
+  'drogi-i-przejscia': ['droga transportowa', 'ciąg komunikacyjny na hali', 'przejście między regałami', 'odległość między regałami w magazynie', 'szerokość przejścia bhp', 'pochylnia maksymalne nachylenie', 'wózek widłowy', 'piesi i wózki'],
+  'skladowanie-w-magazynie': ['dopuszczalne obciążenie regału', 'tabliczka obciążenie regału', 'obciążenie półki regału', 'wysokość składowania palet', 'składowanie materiałów bhp', 'regał magazynowy', 'palety', 'odległość od lamp', 'odległość towaru od tryskaczy', 'gaśnica w magazynie'],
 };
 
 /**
