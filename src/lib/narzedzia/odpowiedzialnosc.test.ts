@@ -157,7 +157,7 @@ describe('poprawki po weryfikacji', () => {
     expect(minal.statusKlasa).toBe('po-terminie');
     // Koniec terminu 31 grudnia: bez zdania o końcu roku.
     const grudzien = opisOdpowiedzialnosci(dane({ sytuacja: 'umyslna', dataSzkody: '2025-12-31', dataWiedzy: '2025-12-31' }), DZIS);
-    expect(grudzien.przedawnienieOpis).not.toContain('118 zd. 2');
+    expect(grudzien.przedawnienieOpis).not.toContain('Jeśli koniec terminu przypada na ostatni dzień roku');
   });
   it('granice statusu 30/31 i 90/91 dni', () => {
     const z = (wiedza: string) => opisOdpowiedzialnosci(dane({ dataSzkody: '2025-12-01', dataWiedzy: wiedza }), DZIS).statusKlasa;
@@ -204,5 +204,50 @@ describe('poprawki po audycie', () => {
   it('po 20 latach bez dopisku o przestępstwie', () => {
     const u = opisOdpowiedzialnosci(dane({ sytuacja: 'umyslna', dataSzkody: '2005-01-10', dataWiedzy: '2005-01-10' }), DZIS);
     expect(u.status).toMatch(/^Termin pracodawcy minął \d+ dni temu$/);
+  });
+});
+
+describe('audyt jakosc3', () => {
+  const sp = (t: string) => t.replace(/\s/g, ' ');
+  const umyslna = (x: Partial<DaneOdpowiedzialnosci>) => dane({ sytuacja: 'umyslna', szkoda: 3000, ...x });
+  it('art. 291 § 2: rok od wiadomości, że szkodę wyrządził pracownik (A-1)', () => {
+    expect(sp(opisOdpowiedzialnosci(dane({ szkoda: 3000 }), DZIS).przedawnienieOpis)).toContain('dowiedział się, że pracownik wyrządził szkodę');
+    expect(bladDanych(dane({ dataWiedzy: '' }), DZIS)?.tekst).toBe('Wpisz dzień, w którym pracodawca dowiedział się o szkodzie i o tym, kto ją wyrządził.');
+  });
+  it('20 lat przy przestępstwie: koniec roku i art. 115 KC jak przy 10 latach (A-3; dni policzone w Pythonie)', () => {
+    const d = umyslna({ dataSzkody: '2006-12-01', dataWiedzy: '2006-12-01' });
+    expect(sp(opisOdpowiedzialnosci(d, '2026-12-10').status)).toBe('Termin pracodawcy minął 6188 dni temu, chyba że szkoda wynikła z przestępstwa');
+    expect(opisOdpowiedzialnosci(d, '2026-12-31').status).toContain('chyba że szkoda wynikła z przestępstwa');
+    expect(sp(opisOdpowiedzialnosci(d, '2027-01-01').status)).toBe('Termin pracodawcy minął 6210 dni temu');
+    const opis = sp(opisOdpowiedzialnosci(d, '2026-12-10').przedawnienieOpis);
+    expect(opis).toContain('1 grudnia 2026 r., a jeśli koniec przypada na ostatni dzień roku i przesuwa się z dnia wolnego, 31 grudnia 2026 r.');
+    const n = umyslna({ dataSzkody: '2008-05-05', dataWiedzy: '2008-05-05' });
+    expect(sp(opisOdpowiedzialnosci(n, '2029-01-02').przedawnienieOpis)).toContain('5 maja 2028 r., a jeśli koniec przypada na ostatni dzień roku i przesuwa się z dnia wolnego, 2 stycznia 2029 r.');
+    expect(opisOdpowiedzialnosci(n, '2029-01-02').status).toContain('chyba że szkoda wynikła z przestępstwa');
+    expect(opisOdpowiedzialnosci(n, '2029-01-03').status).not.toContain('przestępstwa');
+  });
+  it('zawezwanie do próby ugodowej zawiesza, a nie przerywa bieg (A-4, art. 121 pkt 6 KC)', () => {
+    const opis = sp(opisOdpowiedzialnosci(umyslna({ dataSzkody: '2023-12-01', dataWiedzy: '2023-12-01' }), DZIS).przedawnienieOpis);
+    expect(opis).toContain('Mediacja i zawezwanie do próby ugodowej wstrzymują bieg przedawnienia na czas ich trwania (art. 121 pkt 5–6)');
+    expect(opis).not.toContain('komornikiem, i uznanie');
+  });
+  it('obniżenie z § 6 ust. 1 rozporządzenia z 1975 r. obejmuje pieniądze we wspólnej kasie (A-5)', () => {
+    const wspolne = opisOdpowiedzialnosci(dane({ sytuacja: 'wspolne', udzial: 50 }), DZIS).uwagi.join(' ');
+    expect(sp(wspolne)).toContain('każdego mienia powierzonego wspólnie na podstawie umowy, także pieniędzy w kasie (art. 125;');
+    const powierzone = opisOdpowiedzialnosci(dane({ sytuacja: 'powierzone' }), DZIS).uwagi.join(' ');
+    expect(sp(powierzone)).toContain('(ale nie pieniędzy, narzędzi');
+  });
+  it('ostatni możliwy dzień to dziś: wynik mówi „do dziś” (A-6)', () => {
+    const d = dane({ szkoda: 100, wynagrodzenie: 10, dataSzkody: '2025-11-14', dataWiedzy: '2025-11-14' });
+    expect(opisOdpowiedzialnosci(d, '2026-11-16')).toMatchObject({ statusKlasa: 'pilne' });
+    expect(sp(opisOdpowiedzialnosci(d, '2026-11-16').status)).toBe('Termin mógł minąć, ale może trwać do dziś (16 listopada 2026 r.)');
+    expect(sp(opisOdpowiedzialnosci(d, '2026-11-15').status)).toBe('Termin mógł minąć, ale może trwać do 16 listopada 2026 r.');
+    expect(sp(opisOdpowiedzialnosci(d, '2026-11-17').status)).toBe('Termin pracodawcy minął 1 dzień temu');
+  });
+  it('art. 115 KC: święta ruchome i Wigilia w latach 2027–2029 (A-10)', () => {
+    for (const [z, na] of [
+      ['2027-03-27', '2027-03-30'], ['2027-03-29', '2027-03-30'], ['2027-05-27', '2027-05-28'], ['2027-12-24', '2027-12-27'],
+      ['2027-01-06', '2027-01-07'], ['2028-04-15', '2028-04-18'], ['2026-12-31', '2026-12-31'], ['2028-12-31', '2029-01-02'],
+    ]) expect(przesunietyKoniec(z), z).toBe(na);
   });
 });

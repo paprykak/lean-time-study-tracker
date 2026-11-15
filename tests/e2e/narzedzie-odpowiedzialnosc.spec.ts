@@ -101,3 +101,10 @@ test('daty domyślne liczone w przeglądarce, nie w dniu budowania', async ({ pa
   await expect(page.getByLabel('Dzień szkody')).toHaveValue('2026-12-06');
   await expect(page.getByLabel('Pracodawca wie od')).toHaveValue('2026-12-16');
 });
+
+test('FAQ: kary pieniężne tylko z art. 108; link do kary porządkowej (audyt jakosc3, A-2 i A-7)', async ({ page }) => {
+  const tresc = page.locator('main');
+  await expect(tresc).not.toContainText('kar pieniężnych za naruszenie porządku pracy');
+  await expect(tresc).toContainText(/kar\spieniężnych\sz\sart\.\s108,\sktóre\swolno\snałożyć\stylko\sza\snaruszenie\sprzepisów\sBHP/);
+  await expect(page.locator('a[href="/narzedzia/kara-porzadkowa"]')).toHaveCount(1);
+});

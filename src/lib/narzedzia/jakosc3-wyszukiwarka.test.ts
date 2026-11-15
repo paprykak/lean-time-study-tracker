@@ -18,6 +18,14 @@ describe('jakosc3: zapytania z hali trafiają w narzędzie', () => {
     ['sledzenie pracownika', 'monitoring-w-pracy'],
     ['kamera w szatni', 'monitoring-w-pracy'],
     ['kamera w toalecie', 'monitoring-w-pracy'],
+    ['zepsulem maszyne w pracy musze zaplacic', 'odpowiedzialnosc-materialna'],
+    ['zgubilem narzedzia firmowe', 'odpowiedzialnosc-materialna'],
+    ['pracodawca obciazyl mnie kosztami naprawy', 'odpowiedzialnosc-materialna'],
+    ['zgoda na potracenie z wynagrodzenia', 'odpowiedzialnosc-materialna'],
+    ['rozbilem auto sluzbowe', 'odpowiedzialnosc-materialna'],
+    ['potracenie z wyplaty za szkode', 'odpowiedzialnosc-materialna'],
+    ['manko w kasie', 'odpowiedzialnosc-materialna'],
+    ['pracodawca kaze placic za szkode', 'odpowiedzialnosc-materialna'],
     ['ile kg na regal', 'skladowanie-w-magazynie'],
     ['ile kg na polke', 'skladowanie-w-magazynie'],
     ['ile metrow do gasnicy', 'skladowanie-w-magazynie'],
@@ -31,6 +39,8 @@ describe('jakosc3: zapytania z hali trafiają w narzędzie', () => {
 
   it.each([
     ['kamery w magazynie', 'monitoring-w-pracy'],
+    ['zniszczylem wozek widlowy kto placi', 'odpowiedzialnosc-materialna'],
+    ['kara za zniszczenie', 'odpowiedzialnosc-materialna'],
     ['ile procent rampa', 'drogi-i-przejscia'],
     ['wysokosc dojscia do stanowiska pracy', 'drogi-i-przejscia'],
   ])('„%s” → %s w pierwszej trójce', (q, slug) => {
@@ -51,6 +61,13 @@ describe('jakosc3: hasła tych narzędzi nie zabierają zapytań innym', () => {
     ['najnizsza krajowa', 'placa-minimalna'],
     ['od ile metrow praca na wysokosci', 'praca-na-wysokosci'],
     ['uprawnienia na wozek', 'waznosc-uprawnien-udt'],
+    ['kara pieniezna potracenie z wyplaty', 'kara-porzadkowa'],
+    ['praca przy maszynie', 'drgania-w-pracy'],
+    ['auto sluzbowe', 'monitoring-w-pracy'],
+    ['zepsulem sobie zdrowie w pracy', 'odszkodowanie-za-wypadek-przy-pracy'],
+    ['zniszczylem sobie kregoslup w pracy', 'choroba-zawodowa'],
+    ['wozek widlowy', 'waznosc-uprawnien-udt'],
+    ['zaplacic podatek', 'zwrot-podatku-pit-37'],
   ])('„%s” → %s na pierwszym miejscu', (q, slug) => {
     expect(pierwszy(q)).toBe(slug);
   });

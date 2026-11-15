@@ -16,12 +16,14 @@
 // - wina umyślna: pełna wysokość (art. 122), przyczynienie się pracodawcy odliczamy (art. 117 § 1 w tym samym rozdziale);
 // - mienie powierzone (art. 124 § 1–2) i wspólne (art. 125): pełna wysokość bez limitu z art. 119, bo art. 127 do niego nie
 //   odsyła; wspólne: część z umowy (art. 125 § 2); odliczamy przyczynienie (art. 117 przez art. 127);
-// - przedawnienie przy winie nieumyślnej i mieniu powierzonym: rok od dnia, w którym pracodawca dowiedział się o szkodzie,
+// - przedawnienie przy winie nieumyślnej i mieniu powierzonym: rok od dnia, w którym pracodawca dowiedział się, że szkodę
+//   wyrządził pracownik („powziął wiadomość o wyrządzeniu przez pracownika szkody”),
 //   najpóźniej 3 lata od szkody (art. 291 § 2); przy winie umyślnej przepisy KC (art. 291 § 3): 3 lata od dowiedzenia się,
 //   najpóźniej 10 lat od zdarzenia (art. 442¹ § 1), 20 lat od przestępstwa (§ 2); końce lat według art. 112 KC jak
 //   w przedawnienie.ts (29 lutego → 28 lutego). Roszczenie jest przeciw pracownikowi, więc bezpieczna jest data późniejsza:
 //   status („minął”, kolor; „zostało” pokazuje obie daty) liczymy od dnia po przesunięciu z soboty i dnia wolnego (art. 115 KC), a przy winie
-//   umyślnej od końca roku z art. 118 zd. 2 KC; oba przesunięcia nie są przesądzone, więc strona podaje obie daty;
+//   umyślnej od końca roku z art. 118 zd. 2 KC (także dla 20 lat z art. 442¹ § 2); oba przesunięcia nie są przesądzone,
+//   więc strona podaje obie daty;
 // - mienie powierzone: § 6 ust. 1 rozporządzenia z 1975 r. każe obniżyć odszkodowanie przy utrudnionym nadzorze (art. 124
 //   § 2 i 125); kwoty obniżenia przepis nie podaje, więc pokazujemy kwotę przed obniżeniem i piszemy o nim w uwagach;
 // - zarzut i przerwanie przedawnienia: art. 292 i 295 Kp, przy winie umyślnej art. 117 § 2 i 123–124 KC (art. 291 § 3).
@@ -69,7 +71,7 @@ export interface DaneOdpowiedzialnosci {
   /** Część z umowy o współodpowiedzialności (%); potrzebna przy mieniu wspólnym. */
   udzial?: number;
   dataSzkody: string;
-  /** Dzień, w którym pracodawca dowiedział się o szkodzie. */
+  /** Dzień, w którym pracodawca dowiedział się o szkodzie i o tym, że wyrządził ją pracownik (art. 291 § 2). */
   dataWiedzy: string;
 }
 
@@ -90,7 +92,7 @@ export function bladDanych(d: DaneOdpowiedzialnosci, dzis: string): { pole: stri
   if (!poprawnaData(d.dataSzkody)) return { pole: 'dataSzkody', tekst: 'Wpisz dzień szkody.' };
   if (d.dataSzkody < '1990-01-01') return { pole: 'dataSzkody', tekst: 'Dzień szkody: najwcześniej 1 stycznia 1990 r.' };
   if (d.dataSzkody > dzis) return { pole: 'dataSzkody', tekst: 'Dzień szkody nie może być późniejszy niż dziś.' };
-  if (!poprawnaData(d.dataWiedzy)) return { pole: 'dataWiedzy', tekst: 'Wpisz dzień, w którym pracodawca dowiedział się o szkodzie.' };
+  if (!poprawnaData(d.dataWiedzy)) return { pole: 'dataWiedzy', tekst: 'Wpisz dzień, w którym pracodawca dowiedział się o szkodzie i o tym, kto ją wyrządził.' };
   if (d.dataWiedzy < d.dataSzkody) return { pole: 'dataWiedzy', tekst: 'Pracodawca nie mógł dowiedzieć się o szkodzie przed dniem szkody.' };
   if (d.dataWiedzy > dzis) return { pole: 'dataWiedzy', tekst: 'Dzień, w którym pracodawca się dowiedział, nie może być późniejszy niż dziś.' };
   return null;
@@ -161,7 +163,7 @@ const POTRACENIE =
   'Potrącić odszkodowanie z pensji pracodawca może tylko za Twoją zgodą na piśmie (art. 91 § 1 Kodeksu pracy): nie ma go wśród potrąceń bez zgody (art. 87 § 1). Bez zgody musi uzyskać wyrok sądu pracy albo ugodę z klauzulą wykonalności (art. 121¹) i skierować sprawę do komornika. Także przy zgodzie część pensji jest wolna od potrąceń (art. 91 § 2 pkt 1).';
 
 const OBNIZENIE_1975 =
-  'Gdy nadzór nad mieniem jest utrudniony, na przykład w magazynie, w którym pracuje się dłużej niż na jedną zmianę albo w obsadzie co najmniej 5 osób, odszkodowanie za towar i inne mienie z art. 124 § 2 oraz za mienie wspólne obniża się stosownie do utrudnienia; nie dotyczy to pieniędzy, narzędzi, odzieży i obuwia roboczego ani środków ochrony (§ 6 ust. 1 rozporządzenia z 10 października 1975 r.). Tak samo, gdy do mienia mają dostęp inne osoby (§ 6 ust. 1 pkt 1), a w innych okolicznościach w wyjątkowych wypadkach (§ 6 ust. 2). Obniżenie ustala pracodawca po wysłuchaniu pracownika i opinii związku zawodowego (§ 8–9). Kwota wyżej jest przed obniżeniem.';
+  'Gdy nadzór nad mieniem jest utrudniony, na przykład w magazynie, w którym pracuje się dłużej niż na jedną zmianę albo w obsadzie co najmniej 5 osób, odszkodowanie obniża się stosownie do utrudnienia. Dotyczy to towaru i innego mienia z art. 124 § 2 (ale nie pieniędzy, narzędzi, odzieży i obuwia roboczego ani środków ochrony) oraz każdego mienia powierzonego wspólnie na podstawie umowy, także pieniędzy w kasie (art. 125; § 6 ust. 1 rozporządzenia z 10 października 1975 r.). Tak samo, gdy do mienia mają dostęp inne osoby (§ 6 ust. 1 pkt 1), a w innych okolicznościach w wyjątkowych wypadkach (§ 6 ust. 2). Obniżenie ustala pracodawca po wysłuchaniu pracownika i opinii związku zawodowego (§ 8–9). Kwota wyżej jest przed obniżeniem.';
 
 const MAGAZYN_1975 =
   'W magazynie z wydzieloną halą spedycyjną i dozorem ruchu mienia i osób (albo z automatycznym przeładunkiem) za powierzony towar odpowiada się na zasadach art. 114–116 i 118 Kodeksu pracy, czyli pracodawca musi udowodnić winę, a odpowiada się tylko za rzeczywistą stratę; obowiązuje to po pisemnym zawiadomieniu i inwentaryzacji (§ 2 rozporządzenia z 10 października 1975 r.). Rozporządzenie nie odsyła do limitu trzech pensji z art. 119.';
@@ -222,15 +224,22 @@ export function opisOdpowiedzialnosci(d: DaneOdpowiedzialnosci, dzis: string): O
     czesci.push(
       p.koniec === p.maks
         ? 'Termin: 3 lata od szkody, bo to wcześniej niż rok od dnia, w którym pracodawca się dowiedział (art. 291 § 2 Kodeksu pracy).'
-        : 'Termin: rok od dnia, w którym pracodawca dowiedział się o szkodzie, najpóźniej 3 lata od szkody (art. 291 § 2 Kodeksu pracy).',
+        : 'Termin: rok od dnia, w którym pracodawca dowiedział się, że pracownik wyrządził szkodę, najpóźniej 3 lata od szkody (art. 291 § 2 Kodeksu pracy).',
     );
   }
   const bezPrzesuniecia = umyslna ? (p.koniecRoku ?? p.koniec) : p.koniec;
   if (najpozniej !== bezPrzesuniecia) czesci.push(`${dataPoPolsku(bezPrzesuniecia)} to sobota albo dzień wolny od pracy; jeśli termin przesuwa się na następny dzień (art. 115 Kodeksu cywilnego), to ${dataPoPolsku(najpozniej)}`);
-  if (umyslna) czesci.push(`Gdy szkoda wynikła ze zbrodni lub występku, czyli przestępstwa, termin to 20 lat od jego popełnienia: ${dataPoPolsku(p.przestepstwo!)} (art. 442¹ § 2).`);
+  // 20 lat z art. 442¹ § 2 to też termin z art. 442¹: koniec roku (art. 118 zd. 2 KC) i art. 115 KC jak przy 10 latach.
+  const przestepstwoNajpozniej = umyslna ? przesunietyKoniec(koniecRoku(p.przestepstwo!)) : null;
+  if (umyslna)
+    czesci.push(
+      przestepstwoNajpozniej !== p.przestepstwo
+        ? `Gdy szkoda wynikła ze zbrodni lub występku, czyli przestępstwa, termin to 20 lat od jego popełnienia: ${dataPoPolsku(p.przestepstwo!)}, a jeśli koniec przypada na ostatni dzień roku i przesuwa się z dnia wolnego, ${dataPoPolsku(przestepstwoNajpozniej!)} (art. 442¹ § 2 oraz art. 118 zd. 2 i 115 Kodeksu cywilnego).`
+        : `Gdy szkoda wynikła ze zbrodni lub występku, czyli przestępstwa, termin to 20 lat od jego popełnienia: ${dataPoPolsku(p.przestepstwo!)} (art. 442¹ § 2).`,
+    );
   czesci.push(
     umyslna
-      ? 'Bieg przedawnienia przerywa pozew albo inna czynność przed sądem lub komornikiem, i uznanie roszczenia; potem termin biegnie od nowa (art. 123–124 Kodeksu cywilnego). Mediacja wstrzymuje bieg przedawnienia na czas jej trwania (art. 121 pkt 5). Po terminie można odmówić zapłaty (art. 117 § 2).'
+      ? 'Bieg przedawnienia przerywa pozew albo inna czynność przed sądem lub komornikiem i uznanie roszczenia; potem termin biegnie od nowa (art. 123–124 Kodeksu cywilnego). Mediacja i zawezwanie do próby ugodowej wstrzymują bieg przedawnienia na czas ich trwania (art. 121 pkt 5–6). Po terminie można odmówić zapłaty (art. 117 § 2).'
       : 'Bieg przedawnienia przerywa pozew albo inna czynność przed sądem lub komornikiem i uznanie roszczenia; potem termin biegnie od nowa (art. 295 Kodeksu pracy). Po terminie można odmówić zapłaty (art. 292).',
   );
 
@@ -246,10 +255,10 @@ export function opisOdpowiedzialnosci(d: DaneOdpowiedzialnosci, dzis: string): O
     status = `Pracodawcy zostało: ${odmiana(zostalo, ['dzień', 'dni', 'dni'])}${najpozniej !== p.koniec ? `, a może do ${dataPoPolsku(najpozniej)}` : ''}`;
     statusKlasa = STATUS_DNI(doNajpozniej);
   } else if (doNajpozniej >= 0) {
-    status = `Termin mógł minąć, ale może trwać do ${dataPoPolsku(najpozniej)}`;
+    status = doNajpozniej === 0 ? `Termin mógł minąć, ale może trwać do dziś (${dataPoPolsku(najpozniej)})` : `Termin mógł minąć, ale może trwać do ${dataPoPolsku(najpozniej)}`;
     statusKlasa = STATUS_DNI(doNajpozniej);
   } else {
-    status = `Termin pracodawcy minął ${odmiana(-doNajpozniej, ['dzień', 'dni', 'dni'])} temu${umyslna && dniMiedzy(dzis, p.przestepstwo!) >= 0 ? ', chyba że szkoda wynikła z przestępstwa' : ''}`;
+    status = `Termin pracodawcy minął ${odmiana(-doNajpozniej, ['dzień', 'dni', 'dni'])} temu${umyslna && dniMiedzy(dzis, przestepstwoNajpozniej!) >= 0 ? ', chyba że szkoda wynikła z przestępstwa' : ''}`;
     statusKlasa = 'po-terminie';
   }
 

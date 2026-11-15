@@ -114,9 +114,12 @@ export const HASLA: Record<string, string[]> = {
   'dyzur-kierowcy': ['dyżur kierowcy', 'podwójna obsada', 'drugi kierowca'],
   'zaswiadczenie-adr': ['ADR', 'kurs ADR', 'uprawnienia ADR', 'przedłużenie ADR', 'towary niebezpieczne'],
   // Pakiet „odpowiedzialność” (2026-11-14): frazy z podpowiedzi wyszukiwarki Google (pl), a „niedobór”, „inwentaryzacja”,
-  // „szkoda”, „uszkodzenie wózka”, „kara za zniszczenie” i „pozew od pracodawcy” z audytu wyszukiwarki i podobnych narzędzi
+  // „uszkodzenie wózka” i „pozew od pracodawcy” z audytu wyszukiwarki i podobnych narzędzi
   // (bez nich zapytania z hali nie trafiały w to narzędzie, a podobne były przypadkowe).
-  'odpowiedzialnosc-materialna': ['manko w kasie', 'niedobór', 'inwentaryzacja', 'szkoda', 'braki w towarze', 'potrącenie z wypłaty za szkodę', 'zniszczenie mienia pracodawcy', 'uszkodzenie wózka', 'kara za zniszczenie', 'pozew od pracodawcy', 'uszkodzenie samochodu służbowego', 'przedawnienie roszczeń pracodawcy', 'umowa o współodpowiedzialności materialnej'],
+  // Audyt „jakosc3” (2026-11-15): bez „szkoda” (słowo jest w nazwie) i „kara za zniszczenie” (zabierało zapytania o karę
+  // pieniężną narzędziu o karach porządkowych); imiesłowy zamiast czasowników („zniszczony”, nie „zniszczyłem”), bo
+  // „zniszczyłem sobie kręgosłup” to choroba zawodowa, a „zepsułem sobie zdrowie” to wypadek przy pracy.
+  'odpowiedzialnosc-materialna': ['manko w kasie', 'niedobór', 'inwentaryzacja', 'braki w towarze', 'potrącenie z wypłaty za szkodę', 'zgoda na potrącenie z wynagrodzenia', 'zniszczenie mienia pracodawcy', 'uszkodzenie wózka', 'zniszczony wózek', 'zepsuty sprzęt', 'zgubiony sprzęt firmowy', 'rozbity samochód służbowy', 'koszty naprawy', 'pozew od pracodawcy', 'uszkodzenie samochodu służbowego', 'przedawnienie roszczeń pracodawcy', 'umowa o współodpowiedzialności materialnej'],
   'swiadectwo-pracy': ['brak świadectwa pracy', 'świadectwo pracy ile dni', 'sprostowanie świadectwa', 'błąd w świadectwie pracy', 'pracodawca nie wydał świadectwa', 'świadectwo pracy po zwolnieniu', 'co musi być w świadectwie pracy', 'świadectwo pracy pozew', 'odszkodowanie za świadectwo pracy'],
   // Audyt „jakosc3” (2026-11-15): bez „kamera w szatni” i „kamera w toalecie”, bo zabierały zapytania o szatnię i toaletę
   // narzędziu o normach sanitarnych (kamerę w szatni znajduje pytanie z FAQ); dopisane potoczne zapytania z hali.
