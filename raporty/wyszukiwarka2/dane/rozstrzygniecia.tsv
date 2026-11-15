@@ -1,0 +1,19 @@
+114	rodzic-w-pracy	9 tygodni to część urlopu rodzicielskiego, którą omawia rodzic-w-pracy; urlop-ojcowski dotyczy tylko 2 tygodni.
+200	swiadczenie-urlopowe	Wczasy pod gruszą to świadczenie urlopowe, a to narzędzie podaje, ile najwyżej wynosi.
+201	swiadczenie-urlopowe	Wczasy pod gruszą to świadczenie urlopowe, a to narzędzie ma kwoty na 2026 r.
+203	urlop-w-godzinach	Urlop w godzinach liczy to narzędzie, a świadectwo pracy nie opisuje wpisu urlopu w godzinach.
+313	brak	Zapytanie ogólne o rodzaj umowy; okres-wypowiedzenia tylko wspomina o niej w jednym pytaniu.
+336	brak	Żadne narzędzie nie mówi, kiedy zawiadomić pracodawcę o ciąży; praca-w-ciazy dotyczy godzin i zakazów.
+358	brak	Klasyfikacji pracy przy komputerze powyżej 4 godzin jako czynnika nie podaje żadne narzędzie; przerwy-w-pracy tylko o przerwach.
+371	brak	Zgłoszenia zleceniobiorcy do ZUS żadne narzędzie nie opisuje; informacja-o-warunkach-zatrudnienia dotyczy umów o pracę.
+374	sad-pracy-czy-pip	Odpowiada, co może inspekcja pracy i gdzie iść z pozwem, czyli gdzie zgłosić.
+375	informacja-o-warunkach-zatrudnienia	Pytanie „Czy mogę zacząć pracę, zanim podpiszę umowę?” najbliżej dotyka pracy bez umowy.
+408	brak	PIT-11A (emerytury i renty) to inny druk niż PIT-11 z kalkulatora.
+511	kontrola-grafiku	Sprawdza grafik 12 h wprost, a rownowazny-czas-pracy podaje ogólne zasady systemu.
+537	waznosc-uprawnien-udt	Podaje ważność uprawnień na wózek widłowy; czy-potrzebne dotyczy tego, czy w ogóle są wymagane.
+544	dodatek-wyrownawczy	Wyrównanie wynagrodzenia to prawnie dodatek wyrównawczy; płaca minimalna dotyczy tylko dopłaty do minimum.
+573	brak	Szafek w szatni nie opisuje żaden element normy-sanitarne (toalety, umywalki, natryski).
+581	choroba-zawodowa	Zepsute zdrowie w pracy to najszerzej choroba zawodowa; odszkodowanie dotyczy tylko wypadku.
+615	informacja-o-warunkach-zatrudnienia	Jedyne narzędzie dotykające pracy bez umowy (zacząć pracę przed podpisaniem umowy).
+657	brak	Spacer na przerwie nie jest regulowany przez przerwy-w-pracy ani rozstrzygnięty przez co-wolno-na-l4.
+697	limit-pracy-tymczasowej	To dosłowne pytanie z FAQ tego narzędzia.
