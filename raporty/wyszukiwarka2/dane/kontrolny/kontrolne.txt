@@ -1,0 +1,178 @@
+1	ile płatne za niedziele
+2	ile płatne za urlop
+3	czy przysługuje dzień wolny na badania okresowe
+4	czy przysługuje dzień wolny na pogrzeb babci
+5	czy przysługuje dzień wolny za święto w niedzielę
+6	czy pracodawca ma prawo badać alkomatem
+7	czy pracodawca ma prawo odmówić urlopu na żądanie
+8	czy pracodawca ma prawo odmówić urlopu
+9	czy pracownik może odmówić nadgodzin
+10	czy pracownik może odmówić delegacji
+11	czy pracownik może wycofać wypowiedzenie
+12	od kiedy przysługuje 26 dni urlopu
+13	do kiedy pracodawca musi wypłacić ekwiwalent za niewykorzystany urlop
+14	do kiedy pracodawca musi wyplacic wyplate
+15	do kiedy pracodawca musi zapłacić zus
+16	ile dni wolnego po oddaniu krwi
+17	ile dni wolnego po śmierci ojca
+18	zwolnienie z pracy a odprawa
+19	zwolnienie z pracy a l4
+20	zwolnienie z pracy a ubezpieczenie zdrowotne
+21	urlop a l4
+22	urlop art 188
+23	urlop a staż pracy
+24	l4 a umowa zlecenie
+25	l4 a koniec umowy
+26	l4 a koniec umowy o pracę
+27	nadgodziny a dziecko do lat 8
+28	nadgodziny a dziecko do lat 4
+29	nadgodziny a godziny nadliczbowe
+30	umowa zlecenie a emerytura
+31	umowa zlecenie a zwolnienie lekarskie
+32	umowa zlecenie a umowa o pracę
+33	ciąża a umowa na czas określony
+34	ciąża a umowa zlecenie
+35	praca w upale na zewnątrz
+36	praca w upale 2027
+37	praca w upale nowe przepisy
+38	praca w zimnie przepisy
+39	praca w zimnie skutki
+40	czy praca w zimnie jest szkodliwa
+41	praca w nocy skutki uboczne
+42	wózek widłowy przepisy bhp
+43	uprawnienia wózek widłowy nowe przepisy
+44	magazynier uprawnienia udt
+45	magazynier z uprawnieniami udt
+46	pracownik produkcji zakres obowiązków
+47	pracownik magazynu kod zawodu
+48	agencja pracy tymczasowej urlop
+49	agencja pracy tymczasowej a urlop wypoczynkowy
+50	agencja pracy wypowiedzenie umowy
+51	wypowiedzenie agencja pracy tymczasowej
+52	umowa na okres próbny a ciąża
+53	umowa na okres próbny a l4
+54	umowa na okres próbny a urlop
+55	wypowiedzenie przez pracownika kod podstawy prawnej
+56	wypowiedzenie przez pracownika art
+57	wypowiedzenie przez pracownika z zachowaniem okresu wypowiedzenia
+58	zwolnienie lekarskie a koniec umowy o pracę na czas określony
+59	zwolnienie lekarskie a umowa zlecenie
+60	zwolnienie lekarskie a emerytura
+61	chorobowe a umowa zlecenie
+62	chorobowe a emerytura
+63	chorobowe a koniec umowy
+64	zasiłek chorobowy po ustaniu zatrudnienia
+65	zasiłek chorobowy zus
+66	zasiłek chorobowy ile wynosi
+67	zasiłek macierzyński a urlop macierzyński
+68	zasiłek macierzyński a umowa zlecenie
+69	zasiłek macierzyński a rodzicielski
+70	urlop rodzicielski 9 tygodni
+71	urlop rodzicielski ile trwa
+72	urlop rodzicielski ile płatny
+73	urlop dla ojca po urodzeniu dziecka
+74	urlop dla ojca 9 tygodni
+75	urlop dla ojca do 6 roku życia
+76	dzień wolny na dziecko do lat 14
+77	dzień wolny na dziecko wniosek
+78	dzień wolny na dziecko zdrowe
+79	opieka nad chorym dzieckiem do ilu lat
+80	opieka nad chorym dzieckiem ile płatne
+81	opieka nad chorym dzieckiem ile dni
+82	wolne za święto w sobotę 2026
+83	wolne za święto w sobotę
+84	wolne za święto w niedzielę
+85	święta 2027 wolne od pracy
+86	święta 2027 wielkanoc
+87	święta 2027 kalendarz
+88	długi weekend majowy 2027
+89	dlugi weekend czerwiec 2027
+90	dlugi weekend maj 2027
+91	kalendarz dni wolnych 2026
+92	kalendarz dni wolnych 2027
+93	godziny pracy 2026
+94	godziny pracy wrzesień 2026
+95	godziny pracy sierpień 2026
+96	8 godzin pracy ile przerwy
+97	8 godzin pracy ile minut przerwy
+98	8 godzin pracy jaka przerwa
+99	praca po godzinach w domu
+100	praca po godzinach kodeks pracy
+101	dodatek za pracę w nocy
+102	dodatek za pracę w nocy 2026
+103	dodatek za pracę w godzinach nocnych
+104	wynagrodzenie minimalne 2026
+105	wynagrodzenie minimalne 2027
+106	wynagrodzenie minimalne 2026 netto
+107	podatek od wypłaty ppk
+108	wypłata netto brutto
+109	wypłata netto 2026
+110	wypłata netto brutto kalkulator
+111	pit za 2025
+112	zwrot z pitu
+113	zwrot z pit do kiedy
+114	zwrot z pitu na dziecko
+115	odprawa przy zwolnieniu
+116	odprawa przy likwidacji stanowiska
+117	odprawa przy zwolnieniu indywidualnym
+118	odprawa za zwolnienie z pracy
+119	odprawa za likwidację stanowiska
+120	odprawa za likwidację stanowiska pracy
+121	świadectwo pracy a umowa zlecenie
+122	świadectwo pracy aktualny wzór
+123	świadectwo pracy a ekwiwalent za urlop
+124	szkolenie bhp dla pracownika
+125	szkolenie bhp ile ważne
+126	badania lekarskie do pracy
+127	badanie okresowe medycyna pracy
+128	badanie okresowe pracownika
+129	kontrola pip w firmie
+130	kontrola pip bez zapowiedzi
+131	kontrola pip ile lat wstecz
+132	skarga na pracodawcę wzór
+133	skarga na pracodawcę do pip
+134	skarga na pracodawcę do zus
+135	sąd pracy a umowa zlecenie
+136	mobbing a dyskryminacja
+137	mobbing art
+138	kara dla pracownika za nienależyte wykonanie obowiązków
+139	kara dla pracownika kodeks pracy
+140	kara dla pracownika za pracę na czarno
+141	potrącenie z pensji bez zgody pracownika
+142	potrącenie z pensji za błąd
+143	potrącenie z pensji za l4
+144	szkoda wyrządzoną przez pracownika osobie trzeciej
+145	szkoda wyrządzona przez pracownika pracodawcy
+146	szkoda wyrządzona umyślnie przez pracownika
+147	kamera w pracy przepisy
+148	kamera w pracy a rodo
+149	kamera w miejscu pracy
+150	monitoring pracowników kodeks pracy
+151	monitoring pracowników w miejscu pracy
+152	monitoring pracowników rodo
+153	przerwa na papierosa w pracy
+154	przerwa śniadaniowa w pracy
+155	przerwa śniadaniowa w pracy 8 godzin
+156	przerwa śniadaniowa ile trwa
+157	dźwiganie ciężarów medycyna pracy
+158	dzwiganie ciężarów w pracy
+159	dźwiganie ciężarów przez kobiety
+160	temperatura na hali produkcyjnej
+161	temperatura na hali 40 stopni
+162	kierowca wózka widłowego
+163	emerytura a praca na etacie
+164	emerytura a praca na umowę zlecenie
+165	emerytura a praca u tego samego pracodawcy
+166	renta a praca na cały etat
+167	renta a praca zarobkowa
+168	renta a praca na zlecenie
+169	pracownik z orzeczeniem o niepełnosprawności w stopniu umiarkowanym
+170	pracownik z orzeczeniem o niepełnosprawności
+171	pracownik z orzeczeniem o niepełnosprawności w stopniu lekkim
+172	młodociany pracownik wynagrodzenie
+173	młodociany pracownik od ilu lat
+174	młodociany pracownik ile godzin pracy
+175	cudzoziemiec umowa zlecenie
+176	fundusz socjalny a emeryci
+177	fundusz socjalny a rozwiązanie umowy o pracę
+178	fundusz socjalny a pół etatu

@@ -1,0 +1,233 @@
+0	ile płatne za niedziele
+1	ile płatne za urlop
+2	ile płatne za 3 w lotto
+3	czy przysługuje dzień wolny na badania okresowe
+4	czy przysługuje dzień wolny na pogrzeb babci
+5	czy przysługuje dzień wolny za święto w niedzielę
+6	czy pracodawca ma prawo badać alkomatem
+7	czy pracodawca ma prawo odmówić urlopu na żądanie
+8	czy pracodawca ma prawo odmówić urlopu
+9	czy pracownik może odmówić nadgodzin
+10	czy pracownik może odmówić delegacji
+11	czy pracownik może wycofać wypowiedzenie
+12	ile wynosi dodatek pielęgnacyjny
+13	ile wynosi dodatek pielęgnacyjny po 75 roku życia w 2026
+14	ile wynosi dodatek mieszkaniowy
+15	jak obliczyć bmi
+16	jak obliczyć zapotrzebowanie kaloryczne
+17	jak obliczyć procent z liczby
+18	od kiedy przysługuje 26 dni urlopu
+19	od kiedy przysługuje świadczenie wspierające
+20	od kiedy przysługuje zasiłek pielęgnacyjny
+21	do kiedy pracodawca musi wypłacić ekwiwalent za niewykorzystany urlop
+22	do kiedy pracodawca musi wyplacic wyplate
+23	do kiedy pracodawca musi zapłacić zus
+24	ile dni wolnego po oddaniu krwi
+25	ile dni wolnego po śmierci ojca
+26	ile dni wolnego w roku szkolnym 26/27
+27	zwolnienie z pracy a odprawa
+28	zwolnienie z pracy a l4
+29	zwolnienie z pracy a ubezpieczenie zdrowotne
+30	urlop a l4
+31	urlop art 188
+32	urlop a staż pracy
+33	l4 a umowa zlecenie
+34	l4 a koniec umowy
+35	l4 a koniec umowy o pracę
+36	nadgodziny a dziecko do lat 8
+37	nadgodziny a dziecko do lat 4
+38	nadgodziny a godziny nadliczbowe
+39	wypłata allegro
+40	wypłata alimentów z funduszu alimentacyjnego
+41	wypłata aktora
+42	umowa zlecenie a emerytura
+43	umowa zlecenie a zwolnienie lekarskie
+44	umowa zlecenie a umowa o pracę
+45	ciąża a umowa na czas określony
+46	ciąża a okres
+47	ciąża a umowa zlecenie
+48	praca w upale na zewnątrz
+49	praca w upale 2027
+50	praca w upale nowe przepisy
+51	praca w zimnie przepisy
+52	praca w zimnie skutki
+53	czy praca w zimnie jest szkodliwa
+54	praca w nocy skutki uboczne
+55	praca w nocy warszawa
+56	praca w nocy krakow
+57	wózek widłowy przepisy bhp
+58	uprawnienia wózek widłowy nowe przepisy
+59	operator wózka widłowego praca
+60	operator wózka widłowego zarobki
+61	operator wózka widłowego niemcy
+62	magazynier uprawnienia udt
+63	magazynier z uprawnieniami udt zarobki
+64	magazynier z uprawnieniami udt
+65	pracownik produkcji kod zawodu
+66	pracownik produkcji po angielsku
+67	pracownik produkcji zakres obowiązków
+68	pracownik magazynu kod zawodu
+69	pracownik magazynu po angielsku
+70	pracownik magazynu lidl
+71	agencja pracy tymczasowej urlop
+72	agencja pracy tymczasowej a urlop wypoczynkowy
+73	agencja pracy wypowiedzenie umowy
+74	wypowiedzenie agencja pracy tymczasowej
+75	umowa na okres próbny a ciąża
+76	umowa na okres próbny a l4
+77	umowa na okres próbny a urlop
+78	wypowiedzenie przez pracownika kod podstawy prawnej
+79	wypowiedzenie przez pracownika art
+80	wypowiedzenie przez pracownika z zachowaniem okresu wypowiedzenia
+81	zwolnienie lekarskie a koniec umowy o pracę na czas określony
+82	zwolnienie lekarskie a umowa zlecenie
+83	zwolnienie lekarskie a emerytura
+84	chorobowe a umowa zlecenie
+85	chorobowe a emerytura
+86	chorobowe a koniec umowy
+87	zasiłek chorobowy po ustaniu zatrudnienia
+88	zasiłek chorobowy zus
+89	zasiłek chorobowy ile wynosi
+90	zasiłek macierzyński a urlop macierzyński
+91	zasiłek macierzyński a umowa zlecenie
+92	zasiłek macierzyński a rodzicielski
+93	urlop rodzicielski 9 tygodni
+94	urlop rodzicielski ile trwa
+95	urlop rodzicielski ile płatny
+96	urlop dla ojca po urodzeniu dziecka
+97	urlop dla ojca 9 tygodni
+98	urlop dla ojca do 6 roku życia
+99	dzień wolny na dziecko do lat 14
+100	dzień wolny na dziecko wniosek
+101	dzień wolny na dziecko zdrowe
+102	opieka nad chorym dzieckiem do ilu lat
+103	opieka nad chorym dzieckiem ile płatne
+104	opieka nad chorym dzieckiem ile dni
+105	wolne za święto w sobotę 2026
+106	wolne za święto w sobotę
+107	wolne za święto w niedzielę
+108	święta 2027 wolne od pracy
+109	święta 2027 wielkanoc
+110	święta 2027 kalendarz
+111	długi weekend majowy 2027
+112	dlugi weekend czerwiec 2027
+113	dlugi weekend maj 2027
+114	kalendarz dni wolnych 2026
+115	kalendarz dni wolnych 2027
+116	kalendarz dni wolnych w szkole 2026/27
+117	godziny pracy 2026
+118	godziny pracy wrzesień 2026
+119	godziny pracy sierpień 2026
+120	8 godzin pracy ile przerwy
+121	8 godzin pracy ile minut przerwy
+122	8 godzin pracy jaka przerwa
+123	praca po godzinach w domu
+124	praca po godzinach kodeks pracy
+125	praca po godzinach warszawa
+126	praca ponad normę krzyżówka
+127	dodatek za pracę w nocy
+128	dodatek za pracę w nocy 2026
+129	dodatek za pracę w godzinach nocnych
+130	wynagrodzenie minimalne 2026
+131	wynagrodzenie minimalne 2027
+132	wynagrodzenie minimalne 2026 netto
+133	podatek od wypłaty dywidendy
+134	podatek od wypłaty ppk
+135	podatek od wypłaty z subkonta zus
+136	wypłata netto brutto
+137	wypłata netto 2026
+138	wypłata netto brutto kalkulator
+139	pit za 2025
+140	pit za wynajem mieszkania
+141	pit zaloguj
+142	zwrot z pitu
+143	zwrot z pit do kiedy
+144	zwrot z pitu na dziecko
+145	odprawa przy zwolnieniu
+146	odprawa przy likwidacji stanowiska
+147	odprawa przy zwolnieniu indywidualnym
+148	odprawa za zwolnienie z pracy
+149	odprawa za likwidację stanowiska
+150	odprawa za likwidację stanowiska pracy
+151	świadectwo pracy a umowa zlecenie
+152	świadectwo pracy aktualny wzór
+153	świadectwo pracy a ekwiwalent za urlop
+154	szkolenie bhp dla pracownika
+155	szkolenie bhp online
+156	szkolenie bhp ile ważne
+157	badania lekarskie na prawo jazdy
+158	badania lekarskie do pracy
+159	badania lekarskie na prawo jazdy kat b
+160	badanie okresowe medycyna pracy
+161	badanie okresowe pojazdu
+162	badanie okresowe pracownika
+163	kontrola pip w firmie
+164	kontrola pip bez zapowiedzi
+165	kontrola pip ile lat wstecz
+166	skarga na pracodawcę wzór
+167	skarga na pracodawcę do pip
+168	skarga na pracodawcę do zus
+169	sąd pracy adwokat z urzędu
+170	sad pracy adwokat
+171	sąd pracy a umowa zlecenie
+172	mobbing a dyskryminacja
+173	mobbing art
+174	mobbing art kk
+175	kara dla pracownika za nienależyte wykonanie obowiązków
+176	kara dla pracownika kodeks pracy
+177	kara dla pracownika za pracę na czarno
+178	potrącenie z pensji bez zgody pracownika
+179	potrącenie z pensji za błąd
+180	potrącenie z pensji za l4
+181	szkoda wyrządzoną przez pracownika osobie trzeciej
+182	szkoda wyrządzona przez pracownika pracodawcy
+183	szkoda wyrządzona umyślnie przez pracownika
+184	kamera w pracy przepisy
+185	kamera w pracy a rodo
+186	kamera w miejscu pracy
+187	monitoring pracowników kodeks pracy
+188	monitoring pracowników w miejscu pracy
+189	monitoring pracowników rodo
+190	przerwa na papierosa w pracy
+191	przerwa na papierosa krzyżówka
+192	przerwa na papierosa maanam
+193	przerwa śniadaniowa w pracy
+194	przerwa śniadaniowa w pracy 8 godzin
+195	przerwa śniadaniowa ile trwa
+196	regał metalowy
+197	regał na książki
+198	regał ikea
+199	paleta kolorów
+200	paleta ral
+201	paleta euro
+202	hałas harmider krzyżówka
+203	hałastra
+204	hałas zgiełk krzyżówka
+205	dźwiganie ciężarów medycyna pracy
+206	dzwiganie ciężarów w pracy
+207	dźwiganie ciężarów przez kobiety
+208	temperatura na hali gąsienicowej
+209	temperatura na hali produkcyjnej
+210	temperatura na hali 40 stopni
+211	kierowca wózka widłowego
+212	kierowca wózka widłowego zarobki
+213	kierowca wózka widłowego po niemiecku
+214	kierowca zawodowy krzyżówka
+215	kierowca zawodowy kto to
+216	kierowca zawodowy kat b
+217	emerytura a praca na etacie
+218	emerytura a praca na umowę zlecenie
+219	emerytura a praca u tego samego pracodawcy
+220	renta a praca na cały etat
+221	renta a praca zarobkowa
+222	renta a praca na zlecenie
+223	pracownik z orzeczeniem o niepełnosprawności w stopniu umiarkowanym
+224	pracownik z orzeczeniem o niepełnosprawności
+225	pracownik z orzeczeniem o niepełnosprawności w stopniu lekkim
+226	młodociany pracownik wynagrodzenie
+227	młodociany pracownik od ilu lat
+228	młodociany pracownik ile godzin pracy
+229	cudzoziemiec umowa zlecenie
+230	fundusz socjalny a emeryci
+231	fundusz socjalny a rozwiązanie umowy o pracę
+232	fundusz socjalny a pół etatu

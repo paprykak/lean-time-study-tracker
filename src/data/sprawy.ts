@@ -5,7 +5,7 @@
 
 /** Potoczne słowa, pod którymi ludzie szukają narzędzia (slug → hasła). */
 export const HASLA: Record<string, string[]> = {
-  // Pakiet „wyszukiwarka2” (2026-11-15): hasła z podpowiedzi Google (pl) dopisane przy 21 narzędziach (źródło każdego
+  // Pakiet „wyszukiwarka2” (2026-11-15): hasła z podpowiedzi Google (pl) dopisane przy 22 narzędziach (źródło każdego
   // w raporty/wyszukiwarka2/RAPORT.md) i usunięte hasła, które zabierały ogólne zapytania narzędziu głównemu: „L4” przy
   // okresie zasiłkowym, „odprawa” przy odprawie pośmiertnej i zwolnieniach grupowych (słowo jest w nazwie albo w FAQ),
   // „sobota pracująca” przy pracy w sobotę (w podpowiedziach to kalendarz: „sobota pracująca w sierpniu”), „świadectwo
@@ -60,7 +60,7 @@ export const HASLA: Record<string, string[]> = {
   'odprawa-posmiertna': ['śmierć pracownika', 'rodzina'],
   'kontrola-grafiku': ['grafik', 'harmonogram', 'zmiany', 'odpoczynek', '11 godzin', '12 godzin', 'praca zmianowa', 'odpoczynek dobowy', 'zmiana grafiku'],
   'wymiar-czasu-pracy': ['ile godzin', 'godziny w miesiącu', 'etat', 'norma godzin'],
-  'przerwy-w-pracy': ['przerwa', 'śniadaniowa', '15 minut', 'monitor', 'okulary do komputera', 'praca przy komputerze'],
+  'przerwy-w-pracy': ['przerwa', 'śniadaniowa', '15 minut', 'monitor', 'komputer', 'praca przy komputerze'],
   'dyzur-w-pracy': ['dyżur', 'pod telefonem', 'gotowość'],
   'dni-robocze': ['dni robocze', 'termin', 'kalendarz'],
   'pracownik-mlodociany': ['uczeń', 'praktykant', 'nieletni', 'młodociany'],
