@@ -19,8 +19,8 @@
 //   miesiącach od papierowego (art. 77 § 1 pkt 5 i 5a Ordynacji).
 // Termin dopłaty: 30 kwietnia (art. 45 ust. 1 i 4), a gdy to sobota albo dzień ustawowo wolny od pracy, następny dzień
 // po dniu lub dniach wolnych (art. 12 § 5 Ordynacji): przepis szczególny sam przesuwa termin, więc podajemy jedną datę,
-// po przesunięciu (pakiet „terminy 2”, raporty/terminy2/PRZEPISY.md, pytanie 4). Sobota jest w art. 12 § 5 od pierwotnego
-// brzmienia (w mocy od 1.01.1998 r.), więc nie bierzemy reguły soboty z art. 115 KC (od 2017 r.); dni ustawowo wolne
+// po przesunięciu (pakiet „terminy 2”, raporty/terminy2/PRZEPISY.md, pytanie 4). Sobota jest w tej regule od pierwotnego
+// brzmienia art. 12 (wtedy bez podziału na paragrafy, w mocy od 1.01.1998 r.), więc nie bierzemy reguły soboty z art. 115 KC (od 2017 r.); dni ustawowo wolne
 // według `dzienWolnyArt115` z terminy.ts.
 // Przyjęte: przy rozliczeniu osobno małżonków-rodziców Twoja część ulgi to wybrany procent, reszta jest małżonka; zwrot
 // niewykorzystanej ulgi u obojga ograniczamy łączną sumą ich składek (art. 27f ust. 10), najpierw u Ciebie. Wspólne

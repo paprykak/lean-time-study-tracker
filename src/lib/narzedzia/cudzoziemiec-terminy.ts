@@ -17,7 +17,8 @@
 // - „w terminie N dni od dnia …”: dnia zdarzenia nie liczymy (art. 111 § 2 KC). Czy koniec przesuwa się z soboty i święta,
 //   ustawa nie mówi (reguluje tylko awarię systemu). To obowiązki pracodawcy, więc według konwencji z terminy.ts (pakiet
 //   „terminy 2”, raporty/terminy2/PRZEPISY.md, pytanie 3) podajemy datę z przepisu bez przesunięcia, a gdy wypada w sobotę
-//   albo dzień ustawowo wolny, nazwę dnia (`wolny`) i jedno zdanie dlaczego (`BEZ_PRZESUNIECIA.pracodawca` na stronie);
+//   albo dzień ustawowo wolny, nazwę dnia (`wolny`) i jedno zdanie dlaczego (`BEZ_PRZESUNIECIA_CUDZOZIEMCY`; wspólne
+//   `BEZ_PRZESUNIECIA.pracodawca` mówi o „jednym dniu”, a z soboty przesunięcie to co najmniej dwa dni: uwaga w raporcie);
 // - okres pracy z oświadczenia i zezwolenia liczymy z dniem rozpoczęcia włącznie: 24 miesiące od 1 marca kończą się
 //   ostatniego lutego dwa lata później; 6 miesięcy od złożenia oświadczenia jak art. 112 KC (dzień odpowiadający datą);
 // - niepodjęcie pracy przy zezwoleniu: okoliczność zachodzi z ostatnim dniem 2 miesięcy od początku ważności (liczonych
@@ -42,6 +43,10 @@ export interface Termin {
   /** Status sprawdzenia: „blad”, gdy warunek z przepisu nie jest spełniony. */
   stan?: 'ok' | 'blad';
 }
+
+/** Dlaczego terminy powiadomień podajemy bez przesunięcia (raporty/terminy2/PRZEPISY.md, pytanie 3). */
+export const BEZ_PRZESUNIECIA_CUDZOZIEMCY =
+  'Terminy pracodawcy podajemy według przepisu, bez przesunięcia z soboty i dnia wolnego. Ustawa sama przesuwa terminy tylko w wąskich przypadkach, na przykład przy awarii systemu teleinformatycznego, a czy przy sobocie albo święcie przesuwa je art. 115 Kodeksu cywilnego, przepisy wprost nie mówią i orzeczeń nie znaleźliśmy. Powiadomienia składa się elektronicznie, także w dni wolne, więc najbezpieczniej złożyć je do daty z przepisu.';
 
 export const KARTA_UKR_WNIOSEK_DO = '2027-03-04';
 export const ART_41_DO = '2029-03-04';

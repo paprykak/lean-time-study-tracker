@@ -3,8 +3,8 @@
 // i obywatele Ukrainy (art. 5a; art. 41 ustawy o wygaszeniu; art. 42x), przechowywanie kopii (art. 4 ust. 4 i 6).
 // Logika: src/lib/narzedzia/cudzoziemiec-terminy.ts (testy obok).
 import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
-import { opisTerminu as opis, terminyOchrony } from '../../lib/narzedzia/cudzoziemiec-terminy';
-import { BEZ_PRZESUNIECIA, dodajDni, dzisWPolsce } from '../../lib/narzedzia/terminy';
+import { BEZ_PRZESUNIECIA_CUDZOZIEMCY, opisTerminu as opis, terminyOchrony } from '../../lib/narzedzia/cudzoziemiec-terminy';
+import { dodajDni, dzisWPolsce } from '../../lib/narzedzia/terminy';
 
 const DZIS = dzisWPolsce();
 const START_EW = dodajDni(DZIS, 14);
@@ -133,7 +133,7 @@ const faq = [
       Terminy pochodzą z ustawy z 20 marca 2025 r. o warunkach dopuszczalności powierzania pracy cudzoziemcom ze
       zmianami z 2025 i 2026 r. Terminy w dniach liczymy od dnia po zdarzeniu (art. 111 § 2 Kodeksu cywilnego). Ustawa
       nie mówi, czy termin kończący się w sobotę albo dzień ustawowo wolny od pracy przesuwa się na dzień roboczy.
-      {BEZ_PRZESUNIECIA.pracodawca}
+      {BEZ_PRZESUNIECIA_CUDZOZIEMCY}
     </p>
     <ul>
       <li><strong>Oświadczenie:</strong> praca najwyżej 24 miesiące, start najpóźniej 6 miesięcy od złożenia (art. 61 ust. 1 pkt 5–6). 6 miesięcy liczymy od dnia po złożeniu do dnia, który datą odpowiada dniowi złożenia (art. 111 § 2 i 112 Kodeksu cywilnego). 24 miesiące liczymy z dniem startu: od 1 grudnia do 30 listopada dwa lata później. Powiadomienie starosty o podjęciu pracy 7 dni od rozpoczęcia, o niepodjęciu 14 dni od dnia z ewidencji (art. 70 ust. 1).</li>

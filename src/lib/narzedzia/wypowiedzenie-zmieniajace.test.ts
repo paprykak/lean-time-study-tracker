@@ -63,7 +63,11 @@ describe('wypowiedzenie zmieniające (art. 42 § 1–3, art. 36 § 1, art. 30 §
   });
   it('odmowa w sobotę: z pouczeniem (połowa) i bez pouczenia (koniec okresu) dwie daty', () => {
     expect(wypowiedzenieZmieniajace('2026-06-01', '2026-11-14').odmowa).toMatchObject({ zdazDo: '2026-11-21', wedlugArt115: '2026-11-23' });
-    expect(wypowiedzenieZmieniajace('2026-05-13', '2026-11-12', false).odmowa).toMatchObject({ zdazDo: '2026-11-28', wedlugArt115: '2026-11-30' });
+    // Bez pouczenia: koniec okresu (sobota 28.11), po nim nowe warunki, więc bez drugiej daty (weryfikacja prawna P-1).
+    expect(wypowiedzenieZmieniajace('2026-05-13', '2026-11-12', false).odmowa).toMatchObject({ zdazDo: '2026-11-28', wedlugArt115: '2026-11-28', rozne: false });
+    const bez = opisZmieniajacego(wypowiedzenieZmieniajace('2026-07-01', '2026-11-20', false), '2026-11-20');
+    expect(bez).toMatchObject({ odmowa: '5 grudnia 2026 r.', odmowaArt115: null, odmowaZdanie: '', nowe: '6 grudnia 2026 r.' });
+    expect(bez.uwaga).toContain('Tego dnia nie przesuwamy z soboty ani dnia wolnego');
     expect(wypowiedzenieZmieniajace('2023-11-13', '2026-11-12').odmowa).toMatchObject({ zdazDo: '2026-12-06', wedlugArt115: '2026-12-07' });
     expect(wypowiedzenieZmieniajace('2024-02-29', '2027-02-28').odmowa).toMatchObject({ zdazDo: '2027-03-15', rozne: false });
   });

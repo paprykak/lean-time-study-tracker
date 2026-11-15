@@ -94,7 +94,9 @@ export function wypowiedzenieZmieniajace(poczatekPracy: string, doreczenie: stri
     dniB: dniMiedzy(poczatekB, koniecDoOdmowy) + 1,
     pouczenie,
     prog: w.prog ? { miesiace: w.prog.miesiace, dzien: w.prog.dzien, krotszy: w.prog.krotszy.opis, krotszyKoniec: w.prog.krotszyKoniec } : null,
-    odmowa: terminPracownika(odmowaDo),
+    // Bez pouczenia termin to koniec okresu wypowiedzenia (art. 42 § 3 zd. 3): to granica okresu, po której obowiązują
+    // nowe warunki, więc drugiej daty z art. 115 KC nie podajemy (weryfikacja prawna P-1).
+    odmowa: pouczenie ? terminPracownika(odmowaDo) : { zdazDo: odmowaDo, wedlugArt115: odmowaDo, rozne: false, wolne: [] },
     odwolanie: terminPracownika(dodajDni(doreczenie, DNI_ODWOLANIA)),
   };
 }
@@ -167,7 +169,7 @@ export function opisZmieniajacego(r: WypowiedzenieZmieniajace, dzis: string): Op
     odwolanieZdanie: zdanieArt115(r.odwolanie, 'sad'),
     uwaga: r.pouczenie
       ? UWAGA_POUCZENIE
-      : `Bez pouczenia możesz odmówić do końca okresu wypowiedzenia (art. 42 § 3 zdanie trzecie Kodeksu pracy).${r.prog ? ' Staż osiąga próg w trakcie wypowiedzenia, więc okres się wydłuża (art. 42 § 1 Kodeksu pracy, wyrok Sądu Najwyższego I PKN 34/99), ale termin na odmowę liczymy od krótszego okresu.' : ''} Liczy się dzień, w którym odmowa dotrze do pracodawcy.`,
+      : `Bez pouczenia możesz odmówić do końca okresu wypowiedzenia (art. 42 § 3 zdanie trzecie Kodeksu pracy). Tego dnia nie przesuwamy z soboty ani dnia wolnego: następnego dnia obowiązują już nowe warunki.${r.prog ? ' Staż osiąga próg w trakcie wypowiedzenia, więc okres się wydłuża (art. 42 § 1 Kodeksu pracy, wyrok Sądu Najwyższego I PKN 34/99), ale termin na odmowę liczymy od krótszego okresu.' : ''} Liczy się dzień, w którym odmowa dotrze do pracodawcy.`,
   };
 }
 

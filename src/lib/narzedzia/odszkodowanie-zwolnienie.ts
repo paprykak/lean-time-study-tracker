@@ -93,7 +93,7 @@ export const SYTUACJE: Record<Sytuacja, OpisSytuacji> = {
     umowa: true,
     dni: 'okreslona',
     etykietaDni: 'Dni pracy do końca umowy',
-    pozew: 'Pracodawca ma na pozew rok od dnia, w którym dowiedział się o szkodzie, najpóźniej 3 lata od jej wyrządzenia (art. 291 § 2 i § 2¹ Kodeksu pracy); 21 dni z art. 264 tu nie obowiązuje.',
+    pozew: 'Roszczenie pracodawcy przedawnia się z upływem roku od dnia, w którym dowiedział się o szkodzie, najpóźniej 3 lat od jej wyrządzenia (art. 291 § 2 i § 2¹ Kodeksu pracy); po tym terminie możesz odmówić zapłaty (art. 292). 21 dni z art. 264 tu nie obowiązuje.',
   },
 };
 

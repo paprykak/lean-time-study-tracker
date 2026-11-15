@@ -1,0 +1,67 @@
+{
+  "zakres": "git diff f58eeb3 -- src (gałąź fabryka/terminy2) oraz ZDANIE_ART_115, BEZ_PRZESUNIECIA, zdanieArt115 z src/lib/narzedzia/terminy.ts; teksty: Kp Dz.U. 2026 poz. 1245, KC 2026 poz. 795, Ordynacja 2026 poz. 622 (tekst jednolity) i 1997 poz. 926 (pierwotny), ustawa o powierzaniu pracy cudzoziemcom 2025 poz. 621, rozporządzenie 2023 poz. 607 i zm. 2026 poz. 456; orzeczenie IV Pa 79/15 w pełnym tekście z Portalu Orzeczeń (cache); III CZP 21/23 sprawdzona przez glosę krytyczną (Glosa 2/2026, cache).",
+  "data": "2026-11-15",
+  "pytania": {
+    "1_art_264_i_291": "Poprawne. Art. 264 § 2 Kp dotyczy żądania przywrócenia do pracy lub odszkodowania po rozwiązaniu umowy bez wypowiedzenia przez pracodawcę; SO w Olsztynie, IV Pa 79/15 (pełny tekst): „Art. 264 § 1 i 2 k.p. dotyczy tylko roszczeń przysługujących pracownikowi w razie dokonanego przez pracodawcę wypowiedzenia lub rozwiązania bez wypowiedzenia umowy o pracę” i „do roszczenia powoda zastosowanie miał ogólny termin przedawnienia z art. 291 § 1 k.p.”; teza przypisana sygnaturze jest dokładna. Art. 291 § 2¹ Kp: „Przepis § 2 stosuje się także do roszczenia pracodawcy, o którym mowa w art. 61[1] oraz w art. 101[1] § 2” — opis roszczenia z art. 61¹ zgodny (zastrzeżenie redakcyjne: P-4).",
+    "2_art_12_par_5_OP": "Poprawne. Art. 12 § 5 Ordynacji (Dz.U. 2026 poz. 622): „Jeżeli ostatni dzień terminu przypada na sobotę lub dzień ustawowo wolny od pracy, za ostatni dzień terminu uważa się następny dzień po dniu lub dniach wolnych od pracy, chyba że ustawy podatkowe stanowią inaczej.” terminZaplaty sprawdzone: 2022→2.05 (sobota+niedziela+1.05 i 3.05 nie przeszkadza), 2023→2.05, 2028→2.05, 2027 i 2032→30.04. Drobna nieścisłość w komentarzu kodu: P-5.",
+    "3_odmowa_art_42_par_3_i_61_KC": "Opis skuteczności odmowy zgodny z art. 61 § 1 KC („Oświadczenie woli, które ma być złożone innej osobie, jest złożone z chwilą, gdy doszło do niej w taki sposób, że mogła zapoznać się z jego treścią”) i z art. 42 § 3 zd. 2 Kp. Błąd przy braku pouczenia: P-1.",
+    "4_art_177_i_43": "Art. 43 opisany zgodnie z brzmieniem (pkt 1 i 2, „konieczne”, orzeczenie lekarskie, niezawiniona utrata uprawnień). Art. 177 § 1 i § 4 zgodnie. Art. 177 § 1¹ niekompletnie: P-2."
+  },
+  "znaleziska": [
+    {
+      "id": "P-1",
+      "plik": "src/lib/narzedzia/wypowiedzenie-zmieniajace.ts",
+      "linia": 97,
+      "zdanie": "odmowa: terminPracownika(odmowaDo) — przy braku pouczenia wynik pokazuje „Odmowa: zdąż do 5 grudnia 2026 r.” i „Ostatni dzień według art. 115 KC: 7 grudnia 2026 r.”, a obok „Okres kończy się 5 grudnia 2026 r.”, „Gdy przyjmiesz: nowe warunki od 6 grudnia 2026 r.” (sprawdzone: start 2026-09-01, doręczenie 2026-11-16, bez pouczenia). Okres w tygodniach zawsze kończy się w sobotę (art. 30 § 2¹), więc druga data pojawia się przy każdym wypowiedzeniu tygodniowym bez pouczenia.",
+      "problem": "Bez pouczenia odmowę można złożyć tylko do końca okresu wypowiedzenia; druga data z art. 115 KC wypada po końcu okresu, gdy umowa już się rozwiązała albo obowiązują nowe warunki. Strona sama sobie przeczy: ten sam akapit kończy się zdaniem BEZ_PRZESUNIECIA.okres („Koniec okresu podajemy bez przesunięcia z soboty i dnia wolnego”), a termin „do końca okresu” jest przesuwany. Data 7 grudnia może wprowadzić w błąd co do przyjęcia nowych warunków.",
+      "dowod": "Art. 42 § 3 zd. 3 Kp: „W razie braku takiego pouczenia, pracownik może do końca okresu wypowiedzenia złożyć oświadczenie o odmowie przyjęcia zaproponowanych warunków.” Art. 42 § 3 zd. 1: „W razie odmowy przyjęcia przez pracownika zaproponowanych warunków pracy lub płacy, umowa o pracę rozwiązuje się z upływem okresu dokonanego wypowiedzenia.” Art. 30 § 2¹ Kp: „Okres wypowiedzenia umowy o pracę obejmujący tydzień lub miesiąc albo ich wielokrotność kończy się odpowiednio w sobotę lub w ostatnim dniu miesiąca.”",
+      "poprawka": "Przy pouczenie === false: odmowa: { zdazDo: odmowaDo, wedlugArt115: odmowaDo, rozne: false, wolne: [] } (bez drugiej daty), a w uwaga po zdaniu o art. 42 § 3 zd. 3 dopisać: „Ten termin kończy się razem z okresem wypowiedzenia, także w sobotę albo dzień wolny od pracy: następnego dnia obowiązują już nowe warunki albo umowa się rozwiązała.” Na stronie (wypowiedzenie-zmieniajace.astro, l. 132) zmienić początek zdania na: „Gdy pismo zawiera pouczenie, a ostatni dzień na odmowę wypada w sobotę albo dzień ustawowo wolny od pracy, podajemy dwie daty…”."
+    },
+    {
+      "id": "P-2",
+      "plik": "src/pages/narzedzia/wypowiedzenie-zmieniajace.astro",
+      "linia": 150,
+      "zdanie": "Gdy wniosek złożono wcześniej, niż wymagają tego przepisy o tych urlopach, ochrona zaczyna się dopiero 14 dni przed częścią urlopu macierzyńskiego, 21 dni przed urlopem rodzicielskim albo uzupełniającym i 7 dni przed urlopem ojcowskim (art. 177 § 1¹).",
+      "problem": "Pominięty urlop na warunkach urlopu macierzyńskiego (osoba, która przyjęła dziecko na wychowanie, nie dowie się, od kiedy ma ochronę), a „uzupełniającym” bez rzeczownika jest niejasne. Poprzednie zdanie tego punktu wymienia urlop na warunkach urlopu macierzyńskiego, więc lista w § 1¹ jest niespójna z § 1.",
+      "dowod": "Art. 177 § 1¹ Kp: „zakaz, o którym mowa w § 1, zaczyna obowiązywać na: 1) 14 dni przed rozpoczęciem korzystania z części urlopu macierzyńskiego oraz części urlopu na warunkach urlopu macierzyńskiego; 2) 21 dni przed rozpoczęciem korzystania z uzupełniającego urlopu macierzyńskiego oraz urlopu rodzicielskiego albo jego części; 3) 7 dni przed rozpoczęciem korzystania z urlopu ojcowskiego albo jego części.”",
+      "poprawka": "Gdy wniosek złożono wcześniej, niż wymagają tego przepisy o tych urlopach, ochrona zaczyna się dopiero 14 dni przed częścią urlopu macierzyńskiego albo urlopu na warunkach urlopu macierzyńskiego, 21 dni przed uzupełniającym urlopem macierzyńskim albo urlopem rodzicielskim i 7 dni przed urlopem ojcowskim (art. 177 § 1¹)."
+    },
+    {
+      "id": "P-3",
+      "plik": "src/lib/narzedzia/terminy.ts (używane nowo w src/pages/narzedzia/zgloszenie-pracy-cudzoziemca.astro)",
+      "linia": 201,
+      "zdanie": "BEZ_PRZESUNIECIA.pracodawca: „…pracodawca może się na to powoływać, więc jeden dzień po dacie z przepisu nie musi oznaczać spóźnienia.”",
+      "problem": "Art. 115 KC przesuwa koniec terminu na pierwszy dzień, który nie jest wolny ani sobotą, a nie o jeden dzień: z soboty na poniedziałek to dwa dni, przy świętach więcej (np. 2026-12-05 sobota → 2026-12-07). „Jeden dzień” zaniża przesunięcie i jest niezgodne z przepisem, który ta sama strona przytacza.",
+      "dowod": "Art. 115 KC: „Jeżeli koniec terminu do wykonania czynności przypada na dzień uznany ustawowo za wolny od pracy lub na sobotę, termin upływa następnego dnia, który nie jest dniem wolnym od pracy ani sobotą.”",
+      "poprawka": "Terminy pracodawcy podajemy według przepisu, bez przesunięcia z soboty i dnia wolnego. Czy art. 115 Kodeksu cywilnego przesuwa je na następny dzień, który nie jest dniem wolnym od pracy ani sobotą, przepisy wprost nie mówią, a orzeczeń nie znaleźliśmy; pracodawca może się na to powoływać, więc czynność w tym następnym dniu nie musi oznaczać spóźnienia."
+    },
+    {
+      "id": "P-4",
+      "plik": "src/lib/narzedzia/odszkodowanie-zwolnienie.ts",
+      "linia": 96,
+      "zdanie": "Pracodawca ma na pozew rok od dnia, w którym dowiedział się o szkodzie, najpóźniej 3 lata od jej wyrządzenia (art. 291 § 2 i § 2¹ Kodeksu pracy); 21 dni z art. 264 tu nie obowiązuje.",
+      "problem": "Przedawnienie nie jest terminem na pozew: po jego upływie pracodawca może wnieść pozew, a roszczenie wygasa dla sądu tylko wtedy, gdy pracownik podniesie zarzut przedawnienia. Zdanie „ma na pozew rok” sugeruje, że spóźniony pozew przepada sam, przez co pracownik może nie wiedzieć, że musi zarzut podnieść. Ta sama strona (l. 143–144) pisze poprawnie „przedawnia się”.",
+      "dowod": "Art. 292 Kp: „Po upływie terminu przedawnienia roszczenia ze stosunku pracy ten, przeciwko komu przysługuje roszczenie, może uchylić się od jego zaspokojenia, chyba że zrzeka się korzystania z zarzutu przedawnienia.” Art. 291 § 2: „ulegają przedawnieniu z upływem 1 roku od dnia, w którym pracodawca powziął wiadomość o wyrządzeniu przez pracownika szkody, niepóźniej jednak niż z upływem 3 lat od jej wyrządzenia.”",
+      "poprawka": "Roszczenie pracodawcy przedawnia się po roku od dnia, w którym dowiedział się o szkodzie, najpóźniej po 3 latach od jej wyrządzenia (art. 291 § 2 i § 2¹ Kodeksu pracy); po tym czasie możesz podnieść zarzut przedawnienia (art. 292). 21 dni z art. 264 tu nie obowiązuje."
+    },
+    {
+      "id": "P-5",
+      "plik": "src/lib/narzedzia/pit-roczny.ts",
+      "linia": 22,
+      "zdanie": "Sobota jest w art. 12 § 5 od pierwotnego brzmienia (w mocy od 1.01.1998 r.)",
+      "problem": "Komentarz kodu (nie tekst strony): w pierwotnym brzmieniu reguła była w art. 12 bez paragrafów; jako § 5 występuje w późniejszych tekstach (tekst jednolity Dz.U. 2005 poz. 60), a od 1.01.2015 r. ma dopisek „chyba że ustawy podatkowe stanowią inaczej”. Wniosek (sobota od początku) jest prawdziwy, numer jednostki nie.",
+      "dowod": "Dz.U. 1997 nr 137 poz. 926: „Art. 12. Jeżeli ostatni dzień terminu przewidzianego w przepisach prawa podatkowego przypada na sobotę lub dzień ustawowo wolny od pracy, za ostatni dzień terminu uważa się następny dzień po dniu lub dniach wolnych od pracy.” Dz.U. 2015 poz. 613, odnośnik 7 do art. 12 § 5: „W brzmieniu ustalonym przez art. 2 pkt 1 ustawy z dnia 25 lipca 2014 r. … (Dz. U. poz. 1171), która weszła w życie z dniem 1 stycznia 2015 r.”",
+      "poprawka": "Sobota jest w tej regule od pierwotnego brzmienia Ordynacji (art. 12, w mocy od 1.01.1998 r.; dziś art. 12 § 5)"
+    }
+  ],
+  "sprawdzone_bez_zastrzezen": [
+    "odszkodowanie-zwolnienie.ts: teksty pozew dla wypowiedzenia, okresu próbnego (art. 264 § 1), dyscyplinarki i dyscyplinarki w wypowiedzeniu (art. 264 § 2), odejścia z art. 55 § 1¹ (art. 291 § 1, IV Pa 79/15 opisana dokładnie); FAQ i akapit strony spójne z wynikiem",
+    "odpowiedzialnosc.ts i strona: III CZP 21/23 uczciwie opisana („znana nam tylko z przytoczeń”), cytat tezy zgodny z glosą (Glosa 2/2026: „art. 115 k.c. nie ma zastosowania do upływu terminu przedawnienia”, OSNC 2025, nr 1, poz. 2); twierdzenie o glosach krytycznych potwierdzone",
+    "ODMOWA_ART_115 (przy pouczeniu): art. 61 § 1 KC i art. 42 § 3 zd. 2 opisane poprawnie, niepewność zaznaczona",
+    "badania-lekarskie: § 5 rozporządzenia (odwołanie przez podstawową jednostkę służby medycyny pracy, w brzmieniu z 2026 poz. 456), nowe zdania o łańcuchu zwolnień zgodne z art. 229 § 2 i 4 Kp i logiką narzędzia",
+    "monitoring: WSTECZ_BEZ_PRZESUNIECIA i BEZ_PRZESUNIECIA.okres przy art. 22² § 3 — uzasadnienie spójne",
+    "cudzoziemiec: ustawa 2025 poz. 621 rzeczywiście przesuwa terminy tylko przy awarii systemu (art. 5a/70 „pierwszego dnia roboczego następującego…”), więc „ustawa nie mówi” jest prawdziwe",
+    "forma neutralna płciowo: bez uwag w zmienionych zdaniach"
+  ],
+  "nie_sprawdzono": "Sygnatury z terminy.ts sprzed tej gałęzi (IV P 24/19, IX P 280/20, IX P 666/18, VII Pa 90/16) — nie ma ich pełnych tekstów w .cache; IV P 553/24 jest w cache, ale nie była przedmiotem tej gałęzi. SAOS nie był potrzebny."
+}
