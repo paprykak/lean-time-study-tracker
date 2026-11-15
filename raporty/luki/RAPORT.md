@@ -5,7 +5,7 @@ Gałąź `fabryka/luki` (ostatni commit: ten z dopiskiem „pełny check zielony
 z API Sejmu w `.cache/narzedzia/prawo/`, nowelizacje po tekstach jednolitych sprawdzone), budowniczy, weryfikator prawny
 i weryfikator kodu/UX (niezależnie, pliki i teksty przepisów bez wniosków), audytor. Wynik: `npm run -s check:szybki`
 EXIT 0 (2540 testów jednostkowych, kontrola SEO produkcji 139 stron bez błędów) i `BEZ_WEBKIT=1 npm run check` EXIT 0
-(WYNIK_CHECKU). Zrzuty formularza i wyniku 412 i 320 px: `raporty/luki/zrzuty/` (bez przewijania w bok, nic nie ucięte).
+(E2E 2461 zaliczonych, 355 pominiętych z założenia, 9,1 min; Lighthouse 7 adresów; kontrola SEO testowa 150 i produkcji 139 stron bez błędów). Zrzuty formularza i wyniku 412 i 320 px: `raporty/luki/zrzuty/` (bez przewijania w bok, nic nie ucięte).
 
 ## Badanie popytu
 
