@@ -1,0 +1,4498 @@
+[
+ {
+  "id": 1,
+  "q": "dodatek nocny 2026",
+  "zrodlo": "google",
+  "fraza": "dodatek nocny"
+ },
+ {
+  "id": 2,
+  "q": "dodatek nocny sierpien 2026",
+  "zrodlo": "google",
+  "fraza": "dodatek nocny"
+ },
+ {
+  "id": 3,
+  "q": "praca w nocy dodatek",
+  "zrodlo": "google",
+  "fraza": "praca w nocy"
+ },
+ {
+  "id": 4,
+  "q": "praca w nocy a dziecko",
+  "zrodlo": "google",
+  "fraza": "praca w nocy"
+ },
+ {
+  "id": 5,
+  "q": "nocki ile platne",
+  "zrodlo": "google",
+  "fraza": "nocki ile"
+ },
+ {
+  "id": 6,
+  "q": "nocki ile wiecej platne",
+  "zrodlo": "google",
+  "fraza": "nocki ile"
+ },
+ {
+  "id": 7,
+  "q": "drgania w środowisku pracy",
+  "zrodlo": "google",
+  "fraza": "drgania w pracy"
+ },
+ {
+  "id": 8,
+  "q": "drgania mechaniczne w pracy",
+  "zrodlo": "google",
+  "fraza": "drgania w pracy"
+ },
+ {
+  "id": 9,
+  "q": "hałas w pracy normy",
+  "zrodlo": "google",
+  "fraza": "hałas w pracy"
+ },
+ {
+  "id": 10,
+  "q": "hałas w pracy biurowej",
+  "zrodlo": "google",
+  "fraza": "hałas w pracy"
+ },
+ {
+  "id": 11,
+  "q": "wypadek przy pracy to",
+  "zrodlo": "google",
+  "fraza": "wypadek przy pracy"
+ },
+ {
+  "id": 12,
+  "q": "wypadek przy pracy to każde zdarzenie",
+  "zrodlo": "google",
+  "fraza": "wypadek przy pracy"
+ },
+ {
+  "id": 13,
+  "q": "odszkodowanie za wypadek w pracy",
+  "zrodlo": "google",
+  "fraza": "odszkodowanie za wypadek"
+ },
+ {
+  "id": 14,
+  "q": "odszkodowanie za wypadek w pracy zus",
+  "zrodlo": "google",
+  "fraza": "odszkodowanie za wypadek"
+ },
+ {
+  "id": 15,
+  "q": "szkolenie bhp okresowe ile ważne",
+  "zrodlo": "google",
+  "fraza": "szkolenie bhp okresowe"
+ },
+ {
+  "id": 16,
+  "q": "szkolenie bhp okresowe dla pracowników administracyjno biurowych",
+  "zrodlo": "google",
+  "fraza": "szkolenie bhp okresowe"
+ },
+ {
+  "id": 17,
+  "q": "szkolenie bhp co ile lat",
+  "zrodlo": "google",
+  "fraza": "szkolenie bhp co ile"
+ },
+ {
+  "id": 18,
+  "q": "uprawnienia udt na wózki widłowe",
+  "zrodlo": "google",
+  "fraza": "uprawnienia udt"
+ },
+ {
+  "id": 19,
+  "q": "uprawnienia udt co to",
+  "zrodlo": "google",
+  "fraza": "uprawnienia udt"
+ },
+ {
+  "id": 20,
+  "q": "uprawnienia na wózek widłowy cena",
+  "zrodlo": "google",
+  "fraza": "uprawnienia na wózek widłowy"
+ },
+ {
+  "id": 21,
+  "q": "uprawnienia na wózek widłowy udt",
+  "zrodlo": "google",
+  "fraza": "uprawnienia na wózek widłowy"
+ },
+ {
+  "id": 22,
+  "q": "przegląd udt windy samochodowej",
+  "zrodlo": "google",
+  "fraza": "przegląd udt"
+ },
+ {
+  "id": 23,
+  "q": "przegląd udt wózka widłowego",
+  "zrodlo": "google",
+  "fraza": "przegląd udt"
+ },
+ {
+  "id": 24,
+  "q": "ile metrów na pracownika w biurze",
+  "zrodlo": "google",
+  "fraza": "ile metrów na pracownika"
+ },
+ {
+  "id": 25,
+  "q": "ile metrów na pracownika w pomieszczeniu",
+  "zrodlo": "google",
+  "fraza": "ile metrów na pracownika"
+ },
+ {
+  "id": 26,
+  "q": "toaleta w pracy przepisy",
+  "zrodlo": "google",
+  "fraza": "toaleta w pracy"
+ },
+ {
+  "id": 27,
+  "q": "toaleta w miejscu pracy",
+  "zrodlo": "google",
+  "fraza": "toaleta w pracy"
+ },
+ {
+  "id": 28,
+  "q": "szatnia w pracy przepisy",
+  "zrodlo": "google",
+  "fraza": "szatnia w pracy"
+ },
+ {
+  "id": 29,
+  "q": "szatnia w zakładzie pracy",
+  "zrodlo": "google",
+  "fraza": "szatnia w pracy"
+ },
+ {
+  "id": 30,
+  "q": "ile kg można dźwigać w ciąży",
+  "zrodlo": "google",
+  "fraza": "ile kg można dźwigać"
+ },
+ {
+  "id": 31,
+  "q": "ile kg można dźwigać w pracy",
+  "zrodlo": "google",
+  "fraza": "ile kg można dźwigać"
+ },
+ {
+  "id": 32,
+  "q": "dźwiganie w pracy mężczyzna",
+  "zrodlo": "google",
+  "fraza": "dźwiganie w pracy"
+ },
+ {
+  "id": 33,
+  "q": "dźwiganie w pracy kobieta",
+  "zrodlo": "google",
+  "fraza": "dźwiganie w pracy"
+ },
+ {
+  "id": 34,
+  "q": "temperatura w pracy biurowej",
+  "zrodlo": "google",
+  "fraza": "temperatura w pracy"
+ },
+ {
+  "id": 35,
+  "q": "temperatura w pracy nowe przepisy",
+  "zrodlo": "google",
+  "fraza": "temperatura w pracy"
+ },
+ {
+  "id": 36,
+  "q": "zimno w pracy przepisy",
+  "zrodlo": "google",
+  "fraza": "zimno w pracy"
+ },
+ {
+  "id": 37,
+  "q": "zimno w pracy obowiązki pracodawcy",
+  "zrodlo": "google",
+  "fraza": "zimno w pracy"
+ },
+ {
+  "id": 38,
+  "q": "upał w pracy przepisy",
+  "zrodlo": "google",
+  "fraza": "upał w pracy"
+ },
+ {
+  "id": 39,
+  "q": "upał w pracy obowiązki pracodawcy",
+  "zrodlo": "google",
+  "fraza": "upał w pracy"
+ },
+ {
+  "id": 40,
+  "q": "wymiar czasu pracy 2026",
+  "zrodlo": "google",
+  "fraza": "wymiar czasu pracy"
+ },
+ {
+  "id": 41,
+  "q": "wymiar czasu pracy 2027",
+  "zrodlo": "google",
+  "fraza": "wymiar czasu pracy"
+ },
+ {
+  "id": 42,
+  "q": "ile godzin pracy w miesiącu 2026",
+  "zrodlo": "google",
+  "fraza": "ile godzin pracy w miesiącu"
+ },
+ {
+  "id": 43,
+  "q": "ile godzin pracy w miesiącu na cały etat",
+  "zrodlo": "google",
+  "fraza": "ile godzin pracy w miesiącu"
+ },
+ {
+  "id": 44,
+  "q": "nadgodziny kodeks pracy",
+  "zrodlo": "google",
+  "fraza": "nadgodziny"
+ },
+ {
+  "id": 45,
+  "q": "nadgodziny ile płatne",
+  "zrodlo": "google",
+  "fraza": "nadgodziny"
+ },
+ {
+  "id": 46,
+  "q": "nadgodziny ile do odbioru",
+  "zrodlo": "google",
+  "fraza": "nadgodziny ile"
+ },
+ {
+  "id": 47,
+  "q": "nadgodziny ile procent",
+  "zrodlo": "google",
+  "fraza": "nadgodziny ile"
+ },
+ {
+  "id": 48,
+  "q": "dodatek za nadgodziny nocne",
+  "zrodlo": "google",
+  "fraza": "dodatek za nadgodziny"
+ },
+ {
+  "id": 49,
+  "q": "dodatek za nadgodziny jak liczyć",
+  "zrodlo": "google",
+  "fraza": "dodatek za nadgodziny"
+ },
+ {
+  "id": 50,
+  "q": "urlop agencja pracy tymczasowej",
+  "zrodlo": "google",
+  "fraza": "urlop agencja pracy"
+ },
+ {
+  "id": 51,
+  "q": "urlop wypoczynkowy agencja pracy tymczasowej",
+  "zrodlo": "google",
+  "fraza": "urlop agencja pracy"
+ },
+ {
+  "id": 52,
+  "q": "dni wolne od pracy 2026",
+  "zrodlo": "google",
+  "fraza": "dni wolne od pracy"
+ },
+ {
+  "id": 53,
+  "q": "dni wolne od pracy 2027",
+  "zrodlo": "google",
+  "fraza": "dni wolne od pracy"
+ },
+ {
+  "id": 54,
+  "q": "długi weekend 2026",
+  "zrodlo": "google",
+  "fraza": "długi weekend"
+ },
+ {
+  "id": 55,
+  "q": "długi weekend w sierpniu 2026",
+  "zrodlo": "google",
+  "fraza": "długi weekend"
+ },
+ {
+  "id": 56,
+  "q": "ile dni urlopu w roku",
+  "zrodlo": "google",
+  "fraza": "ile dni urlopu"
+ },
+ {
+  "id": 57,
+  "q": "ile dni urlopu kalkulator",
+  "zrodlo": "google",
+  "fraza": "ile dni urlopu"
+ },
+ {
+  "id": 58,
+  "q": "urlop wypoczynkowy kodeks pracy",
+  "zrodlo": "google",
+  "fraza": "urlop wypoczynkowy"
+ },
+ {
+  "id": 59,
+  "q": "urlop wypoczynkowy ile dni",
+  "zrodlo": "google",
+  "fraza": "urlop wypoczynkowy"
+ },
+ {
+  "id": 60,
+  "q": "ekwiwalent za urlop 2026",
+  "zrodlo": "google",
+  "fraza": "ekwiwalent za urlop"
+ },
+ {
+  "id": 61,
+  "q": "ekwiwalent za urlop kalkulator",
+  "zrodlo": "google",
+  "fraza": "ekwiwalent za urlop"
+ },
+ {
+  "id": 62,
+  "q": "niewykorzystany urlop do 30 września konsekwencje",
+  "zrodlo": "google",
+  "fraza": "niewykorzystany urlop"
+ },
+ {
+  "id": 63,
+  "q": "niewykorzystany urlop przy zmianie pracy",
+  "zrodlo": "google",
+  "fraza": "niewykorzystany urlop"
+ },
+ {
+  "id": 64,
+  "q": "l4 ile płatne",
+  "zrodlo": "google",
+  "fraza": "l4 ile"
+ },
+ {
+  "id": 65,
+  "q": "l4 ile dni wstecz",
+  "zrodlo": "google",
+  "fraza": "l4 ile"
+ },
+ {
+  "id": 66,
+  "q": "chorobowe ile procent",
+  "zrodlo": "google",
+  "fraza": "chorobowe ile"
+ },
+ {
+  "id": 67,
+  "q": "chorobowe ile płatne",
+  "zrodlo": "google",
+  "fraza": "chorobowe ile"
+ },
+ {
+  "id": 68,
+  "q": "zwolnienie lekarskie po ustaniu zatrudnienia",
+  "zrodlo": "google",
+  "fraza": "zwolnienie lekarskie"
+ },
+ {
+  "id": 69,
+  "q": "odprawa emerytalna",
+  "zrodlo": "google",
+  "fraza": "odprawa"
+ },
+ {
+  "id": 70,
+  "q": "odprawa emerytalna wysokość",
+  "zrodlo": "google",
+  "fraza": "odprawa"
+ },
+ {
+  "id": 71,
+  "q": "odprawa ile wynosi",
+  "zrodlo": "google",
+  "fraza": "odprawa ile"
+ },
+ {
+  "id": 72,
+  "q": "wolne na dziecko 2 dni",
+  "zrodlo": "google",
+  "fraza": "wolne na dziecko"
+ },
+ {
+  "id": 73,
+  "q": "wolne na dziecko zdrowe",
+  "zrodlo": "google",
+  "fraza": "wolne na dziecko"
+ },
+ {
+  "id": 74,
+  "q": "siła wyższa urlop",
+  "zrodlo": "google",
+  "fraza": "siła wyższa"
+ },
+ {
+  "id": 75,
+  "q": "siła wyższa ile dni",
+  "zrodlo": "google",
+  "fraza": "siła wyższa"
+ },
+ {
+  "id": 76,
+  "q": "najniższa krajowa 2026",
+  "zrodlo": "google",
+  "fraza": "najniższa krajowa"
+ },
+ {
+  "id": 77,
+  "q": "najniższa krajowa 2026 netto",
+  "zrodlo": "google",
+  "fraza": "najniższa krajowa"
+ },
+ {
+  "id": 78,
+  "q": "płaca minimalna 2027",
+  "zrodlo": "google",
+  "fraza": "płaca minimalna"
+ },
+ {
+  "id": 79,
+  "q": "płaca minimalna 2026",
+  "zrodlo": "google",
+  "fraza": "płaca minimalna"
+ },
+ {
+  "id": 80,
+  "q": "brutto netto kalkulator",
+  "zrodlo": "google",
+  "fraza": "brutto netto"
+ },
+ {
+  "id": 81,
+  "q": "brutto netto wynagrodzenie",
+  "zrodlo": "google",
+  "fraza": "brutto netto"
+ },
+ {
+  "id": 82,
+  "q": "na rękę to netto czy brutto",
+  "zrodlo": "google",
+  "fraza": "na rękę"
+ },
+ {
+  "id": 83,
+  "q": "na rękę najniższa krajowa",
+  "zrodlo": "google",
+  "fraza": "na rękę"
+ },
+ {
+  "id": 84,
+  "q": "umowa na czas określony a ciąża",
+  "zrodlo": "google",
+  "fraza": "umowa na czas określony"
+ },
+ {
+  "id": 85,
+  "q": "umowa na czas określony okres wypowiedzenia",
+  "zrodlo": "google",
+  "fraza": "umowa na czas określony"
+ },
+ {
+  "id": 86,
+  "q": "umowa zlecenie netto 2026",
+  "zrodlo": "google",
+  "fraza": "umowa zlecenie netto"
+ },
+ {
+  "id": 87,
+  "q": "umowa zlecenie netto brutto",
+  "zrodlo": "google",
+  "fraza": "umowa zlecenie netto"
+ },
+ {
+  "id": 88,
+  "q": "praca w niedzielę a dzień wolny",
+  "zrodlo": "google",
+  "fraza": "praca w niedzielę"
+ },
+ {
+  "id": 89,
+  "q": "praca w niedzielę wynagrodzenie",
+  "zrodlo": "google",
+  "fraza": "praca w niedzielę"
+ },
+ {
+  "id": 90,
+  "q": "praca w święto kodeks pracy",
+  "zrodlo": "google",
+  "fraza": "praca w święto"
+ },
+ {
+  "id": 91,
+  "q": "praca w święto w sobotę",
+  "zrodlo": "google",
+  "fraza": "praca w święto"
+ },
+ {
+  "id": 92,
+  "q": "przestój w pracy z winy pracodawcy",
+  "zrodlo": "google",
+  "fraza": "przestój w pracy"
+ },
+ {
+  "id": 93,
+  "q": "przestój w pracy a przymusowy urlop",
+  "zrodlo": "google",
+  "fraza": "przestój w pracy"
+ },
+ {
+  "id": 94,
+  "q": "wynagrodzenie za urlop wypoczynkowy kalkulator",
+  "zrodlo": "google",
+  "fraza": "wynagrodzenie za urlop"
+ },
+ {
+  "id": 95,
+  "q": "wynagrodzenie za urlop wypoczynkowy",
+  "zrodlo": "google",
+  "fraza": "wynagrodzenie za urlop"
+ },
+ {
+  "id": 96,
+  "q": "wypłaty z nadgodzinami",
+  "zrodlo": "google",
+  "fraza": "wypłata z nadgodzinami"
+ },
+ {
+  "id": 97,
+  "q": "ppk co to",
+  "zrodlo": "google",
+  "fraza": "ppk"
+ },
+ {
+  "id": 98,
+  "q": "koszt pracodawcy kalkulator",
+  "zrodlo": "google",
+  "fraza": "koszt pracodawcy"
+ },
+ {
+  "id": 99,
+  "q": "koszt pracodawcy za pracownika",
+  "zrodlo": "google",
+  "fraza": "koszt pracodawcy"
+ },
+ {
+  "id": 100,
+  "q": "delegacja krajowa",
+  "zrodlo": "google",
+  "fraza": "delegacja"
+ },
+ {
+  "id": 101,
+  "q": "delegacja zagraniczna",
+  "zrodlo": "google",
+  "fraza": "delegacja"
+ },
+ {
+  "id": 102,
+  "q": "dieta delegacja 2026",
+  "zrodlo": "google",
+  "fraza": "dieta delegacja"
+ },
+ {
+  "id": 103,
+  "q": "dieta delegacja krajowa",
+  "zrodlo": "google",
+  "fraza": "dieta delegacja"
+ },
+ {
+  "id": 104,
+  "q": "l4 po zwolnieniu z pracy",
+  "zrodlo": "google",
+  "fraza": "l4 po zwolnieniu"
+ },
+ {
+  "id": 105,
+  "q": "l4 po zwolnieniu dyscyplinarnym",
+  "zrodlo": "google",
+  "fraza": "l4 po zwolnieniu"
+ },
+ {
+  "id": 106,
+  "q": "świadczenie rehabilitacyjne ile wynosi",
+  "zrodlo": "google",
+  "fraza": "świadczenie rehabilitacyjne"
+ },
+ {
+  "id": 107,
+  "q": "świadczenie rehabilitacyjne zus",
+  "zrodlo": "google",
+  "fraza": "świadczenie rehabilitacyjne"
+ },
+ {
+  "id": 108,
+  "q": "zasiłek opiekuńczy na rodzica",
+  "zrodlo": "google",
+  "fraza": "zasiłek opiekuńczy"
+ },
+ {
+  "id": 109,
+  "q": "zasiłek opiekuńczy na dziecko",
+  "zrodlo": "google",
+  "fraza": "zasiłek opiekuńczy"
+ },
+ {
+  "id": 110,
+  "q": "zasiłek macierzyński kalkulator",
+  "zrodlo": "google",
+  "fraza": "zasiłek macierzyński"
+ },
+ {
+  "id": 111,
+  "q": "zasiłek macierzyński ile wynosi",
+  "zrodlo": "google",
+  "fraza": "zasiłek macierzyński"
+ },
+ {
+  "id": 112,
+  "q": "urlop okolicznościowy ślub",
+  "zrodlo": "google",
+  "fraza": "urlop okolicznościowy"
+ },
+ {
+  "id": 113,
+  "q": "urlop okolicznościowy na pogrzeb",
+  "zrodlo": "google",
+  "fraza": "urlop okolicznościowy"
+ },
+ {
+  "id": 114,
+  "q": "urlop ojcowski 9 tygodni",
+  "zrodlo": "google",
+  "fraza": "urlop ojcowski"
+ },
+ {
+  "id": 115,
+  "q": "urlop ojcowski 2 tygodnie",
+  "zrodlo": "google",
+  "fraza": "urlop ojcowski"
+ },
+ {
+  "id": 116,
+  "q": "urlop wychowawczy ile trwa",
+  "zrodlo": "google",
+  "fraza": "urlop wychowawczy"
+ },
+ {
+  "id": 117,
+  "q": "urlop wychowawczy przed 1999 a emerytura",
+  "zrodlo": "google",
+  "fraza": "urlop wychowawczy"
+ },
+ {
+  "id": 118,
+  "q": "wypłata do 10 dnia miesiąca",
+  "zrodlo": "google",
+  "fraza": "wypłata do 10"
+ },
+ {
+  "id": 119,
+  "q": "wypłata do 10 dnia każdego miesiąca",
+  "zrodlo": "google",
+  "fraza": "wypłata do 10"
+ },
+ {
+  "id": 120,
+  "q": "stawka godzinowa netto 2026",
+  "zrodlo": "google",
+  "fraza": "stawka godzinowa"
+ },
+ {
+  "id": 121,
+  "q": "stawka godzinowa brutto 2026",
+  "zrodlo": "google",
+  "fraza": "stawka godzinowa"
+ },
+ {
+  "id": 122,
+  "q": "grafik pracy wzór",
+  "zrodlo": "google",
+  "fraza": "grafik pracy"
+ },
+ {
+  "id": 123,
+  "q": "grafik zmianowy",
+  "zrodlo": "google",
+  "fraza": "grafik zmian"
+ },
+ {
+  "id": 124,
+  "q": "staż pracy kalkulator",
+  "zrodlo": "google",
+  "fraza": "staż pracy"
+ },
+ {
+  "id": 125,
+  "q": "staż pracy umowa zlecenie",
+  "zrodlo": "google",
+  "fraza": "staż pracy"
+ },
+ {
+  "id": 126,
+  "q": "zasiłek dla bezrobotnych 2026",
+  "zrodlo": "google",
+  "fraza": "zasiłek dla bezrobotnych"
+ },
+ {
+  "id": 127,
+  "q": "zasiłek dla bezrobotnych 2026 netto",
+  "zrodlo": "google",
+  "fraza": "zasiłek dla bezrobotnych"
+ },
+ {
+  "id": 128,
+  "q": "ochrona przedemerytalna dla kobiet",
+  "zrodlo": "google",
+  "fraza": "ochrona przedemerytalna"
+ },
+ {
+  "id": 129,
+  "q": "ochrona przedemerytalna mężczyzn",
+  "zrodlo": "google",
+  "fraza": "ochrona przedemerytalna"
+ },
+ {
+  "id": 130,
+  "q": "zakaz konkurencji w umowie o pracę",
+  "zrodlo": "google",
+  "fraza": "zakaz konkurencji"
+ },
+ {
+  "id": 131,
+  "q": "zakaz konkurencji na umowie zlecenie",
+  "zrodlo": "google",
+  "fraza": "zakaz konkurencji"
+ },
+ {
+  "id": 132,
+  "q": "odszkodowanie za zwolnienie z pracy likwidacja stanowiska",
+  "zrodlo": "google",
+  "fraza": "odszkodowanie za zwolnienie"
+ },
+ {
+  "id": 133,
+  "q": "odszkodowanie za zwolnienie z pracy",
+  "zrodlo": "google",
+  "fraza": "odszkodowanie za zwolnienie"
+ },
+ {
+  "id": 134,
+  "q": "odprawa pośmiertna kodeks pracy",
+  "zrodlo": "google",
+  "fraza": "odprawa pośmiertna"
+ },
+ {
+  "id": 135,
+  "q": "odprawa pośmiertna ile",
+  "zrodlo": "google",
+  "fraza": "odprawa pośmiertna"
+ },
+ {
+  "id": 136,
+  "q": "zwolnienie na l4 umowa zlecenie",
+  "zrodlo": "google",
+  "fraza": "zwolnienie na l4"
+ },
+ {
+  "id": 137,
+  "q": "zwolnienie na l4 polska",
+  "zrodlo": "google",
+  "fraza": "zwolnienie na l4"
+ },
+ {
+  "id": 138,
+  "q": "kara porządkowa 2026",
+  "zrodlo": "google",
+  "fraza": "kara porządkowa"
+ },
+ {
+  "id": 139,
+  "q": "kara porządkowa kodeks pracy",
+  "zrodlo": "google",
+  "fraza": "kara porządkowa"
+ },
+ {
+  "id": 140,
+  "q": "nagana w pracy co oznacza",
+  "zrodlo": "google",
+  "fraza": "nagana w pracy"
+ },
+ {
+  "id": 141,
+  "q": "nagana w pracy konsekwencje",
+  "zrodlo": "google",
+  "fraza": "nagana w pracy"
+ },
+ {
+  "id": 142,
+  "q": "upomnienie w pracy konsekwencje",
+  "zrodlo": "google",
+  "fraza": "upomnienie w pracy"
+ },
+ {
+  "id": 143,
+  "q": "upomnienie w pracy wzór",
+  "zrodlo": "google",
+  "fraza": "upomnienie w pracy"
+ },
+ {
+  "id": 144,
+  "q": "odwołanie do sądu pracy wzór",
+  "zrodlo": "google",
+  "fraza": "odwołanie do sądu pracy"
+ },
+ {
+  "id": 145,
+  "q": "odwołanie do sądu pracy termin",
+  "zrodlo": "google",
+  "fraza": "odwołanie do sądu pracy"
+ },
+ {
+  "id": 146,
+  "q": "okres wypowiedzenia umowy o pracę",
+  "zrodlo": "google",
+  "fraza": "okres wypowiedzenia"
+ },
+ {
+  "id": 147,
+  "q": "okres wypowiedzenia umowy o pracę na czas określony",
+  "zrodlo": "google",
+  "fraza": "okres wypowiedzenia"
+ },
+ {
+  "id": 148,
+  "q": "wypowiedzenie umowy o pracę za porozumieniem stron",
+  "zrodlo": "google",
+  "fraza": "wypowiedzenie umowy o pracę"
+ },
+ {
+  "id": 149,
+  "q": "wypowiedzenie umowy o pracę przez pracownika",
+  "zrodlo": "google",
+  "fraza": "wypowiedzenie umowy o pracę"
+ },
+ {
+  "id": 150,
+  "q": "dni robocze 2026",
+  "zrodlo": "google",
+  "fraza": "dni robocze"
+ },
+ {
+  "id": 151,
+  "q": "dni robocze wrzesień 2026",
+  "zrodlo": "google",
+  "fraza": "dni robocze"
+ },
+ {
+  "id": 152,
+  "q": "dyżur w pracy pod telefonem",
+  "zrodlo": "google",
+  "fraza": "dyżur w pracy"
+ },
+ {
+  "id": 153,
+  "q": "dyżur w pracy kodeks pracy",
+  "zrodlo": "google",
+  "fraza": "dyżur w pracy"
+ },
+ {
+  "id": 154,
+  "q": "pracownik młodociany wiek",
+  "zrodlo": "google",
+  "fraza": "pracownik młodociany"
+ },
+ {
+  "id": 155,
+  "q": "pracownik młodociany wynagrodzenie",
+  "zrodlo": "google",
+  "fraza": "pracownik młodociany"
+ },
+ {
+  "id": 156,
+  "q": "przedawnienie wynagrodzenia za pracę",
+  "zrodlo": "google",
+  "fraza": "przedawnienie wynagrodzenia"
+ },
+ {
+  "id": 157,
+  "q": "przedawnienie wynagrodzenia z umowy zlecenia",
+  "zrodlo": "google",
+  "fraza": "przedawnienie wynagrodzenia"
+ },
+ {
+  "id": 158,
+  "q": "zwolnienia grupowe odprawa",
+  "zrodlo": "google",
+  "fraza": "zwolnienia grupowe"
+ },
+ {
+  "id": 159,
+  "q": "zwolnienia grupowe zasady",
+  "zrodlo": "google",
+  "fraza": "zwolnienia grupowe"
+ },
+ {
+  "id": 160,
+  "q": "pracownik niepełnosprawny na 3 4 etatu",
+  "zrodlo": "google",
+  "fraza": "pracownik niepełnosprawny"
+ },
+ {
+  "id": 161,
+  "q": "pracownik niepełnosprawny w stopniu umiarkowanym",
+  "zrodlo": "google",
+  "fraza": "pracownik niepełnosprawny"
+ },
+ {
+  "id": 162,
+  "q": "lojalka co to",
+  "zrodlo": "google",
+  "fraza": "lojalka"
+ },
+ {
+  "id": 163,
+  "q": "lojalka w pracy",
+  "zrodlo": "google",
+  "fraza": "lojalka"
+ },
+ {
+  "id": 164,
+  "q": "zwrot kosztów szkolenia przez pracownika wzór",
+  "zrodlo": "google",
+  "fraza": "zwrot kosztów szkolenia"
+ },
+ {
+  "id": 165,
+  "q": "zwrot kosztów szkolenia przez pracownika",
+  "zrodlo": "google",
+  "fraza": "zwrot kosztów szkolenia"
+ },
+ {
+  "id": 166,
+  "q": "okres zasiłkowy ile dni",
+  "zrodlo": "google",
+  "fraza": "okres zasiłkowy"
+ },
+ {
+  "id": 167,
+  "q": "okres zasiłkowy kalkulator",
+  "zrodlo": "google",
+  "fraza": "okres zasiłkowy"
+ },
+ {
+  "id": 168,
+  "q": "alkomat w pracy przepisy",
+  "zrodlo": "google",
+  "fraza": "alkomat w pracy"
+ },
+ {
+  "id": 169,
+  "q": "alkomat w pracy kodeks pracy",
+  "zrodlo": "google",
+  "fraza": "alkomat w pracy"
+ },
+ {
+  "id": 170,
+  "q": "kontrola trzeźwości w pracy",
+  "zrodlo": "google",
+  "fraza": "kontrola trzeźwości"
+ },
+ {
+  "id": 171,
+  "q": "praca w ciąży do którego miesiąca",
+  "zrodlo": "google",
+  "fraza": "praca w ciąży"
+ },
+ {
+  "id": 172,
+  "q": "praca w ciąży przy komputerze",
+  "zrodlo": "google",
+  "fraza": "praca w ciąży"
+ },
+ {
+  "id": 173,
+  "q": "uprawnienia sep do 1kv",
+  "zrodlo": "google",
+  "fraza": "uprawnienia sep"
+ },
+ {
+  "id": 174,
+  "q": "uprawnienia sep g1",
+  "zrodlo": "google",
+  "fraza": "uprawnienia sep"
+ },
+ {
+  "id": 175,
+  "q": "czy potrzebne uprawnienia na minikoparkę",
+  "zrodlo": "google",
+  "fraza": "czy potrzebne uprawnienia"
+ },
+ {
+  "id": 176,
+  "q": "kod 95 prawo jazdy",
+  "zrodlo": "google",
+  "fraza": "kod 95"
+ },
+ {
+  "id": 177,
+  "q": "kod 95 co to",
+  "zrodlo": "google",
+  "fraza": "kod 95"
+ },
+ {
+  "id": 178,
+  "q": "badania kierowcy kat b",
+  "zrodlo": "google",
+  "fraza": "badania kierowcy"
+ },
+ {
+  "id": 179,
+  "q": "badania kierowcy zawodowego",
+  "zrodlo": "google",
+  "fraza": "badania kierowcy"
+ },
+ {
+  "id": 180,
+  "q": "badania okresowe do pracy",
+  "zrodlo": "google",
+  "fraza": "badania okresowe"
+ },
+ {
+  "id": 181,
+  "q": "badania okresowe dzień wolny",
+  "zrodlo": "google",
+  "fraza": "badania okresowe"
+ },
+ {
+  "id": 182,
+  "q": "posiłki regeneracyjne dla pracowników",
+  "zrodlo": "google",
+  "fraza": "posiłki regeneracyjne"
+ },
+ {
+  "id": 183,
+  "q": "posiłki regeneracyjne od kiedy",
+  "zrodlo": "google",
+  "fraza": "posiłki regeneracyjne"
+ },
+ {
+  "id": 184,
+  "q": "ekwiwalent za pranie odzieży roboczej 2026",
+  "zrodlo": "google",
+  "fraza": "ekwiwalent za pranie"
+ },
+ {
+  "id": 185,
+  "q": "ekwiwalent za pranie odzieży roboczej",
+  "zrodlo": "google",
+  "fraza": "ekwiwalent za pranie"
+ },
+ {
+  "id": 186,
+  "q": "wypowiedzenie zmieniające warunki pracy i płacy",
+  "zrodlo": "google",
+  "fraza": "wypowiedzenie zmieniające"
+ },
+ {
+  "id": 187,
+  "q": "wypowiedzenie zmieniające a odprawa",
+  "zrodlo": "google",
+  "fraza": "wypowiedzenie zmieniające"
+ },
+ {
+  "id": 188,
+  "q": "obniżenie pensji pracownika",
+  "zrodlo": "google",
+  "fraza": "obniżenie pensji"
+ },
+ {
+  "id": 189,
+  "q": "umowa na zastępstwo a ciąża",
+  "zrodlo": "google",
+  "fraza": "umowa na zastępstwo"
+ },
+ {
+  "id": 190,
+  "q": "umowa na zastępstwo okres wypowiedzenia",
+  "zrodlo": "google",
+  "fraza": "umowa na zastępstwo"
+ },
+ {
+  "id": 191,
+  "q": "wynagrodzenie za niepełny miesiąc pracy kalkulator gofin",
+  "zrodlo": "google",
+  "fraza": "wynagrodzenie za niepełny miesiąc"
+ },
+ {
+  "id": 192,
+  "q": "wynagrodzenie za niepełny miesiąc pracy kalkulator",
+  "zrodlo": "google",
+  "fraza": "wynagrodzenie za niepełny miesiąc"
+ },
+ {
+  "id": 193,
+  "q": "dodatek wyrównawczy w okresie ochronnym",
+  "zrodlo": "google",
+  "fraza": "dodatek wyrównawczy"
+ },
+ {
+  "id": 194,
+  "q": "dodatek wyrównawczy do emerytury",
+  "zrodlo": "google",
+  "fraza": "dodatek wyrównawczy"
+ },
+ {
+  "id": 195,
+  "q": "okres wyczekiwania na wynagrodzenie chorobowe",
+  "zrodlo": "google",
+  "fraza": "okres wyczekiwania"
+ },
+ {
+  "id": 196,
+  "q": "okres wyczekiwania l4",
+  "zrodlo": "google",
+  "fraza": "okres wyczekiwania"
+ },
+ {
+  "id": 197,
+  "q": "chorobowe na zleceniu po jakim czasie",
+  "zrodlo": "google",
+  "fraza": "chorobowe na zleceniu"
+ },
+ {
+  "id": 198,
+  "q": "chorobowe na zleceniu kto płaci",
+  "zrodlo": "google",
+  "fraza": "chorobowe na zleceniu"
+ },
+ {
+  "id": 199,
+  "q": "świadczenie urlopowe 2026",
+  "zrodlo": "google",
+  "fraza": "świadczenie urlopowe"
+ },
+ {
+  "id": 200,
+  "q": "wczasy pod gruszą ile",
+  "zrodlo": "google",
+  "fraza": "wczasy pod gruszą"
+ },
+ {
+  "id": 201,
+  "q": "wczasy pod gruszą 2026",
+  "zrodlo": "google",
+  "fraza": "wczasy pod gruszą"
+ },
+ {
+  "id": 202,
+  "q": "urlop w godzinach czy dniach",
+  "zrodlo": "google",
+  "fraza": "urlop w godzinach"
+ },
+ {
+  "id": 203,
+  "q": "urlop w godzinach na świadectwie pracy",
+  "zrodlo": "google",
+  "fraza": "urlop w godzinach"
+ },
+ {
+  "id": 204,
+  "q": "urlop na wypowiedzeniu a l4",
+  "zrodlo": "google",
+  "fraza": "urlop na wypowiedzeniu"
+ },
+ {
+  "id": 205,
+  "q": "urlop na wypowiedzeniu czy pracodawca może odmówić",
+  "zrodlo": "google",
+  "fraza": "urlop na wypowiedzeniu"
+ },
+ {
+  "id": 206,
+  "q": "urlop szkoleniowy kodeks pracy",
+  "zrodlo": "google",
+  "fraza": "urlop szkoleniowy"
+ },
+ {
+  "id": 207,
+  "q": "urlop szkoleniowy ile dni",
+  "zrodlo": "google",
+  "fraza": "urlop szkoleniowy"
+ },
+ {
+  "id": 208,
+  "q": "urlop bezpłatny a zus",
+  "zrodlo": "google",
+  "fraza": "urlop bezpłatny"
+ },
+ {
+  "id": 209,
+  "q": "urlop bezpłatny zasady",
+  "zrodlo": "google",
+  "fraza": "urlop bezpłatny"
+ },
+ {
+  "id": 210,
+  "q": "zaległy urlop do kiedy wykorzystać",
+  "zrodlo": "google",
+  "fraza": "zaległy urlop"
+ },
+ {
+  "id": 211,
+  "q": "zaległy urlop do kiedy",
+  "zrodlo": "google",
+  "fraza": "zaległy urlop"
+ },
+ {
+  "id": 212,
+  "q": "praca ukraińca w polsce 2025",
+  "zrodlo": "google",
+  "fraza": "praca dla ukraińca"
+ },
+ {
+  "id": 213,
+  "q": "praca ukraińca w polsce",
+  "zrodlo": "google",
+  "fraza": "praca dla ukraińca"
+ },
+ {
+  "id": 214,
+  "q": "zezwolenie na pracę typu a",
+  "zrodlo": "google",
+  "fraza": "zezwolenie na pracę"
+ },
+ {
+  "id": 215,
+  "q": "zezwolenie na pracę dla cudzoziemca",
+  "zrodlo": "google",
+  "fraza": "zezwolenie na pracę"
+ },
+ {
+  "id": 216,
+  "q": "zgłoszenie cudzoziemca do pracy",
+  "zrodlo": "google",
+  "fraza": "zgłoszenie cudzoziemca"
+ },
+ {
+  "id": 217,
+  "q": "zgłoszenie cudzoziemca do urzędu pracy",
+  "zrodlo": "google",
+  "fraza": "zgłoszenie cudzoziemca"
+ },
+ {
+  "id": 218,
+  "q": "wyjście prywatne kodeks pracy",
+  "zrodlo": "google",
+  "fraza": "wyjście prywatne"
+ },
+ {
+  "id": 219,
+  "q": "wyjście prywatne w czasie pracy",
+  "zrodlo": "google",
+  "fraza": "wyjście prywatne"
+ },
+ {
+  "id": 220,
+  "q": "praca w sobotę a dzień wolny",
+  "zrodlo": "google",
+  "fraza": "praca w sobotę"
+ },
+ {
+  "id": 221,
+  "q": "praca w sobotę ile płatna",
+  "zrodlo": "google",
+  "fraza": "praca w sobotę"
+ },
+ {
+  "id": 222,
+  "q": "wolne za sobotę 2026",
+  "zrodlo": "google",
+  "fraza": "wolne za sobotę"
+ },
+ {
+  "id": 223,
+  "q": "wolne za sobotę 2027",
+  "zrodlo": "google",
+  "fraza": "wolne za sobotę"
+ },
+ {
+  "id": 224,
+  "q": "nadgodziny średniotygodniowe przykład",
+  "zrodlo": "google",
+  "fraza": "nadgodziny średniotygodniowe"
+ },
+ {
+  "id": 225,
+  "q": "nadgodziny średniotygodniowe 50 czy 100",
+  "zrodlo": "google",
+  "fraza": "nadgodziny średniotygodniowe"
+ },
+ {
+  "id": 226,
+  "q": "doba pracownicza kodeks pracy",
+  "zrodlo": "google",
+  "fraza": "doba pracownicza"
+ },
+ {
+  "id": 227,
+  "q": "doba pracownicza w równoważnym systemie czasu pracy",
+  "zrodlo": "google",
+  "fraza": "doba pracownicza"
+ },
+ {
+  "id": 228,
+  "q": "równoważny czas pracy a praca w sobotę i niedzielę",
+  "zrodlo": "google",
+  "fraza": "równoważny czas pracy"
+ },
+ {
+  "id": 229,
+  "q": "równoważny czas pracy zasady",
+  "zrodlo": "google",
+  "fraza": "równoważny czas pracy"
+ },
+ {
+  "id": 230,
+  "q": "praca 12 godzin ile przerwy",
+  "zrodlo": "google",
+  "fraza": "praca 12 godzin"
+ },
+ {
+  "id": 231,
+  "q": "praca 12 godzin dziennie",
+  "zrodlo": "google",
+  "fraza": "praca 12 godzin"
+ },
+ {
+  "id": 232,
+  "q": "dorabianie do renty rodzinnej",
+  "zrodlo": "google",
+  "fraza": "dorabianie do renty"
+ },
+ {
+  "id": 233,
+  "q": "dorabianie do renty socjalnej",
+  "zrodlo": "google",
+  "fraza": "dorabianie do renty"
+ },
+ {
+  "id": 234,
+  "q": "dorabianie na emeryturze limit",
+  "zrodlo": "google",
+  "fraza": "dorabianie na emeryturze"
+ },
+ {
+  "id": 235,
+  "q": "zwrot podatku akcyzowego 2026",
+  "zrodlo": "google",
+  "fraza": "zwrot podatku"
+ },
+ {
+  "id": 236,
+  "q": "zwrot podatku akcyzowego",
+  "zrodlo": "google",
+  "fraza": "zwrot podatku"
+ },
+ {
+  "id": 237,
+  "q": "pit 37 co to jest",
+  "zrodlo": "google",
+  "fraza": "pit 37"
+ },
+ {
+  "id": 238,
+  "q": "ulga na dzieci 2026",
+  "zrodlo": "google",
+  "fraza": "ulga na dzieci"
+ },
+ {
+  "id": 239,
+  "q": "ulga na dzieci 2025",
+  "zrodlo": "google",
+  "fraza": "ulga na dzieci"
+ },
+ {
+  "id": 240,
+  "q": "pit dla młodych limit",
+  "zrodlo": "google",
+  "fraza": "pit dla młodych"
+ },
+ {
+  "id": 241,
+  "q": "pit dla młodych do kiedy",
+  "zrodlo": "google",
+  "fraza": "pit dla młodych"
+ },
+ {
+  "id": 242,
+  "q": "choroba zawodowa co to",
+  "zrodlo": "google",
+  "fraza": "choroba zawodowa"
+ },
+ {
+  "id": 243,
+  "q": "praca na wysokości to",
+  "zrodlo": "google",
+  "fraza": "praca na wysokości"
+ },
+ {
+  "id": 244,
+  "q": "praca na wysokości od ilu metrów",
+  "zrodlo": "google",
+  "fraza": "praca na wysokości"
+ },
+ {
+  "id": 245,
+  "q": "emerytura pomostowa dla kogo",
+  "zrodlo": "google",
+  "fraza": "emerytura pomostowa"
+ },
+ {
+  "id": 246,
+  "q": "emerytura pomostowa ile wynosi",
+  "zrodlo": "google",
+  "fraza": "emerytura pomostowa"
+ },
+ {
+  "id": 247,
+  "q": "renta socjalna",
+  "zrodlo": "google",
+  "fraza": "renta"
+ },
+ {
+  "id": 248,
+  "q": "świadczenie przedemerytalne dla kogo",
+  "zrodlo": "google",
+  "fraza": "świadczenie przedemerytalne"
+ },
+ {
+  "id": 249,
+  "q": "świadczenie przedemerytalne netto 2026",
+  "zrodlo": "google",
+  "fraza": "świadczenie przedemerytalne"
+ },
+ {
+  "id": 250,
+  "q": "czas pracy kierowcy tira",
+  "zrodlo": "google",
+  "fraza": "czas pracy kierowcy"
+ },
+ {
+  "id": 251,
+  "q": "czas pracy kierowcy autobusu",
+  "zrodlo": "google",
+  "fraza": "czas pracy kierowcy"
+ },
+ {
+  "id": 252,
+  "q": "dyżur kierowcy jak liczyć",
+  "zrodlo": "google",
+  "fraza": "dyżur kierowcy"
+ },
+ {
+  "id": 253,
+  "q": "dyżur kierowcy co to jest",
+  "zrodlo": "google",
+  "fraza": "dyżur kierowcy"
+ },
+ {
+  "id": 254,
+  "q": "mobbing w pracy co to",
+  "zrodlo": "google",
+  "fraza": "mobbing w pracy"
+ },
+ {
+  "id": 255,
+  "q": "mobbing w pracy przykłady",
+  "zrodlo": "google",
+  "fraza": "mobbing w pracy"
+ },
+ {
+  "id": 256,
+  "q": "dyskryminacja w pracy przykłady",
+  "zrodlo": "google",
+  "fraza": "dyskryminacja w pracy"
+ },
+ {
+  "id": 257,
+  "q": "dyskryminacja w pracy przez współpracowników",
+  "zrodlo": "google",
+  "fraza": "dyskryminacja w pracy"
+ },
+ {
+  "id": 258,
+  "q": "skarga do pip wzór",
+  "zrodlo": "google",
+  "fraza": "skarga do pip"
+ },
+ {
+  "id": 259,
+  "q": "sąd pracy i ubezpieczeń społecznych",
+  "zrodlo": "google",
+  "fraza": "sąd pracy"
+ },
+ {
+  "id": 260,
+  "q": "odpowiedzialność materialna pracownika",
+  "zrodlo": "google",
+  "fraza": "odpowiedzialność materialna"
+ },
+ {
+  "id": 261,
+  "q": "odpowiedzialność materialna pracownika kodeks pracy",
+  "zrodlo": "google",
+  "fraza": "odpowiedzialność materialna"
+ },
+ {
+  "id": 262,
+  "q": "manko co to",
+  "zrodlo": "google",
+  "fraza": "manko"
+ },
+ {
+  "id": 263,
+  "q": "manko w kasie",
+  "zrodlo": "google",
+  "fraza": "manko"
+ },
+ {
+  "id": 264,
+  "q": "świadectwo pracy umowa zlecenie",
+  "zrodlo": "google",
+  "fraza": "świadectwo pracy"
+ },
+ {
+  "id": 265,
+  "q": "świadectwo pracy wzór",
+  "zrodlo": "google",
+  "fraza": "świadectwo pracy"
+ },
+ {
+  "id": 266,
+  "q": "monitoring w pracy kontrola pracownika",
+  "zrodlo": "google",
+  "fraza": "monitoring w pracy"
+ },
+ {
+  "id": 267,
+  "q": "monitoring w pracy przepisy",
+  "zrodlo": "google",
+  "fraza": "monitoring w pracy"
+ },
+ {
+  "id": 268,
+  "q": "kamery w pracy z glosem",
+  "zrodlo": "google",
+  "fraza": "kamery w pracy"
+ },
+ {
+  "id": 269,
+  "q": "kamery w pracy przepisy",
+  "zrodlo": "google",
+  "fraza": "kamery w pracy"
+ },
+ {
+  "id": 270,
+  "q": "składowanie towarów w magazynie",
+  "zrodlo": "google",
+  "fraza": "składowanie w magazynie"
+ },
+ {
+  "id": 271,
+  "q": "składowanie opon w magazynie",
+  "zrodlo": "google",
+  "fraza": "składowanie w magazynie"
+ },
+ {
+  "id": 272,
+  "q": "droga dla wózka widłowego",
+  "zrodlo": "google",
+  "fraza": "droga dla wózka"
+ },
+ {
+  "id": 273,
+  "q": "co wolno na l4 w ciąży",
+  "zrodlo": "google",
+  "fraza": "co wolno na l4"
+ },
+ {
+  "id": 274,
+  "q": "co wolno na l4 od psychiatry",
+  "zrodlo": "google",
+  "fraza": "co wolno na l4"
+ },
+ {
+  "id": 275,
+  "q": "kontrola zus l4",
+  "zrodlo": "google",
+  "fraza": "kontrola zus"
+ },
+ {
+  "id": 276,
+  "q": "kontrola zus l4 od psychiatry",
+  "zrodlo": "google",
+  "fraza": "kontrola zus"
+ },
+ {
+  "id": 277,
+  "q": "fundusz socjalny 2026",
+  "zrodlo": "google",
+  "fraza": "fundusz socjalny"
+ },
+ {
+  "id": 278,
+  "q": "fundusz socjalny w pracy",
+  "zrodlo": "google",
+  "fraza": "fundusz socjalny"
+ },
+ {
+  "id": 279,
+  "q": "przerwa w pracy kodeks pracy",
+  "zrodlo": "google",
+  "fraza": "przerwa w pracy"
+ },
+ {
+  "id": 280,
+  "q": "przerwa w pracy 8h",
+  "zrodlo": "google",
+  "fraza": "przerwa w pracy"
+ },
+ {
+  "id": 281,
+  "q": "przerwa 15 minut kodeks pracy",
+  "zrodlo": "google",
+  "fraza": "przerwa 15 minut"
+ },
+ {
+  "id": 282,
+  "q": "przerwa 15 minut w pracy",
+  "zrodlo": "google",
+  "fraza": "przerwa 15 minut"
+ },
+ {
+  "id": 283,
+  "q": "czy pracodawca może odmówić urlopu na żądanie",
+  "zrodlo": "google",
+  "fraza": "czy pracodawca może"
+ },
+ {
+  "id": 284,
+  "q": "czy pracodawca może odmówić urlopu",
+  "zrodlo": "google",
+  "fraza": "czy pracodawca może"
+ },
+ {
+  "id": 285,
+  "q": "czy pracodawca musi zapewnić wodę",
+  "zrodlo": "google",
+  "fraza": "czy pracodawca musi"
+ },
+ {
+  "id": 286,
+  "q": "czy pracodawca musi podpisać wypowiedzenie",
+  "zrodlo": "google",
+  "fraza": "czy pracodawca musi"
+ },
+ {
+  "id": 287,
+  "q": "pracodawca nie płaci zus",
+  "zrodlo": "google",
+  "fraza": "pracodawca nie płaci"
+ },
+ {
+  "id": 288,
+  "q": "pracodawca nie płaci składek zus a wizyta u lekarza",
+  "zrodlo": "google",
+  "fraza": "pracodawca nie płaci"
+ },
+ {
+  "id": 289,
+  "q": "pracodawca nie chce podpisać wypowiedzenia",
+  "zrodlo": "google",
+  "fraza": "pracodawca nie chce"
+ },
+ {
+  "id": 290,
+  "q": "pracodawca nie chce wydać świadectwa pracy",
+  "zrodlo": "google",
+  "fraza": "pracodawca nie chce"
+ },
+ {
+  "id": 291,
+  "q": "ile się należy urlopu",
+  "zrodlo": "google",
+  "fraza": "ile się należy"
+ },
+ {
+  "id": 292,
+  "q": "ile się należy przerwy na 8 godzin pracy",
+  "zrodlo": "google",
+  "fraza": "ile się należy"
+ },
+ {
+  "id": 293,
+  "q": "czy należy mi się zasiłek dla bezrobotnych",
+  "zrodlo": "google",
+  "fraza": "czy należy mi się"
+ },
+ {
+  "id": 294,
+  "q": "czy muszę przyjść do pracy w dzień wolny",
+  "zrodlo": "google",
+  "fraza": "czy muszę przyjść do pracy"
+ },
+ {
+  "id": 295,
+  "q": "czy musze przyjsc do pracy w sobote",
+  "zrodlo": "google",
+  "fraza": "czy muszę przyjść do pracy"
+ },
+ {
+  "id": 296,
+  "q": "czy mogę odmówić delegacji",
+  "zrodlo": "google",
+  "fraza": "czy mogę odmówić"
+ },
+ {
+  "id": 297,
+  "q": "praca na hali powyżej 28 stopni",
+  "zrodlo": "google",
+  "fraza": "praca na hali"
+ },
+ {
+  "id": 298,
+  "q": "praca zmianowa co to",
+  "zrodlo": "google",
+  "fraza": "praca zmianowa"
+ },
+ {
+  "id": 299,
+  "q": "praca zmianowa kodeks pracy",
+  "zrodlo": "google",
+  "fraza": "praca zmianowa"
+ },
+ {
+  "id": 300,
+  "q": "trzecia zmiana w pracy",
+  "zrodlo": "google",
+  "fraza": "trzecia zmiana"
+ },
+ {
+  "id": 301,
+  "q": "urlop na żądanie ile dni",
+  "zrodlo": "google",
+  "fraza": "urlop na żądanie"
+ },
+ {
+  "id": 302,
+  "q": "urlop na żądanie zasady",
+  "zrodlo": "google",
+  "fraza": "urlop na żądanie"
+ },
+ {
+  "id": 303,
+  "q": "premia uznaniowa",
+  "zrodlo": "google",
+  "fraza": "premia"
+ },
+ {
+  "id": 304,
+  "q": "trzynastka 2026",
+  "zrodlo": "google",
+  "fraza": "trzynastka"
+ },
+ {
+  "id": 305,
+  "q": "dodatek stażowy ile wynosi",
+  "zrodlo": "google",
+  "fraza": "dodatek stażowy"
+ },
+ {
+  "id": 306,
+  "q": "porozumienie stron art. 30 § 1 pkt 1 k. p",
+  "zrodlo": "google",
+  "fraza": "porozumienie stron"
+ },
+ {
+  "id": 307,
+  "q": "porozumienie stron w sprawie rozwiązania umowy o pracę",
+  "zrodlo": "google",
+  "fraza": "porozumienie stron"
+ },
+ {
+  "id": 308,
+  "q": "dyscyplinarka na l4",
+  "zrodlo": "google",
+  "fraza": "dyscyplinarka"
+ },
+ {
+  "id": 309,
+  "q": "dyscyplinarka za co",
+  "zrodlo": "google",
+  "fraza": "dyscyplinarka"
+ },
+ {
+  "id": 310,
+  "q": "zwolnienie dyscyplinarne na l4",
+  "zrodlo": "google",
+  "fraza": "zwolnienie dyscyplinarne"
+ },
+ {
+  "id": 311,
+  "q": "zwolnienie dyscyplinarne powody",
+  "zrodlo": "google",
+  "fraza": "zwolnienie dyscyplinarne"
+ },
+ {
+  "id": 312,
+  "q": "umowa o pracę na czas określony",
+  "zrodlo": "google",
+  "fraza": "umowa o pracę"
+ },
+ {
+  "id": 313,
+  "q": "umowa o pracę na czas nieokreślony",
+  "zrodlo": "google",
+  "fraza": "umowa o pracę"
+ },
+ {
+  "id": 314,
+  "q": "umowa zlecenie 2026",
+  "zrodlo": "google",
+  "fraza": "umowa zlecenie"
+ },
+ {
+  "id": 315,
+  "q": "umowa zlecenie kalkulator",
+  "zrodlo": "google",
+  "fraza": "umowa zlecenie"
+ },
+ {
+  "id": 316,
+  "q": "umowa o dzieło kalkulator",
+  "zrodlo": "google",
+  "fraza": "umowa o dzieło"
+ },
+ {
+  "id": 317,
+  "q": "umowa o dzieło a zus",
+  "zrodlo": "google",
+  "fraza": "umowa o dzieło"
+ },
+ {
+  "id": 318,
+  "q": "pasek wypłaty co to",
+  "zrodlo": "google",
+  "fraza": "pasek wypłaty"
+ },
+ {
+  "id": 319,
+  "q": "pasek wypłaty obowiązek",
+  "zrodlo": "google",
+  "fraza": "pasek wypłaty"
+ },
+ {
+  "id": 320,
+  "q": "wypłata brutto netto",
+  "zrodlo": "google",
+  "fraza": "wypłata"
+ },
+ {
+  "id": 321,
+  "q": "pensja minimalna 2026",
+  "zrodlo": "google",
+  "fraza": "pensja"
+ },
+ {
+  "id": 322,
+  "q": "pensja brutto netto",
+  "zrodlo": "google",
+  "fraza": "pensja"
+ },
+ {
+  "id": 323,
+  "q": "nadgodziny odbiór godzin",
+  "zrodlo": "google",
+  "fraza": "nadgodziny odbiór"
+ },
+ {
+  "id": 324,
+  "q": "nadgodziny odbiór kodeks pracy",
+  "zrodlo": "google",
+  "fraza": "nadgodziny odbiór"
+ },
+ {
+  "id": 325,
+  "q": "wolne za nadgodziny w sobotę",
+  "zrodlo": "google",
+  "fraza": "wolne za nadgodziny"
+ },
+ {
+  "id": 326,
+  "q": "wolne za nadgodziny kodeks pracy",
+  "zrodlo": "google",
+  "fraza": "wolne za nadgodziny"
+ },
+ {
+  "id": 327,
+  "q": "oddanie krwi ile wolnego",
+  "zrodlo": "google",
+  "fraza": "oddanie krwi"
+ },
+ {
+  "id": 328,
+  "q": "oddanie krwi a wolne w pracy",
+  "zrodlo": "google",
+  "fraza": "oddanie krwi"
+ },
+ {
+  "id": 329,
+  "q": "pogrzeb urlop okolicznościowy",
+  "zrodlo": "google",
+  "fraza": "pogrzeb urlop"
+ },
+ {
+  "id": 330,
+  "q": "urlop pogrzeb babci",
+  "zrodlo": "google",
+  "fraza": "pogrzeb urlop"
+ },
+ {
+  "id": 331,
+  "q": "ślub urlop okolicznościowy",
+  "zrodlo": "google",
+  "fraza": "ślub urlop"
+ },
+ {
+  "id": 332,
+  "q": "ślub urlop okolicznościowy ile dni",
+  "zrodlo": "google",
+  "fraza": "ślub urlop"
+ },
+ {
+  "id": 333,
+  "q": "opieka nad dzieckiem do lat 14",
+  "zrodlo": "google",
+  "fraza": "opieka nad dzieckiem"
+ },
+ {
+  "id": 334,
+  "q": "opieka nad dzieckiem 2 dni",
+  "zrodlo": "google",
+  "fraza": "opieka nad dzieckiem"
+ },
+ {
+  "id": 335,
+  "q": "ciąża w pracy uprawnienia",
+  "zrodlo": "google",
+  "fraza": "ciąża w pracy"
+ },
+ {
+  "id": 336,
+  "q": "ciąża w pracy kiedy powiedzieć",
+  "zrodlo": "google",
+  "fraza": "ciąża w pracy"
+ },
+ {
+  "id": 337,
+  "q": "macierzyński ile trwa",
+  "zrodlo": "google",
+  "fraza": "macierzyński"
+ },
+ {
+  "id": 338,
+  "q": "macierzyński a rodzicielski",
+  "zrodlo": "google",
+  "fraza": "macierzyński"
+ },
+ {
+  "id": 339,
+  "q": "rodzicielski dla ojca",
+  "zrodlo": "google",
+  "fraza": "rodzicielski"
+ },
+ {
+  "id": 340,
+  "q": "emerytura pomostowa",
+  "zrodlo": "google",
+  "fraza": "emerytura"
+ },
+ {
+  "id": 341,
+  "q": "emerytura wiek",
+  "zrodlo": "google",
+  "fraza": "emerytura"
+ },
+ {
+  "id": 342,
+  "q": "wiek emerytalny w polsce",
+  "zrodlo": "google",
+  "fraza": "wiek emerytalny"
+ },
+ {
+  "id": 343,
+  "q": "wiek emerytalny kobiet",
+  "zrodlo": "google",
+  "fraza": "wiek emerytalny"
+ },
+ {
+  "id": 344,
+  "q": "wcześniejsza emerytura dla kobiet",
+  "zrodlo": "google",
+  "fraza": "wcześniejsza emerytura"
+ },
+ {
+  "id": 345,
+  "q": "ile można dorobić na emeryturze",
+  "zrodlo": "google",
+  "fraza": "ile można dorobić"
+ },
+ {
+  "id": 346,
+  "q": "ile można dorobić do emerytury",
+  "zrodlo": "google",
+  "fraza": "ile można dorobić"
+ },
+ {
+  "id": 347,
+  "q": "wypadek w drodze do pracy ile płatny",
+  "zrodlo": "google",
+  "fraza": "wypadek w drodze do pracy"
+ },
+ {
+  "id": 348,
+  "q": "wypadek w drodze do pracy odszkodowanie",
+  "zrodlo": "google",
+  "fraza": "wypadek w drodze do pracy"
+ },
+ {
+  "id": 349,
+  "q": "uszczerbek na zdrowiu zus",
+  "zrodlo": "google",
+  "fraza": "uszczerbek na zdrowiu"
+ },
+ {
+  "id": 350,
+  "q": "uszczerbek na zdrowiu powyżej 7 dni",
+  "zrodlo": "google",
+  "fraza": "uszczerbek na zdrowiu"
+ },
+ {
+  "id": 351,
+  "q": "woda w pracy przepisy",
+  "zrodlo": "google",
+  "fraza": "woda w pracy"
+ },
+ {
+  "id": 352,
+  "q": "woda w pracy od ilu stopni",
+  "zrodlo": "google",
+  "fraza": "woda w pracy"
+ },
+ {
+  "id": 353,
+  "q": "napoje w pracy przepisy",
+  "zrodlo": "google",
+  "fraza": "napoje w pracy"
+ },
+ {
+  "id": 354,
+  "q": "napoje w pracy podstawa prawna",
+  "zrodlo": "google",
+  "fraza": "napoje w pracy"
+ },
+ {
+  "id": 355,
+  "q": "ile stopni w pracy biurowej",
+  "zrodlo": "google",
+  "fraza": "ile stopni w pracy"
+ },
+ {
+  "id": 356,
+  "q": "ile stopni w pracy max",
+  "zrodlo": "google",
+  "fraza": "ile stopni w pracy"
+ },
+ {
+  "id": 357,
+  "q": "praca przy komputerze przerwy",
+  "zrodlo": "google",
+  "fraza": "praca przy komputerze"
+ },
+ {
+  "id": 358,
+  "q": "praca przy komputerze powyżej 4 godzin jaki to czynnik",
+  "zrodlo": "google",
+  "fraza": "praca przy komputerze"
+ },
+ {
+  "id": 359,
+  "q": "elektryk uprawnienia sep",
+  "zrodlo": "google",
+  "fraza": "elektryk uprawnienia"
+ },
+ {
+  "id": 360,
+  "q": "elektryk uprawnienia budowlane",
+  "zrodlo": "google",
+  "fraza": "elektryk uprawnienia"
+ },
+ {
+  "id": 361,
+  "q": "tachografy w busach",
+  "zrodlo": "google",
+  "fraza": "tachograf"
+ },
+ {
+  "id": 362,
+  "q": "tachograf na busy",
+  "zrodlo": "google",
+  "fraza": "tachograf"
+ },
+ {
+  "id": 363,
+  "q": "psychotesty dla kierowców kat b",
+  "zrodlo": "google",
+  "fraza": "psychotesty"
+ },
+ {
+  "id": 364,
+  "q": "świadectwo kwalifikacji zawodowej",
+  "zrodlo": "google",
+  "fraza": "świadectwo kwalifikacji"
+ },
+ {
+  "id": 365,
+  "q": "świadectwo kwalifikacji zawodowej kod 95 cena",
+  "zrodlo": "google",
+  "fraza": "świadectwo kwalifikacji"
+ },
+ {
+  "id": 366,
+  "q": "cudzoziemiec praca w polsce",
+  "zrodlo": "google",
+  "fraza": "cudzoziemiec praca"
+ },
+ {
+  "id": 367,
+  "q": "praca cudzoziemiec",
+  "zrodlo": "google",
+  "fraza": "cudzoziemiec praca"
+ },
+ {
+  "id": 368,
+  "q": "karta pobytu praca dokumenty",
+  "zrodlo": "google",
+  "fraza": "karta pobytu praca"
+ },
+ {
+  "id": 369,
+  "q": "karta pobytu praca sezonowa",
+  "zrodlo": "google",
+  "fraza": "karta pobytu praca"
+ },
+ {
+  "id": 370,
+  "q": "zgłoszenie do zus pracownika",
+  "zrodlo": "google",
+  "fraza": "zgłoszenie do zus"
+ },
+ {
+  "id": 371,
+  "q": "zgłoszenie do zus umowa zlecenie",
+  "zrodlo": "google",
+  "fraza": "zgłoszenie do zus"
+ },
+ {
+  "id": 372,
+  "q": "praca na czarno konsekwencje",
+  "zrodlo": "google",
+  "fraza": "praca na czarno"
+ },
+ {
+  "id": 373,
+  "q": "praca na czarno konsekwencje dla pracownika",
+  "zrodlo": "google",
+  "fraza": "praca na czarno"
+ },
+ {
+  "id": 374,
+  "q": "praca bez umowy gdzie zgłosić",
+  "zrodlo": "google",
+  "fraza": "praca bez umowy"
+ },
+ {
+  "id": 375,
+  "q": "praca bez umowy o pracę",
+  "zrodlo": "google",
+  "fraza": "praca bez umowy"
+ },
+ {
+  "id": 376,
+  "q": "sobota pracująca w sierpniu",
+  "zrodlo": "google",
+  "fraza": "sobota pracująca"
+ },
+ {
+  "id": 377,
+  "q": "sobota pracująca 2026",
+  "zrodlo": "google",
+  "fraza": "sobota pracująca"
+ },
+ {
+  "id": 378,
+  "q": "święto w sobotę 2026",
+  "zrodlo": "google",
+  "fraza": "święto w sobotę"
+ },
+ {
+  "id": 379,
+  "q": "święto w sobotę a dzień wolny",
+  "zrodlo": "google",
+  "fraza": "święto w sobotę"
+ },
+ {
+  "id": 380,
+  "q": "11 listopada 2026",
+  "zrodlo": "google",
+  "fraza": "11 listopada"
+ },
+ {
+  "id": 381,
+  "q": "boże ciało 2026",
+  "zrodlo": "google",
+  "fraza": "boże ciało"
+ },
+ {
+  "id": 382,
+  "q": "wigilia wolna 2026",
+  "zrodlo": "google",
+  "fraza": "wigilia wolna"
+ },
+ {
+  "id": 383,
+  "q": "wigilia wolna od kiedy",
+  "zrodlo": "google",
+  "fraza": "wigilia wolna"
+ },
+ {
+  "id": 384,
+  "q": "dzień wolny za święto w sobotę",
+  "zrodlo": "google",
+  "fraza": "dzień wolny za święto"
+ },
+ {
+  "id": 385,
+  "q": "dzień wolny za święto w niedzielę",
+  "zrodlo": "google",
+  "fraza": "dzień wolny za święto"
+ },
+ {
+  "id": 386,
+  "q": "ile dni roboczych we wrześniu 2026",
+  "zrodlo": "google",
+  "fraza": "ile dni roboczych"
+ },
+ {
+  "id": 387,
+  "q": "ile dni roboczych w 2026",
+  "zrodlo": "google",
+  "fraza": "ile dni roboczych"
+ },
+ {
+  "id": 388,
+  "q": "kalendarz 2027 ze świętami",
+  "zrodlo": "google",
+  "fraza": "kalendarz 2027"
+ },
+ {
+  "id": 389,
+  "q": "zmiana grafiku pracy z jakim wyprzedzeniem",
+  "zrodlo": "google",
+  "fraza": "zmiana grafiku"
+ },
+ {
+  "id": 390,
+  "q": "zmiana grafiku kodeks pracy",
+  "zrodlo": "google",
+  "fraza": "zmiana grafiku"
+ },
+ {
+  "id": 391,
+  "q": "odpoczynek dobowy kierowcy",
+  "zrodlo": "google",
+  "fraza": "odpoczynek dobowy"
+ },
+ {
+  "id": 392,
+  "q": "odpoczynek dobowy i tygodniowy",
+  "zrodlo": "google",
+  "fraza": "odpoczynek dobowy"
+ },
+ {
+  "id": 393,
+  "q": "11 godzin odpoczynku po delegacji",
+  "zrodlo": "google",
+  "fraza": "11 godzin odpoczynku"
+ },
+ {
+  "id": 394,
+  "q": "11 godzin odpoczynku dobowego",
+  "zrodlo": "google",
+  "fraza": "11 godzin odpoczynku"
+ },
+ {
+  "id": 395,
+  "q": "35 godzin odpoczynku tygodniowego",
+  "zrodlo": "google",
+  "fraza": "35 godzin odpoczynku"
+ },
+ {
+  "id": 396,
+  "q": "35 godzin odpoczynku jak liczyć",
+  "zrodlo": "google",
+  "fraza": "35 godzin odpoczynku"
+ },
+ {
+  "id": 397,
+  "q": "praca w weekendy",
+  "zrodlo": "google",
+  "fraza": "praca w weekend"
+ },
+ {
+  "id": 398,
+  "q": "praca w weekendy kodeks pracy",
+  "zrodlo": "google",
+  "fraza": "praca w weekend"
+ },
+ {
+  "id": 399,
+  "q": "stawka za godzinę na umowę zlecenie 2026",
+  "zrodlo": "google",
+  "fraza": "stawka za godzinę"
+ },
+ {
+  "id": 400,
+  "q": "stawka za godzinę 2026",
+  "zrodlo": "google",
+  "fraza": "stawka za godzinę"
+ },
+ {
+  "id": 401,
+  "q": "wynagrodzenie zasadnicze co to",
+  "zrodlo": "google",
+  "fraza": "wynagrodzenie zasadnicze"
+ },
+ {
+  "id": 402,
+  "q": "wynagrodzenie zasadnicze to brutto czy netto",
+  "zrodlo": "google",
+  "fraza": "wynagrodzenie zasadnicze"
+ },
+ {
+  "id": 403,
+  "q": "potrącenie z wypłaty za szkodę",
+  "zrodlo": "google",
+  "fraza": "potrącenie z wypłaty"
+ },
+ {
+  "id": 404,
+  "q": "potrącenie komornicze z wypłaty",
+  "zrodlo": "google",
+  "fraza": "potrącenie z wypłaty"
+ },
+ {
+  "id": 405,
+  "q": "komornik wypłata wynagrodzenia",
+  "zrodlo": "google",
+  "fraza": "komornik wypłata"
+ },
+ {
+  "id": 406,
+  "q": "zaliczka na podatek dochodowy",
+  "zrodlo": "google",
+  "fraza": "zaliczka"
+ },
+ {
+  "id": 407,
+  "q": "pit 11 co to",
+  "zrodlo": "google",
+  "fraza": "pit 11"
+ },
+ {
+  "id": 408,
+  "q": "pit 11a",
+  "zrodlo": "google",
+  "fraza": "pit 11"
+ },
+ {
+  "id": 409,
+  "q": "ulga dla młodych do 26 roku życia",
+  "zrodlo": "google",
+  "fraza": "ulga dla młodych"
+ },
+ {
+  "id": 410,
+  "q": "ulga dla młodych do jakiej kwoty",
+  "zrodlo": "google",
+  "fraza": "ulga dla młodych"
+ },
+ {
+  "id": 411,
+  "q": "26 lat podatek od kiedy",
+  "zrodlo": "google",
+  "fraza": "26 lat podatek"
+ },
+ {
+  "id": 412,
+  "q": "26 lat podatek ile",
+  "zrodlo": "google",
+  "fraza": "26 lat podatek"
+ },
+ {
+  "id": 413,
+  "q": "student praca zdalna",
+  "zrodlo": "google",
+  "fraza": "student praca"
+ },
+ {
+  "id": 414,
+  "q": "praca ucznia w wakacje",
+  "zrodlo": "google",
+  "fraza": "praca ucznia"
+ },
+ {
+  "id": 415,
+  "q": "praktyki studenckie",
+  "zrodlo": "google",
+  "fraza": "praktyki"
+ },
+ {
+  "id": 416,
+  "q": "staż z urzędu pracy po 30 roku życia",
+  "zrodlo": "google",
+  "fraza": "staż z urzędu pracy"
+ },
+ {
+  "id": 417,
+  "q": "staż z urzędu pracy po 50 roku życia",
+  "zrodlo": "google",
+  "fraza": "staż z urzędu pracy"
+ },
+ {
+  "id": 418,
+  "q": "umowa na okres próbny 3 miesiące",
+  "zrodlo": "google",
+  "fraza": "umowa na okres próbny"
+ },
+ {
+  "id": 419,
+  "q": "umowa na okres próbny wypowiedzenie",
+  "zrodlo": "google",
+  "fraza": "umowa na okres próbny"
+ },
+ {
+  "id": 420,
+  "q": "trzecia umowa na czas określony a ciąża",
+  "zrodlo": "google",
+  "fraza": "trzecia umowa na czas określony"
+ },
+ {
+  "id": 421,
+  "q": "trzecia umowa na czas określony a przerwa w zatrudnieniu",
+  "zrodlo": "google",
+  "fraza": "trzecia umowa na czas określony"
+ },
+ {
+  "id": 422,
+  "q": "umowa na czas nieokreślony jaki okres wypowiedzenia",
+  "zrodlo": "google",
+  "fraza": "umowa na czas nieokreślony"
+ },
+ {
+  "id": 423,
+  "q": "umowa na czas nieokreślony okres wypowiedzenia",
+  "zrodlo": "google",
+  "fraza": "umowa na czas nieokreślony"
+ },
+ {
+  "id": 424,
+  "q": "wypowiedzenie umowy w ciąży",
+  "zrodlo": "google",
+  "fraza": "wypowiedzenie w ciąży"
+ },
+ {
+  "id": 425,
+  "q": "wypowiedzenie zmieniające w ciąży",
+  "zrodlo": "google",
+  "fraza": "wypowiedzenie w ciąży"
+ },
+ {
+  "id": 426,
+  "q": "wypowiedzenie na l4 przez pracownika",
+  "zrodlo": "google",
+  "fraza": "wypowiedzenie na l4"
+ },
+ {
+  "id": 427,
+  "q": "wypowiedzenie na l4 przez pracodawcę",
+  "zrodlo": "google",
+  "fraza": "wypowiedzenie na l4"
+ },
+ {
+  "id": 428,
+  "q": "zwolnienie z pracy za porozumieniem stron",
+  "zrodlo": "google",
+  "fraza": "zwolnienie z pracy"
+ },
+ {
+  "id": 429,
+  "q": "zwolnienie z pracy z powodu siły wyższej",
+  "zrodlo": "google",
+  "fraza": "zwolnienie z pracy"
+ },
+ {
+  "id": 430,
+  "q": "zwolnienie z pracy ile wypowiedzenia",
+  "zrodlo": "google",
+  "fraza": "zwolnienie z pracy ile"
+ },
+ {
+  "id": 431,
+  "q": "zwolnienie z pracy ile trwa ubezpieczenie zdrowotne",
+  "zrodlo": "google",
+  "fraza": "zwolnienie z pracy ile"
+ },
+ {
+  "id": 432,
+  "q": "rzucam pracę i co dalej",
+  "zrodlo": "google",
+  "fraza": "rzucam pracę"
+ },
+ {
+  "id": 433,
+  "q": "odejście z pracy za porozumieniem stron",
+  "zrodlo": "google",
+  "fraza": "odejście z pracy"
+ },
+ {
+  "id": 434,
+  "q": "porzucenie pracy konsekwencje",
+  "zrodlo": "google",
+  "fraza": "porzucenie pracy"
+ },
+ {
+  "id": 435,
+  "q": "porzucenie pracy przez pracownika",
+  "zrodlo": "google",
+  "fraza": "porzucenie pracy"
+ },
+ {
+  "id": 436,
+  "q": "nieobecność w pracy nieusprawiedliwiona",
+  "zrodlo": "google",
+  "fraza": "nieobecność w pracy"
+ },
+ {
+  "id": 437,
+  "q": "nieobecność w pracy siła wyższa",
+  "zrodlo": "google",
+  "fraza": "nieobecność w pracy"
+ },
+ {
+  "id": 438,
+  "q": "spóźnienie do pracy 5 minut",
+  "zrodlo": "google",
+  "fraza": "spóźnienie do pracy"
+ },
+ {
+  "id": 439,
+  "q": "spóźnienie do pracy 15 minut",
+  "zrodlo": "google",
+  "fraza": "spóźnienie do pracy"
+ },
+ {
+  "id": 440,
+  "q": "nieusprawiedliwiona nieobecność w pracy",
+  "zrodlo": "google",
+  "fraza": "nieusprawiedliwiona nieobecność"
+ },
+ {
+  "id": 441,
+  "q": "nieusprawiedliwiona nieobecność w pracy (art 52)",
+  "zrodlo": "google",
+  "fraza": "nieusprawiedliwiona nieobecność"
+ },
+ {
+  "id": 442,
+  "q": "regulamin pracy od ilu pracowników",
+  "zrodlo": "google",
+  "fraza": "regulamin pracy"
+ },
+ {
+  "id": 443,
+  "q": "układ zbiorowy pracy",
+  "zrodlo": "google",
+  "fraza": "układ zbiorowy"
+ },
+ {
+  "id": 444,
+  "q": "układ zbiorowy pracy co to",
+  "zrodlo": "google",
+  "fraza": "układ zbiorowy"
+ },
+ {
+  "id": 445,
+  "q": "pozew do sądu pracy wzór darmowy",
+  "zrodlo": "google",
+  "fraza": "pozew do sądu pracy"
+ },
+ {
+  "id": 446,
+  "q": "mobbing w pracy",
+  "zrodlo": "google",
+  "fraza": "mobbing"
+ },
+ {
+  "id": 447,
+  "q": "mobbing co to",
+  "zrodlo": "google",
+  "fraza": "mobbing"
+ },
+ {
+  "id": 448,
+  "q": "molestowanie w pracy przykłady",
+  "zrodlo": "google",
+  "fraza": "molestowanie w pracy"
+ },
+ {
+  "id": 449,
+  "q": "molestowanie w pracy przez klienta",
+  "zrodlo": "google",
+  "fraza": "molestowanie w pracy"
+ },
+ {
+  "id": 450,
+  "q": "równe traktowanie w zatrudnieniu",
+  "zrodlo": "google",
+  "fraza": "równe traktowanie"
+ },
+ {
+  "id": 451,
+  "q": "nękanie w pracy przez współpracowników",
+  "zrodlo": "google",
+  "fraza": "nękanie w pracy"
+ },
+ {
+  "id": 452,
+  "q": "nękanie w pracy przykłady",
+  "zrodlo": "google",
+  "fraza": "nękanie w pracy"
+ },
+ {
+  "id": 453,
+  "q": "urlopu",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 454,
+  "q": "urlop",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 455,
+  "q": "nadgodziny",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 456,
+  "q": "L4",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 457,
+  "q": "ile dostanę na chorobowym",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 458,
+  "q": "na rękę",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 459,
+  "q": "nocki",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 460,
+  "q": "wózek widłowy uprawnienia",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 461,
+  "q": "alkomat",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 462,
+  "q": "ile kg",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 463,
+  "q": "upał na hali",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 464,
+  "q": "najnizsza krajowa",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 465,
+  "q": "ile za sobotę w pracy",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 466,
+  "q": "praca w sobotę 50 czy 100",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 467,
+  "q": "praca w sobotę a odbiór dnia wolnego",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 468,
+  "q": "ile nadgodzin za sobotę",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 469,
+  "q": "zwrot podatku ile sie czeka",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 470,
+  "q": "pit 37 a pit 11",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 471,
+  "q": "rozliczenie pit z żoną która nie pracuje",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 472,
+  "q": "badania wysokościowe od ilu metrów",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 473,
+  "q": "praca na drabinie powyżej 2 metrów",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 474,
+  "q": "pomostówka w jakim wieku",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 475,
+  "q": "praca w szczególnych warunkach a emerytura",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 476,
+  "q": "kod 95 stracił ważność",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 477,
+  "q": "świadectwo kwalifikacji zawodowej kod 95",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 478,
+  "q": "zespół cieśni nadgarstka czy to choroba zawodowa",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 479,
+  "q": "ubytek słuchu choroba zawodowa",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 480,
+  "q": "psychotesty dla kierowców co ile lat",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 481,
+  "q": "badania kierowcy zawodowego co ile lat",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 482,
+  "q": "badania kontrolne po l4 po ilu dniach",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 483,
+  "q": "badania wstępne do pracy czy przysługuje dzień wolny",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 484,
+  "q": "posiłek regeneracyjny w pracy kiedy przysługuje",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 485,
+  "q": "kiedy pracownikowi przysługuje darmowy posiłek w pracy",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 486,
+  "q": "ekwiwalent za pranie umowa zlecenie",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 487,
+  "q": "obniżenie wynagrodzenia bez zgody pracownika",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 488,
+  "q": "umowa na zastępstwo jaki okres wypowiedzenia",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 489,
+  "q": "umowa na czas nieobecności pracownika",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 490,
+  "q": "pensja po l4 kalkulator",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 491,
+  "q": "wypłata za niepełny miesiąc",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 492,
+  "q": "l4 w pierwszym miesiącu pracy",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 493,
+  "q": "l4 na zleceniu ile płatne",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 494,
+  "q": "umowa zlecenie l4 kto płaci",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 495,
+  "q": "wczasy pod gruszą ile dni urlopu trzeba wziąć",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 496,
+  "q": "dofinansowanie do urlopu wypoczynkowego",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 497,
+  "q": "urlop bezpłatny a ubezpieczenie zdrowotne",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 498,
+  "q": "urlop bezpłatny a staż pracy",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 499,
+  "q": "urlop z zeszłego roku do kiedy wykorzystać",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 500,
+  "q": "czy zaległy urlop przepada po 30 września",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 501,
+  "q": "przymusowy urlop w okresie wypowiedzenia",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 502,
+  "q": "urlop na żądanie w 12 godzinnym systemie pracy",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 503,
+  "q": "urlop szkoleniowy na studia podyplomowe",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 504,
+  "q": "studia zaoczne a urlop szkoleniowy",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 505,
+  "q": "ile dni na zgłoszenie ukraińca do pup",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 506,
+  "q": "powiadomienie o powierzeniu pracy obywatelowi ukrainy",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 507,
+  "q": "wcześniejsze wyjście z pracy a odpracowanie",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 508,
+  "q": "wcześniejsze przyjście do pracy nadgodziny",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 509,
+  "q": "nadgodziny w tej samej dobie",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 510,
+  "q": "praca po 12 godzin ile wolnego",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 511,
+  "q": "system 12 godzinny grafik",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 512,
+  "q": "praca powyżej 48 godzin tygodniowo",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 513,
+  "q": "ile można dorobić do renty 2026",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 514,
+  "q": "limit dorabiania do emerytury",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 515,
+  "q": "ulga na dziecko ile wynosi",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 516,
+  "q": "ulga prorodzinna limit dochodu",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 517,
+  "q": "ulga dla pracujących seniorów",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 518,
+  "q": "renta ile lat pracy minimum",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 519,
+  "q": "renta po wypadku w pracy",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 520,
+  "q": "przedemerytalne dla mężczyzn",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 521,
+  "q": "zasiłek przedemerytalny warunki",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 522,
+  "q": "zwolnienie przed emeryturą okres ochronny",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 523,
+  "q": "przerwa kierowcy po 4.5 godzinach jazdy",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 524,
+  "q": "odpoczynek tygodniowy kierowcy jak liczyć",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 525,
+  "q": "czas pracy kierowcy tabela",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 526,
+  "q": "ile może jechać kierowca zawodowy",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 527,
+  "q": "czy dyżur kierowcy wlicza się do czasu pracy",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 528,
+  "q": "uprawnienia adr na ile lat",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 529,
+  "q": "kurs adr przedłużenie",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 530,
+  "q": "uprawnienia sep do kiedy ważne",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 531,
+  "q": "sep g1 ważność",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 532,
+  "q": "czy na paleciak elektryczny trzeba mieć uprawnienia",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 533,
+  "q": "zwyżka nożycowa uprawnienia",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 534,
+  "q": "przeniesienie na inne stanowisko a wynagrodzenie",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 535,
+  "q": "ile czasu na zgłoszenie do zus nowego pracownika",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 536,
+  "q": "12 godzin pracy ile przerwy",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 537,
+  "q": "uprawnienia na wózek",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 538,
+  "q": "ile dostanę na L4",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 539,
+  "q": "niewykorzystany urlop",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 540,
+  "q": "czas pracy kierowcy",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 541,
+  "q": "kalkulator nadgodzin",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 542,
+  "q": "przerwy",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 543,
+  "q": "szef nie płaci za nadgodziny",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 544,
+  "q": "wyrównanie wynagrodzenia",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 545,
+  "q": "fundusz socjalny ile na pracownika",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 546,
+  "q": "monitoring komputera",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 547,
+  "q": "kamera nad stanowiskiem",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 548,
+  "q": "monitoring bez informacji",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 549,
+  "q": "czy pracodawca moze mnie podgladac",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 550,
+  "q": "sledzenie pracownika",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 551,
+  "q": "kamera w szatni",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 552,
+  "q": "kamera w toalecie",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 553,
+  "q": "zepsulem maszyne w pracy musze zaplacic",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 554,
+  "q": "zgubilem narzedzia firmowe",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 555,
+  "q": "pracodawca obciazyl mnie kosztami naprawy",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 556,
+  "q": "zgoda na potracenie z wynagrodzenia",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 557,
+  "q": "rozbilem auto sluzbowe",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 558,
+  "q": "pracodawca kaze placic za szkode",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 559,
+  "q": "ile kg na regal",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 560,
+  "q": "ile kg na polke",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 561,
+  "q": "ile metrow do gasnicy",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 562,
+  "q": "co na najnizszej polce",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 563,
+  "q": "rampa zaladunkowa",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 564,
+  "q": "barierki dla pieszych hala",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 565,
+  "q": "pasy na hali zolte",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 566,
+  "q": "kamery w magazynie",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 567,
+  "q": "zniszczylem wozek widlowy kto placi",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 568,
+  "q": "kara za zniszczenie",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 569,
+  "q": "ile procent rampa",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 570,
+  "q": "wysokosc dojscia do stanowiska pracy",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 571,
+  "q": "szatnia",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 572,
+  "q": "toaleta",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 573,
+  "q": "szafka w szatni",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 574,
+  "q": "okulary do komputera",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 575,
+  "q": "ile kg wolno dzwigac",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 576,
+  "q": "ile kg kobieta",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 577,
+  "q": "od ile metrow praca na wysokosci",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 578,
+  "q": "kara pieniezna potracenie z wyplaty",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 579,
+  "q": "praca przy maszynie",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 580,
+  "q": "auto sluzbowe",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 581,
+  "q": "zepsulem sobie zdrowie w pracy",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 582,
+  "q": "zniszczylem sobie kregoslup w pracy",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 583,
+  "q": "wozek widlowy",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 584,
+  "q": "zaplacic podatek",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 585,
+  "q": "prog podatkowy",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 586,
+  "q": "pasy bezpieczenstwa",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 587,
+  "q": "wysokosc odprawy",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 588,
+  "q": "wysokosc wynagrodzenia",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 589,
+  "q": "badania na stanowisku pracy",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 590,
+  "q": "przedawnienie urlopu",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 591,
+  "q": "stary urlop",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 592,
+  "q": "niewykorzystany urlop z 2024",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 593,
+  "q": "na czarno",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 594,
+  "q": "praca na czarno",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 595,
+  "q": "dokumenty na start w pracy",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 596,
+  "q": "zapoznanie z regulaminem pracy",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 597,
+  "q": "kiedy dostane umowe",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 598,
+  "q": "wymowienie",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 599,
+  "q": "wypowiedzenie umowy na czas okreslony",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 600,
+  "q": "wolne na poszukiwanie pracy",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 601,
+  "q": "odejscie z pracy",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 602,
+  "q": "odprawa po 8 latach",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 603,
+  "q": "odprawa przy porozumieniu stron",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 604,
+  "q": "czy nalezy mi sie odprawa",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 605,
+  "q": "ile pensji odprawy",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 606,
+  "q": "dostalem nagane",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 607,
+  "q": "dostalam nagane",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 608,
+  "q": "dostalem upomnienie",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 609,
+  "q": "urlop na zadanie",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 610,
+  "q": "ekwiwalent za niewykorzystany urlop",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 611,
+  "q": "przedawnienie",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 612,
+  "q": "kara z regulaminu pracy",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 613,
+  "q": "kara porzadkowa",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 614,
+  "q": "nowa praca",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 615,
+  "q": "praca bez umowy",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 616,
+  "q": "umowa na czas okreslony",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 617,
+  "q": "czas okreslony",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 618,
+  "q": "wypowiedzenie przed emerytura",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 619,
+  "q": "redukcja etatow",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 620,
+  "q": "porozumienie stron",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 621,
+  "q": "ile lat pracy",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 622,
+  "q": "odprawa posmiertna",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 623,
+  "q": "dostalem l4",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 624,
+  "q": "toaleta w pracy",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 625,
+  "q": "ile toalet w pracy",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 626,
+  "q": "szatnia w pracy",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 627,
+  "q": "szkoda na zdrowiu w pracy",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 628,
+  "q": "potrącenie kary pieniężnej",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 629,
+  "q": "pozwać pracodawcę",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 630,
+  "q": "pozwać o wypłatę",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 631,
+  "q": "wypłata za pierwszy dzień pracy",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 632,
+  "q": "świadectwo pracy po odejściu z pracy",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 633,
+  "q": "zwalniają mnie na L4",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 634,
+  "q": "powrót do pracy po zwolnieniu lekarskim",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 635,
+  "q": "praca na zwolnieniu lekarskim",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 636,
+  "q": "fundusz socjalny",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 637,
+  "q": "świadczenie urlopowe",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 638,
+  "q": "fundusz socjalny ile wynosi",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 639,
+  "q": "fundusz socjalny dla emerytów",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 640,
+  "q": "fundusz socjalny ile bez podatku",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 641,
+  "q": "zfśs co to",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 642,
+  "q": "zfśs od ilu pracowników",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 643,
+  "q": "zfśs odpis 2026",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 644,
+  "q": "zfśs kwota wolna od podatku 2026",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 645,
+  "q": "czy każdy pracodawca musi mieć fundusz socjalny",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 646,
+  "q": "kiedy pracodawca musi mieć fundusz socjalny",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 647,
+  "q": "wczasy pod gruszą zasady",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 648,
+  "q": "wczasy pod gruszą dla kogo",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 649,
+  "q": "bony świąteczne dla pracowników",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 650,
+  "q": "zfśs",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 651,
+  "q": "czy pracodawca musi mieć fundusz socjalny",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 652,
+  "q": "świadczenie urlopowe 2026 ile",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 653,
+  "q": "wypadek na imprezie firmowej",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 654,
+  "q": "wypadek na siłowni",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 655,
+  "q": "zlecenie na L4",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 656,
+  "q": "badania kontrolne po L4",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 657,
+  "q": "spacer w przerwie",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 658,
+  "q": "czy na l4 można wychodzić z domu",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 659,
+  "q": "czy na L4 można pracować",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 660,
+  "q": "praca na L4 u innego pracodawcy",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 661,
+  "q": "wyjazd na L4",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 662,
+  "q": "chory może chodzić",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 663,
+  "q": "chory powinien leżeć",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 664,
+  "q": "odwołanie od decyzji ZUS",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 665,
+  "q": "siłownia na L4",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 666,
+  "q": "sport na L4",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 667,
+  "q": "remont na L4",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 668,
+  "q": "spacer na L4",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 669,
+  "q": "maile na L4",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 670,
+  "q": "maile na zwolnieniu lekarskim",
+  "zrodlo": "testy"
+ },
+ {
+  "id": 671,
+  "q": "odprawa",
+  "zrodlo": "raport"
+ },
+ {
+  "id": 672,
+  "q": "kierownik dał mi upomnienie",
+  "zrodlo": "raport"
+ },
+ {
+  "id": 673,
+  "q": "Ile wynosi dodatek za pracę w nocy w 2026 r.?",
+  "zrodlo": "faq",
+  "narzedzie": "dodatek-za-prace-w-nocy"
+ },
+ {
+  "id": 674,
+  "q": "Od kiedy pracodawca musi ograniczać drgania?",
+  "zrodlo": "faq",
+  "narzedzie": "drgania-w-pracy"
+ },
+ {
+  "id": 675,
+  "q": "Ile godzin można pracować przy 90 dB?",
+  "zrodlo": "faq",
+  "narzedzie": "halas-w-pracy"
+ },
+ {
+  "id": 676,
+  "q": "Ile czasu ma pracodawca na protokół powypadkowy?",
+  "zrodlo": "faq",
+  "narzedzie": "odszkodowanie-za-wypadek-przy-pracy"
+ },
+ {
+  "id": 677,
+  "q": "Kto płaci za szkolenie BHP i czy odbywa się w czasie pracy?",
+  "zrodlo": "faq",
+  "narzedzie": "szkolenie-okresowe-bhp"
+ },
+ {
+  "id": 678,
+  "q": "Czy na ręczny wózek paletowy potrzebne są uprawnienia UDT?",
+  "zrodlo": "faq",
+  "narzedzie": "waznosc-uprawnien-udt"
+ },
+ {
+  "id": 679,
+  "q": "Co ile badanie UDT wózka widłowego?",
+  "zrodlo": "faq",
+  "narzedzie": "badania-udt"
+ },
+ {
+  "id": 680,
+  "q": "Jaka musi być wysokość pomieszczenia pracy?",
+  "zrodlo": "faq",
+  "narzedzie": "powierzchnia-na-pracownika"
+ },
+ {
+  "id": 681,
+  "q": "Ile toalet na liczbę pracowników?",
+  "zrodlo": "faq",
+  "narzedzie": "normy-sanitarne"
+ },
+ {
+  "id": 682,
+  "q": "Co to jest praca dorywcza przy dźwiganiu?",
+  "zrodlo": "faq",
+  "narzedzie": "ile-kg-wolno-dzwigac"
+ },
+ {
+  "id": 683,
+  "q": "Kogo nie dotyczą progi 35°C i 32°C?",
+  "zrodlo": "faq",
+  "narzedzie": "temperatura-w-pracy"
+ },
+ {
+  "id": 684,
+  "q": "Jak obliczyć wymiar czasu pracy?",
+  "zrodlo": "faq",
+  "narzedzie": "wymiar-czasu-pracy"
+ },
+ {
+  "id": 685,
+  "q": "Ile wynosi dodatek za nadgodziny?",
+  "zrodlo": "faq",
+  "narzedzie": "kalkulator-nadgodzin"
+ },
+ {
+  "id": 686,
+  "q": "Jak agencja liczy wynagrodzenie za urlop?",
+  "zrodlo": "faq",
+  "narzedzie": "urlop-w-agencji-pracy"
+ },
+ {
+  "id": 687,
+  "q": "Czy krótki urlop przy długim weekendzie to problem z 14 dniami wypoczynku?",
+  "zrodlo": "faq",
+  "narzedzie": "dni-wolne-od-pracy"
+ },
+ {
+  "id": 688,
+  "q": "Ile dni urlopu na żądanie?",
+  "zrodlo": "faq",
+  "narzedzie": "kalkulator-urlopu"
+ },
+ {
+  "id": 689,
+  "q": "Kiedy przysługuje ekwiwalent za niewykorzystany urlop?",
+  "zrodlo": "faq",
+  "narzedzie": "ekwiwalent-za-urlop"
+ },
+ {
+  "id": 690,
+  "q": "Jak liczy się podstawę chorobowego?",
+  "zrodlo": "faq",
+  "narzedzie": "kalkulator-l4"
+ },
+ {
+  "id": 691,
+  "q": "Od czego liczy się odprawę?",
+  "zrodlo": "faq",
+  "narzedzie": "kalkulator-odprawy"
+ },
+ {
+  "id": 692,
+  "q": "Ile godzin wolnego na dziecko przy niepełnym etacie?",
+  "zrodlo": "faq",
+  "narzedzie": "wolne-na-dziecko"
+ },
+ {
+  "id": 693,
+  "q": "Ile wynosi płaca minimalna w 2026 r.?",
+  "zrodlo": "faq",
+  "narzedzie": "placa-minimalna"
+ },
+ {
+  "id": 694,
+  "q": "Jakie składki płaci pracownik?",
+  "zrodlo": "faq",
+  "narzedzie": "brutto-netto"
+ },
+ {
+  "id": 695,
+  "q": "Jakie jest wypowiedzenie na okresie próbnym?",
+  "zrodlo": "faq",
+  "narzedzie": "okres-probny"
+ },
+ {
+  "id": 696,
+  "q": "Kiedy limit 33 miesięcy nie obowiązuje?",
+  "zrodlo": "faq",
+  "narzedzie": "umowa-na-czas-okreslony"
+ },
+ {
+  "id": 697,
+  "q": "A gdy zastępuję nieobecnego pracownika?",
+  "zrodlo": "faq",
+  "narzedzie": "limit-pracy-tymczasowej"
+ },
+ {
+  "id": 698,
+  "q": "Ile to netto z 3000 zł brutto na zleceniu?",
+  "zrodlo": "faq",
+  "narzedzie": "zlecenie-netto"
+ },
+ {
+  "id": 699,
+  "q": "Od której godziny liczy się niedziela w pracy?",
+  "zrodlo": "faq",
+  "narzedzie": "praca-w-niedziele"
+ },
+ {
+  "id": 700,
+  "q": "Jak policzyć godzinę przestoju przy pensji miesięcznej?",
+  "zrodlo": "faq",
+  "narzedzie": "wynagrodzenie-za-przestoj"
+ },
+ {
+  "id": 701,
+  "q": "Czy za urlop płaci się dodatek nocny i nadgodziny?",
+  "zrodlo": "faq",
+  "narzedzie": "wynagrodzenie-za-urlop"
+ },
+ {
+  "id": 702,
+  "q": "Czy nocne nadgodziny liczą się podwójnie?",
+  "zrodlo": "faq",
+  "narzedzie": "wyplata-z-nadgodzinami"
+ },
+ {
+  "id": 703,
+  "q": "Czy można płacić mniej niż 2% do PPK?",
+  "zrodlo": "faq",
+  "narzedzie": "kalkulator-ppk"
+ },
+ {
+  "id": 704,
+  "q": "Kiedy pracodawca nie płaci Funduszu Pracy?",
+  "zrodlo": "faq",
+  "narzedzie": "koszt-pracodawcy"
+ },
+ {
+  "id": 705,
+  "q": "Ile wynosi ryczałt za nocleg w delegacji?",
+  "zrodlo": "faq",
+  "narzedzie": "delegacja-krajowa"
+ },
+ {
+  "id": 706,
+  "q": "Czy prywatna firma może płacić niższą dietę za granicą?",
+  "zrodlo": "faq",
+  "narzedzie": "delegacja-zagraniczna"
+ },
+ {
+  "id": 707,
+  "q": "Kto wypłaca zasiłek chorobowy po końcu umowy?",
+  "zrodlo": "faq",
+  "narzedzie": "l4-po-zwolnieniu"
+ },
+ {
+  "id": 708,
+  "q": "Czy pracodawca może mnie zwolnić w czasie świadczenia rehabilitacyjnego?",
+  "zrodlo": "faq",
+  "narzedzie": "swiadczenie-rehabilitacyjne"
+ },
+ {
+  "id": 709,
+  "q": "Ile wynosi zasiłek opiekuńczy?",
+  "zrodlo": "faq",
+  "narzedzie": "zasilek-opiekunczy"
+ },
+ {
+  "id": 710,
+  "q": "Ile trwa urlop macierzyński i rodzicielski?",
+  "zrodlo": "faq",
+  "narzedzie": "zasilek-macierzynski"
+ },
+ {
+  "id": 711,
+  "q": "Ile dni wolnego za oddanie krwi?",
+  "zrodlo": "faq",
+  "narzedzie": "urlop-okolicznosciowy"
+ },
+ {
+  "id": 712,
+  "q": "Do kiedy można wykorzystać urlop ojcowski?",
+  "zrodlo": "faq",
+  "narzedzie": "urlop-ojcowski"
+ },
+ {
+  "id": 713,
+  "q": "Kiedy złożyć wniosek o urlop wychowawczy?",
+  "zrodlo": "faq",
+  "narzedzie": "urlop-wychowawczy"
+ },
+ {
+  "id": 714,
+  "q": "Co, gdy dzień wypłaty wypada w sobotę, niedzielę albo święto?",
+  "zrodlo": "faq",
+  "narzedzie": "termin-wyplaty-wynagrodzenia"
+ },
+ {
+  "id": 715,
+  "q": "Ile to na godzinę 6000 zł brutto?",
+  "zrodlo": "faq",
+  "narzedzie": "stawka-godzinowa"
+ },
+ {
+  "id": 716,
+  "q": "Jak często wolna niedziela?",
+  "zrodlo": "faq",
+  "narzedzie": "kontrola-grafiku"
+ },
+ {
+  "id": 717,
+  "q": "Co wlicza się do stażu pracy od 2026 r.?",
+  "zrodlo": "faq",
+  "narzedzie": "staz-pracy"
+ },
+ {
+  "id": 718,
+  "q": "Ile wynosi zasiłek dla bezrobotnych?",
+  "zrodlo": "faq",
+  "narzedzie": "zasilek-dla-bezrobotnych"
+ },
+ {
+  "id": 719,
+  "q": "Czy w ochronie przedemerytalnej można zostać zwolnionym?",
+  "zrodlo": "faq",
+  "narzedzie": "ochrona-przedemerytalna"
+ },
+ {
+  "id": 720,
+  "q": "Czy od odszkodowania za zakaz konkurencji płaci się podatek?",
+  "zrodlo": "faq",
+  "narzedzie": "zakaz-konkurencji"
+ },
+ {
+  "id": 721,
+  "q": "Ile mam czasu na pozew o odszkodowanie za zwolnienie?",
+  "zrodlo": "faq",
+  "narzedzie": "odszkodowanie-za-zwolnienie"
+ },
+ {
+  "id": 722,
+  "q": "Komu przysługuje odprawa pośmiertna?",
+  "zrodlo": "faq",
+  "narzedzie": "odprawa-posmiertna"
+ },
+ {
+  "id": 723,
+  "q": "Czy pracodawca może zwolnić mnie na L4?",
+  "zrodlo": "faq",
+  "narzedzie": "zwolnienie-na-l4"
+ },
+ {
+  "id": 724,
+  "q": "Kiedy kara porządkowa się zaciera?",
+  "zrodlo": "faq",
+  "narzedzie": "kara-porzadkowa"
+ },
+ {
+  "id": 725,
+  "q": "Ile jest czasu na odwołanie od wypowiedzenia do sądu pracy?",
+  "zrodlo": "faq",
+  "narzedzie": "odwolanie-do-sadu-pracy"
+ },
+ {
+  "id": 726,
+  "q": "Ile dni wolnych na szukanie pracy?",
+  "zrodlo": "faq",
+  "narzedzie": "okres-wypowiedzenia"
+ },
+ {
+  "id": 727,
+  "q": "Ile jest dni roboczych w roku?",
+  "zrodlo": "faq",
+  "narzedzie": "dni-robocze"
+ },
+ {
+  "id": 728,
+  "q": "Kogo nie dotyczą przepisy o wynagrodzeniu za dyżur?",
+  "zrodlo": "faq",
+  "narzedzie": "dyzur-w-pracy"
+ },
+ {
+  "id": 729,
+  "q": "Ile zarabia uczeń w nauce zawodu w 2026 r.?",
+  "zrodlo": "faq",
+  "narzedzie": "pracownik-mlodociany"
+ },
+ {
+  "id": 730,
+  "q": "Czy po 3 latach pracodawca na pewno nie zapłaci?",
+  "zrodlo": "faq",
+  "narzedzie": "przedawnienie-wynagrodzenia"
+ },
+ {
+  "id": 731,
+  "q": "Czy po zwolnieniu grupowym pracodawca musi mnie przyjąć z powrotem?",
+  "zrodlo": "faq",
+  "narzedzie": "zwolnienia-grupowe"
+ },
+ {
+  "id": 732,
+  "q": "Od kiedy pracodawca musi stosować krótszy czas pracy?",
+  "zrodlo": "faq",
+  "narzedzie": "pracownik-niepelnosprawny"
+ },
+ {
+  "id": 733,
+  "q": "Czy muszę oddać pieniądze za szkolenie, gdy odchodzę z pracy?",
+  "zrodlo": "faq",
+  "narzedzie": "zwrot-kosztow-szkolenia"
+ },
+ {
+  "id": 734,
+  "q": "Ile dni przerwy w L4 zeruje okres zasiłkowy?",
+  "zrodlo": "faq",
+  "narzedzie": "okres-zasilkowy"
+ },
+ {
+  "id": 735,
+  "q": "Co, jeśli nie zgadzam się z wynikiem alkomatu?",
+  "zrodlo": "faq",
+  "narzedzie": "kontrola-trzezwosci"
+ },
+ {
+  "id": 736,
+  "q": "Ile kilogramów może dźwigać kobieta w ciąży?",
+  "zrodlo": "faq",
+  "narzedzie": "praca-w-ciazy"
+ },
+ {
+  "id": 737,
+  "q": "Czy zamiast urlopu wychowawczego mogę pracować na pół etatu?",
+  "zrodlo": "faq",
+  "narzedzie": "rodzic-w-pracy"
+ },
+ {
+  "id": 738,
+  "q": "Czy do obsługi urządzeń do 1 kV potrzebne są uprawnienia?",
+  "zrodlo": "faq",
+  "narzedzie": "waznosc-uprawnien-sep"
+ },
+ {
+  "id": 739,
+  "q": "Czy na paleciak elektryczny trzeba mieć uprawnienia UDT?",
+  "zrodlo": "faq",
+  "narzedzie": "czy-potrzebne-uprawnienia-udt"
+ },
+ {
+  "id": 740,
+  "q": "Czy szkolenie zrobione wcześniej przedłuża kod 95 od starej daty?",
+  "zrodlo": "faq",
+  "narzedzie": "kod-95"
+ },
+ {
+  "id": 741,
+  "q": "Ile kosztują psychotesty dla kierowcy?",
+  "zrodlo": "faq",
+  "narzedzie": "badania-kierowcy"
+ },
+ {
+  "id": 742,
+  "q": "Czy w nowej pracy zawsze trzeba robić badania wstępne?",
+  "zrodlo": "faq",
+  "narzedzie": "badania-lekarskie-w-pracy"
+ },
+ {
+  "id": 743,
+  "q": "Skąd wiadomo, ile kcal spalam w pracy, i kto decyduje o posiłkach?",
+  "zrodlo": "faq",
+  "narzedzie": "posilki-profilaktyczne"
+ },
+ {
+  "id": 744,
+  "q": "Czy na zleceniu należy się odzież robocza?",
+  "zrodlo": "faq",
+  "narzedzie": "odziez-robocza"
+ },
+ {
+  "id": 745,
+  "q": "Ile mam czasu na odmowę przyjęcia nowych warunków?",
+  "zrodlo": "faq",
+  "narzedzie": "wypowiedzenie-zmieniajace"
+ },
+ {
+  "id": 746,
+  "q": "Co musi być w informacji o warunkach zatrudnienia?",
+  "zrodlo": "faq",
+  "narzedzie": "informacja-o-warunkach-zatrudnienia"
+ },
+ {
+  "id": 747,
+  "q": "Jaki jest okres wypowiedzenia umowy na zastępstwo?",
+  "zrodlo": "faq",
+  "narzedzie": "umowa-na-zastepstwo"
+ },
+ {
+  "id": 748,
+  "q": "Jak liczy się pensję za miesiąc z L4?",
+  "zrodlo": "faq",
+  "narzedzie": "wynagrodzenie-za-niepelny-miesiac"
+ },
+ {
+  "id": 749,
+  "q": "Jak długo przysługuje dodatek wyrównawczy?",
+  "zrodlo": "faq",
+  "narzedzie": "dodatek-wyrownawczy"
+ },
+ {
+  "id": 750,
+  "q": "Czy poprzednia praca skraca okres wyczekiwania?",
+  "zrodlo": "faq",
+  "narzedzie": "okres-wyczekiwania"
+ },
+ {
+  "id": 751,
+  "q": "Czy na umowie zlecenia należy się L4 płatne?",
+  "zrodlo": "faq",
+  "narzedzie": "zasilek-chorobowy-na-zleceniu"
+ },
+ {
+  "id": 752,
+  "q": "Czy pracodawca musi wypłacić świadczenie urlopowe?",
+  "zrodlo": "faq",
+  "narzedzie": "swiadczenie-urlopowe"
+ },
+ {
+  "id": 753,
+  "q": "Ile dni urlopu przy pracy po 12 godzin?",
+  "zrodlo": "faq",
+  "narzedzie": "urlop-w-godzinach"
+ },
+ {
+  "id": 754,
+  "q": "Co z urlopem, którego nie zdążę wykorzystać?",
+  "zrodlo": "faq",
+  "narzedzie": "urlop-w-okresie-wypowiedzenia"
+ },
+ {
+  "id": 755,
+  "q": "Czy na studia podyplomowe albo kurs przysługuje urlop szkoleniowy?",
+  "zrodlo": "faq",
+  "narzedzie": "urlop-szkoleniowy"
+ },
+ {
+  "id": 756,
+  "q": "Czy pracodawca musi dać urlop bezpłatny?",
+  "zrodlo": "faq",
+  "narzedzie": "urlop-bezplatny"
+ },
+ {
+  "id": 757,
+  "q": "Do kiedy pracodawca musi udzielić zaległego urlopu?",
+  "zrodlo": "faq",
+  "narzedzie": "zalegly-urlop"
+ },
+ {
+  "id": 758,
+  "q": "Czy obywatel Ukrainy potrzebuje zezwolenia na pracę?",
+  "zrodlo": "faq",
+  "narzedzie": "praca-cudzoziemca"
+ },
+ {
+  "id": 759,
+  "q": "Jakie terminy obowiązują przy oświadczeniu o powierzeniu pracy?",
+  "zrodlo": "faq",
+  "narzedzie": "zgloszenie-pracy-cudzoziemca"
+ },
+ {
+  "id": 760,
+  "q": "Czy na wyjście prywatne trzeba złożyć wniosek?",
+  "zrodlo": "faq",
+  "narzedzie": "odpracowanie-wyjscia-prywatnego"
+ },
+ {
+  "id": 761,
+  "q": "Czy zamiast dnia wolnego można dostać pieniądze?",
+  "zrodlo": "faq",
+  "narzedzie": "praca-w-sobote"
+ },
+ {
+  "id": 762,
+  "q": "Czy zamiast dodatku można dostać wolne?",
+  "zrodlo": "faq",
+  "narzedzie": "nadgodziny-sredniotygodniowe"
+ },
+ {
+  "id": 763,
+  "q": "Co to jest doba pracownicza?",
+  "zrodlo": "faq",
+  "narzedzie": "doba-pracownicza"
+ },
+ {
+  "id": 764,
+  "q": "Jaki okres rozliczeniowy przy zmianach po 12 godzin?",
+  "zrodlo": "faq",
+  "narzedzie": "rownowazny-czas-pracy"
+ },
+ {
+  "id": 765,
+  "q": "O ile ZUS zmniejszy rentę?",
+  "zrodlo": "faq",
+  "narzedzie": "dorabianie-do-renty"
+ },
+ {
+  "id": 766,
+  "q": "Czy składka zdrowotna zmniejsza podatek?",
+  "zrodlo": "faq",
+  "narzedzie": "zwrot-podatku-pit-37"
+ },
+ {
+  "id": 767,
+  "q": "Jak podzielić ulgę z drugim rodzicem?",
+  "zrodlo": "faq",
+  "narzedzie": "ulga-na-dzieci"
+ },
+ {
+  "id": 768,
+  "q": "Do kiedy działa ulga dla młodych?",
+  "zrodlo": "faq",
+  "narzedzie": "zerowy-pit"
+ },
+ {
+  "id": 769,
+  "q": "Czy zespół cieśni nadgarstka to choroba zawodowa?",
+  "zrodlo": "faq",
+  "narzedzie": "choroba-zawodowa"
+ },
+ {
+  "id": 770,
+  "q": "Kiedy trzeba mieć szelki bezpieczeństwa?",
+  "zrodlo": "faq",
+  "narzedzie": "praca-na-wysokosci"
+ },
+ {
+  "id": 771,
+  "q": "Czy trzeba pracować przed 1999 r.?",
+  "zrodlo": "faq",
+  "narzedzie": "emerytura-pomostowa"
+ },
+ {
+  "id": 772,
+  "q": "Czym różni się całkowita i częściowa niezdolność do pracy?",
+  "zrodlo": "faq",
+  "narzedzie": "renta-z-tytulu-niezdolnosci-do-pracy"
+ },
+ {
+  "id": 773,
+  "q": "Komu przysługuje świadczenie przedemerytalne?",
+  "zrodlo": "faq",
+  "narzedzie": "swiadczenie-przedemerytalne"
+ },
+ {
+  "id": 774,
+  "q": "Czy kierowcy busa do 3,5 tony dotyczą te przepisy?",
+  "zrodlo": "faq",
+  "narzedzie": "czas-jazdy-kierowcy"
+ },
+ {
+  "id": 775,
+  "q": "Czy jazda jako drugi kierowca w załodze jest płatna?",
+  "zrodlo": "faq",
+  "narzedzie": "dyzur-kierowcy"
+ },
+ {
+  "id": 776,
+  "q": "Co grozi za jazdę bez ważnego zaświadczenia ADR?",
+  "zrodlo": "faq",
+  "narzedzie": "zaswiadczenie-adr"
+ },
+ {
+  "id": 777,
+  "q": "Co to jest dyskryminacja w pracy?",
+  "zrodlo": "faq",
+  "narzedzie": "mobbing-i-dyskryminacja"
+ },
+ {
+  "id": 778,
+  "q": "Czy pozew do sądu pracy jest płatny?",
+  "zrodlo": "faq",
+  "narzedzie": "sad-pracy-czy-pip"
+ },
+ {
+  "id": 779,
+  "q": "Do kiedy pracodawca może żądać odszkodowania?",
+  "zrodlo": "faq",
+  "narzedzie": "odpowiedzialnosc-materialna"
+ },
+ {
+  "id": 780,
+  "q": "Co zrobić, gdy pracodawca nie wydał świadectwa pracy?",
+  "zrodlo": "faq",
+  "narzedzie": "swiadectwo-pracy"
+ },
+ {
+  "id": 781,
+  "q": "Czy pracodawca może nagrywać pracowników kamerą?",
+  "zrodlo": "faq",
+  "narzedzie": "monitoring-w-pracy"
+ },
+ {
+  "id": 782,
+  "q": "Ile musi mieć przejście między maszynami?",
+  "zrodlo": "faq",
+  "narzedzie": "drogi-i-przejscia"
+ },
+ {
+  "id": 783,
+  "q": "Co kładzie się na najniższych półkach regału?",
+  "zrodlo": "faq",
+  "narzedzie": "skladowanie-w-magazynie"
+ },
+ {
+  "id": 784,
+  "q": "Jak wygląda kontrola ZUS na L4?",
+  "zrodlo": "faq",
+  "narzedzie": "co-wolno-na-l4"
+ },
+ {
+  "id": 785,
+  "q": "Ile świadczeń z funduszu socjalnego jest bez podatku i ZUS?",
+  "zrodlo": "faq",
+  "narzedzie": "fundusz-socjalny"
+ },
+ {
+  "id": 786,
+  "q": "Ile przerwy przy 12 godzinach pracy?",
+  "zrodlo": "faq",
+  "narzedzie": "przerwy-w-pracy"
+ }
+]
