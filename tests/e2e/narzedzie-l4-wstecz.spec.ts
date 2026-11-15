@@ -29,7 +29,7 @@ test('3 dni wstecz: tak; zawiadomienie w drugim dniu nieobecności, który miną
 test('4 dni wstecz: dzień bez zwolnienia; psychiatra: wyjątek z § 7 ust. 4', async ({ page }) => {
   await page.getByLabel('Nie pracujesz od').fill('2026-11-09');
   await expect(page.locator('[data-w="werdykt"]')).toHaveText('Nie, tak daleko L4 nie sięga');
-  await expect(page.locator('[data-w="opis"]')).toContainText(/\(1\sdzień\)\szostanie\sbez\szwolnienia/);
+  await expect(page.locator('[data-w="opis"]')).toContainText(/Dzień\s9\slistopada\s2026\sr\.\szostanie\sbez\szwolnienia/);
   await page.getByLabel('Lekarz', { exact: true }).selectOption('psychiatra');
   await expect(page.locator('[data-w="werdykt"]')).toHaveText('Tylko w jednej sytuacji');
   await expect(page.locator('[data-w="opis"]')).toContainText(/§\s7\sust\.\s4/);
