@@ -226,8 +226,8 @@ export const ZDANIE_ART_115: Record<RodzajTerminu, string> = {
  * w dniu „Zdąż do” (albo według art. 115 KC później), a linijka mówi tylko, jak go realnie dotrzymać.
  * - `pracodawca`: pismo musi dojść do pracodawcy (art. 61 § 1 KC przez art. 300 Kp; nadanie na poczcie nie wystarcza:
  *   SR Szczecin-Centrum IX P 762/20, SO w Łodzi VII Pa 90/16), a w dzień wolny biuro zwykle jest nieczynne, więc ostatni
- *   dzień roboczy przed tą datą (pon.–pt. bez świąt), nazwany wprost; grafiku zakładu nie znamy, stąd „chyba że zakład
- *   przyjmuje pisma także tego dnia” (przepisu o przyjmowaniu pism w sobotę brak).
+ *   dzień roboczy przed tą datą (pon.–pt. bez świąt), nazwany wprost, jako rada „bezpieczniej”, a nie termin; grafiku
+ *   zakładu nie znamy, stąd „jeśli zakład nie przyjmuje pism tego dnia” (przepisu o przyjmowaniu pism w sobotę brak).
  * - `sad`: oddanie pisma w placówce operatora świadczącego pocztowe usługi powszechne (operator wyznaczony z art. 3 pkt 13
  *   Prawa pocztowego, na lata 2026–2035 Poczta Polska) jest równoznaczne z wniesieniem do sądu (art. 165 § 2 KPC), także
  *   w dzień wolny, jeśli placówka jest czynna; liczy się dowód nadania, a kurier tego skutku nie ma.
@@ -235,7 +235,7 @@ export const ZDANIE_ART_115: Record<RodzajTerminu, string> = {
  *   VI ACa 1552/13, V ACa 1254/17), z ostrzeżeniem z konwencji: przesunięcie z art. 115 KC jest przy przedawnieniu wątpliwe.
  * - `odwolanie-zus`: odwołanie od decyzji ZUS jest pismem procesowym, wnosi się je do oddziału, który wydał decyzję
  *   (art. 477⁹ § 1 KPC, art. 83 ust. 5 ustawy o systemie ubezpieczeń społecznych); sądy liczą termin od dnia nadania
- *   (SA w Gdańsku III AUz 11/18, SO w Gdańsku VII U 2743/12).
+ *   (sądy uznają dzień nadania za dzień wniesienia: SA w Gdańsku III AUz 11/18, SO w Gdańsku VII U 2743/12).
  * - `zastrzezenia-zus` (art. 68e ust. 4 ustawy zasiłkowej) i `orzeczenie-lekarskie` (§ 5 ust. 3 rozporządzenia o badaniach):
  *   przepisy nie mówią, czy nadanie na poczcie zachowuje termin, więc jak przy piśmie do pracodawcy: ma dotrzeć.
  * Sobota przed 1.01.2017 r. też dostaje linijkę: art. 115 KC jej wtedy nie przesuwał, ale biuro i tak bywa nieczynne.
@@ -244,44 +244,57 @@ export const ZDANIE_ART_115: Record<RodzajTerminu, string> = {
  * ten dzień był, i radzi złożyć pismo jak najszybciej.
  * Ten sam tekst w HTML ze strony i w skrypcie przeglądarki (skrypt przepuszcza go jeszcze przez typografia()).
  */
-export type RodzajLinijki = RodzajTerminu | 'odwolanie-zus' | 'zastrzezenia-zus' | 'orzeczenie-lekarskie';
+export type RodzajLinijki = RodzajTerminu | 'odmowa' | 'odwolanie-zus' | 'zastrzezenia-zus' | 'orzeczenie-lekarskie';
 
-/** Pisma, które muszą dotrzeć do adresata: co złożyć, gdzie i dlaczego nie wystarcza nadanie. */
-const DOTARCIE: Record<'pracodawca' | 'zastrzezenia-zus' | 'orzeczenie-lekarskie', { pismo: string; gdzie: string; bo: string }> = {
+type Dotarcie = 'pracodawca' | 'odmowa' | 'zastrzezenia-zus' | 'orzeczenie-lekarskie';
+/**
+ * Pisma, które muszą dotrzeć do adresata: warunek („gdy adresat tego dnia nie przyjmuje pism”; weryfikacja prawna P-2 i P-6:
+ * art. 61 § 1 KC wymaga tylko dojścia, a dnia roboczego nie wymaga żaden przepis), co złożyć i dlaczego nie wystarcza nadanie.
+ * Odmowa z art. 42 § 3 Kp to oświadczenie bez wymaganej formy (P-8), stąd „najlepiej na piśmie”.
+ */
+const DOTARCIE: Record<Dotarcie, { gdy: string; co: string; bo: string }> = {
   pracodawca: {
-    pismo: 'Pismo do pracodawcy',
-    gdzie: '',
+    gdy: 'Jeśli zakład nie przyjmuje pism tego dnia',
+    co: 'pismo do pracodawcy',
     bo: 'liczy się dzień, w którym pismo do niego dotrze, a nie dzień nadania (art. 61 § 1 Kodeksu cywilnego)',
   },
+  odmowa: {
+    gdy: 'Jeśli zakład nie przyjmuje pism tego dnia',
+    co: 'odmowę (najlepiej na piśmie)',
+    bo: 'liczy się dzień, w którym odmowa dotrze do pracodawcy, a nie dzień nadania (art. 61 § 1 Kodeksu cywilnego)',
+  },
   'zastrzezenia-zus': {
-    pismo: 'Zastrzeżenia',
-    gdzie: '',
-    bo: 'ustawa nie mówi, czy wystarczy nadanie na poczcie, więc bezpieczniej, żeby w tym dniu dotarły',
+    gdy: 'Jeśli tego dnia nie da się ich złożyć osobiście',
+    co: 'zastrzeżenia',
+    bo: 'ustawa nie mówi, czy wystarczy nadanie na poczcie, więc bezpieczniej, żeby dotarły w terminie',
   },
   'orzeczenie-lekarskie': {
-    pismo: 'Odwołanie',
-    gdzie: ' w przychodni medycyny pracy, która wydała orzeczenie,',
+    gdy: 'Jeśli jednostka medycyny pracy, w której wydano orzeczenie, nie jest czynna tego dnia',
+    co: 'odwołanie',
     bo: 'rozporządzenie nie mówi, że wystarczy nadanie na poczcie',
   },
 };
+
+const DZIEN_TYGODNIA = ['niedziela', 'poniedziałek', 'wtorek', 'środa', 'czwartek', 'piątek', 'sobota'];
 
 export function linijkaDniaWolnego(t: Pick<TerminPracownika, 'zdazDo'>, rodzaj: RodzajLinijki, dzis?: string): string {
   const powod = dzienWolny(t.zdazDo);
   if (!powod || (dzis !== undefined && dzis > t.zdazDo)) return '';
   const dzien = `To ${powod === 'sobota' || powod === 'niedziela' ? powod : JEDNORAZOWE_WOLNE[t.zdazDo] ? 'dzień wolny od pracy' : `dzień wolny od pracy (${powod})`}.`;
-  if (rodzaj === 'pracodawca' || rodzaj === 'zastrzezenia-zus' || rodzaj === 'orzeczenie-lekarskie') {
+  if (rodzaj === 'pracodawca' || rodzaj === 'odmowa' || rodzaj === 'zastrzezenia-zus' || rodzaj === 'orzeczenie-lekarskie') {
     const d = DOTARCIE[rodzaj];
     const roboczy = ostatniDzienRoboczyPrzed(t.zdazDo);
-    const wyjatek = rodzaj === 'pracodawca' ? ', chyba że zakład przyjmuje pisma także tego dnia' : '';
     // Dzień roboczy już minął (dziś to dzień wolny przed „Zdąż do” albo ten dzień): ta sama zasada, bez rady na przeszłość.
-    if (dzis !== undefined && dzis > roboczy)
-      return `${dzien} Ostatni dzień roboczy przed tą datą był ${wDniu(roboczy)} ${d.pismo}${d.gdzie} złóż jak najszybciej, najlepiej osobiście: ${d.bo}.`;
-    return `${dzien} ${d.pismo}${d.gdzie} złóż najpóźniej w ostatnim dniu roboczym przed tą datą, czyli ${wDniu(roboczy)}${wyjatek}: ${d.bo}.`;
+    if (dzis !== undefined && dzis > roboczy) {
+      const nazwa = DZIEN_TYGODNIA[new Date(`${roboczy}T00:00:00Z`).getUTCDay()];
+      return `${dzien} Ostatnim dniem roboczym przed tą datą był${nazwa === 'środa' ? 'a' : ''} ${nazwa} ${dataPoPolsku(roboczy)} Złóż ${d.co} jak najszybciej, najlepiej osobiście: ${d.bo}.`;
+    }
+    return `${dzien} ${d.gdy}, bezpieczniej złóż ${d.co} najpóźniej w ostatnim dniu roboczym przed tą datą, czyli ${wDniu(roboczy)}: ${d.bo}.`;
   }
   const pismo = rodzaj === 'przedawnienie' ? 'pozew' : rodzaj === 'odwolanie-zus' ? 'odwołanie' : 'pismo';
   const dokad =
     rodzaj === 'odwolanie-zus'
-      ? ', zaadresowane do oddziału ZUS, który wydał decyzję: sądy liczą wtedy termin od dnia nadania'
+      ? ', zaadresowane do oddziału ZUS, który wydał decyzję: sądy uznają wtedy dzień nadania za dzień wniesienia odwołania'
       : `: nadanie jest równoznaczne z wniesieniem ${pismo === 'pozew' ? 'pozwu' : 'pisma'} do sądu`;
   const poczta = `Tego dnia możesz jeszcze nadać ${pismo} w placówce Poczty Polskiej (operatora wyznaczonego), jeśli jest czynna${dokad} (art. 165 § 2 Kodeksu postępowania cywilnego). Zachowaj potwierdzenie nadania; list u kuriera tego skutku nie ma.`;
   if (rodzaj === 'przedawnienie')

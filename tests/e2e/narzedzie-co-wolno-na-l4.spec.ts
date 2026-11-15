@@ -100,7 +100,7 @@ test('zastrzeżenia w sobotę i odwołanie w niedzielę: linijki praktyczne pod 
   await page.getByLabel('Kto kontroluje').selectOption('pracodawca');
   await page.getByLabel('Dzień czynności').fill('2026-11-12');
   await page.getByLabel('Otrzymanie protokołu').fill('2026-11-14');
-  await expect(page.locator('[data-w="zastrzezenia-praktycznie"]')).toHaveText(/^To\ssobota\.\sZastrzeżenia\szłóż\snajpóźniej\sw\sostatnim\sdniu\sroboczym\sprzed\stą\sdatą,\sczyli\sw\spiątek\s20\slistopada\s2026\sr\.:\sustawa\snie\smówi,\sczy\swystarczy\snadanie\sna\spoczcie/);
+  await expect(page.locator('[data-w="zastrzezenia-praktycznie"]')).toHaveText(/^To\ssobota\.\sJeśli\stego\sdnia\snie\sda\ssię\sich\szłożyć\sosobiście,\sbezpieczniej\szłóż\szastrzeżenia\snajpóźniej\sw\sostatnim\sdniu\sroboczym\sprzed\stą\sdatą,\sczyli\sw\spiątek\s20\slistopada\s2026\sr\.:\sustawa\snie\smówi,\sczy\swystarczy\snadanie\sna\spoczcie/);
   await page.getByLabel('Doręczenie decyzji ZUS').fill('2026-11-13');
   await expect(page.locator('[data-w="odwolanie-praktycznie"]')).toHaveText(/^To\sniedziela\.\sTego\sdnia\smożesz\sjeszcze\snadać\sodwołanie\sw\splacówce\sPoczty\sPolskiej\s\(operatora\swyznaczonego\),\sjeśli\sjest\sczynna,\szaadresowane\sdo\soddziału\sZUS/);
   await page.getByLabel('Doręczenie decyzji ZUS').fill('2026-11-16');

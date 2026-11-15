@@ -440,7 +440,7 @@ describe('linijkaDniaWolnego i ostatni dzień roboczy', () => {
     expect(dzienRoboczy(data)).toBe(false);
     expect(ostatniDzienRoboczyPrzed(data)).toBe(roboczy);
     expect(sp(wDniu(roboczy))).toBe(`${dzien} ${sp(dataPoPolsku(roboczy))}`);
-    expect(sp(linijkaDniaWolnego({ zdazDo: data }, 'pracodawca'))).toContain(`czyli ${dzien} ${sp(dataPoPolsku(roboczy))}, chyba że`);
+    expect(sp(linijkaDniaWolnego({ zdazDo: data }, 'pracodawca'))).toContain(`czyli ${dzien} ${sp(dataPoPolsku(roboczy))}: liczy się dzień`);
   });
   it('dzień roboczy: bez linijki (Wigilia przed 2025 r., zwykły piątek)', () => {
     for (const d of ['2024-12-24', '2026-12-11', '2026-12-23', '2016-12-30'])
@@ -450,7 +450,7 @@ describe('linijkaDniaWolnego i ostatni dzień roboczy', () => {
   it('sobota przed 2017 r.: art. 115 KC jej nie przesuwa, ale linijka jest (biuro i tak bywa nieczynne)', () => {
     expect(terminPracownika('2016-12-31').rozne).toBe(false);
     expect(sp(linijkaDniaWolnego(terminPracownika('2016-12-31'), 'pracodawca'))).toBe(
-      'To sobota. Pismo do pracodawcy złóż najpóźniej w ostatnim dniu roboczym przed tą datą, czyli w piątek 30 grudnia 2016 r., chyba że zakład przyjmuje pisma także tego dnia: liczy się dzień, w którym pismo do niego dotrze, a nie dzień nadania (art. 61 § 1 Kodeksu cywilnego).',
+      'To sobota. Jeśli zakład nie przyjmuje pism tego dnia, bezpieczniej złóż pismo do pracodawcy najpóźniej w ostatnim dniu roboczym przed tą datą, czyli w piątek 30 grudnia 2016 r.: liczy się dzień, w którym pismo do niego dotrze, a nie dzień nadania (art. 61 § 1 Kodeksu cywilnego).',
     );
     expect(terminPracownika('2017-01-07')).toMatchObject({ rozne: true, wedlugArt115: '2017-01-09' });
   });
@@ -466,10 +466,10 @@ describe('linijkaDniaWolnego i ostatni dzień roboczy', () => {
   });
   it('z dniem dzisiejszym: do dnia roboczego rada, potem przypomnienie, po „Zdąż do” nic', () => {
     const t = { zdazDo: '2026-12-13' };
-    expect(sp(linijkaDniaWolnego(t, 'pracodawca', '2026-12-11'))).toContain('złóż najpóźniej w ostatnim dniu roboczym przed tą datą, czyli w piątek 11 grudnia 2026 r.,');
+    expect(sp(linijkaDniaWolnego(t, 'pracodawca', '2026-12-11'))).toContain('bezpieczniej złóż pismo do pracodawcy najpóźniej w ostatnim dniu roboczym przed tą datą, czyli w piątek 11 grudnia 2026 r.:');
     for (const dzis of ['2026-12-12', '2026-12-13'])
       expect(sp(linijkaDniaWolnego(t, 'pracodawca', dzis))).toBe(
-        'To niedziela. Ostatni dzień roboczy przed tą datą był w piątek 11 grudnia 2026 r. Pismo do pracodawcy złóż jak najszybciej, najlepiej osobiście: liczy się dzień, w którym pismo do niego dotrze, a nie dzień nadania (art. 61 § 1 Kodeksu cywilnego).',
+        'To niedziela. Ostatnim dniem roboczym przed tą datą był piątek 11 grudnia 2026 r. Złóż pismo do pracodawcy jak najszybciej, najlepiej osobiście: liczy się dzień, w którym pismo do niego dotrze, a nie dzień nadania (art. 61 § 1 Kodeksu cywilnego).',
       );
     expect(linijkaDniaWolnego(t, 'sad', '2026-12-13')).toMatch(/^To niedziela\. Tego dnia możesz jeszcze nadać pismo/);
     for (const r of ['pracodawca', 'sad', 'przedawnienie'] as const) expect(linijkaDniaWolnego(t, r, '2026-12-14')).toBe('');

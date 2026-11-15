@@ -1,0 +1,104 @@
+{
+  "znaleziska": [
+    {
+      "id": "P-1",
+      "waga": "ryzyko",
+      "plik": "src/lib/narzedzia/terminy.ts (linijkaDniaWolnego, rodzaj 'odwolanie-zus'); co-wolno-na-l4.ts",
+      "fragment": "zaadresowane do oddziału ZUS, który wydał decyzję: sądy liczą wtedy termin od dnia nadania (art. 165 § 2 Kodeksu postępowania cywilnego)",
+      "problem": "Zdanie mówi coś innego niż orzeczenia. Sądy nie liczą terminu od dnia nadania (termin biegnie od doręczenia decyzji, art. 477⁹ § 1 KPC). Uznają za to dzień nadania w placówce operatora za dzień wniesienia odwołania. Czytelnik może zrozumieć, że nadanie otwiera nowy termin. Art. 165 § 2 KPC mówi też wprost tylko o „wniesieniu do sądu”, a do odwołania składanego przez organ rentowy stosują go dopiero sądy. Z obecnego brzmienia wynika, że robi to sam przepis.",
+      "zrodlo": "Art. 477⁹ § 1 KPC (t.j. Dz.U. 2026 poz. 468): „Odwołania od decyzji organów rentowych […] wnosi się na piśmie do organu […], który wydał decyzję […], w terminie miesiąca od dnia doręczenia decyzji”. Art. 83 ust. 5 usus (t.j. 2026 poz. 1474): „Odwołanie wnosi się na piśmie do jednostki organizacyjnej Zakładu, która wydała decyzję”. SA w Gdańsku, III AUz 11/18, 24.01.2018: „odwołanie wniesione […] w dniu 9 stycznia 2015 r. (data nadania w polskiej placówce pocztowej operatora wyznaczonego) jest odwołaniem złożonym w terminie”. SO w Gdańsku, VII U 2743/12: „wniosła w dniu 17 lutego 2012 r. (data stempla pocztowego […] – zgodnie z art. 165 § 2 k.p.c.)”.",
+      "propozycja": "„…zaadresowane do oddziału ZUS, który wydał decyzję: sądy uznają wtedy dzień nadania za dzień wniesienia odwołania (stosują art. 165 § 2 Kodeksu postępowania cywilnego)”."
+    },
+    {
+      "id": "P-2",
+      "waga": "ryzyko",
+      "plik": "src/lib/narzedzia/terminy.ts (DOTARCIE.pracodawca); termin-odwolania.ts, kara-porzadkowa.ts, swiadectwo-pracy.ts, wypowiedzenie-zmieniajace.ts",
+      "fragment": "Pismo do pracodawcy złóż najpóźniej w ostatnim dniu roboczym przed tą datą, czyli w piątek 11 grudnia 2026 r., chyba że zakład przyjmuje pisma także tego dnia",
+      "problem": "„Najpóźniej” podaje piątek jak termin z przepisu. Na ekranie widać wtedy trzy daty: „Zdąż do” (sobota), piątek z linijki i „według art. 115 KC” (poniedziałek). Komentarz w kodzie zapowiada, że trzeciej daty nie będzie. Przepis wymaga tylko, żeby pismo doszło do pracodawcy do końca terminu. O dniu roboczym przepis nic nie mówi: pismo może dojść w sobotę albo w niedzielę, np. wręczone przełożonemu na zmianie. Zastrzeżenie „chyba że…” łagodzi problem, ale przy „najpóźniej” to nadal rada mocniejsza niż przepis.",
+      "zrodlo": "Art. 61 § 1 KC (t.j. 2026 poz. 795): „Oświadczenie woli, które ma być złożone innej osobie, jest złożone z chwilą, gdy doszło do niej w taki sposób, że mogła zapoznać się z jego treścią”. Art. 300 Kp. SR Szczecin-Centrum, IX P 762/20 (przy sprzeciwie od kary): „zastosowanie ma art. 61 kc. […] Dopiero z tą datą pracodawca miał możliwość zapoznania się z treścią pisma”.",
+      "propozycja": "„To sobota. Jeśli zakład nie przyjmuje pism tego dnia, bezpieczniej złożyć pismo do pracodawcy w ostatnim dniu roboczym przed tą datą, czyli w piątek 11 grudnia 2026 r.: liczy się dzień, w którym pismo do niego dotrze, a nie dzień nadania (art. 61 § 1 Kodeksu cywilnego).”"
+    },
+    {
+      "id": "P-3",
+      "waga": "drobne",
+      "plik": "src/lib/narzedzia/terminy.ts (linijka 'przedawnienie'); przedawnienie.ts, zalegly-urlop.ts, swiadectwo-pracy.ts",
+      "fragment": "Nie odkładaj pozwu na następny dzień roboczy: przy przedawnieniu przesunięcie z art. 115 Kodeksu cywilnego jest wątpliwe.",
+      "problem": "Ostrzeżenie jest trafne i bezpieczne. „Wątpliwe” to jednak za słabo: według źródeł wtórnych uchwała 7 sędziów SN z 22.05.2024 r., III CZP 21/23, przesądza, że art. 115 KC do upływu przedawnienia się nie stosuje. Komentarz nad ZDANIE_ART_115 zostawia tę uchwałę „do sprawdzenia ręcznie”. Uchwały nie przeczytałem w źródle (sn.pl blokuje automaty, SAOS w przerwie). Druga część linijki („nadanie jest równoznaczne z wniesieniem pozwu do sądu”) przy przerwaniu przedawnienia ma oparcie w orzecznictwie apelacyjnym (P-potw.).",
+      "zrodlo": "Art. 115 KC: „Jeżeli koniec terminu do wykonania czynności przypada na dzień uznany ustawowo za wolny od pracy lub na sobotę, termin upływa następnego dnia […]”. Art. 291 § 1 Kp: „Roszczenia ze stosunku pracy ulegają przedawnieniu z upływem 3 lat od dnia, w którym roszczenie stało się wymagalne”. III CZP 21/23 znam tylko ze streszczeń (prawo.pl: „Przedawnienie w weekend nie przedłuża się na dzień wolny od pracy”; legeartis.org).",
+      "propozycja": "Gdy Patryk albo redakcja przeczyta III CZP 21/23 na sn.pl: „…przy przedawnieniu Sąd Najwyższy nie stosuje przesunięcia z art. 115 Kodeksu cywilnego (uchwała 7 sędziów z 22 maja 2024 r., III CZP 21/23)”. Do tego czasu brzmienie może zostać."
+    },
+    {
+      "id": "P-4",
+      "waga": "drobne",
+      "plik": "src/lib/narzedzia/terminy.ts (linijka: DOTARCIE i rodzaj 'sad')",
+      "fragment": "placówce Poczty Polskiej (operatora wyznaczonego)",
+      "problem": "Art. 165 § 2 KPC w t.j. 2026 nie mówi o „operatorze wyznaczonym”, tylko o „operatorze świadczącym pocztowe usługi powszechne”. Wskazanie Poczty Polskiej jest bezpieczne i aktualne: decyzja Prezesa UKE z 28.11.2025 r. czyni ją operatorem wyznaczonym na lata 2026–2035. Strona odwolanie-do-sadu-pracy w FAQ i w „Jak liczymy” używa jednak słów ustawy. Sprzeczności nie ma, różni się tylko słownictwo.",
+      "zrodlo": "Art. 165 § 2 KPC: „Oddanie pisma procesowego w polskiej placówce operatora świadczącego pocztowe usługi powszechne na terytorium Rzeczypospolitej Polskiej […] jest równoznaczne z wniesieniem tego pisma do sądu”. Art. 3 pkt 13 Prawa pocztowego (t.j. 2026 poz. 558): „operator wyznaczony – operatora pocztowego obowiązanego do świadczenia usług powszechnych”.",
+      "propozycja": "Zostawić albo ujednolicić: „w placówce Poczty Polskiej (operatora świadczącego pocztowe usługi powszechne)”."
+    },
+    {
+      "id": "P-5",
+      "waga": "drobne",
+      "plik": "src/lib/narzedzia/kara-porzadkowa.ts (opisKary)",
+      "fragment": "praktycznie: linijkaDniaWolnego(r.sprzeciw, 'pracodawca')",
+      "problem": "Kara porządkowa jako jedyne narzędzie wywołuje linijkę bez `dzis`. Gdy dzień sprzeciwu dawno minął, strona i tak radzi „złóż najpóźniej … w piątek X” (data z przeszłości). W pozostałych narzędziach linijka po dniu „Zdąż do” znika. Narzędzie służy też do oceny kar z przeszłości, więc taka rada czyta się jak aktualne zalecenie.",
+      "zrodlo": "Art. 112 § 1 Kp: „pracownik może w ciągu 7 dni od dnia zawiadomienia go o ukaraniu wnieść sprzeciw”.",
+      "propozycja": "Przekazać do opisKary dzień dzisiejszy (dzisWPolsce() w skrypcie strony) i wywołać linijkaDniaWolnego(r.sprzeciw, 'pracodawca', dzis). Przy kodzie zostawić komentarz, dlaczego nie."
+    },
+    {
+      "id": "P-6",
+      "waga": "drobne",
+      "plik": "src/lib/narzedzia/terminy.ts (DOTARCIE 'orzeczenie-lekarskie' i 'zastrzezenia-zus')",
+      "fragment": "Odwołanie w przychodni medycyny pracy, która wydała orzeczenie, złóż najpóźniej w ostatnim dniu roboczym…",
+      "problem": "Miejsce złożenia zgadza się ze stanem po nowelizacji 2026 poz. 456: odwołanie wnosi się za pośrednictwem jednostki służby medycyny pracy. Linijka nazywa ją jednak inaczej niż FAQ tej samej strony („za pośrednictwem jednostki medycyny pracy, w której wydano orzeczenie”). Brakuje też zastrzeżenia o pracującej sobocie, które linijka dla pracodawcy ma: przychodnie medycyny pracy często są czynne w soboty. To samo dotyczy zastrzeżeń, gdy kontrolę robi płatnik (art. 68 ust. 1a ustawy zasiłkowej). W wariancie spóźnionym zdanie „więc bezpieczniej, żeby w tym dniu dotarły” nie mówi, o który dzień chodzi.",
+      "zrodlo": "§ 5 ust. 1 i 3 rozporządzenia (t.j. 2023 poz. 607, zm. 2026 poz. 456, § 1 pkt 2 lit. a): „Od orzeczenia lekarskiego […] przysługuje odwołanie wnoszone na piśmie” oraz „Odwołanie wraz z jego uzasadnieniem wnosi się w terminie 7 dni od dnia otrzymania orzeczenia lekarskiego, za pośrednictwem podstawowej jednostki służby medycyny pracy, w której orzeczenie zostało wydane”. Art. 68e ust. 4 ustawy zasiłkowej (t.j. 2026 poz. 854): „Osoba kontrolowana ma prawo w terminie 7 dni od dnia otrzymania protokołu kontroli lub aneksu do protokołu kontroli złożyć zastrzeżenia […]”.",
+      "propozycja": "„Odwołanie złóż w jednostce medycyny pracy, w której wydano orzeczenie, najpóźniej…, chyba że jest czynna także tego dnia”. W wariancie spóźnionym: „…więc bezpieczniej, żeby dotarły jak najszybciej”."
+    },
+    {
+      "id": "P-7",
+      "waga": "drobne",
+      "plik": "src/lib/narzedzia/terminy.ts (wariant po dniu roboczym)",
+      "fragment": "Ostatni dzień roboczy przed tą datą był w piątek 11 grudnia 2026 r.",
+      "problem": "Zdanie jest niezgrabne (dzień „był w piątek”). Prawnie jest bez zarzutu.",
+      "zrodlo": "—",
+      "propozycja": "„Ostatnim dniem roboczym przed tą datą był piątek 11 grudnia 2026 r.” (potrzebna forma mianownika zamiast wDniu)."
+    },
+    {
+      "id": "P-8",
+      "waga": "drobne",
+      "plik": "src/lib/narzedzia/wypowiedzenie-zmieniajace.ts (odmowaPraktycznie)",
+      "fragment": "Pismo do pracodawcy złóż najpóźniej…",
+      "problem": "Art. 42 § 3 Kp mówi o „oświadczeniu o odmowie” i nie wymaga formy pisemnej. Słowo „pismo” sugeruje taki wymóg. Pismo jest praktycznie lepsze jako dowód, więc to tylko sprawa precyzji.",
+      "zrodlo": "Art. 42 § 3 Kp (t.j. 2026 poz. 1245): „Jeżeli pracownik przed upływem połowy okresu wypowiedzenia nie złoży oświadczenia o odmowie przyjęcia zaproponowanych warunków, uważa się, że wyraził zgodę […]. W razie braku takiego pouczenia, pracownik może do końca okresu wypowiedzenia złożyć oświadczenie o odmowie”.",
+      "propozycja": "Dla odmowy osobny `pismo`: „Odmowę (najlepiej na piśmie) złóż…”."
+    },
+    {
+      "id": "P-9",
+      "waga": "drobne",
+      "plik": "src/pages/narzedzia/swiadectwo-pracy.astro",
+      "fragment": "glowny-praktycznie oraz `${p.klucz}-praktycznie` w pozycji",
+      "problem": "Ta sama linijka wyświetla się dwa razy: pod głównym terminem i w wierszu pozycji (np. wniosek o sprostowanie). To nie jest błąd prawny, ale tekst się powtarza.",
+      "zrodlo": "—",
+      "propozycja": "Pokazywać linijkę w pozycji tylko wtedy, gdy ta pozycja nie jest terminem głównym."
+    }
+  ],
+  "potwierdzone": [
+    "Art. 165 § 2 KPC (t.j. 2026 poz. 468; żadna z 5 nowelizacji po t.j., czyli 2026 poz. 473, 830, 1003, 1046, 1296, nie zmienia art. 165 ani 477⁹): oddanie pisma w placówce operatora usług powszechnych „jest równoznaczne z wniesieniem tego pisma do sądu”. Linijka 'sad' poprawnie stosuje go do odwołania od wypowiedzenia i żądań z art. 264 § 1–3 Kp, do pozwu o uchylenie kary (art. 112 § 2) oraz do żądania sprostowania świadectwa w sądzie pracy (art. 97 § 2¹). Pozew, odwołanie i żądanie do sądu pracy to pisma procesowe.",
+    "Kurier nie daje skutku z art. 165 § 2 (przepis obejmuje tylko operatora świadczącego pocztowe usługi powszechne). Poczta Polska jest operatorem wyznaczonym na lata 2026–2035 (decyzja Prezesa UKE z 28.11.2025 r. według komunikatów poczta-polska.pl i gov.pl; sama decyzja na uke.gov.pl jest za blokadą Incapsula).",
+    "Pozew nadany na poczcie przerywa przedawnienie z dniem nadania. SA w Warszawie, VI ACa 1552/13: „Pozew wywołuje skutki prawne od chwili wniesienia, a więc zgodnie z art. 165 § 2 k.p.c. od momentu […] oddania w polskiej placówce pocztowej”. SA w Warszawie, V ACa 1254/17: „bieg terminu przedawnienia został przerwany […] z dniem 28 czerwca 2016 r. (data nadania […] co w związku z treścią art. 165 § 2 k.p.c. jest równoznaczny z wniesieniem tego pisma do sądu)”. To sprawy z art. 123 KC; art. 295 § 1 pkt 1 Kp ma tę samą konstrukcję. Treść sprawdzona na żywo w orzeczenia.ms.gov.pl.",
+    "Pismo do pracodawcy musi do niego dojść: art. 61 § 1 KC przez art. 300 Kp; SR Szczecin-Centrum, IX P 762/20 (sprzeciw od kary, pełny tekst sprawdzony na żywo). Rodzaj 'pracodawca' jest dobrze przypisany: sprzeciw (art. 112 § 1), wniosek o sprostowanie (art. 97 § 2¹), odmowa z art. 42 § 3 z pouczeniem i bez niego.",
+    "Odwołanie od decyzji ZUS wnosi się do jednostki ZUS, która wydała decyzję (art. 477⁹ § 1 KPC, art. 83 ust. 2 i 5 usus). Sądy liczą dzień nadania jako dzień wniesienia: III AUz 11/18 i VII U 2743/12, oba sprawdzone na żywo. Brzmienie z „liczą termin” poprawić (P-1).",
+    "Zastrzeżenia (art. 68e ust. 4–5 ustawy zasiłkowej, t.j. 2026 poz. 854): ustawa rzeczywiście nie mówi, czy wystarczy nadanie, i nie odsyła ogólnie do KPA (w ustawie zasiłkowej jest tylko odesłanie przy konkretnych decyzjach). Ostrożne „ma dotrzeć” jest uczciwe. Przy kontroli płatnika (art. 68 ust. 1a) zastrzeżenia też rozpatruje ZUS (ust. 5).",
+    "Odwołanie od orzeczenia lekarskiego: forma pisemna, 7 dni, wnoszone za pośrednictwem jednostki medycyny pracy (§ 5 ust. 1 i 3 po zm. 2026 poz. 456). Rozporządzenie nie przewiduje skutku nadania. Nowelizacja 2026 poz. 726 dotyczy ołowiu (§ 13a) i § 5 nie zmienia.",
+    "Lista dni wolnych zgadza się z art. 1 ustawy o dniach wolnych od pracy (t.j. 2025 poz. 296, bez nowelizacji po t.j.): Wigilia od 1.02.2025 r. (WIGILIA_OD = 2025), 6 stycznia od 2011 r. (Dz.U. 2010 nr 224 poz. 1459, TRZECH_KROLI_OD = 2011), jednorazowo 12.11.2018 r. „Dzień roboczy = pon.–pt. bez dni ustawowo wolnych” to rozsądna konwencja praktyczna, a nie definicja z przepisu, i linijka jej tak nie przedstawia. Testy 398/398 przechodzą, daty ostatniego dnia roboczego w tabeli testów sprawdziłem ręcznie na wybranych przykładach (24–27.12.2026, 1–2.01.2027, Wielkanoc 2027).",
+    "Brak sprzeczności z „Jak liczymy” i FAQ: odwolanie-do-sadu-pracy (FAQ o nadaniu na poczcie i zdanie, że art. 165 § 2 dotyczy tylko pism do sądu), kara-porzadkowa („nadanie na poczcie nie wystarcza”), przedawnienie-wynagrodzenia i zalegly-urlop („przesunięcie jest wątpliwe… pierwsza data”), wypowiedzenie-zmieniajace (bez przesunięcia przy odmowie bez pouczenia), badania-lekarskie (za pośrednictwem jednostki medycyny pracy), co-wolno-na-l4.",
+    "Forma neutralna płciowo (tryb rozkazujący, 2. osoba) i brak porad ponad przepis poza P-2 i P-8."
+  ],
+  "nie_sprawdzono": [
+    "Uchwała SN III CZP 21/23 z 22.05.2024 r. w pełnym tekście: sn.pl blokuje automaty, a SAOS był w przerwie technicznej (15.11.2026). Rozstrzygnięcie znam tylko ze streszczeń w wyszukiwarce.",
+    "SO w Łodzi, VII Pa 90/16, i VII Pa 323/13: nie pobrałem pełnych tekstów. Powołuje je ZDANIE_ART_115 i strona kary, ale sama linijka nie.",
+    "Treść decyzji Prezesa UKE z 28.11.2025 r. (uke.gov.pl za Incapsula). Opieram się na komunikatach Poczty Polskiej i gov.pl.",
+    "Dzień wolny ogłoszony na podstawie art. 1a ustawy o dniach wolnych (stan epidemii) nie jest w kalendarzu. Dziś to tylko przypadek teoretyczny.",
+    "Wygląd stron w przeglądarce (czytnik ekranu, telefon). Sprawdzałem tylko teksty z modułów (tsx) i testy jednostkowe."
+  ]
+}

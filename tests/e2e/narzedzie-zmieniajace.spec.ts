@@ -96,7 +96,7 @@ test('odmowa do niedzieli: złóż w piątek; odwołanie w niedzielę: placówka
   await page.getByLabel('Pracujesz u tego pracodawcy od').fill('2026-05-12');
   await page.getByLabel('Dzień doręczenia pisma').fill('2026-11-12');
   await expect(page.locator('[data-w="odmowa"]')).toHaveText(/^6\sgrudnia\s2026\sr\.$/);
-  await expect(page.locator('[data-w="odmowa-praktycznie"]')).toContainText(/czyli\sw\spiątek\s4\sgrudnia\s2026\sr\.,/);
+  await expect(page.locator('[data-w="odmowa-praktycznie"]')).toContainText(/czyli\sw\spiątek\s4\sgrudnia\s2026\sr\.:/);
   await expect(page.locator('[data-w="odwolanie-praktycznie"]')).toBeHidden();
   await page.getByLabel('Pracujesz u tego pracodawcy od').fill('2020-01-15');
   await page.getByLabel('Dzień doręczenia pisma').fill('2026-11-22');

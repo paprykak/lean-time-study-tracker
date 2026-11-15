@@ -85,7 +85,7 @@ test('sprostowanie do pracodawcy w sobotę 2 stycznia 2027 r.: złóż w czwarte
   await page.getByLabel('Sprawa', { exact: true }).selectOption('sprostowanie-wniosek');
   await page.locator('#o-data').fill('2026-12-19');
   await expect(page.locator('[data-w="koniec"]')).toHaveText(/^2\sstycznia\s2027\sr\.$/);
-  await expect(page.locator('[data-w="praktycznie"]')).toHaveText(/^To\ssobota\.\sPismo\sdo\spracodawcy\szłóż\snajpóźniej\sw\sostatnim\sdniu\sroboczym\sprzed\stą\sdatą,\sczyli\sw\sczwartek\s31\sgrudnia\s2026\sr\.,\schyba\sże\szakład\sprzyjmuje\spisma\stakże\stego\sdnia:\sliczy\ssię\sdzień,\sw\sktórym\spismo\sdo\sniego\sdotrze,\sa\snie\sdzień\snadania\s\(art\.\s61\s§\s1\sKodeksu\scywilnego\)\.$/);
+  await expect(page.locator('[data-w="praktycznie"]')).toHaveText(/^To\ssobota\.\sJeśli\szakład\snie\sprzyjmuje\spism\stego\sdnia,\sbezpieczniej\szłóż\spismo\sdo\spracodawcy\snajpóźniej\sw\sostatnim\sdniu\sroboczym\sprzed\stą\sdatą,\sczyli\sw\sczwartek\s31\sgrudnia\s2026\sr\.:\sliczy\ssię\sdzień,\sw\sktórym\spismo\sdo\sniego\sdotrze,\sa\snie\sdzień\snadania\s\(art\.\s61\s§\s1\sKodeksu\scywilnego\)\.$/);
 });
 
 test('dziś po dniu „Zdąż do” (25 grudnia 2026 r.): linijki już nie ma, status mówi o dniu z art. 115 KC', async ({ page }) => {

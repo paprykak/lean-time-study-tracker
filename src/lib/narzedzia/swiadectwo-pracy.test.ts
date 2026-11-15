@@ -168,7 +168,7 @@ describe('błędne dane', () => {
 describe('terminy3: terminy świadectwa w dzień wolny', () => {
   it('wniosek o sprostowanie do niedzieli 13 grudnia 2026 r.: w piątek 11 grudnia, linijka tylko pod najbliższym terminem', () => {
     const o = opisSwiadectwa(dane({ ustanie: '2026-11-27', otrzymanie: '2026-11-29' }), '2026-11-30');
-    expect(sp(o.glownyPraktycznie)).toContain('czyli w piątek 11 grudnia 2026 r.,');
+    expect(sp(o.glownyPraktycznie)).toContain('czyli w piątek 11 grudnia 2026 r.:');
     // K-2: ta sama linijka tylko pod najbliższym terminem, nie drugi raz w wierszu.
     expect(o.pozycje.find((p) => p.klucz === 'sprostowanie')!.praktycznie).toBe('');
   });

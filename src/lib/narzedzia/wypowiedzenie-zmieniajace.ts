@@ -159,7 +159,7 @@ export function opisZmieniajacego(r: WypowiedzenieZmieniajace, dzis: string): Op
     odmowa: dataPoPolsku(r.odmowa.zdazDo),
     odmowaArt115: r.odmowa.rozne ? dataPoPolsku(r.odmowa.wedlugArt115) : null,
     /** Linijki praktyczne pod datami w sobotę albo dzień wolny (pakiet „terminy3”), także przy odmowie bez pouczenia. */
-    odmowaPraktycznie: linijkaDniaWolnego(r.odmowa, 'pracodawca', dzis),
+    odmowaPraktycznie: linijkaDniaWolnego(r.odmowa, 'odmowa', dzis),
     odmowaZdanie: zdanieOdmowy && zdanieOdmowy.replace(ZDANIE_ART_115.pracodawca, ODMOWA_ART_115),
     status,
     statusKlasa,
