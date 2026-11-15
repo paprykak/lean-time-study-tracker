@@ -58,8 +58,8 @@ describe('koniec przedawnienia w sobotę albo dzień wolny (art. 115 KC)', () =>
     expect(o.status).toBe('Zostało: 4 dni');
     expect(sp(o.krotko)).toBe('14 listopada 2026 r. (według art. 115 KC: 16 listopada 2026 r.)');
     expect(sp(o.zDniami)).toBe('14 listopada 2026 r. (za 4 dni); według art. 115 KC: 16 listopada 2026 r.');
-    expect(opisPrzedawnienia(p, '2026-11-15').status).toBe('Pierwsza data minęła; według art. 115 KC zostało: 1 dzień');
-    expect(opisPrzedawnienia(p, '2026-11-16').status).toBe('Pierwsza data minęła; według art. 115 KC ostatni dzień to dziś');
+    expect(opisPrzedawnienia(p, '2026-11-15').status).toBe('Pierwsza data minęła; tylko gdy sąd przesunie koniec według art. 115 KC, zostało: 1 dzień');
+    expect(opisPrzedawnienia(p, '2026-11-16').status).toBe('Pierwsza data minęła; tylko gdy sąd przesunie koniec według art. 115 KC, ostatni dzień to dziś');
     expect(opisPrzedawnienia(p, '2026-11-18').status).toBe('Termin minął 2 dni temu');
     expect(opisPrzedawnienia(p, '2026-11-13').status).toBe('Zostało: 1 dzień');
     const bez = opisPrzedawnienia(przedawnienie('2023-11-10', '2026-11-10'), '2026-11-10');

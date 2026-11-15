@@ -49,7 +49,7 @@ test('koniec w sobotę 14 listopada 2026 r.: zdąż do i ostatni dzień według 
   await expect(page.locator('[data-w="najstarsza"]')).toHaveText(/^za\slistopad\s2023\sr\.$/);
   await expect(page.locator('[data-w="opis"]')).toHaveText(/zdąż\sdo\s14\slistopada\s2026\sr\.;\sostatni\sdzień\swedług\sart\.\s115\sKC:\s16\slistopada\s2026\sr\./);
   await expect(page.locator('[data-w="zdanie"]')).toBeVisible();
-  await expect(page.locator('[data-w="status"]')).toHaveText(/^Pierwsza\sdata\sminęła;\swedług\sart\.\s115\sKC\szostało:\s1\sdzień$/);
+  await expect(page.locator('[data-w="status"]')).toHaveText(/^Pierwsza\sdata\sminęła;\stylko\sgdy\ssąd\sprzesunie\skoniec\swedług\sart\.\s115\sKC,\szostało:\s1\sdzień$/);
   await page.getByLabel('Sprawdź na dzień').fill('2026-11-17');
   await expect(page.locator('[data-w="najstarsza"]')).toHaveText(/^za\sgrudzień\s2023\sr\.$/);
 });

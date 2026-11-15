@@ -162,11 +162,19 @@ export function zdanieArt115(t: TerminPracownika, rodzaj: RodzajTerminu): string
   return `${dzien}: gdy koniec terminu wypada w sobotę albo dzień ustawowo wolny od pracy, upływa on następnego dnia, który nie jest dniem wolnym ani sobotą (art. 115 Kodeksu cywilnego). ${ZDANIE_ART_115[rodzaj]}`;
 }
 
-/** Jak pewne jest przesunięcie w danym rodzaju terminu (orzecznictwo sprawdzone w SAOS, raporty/terminy/PRZEPISY.md). */
+/**
+ * Jak pewne jest przesunięcie w danym rodzaju terminu (raporty/terminy/PRZEPISY.md). API SAOS było w przerwie technicznej
+ * (2026-11-15), a sn.pl blokuje automaty, więc strony nie powołują się na orzeczenia Sądu Najwyższego; sygnatury to
+ * wyroki sądów pracy z Portalu Orzeczeń MS, sprawdzone w pełnym tekście uzasadnienia: SR w Jeleniej Górze, IV P 24/19
+ * (pozew z art. 264 Kp, koniec w sobotę i niedzielę), SR Szczecin-Centrum, IX P 280/20 (sprzeciw od kary, Poniedziałek
+ * Wielkanocny), SO w Łodzi, VII Pa 90/16 (do sprzeciwu nie stosuje się art. 165 § 2 KPC), SR dla Wrocławia-Śródmieścia,
+ * IV P 553/24 (dni wolne bez znaczenia dla upływu przedawnienia z art. 291 Kp) i SO Warszawa-Praga, VII P 41/22
+ * (przedawnienie z końcem w niedzielę przesunięte).
+ */
 export const ZDANIE_ART_115: Record<RodzajTerminu, string> = {
-  sad: 'Bezpieczniej zdążyć do pierwszej daty.',
-  pracodawca: 'Bezpieczniej zdążyć do pierwszej daty.',
-  przedawnienie: 'Bezpieczniej zdążyć do pierwszej daty.',
+  sad: 'Sądy pracy stosują to przesunięcie do pozwów z Kodeksu pracy (np. Sąd Rejonowy w Jeleniej Górze, IV P 24/19), ale bezpieczniej zdążyć do pierwszej daty.',
+  pracodawca: 'Sądy pracy stosują je też do pism do pracodawcy (np. Sąd Rejonowy Szczecin-Centrum, IX P 280/20, przy sprzeciwie od kary), ale pismo musi w tym dniu do niego dotrzeć, a samo nadanie na poczcie nie wystarcza (Sąd Okręgowy w Łodzi, VII Pa 90/16); bezpieczniej zdążyć do pierwszej daty.',
+  przedawnienie: 'Przy przedawnieniu sądy nie są zgodne (przesunięcie przyjął Sąd Okręgowy Warszawa-Praga, VII P 41/22, a odrzucił Sąd Rejonowy dla Wrocławia-Śródmieścia, IV P 553/24), bo przedawnienie biegnie samo, a nie jest terminem do wykonania czynności; pozew złóż najpóźniej w pierwszej dacie.',
 };
 
 /** Jedno zdanie, dlaczego terminy pracodawcy i granice okresów podajemy bez przesunięcia. */

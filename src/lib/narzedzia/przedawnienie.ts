@@ -8,7 +8,8 @@
 //   dłuższy, więc nasza data jest najwcześniejsza z możliwych;
 // - koniec przedawnienia w sobotę albo dzień ustawowo wolny: wspólna konwencja z terminy.ts (pakiet „terminy”,
 //   2026-11-15), czyli „zdąż do” (bez przesunięcia, `koniec`) i ostatni dzień według art. 115 KC (`art115`). Wypłata,
-//   której pierwsza data minęła, ale dzień z art. 115 KC jeszcze nie, zostaje na liście ze statusem „pilne”.
+//   której pierwsza data minęła, ale dzień z art. 115 KC jeszcze nie, zostaje na liście ze statusem „pilne” i zastrzeżeniem,
+//   że to tylko wtedy, gdy sąd przesunie koniec: przy przedawnieniu sądy nie są zgodne (`ZDANIE_ART_115.przedawnienie`).
 import { odmiana } from '../redakcja';
 import { terminyWyplaty, type DzienWyplaty } from './termin-wyplaty';
 import { ETYKIETA_ART_115, dataPoPolsku, dniMiedzy, dodajLata, fazaTerminu, ileDni, terminPracownika, zdanieArt115 } from './terminy';
@@ -45,7 +46,7 @@ export function opisPrzedawnienia(p: { wymagalne: string; koniec: string; art115
       f.faza === 'po-terminie'
         ? `Termin minął ${odmiana(-f.dni, DNI)} temu`
         : f.faza === 'tylko-art-115'
-          ? `Pierwsza data minęła; według art. 115 KC ${f.dni === 0 ? 'ostatni dzień to dziś' : `zostało: ${odmiana(f.dni, DNI)}`}`
+          ? `Pierwsza data minęła; tylko gdy sąd przesunie koniec według art. 115 KC, ${f.dni === 0 ? 'ostatni dzień to dziś' : `zostało: ${odmiana(f.dni, DNI)}`}`
           : f.dni === 0
             ? 'Ostatni dzień: dziś'
             : `Zostało: ${odmiana(f.dni, DNI)}`,

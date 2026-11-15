@@ -16,7 +16,7 @@ const faq = [
   },
   {
     pytanie: 'Jak liczyć 21 dni na odwołanie?',
-    odpowiedz: 'Dnia doręczenia nie wlicza się (art. 111 § 2 Kodeksu cywilnego), więc przy doręczeniu w czwartek termin kończy się w czwartek za trzy tygodnie. Gdy ostatni dzień wypada w sobotę, niedzielę albo święto, termin kończy się w najbliższy dzień roboczy (art. 115 Kodeksu cywilnego).',
+    odpowiedz: 'Dnia doręczenia nie wlicza się (art. 111 § 2 Kodeksu cywilnego), więc przy doręczeniu w czwartek termin kończy się w czwartek za trzy tygodnie. Gdy ostatni dzień wypada w sobotę albo dzień ustawowo wolny od pracy, termin upływa następnego dnia, który nie jest dniem wolnym ani sobotą (art. 115 Kodeksu cywilnego). Sądy pracy stosują to przesunięcie do odwołań, ale kalkulator pokazuje wtedy dwie daty i bezpieczniej zdążyć do pierwszej.',
   },
   {
     pytanie: 'Czy wystarczy nadać odwołanie na poczcie w ostatnim dniu?',
@@ -31,7 +31,7 @@ const faq = [
 <StronaNarzedzia
   slug="odwolanie-do-sadu-pracy"
   tytul="Odwołanie od wypowiedzenia: 21 dni do sądu"
-  opis="Ostatni dzień na odwołanie od wypowiedzenia albo dyscyplinarki do sądu pracy (21 dni) i na sprostowanie świadectwa (14 dni), z przesunięciem ze świąt."
+  opis="Do kiedy odwołanie od wypowiedzenia albo dyscyplinarki do sądu pracy (21 dni) i sprostowanie świadectwa (14 dni), gdy termin wypada w weekend lub święto."
   h1="Odwołanie do sądu pracy: do kiedy"
   lead="Na odwołanie od wypowiedzenia albo zwolnienia dyscyplinarnego jest 21 dni. Wybierz sprawę i wpisz dzień doręczenia pisma, a policzymy ostatni dzień na złożenie odwołania."
   faq={faq}
@@ -90,11 +90,15 @@ const faq = [
     <h2 id="jak-liczymy">Jak liczymy</h2>
     <p>
       Dnia, w którym doręczono pismo, nie wliczamy (art. 111 § 2 Kodeksu cywilnego). Gdy ostatni dzień wypada w sobotę
-      albo dzień ustawowo wolny od pracy, termin upływa w najbliższym dniu, który nie jest sobotą ani dniem wolnym (art. 115
-      Kodeksu cywilnego). Przepisy Kodeksu cywilnego stosuje się w sprawach pracowniczych przez art. 300 Kodeksu pracy,
-      a w postępowaniu sądowym przez art. 165 § 1 Kodeksu postępowania cywilnego. Pismo do sądu można nadać w placówce
-      operatora pocztowego świadczącego usługi powszechne: liczy się dzień nadania (art. 165 § 2 Kodeksu postępowania
-      cywilnego). Gdy pracodawca nie zawiadomi o odmowie sprostowania świadectwa pracy, żądanie sprostowania wnosi się do
+      albo dzień ustawowo wolny od pracy (niedziela albo święto z ustawy o dniach wolnych od pracy), termin upływa
+      następnego dnia, który nie jest dniem wolnym ani sobotą (art. 115 Kodeksu cywilnego). Wtedy pokazujemy dwie daty:
+      „Zdąż do”, czyli dzień bez przesunięcia, którego dotrzymanie jest zawsze bezpieczne, i ostatni dzień według art. 115.
+      Sądy pracy stosują to przesunięcie zarówno do pozwów, jak i do pism do pracodawcy, na przykład sprzeciwu od kary;
+      orzeczeń Sądu Najwyższego w tej sprawie nie mogliśmy sprawdzić, więc zalecamy pierwszą datę. Przepisy Kodeksu
+      cywilnego stosuje się w sprawach pracowniczych przez art. 300 Kodeksu pracy, a w postępowaniu sądowym przez art. 165
+      § 1 Kodeksu postępowania cywilnego. Pismo do sądu można nadać w placówce operatora pocztowego świadczącego usługi
+      powszechne: liczy się dzień nadania (art. 165 § 2 Kodeksu postępowania cywilnego). Ten przepis dotyczy tylko pism do
+      sądu: wniosek o sprostowanie i sprzeciw od kary muszą w terminie dotrzeć do pracodawcy. Gdy pracodawca nie zawiadomi o odmowie sprostowania świadectwa pracy, żądanie sprostowania wnosi się do
       sądu pracy (art. 97 § 2¹ zdanie trzecie Kodeksu pracy). Ile trwa okres wypowiedzenia, policzy <a href="/narzedzia/okres-wypowiedzenia">kalkulator okresu wypowiedzenia</a>,
       a czy zasiłek przysługuje po zwolnieniu, <a href="/narzedzia/zasilek-dla-bezrobotnych">kalkulator zasiłku dla bezrobotnych</a>.
     </p>

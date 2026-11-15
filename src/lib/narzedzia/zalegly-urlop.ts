@@ -222,7 +222,7 @@ const kiedy = (t: Termin) => `${dataPoPolsku(t.data)} (${ileDni(t.zostalo)})${ar
 export const NIE_STRACONE = 'roszczenie nie musi być stracone (art. 292, wyrok TSUE C-120/21)';
 const stan = (t: Termin) =>
   t.zostalo < 0 && t.zostalo115 !== undefined && t.zostalo115 >= 0
-    ? `Pierwsza data minęła; ${ETYKIETA_ART_115.charAt(0).toLowerCase()}${ETYKIETA_ART_115.slice(1)}: ${t.zostalo115 === 0 ? 'dziś' : dataPoPolsku(t.art115!)}`
+    ? `Pierwsza data minęła; tylko gdy sąd przesunie koniec, ${ETYKIETA_ART_115.charAt(0).toLowerCase()}${ETYKIETA_ART_115.slice(1)}: ${t.zostalo115 === 0 ? 'dziś' : dataPoPolsku(t.art115!)}`
     : t.zostalo < 0
       ? `Najwcześniejszy termin przedawnienia minął ${ileDni(t.zostalo115 !== undefined ? t.zostalo115 : t.zostalo)}; ${NIE_STRACONE}`
       : t.zostalo === 0
