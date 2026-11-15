@@ -48,9 +48,9 @@ Proces: badacz prawa (`PRZEPISY.md`; przerwany limitem API, ale z kompletem wnio
   i gov.pl (źródła urzędowego UKE nie odczytano: blokada automatów).
 
 ## Wynik checku
-`npm run -s check:szybki` EXIT 0 (astro check 0 błędów, testy jednostkowe zielone), `BEZ_WEBKIT=1 npm run check`: wynik
-w ostatnim commicie (dopisek „pełny check zielony” tylko przy EXIT 0). Zrzuty 412 i 320 px ośmiu stron w stanie z linijką:
-0 px przewijania w bok, linijka widoczna, nic nieucięte.
+`npm run -s check:szybki` EXIT 0 (astro check 0 błędów), `BEZ_WEBKIT=1 npm run check` EXIT 0 (unit 2511 w 142 plikach,
+E2E 2441 zaliczonych, 349 pominiętych z założenia, 9,3 min; Lighthouse i kontrola SEO produkcji przed startem bez błędów).
+Zrzuty 412 i 320 px ośmiu stron w stanie z linijką (`zrzuty/`): 0 px przewijania w bok, linijka widoczna, nic nieucięte.
 
 ## Interpretacje
 - Linijka zależy od dnia tygodnia „Zdąż do”, nie od tego, czy art. 115 KC daje drugą datę: sobota sprzed 2017 r. też ją

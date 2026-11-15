@@ -24,7 +24,7 @@ const SCENARIUSZE = {
   'swiadectwo-pracy': [
     async (p) => {
       await p.fill('#s-ustanie', '2026-11-10');
-      await p.fill('#s-otrzymanie', '2026-11-29');
+      await p.fill('#s-otrzymanie', '2026-11-15');
     },
     '[data-w="glowny-praktycznie"]',
   ],
