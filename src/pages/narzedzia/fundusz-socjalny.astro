@@ -38,7 +38,7 @@ const faq = [
   },
   {
     pytanie: 'Ile świadczeń z funduszu socjalnego jest bez podatku i ZUS?',
-    odpowiedz: 'Składek ZUS ani zdrowotnej nie ma (§ 2 ust. 1 pkt 19 rozporządzenia o podstawie składek, art. 81 ust. 1 ustawy o świadczeniach opieki zdrowotnej). Pracownik nie płaci podatku od świadczeń w całości z funduszu do 1000 zł w roku łącznie; bony, talony i inne znaki wymienne na towary lub usługi nie są przy tym świadczeniem rzeczowym (art. 21 ust. 1 pkt 67 ustawy o PIT). Dopłaty z funduszu do wypoczynku dzieci i młodzieży do 18 lat zorganizowanego przez firmy, które się tym zajmują (wczasy, kolonie, obozy, zimowiska), i do ich leczenia sanatoryjnego są wolne od podatku bez limitu (art. 21 ust. 1 pkt 78 lit. a).',
+    odpowiedz: 'Składek ZUS ani zdrowotnej nie ma (§ 2 ust. 1 pkt 19 rozporządzenia o podstawie składek, art. 81 ust. 1 ustawy o świadczeniach opieki zdrowotnej). Pracownik nie płaci podatku od świadczeń w całości z funduszu do 1000 zł w roku łącznie; bony, talony i inne znaki wymienne na towary lub usługi nie są przy tym świadczeniem rzeczowym (art. 21 ust. 1 pkt 67 ustawy o PIT). Dopłaty z funduszu do wypoczynku dzieci i młodzieży do 18 lat zorganizowanego przez podmioty, które się tym zajmują (wczasy, kolonie, obozy, zimowiska), i do ich leczenia sanatoryjnego są wolne od podatku bez limitu (art. 21 ust. 1 pkt 78 lit. a).',
   },
   {
     pytanie: 'Co zrobić, gdy pracodawca nie tworzy funduszu socjalnego?',
@@ -69,7 +69,7 @@ const faq = [
           <input id="f-etaty" name="etaty" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value={ETATY_START} aria-describedby="f-etaty-opis f-blad" />
         </div>
       </div>
-      <p id="f-etaty-opis" class="meta mt-1">Pracownicy na umowę o pracę w przeliczeniu na pełne etaty, na przykład 2 osoby na pół etatu to 1 etat.</p>
+      <p id="f-etaty-opis" class="meta mt-1">Pracownicy (umowa o pracę, powołanie, wybór, mianowanie) w przeliczeniu na pełne etaty, na przykład 2 osoby na pół etatu to 1 etat.</p>
       <div class="mt-4">
         <label for="f-zwiazek" class="etykieta-pola">Związek zawodowy w firmie</label>
         <select id="f-zwiazek" name="zwiazek" class="pole mt-1" aria-describedby="f-zwiazek-opis">
@@ -142,16 +142,16 @@ const faq = [
       <li>Pracodawca z co najmniej 20 i mniej niż 50 etatami, gdy wniosek złoży zakładowa organizacja związkowa (art. 3 ust. 1c).</li>
       <li>Jednostki budżetowe i samorządowe zakłady budżetowe, bez względu na liczbę pracowników (art. 3 ust. 2).</li>
       <li>U pracodawców z pierwszych dwóch punktów układ zbiorowy pracy, a gdy go nie ma, regulamin wynagradzania może inaczej ustalić odpis albo postanowić, że funduszu nie będzie (art. 4 ust. 1–2). Bez zakładowej organizacji związkowej takie postanowienie regulaminu wynagradzania pracodawca uzgadnia z pracownikami wybranymi przez załogę (art. 4 ust. 3).</li>
-      <li>Poniżej 50 etatów pracodawca może utworzyć fundusz, wypłacać świadczenie urlopowe albo nie robić żadnej z tych rzeczy (art. 3 ust. 3). Gdy nie robi żadnej, a nie obejmuje go układ zbiorowy i nie musi mieć regulaminu wynagradzania, informuje o tym pracowników w pierwszym miesiącu roku (art. 3 ust. 3a). Przy co najmniej 50 pracownikach zapisuje to w układzie zbiorowym, a bez układu w regulaminie wynagradzania, bez związku zawodowego w uzgodnieniu z pracownikami wybranymi przez załogę (art. 3 ust. 3b, art. 4 ust. 3).</li>
-      <li>Pracodawca, który musi tworzyć fundusz, przekazuje na jego osobny rachunek co najmniej 75% odpisów do 31 maja, a całość do 30 września (art. 6 ust. 2, art. 12 ust. 1). Pracodawca, który zaczyna działalność w ciągu roku, robi odpis od następnego roku (art. 6a ust. 1). Gdy działalność zaczyna się od komercjalizacji, przejęcia, podziału lub połączenia zakładu lub jego części razem z przejęciem pracowników, pracodawca z co najmniej 50 etatami, pracodawca z art. 3 ust. 1c i jednostka budżetowa tworzą fundusz od razu (art. 6a ust. 1a).</li>
+      <li>Poniżej 50 etatów pracodawca może utworzyć fundusz, wypłacać świadczenie urlopowe albo nie robić żadnej z tych rzeczy (art. 3 ust. 3). Gdy nie robi żadnej, a nie obejmuje go układ zbiorowy i nie musi mieć regulaminu wynagradzania, informuje o tym pracowników w pierwszym miesiącu roku (art. 3 ust. 3a). Przy co najmniej 50 pracownikach (przepis nie mówi o etatach, więc liczą się osoby) zapisuje to w układzie zbiorowym, a bez układu w regulaminie wynagradzania, bez związku zawodowego w uzgodnieniu z pracownikami wybranymi przez załogę (art. 3 ust. 3b, art. 4 ust. 3).</li>
+      <li>Pracodawca, który musi tworzyć fundusz, przekazuje na jego osobny rachunek co najmniej 75% odpisów podstawowych (bez zwiększeń) do 31 maja, a całość do 30 września (art. 6 ust. 2, art. 12 ust. 1). Pracodawca, który zaczyna działalność w ciągu roku, robi odpis od następnego roku (art. 6a ust. 1). Gdy działalność zaczyna się od komercjalizacji, przejęcia, podziału lub połączenia zakładu lub jego części razem z przejęciem pracowników, pracodawca z co najmniej 50 etatami, pracodawca z art. 3 ust. 1c i jednostka budżetowa tworzą fundusz od razu (art. 6a ust. 1a).</li>
     </ul>
 
     <h2 id="kto-korzysta">Kto korzysta i od czego zależy świadczenie</h2>
     <ul>
-      <li>Z funduszu korzystają pracownicy i ich rodziny, emeryci i renciści, którzy u tego pracodawcy pracowali, i ich rodziny, a także inne osoby, którym prawo do świadczeń przyzna regulamin funduszu (art. 2 pkt 5).</li>
-      <li>Pieniądze idą na wypoczynek, kulturę, sport i rekreację, opiekę nad dziećmi w żłobkach, klubach dziecięcych i przedszkolach, pomoc rzeczową lub finansową i pomoc na cele mieszkaniowe (art. 2 pkt 1). Od 1 stycznia 2028 r. przepis wymieni też punkty opieki dziennej i oddziały przedszkolne w szkołach podstawowych (Dz.U. 2026 poz. 1123).</li>
+      <li>Z funduszu korzystają pracownicy i ich rodziny, emeryci i renciści, którzy są byłymi pracownikami, i ich rodziny, a także inne osoby, którym prawo do świadczeń przyzna regulamin funduszu (art. 2 pkt 5).</li>
+      <li>Pieniądze idą na wypoczynek, kulturę, sport i rekreację, opiekę nad dziećmi w żłobkach, klubach dziecięcych i przedszkolach, pomoc rzeczową lub finansową i pomoc na cele mieszkaniowe (art. 2 pkt 1). Od 1 stycznia 2028 r. przepis wymieni też punkty opieki dziennej i oddziały przedszkolne w szkołach podstawowych, a nie wymieni już dziennego opiekuna (Dz.U. 2026 poz. 1123).</li>
       <li>Ulgowe usługi, świadczenia i wysokość dopłat zależą od sytuacji życiowej, rodzinnej i materialnej (art. 8 ust. 1). Dane o sobie podajesz w oświadczeniu, a pracodawca może żądać dokumentów w zakresie potrzebnym do ich potwierdzenia (art. 8 ust. 1a).</li>
-      <li>Zasady podaje regulamin funduszu. Pracodawca ustala go w uzgodnieniu z zakładową organizacją związkową, a świadczenia przyznaje w uzgodnieniu z nią (art. 8 ust. 2 ustawy o ZFŚS, art. 27 ust. 1–2 ustawy o związkach zawodowych). Gdy działa kilka związków i w ciągu 30 dni od otrzymania projektu nie przedstawią wspólnego stanowiska, o regulaminie decyduje pracodawca po rozpatrzeniu ich odrębnych stanowisk (art. 30 ust. 6 ustawy o związkach zawodowych). Bez związku zawodowego regulamin uzgadnia z pracownikami wybranymi przez załogę (art. 8 ust. 2 zd. 2 ustawy o ZFŚS, w tym brzmieniu od 27 stycznia 2026 r.).</li>
+      <li>Zasady podaje regulamin funduszu. Pracodawca ustala go w uzgodnieniu z zakładową organizacją związkową, a świadczenia przyznaje w uzgodnieniu z nią (art. 8 ust. 2 ustawy o ZFŚS, art. 27 ust. 1–2 ustawy o związkach zawodowych). Gdy działa kilka związków, z których każdy zrzesza co najmniej 5% pracowników (albo jest reprezentatywny), i w ciągu 30 dni od otrzymania projektu nie przedstawią wspólnego stanowiska, o regulaminie decyduje pracodawca po rozpatrzeniu ich odrębnych stanowisk (art. 30 ust. 6–7 ustawy o związkach zawodowych). Bez związku zawodowego regulamin uzgadnia z pracownikami wybranymi przez załogę (art. 8 ust. 2 zd. 2 ustawy o ZFŚS, w tym brzmieniu od 27 stycznia 2026 r.).</li>
       <li>Niewykorzystane pieniądze przechodzą na następny rok (art. 11), a środki funduszu nie podlegają egzekucji, chyba że chodzi o zobowiązania samego funduszu (art. 12 ust. 2).</li>
     </ul>
 
@@ -173,10 +173,11 @@ const faq = [
     <h2 id="jak-liczymy">Jak liczymy</h2>
     <p>
       Próg porównujemy z liczbą etatów, którą wpisujesz, według stanu na 1 stycznia; 50,00 etatu to już „co najmniej 50”.
-      Odpis na rok to odpis na jeden etat razy przeciętna liczba etatów w roku. Przyjmujemy, że przez cały rok jest ich
+      Odpis na rok to dokładny odpis na jeden etat (przed zaokrągleniem) razy przeciętna liczba etatów w roku, więc może się
+      różnić o grosze od zaokrąglonej kwoty razy liczba etatów. Przyjmujemy, że przez cały rok jest ich
       tyle, ile 1 stycznia; pracodawca liczy odpis od liczby planowanej i koryguje go na koniec roku (§ 1 rozporządzenia).
-      Przy pracodawcy, który nie musi tworzyć funduszu, pokazujemy tylko odpis podstawowy 37,5%, bez 50%, odpisów na
-      młodocianych i zwiększeń, które ustawa też dopuszcza (art. 3 ust. 3 odsyła do art. 5). Przepisy nie mówią, jak zaokrąglać, więc kwoty zaokrąglamy do grosza (od pół grosza w górę), kwotę „co najmniej
+      Kwotę na rok zawsze liczymy po 37,5% od wszystkich etatów, bez 50%, odpisów na młodocianych i zwiększeń, które
+      zależą od składu załogi. Przepisy nie mówią, jak zaokrąglać, więc kwoty zaokrąglamy do grosza (od pół grosza w górę), kwotę „co najmniej
       75%” w górę i podajemy wartość dokładną. Świadczenie urlopowe nie może przekroczyć odpisu, więc jego maksimum jest
       zaokrąglone w dół (w {rok} r. {zl(maksimum(rok, 'zwykle').kwota)} przy odpisie {zl(odpis.kwota)}); ile wyniesie przy Twoim etacie, policzy <a href="/narzedzia/swiadczenie-urlopowe">kalkulator świadczenia urlopowego</a>.
     </p>
@@ -185,7 +186,7 @@ const faq = [
       wpłat z art. 6 ust. 2 obowiązują pracodawcę z 20–49 etatami, który tworzy fundusz na wniosek związku (art. 6 ust. 2a
       wyłącza pracodawców z art. 3 ust. 3, czyli poniżej 50 etatów; pokazujemy terminy, bo to wariant korzystniejszy dla
       pracowników), i to samo przy jednostce budżetowej poniżej 50 etatów; czy w jednostce budżetowej układ zbiorowy może wyłączyć fundusz (art. 4 ust. 1 odsyła tylko do art. 3
-      ust. 1 i 1c), więc tego nie przesądzamy. Ustawy okołobudżetowe na 2025 i 2026 r. podstawy odpisu nie zmieniają,
+      ust. 1 i 1c). Żadnej z tych spraw nie przesądzamy. Ustawy okołobudżetowe na 2025 i 2026 r. podstawy odpisu nie zmieniają,
       projekt na 2027 r. (druk sejmowy nr 3154) też nie. Kwota na 2027 r. będzie znana po obwieszczeniu Prezesa GUS do
       20 lutego 2027 r.
     </p>

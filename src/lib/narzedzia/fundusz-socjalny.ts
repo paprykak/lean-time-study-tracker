@@ -146,7 +146,7 @@ export const zlDokladnie = (x: number) => `${DOKLADNIE.format(x)} zł`;
 export const okresPodstawy = (rok: number) =>
   PODSTAWA_ODPISU[rok].zaPolrocze >= PODSTAWA_ODPISU[rok].zaRok ? `drugiego półrocza ${rok - 1} r.` : `${rok - 1} r.`;
 
-export const KTO = 'pracownicy, byli pracownicy na emeryturze lub rencie, rodziny jednych i drugich oraz osoby wskazane w regulaminie (art. 2 pkt 5)';
+export const KTO = 'pracownicy, emeryci i renciści będący byłymi pracownikami, rodziny jednych i drugich oraz osoby wskazane w regulaminie (art. 2 pkt 5)';
 export const OD_CZEGO = 'sytuacja życiowa, rodzinna i materialna (art. 8 ust. 1) i regulamin funduszu (art. 8 ust. 2)';
 
 /** Teksty wyniku: te same w HTML ze strony i w skrypcie przeglądarki. */
@@ -171,7 +171,7 @@ export function opisFunduszu(rok: number, etatyTys: number, zwiazek: Zwiazek, pr
         ? 'nie zamiast funduszu: wybór między funduszem a świadczeniem urlopowym mają tylko pracodawcy poniżej 50 etatów (art. 3 ust. 3)'
         : musi
           ? `nie zamiast funduszu: pracodawca, który musi tworzyć fundusz (${o === 'wniosek' ? 'art. 3 ust. 1c' : 'art. 3 ust. 2'}), nie zastąpi go świadczeniem urlopowym`
-      : `jeśli pracodawca je wypłaca: najwyżej ${zl(maksimum(rok, 'zwykle').kwota)} na pełny etat raz w roku, przy urlopie wypoczynkowym co najmniej 14 kolejnych dni kalendarzowych (art. 3 ust. 3–5)`,
+      : `jeśli pracodawca je wypłaca: najwyżej ${zl(maksimum(rok, 'zwykle').kwota)} na pełny etat w zwykłych warunkach raz w roku, przy urlopie wypoczynkowym co najmniej 14 kolejnych dni kalendarzowych (art. 3 ust. 3–5)`,
     kto: KTO,
     odCzego: OD_CZEGO,
     uwagi: [],
@@ -198,7 +198,7 @@ export function opisFunduszu(rok: number, etatyTys: number, zwiazek: Zwiazek, pr
   }
   if (o === 'dobrowolny') {
     r.uwagi.push(
-      'Gdy pracodawca nie tworzy funduszu i nie wypłaca świadczenia urlopowego: jeśli nie obejmuje go układ zbiorowy i nie musi mieć regulaminu wynagradzania, informuje o tym pracowników w pierwszym miesiącu roku, w sposób u siebie przyjęty (art. 3 ust. 3a); jeśli zatrudnia co najmniej 50 pracowników (przepis nie mówi o etatach, liczymy osoby), zapisuje to w układzie zbiorowym, a bez układu w regulaminie wynagradzania, bez związku zawodowego w uzgodnieniu z pracownikami wybranymi przez załogę (art. 3 ust. 3b, art. 4 ust. 3). Innych przypadków ustawa nie rozstrzyga.',
+      'Gdy pracodawca nie tworzy funduszu i nie wypłaca świadczenia urlopowego: jeśli nie obejmuje go układ zbiorowy i nie musi mieć regulaminu wynagradzania, informuje o tym pracowników w pierwszym miesiącu roku, w sposób u siebie przyjęty (art. 3 ust. 3a); jeśli zatrudnia co najmniej 50 pracowników (przepis nie mówi o etatach, więc liczą się osoby), zapisuje to w układzie zbiorowym, a bez układu w regulaminie wynagradzania, bez związku zawodowego w uzgodnieniu z pracownikami wybranymi przez załogę (art. 3 ust. 3b, art. 4 ust. 3). Innych przypadków ustawa nie rozstrzyga.',
     );
   }
   if (musi && etatyTys < 50_000) {
@@ -206,7 +206,7 @@ export function opisFunduszu(rok: number, etatyTys: number, zwiazek: Zwiazek, pr
   }
   if (o === 'budzetowa') {
     r.uwagi.push(
-      'Dla nauczycieli odpis wynika z Karty Nauczyciela, a uczelni publicznych ten sposób liczenia nie dotyczy (art. 5 ust. 8). W jednostkach podległych ministrowi spraw wewnętrznych, w więziennictwie i u pracowników cywilnych wojska odpis może określać rozporządzenie, nie wyżej niż ustawa (art. 1 ust. 2–3). Tego nie liczymy.',
+      'Czy układ zbiorowy może tu wyłączyć fundusz, ustawa wprost nie mówi: art. 4 ust. 1 odsyła tylko do art. 3 ust. 1 i 1c. Dla nauczycieli odpis wynika z Karty Nauczyciela, a uczelni publicznych ten sposób liczenia nie dotyczy (art. 5 ust. 8). W jednostkach podległych ministrowi spraw wewnętrznych, w więziennictwie i u pracowników cywilnych wojska odpis może określać rozporządzenie, nie wyżej niż ustawa (art. 1 ust. 2–3). Tego nie liczymy.',
     );
   }
   if (musi) {
