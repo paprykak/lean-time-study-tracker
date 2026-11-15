@@ -108,3 +108,14 @@ test('ostrzeżenie o art. 115 KC, gdy datę przesuniętą ma tylko wiersz', asyn
   await expect(page.locator('[data-w="zdanie"]')).toBeVisible();
   await expect(page.locator('[data-w="zdanie"]')).toContainText(/wątpliwe/);
 });
+
+// Linijka praktyczna (pakiet „terminy3”): przedawnienie urlopu za 2025 r. najwcześniej w niedzielę 31.12.2028 r.
+test('pierwszy termin przedawnienia w niedzielę: linijka o pozwie pod opisem', async ({ page }) => {
+  await page.locator('[name="rok1"]').fill('2026');
+  await expect(page.locator('[data-w="opis"]')).toContainText(/za\s2025\sr\.,\s31\sgrudnia\s2028/);
+  await expect(page.locator('[data-w="praktycznie"]')).toHaveText(/^To\sniedziela\.\sTego\sdnia\smożesz\sjeszcze\snadać\spozew/);
+  // 2024 r. i 2026 r.: pierwszy termin 31.12.2027 r. (piątek), bez linijki.
+  await page.locator('[name="rok2"]').fill('2024');
+  await expect(page.locator('[data-w="opis"]')).toContainText(/za\s2024\sr\.,\s31\sgrudnia\s2027/);
+  await expect(page.locator('[data-w="praktycznie"]')).toBeHidden();
+});

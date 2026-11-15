@@ -75,3 +75,18 @@ test('C-6–C-9: art. 295 § 2, art. 291 § 5, art. 85 § 3 i nagłówek wyniku 
   await expect(page.locator('#zasady + ul a[href="/narzedzia/zalegly-urlop"]')).toHaveCount(1);
   await expect(page.locator('main')).toContainText(/opisuje\sstrona\so\ssądzie\spracy\si\sPIP/);
 });
+
+// Linijka praktyczna (pakiet „terminy3”): na 15.11.2026 r. przy wypłacie 5. dnia najstarsza jest wypłata z 5.12.2023 r.,
+// przedawnienie 5.12.2026 r. (sobota); inna należność 13.12.2023 r. kończy się w niedzielę 13.12.2026 r.
+test('koniec przedawnienia w sobotę: linijka o pozwie nadanym w placówce pocztowej, z ostrzeżeniem', async ({ page }) => {
+  await page.getByLabel('Sprawdź na dzień').fill('2026-11-15');
+  await page.getByLabel('Dzień wypłaty').fill('5');
+  await expect(page.locator('[data-w="opis"]')).toContainText(/5\sgrudnia\s2026/);
+  await expect(page.locator('[data-w="praktycznie"]')).toHaveText(/^To\ssobota\.\sTego\sdnia\smożesz\sjeszcze\snadać\spozew.*przy\sprzedawnieniu\sprzesunięcie\sz\sart\.\s115\sKodeksu\scywilnego\sjest\swątpliwe\.$/);
+  await page.getByLabel(/Inna należność/).fill('2023-12-13');
+  await expect(page.locator('[data-w="inna-praktycznie"]')).toHaveText(/^To\sniedziela\.\sTego\sdnia\smożesz\sjeszcze\snadać\spozew/);
+  await page.getByLabel(/Inna należność/).fill('2023-12-14');
+  await expect(page.locator('[data-w="inna-praktycznie"]')).toBeHidden();
+  await page.getByLabel('Dzień wypłaty').fill('10');
+  await expect(page.locator('[data-w="praktycznie"]')).toBeHidden();
+});

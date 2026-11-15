@@ -464,6 +464,16 @@ describe('linijkaDniaWolnego i ostatni dzień roboczy', () => {
     expect(linijkaDniaWolnego({ zdazDo: '2018-11-12' }, 'sad')).toMatch(/^To dzień wolny od pracy\. /);
     expect(linijkaDniaWolnego({ zdazDo: '2026-12-13' }, 'sad')).toMatch(/^To niedziela\. /);
   });
+  it('z dniem dzisiejszym: do dnia roboczego rada, potem przypomnienie, po „Zdąż do” nic', () => {
+    const t = { zdazDo: '2026-12-13' };
+    expect(sp(linijkaDniaWolnego(t, 'pracodawca', '2026-12-11'))).toContain('złóż najpóźniej w ostatnim dniu roboczym przed tą datą, czyli w piątek 11 grudnia 2026 r.:');
+    for (const dzis of ['2026-12-12', '2026-12-13'])
+      expect(sp(linijkaDniaWolnego(t, 'pracodawca', dzis))).toBe(
+        'To niedziela. Ostatni dzień roboczy przed tą datą był w piątek 11 grudnia 2026 r. Liczy się dzień, w którym pismo dotrze do pracodawcy (art. 61 § 1 Kodeksu cywilnego), więc doręcz je jak najszybciej, najlepiej osobiście.',
+      );
+    expect(linijkaDniaWolnego(t, 'sad', '2026-12-13')).toMatch(/^To niedziela\. Tego dnia możesz jeszcze nadać pismo/);
+    for (const r of ['pracodawca', 'sad', 'przedawnienie'] as const) expect(linijkaDniaWolnego(t, r, '2026-12-14')).toBe('');
+  });
   it('błędna data to RangeError', () => expect(() => ostatniDzienRoboczyPrzed('2026-02-30')).toThrow(RangeError));
   it('dzienWolnyArt115 bez zmian po wydzieleniu wspólnej reguły (sobota od 2017 r.)', () => {
     expect(dzienWolnyArt115('2016-12-31')).toBeNull();

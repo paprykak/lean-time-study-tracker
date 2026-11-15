@@ -71,3 +71,19 @@ test('daty domyślne od prawdziwego dziś (13.01.2027 → 3.01.2027)', async ({ 
   await expect(page.getByLabel('Ostatni dzień umowy')).toHaveValue('2027-01-03');
   await expect(page.locator('[data-w="glowny"]')).toHaveText(/^17\sstycznia\s2027\sr\.$/);
 });
+
+// Linijka praktyczna (pakiet „terminy3”): dziś sobota 14.11.2026 r. i to ostatni dzień na wniosek, więc piątek już minął.
+test('dziś sobota, wniosek do dziś: przypomnienie, że ostatni dzień roboczy był w piątek', async ({ page }) => {
+  await expect(page.locator('[data-w="glowny-praktycznie"]')).toHaveText(/^To\ssobota\.\sOstatni\sdzień\sroboczy\sprzed\stą\sdatą\sbył\sw\spiątek\s13\slistopada\s2026\sr\.\sLiczy\ssię\sdzień,\sw\sktórym\spismo\sdotrze\sdo\spracodawcy/);
+  await expect(page.locator('[data-w="sprostowanie-praktycznie"]')).toHaveText(/w\spiątek\s13\slistopada\s2026\sr\./);
+  await page.getByLabel('Wniosek o sprostowanie doręczony').fill('2026-11-10');
+  await expect(page.locator('[data-w="sprostowanie-praktycznie"]')).toBeEmpty();
+});
+
+test('wniosek o sprostowanie do niedzieli 13 grudnia 2026 r.: złóż w piątek 11 grudnia', async ({ page }) => {
+  await page.getByLabel('Ostatni dzień umowy').fill('2026-11-27');
+  await page.getByLabel('Świadectwo otrzymane').fill('2026-11-29');
+  await expect(page.locator('[data-w="glowny"]')).toHaveText(/^13\sgrudnia\s2026\sr\.$/);
+  await expect(page.locator('[data-w="glowny-praktycznie"]')).toContainText(/złóż\snajpóźniej\sw\sostatnim\sdniu\sroboczym\sprzed\stą\sdatą,\sczyli\sw\spiątek\s11\sgrudnia\s2026\sr\.:/);
+  await expect(page.locator('[data-w="wydanie-sad-praktycznie"]')).toBeEmpty();
+});

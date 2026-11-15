@@ -231,7 +231,9 @@ export const ZDANIE_ART_115: Record<RodzajTerminu, string> = {
  * - `przedawnienie`: jak `sad` (pozew przerywa bieg przedawnienia), z ostrzeżeniem z konwencji: przesunięcie z art. 115 KC
  *   jest przy przedawnieniu wątpliwe.
  * Sobota przed 1.01.2017 r. też dostaje linijkę: art. 115 KC jej wtedy nie przesuwał, ale biuro i tak bywa nieczynne.
- * Z `dzis` po dniu „Zdąż do” linijki nie ma: rada o tym dniu jest już nieaktualna, a stan terminu podaje status.
+ * Z `dzis` po dniu „Zdąż do” linijki nie ma: rada o tym dniu jest już nieaktualna, a stan terminu podaje status. Przy piśmie
+ * do pracodawcy po ostatnim dniu roboczym (dziś sobota przed niedzielą „Zdąż do” albo sam ten dzień) linijka mówi, kiedy
+ * ten dzień był, i radzi doręczyć pismo jak najszybciej.
  * Ten sam tekst w HTML ze strony i w skrypcie przeglądarki (skrypt przepuszcza go jeszcze przez typografia()).
  */
 export function linijkaDniaWolnego(t: Pick<TerminPracownika, 'zdazDo'>, rodzaj: RodzajTerminu, dzis?: string): string {
@@ -240,8 +242,13 @@ export function linijkaDniaWolnego(t: Pick<TerminPracownika, 'zdazDo'>, rodzaj: 
   const dzien = `To ${powod === 'sobota' || powod === 'niedziela' ? powod : JEDNORAZOWE_WOLNE[t.zdazDo] ? 'dzień wolny od pracy' : `dzień wolny od pracy (${powod})`}.`;
   const poczta = (pismo: string) =>
     `Tego dnia możesz jeszcze nadać ${pismo} w placówce pocztowej operatora wyznaczonego (Poczty Polskiej), jeśli jest czynna: to tak, jakby wnieść ${pismo === 'pozew' ? 'go' : 'je'} do sądu (art. 165 § 2 Kodeksu postępowania cywilnego).`;
-  if (rodzaj === 'pracodawca')
-    return `${dzien} Pismo do pracodawcy złóż najpóźniej w ostatnim dniu roboczym przed tą datą, czyli ${wDniu(ostatniDzienRoboczyPrzed(t.zdazDo))}: liczy się dzień, w którym do niego dotrze (art. 61 § 1 Kodeksu cywilnego).`;
+  if (rodzaj === 'pracodawca') {
+    const roboczy = ostatniDzienRoboczyPrzed(t.zdazDo);
+    // Dzień roboczy już minął (dziś to dzień wolny przed „Zdąż do” albo ten dzień): ta sama zasada, bez rady na przeszłość.
+    if (dzis !== undefined && dzis > roboczy)
+      return `${dzien} Ostatni dzień roboczy przed tą datą był ${wDniu(roboczy)} Liczy się dzień, w którym pismo dotrze do pracodawcy (art. 61 § 1 Kodeksu cywilnego), więc doręcz je jak najszybciej, najlepiej osobiście.`;
+    return `${dzien} Pismo do pracodawcy złóż najpóźniej w ostatnim dniu roboczym przed tą datą, czyli ${wDniu(roboczy)}: liczy się dzień, w którym do niego dotrze (art. 61 § 1 Kodeksu cywilnego).`;
+  }
   if (rodzaj === 'sad') return `${dzien} ${poczta('pismo')}`;
   return `${dzien} ${poczta('pozew')} Nie odkładaj go na następny dzień roboczy: przy przedawnieniu przesunięcie z art. 115 Kodeksu cywilnego jest wątpliwe.`;
 }
