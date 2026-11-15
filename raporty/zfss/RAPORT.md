@@ -1,9 +1,9 @@
 # Pakiet „zfss”: raport (2026-11-15)
 
-Gałąź `fabryka/zfss`. Jedno narzędzie w kategorii „wynagrodzenie”: `/narzedzia/fundusz-socjalny` (zakładowy fundusz świadczeń
+Gałąź `fabryka/zfss` (ostatni commit: ten z dopiskiem „pełny check zielony”). Jedno narzędzie w kategorii „wynagrodzenie”: `/narzedzia/fundusz-socjalny` (zakładowy fundusz świadczeń
 socjalnych). Proces: badacz prawa (`raporty/zfss/PRZEPISY.md`), budowniczy, weryfikator prawny i weryfikator kodu/UX
 (niezależnie, pliki i teksty przepisów bez wniosków), audytor. Wynik: `npm run -s check:szybki` EXIT 0 (2300 testów
-jednostkowych) i `BEZ_WEBKIT=1 npm run check` WYNIK_CHECKU. Zrzuty formularza i wyniku 412 i 320 px: `raporty/zfss/zrzuty/`
+jednostkowych) i `BEZ_WEBKIT=1 npm run check` EXIT 0 (E2E 2385 zaliczonych, 349 pominiętych z założenia, 9,5 min; Lighthouse 7 adresów; kontrola SEO testowa 148 i produkcji 137 stron bez błędów). Zrzuty formularza i wyniku 412 i 320 px: `raporty/zfss/zrzuty/`
 (bez przewijania w bok, nic nie ucięte).
 
 ## Co liczy
