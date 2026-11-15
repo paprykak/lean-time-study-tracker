@@ -44,7 +44,16 @@ test('6 miesięcy stażu mija w trakcie wypowiedzenia: 1 miesiąc zamiast 2 tygo
   await expect(page.locator('[data-w="koniec"]')).toHaveText(/^30\swrześnia\s2026\sr\.\s\(środa\)$/);
   await expect(page.locator('[data-w="okres"]')).toHaveText(/^1\smiesiąc$/);
   await expect(page.locator('[data-w="staz"]')).toHaveText(/^5\smiesięcy$/);
-  await expect(page.locator('[data-w="uwaga"]')).toHaveText(/z\skońcem dnia 31\ssierpnia\s2026\sr\., staż osiągnie 6\smiesięcy.*do\s1\smiesiąca\. Bez wydłużenia: 2\stygodnie, do\s5\swrześnia\s2026\sr\.\s\(sobota\)/);
+  await expect(page.locator('[data-w="uwaga"]')).toHaveText(/z\skońcem dnia 31\ssierpnia\s2026\sr\., staż osiągnie 6\smiesięcy.*do\s1\smiesiąca\. Bez wydłużenia: 2\stygodnie, do\s5\swrześnia\s2026\sr\.\s\(sobota\)\. Sąd Najwyższy liczy staż do dnia rozwiązania umowy \(I\sPKN\s34\/99\)\.$/);
+});
+
+test('stan faktyczny wyroku SN II PK 12/11: praca od 1 sierpnia 2006 r., doręczenie w lipcu 2009 r., 3 miesiące', async ({ page }) => {
+  await page.getByLabel('Początek pracy u tego pracodawcy').fill('2006-08-01');
+  await page.getByLabel('Doręczenie wypowiedzenia').fill('2009-07-15');
+  await expect(page.locator('[data-w="okres"]')).toHaveText(/^3\smiesiące$/);
+  await expect(page.locator('[data-w="koniec"]')).toHaveText(/^31\spaździernika\s2009\sr\.\s\(sobota\)$/);
+  await expect(page.locator('[data-w="uwaga"]')).toHaveText(/staż osiągnie 3\slata.*Bez wydłużenia: 1\smiesiąc, do\s31\ssierpnia\s2009\sr\.\s\(poniedziałek\)\./);
+  await expect(page.locator('main')).toContainText(/I\sPKN\s34\/99/);
 });
 
 test('koniec miesiąca (art. 112 KC): 29 lutego 2024 r. → doręczenie 28 lutego 2027 r., 3 miesiące do 31 maja', async ({ page }) => {
