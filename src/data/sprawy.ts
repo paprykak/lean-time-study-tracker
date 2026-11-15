@@ -135,6 +135,12 @@ export const HASLA: Record<string, string[]> = {
   // Pakiet „zfss” (2026-11-15): frazy z podpowiedzi wyszukiwarki Google (pl) do zapytań „fundusz socjalny”, „zfśs”,
   // „fundusz socjalny ile”, „czy pracodawca musi mieć fundusz socjalny”, „wczasy pod gruszą”, „bony świąteczne”.
   'fundusz-socjalny': ['ZFŚS', 'socjal', 'socjalne z pracy', 'fundusz socjalny w pracy', 'fundusz socjalny ile na pracownika', 'ZFŚS od ilu pracowników', 'czy każdy pracodawca musi mieć fundusz socjalny', 'odpis na ZFŚS', 'fundusz socjalny dla emerytów', 'bony świąteczne dla pracowników', 'paczki świąteczne', 'zapomoga z funduszu socjalnego', 'regulamin ZFŚS', 'kryterium socjalne', 'dofinansowanie z funduszu socjalnego', 'wczasy pod gruszą zasady', 'wczasy pod gruszą dla kogo'],
+  // Pakiet „luki” (2026-11-15): podpowiedzi Google „l4 wstecz”, „zwolnienie lekarskie wstecz ile dni”, „czy muszę dostarczyć l4”,
+  // „kiedy trzeba powiadomić pracodawcę o l4”, „kiedy zwolnienie jest widoczne w pue”, „zwolnienie ile dni do przodu”.
+  'l4-wstecz': ['L4 wstecz', 'zwolnienie lekarskie wstecz', 'zwolnienie z datą wsteczną', 'ile dni wstecz L4', 'L4 od psychiatry wstecz', 'L4 do przodu', 'powiadomienie pracodawcy o L4', 'zgłoszenie L4 pracodawcy', 'dostarczenie L4', 'czy muszę dostarczyć L4', 'kiedy pracodawca widzi L4', 'L4 widoczne na PUE'],
+  // Podpowiedzi „czy pracodawca może zmusić do nadgodzin”, „odmowa nadgodzin”, „czy muszę zostać po godzinach”,
+  // „czy nadgodziny są obowiązkowe”, „odmowa nadgodzin dziecko do lat 8”, „nadgodziny ile maksymalnie”.
+  'odmowa-nadgodzin': ['odmowa nadgodzin', 'czy muszę zostać po godzinach', 'zostać po godzinach', 'każą zostać dłużej', 'czy nadgodziny są obowiązkowe', 'zmuszanie do nadgodzin', 'nadgodziny w ciąży', 'nadgodziny dziecko do lat 8', 'nadgodziny bez zgody', 'limit nadgodzin', 'nadgodziny ile maksymalnie', '150 godzin nadliczbowych'],
 };
 
 /**

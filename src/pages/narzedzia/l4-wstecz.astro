@@ -1,0 +1,179 @@
+---
+// L4 wstecz: od kiedy może zacząć się zwolnienie lekarskie (§ 6–7 rozporządzenia Dz.U. 2015 poz. 2013) i do kiedy
+// zawiadomić pracodawcę (§ 2 rozporządzenia, t.j. Dz.U. 2014 poz. 1632). Logika i teksty wyniku: src/lib/narzedzia/l4-wstecz.ts.
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { PO_BADANIU_MAKS, WSTECZ_DNI, opisL4 } from '../../lib/narzedzia/l4-wstecz';
+import { dodajDni, dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+const dzis = dzisWPolsce();
+const POCZATEK_DNI = -1;
+const start = opisL4(dzis, dodajDni(dzis, POCZATEK_DNI), 'inny', dzis);
+
+const faq = [
+  {
+    pytanie: 'Ile dni wstecz można dostać L4?',
+    odpowiedz: `Najwyżej ${WSTECZ_DNI} dni przed dniem wizyty, jeśli wyniki badania niewątpliwie wykazują, że już wtedy była niezdolność do pracy (§ 7 ust. 3 rozporządzenia o zaświadczeniach lekarskich). Liczą się dni kalendarzowe, także sobota i niedziela: przy wizycie w poniedziałek zwolnienie może zacząć się najwcześniej w piątek. Granica nie dotyczy pobytu w szpitalu: zwolnienie obejmuje go od dnia przyjęcia do dnia wypisu (§ 4 ust. 2, § 10 ust. 1).`,
+  },
+  {
+    pytanie: 'Czy psychiatra może wystawić L4 wstecz na dłużej?',
+    odpowiedz: `Tak, ale tylko wtedy, gdy stwierdza albo podejrzewa zaburzenia psychiczne ograniczające zdolność oceny własnego postępowania (§ 7 ust. 4 rozporządzenia o zaświadczeniach lekarskich). Przepis nie podaje wtedy granicy w dniach. W innych przypadkach także u psychiatry obowiązują ${WSTECZ_DNI} dni z § 7 ust. 3.`,
+  },
+  {
+    pytanie: 'Do kiedy trzeba powiadomić pracodawcę o L4?',
+    odpowiedz: 'Niezwłocznie, najpóźniej w drugim dniu nieobecności w pracy. Podajesz przyczynę i przewidywany czas nieobecności (§ 2 ust. 2 rozporządzenia o usprawiedliwianiu nieobecności). Jeśli przepisy obowiązujące u pracodawcy, na przykład regulamin pracy, nie określają sposobu, zawiadamiasz osobiście, przez inną osobę, telefonicznie, innym środkiem łączności albo pocztą; wtedy liczy się data stempla. Gdy przyczynę nieobecności znasz z góry, uprzedzasz wcześniej (§ 2 ust. 1).',
+  },
+  {
+    pytanie: 'Czy muszę zanieść L4 do pracodawcy?',
+    odpowiedz: 'Zwykle nie. Lekarz wystawia zwolnienie elektronicznie i wysyła je do ZUS (art. 55 ust. 1–2 ustawy zasiłkowej), a pracodawca z profilem na PUE ZUS ma je najpóźniej w dniu następującym po dniu, w którym otrzymał je ZUS (art. 58 ust. 1). Wydruk albo papierowe zaświadczenie (wystawione, gdy elektroniczne nie było możliwe) dostarczasz pracodawcy, który nie ma profilu; o tym obowiązku musi poinformować na piśmie w pierwszym dniu ubezpieczenia chorobowego (art. 58 ust. 5, art. 62 ust. 1 pkt 2). Gdy zasiłek wypłaca ZUS, dostarczasz je do ZUS, chyba że pracodawca poinformował Cię na piśmie, że masz oddać je jemu (art. 62 ust. 1 pkt 1 i ust. 2). Papierowe zaświadczenie lekarz przesyła też do ZUS elektronicznie w ciągu 3 dni roboczych (art. 55a ust. 7 i 9).',
+  },
+  {
+    pytanie: 'Czy L4 może zacząć się później niż od jutra?',
+    odpowiedz: `Zwykle zwolnienie zaczyna się w dniu badania albo w dniu następnym (§ 7 ust. 1 rozporządzenia o zaświadczeniach lekarskich). Później, najpóźniej ${PO_BADANIU_MAKS}. dnia po dniu badania, tylko gdy zaraz po dniu badania są dni wolne od pracy albo gdy badanie odbywa się w trakcie wcześniejszego zwolnienia (§ 7 ust. 2).`,
+  },
+  {
+    pytanie: 'Co grozi za niezawiadomienie pracodawcy o L4?',
+    odpowiedz: 'Kodeks pracy przewiduje za nieprzestrzeganie przyjętego sposobu usprawiedliwiania nieobecności karę upomnienia albo nagany (art. 108 § 1). Czy możliwe są inne skutki, zależy od okoliczności i w sporze ocenia to sąd. Spóźnione zawiadomienie nie zmienia tego, że zwolnienie lekarskie usprawiedliwia nieobecność (§ 3 pkt 1 rozporządzenia o usprawiedliwianiu nieobecności). Spóźnienie może usprawiedliwić na przykład obłożna choroba połączona z brakiem lub nieobecnością domowników albo inne zdarzenie losowe; wtedy zawiadamiasz niezwłocznie po ustaniu przeszkody (§ 2 ust. 3 rozporządzenia o usprawiedliwianiu nieobecności).',
+  },
+];
+---
+<StronaNarzedzia
+  slug="l4-wstecz"
+  tytul="L4 wstecz: ile dni i kiedy zgłosić pracodawcy"
+  opis="Ile dni wstecz lekarz może wystawić L4 (3 dni, psychiatra dłużej), od kiedy może zacząć się zwolnienie i do kiedy zawiadomić pracodawcę o nieobecności."
+  h1="L4 wstecz: od kiedy zwolnienie i do kiedy zgłosić je pracodawcy"
+  lead="Lekarz może wystawić zwolnienie najwyżej 3 dni wstecz, a pracodawcę trzeba zawiadomić niezwłocznie, najpóźniej w drugim dniu nieobecności. Wpisz dzień wizyty i pierwszy dzień nieobecności w pracy, a sprawdzimy, czy L4 może objąć ten dzień i do kiedy zawiadomić pracodawcę."
+  faq={faq}
+>
+  <form class="kalkulator" data-l4-wstecz novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twoje L4</h2>
+      <div class="mt-4 grid grid-cols-1 min-[380px]:grid-cols-2 items-end gap-3">
+        <div>
+          <label for="l4-badanie" class="etykieta-pola">Wizyta u lekarza</label>
+          <input id="l4-badanie" name="badanie" type="date" class="pole mt-1" min="2016-01-01" max="2100-12-31" value={dzis} data-dzis="0" aria-describedby="l4-blad" />
+        </div>
+        <div>
+          <label for="l4-poczatek" class="etykieta-pola">Nie pracujesz od</label>
+          <input id="l4-poczatek" name="poczatek" type="date" class="pole mt-1" min="2016-01-01" max="2100-12-31" value={dodajDni(dzis, POCZATEK_DNI)} data-dzis={POCZATEK_DNI} aria-describedby="l4-poczatek-opis l4-blad" />
+        </div>
+      </div>
+      <p id="l4-poczatek-opis" class="meta mt-1">Pierwszy dzień, w którym z powodu choroby nie ma Cię w pracy.</p>
+      <div class="mt-4">
+        <label for="l4-lekarz" class="etykieta-pola">Lekarz</label>
+        <select id="l4-lekarz" name="lekarz" class="pole mt-1">
+          <option value="inny" selected>Inny niż psychiatra</option>
+          <option value="psychiatra">Psychiatra</option>
+        </select>
+      </div>
+      <p id="l4-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Czy L4 obejmie ten dzień</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-data" data-w="werdykt">{start.werdykt}</p>
+        <p class="meta" data-w="opis">{start.opis}</p>
+        <p class="sr-only" data-w="glos">{start.zawiadomEtykieta}: {start.zawiadom}</p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Najwcześniejszy początek L4</dt><dd data-w="od">{start.odKiedy}</dd></div>
+        <div><dt>Najpóźniejszy początek L4</dt><dd data-w="do">{start.doKiedy}</dd></div>
+        <div><dt data-w="zawiadom-etykieta">{start.zawiadomEtykieta}</dt><dd data-w="zawiadom">{start.zawiadom}</dd></div>
+      </dl>
+      <p class="wynik-uwaga" data-w="uwaga">{start.uwagi.join(' ')}</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Wynik powyżej to przykład z dnia aktualizacji strony (wizyta tego dnia, nieobecność od dnia poprzedniego), a zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="od-kiedy">Od kiedy może zacząć się L4</h2>
+    <ul>
+      <li>Zaświadczenie lekarskie wystawia się wyłącznie po bezpośrednim badaniu stanu zdrowia (§ 6 ust. 1 rozporządzenia o zaświadczeniach lekarskich, art. 55 ust. 4 pkt 1 ustawy zasiłkowej).</li>
+      <li>Zwykle zwolnienie obejmuje okres od dnia badania albo od dnia następnego (§ 7 ust. 1).</li>
+      <li>Wstecz najwyżej {WSTECZ_DNI} dni przed dniem badania, jeśli jego wyniki wykazują, że w tym czasie niewątpliwie była niezdolność do pracy (§ 7 ust. 3).</li>
+      <li>Pobyt w szpitalu zwolnienie obejmuje od dnia przyjęcia do dnia wypisu, a zaświadczenie wystawia się najpóźniej w dniu wypisu, na wniosek także później (§ 4 ust. 2, § 10 ust. 1 i 3).</li>
+      <li>Psychiatra może sięgnąć dalej wstecz, gdy stwierdza albo podejrzewa zaburzenia psychiczne ograniczające zdolność oceny własnego postępowania (§ 7 ust. 4). Przepis nie podaje granicy w dniach.</li>
+      <li>Później niż od dnia po badaniu, ale najpóźniej {PO_BADANIU_MAKS}. dnia po dniu badania, tylko gdy zaraz po dniu badania są dni wolne od pracy albo gdy badanie odbywa się w trakcie wcześniejszego zwolnienia (§ 7 ust. 2).</li>
+    </ul>
+
+    <h2 id="zawiadomienie">Zawiadomienie pracodawcy</h2>
+    <ul>
+      <li>Gdy przyczynę nieobecności znasz z góry, na przykład zaplanowany zabieg, uprzedzasz pracodawcę o niej i o czasie nieobecności (§ 2 ust. 1 rozporządzenia o usprawiedliwianiu nieobecności).</li>
+      <li>Gdy choroba przychodzi nagle, zawiadamiasz niezwłocznie, najpóźniej w drugim dniu nieobecności, i podajesz przyczynę i przewidywany czas nieobecności (§ 2 ust. 2).</li>
+      <li>Sposób może określać regulamin pracy albo inne przepisy obowiązujące u pracodawcy. Jeśli go nie określają: osobiście, przez inną osobę, telefonicznie, innym środkiem łączności albo pocztą, a wtedy liczy się data stempla pocztowego (§ 2 ust. 2).</li>
+      <li>Spóźnienie może usprawiedliwić na przykład obłożna choroba połączona z brakiem albo nieobecnością domowników albo inne zdarzenie losowe; wtedy zawiadamiasz niezwłocznie po ustaniu przeszkody (§ 2 ust. 3).</li>
+      <li>Za nieprzestrzeganie przyjętego sposobu usprawiedliwiania nieobecności pracodawca może dać karę upomnienia albo nagany (art. 108 § 1 Kodeksu pracy). Jak odwołać się od kary, sprawdzi <a href="/narzedzia/kara-porzadkowa">kalkulator kary porządkowej</a>.</li>
+    </ul>
+
+    <h2 id="dostarczenie">Czy trzeba dostarczyć L4</h2>
+    <ul>
+      <li>Lekarz wystawia zaświadczenie elektronicznie (e-ZLA) i przekazuje je do ZUS (art. 55 ust. 1–2 ustawy zasiłkowej). Pracodawca z profilem na PUE ZUS ma je najpóźniej w dniu następującym po dniu, w którym otrzymał je ZUS (art. 58 ust. 1). Niczego nie zanosisz.</li>
+      <li>Wydruk dostajesz na swoje żądanie albo wtedy, gdy pracodawca nie ma profilu (art. 55a ust. 6). Pracodawcy bez profilu dostarczasz wydruk, a gdy zasiłek wypłaca ZUS, dostarczasz go do ZUS, chyba że pracodawca poinformował Cię na piśmie, że masz oddać go jemu; wtedy on przekazuje go do ZUS (art. 62 ust. 1–2). Pracodawca bez profilu informuje na piśmie o obowiązku dostarczania wydruku w pierwszym dniu ubezpieczenia chorobowego (art. 58 ust. 5).</li>
+      <li>Gdy wystawienie elektroniczne nie jest możliwe, na przykład bez internetu, lekarz daje zaświadczenie na formularzu wydrukowanym z systemu w dniu badania (art. 55a ust. 7) i przesyła je do ZUS elektronicznie w ciągu 3 dni roboczych (art. 55a ust. 9). Takie zaświadczenie dostarczasz tak samo jak wydruk (art. 62 ust. 1).</li>
+      <li>Obecne brzmienie art. 62 ustawy zasiłkowej nie podaje terminu dostarczenia wydruku ani obniżenia zasiłku za spóźnienie.</li>
+    </ul>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Dni z § 7 liczymy kalendarzowo, razem z sobotami, niedzielami i świętami: rozporządzenie mówi o dniach, a dni wolne
+      od pracy wymienia osobno tylko w § 7 ust. 2. „{PO_BADANIU_MAKS}. dzień po dniu badania” to dzień badania plus {PO_BADANIU_MAKS} dni.
+      Drugi dzień nieobecności to dzień po pierwszym dniu nieobecności, także gdy wypada w dzień wolny według grafiku:
+      przepis nie mówi, czy dni wolne się liczą, a ta data jest najwcześniejsza z możliwych, więc zawiadomienie do niej
+      jest bezpieczne. Nie przesuwamy jej z soboty ani święta: przepis wskazuje dzień nieobecności, a nie termin liczony
+      w dniach, do którego stosuje się art. 115 Kodeksu cywilnego. Czy wyniki badania potwierdzają niezdolność do pracy przed wizytą, ocenia lekarz: narzędzie podaje
+      tylko granice z przepisu.
+    </p>
+    <p>
+      Czego przepisy nie mówią: czy przy dniach wolnych po badaniu zwolnienie musi zacząć się zaraz po nich (§ 7 ust. 2 podaje tylko granicę 4. dnia); § 2 ust. 3 dosłownie odsyła do „terminu przewidzianego w ust. 1”, choć termin podaje ust. 2, a narzędzie stosuje go do terminu z ust. 2, bo to wariant korzystny dla pracownika; czy zwolnienie elektroniczne, które pracodawca widzi na PUE ZUS, zastępuje zawiadomienie
+      z § 2 ust. 2. Rozporządzenie o usprawiedliwianiu nieobecności o nim nie wspomina, więc bezpieczniej zawiadomić
+      pracodawcę osobno. Ile wyniesie zasiłek, policzy <a href="/narzedzia/kalkulator-l4">kalkulator L4</a>, ile zostało ze 182 dni, <a href="/narzedzia/okres-zasilkowy">kalkulator okresu zasiłkowego</a>, a co wolno w czasie zwolnienia, sprawdzi <a href="/narzedzia/co-wolno-na-l4">narzędzie „Co wolno na L4”</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { KOMUNIKATY, opisL4, type Lekarz } from '../../lib/narzedzia/l4-wstecz';
+  import { dzisWPolsce, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { typografia } from '../../lib/typografia.mjs';
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
+
+  const form = document.querySelector<HTMLFormElement>('[data-l4-wstecz]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    // Zapis tylko przy zmianie: czytnik ekranu nie powtarza regionu aria-live, gdy tekst jest ten sam.
+    const pisz = (k: string, tekst: string) => {
+      const t = typografia(tekst);
+      if (w(k).textContent !== t) w(k).textContent = t;
+    };
+    const przelicz = () => {
+      const badanie = el('badanie').value;
+      const poczatek = el('poczatek').value;
+      const blad = !poprawnaData(badanie) ? KOMUNIKATY['brak-badania'] : !poprawnaData(poczatek) ? KOMUNIKATY['brak-poczatku'] : null;
+      pokazBlad(form.querySelector<HTMLElement>('[data-blad="dane"]')!, blad, !poprawnaData(badanie) ? [el('badanie')] : [el('poczatek')]);
+      if (blad) {
+        pisz('werdykt', '—');
+        for (const k of ['opis', 'glos', 'uwaga']) pisz(k, '');
+        for (const k of ['od', 'do', 'zawiadom']) pisz(k, '—');
+        pisz('zawiadom-etykieta', 'Zawiadom pracodawcę');
+        return;
+      }
+      const o = opisL4(badanie, poczatek, el('lekarz').value as Lekarz, dzisWPolsce());
+      pisz('werdykt', o.werdykt);
+      pisz('opis', o.opis);
+      pisz('od', o.odKiedy);
+      pisz('do', o.doKiedy);
+      pisz('zawiadom-etykieta', o.zawiadomEtykieta);
+      pisz('zawiadom', o.zawiadom);
+      pisz('glos', `${o.zawiadomEtykieta}: ${o.zawiadom}`);
+      pisz('uwaga', o.uwagi.join(' '));
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    ustawDzisiejszeWartosci(form);
+    liczPoPowrocie(przelicz);
+    przelicz();
+  }
+</script>

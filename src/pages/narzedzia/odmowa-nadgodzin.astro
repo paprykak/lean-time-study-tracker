@@ -1,0 +1,251 @@
+---
+// Czy można odmówić nadgodzin: art. 100 § 1, 132, 151 § 1–4, 178 § 1–2 i 203 § 1 Kodeksu pracy, art. 15 ust. 3 i 16
+// ustawy o rehabilitacji. Logika i teksty wyniku: src/lib/narzedzia/odmowa-nadgodzin.ts.
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { LIMIT_ROCZNY, czasDnia, opisNadgodzin, type CzasDnia, type DaneNadgodzin } from '../../lib/narzedzia/odmowa-nadgodzin';
+
+const PRZYKLAD: DaneNadgodzin = {
+  powod: 'potrzeby',
+  ciaza: false,
+  dziecko8: false,
+  zgodaDziecko: false,
+  mlodociany: false,
+  niepelnosprawny: false,
+  zgodaLekarza: false,
+  pilnowanie: false,
+  nds: false,
+  start: '06:00',
+  koniecZmiany: '14:00',
+  koniecPracy: '18:00',
+  nastepna: '06:00',
+  wRoku: 40,
+  limit: LIMIT_ROCZNY,
+};
+const start = opisNadgodzin(PRZYKLAD, czasDnia(PRZYKLAD) as CzasDnia);
+
+const POLA_WYBORU = [
+  { name: 'ciaza', tekst: 'Jesteś w ciąży' },
+  { name: 'dziecko8', tekst: 'Wychowujesz dziecko, które nie ma jeszcze 8 lat' },
+  { name: 'zgodaDziecko', tekst: 'Zgadzasz się na nadgodziny (przy dziecku do 8 lat)', zalezne: true },
+  { name: 'mlodociany', tekst: 'Masz mniej niż 18 lat' },
+  { name: 'niepelnosprawny', tekst: 'Masz orzeczenie o stopniu niepełnosprawności (albo z ZUS)' },
+  { name: 'zgodaLekarza', tekst: 'Lekarz zgodził się na nadgodziny na Twój wniosek', zalezne: true },
+  { name: 'pilnowanie', tekst: 'Pracujesz przy pilnowaniu (ochrona, dozór)', zalezne: true },
+  { name: 'nds', tekst: 'Na stanowisku są przekroczone normy czynników szkodliwych (NDS, NDN), np. hałasu' },
+];
+
+const faq = [
+  {
+    pytanie: 'Czy pracodawca może zmusić do nadgodzin?',
+    odpowiedz: 'Może je polecić w dwóch sytuacjach: przy akcji ratowniczej albo usuwaniu awarii i przy szczególnych potrzebach pracodawcy (art. 151 § 1 Kodeksu pracy). Polecenie zgodne z przepisami i umową trzeba wykonać (art. 100 § 1). Nie wolno go wydać osobie w ciąży, młodocianej i, z wyjątkami, osobie z niepełnosprawnością, a osobie wychowującej dziecko do 8 lat tylko za jej zgodą.',
+  },
+  {
+    pytanie: 'Kiedy można odmówić nadgodzin?',
+    odpowiedz: `Gdy polecenie jest sprzeczne z przepisami albo umową (art. 100 § 1 Kodeksu pracy): w ciąży (art. 178 § 1), przed ukończeniem 18 lat (art. 203 § 1), przy niepełnosprawności bez zgody lekarza, chyba że pracujesz przy pilnowaniu (art. 15 ust. 3 i 16 ustawy o rehabilitacji), przy dziecku do 8 lat bez Twojej zgody (art. 178 § 2), na stanowisku z przekroczonymi normami czynników szkodliwych (art. 151 § 2), po wyczerpaniu limitu ${LIMIT_ROCZNY} godzin (art. 151 § 3) i gdy nie zostanie 11 godzin odpoczynku (art. 132 § 1). Trzy ostatnie powody nie dotyczą akcji ratowniczej ani awarii.`,
+  },
+  {
+    pytanie: 'Ile nadgodzin można mieć w roku?',
+    odpowiedz: `Z powodu szczególnych potrzeb pracodawcy najwyżej ${LIMIT_ROCZNY} godzin w roku kalendarzowym, chyba że układ zbiorowy, regulamin pracy albo, u pracodawcy bez układu i bez obowiązku regulaminu, umowa o pracę ustalają inną liczbę (art. 151 § 3–4 Kodeksu pracy). Nadgodzin przy akcji ratowniczej albo awarii limit nie obejmuje. Czas pracy z nadgodzinami nie może przekraczać przeciętnie 48 godzin w tygodniu w okresie rozliczeniowym (art. 131 § 1).`,
+  },
+  {
+    pytanie: 'Do której najdłużej wolno zostać w pracy?',
+    odpowiedz: 'Tak, żeby w dobie, liczonej od godziny rozpoczęcia zmiany, zostało co najmniej 11 godzin nieprzerwanego odpoczynku (art. 132 § 1 i art. 128 § 3 pkt 1 Kodeksu pracy). Przy zmianie od 6:00 to najpóźniej 19:00, a gdy następna zmiana zaczyna się wcześniej niż za 24 godziny, odpowiednio wcześniej. Przy akcji ratowniczej albo awarii ta granica nie obowiązuje, ale należy się równoważny odpoczynek (art. 132 § 2–3).',
+  },
+  {
+    pytanie: 'Czy mając małe dziecko można odmówić nadgodzin?',
+    odpowiedz: 'Tak, jeśli dziecko nie ma jeszcze 8 lat: bez Twojej zgody pracodawca nie może zatrudniać Cię w godzinach nadliczbowych (art. 178 § 2 Kodeksu pracy). Przepis dotyczy osoby, która wychowuje dziecko. Gdy oboje rodzice albo opiekunowie dziecka pracują, z tej ochrony może korzystać jedno z nich (art. 189¹).',
+  },
+  {
+    pytanie: 'Co grozi za odmowę nadgodzin?',
+    odpowiedz: 'Gdy polecenie było zgodne z prawem, odmowa jest naruszeniem obowiązku z art. 100 § 1 Kodeksu pracy, a jej skutki, na przykład kara porządkowa, zależą od okoliczności i w sporze ocenia je sąd. Gdy polecenie naruszało przepisy, na przykład w ciąży albo ponad limit, obowiązku jego wykonania nie było.',
+  },
+];
+---
+<StronaNarzedzia
+  slug="odmowa-nadgodzin"
+  tytul="Czy można odmówić nadgodzin? Sprawdź"
+  opis="Czy musisz zostać po godzinach: kiedy wolno polecić nadgodziny, kto może odmówić (ciąża, dziecko do 8 lat, poniżej 18 lat), limit 150 h, 11 h odpoczynku."
+  h1="Czy można odmówić nadgodzin"
+  lead="Pracodawca może polecić nadgodziny przy awarii albo przy szczególnych potrzebach, ale nie każdemu i nie bez granic. Wybierz powód, zaznacz, co Cię dotyczy, i wpisz godziny zmiany, a sprawdzimy, czy musisz zostać i do której najdłużej."
+  faq={faq}
+>
+  <form class="kalkulator" data-odmowa-nadgodzin novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Nadgodziny dziś</h2>
+      <div class="mt-4">
+        <label for="n-powod" class="etykieta-pola">Powód nadgodzin</label>
+        <select id="n-powod" name="powod" class="pole mt-1" aria-describedby="n-powod-opis">
+          <option value="potrzeby" selected>Szczególne potrzeby</option>
+          <option value="awaria">Awaria, ratunek</option>
+        </select>
+        <p id="n-powod-opis" class="meta mt-1">Szczególne potrzeby pracodawcy, na przykład pilne zamówienie, albo akcja ratownicza (życie, zdrowie, mienie, środowisko) i usuwanie awarii.</p>
+      </div>
+      <fieldset class="mt-4">
+        <legend class="etykieta-pola">Co Cię dotyczy</legend>
+        {POLA_WYBORU.map((p, i) => (
+          <label class={`${i ? 'mt-3' : 'mt-2'} ${'zalezne' in p ? 'ml-7 ' : ''}flex items-start gap-3 text-[0.9375rem]`}>
+            <input type="checkbox" name={p.name} class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
+            <span>{p.tekst}</span>
+          </label>
+        ))}
+      </fieldset>
+      <fieldset class="mt-4">
+        <legend class="etykieta-pola">Godziny</legend>
+        <div class="mt-1 grid grid-cols-1 min-[380px]:grid-cols-2 items-end gap-3">
+          <div>
+            <label for="n-start" class="meta">Zmiana od</label>
+            <input id="n-start" name="start" type="time" class="pole mt-1" value={PRZYKLAD.start} aria-describedby="n-blad" />
+          </div>
+          <div>
+            <label for="n-koniec" class="meta">Zmiana do (grafik)</label>
+            <input id="n-koniec" name="koniecZmiany" type="time" class="pole mt-1" value={PRZYKLAD.koniecZmiany} aria-describedby="n-blad" />
+          </div>
+          <div>
+            <label for="n-praca" class="meta">Praca miałaby trwać do</label>
+            <input id="n-praca" name="koniecPracy" type="time" class="pole mt-1" value={PRZYKLAD.koniecPracy} aria-describedby="n-blad" />
+          </div>
+          <div>
+            <label for="n-nastepna" class="meta">Następna zmiana od</label>
+            <input id="n-nastepna" name="nastepna" type="time" class="pole mt-1" value={PRZYKLAD.nastepna} aria-describedby="n-nastepna-opis n-blad" />
+          </div>
+        </div>
+        <p id="n-nastepna-opis" class="meta mt-1">Zmiana w dniu po dniu, w którym zaczęła się dzisiejsza. Puste pole: tego dnia masz wolne.</p>
+      </fieldset>
+      <div class="mt-4 grid grid-cols-1 min-[380px]:grid-cols-2 items-end gap-3">
+        <div>
+          <label for="n-wroku" class="etykieta-pola">Nadgodziny w tym roku</label>
+          <input id="n-wroku" name="wRoku" type="text" inputmode="decimal" autocomplete="off" class="pole mt-1" value={String(PRZYKLAD.wRoku)} aria-describedby="n-wroku-opis n-blad" />
+        </div>
+        <div>
+          <label for="n-limit" class="etykieta-pola">Limit w roku (h)</label>
+          <input id="n-limit" name="limit" type="text" inputmode="decimal" autocomplete="off" class="pole mt-1" value={String(LIMIT_ROCZNY)} aria-describedby="n-wroku-opis n-blad" />
+        </div>
+      </div>
+      <p id="n-wroku-opis" class="meta mt-1">Godziny z powodu szczególnych potrzeb, bez dzisiejszych. Limit to {LIMIT_ROCZNY} h, chyba że układ zbiorowy, regulamin pracy albo umowa podają inny.</p>
+      <p id="n-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Czy musisz zostać</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-data" data-w="werdykt">{start.naglowek}</p>
+        <p class="meta" data-w="powody">{start.powody.join(' ')}</p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Nadgodziny dziś</dt><dd data-w="dzis">{start.dzis}</dd></div>
+        <div><dt>Najpóźniej do</dt><dd data-w="najpozniej">{start.najpozniej}</dd></div>
+        <div><dt>Limit roczny</dt><dd data-w="limit">{start.limit}</dd></div>
+      </dl>
+      <p class="wynik-uwaga" data-w="uwaga">{start.uwagi.join(' ')}</p>
+      <noscript><p class="wynik-uwaga">Narzędzie liczy w przeglądarce i potrzebuje JavaScriptu. Wynik powyżej dotyczy zmiany 6:00–14:00 z pracą do 18:00, a zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="kiedy-wolno">Kiedy pracodawca może polecić nadgodziny</h2>
+    <ul>
+      <li>Nadgodziny to praca ponad normy czasu pracy albo ponad dobowy wymiar z Twojego grafiku. Są dopuszczalne tylko przy akcji ratowniczej w celu ochrony życia, zdrowia, mienia lub środowiska albo usuwaniu awarii i przy szczególnych potrzebach pracodawcy (art. 151 § 1 Kodeksu pracy).</li>
+      <li>Polecenie przełożonego dotyczące pracy wykonuje się, jeżeli nie jest sprzeczne z przepisami prawa ani umową o pracę (art. 100 § 1). Kodeks nie wymaga, żeby polecenie nadgodzin było na piśmie.</li>
+      <li>Z powodu szczególnych potrzeb najwyżej {LIMIT_ROCZNY} godzin w roku kalendarzowym, chyba że układ zbiorowy, regulamin pracy albo, u pracodawcy bez układu i bez obowiązku regulaminu, umowa o pracę ustalają inną liczbę (art. 151 § 3–4).</li>
+      <li>W każdej dobie należy się co najmniej 11 godzin nieprzerwanego odpoczynku, a w tygodniu 35 godzin (art. 132 § 1, art. 133 § 1). Doba to 24 godziny od godziny, w której zaczynasz pracę według grafiku (art. 128 § 3 pkt 1). Przy akcji ratowniczej albo awarii 11 godzin nie obowiązuje, ale należy się równoważny odpoczynek w okresie rozliczeniowym (art. 132 § 2–3).</li>
+      <li>Czas pracy z nadgodzinami nie może przekraczać przeciętnie 48 godzin w tygodniu (art. 131 § 1); to sprawdzi <a href="/narzedzia/nadgodziny-sredniotygodniowe">kalkulator nadgodzin średniotygodniowych</a>.</li>
+    </ul>
+
+    <h2 id="kto-nie">Kogo nie wolno zatrudniać w nadgodzinach</h2>
+    <ul>
+      <li>Pracownicy w ciąży, bez wyjątków, także za zgodą (art. 178 § 1).</li>
+      <li>Pracownika wychowującego dziecko do ukończenia przez nie 8 lat bez jego zgody (art. 178 § 2). Gdy oboje rodzice albo opiekunowie dziecka pracują, z tej ochrony może korzystać jedno z nich (art. 189¹).</li>
+      <li>Pracownika młodocianego, czyli przed ukończeniem 18 lat (art. 203 § 1).</li>
+      <li>Osoby z niepełnosprawnością (art. 15 ust. 3 ustawy o rehabilitacji), chyba że pracuje przy pilnowaniu albo na jej wniosek zgodę wyraził lekarz przeprowadzający badania profilaktyczne, a gdy go nie ma, lekarz sprawujący nad nią opiekę (art. 16 ust. 1). Bez tych wyjątków jej czas pracy nie może też przekraczać 8 godzin na dobę, a przy znacznym albo umiarkowanym stopniu 7 godzin (art. 15 ust. 1–2).</li>
+      <li>Z powodu szczególnych potrzeb pracodawcy: na stanowiskach, na których przekroczone są najwyższe dopuszczalne stężenia albo natężenia czynników szkodliwych dla zdrowia (art. 151 § 2 Kodeksu pracy). Czy hałas przekracza normę, sprawdzi <a href="/narzedzia/halas-w-pracy">kalkulator hałasu w pracy</a>.</li>
+    </ul>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Nadgodziny dziś to czas od końca zmiany według grafiku do końca pracy. Przy zmianie krótszej niż 8 godzin to ostrożne założenie: praca do 8 godzin w dobie nie przekracza normy dobowej (art. 129 § 1). Odpoczynek liczymy w dobie, która zaczyna się
+      o godzinie rozpoczęcia dzisiejszej zmiany: od końca pracy do końca tej doby albo do początku następnej zmiany, jeśli
+      zaczyna się wcześniej. Najpóźniejszy koniec pracy to więc 13 godzin od startu zmiany albo 11 godzin przed następną
+      zmianą, zależnie od tego, co wypada wcześniej. Gdy następna zmiana zaczyna się o wcześniejszej godzinie niż dzisiejsza,
+      jej początek wypada w tej samej dobie; czy to nadgodziny, sprawdzi <a href="/narzedzia/doba-pracownicza">kalkulator doby pracowniczej</a>. Limit roczny porównujemy z godzinami,
+      które wpisujesz, plus dzisiejszymi; gdy limit kończy się wcześniej niż odpoczynek, pole „Najpóźniej do” pokazuje granicę z limitu. Tygodniowego odpoczynku i średniej 48 godzin narzędzie nie liczy, bo potrzebny jest
+      cały grafik.
+    </p>
+    <p>
+      Czego przepisy nie mówią: co dokładnie są „szczególne potrzeby pracodawcy”. Kodeks ich nie definiuje, więc narzędzie
+      tego nie ocenia; w sporze rozstrzyga sąd. Narzędzie nie dotyczy kadry zarządzającej i kierowników wyodrębnionych
+      komórek (art. 151⁴), kierowców (ustawa o czasie pracy kierowców) ani pracy ponad wymiar przy niepełnym etacie, która
+      mieści się w normach czasu pracy (art. 151 § 5). Ile zapłacą za nadgodziny, policzy <a href="/narzedzia/kalkulator-nadgodzin">kalkulator nadgodzin</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { KOMUNIKATY, LIMIT_ROCZNY, czasDnia, minuty, opisNadgodzin, wczytajGodziny, type DaneNadgodzin, type Powod } from '../../lib/narzedzia/odmowa-nadgodzin';
+  import { typografia } from '../../lib/typografia.mjs';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
+
+  const form = document.querySelector<HTMLFormElement>('[data-odmowa-nadgodzin]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const zaznaczone = (n: string) => el(n).checked;
+    // Zapis tylko przy zmianie: czytnik ekranu nie powtarza regionu aria-live, gdy tekst jest ten sam.
+    const pisz = (k: string, tekst: string) => {
+      const t = typografia(tekst);
+      if (w(k).textContent !== t) w(k).textContent = t;
+    };
+    const GODZINY = ['start', 'koniecZmiany', 'koniecPracy', 'nastepna'];
+    const przelicz = () => {
+      const wRoku = wczytajGodziny(el('wRoku').value);
+      // Puste pole limitu to limit z Kodeksu (art. 151 § 3), a nie 0 h.
+      const limit = el('limit').value.trim() ? wczytajGodziny(el('limit').value) : LIMIT_ROCZNY;
+      const d: DaneNadgodzin = {
+        powod: el('powod').value as Powod,
+        ciaza: zaznaczone('ciaza'),
+        dziecko8: zaznaczone('dziecko8'),
+        zgodaDziecko: zaznaczone('zgodaDziecko'),
+        mlodociany: zaznaczone('mlodociany'),
+        niepelnosprawny: zaznaczone('niepelnosprawny'),
+        zgodaLekarza: zaznaczone('zgodaLekarza'),
+        pilnowanie: zaznaczone('pilnowanie'),
+        nds: zaznaczone('nds'),
+        start: el('start').value,
+        koniecZmiany: el('koniecZmiany').value,
+        koniecPracy: el('koniecPracy').value,
+        nastepna: el('nastepna').value,
+        wRoku: wRoku ?? 0,
+        limit: limit ?? 0,
+      };
+      const c = czasDnia(d);
+      let blad: string | null = null;
+      let pola: HTMLInputElement[] = [];
+      if ('blad' in c) {
+        blad = KOMUNIKATY[c.blad];
+        pola = c.blad === 'godziny' ? GODZINY.map(el).filter((p) => (p.name === 'nastepna' ? p.value !== '' && minuty(p.value) === null : minuty(p.value) === null)) : c.blad === 'kolejnosc' ? [el('koniecPracy')] : [el('nastepna')];
+      } else if (wRoku === null || limit === null) {
+        blad = KOMUNIKATY.liczby;
+        pola = [wRoku === null ? el('wRoku') : null, limit === null ? el('limit') : null].filter((x): x is HTMLInputElement => !!x);
+      }
+      pokazBlad(form.querySelector<HTMLElement>('[data-blad="dane"]')!, blad, pola);
+      if (blad || 'blad' in c) {
+        pisz('werdykt', '—');
+        pisz('powody', '');
+        pisz('uwaga', '');
+        for (const k of ['dzis', 'najpozniej', 'limit']) pisz(k, '—');
+        return;
+      }
+      const o = opisNadgodzin(d, c);
+      pisz('werdykt', o.naglowek);
+      pisz('powody', o.powody.join(' '));
+      pisz('dzis', o.dzis);
+      pisz('najpozniej', o.najpozniej);
+      pisz('limit', o.limit);
+      pisz('uwaga', o.uwagi.join(' '));
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    liczPoPowrocie(przelicz);
+    przelicz();
+  }
+</script>
