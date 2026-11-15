@@ -879,6 +879,28 @@ export const AKTY = {
     adres: eli(2024, 1925),
     sprawdzono: '2026-11-15',
   },
+  // Pakiet „luki” (2026-11-15): L4 wstecz i zawiadomienie pracodawcy, odmowa nadgodzin.
+  zaswiadczeniaLekarskie: {
+    nazwa: 'Rozporządzenie w sprawie trybu i sposobu orzekania o czasowej niezdolności do pracy, wystawiania zaświadczenia lekarskiego oraz trybu i sposobu sprostowania błędu w zaświadczeniu lekarskim',
+    publikator: 'Dz.U. 2015 poz. 2013',
+    uwaga: 'bez zmian, w mocy od 1 stycznia 2016 r. (podstawa: art. 59a ustawy zasiłkowej, bez zmian w t.j. Dz.U. 2026 poz. 854); § 6 ust. 1: tylko po bezpośrednim badaniu; § 7 ust. 1–2: od dnia badania albo następnego, później najpóźniej 4. dnia po badaniu przy dniach wolnych albo w trakcie wcześniejszego zwolnienia; § 7 ust. 3: do 3 dni przed badaniem; § 7 ust. 4: psychiatra wcześniej',
+    adres: eli(2015, 2013),
+    sprawdzono: '2026-11-15',
+  },
+  usprawiedliwianieNieobecnosci: {
+    nazwa: 'Rozporządzenie w sprawie sposobu usprawiedliwiania nieobecności w pracy oraz udzielania pracownikom zwolnień od pracy',
+    publikator: 'Dz.U. 2014 poz. 1632',
+    uwaga: 'tekst jednolity, bez późniejszych zmian; § 2 ust. 1–3: uprzedzenie o nieobecności znanej z góry, zawiadomienie niezwłocznie, najpóźniej w drugim dniu nieobecności, sposób i data stempla, usprawiedliwione spóźnienie; § 3 pkt 1: zaświadczenie lekarskie jako dowód',
+    adres: eli(2014, 1632),
+    sprawdzono: '2026-11-15',
+  },
+  zasilkowaZaswiadczenia: {
+    nazwa: 'Ustawa o świadczeniach pieniężnych z ubezpieczenia społecznego w razie choroby i macierzyństwa',
+    publikator: 'Dz.U. 2026 poz. 854',
+    uwaga: 'tekst jednolity (stan prawny na 17 czerwca 2026 r.); art. 55 ust. 1–2 i 4, art. 55a ust. 6, 7 i 9, art. 58 ust. 1 i 5, art. 62 ust. 1: zaświadczenie elektroniczne, wydruk, formularz papierowy, udostępnienie płatnikowi; zmiany Dz.U. 2026 poz. 26, 441 i 1123 tych przepisów nie dotyczą',
+    adres: eli(2026, 854),
+    sprawdzono: '2026-11-15',
+  },
 } as const satisfies Record<string, Akt>;
 
 export type KluczAktu = keyof typeof AKTY;
