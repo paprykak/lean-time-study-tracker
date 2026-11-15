@@ -106,5 +106,6 @@ test('FAQ: kary pieniężne tylko z art. 108; link do kary porządkowej (audyt j
   const tresc = page.locator('main');
   await expect(tresc).not.toContainText('kar pieniężnych za naruszenie porządku pracy');
   await expect(tresc).toContainText(/kar\spieniężnych\sz\sart\.\s108,\sktóre\swolno\snałożyć\stylko\sza\snaruszenie\sprzepisów\sBHP/);
-  await expect(page.locator('a[href="/narzedzia/kara-porzadkowa"]')).toHaveCount(1);
+  // Jeden link w treści strony; kolumna „Podobne narzędzia” (aside) może mieć drugi.
+  await expect(page.locator('.tresc a[href="/narzedzia/kara-porzadkowa"]')).toHaveCount(1);
 });
