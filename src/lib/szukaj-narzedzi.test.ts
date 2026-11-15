@@ -299,7 +299,6 @@ describe('wyszukiwarka narzędzi: hasła zmienione w pakiecie „wyszukiwarka2�
     ['zgłoszenie cudzoziemca do urzędu pracy', 'zgloszenie-pracy-cudzoziemca'],
     ['gdzie zgłosić pracodawcę który nie płaci', 'sad-pracy-czy-pip'],
     ['praca bez umowy', 'informacja-o-warunkach-zatrudnienia'],
-    ['sobota pracująca 2026', 'dni-wolne-od-pracy'],
     ['boże ciało 2026', 'dni-wolne-od-pracy'],
     ['11 listopada 2026', 'dni-wolne-od-pracy'],
     ['praca w sobotę ile płatna', 'praca-w-sobote'],

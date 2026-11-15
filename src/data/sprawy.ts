@@ -1,16 +1,18 @@
 // Język hali dla wyszukiwarki i strony głównej. Rejestr narzędzi (src/data/narzedzia.ts) dopisują zespoły fabryki,
 // więc potoczne słowa i najczęstsze sprawy są tutaj, w osobnym pliku. Test src/lib/szukaj-narzedzi.test.ts pilnuje,
 // że każdy slug istnieje w rejestrze. Nowe narzędzie działa w wyszukiwarce bez wpisu (nazwa, opis i pytania z FAQ);
-// hasło dopisujesz tylko wtedy, gdy ludzie mówią o sprawie słowem, którego nie ma w nazwie ani w pytaniach.
+// hasło dopisujesz tylko wtedy, gdy ludzie mówią o sprawie słowem, którego nie ma w nazwie ani w pytaniach, albo gdy
+// całe częste zapytanie (podpowiedź Google) przegrywa z innym narzędziem: wyszukiwarka liczy hasło także jako całą frazę.
+// Hasło tylko dla sprawy, na którą strona narzędzia naprawdę odpowiada; każda zmiana z testem w obie strony.
 
 /** Potoczne słowa, pod którymi ludzie szukają narzędzia (slug → hasła). */
 export const HASLA: Record<string, string[]> = {
-  // Pakiet „wyszukiwarka2” (2026-11-15): hasła z podpowiedzi Google (pl) dopisane przy 22 narzędziach (źródło każdego
-  // w raporty/wyszukiwarka2/RAPORT.md) i usunięte hasła, które zabierały ogólne zapytania narzędziu głównemu: „L4” przy
+  // Pakiet „wyszukiwarka2” (2026-11-15): 27 haseł z podpowiedzi Google (pl) przy 18 narzędziach (źródło każdego
+  // w raporty/wyszukiwarka2/RAPORT.md) i 5 usuniętych, które zabierały ogólne zapytania narzędziu głównemu: „L4” przy
   // okresie zasiłkowym, „odprawa” przy odprawie pośmiertnej i zwolnieniach grupowych (słowo jest w nazwie albo w FAQ),
-  // „sobota pracująca” przy pracy w sobotę (w podpowiedziach to kalendarz: „sobota pracująca w sierpniu”), „świadectwo
-  // pracy” przy stażu pracy (od rundy 7 jest narzędzie o świadectwie). Każda zmiana z testem w obie strony
-  // w src/lib/szukaj-narzedzi.test.ts.
+  // „sobota pracująca” przy pracy w sobotę (w podpowiedziach to kalendarz: „sobota pracująca w sierpniu”, na który żadne
+  // narzędzie nie odpowiada), „świadectwo pracy” przy stażu pracy (od rundy 7 jest narzędzie o świadectwie). Każda
+  // zmiana z testem w obie strony w src/lib/szukaj-narzedzi.test.ts.
   'kalkulator-l4': ['chorobowe', 'zwolnienie lekarskie', 'choroba', 'zasiłek chorobowy', 'e-ZLA', 'ile dostanę na L4'],
   'okres-zasilkowy': ['chorobowe', '182 dni', 'długie zwolnienie'],
   'zwolnienie-na-l4': ['zwolnienie lekarskie', 'choroba', 'wypowiedzenie na L4', 'art. 53', 'zwalniają mnie na L4'],
@@ -23,7 +25,7 @@ export const HASLA: Record<string, string[]> = {
   'dodatek-za-prace-w-nocy': ['nocki', 'nocna zmiana', 'trzecia zmiana', 'nocne'],
   'praca-w-niedziele': ['święto', 'weekend', 'dzień wolny za niedzielę'],
   'placa-minimalna': ['najniższa krajowa', 'minimalne wynagrodzenie', 'pasek', 'pensja minimalna'],
-  'stawka-godzinowa': ['na godzinę', 'stawka', 'pensja', 'stawka godzinowa'],
+  'stawka-godzinowa': ['na godzinę', 'stawka', 'pensja'],
   'termin-wyplaty-wynagrodzenia': ['kiedy wypłata', 'spóźniona wypłata', 'dziesiąty', 'wypłata do 10 dnia miesiąca'],
   'przedawnienie-wynagrodzenia': ['zaległa wypłata', 'niezapłacone nadgodziny', 'pozew', 'pozwać o wypłatę'],
   'wynagrodzenie-za-przestoj': ['postój', 'brak pracy', 'awaria', 'stoi linia', 'przestój'],
@@ -41,7 +43,7 @@ export const HASLA: Record<string, string[]> = {
   'rodzic-w-pracy': ['dziecko', 'praca zdalna', 'elastyczny czas', 'rodzic', 'praca w nocy a dziecko'],
   'urlop-ojcowski': ['tata', 'ojciec', 'narodziny dziecka'],
   'urlop-wychowawczy': ['wychowawczy', 'dziecko', 'opieka nad dzieckiem'],
-  'dni-wolne-od-pracy': ['święta', 'długi weekend', 'kalendarz', 'mostek', 'sobota pracująca', 'święto w sobotę', 'dzień wolny za święto', 'Boże Ciało', '11 listopada', 'Wigilia wolna'],
+  'dni-wolne-od-pracy': ['święta', 'długi weekend', 'kalendarz', 'mostek', 'święto w sobotę', 'Boże Ciało', '11 listopada'],
   'urlop-w-agencji-pracy': ['agencja', 'praca tymczasowa', 'urlop'],
   'okres-wypowiedzenia': ['wypowiedzenie', 'wymówienie', 'zwolnienie', 'odejście z pracy', 'zwalniają mnie', 'rzucam pracę', 'pracownik wypowiada', 'wolne na poszukiwanie', 'wypowiedzenie umowy na czas określony'],
   'kalkulator-odprawy': ['odprawa', 'odprawę', 'odprawa przy zwolnieniu', 'ile pensji odprawy', 'odprawa po latach', 'odprawa za porozumieniem', 'czy należy mi się odprawa', 'odprawa przy redukcji etatów', 'likwidacja stanowiska', 'zwolnienie'],
@@ -58,9 +60,9 @@ export const HASLA: Record<string, string[]> = {
   'zasilek-dla-bezrobotnych': ['bezrobocie', 'urząd pracy', 'po zwolnieniu', 'kuroniówka'],
   'staz-pracy': ['lata pracy', 'staż'],
   'odprawa-posmiertna': ['śmierć pracownika', 'rodzina'],
-  'kontrola-grafiku': ['grafik', 'harmonogram', 'zmiany', 'odpoczynek', '11 godzin', '12 godzin', 'praca zmianowa', 'odpoczynek dobowy', 'zmiana grafiku'],
+  'kontrola-grafiku': ['grafik', 'harmonogram', 'zmiany', 'odpoczynek', '11 godzin', '12 godzin', 'praca zmianowa', 'odpoczynek dobowy'],
   'wymiar-czasu-pracy': ['ile godzin', 'godziny w miesiącu', 'etat', 'norma godzin'],
-  'przerwy-w-pracy': ['przerwa', 'śniadaniowa', '15 minut', 'monitor', 'komputer', 'praca przy komputerze'],
+  'przerwy-w-pracy': ['przerwa', 'śniadaniowa', '15 minut', 'monitor', 'komputer'],
   'dyzur-w-pracy': ['dyżur', 'pod telefonem', 'gotowość'],
   'dni-robocze': ['dni robocze', 'termin', 'kalendarz'],
   'pracownik-mlodociany': ['uczeń', 'praktykant', 'nieletni', 'młodociany'],
@@ -78,7 +80,7 @@ export const HASLA: Record<string, string[]> = {
   'waznosc-uprawnien-udt': ['UDT', 'wózek widłowy', 'uprawnienia na wózek', 'suwnica', 'przedłużenie uprawnień'],
   'badania-udt': ['przegląd wózka', 'UDT', 'konserwacja', 'wózek widłowy'],
   'mobbing-i-dyskryminacja': ['nękanie', 'molestowanie', 'równe traktowanie', 'odszkodowanie za mobbing', 'gorsze traktowanie'],
-  'sad-pracy-czy-pip': ['inspekcja pracy', 'skarga na pracodawcę', 'zgłoszenie do PIP', 'anonimowa skarga', 'pozew', 'koszty sądowe', 'pozwać pracodawcę', 'gdzie zgłosić pracodawcę', 'gdzie zgłosić pracę bez umowy'],
+  'sad-pracy-czy-pip': ['inspekcja pracy', 'skarga na pracodawcę', 'zgłoszenie do PIP', 'anonimowa skarga', 'pozew', 'koszty sądowe', 'pozwać pracodawcę', 'gdzie zgłosić pracodawcę'],
   // Runda 2 (2026-11-13): hasła z podpowiedzi wyszukiwarki Google (pl), nie z głowy; źródła w raporcie pakietu.
   'waznosc-uprawnien-sep': ['uprawnienia elektryczne', 'uprawnienia sepowskie', 'SEP do 1 kV', 'elektryk'],
   'czy-potrzebne-uprawnienia-udt': ['paleciak', 'wózek paletowy', 'zwyżka', 'podest ruchomy', 'podnośnik koszowy'],
