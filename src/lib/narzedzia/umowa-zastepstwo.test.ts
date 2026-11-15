@@ -31,6 +31,25 @@ describe('wypowiedzenie umowy na zastępstwo (art. 36 § 1, art. 30 § 2^1)', ()
     expect(r.powod).toBe('termin');
   });
 
+  // Próg 3 lat mija z końcem 9.12.2026 r. (praca od 10.12.2023 r.), czyli w trakcie miesięcznego okresu z doręczenia
+  // 25.11.2026 r. (do 31.12.2026 r.): okres 3 miesiące do 28.02.2027 r. (I PKN 34/99). Staż liczy się do dnia rozwiązania
+  // umowy, więc umowa z datą końca przed 9.12 progu nie osiąga i zostaje przy 1 miesiącu.
+  it.each([
+    ['', '3 miesiące', '2027-02-28', '2027-02-28', 'wypowiedzenie'],
+    ['2026-12-05', '1 miesiąc', '2026-12-31', '2026-12-05', 'termin'],
+    ['2026-12-08', '1 miesiąc', '2026-12-31', '2026-12-08', 'termin'],
+    ['2026-12-09', '3 miesiące', '2027-02-28', '2026-12-09', 'termin'],
+    ['2027-01-15', '3 miesiące', '2027-02-28', '2027-01-15', 'termin'],
+    ['2027-03-01', '3 miesiące', '2027-02-28', '2027-02-28', 'wypowiedzenie'],
+  ])('próg stażu w trakcie wypowiedzenia, koniec umowy „%s”: %s do %s, ostatni dzień %s', (koniec, opis, koniecOkr, ostatni, powod) => {
+    const r = wypowiedzenieZastepstwa('2023-12-10', '2026-11-25', koniec);
+    expect(r.stazMiesiecy).toBe(35);
+    expect(r.okres.opis).toBe(opis);
+    expect(r.koniecOkresu).toBe(koniecOkr);
+    expect(r.ostatniDzien).toBe(ostatni);
+    expect(r.powod).toBe(powod);
+  });
+
   it('data końca po okresie wypowiedzenia: decyduje wypowiedzenie; pusta data jak brak daty', () => {
     expect(wypowiedzenieZastepstwa('2024-02-29', '2026-11-30', '2027-01-15')).toMatchObject({ ostatniDzien: '2026-12-31', powod: 'wypowiedzenie' });
     expect(wypowiedzenieZastepstwa('2024-02-29', '2026-11-30', '')).toMatchObject({ ostatniDzien: '2026-12-31', powod: 'wypowiedzenie' });

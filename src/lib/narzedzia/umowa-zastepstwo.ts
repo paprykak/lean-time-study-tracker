@@ -26,8 +26,12 @@
 // 4. Staż do okresu wypowiedzenia: pełne miesiące od początku pracy do dnia przed doręczeniem (stazWDniu, jak w kalkulatorze
 //    okresu wypowiedzenia). Do stażu wlicza się pracę u poprzedniego pracodawcy przy przejściu zakładu (art. 36 § 1^1)
 //    oraz zlecenie i działalność na rzecz tego pracodawcy (art. 302^1 § 8): użytkownik wpisuje najwcześniejszą datę.
-//    Gdy próg 6 miesięcy albo 3 lat mija w trakcie wypowiedzenia, przepis nie mówi wprost, co wtedy; jak w kalkulatorze
-//    okresu wypowiedzenia (wypowiedzenieStalej) podajemy dłuższy okres (wariant bezpieczny dla pracownika).
+//    Gdy próg 6 miesięcy albo 3 lat mija w trakcie wypowiedzenia, przepis nie mówi tego wprost, ale Sąd Najwyższy liczy
+//    staż do dnia rozwiązania umowy z upływem okresu wypowiedzenia, a nie do doręczenia (I PKN 34/99, II PK 12/11, I PK 2/13;
+//    pełne teksty w API SAOS, raporty/orzecznictwo/RAPORT.md). Art. 36 § 1 dotyczy wprost także umowy na czas określony,
+//    więc linia obejmuje zastępstwo: jak w kalkulatorze okresu wypowiedzenia (wypowiedzenieStalej) podajemy dłuższy okres.
+//    Gdy umowa kończy się z upływem czasu (data z umowy) przed dniem progu, staż w dniu rozwiązania progu nie osiąga:
+//    zostaje krótszy okres, a ostatnim dniem i tak jest data z umowy.
 // 5. Przedłużenie oceniamy od daty końca wpisanej w umowie. Gdy ta data wypada przed końcem okresu wypowiedzenia,
 //    a umowa się przedłuża, ostatnim dniem jest dzień porodu. Gdy wypowiedzenie kończy umowę przed tą datą, przepis
 //    nie mówi wprost, czy przedłużenie obejmuje taką umowę: zaznaczamy to (przedluzeniePoWypowiedzeniu).
@@ -55,8 +59,11 @@ export function wypowiedzenieZastepstwa(poczatekPracy: string, doreczenie: strin
   }
   const w = wypowiedzenieStalej(poczatekPracy, doreczenie);
   const stazMiesiecy = w.staz;
-  const okres = w.okres;
-  const koniecOkresu = w.koniec;
+  // Staż liczy się do dnia rozwiązania umowy (interpretacja 4): umowa, która kończy się z upływem czasu przed dniem
+  // progu, zostaje przy krótszym okresie (próg mija z końcem dnia `prog.dzien`).
+  const przedProgiem = !!w.prog && !!koniecUmowy && koniecUmowy < w.prog.dzien;
+  const okres = przedProgiem ? w.prog!.krotszy : w.okres;
+  const koniecOkresu = przedProgiem ? w.prog!.krotszyKoniec : w.koniec;
   const termin = !!koniecUmowy && koniecUmowy < koniecOkresu;
   return { stazMiesiecy, okres, koniecOkresu, ostatniDzien: termin ? koniecUmowy! : koniecOkresu, powod: termin ? 'termin' : 'wypowiedzenie' };
 }
