@@ -29,7 +29,7 @@
 //   czy kolejne zwolnienia bez przerwy liczą się razem, więc liczymy tylko wpisane.
 // - Ustawa nie wylicza „zwykłych czynności dnia codziennego”; zakupy, aptekę i sprawy domowe zaliczamy do nich w zwykłym
 //   znaczeniu słów, ale zawsze z warunkiem z ust. 1b (nie utrudniają ani nie wydłużają leczenia). Wizyta u lekarza i badania
-//   służą leczeniu. Sport, remont i impreza: ocena ZUS (ust. 1e), bez werdyktu „wolno”.
+//   służą leczeniu. Sport, remont i impreza: ocena ZUS (art. 68 ust. 1e), bez werdyktu „wolno”.
 // - Wskazanie „chory powinien leżeć” jest w zaświadczeniu (art. 55 ust. 3 pkt 7), ale żaden przepis nie mówi, czego przy nim
 //   nie wolno; piszemy to wprost zamiast zgadywać.
 // - Od 1 stycznia 2027 r. praca w tytule, z którego na żądanie nie wystawiono zwolnienia (ust. 1d): ustawa nie mówi wprost,
@@ -187,7 +187,8 @@ export function stanTerminu(koniec: string, dzis: string): { tekst: string; klas
   return { tekst: wielka(zaIle(r)), klasa: r <= 3 ? 'pilne' : r <= 7 ? 'wkrotce' : 'w-terminie' };
 }
 
-const NAZWA_WOLNEGO = (powod: string | null) => (powod === 'sobota' ? 'sobota' : powod === 'niedziela' ? 'niedziela' : 'dzień wolny od pracy');
+/** „sobota”, „niedziela” albo „Boże Narodzenie, dzień wolny od pracy”. */
+const NAZWA_WOLNEGO = (powod: string | null) => (powod === 'sobota' || powod === 'niedziela' ? powod : `${powod}, dzień wolny od pracy`);
 
 const KLASA: Record<Werdykt, KlasaStatusu> = { wolno: 'w-terminie', warunek: 'wkrotce', zalezy: 'pilne', nie: 'po-terminie' };
 
@@ -370,7 +371,8 @@ export function opisKontroli(k: Kontrola, b: Brzmienie): string[] {
   ];
   if (k !== 'pracodawca')
     lista.push('ZUS może też skierować Cię na badanie do lekarza orzecznika; zwraca koszty przejazdu do ceny najtańszej komunikacji publicznej (art. 59 ust. 3 pkt 1 i ust. 13).');
-  if (b === 'dawne') lista.push('Kontrolę wszczętą przed 13 kwietnia 2026 r. kończy się według dawnych przepisów (art. 42 ustawy z 18 grudnia 2025 r., Dz.U. 2026 poz. 26).');
+  if (b === 'dawne')
+    lista.push('Opis dotyczy przepisów o kontroli od 13 kwietnia 2026 r. Kontrolę wszczętą przed tym dniem kończy się według dawnych przepisów (art. 42 ustawy z 18 grudnia 2025 r., Dz.U. 2026 poz. 26).');
   return lista;
 }
 
@@ -400,7 +402,9 @@ export function opisL4(d: DaneL4, dzis: string): OpisL4 {
     const s = stanTerminu(t, dzis);
     zastrzezeniaStatus = s.tekst;
     zastrzezeniaKlasa = s.klasa;
-    zastrzezenia = `Najpóźniej ${dataPoPolsku(t)}: ${DNI_ZASTRZEZEN} dni od otrzymania protokołu, z dowodami na swoje twierdzenia; rozpatruje je ZUS i odpowiada na piśmie (art. 68e ust. 4–5 ustawy zasiłkowej). Ustawa nie mówi, czy termin przesuwa się z soboty albo dnia wolnego, więc podajemy datę bez przesunięcia.`;
+    const wolny = przesunZDniaWolnego(t).przesuniecie[0]?.powod ?? null;
+    const sobota = wolny ? ` ${wielka(dataPoPolsku(t))} to ${NAZWA_WOLNEGO(wolny)}; ustawa nie mówi, czy termin przesuwa się wtedy na następny dzień roboczy, więc podajemy datę bez przesunięcia.` : '';
+    zastrzezenia = `Najpóźniej ${dataPoPolsku(t)}: ${DNI_ZASTRZEZEN} dni od otrzymania protokołu, z dowodami na swoje twierdzenia; rozpatruje je ZUS i odpowiada na piśmie (art. 68e ust. 4–5 ustawy zasiłkowej).${sobota}`;
   }
 
   const gdzie =
@@ -413,13 +417,20 @@ export function opisL4(d: DaneL4, dzis: string): OpisL4 {
     odwolanie = `O utracie zasiłku ZUS wydaje decyzję. Na odwołanie do sądu masz miesiąc od jej doręczenia. ${gdzie} Wpisz dzień doręczenia decyzji, a policzymy datę.`;
   } else {
     const t = terminOdwolania(d.decyzja!);
-    const s = stanTerminu(t.koniec, dzis);
+    // Gdy data bez przesunięcia już minęła, a przesunięta jeszcze nie, liczy się tylko ta druga (art. 115 KC).
+    const tylkoPrzesuniety = t.poPrzesunieciu !== null && t.koniec < dzis && t.poPrzesunieciu >= dzis;
+    const s = stanTerminu(tylkoPrzesuniety ? t.poPrzesunieciu! : t.koniec, dzis);
     odwolanieStatus = s.tekst;
     odwolanieKlasa = s.klasa;
-    const przesuniecie = t.poPrzesunieciu
-      ? ` ${wielka(dataPoPolsku(t.koniec))} to ${NAZWA_WOLNEGO(t.powod)}: według art. 115 Kodeksu cywilnego (przez art. 165 § 1 KPC) ostatni dzień to ${dataPoPolsku(t.poPrzesunieciu)}, ale bezpieczniej zdążyć do ${dataPoPolsku(t.koniec)}.`
-      : '';
-    odwolanie = `Zdąż do ${dataPoPolsku(t.koniec)}: miesiąc od doręczenia decyzji.${przesuniecie} ${gdzie} ${spoznione}`;
+    const art115 = 'według art. 115 Kodeksu cywilnego (przez art. 165 § 1 KPC)';
+    if (tylkoPrzesuniety)
+      odwolanie = `Miesiąc od doręczenia decyzji minął ${dataPoPolsku(t.koniec)}, ale ten dzień to ${NAZWA_WOLNEGO(t.powod)}, więc ${art115} termin upływa ${dataPoPolsku(t.poPrzesunieciu!)} Nie zwlekaj: to ostatni dzień. ${gdzie} ${spoznione}`;
+    else {
+      const przesuniecie = t.poPrzesunieciu
+        ? ` ${wielka(dataPoPolsku(t.koniec))} to ${NAZWA_WOLNEGO(t.powod)}: ${art115} ostatni dzień to ${dataPoPolsku(t.poPrzesunieciu)}, ale bezpieczniej zdążyć do ${dataPoPolsku(t.koniec)}`
+        : '';
+      odwolanie = `Zdąż do ${dataPoPolsku(t.koniec)}: miesiąc od doręczenia decyzji.${przesuniecie} ${gdzie} ${spoznione}`;
+    }
   }
 
   const uwagi: string[] = [

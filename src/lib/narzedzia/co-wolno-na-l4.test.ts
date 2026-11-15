@@ -161,6 +161,26 @@ describe('opis wyniku', () => {
     expect(pusto.zastrzezeniaStatus).toBeNull();
     expect(pusto.odwolanie).toContain('Wpisz dzień doręczenia decyzji');
   });
+  it('przesunięcie ze święta: nazwa dnia, całe zdanie bez podwójnej kropki', () => {
+    const pazdz = { ...baza, od: '2026-10-01', do: '2026-10-14', dzien: '2026-10-05', decyzja: '2026-10-11' };
+    const o = opisL4(pazdz, '2026-11-05');
+    expect(o.odwolanie).toMatch(
+      /^Zdąż do 11 listopada 2026 r\.: miesiąc od doręczenia decyzji\. 11 listopada 2026 r\. to Narodowe Święto Niepodległości, dzień wolny od pracy: według art\. 115 Kodeksu cywilnego \(przez art\. 165 § 1 KPC\) ostatni dzień to 12 listopada 2026 r\., ale bezpieczniej zdążyć do 11 listopada 2026 r\. Odwołanie wnosisz/,
+    );
+    for (const t of [o.odwolanie, o.zastrzezenia, o.skutek, ...o.kontrola, ...o.uwagi]) expect(t).not.toContain('r..');
+  });
+  it('dzień po dacie bez przesunięcia, a przed przesuniętą: liczy się art. 115 KC, a nie „termin minął”', () => {
+    const pazdz = { ...baza, od: '2026-10-01', do: '2026-10-14', dzien: '2026-10-05', decyzja: '2026-10-11' };
+    const o = opisL4(pazdz, '2026-11-12');
+    expect(o.odwolanieStatus).toBe('Dziś ostatni dzień');
+    expect(o.odwolanieKlasa).toBe('pilne');
+    expect(o.odwolanie).toMatch(/^Miesiąc od doręczenia decyzji minął 11 listopada 2026 r\., ale ten dzień to Narodowe Święto Niepodległości, dzień wolny od pracy, więc według art\. 115 Kodeksu cywilnego \(przez art\. 165 § 1 KPC\) termin upływa 12 listopada 2026 r\. Nie zwlekaj/);
+    expect(opisL4(pazdz, '2026-11-13').odwolanieStatus).toBe('Termin minął 2 dni temu');
+  });
+  it('zastrzeżenia: uwaga o sobocie tylko wtedy, gdy termin wypada w dzień wolny', () => {
+    expect(opisL4({ ...baza, protokol: '2026-11-14' }, DZIS).zastrzezenia).toContain('21 listopada 2026 r. to sobota; ustawa nie mówi, czy termin przesuwa się');
+    expect(opisL4({ ...baza, protokol: '2026-11-10' }, DZIS).zastrzezenia).not.toContain('przesuwa');
+  });
   it('termin bez przesunięcia: jedna data', () => {
     const o = opisL4({ ...baza, dzien: '2026-11-04', decyzja: '2026-11-04' }, DZIS);
     expect(o.odwolanie).toMatch(/^Zdąż do 4 grudnia 2026 r\.: miesiąc od doręczenia decyzji\. Odwołanie wnosisz/);
@@ -210,5 +230,23 @@ describe('wyszukiwarka serwisu: frazy z podpowiedzi Google prowadzą do narzędz
     const { przygotuj, szukaj } = await import('../szukaj-narzedzi');
     const { indeksNarzedzi } = await import('../indeks-narzedzi');
     expect(szukaj(przygotuj(indeksNarzedzi()), q, 1)[0]?.wpis.s).toBe('co-wolno-na-l4');
+  });
+});
+
+describe('typografia wszystkich wyników', () => {
+  it('żaden tekst nie ma „r..”, podwójnej spacji ani pustego nawiasu', () => {
+    const kontrole = ['nikt', 'zus', 'pracodawca'] as const;
+    for (const c of Object.keys(CZYNNOSCI) as Czynnosc[])
+      for (const [od, do_, dzien] of [['2026-04-01', '2026-04-20', '2026-04-12'], ['2026-10-01', '2026-10-14', '2026-10-05'], ['2027-01-01', '2027-01-10', '2027-01-02']])
+        for (const k of kontrole)
+          for (const wskazanie of ['chodzic', 'lezec'] as const)
+            for (const [protokol, decyzja, dzis] of [['', '', DZIS], ['2026-10-10', '2026-10-11', '2026-11-12'], ['2026-10-14', '2026-10-31', DZIS], ['2027-01-09', '2027-01-30', '2027-02-02']]) {
+              if ((protokol && protokol < dzien) || (decyzja && decyzja < dzien)) continue;
+              const o = opisL4({ czynnosc: c, wskazanie, kontrola: k, od, do: do_, dzien, protokol, decyzja }, dzis);
+              for (const t of [o.werdykt, o.werdyktOpis, o.skutek, o.zastrzezenia, o.odwolanie, ...o.warunki, ...o.kontrola, ...o.uwagi, ...o.cytaty]) {
+                expect(t).not.toMatch(/r\.\.|\s{2}|\(\)|\.\./);
+                expect(t).not.toMatch(/łeś|łaś/);
+              }
+            }
   });
 });

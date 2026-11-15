@@ -114,8 +114,9 @@ const faq = [
         <p class="status-terminu" data-w="przepis" data-status={start.werdyktKlasa}>{start.przepis}</p>
       </div>
       <p class="meta mt-2" data-w="werdykt-opis">{start.werdyktOpis}</p>
-      <h3 class="etykieta mt-4">Warunki i uwagi</h3>
+      <h3 class="etykieta mt-4">Warunki</h3>
       <ul class="mt-1 list-disc space-y-1 pl-5 text-[0.9375rem]" data-w="warunki">{start.warunki.map((t) => <li>{t}</li>)}</ul>
+      <h3 class="etykieta mt-4">Skutek i terminy</h3>
       <dl class="wynik-lista">
         <div>
           <dt>Skutek</dt>
@@ -136,11 +137,12 @@ const faq = [
           </dd>
         </div>
       </dl>
+      <h3 class="etykieta mt-4">Uwagi</h3>
+      <ul class="mt-1 space-y-2" data-w="uwagi">{start.uwagi.map((t) => <li class="wynik-uwaga">{t}</li>)}</ul>
       <h3 class="etykieta mt-4">Jak przebiega kontrola</h3>
       <ul class="mt-1 list-disc space-y-1 pl-5 text-[0.9375rem]" data-w="kontrola">{start.kontrola.map((t) => <li>{t}</li>)}</ul>
       <h3 class="etykieta mt-4" data-w="brzmienie">{start.brzmienieTytul}</h3>
       <ul class="mt-1 list-disc space-y-1 pl-5 text-[0.9375rem]" data-w="cytaty">{start.cytaty.map((t) => <li>{t}</li>)}</ul>
-      <ul class="mt-3 space-y-2" data-w="uwagi">{start.uwagi.map((t) => <li class="wynik-uwaga">{t}</li>)}</ul>
       <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
     </div>
   </form>
@@ -230,6 +232,11 @@ const faq = [
         }),
       );
     };
+    const ustaw = (e: HTMLElement, status: string | null) => {
+      const ukryj = !status;
+      if (e.hidden !== ukryj) e.hidden = ukryj;
+      if (status && e.dataset.status !== status) e.dataset.status = status;
+    };
     const blad = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
     const NAZWY: Record<string, string> = { od: 'pierwszego dnia zwolnienia', do: 'ostatniego dnia zwolnienia', dzien: 'dnia czynności', protokol: 'otrzymania protokołu', decyzja: 'doręczenia decyzji' };
     const przelicz = () => {
@@ -239,30 +246,35 @@ const faq = [
       pisz('czynnosc-opis', CZYNNOSCI[czynnosc].opis);
       const dane: DaneL4 = { czynnosc, wskazanie, kontrola, od: el('od').value, do: el('do').value, dzien: el('dzien').value, protokol: el('protokol').value, decyzja: el('decyzja').value };
       const dzis = dzisWPolsce();
-      const niepelne = Object.keys(NAZWY).find((n) => el(n).validity.badInput) as keyof DaneL4 | undefined;
-      const wymagane = niepelne === 'od' || niepelne === 'do' || niepelne === 'dzien';
-      const b = niepelne ? { pole: niepelne, tekst: `Wpisz pełną datę ${NAZWY[niepelne]}${wymagane ? '' : ' albo wyczyść pole'}.` } : bladL4(dane, dzis);
+      // Ta sama kolejność co w bladL4: najpierw pola wymagane (niepełne albo błędne), potem protokół i decyzja.
+      const niepelne = (pola: (keyof DaneL4)[]) => pola.find((n) => el(n).validity.badInput);
+      const wymagane = niepelne(['od', 'do', 'dzien']);
+      const opcjonalne = niepelne(['protokol', 'decyzja']);
+      const bladDanych = bladL4({ ...dane, protokol: '', decyzja: '' }, dzis);
+      const b = wymagane
+        ? { pole: wymagane, tekst: `Wpisz pełną datę ${NAZWY[wymagane]}.` }
+        : bladDanych ?? (opcjonalne ? { pole: opcjonalne, tekst: `Wpisz pełną datę ${NAZWY[opcjonalne]} albo wyczyść pole.` } : bladL4(dane, dzis));
       pokazBlad(blad, b?.tekst, b ? el(b.pole) : []);
       if (b) {
         // Werdykt nie zależy od dat: przy błędzie liczymy go bez nich, a skutek i terminy chowamy.
         const o = werdyktBezDat(czynnosc, wskazanie, kontrola, dane.dzien, dzis);
         pisz('werdykt', o.werdykt);
         pisz('przepis', o.przepis);
-        w('przepis').dataset.status = o.werdyktKlasa;
+        ustaw(w('przepis'), o.werdyktKlasa);
         pisz('werdykt-opis', o.werdyktOpis);
         lista('warunki', o.warunki);
         lista('kontrola', o.kontrola);
         pisz('brzmienie', o.brzmienieTytul);
         lista('cytaty', o.cytaty);
         for (const k of ['skutek', 'zastrzezenia', 'odwolanie']) pisz(k, '—');
-        for (const k of ['zastrzezenia', 'odwolanie']) w(`${k}-status`).hidden = true;
+        for (const k of ['zastrzezenia', 'odwolanie']) ustaw(w(`${k}-status`), null);
         lista('uwagi', [], 'wynik-uwaga');
         return;
       }
       const o = opisL4(dane, dzis);
       pisz('werdykt', o.werdykt);
       pisz('przepis', o.przepis);
-      w('przepis').dataset.status = o.werdyktKlasa;
+      ustaw(w('przepis'), o.werdyktKlasa);
       pisz('werdykt-opis', o.werdyktOpis);
       lista('warunki', o.warunki);
       pisz('skutek', o.skutek);
@@ -271,13 +283,9 @@ const faq = [
       lista('cytaty', o.cytaty);
       lista('uwagi', o.uwagi, 'wynik-uwaga');
       for (const k of ['zastrzezenia', 'odwolanie'] as const) {
-        const st = w(`${k}-status`);
         const tekst = o[`${k}Status`];
-        st.hidden = !tekst;
-        if (tekst) {
-          st.dataset.status = o[`${k}Klasa`] ?? '';
-          pisz(`${k}-status`, tekst);
-        }
+        ustaw(w(`${k}-status`), tekst ? (o[`${k}Klasa`] ?? '') : null);
+        if (tekst) pisz(`${k}-status`, tekst);
         pisz(k, o[k]);
       }
     };
