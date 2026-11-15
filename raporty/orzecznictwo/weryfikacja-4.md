@@ -145,4 +145,20 @@ Cytaty z I PK 195/09, I BP 11/14, III PK 113/13 i II PK 267/15 są dosłowne, z 
 
 ## Nowe wyszukiwania w SAOS
 
-WYNIKI_WYSZUKIWAN
+**Nie wykonano.** Przez ok. 70 minut weryfikacji (2026-11-15, rano) API SAOS odpowiadało stroną „Przerwa techniczna” albo nie odpowiadało w 40 s (sprawdzane co minutę, plus 10 ponowień `saos.py`). Nowe orzeczenia wyżej znalazłem przez przeszukanie pełnych tekstów w `.cache/narzedzia/orzeczenia/` (80 orzeczeń). Wyszukiwanie orzeczeń przeciwnych w całej bazie SAOS jest więc **nie wykonane** i trzeba je powtórzyć, gdy API wróci (`timeout 600 python3 -I .cache/narzedzia/saos.py szukaj 'all=…' courtType=SUPREME pageSize=50`). Przygotowane zapytania:
+
+- `all=przedawnienie urlop wypoczynkowy wymagalne koniec roku kalendarzowego art. 161`
+- `all=przedawnienie urlopu zaległego art. 168 art. 291`
+- `all=ekwiwalent za urlop przedawnienie dzień rozwiązania stosunku pracy`
+- `all=art. 264 k.p. termin art. 115 k.c.`
+- `all=termin do wniesienia odwołania od wypowiedzenia sobota`
+- `all=art. 112 k.p. sprzeciw kara porządkowa termin`
+- `all=art. 97 § 2 świadectwo pracy sprostowanie termin 7 dni`
+- `all=terminy prawa materialnego kodeks pracy art. 300 art. 115`
+- `all=odpowiedzialność materialna powierzone mienie art. 119 ograniczenie trzymiesięcznego art. 124`
+- `all=rozporządzenie 1975 odpowiedzialność materialna magazyn`
+- `all=art. 121 k.p. obniżenie odszkodowania wina umyślna`
+- `all=umyślne wyrządzenie szkody kilku pracowników solidarna odpowiedzialność art. 441`
+- `all=art. 122 k.p. umyślnie wyrządził szkodę art. 121`
+- `all=art. 291 § 3 k.p. przedawnienie umyślne wyrządzenie szkody art. 442`
+- `all=art. 291 § 2 k.p. przedawnienie roszczeń pracodawcy szkoda`
