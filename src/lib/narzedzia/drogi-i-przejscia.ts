@@ -155,7 +155,7 @@ export function sprawdzPrzejscie(d: DanePrzejscia): WynikPrzejscia {
             klucz: 'pochylnia',
             co: 'Pochylnia',
             wynik: naDrodze ? 'nie' : 'zalezy',
-            tekst: `Nachylenie ${opis}: więcej niż ${MAKS_NACHYLENIE}% dopuszczalnych na drogach transportowych i w magazynach (§ 5 ust. 1)${naDrodze ? '' : '; za stromo, jeśli to przejście jest w magazynie albo na drodze transportowej'}. Przy różnicy ${cm(hMm)} pochylnia musi mieć w poziomie co najmniej ${metry(najkrotszaPochylnia(d.roznica))}.`,
+            tekst: `Nachylenie ${opis}: więcej niż ${MAKS_NACHYLENIE}% dopuszczalnych na drogach transportowych i w magazynach (§ 5 ust. 1)${naDrodze ? '' : '; za stromo, jeśli to miejsce jest w magazynie albo na drodze transportowej'}. Przy różnicy ${cm(hMm)} pochylnia ${naDrodze ? 'musi mieć' : `o nachyleniu najwyżej ${MAKS_NACHYLENIE}% ma`} w poziomie co najmniej ${metry(najkrotszaPochylnia(d.roznica))}.`,
           },
     );
   }

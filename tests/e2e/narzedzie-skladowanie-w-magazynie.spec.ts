@@ -10,7 +10,7 @@ test.beforeEach(async ({ page }) => {
 
 test('start: 2 × 800 kg na poziomie 2000 kg, sekcja 4 × 1600 kg przekracza 6000 kg o 400 kg', async ({ page }) => {
   await expect(page.locator('[data-w="glowny"]')).toHaveText(/^1600\skg$/);
-  await expect(page.locator('[data-w="zmiesci"]')).toHaveText(/zmieszczą\ssię\snajwyżej\s2\stakie\sładunki/);
+  await expect(page.locator('[data-w="zmiesci"]')).toHaveText(/zmieści\ssię\snajwyżej\s1\staki\sładunek,\sbo\sprzy\s4\szajętych\spoziomach\sogranicza\sobciążenie\ssekcji/);
   await expect(page.locator('[data-w="status"]')).toHaveText('Niezgodne z przepisem');
   await expect(page.locator('[data-w="lista"]')).toContainText(/6400\skg\sna\s4\spoziomach:\so\s400\skg\swięcej/);
 });

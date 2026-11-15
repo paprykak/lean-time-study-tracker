@@ -93,6 +93,8 @@ export function sprawdzSkladowanie(d: DaneSkladowania): WynikSkladowania {
   const sprawdzenia: Sprawdzenie[] = [];
   let naPoziomie: number | null = null;
   let ileZmiesci: number | null = null;
+  /** Ile ładunków na poziomie pozwala sam limit poziomu, gdy mniej pozwala limit sekcji (audyt jakosc3, C-7). */
+  let zPoziomu: number | null = null;
 
   if (d.ladunki !== undefined && d.masa !== undefined) {
     const sumaG = d.ladunki * g(d.masa);
@@ -114,6 +116,14 @@ export function sprawdzSkladowanie(d: DaneSkladowania): WynikSkladowania {
           ? { klucz: 'sekcja', co: 'Obciążenie sekcji', wynik: 'tak', tekst: `${kg(sekcjaG / 1000)} ${naPoziomach(d.poziomy)}, dopuszczalne ${kg(d.limitSekcji)} (§ 68 ust. 2 pkt 2 ogólnych przepisów BHP).` }
           : { klucz: 'sekcja', co: 'Obciążenie sekcji', wynik: 'nie', tekst: `${kg(sekcjaG / 1000)} ${naPoziomach(d.poziomy)}: o ${kg((sekcjaG - limitG) / 1000)} więcej niż ${kg(d.limitSekcji)} z tabliczki (§ 68 ust. 2 pkt 2 ogólnych przepisów BHP).` },
       );
+      // Na każdym z zajętych poziomów tyle samo ładunków: limit sekcji może pozwolić na mniej niż limit poziomu.
+      if (ileZmiesci !== null) {
+        const zSekcji = Math.floor(limitG / (g(d.masa) * d.poziomy));
+        if (zSekcji < ileZmiesci) {
+          zPoziomu = ileZmiesci;
+          ileZmiesci = zSekcji;
+        }
+      }
     }
   }
 
@@ -161,9 +171,14 @@ export function sprawdzSkladowanie(d: DaneSkladowania): WynikSkladowania {
         ? { tekst: 'Ten odstęp nie dotyczy materiałów niepalnych', rodzaj: 'brak' }
         : { tekst: 'Wpisz dane z tabliczki regału albo odległości', rodzaj: 'brak' };
 
+  const przy = (n: number) => `przy ${n} ${n === 1 ? 'zajętym poziomie' : 'zajętych poziomach'}`;
   const zmiesciOpis =
     ileZmiesci === null
       ? ''
+      : zPoziomu !== null
+        ? ileZmiesci === 0
+          ? `${przy(d.poziomy!).replace(/^p/, 'P')} obciążenie sekcji nie pozwala na ani jeden taki ładunek na każdym poziomie (sam poziom uniesie ${zPoziomu}).`
+          : `${zmiesciSie(odmiana(ileZmiesci, ['taki ładunek', 'takie ładunki', 'takich ładunków'])).slice(0, -1)}, bo ${przy(d.poziomy!)} ogranicza obciążenie sekcji (sam poziom uniesie ${zPoziomu}).`
       : ileZmiesci === 0
         ? 'Jeden taki ładunek jest cięższy niż dopuszczalne obciążenie poziomu.'
         : zmiesciSie(odmiana(ileZmiesci, ['taki ładunek', 'takie ładunki', 'takich ładunków']));

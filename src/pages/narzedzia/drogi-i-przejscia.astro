@@ -153,7 +153,7 @@ const faq = [
       <li>Organizator pracy, czyli pracodawca albo inny przedsiębiorca organizujący pracę wózków, podejmuje środki zapobiegające wtargnięciu osób na teren ich pracy, a gdy się nie da, stosuje środki chroniące ludzi (§ 8 ust. 2–3 rozporządzenia o wózkach jezdniowych).</li>
     </ul>
     <p>
-      Czy na wózek potrzebne są uprawnienia UDT, sprawdzi <a href="/narzedzia/czy-potrzebne-uprawnienia-udt">narzędzie o uprawnieniach UDT</a>, a regały i odległości w magazynie <a href="/narzedzia/skladowanie-w-magazynie">narzędzie o składowaniu</a>.
+      Czy na wózek potrzebne są uprawnienia UDT, sprawdzi <a href="/narzedzia/czy-potrzebne-uprawnienia-udt">narzędzie o uprawnieniach UDT</a>, a regały i odległości w magazynie <a href="/narzedzia/skladowanie-w-magazynie">narzędzie o składowaniu</a>. Balustrady i pracę na podwyższeniu opisuje <a href="/narzedzia/praca-na-wysokosci">narzędzie o pracy na wysokości</a>.
     </p>
 
     <h2 id="jak-liczymy">Jak liczymy</h2>
@@ -202,10 +202,13 @@ const faq = [
       const { dane, blad } = odczytajPrzejscie(teksty, rodzaj, el('piesi').checked);
       pokazBlad(form.querySelector<HTMLElement>('[data-blad="dane"]')!, blad?.tekst, blad ? el(blad.pole) : []);
       const status = w('status');
-      pisz(w('minimum'), sprawdzPrzejscie({ rodzaj }).minimum);
+      // Nagłówek i uwaga zależą od samego rodzaju: przy błędzie w polu też pasują do wybranego rodzaju.
+      const bezWymiarow = sprawdzPrzejscie({ rodzaj, piesi: el('piesi').checked });
+      pisz(w('minimum'), bezWymiarow.minimum);
       if (!dane) {
         status.hidden = true;
         w('lista').replaceChildren();
+        pisz(w('uwaga'), bezWymiarow.uwaga);
         return;
       }
       const r = sprawdzPrzejscie(dane);

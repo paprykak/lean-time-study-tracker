@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 import { adresNarzedzia } from '../../src/data/narzedzia';
 
 // Dziś 14.11.2026 (zegar przeglądarki). Oczekiwane wartości z niezależnego rachunku w Pythonie (jak w testach jednostkowych):
-// uruchomienie 15.12.2026 → informacja do 30.11.2026 (16 dni), oznaczenie do 14.12.2026; nagranie 15.08.2026 → do 14.11.2026
+// uruchomienie 15.12.2026 → informacja do 30.11.2026 (16 dni), oznaczenie do 13.12.2026 (dzień poprzedni 14.12.2026); nagranie 15.08.2026 → do 14.11.2026
 // (dziś), 10.11.2026 → do 9.02.2027 (87 dni).
 test.beforeEach(async ({ page }) => {
   await page.clock.setFixedTime(new Date('2026-11-14T10:00:00+01:00'));
@@ -15,7 +15,7 @@ test('kamery w hali: warunki, termin uprzedzenia i przechowywania', async ({ pag
   await page.getByLabel('Uruchomienie monitoringu').fill('2026-12-15');
   await page.getByLabel('Czy pracodawca uprzedził?').selectOption('nie');
   await expect(page.getByLabel('Dzień informacji')).toBeHidden();
-  await expect(page.locator('[data-w="informacja"]')).toContainText(/najpóźniej\s30\slistopada\s2026\sr\.,\soznaczenie\sterenu\snajpóźniej\s14\sgrudnia\s2026\sr\./);
+  await expect(page.locator('[data-w="informacja"]')).toContainText(/najpóźniej\s30\slistopada\s2026\sr\.,\soznaczenie\sterenu\snajpóźniej\s13\sgrudnia\s2026\sr\.,\sa\sjeśli\swystarczy\sdzień\spoprzedni,\s14\sgrudnia\s2026\sr\./);
   await expect(page.locator('[data-w="informacja-status"]')).toHaveText(/^Pracodawcy\szostało\s16\sdni$/);
   await expect(page.locator('[data-w="informacja-status"]')).toHaveAttribute('data-status', 'w-terminie');
   await page.getByLabel('Uruchomienie monitoringu').fill('2026-08-01');
@@ -70,4 +70,19 @@ test('błąd w polu, które znika, znika razem z nim', async ({ page }) => {
   await page.getByLabel('Rodzaj').selectOption('poczta');
   await expect(page.locator('[data-blad="dane"]')).toBeHidden();
   await expect(page.locator('[data-w="warunki"]')).toContainText(/\(art\.\s22²\s§\s6\sprzez\sart\.\s22³\s§\s3\)/);
+});
+
+test('osoba przyjęta po uruchomieniu: § 8 zamiast terminu 2 tygodni; czytnik ogłasza status z datą (audyt jakosc3)', async ({ page }) => {
+  await page.getByLabel('Uruchomienie monitoringu').fill('2026-06-01');
+  await page.getByLabel('Dzień informacji').fill('2026-10-01');
+  await expect(page.locator('[data-w="informacja-status"]')).toHaveText(/^Za\spóźno/);
+  await expect(page.locator('[data-w="informacja"]')).toContainText(/wybierz\s„Przyjęto\smnie\spóźniej”/);
+  await page.getByLabel('Czy pracodawca uprzedził?').selectOption('pozniej');
+  await expect(page.getByLabel('Dzień informacji')).toBeHidden();
+  await expect(page.locator('[data-w="informacja-status"]')).toBeHidden();
+  await expect(page.locator('[data-w="informacja"]')).toContainText(/przed\sdopuszczeniem\sdo\spracy\s\(art\.\s22²\s§\s8\)/);
+  // Region aria-live obejmuje status i datę, a nie sam ukrywany status.
+  await expect(page.locator('dd[aria-live="polite"][aria-atomic="true"]')).toHaveCount(2);
+  await expect(page.locator('dd[aria-live] [data-w="informacja"]')).toHaveCount(1);
+  await expect(page.locator('[data-w="informacja-status"][aria-live]')).toHaveCount(0);
 });

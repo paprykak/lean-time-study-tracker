@@ -48,7 +48,10 @@ describe('pochylnia (§ 5 ust. 1: najwyżej 8%)', () => {
     expect(wynik({ rodzaj: 'obsluga', roznica: 20, dlugosc: 2.5 }, 'pochylnia')).toMatchObject({ wynik: 'tak', tekst: expect.stringContaining('8% (ok. 4,6°)') });
     expect(wynik({ rodzaj: 'wozki', roznica: 20, dlugosc: 2.49 }, 'pochylnia')).toMatchObject({ wynik: 'nie', tekst: expect.stringContaining('8,1% (ok. 4,6°)') });
     // Przy przejściu pieszym § 5 ust. 1 działa tylko w magazynie albo na drodze transportowej.
-    expect(wynik({ rodzaj: 'obsluga', roznica: 20, dlugosc: 2.49 }, 'pochylnia')).toMatchObject({ wynik: 'zalezy', tekst: expect.stringContaining('jeśli to przejście jest w magazynie') });
+    expect(wynik({ rodzaj: 'obsluga', roznica: 20, dlugosc: 2.49 }, 'pochylnia')).toMatchObject({ wynik: 'zalezy', tekst: expect.stringContaining('jeśli to miejsce jest w magazynie') });
+    // audyt jakosc3 (C-6): poza drogą wózków 8% to wskazówka, więc bez „musi mieć”
+    expect(wynik({ rodzaj: 'obsluga', roznica: 15, dlugosc: 1.5 }, 'pochylnia')?.tekst.replace(/\s/g, ' ')).toContain('pochylnia o nachyleniu najwyżej 8% ma w poziomie co najmniej 1,88 m');
+    expect(wynik({ rodzaj: 'wozki', roznica: 15, dlugosc: 1.5 }, 'pochylnia')?.tekst.replace(/\s/g, ' ')).toContain('pochylnia musi mieć w poziomie co najmniej 1,88 m');
     expect(sprawdzPrzejscie({ rodzaj: 'gasnica', szerokosc: 1.2, roznica: 20, dlugosc: 2.49 }).status.tekst).toBe('Zgodne tylko pod warunkiem');
     expect(wynik({ rodzaj: 'wozki', roznica: 0.1, dlugosc: 100 }, 'pochylnia')?.tekst).toBe('Nachylenie 0,1%, na drogach transportowych i w magazynach dopuszczalne najwyżej 8% (§ 5 ust. 1).');
     expect(wynik({ rodzaj: 'wozki', roznica: 100, dlugosc: 12.5 }, 'pochylnia')?.wynik).toBe('tak');
@@ -100,6 +103,17 @@ describe('odczyt formularza', () => {
     expect(odczytajPrzejscie({ ...puste, roznica: '15' }, 'obsluga', false).blad).toEqual({ pole: 'dlugosc', tekst: 'Do pochylni wpisz i różnicę poziomów, i długość w poziomie.' });
     expect(odczytajPrzejscie({ ...puste, dlugosc: '2' }, 'obsluga', false).blad?.pole).toBe('roznica');
     expect(odczytajPrzejscie({ ...puste, szerokosc: '51' }, 'obsluga', false).blad?.pole).toBe('szerokosc');
+  });
+  it('górne granice pól i próg 1 m przy dwóch kierunkach ±1 mm (audyt jakosc3, C-9)', () => {
+    expect(odczytajPrzejscie({ ...puste, wysokosc: '30' }, 'obsluga', false).blad).toBeNull();
+    expect(odczytajPrzejscie({ ...puste, wysokosc: '30,001' }, 'obsluga', false).blad?.pole).toBe('wysokosc');
+    expect(odczytajPrzejscie({ ...puste, roznica: '1000', dlugosc: '1000' }, 'obsluga', false).blad).toBeNull();
+    expect(odczytajPrzejscie({ ...puste, roznica: '1000,1', dlugosc: '1000' }, 'obsluga', false).blad?.pole).toBe('roznica');
+    expect(odczytajPrzejscie({ ...puste, roznica: '10', dlugosc: '1000,001' }, 'obsluga', false).blad?.pole).toBe('dlugosc');
+    const dwa = (szerokosc: number) => wynik({ rodzaj: 'obsluga-dwa', szerokosc }, 'szerokosc');
+    expect(dwa(0.999)).toMatchObject({ wynik: 'nie', tekst: expect.stringMatching(/0,1\scm/) });
+    expect(dwa(1)?.wynik).toBe('tak');
+    expect(dwa(1.001)?.wynik).toBe('tak');
   });
   it('liczbaZPola', () => {
     expect(liczbaZPola('', 3)).toBeUndefined();
