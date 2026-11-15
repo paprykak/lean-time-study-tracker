@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { BEZ_PRZESUNIECIA, ETYKIETA_ART_115, ETYKIETA_ZDAZ_DO, ZDANIE_ART_115, dzienWolnyArt115, terminPracownika, zdanieArt115 } from './terminy';
 import { dataPoPolsku, dniMiedzy, dodajDni, dodajLata, dodajMiesiace, dzisWPolsce, ileDni, koniecOkresu, pelneMiesiace, poprawnaData } from './terminy';
 import { plikIcs, wyzwalacz } from './kalendarz-ics';
 
@@ -305,5 +306,73 @@ describe('plik .ics zgodny z RFC 5545', () => {
     expect(bledyIcs('BEGIN:VCALENDAR\r\nBEGIN:VALARM\r\nTRIGGER:-1D\r\nEND:VALARM\r\n')).toEqual(
       expect.arrayContaining(['zły TRIGGER: -1D', 'VALARM poza VEVENT', 'niezamknięty komponent']),
     );
+  });
+});
+
+// Oczekiwane daty: niezależny rachunek w raporty/terminy/art115.py (święta z dateutil.easter, nie z czas-pracy.ts).
+describe('terminPracownika (art. 115 KC)', () => {
+  it.each([
+    ['2026-11-16', '2026-11-16'], // poniedziałek: bez przesunięcia
+    ['2026-11-14', '2026-11-16'], // sobota
+    ['2026-11-15', '2026-11-16'], // niedziela
+    ['2026-11-11', '2026-11-12'], // Święto Niepodległości (środa)
+    ['2026-12-24', '2026-12-28'], // Wigilia (od 2025 r.), święta, sobota 26.12, niedziela
+    ['2026-12-26', '2026-12-28'],
+    ['2027-12-24', '2027-12-27'], // Wigilia w piątek, 25–26 grudnia w weekend
+    ['2028-12-23', '2028-12-27'], // sobota przed Wigilią: cztery dni wolne z rzędu
+    ['2026-12-31', '2026-12-31'], // Sylwester nie jest dniem wolnym
+    ['2027-01-01', '2027-01-04'], // Nowy Rok w piątek: przełom tygodnia
+    ['2028-12-31', '2029-01-02'], // niedziela 31.12 i Nowy Rok: przełom roku
+    ['2027-03-27', '2027-03-30'], // sobota przed Wielkanocą (ruchome: Wielkanoc 28.03, poniedziałek 29.03)
+    ['2027-03-28', '2027-03-30'],
+    ['2027-05-15', '2027-05-17'], // sobota przed Zielonymi Świątkami (niedziela 16.05)
+    ['2027-05-27', '2027-05-28'], // Boże Ciało
+    ['2026-06-04', '2026-06-05'], // Boże Ciało 2026
+    ['2024-12-24', '2024-12-24'], // Wigilia przed 2025 r. to zwykły dzień
+    ['2024-02-29', '2024-02-29'], // 29 lutego w czwartek
+    ['2028-02-29', '2028-02-29'],
+    ['2020-02-29', '2020-03-02'], // 29 lutego w sobotę
+    ['2021-01-06', '2021-01-07'], // Trzech Króli (od 2011 r.)
+    ['2010-01-06', '2010-01-06'], // przed 2011 r. 6 stycznia to dzień roboczy
+    ['2027-05-01', '2027-05-04'], // 1 maja w sobotę, niedziela, 3 maja w poniedziałek
+    ['2027-05-03', '2027-05-04'],
+    ['2026-08-15', '2026-08-17'], // Wniebowzięcie w sobotę
+    ['2027-08-15', '2027-08-16'],
+    ['2029-12-31', '2029-12-31'],
+    ['2030-11-01', '2030-11-04'], // Wszystkich Świętych w piątek
+    ['2026-04-05', '2026-04-07'], // Wielkanoc i poniedziałek wielkanocny
+    ['2026-04-06', '2026-04-07'],
+  ])('%s → %s', (koniec, wynik) => {
+    const t = terminPracownika(koniec);
+    expect(t.zdazDo).toBe(koniec);
+    expect(t.wedlugArt115).toBe(wynik);
+    expect(t.rozne).toBe(wynik !== koniec);
+    expect(t.wolne.length).toBe(dniMiedzy(koniec, wynik));
+  });
+  it('podaje kolejne dni wolne z nazwami', () => {
+    expect(terminPracownika('2026-12-24').wolne).toEqual([
+      { data: '2026-12-24', powod: 'Wigilia Bożego Narodzenia' },
+      { data: '2026-12-25', powod: 'Boże Narodzenie' },
+      { data: '2026-12-26', powod: 'drugi dzień Bożego Narodzenia' },
+      { data: '2026-12-27', powod: 'niedziela' },
+    ]);
+    expect(dzienWolnyArt115('2026-11-14')).toBe('sobota');
+    expect(dzienWolnyArt115('2026-11-13')).toBeNull();
+  });
+  it('odrzuca błędną datę', () => {
+    expect(() => terminPracownika('2026-02-30')).toThrow(RangeError);
+    expect(() => terminPracownika('')).toThrow(RangeError);
+  });
+  it('zdanie opisu: puste bez przesunięcia, z dniem i przepisem przy przesunięciu', () => {
+    expect(zdanieArt115(terminPracownika('2026-11-16'), 'sad')).toBe('');
+    const z = zdanieArt115(terminPracownika('2026-11-14'), 'sad');
+    expect(z).toMatch(/^14 listopada 2026 r\. to sobota: /);
+    expect(z).toContain('(art. 115 Kodeksu cywilnego)');
+    expect(z.endsWith(ZDANIE_ART_115.sad)).toBe(true);
+    expect(zdanieArt115(terminPracownika('2026-11-11'), 'pracodawca')).toMatch(/^11 listopada 2026 r\. to dzień wolny od pracy \(Narodowe Święto Niepodległości\): /);
+    for (const r of ['sad', 'pracodawca', 'przedawnienie'] as const) expect(ZDANIE_ART_115[r]).toMatch(/\.$/);
+    expect(ETYKIETA_ZDAZ_DO).toBe('Zdąż do');
+    expect(ETYKIETA_ART_115).toBe('Ostatni dzień według art. 115 KC');
+    expect(BEZ_PRZESUNIECIA.pracodawca).toContain('art. 115');
   });
 });

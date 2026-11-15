@@ -23,6 +23,8 @@
 // (umowa na zastępstwo: upływ 3. miesiąca ciąży; praca cudzoziemca: okno na podjęcie pracy), a w drugą stronę szkolenie
 // okresowe BHP: „do 6 (12) miesięcy od rozpoczęcia pracy” liczymy jak okres z pierwszym dniem (pkt 2), bo wychodzi wcześniej.
 
+import { swieta } from './czas-pracy';
+
 const DZIEN_MS = 86_400_000;
 
 /** Czy tekst to poprawna data RRRR-MM-DD (także sprawdza, że dzień istnieje). */
@@ -100,3 +102,75 @@ export function ileDni(dni: number): string {
   if (dni === -1) return 'wczoraj';
   return dni > 0 ? `za ${n} ${slowo}` : `${n} ${slowo} temu`;
 }
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Termin, który musi zachować pracownik, a art. 115 Kodeksu cywilnego (pakiet „terminy”, DECYZJE.md 2026-11-15).
+// Art. 115 KC (t.j. Dz.U. 2026 poz. 795): „Jeżeli koniec terminu do wykonania czynności przypada na dzień uznany
+// ustawowo za wolny od pracy lub na sobotę, termin upływa następnego dnia, który nie jest dniem wolnym od pracy ani
+// sobotą.” W prawie pracy stosuje się go przez art. 300 Kp, w postępowaniu sądowym przez art. 165 § 1 KPC. Dni ustawowo
+// wolne od pracy: niedziele i święta z art. 1 ustawy o dniach wolnych od pracy (`swieta` z czas-pracy.ts, z Wigilią od
+// 2025 r.). Jedna konwencja dla wszystkich kalkulatorów terminów pracownika: gdy daty się różnią, wynik pokazuje
+// „Zdąż do” (data bez przesunięcia, bezpieczna zawsze) i „Ostatni dzień według art. 115 KC” z jednym zdaniem, kiedy
+// przesunięcie działa (`ZDANIE_ART_115`). Terminy pracodawcy i granice okresów (nie czynność pracownika) narzędzia
+// podają bez przesunięcia (`BEZ_PRZESUNIECIA`).
+export const ETYKIETA_ZDAZ_DO = 'Zdąż do';
+export const ETYKIETA_ART_115 = 'Ostatni dzień według art. 115 KC';
+
+/** Nazwa dnia, z którego art. 115 KC przesuwa koniec terminu („sobota”, „niedziela”, nazwa święta), albo null. */
+export function dzienWolnyArt115(data: string): string | null {
+  const swieto = swieta(Number(data.slice(0, 4))).find((s) => s.data === data);
+  if (swieto) return swieto.nazwa;
+  const dt = new Date(`${data}T00:00:00Z`).getUTCDay();
+  return dt === 0 ? 'niedziela' : dt === 6 ? 'sobota' : null;
+}
+
+export interface TerminPracownika {
+  /** Ostatni dzień z liczby dni, tygodni, miesięcy albo lat, bez przesunięcia: „zdąż do”. */
+  zdazDo: string;
+  /** Ostatni dzień po przesunięciu z soboty i dnia ustawowo wolnego od pracy (art. 115 KC); równy `zdazDo`, gdy to dzień roboczy. */
+  wedlugArt115: string;
+  /** Czy daty się różnią (koniec wypada w sobotę albo dzień wolny). */
+  rozne: boolean;
+  /** Dni, z których przesunięto koniec, po kolei: nazwa święta, „sobota” albo „niedziela”. */
+  wolne: { data: string; powod: string }[];
+}
+
+/** Koniec terminu pracownika bez przesunięcia i po przesunięciu z art. 115 KC. */
+export function terminPracownika(koniec: string): TerminPracownika {
+  if (!poprawnaData(koniec)) throw new RangeError(`Błędna data końca terminu: ${koniec}`);
+  const wolne: { data: string; powod: string }[] = [];
+  let d = koniec;
+  for (let p = dzienWolnyArt115(d); p; p = dzienWolnyArt115(d)) {
+    wolne.push({ data: d, powod: p });
+    d = dodajDni(d, 1);
+  }
+  return { zdazDo: koniec, wedlugArt115: d, rozne: d !== koniec, wolne };
+}
+
+/** Rodzaj terminu pracownika: pismo do sądu, pismo do pracodawcy albo przedawnienie roszczenia. */
+export type RodzajTerminu = 'sad' | 'pracodawca' | 'przedawnienie';
+
+const NAZWA_DNIA = (powod: string) => (powod === 'sobota' || powod === 'niedziela' ? powod : `dzień wolny od pracy (${powod})`);
+
+/**
+ * Jedno zdanie pod dwiema datami: kiedy przesunięcie działa i jak pewne jest w tym rodzaju terminu.
+ * Ten sam tekst w HTML ze strony i w skrypcie przeglądarki (skrypt przepuszcza go jeszcze przez typografia()).
+ */
+export function zdanieArt115(t: TerminPracownika, rodzaj: RodzajTerminu): string {
+  if (!t.rozne) return '';
+  const dzien = `${dataPoPolsku(t.zdazDo)} to ${NAZWA_DNIA(t.wolne[0].powod)}`;
+  return `${dzien}: gdy koniec terminu wypada w sobotę albo dzień ustawowo wolny od pracy, upływa on następnego dnia, który nie jest dniem wolnym ani sobotą (art. 115 Kodeksu cywilnego). ${ZDANIE_ART_115[rodzaj]}`;
+}
+
+/** Jak pewne jest przesunięcie w danym rodzaju terminu (orzecznictwo sprawdzone w SAOS, raporty/terminy/PRZEPISY.md). */
+export const ZDANIE_ART_115: Record<RodzajTerminu, string> = {
+  sad: 'Bezpieczniej zdążyć do pierwszej daty.',
+  pracodawca: 'Bezpieczniej zdążyć do pierwszej daty.',
+  przedawnienie: 'Bezpieczniej zdążyć do pierwszej daty.',
+};
+
+/** Jedno zdanie, dlaczego terminy pracodawcy i granice okresów podajemy bez przesunięcia. */
+export const BEZ_PRZESUNIECIA = {
+  pracodawca: 'Terminy pracodawcy podajemy bez przesunięcia z soboty i dnia wolnego (art. 115 Kodeksu cywilnego), bo to nie Twoja czynność; gdy taki termin kończy się w dzień wolny, pracodawca może się powołać na przesunięcie na następny dzień roboczy.',
+  okres: 'Koniec okresu podajemy bez przesunięcia z soboty i dnia wolnego: art. 115 Kodeksu cywilnego dotyczy terminów do wykonania czynności, a nie okresów, które po prostu mijają.',
+};
