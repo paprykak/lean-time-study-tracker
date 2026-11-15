@@ -49,6 +49,7 @@ describe('podobne narzędzia', () => {
     ['normy-sanitarne', 'powierzchnia-na-pracownika'],
     ['zasilek-dla-bezrobotnych', 'swiadectwo-pracy'],
     ['okres-probny', 'umowa-na-czas-okreslony'],
+    ['praca-w-ciazy', 'przerwy-w-pracy'],
   ])('%s → %s wśród podobnych', (a, b) => {
     expect(podobne(a, NARZEDZIA)).toContain(b);
   });
@@ -104,9 +105,10 @@ describe('podobne narzędzia', () => {
 
   it('linki ze stron: slug z nazwy pliku, bez linku do samej siebie, bez adresów spoza narzędzi', () => {
     const linki = linkiZeStron({
-      '../pages/narzedzia/a-b.astro': 'tekst <a href="/narzedzia/c-d">x</a>, <a href="/narzedzia/a-b">ta sama</a> i <a href="/o-nas">o nas</a>',
+      '../pages/narzedzia/a-b.astro': 'tekst <a href="/narzedzia/c-d">x</a>, <a href="/narzedzia/a-b">ta sama</a> i <a href="/o-nas">o nas</a>, ' +
+        `<a href="/narzedzia/e-f#tabela">z kotwicą</a>, <a href='/narzedzia/g-h'>apostrof</a>`,
     });
-    expect([...linki.get('a-b')!]).toEqual(['c-d']);
+    expect([...linki.get('a-b')!]).toEqual(['c-d', 'e-f', 'g-h']);
   });
 
   // ogolneBhp i ogolneBhpHala to ten sam akt (Dz.U. 2003 poz. 1650): bez rozpoznania po publikatorze drogi i przejścia

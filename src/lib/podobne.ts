@@ -21,7 +21,8 @@ export const ZA_LINK = 2.5;
 const ZA_SLOWO = 1.5;
 const ZA_HASLO = 1;
 const KROTKIE_OK = new Set(['l4', 'udt', 'bhp', 'ppk', 'sep']);
-// Słowa porównujemy po pierwszych 6 literach, więc lista ma pełne słowa i ich 6-literowe początki.
+// Słowo pomijamy, gdy całe jest na liście albo gdy na liście jest jego 6-literowy początek (słowa porównujemy po
+// 6 literach). Wpis krótszy niż 6 liter działa więc tylko jako całe słowo: „okres” nie wycina „okresu”.
 const POMIJANE = new Set(['w', 'i', 'na', 'do', 'za', 'od', 'z', 'po', 'ile', 'pracy', 'praca', 'prace', 'kalkulator', 'czy', 'albo', 'oraz', 'normy', 'termin', 'terminy', 'pracownik', 'pracownika', 'dni', 'dzien', 'zwolnienie', 'zwolnienia',
   // Przymiotniki i nazwy dokumentów, które łączą niepowiązane sprawy (kierowca zawodowy ≁ choroba zawodowa,
   // świadectwo pracy ≁ świadectwo kwalifikacji, wcześniejsza emerytura ≁ wcześniejsze przyjście do pracy, zwrot podatku ≁ zwrot kosztów szkolenia, odzież robocza ≁ dni robocze,
@@ -30,10 +31,10 @@ const POMIJANE = new Set(['w', 'i', 'na', 'do', 'za', 'od', 'z', 'po', 'ile', 'p
   'powierzeniu', 'powierzenie', 'powierzenia',
   // Słowa ogólne w nazwach i hasłach (początki): kontrola trzeźwości ≁ kontrola grafiku ≁ kontrola ZUS, ile kg wolno ≁ co wolno
   // na L4, świadczenie urlopowe ≁ świadczenie rehabilitacyjne, odszkodowanie za wypadek ≁ odszkodowanie za zwolnienie ≁ zakaz
-  // konkurencji, praca przy monitorze ≁ monitoring, okres próbny ≁ okres zasiłkowy, wyjazd służbowy ≁ wyjazd na L4,
-  // pracownik niepełnosprawny ≁ niepełny miesiąc.
-  'pracod', 'pracow', 'kontro', 'wolno', 'swiadc', 'odszko', 'monito', 'okres', 'sluzbo', 'stanow', 'wyjazd', 'pozew', 'koszty',
-  'zmiana', 'kiedy', 'pierws', 'dostan', 'trzeci', 'osobe', 'brak', 'przy', 'niepel']);
+  // konkurencji, praca przy monitorze ≁ monitoring (pomijamy samo słowo „monitoring”, „monitor” zostaje), okres próbny ≁ okres zasiłkowy, wyjazd służbowy ≁ wyjazd na L4,
+  // pracownik niepełnosprawny ≁ niepełny miesiąc (pomijamy samo „niepełny”).
+  'pracod', 'pracow', 'kontro', 'wolno', 'swiadc', 'odszko', 'monitoring', 'okres', 'sluzbo', 'stanow', 'wyjazd', 'pozew', 'koszty',
+  'zmiana', 'kiedy', 'pierws', 'dostan', 'trzeci', 'osobe', 'brak', 'przy', 'niepelny']);
 
 const slowa = (tekst: string) =>
   new Set(
@@ -55,7 +56,7 @@ const ZMIENIAJACY = /o zmianie|zmieniając/i;
 const aktyNarzedzia = (przepisy: readonly KluczAktu[]) =>
   new Set(przepisy.filter((k) => !ZMIENIAJACY.test(AKTY[k].nazwa)).map((k) => AKTY[k].publikator));
 
-const ADRES_NARZEDZIA = /href="\/narzedzia\/([a-z0-9-]+)"/g;
+const ADRES_NARZEDZIA = /href=["']\/narzedzia\/([a-z0-9-]+)(?:#[^"']*)?["']/g;
 /** Linki między stronami narzędzi: slug → slugi, do których strona linkuje. */
 export function linkiZeStron(zrodla: Record<string, string>): Map<string, Set<string>> {
   const linki = new Map<string, Set<string>>();
