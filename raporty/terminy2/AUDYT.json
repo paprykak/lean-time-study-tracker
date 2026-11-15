@@ -1,0 +1,74 @@
+{
+  "zakres": "Audyt jakości 2026-11-15: wypowiedzenie-zmieniajace i badania-lekarskie-w-pracy (zmiany rundy 8, 926b8f0..3670873, oraz cała treść stron według stanu HEAD). Konwencja art. 115 KC przy odmowie i odwołaniu (praca innego zespołu) pominięta.",
+  "metoda": "Teksty aktów pobrane z API Sejmu: Kp t.j. Dz.U. 2026 poz. 1245 (akty zmieniające po t.j.: poz. 473, 1046 — nie dotyczą badanych artykułów), ustawa o zwolnieniach t.j. Dz.U. 2026 poz. 1195, rozporządzenie t.j. Dz.U. 2023 poz. 607 ze zm. Dz.U. 2026 poz. 456 i poz. 726 (726 dotyczy tylko ołowiu, § 13a). Niezależny model w Pythonie (datetime, calendar, własne święta i Wielkanoc) porównany z funkcjami TS (bundle esbuild): 2 × 14 000 losowych przypadków (wypowiedzenieZmieniajace, badanieKontrolne, odwolanie) + 2380 przypadków brzegowych progów stażu 6 miesięcy i 3 lat (start 29.02, 31.08, 31.03, 31.12, 1.01, 28.02, 30.06; doręczenia od 75 dni przed progiem do 9 dni po, z pouczeniem i bez): 0 różnic w okresie, końcu, odmowie A i B, początku wariantu B, dniach A/B, wyniku badania kontrolnego, łańcuchu zwolnień i terminie odwołania od orzeczenia.",
+  "znaleziska": [
+    {
+      "id": "B-1",
+      "narzedzie": "badania-lekarskie-w-pracy",
+      "plik": "src/lib/narzedzia/badania-lekarskie.ts",
+      "linia": 136,
+      "rodzaj": "prawny",
+      "opis": "Domyślna odpowiedź „Nie wiem” (dzienPracy = 'auto') traktuje każdy dzień pon.–pt. bez święta w przerwie jako dzień pracy. Przy sytuacji, którą runda 8 miała naprawić (długie L4, potem urlop, potem krótkie L4), wynik domyślny to „nie jest wymagane / Wracasz bez badania kontrolnego”, choć pracownik po niezdolności ponad 30 dni nie wrócił do pracy. Runda 8 dodała tylko podpowiedź „urlop się nie liczy” i test dla odpowiedzi 'nie' i 'tak'; przypadek 'auto' nie jest testowany. Narusza zasadę 2 standardu (wariant bezpieczny), a FAQ i „Jak liczymy” mówią, że urlop w przerwie traktujemy jak brak dnia pracy. Lukę wskazały już raporty/orzecznictwo/weryfikacja-2.md (pkt 1 „Sprzeczne”) i weryfikacja-2-runda.md (sekcja 3): jest dalej otwarta.",
+      "dowod": "badanieKontrolne([{od:'2026-01-01',do:'2026-02-15'},{od:'2026-03-02',do:'2026-03-06'}],'choroba','auto') → {wynik:'niewymagane', dniOstatniej:5, wczesniejsza:null, zwolnienWLancuchu:1}; to samo z 'nie' → {wynik:'potrzebne', wczesniejsza:{dni:46}}. Art. 229 § 4 Kp: „Pracodawca nie może dopuścić do pracy pracownika bez aktualnego orzeczenia lekarskiego…”; strona (FAQ): „urlop w przerwie traktujemy jak brak dnia pracy”.",
+      "poprawka": "W trybie 'auto', gdy wcześniejszy blok trwał ponad 30 dni, a przerwa zawiera dni pon.–pt., nie przerywać łańcucha po cichu: wynik 'nierozstrzygniete' z opisem w formie neutralnej, np. „Wcześniejsza niezdolność trwała N dni. Jeśli między zwolnieniami nie było dnia pracy (na przykład był tylko urlop), badanie kontrolne jest potrzebne: wybierz „Nie” w pytaniu o dzień pracy.” Albo przy wcześniejszym bloku ponad 30 dni pytać wprost, bez opcji „Nie wiem”. Test jednostkowy dla 'auto' z tym przypadkiem.",
+      "pewnosc": "wysoka"
+    },
+    {
+      "id": "B-2",
+      "narzedzie": "badania-lekarskie-w-pracy",
+      "plik": "src/pages/narzedzia/badania-lekarskie-w-pracy.astro",
+      "linia": 296,
+      "rodzaj": "ux",
+      "opis": "„Jak liczymy”, pkt 1: „Gdy między zwolnieniami są tylko dni wolne, przepis nie mówi, czy to jedna niezdolność; wtedy wskazujemy, że bezpieczniej zrobić badanie.” Bez warunku „a łącznie wychodzi ponad 30 dni”. Narzędzie (interpretacja 2 w .ts, FAQ) pokazuje „przepis tego nie rozstrzyga / bezpieczniej zrobić badanie” tylko przy łącznym czasie ponad 30 dni; dla krótszych łańcuchów wynik to „nie jest wymagane”. Sprzeczność opisu z wynikiem.",
+      "dowod": "badanieKontrolne([{od:'2026-11-02',do:'2026-11-06'},{od:'2026-11-09',do:'2026-11-13'}],'choroba','auto') → wynik 'niewymagane', zwolnienWLancuchu 2, dniLacznie 12 (przerwa: sobota i niedziela). FAQ: „Gdy w przerwie są tylko dni wolne, a łącznie wychodzi ponad 30 dni, bezpieczniej zrobić badanie”.",
+      "poprawka": "„Gdy między zwolnieniami są tylko dni wolne, a łącznie z przerwą wychodzi ponad {PROG_KONTROLNE} dni, przepis nie mówi, czy to jedna niezdolność; wtedy wskazujemy, że bezpieczniej zrobić badanie.”",
+      "pewnosc": "wysoka"
+    },
+    {
+      "id": "A-1",
+      "narzedzie": "wypowiedzenie-zmieniajace",
+      "plik": "src/lib/narzedzia/wypowiedzenie-zmieniajace.ts",
+      "linia": 171,
+      "rodzaj": "ux",
+      "opis": "Błąd gramatyczny w wierszu wyniku o progu stażu (ten sam tekst w HTML i skrypcie): przy liczebniku 3 orzeczenie musi być w liczbie mnogiej („3 lata mijają”), a funkcja zawsze pisze „mija”. Dla 6 miesięcy „mija” jest poprawne.",
+      "dowod": "tekstProgu({miesiace:36, dzien:'2026-11-19', krotszy:'1 miesiąc', …}) → „3 lata mija 19 listopada 2026 r.; odmowę liczymy od krótszego okresu (1 miesiąc)”. Ten wiersz pokazuje się np. dla startu 2023-11-20 i doręczenia 2026-11-12 (okres 3 miesiące, prog 36).",
+      "poprawka": "`${prog.miesiace === 6 ? '6 miesięcy mija' : '3 lata mijają'} ${dataPoPolsku(prog.dzien)}; …` (albo jak w okres-wypowiedzenia: „z końcem dnia … staż osiągnie 3 lata”) i test jednostkowy tekstu dla 36 miesięcy.",
+      "pewnosc": "wysoka"
+    },
+    {
+      "id": "A-2",
+      "narzedzie": "wypowiedzenie-zmieniajace",
+      "plik": "src/pages/narzedzia/wypowiedzenie-zmieniajace.astro",
+      "linia": 150,
+      "rodzaj": "prawny",
+      "opis": "Sekcja „Kiedy pracodawca nie może wypowiedzieć warunków”: „W ciąży i od złożenia wniosku o urlop macierzyński, ojcowski albo rodzicielski do jego końca pracodawca nie może wypowiedzieć umowy (art. 177 § 1).” Pomija art. 177 § 1¹: przy wniosku złożonym wcześniej niż w terminach z art. 180 § 9 itd. zakaz zaczyna się dopiero 14, 21 albo 7 dni przed urlopem. Zdanie daje nadmierną pewność ochrony od dnia wniosku. Pomija też urlop uzupełniający i na warunkach macierzyńskiego oraz wyjątek z § 4 (upadłość, likwidacja).",
+      "dowod": "Kp t.j. 2026 poz. 1245, art. 177 § 1¹: „W przypadku złożenia wniosku, o którym mowa w § 1, wcześniej niż w terminach określonych w art. 180 § 9, art. 180[2] § 4, art. 182[1d] § 1, art. 182[3] § 2 oraz art. 183 § 6 zakaz, o którym mowa w § 1, zaczyna obowiązywać na: 1) 14 dni przed rozpoczęciem korzystania z części urlopu macierzyńskiego oraz części urlopu na warunkach urlopu macierzyńskiego; 2) 21 dni przed rozpoczęciem korzystania z uzupełniającego urlopu macierzyńskiego oraz urlopu rodzicielskiego albo jego części; 3) 7 dni przed rozpoczęciem korzystania z urlopu ojcowskiego albo jego części.” § 4: wypowiedzenie w tych okresach „może nastąpić tylko w razie ogłoszenia upadłości lub likwidacji pracodawcy”.",
+      "poprawka": "„W ciąży, w czasie urlopu macierzyńskiego i od złożenia wniosku o urlop macierzyński, uzupełniający, ojcowski albo rodzicielski do jego końca pracodawca nie może wypowiedzieć umowy (art. 177 § 1); gdy wniosek złożono wcześniej, niż wymaga przepis, zakaz zaczyna się 14, 21 albo 7 dni przed urlopem (art. 177 § 1¹). Wyjątek: upadłość albo likwidacja pracodawcy (art. 177 § 4).” Resztę zdania (wypowiedzenie zmieniające, ustawa o zwolnieniach) bez zmian.",
+      "pewnosc": "wysoka"
+    },
+    {
+      "id": "A-3",
+      "narzedzie": "wypowiedzenie-zmieniajace",
+      "plik": "src/pages/narzedzia/wypowiedzenie-zmieniajace.astro",
+      "linia": 149,
+      "rodzaj": "prawny",
+      "opis": "Ochrona przedemerytalna: „tylko z powodu nowych zasad wynagradzania dla wszystkich albo Twojej grupy pracowników albo utraty zdolności do pracy lub uprawnień (art. 39, 40 i 43)”. Art. 43 pkt 2 mówi o utracie zdolności „stwierdzonej orzeczeniem lekarskim” i o „niezawinionej przez pracownika” utracie uprawnień. Skrót rozszerza podstawy wypowiedzenia na niekorzyść osoby chronionej (np. zawiniona utrata uprawnień nie pozwala na wypowiedzenie zmieniające z art. 43). Zakres przyczyn: „jeżeli wypowiedzenie stało się konieczne”.",
+      "dowod": "Kp art. 43: „Pracodawca może wypowiedzieć warunki pracy lub płacy pracownikowi, o którym mowa w art. 39, jeżeli wypowiedzenie stało się konieczne ze względu na: 1) wprowadzenie nowych zasad wynagradzania dotyczących ogółu pracowników zatrudnionych u danego pracodawcy lub tej ich grupy, do której pracownik należy; 2) stwierdzoną orzeczeniem lekarskim utratę zdolności do wykonywania dotychczasowej pracy albo niezawinioną przez pracownika utratę uprawnień koniecznych do jej wykonywania.”",
+      "poprawka": "„…tylko gdy jest to konieczne z powodu nowych zasad wynagradzania dla wszystkich albo Twojej grupy pracowników, stwierdzonej orzeczeniem lekarskim utraty zdolności do dotychczasowej pracy albo niezawinionej przez Ciebie utraty uprawnień potrzebnych do tej pracy (art. 39, 40 i 43).”",
+      "pewnosc": "srednia"
+    }
+  ],
+  "potwierdzone_bez_uwag": [
+    "Obliczenia wypowiedzenia zmieniającego (okres z art. 36 § 1, koniec z art. 30 § 2¹, próg stażu w trakcie okresu, połowa w wariantach A i B, bez pouczenia do końca krótszego okresu): 0 różnic z niezależnym modelem, także 29.02, koniec lutego, koniec roku, doręczenie w sobotę i niedzielę.",
+    "badanieKontrolne (scalanie zwolnień, próg > 30 dni kalendarzowych, łańcuch przez przerwy bez dnia roboczego ze świętami i Wigilią od 2025, wcześniejsza niezdolność > 30 dni) i odwolanie (otrzymanie + 7, sobota/niedziela/święto): 0 różnic.",
+    "Brzmienie art. 229 § 1–§ 6¹, art. 201 § 1, art. 211 pkt 5 Kp, § 2 ust. 1–2 i § 5 rozporządzenia oraz zmian z Dz.U. 2026 poz. 456 (wejście w życie 17.04.2026, okres przejściowy 6 miesięcy, § 3 ust. 4a pkt 12 i 15, 4d, 4e, 4g, pośrednictwo podstawowej jednostki) zgodne z tym, co piszą strona i komentarze.",
+    "Art. 41, 41¹ § 1, 42 § 1–4, 36 § 1, § 5, 30 § 1 pkt 4, 264 § 1 Kp i art. 5 ust. 2–6, art. 8, art. 10 ust. 1 i 3 ustawy o zwolnieniach (t.j. 2026 poz. 1195): zdania strony zgodne.",
+    "Forma neutralna płciowo w obu narzędziach: brak form „-łeś/-łaś”; teksty wyniku w HTML i skrypcie z tych samych funkcji (tekstKontrolnego, tekstWstepnych, opisZmieniajacego)."
+  ],
+  "niesprawdzone": [
+    "Tezy i daty orzeczeń SN w pełnym tekście SAOS: II PK 214/07 (20.03.2008), I PKN 639/00, II PK 319/04, I PK 541/03 (badania) oraz I PKN 34/99, II PK 12/11, I PK 2/13, I PK 144/11 (12.04.2012), III PK 55/14, I PK 211/14, II PK 340/12, I PKN 79/00, I PK 139/04 (wypowiedzenie zmieniające). API SAOS przez cały czas audytu (ok. 07:55–08:45 UTC, 2026-11-15) zwracało stronę „Przerwa techniczna”; skrypt ponawiał zapytania co 4 minuty. Brzmienie strony zgadza się z dosłownymi cytatami w raporty/orzecznictwo/weryfikacja-2.md i weryfikacja-2-runda.md (np. II PK 214/07: „Badania te są niezbędne przed dopuszczeniem do wykonywania pracy, natomiast nieprzeprowadzenie ich przed urlopem nie pozostaje w sprzeczności z istotą urlopu wypoczynkowego”; I PK 541/03: „gdy wyłączną przyczyną tej odmowy są okoliczności leżące po stronie pracownika”), ale tych cytatów nie potwierdzono niezależnie w źródle.",
+    "Przepisy przejściowe art. 302¹ Kp (od kiedy i u jakich pracodawców wliczanie zleceń i działalności do stażu działa) — strona tylko odsyła do § 8, nie sprawdzano.",
+    "E2E i zrzuty z telefonu (zasada 10) — nie uruchamiano; audyt tylko na logice i treści.",
+    "Prezentacja terminów odmowy i odwołania według art. 115 KC (zmieniana przez osobny zespół) — świadomie pominięta."
+  ]
+}
