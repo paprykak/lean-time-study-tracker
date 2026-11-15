@@ -204,3 +204,11 @@ describe('błędne dane', () => {
     expect(werdyktBezDat('inna-praca', 'chodzic', 'nikt', '', '2027-01-05').werdykt).toBe('Tylko bez zwolnienia z tej pracy');
   });
 });
+
+describe('wyszukiwarka serwisu: frazy z podpowiedzi Google prowadzą do narzędzia', () => {
+  it.each(['czy na l4 można wychodzić z domu', 'czy na L4 można pracować', 'praca na L4 u innego pracodawcy', 'kontrola ZUS L4', 'wyjazd na L4', 'chory może chodzić', 'chory powinien leżeć', 'odwołanie od decyzji ZUS'])('„%s” → pierwsze miejsce', async (q) => {
+    const { przygotuj, szukaj } = await import('../szukaj-narzedzi');
+    const { indeksNarzedzi } = await import('../indeks-narzedzi');
+    expect(szukaj(przygotuj(indeksNarzedzi()), q, 1)[0]?.wpis.s).toBe('co-wolno-na-l4');
+  });
+});
