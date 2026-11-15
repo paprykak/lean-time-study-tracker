@@ -1,0 +1,23 @@
+import { readFileSync, writeFileSync } from 'node:fs';
+const D = '/tmp/claude-0/-home-user-lean-time-study-tracker/b0b3f654-466d-5392-b1a0-b55158a76b00/scratchpad/';
+const nowy = await import('/home/user/lean-time-study-tracker/src/lib/szukaj-narzedzi.ts');
+const stary = await import(D + 'szukaj-stary.ts');
+const pN = nowy.przygotuj(JSON.parse(readFileSync(D + 'indeks.json', 'utf8')));
+const pS = stary.przygotuj(JSON.parse(readFileSync(D + 'indeks-stary.json', 'utf8')));
+const wiersz = (zbior, id, q, ocz, zr) => {
+  const s = stary.szukaj(pS, q, 3).map((x) => x.wpis.s), n = nowy.szukaj(pN, q, 3).map((x) => x.wpis.s);
+  const ocena = (w) => (ocz === 'brak' ? '-' : w[0] === ocz ? '1' : w.includes(ocz) ? 'top3' : 'X');
+  return [zbior, id, zr, q, ocz, ocena(s), s.join(', '), ocena(n), n.join(', ')].join('\t');
+};
+const out = ['zestaw\tid\tzrodlo\tzapytanie\toczekiwane\tprzed\tprzed: top3\tpo\tpo: top3'];
+const zestaw = JSON.parse(readFileSync(D + 'zestaw.json', 'utf8'));
+const et = new Map(readFileSync(D + 'etykiety.tsv', 'utf8').trim().split('\n').map((l) => l.split('\t')).map(([i, s]) => [+i, s]));
+for (const z of zestaw) out.push(wiersz('glowny', z.id, z.q, et.get(z.id), z.zrodlo));
+const kq = new Map(readFileSync(D + 'kontrolne.txt', 'utf8').trim().split('\n').map((l) => l.split('\t')).map(([i, t]) => [+i, t]));
+const ke = new Map(readFileSync(D + 'kontrol-etykiety.tsv', 'utf8').trim().split('\n').map((l) => l.split('\t')).map(([i, s]) => [+i, s]));
+for (const [i, q] of kq) out.push(wiersz('kontrolny', i, q, ke.get(i), 'google'));
+writeFileSync('/home/user/lean-time-study-tracker/raporty/wyszukiwarka2/wyniki-przed-i-po.tsv', out.join('\n') + '\n');
+const stat = (zb, k) => { const r = out.slice(1).map((l) => l.split('\t')).filter((x) => x[0] === zb && x[4] !== 'brak'); const c = (v) => r.filter((x) => x[k] === v).length; return `${zb} n=${r.length} top1 ${c('1')} top3 ${c('1') + c('top3')} X ${c('X')}`; };
+console.log(stat('glowny', 5), '|', stat('glowny', 7)); console.log(stat('kontrolny', 5), '|', stat('kontrolny', 7));
+const gorzej = out.slice(1).map((l) => l.split('\t')).filter((x) => x[4] !== 'brak' && ((x[5] === '1' && x[7] !== '1') || (x[5] === 'top3' && x[7] === 'X')));
+console.log('POGORSZONE', gorzej.length); for (const g of gorzej) console.log(g[0], g[3], '→', g[4], '| przed', g[6], '| po', g[8]);

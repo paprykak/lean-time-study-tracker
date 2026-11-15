@@ -1,0 +1,965 @@
+zestaw	id	zrodlo	zapytanie	oczekiwane	przed	przed: top3	po	po: top3
+glowny	1	google	dodatek nocny 2026	dodatek-za-prace-w-nocy	1	dodatek-za-prace-w-nocy, placa-minimalna, kalkulator-nadgodzin	1	dodatek-za-prace-w-nocy, kalkulator-nadgodzin, dodatek-wyrownawczy
+glowny	2	google	dodatek nocny sierpien 2026	dodatek-za-prace-w-nocy	1	dodatek-za-prace-w-nocy, placa-minimalna, kalkulator-nadgodzin	1	dodatek-za-prace-w-nocy, kalkulator-nadgodzin, dodatek-wyrownawczy
+glowny	3	google	praca w nocy dodatek	dodatek-za-prace-w-nocy	1	dodatek-za-prace-w-nocy, wyplata-z-nadgodzinami, dodatek-wyrownawczy	1	dodatek-za-prace-w-nocy, dodatek-wyrownawczy, kalkulator-nadgodzin
+glowny	4	google	praca w nocy a dziecko	rodzic-w-pracy	X	dodatek-za-prace-w-nocy, praca-w-niedziele, praca-w-sobote	1	rodzic-w-pracy, dodatek-za-prace-w-nocy, urlop-wychowawczy
+glowny	5	google	nocki ile platne	dodatek-za-prace-w-nocy	1	dodatek-za-prace-w-nocy, dyzur-kierowcy, wyplata-z-nadgodzinami	1	dodatek-za-prace-w-nocy, wyplata-z-nadgodzinami, dyzur-kierowcy
+glowny	6	google	nocki ile wiecej platne	dodatek-za-prace-w-nocy	X		1	dodatek-za-prace-w-nocy, wyplata-z-nadgodzinami, dyzur-kierowcy
+glowny	7	google	drgania w środowisku pracy	drgania-w-pracy	1	drgania-w-pracy, okres-wypowiedzenia, przerwy-w-pracy	1	drgania-w-pracy
+glowny	8	google	drgania mechaniczne w pracy	drgania-w-pracy	1	drgania-w-pracy, okres-wypowiedzenia, przerwy-w-pracy	1	drgania-w-pracy
+glowny	9	google	hałas w pracy normy	halas-w-pracy	1	halas-w-pracy, drgania-w-pracy, ile-kg-wolno-dzwigac	1	halas-w-pracy, drgania-w-pracy, normy-sanitarne
+glowny	10	google	hałas w pracy biurowej	halas-w-pracy	1	halas-w-pracy, szkolenie-okresowe-bhp	1	halas-w-pracy, szkolenie-okresowe-bhp
+glowny	11	google	wypadek przy pracy to	odszkodowanie-za-wypadek-przy-pracy	top3	renta-z-tytulu-niezdolnosci-do-pracy, odszkodowanie-za-wypadek-przy-pracy, dodatek-wyrownawczy	1	odszkodowanie-za-wypadek-przy-pracy, renta-z-tytulu-niezdolnosci-do-pracy, dodatek-wyrownawczy
+glowny	12	google	wypadek przy pracy to każde zdarzenie	odszkodowanie-za-wypadek-przy-pracy	1	odszkodowanie-za-wypadek-przy-pracy, fundusz-socjalny, renta-z-tytulu-niezdolnosci-do-pracy	1	odszkodowanie-za-wypadek-przy-pracy, renta-z-tytulu-niezdolnosci-do-pracy, fundusz-socjalny
+glowny	13	google	odszkodowanie za wypadek w pracy	odszkodowanie-za-wypadek-przy-pracy	1	odszkodowanie-za-wypadek-przy-pracy, odszkodowanie-za-zwolnienie, swiadectwo-pracy	1	odszkodowanie-za-wypadek-przy-pracy, odszkodowanie-za-zwolnienie, swiadectwo-pracy
+glowny	14	google	odszkodowanie za wypadek w pracy zus	odszkodowanie-za-wypadek-przy-pracy	1	odszkodowanie-za-wypadek-przy-pracy, renta-z-tytulu-niezdolnosci-do-pracy, informacja-o-warunkach-zatrudnienia	1	odszkodowanie-za-wypadek-przy-pracy, renta-z-tytulu-niezdolnosci-do-pracy
+glowny	15	google	szkolenie bhp okresowe ile ważne	szkolenie-okresowe-bhp	1	szkolenie-okresowe-bhp, kod-95, badania-lekarskie-w-pracy	1	szkolenie-okresowe-bhp, kod-95
+glowny	16	google	szkolenie bhp okresowe dla pracowników administracyjno biurowych	szkolenie-okresowe-bhp	1	szkolenie-okresowe-bhp	1	szkolenie-okresowe-bhp, kod-95
+glowny	17	google	szkolenie bhp co ile lat	szkolenie-okresowe-bhp	1	szkolenie-okresowe-bhp, kod-95, zwrot-kosztow-szkolenia	1	szkolenie-okresowe-bhp, kod-95, zwrot-kosztow-szkolenia
+glowny	18	google	uprawnienia udt na wózki widłowe	waznosc-uprawnien-udt	1	waznosc-uprawnien-udt, badania-udt, czy-potrzebne-uprawnienia-udt	1	waznosc-uprawnien-udt, badania-udt, czy-potrzebne-uprawnienia-udt
+glowny	19	google	uprawnienia udt co to	czy-potrzebne-uprawnienia-udt	top3	waznosc-uprawnien-udt, czy-potrzebne-uprawnienia-udt, badania-udt	1	czy-potrzebne-uprawnienia-udt, waznosc-uprawnien-udt, badania-udt
+glowny	20	google	uprawnienia na wózek widłowy cena	waznosc-uprawnien-udt	1	waznosc-uprawnien-udt, czy-potrzebne-uprawnienia-udt, badania-kierowcy	1	waznosc-uprawnien-udt, drogi-i-przejscia, badania-udt
+glowny	21	google	uprawnienia na wózek widłowy udt	waznosc-uprawnien-udt	1	waznosc-uprawnien-udt, czy-potrzebne-uprawnienia-udt, badania-udt	1	waznosc-uprawnien-udt, czy-potrzebne-uprawnienia-udt, badania-udt
+glowny	22	google	przegląd udt windy samochodowej	badania-udt	1	badania-udt, waznosc-uprawnien-udt, czy-potrzebne-uprawnienia-udt	1	badania-udt
+glowny	23	google	przegląd udt wózka widłowego	badania-udt	1	badania-udt, waznosc-uprawnien-udt, drogi-i-przejscia	1	badania-udt, waznosc-uprawnien-udt
+glowny	24	google	ile metrów na pracownika w biurze	powierzchnia-na-pracownika	1	powierzchnia-na-pracownika, szkolenie-okresowe-bhp	1	powierzchnia-na-pracownika, skladowanie-w-magazynie, praca-na-wysokosci
+glowny	25	google	ile metrów na pracownika w pomieszczeniu	powierzchnia-na-pracownika	1	powierzchnia-na-pracownika	1	powierzchnia-na-pracownika
+glowny	26	google	toaleta w pracy przepisy	normy-sanitarne	1	normy-sanitarne, co-wolno-na-l4, ile-kg-wolno-dzwigac	1	normy-sanitarne
+glowny	27	google	toaleta w miejscu pracy	normy-sanitarne	1	normy-sanitarne, monitoring-w-pracy	1	normy-sanitarne
+glowny	28	google	szatnia w pracy przepisy	normy-sanitarne	1	normy-sanitarne, co-wolno-na-l4, ile-kg-wolno-dzwigac	1	normy-sanitarne, monitoring-w-pracy
+glowny	29	google	szatnia w zakładzie pracy	normy-sanitarne	1	normy-sanitarne, monitoring-w-pracy, okres-wypowiedzenia	1	normy-sanitarne, monitoring-w-pracy
+glowny	30	google	ile kg można dźwigać w ciąży	ile-kg-wolno-dzwigac	1	ile-kg-wolno-dzwigac, praca-w-ciazy, skladowanie-w-magazynie	1	ile-kg-wolno-dzwigac, praca-w-ciazy
+glowny	31	google	ile kg można dźwigać w pracy	ile-kg-wolno-dzwigac	1	ile-kg-wolno-dzwigac, praca-w-ciazy, co-wolno-na-l4	1	ile-kg-wolno-dzwigac
+glowny	32	google	dźwiganie w pracy mężczyzna	ile-kg-wolno-dzwigac	1	ile-kg-wolno-dzwigac, praca-w-ciazy	1	ile-kg-wolno-dzwigac
+glowny	33	google	dźwiganie w pracy kobieta	ile-kg-wolno-dzwigac	1	ile-kg-wolno-dzwigac, praca-w-ciazy, drgania-w-pracy	1	ile-kg-wolno-dzwigac, praca-w-ciazy
+glowny	34	google	temperatura w pracy biurowej	temperatura-w-pracy	1	temperatura-w-pracy, szkolenie-okresowe-bhp	1	temperatura-w-pracy, szkolenie-okresowe-bhp
+glowny	35	google	temperatura w pracy nowe przepisy	temperatura-w-pracy	1	temperatura-w-pracy, co-wolno-na-l4, informacja-o-warunkach-zatrudnienia	1	temperatura-w-pracy, informacja-o-warunkach-zatrudnienia, co-wolno-na-l4
+glowny	36	google	zimno w pracy przepisy	temperatura-w-pracy	1	temperatura-w-pracy, co-wolno-na-l4, ile-kg-wolno-dzwigac	1	temperatura-w-pracy
+glowny	37	google	zimno w pracy obowiązki pracodawcy	temperatura-w-pracy	1	temperatura-w-pracy, zgloszenie-pracy-cudzoziemca, wypowiedzenie-zmieniajace	1	temperatura-w-pracy
+glowny	38	google	upał w pracy przepisy	temperatura-w-pracy	1	temperatura-w-pracy, co-wolno-na-l4, ile-kg-wolno-dzwigac	1	temperatura-w-pracy
+glowny	39	google	upał w pracy obowiązki pracodawcy	temperatura-w-pracy	1	temperatura-w-pracy, zgloszenie-pracy-cudzoziemca, wypowiedzenie-zmieniajace	1	temperatura-w-pracy
+glowny	40	google	wymiar czasu pracy 2026	wymiar-czasu-pracy	1	wymiar-czasu-pracy, pracownik-niepelnosprawny, dodatek-za-prace-w-nocy	1	wymiar-czasu-pracy, pracownik-niepelnosprawny, nadgodziny-sredniotygodniowe
+glowny	41	google	wymiar czasu pracy 2027	wymiar-czasu-pracy	1	wymiar-czasu-pracy, pracownik-niepelnosprawny, nadgodziny-sredniotygodniowe	1	wymiar-czasu-pracy, pracownik-niepelnosprawny, nadgodziny-sredniotygodniowe
+glowny	42	google	ile godzin pracy w miesiącu 2026	wymiar-czasu-pracy	1	wymiar-czasu-pracy, dodatek-za-prace-w-nocy, rownowazny-czas-pracy	1	wymiar-czasu-pracy, rownowazny-czas-pracy, stawka-godzinowa
+glowny	43	google	ile godzin pracy w miesiącu na cały etat	wymiar-czasu-pracy	1	wymiar-czasu-pracy, rownowazny-czas-pracy, praca-w-sobote	1	wymiar-czasu-pracy, praca-w-sobote, rownowazny-czas-pracy
+glowny	44	google	nadgodziny kodeks pracy	kalkulator-nadgodzin	X	praca-w-sobote, doba-pracownicza, dodatek-za-prace-w-nocy	1	kalkulator-nadgodzin, wyplata-z-nadgodzinami, praca-w-sobote
+glowny	45	google	nadgodziny ile płatne	kalkulator-nadgodzin	top3	wynagrodzenie-za-urlop, kalkulator-nadgodzin, praca-w-sobote	1	kalkulator-nadgodzin, nadgodziny-sredniotygodniowe, wyplata-z-nadgodzinami
+glowny	46	google	nadgodziny ile do odbioru	kalkulator-nadgodzin	top3	praca-w-sobote, kalkulator-nadgodzin, doba-pracownicza	1	kalkulator-nadgodzin, praca-w-sobote
+glowny	47	google	nadgodziny ile procent	kalkulator-nadgodzin	1	kalkulator-nadgodzin, praca-w-sobote, doba-pracownicza	1	kalkulator-nadgodzin, nadgodziny-sredniotygodniowe, wyplata-z-nadgodzinami
+glowny	48	google	dodatek za nadgodziny nocne	kalkulator-nadgodzin	top3	dodatek-za-prace-w-nocy, kalkulator-nadgodzin, wyplata-z-nadgodzinami	top3	dodatek-za-prace-w-nocy, kalkulator-nadgodzin, wyplata-z-nadgodzinami
+glowny	49	google	dodatek za nadgodziny jak liczyć	kalkulator-nadgodzin	1	kalkulator-nadgodzin, dodatek-za-prace-w-nocy, wyplata-z-nadgodzinami	1	kalkulator-nadgodzin, dodatek-za-prace-w-nocy, wyplata-z-nadgodzinami
+glowny	50	google	urlop agencja pracy tymczasowej	urlop-w-agencji-pracy	1	urlop-w-agencji-pracy, limit-pracy-tymczasowej, umowa-na-czas-okreslony	1	urlop-w-agencji-pracy, limit-pracy-tymczasowej
+glowny	51	google	urlop wypoczynkowy agencja pracy tymczasowej	urlop-w-agencji-pracy	1	urlop-w-agencji-pracy, limit-pracy-tymczasowej, kalkulator-urlopu	1	urlop-w-agencji-pracy, limit-pracy-tymczasowej, kalkulator-urlopu
+glowny	52	google	dni wolne od pracy 2026	dni-wolne-od-pracy	1	dni-wolne-od-pracy, kalkulator-urlopu, ekwiwalent-za-urlop	1	dni-wolne-od-pracy, praca-w-sobote, dni-robocze
+glowny	53	google	dni wolne od pracy 2027	dni-wolne-od-pracy	top3	kalkulator-urlopu, praca-w-sobote, dni-wolne-od-pracy	1	dni-wolne-od-pracy, praca-w-sobote, dni-robocze
+glowny	54	google	długi weekend 2026	dni-wolne-od-pracy	1	dni-wolne-od-pracy, wymiar-czasu-pracy	1	dni-wolne-od-pracy, praca-w-niedziele
+glowny	55	google	długi weekend w sierpniu 2026	dni-wolne-od-pracy	1	dni-wolne-od-pracy, wymiar-czasu-pracy	1	dni-wolne-od-pracy, praca-w-niedziele
+glowny	56	google	ile dni urlopu w roku	kalkulator-urlopu	1	kalkulator-urlopu, urlop-w-godzinach, zalegly-urlop	1	kalkulator-urlopu, urlop-w-okresie-wypowiedzenia, urlop-szkoleniowy
+glowny	57	google	ile dni urlopu kalkulator	kalkulator-urlopu	1	kalkulator-urlopu, urlop-w-godzinach, dni-wolne-od-pracy	1	kalkulator-urlopu, urlop-w-agencji-pracy, urlop-szkoleniowy
+glowny	58	google	urlop wypoczynkowy kodeks pracy	kalkulator-urlopu	1	kalkulator-urlopu, dni-wolne-od-pracy, urlop-bezplatny	1	kalkulator-urlopu, urlop-bezplatny, wynagrodzenie-za-urlop
+glowny	59	google	urlop wypoczynkowy ile dni	kalkulator-urlopu	1	kalkulator-urlopu, dni-wolne-od-pracy, urlop-bezplatny	1	kalkulator-urlopu, wynagrodzenie-za-urlop, urlop-bezplatny
+glowny	60	google	ekwiwalent za urlop 2026	ekwiwalent-za-urlop	1	ekwiwalent-za-urlop, kalkulator-urlopu, swiadczenie-urlopowe	1	ekwiwalent-za-urlop, urlop-w-okresie-wypowiedzenia, odziez-robocza
+glowny	61	google	ekwiwalent za urlop kalkulator	ekwiwalent-za-urlop	1	ekwiwalent-za-urlop, urlop-w-okresie-wypowiedzenia, kalkulator-urlopu	1	ekwiwalent-za-urlop, urlop-w-okresie-wypowiedzenia, odziez-robocza
+glowny	62	google	niewykorzystany urlop do 30 września konsekwencje	zalegly-urlop	1	zalegly-urlop, ekwiwalent-za-urlop, urlop-w-agencji-pracy	1	zalegly-urlop
+glowny	63	google	niewykorzystany urlop przy zmianie pracy	ekwiwalent-za-urlop	top3	urlop-w-godzinach, urlop-w-agencji-pracy, ekwiwalent-za-urlop	1	ekwiwalent-za-urlop, urlop-w-godzinach, urlop-w-agencji-pracy
+glowny	64	google	l4 ile płatne	kalkulator-l4	1	kalkulator-l4, okres-wyczekiwania, zasilek-chorobowy-na-zleceniu	1	kalkulator-l4, okres-wyczekiwania, co-wolno-na-l4
+glowny	65	google	l4 ile dni wstecz	brak	-	badania-lekarskie-w-pracy, okres-zasilkowy, okres-wyczekiwania	-	kalkulator-l4, l4-po-zwolnieniu, co-wolno-na-l4
+glowny	66	google	chorobowe ile procent	kalkulator-l4	1	kalkulator-l4, okres-wyczekiwania, okres-zasilkowy	1	kalkulator-l4, okres-zasilkowy, choroba-zawodowa
+glowny	67	google	chorobowe ile płatne	kalkulator-l4	1	kalkulator-l4, okres-wyczekiwania, zasilek-chorobowy-na-zleceniu	1	kalkulator-l4, okres-wyczekiwania, zasilek-chorobowy-na-zleceniu
+glowny	68	google	zwolnienie lekarskie po ustaniu zatrudnienia	l4-po-zwolnieniu	1	l4-po-zwolnieniu, kalkulator-l4, zwolnienie-na-l4	top3	kalkulator-l4, l4-po-zwolnieniu, zwolnienie-na-l4
+glowny	69	google	odprawa emerytalna	kalkulator-odprawy	1	kalkulator-odprawy, odprawa-posmiertna, zwolnienia-grupowe	1	kalkulator-odprawy, odprawa-posmiertna
+glowny	70	google	odprawa emerytalna wysokość	kalkulator-odprawy	1	kalkulator-odprawy	1	kalkulator-odprawy, odprawa-posmiertna, skladowanie-w-magazynie
+glowny	71	google	odprawa ile wynosi	kalkulator-odprawy	1	kalkulator-odprawy, odprawa-posmiertna, zwolnienia-grupowe	1	kalkulator-odprawy, odprawa-posmiertna, zwolnienia-grupowe
+glowny	72	google	wolne na dziecko 2 dni	wolne-na-dziecko	1	wolne-na-dziecko, praca-w-sobote, dni-wolne-od-pracy	1	wolne-na-dziecko, rodzic-w-pracy, praca-w-sobote
+glowny	73	google	wolne na dziecko zdrowe	wolne-na-dziecko	top3	praca-w-sobote, praca-w-niedziele, wolne-na-dziecko	1	wolne-na-dziecko, rodzic-w-pracy, urlop-wychowawczy
+glowny	74	google	siła wyższa urlop	wolne-na-dziecko	1	wolne-na-dziecko	1	wolne-na-dziecko
+glowny	75	google	siła wyższa ile dni	wolne-na-dziecko	1	wolne-na-dziecko	1	wolne-na-dziecko
+glowny	76	google	najniższa krajowa 2026	placa-minimalna	1	placa-minimalna, delegacja-krajowa	1	placa-minimalna, brutto-netto, delegacja-krajowa
+glowny	77	google	najniższa krajowa 2026 netto	brutto-netto	top3	placa-minimalna, brutto-netto, delegacja-krajowa	1	brutto-netto, placa-minimalna
+glowny	78	google	płaca minimalna 2027	placa-minimalna	top3	koszt-pracodawcy, placa-minimalna, brutto-netto	1	placa-minimalna, koszt-pracodawcy, stawka-godzinowa
+glowny	79	google	płaca minimalna 2026	placa-minimalna	1	placa-minimalna, koszt-pracodawcy, brutto-netto	1	placa-minimalna, koszt-pracodawcy, stawka-godzinowa
+glowny	80	google	brutto netto kalkulator	brutto-netto	1	brutto-netto, zlecenie-netto, koszt-pracodawcy	1	brutto-netto, zlecenie-netto
+glowny	81	google	brutto netto wynagrodzenie	brutto-netto	1	brutto-netto, zlecenie-netto, koszt-pracodawcy	1	brutto-netto, zlecenie-netto, koszt-pracodawcy
+glowny	82	google	na rękę to netto czy brutto	brutto-netto	1	brutto-netto, zlecenie-netto, wyplata-z-nadgodzinami	1	brutto-netto, zlecenie-netto
+glowny	83	google	na rękę najniższa krajowa	brutto-netto	X	placa-minimalna	1	brutto-netto, placa-minimalna
+glowny	84	google	umowa na czas określony a ciąża	umowa-na-czas-okreslony	1	umowa-na-czas-okreslony, umowa-na-zastepstwo, okres-wypowiedzenia	1	umowa-na-czas-okreslony, okres-wypowiedzenia, umowa-na-zastepstwo
+glowny	85	google	umowa na czas określony okres wypowiedzenia	okres-wypowiedzenia	1	okres-wypowiedzenia, umowa-na-czas-okreslony, umowa-na-zastepstwo	1	okres-wypowiedzenia, umowa-na-czas-okreslony, umowa-na-zastepstwo
+glowny	86	google	umowa zlecenie netto 2026	zlecenie-netto	1	zlecenie-netto, brutto-netto, dodatek-za-prace-w-nocy	1	zlecenie-netto, brutto-netto, zasilek-chorobowy-na-zleceniu
+glowny	87	google	umowa zlecenie netto brutto	zlecenie-netto	1	zlecenie-netto, brutto-netto, zasilek-chorobowy-na-zleceniu	1	zlecenie-netto, brutto-netto
+glowny	88	google	praca w niedzielę a dzień wolny	praca-w-niedziele	1	praca-w-niedziele, praca-w-sobote, okres-wypowiedzenia	1	praca-w-niedziele, praca-w-sobote
+glowny	89	google	praca w niedzielę wynagrodzenie	praca-w-niedziele	1	praca-w-niedziele, dyzur-w-pracy, wynagrodzenie-za-niepelny-miesiac	1	praca-w-niedziele, wynagrodzenie-za-przestoj, wynagrodzenie-za-niepelny-miesiac
+glowny	90	google	praca w święto kodeks pracy	praca-w-niedziele	1	praca-w-niedziele, dni-wolne-od-pracy, praca-w-sobote	1	praca-w-niedziele, dni-wolne-od-pracy, praca-w-sobote
+glowny	91	google	praca w święto w sobotę	dni-wolne-od-pracy	top3	praca-w-sobote, dni-wolne-od-pracy, wymiar-czasu-pracy	1	dni-wolne-od-pracy, praca-w-sobote, praca-w-niedziele
+glowny	92	google	przestój w pracy z winy pracodawcy	wynagrodzenie-za-przestoj	1	wynagrodzenie-za-przestoj, odszkodowanie-za-zwolnienie, urlop-bezplatny	1	wynagrodzenie-za-przestoj, odszkodowanie-za-zwolnienie
+glowny	93	google	przestój w pracy a przymusowy urlop	wynagrodzenie-za-przestoj	X	urlop-w-okresie-wypowiedzenia, urlop-bezplatny, urlop-okolicznosciowy	top3	urlop-w-okresie-wypowiedzenia, wynagrodzenie-za-przestoj
+glowny	94	google	wynagrodzenie za urlop wypoczynkowy kalkulator	wynagrodzenie-za-urlop	top3	urlop-bezplatny, kalkulator-urlopu, wynagrodzenie-za-urlop	1	wynagrodzenie-za-urlop, kalkulator-urlopu, urlop-bezplatny
+glowny	95	google	wynagrodzenie za urlop wypoczynkowy	wynagrodzenie-za-urlop	top3	urlop-bezplatny, kalkulator-urlopu, wynagrodzenie-za-urlop	1	wynagrodzenie-za-urlop, kalkulator-urlopu, urlop-bezplatny
+glowny	96	google	wypłaty z nadgodzinami	wyplata-z-nadgodzinami	1	wyplata-z-nadgodzinami, przedawnienie-wynagrodzenia, brutto-netto	1	wyplata-z-nadgodzinami, przedawnienie-wynagrodzenia, odpowiedzialnosc-materialna
+glowny	97	google	ppk co to	kalkulator-ppk	1	kalkulator-ppk, koszt-pracodawcy, informacja-o-warunkach-zatrudnienia	1	kalkulator-ppk, informacja-o-warunkach-zatrudnienia, koszt-pracodawcy
+glowny	98	google	koszt pracodawcy kalkulator	koszt-pracodawcy	1	koszt-pracodawcy, odpowiedzialnosc-materialna, sad-pracy-czy-pip	1	koszt-pracodawcy, odpowiedzialnosc-materialna, sad-pracy-czy-pip
+glowny	99	google	koszt pracodawcy za pracownika	koszt-pracodawcy	top3	odpowiedzialnosc-materialna, koszt-pracodawcy, sad-pracy-czy-pip	1	koszt-pracodawcy, odpowiedzialnosc-materialna, sad-pracy-czy-pip
+glowny	100	google	delegacja krajowa	delegacja-krajowa	1	delegacja-krajowa, delegacja-zagraniczna, placa-minimalna	1	delegacja-krajowa, delegacja-zagraniczna
+glowny	101	google	delegacja zagraniczna	delegacja-zagraniczna	1	delegacja-zagraniczna, delegacja-krajowa	1	delegacja-zagraniczna
+glowny	102	google	dieta delegacja 2026	delegacja-krajowa	1	delegacja-krajowa, delegacja-zagraniczna	1	delegacja-krajowa, delegacja-zagraniczna
+glowny	103	google	dieta delegacja krajowa	delegacja-krajowa	1	delegacja-krajowa, delegacja-zagraniczna	1	delegacja-krajowa, delegacja-zagraniczna
+glowny	104	google	l4 po zwolnieniu z pracy	l4-po-zwolnieniu	1	l4-po-zwolnieniu, badania-lekarskie-w-pracy, co-wolno-na-l4	1	l4-po-zwolnieniu, zwolnienie-na-l4, co-wolno-na-l4
+glowny	105	google	l4 po zwolnieniu dyscyplinarnym	l4-po-zwolnieniu	X	kalkulator-l4, badania-lekarskie-w-pracy, co-wolno-na-l4	1	l4-po-zwolnieniu, odszkodowanie-za-zwolnienie, co-wolno-na-l4
+glowny	106	google	świadczenie rehabilitacyjne ile wynosi	swiadczenie-rehabilitacyjne	1	swiadczenie-rehabilitacyjne, swiadczenie-urlopowe, fundusz-socjalny	1	swiadczenie-rehabilitacyjne, swiadczenie-urlopowe
+glowny	107	google	świadczenie rehabilitacyjne zus	swiadczenie-rehabilitacyjne	1	swiadczenie-rehabilitacyjne, fundusz-socjalny, zwolnienie-na-l4	1	swiadczenie-rehabilitacyjne, zwolnienie-na-l4
+glowny	108	google	zasiłek opiekuńczy na rodzica	zasilek-opiekunczy	1	zasilek-opiekunczy, odprawa-posmiertna, wolne-na-dziecko	1	zasilek-opiekunczy, odprawa-posmiertna, wolne-na-dziecko
+glowny	109	google	zasiłek opiekuńczy na dziecko	zasilek-opiekunczy	1	zasilek-opiekunczy, zasilek-macierzynski, wolne-na-dziecko	1	zasilek-opiekunczy, zasilek-macierzynski, wolne-na-dziecko
+glowny	110	google	zasiłek macierzyński kalkulator	zasilek-macierzynski	1	zasilek-macierzynski, kalkulator-l4, swiadczenie-przedemerytalne	1	zasilek-macierzynski, umowa-na-zastepstwo
+glowny	111	google	zasiłek macierzyński ile wynosi	zasilek-macierzynski	1	zasilek-macierzynski, zasilek-dla-bezrobotnych, zasilek-opiekunczy	1	zasilek-macierzynski
+glowny	112	google	urlop okolicznościowy ślub	urlop-okolicznosciowy	1	urlop-okolicznosciowy	1	urlop-okolicznosciowy
+glowny	113	google	urlop okolicznościowy na pogrzeb	urlop-okolicznosciowy	1	urlop-okolicznosciowy	1	urlop-okolicznosciowy
+glowny	114	google	urlop ojcowski 9 tygodni	rodzic-w-pracy	X	urlop-ojcowski, nadgodziny-sredniotygodniowe, czas-jazdy-kierowcy	X	urlop-ojcowski, czas-jazdy-kierowcy, nadgodziny-sredniotygodniowe
+glowny	115	google	urlop ojcowski 2 tygodnie	urlop-ojcowski	1	urlop-ojcowski, kalkulator-urlopu, urlop-w-agencji-pracy	1	urlop-ojcowski
+glowny	116	google	urlop wychowawczy ile trwa	urlop-wychowawczy	1	urlop-wychowawczy, rodzic-w-pracy, zasilek-macierzynski	1	urlop-wychowawczy
+glowny	117	google	urlop wychowawczy przed 1999 a emerytura	brak	-	emerytura-pomostowa	-	urlop-wychowawczy, emerytura-pomostowa, ochrona-przedemerytalna
+glowny	118	google	wypłata do 10 dnia miesiąca	termin-wyplaty-wynagrodzenia	X	przedawnienie-wynagrodzenia, wyplata-z-nadgodzinami, swiadczenie-rehabilitacyjne	1	termin-wyplaty-wynagrodzenia, przedawnienie-wynagrodzenia
+glowny	119	google	wypłata do 10 dnia każdego miesiąca	termin-wyplaty-wynagrodzenia	top3	przedawnienie-wynagrodzenia, termin-wyplaty-wynagrodzenia, wyplata-z-nadgodzinami	1	termin-wyplaty-wynagrodzenia, przedawnienie-wynagrodzenia
+glowny	120	google	stawka godzinowa netto 2026	stawka-godzinowa	top3	zlecenie-netto, dodatek-za-prace-w-nocy, stawka-godzinowa	1	stawka-godzinowa, zlecenie-netto, brutto-netto
+glowny	121	google	stawka godzinowa brutto 2026	stawka-godzinowa	1	stawka-godzinowa, dodatek-za-prace-w-nocy, zlecenie-netto	1	stawka-godzinowa, zlecenie-netto, kalkulator-nadgodzin
+glowny	122	google	grafik pracy wzór	kontrola-grafiku	1	kontrola-grafiku, przerwy-w-pracy, dodatek-za-prace-w-nocy	1	kontrola-grafiku, praca-w-sobote, praca-w-niedziele
+glowny	123	google	grafik zmianowy	kontrola-grafiku	1	kontrola-grafiku, dodatek-za-prace-w-nocy, doba-pracownicza	1	kontrola-grafiku, dodatek-za-prace-w-nocy, doba-pracownicza
+glowny	124	google	staż pracy kalkulator	staz-pracy	1	staz-pracy, renta-z-tytulu-niezdolnosci-do-pracy, kalkulator-urlopu	1	staz-pracy, renta-z-tytulu-niezdolnosci-do-pracy, kalkulator-urlopu
+glowny	125	google	staż pracy umowa zlecenie	staz-pracy	1	staz-pracy, kalkulator-urlopu, dodatek-za-prace-w-nocy	1	staz-pracy, zlecenie-netto, kalkulator-urlopu
+glowny	126	google	zasiłek dla bezrobotnych 2026	zasilek-dla-bezrobotnych	1	zasilek-dla-bezrobotnych, dodatek-za-prace-w-nocy, koszt-pracodawcy	1	zasilek-dla-bezrobotnych
+glowny	127	google	zasiłek dla bezrobotnych 2026 netto	zasilek-dla-bezrobotnych	1	zasilek-dla-bezrobotnych, brutto-netto, dodatek-za-prace-w-nocy	1	zasilek-dla-bezrobotnych
+glowny	128	google	ochrona przedemerytalna dla kobiet	ochrona-przedemerytalna	1	ochrona-przedemerytalna	1	ochrona-przedemerytalna
+glowny	129	google	ochrona przedemerytalna mężczyzn	ochrona-przedemerytalna	1	ochrona-przedemerytalna	1	ochrona-przedemerytalna
+glowny	130	google	zakaz konkurencji w umowie o pracę	zakaz-konkurencji	1	zakaz-konkurencji, brutto-netto, l4-po-zwolnieniu	1	zakaz-konkurencji
+glowny	131	google	zakaz konkurencji na umowie zlecenie	zakaz-konkurencji	1	zakaz-konkurencji, zlecenie-netto, zasilek-chorobowy-na-zleceniu	1	zakaz-konkurencji, zlecenie-netto, zasilek-chorobowy-na-zleceniu
+glowny	132	google	odszkodowanie za zwolnienie z pracy likwidacja stanowiska	odszkodowanie-za-zwolnienie	top3	kalkulator-odprawy, odszkodowanie-za-zwolnienie, swiadectwo-pracy	1	odszkodowanie-za-zwolnienie, kalkulator-odprawy, swiadectwo-pracy
+glowny	133	google	odszkodowanie za zwolnienie z pracy	odszkodowanie-za-zwolnienie	1	odszkodowanie-za-zwolnienie, swiadectwo-pracy, okres-wypowiedzenia	1	odszkodowanie-za-zwolnienie, swiadectwo-pracy, odszkodowanie-za-wypadek-przy-pracy
+glowny	134	google	odprawa pośmiertna kodeks pracy	odprawa-posmiertna	1	odprawa-posmiertna, wypowiedzenie-zmieniajace, mobbing-i-dyskryminacja	1	odprawa-posmiertna
+glowny	135	google	odprawa pośmiertna ile	odprawa-posmiertna	1	odprawa-posmiertna, kalkulator-odprawy, zwolnienia-grupowe	1	odprawa-posmiertna
+glowny	136	google	zwolnienie na l4 umowa zlecenie	zasilek-chorobowy-na-zleceniu	1	zasilek-chorobowy-na-zleceniu, l4-po-zwolnieniu, co-wolno-na-l4	1	zasilek-chorobowy-na-zleceniu, l4-po-zwolnieniu, zlecenie-netto
+glowny	137	google	zwolnienie na l4 polska	kalkulator-l4	1	kalkulator-l4, l4-po-zwolnieniu, okres-zasilkowy	1	kalkulator-l4, zwolnienie-na-l4, l4-po-zwolnieniu
+glowny	138	google	kara porządkowa 2026	kara-porzadkowa	1	kara-porzadkowa	1	kara-porzadkowa
+glowny	139	google	kara porządkowa kodeks pracy	kara-porzadkowa	1	kara-porzadkowa, kontrola-trzezwosci, mobbing-i-dyskryminacja	1	kara-porzadkowa
+glowny	140	google	nagana w pracy co oznacza	kara-porzadkowa	1	kara-porzadkowa, kontrola-trzezwosci	1	kara-porzadkowa, kontrola-trzezwosci
+glowny	141	google	nagana w pracy konsekwencje	kara-porzadkowa	1	kara-porzadkowa, okres-wypowiedzenia, przerwy-w-pracy	1	kara-porzadkowa
+glowny	142	google	upomnienie w pracy konsekwencje	kara-porzadkowa	1	kara-porzadkowa, okres-wypowiedzenia, przerwy-w-pracy	1	kara-porzadkowa
+glowny	143	google	upomnienie w pracy wzór	kara-porzadkowa	1	kara-porzadkowa, okres-wypowiedzenia, przerwy-w-pracy	1	kara-porzadkowa
+glowny	144	google	odwołanie do sądu pracy wzór	odwolanie-do-sadu-pracy	1	odwolanie-do-sadu-pracy, wypowiedzenie-zmieniajace, co-wolno-na-l4	1	odwolanie-do-sadu-pracy, wypowiedzenie-zmieniajace, co-wolno-na-l4
+glowny	145	google	odwołanie do sądu pracy termin	odwolanie-do-sadu-pracy	1	odwolanie-do-sadu-pracy, wypowiedzenie-zmieniajace, kara-porzadkowa	1	odwolanie-do-sadu-pracy, wypowiedzenie-zmieniajace
+glowny	146	google	okres wypowiedzenia umowy o pracę	okres-wypowiedzenia	1	okres-wypowiedzenia, okres-probny, okres-wyczekiwania	1	okres-wypowiedzenia, okres-probny, umowa-na-zastepstwo
+glowny	147	google	okres wypowiedzenia umowy o pracę na czas określony	okres-wypowiedzenia	1	okres-wypowiedzenia, umowa-na-czas-okreslony, umowa-na-zastepstwo	1	okres-wypowiedzenia, umowa-na-czas-okreslony, umowa-na-zastepstwo
+glowny	148	google	wypowiedzenie umowy o pracę za porozumieniem stron	brak	-	zasilek-dla-bezrobotnych, okres-wypowiedzenia, wypowiedzenie-zmieniajace	-	wypowiedzenie-zmieniajace, okres-wypowiedzenia, zasilek-dla-bezrobotnych
+glowny	149	google	wypowiedzenie umowy o pracę przez pracownika	okres-wypowiedzenia	1	okres-wypowiedzenia, odszkodowanie-za-zwolnienie, informacja-o-warunkach-zatrudnienia	1	okres-wypowiedzenia, wypowiedzenie-zmieniajace, informacja-o-warunkach-zatrudnienia
+glowny	150	google	dni robocze 2026	dni-robocze	1	dni-robocze, kalkulator-urlopu, dni-wolne-od-pracy	1	dni-robocze, odziez-robocza
+glowny	151	google	dni robocze wrzesień 2026	dni-robocze	1	dni-robocze, kalkulator-urlopu, dni-wolne-od-pracy	1	dni-robocze, odziez-robocza
+glowny	152	google	dyżur w pracy pod telefonem	dyzur-w-pracy	1	dyzur-w-pracy, dyzur-kierowcy	1	dyzur-w-pracy
+glowny	153	google	dyżur w pracy kodeks pracy	dyzur-w-pracy	1	dyzur-w-pracy, dyzur-kierowcy, mobbing-i-dyskryminacja	1	dyzur-w-pracy, dyzur-kierowcy
+glowny	154	google	pracownik młodociany wiek	pracownik-mlodociany	1	pracownik-mlodociany, ochrona-przedemerytalna, swiadczenie-przedemerytalne	1	pracownik-mlodociany, ochrona-przedemerytalna, ile-kg-wolno-dzwigac
+glowny	155	google	pracownik młodociany wynagrodzenie	pracownik-mlodociany	1	pracownik-mlodociany, odpowiedzialnosc-materialna, ile-kg-wolno-dzwigac	1	pracownik-mlodociany, ile-kg-wolno-dzwigac, odpowiedzialnosc-materialna
+glowny	156	google	przedawnienie wynagrodzenia za pracę	przedawnienie-wynagrodzenia	top3	odpowiedzialnosc-materialna, przedawnienie-wynagrodzenia, wypowiedzenie-zmieniajace	1	przedawnienie-wynagrodzenia, odpowiedzialnosc-materialna, zalegly-urlop
+glowny	157	google	przedawnienie wynagrodzenia z umowy zlecenia	przedawnienie-wynagrodzenia	X	odpowiedzialnosc-materialna, zlecenie-netto, zasilek-chorobowy-na-zleceniu	1	przedawnienie-wynagrodzenia, zlecenie-netto, odpowiedzialnosc-materialna
+glowny	158	google	zwolnienia grupowe odprawa	zwolnienia-grupowe	1	zwolnienia-grupowe, kalkulator-odprawy	1	zwolnienia-grupowe, kalkulator-odprawy
+glowny	159	google	zwolnienia grupowe zasady	zwolnienia-grupowe	1	zwolnienia-grupowe	1	zwolnienia-grupowe
+glowny	160	google	pracownik niepełnosprawny na 3 4 etatu	pracownik-niepelnosprawny	X	rodzic-w-pracy	1	pracownik-niepelnosprawny, ochrona-przedemerytalna, okres-wypowiedzenia
+glowny	161	google	pracownik niepełnosprawny w stopniu umiarkowanym	pracownik-niepelnosprawny	1	pracownik-niepelnosprawny	1	pracownik-niepelnosprawny
+glowny	162	google	lojalka co to	zwrot-kosztow-szkolenia	1	zwrot-kosztow-szkolenia	1	zwrot-kosztow-szkolenia
+glowny	163	google	lojalka w pracy	zwrot-kosztow-szkolenia	1	zwrot-kosztow-szkolenia, okres-wypowiedzenia, przerwy-w-pracy	1	zwrot-kosztow-szkolenia
+glowny	164	google	zwrot kosztów szkolenia przez pracownika wzór	zwrot-kosztow-szkolenia	1	zwrot-kosztow-szkolenia, odpowiedzialnosc-materialna, szkolenie-okresowe-bhp	1	zwrot-kosztow-szkolenia
+glowny	165	google	zwrot kosztów szkolenia przez pracownika	zwrot-kosztow-szkolenia	1	zwrot-kosztow-szkolenia, odpowiedzialnosc-materialna, szkolenie-okresowe-bhp	1	zwrot-kosztow-szkolenia
+glowny	166	google	okres zasiłkowy ile dni	okres-zasilkowy	1	okres-zasilkowy, okres-wyczekiwania, okres-wypowiedzenia	1	okres-zasilkowy, okres-wyczekiwania, okres-wypowiedzenia
+glowny	167	google	okres zasiłkowy kalkulator	okres-zasilkowy	1	okres-zasilkowy, co-wolno-na-l4, okres-wyczekiwania	1	okres-zasilkowy, okres-wyczekiwania, okres-wypowiedzenia
+glowny	168	google	alkomat w pracy przepisy	kontrola-trzezwosci	1	kontrola-trzezwosci, co-wolno-na-l4, ile-kg-wolno-dzwigac	1	kontrola-trzezwosci
+glowny	169	google	alkomat w pracy kodeks pracy	kontrola-trzezwosci	1	kontrola-trzezwosci, mobbing-i-dyskryminacja	1	kontrola-trzezwosci
+glowny	170	google	kontrola trzeźwości w pracy	kontrola-trzezwosci	1	kontrola-trzezwosci, monitoring-w-pracy, badania-lekarskie-w-pracy	1	kontrola-trzezwosci, kontrola-grafiku, co-wolno-na-l4
+glowny	171	google	praca w ciąży do którego miesiąca	praca-w-ciazy	top3	okres-wypowiedzenia, zwolnienie-na-l4, praca-w-ciazy	1	praca-w-ciazy, praca-w-niedziele, praca-na-wysokosci
+glowny	172	google	praca w ciąży przy komputerze	praca-w-ciazy	1	praca-w-ciazy, dodatek-wyrownawczy, monitoring-w-pracy	1	praca-w-ciazy, przerwy-w-pracy, dodatek-wyrownawczy
+glowny	173	google	uprawnienia sep do 1kv	waznosc-uprawnien-sep	1	waznosc-uprawnien-sep, waznosc-uprawnien-udt, czy-potrzebne-uprawnienia-udt	1	waznosc-uprawnien-sep
+glowny	174	google	uprawnienia sep g1	waznosc-uprawnien-sep	1	waznosc-uprawnien-sep	1	waznosc-uprawnien-sep
+glowny	175	google	czy potrzebne uprawnienia na minikoparkę	czy-potrzebne-uprawnienia-udt	1	czy-potrzebne-uprawnienia-udt, waznosc-uprawnien-udt, waznosc-uprawnien-sep	1	czy-potrzebne-uprawnienia-udt, waznosc-uprawnien-udt, waznosc-uprawnien-sep
+glowny	176	google	kod 95 prawo jazdy	kod-95	1	kod-95	1	kod-95
+glowny	177	google	kod 95 co to	kod-95	1	kod-95, mobbing-i-dyskryminacja	1	kod-95
+glowny	178	google	badania kierowcy kat b	badania-kierowcy	1	badania-kierowcy, badania-lekarskie-w-pracy, badania-udt	1	badania-kierowcy
+glowny	179	google	badania kierowcy zawodowego	badania-kierowcy	1	badania-kierowcy, kod-95, choroba-zawodowa	1	badania-kierowcy, kod-95
+glowny	180	google	badania okresowe do pracy	badania-lekarskie-w-pracy	1	badania-lekarskie-w-pracy, szkolenie-okresowe-bhp, okres-wypowiedzenia	1	badania-lekarskie-w-pracy, praca-na-wysokosci, okres-wypowiedzenia
+glowny	181	google	badania okresowe dzień wolny	badania-lekarskie-w-pracy	1	badania-lekarskie-w-pracy, praca-w-niedziele, okres-wypowiedzenia	1	badania-lekarskie-w-pracy, okres-wypowiedzenia, praca-w-niedziele
+glowny	182	google	posiłki regeneracyjne dla pracowników	posilki-profilaktyczne	1	posilki-profilaktyczne	1	posilki-profilaktyczne
+glowny	183	google	posiłki regeneracyjne od kiedy	posilki-profilaktyczne	1	posilki-profilaktyczne, delegacja-krajowa, delegacja-zagraniczna	1	posilki-profilaktyczne
+glowny	184	google	ekwiwalent za pranie odzieży roboczej 2026	odziez-robocza	1	odziez-robocza	1	odziez-robocza
+glowny	185	google	ekwiwalent za pranie odzieży roboczej	odziez-robocza	1	odziez-robocza	1	odziez-robocza
+glowny	186	google	wypowiedzenie zmieniające warunki pracy i płacy	wypowiedzenie-zmieniajace	1	wypowiedzenie-zmieniajace, l4-po-zwolnieniu	1	wypowiedzenie-zmieniajace
+glowny	187	google	wypowiedzenie zmieniające a odprawa	wypowiedzenie-zmieniajace	1	wypowiedzenie-zmieniajace	1	wypowiedzenie-zmieniajace
+glowny	188	google	obniżenie pensji pracownika	wypowiedzenie-zmieniajace	1	wypowiedzenie-zmieniajace, brutto-netto, odprawa-posmiertna	1	wypowiedzenie-zmieniajace, brutto-netto, odprawa-posmiertna
+glowny	189	google	umowa na zastępstwo a ciąża	umowa-na-zastepstwo	1	umowa-na-zastepstwo, zwolnienie-na-l4	1	umowa-na-zastepstwo
+glowny	190	google	umowa na zastępstwo okres wypowiedzenia	umowa-na-zastepstwo	1	umowa-na-zastepstwo, okres-wypowiedzenia, okres-probny	1	umowa-na-zastepstwo, okres-wypowiedzenia, okres-probny
+glowny	191	google	wynagrodzenie za niepełny miesiąc pracy kalkulator gofin	wynagrodzenie-za-niepelny-miesiac	1	wynagrodzenie-za-niepelny-miesiac, wymiar-czasu-pracy, okres-wyczekiwania	1	wynagrodzenie-za-niepelny-miesiac, wymiar-czasu-pracy
+glowny	192	google	wynagrodzenie za niepełny miesiąc pracy kalkulator	wynagrodzenie-za-niepelny-miesiac	1	wynagrodzenie-za-niepelny-miesiac, wymiar-czasu-pracy, okres-wyczekiwania	1	wynagrodzenie-za-niepelny-miesiac, wymiar-czasu-pracy
+glowny	193	google	dodatek wyrównawczy w okresie ochronnym	dodatek-wyrownawczy	1	dodatek-wyrownawczy, ochrona-przedemerytalna, praca-w-niedziele	1	dodatek-wyrownawczy, ochrona-przedemerytalna
+glowny	194	google	dodatek wyrównawczy do emerytury	brak	-	dodatek-wyrownawczy	-	dodatek-wyrownawczy
+glowny	195	google	okres wyczekiwania na wynagrodzenie chorobowe	okres-wyczekiwania	1	okres-wyczekiwania, okres-zasilkowy, co-wolno-na-l4	1	okres-wyczekiwania, okres-zasilkowy
+glowny	196	google	okres wyczekiwania l4	okres-wyczekiwania	1	okres-wyczekiwania, okres-zasilkowy, badania-lekarskie-w-pracy	1	okres-wyczekiwania, okres-zasilkowy, badania-lekarskie-w-pracy
+glowny	197	google	chorobowe na zleceniu po jakim czasie	okres-wyczekiwania	top3	co-wolno-na-l4, zasilek-chorobowy-na-zleceniu, okres-wyczekiwania	1	okres-wyczekiwania, zasilek-chorobowy-na-zleceniu, zlecenie-netto
+glowny	198	google	chorobowe na zleceniu kto płaci	zasilek-chorobowy-na-zleceniu	1	zasilek-chorobowy-na-zleceniu, kalkulator-l4, okres-wyczekiwania	1	zasilek-chorobowy-na-zleceniu, kalkulator-l4, okres-wyczekiwania
+glowny	199	google	świadczenie urlopowe 2026	swiadczenie-urlopowe	1	swiadczenie-urlopowe, kalkulator-urlopu, ekwiwalent-za-urlop	1	swiadczenie-urlopowe, swiadczenie-rehabilitacyjne, swiadczenie-przedemerytalne
+glowny	200	google	wczasy pod gruszą ile	swiadczenie-urlopowe	top3	fundusz-socjalny, swiadczenie-urlopowe	1	swiadczenie-urlopowe, fundusz-socjalny
+glowny	201	google	wczasy pod gruszą 2026	swiadczenie-urlopowe	top3	fundusz-socjalny, swiadczenie-urlopowe	1	swiadczenie-urlopowe, fundusz-socjalny
+glowny	202	google	urlop w godzinach czy dniach	urlop-w-godzinach	1	urlop-w-godzinach, praca-w-sobote, urlop-szkoleniowy	1	urlop-w-godzinach, urlop-szkoleniowy
+glowny	203	google	urlop w godzinach na świadectwie pracy	urlop-w-godzinach	1	urlop-w-godzinach, staz-pracy, pracownik-niepelnosprawny	1	urlop-w-godzinach, swiadectwo-pracy, urlop-szkoleniowy
+glowny	204	google	urlop na wypowiedzeniu a l4	urlop-w-okresie-wypowiedzenia	1	urlop-w-okresie-wypowiedzenia, zwolnienie-na-l4, umowa-na-zastepstwo	1	urlop-w-okresie-wypowiedzenia, zwolnienie-na-l4, urlop-w-agencji-pracy
+glowny	205	google	urlop na wypowiedzeniu czy pracodawca może odmówić	urlop-w-okresie-wypowiedzenia	1	urlop-w-okresie-wypowiedzenia, wypowiedzenie-zmieniajace, umowa-na-zastepstwo	1	urlop-w-okresie-wypowiedzenia, wypowiedzenie-zmieniajace, urlop-w-agencji-pracy
+glowny	206	google	urlop szkoleniowy kodeks pracy	urlop-szkoleniowy	top3	zwrot-kosztow-szkolenia, urlop-okolicznosciowy, urlop-szkoleniowy	1	urlop-szkoleniowy, urlop-w-agencji-pracy, kalkulator-urlopu
+glowny	207	google	urlop szkoleniowy ile dni	urlop-szkoleniowy	1	urlop-szkoleniowy, zwrot-kosztow-szkolenia, kalkulator-urlopu	1	urlop-szkoleniowy, kalkulator-urlopu, urlop-w-agencji-pracy
+glowny	208	google	urlop bezpłatny a zus	urlop-bezplatny	1	urlop-bezplatny, wynagrodzenie-za-niepelny-miesiac	1	urlop-bezplatny
+glowny	209	google	urlop bezpłatny zasady	urlop-bezplatny	1	urlop-bezplatny, wynagrodzenie-za-niepelny-miesiac	1	urlop-bezplatny, wynagrodzenie-za-niepelny-miesiac
+glowny	210	google	zaległy urlop do kiedy wykorzystać	zalegly-urlop	X	kalkulator-urlopu, urlop-w-okresie-wypowiedzenia, urlop-w-godzinach	top3	kalkulator-urlopu, zalegly-urlop, urlop-w-godzinach
+glowny	211	google	zaległy urlop do kiedy	zalegly-urlop	top3	kalkulator-urlopu, zalegly-urlop, urlop-w-godzinach	1	zalegly-urlop, kalkulator-urlopu, urlop-w-godzinach
+glowny	212	google	praca ukraińca w polsce 2025	praca-cudzoziemca	1	praca-cudzoziemca, zgloszenie-pracy-cudzoziemca, praca-w-niedziele	1	praca-cudzoziemca, zgloszenie-pracy-cudzoziemca
+glowny	213	google	praca ukraińca w polsce	praca-cudzoziemca	1	praca-cudzoziemca, zgloszenie-pracy-cudzoziemca, praca-w-niedziele	1	praca-cudzoziemca, zgloszenie-pracy-cudzoziemca
+glowny	214	google	zezwolenie na pracę typu a	praca-cudzoziemca	1	praca-cudzoziemca, zgloszenie-pracy-cudzoziemca, brutto-netto	1	praca-cudzoziemca, zgloszenie-pracy-cudzoziemca
+glowny	215	google	zezwolenie na pracę dla cudzoziemca	praca-cudzoziemca	1	praca-cudzoziemca, zgloszenie-pracy-cudzoziemca	1	praca-cudzoziemca, zgloszenie-pracy-cudzoziemca
+glowny	216	google	zgłoszenie cudzoziemca do pracy	zgloszenie-pracy-cudzoziemca	1	zgloszenie-pracy-cudzoziemca, informacja-o-warunkach-zatrudnienia, sad-pracy-czy-pip	1	zgloszenie-pracy-cudzoziemca, praca-cudzoziemca, sad-pracy-czy-pip
+glowny	217	google	zgłoszenie cudzoziemca do urzędu pracy	zgloszenie-pracy-cudzoziemca	1	zgloszenie-pracy-cudzoziemca, informacja-o-warunkach-zatrudnienia, sad-pracy-czy-pip	1	zgloszenie-pracy-cudzoziemca
+glowny	218	google	wyjście prywatne kodeks pracy	odpracowanie-wyjscia-prywatnego	1	odpracowanie-wyjscia-prywatnego, mobbing-i-dyskryminacja	1	odpracowanie-wyjscia-prywatnego
+glowny	219	google	wyjście prywatne w czasie pracy	odpracowanie-wyjscia-prywatnego	1	odpracowanie-wyjscia-prywatnego, czas-jazdy-kierowcy, pracownik-niepelnosprawny	1	odpracowanie-wyjscia-prywatnego
+glowny	220	google	praca w sobotę a dzień wolny	praca-w-sobote	1	praca-w-sobote, dni-wolne-od-pracy, praca-w-niedziele	1	praca-w-sobote, praca-w-niedziele, dni-wolne-od-pracy
+glowny	221	google	praca w sobotę ile płatna	praca-w-sobote	1	praca-w-sobote, przerwy-w-pracy, okres-wyczekiwania	1	praca-w-sobote, dni-wolne-od-pracy, wymiar-czasu-pracy
+glowny	222	google	wolne za sobotę 2026	dni-wolne-od-pracy	1	dni-wolne-od-pracy, praca-w-sobote, kalkulator-urlopu	top3	praca-w-sobote, dni-wolne-od-pracy, dni-robocze
+glowny	223	google	wolne za sobotę 2027	dni-wolne-od-pracy	top3	praca-w-sobote, dni-wolne-od-pracy, kalkulator-urlopu	top3	praca-w-sobote, dni-wolne-od-pracy, dni-robocze
+glowny	224	google	nadgodziny średniotygodniowe przykład	nadgodziny-sredniotygodniowe	1	nadgodziny-sredniotygodniowe	1	nadgodziny-sredniotygodniowe
+glowny	225	google	nadgodziny średniotygodniowe 50 czy 100	nadgodziny-sredniotygodniowe	1	nadgodziny-sredniotygodniowe, kalkulator-nadgodzin, praca-w-sobote	1	nadgodziny-sredniotygodniowe, kalkulator-nadgodzin, praca-w-sobote
+glowny	226	google	doba pracownicza kodeks pracy	doba-pracownicza	1	doba-pracownicza, kontrola-grafiku, okres-wypowiedzenia	1	doba-pracownicza, kontrola-grafiku
+glowny	227	google	doba pracownicza w równoważnym systemie czasu pracy	doba-pracownicza	1	doba-pracownicza, kontrola-grafiku, rownowazny-czas-pracy	1	doba-pracownicza, rownowazny-czas-pracy, urlop-w-godzinach
+glowny	228	google	równoważny czas pracy a praca w sobotę i niedzielę	rownowazny-czas-pracy	1	rownowazny-czas-pracy, praca-w-niedziele, praca-w-sobote	1	rownowazny-czas-pracy, praca-w-sobote, praca-w-niedziele
+glowny	229	google	równoważny czas pracy zasady	rownowazny-czas-pracy	1	rownowazny-czas-pracy, doba-pracownicza, czas-jazdy-kierowcy	1	rownowazny-czas-pracy, urlop-w-godzinach, doba-pracownicza
+glowny	230	google	praca 12 godzin ile przerwy	przerwy-w-pracy	1	przerwy-w-pracy, rownowazny-czas-pracy, urlop-w-godzinach	1	przerwy-w-pracy, kontrola-grafiku, rownowazny-czas-pracy
+glowny	231	google	praca 12 godzin dziennie	rownowazny-czas-pracy	1	rownowazny-czas-pracy, urlop-w-godzinach, praca-w-niedziele	top3	kontrola-grafiku, rownowazny-czas-pracy, urlop-w-godzinach
+glowny	232	google	dorabianie do renty rodzinnej	dorabianie-do-renty	1	dorabianie-do-renty	1	dorabianie-do-renty
+glowny	233	google	dorabianie do renty socjalnej	dorabianie-do-renty	1	dorabianie-do-renty	1	dorabianie-do-renty
+glowny	234	google	dorabianie na emeryturze limit	dorabianie-do-renty	1	dorabianie-do-renty, kalkulator-odprawy	1	dorabianie-do-renty
+glowny	235	google	zwrot podatku akcyzowego 2026	brak	-	zwrot-podatku-pit-37, ulga-na-dzieci, brutto-netto	-	zwrot-podatku-pit-37, ulga-na-dzieci, zwrot-kosztow-szkolenia
+glowny	236	google	zwrot podatku akcyzowego	brak	-	zwrot-podatku-pit-37, ulga-na-dzieci, zwrot-kosztow-szkolenia	-	zwrot-podatku-pit-37, ulga-na-dzieci, zwrot-kosztow-szkolenia
+glowny	237	google	pit 37 co to jest	zwrot-podatku-pit-37	1	zwrot-podatku-pit-37, ulga-na-dzieci, zerowy-pit	1	zwrot-podatku-pit-37
+glowny	238	google	ulga na dzieci 2026	ulga-na-dzieci	1	ulga-na-dzieci, brutto-netto, dni-wolne-od-pracy	1	ulga-na-dzieci, zerowy-pit, zwrot-podatku-pit-37
+glowny	239	google	ulga na dzieci 2025	ulga-na-dzieci	1	ulga-na-dzieci, zwrot-podatku-pit-37, praca-w-niedziele	1	ulga-na-dzieci, zerowy-pit, zwrot-podatku-pit-37
+glowny	240	google	pit dla młodych limit	zerowy-pit	1	zerowy-pit, ulga-na-dzieci	1	zerowy-pit, ulga-na-dzieci
+glowny	241	google	pit dla młodych do kiedy	zerowy-pit	1	zerowy-pit, ulga-na-dzieci, zwrot-podatku-pit-37	1	zerowy-pit
+glowny	242	google	choroba zawodowa co to	choroba-zawodowa	1	choroba-zawodowa, dodatek-wyrownawczy, kalkulator-l4	1	choroba-zawodowa
+glowny	243	google	praca na wysokości to	praca-na-wysokosci	1	praca-na-wysokosci, powierzchnia-na-pracownika, pracownik-mlodociany	1	praca-na-wysokosci, skladowanie-w-magazynie, pracownik-mlodociany
+glowny	244	google	praca na wysokości od ilu metrów	praca-na-wysokosci	1	praca-na-wysokosci, powierzchnia-na-pracownika, fundusz-socjalny	1	praca-na-wysokosci, skladowanie-w-magazynie
+glowny	245	google	emerytura pomostowa dla kogo	emerytura-pomostowa	1	emerytura-pomostowa, fundusz-socjalny	1	emerytura-pomostowa
+glowny	246	google	emerytura pomostowa ile wynosi	emerytura-pomostowa	1	emerytura-pomostowa, fundusz-socjalny, kalkulator-odprawy	1	emerytura-pomostowa, kalkulator-odprawy
+glowny	247	google	renta socjalna	brak	-	renta-z-tytulu-niezdolnosci-do-pracy, dorabianie-do-renty, fundusz-socjalny	-	renta-z-tytulu-niezdolnosci-do-pracy, fundusz-socjalny, dorabianie-do-renty
+glowny	248	google	świadczenie przedemerytalne dla kogo	swiadczenie-przedemerytalne	1	swiadczenie-przedemerytalne, fundusz-socjalny	1	swiadczenie-przedemerytalne, fundusz-socjalny
+glowny	249	google	świadczenie przedemerytalne netto 2026	swiadczenie-przedemerytalne	1	swiadczenie-przedemerytalne, brutto-netto, swiadczenie-urlopowe	1	swiadczenie-przedemerytalne, brutto-netto, zlecenie-netto
+glowny	250	google	czas pracy kierowcy tira	czas-jazdy-kierowcy	1	czas-jazdy-kierowcy, dyzur-kierowcy, pracownik-niepelnosprawny	1	czas-jazdy-kierowcy, dyzur-kierowcy, badania-kierowcy
+glowny	251	google	czas pracy kierowcy autobusu	czas-jazdy-kierowcy	1	czas-jazdy-kierowcy, dyzur-kierowcy, pracownik-niepelnosprawny	1	czas-jazdy-kierowcy, dyzur-kierowcy, badania-kierowcy
+glowny	252	google	dyżur kierowcy jak liczyć	dyzur-kierowcy	1	dyzur-kierowcy	1	dyzur-kierowcy, dyzur-w-pracy
+glowny	253	google	dyżur kierowcy co to jest	dyzur-kierowcy	1	dyzur-kierowcy, badania-kierowcy, czas-jazdy-kierowcy	1	dyzur-kierowcy, dyzur-w-pracy
+glowny	254	google	mobbing w pracy co to	mobbing-i-dyskryminacja	1	mobbing-i-dyskryminacja, okres-wypowiedzenia, przerwy-w-pracy	1	mobbing-i-dyskryminacja
+glowny	255	google	mobbing w pracy przykłady	mobbing-i-dyskryminacja	1	mobbing-i-dyskryminacja	1	mobbing-i-dyskryminacja
+glowny	256	google	dyskryminacja w pracy przykłady	mobbing-i-dyskryminacja	1	mobbing-i-dyskryminacja	1	mobbing-i-dyskryminacja
+glowny	257	google	dyskryminacja w pracy przez współpracowników	mobbing-i-dyskryminacja	1	mobbing-i-dyskryminacja, okres-wypowiedzenia, przerwy-w-pracy	1	mobbing-i-dyskryminacja
+glowny	258	google	skarga do pip wzór	sad-pracy-czy-pip	1	sad-pracy-czy-pip, mobbing-i-dyskryminacja	1	sad-pracy-czy-pip
+glowny	259	google	sąd pracy i ubezpieczeń społecznych	sad-pracy-czy-pip	top3	odwolanie-do-sadu-pracy, sad-pracy-czy-pip, wypowiedzenie-zmieniajace	1	sad-pracy-czy-pip, odwolanie-do-sadu-pracy, urlop-bezplatny
+glowny	260	google	odpowiedzialność materialna pracownika	odpowiedzialnosc-materialna	1	odpowiedzialnosc-materialna	1	odpowiedzialnosc-materialna
+glowny	261	google	odpowiedzialność materialna pracownika kodeks pracy	odpowiedzialnosc-materialna	1	odpowiedzialnosc-materialna	1	odpowiedzialnosc-materialna
+glowny	262	google	manko co to	odpowiedzialnosc-materialna	1	odpowiedzialnosc-materialna	1	odpowiedzialnosc-materialna
+glowny	263	google	manko w kasie	odpowiedzialnosc-materialna	1	odpowiedzialnosc-materialna	1	odpowiedzialnosc-materialna
+glowny	264	google	świadectwo pracy umowa zlecenie	swiadectwo-pracy	top3	staz-pracy, swiadectwo-pracy, dodatek-za-prace-w-nocy	1	swiadectwo-pracy, zlecenie-netto, zasilek-chorobowy-na-zleceniu
+glowny	265	google	świadectwo pracy wzór	swiadectwo-pracy	top3	staz-pracy, swiadectwo-pracy, kod-95	1	swiadectwo-pracy, kod-95, odwolanie-do-sadu-pracy
+glowny	266	google	monitoring w pracy kontrola pracownika	monitoring-w-pracy	1	monitoring-w-pracy, kontrola-grafiku, okres-wypowiedzenia	1	monitoring-w-pracy
+glowny	267	google	monitoring w pracy przepisy	monitoring-w-pracy	top3	przerwy-w-pracy, monitoring-w-pracy, co-wolno-na-l4	1	monitoring-w-pracy, praca-w-ciazy, przerwy-w-pracy
+glowny	268	google	kamery w pracy z glosem	monitoring-w-pracy	1	monitoring-w-pracy, halas-w-pracy	1	monitoring-w-pracy
+glowny	269	google	kamery w pracy przepisy	monitoring-w-pracy	1	monitoring-w-pracy, co-wolno-na-l4, ile-kg-wolno-dzwigac	1	monitoring-w-pracy
+glowny	270	google	składowanie towarów w magazynie	skladowanie-w-magazynie	1	skladowanie-w-magazynie, odpowiedzialnosc-materialna	1	skladowanie-w-magazynie
+glowny	271	google	składowanie opon w magazynie	skladowanie-w-magazynie	1	skladowanie-w-magazynie, drogi-i-przejscia, ile-kg-wolno-dzwigac	1	skladowanie-w-magazynie
+glowny	272	google	droga dla wózka widłowego	drogi-i-przejscia	1	drogi-i-przejscia, badania-udt, waznosc-uprawnien-udt	1	drogi-i-przejscia, badania-udt
+glowny	273	google	co wolno na l4 w ciąży	co-wolno-na-l4	X	zwolnienie-na-l4, dodatek-wyrownawczy, okres-zasilkowy	1	co-wolno-na-l4, zwolnienie-na-l4, kalkulator-l4
+glowny	274	google	co wolno na l4 od psychiatry	co-wolno-na-l4	X	kalkulator-l4, badania-lekarskie-w-pracy, okres-zasilkowy	1	co-wolno-na-l4, kalkulator-l4, zasilek-opiekunczy
+glowny	275	google	kontrola zus l4	co-wolno-na-l4	1	co-wolno-na-l4, badania-lekarskie-w-pracy, kalkulator-l4	1	co-wolno-na-l4, badania-lekarskie-w-pracy
+glowny	276	google	kontrola zus l4 od psychiatry	co-wolno-na-l4	1	co-wolno-na-l4, badania-lekarskie-w-pracy, kalkulator-l4	1	co-wolno-na-l4, badania-lekarskie-w-pracy
+glowny	277	google	fundusz socjalny 2026	fundusz-socjalny	1	fundusz-socjalny, koszt-pracodawcy	1	fundusz-socjalny
+glowny	278	google	fundusz socjalny w pracy	fundusz-socjalny	1	fundusz-socjalny, koszt-pracodawcy	1	fundusz-socjalny
+glowny	279	google	przerwa w pracy kodeks pracy	przerwy-w-pracy	1	przerwy-w-pracy, czas-jazdy-kierowcy, limit-pracy-tymczasowej	1	przerwy-w-pracy, czas-jazdy-kierowcy, dyzur-kierowcy
+glowny	280	google	przerwa w pracy 8h	przerwy-w-pracy	1	przerwy-w-pracy, czas-jazdy-kierowcy, limit-pracy-tymczasowej	1	przerwy-w-pracy, czas-jazdy-kierowcy, dyzur-kierowcy
+glowny	281	google	przerwa 15 minut kodeks pracy	przerwy-w-pracy	1	przerwy-w-pracy, pracownik-niepelnosprawny, praca-w-ciazy	1	przerwy-w-pracy, pracownik-niepelnosprawny
+glowny	282	google	przerwa 15 minut w pracy	przerwy-w-pracy	1	przerwy-w-pracy, pracownik-niepelnosprawny, praca-w-ciazy	1	przerwy-w-pracy, pracownik-niepelnosprawny
+glowny	283	google	czy pracodawca może odmówić urlopu na żądanie	kalkulator-urlopu	X	urlop-w-okresie-wypowiedzenia, zalegly-urlop, odpowiedzialnosc-materialna	1	kalkulator-urlopu, urlop-w-okresie-wypowiedzenia, urlop-w-godzinach
+glowny	284	google	czy pracodawca może odmówić urlopu	kalkulator-urlopu	X	zalegly-urlop, umowa-na-zastepstwo, urlop-bezplatny	top3	urlop-bezplatny, urlop-w-okresie-wypowiedzenia, kalkulator-urlopu
+glowny	285	google	czy pracodawca musi zapewnić wodę	temperatura-w-pracy	1	temperatura-w-pracy, normy-sanitarne, fundusz-socjalny	1	temperatura-w-pracy, normy-sanitarne, delegacja-krajowa
+glowny	286	google	czy pracodawca musi podpisać wypowiedzenie	brak	-	informacja-o-warunkach-zatrudnienia, okres-probny, umowa-na-zastepstwo	-	wypowiedzenie-zmieniajace, okres-probny, okres-wypowiedzenia
+glowny	287	google	pracodawca nie płaci zus	brak	-	koszt-pracodawcy, kalkulator-l4, odszkodowanie-za-wypadek-przy-pracy	-	koszt-pracodawcy, odszkodowanie-za-wypadek-przy-pracy, kalkulator-l4
+glowny	288	google	pracodawca nie płaci składek zus a wizyta u lekarza	brak	-	koszt-pracodawcy, urlop-bezplatny, odszkodowanie-za-wypadek-przy-pracy	-	koszt-pracodawcy, urlop-bezplatny, odszkodowanie-za-wypadek-przy-pracy
+glowny	289	google	pracodawca nie chce podpisać wypowiedzenia	brak	-	okres-probny, urlop-w-okresie-wypowiedzenia, informacja-o-warunkach-zatrudnienia	-	wypowiedzenie-zmieniajace, okres-probny, okres-wypowiedzenia
+glowny	290	google	pracodawca nie chce wydać świadectwa pracy	swiadectwo-pracy	1	swiadectwo-pracy, praca-cudzoziemca, fundusz-socjalny	1	swiadectwo-pracy
+glowny	291	google	ile się należy urlopu	kalkulator-urlopu	top3	swiadczenie-urlopowe, wynagrodzenie-za-niepelny-miesiac, kalkulator-urlopu	1	kalkulator-urlopu, swiadczenie-urlopowe, urlop-w-agencji-pracy
+glowny	292	google	ile się należy przerwy na 8 godzin pracy	przerwy-w-pracy	1	przerwy-w-pracy, drgania-w-pracy, pracownik-niepelnosprawny	1	przerwy-w-pracy, praca-w-ciazy, drgania-w-pracy
+glowny	293	google	czy należy mi się zasiłek dla bezrobotnych	zasilek-dla-bezrobotnych	1	zasilek-dla-bezrobotnych, zasilek-chorobowy-na-zleceniu, l4-po-zwolnieniu	1	zasilek-dla-bezrobotnych, zasilek-chorobowy-na-zleceniu, l4-po-zwolnieniu
+glowny	294	google	czy muszę przyjść do pracy w dzień wolny	praca-w-sobote	top3	dni-wolne-od-pracy, praca-w-niedziele, praca-w-sobote	1	praca-w-sobote, praca-w-niedziele, dni-wolne-od-pracy
+glowny	295	google	czy musze przyjsc do pracy w sobote	praca-w-sobote	top3	dni-wolne-od-pracy, praca-w-sobote, doba-pracownicza	1	praca-w-sobote, dni-wolne-od-pracy, doba-pracownicza
+glowny	296	google	czy mogę odmówić delegacji	brak	-	delegacja-krajowa, delegacja-zagraniczna, wypowiedzenie-zmieniajace	-	delegacja-krajowa, delegacja-zagraniczna, wypowiedzenie-zmieniajace
+glowny	297	google	praca na hali powyżej 28 stopni	temperatura-w-pracy	X	praca-na-wysokosci, pracownik-niepelnosprawny	1	temperatura-w-pracy, praca-na-wysokosci, pracownik-niepelnosprawny
+glowny	298	google	praca zmianowa co to	kontrola-grafiku	X	dodatek-za-prace-w-nocy, rownowazny-czas-pracy, urlop-w-godzinach	1	kontrola-grafiku, wypowiedzenie-zmieniajace, dodatek-za-prace-w-nocy
+glowny	299	google	praca zmianowa kodeks pracy	kontrola-grafiku	X	dodatek-za-prace-w-nocy, rownowazny-czas-pracy, doba-pracownicza	1	kontrola-grafiku, wypowiedzenie-zmieniajace, limit-pracy-tymczasowej
+glowny	300	google	trzecia zmiana w pracy	kontrola-grafiku	X	dodatek-za-prace-w-nocy, kalkulator-urlopu, doba-pracownicza	X	dodatek-za-prace-w-nocy, umowa-na-czas-okreslony, wypowiedzenie-zmieniajace
+glowny	301	google	urlop na żądanie ile dni	kalkulator-urlopu	1	kalkulator-urlopu, urlop-w-godzinach, urlop-w-okresie-wypowiedzenia	1	kalkulator-urlopu, urlop-w-godzinach, urlop-w-okresie-wypowiedzenia
+glowny	302	google	urlop na żądanie zasady	kalkulator-urlopu	1	kalkulator-urlopu, urlop-w-godzinach, urlop-w-okresie-wypowiedzenia	1	kalkulator-urlopu, urlop-w-godzinach, urlop-w-okresie-wypowiedzenia
+glowny	303	google	premia uznaniowa	brak	-	ekwiwalent-za-urlop, wynagrodzenie-za-urlop	-	ekwiwalent-za-urlop, wynagrodzenie-za-urlop
+glowny	304	google	trzynastka 2026	brak	-	dodatek-za-prace-w-nocy, brutto-netto, kalkulator-urlopu	-	
+glowny	305	google	dodatek stażowy ile wynosi	brak	-	placa-minimalna, dodatek-za-prace-w-nocy, kalkulator-nadgodzin	-	dodatek-wyrownawczy, dodatek-za-prace-w-nocy, kalkulator-nadgodzin
+glowny	306	google	porozumienie stron art. 30 § 1 pkt 1 k. p	brak	-	kalkulator-odprawy, zasilek-dla-bezrobotnych, zwolnienie-na-l4	-	zasilek-dla-bezrobotnych, kalkulator-odprawy, zwolnienie-na-l4
+glowny	307	google	porozumienie stron w sprawie rozwiązania umowy o pracę	brak	-	zasilek-dla-bezrobotnych, emerytura-pomostowa, zwrot-kosztow-szkolenia	-	zasilek-dla-bezrobotnych, emerytura-pomostowa, informacja-o-warunkach-zatrudnienia
+glowny	308	google	dyscyplinarka na l4	zwolnienie-na-l4	X	kalkulator-l4, badania-lekarskie-w-pracy, co-wolno-na-l4	X	odwolanie-do-sadu-pracy, kalkulator-l4, co-wolno-na-l4
+glowny	309	google	dyscyplinarka za co	brak	-	odszkodowanie-za-zwolnienie, odwolanie-do-sadu-pracy	-	odwolanie-do-sadu-pracy, odszkodowanie-za-zwolnienie
+glowny	310	google	zwolnienie dyscyplinarne na l4	zwolnienie-na-l4	X	kalkulator-l4, l4-po-zwolnieniu, odszkodowanie-za-zwolnienie	top3	odszkodowanie-za-zwolnienie, kalkulator-l4, zwolnienie-na-l4
+glowny	311	google	zwolnienie dyscyplinarne powody	brak	-	odszkodowanie-za-zwolnienie, okres-zasilkowy	-	odszkodowanie-za-zwolnienie, okres-zasilkowy, odwolanie-do-sadu-pracy
+glowny	312	google	umowa o pracę na czas określony	umowa-na-czas-okreslony	1	umowa-na-czas-okreslony, okres-wypowiedzenia, wypowiedzenie-zmieniajace	1	umowa-na-czas-okreslony, okres-wypowiedzenia
+glowny	313	google	umowa o pracę na czas nieokreślony	brak	-	okres-wypowiedzenia, umowa-na-czas-okreslony, wypowiedzenie-zmieniajace	-	okres-wypowiedzenia, umowa-na-czas-okreslony, umowa-na-zastepstwo
+glowny	314	google	umowa zlecenie 2026	zlecenie-netto	X	dodatek-za-prace-w-nocy, kalkulator-urlopu, staz-pracy	1	zlecenie-netto, zasilek-chorobowy-na-zleceniu, staz-pracy
+glowny	315	google	umowa zlecenie kalkulator	zlecenie-netto	top3	zasilek-chorobowy-na-zleceniu, zlecenie-netto, dodatek-za-prace-w-nocy	1	zlecenie-netto, zasilek-chorobowy-na-zleceniu, staz-pracy
+glowny	316	google	umowa o dzieło kalkulator	brak	-	informacja-o-warunkach-zatrudnienia, umowa-na-zastepstwo, okres-wypowiedzenia	-	umowa-na-zastepstwo, informacja-o-warunkach-zatrudnienia, okres-wypowiedzenia
+glowny	317	google	umowa o dzieło a zus	brak	-	informacja-o-warunkach-zatrudnienia, brutto-netto, zlecenie-netto	-	informacja-o-warunkach-zatrudnienia, zlecenie-netto
+glowny	318	google	pasek wypłaty co to	brak	-	brutto-netto, wyplata-z-nadgodzinami, odpowiedzialnosc-materialna	-	wyplata-z-nadgodzinami, brutto-netto, placa-minimalna
+glowny	319	google	pasek wypłaty obowiązek	brak	-	brutto-netto, wyplata-z-nadgodzinami, placa-minimalna	-	wyplata-z-nadgodzinami, brutto-netto, placa-minimalna
+glowny	320	google	wypłata brutto netto	brutto-netto	1	brutto-netto, zlecenie-netto, wyplata-z-nadgodzinami	1	brutto-netto, zlecenie-netto
+glowny	321	google	pensja minimalna 2026	placa-minimalna	top3	brutto-netto, placa-minimalna, koszt-pracodawcy	1	placa-minimalna, stawka-godzinowa, brutto-netto
+glowny	322	google	pensja brutto netto	brutto-netto	1	brutto-netto, zlecenie-netto, stawka-godzinowa	1	brutto-netto, zlecenie-netto
+glowny	323	google	nadgodziny odbiór godzin	kalkulator-nadgodzin	top3	praca-w-sobote, kalkulator-nadgodzin, nadgodziny-sredniotygodniowe	1	kalkulator-nadgodzin, praca-w-sobote, nadgodziny-sredniotygodniowe
+glowny	324	google	nadgodziny odbiór kodeks pracy	kalkulator-nadgodzin	X	praca-w-sobote, doba-pracownicza, dodatek-za-prace-w-nocy	1	kalkulator-nadgodzin, praca-w-sobote, doba-pracownicza
+glowny	325	google	wolne za nadgodziny w sobotę	kalkulator-nadgodzin	top3	praca-w-sobote, kalkulator-nadgodzin, dni-wolne-od-pracy	top3	praca-w-sobote, kalkulator-nadgodzin, dni-wolne-od-pracy
+glowny	326	google	wolne za nadgodziny kodeks pracy	kalkulator-nadgodzin	X	praca-w-sobote, nadgodziny-sredniotygodniowe, rownowazny-czas-pracy	1	kalkulator-nadgodzin, praca-w-sobote, nadgodziny-sredniotygodniowe
+glowny	327	google	oddanie krwi ile wolnego	urlop-okolicznosciowy	1	urlop-okolicznosciowy	1	urlop-okolicznosciowy
+glowny	328	google	oddanie krwi a wolne w pracy	urlop-okolicznosciowy	1	urlop-okolicznosciowy, okres-wypowiedzenia, praca-w-sobote	1	urlop-okolicznosciowy
+glowny	329	google	pogrzeb urlop okolicznościowy	urlop-okolicznosciowy	1	urlop-okolicznosciowy	1	urlop-okolicznosciowy
+glowny	330	google	urlop pogrzeb babci	urlop-okolicznosciowy	1	urlop-okolicznosciowy, kalkulator-urlopu, ekwiwalent-za-urlop	1	urlop-okolicznosciowy
+glowny	331	google	ślub urlop okolicznościowy	urlop-okolicznosciowy	1	urlop-okolicznosciowy	1	urlop-okolicznosciowy
+glowny	332	google	ślub urlop okolicznościowy ile dni	urlop-okolicznosciowy	1	urlop-okolicznosciowy, kalkulator-urlopu, urlop-w-godzinach	1	urlop-okolicznosciowy
+glowny	333	google	opieka nad dzieckiem do lat 14	wolne-na-dziecko	1	wolne-na-dziecko, zasilek-opiekunczy, urlop-wychowawczy	1	wolne-na-dziecko, zasilek-opiekunczy, urlop-wychowawczy
+glowny	334	google	opieka nad dzieckiem 2 dni	wolne-na-dziecko	1	wolne-na-dziecko, urlop-wychowawczy, zasilek-opiekunczy	1	wolne-na-dziecko, zasilek-opiekunczy, urlop-wychowawczy
+glowny	335	google	ciąża w pracy uprawnienia	praca-w-ciazy	top3	rodzic-w-pracy, dodatek-wyrownawczy, praca-w-ciazy	1	praca-w-ciazy, rodzic-w-pracy, zasilek-macierzynski
+glowny	336	google	ciąża w pracy kiedy powiedzieć	brak	-	dodatek-wyrownawczy, praca-w-ciazy, drgania-w-pracy	-	praca-w-ciazy, zasilek-macierzynski, dodatek-wyrownawczy
+glowny	337	google	macierzyński ile trwa	zasilek-macierzynski	1	zasilek-macierzynski, okres-wypowiedzenia, umowa-na-zastepstwo	1	zasilek-macierzynski, umowa-na-zastepstwo
+glowny	338	google	macierzyński a rodzicielski	zasilek-macierzynski	1	zasilek-macierzynski, umowa-na-zastepstwo, rodzic-w-pracy	1	zasilek-macierzynski
+glowny	339	google	rodzicielski dla ojca	rodzic-w-pracy	top3	zasilek-macierzynski, rodzic-w-pracy	top3	zasilek-macierzynski, rodzic-w-pracy
+glowny	340	google	emerytura pomostowa	emerytura-pomostowa	1	emerytura-pomostowa, kalkulator-ppk, ochrona-przedemerytalna	1	emerytura-pomostowa
+glowny	341	google	emerytura wiek	brak	-	ochrona-przedemerytalna, emerytura-pomostowa, swiadczenie-przedemerytalne	-	ochrona-przedemerytalna, emerytura-pomostowa, swiadczenie-przedemerytalne
+glowny	342	google	wiek emerytalny w polsce	brak	-	ochrona-przedemerytalna, kalkulator-odprawy, rodzic-w-pracy	-	ochrona-przedemerytalna
+glowny	343	google	wiek emerytalny kobiet	brak	-	ochrona-przedemerytalna	-	ochrona-przedemerytalna
+glowny	344	google	wcześniejsza emerytura dla kobiet	brak	-	emerytura-pomostowa, dorabianie-do-renty	-	emerytura-pomostowa, ochrona-przedemerytalna, dorabianie-do-renty
+glowny	345	google	ile można dorobić na emeryturze	dorabianie-do-renty	1	dorabianie-do-renty, swiadczenie-przedemerytalne, ochrona-przedemerytalna	1	dorabianie-do-renty, swiadczenie-przedemerytalne
+glowny	346	google	ile można dorobić do emerytury	dorabianie-do-renty	1	dorabianie-do-renty, swiadczenie-przedemerytalne, ochrona-przedemerytalna	1	dorabianie-do-renty, swiadczenie-przedemerytalne
+glowny	347	google	wypadek w drodze do pracy ile płatny	odszkodowanie-za-wypadek-przy-pracy	top3	dodatek-wyrownawczy, odszkodowanie-za-wypadek-przy-pracy, renta-z-tytulu-niezdolnosci-do-pracy	1	odszkodowanie-za-wypadek-przy-pracy, dodatek-wyrownawczy, renta-z-tytulu-niezdolnosci-do-pracy
+glowny	348	google	wypadek w drodze do pracy odszkodowanie	odszkodowanie-za-wypadek-przy-pracy	1	odszkodowanie-za-wypadek-przy-pracy, odszkodowanie-za-zwolnienie, swiadectwo-pracy	1	odszkodowanie-za-wypadek-przy-pracy, odszkodowanie-za-zwolnienie, swiadectwo-pracy
+glowny	349	google	uszczerbek na zdrowiu zus	odszkodowanie-za-wypadek-przy-pracy	1	odszkodowanie-za-wypadek-przy-pracy	1	odszkodowanie-za-wypadek-przy-pracy
+glowny	350	google	uszczerbek na zdrowiu powyżej 7 dni	odszkodowanie-za-wypadek-przy-pracy	X		1	odszkodowanie-za-wypadek-przy-pracy
+glowny	351	google	woda w pracy przepisy	temperatura-w-pracy	X	co-wolno-na-l4, ile-kg-wolno-dzwigac, czas-jazdy-kierowcy	1	temperatura-w-pracy
+glowny	352	google	woda w pracy od ilu stopni	temperatura-w-pracy	X	fundusz-socjalny, praca-na-wysokosci, badania-lekarskie-w-pracy	1	temperatura-w-pracy
+glowny	353	google	napoje w pracy przepisy	temperatura-w-pracy	1	temperatura-w-pracy, co-wolno-na-l4, ile-kg-wolno-dzwigac	1	temperatura-w-pracy, posilki-profilaktyczne
+glowny	354	google	napoje w pracy podstawa prawna	temperatura-w-pracy	1	temperatura-w-pracy, odszkodowanie-za-zwolnienie, praca-cudzoziemca	1	temperatura-w-pracy, praca-cudzoziemca, posilki-profilaktyczne
+glowny	355	google	ile stopni w pracy biurowej	temperatura-w-pracy	X	pracownik-niepelnosprawny, szkolenie-okresowe-bhp	1	temperatura-w-pracy, pracownik-niepelnosprawny, szkolenie-okresowe-bhp
+glowny	356	google	ile stopni w pracy max	temperatura-w-pracy	X	pracownik-niepelnosprawny, okres-wypowiedzenia, przerwy-w-pracy	1	temperatura-w-pracy, pracownik-niepelnosprawny
+glowny	357	google	praca przy komputerze przerwy	przerwy-w-pracy	1	przerwy-w-pracy, monitoring-w-pracy, praca-w-ciazy	1	przerwy-w-pracy, praca-w-ciazy, monitoring-w-pracy
+glowny	358	google	praca przy komputerze powyżej 4 godzin jaki to czynnik	brak	-	nadgodziny-sredniotygodniowe, przerwy-w-pracy, urlop-w-godzinach	-	praca-w-ciazy, przerwy-w-pracy, praca-na-wysokosci
+glowny	359	google	elektryk uprawnienia sep	waznosc-uprawnien-sep	1	waznosc-uprawnien-sep	1	waznosc-uprawnien-sep
+glowny	360	google	elektryk uprawnienia budowlane	brak	-	waznosc-uprawnien-sep, waznosc-uprawnien-udt, czy-potrzebne-uprawnienia-udt	-	waznosc-uprawnien-sep
+glowny	361	google	tachografy w busach	czas-jazdy-kierowcy	1	czas-jazdy-kierowcy	1	czas-jazdy-kierowcy
+glowny	362	google	tachograf na busy	czas-jazdy-kierowcy	1	czas-jazdy-kierowcy	1	czas-jazdy-kierowcy
+glowny	363	google	psychotesty dla kierowców kat b	badania-kierowcy	1	badania-kierowcy, czas-jazdy-kierowcy, kod-95	1	badania-kierowcy
+glowny	364	google	świadectwo kwalifikacji zawodowej	kod-95	1	kod-95, badania-kierowcy, waznosc-uprawnien-sep	1	kod-95
+glowny	365	google	świadectwo kwalifikacji zawodowej kod 95 cena	kod-95	1	kod-95	1	kod-95
+glowny	366	google	cudzoziemiec praca w polsce	praca-cudzoziemca	1	praca-cudzoziemca, zgloszenie-pracy-cudzoziemca, praca-w-niedziele	1	praca-cudzoziemca
+glowny	367	google	praca cudzoziemiec	praca-cudzoziemca	1	praca-cudzoziemca, zgloszenie-pracy-cudzoziemca, praca-w-niedziele	1	praca-cudzoziemca
+glowny	368	google	karta pobytu praca dokumenty	praca-cudzoziemca	X	zgloszenie-pracy-cudzoziemca	1	praca-cudzoziemca, zgloszenie-pracy-cudzoziemca
+glowny	369	google	karta pobytu praca sezonowa	praca-cudzoziemca	X	zgloszenie-pracy-cudzoziemca	1	praca-cudzoziemca, zgloszenie-pracy-cudzoziemca
+glowny	370	google	zgłoszenie do zus pracownika	informacja-o-warunkach-zatrudnienia	1	informacja-o-warunkach-zatrudnienia, fundusz-socjalny, koszt-pracodawcy	1	informacja-o-warunkach-zatrudnienia, sad-pracy-czy-pip
+glowny	371	google	zgłoszenie do zus umowa zlecenie	brak	-	informacja-o-warunkach-zatrudnienia, zlecenie-netto, zasilek-chorobowy-na-zleceniu	-	zlecenie-netto, informacja-o-warunkach-zatrudnienia, zasilek-chorobowy-na-zleceniu
+glowny	372	google	praca na czarno konsekwencje	brak	-	informacja-o-warunkach-zatrudnienia, praca-w-niedziele, praca-w-sobote	-	informacja-o-warunkach-zatrudnienia
+glowny	373	google	praca na czarno konsekwencje dla pracownika	brak	-	informacja-o-warunkach-zatrudnienia, okres-wypowiedzenia, fundusz-socjalny	-	informacja-o-warunkach-zatrudnienia
+glowny	374	google	praca bez umowy gdzie zgłosić	sad-pracy-czy-pip	X	monitoring-w-pracy, informacja-o-warunkach-zatrudnienia, wypowiedzenie-zmieniajace	1	sad-pracy-czy-pip, monitoring-w-pracy
+glowny	375	google	praca bez umowy o pracę	informacja-o-warunkach-zatrudnienia	1	informacja-o-warunkach-zatrudnienia, praca-cudzoziemca, wypowiedzenie-zmieniajace	1	informacja-o-warunkach-zatrudnienia, brutto-netto, praca-cudzoziemca
+glowny	376	google	sobota pracująca w sierpniu	dni-wolne-od-pracy	top3	praca-w-sobote, zerowy-pit, dni-wolne-od-pracy	1	dni-wolne-od-pracy, praca-w-sobote, zerowy-pit
+glowny	377	google	sobota pracująca 2026	dni-wolne-od-pracy	top3	praca-w-sobote, dni-wolne-od-pracy, termin-wyplaty-wynagrodzenia	top3	praca-w-sobote, zerowy-pit, dni-wolne-od-pracy
+glowny	378	google	święto w sobotę 2026	dni-wolne-od-pracy	1	dni-wolne-od-pracy, termin-wyplaty-wynagrodzenia, wymiar-czasu-pracy	1	dni-wolne-od-pracy, praca-w-sobote, praca-w-niedziele
+glowny	379	google	święto w sobotę a dzień wolny	dni-wolne-od-pracy	top3	praca-w-sobote, dni-wolne-od-pracy, praca-w-niedziele	1	dni-wolne-od-pracy, praca-w-sobote, praca-w-niedziele
+glowny	380	google	11 listopada 2026	dni-wolne-od-pracy	X	delegacja-zagraniczna, kontrola-grafiku, dodatek-za-prace-w-nocy	1	dni-wolne-od-pracy
+glowny	381	google	boże ciało 2026	dni-wolne-od-pracy	X	dodatek-za-prace-w-nocy, koszt-pracodawcy, brutto-netto	1	dni-wolne-od-pracy
+glowny	382	google	wigilia wolna 2026	dni-wolne-od-pracy	1	dni-wolne-od-pracy, kalkulator-urlopu, ekwiwalent-za-urlop	1	dni-wolne-od-pracy
+glowny	383	google	wigilia wolna od kiedy	dni-wolne-od-pracy	1	dni-wolne-od-pracy, ile-kg-wolno-dzwigac, okres-wypowiedzenia	1	dni-wolne-od-pracy
+glowny	384	google	dzień wolny za święto w sobotę	dni-wolne-od-pracy	top3	praca-w-sobote, dni-wolne-od-pracy, praca-w-niedziele	1	dni-wolne-od-pracy, praca-w-sobote, praca-w-niedziele
+glowny	385	google	dzień wolny za święto w niedzielę	dni-wolne-od-pracy	top3	praca-w-niedziele, praca-w-sobote, dni-wolne-od-pracy	top3	praca-w-niedziele, dni-wolne-od-pracy, praca-w-sobote
+glowny	386	google	ile dni roboczych we wrześniu 2026	dni-robocze	1	dni-robocze, kalkulator-urlopu, dni-wolne-od-pracy	1	dni-robocze, zalegly-urlop, odziez-robocza
+glowny	387	google	ile dni roboczych w 2026	dni-robocze	1	dni-robocze, kalkulator-urlopu, dni-wolne-od-pracy	1	dni-robocze, odziez-robocza
+glowny	388	google	kalendarz 2027 ze świętami	dni-wolne-od-pracy	1	dni-wolne-od-pracy, termin-wyplaty-wynagrodzenia	1	dni-wolne-od-pracy, dni-robocze, termin-wyplaty-wynagrodzenia
+glowny	389	google	zmiana grafiku pracy z jakim wyprzedzeniem	kontrola-grafiku	top3	rownowazny-czas-pracy, dodatek-za-prace-w-nocy, kontrola-grafiku	1	kontrola-grafiku, dodatek-za-prace-w-nocy, doba-pracownicza
+glowny	390	google	zmiana grafiku kodeks pracy	kontrola-grafiku	top3	dodatek-za-prace-w-nocy, kontrola-grafiku, doba-pracownicza	1	kontrola-grafiku, dodatek-za-prace-w-nocy, doba-pracownicza
+glowny	391	google	odpoczynek dobowy kierowcy	czas-jazdy-kierowcy	1	czas-jazdy-kierowcy, dyzur-kierowcy	1	czas-jazdy-kierowcy, kontrola-grafiku
+glowny	392	google	odpoczynek dobowy i tygodniowy	kontrola-grafiku	X	czas-jazdy-kierowcy	top3	czas-jazdy-kierowcy, kontrola-grafiku
+glowny	393	google	11 godzin odpoczynku po delegacji	kontrola-grafiku	1	kontrola-grafiku, doba-pracownicza, czas-jazdy-kierowcy	1	kontrola-grafiku, delegacja-zagraniczna, czas-jazdy-kierowcy
+glowny	394	google	11 godzin odpoczynku dobowego	kontrola-grafiku	top3	czas-jazdy-kierowcy, kontrola-grafiku, doba-pracownicza	1	kontrola-grafiku, czas-jazdy-kierowcy, doba-pracownicza
+glowny	395	google	35 godzin odpoczynku tygodniowego	kontrola-grafiku	1	kontrola-grafiku, czas-jazdy-kierowcy, nadgodziny-sredniotygodniowe	top3	czas-jazdy-kierowcy, kontrola-grafiku, nadgodziny-sredniotygodniowe
+glowny	396	google	35 godzin odpoczynku jak liczyć	kontrola-grafiku	1	kontrola-grafiku, doba-pracownicza, kalkulator-nadgodzin	1	kontrola-grafiku, doba-pracownicza, czas-jazdy-kierowcy
+glowny	397	google	praca w weekendy	praca-w-niedziele	1	praca-w-niedziele, dni-wolne-od-pracy, rownowazny-czas-pracy	1	praca-w-niedziele, dni-wolne-od-pracy, rownowazny-czas-pracy
+glowny	398	google	praca w weekendy kodeks pracy	praca-w-niedziele	1	praca-w-niedziele, dni-wolne-od-pracy, rownowazny-czas-pracy	1	praca-w-niedziele, dni-wolne-od-pracy, rownowazny-czas-pracy
+glowny	399	google	stawka za godzinę na umowę zlecenie 2026	zlecenie-netto	top3	dodatek-za-prace-w-nocy, zlecenie-netto, kalkulator-urlopu	1	zlecenie-netto, stawka-godzinowa, zasilek-chorobowy-na-zleceniu
+glowny	400	google	stawka za godzinę 2026	stawka-godzinowa	top3	dodatek-za-prace-w-nocy, stawka-godzinowa, kalkulator-nadgodzin	1	stawka-godzinowa, kalkulator-nadgodzin, wynagrodzenie-za-przestoj
+glowny	401	google	wynagrodzenie zasadnicze co to	brak	-	kalkulator-nadgodzin, dyzur-w-pracy, kalkulator-l4	-	wynagrodzenie-za-przestoj, wynagrodzenie-za-urlop, wynagrodzenie-za-niepelny-miesiac
+glowny	402	google	wynagrodzenie zasadnicze to brutto czy netto	brak	-	brutto-netto, zlecenie-netto, koszt-pracodawcy	-	brutto-netto, zlecenie-netto, koszt-pracodawcy
+glowny	403	google	potrącenie z wypłaty za szkodę	odpowiedzialnosc-materialna	1	odpowiedzialnosc-materialna, odszkodowanie-za-wypadek-przy-pracy, przedawnienie-wynagrodzenia	1	odpowiedzialnosc-materialna
+glowny	404	google	potrącenie komornicze z wypłaty	brak	-	odpowiedzialnosc-materialna, brutto-netto, kara-porzadkowa	-	odpowiedzialnosc-materialna, kara-porzadkowa
+glowny	405	google	komornik wypłata wynagrodzenia	brak	-	przedawnienie-wynagrodzenia, termin-wyplaty-wynagrodzenia, odpowiedzialnosc-materialna	-	termin-wyplaty-wynagrodzenia, wyplata-z-nadgodzinami, wynagrodzenie-za-niepelny-miesiac
+glowny	406	google	zaliczka na podatek dochodowy	brutto-netto	1	brutto-netto, ulga-na-dzieci	1	brutto-netto, ulga-na-dzieci, zwrot-podatku-pit-37
+glowny	407	google	pit 11 co to	zwrot-podatku-pit-37	1	zwrot-podatku-pit-37, kontrola-grafiku, ulga-na-dzieci	1	zwrot-podatku-pit-37, ulga-na-dzieci, zerowy-pit
+glowny	408	google	pit 11a	brak	-	brutto-netto, ulga-na-dzieci, zerowy-pit	-	zwrot-podatku-pit-37, ulga-na-dzieci, zerowy-pit
+glowny	409	google	ulga dla młodych do 26 roku życia	zerowy-pit	1	zerowy-pit	1	zerowy-pit
+glowny	410	google	ulga dla młodych do jakiej kwoty	zerowy-pit	1	zerowy-pit, ulga-na-dzieci, brutto-netto	1	zerowy-pit, ulga-na-dzieci
+glowny	411	google	26 lat podatek od kiedy	zerowy-pit	X	brutto-netto, kalkulator-urlopu, staz-pracy	top3	brutto-netto, kalkulator-urlopu, zerowy-pit
+glowny	412	google	26 lat podatek ile	zerowy-pit	X	brutto-netto, kalkulator-urlopu, staz-pracy	top3	brutto-netto, kalkulator-urlopu, zerowy-pit
+glowny	413	google	student praca zdalna	brak	-	rodzic-w-pracy, zwrot-kosztow-szkolenia	-	rodzic-w-pracy, zlecenie-netto
+glowny	414	google	praca ucznia w wakacje	pracownik-mlodociany	1	pracownik-mlodociany, praca-w-niedziele, praca-w-sobote	1	pracownik-mlodociany
+glowny	415	google	praktyki studenckie	brak	-	pracownik-mlodociany	-	pracownik-mlodociany
+glowny	416	google	staż z urzędu pracy po 30 roku życia	brak	-	kalkulator-urlopu	-	staz-pracy, zerowy-pit, zgloszenie-pracy-cudzoziemca
+glowny	417	google	staż z urzędu pracy po 50 roku życia	brak	-	kalkulator-urlopu	-	staz-pracy, zerowy-pit, praca-w-sobote
+glowny	418	google	umowa na okres próbny 3 miesiące	okres-probny	X	umowa-na-czas-okreslony, okres-wyczekiwania, okres-wypowiedzenia	1	okres-probny, umowa-na-czas-okreslony, okres-wypowiedzenia
+glowny	419	google	umowa na okres próbny wypowiedzenie	okres-probny	1	okres-probny, okres-wypowiedzenia, umowa-na-zastepstwo	1	okres-probny, okres-wypowiedzenia, umowa-na-zastepstwo
+glowny	420	google	trzecia umowa na czas określony a ciąża	umowa-na-czas-okreslony	1	umowa-na-czas-okreslony, umowa-na-zastepstwo, okres-wypowiedzenia	1	umowa-na-czas-okreslony, okres-wypowiedzenia, umowa-na-zastepstwo
+glowny	421	google	trzecia umowa na czas określony a przerwa w zatrudnieniu	umowa-na-czas-okreslony	1	umowa-na-czas-okreslony, okres-wypowiedzenia, emerytura-pomostowa	1	umowa-na-czas-okreslony, okres-wypowiedzenia
+glowny	422	google	umowa na czas nieokreślony jaki okres wypowiedzenia	okres-wypowiedzenia	1	okres-wypowiedzenia, umowa-na-zastepstwo, umowa-na-czas-okreslony	1	okres-wypowiedzenia, umowa-na-zastepstwo, okres-probny
+glowny	423	google	umowa na czas nieokreślony okres wypowiedzenia	okres-wypowiedzenia	1	okres-wypowiedzenia, umowa-na-zastepstwo, umowa-na-czas-okreslony	1	okres-wypowiedzenia, umowa-na-zastepstwo, okres-probny
+glowny	424	google	wypowiedzenie umowy w ciąży	brak	-	umowa-na-zastepstwo, zwolnienie-na-l4, okres-wypowiedzenia	-	umowa-na-zastepstwo, okres-wypowiedzenia, wypowiedzenie-zmieniajace
+glowny	425	google	wypowiedzenie zmieniające w ciąży	wypowiedzenie-zmieniajace	1	wypowiedzenie-zmieniajace, umowa-na-zastepstwo, zwolnienie-na-l4	1	wypowiedzenie-zmieniajace, umowa-na-zastepstwo, zwolnienie-na-l4
+glowny	426	google	wypowiedzenie na l4 przez pracownika	okres-wypowiedzenia	1	okres-wypowiedzenia, zwolnienie-na-l4, dodatek-wyrownawczy	top3	zwolnienie-na-l4, okres-wypowiedzenia, wypowiedzenie-zmieniajace
+glowny	427	google	wypowiedzenie na l4 przez pracodawcę	zwolnienie-na-l4	1	zwolnienie-na-l4, co-wolno-na-l4, kalkulator-l4	1	zwolnienie-na-l4, co-wolno-na-l4, kalkulator-l4
+glowny	428	google	zwolnienie z pracy za porozumieniem stron	brak	-	zasilek-dla-bezrobotnych, okres-wypowiedzenia, kalkulator-odprawy	-	zasilek-dla-bezrobotnych, kalkulator-odprawy
+glowny	429	google	zwolnienie z pracy z powodu siły wyższej	wolne-na-dziecko	1	wolne-na-dziecko	1	wolne-na-dziecko, okres-zasilkowy
+glowny	430	google	zwolnienie z pracy ile wypowiedzenia	okres-wypowiedzenia	1	okres-wypowiedzenia, zwolnienie-na-l4, odszkodowanie-za-zwolnienie	top3	zwolnienie-na-l4, okres-wypowiedzenia, odszkodowanie-za-zwolnienie
+glowny	431	google	zwolnienie z pracy ile trwa ubezpieczenie zdrowotne	brak	-	okres-wypowiedzenia, urlop-bezplatny	-	okres-wypowiedzenia, zwolnienie-na-l4, urlop-bezplatny
+glowny	432	google	rzucam pracę i co dalej	okres-wypowiedzenia	1	okres-wypowiedzenia, zgloszenie-pracy-cudzoziemca, urlop-w-okresie-wypowiedzenia	1	okres-wypowiedzenia, zgloszenie-pracy-cudzoziemca, urlop-w-okresie-wypowiedzenia
+glowny	433	google	odejście z pracy za porozumieniem stron	brak	-	zasilek-dla-bezrobotnych, zwrot-kosztow-szkolenia, okres-wypowiedzenia	-	okres-wypowiedzenia, zasilek-dla-bezrobotnych, kalkulator-odprawy
+glowny	434	google	porzucenie pracy konsekwencje	brak	-	okres-wypowiedzenia, przerwy-w-pracy, brutto-netto	-	limit-pracy-tymczasowej, przerwy-w-pracy, temperatura-w-pracy
+glowny	435	google	porzucenie pracy przez pracownika	brak	-	okres-wypowiedzenia, fundusz-socjalny, monitoring-w-pracy	-	pracownik-niepelnosprawny, monitoring-w-pracy, pracownik-mlodociany
+glowny	436	google	nieobecność w pracy nieusprawiedliwiona	brak	-	limit-pracy-tymczasowej, okres-wypowiedzenia, przerwy-w-pracy	-	umowa-na-zastepstwo
+glowny	437	google	nieobecność w pracy siła wyższa	wolne-na-dziecko	1	wolne-na-dziecko, limit-pracy-tymczasowej	1	wolne-na-dziecko
+glowny	438	google	spóźnienie do pracy 5 minut	brak	-	praca-w-ciazy, przerwy-w-pracy, zwolnienie-na-l4	-	przerwy-w-pracy, praca-w-ciazy, zasilek-macierzynski
+glowny	439	google	spóźnienie do pracy 15 minut	brak	-	przerwy-w-pracy, pracownik-niepelnosprawny, praca-w-ciazy	-	przerwy-w-pracy, pracownik-niepelnosprawny
+glowny	440	google	nieusprawiedliwiona nieobecność w pracy	brak	-	limit-pracy-tymczasowej, okres-wypowiedzenia, przerwy-w-pracy	-	umowa-na-zastepstwo
+glowny	441	google	nieusprawiedliwiona nieobecność w pracy (art 52)	brak	-	zwolnienie-na-l4, odpracowanie-wyjscia-prywatnego, limit-pracy-tymczasowej	-	zwolnienie-na-l4, wolne-na-dziecko, umowa-na-zastepstwo
+glowny	442	google	regulamin pracy od ilu pracowników	brak	-	fundusz-socjalny, informacja-o-warunkach-zatrudnienia, normy-sanitarne	-	fundusz-socjalny, informacja-o-warunkach-zatrudnienia
+glowny	443	google	układ zbiorowy pracy	brak	-	okres-wypowiedzenia, przerwy-w-pracy, brutto-netto	-	limit-pracy-tymczasowej, przerwy-w-pracy, temperatura-w-pracy
+glowny	444	google	układ zbiorowy pracy co to	brak	-	okres-wypowiedzenia, przerwy-w-pracy, brutto-netto	-	limit-pracy-tymczasowej, przerwy-w-pracy, praca-w-sobote
+glowny	445	google	pozew do sądu pracy wzór darmowy	sad-pracy-czy-pip	1	sad-pracy-czy-pip, odwolanie-do-sadu-pracy, posilki-profilaktyczne	1	sad-pracy-czy-pip, posilki-profilaktyczne, odwolanie-do-sadu-pracy
+glowny	446	google	mobbing w pracy	mobbing-i-dyskryminacja	1	mobbing-i-dyskryminacja, okres-wypowiedzenia, przerwy-w-pracy	1	mobbing-i-dyskryminacja
+glowny	447	google	mobbing co to	mobbing-i-dyskryminacja	1	mobbing-i-dyskryminacja	1	mobbing-i-dyskryminacja
+glowny	448	google	molestowanie w pracy przykłady	mobbing-i-dyskryminacja	1	mobbing-i-dyskryminacja	1	mobbing-i-dyskryminacja
+glowny	449	google	molestowanie w pracy przez klienta	mobbing-i-dyskryminacja	1	mobbing-i-dyskryminacja, okres-wypowiedzenia, przerwy-w-pracy	1	mobbing-i-dyskryminacja
+glowny	450	google	równe traktowanie w zatrudnieniu	mobbing-i-dyskryminacja	1	mobbing-i-dyskryminacja	1	mobbing-i-dyskryminacja
+glowny	451	google	nękanie w pracy przez współpracowników	mobbing-i-dyskryminacja	1	mobbing-i-dyskryminacja, okres-wypowiedzenia, przerwy-w-pracy	1	mobbing-i-dyskryminacja
+glowny	452	google	nękanie w pracy przykłady	mobbing-i-dyskryminacja	1	mobbing-i-dyskryminacja	1	mobbing-i-dyskryminacja
+glowny	453	testy	urlopu	kalkulator-urlopu	1	kalkulator-urlopu, swiadczenie-urlopowe, zalegly-urlop	1	kalkulator-urlopu, urlop-w-agencji-pracy, wynagrodzenie-za-urlop
+glowny	454	testy	urlop	kalkulator-urlopu	1	kalkulator-urlopu, urlop-bezplatny, urlop-ojcowski	1	kalkulator-urlopu, urlop-w-agencji-pracy, urlop-ojcowski
+glowny	455	testy	nadgodziny	kalkulator-nadgodzin	1	kalkulator-nadgodzin, praca-w-sobote, nadgodziny-sredniotygodniowe	1	kalkulator-nadgodzin, wyplata-z-nadgodzinami, nadgodziny-sredniotygodniowe
+glowny	456	testy	L4	kalkulator-l4	1	kalkulator-l4, l4-po-zwolnieniu, badania-lekarskie-w-pracy	1	kalkulator-l4, co-wolno-na-l4, l4-po-zwolnieniu
+glowny	457	testy	ile dostanę na chorobowym	kalkulator-l4	1	kalkulator-l4, zasilek-chorobowy-na-zleceniu, urlop-bezplatny	1	kalkulator-l4, zasilek-chorobowy-na-zleceniu, okres-zasilkowy
+glowny	458	testy	na rękę	brutto-netto	1	brutto-netto, zlecenie-netto, wyplata-z-nadgodzinami	1	brutto-netto, zlecenie-netto, wyplata-z-nadgodzinami
+glowny	459	testy	nocki	dodatek-za-prace-w-nocy	1	dodatek-za-prace-w-nocy, wyplata-z-nadgodzinami	1	dodatek-za-prace-w-nocy, wyplata-z-nadgodzinami
+glowny	460	testy	wózek widłowy uprawnienia	waznosc-uprawnien-udt	1	waznosc-uprawnien-udt, czy-potrzebne-uprawnienia-udt, badania-kierowcy	1	waznosc-uprawnien-udt, drogi-i-przejscia, badania-udt
+glowny	461	testy	alkomat	kontrola-trzezwosci	1	kontrola-trzezwosci	1	kontrola-trzezwosci
+glowny	462	testy	ile kg	ile-kg-wolno-dzwigac	1	ile-kg-wolno-dzwigac, skladowanie-w-magazynie	1	ile-kg-wolno-dzwigac, skladowanie-w-magazynie
+glowny	463	testy	upał na hali	temperatura-w-pracy	1	temperatura-w-pracy	1	temperatura-w-pracy
+glowny	464	testy	najnizsza krajowa	placa-minimalna	1	placa-minimalna, delegacja-krajowa, skladowanie-w-magazynie	1	placa-minimalna, brutto-netto, delegacja-krajowa
+glowny	465	testy	ile za sobotę w pracy	praca-w-sobote	1	praca-w-sobote, wymiar-czasu-pracy, dni-wolne-od-pracy	1	praca-w-sobote, dni-wolne-od-pracy, wymiar-czasu-pracy
+glowny	466	testy	praca w sobotę 50 czy 100	praca-w-sobote	1	praca-w-sobote, nadgodziny-sredniotygodniowe, wyplata-z-nadgodzinami	1	praca-w-sobote, kalkulator-nadgodzin, nadgodziny-sredniotygodniowe
+glowny	467	testy	praca w sobotę a odbiór dnia wolnego	praca-w-sobote	1	praca-w-sobote, dni-wolne-od-pracy, dni-robocze	1	praca-w-sobote, dni-wolne-od-pracy
+glowny	468	testy	ile nadgodzin za sobotę	praca-w-sobote	1	praca-w-sobote, odpracowanie-wyjscia-prywatnego, kalkulator-nadgodzin	1	praca-w-sobote, dni-wolne-od-pracy, odpracowanie-wyjscia-prywatnego
+glowny	469	testy	zwrot podatku ile sie czeka	zwrot-podatku-pit-37	1	zwrot-podatku-pit-37, ulga-na-dzieci, zwrot-kosztow-szkolenia	1	zwrot-podatku-pit-37, ulga-na-dzieci, zwrot-kosztow-szkolenia
+glowny	470	testy	pit 37 a pit 11	zwrot-podatku-pit-37	1	zwrot-podatku-pit-37	1	zwrot-podatku-pit-37
+glowny	471	testy	rozliczenie pit z żoną która nie pracuje	zwrot-podatku-pit-37	1	zwrot-podatku-pit-37, brutto-netto, rownowazny-czas-pracy	1	zwrot-podatku-pit-37
+glowny	472	testy	badania wysokościowe od ilu metrów	praca-na-wysokosci	1	praca-na-wysokosci, badania-lekarskie-w-pracy, skladowanie-w-magazynie	1	praca-na-wysokosci
+glowny	473	testy	praca na drabinie powyżej 2 metrów	praca-na-wysokosci	1	praca-na-wysokosci, powierzchnia-na-pracownika	1	praca-na-wysokosci
+glowny	474	testy	pomostówka w jakim wieku	emerytura-pomostowa	1	emerytura-pomostowa, ulga-na-dzieci	1	emerytura-pomostowa, ochrona-przedemerytalna
+glowny	475	testy	praca w szczególnych warunkach a emerytura	emerytura-pomostowa	1	emerytura-pomostowa, swiadczenie-przedemerytalne, dorabianie-do-renty	1	emerytura-pomostowa, swiadczenie-przedemerytalne
+glowny	476	testy	kod 95 stracił ważność	kod-95	1	kod-95	1	kod-95
+glowny	477	testy	świadectwo kwalifikacji zawodowej kod 95	kod-95	1	kod-95	1	kod-95
+glowny	478	testy	zespół cieśni nadgarstka czy to choroba zawodowa	choroba-zawodowa	1	choroba-zawodowa	1	choroba-zawodowa
+glowny	479	testy	ubytek słuchu choroba zawodowa	choroba-zawodowa	1	choroba-zawodowa, dodatek-wyrownawczy	1	choroba-zawodowa
+glowny	480	testy	psychotesty dla kierowców co ile lat	badania-kierowcy	1	badania-kierowcy, kod-95	1	badania-kierowcy
+glowny	481	testy	badania kierowcy zawodowego co ile lat	badania-kierowcy	1	badania-kierowcy, kod-95, choroba-zawodowa	1	badania-kierowcy, kod-95, choroba-zawodowa
+glowny	482	testy	badania kontrolne po l4 po ilu dniach	badania-lekarskie-w-pracy	1	badania-lekarskie-w-pracy, zwolnienie-na-l4	1	badania-lekarskie-w-pracy, zwolnienie-na-l4
+glowny	483	testy	badania wstępne do pracy czy przysługuje dzień wolny	badania-lekarskie-w-pracy	1	badania-lekarskie-w-pracy, dni-wolne-od-pracy, urlop-okolicznosciowy	1	badania-lekarskie-w-pracy, praca-w-sobote, praca-w-niedziele
+glowny	484	testy	posiłek regeneracyjny w pracy kiedy przysługuje	posilki-profilaktyczne	1	posilki-profilaktyczne, dodatek-za-prace-w-nocy, dni-wolne-od-pracy	1	posilki-profilaktyczne
+glowny	485	testy	kiedy pracownikowi przysługuje darmowy posiłek w pracy	posilki-profilaktyczne	1	posilki-profilaktyczne, pracownik-niepelnosprawny, swiadczenie-przedemerytalne	1	posilki-profilaktyczne, pracownik-niepelnosprawny, swiadczenie-przedemerytalne
+glowny	486	testy	ekwiwalent za pranie umowa zlecenie	odziez-robocza	1	odziez-robocza, zlecenie-netto, zasilek-chorobowy-na-zleceniu	1	odziez-robocza, zlecenie-netto, zasilek-chorobowy-na-zleceniu
+glowny	487	testy	obniżenie wynagrodzenia bez zgody pracownika	wypowiedzenie-zmieniajace	1	wypowiedzenie-zmieniajace, odpowiedzialnosc-materialna, fundusz-socjalny	1	wypowiedzenie-zmieniajace, odpowiedzialnosc-materialna
+glowny	488	testy	umowa na zastępstwo jaki okres wypowiedzenia	umowa-na-zastepstwo	1	umowa-na-zastepstwo, okres-wypowiedzenia, okres-probny	1	umowa-na-zastepstwo, okres-wypowiedzenia, okres-probny
+glowny	489	testy	umowa na czas nieobecności pracownika	umowa-na-zastepstwo	1	umowa-na-zastepstwo, okres-wypowiedzenia, odszkodowanie-za-zwolnienie	1	umowa-na-zastepstwo, umowa-na-czas-okreslony, okres-wypowiedzenia
+glowny	490	testy	pensja po l4 kalkulator	wynagrodzenie-za-niepelny-miesiac	1	wynagrodzenie-za-niepelny-miesiac, brutto-netto, kalkulator-l4	1	wynagrodzenie-za-niepelny-miesiac, kalkulator-l4, co-wolno-na-l4
+glowny	491	testy	wypłata za niepełny miesiąc	wynagrodzenie-za-niepelny-miesiac	1	wynagrodzenie-za-niepelny-miesiac, przedawnienie-wynagrodzenia, wyplata-z-nadgodzinami	1	wynagrodzenie-za-niepelny-miesiac, termin-wyplaty-wynagrodzenia
+glowny	492	testy	l4 w pierwszym miesiącu pracy	okres-wyczekiwania	1	okres-wyczekiwania, wynagrodzenie-za-niepelny-miesiac, zwolnienie-na-l4	1	okres-wyczekiwania, wynagrodzenie-za-niepelny-miesiac, zwolnienie-na-l4
+glowny	493	testy	l4 na zleceniu ile płatne	zasilek-chorobowy-na-zleceniu	1	zasilek-chorobowy-na-zleceniu, okres-wyczekiwania, kalkulator-l4	1	zasilek-chorobowy-na-zleceniu, kalkulator-l4, co-wolno-na-l4
+glowny	494	testy	umowa zlecenie l4 kto płaci	zasilek-chorobowy-na-zleceniu	1	zasilek-chorobowy-na-zleceniu, l4-po-zwolnieniu, okres-wyczekiwania	1	zasilek-chorobowy-na-zleceniu, zlecenie-netto, kalkulator-l4
+glowny	495	testy	wczasy pod gruszą ile dni urlopu trzeba wziąć	swiadczenie-urlopowe	1	swiadczenie-urlopowe, dni-wolne-od-pracy, urlop-w-okresie-wypowiedzenia	1	swiadczenie-urlopowe, fundusz-socjalny, urlop-ojcowski
+glowny	496	testy	dofinansowanie do urlopu wypoczynkowego	swiadczenie-urlopowe	top3	kalkulator-urlopu, swiadczenie-urlopowe, urlop-bezplatny	top3	kalkulator-urlopu, swiadczenie-urlopowe, urlop-bezplatny
+glowny	497	testy	urlop bezpłatny a ubezpieczenie zdrowotne	urlop-bezplatny	1	urlop-bezplatny, wynagrodzenie-za-niepelny-miesiac	1	urlop-bezplatny
+glowny	498	testy	urlop bezpłatny a staż pracy	urlop-bezplatny	1	urlop-bezplatny, staz-pracy, kalkulator-urlopu	1	urlop-bezplatny, staz-pracy, kalkulator-urlopu
+glowny	499	testy	urlop z zeszłego roku do kiedy wykorzystać	zalegly-urlop	1	zalegly-urlop, kalkulator-urlopu, urlop-w-okresie-wypowiedzenia	1	zalegly-urlop, kalkulator-urlopu, urlop-w-okresie-wypowiedzenia
+glowny	500	testy	czy zaległy urlop przepada po 30 września	zalegly-urlop	1	zalegly-urlop	1	zalegly-urlop
+glowny	501	testy	przymusowy urlop w okresie wypowiedzenia	urlop-w-okresie-wypowiedzenia	1	urlop-w-okresie-wypowiedzenia, umowa-na-zastepstwo, urlop-w-agencji-pracy	1	urlop-w-okresie-wypowiedzenia
+glowny	502	testy	urlop na żądanie w 12 godzinnym systemie pracy	urlop-w-godzinach	1	urlop-w-godzinach, rownowazny-czas-pracy, kontrola-grafiku	1	urlop-w-godzinach, rownowazny-czas-pracy, kontrola-grafiku
+glowny	503	testy	urlop szkoleniowy na studia podyplomowe	urlop-szkoleniowy	1	urlop-szkoleniowy, zwrot-kosztow-szkolenia	1	urlop-szkoleniowy, zwrot-kosztow-szkolenia
+glowny	504	testy	studia zaoczne a urlop szkoleniowy	urlop-szkoleniowy	1	urlop-szkoleniowy, zwrot-kosztow-szkolenia	1	urlop-szkoleniowy
+glowny	505	testy	ile dni na zgłoszenie ukraińca do pup	zgloszenie-pracy-cudzoziemca	1	zgloszenie-pracy-cudzoziemca, informacja-o-warunkach-zatrudnienia	1	zgloszenie-pracy-cudzoziemca
+glowny	506	testy	powiadomienie o powierzeniu pracy obywatelowi ukrainy	zgloszenie-pracy-cudzoziemca	1	zgloszenie-pracy-cudzoziemca, praca-cudzoziemca	1	zgloszenie-pracy-cudzoziemca, praca-cudzoziemca
+glowny	507	testy	wcześniejsze wyjście z pracy a odpracowanie	odpracowanie-wyjscia-prywatnego	1	odpracowanie-wyjscia-prywatnego, doba-pracownicza, okres-wypowiedzenia	1	odpracowanie-wyjscia-prywatnego
+glowny	508	testy	wcześniejsze przyjście do pracy nadgodziny	doba-pracownicza	1	doba-pracownicza, odpracowanie-wyjscia-prywatnego, praca-w-sobote	1	doba-pracownicza, odpracowanie-wyjscia-prywatnego
+glowny	509	testy	nadgodziny w tej samej dobie	doba-pracownicza	1	doba-pracownicza, limit-pracy-tymczasowej	1	doba-pracownicza
+glowny	510	testy	praca po 12 godzin ile wolnego	rownowazny-czas-pracy	1	rownowazny-czas-pracy, kontrola-grafiku, urlop-w-godzinach	top3	kontrola-grafiku, rownowazny-czas-pracy, urlop-w-godzinach
+glowny	511	testy	system 12 godzinny grafik	kontrola-grafiku	1	kontrola-grafiku, rownowazny-czas-pracy, doba-pracownicza	top3	rownowazny-czas-pracy, urlop-w-godzinach, kontrola-grafiku
+glowny	512	testy	praca powyżej 48 godzin tygodniowo	nadgodziny-sredniotygodniowe	1	nadgodziny-sredniotygodniowe, czas-jazdy-kierowcy	1	nadgodziny-sredniotygodniowe, czas-jazdy-kierowcy
+glowny	513	testy	ile można dorobić do renty 2026	dorabianie-do-renty	1	dorabianie-do-renty, koszt-pracodawcy, swiadczenie-przedemerytalne	1	dorabianie-do-renty
+glowny	514	testy	limit dorabiania do emerytury	dorabianie-do-renty	1	dorabianie-do-renty, kalkulator-odprawy	1	dorabianie-do-renty
+glowny	515	testy	ulga na dziecko ile wynosi	ulga-na-dzieci	1	ulga-na-dzieci, zasilek-opiekunczy, zasilek-macierzynski	1	ulga-na-dzieci, zasilek-opiekunczy
+glowny	516	testy	ulga prorodzinna limit dochodu	ulga-na-dzieci	1	ulga-na-dzieci, zerowy-pit	1	ulga-na-dzieci
+glowny	517	testy	ulga dla pracujących seniorów	zerowy-pit	1	zerowy-pit	1	zerowy-pit
+glowny	518	testy	renta ile lat pracy minimum	renta-z-tytulu-niezdolnosci-do-pracy	1	renta-z-tytulu-niezdolnosci-do-pracy, staz-pracy, dorabianie-do-renty	1	renta-z-tytulu-niezdolnosci-do-pracy, staz-pracy, dorabianie-do-renty
+glowny	519	testy	renta po wypadku w pracy	renta-z-tytulu-niezdolnosci-do-pracy	1	renta-z-tytulu-niezdolnosci-do-pracy, koszt-pracodawcy, odszkodowanie-za-wypadek-przy-pracy	1	renta-z-tytulu-niezdolnosci-do-pracy, dorabianie-do-renty
+glowny	520	testy	przedemerytalne dla mężczyzn	swiadczenie-przedemerytalne	1	swiadczenie-przedemerytalne, ochrona-przedemerytalna, ile-kg-wolno-dzwigac	1	swiadczenie-przedemerytalne, ochrona-przedemerytalna, ile-kg-wolno-dzwigac
+glowny	521	testy	zasiłek przedemerytalny warunki	swiadczenie-przedemerytalne	1	swiadczenie-przedemerytalne, l4-po-zwolnieniu, emerytura-pomostowa	1	swiadczenie-przedemerytalne
+glowny	522	testy	zwolnienie przed emeryturą okres ochronny	ochrona-przedemerytalna	1	ochrona-przedemerytalna, zwolnienia-grupowe, okres-zasilkowy	1	ochrona-przedemerytalna, swiadczenie-przedemerytalne
+glowny	523	testy	przerwa kierowcy po 4.5 godzinach jazdy	czas-jazdy-kierowcy	1	czas-jazdy-kierowcy, dyzur-kierowcy, nadgodziny-sredniotygodniowe	1	czas-jazdy-kierowcy, dyzur-kierowcy
+glowny	524	testy	odpoczynek tygodniowy kierowcy jak liczyć	czas-jazdy-kierowcy	1	czas-jazdy-kierowcy, dyzur-kierowcy, doba-pracownicza	1	czas-jazdy-kierowcy, dyzur-kierowcy
+glowny	525	testy	czas pracy kierowcy tabela	czas-jazdy-kierowcy	1	czas-jazdy-kierowcy, dyzur-kierowcy, pracownik-niepelnosprawny	1	czas-jazdy-kierowcy, dyzur-kierowcy, badania-kierowcy
+glowny	526	testy	ile może jechać kierowca zawodowy	czas-jazdy-kierowcy	1	czas-jazdy-kierowcy, badania-kierowcy, kod-95	1	czas-jazdy-kierowcy
+glowny	527	testy	czy dyżur kierowcy wlicza się do czasu pracy	dyzur-kierowcy	1	dyzur-kierowcy, dyzur-w-pracy, czas-jazdy-kierowcy	1	dyzur-kierowcy, dyzur-w-pracy, czas-jazdy-kierowcy
+glowny	528	testy	uprawnienia adr na ile lat	zaswiadczenie-adr	1	zaswiadczenie-adr, waznosc-uprawnien-udt, czy-potrzebne-uprawnienia-udt	1	zaswiadczenie-adr, waznosc-uprawnien-udt, waznosc-uprawnien-sep
+glowny	529	testy	kurs adr przedłużenie	zaswiadczenie-adr	1	zaswiadczenie-adr	1	zaswiadczenie-adr
+glowny	530	testy	uprawnienia sep do kiedy ważne	waznosc-uprawnien-sep	1	waznosc-uprawnien-sep, waznosc-uprawnien-udt, zaswiadczenie-adr	1	waznosc-uprawnien-sep, zaswiadczenie-adr, waznosc-uprawnien-udt
+glowny	531	testy	sep g1 ważność	waznosc-uprawnien-sep	1	waznosc-uprawnien-sep	1	waznosc-uprawnien-sep
+glowny	532	testy	czy na paleciak elektryczny trzeba mieć uprawnienia	czy-potrzebne-uprawnienia-udt	1	czy-potrzebne-uprawnienia-udt, waznosc-uprawnien-sep	1	czy-potrzebne-uprawnienia-udt, waznosc-uprawnien-sep
+glowny	533	testy	zwyżka nożycowa uprawnienia	czy-potrzebne-uprawnienia-udt	1	czy-potrzebne-uprawnienia-udt	1	czy-potrzebne-uprawnienia-udt
+glowny	534	testy	przeniesienie na inne stanowisko a wynagrodzenie	dodatek-wyrownawczy	1	dodatek-wyrownawczy, wypowiedzenie-zmieniajace, co-wolno-na-l4	1	dodatek-wyrownawczy
+glowny	535	testy	ile czasu na zgłoszenie do zus nowego pracownika	informacja-o-warunkach-zatrudnienia	1	informacja-o-warunkach-zatrudnienia	1	informacja-o-warunkach-zatrudnienia
+glowny	536	testy	12 godzin pracy ile przerwy	przerwy-w-pracy	1	przerwy-w-pracy, rownowazny-czas-pracy, urlop-w-godzinach	1	przerwy-w-pracy, kontrola-grafiku, rownowazny-czas-pracy
+glowny	537	testy	uprawnienia na wózek	waznosc-uprawnien-udt	1	waznosc-uprawnien-udt, czy-potrzebne-uprawnienia-udt, badania-kierowcy	1	waznosc-uprawnien-udt, czy-potrzebne-uprawnienia-udt, drogi-i-przejscia
+glowny	538	testy	ile dostanę na L4	kalkulator-l4	1	kalkulator-l4, zasilek-chorobowy-na-zleceniu, nadgodziny-sredniotygodniowe	1	kalkulator-l4, co-wolno-na-l4, zasilek-chorobowy-na-zleceniu
+glowny	539	testy	niewykorzystany urlop	ekwiwalent-za-urlop	1	ekwiwalent-za-urlop, zalegly-urlop, urlop-w-agencji-pracy	1	ekwiwalent-za-urlop, zalegly-urlop, urlop-w-agencji-pracy
+glowny	540	testy	czas pracy kierowcy	czas-jazdy-kierowcy	1	czas-jazdy-kierowcy, dyzur-kierowcy, pracownik-niepelnosprawny	1	czas-jazdy-kierowcy, dyzur-kierowcy, badania-kierowcy
+glowny	541	testy	kalkulator nadgodzin	kalkulator-nadgodzin	1	kalkulator-nadgodzin, praca-w-sobote, dodatek-za-prace-w-nocy	1	kalkulator-nadgodzin, wyplata-z-nadgodzinami, nadgodziny-sredniotygodniowe
+glowny	542	testy	przerwy	przerwy-w-pracy	1	przerwy-w-pracy, czas-jazdy-kierowcy, dyzur-kierowcy	1	przerwy-w-pracy, czas-jazdy-kierowcy, dyzur-kierowcy
+glowny	543	testy	szef nie płaci za nadgodziny	kalkulator-nadgodzin	X	placa-minimalna, dodatek-za-prace-w-nocy, wynagrodzenie-za-urlop	1	kalkulator-nadgodzin, placa-minimalna, nadgodziny-sredniotygodniowe
+glowny	544	testy	wyrównanie wynagrodzenia	dodatek-wyrownawczy	X	placa-minimalna, odpowiedzialnosc-materialna, przedawnienie-wynagrodzenia	X	placa-minimalna, wypowiedzenie-zmieniajace, termin-wyplaty-wynagrodzenia
+glowny	545	testy	fundusz socjalny ile na pracownika	fundusz-socjalny	1	fundusz-socjalny, koszt-pracodawcy	1	fundusz-socjalny
+glowny	546	testy	monitoring komputera	monitoring-w-pracy	1	monitoring-w-pracy, przerwy-w-pracy, praca-w-ciazy	1	monitoring-w-pracy, przerwy-w-pracy, praca-w-ciazy
+glowny	547	testy	kamera nad stanowiskiem	monitoring-w-pracy	1	monitoring-w-pracy	1	monitoring-w-pracy
+glowny	548	testy	monitoring bez informacji	monitoring-w-pracy	1	monitoring-w-pracy, informacja-o-warunkach-zatrudnienia	1	monitoring-w-pracy, przerwy-w-pracy, praca-w-ciazy
+glowny	549	testy	czy pracodawca moze mnie podgladac	monitoring-w-pracy	1	monitoring-w-pracy, co-wolno-na-l4, informacja-o-warunkach-zatrudnienia	1	monitoring-w-pracy
+glowny	550	testy	sledzenie pracownika	monitoring-w-pracy	1	monitoring-w-pracy, okres-wypowiedzenia, fundusz-socjalny	1	monitoring-w-pracy
+glowny	551	testy	kamera w szatni	monitoring-w-pracy	1	monitoring-w-pracy, normy-sanitarne	1	monitoring-w-pracy, normy-sanitarne
+glowny	552	testy	kamera w toalecie	monitoring-w-pracy	1	monitoring-w-pracy, normy-sanitarne	1	monitoring-w-pracy
+glowny	553	testy	zepsulem maszyne w pracy musze zaplacic	odpowiedzialnosc-materialna	1	odpowiedzialnosc-materialna, renta-z-tytulu-niezdolnosci-do-pracy, doba-pracownicza	1	odpowiedzialnosc-materialna, renta-z-tytulu-niezdolnosci-do-pracy
+glowny	554	testy	zgubilem narzedzia firmowe	odpowiedzialnosc-materialna	1	odpowiedzialnosc-materialna	1	odpowiedzialnosc-materialna, drgania-w-pracy
+glowny	555	testy	pracodawca obciazyl mnie kosztami naprawy	odpowiedzialnosc-materialna	1	odpowiedzialnosc-materialna, koszt-pracodawcy, sad-pracy-czy-pip	1	odpowiedzialnosc-materialna
+glowny	556	testy	zgoda na potracenie z wynagrodzenia	odpowiedzialnosc-materialna	1	odpowiedzialnosc-materialna, wypowiedzenie-zmieniajace	1	odpowiedzialnosc-materialna, wypowiedzenie-zmieniajace
+glowny	557	testy	rozbilem auto sluzbowe	odpowiedzialnosc-materialna	1	odpowiedzialnosc-materialna, monitoring-w-pracy	1	odpowiedzialnosc-materialna, monitoring-w-pracy
+glowny	558	testy	pracodawca kaze placic za szkode	odpowiedzialnosc-materialna	1	odpowiedzialnosc-materialna, odszkodowanie-za-wypadek-przy-pracy, koszt-pracodawcy	1	odpowiedzialnosc-materialna, odszkodowanie-za-wypadek-przy-pracy, przedawnienie-wynagrodzenia
+glowny	559	testy	ile kg na regal	skladowanie-w-magazynie	1	skladowanie-w-magazynie, ile-kg-wolno-dzwigac, drogi-i-przejscia	1	skladowanie-w-magazynie, ile-kg-wolno-dzwigac
+glowny	560	testy	ile kg na polke	skladowanie-w-magazynie	1	skladowanie-w-magazynie, ile-kg-wolno-dzwigac	1	skladowanie-w-magazynie
+glowny	561	testy	ile metrow do gasnicy	skladowanie-w-magazynie	1	skladowanie-w-magazynie, praca-na-wysokosci, powierzchnia-na-pracownika	1	skladowanie-w-magazynie
+glowny	562	testy	co na najnizszej polce	skladowanie-w-magazynie	1	skladowanie-w-magazynie, placa-minimalna, mobbing-i-dyskryminacja	1	skladowanie-w-magazynie
+glowny	563	testy	rampa zaladunkowa	drogi-i-przejscia	1	drogi-i-przejscia	1	drogi-i-przejscia
+glowny	564	testy	barierki dla pieszych hala	drogi-i-przejscia	1	drogi-i-przejscia	1	drogi-i-przejscia
+glowny	565	testy	pasy na hali zolte	drogi-i-przejscia	1	drogi-i-przejscia	1	drogi-i-przejscia
+glowny	566	testy	kamery w magazynie	monitoring-w-pracy	top3	drogi-i-przejscia, monitoring-w-pracy, skladowanie-w-magazynie	1	monitoring-w-pracy, skladowanie-w-magazynie, drogi-i-przejscia
+glowny	567	testy	zniszczylem wozek widlowy kto placi	odpowiedzialnosc-materialna	top3	badania-kierowcy, odpowiedzialnosc-materialna, waznosc-uprawnien-udt	1	odpowiedzialnosc-materialna, waznosc-uprawnien-udt, drogi-i-przejscia
+glowny	568	testy	kara za zniszczenie	odpowiedzialnosc-materialna	top3	kara-porzadkowa, odpowiedzialnosc-materialna, kontrola-trzezwosci	top3	kara-porzadkowa, odpowiedzialnosc-materialna, kontrola-trzezwosci
+glowny	569	testy	ile procent rampa	drogi-i-przejscia	1	drogi-i-przejscia, odszkodowanie-za-wypadek-przy-pracy	1	drogi-i-przejscia, odszkodowanie-za-wypadek-przy-pracy
+glowny	570	testy	wysokosc dojscia do stanowiska pracy	drogi-i-przejscia	1	drogi-i-przejscia, wypowiedzenie-zmieniajace, dodatek-wyrownawczy	1	drogi-i-przejscia
+glowny	571	testy	szatnia	normy-sanitarne	1	normy-sanitarne, monitoring-w-pracy	1	normy-sanitarne, monitoring-w-pracy
+glowny	572	testy	toaleta	normy-sanitarne	1	normy-sanitarne, monitoring-w-pracy	1	normy-sanitarne
+glowny	573	testy	szafka w szatni	brak	-	normy-sanitarne, monitoring-w-pracy	-	normy-sanitarne, monitoring-w-pracy
+glowny	574	testy	okulary do komputera	brak	-	przerwy-w-pracy, monitoring-w-pracy, praca-w-ciazy	-	przerwy-w-pracy, monitoring-w-pracy, praca-w-ciazy
+glowny	575	testy	ile kg wolno dzwigac	ile-kg-wolno-dzwigac	1	ile-kg-wolno-dzwigac, skladowanie-w-magazynie, praca-w-ciazy	1	ile-kg-wolno-dzwigac, skladowanie-w-magazynie
+glowny	576	testy	ile kg kobieta	ile-kg-wolno-dzwigac	1	ile-kg-wolno-dzwigac, skladowanie-w-magazynie, drgania-w-pracy	1	ile-kg-wolno-dzwigac, skladowanie-w-magazynie
+glowny	577	testy	od ile metrow praca na wysokosci	praca-na-wysokosci	1	praca-na-wysokosci, powierzchnia-na-pracownika, skladowanie-w-magazynie	1	praca-na-wysokosci, skladowanie-w-magazynie, powierzchnia-na-pracownika
+glowny	578	testy	kara pieniezna potracenie z wyplaty	kara-porzadkowa	1	kara-porzadkowa, odpowiedzialnosc-materialna	1	kara-porzadkowa, odpowiedzialnosc-materialna
+glowny	579	testy	praca przy maszynie	brak	-	drgania-w-pracy, praca-w-niedziele, praca-w-sobote	-	drgania-w-pracy, czy-potrzebne-uprawnienia-udt
+glowny	580	testy	auto sluzbowe	brak	-	monitoring-w-pracy, delegacja-krajowa, delegacja-zagraniczna	-	monitoring-w-pracy, odpowiedzialnosc-materialna
+glowny	581	testy	zepsulem sobie zdrowie w pracy	choroba-zawodowa	X	odszkodowanie-za-wypadek-przy-pracy, odpowiedzialnosc-materialna	X	odszkodowanie-za-wypadek-przy-pracy, odpowiedzialnosc-materialna
+glowny	582	testy	zniszczylem sobie kregoslup w pracy	choroba-zawodowa	1	choroba-zawodowa, okres-wypowiedzenia, przerwy-w-pracy	1	choroba-zawodowa, odpowiedzialnosc-materialna
+glowny	583	testy	wozek widlowy	waznosc-uprawnien-udt	1	waznosc-uprawnien-udt, badania-udt, drogi-i-przejscia	1	waznosc-uprawnien-udt, drogi-i-przejscia, badania-udt
+glowny	584	testy	zaplacic podatek	brak	-	zwrot-podatku-pit-37, brutto-netto, delegacja-krajowa	-	zwrot-podatku-pit-37, przedawnienie-wynagrodzenia, brutto-netto
+glowny	585	testy	prog podatkowy	brak	-	zwrot-podatku-pit-37, zwolnienia-grupowe, fundusz-socjalny	-	zwrot-podatku-pit-37, zwolnienia-grupowe, fundusz-socjalny
+glowny	586	testy	pasy bezpieczenstwa	brak	-	praca-na-wysokosci	-	praca-na-wysokosci
+glowny	587	testy	wysokosc odprawy	kalkulator-odprawy	1	kalkulator-odprawy, skladowanie-w-magazynie, odprawa-posmiertna	1	kalkulator-odprawy, odprawa-posmiertna, skladowanie-w-magazynie
+glowny	588	testy	wysokosc wynagrodzenia	brak	-	odpowiedzialnosc-materialna, przedawnienie-wynagrodzenia, skladowanie-w-magazynie	-	skladowanie-w-magazynie, praca-na-wysokosci, wynagrodzenie-za-przestoj
+glowny	589	testy	badania na stanowisku pracy	badania-lekarskie-w-pracy	top3	halas-w-pracy, szkolenie-okresowe-bhp, badania-lekarskie-w-pracy	1	badania-lekarskie-w-pracy, praca-na-wysokosci, halas-w-pracy
+glowny	590	testy	przedawnienie urlopu	zalegly-urlop	1	zalegly-urlop, kalkulator-urlopu, odpowiedzialnosc-materialna	1	zalegly-urlop, przedawnienie-wynagrodzenia, odpowiedzialnosc-materialna
+glowny	591	testy	stary urlop	zalegly-urlop	1	zalegly-urlop, kalkulator-urlopu, ekwiwalent-za-urlop	1	zalegly-urlop
+glowny	592	testy	niewykorzystany urlop z 2024	zalegly-urlop	top3	ekwiwalent-za-urlop, zalegly-urlop, urlop-w-agencji-pracy	top3	ekwiwalent-za-urlop, zalegly-urlop, urlop-w-agencji-pracy
+glowny	593	testy	na czarno	brak	-	informacja-o-warunkach-zatrudnienia	-	informacja-o-warunkach-zatrudnienia
+glowny	594	testy	praca na czarno	brak	-	informacja-o-warunkach-zatrudnienia, praca-w-niedziele, praca-w-sobote	-	informacja-o-warunkach-zatrudnienia
+glowny	595	testy	dokumenty na start w pracy	informacja-o-warunkach-zatrudnienia	1	informacja-o-warunkach-zatrudnienia, doba-pracownicza, kod-95	1	informacja-o-warunkach-zatrudnienia, zalegly-urlop, doba-pracownicza
+glowny	596	testy	zapoznanie z regulaminem pracy	informacja-o-warunkach-zatrudnienia	1	informacja-o-warunkach-zatrudnienia, fundusz-socjalny, kara-porzadkowa	1	informacja-o-warunkach-zatrudnienia
+glowny	597	testy	kiedy dostane umowe	informacja-o-warunkach-zatrudnienia	top3	brutto-netto, informacja-o-warunkach-zatrudnienia, zasilek-chorobowy-na-zleceniu	1	informacja-o-warunkach-zatrudnienia, brutto-netto, kara-porzadkowa
+glowny	598	testy	wymowienie	okres-wypowiedzenia	1	okres-wypowiedzenia	1	okres-wypowiedzenia
+glowny	599	testy	wypowiedzenie umowy na czas okreslony	okres-wypowiedzenia	1	okres-wypowiedzenia, umowa-na-czas-okreslony, umowa-na-zastepstwo	1	okres-wypowiedzenia, umowa-na-czas-okreslony, umowa-na-zastepstwo
+glowny	600	testy	wolne na poszukiwanie pracy	okres-wypowiedzenia	1	okres-wypowiedzenia, praca-w-sobote, praca-w-niedziele	1	okres-wypowiedzenia
+glowny	601	testy	odejscie z pracy	okres-wypowiedzenia	1	okres-wypowiedzenia, swiadectwo-pracy, zakaz-konkurencji	1	okres-wypowiedzenia, swiadectwo-pracy, zakaz-konkurencji
+glowny	602	testy	odprawa po 8 latach	kalkulator-odprawy	1	kalkulator-odprawy, rodzic-w-pracy	1	kalkulator-odprawy, odprawa-posmiertna
+glowny	603	testy	odprawa przy porozumieniu stron	kalkulator-odprawy	1	kalkulator-odprawy, zasilek-dla-bezrobotnych	1	kalkulator-odprawy, odprawa-posmiertna, zasilek-dla-bezrobotnych
+glowny	604	testy	czy nalezy mi sie odprawa	kalkulator-odprawy	1	kalkulator-odprawy, odprawa-posmiertna, zwolnienia-grupowe	1	kalkulator-odprawy, odprawa-posmiertna, zwolnienia-grupowe
+glowny	605	testy	ile pensji odprawy	kalkulator-odprawy	1	kalkulator-odprawy, wypowiedzenie-zmieniajace, odprawa-posmiertna	1	kalkulator-odprawy, odprawa-posmiertna, wypowiedzenie-zmieniajace
+glowny	606	testy	dostalem nagane	kara-porzadkowa	1	kara-porzadkowa, brutto-netto, kalkulator-l4	1	kara-porzadkowa
+glowny	607	testy	dostalam nagane	kara-porzadkowa	1	kara-porzadkowa, brutto-netto, kalkulator-l4	1	kara-porzadkowa
+glowny	608	testy	dostalem upomnienie	kara-porzadkowa	1	kara-porzadkowa, brutto-netto, kalkulator-l4	1	kara-porzadkowa
+glowny	609	testy	urlop na zadanie	kalkulator-urlopu	1	kalkulator-urlopu, urlop-w-godzinach, urlop-w-okresie-wypowiedzenia	1	kalkulator-urlopu, urlop-w-godzinach, urlop-w-okresie-wypowiedzenia
+glowny	610	testy	ekwiwalent za niewykorzystany urlop	ekwiwalent-za-urlop	1	ekwiwalent-za-urlop, zalegly-urlop, urlop-w-okresie-wypowiedzenia	1	ekwiwalent-za-urlop, zalegly-urlop, urlop-w-okresie-wypowiedzenia
+glowny	611	testy	przedawnienie	przedawnienie-wynagrodzenia	1	przedawnienie-wynagrodzenia, odpowiedzialnosc-materialna, zalegly-urlop	1	przedawnienie-wynagrodzenia, zalegly-urlop, odpowiedzialnosc-materialna
+glowny	612	testy	kara z regulaminu pracy	kara-porzadkowa	1	kara-porzadkowa, fundusz-socjalny, informacja-o-warunkach-zatrudnienia	1	kara-porzadkowa, informacja-o-warunkach-zatrudnienia, fundusz-socjalny
+glowny	613	testy	kara porzadkowa	kara-porzadkowa	1	kara-porzadkowa, kontrola-trzezwosci	1	kara-porzadkowa
+glowny	614	testy	nowa praca	informacja-o-warunkach-zatrudnienia	1	informacja-o-warunkach-zatrudnienia, okres-wyczekiwania, umowa-na-czas-okreslony	1	informacja-o-warunkach-zatrudnienia, okres-wyczekiwania, umowa-na-czas-okreslony
+glowny	615	testy	praca bez umowy	informacja-o-warunkach-zatrudnienia	1	informacja-o-warunkach-zatrudnienia, wypowiedzenie-zmieniajace, monitoring-w-pracy	1	informacja-o-warunkach-zatrudnienia, brutto-netto, praca-cudzoziemca
+glowny	616	testy	umowa na czas okreslony	umowa-na-czas-okreslony	1	umowa-na-czas-okreslony, okres-wypowiedzenia, umowa-na-zastepstwo	1	umowa-na-czas-okreslony, okres-wypowiedzenia, umowa-na-zastepstwo
+glowny	617	testy	czas okreslony	umowa-na-czas-okreslony	1	umowa-na-czas-okreslony, okres-wypowiedzenia, czas-jazdy-kierowcy	1	umowa-na-czas-okreslony, okres-wypowiedzenia
+glowny	618	testy	wypowiedzenie przed emerytura	ochrona-przedemerytalna	1	ochrona-przedemerytalna, swiadczenie-przedemerytalne, emerytura-pomostowa	1	ochrona-przedemerytalna, emerytura-pomostowa, swiadczenie-przedemerytalne
+glowny	619	testy	redukcja etatow	zwolnienia-grupowe	1	zwolnienia-grupowe, kalkulator-odprawy, kalkulator-urlopu	1	zwolnienia-grupowe, kalkulator-odprawy
+glowny	620	testy	porozumienie stron	brak	-	zasilek-dla-bezrobotnych, kalkulator-odprawy, zwrot-kosztow-szkolenia	-	zasilek-dla-bezrobotnych, kalkulator-odprawy
+glowny	621	testy	ile lat pracy	staz-pracy	1	staz-pracy, brutto-netto, renta-z-tytulu-niezdolnosci-do-pracy	1	staz-pracy, renta-z-tytulu-niezdolnosci-do-pracy, badania-kierowcy
+glowny	622	testy	odprawa posmiertna	odprawa-posmiertna	1	odprawa-posmiertna, kalkulator-odprawy, zwolnienia-grupowe	1	odprawa-posmiertna
+glowny	623	testy	dostalem l4	kalkulator-l4	1	kalkulator-l4, zasilek-chorobowy-na-zleceniu, nadgodziny-sredniotygodniowe	1	kalkulator-l4, co-wolno-na-l4, l4-po-zwolnieniu
+glowny	624	testy	toaleta w pracy	normy-sanitarne	1	normy-sanitarne, monitoring-w-pracy, okres-wypowiedzenia	1	normy-sanitarne
+glowny	625	testy	ile toalet w pracy	normy-sanitarne	1	normy-sanitarne, monitoring-w-pracy, okres-wypowiedzenia	1	normy-sanitarne, monitoring-w-pracy
+glowny	626	testy	szatnia w pracy	normy-sanitarne	1	normy-sanitarne, monitoring-w-pracy, okres-wypowiedzenia	1	normy-sanitarne, monitoring-w-pracy
+glowny	627	testy	szkoda na zdrowiu w pracy	odszkodowanie-za-wypadek-przy-pracy	1	odszkodowanie-za-wypadek-przy-pracy, odpowiedzialnosc-materialna, kalkulator-urlopu	1	odszkodowanie-za-wypadek-przy-pracy
+glowny	628	testy	potrącenie kary pieniężnej	kara-porzadkowa	1	kara-porzadkowa	1	kara-porzadkowa
+glowny	629	testy	pozwać pracodawcę	sad-pracy-czy-pip	1	sad-pracy-czy-pip, przedawnienie-wynagrodzenia, co-wolno-na-l4	1	sad-pracy-czy-pip, przedawnienie-wynagrodzenia
+glowny	630	testy	pozwać o wypłatę	przedawnienie-wynagrodzenia	1	przedawnienie-wynagrodzenia, brutto-netto, sad-pracy-czy-pip	1	przedawnienie-wynagrodzenia, sad-pracy-czy-pip
+glowny	631	testy	wypłata za pierwszy dzień pracy	wynagrodzenie-za-niepelny-miesiac	1	wynagrodzenie-za-niepelny-miesiac, informacja-o-warunkach-zatrudnienia, brutto-netto	1	wynagrodzenie-za-niepelny-miesiac, informacja-o-warunkach-zatrudnienia
+glowny	632	testy	świadectwo pracy po odejściu z pracy	swiadectwo-pracy	1	swiadectwo-pracy, okres-wypowiedzenia, staz-pracy	1	swiadectwo-pracy, kod-95
+glowny	633	testy	zwalniają mnie na L4	zwolnienie-na-l4	1	zwolnienie-na-l4, kalkulator-l4, okres-wypowiedzenia	1	zwolnienie-na-l4, okres-wypowiedzenia
+glowny	634	testy	powrót do pracy po zwolnieniu lekarskim	badania-lekarskie-w-pracy	1	badania-lekarskie-w-pracy, co-wolno-na-l4, l4-po-zwolnieniu	1	badania-lekarskie-w-pracy, co-wolno-na-l4, kalkulator-l4
+glowny	635	testy	praca na zwolnieniu lekarskim	co-wolno-na-l4	1	co-wolno-na-l4, badania-lekarskie-w-pracy, zwolnienie-na-l4	1	co-wolno-na-l4, badania-lekarskie-w-pracy, kalkulator-l4
+glowny	636	testy	fundusz socjalny	fundusz-socjalny	1	fundusz-socjalny, koszt-pracodawcy	1	fundusz-socjalny
+glowny	637	testy	świadczenie urlopowe	swiadczenie-urlopowe	1	swiadczenie-urlopowe, kalkulator-urlopu, swiadczenie-przedemerytalne	1	swiadczenie-urlopowe, swiadczenie-rehabilitacyjne, swiadczenie-przedemerytalne
+glowny	638	testy	fundusz socjalny ile wynosi	fundusz-socjalny	1	fundusz-socjalny, koszt-pracodawcy	1	fundusz-socjalny
+glowny	639	testy	fundusz socjalny dla emerytów	fundusz-socjalny	1	fundusz-socjalny	1	fundusz-socjalny
+glowny	640	testy	fundusz socjalny ile bez podatku	fundusz-socjalny	1	fundusz-socjalny, zerowy-pit	1	fundusz-socjalny
+glowny	641	testy	zfśs co to	fundusz-socjalny	1	fundusz-socjalny	1	fundusz-socjalny
+glowny	642	testy	zfśs od ilu pracowników	fundusz-socjalny	1	fundusz-socjalny, normy-sanitarne	1	fundusz-socjalny
+glowny	643	testy	zfśs odpis 2026	fundusz-socjalny	1	fundusz-socjalny	1	fundusz-socjalny
+glowny	644	testy	zfśs kwota wolna od podatku 2026	fundusz-socjalny	1	fundusz-socjalny	1	fundusz-socjalny, zwrot-podatku-pit-37
+glowny	645	testy	czy każdy pracodawca musi mieć fundusz socjalny	fundusz-socjalny	1	fundusz-socjalny, szkolenie-okresowe-bhp, termin-wyplaty-wynagrodzenia	1	fundusz-socjalny
+glowny	646	testy	kiedy pracodawca musi mieć fundusz socjalny	fundusz-socjalny	1	fundusz-socjalny, szkolenie-okresowe-bhp	1	fundusz-socjalny
+glowny	647	testy	wczasy pod gruszą zasady	fundusz-socjalny	1	fundusz-socjalny, swiadczenie-urlopowe	1	fundusz-socjalny, swiadczenie-urlopowe
+glowny	648	testy	wczasy pod gruszą dla kogo	fundusz-socjalny	1	fundusz-socjalny, swiadczenie-urlopowe	1	fundusz-socjalny, swiadczenie-urlopowe
+glowny	649	testy	bony świąteczne dla pracowników	fundusz-socjalny	1	fundusz-socjalny	1	fundusz-socjalny
+glowny	650	testy	zfśs	fundusz-socjalny	1	fundusz-socjalny	1	fundusz-socjalny
+glowny	651	testy	czy pracodawca musi mieć fundusz socjalny	fundusz-socjalny	1	fundusz-socjalny, szkolenie-okresowe-bhp	1	fundusz-socjalny
+glowny	652	testy	świadczenie urlopowe 2026 ile	swiadczenie-urlopowe	1	swiadczenie-urlopowe, kalkulator-urlopu, ekwiwalent-za-urlop	1	swiadczenie-urlopowe, swiadczenie-rehabilitacyjne, swiadczenie-przedemerytalne
+glowny	653	testy	wypadek na imprezie firmowej	odszkodowanie-za-wypadek-przy-pracy	1	odszkodowanie-za-wypadek-przy-pracy, odpowiedzialnosc-materialna, renta-z-tytulu-niezdolnosci-do-pracy	1	odszkodowanie-za-wypadek-przy-pracy, odpowiedzialnosc-materialna, renta-z-tytulu-niezdolnosci-do-pracy
+glowny	654	testy	wypadek na siłowni	brak	-	odszkodowanie-za-wypadek-przy-pracy, co-wolno-na-l4, renta-z-tytulu-niezdolnosci-do-pracy	-	odszkodowanie-za-wypadek-przy-pracy, co-wolno-na-l4, renta-z-tytulu-niezdolnosci-do-pracy
+glowny	655	testy	zlecenie na L4	zasilek-chorobowy-na-zleceniu	1	zasilek-chorobowy-na-zleceniu, co-wolno-na-l4, okres-wyczekiwania	1	zasilek-chorobowy-na-zleceniu, co-wolno-na-l4, okres-wyczekiwania
+glowny	656	testy	badania kontrolne po L4	badania-lekarskie-w-pracy	1	badania-lekarskie-w-pracy, co-wolno-na-l4, zwolnienie-na-l4	1	badania-lekarskie-w-pracy, co-wolno-na-l4, kontrola-trzezwosci
+glowny	657	testy	spacer w przerwie	brak	-	przerwy-w-pracy, co-wolno-na-l4, czas-jazdy-kierowcy	-	przerwy-w-pracy, co-wolno-na-l4, czas-jazdy-kierowcy
+glowny	658	testy	czy na l4 można wychodzić z domu	co-wolno-na-l4	1	co-wolno-na-l4, swiadczenie-rehabilitacyjne, zwolnienie-na-l4	1	co-wolno-na-l4
+glowny	659	testy	czy na L4 można pracować	co-wolno-na-l4	1	co-wolno-na-l4, nadgodziny-sredniotygodniowe, okres-wypowiedzenia	1	co-wolno-na-l4, kalkulator-l4, l4-po-zwolnieniu
+glowny	660	testy	praca na L4 u innego pracodawcy	co-wolno-na-l4	1	co-wolno-na-l4, zwolnienie-na-l4, dodatek-wyrownawczy	1	co-wolno-na-l4, dodatek-wyrownawczy, zwolnienie-na-l4
+glowny	661	testy	wyjazd na L4	co-wolno-na-l4	1	co-wolno-na-l4, okres-wyczekiwania, kalkulator-l4	1	co-wolno-na-l4, delegacja-krajowa, delegacja-zagraniczna
+glowny	662	testy	chory może chodzić	co-wolno-na-l4	1	co-wolno-na-l4, kalkulator-l4, zwolnienie-na-l4	1	co-wolno-na-l4
+glowny	663	testy	chory powinien leżeć	co-wolno-na-l4	1	co-wolno-na-l4	1	co-wolno-na-l4
+glowny	664	testy	odwołanie od decyzji ZUS	co-wolno-na-l4	1	co-wolno-na-l4, urlop-bezplatny	1	co-wolno-na-l4
+glowny	665	testy	siłownia na L4	co-wolno-na-l4	1	co-wolno-na-l4, kalkulator-l4, badania-lekarskie-w-pracy	1	co-wolno-na-l4
+glowny	666	testy	sport na L4	co-wolno-na-l4	1	co-wolno-na-l4, kalkulator-l4, badania-lekarskie-w-pracy	1	co-wolno-na-l4
+glowny	667	testy	remont na L4	co-wolno-na-l4	1	co-wolno-na-l4, kalkulator-l4, badania-lekarskie-w-pracy	1	co-wolno-na-l4
+glowny	668	testy	spacer na L4	co-wolno-na-l4	1	co-wolno-na-l4, kalkulator-l4, badania-lekarskie-w-pracy	1	co-wolno-na-l4
+glowny	669	testy	maile na L4	co-wolno-na-l4	1	co-wolno-na-l4, kalkulator-l4, badania-lekarskie-w-pracy	1	co-wolno-na-l4
+glowny	670	testy	maile na zwolnieniu lekarskim	co-wolno-na-l4	1	co-wolno-na-l4, kalkulator-l4, badania-lekarskie-w-pracy	1	co-wolno-na-l4, kalkulator-l4, badania-lekarskie-w-pracy
+glowny	671	raport	odprawa	kalkulator-odprawy	top3	odprawa-posmiertna, zwolnienia-grupowe, kalkulator-odprawy	1	kalkulator-odprawy, odprawa-posmiertna, zwolnienia-grupowe
+glowny	672	raport	kierownik dał mi upomnienie	kara-porzadkowa	X		1	kara-porzadkowa
+glowny	673	faq	Ile wynosi dodatek za pracę w nocy w 2026 r.?	dodatek-za-prace-w-nocy	1	dodatek-za-prace-w-nocy, placa-minimalna, brutto-netto	1	dodatek-za-prace-w-nocy, dodatek-wyrownawczy, kalkulator-nadgodzin
+glowny	674	faq	Od kiedy pracodawca musi ograniczać drgania?	drgania-w-pracy	1	drgania-w-pracy, fundusz-socjalny, swiadectwo-pracy	1	drgania-w-pracy
+glowny	675	faq	Ile godzin można pracować przy 90 dB?	halas-w-pracy	1	halas-w-pracy, kontrola-grafiku, nadgodziny-sredniotygodniowe	1	halas-w-pracy
+glowny	676	faq	Ile czasu ma pracodawca na protokół powypadkowy?	odszkodowanie-za-wypadek-przy-pracy	1	odszkodowanie-za-wypadek-przy-pracy, umowa-na-zastepstwo, swiadectwo-pracy	1	odszkodowanie-za-wypadek-przy-pracy, swiadectwo-pracy
+glowny	677	faq	Kto płaci za szkolenie BHP i czy odbywa się w czasie pracy?	szkolenie-okresowe-bhp	1	szkolenie-okresowe-bhp, odszkodowanie-za-wypadek-przy-pracy, badania-lekarskie-w-pracy	1	szkolenie-okresowe-bhp, kod-95
+glowny	678	faq	Czy na ręczny wózek paletowy potrzebne są uprawnienia UDT?	czy-potrzebne-uprawnienia-udt	top3	waznosc-uprawnien-udt, czy-potrzebne-uprawnienia-udt, badania-udt	1	czy-potrzebne-uprawnienia-udt, waznosc-uprawnien-udt
+glowny	679	faq	Co ile badanie UDT wózka widłowego?	badania-udt	1	badania-udt, waznosc-uprawnien-udt, drogi-i-przejscia	1	badania-udt, waznosc-uprawnien-udt, drogi-i-przejscia
+glowny	680	faq	Jaka musi być wysokość pomieszczenia pracy?	powierzchnia-na-pracownika	1	powierzchnia-na-pracownika, swiadectwo-pracy, praca-na-wysokosci	1	powierzchnia-na-pracownika, swiadectwo-pracy, drogi-i-przejscia
+glowny	681	faq	Ile toalet na liczbę pracowników?	normy-sanitarne	1	normy-sanitarne, okres-wypowiedzenia, monitoring-w-pracy	1	normy-sanitarne, monitoring-w-pracy, okres-wypowiedzenia
+glowny	682	faq	Co to jest praca dorywcza przy dźwiganiu?	ile-kg-wolno-dzwigac	1	ile-kg-wolno-dzwigac, praca-w-ciazy	1	ile-kg-wolno-dzwigac
+glowny	683	faq	Kogo nie dotyczą progi 35°C i 32°C?	temperatura-w-pracy	1	temperatura-w-pracy, dyzur-w-pracy	1	temperatura-w-pracy
+glowny	684	faq	Jak obliczyć wymiar czasu pracy?	wymiar-czasu-pracy	1	wymiar-czasu-pracy, pracownik-niepelnosprawny, nadgodziny-sredniotygodniowe	1	wymiar-czasu-pracy, pracownik-niepelnosprawny
+glowny	685	faq	Ile wynosi dodatek za nadgodziny?	kalkulator-nadgodzin	1	kalkulator-nadgodzin, dodatek-za-prace-w-nocy, placa-minimalna	1	kalkulator-nadgodzin, dodatek-za-prace-w-nocy, dodatek-wyrownawczy
+glowny	686	faq	Jak agencja liczy wynagrodzenie za urlop?	urlop-w-agencji-pracy	1	urlop-w-agencji-pracy, wynagrodzenie-za-urlop, wynagrodzenie-za-niepelny-miesiac	1	urlop-w-agencji-pracy, wynagrodzenie-za-urlop, wynagrodzenie-za-niepelny-miesiac
+glowny	687	faq	Czy krótki urlop przy długim weekendzie to problem z 14 dniami wypoczynku?	dni-wolne-od-pracy	1	dni-wolne-od-pracy	1	dni-wolne-od-pracy
+glowny	688	faq	Ile dni urlopu na żądanie?	kalkulator-urlopu	1	kalkulator-urlopu, urlop-w-godzinach, urlop-w-okresie-wypowiedzenia	1	kalkulator-urlopu, urlop-w-godzinach, urlop-w-okresie-wypowiedzenia
+glowny	689	faq	Kiedy przysługuje ekwiwalent za niewykorzystany urlop?	ekwiwalent-za-urlop	1	ekwiwalent-za-urlop, urlop-w-okresie-wypowiedzenia, zalegly-urlop	1	ekwiwalent-za-urlop, urlop-w-okresie-wypowiedzenia, zalegly-urlop
+glowny	690	faq	Jak liczy się podstawę chorobowego?	kalkulator-l4	1	kalkulator-l4, okres-zasilkowy, zasilek-chorobowy-na-zleceniu	1	kalkulator-l4, okres-zasilkowy, zasilek-chorobowy-na-zleceniu
+glowny	691	faq	Od czego liczy się odprawę?	kalkulator-odprawy	1	kalkulator-odprawy, kalkulator-nadgodzin, wynagrodzenie-za-urlop	1	kalkulator-odprawy, kalkulator-nadgodzin, wynagrodzenie-za-urlop
+glowny	692	faq	Ile godzin wolnego na dziecko przy niepełnym etacie?	wolne-na-dziecko	1	wolne-na-dziecko, praca-w-sobote, praca-w-niedziele	1	wolne-na-dziecko, rodzic-w-pracy
+glowny	693	faq	Ile wynosi płaca minimalna w 2026 r.?	placa-minimalna	1	placa-minimalna, brutto-netto, dodatek-za-prace-w-nocy	1	placa-minimalna, koszt-pracodawcy, brutto-netto
+glowny	694	faq	Jakie składki płaci pracownik?	brutto-netto	1	brutto-netto, koszt-pracodawcy, pracownik-mlodociany	1	brutto-netto, koszt-pracodawcy, pracownik-mlodociany
+glowny	695	faq	Jakie jest wypowiedzenie na okresie próbnym?	okres-probny	1	okres-probny, okres-wypowiedzenia, urlop-w-okresie-wypowiedzenia	1	okres-probny, okres-wypowiedzenia, urlop-w-okresie-wypowiedzenia
+glowny	696	faq	Kiedy limit 33 miesięcy nie obowiązuje?	umowa-na-czas-okreslony	1	umowa-na-czas-okreslony, umowa-na-zastepstwo, limit-pracy-tymczasowej	1	umowa-na-czas-okreslony, umowa-na-zastepstwo, limit-pracy-tymczasowej
+glowny	697	faq	A gdy zastępuję nieobecnego pracownika?	limit-pracy-tymczasowej	1	limit-pracy-tymczasowej	1	limit-pracy-tymczasowej
+glowny	698	faq	Ile to netto z 3000 zł brutto na zleceniu?	zlecenie-netto	1	zlecenie-netto, brutto-netto	1	zlecenie-netto, brutto-netto
+glowny	699	faq	Od której godziny liczy się niedziela w pracy?	praca-w-niedziele	1	praca-w-niedziele, doba-pracownicza, wymiar-czasu-pracy	1	praca-w-niedziele, wymiar-czasu-pracy, kontrola-grafiku
+glowny	700	faq	Jak policzyć godzinę przestoju przy pensji miesięcznej?	wynagrodzenie-za-przestoj	1	wynagrodzenie-za-przestoj, kalkulator-nadgodzin	1	wynagrodzenie-za-przestoj, kalkulator-nadgodzin
+glowny	701	faq	Czy za urlop płaci się dodatek nocny i nadgodziny?	wynagrodzenie-za-urlop	1	wynagrodzenie-za-urlop, dodatek-za-prace-w-nocy, placa-minimalna	1	wynagrodzenie-za-urlop, dodatek-za-prace-w-nocy, placa-minimalna
+glowny	702	faq	Czy nocne nadgodziny liczą się podwójnie?	wyplata-z-nadgodzinami	1	wyplata-z-nadgodzinami, dodatek-za-prace-w-nocy, kalkulator-nadgodzin	1	wyplata-z-nadgodzinami, kalkulator-nadgodzin, dodatek-za-prace-w-nocy
+glowny	703	faq	Czy można płacić mniej niż 2% do PPK?	kalkulator-ppk	1	kalkulator-ppk, okres-wypowiedzenia, placa-minimalna	1	kalkulator-ppk
+glowny	704	faq	Kiedy pracodawca nie płaci Funduszu Pracy?	koszt-pracodawcy	1	koszt-pracodawcy, fundusz-socjalny, wypowiedzenie-zmieniajace	1	koszt-pracodawcy, fundusz-socjalny, wypowiedzenie-zmieniajace
+glowny	705	faq	Ile wynosi ryczałt za nocleg w delegacji?	delegacja-krajowa	1	delegacja-krajowa, delegacja-zagraniczna	1	delegacja-krajowa, delegacja-zagraniczna
+glowny	706	faq	Czy prywatna firma może płacić niższą dietę za granicą?	delegacja-zagraniczna	1	delegacja-zagraniczna, delegacja-krajowa, kalkulator-l4	1	delegacja-zagraniczna, delegacja-krajowa
+glowny	707	faq	Kto wypłaca zasiłek chorobowy po końcu umowy?	l4-po-zwolnieniu	1	l4-po-zwolnieniu, zasilek-chorobowy-na-zleceniu, okres-wyczekiwania	1	l4-po-zwolnieniu, zasilek-chorobowy-na-zleceniu, kalkulator-l4
+glowny	708	faq	Czy pracodawca może mnie zwolnić w czasie świadczenia rehabilitacyjnego?	swiadczenie-rehabilitacyjne	1	swiadczenie-rehabilitacyjne, zwolnienie-na-l4, pracownik-niepelnosprawny	1	swiadczenie-rehabilitacyjne, zwolnienie-na-l4
+glowny	709	faq	Ile wynosi zasiłek opiekuńczy?	zasilek-opiekunczy	1	zasilek-opiekunczy, zasilek-dla-bezrobotnych, zasilek-macierzynski	1	zasilek-opiekunczy
+glowny	710	faq	Ile trwa urlop macierzyński i rodzicielski?	zasilek-macierzynski	1	zasilek-macierzynski, umowa-na-zastepstwo, urlop-wychowawczy	1	zasilek-macierzynski
+glowny	711	faq	Ile dni wolnego za oddanie krwi?	urlop-okolicznosciowy	1	urlop-okolicznosciowy, praca-w-sobote, dni-wolne-od-pracy	1	urlop-okolicznosciowy
+glowny	712	faq	Do kiedy można wykorzystać urlop ojcowski?	urlop-ojcowski	1	urlop-ojcowski, urlop-w-okresie-wypowiedzenia, kalkulator-urlopu	1	urlop-ojcowski, kalkulator-urlopu, urlop-w-godzinach
+glowny	713	faq	Kiedy złożyć wniosek o urlop wychowawczy?	urlop-wychowawczy	1	urlop-wychowawczy, rodzic-w-pracy, urlop-ojcowski	1	urlop-wychowawczy, urlop-ojcowski, rodzic-w-pracy
+glowny	714	faq	Co, gdy dzień wypłaty wypada w sobotę, niedzielę albo święto?	termin-wyplaty-wynagrodzenia	1	termin-wyplaty-wynagrodzenia, praca-w-niedziele, praca-w-sobote	1	termin-wyplaty-wynagrodzenia, praca-w-niedziele, dni-wolne-od-pracy
+glowny	715	faq	Ile to na godzinę 6000 zł brutto?	stawka-godzinowa	1	stawka-godzinowa, zlecenie-netto, brutto-netto	1	stawka-godzinowa, brutto-netto, zlecenie-netto
+glowny	716	faq	Jak często wolna niedziela?	kontrola-grafiku	1	kontrola-grafiku, praca-w-niedziele, kalkulator-urlopu	1	kontrola-grafiku, praca-w-niedziele, wynagrodzenie-za-niepelny-miesiac
+glowny	717	faq	Co wlicza się do stażu pracy od 2026 r.?	staz-pracy	1	staz-pracy, kalkulator-urlopu, dodatek-za-prace-w-nocy	1	staz-pracy, urlop-bezplatny, kalkulator-urlopu
+glowny	718	faq	Ile wynosi zasiłek dla bezrobotnych?	zasilek-dla-bezrobotnych	1	zasilek-dla-bezrobotnych, zasilek-macierzynski, zasilek-opiekunczy	1	zasilek-dla-bezrobotnych
+glowny	719	faq	Czy w ochronie przedemerytalnej można zostać zwolnionym?	ochrona-przedemerytalna	1	ochrona-przedemerytalna	1	ochrona-przedemerytalna
+glowny	720	faq	Czy od odszkodowania za zakaz konkurencji płaci się podatek?	zakaz-konkurencji	1	zakaz-konkurencji, odszkodowanie-za-wypadek-przy-pracy	1	zakaz-konkurencji
+glowny	721	faq	Ile mam czasu na pozew o odszkodowanie za zwolnienie?	odszkodowanie-za-zwolnienie	top3	swiadectwo-pracy, odszkodowanie-za-zwolnienie, okres-wypowiedzenia	1	odszkodowanie-za-zwolnienie, swiadectwo-pracy
+glowny	722	faq	Komu przysługuje odprawa pośmiertna?	odprawa-posmiertna	1	odprawa-posmiertna, kalkulator-odprawy, swiadczenie-przedemerytalne	1	odprawa-posmiertna, kalkulator-odprawy
+glowny	723	faq	Czy pracodawca może zwolnić mnie na L4?	zwolnienie-na-l4	1	zwolnienie-na-l4, swiadczenie-rehabilitacyjne, co-wolno-na-l4	1	zwolnienie-na-l4, co-wolno-na-l4, kalkulator-l4
+glowny	724	faq	Kiedy kara porządkowa się zaciera?	kara-porzadkowa	1	kara-porzadkowa	1	kara-porzadkowa
+glowny	725	faq	Ile jest czasu na odwołanie od wypowiedzenia do sądu pracy?	odwolanie-do-sadu-pracy	1	odwolanie-do-sadu-pracy, wypowiedzenie-zmieniajace, okres-wypowiedzenia	1	odwolanie-do-sadu-pracy, wypowiedzenie-zmieniajace, okres-wypowiedzenia
+glowny	726	faq	Ile dni wolnych na szukanie pracy?	okres-wypowiedzenia	1	okres-wypowiedzenia, praca-w-sobote, dni-wolne-od-pracy	1	okres-wypowiedzenia, praca-w-sobote, dni-wolne-od-pracy
+glowny	727	faq	Ile jest dni roboczych w roku?	dni-robocze	1	dni-robocze, kalkulator-urlopu, wolne-na-dziecko	1	dni-robocze
+glowny	728	faq	Kogo nie dotyczą przepisy o wynagrodzeniu za dyżur?	dyzur-w-pracy	1	dyzur-w-pracy, temperatura-w-pracy	1	dyzur-w-pracy
+glowny	729	faq	Ile zarabia uczeń w nauce zawodu w 2026 r.?	pracownik-mlodociany	1	pracownik-mlodociany	1	pracownik-mlodociany
+glowny	730	faq	Czy po 3 latach pracodawca na pewno nie zapłaci?	przedawnienie-wynagrodzenia	1	przedawnienie-wynagrodzenia, kalkulator-odprawy, odpowiedzialnosc-materialna	1	przedawnienie-wynagrodzenia, kalkulator-odprawy, odpowiedzialnosc-materialna
+glowny	731	faq	Czy po zwolnieniu grupowym pracodawca musi mnie przyjąć z powrotem?	zwolnienia-grupowe	1	zwolnienia-grupowe, urlop-szkoleniowy, swiadectwo-pracy	1	zwolnienia-grupowe, badania-lekarskie-w-pracy, kalkulator-odprawy
+glowny	732	faq	Od kiedy pracodawca musi stosować krótszy czas pracy?	pracownik-niepelnosprawny	1	pracownik-niepelnosprawny, swiadectwo-pracy, rodzic-w-pracy	1	pracownik-niepelnosprawny
+glowny	733	faq	Czy muszę oddać pieniądze za szkolenie, gdy odchodzę z pracy?	zwrot-kosztow-szkolenia	1	zwrot-kosztow-szkolenia	1	zwrot-kosztow-szkolenia
+glowny	734	faq	Ile dni przerwy w L4 zeruje okres zasiłkowy?	okres-zasilkowy	1	okres-zasilkowy, okres-wyczekiwania, badania-lekarskie-w-pracy	1	okres-zasilkowy, okres-wyczekiwania
+glowny	735	faq	Co, jeśli nie zgadzam się z wynikiem alkomatu?	kontrola-trzezwosci	1	kontrola-trzezwosci	1	kontrola-trzezwosci
+glowny	736	faq	Ile kilogramów może dźwigać kobieta w ciąży?	ile-kg-wolno-dzwigac	1	ile-kg-wolno-dzwigac, praca-w-ciazy, drgania-w-pracy	top3	praca-w-ciazy, ile-kg-wolno-dzwigac
+glowny	737	faq	Czy zamiast urlopu wychowawczego mogę pracować na pół etatu?	rodzic-w-pracy	1	rodzic-w-pracy, nadgodziny-sredniotygodniowe, kalkulator-urlopu	1	rodzic-w-pracy, kalkulator-urlopu, posilki-profilaktyczne
+glowny	738	faq	Czy do obsługi urządzeń do 1 kV potrzebne są uprawnienia?	waznosc-uprawnien-sep	1	waznosc-uprawnien-sep	1	waznosc-uprawnien-sep
+glowny	739	faq	Czy na paleciak elektryczny trzeba mieć uprawnienia UDT?	czy-potrzebne-uprawnienia-udt	1	czy-potrzebne-uprawnienia-udt	1	czy-potrzebne-uprawnienia-udt
+glowny	740	faq	Czy szkolenie zrobione wcześniej przedłuża kod 95 od starej daty?	kod-95	1	kod-95	1	kod-95
+glowny	741	faq	Ile kosztują psychotesty dla kierowcy?	badania-kierowcy	1	badania-kierowcy, kod-95	1	badania-kierowcy
+glowny	742	faq	Czy w nowej pracy zawsze trzeba robić badania wstępne?	badania-lekarskie-w-pracy	1	badania-lekarskie-w-pracy, informacja-o-warunkach-zatrudnienia, temperatura-w-pracy	1	badania-lekarskie-w-pracy
+glowny	743	faq	Skąd wiadomo, ile kcal spalam w pracy, i kto decyduje o posiłkach?	posilki-profilaktyczne	1	posilki-profilaktyczne	1	posilki-profilaktyczne
+glowny	744	faq	Czy na zleceniu należy się odzież robocza?	odziez-robocza	1	odziez-robocza, zasilek-chorobowy-na-zleceniu, dodatek-za-prace-w-nocy	1	odziez-robocza
+glowny	745	faq	Ile mam czasu na odmowę przyjęcia nowych warunków?	wypowiedzenie-zmieniajace	1	wypowiedzenie-zmieniajace	1	wypowiedzenie-zmieniajace
+glowny	746	faq	Co musi być w informacji o warunkach zatrudnienia?	informacja-o-warunkach-zatrudnienia	1	informacja-o-warunkach-zatrudnienia, monitoring-w-pracy	1	informacja-o-warunkach-zatrudnienia
+glowny	747	faq	Jaki jest okres wypowiedzenia umowy na zastępstwo?	umowa-na-zastepstwo	1	umowa-na-zastepstwo, okres-wypowiedzenia, okres-probny	1	umowa-na-zastepstwo, okres-wypowiedzenia, okres-probny
+glowny	748	faq	Jak liczy się pensję za miesiąc z L4?	wynagrodzenie-za-niepelny-miesiac	1	wynagrodzenie-za-niepelny-miesiac, wyplata-z-nadgodzinami, wynagrodzenie-za-urlop	1	wynagrodzenie-za-niepelny-miesiac, okres-wyczekiwania, wyplata-z-nadgodzinami
+glowny	749	faq	Jak długo przysługuje dodatek wyrównawczy?	dodatek-wyrownawczy	1	dodatek-wyrownawczy, dodatek-za-prace-w-nocy, dni-wolne-od-pracy	1	dodatek-wyrownawczy
+glowny	750	faq	Czy poprzednia praca skraca okres wyczekiwania?	okres-wyczekiwania	1	okres-wyczekiwania, szkolenie-okresowe-bhp	1	okres-wyczekiwania
+glowny	751	faq	Czy na umowie zlecenia należy się L4 płatne?	zasilek-chorobowy-na-zleceniu	1	zasilek-chorobowy-na-zleceniu, okres-wyczekiwania, l4-po-zwolnieniu	1	zasilek-chorobowy-na-zleceniu, l4-po-zwolnieniu, okres-wyczekiwania
+glowny	752	faq	Czy pracodawca musi wypłacić świadczenie urlopowe?	swiadczenie-urlopowe	1	swiadczenie-urlopowe, fundusz-socjalny, odpowiedzialnosc-materialna	1	swiadczenie-urlopowe, swiadczenie-rehabilitacyjne, ekwiwalent-za-urlop
+glowny	753	faq	Ile dni urlopu przy pracy po 12 godzin?	urlop-w-godzinach	1	urlop-w-godzinach, pracownik-mlodociany, rownowazny-czas-pracy	1	urlop-w-godzinach, rownowazny-czas-pracy, urlop-szkoleniowy
+glowny	754	faq	Co z urlopem, którego nie zdążę wykorzystać?	urlop-w-okresie-wypowiedzenia	1	urlop-w-okresie-wypowiedzenia, kalkulator-urlopu, urlop-ojcowski	1	urlop-w-okresie-wypowiedzenia
+glowny	755	faq	Czy na studia podyplomowe albo kurs przysługuje urlop szkoleniowy?	urlop-szkoleniowy	1	urlop-szkoleniowy, zwrot-kosztow-szkolenia	1	urlop-szkoleniowy, zwrot-kosztow-szkolenia
+glowny	756	faq	Czy pracodawca musi dać urlop bezpłatny?	urlop-bezplatny	1	urlop-bezplatny, zalegly-urlop, informacja-o-warunkach-zatrudnienia	1	urlop-bezplatny, zalegly-urlop
+glowny	757	faq	Do kiedy pracodawca musi udzielić zaległego urlopu?	zalegly-urlop	1	zalegly-urlop, swiadczenie-urlopowe, umowa-na-zastepstwo	1	zalegly-urlop, urlop-w-okresie-wypowiedzenia
+glowny	758	faq	Czy obywatel Ukrainy potrzebuje zezwolenia na pracę?	praca-cudzoziemca	1	praca-cudzoziemca, zgloszenie-pracy-cudzoziemca	1	praca-cudzoziemca, zgloszenie-pracy-cudzoziemca
+glowny	759	faq	Jakie terminy obowiązują przy oświadczeniu o powierzeniu pracy?	zgloszenie-pracy-cudzoziemca	1	zgloszenie-pracy-cudzoziemca, praca-cudzoziemca, wypowiedzenie-zmieniajace	1	zgloszenie-pracy-cudzoziemca, praca-cudzoziemca
+glowny	760	faq	Czy na wyjście prywatne trzeba złożyć wniosek?	odpracowanie-wyjscia-prywatnego	1	odpracowanie-wyjscia-prywatnego, waznosc-uprawnien-udt, rodzic-w-pracy	1	odpracowanie-wyjscia-prywatnego
+glowny	761	faq	Czy zamiast dnia wolnego można dostać pieniądze?	praca-w-sobote	1	praca-w-sobote, kalkulator-nadgodzin, nadgodziny-sredniotygodniowe	1	praca-w-sobote, posilki-profilaktyczne, kalkulator-nadgodzin
+glowny	762	faq	Czy zamiast dodatku można dostać wolne?	kalkulator-nadgodzin	1	kalkulator-nadgodzin, praca-w-sobote, nadgodziny-sredniotygodniowe	1	kalkulator-nadgodzin, nadgodziny-sredniotygodniowe, praca-w-sobote
+glowny	763	faq	Co to jest doba pracownicza?	doba-pracownicza	1	doba-pracownicza, kontrola-grafiku, okres-wypowiedzenia	1	doba-pracownicza, kontrola-grafiku
+glowny	764	faq	Jaki okres rozliczeniowy przy zmianach po 12 godzin?	rownowazny-czas-pracy	1	rownowazny-czas-pracy, kontrola-grafiku, urlop-w-godzinach	1	rownowazny-czas-pracy, kontrola-grafiku, urlop-w-godzinach
+glowny	765	faq	O ile ZUS zmniejszy rentę?	dorabianie-do-renty	1	dorabianie-do-renty, renta-z-tytulu-niezdolnosci-do-pracy, urlop-bezplatny	1	dorabianie-do-renty, renta-z-tytulu-niezdolnosci-do-pracy, urlop-bezplatny
+glowny	766	faq	Czy składka zdrowotna zmniejsza podatek?	zwrot-podatku-pit-37	1	zwrot-podatku-pit-37, urlop-bezplatny, brutto-netto	1	zwrot-podatku-pit-37, urlop-bezplatny, brutto-netto
+glowny	767	faq	Jak podzielić ulgę z drugim rodzicem?	ulga-na-dzieci	1	ulga-na-dzieci	1	ulga-na-dzieci
+glowny	768	faq	Do kiedy działa ulga dla młodych?	zerowy-pit	1	zerowy-pit	1	zerowy-pit
+glowny	769	faq	Czy zespół cieśni nadgarstka to choroba zawodowa?	choroba-zawodowa	1	choroba-zawodowa	1	choroba-zawodowa
+glowny	770	faq	Kiedy trzeba mieć szelki bezpieczeństwa?	praca-na-wysokosci	1	praca-na-wysokosci	1	praca-na-wysokosci
+glowny	771	faq	Czy trzeba pracować przed 1999 r.?	emerytura-pomostowa	1	emerytura-pomostowa, odpowiedzialnosc-materialna, pracownik-niepelnosprawny	1	emerytura-pomostowa, limit-pracy-tymczasowej, drgania-w-pracy
+glowny	772	faq	Czym różni się całkowita i częściowa niezdolność do pracy?	renta-z-tytulu-niezdolnosci-do-pracy	1	renta-z-tytulu-niezdolnosci-do-pracy, praca-w-sobote, odpracowanie-wyjscia-prywatnego	1	renta-z-tytulu-niezdolnosci-do-pracy
+glowny	773	faq	Komu przysługuje świadczenie przedemerytalne?	swiadczenie-przedemerytalne	1	swiadczenie-przedemerytalne, odprawa-posmiertna, kalkulator-odprawy	1	swiadczenie-przedemerytalne
+glowny	774	faq	Czy kierowcy busa do 3,5 tony dotyczą te przepisy?	czas-jazdy-kierowcy	1	czas-jazdy-kierowcy	1	czas-jazdy-kierowcy
+glowny	775	faq	Czy jazda jako drugi kierowca w załodze jest płatna?	dyzur-kierowcy	1	dyzur-kierowcy, czas-jazdy-kierowcy	1	dyzur-kierowcy
+glowny	776	faq	Co grozi za jazdę bez ważnego zaświadczenia ADR?	zaswiadczenie-adr	1	zaswiadczenie-adr, waznosc-uprawnien-udt	1	zaswiadczenie-adr
+glowny	777	faq	Co to jest dyskryminacja w pracy?	mobbing-i-dyskryminacja	1	mobbing-i-dyskryminacja, okres-wypowiedzenia, przerwy-w-pracy	1	mobbing-i-dyskryminacja
+glowny	778	faq	Czy pozew do sądu pracy jest płatny?	sad-pracy-czy-pip	1	sad-pracy-czy-pip, urlop-okolicznosciowy, odwolanie-do-sadu-pracy	1	sad-pracy-czy-pip, odwolanie-do-sadu-pracy, swiadectwo-pracy
+glowny	779	faq	Do kiedy pracodawca może żądać odszkodowania?	odpowiedzialnosc-materialna	1	odpowiedzialnosc-materialna, odszkodowanie-za-zwolnienie, mobbing-i-dyskryminacja	top3	odszkodowanie-za-zwolnienie, odpowiedzialnosc-materialna, mobbing-i-dyskryminacja
+glowny	780	faq	Co zrobić, gdy pracodawca nie wydał świadectwa pracy?	swiadectwo-pracy	1	swiadectwo-pracy, praca-cudzoziemca, fundusz-socjalny	1	swiadectwo-pracy
+glowny	781	faq	Czy pracodawca może nagrywać pracowników kamerą?	monitoring-w-pracy	1	monitoring-w-pracy, informacja-o-warunkach-zatrudnienia, odpowiedzialnosc-materialna	1	monitoring-w-pracy
+glowny	782	faq	Ile musi mieć przejście między maszynami?	drogi-i-przejscia	1	drogi-i-przejscia	1	drogi-i-przejscia
+glowny	783	faq	Co kładzie się na najniższych półkach regału?	skladowanie-w-magazynie	1	skladowanie-w-magazynie	1	skladowanie-w-magazynie
+glowny	784	faq	Jak wygląda kontrola ZUS na L4?	co-wolno-na-l4	1	co-wolno-na-l4, badania-lekarskie-w-pracy, kalkulator-l4	1	co-wolno-na-l4
+glowny	785	faq	Ile świadczeń z funduszu socjalnego jest bez podatku i ZUS?	fundusz-socjalny	1	fundusz-socjalny	1	fundusz-socjalny
+glowny	786	faq	Ile przerwy przy 12 godzinach pracy?	przerwy-w-pracy	1	przerwy-w-pracy, urlop-w-godzinach, rownowazny-czas-pracy	1	przerwy-w-pracy, kontrola-grafiku, rownowazny-czas-pracy
+kontrolny	1	google	ile płatne za niedziele	praca-w-niedziele	1	praca-w-niedziele, dyzur-kierowcy, wynagrodzenie-za-urlop	1	praca-w-niedziele, dyzur-kierowcy, wynagrodzenie-za-urlop
+kontrolny	2	google	ile płatne za urlop	wynagrodzenie-za-urlop	1	wynagrodzenie-za-urlop, urlop-ojcowski, urlop-okolicznosciowy	1	wynagrodzenie-za-urlop, urlop-ojcowski, urlop-okolicznosciowy
+kontrolny	3	google	czy przysługuje dzień wolny na badania okresowe	badania-lekarskie-w-pracy	1	badania-lekarskie-w-pracy, praca-w-niedziele, okres-wypowiedzenia	1	badania-lekarskie-w-pracy, okres-wypowiedzenia, praca-w-niedziele
+kontrolny	4	google	czy przysługuje dzień wolny na pogrzeb babci	urlop-okolicznosciowy	1	urlop-okolicznosciowy, dni-wolne-od-pracy, praca-w-niedziele	1	urlop-okolicznosciowy, praca-w-niedziele, praca-w-sobote
+kontrolny	5	google	czy przysługuje dzień wolny za święto w niedzielę	dni-wolne-od-pracy	top3	praca-w-niedziele, dni-wolne-od-pracy, praca-w-sobote	top3	praca-w-niedziele, dni-wolne-od-pracy, praca-w-sobote
+kontrolny	6	google	czy pracodawca ma prawo badać alkomatem	kontrola-trzezwosci	1	kontrola-trzezwosci, odszkodowanie-za-zwolnienie, temperatura-w-pracy	1	kontrola-trzezwosci, urlop-wychowawczy, odszkodowanie-za-zwolnienie
+kontrolny	7	google	czy pracodawca ma prawo odmówić urlopu na żądanie	kalkulator-urlopu	X	odszkodowanie-za-zwolnienie, odpowiedzialnosc-materialna, umowa-na-zastepstwo	1	kalkulator-urlopu, urlop-wychowawczy, urlop-w-okresie-wypowiedzenia
+kontrolny	8	google	czy pracodawca ma prawo odmówić urlopu	brak	-	umowa-na-zastepstwo, zalegly-urlop, urlop-bezplatny	-	urlop-wychowawczy, urlop-bezplatny, urlop-w-agencji-pracy
+kontrolny	9	google	czy pracownik może odmówić nadgodzin	brak	-	pracownik-mlodociany, praca-w-ciazy, rownowazny-czas-pracy	-	kalkulator-nadgodzin, pracownik-mlodociany, doba-pracownicza
+kontrolny	10	google	czy pracownik może odmówić delegacji	brak	-	co-wolno-na-l4, pracownik-mlodociany, delegacja-krajowa	-	delegacja-krajowa, delegacja-zagraniczna, pracownik-mlodociany
+kontrolny	11	google	czy pracownik może wycofać wypowiedzenie	brak	-	odszkodowanie-za-zwolnienie, okres-wypowiedzenia, co-wolno-na-l4	-	okres-wypowiedzenia, wypowiedzenie-zmieniajace, urlop-w-okresie-wypowiedzenia
+kontrolny	12	google	od kiedy przysługuje 26 dni urlopu	kalkulator-urlopu	1	kalkulator-urlopu, staz-pracy, dni-wolne-od-pracy	1	kalkulator-urlopu, staz-pracy, dni-wolne-od-pracy
+kontrolny	13	google	do kiedy pracodawca musi wypłacić ekwiwalent za niewykorzystany urlop	ekwiwalent-za-urlop	1	ekwiwalent-za-urlop, zalegly-urlop, swiadczenie-urlopowe	1	ekwiwalent-za-urlop, zalegly-urlop
+kontrolny	14	google	do kiedy pracodawca musi wyplacic wyplate	termin-wyplaty-wynagrodzenia	top3	odpowiedzialnosc-materialna, termin-wyplaty-wynagrodzenia, swiadczenie-urlopowe	1	termin-wyplaty-wynagrodzenia, ekwiwalent-za-urlop, swiadczenie-urlopowe
+kontrolny	15	google	do kiedy pracodawca musi zapłacić zus	brak	-	informacja-o-warunkach-zatrudnienia, fundusz-socjalny, urlop-bezplatny	-	koszt-pracodawcy, odszkodowanie-za-wypadek-przy-pracy, informacja-o-warunkach-zatrudnienia
+kontrolny	16	google	ile dni wolnego po oddaniu krwi	urlop-okolicznosciowy	1	urlop-okolicznosciowy, praca-w-sobote, dni-wolne-od-pracy	1	urlop-okolicznosciowy
+kontrolny	17	google	ile dni wolnego po śmierci ojca	urlop-okolicznosciowy	X	praca-w-sobote, dni-wolne-od-pracy, wolne-na-dziecko	X	dni-wolne-od-pracy, wolne-na-dziecko, praca-w-sobote
+kontrolny	18	google	zwolnienie z pracy a odprawa	kalkulator-odprawy	top3	okres-wypowiedzenia, kalkulator-odprawy, l4-po-zwolnieniu	1	kalkulator-odprawy, zwolnienia-grupowe, zwolnienie-na-l4
+kontrolny	19	google	zwolnienie z pracy a l4	zwolnienie-na-l4	top3	l4-po-zwolnieniu, zwolnienie-na-l4, badania-lekarskie-w-pracy	top3	l4-po-zwolnieniu, zwolnienie-na-l4, kalkulator-l4
+kontrolny	20	google	zwolnienie z pracy a ubezpieczenie zdrowotne	brak	-	urlop-bezplatny, okres-wypowiedzenia, l4-po-zwolnieniu	-	zwolnienie-na-l4, urlop-bezplatny, okres-wypowiedzenia
+kontrolny	21	google	urlop a l4	brak	-	wynagrodzenie-za-niepelny-miesiac, nadgodziny-sredniotygodniowe, kalkulator-l4	-	kalkulator-l4, co-wolno-na-l4, kalkulator-urlopu
+kontrolny	22	google	urlop art 188	wolne-na-dziecko	1	wolne-na-dziecko, odpracowanie-wyjscia-prywatnego	1	wolne-na-dziecko
+kontrolny	23	google	urlop a staż pracy	staz-pracy	top3	kalkulator-urlopu, staz-pracy, urlop-bezplatny	1	staz-pracy, kalkulator-urlopu, urlop-bezplatny
+kontrolny	24	google	l4 a umowa zlecenie	zasilek-chorobowy-na-zleceniu	1	zasilek-chorobowy-na-zleceniu, okres-wyczekiwania, zlecenie-netto	1	zasilek-chorobowy-na-zleceniu, zlecenie-netto, co-wolno-na-l4
+kontrolny	25	google	l4 a koniec umowy	l4-po-zwolnieniu	top3	zwolnienie-na-l4, zwolnienia-grupowe, l4-po-zwolnieniu	1	l4-po-zwolnieniu, zasilek-chorobowy-na-zleceniu, kalkulator-l4
+kontrolny	26	google	l4 a koniec umowy o pracę	l4-po-zwolnieniu	top3	zwolnienie-na-l4, l4-po-zwolnieniu, okres-wyczekiwania	1	l4-po-zwolnieniu, co-wolno-na-l4, kalkulator-l4
+kontrolny	27	google	nadgodziny a dziecko do lat 8	rodzic-w-pracy	1	rodzic-w-pracy, praca-w-sobote, zasilek-macierzynski	1	rodzic-w-pracy, zasilek-macierzynski, przedawnienie-wynagrodzenia
+kontrolny	28	google	nadgodziny a dziecko do lat 4	rodzic-w-pracy	1	rodzic-w-pracy, praca-w-sobote, nadgodziny-sredniotygodniowe	1	rodzic-w-pracy, nadgodziny-sredniotygodniowe, ochrona-przedemerytalna
+kontrolny	29	google	nadgodziny a godziny nadliczbowe	kalkulator-nadgodzin	1	kalkulator-nadgodzin, doba-pracownicza, nadgodziny-sredniotygodniowe	1	kalkulator-nadgodzin, nadgodziny-sredniotygodniowe, doba-pracownicza
+kontrolny	30	google	umowa zlecenie a emerytura	dorabianie-do-renty	X	zlecenie-netto, zasilek-chorobowy-na-zleceniu, emerytura-pomostowa	X	zlecenie-netto, zasilek-chorobowy-na-zleceniu, emerytura-pomostowa
+kontrolny	31	google	umowa zlecenie a zwolnienie lekarskie	zasilek-chorobowy-na-zleceniu	X	l4-po-zwolnieniu, co-wolno-na-l4, zwolnienie-na-l4	X	zlecenie-netto, kalkulator-l4, co-wolno-na-l4
+kontrolny	32	google	umowa zlecenie a umowa o pracę	zlecenie-netto	X	dodatek-za-prace-w-nocy, staz-pracy, kalkulator-urlopu	1	zlecenie-netto, zasilek-chorobowy-na-zleceniu, staz-pracy
+kontrolny	33	google	ciąża a umowa na czas określony	brak	-	umowa-na-czas-okreslony, umowa-na-zastepstwo, okres-wypowiedzenia	-	umowa-na-czas-okreslony, okres-wypowiedzenia, umowa-na-zastepstwo
+kontrolny	34	google	ciąża a umowa zlecenie	brak	-	umowa-na-zastepstwo, zlecenie-netto, zasilek-chorobowy-na-zleceniu	-	zlecenie-netto, umowa-na-zastepstwo, zasilek-chorobowy-na-zleceniu
+kontrolny	35	google	praca w upale na zewnątrz	temperatura-w-pracy	1	temperatura-w-pracy, posilki-profilaktyczne	1	temperatura-w-pracy, posilki-profilaktyczne
+kontrolny	36	google	praca w upale 2027	temperatura-w-pracy	1	temperatura-w-pracy, koszt-pracodawcy, kalkulator-urlopu	1	temperatura-w-pracy
+kontrolny	37	google	praca w upale nowe przepisy	temperatura-w-pracy	1	temperatura-w-pracy, co-wolno-na-l4, informacja-o-warunkach-zatrudnienia	1	temperatura-w-pracy, co-wolno-na-l4, informacja-o-warunkach-zatrudnienia
+kontrolny	38	google	praca w zimnie przepisy	temperatura-w-pracy	1	temperatura-w-pracy, co-wolno-na-l4, ile-kg-wolno-dzwigac	1	temperatura-w-pracy
+kontrolny	39	google	praca w zimnie skutki	temperatura-w-pracy	1	temperatura-w-pracy, urlop-bezplatny	1	temperatura-w-pracy, urlop-bezplatny
+kontrolny	40	google	czy praca w zimnie jest szkodliwa	temperatura-w-pracy	1	temperatura-w-pracy, praca-w-niedziele, praca-w-sobote	1	temperatura-w-pracy
+kontrolny	41	google	praca w nocy skutki uboczne	brak	-	dodatek-za-prace-w-nocy, urlop-bezplatny, praca-w-ciazy	-	dodatek-za-prace-w-nocy, urlop-bezplatny, praca-w-ciazy
+kontrolny	42	google	wózek widłowy przepisy bhp	czy-potrzebne-uprawnienia-udt	X	drogi-i-przejscia, waznosc-uprawnien-udt, badania-udt	X	drogi-i-przejscia, waznosc-uprawnien-udt, badania-udt
+kontrolny	43	google	uprawnienia wózek widłowy nowe przepisy	waznosc-uprawnien-udt	1	waznosc-uprawnien-udt, drogi-i-przejscia, czy-potrzebne-uprawnienia-udt	1	waznosc-uprawnien-udt, drogi-i-przejscia, badania-udt
+kontrolny	44	google	magazynier uprawnienia udt	czy-potrzebne-uprawnienia-udt	top3	waznosc-uprawnien-udt, czy-potrzebne-uprawnienia-udt, badania-udt	1	czy-potrzebne-uprawnienia-udt, waznosc-uprawnien-udt, badania-udt
+kontrolny	45	google	magazynier z uprawnieniami udt	czy-potrzebne-uprawnienia-udt	top3	waznosc-uprawnien-udt, czy-potrzebne-uprawnienia-udt, badania-udt	1	czy-potrzebne-uprawnienia-udt, waznosc-uprawnien-udt, badania-udt
+kontrolny	46	google	pracownik produkcji zakres obowiązków	brak	-	szkolenie-okresowe-bhp, umowa-na-czas-okreslony, zgloszenie-pracy-cudzoziemca	-	pracownik-mlodociany, pracownik-niepelnosprawny, szkolenie-okresowe-bhp
+kontrolny	47	google	pracownik magazynu kod zawodu	brak	-	pracownik-mlodociany, ile-kg-wolno-dzwigac, odpowiedzialnosc-materialna	-	kod-95, pracownik-mlodociany, pracownik-niepelnosprawny
+kontrolny	48	google	agencja pracy tymczasowej urlop	urlop-w-agencji-pracy	1	urlop-w-agencji-pracy, limit-pracy-tymczasowej, umowa-na-czas-okreslony	1	urlop-w-agencji-pracy, limit-pracy-tymczasowej
+kontrolny	49	google	agencja pracy tymczasowej a urlop wypoczynkowy	urlop-w-agencji-pracy	1	urlop-w-agencji-pracy, limit-pracy-tymczasowej, kalkulator-urlopu	1	urlop-w-agencji-pracy, limit-pracy-tymczasowej, kalkulator-urlopu
+kontrolny	50	google	agencja pracy wypowiedzenie umowy	urlop-w-agencji-pracy	top3	okres-wypowiedzenia, urlop-w-agencji-pracy, wypowiedzenie-zmieniajace	top3	limit-pracy-tymczasowej, urlop-w-agencji-pracy, okres-wypowiedzenia
+kontrolny	51	google	wypowiedzenie agencja pracy tymczasowej	urlop-w-agencji-pracy	1	urlop-w-agencji-pracy, limit-pracy-tymczasowej, umowa-na-czas-okreslony	1	urlop-w-agencji-pracy, limit-pracy-tymczasowej
+kontrolny	52	google	umowa na okres próbny a ciąża	brak	-	okres-probny, umowa-na-zastepstwo, okres-wypowiedzenia	-	okres-probny, umowa-na-zastepstwo
+kontrolny	53	google	umowa na okres próbny a l4	brak	-	okres-probny, okres-wyczekiwania, okres-zasilkowy	-	okres-probny, okres-wyczekiwania, okres-zasilkowy
+kontrolny	54	google	umowa na okres próbny a urlop	okres-probny	1	okres-probny, umowa-na-zastepstwo, staz-pracy	1	okres-probny, urlop-w-okresie-wypowiedzenia, umowa-na-zastepstwo
+kontrolny	55	google	wypowiedzenie przez pracownika kod podstawy prawnej	brak	-	odszkodowanie-za-zwolnienie	-	kod-95, okres-wypowiedzenia, wypowiedzenie-zmieniajace
+kontrolny	56	google	wypowiedzenie przez pracownika art	brak	-	okres-wypowiedzenia, zwolnienie-na-l4, odszkodowanie-za-zwolnienie	-	zwolnienie-na-l4, okres-wypowiedzenia, wolne-na-dziecko
+kontrolny	57	google	wypowiedzenie przez pracownika z zachowaniem okresu wypowiedzenia	okres-wypowiedzenia	1	okres-wypowiedzenia, urlop-w-agencji-pracy, urlop-w-okresie-wypowiedzenia	1	okres-wypowiedzenia, urlop-w-okresie-wypowiedzenia, okres-probny
+kontrolny	58	google	zwolnienie lekarskie a koniec umowy o pracę na czas określony	l4-po-zwolnieniu	X	okres-wypowiedzenia, umowa-na-czas-okreslony, zwolnienie-na-l4	X	umowa-na-czas-okreslony, okres-wypowiedzenia, zwolnienie-na-l4
+kontrolny	59	google	zwolnienie lekarskie a umowa zlecenie	zasilek-chorobowy-na-zleceniu	X	l4-po-zwolnieniu, co-wolno-na-l4, zwolnienie-na-l4	X	zlecenie-netto, kalkulator-l4, co-wolno-na-l4
+kontrolny	60	google	zwolnienie lekarskie a emerytura	brak	-	kalkulator-l4, l4-po-zwolnieniu, ochrona-przedemerytalna	-	kalkulator-l4, ochrona-przedemerytalna, zwolnienia-grupowe
+kontrolny	61	google	chorobowe a umowa zlecenie	zasilek-chorobowy-na-zleceniu	1	zasilek-chorobowy-na-zleceniu, zlecenie-netto, okres-wyczekiwania	top3	zlecenie-netto, zasilek-chorobowy-na-zleceniu, okres-wyczekiwania
+kontrolny	62	google	chorobowe a emerytura	brak	-	kalkulator-l4, emerytura-pomostowa, kalkulator-ppk	-	emerytura-pomostowa, ochrona-przedemerytalna, kalkulator-l4
+kontrolny	63	google	chorobowe a koniec umowy	l4-po-zwolnieniu	top3	zwolnienie-na-l4, zasilek-chorobowy-na-zleceniu, l4-po-zwolnieniu	X	zasilek-chorobowy-na-zleceniu, zwolnienie-na-l4, zlecenie-netto
+kontrolny	64	google	zasiłek chorobowy po ustaniu zatrudnienia	l4-po-zwolnieniu	1	l4-po-zwolnieniu, kalkulator-l4, zasilek-chorobowy-na-zleceniu	1	l4-po-zwolnieniu, zasilek-chorobowy-na-zleceniu, kalkulator-l4
+kontrolny	65	google	zasiłek chorobowy zus	kalkulator-l4	top3	co-wolno-na-l4, kalkulator-l4, zasilek-chorobowy-na-zleceniu	1	kalkulator-l4, zasilek-chorobowy-na-zleceniu, co-wolno-na-l4
+kontrolny	66	google	zasiłek chorobowy ile wynosi	kalkulator-l4	X	okres-wyczekiwania, swiadczenie-rehabilitacyjne, dodatek-wyrownawczy	top3	zasilek-chorobowy-na-zleceniu, kalkulator-l4, zasilek-opiekunczy
+kontrolny	67	google	zasiłek macierzyński a urlop macierzyński	zasilek-macierzynski	1	zasilek-macierzynski, umowa-na-zastepstwo, urlop-bezplatny	1	zasilek-macierzynski, urlop-bezplatny, umowa-na-zastepstwo
+kontrolny	68	google	zasiłek macierzyński a umowa zlecenie	brak	-	zasilek-chorobowy-na-zleceniu, zlecenie-netto, dodatek-za-prace-w-nocy	-	zasilek-macierzynski, zasilek-chorobowy-na-zleceniu, zlecenie-netto
+kontrolny	69	google	zasiłek macierzyński a rodzicielski	zasilek-macierzynski	1	zasilek-macierzynski	1	zasilek-macierzynski
+kontrolny	70	google	urlop rodzicielski 9 tygodni	zasilek-macierzynski	1	zasilek-macierzynski, nadgodziny-sredniotygodniowe, czas-jazdy-kierowcy	1	zasilek-macierzynski, urlop-ojcowski, czas-jazdy-kierowcy
+kontrolny	71	google	urlop rodzicielski ile trwa	zasilek-macierzynski	1	zasilek-macierzynski, urlop-wychowawczy, rodzic-w-pracy	1	zasilek-macierzynski, urlop-wychowawczy, rodzic-w-pracy
+kontrolny	72	google	urlop rodzicielski ile płatny	zasilek-macierzynski	X	wynagrodzenie-za-urlop, urlop-ojcowski, urlop-okolicznosciowy	top3	wynagrodzenie-za-urlop, zasilek-macierzynski, urlop-ojcowski
+kontrolny	73	google	urlop dla ojca po urodzeniu dziecka	urlop-ojcowski	top3	zasilek-macierzynski, urlop-ojcowski, urlop-okolicznosciowy	top3	zasilek-macierzynski, urlop-wychowawczy, urlop-ojcowski
+kontrolny	74	google	urlop dla ojca 9 tygodni	zasilek-macierzynski	X	nadgodziny-sredniotygodniowe, czas-jazdy-kierowcy, urlop-ojcowski	X	urlop-ojcowski, czas-jazdy-kierowcy, nadgodziny-sredniotygodniowe
+kontrolny	75	google	urlop dla ojca do 6 roku życia	rodzic-w-pracy	X	kalkulator-ppk, zalegly-urlop, zerowy-pit	X	zerowy-pit, kalkulator-urlopu, urlop-w-okresie-wypowiedzenia
+kontrolny	76	google	dzień wolny na dziecko do lat 14	wolne-na-dziecko	1	wolne-na-dziecko, rodzic-w-pracy, dni-wolne-od-pracy	1	wolne-na-dziecko, rodzic-w-pracy, ulga-na-dzieci
+kontrolny	77	google	dzień wolny na dziecko wniosek	wolne-na-dziecko	X	rodzic-w-pracy, urlop-wychowawczy, urlop-ojcowski	top3	rodzic-w-pracy, wolne-na-dziecko, urlop-wychowawczy
+kontrolny	78	google	dzień wolny na dziecko zdrowe	wolne-na-dziecko	top3	praca-w-niedziele, praca-w-sobote, wolne-na-dziecko	1	wolne-na-dziecko, ulga-na-dzieci, praca-w-niedziele
+kontrolny	79	google	opieka nad chorym dzieckiem do ilu lat	zasilek-opiekunczy	1	zasilek-opiekunczy, wolne-na-dziecko, urlop-wychowawczy	1	zasilek-opiekunczy, wolne-na-dziecko, urlop-wychowawczy
+kontrolny	80	google	opieka nad chorym dzieckiem ile płatne	zasilek-opiekunczy	1	zasilek-opiekunczy, wolne-na-dziecko, urlop-wychowawczy	1	zasilek-opiekunczy, wolne-na-dziecko, urlop-wychowawczy
+kontrolny	81	google	opieka nad chorym dzieckiem ile dni	zasilek-opiekunczy	1	zasilek-opiekunczy, wolne-na-dziecko, urlop-wychowawczy	1	zasilek-opiekunczy, wolne-na-dziecko, urlop-wychowawczy
+kontrolny	82	google	wolne za święto w sobotę 2026	dni-wolne-od-pracy	1	dni-wolne-od-pracy, praca-w-sobote, termin-wyplaty-wynagrodzenia	1	dni-wolne-od-pracy, praca-w-sobote, praca-w-niedziele
+kontrolny	83	google	wolne za święto w sobotę	dni-wolne-od-pracy	top3	praca-w-sobote, dni-wolne-od-pracy, praca-w-niedziele	1	dni-wolne-od-pracy, praca-w-sobote, praca-w-niedziele
+kontrolny	84	google	wolne za święto w niedzielę	dni-wolne-od-pracy	top3	praca-w-niedziele, dni-wolne-od-pracy, praca-w-sobote	top3	praca-w-niedziele, dni-wolne-od-pracy
+kontrolny	85	google	święta 2027 wolne od pracy	dni-wolne-od-pracy	top3	praca-w-niedziele, dni-wolne-od-pracy, praca-w-sobote	1	dni-wolne-od-pracy, praca-w-niedziele, praca-w-sobote
+kontrolny	86	google	święta 2027 wielkanoc	dni-wolne-od-pracy	top3	praca-w-niedziele, dni-wolne-od-pracy, koszt-pracodawcy	1	dni-wolne-od-pracy, praca-w-niedziele, praca-w-sobote
+kontrolny	87	google	święta 2027 kalendarz	dni-wolne-od-pracy	1	dni-wolne-od-pracy, termin-wyplaty-wynagrodzenia	1	dni-wolne-od-pracy, termin-wyplaty-wynagrodzenia
+kontrolny	88	google	długi weekend majowy 2027	dni-wolne-od-pracy	1	dni-wolne-od-pracy	1	dni-wolne-od-pracy, praca-w-niedziele
+kontrolny	89	google	dlugi weekend czerwiec 2027	dni-wolne-od-pracy	1	dni-wolne-od-pracy	1	dni-wolne-od-pracy, praca-w-niedziele
+kontrolny	90	google	dlugi weekend maj 2027	dni-wolne-od-pracy	1	dni-wolne-od-pracy	1	dni-wolne-od-pracy, praca-w-niedziele
+kontrolny	91	google	kalendarz dni wolnych 2026	dni-wolne-od-pracy	1	dni-wolne-od-pracy, dni-robocze, kalkulator-urlopu	1	dni-wolne-od-pracy, dni-robocze, praca-w-sobote
+kontrolny	92	google	kalendarz dni wolnych 2027	dni-wolne-od-pracy	1	dni-wolne-od-pracy, dni-robocze, kalkulator-urlopu	1	dni-wolne-od-pracy, dni-robocze, praca-w-sobote
+kontrolny	93	google	godziny pracy 2026	wymiar-czasu-pracy	1	wymiar-czasu-pracy, dodatek-za-prace-w-nocy, pracownik-mlodociany	1	wymiar-czasu-pracy, rownowazny-czas-pracy, doba-pracownicza
+kontrolny	94	google	godziny pracy wrzesień 2026	wymiar-czasu-pracy	1	wymiar-czasu-pracy, dodatek-za-prace-w-nocy, pracownik-mlodociany	1	wymiar-czasu-pracy, rownowazny-czas-pracy, doba-pracownicza
+kontrolny	95	google	godziny pracy sierpień 2026	wymiar-czasu-pracy	1	wymiar-czasu-pracy, dodatek-za-prace-w-nocy, pracownik-mlodociany	1	wymiar-czasu-pracy, rownowazny-czas-pracy, doba-pracownicza
+kontrolny	96	google	8 godzin pracy ile przerwy	przerwy-w-pracy	1	przerwy-w-pracy, drgania-w-pracy, pracownik-niepelnosprawny	1	przerwy-w-pracy, praca-w-ciazy, drgania-w-pracy
+kontrolny	97	google	8 godzin pracy ile minut przerwy	przerwy-w-pracy	1	przerwy-w-pracy, pracownik-niepelnosprawny, praca-w-ciazy	1	przerwy-w-pracy, praca-w-ciazy, pracownik-niepelnosprawny
+kontrolny	98	google	8 godzin pracy jaka przerwa	przerwy-w-pracy	1	przerwy-w-pracy, drgania-w-pracy, pracownik-niepelnosprawny	1	przerwy-w-pracy, praca-w-ciazy, drgania-w-pracy
+kontrolny	99	google	praca po godzinach w domu	brak	-	co-wolno-na-l4, przerwy-w-pracy, rownowazny-czas-pracy	-	co-wolno-na-l4, rownowazny-czas-pracy, urlop-w-godzinach
+kontrolny	100	google	praca po godzinach kodeks pracy	kalkulator-nadgodzin	X	przerwy-w-pracy, rownowazny-czas-pracy, urlop-w-godzinach	X	rownowazny-czas-pracy, urlop-w-godzinach, praca-w-sobote
+kontrolny	101	google	dodatek za pracę w nocy	dodatek-za-prace-w-nocy	1	dodatek-za-prace-w-nocy, wyplata-z-nadgodzinami, dodatek-wyrownawczy	1	dodatek-za-prace-w-nocy, wyplata-z-nadgodzinami, dodatek-wyrownawczy
+kontrolny	102	google	dodatek za pracę w nocy 2026	dodatek-za-prace-w-nocy	1	dodatek-za-prace-w-nocy, placa-minimalna, pracownik-mlodociany	1	dodatek-za-prace-w-nocy, wyplata-z-nadgodzinami, dodatek-wyrownawczy
+kontrolny	103	google	dodatek za pracę w godzinach nocnych	dodatek-za-prace-w-nocy	1	dodatek-za-prace-w-nocy, kalkulator-nadgodzin, praca-w-sobote	1	dodatek-za-prace-w-nocy, kalkulator-nadgodzin, dodatek-wyrownawczy
+kontrolny	104	google	wynagrodzenie minimalne 2026	placa-minimalna	1	placa-minimalna, dodatek-za-prace-w-nocy, koszt-pracodawcy	1	placa-minimalna, wynagrodzenie-za-niepelny-miesiac, kalkulator-l4
+kontrolny	105	google	wynagrodzenie minimalne 2027	placa-minimalna	top3	koszt-pracodawcy, placa-minimalna, kalkulator-l4	1	placa-minimalna, wynagrodzenie-za-niepelny-miesiac, kalkulator-l4
+kontrolny	106	google	wynagrodzenie minimalne 2026 netto	brutto-netto	1	brutto-netto, placa-minimalna, dodatek-za-prace-w-nocy	1	brutto-netto, placa-minimalna, zlecenie-netto
+kontrolny	107	google	podatek od wypłaty ppk	kalkulator-ppk	top3	brutto-netto, kalkulator-ppk, odszkodowanie-za-wypadek-przy-pracy	1	kalkulator-ppk, brutto-netto, termin-wyplaty-wynagrodzenia
+kontrolny	108	google	wypłata netto brutto	brutto-netto	1	brutto-netto, zlecenie-netto, wyplata-z-nadgodzinami	1	brutto-netto, zlecenie-netto
+kontrolny	109	google	wypłata netto 2026	brutto-netto	1	brutto-netto, termin-wyplaty-wynagrodzenia, ekwiwalent-za-urlop	1	brutto-netto, zlecenie-netto
+kontrolny	110	google	wypłata netto brutto kalkulator	brutto-netto	1	brutto-netto, zlecenie-netto, wyplata-z-nadgodzinami	1	brutto-netto, zlecenie-netto
+kontrolny	111	google	pit za 2025	zwrot-podatku-pit-37	X	brutto-netto, ulga-na-dzieci, zerowy-pit	1	zwrot-podatku-pit-37, ulga-na-dzieci, zerowy-pit
+kontrolny	112	google	zwrot z pitu	zwrot-podatku-pit-37	top3	zwrot-kosztow-szkolenia, ulga-na-dzieci, zwrot-podatku-pit-37	1	zwrot-podatku-pit-37, zwrot-kosztow-szkolenia, ulga-na-dzieci
+kontrolny	113	google	zwrot z pit do kiedy	zwrot-podatku-pit-37	top3	ulga-na-dzieci, zwrot-podatku-pit-37, zwrot-kosztow-szkolenia	1	zwrot-podatku-pit-37, ulga-na-dzieci, zwrot-kosztow-szkolenia
+kontrolny	114	google	zwrot z pitu na dziecko	ulga-na-dzieci	1	ulga-na-dzieci, zwrot-podatku-pit-37, praca-w-niedziele	1	ulga-na-dzieci, zwrot-podatku-pit-37, zwrot-kosztow-szkolenia
+kontrolny	115	google	odprawa przy zwolnieniu	kalkulator-odprawy	1	kalkulator-odprawy, zwolnienia-grupowe, kalkulator-l4	1	kalkulator-odprawy, zwolnienia-grupowe, odprawa-posmiertna
+kontrolny	116	google	odprawa przy likwidacji stanowiska	kalkulator-odprawy	1	kalkulator-odprawy, wypowiedzenie-zmieniajace	1	kalkulator-odprawy, wypowiedzenie-zmieniajace
+kontrolny	117	google	odprawa przy zwolnieniu indywidualnym	kalkulator-odprawy	1	kalkulator-odprawy, zwolnienia-grupowe, kalkulator-l4	1	kalkulator-odprawy, zwolnienia-grupowe, odprawa-posmiertna
+kontrolny	118	google	odprawa za zwolnienie z pracy	kalkulator-odprawy	top3	okres-wypowiedzenia, kalkulator-odprawy, l4-po-zwolnieniu	1	kalkulator-odprawy, zwolnienia-grupowe, zwolnienie-na-l4
+kontrolny	119	google	odprawa za likwidację stanowiska	kalkulator-odprawy	1	kalkulator-odprawy, wypowiedzenie-zmieniajace	1	kalkulator-odprawy, wypowiedzenie-zmieniajace
+kontrolny	120	google	odprawa za likwidację stanowiska pracy	kalkulator-odprawy	1	kalkulator-odprawy, wypowiedzenie-zmieniajace, dodatek-wyrownawczy	1	kalkulator-odprawy, wypowiedzenie-zmieniajace
+kontrolny	121	google	świadectwo pracy a umowa zlecenie	brak	-	staz-pracy, swiadectwo-pracy, dodatek-za-prace-w-nocy	-	swiadectwo-pracy, zlecenie-netto, zasilek-chorobowy-na-zleceniu
+kontrolny	122	google	świadectwo pracy aktualny wzór	brak	-	staz-pracy, swiadectwo-pracy, kod-95	-	swiadectwo-pracy, kod-95, odwolanie-do-sadu-pracy
+kontrolny	123	google	świadectwo pracy a ekwiwalent za urlop	brak	-	staz-pracy, ekwiwalent-za-urlop, urlop-w-okresie-wypowiedzenia	-	ekwiwalent-za-urlop, swiadectwo-pracy, urlop-w-okresie-wypowiedzenia
+kontrolny	124	google	szkolenie bhp dla pracownika	szkolenie-okresowe-bhp	1	szkolenie-okresowe-bhp, powierzchnia-na-pracownika, informacja-o-warunkach-zatrudnienia	1	szkolenie-okresowe-bhp, powierzchnia-na-pracownika, informacja-o-warunkach-zatrudnienia
+kontrolny	125	google	szkolenie bhp ile ważne	szkolenie-okresowe-bhp	1	szkolenie-okresowe-bhp, kod-95, praca-na-wysokosci	1	szkolenie-okresowe-bhp, kod-95, praca-na-wysokosci
+kontrolny	126	google	badania lekarskie do pracy	badania-lekarskie-w-pracy	1	badania-lekarskie-w-pracy, praca-na-wysokosci, zwolnienie-na-l4	1	badania-lekarskie-w-pracy, badania-kierowcy, praca-na-wysokosci
+kontrolny	127	google	badanie okresowe medycyna pracy	badania-lekarskie-w-pracy	1	badania-lekarskie-w-pracy, szkolenie-okresowe-bhp, okres-wypowiedzenia	1	badania-lekarskie-w-pracy
+kontrolny	128	google	badanie okresowe pracownika	badania-lekarskie-w-pracy	top3	szkolenie-okresowe-bhp, okres-wypowiedzenia, badania-lekarskie-w-pracy	1	badania-lekarskie-w-pracy, okres-wypowiedzenia, szkolenie-okresowe-bhp
+kontrolny	129	google	kontrola pip w firmie	brak	-	kontrola-grafiku, co-wolno-na-l4, kontrola-trzezwosci	-	kontrola-grafiku, kontrola-trzezwosci, sad-pracy-czy-pip
+kontrolny	130	google	kontrola pip bez zapowiedzi	brak	-	monitoring-w-pracy, sad-pracy-czy-pip	-	kontrola-grafiku, kontrola-trzezwosci, sad-pracy-czy-pip
+kontrolny	131	google	kontrola pip ile lat wstecz	brak	-	badania-lekarskie-w-pracy, przedawnienie-wynagrodzenia	-	kontrola-grafiku, kontrola-trzezwosci, przedawnienie-wynagrodzenia
+kontrolny	132	google	skarga na pracodawcę wzór	brak	-	sad-pracy-czy-pip, mobbing-i-dyskryminacja, co-wolno-na-l4	-	sad-pracy-czy-pip, mobbing-i-dyskryminacja
+kontrolny	133	google	skarga na pracodawcę do pip	sad-pracy-czy-pip	1	sad-pracy-czy-pip, mobbing-i-dyskryminacja	1	sad-pracy-czy-pip
+kontrolny	134	google	skarga na pracodawcę do zus	brak	-	sad-pracy-czy-pip, co-wolno-na-l4, koszt-pracodawcy	-	sad-pracy-czy-pip, koszt-pracodawcy, odszkodowanie-za-wypadek-przy-pracy
+kontrolny	135	google	sąd pracy a umowa zlecenie	brak	-	odwolanie-do-sadu-pracy, sad-pracy-czy-pip, dodatek-za-prace-w-nocy	-	zlecenie-netto, sad-pracy-czy-pip, odwolanie-do-sadu-pracy
+kontrolny	136	google	mobbing a dyskryminacja	mobbing-i-dyskryminacja	1	mobbing-i-dyskryminacja	1	mobbing-i-dyskryminacja
+kontrolny	137	google	mobbing art	mobbing-i-dyskryminacja	1	mobbing-i-dyskryminacja, wolne-na-dziecko, zwolnienie-na-l4	1	mobbing-i-dyskryminacja, wolne-na-dziecko, zwolnienie-na-l4
+kontrolny	138	google	kara dla pracownika za nienależyte wykonanie obowiązków	kara-porzadkowa	X		1	kara-porzadkowa, pracownik-mlodociany, pracownik-niepelnosprawny
+kontrolny	139	google	kara dla pracownika kodeks pracy	kara-porzadkowa	X	okres-wypowiedzenia, fundusz-socjalny, monitoring-w-pracy	1	kara-porzadkowa, pracownik-niepelnosprawny, pracownik-mlodociany
+kontrolny	140	google	kara dla pracownika za pracę na czarno	brak	-	informacja-o-warunkach-zatrudnienia, okres-wypowiedzenia, fundusz-socjalny	-	informacja-o-warunkach-zatrudnienia, kara-porzadkowa
+kontrolny	141	google	potrącenie z pensji bez zgody pracownika	odpowiedzialnosc-materialna	1	odpowiedzialnosc-materialna, wypowiedzenie-zmieniajace	1	odpowiedzialnosc-materialna, wypowiedzenie-zmieniajace
+kontrolny	142	google	potrącenie z pensji za błąd	odpowiedzialnosc-materialna	1	odpowiedzialnosc-materialna	1	odpowiedzialnosc-materialna, swiadectwo-pracy, kara-porzadkowa
+kontrolny	143	google	potrącenie z pensji za l4	wynagrodzenie-za-niepelny-miesiac	1	wynagrodzenie-za-niepelny-miesiac, odpowiedzialnosc-materialna	top3	odpowiedzialnosc-materialna, wynagrodzenie-za-niepelny-miesiac, kalkulator-l4
+kontrolny	144	google	szkoda wyrządzoną przez pracownika osobie trzeciej	odpowiedzialnosc-materialna	1	odpowiedzialnosc-materialna	1	odpowiedzialnosc-materialna, powierzchnia-na-pracownika
+kontrolny	145	google	szkoda wyrządzona przez pracownika pracodawcy	odpowiedzialnosc-materialna	1	odpowiedzialnosc-materialna, informacja-o-warunkach-zatrudnienia, fundusz-socjalny	1	odpowiedzialnosc-materialna
+kontrolny	146	google	szkoda wyrządzona umyślnie przez pracownika	odpowiedzialnosc-materialna	1	odpowiedzialnosc-materialna	1	odpowiedzialnosc-materialna
+kontrolny	147	google	kamera w pracy przepisy	monitoring-w-pracy	1	monitoring-w-pracy, co-wolno-na-l4, ile-kg-wolno-dzwigac	1	monitoring-w-pracy
+kontrolny	148	google	kamera w pracy a rodo	monitoring-w-pracy	1	monitoring-w-pracy	1	monitoring-w-pracy
+kontrolny	149	google	kamera w miejscu pracy	monitoring-w-pracy	1	monitoring-w-pracy	1	monitoring-w-pracy
+kontrolny	150	google	monitoring pracowników kodeks pracy	monitoring-w-pracy	1	monitoring-w-pracy, okres-wypowiedzenia, przerwy-w-pracy	1	monitoring-w-pracy, praca-w-ciazy, przerwy-w-pracy
+kontrolny	151	google	monitoring pracowników w miejscu pracy	monitoring-w-pracy	1	monitoring-w-pracy, okres-wypowiedzenia, przerwy-w-pracy	1	monitoring-w-pracy, praca-w-ciazy, przerwy-w-pracy
+kontrolny	152	google	monitoring pracowników rodo	monitoring-w-pracy	1	monitoring-w-pracy	1	monitoring-w-pracy
+kontrolny	153	google	przerwa na papierosa w pracy	brak	-	przerwy-w-pracy, czas-jazdy-kierowcy, limit-pracy-tymczasowej	-	przerwy-w-pracy, czas-jazdy-kierowcy, praca-w-ciazy
+kontrolny	154	google	przerwa śniadaniowa w pracy	przerwy-w-pracy	1	przerwy-w-pracy, czas-jazdy-kierowcy, limit-pracy-tymczasowej	1	przerwy-w-pracy, czas-jazdy-kierowcy
+kontrolny	155	google	przerwa śniadaniowa w pracy 8 godzin	przerwy-w-pracy	1	przerwy-w-pracy, drgania-w-pracy, pracownik-niepelnosprawny	1	przerwy-w-pracy, pracownik-niepelnosprawny
+kontrolny	156	google	przerwa śniadaniowa ile trwa	przerwy-w-pracy	1	przerwy-w-pracy, czas-jazdy-kierowcy, okres-probny	1	przerwy-w-pracy, czas-jazdy-kierowcy
+kontrolny	157	google	dźwiganie ciężarów medycyna pracy	ile-kg-wolno-dzwigac	1	ile-kg-wolno-dzwigac, badania-lekarskie-w-pracy, praca-w-ciazy	1	ile-kg-wolno-dzwigac, badania-lekarskie-w-pracy
+kontrolny	158	google	dzwiganie ciężarów w pracy	ile-kg-wolno-dzwigac	1	ile-kg-wolno-dzwigac, praca-w-ciazy, mobbing-i-dyskryminacja	1	ile-kg-wolno-dzwigac
+kontrolny	159	google	dźwiganie ciężarów przez kobiety	ile-kg-wolno-dzwigac	1	ile-kg-wolno-dzwigac, praca-w-ciazy	1	ile-kg-wolno-dzwigac
+kontrolny	160	google	temperatura na hali produkcyjnej	temperatura-w-pracy	1	temperatura-w-pracy	1	temperatura-w-pracy
+kontrolny	161	google	temperatura na hali 40 stopni	temperatura-w-pracy	1	temperatura-w-pracy, pracownik-niepelnosprawny	1	temperatura-w-pracy
+kontrolny	162	google	kierowca wózka widłowego	czy-potrzebne-uprawnienia-udt	X	badania-udt, drogi-i-przejscia, waznosc-uprawnien-udt	X	badania-udt, drogi-i-przejscia, badania-kierowcy
+kontrolny	163	google	emerytura a praca na etacie	dorabianie-do-renty	1	dorabianie-do-renty, fundusz-socjalny, emerytura-pomostowa	top3	emerytura-pomostowa, ochrona-przedemerytalna, dorabianie-do-renty
+kontrolny	164	google	emerytura a praca na umowę zlecenie	dorabianie-do-renty	X	dodatek-za-prace-w-nocy, staz-pracy, emerytura-pomostowa	X	zlecenie-netto, emerytura-pomostowa, zasilek-chorobowy-na-zleceniu
+kontrolny	165	google	emerytura a praca u tego samego pracodawcy	dorabianie-do-renty	X	fundusz-socjalny, okres-probny	X	emerytura-pomostowa, okres-probny, ochrona-przedemerytalna
+kontrolny	166	google	renta a praca na cały etat	dorabianie-do-renty	top3	koszt-pracodawcy, dorabianie-do-renty, renta-z-tytulu-niezdolnosci-do-pracy	X	renta-z-tytulu-niezdolnosci-do-pracy, praca-w-sobote, wymiar-czasu-pracy
+kontrolny	167	google	renta a praca zarobkowa	dorabianie-do-renty	1	dorabianie-do-renty, renta-z-tytulu-niezdolnosci-do-pracy, koszt-pracodawcy	top3	renta-z-tytulu-niezdolnosci-do-pracy, dorabianie-do-renty
+kontrolny	168	google	renta a praca na zlecenie	dorabianie-do-renty	1	dorabianie-do-renty, renta-z-tytulu-niezdolnosci-do-pracy, dodatek-za-prace-w-nocy	top3	renta-z-tytulu-niezdolnosci-do-pracy, dorabianie-do-renty, zasilek-chorobowy-na-zleceniu
+kontrolny	169	google	pracownik z orzeczeniem o niepełnosprawności w stopniu umiarkowanym	pracownik-niepelnosprawny	1	pracownik-niepelnosprawny	1	pracownik-niepelnosprawny
+kontrolny	170	google	pracownik z orzeczeniem o niepełnosprawności	pracownik-niepelnosprawny	1	pracownik-niepelnosprawny	1	pracownik-niepelnosprawny
+kontrolny	171	google	pracownik z orzeczeniem o niepełnosprawności w stopniu lekkim	pracownik-niepelnosprawny	1	pracownik-niepelnosprawny	1	pracownik-niepelnosprawny
+kontrolny	172	google	młodociany pracownik wynagrodzenie	pracownik-mlodociany	1	pracownik-mlodociany, odpowiedzialnosc-materialna, ile-kg-wolno-dzwigac	1	pracownik-mlodociany, ile-kg-wolno-dzwigac, odpowiedzialnosc-materialna
+kontrolny	173	google	młodociany pracownik od ilu lat	pracownik-mlodociany	1	pracownik-mlodociany, praca-na-wysokosci, halas-w-pracy	1	pracownik-mlodociany, fundusz-socjalny, praca-na-wysokosci
+kontrolny	174	google	młodociany pracownik ile godzin pracy	pracownik-mlodociany	1	pracownik-mlodociany, halas-w-pracy, doba-pracownicza	1	pracownik-mlodociany, pracownik-niepelnosprawny, ile-kg-wolno-dzwigac
+kontrolny	175	google	cudzoziemiec umowa zlecenie	praca-cudzoziemca	top3	zlecenie-netto, zasilek-chorobowy-na-zleceniu, praca-cudzoziemca	top3	zlecenie-netto, zasilek-chorobowy-na-zleceniu, praca-cudzoziemca
+kontrolny	176	google	fundusz socjalny a emeryci	fundusz-socjalny	1	fundusz-socjalny	1	fundusz-socjalny
+kontrolny	177	google	fundusz socjalny a rozwiązanie umowy o pracę	fundusz-socjalny	1	fundusz-socjalny, emerytura-pomostowa	1	fundusz-socjalny
+kontrolny	178	google	fundusz socjalny a pół etatu	fundusz-socjalny	1	fundusz-socjalny, kalkulator-urlopu, wymiar-czasu-pracy	1	fundusz-socjalny
