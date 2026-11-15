@@ -64,3 +64,20 @@ describe('audyt jakosc4: sprzeciw przy progach art. 115 KC', () => {
     expect(karaPorzadkowa({ naruszenie: ukaranie, wiadomosc: ukaranie, ukaranie }).sprzeciw).toMatchObject({ zdazDo, wedlugArt115, rozne });
   });
 });
+
+// Linijka praktyczna pod datą sprzeciwu (pakiet „terminy3”, daty z raporty/terminy3/linijka.py).
+describe('terminy3: sprzeciw w dzień wolny', () => {
+  const sp = (t: string) => t.replace(/\s/g, ' ');
+  it('sprzeciw do niedzieli 13 grudnia 2026 r.: złóż w piątek 11 grudnia', () => {
+    const o = opisKary({ naruszenie: '2026-12-01', wiadomosc: '2026-12-02', ukaranie: '2026-12-06' });
+    expect(sp(o.sprzeciw)).toBe('13 grudnia 2026 r.');
+    expect(sp(o.praktycznie)).toBe(
+      'To niedziela. Pismo do pracodawcy złóż najpóźniej w ostatnim dniu roboczym przed tą datą, czyli w piątek 11 grudnia 2026 r.: liczy się dzień, w którym do niego dotrze (art. 61 § 1 Kodeksu cywilnego).',
+    );
+  });
+  it('sprzeciw w święto 3 maja 2027 r. (poniedziałek): piątek 30 kwietnia; w dzień roboczy bez linijki', () => {
+    expect(sp(opisKary({ naruszenie: '2027-04-20', wiadomosc: '2027-04-21', ukaranie: '2027-04-26' }).praktycznie)).toContain('(Święto Narodowe Trzeciego Maja)');
+    expect(sp(opisKary({ naruszenie: '2027-04-20', wiadomosc: '2027-04-21', ukaranie: '2027-04-26' }).praktycznie)).toContain('czyli w piątek 30 kwietnia 2027 r.:');
+    expect(opisKary({ naruszenie: '2026-11-01', wiadomosc: '2026-11-02', ukaranie: '2026-11-03' }).praktycznie).toBe('');
+  });
+});

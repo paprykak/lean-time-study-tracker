@@ -101,3 +101,22 @@ describe('audyt jakosc4: ostrzeżenie przy datach z art. 115 KC, stan „innej n
     expect(wyplatyDoDochodzenia('2019-12-30', 'ten', 1).some((x) => x.za === '2020-01')).toBe(false);
   });
 });
+
+// Linijka praktyczna pod „zdąż do” (pakiet „terminy3”, daty z raporty/terminy3/linijka.py).
+describe('terminy3: koniec przedawnienia w dzień wolny', () => {
+  const sp = (t: string) => t.replace(/\s/g, ' ');
+  const p = (wymagalne: string) => przedawnienie(wymagalne, '2026-11-15');
+  it('koniec w niedzielę 13 grudnia 2026 r.: można nadać pozew tego dnia, z ostrzeżeniem', () => {
+    const o = opisPrzedawnienia(p('2023-12-13'), '2026-11-15');
+    expect(sp(o.praktycznie)).toBe(
+      'To niedziela. Tego dnia możesz jeszcze nadać pozew w placówce pocztowej operatora wyznaczonego (Poczty Polskiej), jeśli jest czynna: to tak, jakby wnieść go do sądu (art. 165 § 2 Kodeksu postępowania cywilnego). Nie odkładaj go na następny dzień roboczy: przy przedawnieniu przesunięcie z art. 115 Kodeksu cywilnego jest wątpliwe.',
+    );
+  });
+  it('Wigilia 2026 r. i sobota przed 2017 r. też; dzień roboczy i dzień po terminie bez linijki', () => {
+    expect(opisPrzedawnienia(p('2023-12-24'), '2026-11-15').praktycznie).toMatch(/^To dzień wolny od pracy \(Wigilia Bożego Narodzenia\)\. /);
+    expect(opisPrzedawnienia(przedawnienie('2013-12-31', '2016-12-01'), '2016-12-01').praktycznie).toMatch(/^To sobota\. Tego dnia/);
+    expect(opisPrzedawnienia(p('2023-12-11'), '2026-11-15').praktycznie).toBe('');
+    expect(opisPrzedawnienia(p('2023-12-13'), '2026-12-13').praktycznie).not.toBe('');
+    expect(opisPrzedawnienia(p('2023-12-13'), '2026-12-14').praktycznie).toBe('');
+  });
+});

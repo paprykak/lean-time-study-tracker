@@ -163,3 +163,24 @@ describe('błędne dane', () => {
     expect(() => opisSwiadectwa(dane({ ustanie: 'x' }), DZIS)).toThrow(RangeError);
   });
 });
+
+// Linijka praktyczna pod terminami pracownika (pakiet „terminy3”, daty z raporty/terminy3/linijka.py).
+describe('terminy3: terminy świadectwa w dzień wolny', () => {
+  it('wniosek o sprostowanie do niedzieli 13 grudnia 2026 r.: w piątek 11 grudnia, także pod najbliższym terminem', () => {
+    const o = opisSwiadectwa(dane({ ustanie: '2026-11-27', otrzymanie: '2026-11-29' }), '2026-11-30');
+    const s = o.pozycje.find((p) => p.klucz === 'sprostowanie')!;
+    expect(sp(s.praktycznie!)).toContain('czyli w piątek 11 grudnia 2026 r.:');
+    expect(sp(o.glownyPraktycznie)).toBe(sp(s.praktycznie!));
+  });
+  it('po złożeniu wniosku bez linijki przy sprostowaniu; pozew po odmowie w Wigilię: placówka pocztowa', () => {
+    const o = opisSwiadectwa(dane({ otrzymanie: '2026-10-31', wniosek: '2026-11-10', odmowa: '2026-12-10' }), '2026-12-14');
+    expect(o.pozycje.find((p) => p.klucz === 'sprostowanie')!.praktycznie).toBe('');
+    expect(sp(o.pozycje.find((p) => p.klucz === 'pozew')!.praktycznie!)).toMatch(/^To dzień wolny od pracy \(Wigilia Bożego Narodzenia\)\. Tego dnia możesz jeszcze nadać pismo/);
+    expect(sp(o.glownyPraktycznie)).toMatch(/Wigilia/);
+  });
+  it('pozew o wydanie: przedawnienie w niedzielę 13 grudnia 2026 r. (ustanie 13.12.2023 r.)', () => {
+    const o = opisSwiadectwa(dane({ ustanie: '2023-12-13' }), '2026-11-15');
+    expect(o.pozycje.find((p) => p.klucz === 'wydanie-sad')!.praktycznie).toMatch(/Nie odkładaj go na następny dzień roboczy/);
+    expect(opisSwiadectwa(dane({ ustanie: '2023-12-13' }), '2026-12-14').pozycje.find((p) => p.klucz === 'wydanie-sad')!.praktycznie).toBe('');
+  });
+});

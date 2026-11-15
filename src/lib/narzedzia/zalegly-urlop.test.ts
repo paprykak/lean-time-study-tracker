@@ -186,3 +186,20 @@ describe('audyt jakosc4', () => {
     expect(zaleglyUrlop({ urlopy: [{ rok: 2011, dni: 2 }], naDzien: '2026-11-15' }).lata[0].udzielenie.data).toBe('2012-09-30');
   });
 });
+
+// Linijka praktyczna pod głównym terminem (pakiet „terminy3”): 31.12.2028 r. to niedziela (raporty/terminy3/linijka.py).
+describe('terminy3: linijka praktyczna przy przedawnieniu urlopu', () => {
+  it('urlop za 2025 r.: koniec w niedzielę 31 grudnia 2028 r.', () => {
+    const o = opis(zaleglyUrlop({ urlopy: [{ rok: 2025, dni: 6 }], naDzien: NA }));
+    expect(o.praktycznie).toMatch(/^To niedziela\. Tego dnia możesz jeszcze nadać pozew .*przy przedawnieniu przesunięcie z art\. 115 Kodeksu cywilnego jest wątpliwe\.$/);
+  });
+  it('urlop za 2026 r. (31.12.2029 r., poniedziałek): bez linijki; po terminie też bez', () => {
+    expect(opis(zaleglyUrlop({ urlopy: [{ rok: 2026, dni: 26 }], naDzien: NA })).praktycznie).toBe('');
+    expect(opis(zaleglyUrlop({ urlopy: [{ rok: 2025, dni: 6 }], naDzien: '2029-01-01' })).praktycznie).toBe('');
+  });
+  it('ekwiwalent: koniec umowy 13.12.2023 r., przedawnienie w niedzielę 13.12.2026 r.', () => {
+    const o = opis(zaleglyUrlop({ urlopy: [{ rok: 2023, dni: 3 }], naDzien: NA, koniecUmowy: '2023-12-13' }));
+    expect(o.etykieta).toBe('Ekwiwalent za niewykorzystany urlop');
+    expect(o.praktycznie).toMatch(/^To niedziela\. Tego dnia możesz jeszcze nadać pozew/);
+  });
+});
