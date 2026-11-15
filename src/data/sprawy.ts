@@ -132,6 +132,9 @@ export const HASLA: Record<string, string[]> = {
   // Pakiet „l4” (2026-11-15): frazy z podpowiedzi wyszukiwarki Google (pl) do zapytań „co wolno na l4”, „czy na l4 można”,
   // „kontrola zus l4”, „praca na l4”, „wyjazd na l4”, „l4 chory może chodzić”.
   'co-wolno-na-l4': ['czy na L4 można wychodzić z domu', 'praca na L4', 'praca na L4 u innego pracodawcy', 'praca na L4 nowe przepisy', 'kontrola ZUS L4', 'kontrola ZUS jak wygląda', 'wyjazd na L4', 'chory może chodzić', 'chory powinien leżeć', 'utrata zasiłku chorobowego', 'odwołanie od decyzji ZUS', 'siłownia na L4', 'sport na L4', 'remont na L4', 'spacer na L4', 'maile na L4', 'praca na zwolnieniu lekarskim'],
+  // Pakiet „zfss” (2026-11-15): frazy z podpowiedzi wyszukiwarki Google (pl) do zapytań „fundusz socjalny”, „zfśs”,
+  // „fundusz socjalny ile”, „czy pracodawca musi mieć fundusz socjalny”, „wczasy pod gruszą”, „bony świąteczne”.
+  'fundusz-socjalny': ['ZFŚS', 'socjal', 'socjalne z pracy', 'fundusz socjalny w pracy', 'fundusz socjalny ile na pracownika', 'ZFŚS od ilu pracowników', 'czy każdy pracodawca musi mieć fundusz socjalny', 'odpis na ZFŚS', 'fundusz socjalny dla emerytów', 'bony świąteczne dla pracowników', 'paczki świąteczne', 'zapomoga z funduszu socjalnego', 'regulamin ZFŚS', 'kryterium socjalne', 'dofinansowanie z funduszu socjalnego', 'wczasy pod gruszą zasady', 'wczasy pod gruszą dla kogo'],
 };
 
 /**

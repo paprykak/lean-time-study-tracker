@@ -850,6 +850,35 @@ export const AKTY = {
     adres: eli(2026, 503),
     sprawdzono: '2026-11-15',
   },
+  // Pakiet „zfss” (2026-11-15): fundusz socjalny.
+  zfssZmiana2026: {
+    nazwa: 'Ustawa z 4 grudnia 2025 r. o zmianie ustawy – Kodeks pracy oraz ustawy o zakładowym funduszu świadczeń socjalnych',
+    publikator: 'Dz.U. 2026 poz. 25',
+    uwaga: 'od 27 stycznia 2026 r.; art. 2: art. 4 ust. 3 i art. 8 ust. 2 zd. 2 ustawy o ZFŚS („z pracownikami wybranymi przez załogę”); jedyna nowelizacja po t.j. Dz.U. 2024 poz. 288 w mocy, art. 2 pkt 1 zmienia od 1 stycznia 2028 r. Dz.U. 2026 poz. 1123 (art. 8)',
+    adres: eli(2026, 25),
+    sprawdzono: '2026-11-15',
+  },
+  zfssLiczbaZatrudnionych: {
+    nazwa: 'Rozporządzenie w sprawie sposobu ustalania przeciętnej liczby zatrudnionych w celu naliczania odpisu na zakładowy fundusz świadczeń socjalnych',
+    publikator: 'Dz.U. 2009 nr 43 poz. 349',
+    uwaga: '§ 1: przeciętna planowana liczba zatrudnionych w roku, skorygowana na koniec roku, niepełne etaty przeliczone na pełne; § 3: suma przeciętnych miesięcznych przez 12; bez zmian',
+    adres: eli(2009, 349),
+    sprawdzono: '2026-11-15',
+  },
+  zwiazkiZawodowe: {
+    nazwa: 'Ustawa o związkach zawodowych',
+    publikator: 'Dz.U. 2026 poz. 549',
+    uwaga: 'tekst jednolity; art. 27 ust. 1–2 (regulamin ZFŚS i przyznawanie świadczeń w uzgodnieniu z zakładową organizacją związkową), art. 30 ust. 6 (kilka związków bez wspólnego stanowiska w 30 dni: decyduje pracodawca); zmiana Dz.U. 2026 poz. 1340 zmienia art. 32 ust. 9¹ i dodaje art. 32¹, art. 27 i 30 bez zmian',
+    adres: eli(2026, 549),
+    sprawdzono: '2026-11-15',
+  },
+  okolobudzetowa2025: {
+    nazwa: 'Ustawa o szczególnych rozwiązaniach służących realizacji ustawy budżetowej na rok 2025',
+    publikator: 'Dz.U. 2024 poz. 1925',
+    uwaga: 'bez przepisu o odpisie na ZFŚS; projekt ustawy okołobudżetowej na 2027 r. (druk sejmowy nr 3154, uchwalony przez Sejm 6 listopada 2026 r.) też go nie ma',
+    adres: eli(2024, 1925),
+    sprawdzono: '2026-11-15',
+  },
 } as const satisfies Record<string, Akt>;
 
 export type KluczAktu = keyof typeof AKTY;
