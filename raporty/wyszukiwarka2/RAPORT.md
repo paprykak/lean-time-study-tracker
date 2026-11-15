@@ -114,9 +114,15 @@ Zasada w komentarzu `sprawy.ts` uzupełniona: hasło także wtedy, gdy całe cz�
 
 ## Wynik checku
 
-`npm run -s check:szybki`: EXIT 0. `BEZ_WEBKIT=1 npm run check`: EXIT 0 (wpis w commicie „pełny check zielony”).
-Testy jednostkowe: 2517 (w tym 4 nowe pliki i bloki: zestaw z progiem 95%/99%, algorytm, hasła w obie strony,
-poprawki po weryfikatorze). Zrzuty `/szukaj?q=…` z wynikami: `zrzuty/` (412 px i 320 px, bez ucięć i bez przewijania w bok).
+`npm run -s check:szybki`: EXIT 0. `BEZ_WEBKIT=1 npm run check`: EXIT 0 (2517 testów jednostkowych w 143 plikach,
+2417 testów E2E na komputerze i Androidzie w 8,8 min, axe, Lighthouse, budżet, build produkcji przed startem).
+Nowe testy: plik zestawu z progiem 95%/99% (także osobno dla podpowiedzi Google: 93%/99%), bloki algorytmu, haseł
+w obie strony i poprawek po weryfikatorze w `szukaj-narzedzi.test.ts`.
+
+Zrzuty (`zrzuty/`, podgląd `RH_PODGLAD=1`, telefon 412 px i 320 px): `/szukaj` dla „kierownik dał mi upomnienie”,
+„odprawa”, „ile stopni w pracy max” i pole na stronie głównej przy pisaniu „przeda”. Przy obu szerokościach strona nie
+przewija się w bok i żaden element treści nie wychodzi poza ekran (pomiar w skrypcie, nie tylko na oko); pasek kategorii
+u góry to wspólny przewijany pasek, tak jak wcześniej.
 
 ## Pogorszone zapytania (17)
 
