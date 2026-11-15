@@ -55,9 +55,18 @@ test('kontrola pracodawcy, zastrzeżenia i odwołanie z dwiema datami', async ({
   await expect(page.locator('[data-w="zastrzezenia-status"]')).toBeHidden();
   await page.getByLabel('Dzień czynności').fill('2026-11-12');
   await page.getByLabel('Otrzymanie protokołu').fill('2026-11-14');
-  await expect(page.locator('[data-w="zastrzezenia"]')).toContainText(/^Zastrzeżenia\sskładasz\snajpóźniej\s21\slistopada\s2026\sr\./);
+  // Audyt jakosc4 (A-2): koniec 7 dni w sobotę, więc dwie daty jak przy odwołaniu.
+  await expect(page.locator('[data-w="zastrzezenia"]')).toContainText(/^Zdąż\sdo\s21\slistopada\s2026\sr\.:\s7\sdni/);
+  await expect(page.locator('[data-w="zastrzezenia"]')).toContainText(/ostatni\sdzień\sto\s23\slistopada\s2026\sr\./);
   await expect(page.locator('[data-w="zastrzezenia-status"]')).toHaveText(/^Zostało\s6\sdni$/);
   await expect(page.locator('[data-w="zastrzezenia-status"]')).toHaveAttribute('data-status', 'wkrotce');
+  // Dzień po sobocie, w której minęła pierwsza data: nie „Termin minął”.
+  await page.getByLabel('Zwolnienie od').fill('2026-11-03');
+  await page.getByLabel('Dzień czynności').fill('2026-11-05');
+  await page.getByLabel('Otrzymanie protokołu').fill('2026-11-07');
+  await expect(page.locator('[data-w="zastrzezenia-status"]')).toHaveText(/^Pierwsza\sdata\sminęła;\sostatni\sdzień\swedług\sart\.\s115\sKC:\s16\slistopada\s2026\sr\.$/);
+  await page.getByLabel('Dzień czynności').fill('2026-11-12');
+  await page.getByLabel('Otrzymanie protokołu').fill('2026-11-14');
   await page.getByLabel('Doręczenie decyzji ZUS').fill('2026-11-13');
   await expect(page.locator('[data-w="odwolanie"]')).toContainText(/^Zdąż\sdo\s13\sgrudnia\s2026\sr\.:\smiesiąc\sod\sdoręczenia\sdecyzji\.\s13\sgrudnia\s2026\sr\.\sto\sniedziela/);
   await expect(page.locator('[data-w="odwolanie"]')).toContainText(/ostatni\sdzień\sto\s14\sgrudnia\s2026\sr\./);
