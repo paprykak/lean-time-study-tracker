@@ -55,3 +55,22 @@ test('z pouczeniem, próg 6 miesięcy w trakcie wypowiedzenia: oba warianty poł
   await expect(page.locator('[data-w="wariant-b"]')).toHaveText(/^21\slistopada\s2026\sr\.$/);
   await expect(page.locator('[data-w="koniec"]')).toHaveText(/^31\sgrudnia\s2026\sr\.$/);
 });
+
+test('koniec w sobotę: odmowa i odwołanie z datą „zdąż do” i datą według art. 115 KC', async ({ page }) => {
+  await page.getByLabel('Pracujesz u tego pracodawcy od').fill('2026-06-01');
+  await page.getByLabel('Dzień doręczenia pisma').fill('2026-11-14');
+  await expect(page.locator('#wynik-tytul')).toHaveText(/^Odmowa: zdąż do$/);
+  await expect(page.locator('[data-w="odmowa"]')).toHaveText(/^21\slistopada\s2026\sr\.$/);
+  await expect(page.locator('[data-w="odmowa-art115"]')).toHaveText(/^23\slistopada\s2026\sr\.$/);
+  await expect(page.locator('[data-w="odmowa-zdanie"]')).toContainText(/21\slistopada\s2026\sr\. to\ssobota.*art\.\s61\s§\s1 Kodeksu cywilnego/);
+  await expect(page.locator('[data-w="odwolanie"]')).toHaveText(/^5\sgrudnia\s2026\sr\.$/);
+  await expect(page.locator('[data-w="odwolanie-art115"]')).toHaveText(/^7\sgrudnia\s2026\sr\.$/);
+  await expect(page.locator('[data-w="odwolanie-zdanie"]')).toContainText(/IV\sP\s24\/19/);
+  // Dzień roboczy: jedna data, wiersze i zdania o art. 115 KC ukryte.
+  await page.getByLabel('Dzień doręczenia pisma').fill('2026-11-12');
+  await expect(page.locator('#wynik-tytul')).toHaveText(/^Odmowę złóż najpóźniej$/);
+  await expect(page.locator('[data-wiersz="odmowa-art115"]')).toBeHidden();
+  await expect(page.locator('[data-wiersz="odwolanie-art115"]')).toBeHidden();
+  await expect(page.locator('[data-w="odmowa-zdanie"]')).toBeHidden();
+  await expect(page.locator('[data-w="odwolanie-zdanie"]')).toBeHidden();
+});

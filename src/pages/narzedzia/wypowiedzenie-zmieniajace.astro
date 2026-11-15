@@ -2,12 +2,12 @@
 // Wypowiedzenie zmieniające: do kiedy odmówić nowych warunków (art. 42 § 3 Kp), kiedy kończy się okres wypowiedzenia
 // (art. 36 § 1, art. 30 § 2^1) i do kiedy odwołanie do sądu pracy (art. 264 § 1). Logika: src/lib/narzedzia/wypowiedzenie-zmieniajace.ts.
 import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
-import { tekstProgu, wypowiedzenieZmieniajace } from '../../lib/narzedzia/wypowiedzenie-zmieniajace';
-import { dataPoPolsku, dodajDni, dzisWPolsce } from '../../lib/narzedzia/terminy';
+import { opisZmieniajacego, wypowiedzenieZmieniajace } from '../../lib/narzedzia/wypowiedzenie-zmieniajace';
+import { BEZ_PRZESUNIECIA, ETYKIETA_ART_115, dodajDni, dzisWPolsce } from '../../lib/narzedzia/terminy';
 
 const DZIS = dzisWPolsce();
 const START = dodajDni(DZIS, -400);
-const r = wypowiedzenieZmieniajace(START, DZIS);
+const o = opisZmieniajacego(wypowiedzenieZmieniajace(START, DZIS), DZIS);
 
 const faq = [
   {
@@ -65,21 +65,27 @@ const faq = [
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
-      <h2 id="wynik-tytul" class="etykieta">Odmowę złóż najpóźniej</h2>
+      <h2 id="wynik-tytul" class="etykieta" data-w="odmowa-etykieta">{o.odmowaEtykieta}</h2>
       <div aria-live="polite" aria-atomic="true">
-        <p class="wynik-data" data-w="odmowa">{dataPoPolsku(r.odmowaDo)}</p>
-        <p class="status-terminu" data-w="status" hidden></p>
+        <p class="wynik-data" data-w="odmowa">{o.odmowa}</p>
+        <p class="status-terminu" data-w="status" data-status={o.statusKlasa}>{o.status}</p>
+        <dl class="wynik-lista" data-wiersz="odmowa-art115" hidden={!o.odmowaArt115}>
+          <div><dt>{ETYKIETA_ART_115}</dt><dd data-w="odmowa-art115">{o.odmowaArt115}</dd></div>
+        </dl>
       </div>
+      <p class="meta mt-2" data-w="odmowa-zdanie" hidden={!o.odmowaZdanie}>{o.odmowaZdanie}</p>
       <dl class="wynik-lista">
-        <div><dt>Okres wypowiedzenia</dt><dd data-w="okres">{r.okres.opis}</dd></div>
-        <div data-w="prog-wiersz" hidden={!r.prog}><dt>Próg stażu w trakcie wypowiedzenia</dt><dd data-w="prog">{r.prog ? tekstProgu(r.prog) : ''}</dd></div>
-        <div><dt>Okres kończy się</dt><dd data-w="koniec">{dataPoPolsku(r.koniec)}</dd></div>
-        <div><dt>Gdy przyjmiesz: nowe warunki od</dt><dd data-w="nowe">{dataPoPolsku(r.noweWarunkiOd)}</dd></div>
-        <div><dt>Gdy odmówisz: ostatni dzień umowy</dt><dd data-w="ostatni">{dataPoPolsku(r.koniec)}</dd></div>
-        <div><dt>Połowa od początku pełnego tygodnia albo miesiąca</dt><dd data-w="wariant-b">{dataPoPolsku(r.odmowaDoWariantB)}</dd></div>
-        <div><dt>Odwołanie do sądu pracy do</dt><dd data-w="odwolanie">{dataPoPolsku(r.odwolanieDo)}</dd></div>
+        <div><dt>Okres wypowiedzenia</dt><dd data-w="okres">{o.okres}</dd></div>
+        <div data-w="prog-wiersz" hidden={!o.prog}><dt>Próg stażu w trakcie wypowiedzenia</dt><dd data-w="prog">{o.prog ?? ''}</dd></div>
+        <div><dt>Okres kończy się</dt><dd data-w="koniec">{o.koniec}</dd></div>
+        <div><dt>Gdy przyjmiesz: nowe warunki od</dt><dd data-w="nowe">{o.nowe}</dd></div>
+        <div><dt>Gdy odmówisz: ostatni dzień umowy</dt><dd data-w="ostatni">{o.koniec}</dd></div>
+        <div><dt>Połowa od początku pełnego tygodnia albo miesiąca</dt><dd data-w="wariant-b">{o.wariantB}</dd></div>
+        <div><dt>Odwołanie do sądu pracy: zdąż do</dt><dd data-w="odwolanie">{o.odwolanie}</dd></div>
+        <div data-wiersz="odwolanie-art115" hidden={!o.odwolanieArt115}><dt>Odwołanie: {ETYKIETA_ART_115.toLowerCase()}</dt><dd data-w="odwolanie-art115">{o.odwolanieArt115}</dd></div>
       </dl>
-      <p class="wynik-uwaga" data-w="uwaga">Odmowa złożona później może zostać uznana za spóźnioną, a wtedy przyjmujesz nowe warunki (art. 42 § 3 Kodeksu pracy). Liczy się dzień, w którym odmowa dotrze do pracodawcy.</p>
+      <p class="meta mt-2" data-w="odwolanie-zdanie" hidden={!o.odwolanieZdanie}>{o.odwolanieZdanie}</p>
+      <p class="wynik-uwaga" data-w="uwaga">{o.uwaga}</p>
       <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
     </div>
   </form>
@@ -123,14 +129,18 @@ const faq = [
       odmowa złożona do tego dnia mieści się w terminie przy obu sposobach liczenia. Gdy próg stażu mija w trakcie
       wypowiedzenia, oba warianty liczymy od krótszego okresu. Gdy połowa wypada w środku dnia
       (na przykład przy 31 dniach), ten dzień już nie wchodzi do terminu. Dnia doręczenia nie liczymy (art. 111 § 2
-      Kodeksu cywilnego). Terminu na odmowę nie przesuwamy z soboty ani święta: gdy wypada w dzień wolny, złóż odmowę
-      wcześniej. Przepis nie wymaga pisma, ale pismo z potwierdzeniem odbioru jest dowodem, a liczy się dzień, w którym
-      odmowa dotrze do pracodawcy, a nie dzień wysłania. Najbezpieczniej złożyć odmowę od razu, gdy decyzja jest podjęta.
+      Kodeksu cywilnego). Gdy ostatni dzień na odmowę wypada w sobotę albo dzień ustawowo wolny od pracy, podajemy
+      dwie daty: „zdąż do” i ostatni dzień według art. 115 Kodeksu cywilnego (następny dzień, który nie jest dniem wolnym
+      ani sobotą). Czy to przesunięcie działa przy odmowie, przepisy wprost nie mówią, a orzeczeń o tym nie znaleźliśmy,
+      więc zdąż do pierwszej daty. Przepis nie wymaga pisma, ale pismo z potwierdzeniem odbioru jest dowodem, a liczy się dzień, w którym
+      odmowa dotrze do pracodawcy tak, że może się z nią zapoznać (art. 61 § 1 Kodeksu cywilnego), a nie dzień wysłania.
+      Najbezpieczniej złożyć odmowę od razu, gdy decyzja jest podjęta. {BEZ_PRZESUNIECIA.okres}
     </p>
     <p>
-      <strong>Odwołanie do sądu pracy.</strong> 21 dni od doręczenia pisma (art. 264 § 1). Gdy ostatni dzień wypada
-      w sobotę, niedzielę albo święto, termin przesuwa się na najbliższy dzień roboczy (art. 115 Kodeksu cywilnego).
-      Szczegóły i przywrócenie terminu: <a href="/narzedzia/odwolanie-do-sadu-pracy">kalkulator terminu odwołania</a>.
+      <strong>Odwołanie do sądu pracy.</strong> 21 dni od doręczenia pisma (art. 264 § 1), bez dnia doręczenia. Gdy
+      21. dzień wypada w sobotę albo dzień ustawowo wolny od pracy, podajemy „zdąż do” i ostatni dzień według art. 115
+      Kodeksu cywilnego: sądy pracy stosują to przesunięcie przy odwołaniach z art. 264, ale bezpieczniej zdążyć do pierwszej
+      daty. Szczegóły i przywrócenie terminu: <a href="/narzedzia/odwolanie-do-sadu-pracy">kalkulator terminu odwołania</a>.
     </p>
 
     <h2 id="kiedy-nie-wolno">Kiedy pracodawca nie może wypowiedzieć warunków</h2>
@@ -174,16 +184,17 @@ const faq = [
 <script>
   import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
-  import { tekstProgu, wypowiedzenieZmieniajace } from '../../lib/narzedzia/wypowiedzenie-zmieniajace';
-  import { dataPoPolsku, dniMiedzy, dzisWPolsce, poprawnaData } from '../../lib/narzedzia/terminy';
-  import { odmiana } from '../../lib/redakcja';
+  import { opisZmieniajacego, wypowiedzenieZmieniajace } from '../../lib/narzedzia/wypowiedzenie-zmieniajace';
+  import { dzisWPolsce, poprawnaData } from '../../lib/narzedzia/terminy';
   import { typografia } from '../../lib/typografia.mjs';
 
   const form = document.querySelector<HTMLFormElement>('[data-zmieniajace]');
   if (form) {
     const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const wiersz = (k: string) => form.querySelector<HTMLElement>(`[data-wiersz="${k}"]`)!;
     const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
-    const POLA = ['okres', 'koniec', 'nowe', 'ostatni', 'wariant-b', 'odwolanie'];
+    const POLA = ['odmowa', 'okres', 'koniec', 'nowe', 'ostatni', 'wariant-b', 'odwolanie'];
+    const ZDANIA = ['odmowa-zdanie', 'odwolanie-zdanie'];
     const przelicz = () => {
       const start = el('start').value;
       const doreczenie = el('doreczenie').value;
@@ -196,35 +207,41 @@ const faq = [
       else if (doreczenie < start) (blad = 'Dzień doręczenia nie może być wcześniejszy niż początek pracy.'), (pole = el('doreczenie'));
       pokazBlad(b, blad, pole);
       if (blad) {
-        w('odmowa').textContent = '—';
+        w('odmowa-etykieta').textContent = 'Odmowę złóż najpóźniej';
         for (const k of POLA) w(k).textContent = '—';
+        for (const k of ZDANIA) w(k).hidden = true;
         w('prog-wiersz').hidden = true;
+        wiersz('odmowa-art115').hidden = true;
+        wiersz('odwolanie-art115').hidden = true;
         status.hidden = true;
         w('uwaga').hidden = true;
         return;
       }
-      const r = wypowiedzenieZmieniajace(start, doreczenie, el('pouczenie').checked);
-      w('odmowa').textContent = typografia(dataPoPolsku(r.odmowaDo));
-      w('okres').textContent = typografia(r.okres.opis);
-      w('prog-wiersz').hidden = !r.prog;
-      w('prog').textContent = r.prog ? typografia(tekstProgu(r.prog)) : '';
-      w('koniec').textContent = typografia(dataPoPolsku(r.koniec));
-      w('nowe').textContent = typografia(dataPoPolsku(r.noweWarunkiOd));
-      w('ostatni').textContent = typografia(dataPoPolsku(r.koniec));
-      w('wariant-b').textContent = typografia(r.pouczenie ? dataPoPolsku(r.odmowaDoWariantB) : 'nie dotyczy (bez pouczenia)');
-      w('odwolanie').textContent = typografia(dataPoPolsku(r.odwolanieDo));
+      const o = opisZmieniajacego(wypowiedzenieZmieniajace(start, doreczenie, el('pouczenie').checked), dzisWPolsce());
+      const pisz = (k: string, t: string) => (w(k).textContent = typografia(t));
+      pisz('odmowa-etykieta', o.odmowaEtykieta);
+      pisz('odmowa', o.odmowa);
+      wiersz('odmowa-art115').hidden = !o.odmowaArt115;
+      pisz('odmowa-art115', o.odmowaArt115 ?? '');
+      pisz('odmowa-zdanie', o.odmowaZdanie);
+      w('odmowa-zdanie').hidden = !o.odmowaZdanie;
+      pisz('okres', o.okres);
+      w('prog-wiersz').hidden = !o.prog;
+      pisz('prog', o.prog ?? '');
+      pisz('koniec', o.koniec);
+      pisz('nowe', o.nowe);
+      pisz('ostatni', o.koniec);
+      pisz('wariant-b', o.wariantB);
+      pisz('odwolanie', o.odwolanie);
+      wiersz('odwolanie-art115').hidden = !o.odwolanieArt115;
+      pisz('odwolanie-art115', o.odwolanieArt115 ?? '');
+      pisz('odwolanie-zdanie', o.odwolanieZdanie);
+      w('odwolanie-zdanie').hidden = !o.odwolanieZdanie;
       w('uwaga').hidden = false;
-      w('uwaga').textContent = typografia(
-        r.pouczenie
-          ? 'Odmowa złożona później może zostać uznana za spóźnioną, a wtedy przyjmujesz nowe warunki (art. 42 § 3 Kodeksu pracy). Liczy się dzień, w którym odmowa dotrze do pracodawcy.'
-          : `Bez pouczenia możesz odmówić do końca okresu wypowiedzenia (art. 42 § 3 zdanie trzecie Kodeksu pracy).${r.prog ? ' Staż osiąga próg w trakcie wypowiedzenia, więc okres się wydłuża (art. 42 § 1 Kodeksu pracy, wyrok Sądu Najwyższego I PKN 34/99), ale termin na odmowę liczymy od krótszego okresu.' : ''} Liczy się dzień, w którym odmowa dotrze do pracodawcy.`,
-      );
-      const zostalo = dniMiedzy(dzisWPolsce(), r.odmowaDo);
+      pisz('uwaga', o.uwaga);
       status.hidden = false;
-      status.dataset.status = zostalo < 0 ? 'po-terminie' : zostalo <= 3 ? 'wkrotce' : 'w-terminie';
-      status.textContent = typografia(
-        zostalo < 0 ? 'Termin na odmowę minął' : zostalo === 0 ? 'To dziś: złóż odmowę dzisiaj' : zostalo === 1 ? 'Został 1 dzień' : `${zostalo % 10 >= 2 && zostalo % 10 <= 4 && (zostalo % 100 < 12 || zostalo % 100 > 14) ? 'Zostały' : 'Zostało'} ${odmiana(zostalo, ['dzień', 'dni', 'dni'])}`,
-      );
+      status.dataset.status = o.statusKlasa;
+      pisz('status', o.status);
     };
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);
