@@ -7,12 +7,13 @@
 
 /** Potoczne słowa, pod którymi ludzie szukają narzędzia (slug → hasła). */
 export const HASLA: Record<string, string[]> = {
-  // Pakiet „wyszukiwarka2” (2026-11-15): 27 haseł z podpowiedzi Google (pl) przy 18 narzędziach (źródło każdego
-  // w raporty/wyszukiwarka2/RAPORT.md) i 5 usuniętych, które zabierały ogólne zapytania narzędziu głównemu: „L4” przy
-  // okresie zasiłkowym, „odprawa” przy odprawie pośmiertnej i zwolnieniach grupowych (słowo jest w nazwie albo w FAQ),
-  // „sobota pracująca” przy pracy w sobotę (w podpowiedziach to kalendarz: „sobota pracująca w sierpniu”, na który żadne
-  // narzędzie nie odpowiada), „świadectwo pracy” przy stażu pracy (od rundy 7 jest narzędzie o świadectwie). Każda
-  // zmiana z testem w obie strony w src/lib/szukaj-narzedzi.test.ts.
+  // Pakiet „wyszukiwarka2” (2026-11-15): 26 haseł z podpowiedzi Google (pl) przy 17 narzędziach (źródło każdego
+  // w raporty/wyszukiwarka2/RAPORT.md) i 11 usuniętych, które zabierały ogólne słowo narzędziu, do którego ono należy:
+  // „L4” (okres zasiłkowy), „zwolnienie lekarskie” (zwolnienie na L4, L4 po zwolnieniu), „emerytura” (PPK), „odprawa”
+  // (odprawa pośmiertna, zwolnienia grupowe), „odszkodowanie” (zakaz konkurencji), „szkolenie” (lojalka), „świadectwo
+  // pracy” (staż pracy; od rundy 7 jest narzędzie o świadectwie), „wózek” (drgania) i „sobota pracująca” (praca w sobotę;
+  // w podpowiedziach to kalendarz sobót pracujących, na który żadne narzędzie nie odpowiada). Sprawy tych narzędzi są
+  // w ich nazwach, pytaniach z FAQ i pozostałych hasłach. Każda zmiana z testem w obie strony w src/lib/szukaj-narzedzi.test.ts.
   'kalkulator-l4': ['chorobowe', 'zwolnienie lekarskie', 'choroba', 'zasiłek chorobowy', 'e-ZLA', 'ile dostanę na L4'],
   'okres-zasilkowy': ['chorobowe', '182 dni', 'długie zwolnienie'],
   'zwolnienie-na-l4': ['choroba', 'wypowiedzenie na L4', 'art. 53', 'zwalniają mnie na L4'],
