@@ -54,7 +54,7 @@ describe('teksty wyniku', () => {
     expect(o.werdykt).toBe('Tak, jeśli badanie to potwierdzi');
     expect(o.opis).toContain('3 dni przed wizytą');
     expect(o.odKiedy).toBe('wtorek, 10 listopada 2026 r. (3 dni przed wizytą)');
-    expect(o.zawiadomEtykieta).toBe('Zawiadom pracodawcę najpóźniej');
+    expect(o.zawiadomEtykieta).toBe('Zawiadom pracodawcę');
     expect(o.zawiadom).toContain('środa, 11 listopada 2026 r.');
     expect(o.uwagi.join(' ')).toContain('Narodowe Święto Niepodległości');
   });
@@ -79,7 +79,7 @@ describe('teksty wyniku', () => {
   });
   it('nieobecność dopiero będzie: termin i uprzedzenie z § 2 ust. 1', () => {
     const o = opisL4('2026-11-13', '2026-11-16', 'inny', '2026-11-13');
-    expect(o.zawiadomEtykieta).toBe('Zawiadom pracodawcę najpóźniej');
+    expect(o.zawiadomEtykieta).toBe('Zawiadom pracodawcę');
     expect(o.zawiadom).toBe('niezwłocznie, najpóźniej wtorek, 17 listopada 2026 r.; gdy przyczynę znasz z góry, uprzedź przed 16 listopada 2026 r. (§ 2 ust. 1)');
   });
   it('termin minął: zawiadom od razu, § 2 ust. 3; bez uwagi o dniu wolnym', () => {
@@ -89,7 +89,7 @@ describe('teksty wyniku', () => {
     expect(o.uwagi).toEqual([]);
   });
   it('termin dziś to jeszcze nie spóźnienie', () => {
-    expect(opisL4('2026-11-13', '2026-11-12', 'inny', '2026-11-13').zawiadomEtykieta).toBe('Zawiadom pracodawcę najpóźniej');
+    expect(opisL4('2026-11-13', '2026-11-12', 'inny', '2026-11-13').zawiadomEtykieta).toBe('Zawiadom pracodawcę');
   });
   it('drugi dzień w sobotę albo w Boże Narodzenie: uwaga o dniu wolnym', () => {
     expect(opisL4('2026-11-13', '2026-11-13', 'inny', '2026-11-13').uwagi.join(' ')).toContain('14 listopada 2026 r. to sobota');

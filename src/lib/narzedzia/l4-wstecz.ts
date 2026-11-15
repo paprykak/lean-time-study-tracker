@@ -129,7 +129,7 @@ export function opisL4(badanie: string, poczatek: string, lekarz: Lekarz, dzis: 
   }
 
   const termin = terminZawiadomienia(poczatek);
-  let zawiadomEtykieta = 'Zawiadom pracodawcę najpóźniej';
+  let zawiadomEtykieta = 'Zawiadom pracodawcę';
   let zawiadom = `niezwłocznie, najpóźniej ${dataZDniem(termin)} (drugi dzień nieobecności)`;
   if (poczatek > dzis) {
     zawiadom = `niezwłocznie, najpóźniej ${dataZDniem(termin)}; gdy przyczynę znasz z góry, uprzedź przed ${dataPoPolsku(poczatek)} (§ 2 ust. 1)`;
