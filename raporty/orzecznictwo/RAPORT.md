@@ -28,8 +28,8 @@ uwagi w zakresie pakietu poprawione.
 ## Wynik checku
 
 - `npm run -s check:szybki`: EXIT 0.
-- `BEZ_WEBKIT=1 npm run check`: wynik w wiadomości końcowej zespołu i w commicie z dopiskiem „pełny check zielony”.
-- Zrzuty 412 i 320 px zmienionych stron (okres-wypowiedzenia z uwagą o progu, wypowiedzenie-zmieniajace z progiem i bez pouczenia, kalkulator-odprawy, badania-lekarskie-w-pracy): bez przewijania w bok, nic nie ucięte (tabele przewijają się we własnym pojemniku, jak w całym serwisie). Zrzuty w scratchpadzie sesji (`ux/`, `zrzuty/`), poza repozytorium.
+- `BEZ_WEBKIT=1 npm run check` (na commicie `3670873`, potem zmienił się tylko ten raport): EXIT 0; vitest 2029 testów (136 plików), Playwright 2335 passed, 343 skipped (WebKit), Lighthouse i `check:start` zielone.
+- Zrzuty 412 i 320 px zmienionych stron (okres-wypowiedzenia z uwagą o progu, wypowiedzenie-zmieniajace z progiem i bez pouczenia, kalkulator-odprawy, badania-lekarskie-w-pracy): bez przewijania w bok, nic nie ucięte (tabele przewijają się we własnym pojemniku, jak w całym serwisie). Po ostatnich poprawkach zrzuty wszystkich czterech stron w 412 i 320 px: `scrollWidth − innerWidth = 0` na każdej. Zrzuty w scratchpadzie sesji (`ux/`, `zrzuty/`), poza repozytorium.
 
 ## Pozycje z STAN.md
 
