@@ -86,9 +86,9 @@ const faq = [
       <div aria-live="polite" aria-atomic="true">
         <p class="wynik-data" data-w="glowny">{start.glowny}</p>
         <p class="meta" data-w="glowny-opis">{start.glownyOpis}</p>
-        <p class="meta mt-1" data-w="glowny-praktycznie" hidden={!start.glownyPraktycznie}>{start.glownyPraktycznie}</p>
         <p class="status-terminu" data-w="status" data-status={start.statusKlasa}>{start.status}</p>
       </div>
+      <p class="meta mt-2" data-w="glowny-praktycznie" hidden={!start.glownyPraktycznie}>{start.glownyPraktycznie}</p>
       <dl class="wynik-lista">
         {start.pozycje.map((p) => <div><dt>{p.etykieta}</dt><dd><span data-w={p.klucz}>{p.wartosc}</span><span class="wynik-opis" data-w={`${p.klucz}-praktycznie`}>{p.praktycznie ?? ''}</span><span class="block font-normal" data-w={`${p.klucz}-opis`}>{p.opis}</span></dd></div>)}
       </dl>

@@ -7,7 +7,7 @@ import { ETYKIETA_ART_115, dodajDni, dzisWPolsce } from '../../lib/narzedzia/ter
 
 const dzis = dzisWPolsce();
 const D = { naruszenie: dodajDni(dzis, -10), wiadomosc: dodajDni(dzis, -8), ukaranie: dzis };
-const o = opisKary(D);
+const o = opisKary(D, dzis);
 
 const faq = [
   {
@@ -58,11 +58,11 @@ const faq = [
       <h2 id="wynik-tytul" class="etykieta" data-w="etykieta">{o.etykieta}</h2>
       <div aria-live="polite" aria-atomic="true">
         <p class="wynik-data" data-w="sprzeciw">{o.sprzeciw}</p>
-        <p class="meta mt-1" data-w="praktycznie" hidden={!o.praktycznie}>{o.praktycznie}</p>
         <dl class="wynik-lista" data-wiersz="art115" hidden={!o.art115}>
           <div><dt>{ETYKIETA_ART_115}</dt><dd data-w="art115">{o.art115}</dd></div>
         </dl>
       </div>
+      <p class="meta mt-2" data-w="praktycznie" hidden={!o.praktycznie}>{o.praktycznie}</p>
       <p class="meta mt-2" data-w="zdanie" hidden={!o.zdanie}>{o.zdanie}</p>
       <p class="status-terminu" data-w="status" data-status={o.statusKlasa} aria-live="polite">{o.status}</p>
       <dl class="wynik-lista">
@@ -109,7 +109,7 @@ const faq = [
 <script>
   import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
   import { opisKary } from '../../lib/narzedzia/kara-porzadkowa';
-  import { poprawnaData } from '../../lib/narzedzia/terminy';
+  import { dzisWPolsce, poprawnaData } from '../../lib/narzedzia/terminy';
   import { typografia } from '../../lib/typografia.mjs';
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
 
@@ -143,7 +143,7 @@ const faq = [
         for (const k of ['ostatni', '2tyg', '3mies', 'zatarcie']) w(k).textContent = '—';
         return;
       }
-      const o = opisKary(d);
+      const o = opisKary(d, dzisWPolsce());
       w('etykieta').textContent = typografia(o.etykieta);
       w('sprzeciw').textContent = typografia(o.sprzeciw);
       w('praktycznie').textContent = typografia(o.praktycznie);

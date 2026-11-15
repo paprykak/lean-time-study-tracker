@@ -81,9 +81,9 @@ const faq = [
       <div aria-live="polite" aria-atomic="true">
         <p class="wynik-data" data-w="najstarsza">za {miesiac(pierwsza.za)}</p>
         <p class="meta" data-w="opis">{o.opis}</p>
-        <p class="meta mt-1" data-w="praktycznie" hidden={!o.praktycznie}>{o.praktycznie}</p>
         <p class="status-terminu" data-w="status" data-status={pierwsza.status}>{o.status}</p>
       </div>
+      <p class="meta mt-2" data-w="praktycznie" hidden={!o.praktycznie}>{o.praktycznie}</p>
       <p class="meta mt-2" data-w="zdanie" hidden={!o.zdanie}>{o.zdanie}</p>
       <dl class="wynik-lista">
         <div data-wiersz="inna" hidden><dt>Inna należność: koniec przedawnienia</dt><dd><span data-w="inna"></span><span class="wynik-opis" data-w="inna-praktycznie" hidden></span></dd></div>

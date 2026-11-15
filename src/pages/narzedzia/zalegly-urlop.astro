@@ -100,9 +100,9 @@ const faq = [
       <div aria-live="polite" aria-atomic="true">
         <p class="wynik-kwota" data-w="glowny">{o.glowny}</p>
         <p class="meta" data-w="opis">{o.opis}</p>
-        <p class="meta mt-1" data-w="praktycznie" hidden={!o.praktycznie}>{o.praktycznie}</p>
         <p class="status-terminu" data-w="status" data-status={o.status}>{o.statusTekst}</p>
       </div>
+      <p class="meta mt-2" data-w="praktycznie" hidden={!o.praktycznie}>{o.praktycznie}</p>
       <p class="meta mt-2" data-w="zdanie" hidden={!o.zdanie}>{o.zdanie}</p>
       <div data-w="lata">
         {o.lata.map((r) => (

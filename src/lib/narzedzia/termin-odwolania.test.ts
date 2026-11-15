@@ -8,6 +8,7 @@ describe('terminy odwołania do sądu pracy i sprostowania świadectwa (art. 264
   });
   it('koniec w Wigilię: przesunięcie przez święta i weekend na 28 grudnia', () => {
     const t = terminSprawy('2026-12-03', 'bez-wypowiedzenia');
+    expect(t.zdazDo).toBe('2026-12-24');
     expect(t.wedlugArt115).toBe('2026-12-28');
     expect(t.wolne.map((p) => p.powod)).toEqual(['Wigilia Bożego Narodzenia', 'Boże Narodzenie', 'drugi dzień Bożego Narodzenia', 'niedziela']);
   });

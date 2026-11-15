@@ -87,3 +87,12 @@ test('sprostowanie do pracodawcy w sobotę 2 stycznia 2027 r.: złóż w czwarte
   await expect(page.locator('[data-w="koniec"]')).toHaveText(/^2\sstycznia\s2027\sr\.$/);
   await expect(page.locator('[data-w="praktycznie"]')).toHaveText(/^To\ssobota\.\sPismo\sdo\spracodawcy\szłóż\snajpóźniej\sw\sostatnim\sdniu\sroboczym\sprzed\stą\sdatą,\sczyli\sw\sczwartek\s31\sgrudnia\s2026\sr\.,\schyba\sże\szakład\sprzyjmuje\spisma\stakże\stego\sdnia:\sliczy\ssię\sdzień,\sw\sktórym\spismo\sdo\sniego\sdotrze,\sa\snie\sdzień\snadania\s\(art\.\s61\s§\s1\sKodeksu\scywilnego\)\.$/);
 });
+
+test('dziś po dniu „Zdąż do” (25 grudnia 2026 r.): linijki już nie ma, status mówi o dniu z art. 115 KC', async ({ page }) => {
+  await page.clock.setFixedTime(new Date('2026-12-25T10:00:00+01:00'));
+  await page.goto(NARZEDZIE_ODWOLANIE);
+  await page.getByLabel('Sprawa', { exact: true }).selectOption('bez-wypowiedzenia');
+  await page.locator('#o-data').fill('2026-12-03');
+  await expect(page.locator('[data-w="status"]')).toHaveText(/^Pierwsza\sdata\sminęła/);
+  await expect(page.locator('[data-w="praktycznie"]')).toBeHidden();
+});

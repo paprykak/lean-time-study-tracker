@@ -1,0 +1,63 @@
+{
+  "znaleziska": [
+    {
+      "id": "K-1",
+      "waga": "ryzyko",
+      "plik": "src/lib/narzedzia/kara-porzadkowa.ts",
+      "linia": 48,
+      "problem": "Kara porządkowa wywołuje linijkaDniaWolnego bez `dzis`, więc linijka z radą na przyszłość („złóż najpóźniej w piątek 12 grudnia 2025 r.”) pokazuje się także dla terminu sprzeciwu, który dawno minął. Komentarz nad linijkaDniaWolnego mówi, że po dniu „Zdąż do” linijki nie ma, a w pozostałych 7 narzędziach tak jest (dzis albo naDzien, w zaległym urlopie przez zostalo >= 0). W karze nie ma też wariantu „ostatni dzień roboczy był…”.",
+      "dowod": "Podgląd 4330, zegar 2026-11-15: kara-porzadkowa, naruszenie 2025-12-01, dowiedział się 2025-12-02, zawiadomienie 2025-12-06 → [data-w=praktycznie] widoczny: „To sobota. Pismo do pracodawcy złóż najpóźniej w ostatnim dniu roboczym przed tą datą, czyli w piątek 12 grudnia 2025 r., …”.",
+      "propozycja": "Przekazać dzisWPolsce() do opisKary i dalej do linijkaDniaWolnego(r.sprzeciw, 'pracodawca', dzis) (strona i tak liczy w przeglądarce), dodać test jednostkowy i E2E ze stałym zegarem dla minionego terminu. Jeśli brak dzis w karze jest zamierzony, dopisać to w komentarzu nad linijkaDniaWolnego i w kara-porzadkowa.ts."
+    },
+    {
+      "id": "K-2",
+      "waga": "drobne",
+      "plik": "src/pages/narzedzia/swiadectwo-pracy.astro",
+      "linia": 93,
+      "problem": "Świadectwo pracy pokazuje tę samą długą linijkę (ok. 60 słów) dwa razy jedna pod drugą: pod najbliższym terminem (glowny-praktycznie) i w wierszu „Wniosek o sprostowanie” (sprostowanie-praktycznie), bo pozycja i termin główny to ten sam termin. Na telefonie 320 px to blisko pół ekranu powtórzonego tekstu.",
+      "dowod": "Zegar 2026-11-14, ostatni dzień umowy 2026-10-30, świadectwo 2026-10-31: oba elementy widoczne, identyczny tekst (zrzut: scratchpad/wk/swiadectwo-wycinek-320.png). To samo przy pozwie po odmowie i przy ostrożnym pozwie.",
+      "propozycja": "W pozycji, która jest jednocześnie terminem głównym, linijkę pominąć (albo podawać ją tylko pod głównym terminem), i zmienić asercję w E2E „dziś sobota…”, która dziś sprawdza obie kopie."
+    },
+    {
+      "id": "K-3",
+      "waga": "drobne",
+      "plik": "src/pages/narzedzia/przedawnienie-wynagrodzenia.astro",
+      "linia": 84,
+      "problem": "W 6 narzędziach (odwołanie, kara, świadectwo, przedawnienie, zaległy urlop, wypowiedzenie zmieniające: odmowa, badania) linijka jest w bloku aria-live=\"polite\" aria-atomic=\"true\". Przy każdej zmianie pola czytnik ekranu czyta od nowa cały blok, teraz z dodatkowymi ok. 300 znakami (przy przedawnieniu linijka jest między opisem a statusem, więc status pada dopiero po niej). Ogłoszeń to nie psuje, ale bardzo je wydłuża. W co-wolno-na-l4, w wierszach świadectwa i w odwołaniu przy wypowiedzeniu zmieniającym linijka jest poza aria-live.",
+      "dowod": "Playwright: dla [data-w=praktycznie] najbliższy przodek z aria-live to polite/atomic (telefon.json w scratchpadzie).",
+      "propozycja": "Przenieść linijkę za </div> regionu aria-live (zaraz pod nim, jak zdanie art. 115 KC w data-w=\"zdanie\"), a w przedawnieniu co najmniej za status, żeby ogłoszenie zostało krótkie: data i status."
+    },
+    {
+      "id": "K-4",
+      "waga": "drobne",
+      "plik": "src/lib/narzedzia/terminy.ts",
+      "linia": 155,
+      "problem": "dzienRoboczy, ostatniDzienRoboczyPrzed, wDniu i typ RodzajLinijki są eksportowane, ale poza terminy.ts używają ich tylko testy (grep po src, tests, scripts). Nie jest to błąd, ale poszerza publiczne API modułu.",
+      "dowod": "grep -rln '\\bdzienRoboczy\\b|ostatniDzienRoboczyPrzed|\\bwDniu\\b|RodzajLinijki' src tests scripts: tylko terminy.ts i terminy.test.ts (wDniu w swiadczenie-przedemerytalne.ts to inna nazwa pola, nie import).",
+      "propozycja": "Zostawić (eksport na potrzeby testów jest w repo przyjęty) albo opisać w komentarzu, że eksport jest dla testów; RodzajLinijki może zostać, bo to typ parametru funkcji publicznej."
+    },
+    {
+      "id": "K-5",
+      "waga": "drobne",
+      "plik": "tests/e2e/narzedzie-odwolanie.spec.ts",
+      "linia": 70,
+      "problem": "Żaden test E2E nie sprawdza w przeglądarce, że linijka znika, gdy dziś jest już po dniu „Zdąż do” (wszystkie asercje toBeHidden/toBeEmpty dotyczą zmiany daty na dzień roboczy albo pustego pola). Zachowanie pokrywają tylko testy jednostkowe. Dodatkowo z dawnego testu terminCzynnosci zniknęła asercja pierwotnej daty (pierwotny 2026-12-24 przy Wigilii); nowy test sprawdza wedlugArt115 i powody, a nie zdazDo.",
+      "dowod": "git diff a8b42ca -- tests/e2e; ręcznie (zegar 2026-12-27, bez wypowiedzenia od 2026-12-03) linijka jest poprawnie ukryta, więc to tylko luka w testach.",
+      "propozycja": "W teście „pozew do sądu w Wigilię” dopisać wariant z zegarem 2026-12-27 i oczekiwać toBeHidden; w termin-odwolania.test.ts dopisać expect(t.zdazDo).toBe('2026-12-24')."
+    }
+  ],
+  "porownania": "Własny model w Pythonie (Wielkanoc z algorytmu Meeusa, święta z art. 1 ustawy: Trzech Króli od 2011, Wigilia od 2025, 12.11.2018, sobota od 2017 tylko dla art. 115 KC) porównany z bundlem TS (esbuild) dla każdego dnia 2000-01-01–2040-12-31 (14 976 dni): dzienRoboczy, ostatniDzienRoboczyPrzed, wDniu, pełny tekst linijkaDniaWolnego dla 6 rodzajów bez dzis i z dzis = D-5, D-3, D-2, D-1, D, D+1 (w dzień roboczy pusty tekst). Razem 260 120 porównań, 0 rozbieżności (wariant pracodawcy: 16 010 „najpóźniej”, 7 145 „był”, 4 631 pustych). dzienWolnyArt115 i terminPracownika: 14 976 dni nowej wersji względem a8b42ca, 0 rozbieżności, i 14 976 względem modelu Pythona, 0 rozbieżności.",
+  "potwierdzone": [
+    "dzienWolny to jedno źródło reguły; dzienWolnyArt115 i terminPracownika mają wynik identyczny z a8b42ca dla lat 2000–2040.",
+    "Miejscownik dnia tygodnia poprawny (we wtorek, w środę, w niedzielę, w sobotę).",
+    "Warunek pokazania (dzień wolny i dzis <= zdazDo) oraz wybór wariantu „najpóźniej / był” (dzis > ostatni dzień roboczy) zgodne z komentarzem w terminy.ts; sobota sprzed 2017 r. i 12.11.2018 r. obsłużone.",
+    "Rodzaje pism: odwołanie (pracodawca dla sprostowania i sprzeciwu, sąd dla pozwów), kara (pracodawca), świadectwo (pracodawca / sąd / przedawnienie, wniosek po złożeniu bez linijki), przedawnienie i zaległy urlop (przedawnienie), wypowiedzenie zmieniające (odmowa pracodawca, odwołanie sąd), badania (orzeczenie-lekarskie), L4 (zastrzezenia-zus, odwolanie-zus).",
+    "Teksty z jednej funkcji dla HTML i skryptu; w skryptach przez typografia() (twarde spacje, 0 zwykłych spacji po jednoliterowych spójnikach); brak style=\"\" w 8 zbudowanych stronach.",
+    "Chowanie w skrypcie przy błędzie danych, pustym polu i zmianie danych działa we wszystkich 8 narzędziach (hidden albo pusty .wynik-opis z :empty{display:none}).",
+    "320 i 412 px: brak przewijania w bok (scrollWidth == clientWidth) i linijka mieści się w treści (left 37, right 283/375) w 10 stanach z linijką; zrzuty w scratchpad/wk/*.png.",
+    "Testy E2E z \\s i stałym zegarem (albo stałym polem „na dzień”) pokrywają sobotę, niedzielę i święta (Wigilia, 11.11, 3.05, 1.11 w testach jednostkowych) oraz wariant „był” (świadectwo 14.11.2026).",
+    "Nic w repo poza komentarzem i starymi raportami nie odwołuje się do przesunZDniaWolnego, terminWDniach ani terminCzynnosci; testy terminCzynnosci zastąpione równoważnymi na terminSprawy.",
+    "Sześć narzędzi spoza zakresu: pliki bez zmian, 139 testów zielonych, tekst zbudowanych stron identyczny z buildem a8b42ca (porównanie po usunięciu skryptów i hashy).",
+    "vitest src/lib/narzedzia: 2176 testów zielonych; tsc --noEmit bez błędów."
+  ]
+}

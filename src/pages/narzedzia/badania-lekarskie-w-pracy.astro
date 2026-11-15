@@ -227,12 +227,12 @@ const faq = [
         <div aria-live="polite" aria-atomic="true">
           <p class="meta" data-w="c-etykieta">{to.etykieta}</p>
           <p class="wynik-data" data-w="c-wynik">{to.wynik}</p>
-          <p class="meta mt-1" data-w="c-praktycznie" hidden={!to.praktycznie}>{to.praktycznie}</p>
           <p class="status-terminu" data-w="c-status" data-status={to.status?.rodzaj}>{to.status?.tekst}</p>
           <dl class="wynik-lista" data-wiersz="c-art115" hidden={!to.art115}>
             <div><dt>{ETYKIETA_ART_115}</dt><dd data-w="c-art115">{to.art115}</dd></div>
           </dl>
         </div>
+        <p class="meta mt-2" data-w="c-praktycznie" hidden={!to.praktycznie}>{to.praktycznie}</p>
         <p class="meta mt-2" data-w="c-opis">{to.opis}</p>
         <dl class="wynik-lista">
           <div><dt>Jak</dt><dd>na piśmie, z uzasadnieniem, przez jednostkę medycyny pracy, w której wydano orzeczenie (§ 5 ust. 1 i 3 rozporządzenia)</dd></div>

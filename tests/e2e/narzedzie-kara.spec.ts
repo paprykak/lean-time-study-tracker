@@ -48,6 +48,8 @@ test('link do odpowiedzialności materialnej w wyjaśnieniu', async ({ page }) =
 
 // Linijka praktyczna pod datą sprzeciwu (pakiet „terminy3”): 13.12.2026 r. to niedziela, 3.05.2027 r. święto.
 test('sprzeciw do niedzieli 13 grudnia 2026 r.: złóż w piątek 11 grudnia', async ({ page }) => {
+  await page.clock.setFixedTime(new Date('2026-11-15T10:00:00+01:00'));
+  await page.goto(NARZEDZIE_KARA);
   await page.getByLabel('Dzień naruszenia').fill('2026-12-01');
   await page.getByLabel('Kiedy pracodawca się o nim dowiedział').fill('2026-12-02');
   await page.getByLabel('Dzień zawiadomienia o karze').fill('2026-12-06');
@@ -58,5 +60,15 @@ test('sprzeciw do niedzieli 13 grudnia 2026 r.: złóż w piątek 11 grudnia', a
   await page.getByLabel('Dzień zawiadomienia o karze').fill('2027-04-26');
   await expect(page.locator('[data-w="praktycznie"]')).toContainText(/Święto\sNarodowe\sTrzeciego\sMaja\)\.\sPismo.*w\spiątek\s30\skwietnia\s2027\sr\./);
   await page.getByLabel('Dzień zawiadomienia o karze').fill('2027-04-27');
+  await expect(page.locator('[data-w="praktycznie"]')).toBeHidden();
+});
+
+test('sprzeciw już po terminie (dziś 14 grudnia 2026 r.): bez linijki', async ({ page }) => {
+  await page.clock.setFixedTime(new Date('2026-12-14T10:00:00+01:00'));
+  await page.goto(NARZEDZIE_KARA);
+  await page.getByLabel('Dzień naruszenia').fill('2026-12-01');
+  await page.getByLabel('Kiedy pracodawca się o nim dowiedział').fill('2026-12-02');
+  await page.getByLabel('Dzień zawiadomienia o karze').fill('2026-12-06');
+  await expect(page.locator('[data-w="sprzeciw"]')).toHaveText(/^13\sgrudnia\s2026\sr\.$/);
   await expect(page.locator('[data-w="praktycznie"]')).toBeHidden();
 });

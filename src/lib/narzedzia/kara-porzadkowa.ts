@@ -37,15 +37,18 @@ export function karaPorzadkowa(d: DaneKary) {
   };
 }
 
-/** Teksty wyniku: te same w HTML ze strony i w skrypcie przeglądarki (skrypt dodaje typografia()). */
-export function opisKary(d: DaneKary) {
+/**
+ * Teksty wyniku: te same w HTML ze strony i w skrypcie przeglądarki (skrypt dodaje typografia()). `dzis` tylko dla linijki
+ * praktycznej: po dniu „Zdąż do” sprzeciwu jej nie ma (weryfikacja kodu terminy3, K-1).
+ */
+export function opisKary(d: DaneKary, dzis?: string) {
   const r = karaPorzadkowa(d);
   return {
     etykieta: r.sprzeciw.rozne ? `Sprzeciw do pracodawcy: ${ETYKIETA_ZDAZ_DO.toLowerCase()}` : 'Sprzeciw do pracodawcy najpóźniej',
     sprzeciw: dataPoPolsku(r.sprzeciw.zdazDo),
     art115: r.sprzeciw.rozne ? dataPoPolsku(r.sprzeciw.wedlugArt115) : null,
     /** Linijka praktyczna pod datą sprzeciwu w sobotę albo dzień wolny (pakiet „terminy3”). */
-    praktycznie: linijkaDniaWolnego(r.sprzeciw, 'pracodawca'),
+    praktycznie: linijkaDniaWolnego(r.sprzeciw, 'pracodawca', dzis),
     zdanie: zdanieArt115(r.sprzeciw, 'pracodawca'),
     status: r.wTerminie
       ? 'Kara nałożona w terminie'

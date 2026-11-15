@@ -68,12 +68,12 @@ const faq = [
       <h2 id="wynik-tytul" class="etykieta" data-w="odmowa-etykieta">{o.odmowaEtykieta}</h2>
       <div aria-live="polite" aria-atomic="true">
         <p class="wynik-data" data-w="odmowa">{o.odmowa}</p>
-        <p class="meta mt-1" data-w="odmowa-praktycznie" hidden={!o.odmowaPraktycznie}>{o.odmowaPraktycznie}</p>
         <p class="status-terminu" data-w="status" data-status={o.statusKlasa}>{o.status}</p>
         <dl class="wynik-lista" data-wiersz="odmowa-art115" hidden={!o.odmowaArt115}>
           <div><dt>{ETYKIETA_ART_115}</dt><dd data-w="odmowa-art115">{o.odmowaArt115}</dd></div>
         </dl>
       </div>
+      <p class="meta mt-2" data-w="odmowa-praktycznie" hidden={!o.odmowaPraktycznie}>{o.odmowaPraktycznie}</p>
       <p class="meta mt-2" data-w="odmowa-zdanie" hidden={!o.odmowaZdanie}>{o.odmowaZdanie}</p>
       <dl class="wynik-lista">
         <div><dt>Okres wypowiedzenia</dt><dd data-w="okres">{o.okres}</dd></div>

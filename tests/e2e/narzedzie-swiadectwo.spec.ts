@@ -75,7 +75,8 @@ test('daty domyślne od prawdziwego dziś (13.01.2027 → 3.01.2027)', async ({ 
 // Linijka praktyczna (pakiet „terminy3”): dziś sobota 14.11.2026 r. i to ostatni dzień na wniosek, więc piątek już minął.
 test('dziś sobota, wniosek do dziś: przypomnienie, że ostatni dzień roboczy był w piątek', async ({ page }) => {
   await expect(page.locator('[data-w="glowny-praktycznie"]')).toHaveText(/^To\ssobota\.\sOstatni\sdzień\sroboczy\sprzed\stą\sdatą\sbył\sw\spiątek\s13\slistopada\s2026\sr\.\sPismo\sdo\spracodawcy\szłóż\sjak\snajszybciej/);
-  await expect(page.locator('[data-w="sprostowanie-praktycznie"]')).toHaveText(/w\spiątek\s13\slistopada\s2026\sr\./);
+  // Ta sama linijka tylko raz, pod najbliższym terminem (weryfikacja K-2).
+  await expect(page.locator('[data-w="sprostowanie-praktycznie"]')).toBeEmpty();
   await page.getByLabel('Wniosek o sprostowanie doręczony').fill('2026-11-10');
   await expect(page.locator('[data-w="sprostowanie-praktycznie"]')).toBeEmpty();
 });

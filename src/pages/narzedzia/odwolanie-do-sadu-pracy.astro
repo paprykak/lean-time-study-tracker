@@ -57,12 +57,12 @@ const faq = [
       <h2 id="wynik-tytul" class="etykieta" data-w="etykieta">{o.etykieta}</h2>
       <div aria-live="polite" aria-atomic="true">
         <p class="wynik-data" data-w="koniec">{o.glowny}</p>
-        <p class="meta mt-1" data-w="praktycznie" hidden={!o.praktycznie}>{o.praktycznie}</p>
         <p class="status-terminu" data-w="status" data-status={o.statusKlasa}>{o.status}</p>
         <dl class="wynik-lista" data-wiersz="art115" hidden={!o.art115}>
           <div><dt>{ETYKIETA_ART_115}</dt><dd data-w="art115">{o.art115}</dd></div>
         </dl>
       </div>
+      <p class="meta mt-2" data-w="praktycznie" hidden={!o.praktycznie}>{o.praktycznie}</p>
       <p class="meta mt-2" data-w="zdanie" hidden={!o.zdanie}>{o.zdanie}</p>
       <dl class="wynik-lista">
         <div><dt>Gdzie złożyć</dt><dd data-w="gdzie">{SPRAWY[SPRAWA].gdzie}</dd></div>

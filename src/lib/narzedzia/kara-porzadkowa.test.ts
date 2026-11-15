@@ -81,3 +81,12 @@ describe('terminy3: sprzeciw w dzień wolny', () => {
     expect(opisKary({ naruszenie: '2026-11-01', wiadomosc: '2026-11-02', ukaranie: '2026-11-03' }).praktycznie).toBe('');
   });
 });
+
+describe('terminy3, weryfikacja K-1: linijka sprzeciwu z dniem dzisiejszym', () => {
+  const d = { naruszenie: '2026-12-01', wiadomosc: '2026-12-02', ukaranie: '2026-12-06' };
+  it('do 11 grudnia rada, 12–13 grudnia „był”, od 14 grudnia bez linijki', () => {
+    expect(opisKary(d, '2026-12-11').praktycznie).toContain('złóż najpóźniej');
+    expect(opisKary(d, '2026-12-13').praktycznie).toMatch(/Ostatni dzień roboczy przed tą datą był w piątek 11/);
+    expect(opisKary(d, '2026-12-14').praktycznie).toBe('');
+  });
+});
