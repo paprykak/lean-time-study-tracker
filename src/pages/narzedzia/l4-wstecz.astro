@@ -32,7 +32,7 @@ const faq = [
   },
   {
     pytanie: 'Co grozi za niezawiadomienie pracodawcy o L4?',
-    odpowiedz: 'Kodeks pracy przewiduje za nieprzestrzeganie przyjętego sposobu usprawiedliwiania nieobecności karę upomnienia albo nagany (art. 108 § 1). Czy możliwe są inne skutki, zależy od okoliczności i w sporze ocenia to sąd. Spóźnione zawiadomienie nie zmienia tego, że zwolnienie lekarskie usprawiedliwia nieobecność (§ 3 pkt 1 rozporządzenia o usprawiedliwianiu nieobecności). Spóźnienie może usprawiedliwić na przykład obłożna choroba połączona z brakiem domowników albo inne zdarzenie losowe; wtedy zawiadamiasz niezwłocznie po ustaniu przeszkody (§ 2 ust. 3 rozporządzenia o usprawiedliwianiu nieobecności).',
+    odpowiedz: 'Kodeks pracy przewiduje za nieprzestrzeganie przyjętego sposobu usprawiedliwiania nieobecności karę upomnienia albo nagany (art. 108 § 1). Czy możliwe są inne skutki, zależy od okoliczności i w sporze ocenia to sąd. Spóźnione zawiadomienie nie zmienia tego, że zwolnienie lekarskie usprawiedliwia nieobecność (§ 3 pkt 1 rozporządzenia o usprawiedliwianiu nieobecności). Spóźnienie może usprawiedliwić na przykład obłożna choroba połączona z brakiem lub nieobecnością domowników albo inne zdarzenie losowe; wtedy zawiadamiasz niezwłocznie po ustaniu przeszkody (§ 2 ust. 3 rozporządzenia o usprawiedliwianiu nieobecności).',
   },
 ];
 ---
@@ -81,7 +81,7 @@ const faq = [
         <div><dt data-w="zawiadom-etykieta">{start.zawiadomEtykieta}</dt><dd data-w="zawiadom">{start.zawiadom}</dd></div>
       </dl>
       <p class="wynik-uwaga" data-w="uwaga">{start.uwagi.join(' ')}</p>
-      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Wynik powyżej dotyczy wizyty dziś i nieobecności od wczoraj, a zasady są opisane poniżej.</p></noscript>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Wynik powyżej to przykład z dnia aktualizacji strony (wizyta tego dnia, nieobecność od dnia poprzedniego), a zasady są opisane poniżej.</p></noscript>
     </div>
   </form>
 
@@ -119,7 +119,8 @@ const faq = [
       od pracy wymienia osobno tylko w § 7 ust. 2. „{PO_BADANIU_MAKS}. dzień po dniu badania” to dzień badania plus {PO_BADANIU_MAKS} dni.
       Drugi dzień nieobecności to dzień po pierwszym dniu nieobecności, także gdy wypada w dzień wolny według grafiku:
       przepis nie mówi, czy dni wolne się liczą, a ta data jest najwcześniejsza z możliwych, więc zawiadomienie do niej
-      jest bezpieczne. Czy wyniki badania potwierdzają niezdolność do pracy przed wizytą, ocenia lekarz: narzędzie podaje
+      jest bezpieczne. Nie przesuwamy jej z soboty ani święta: przepis wskazuje dzień nieobecności, a nie termin liczony
+      w dniach, do którego stosuje się art. 115 Kodeksu cywilnego. Czy wyniki badania potwierdzają niezdolność do pracy przed wizytą, ocenia lekarz: narzędzie podaje
       tylko granice z przepisu.
     </p>
     <p>

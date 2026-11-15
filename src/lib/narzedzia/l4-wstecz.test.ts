@@ -55,14 +55,14 @@ describe('teksty wyniku', () => {
     expect(o.opis).toContain('3 dni przed wizytą');
     expect(o.odKiedy).toBe('wtorek, 10 listopada 2026 r. (3 dni przed wizytą)');
     expect(o.zawiadomEtykieta).toBe('Zawiadom pracodawcę');
-    expect(o.zawiadom).toContain('środa, 11 listopada 2026 r.');
+    expect(o.zawiadom).toBe('niezwłocznie, najpóźniej 11 listopada 2026 r. (środa, drugi dzień nieobecności)');
     expect(o.uwagi.join(' ')).toContain('Narodowe Święto Niepodległości');
   });
   it('4 dni wstecz: dzień poza zwolnieniem, u psychiatry wyjątek bez granicy', () => {
     const o = opisL4('2026-11-13', '2026-11-09', 'inny', DZIS);
     expect(o.werdykt).toBe('Nie, tak daleko L4 nie sięga');
     expect(o.opis).toContain('Dzień 9 listopada 2026 r. zostanie bez zwolnienia lekarskiego');
-    expect(opisL4('2026-11-13', '2026-11-07', 'inny', DZIS).opis).toContain('Od 7 listopada 2026 r. do 9 listopada 2026 r. (3 dni) zostanie');
+    expect(opisL4('2026-11-13', '2026-11-07', 'inny', DZIS).opis).toContain('Okres od 7 listopada 2026 r. do 9 listopada 2026 r. (3 dni) zostanie');
     const psych = opisL4('2026-11-13', '2026-11-01', 'psychiatra', DZIS);
     expect(psych.werdykt).toBe('Tylko w jednej sytuacji');
     expect(psych.opis).toContain('12 dni przed wizytą');
@@ -80,7 +80,7 @@ describe('teksty wyniku', () => {
   it('nieobecność dopiero będzie: termin i uprzedzenie z § 2 ust. 1', () => {
     const o = opisL4('2026-11-13', '2026-11-16', 'inny', '2026-11-13');
     expect(o.zawiadomEtykieta).toBe('Zawiadom pracodawcę');
-    expect(o.zawiadom).toBe('niezwłocznie, najpóźniej wtorek, 17 listopada 2026 r.; gdy przyczynę znasz z góry, uprzedź przed 16 listopada 2026 r. (§ 2 ust. 1)');
+    expect(o.zawiadom).toBe('niezwłocznie, najpóźniej 17 listopada 2026 r. (wtorek); gdy przyczynę znasz z góry, uprzedź przed 16 listopada 2026 r. (§ 2 ust. 1)');
   });
   it('termin minął: zawiadom od razu, § 2 ust. 3; bez uwagi o dniu wolnym', () => {
     const o = opisL4('2026-11-13', '2026-11-10', 'inny', '2026-11-13');

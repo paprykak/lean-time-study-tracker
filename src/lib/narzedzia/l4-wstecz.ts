@@ -50,6 +50,8 @@ export type Polozenie = 'przed-granica' | 'wstecz' | 'zwykle' | 'pozniej-warunek
 export const dzienTygodnia = (data: string) => DNI_TYGODNIA[new Date(`${data}T00:00:00Z`).getUTCDay()];
 /** „piątek, 13 listopada 2026 r.” */
 export const dataZDniem = (data: string) => `${dzienTygodnia(data)}, ${dataPoPolsku(data)}`;
+/** „14 listopada 2026 r. (sobota)”: po „najpóźniej” bez odmiany dnia tygodnia. */
+export const dataINazwaDnia = (data: string, dopisek = '') => `${dataPoPolsku(data)} (${dzienTygodnia(data)}${dopisek})`;
 
 export interface GraniceL4 {
   /** Najwcześniejszy początek zwolnienia u lekarza innego niż psychiatra: 3 dni przed dniem badania. */
@@ -112,7 +114,7 @@ export function opisL4(badanie: string, poczatek: string, lekarz: Lekarz, dzis: 
       opis = `To ${dni(-roznica)} przed wizytą. Psychiatra może objąć zwolnieniem okres wcześniejszy niż 3 dni, gdy stwierdza albo podejrzewa zaburzenia psychiczne ograniczające zdolność oceny własnego postępowania (§ 7 ust. 4). Przepis nie podaje granicy. W innych przypadkach zwolnienie może zacząć się najwyżej 3 dni przed dniem badania (§ 7 ust. 3).`;
     } else {
       werdykt = 'Nie, tak daleko L4 nie sięga';
-      opis = `To ${dni(-roznica)} przed wizytą, a zwolnienie może objąć najwyżej 3 dni przed dniem badania (§ 7 ust. 3). ${poza === 1 ? `Dzień ${dataPoPolsku(poczatek)} zostanie` : `Od ${dataPoPolsku(poczatek)} do ${dataPoPolsku(dodajDni(g.najwczesniej, -1))} (${dni(poza)}) zostanie`} bez zwolnienia lekarskiego. Granica 3 dni nie dotyczy pobytu w szpitalu: zwolnienie obejmuje go od dnia przyjęcia do dnia wypisu (§ 4 ust. 2, § 10 ust. 1).`;
+      opis = `To ${dni(-roznica)} przed wizytą, a zwolnienie może objąć najwyżej 3 dni przed dniem badania (§ 7 ust. 3). ${poza === 1 ? `Dzień ${dataPoPolsku(poczatek)} zostanie` : `Okres od ${dataPoPolsku(poczatek)} do ${dataPoPolsku(dodajDni(g.najwczesniej, -1))} (${dni(poza)}) zostanie`} bez zwolnienia lekarskiego. Granica 3 dni nie dotyczy pobytu w szpitalu: zwolnienie obejmuje go od dnia przyjęcia do dnia wypisu (§ 4 ust. 2, § 10 ust. 1).`;
     }
   } else if (p === 'wstecz') {
     werdykt = 'Tak, jeśli badanie to potwierdzi';
@@ -130,16 +132,16 @@ export function opisL4(badanie: string, poczatek: string, lekarz: Lekarz, dzis: 
 
   const termin = terminZawiadomienia(poczatek);
   let zawiadomEtykieta = 'Zawiadom pracodawcę';
-  let zawiadom = `niezwłocznie, najpóźniej ${dataZDniem(termin)} (drugi dzień nieobecności)`;
+  let zawiadom = `niezwłocznie, najpóźniej ${dataINazwaDnia(termin, ', drugi dzień nieobecności')}`;
   if (poczatek > dzis) {
-    zawiadom = `niezwłocznie, najpóźniej ${dataZDniem(termin)}; gdy przyczynę znasz z góry, uprzedź przed ${dataPoPolsku(poczatek)} (§ 2 ust. 1)`;
+    zawiadom = `niezwłocznie, najpóźniej ${dataINazwaDnia(termin)}; gdy przyczynę znasz z góry, uprzedź przed ${dataPoPolsku(poczatek)} (§ 2 ust. 1)`;
   } else if (termin < dzis) {
     zawiadomEtykieta = 'Termin zawiadomienia minął';
-    zawiadom = `${dataZDniem(termin)}; zawiadom od razu. Spóźnienie może usprawiedliwić np. obłożna choroba połączona z brakiem domowników albo inne zdarzenie losowe (§ 2 ust. 3)`;
+    zawiadom = `${dataINazwaDnia(termin)}; zawiadom od razu. Spóźnienie może usprawiedliwić na przykład obłożna choroba połączona z brakiem lub nieobecnością domowników albo inne zdarzenie losowe (§ 2 ust. 3)`;
   }
   const wolny = dzienWolnyArt115(termin);
   if (wolny && !(termin < dzis)) {
-    uwagi.push(`${dataPoPolsku(termin)} to ${wolny}. Przepis nie mówi, czy dzień, w którym nie masz pracować, liczy się jako dzień nieobecności, więc bezpieczniej zawiadomić do tej daty.`);
+    uwagi.push(`${dataPoPolsku(termin)} to ${wolny}. Przepis nie mówi, czy dzień, w którym nie masz pracować, liczy się jako dzień nieobecności, a to nie termin liczony w dniach, który art. 115 Kodeksu cywilnego przesuwa z dnia wolnego, więc bezpieczniej zawiadomić do tej daty.`);
   }
   return {
     werdykt,

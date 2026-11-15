@@ -150,6 +150,9 @@ export interface OpisNadgodzin {
   uwagi: string[];
 }
 
+const ZGODA_DZIECKO =
+  'Gdy wychowujesz dziecko, które nie ma jeszcze 8 lat, pracodawca nie może zatrudniać Cię w nadgodzinach bez Twojej zgody (art. 178 § 2 Kodeksu pracy). Możesz się nie zgodzić. Gdy oboje rodzice albo opiekunowie dziecka pracują, z tej ochrony może korzystać jedno z nich (art. 189¹).';
+
 const NAGLOWKI: Record<Werdykt, string> = {
   zakaz: 'Nie wolno: możesz odmówić',
   'za-dlugo': 'Nie tak długo',
@@ -200,10 +203,11 @@ export function opisNadgodzin(d: DaneNadgodzin, c: CzasDnia): OpisNadgodzin {
       );
     }
   }
+  if (werdykt === 'za-dlugo' && d.dziecko8 && !d.zgodaDziecko) powody.push(ZGODA_DZIECKO);
   if (werdykt === 'obowiazek' && c.nadgodzinyMin === 0) werdykt = 'brak';
   if (werdykt === 'obowiazek' && d.dziecko8 && !d.zgodaDziecko) {
     werdykt = 'zgoda';
-    powody.push('Gdy wychowujesz dziecko, które nie ma jeszcze 8 lat, pracodawca nie może zatrudniać Cię w nadgodzinach bez Twojej zgody (art. 178 § 2 Kodeksu pracy). Możesz się nie zgodzić.');
+    powody.push(ZGODA_DZIECKO);
   }
   if (werdykt === 'obowiazek') {
     powody.push(
@@ -218,10 +222,19 @@ export function opisNadgodzin(d: DaneNadgodzin, c: CzasDnia): OpisNadgodzin {
     uwagi.push(`Przy akcji ratowniczej albo awarii 11 godzin odpoczynku nie obowiązuje (zostałoby ${czasMin(c.odpoczynek)}), ale należy się równoważny odpoczynek w okresie rozliczeniowym (art. 132 § 2 pkt 2 i § 3).`);
   }
   if (c.nastepna !== null && c.nastepna < c.start + DOBA_MIN) {
-    uwagi.push('Następna zmiana zaczyna się wcześniej niż dzisiejsza, więc jej początek wypada w tej samej dobie: poza ruchomym rozkładem to też nadgodziny (art. 151 § 1 i art. 140¹ Kodeksu pracy).');
+    uwagi.push(
+      werdykt === 'brak'
+        ? 'Dziś nadgodzin nie ma, ale następna zmiana zaczyna się wcześniej niż dzisiejsza, więc jej początek wypada w tej samej dobie: poza ruchomym rozkładem to nadgodziny (art. 151 § 1 i art. 140¹ Kodeksu pracy).'
+        : 'Następna zmiana zaczyna się wcześniej niż dzisiejsza, więc jej początek wypada w tej samej dobie: poza ruchomym rozkładem to też nadgodziny (art. 151 § 1 i art. 140¹ Kodeksu pracy).',
+    );
+  }
+  if (c.koniecZmiany - c.start < 8 * 60 && c.nadgodzinyMin > 0) {
+    uwagi.push('Zmiana z grafiku trwa krócej niż 8 godzin. Praca do 8 godzin w dobie nie przekracza normy dobowej (art. 129 § 1 Kodeksu pracy), więc nadgodzinami jest wtedy tylko przy przekroczeniu normy tygodniowej; narzędzie liczy od końca zmiany, czyli ostrożnie.');
   }
   if (werdykt !== 'zakaz' && werdykt !== 'brak') uwagi.push('Za nadgodziny należy się dodatek 50% albo 100% albo czas wolny (art. 151¹–151² Kodeksu pracy).');
 
+  // Najpóźniejszy koniec z samego limitu: koniec zmiany plus godziny, które zostały (w pełnych minutach w dół).
+  const zLimitu = c.koniecZmiany + Math.floor(zostalo * 60 + 1e-9);
   return {
     werdykt,
     naglowek: werdykt === 'za-dlugo' && zostalo === 0 && c.odpoczynek >= ODPOCZYNEK_MIN ? 'Nadgodzin z tego powodu już nie' : NAGLOWKI[werdykt],
@@ -231,9 +244,13 @@ export function opisNadgodzin(d: DaneNadgodzin, c: CzasDnia): OpisNadgodzin {
       ? c.najpozniej >= c.koniecZmiany
         ? `${godzina(c.najpozniej)} przy zwykłej pracy; przy awarii bez tej granicy`
         : 'przy zwykłej pracy nadgodzin dziś być nie może; przy awarii bez tej granicy'
-      : c.najpozniej >= c.koniecZmiany
-        ? `${godzina(c.najpozniej)} (11 h odpoczynku${c.nastepna !== null && c.nastepna < c.start + DOBA_MIN ? ' przed następną zmianą' : ' w dobie'})`
-        : 'nadgodziny dziś naruszyłyby 11 h odpoczynku',
+      : c.najpozniej < c.koniecZmiany
+        ? 'nadgodziny dziś naruszyłyby 11 h odpoczynku'
+        : zostalo <= 0
+          ? `${godzina(c.koniecZmiany)}, koniec zmiany: limit roczny wykorzystany`
+          : zLimitu < c.najpozniej
+            ? `${godzina(zLimitu)} (limit roczny; odpoczynek pozwalałby do ${godzina(c.najpozniej)})`
+            : `${godzina(c.najpozniej)} (11 h odpoczynku${c.nastepna !== null && c.nastepna < c.start + DOBA_MIN ? ' przed następną zmianą' : ' w dobie'})`,
     limit: awaria
       ? 'nie dotyczy akcji ratowniczej ani awarii'
       : `zostało ${liczba(zostalo)} z ${liczba(d.limit)} h w tym roku${c.nadgodzinyMin ? `, po dzisiejszych ${liczba(Math.max(0, zostalo - godzinyDzis))} h` : ''}`,

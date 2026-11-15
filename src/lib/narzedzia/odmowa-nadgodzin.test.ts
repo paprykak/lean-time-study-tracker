@@ -151,3 +151,26 @@ describe('nagłówek przy wykorzystanym limicie', () => {
     expect(opis({ wRoku: 148, koniecPracy: '18:00' }).naglowek).toBe('Nie tak długo');
   });
 });
+
+describe('audyt: limit w polu „Najpóźniej do”, art. 189¹, zmiana krótsza niż 8 h', () => {
+  it('148 z 150 h przy zmianie 6–14: najpóźniej 16:00 z limitu', () => {
+    expect(opis({ wRoku: 148, koniecPracy: '15:00' }).najpozniej).toBe('16:00 (limit roczny; odpoczynek pozwalałby do 19:00)');
+    expect(opis({ wRoku: 149.5, koniecPracy: '14:30' }).najpozniej).toBe('14:30 (limit roczny; odpoczynek pozwalałby do 19:00)');
+    expect(opis({ wRoku: 150, koniecPracy: '15:00' }).najpozniej).toBe('14:00, koniec zmiany: limit roczny wykorzystany');
+    expect(opis({ wRoku: 140 }).najpozniej).toBe('19:00 (11 h odpoczynku w dobie)');
+    expect(opis({ powod: 'awaria', wRoku: 150 }).najpozniej).toBe('19:00 przy zwykłej pracy; przy awarii bez tej granicy');
+  });
+  it('dziecko do 8 lat: art. 189¹ w wyniku, także przy „Nie tak długo”', () => {
+    expect(opis({ dziecko8: true }).powody.join(' ')).toContain('art. 189¹');
+    const o = opis({ dziecko8: true, koniecPracy: '20:00' });
+    expect(o.werdykt).toBe('za-dlugo');
+    expect(o.powody.join(' ')).toContain('art. 178 § 2');
+  });
+  it('brak nadgodzin i następna zmiana w tej samej dobie: uwaga bez sprzeczności', () => {
+    expect(opis({ koniecPracy: '14:00', nastepna: '5:00' }).uwagi.join(' ')).toContain('Dziś nadgodzin nie ma');
+  });
+  it('zmiana krótsza niż 8 h: uwaga o normie dobowej', () => {
+    expect(opis({ koniecZmiany: '12:00', koniecPracy: '14:00' }).uwagi.join(' ')).toContain('art. 129 § 1');
+    expect(opis({}).uwagi.join(' ')).not.toContain('art. 129 § 1');
+  });
+});

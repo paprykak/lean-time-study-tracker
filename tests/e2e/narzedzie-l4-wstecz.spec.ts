@@ -23,7 +23,7 @@ test('3 dni wstecz: tak; zawiadomienie w drugim dniu nieobecności, który miną
   await expect(page.locator('[data-w="od"]')).toHaveText(/^wtorek,\s10\slistopada\s2026\sr\.\s\(3\sdni\sprzed\swizytą\)$/);
   await expect(page.locator('[data-w="do"]')).toContainText(/sobota,\s14\slistopada\s2026\sr\.;\sdo\s17\slistopada\s2026\sr\./);
   await expect(page.locator('[data-w="zawiadom-etykieta"]')).toHaveText('Termin zawiadomienia minął');
-  await expect(page.locator('[data-w="zawiadom"]')).toContainText(/środa,\s11\slistopada\s2026\sr\./);
+  await expect(page.locator('[data-w="zawiadom"]')).toHaveText(/^11\slistopada\s2026\sr\.\s\(środa\);\szawiadom\sod\srazu/);
 });
 
 test('4 dni wstecz: dzień bez zwolnienia; psychiatra: wyjątek z § 7 ust. 4', async ({ page }) => {
@@ -39,7 +39,7 @@ test('L4 od poniedziałku po piątkowej wizycie: z warunkiem; termin i uprzedzen
   await page.getByLabel('Nie pracujesz od').fill('2026-11-16');
   await expect(page.locator('[data-w="werdykt"]')).toHaveText('Tylko w dwóch sytuacjach');
   await expect(page.locator('[data-w="zawiadom-etykieta"]')).toHaveText('Zawiadom pracodawcę');
-  await expect(page.locator('[data-w="zawiadom"]')).toHaveText(/^niezwłocznie,\snajpóźniej\swtorek,\s17\slistopada\s2026\sr\.;\sgdy\sprzyczynę\sznasz\sz\sgóry,\suprzedź\sprzed\s16\slistopada\s2026\sr\.\s\(§\s2\sust\.\s1\)$/);
+  await expect(page.locator('[data-w="zawiadom"]')).toHaveText(/^niezwłocznie,\snajpóźniej\s17\slistopada\s2026\sr\.\s\(wtorek\);\sgdy\sprzyczynę\sznasz\sz\sgóry,\suprzedź\sprzed\s16\slistopada\s2026\sr\.\s\(§\s2\sust\.\s1\)$/);
   await page.getByLabel('Nie pracujesz od').fill('2026-11-18');
   await expect(page.locator('[data-w="werdykt"]')).toHaveText('Nie, to za daleko od wizyty');
   await expect(page.locator('[data-w="opis"]')).toHaveText(/najwcześniej\s14\slistopada\s2026\sr\.\s\(4\sdni\sprzed\spoczątkiem\)\.$/);
@@ -49,7 +49,7 @@ test('nieobecność od dziś: zawiadom do soboty, uwaga o dniu wolnym', async ({
   await page.getByLabel('Nie pracujesz od').fill('2026-11-13');
   await expect(page.locator('[data-w="werdykt"]')).toHaveText('Tak');
   await expect(page.locator('[data-w="zawiadom-etykieta"]')).toHaveText('Zawiadom pracodawcę');
-  await expect(page.locator('[data-w="zawiadom"]')).toContainText(/^niezwłocznie,\snajpóźniej\ssobota,\s14\slistopada\s2026\sr\.\s\(drugi\sdzień\snieobecności\)$/);
+  await expect(page.locator('[data-w="zawiadom"]')).toHaveText(/^niezwłocznie,\snajpóźniej\s14\slistopada\s2026\sr\.\s\(sobota,\sdrugi\sdzień\snieobecności\)$/);
   await expect(page.locator('[data-w="uwaga"]')).toContainText(/14\slistopada\s2026\sr\.\sto\ssobota/);
 });
 
