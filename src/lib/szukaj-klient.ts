@@ -1,7 +1,7 @@
 // Część przeglądarkowa wyszukiwarki narzędzi: wczytanie indeksu (raz na stronę, dopiero przy pierwszym użyciu pola),
 // podświetlenie trafionych słów i wiersz wyniku. Używają jej pole wyszukiwania (Wyszukiwarka.astro), filtr na
 // /narzedzia i strona /szukaj, więc wynik wygląda wszędzie tak samo. Bez innerHTML: tekst z indeksu idzie jako tekst.
-import { normalizuj, pasuje, przygotuj, slowa, szukaj, type WpisIndeksu, type Wynik } from './szukaj-narzedzi';
+import { literowka, normalizuj, pasuje, przygotuj, slowa, szukaj, type WpisIndeksu, type Wynik } from './szukaj-narzedzi';
 import { odmiana } from './redakcja';
 
 let indeks: Promise<ReturnType<typeof przygotuj>> | undefined;
@@ -30,7 +30,8 @@ export function podswietl(tekst: string, szukane: string[]): DocumentFragment {
   let ostatni = 0;
   for (const m of tekst.matchAll(/[\p{L}\p{N}]+/gu)) {
     const slowo = normalizuj(m[0]);
-    if (!szukane.some((s) => pasuje(s, slowo))) continue;
+    // Także słowo trafione przez literówkę („urlpo” → „urlop”), żeby było widać, dlaczego wynik jest na liście.
+    if (!szukane.some((s) => pasuje(s, slowo) || literowka(s, slowo))) continue;
     if (m.index! > ostatni) f.append(tekst.slice(ostatni, m.index));
     const mark = document.createElement('mark');
     mark.textContent = m[0];

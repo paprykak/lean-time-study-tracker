@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { normalizuj, pasuje, przygotuj, slowa, szukaj } from './szukaj-narzedzi';
+import { literowka, normalizuj, pasuje, przygotuj, slowa, szukaj } from './szukaj-narzedzi';
 import { indeksNarzedzi, zKoduStrony } from './indeks-narzedzi';
 import { NARZEDZIA } from '../data/narzedzia';
 import { HASLA } from '../data/sprawy';
@@ -309,7 +309,7 @@ describe('wyszukiwarka narzędzi: hasła zmienione w pakiecie „wyszukiwarka2�
     ['wypowiedzenie umowy na czas określony', 'okres-wypowiedzenia'],
     ['umowa na czas określony', 'umowa-na-czas-okreslony'],
     ['choroba zawodowa kręgosłupa', 'choroba-zawodowa'],
-    ['praca w nocy a dziecko', 'rodzic-w-pracy'],
+    ['praca w nocy', 'dodatek-za-prace-w-nocy'],
     ['dodatek nocny', 'dodatek-za-prace-w-nocy'],
     ['wynagrodzenie za urlop wypoczynkowy', 'wynagrodzenie-za-urlop'],
     ['urlop wypoczynkowy ile dni', 'kalkulator-urlopu'],
@@ -319,5 +319,61 @@ describe('wyszukiwarka narzędzi: hasła zmienione w pakiecie „wyszukiwarka2�
     ['staż pracy kalkulator', 'staz-pracy'],
   ])('„%s” → %s na pierwszym miejscu', (q, slug) => {
     expect(pierwszy(q)).toBe(slug);
+  });
+});
+
+describe('wyszukiwarka narzędzi: poprawki po weryfikatorze kodu i UX (pakiet „wyszukiwarka2”)', () => {
+  it('pisanie na żywo: początek słowa nie przegrywa z przypadkową odmianą ani z przyimkiem', () => {
+    expect(pierwszy('przeda')).toBe('przedawnienie-wynagrodzenia');
+    expect(pierwszy('przedaw')).toBe('przedawnienie-wynagrodzenia');
+    expect(pierwszy('nad')).toBe('kalkulator-nadgodzin');
+    expect(pierwszy('kalkulator nad')).toBe('kalkulator-nadgodzin');
+    expect(pasuje('przed', 'przerwy')).toBe(false);
+    expect(pasuje('szkola', 'szkoda')).toBe(false);
+    expect(pasuje('zasilku', 'zasilek')).toBe(true);
+  });
+
+  it('jednowyrazowe hasło innego narzędzia nie zabiera ogólnego słowa', () => {
+    expect(pierwszy('wózek')).toBe('waznosc-uprawnien-udt');
+    expect(wsrod('odszkodowanie', 2).sort()).toEqual(['odszkodowanie-za-wypadek-przy-pracy', 'odszkodowanie-za-zwolnienie']);
+    expect(wsrod('emerytura')).not.toContain('kalkulator-ppk');
+    expect(pierwszy('szkolenie')).toBe('szkolenie-okresowe-bhp');
+    expect(pierwszy('zwolnienie lekarskie')).toBe('kalkulator-l4');
+    // a sprawy tych narzędzi dalej do nich prowadzą
+    expect(pierwszy('zakaz konkurencji odszkodowanie')).toBe('zakaz-konkurencji');
+    expect(pierwszy('ppk')).toBe('kalkulator-ppk');
+    expect(pierwszy('lojalka szkolenie')).toBe('zwrot-kosztow-szkolenia');
+    expect(pierwszy('drgania wózek')).toBe('drgania-w-pracy');
+    expect(pierwszy('L4 po zwolnieniu z pracy')).toBe('l4-po-zwolnieniu');
+    expect(pierwszy('wypowiedzenie na L4')).toBe('zwolnienie-na-l4');
+  });
+
+  it('podpowiedzi pod polem wyszukiwania na stronie głównej prowadzą do narzędzia z najczęstszych spraw', async () => {
+    const { CZESTO_SZUKANE } = await import('../data/sprawy');
+    const oczekiwane: Record<string, string> = { L4: 'kalkulator-l4', nadgodziny: 'kalkulator-nadgodzin', nocki: 'dodatek-za-prace-w-nocy', urlop: 'kalkulator-urlopu', wypowiedzenie: 'okres-wypowiedzenia', 'UDT na wózek': 'waznosc-uprawnien-udt', 'ile kg': 'ile-kg-wolno-dzwigac' };
+    for (const q of CZESTO_SZUKANE) expect(pierwszy(q), q).toBe(oczekiwane[q]);
+  });
+
+  it('literówka przy słowach 5–6 znaków tylko z przestawionymi literami („urlpo”), a nie „szkoła” → „szkoda”', () => {
+    expect(literowka('urlpo', 'urlop')).toBe(true);
+    expect(literowka('szkola', 'szkoda')).toBe(false);
+    expect(literowka('pilka', 'polka')).toBe(false);
+    expect(literowka('nadgodzny', 'nadgodziny')).toBe(true);
+    expect(literowka('wypowiedzenei', 'wypowiedzenie')).toBe(true);
+    expect(wsrod('szkoła')).not.toContain('odszkodowanie-za-wypadek-przy-pracy');
+  });
+
+  it('filtr kategorii działa przed progiem, więc lista w kategorii nie jest pusta', () => {
+    expect(szukaj(p, '12 godzin', Infinity, 'wynagrodzenie').length).toBeGreaterThan(0);
+    expect(szukaj(p, 'praca w nocy', Infinity, 'umowa').every((w) => w.wpis.kk === 'umowa')).toBe(true);
+    expect(szukaj(p, 'praca w nocy', Infinity, 'umowa').length).toBeGreaterThan(0);
+  });
+
+  it('przy ponad 8 słowach zostaje ostatnie, pisane właśnie teraz', () => {
+    expect(slowa('pracodawca zmienia grafik zmiany dzien przed praca weekend noc ciąż').at(-1)).toBe('ciaz');
+  });
+
+  it('pojedyncza litera nie pasuje do dłuższego słowa („m²” to nie „ma”)', () => {
+    expect(szukaj(p, 'Ile m² i m³ na pracownika', 3).map((w) => w.wpis.s)).toEqual(['powierzchnia-na-pracownika']);
   });
 });
