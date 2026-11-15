@@ -138,6 +138,9 @@ export const HASLA: Record<string, string[]> = {
   // Pakiet „luki” (2026-11-15): podpowiedzi Google „l4 wstecz”, „zwolnienie lekarskie wstecz ile dni”, „czy muszę dostarczyć l4”,
   // „kiedy trzeba powiadomić pracodawcę o l4”, „kiedy zwolnienie jest widoczne w pue”, „zwolnienie ile dni do przodu”.
   'l4-wstecz': ['L4 wstecz', 'zwolnienie lekarskie wstecz', 'zwolnienie z datą wsteczną', 'ile dni wstecz L4', 'L4 od psychiatry wstecz', 'L4 do przodu', 'powiadomienie pracodawcy o L4', 'zgłoszenie L4 pracodawcy', 'dostarczenie L4', 'czy muszę dostarczyć L4', 'kiedy pracodawca widzi L4', 'L4 widoczne na PUE'],
+  // Podpowiedzi „czy pracodawca może zmusić do nadgodzin”, „odmowa nadgodzin”, „czy muszę zostać po godzinach”,
+  // „czy nadgodziny są obowiązkowe”, „odmowa nadgodzin dziecko do lat 8”, „nadgodziny ile maksymalnie”.
+  'odmowa-nadgodzin': ['odmowa nadgodzin', 'czy muszę zostać po godzinach', 'zostać po godzinach', 'każą zostać dłużej', 'czy nadgodziny są obowiązkowe', 'zmuszanie do nadgodzin', 'nadgodziny w ciąży', 'nadgodziny dziecko do lat 8', 'nadgodziny bez zgody', 'limit nadgodzin', 'nadgodziny ile maksymalnie', '150 godzin nadliczbowych'],
 };
 
 /**

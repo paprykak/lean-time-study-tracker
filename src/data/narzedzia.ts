@@ -945,6 +945,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-15',
   },
   {
+    slug: 'odmowa-nadgodzin',
+    nazwa: 'Czy można odmówić nadgodzin',
+    krotko: 'Czy musisz zostać po godzinach: kto może odmówić, limit 150 h w roku i do której najdłużej wolno pracować.',
+    kategoria: 'czas-pracy',
+    przepisy: ['kodeksPracy', 'rehabilitacja', 'ndsNdn'],
+    sprawdzono: '2026-11-15',
+  },
+  {
     slug: 'przerwy-w-pracy',
     nazwa: 'Przerwy w pracy',
     krotko: 'Ile przerw przy zmianie 8 i 12 godzin, które są płatne, przy monitorze, na karmienie, dla młodocianych.',
