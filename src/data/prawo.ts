@@ -331,9 +331,9 @@ export const AKTY = {
   recznePrace: {
     nazwa: 'Rozporządzenie w sprawie bezpieczeństwa i higieny pracy przy ręcznych pracach transportowych',
     publikator: 'Dz.U. 2018 poz. 1139',
-    uwaga: 'tekst jednolity; § 2, 3, 13, 14, 16 i 17',
+    uwaga: 'tekst jednolity, bez zmian po nim; § 2, 3, 13, 14, 16 i 17; drogi i przejścia: § 12 ust. 1, § 21 ust. 3, § 34–35',
     adres: eli(2018, 1139),
-    sprawdzono: '2026-11-11',
+    sprawdzono: '2026-11-15',
   },
   praceKobietCiaza: {
     nazwa: 'Rozporządzenie w sprawie wykazu prac uciążliwych, niebezpiecznych lub szkodliwych dla zdrowia kobiet w ciąży i kobiet karmiących dziecko piersią',
@@ -769,9 +769,9 @@ export const AKTY = {
   pip: {
     nazwa: 'Ustawa o Państwowej Inspekcji Pracy',
     publikator: 'Dz.U. 2024 poz. 1712',
-    uwaga: 'tekst jednolity; art. 10–11 (zadania, nakazy, nakaz wypłaty wynagrodzenia), art. 23 ust. 2–3 (tajemnica tożsamości osoby przesłuchanej), art. 44 ust. 3 (tajemnica, że kontrola jest po skardze); zmiany Dz.U. 2025 poz. 321, 368, 620, 769 i 2026 poz. 160 nie dotyczą tych przepisów',
+    uwaga: 'tekst jednolity; art. 10–11 (zadania, nakazy, nakaz wypłaty wynagrodzenia, wystąpienie albo polecenie), art. 23 ust. 2–3 (tajemnica tożsamości osoby przesłuchanej), art. 44 ust. 3 (tajemnica, że kontrola jest po skardze); po tekście jednolitym art. 10 ust. 1 zmieniły Dz.U. 2025 poz. 321 (pkt 15e) i 620 (pkt 3 i 15), a art. 10 ust. 1 pkt 11, art. 11 i art. 23 ust. 1 Dz.U. 2026 poz. 473 (wpis zmianaPip2026); Dz.U. 2025 poz. 368, 769 i 2026 poz. 160 tych przepisów nie zmieniają; art. 23 ust. 2–3 i art. 44 ust. 3 bez zmian',
     adres: eli(2024, 1712),
-    sprawdzono: '2026-11-13',
+    sprawdzono: '2026-11-15',
   },
   skargiWnioski: {
     nazwa: 'Rozporządzenie Rady Ministrów w sprawie organizacji przyjmowania i rozpatrywania skarg i wniosków',
