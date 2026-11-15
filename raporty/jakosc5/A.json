@@ -1,0 +1,93 @@
+{
+  "partia": "A",
+  "sprawdzone": [{
+    "slug": "fundusz-socjalny",
+    "pliki": ["src/lib/narzedzia/fundusz-socjalny.ts", "src/lib/narzedzia/fundusz-socjalny.test.ts", "src/lib/narzedzia/fundusz-socjalny-szukaj.test.ts", "src/pages/narzedzia/fundusz-socjalny.astro", "tests/e2e/narzedzie-fundusz-socjalny.spec.ts", "src/lib/narzedzia/swiadczenie-urlopowe.ts (PODSTAWA_ODPISU, podstawaOdpisu, maksimum, LATA_ODPISU)", "src/data/narzedzia.ts (wpis)", "src/data/prawo.ts (11 aktów z przepisy)", "src/data/sprawy.ts", "src/lib/narzedzia/rejestr.test.ts (test podstawy odpisu)"],
+    "wynik": "problemy (bez krytycznych): przepisy ZFŚS t.j. 2024/288 + 2026/25 (art. 4 ust. 3, art. 8 ust. 2 od 27.01.2026) + 2026/1123 (art. 8 od 1.01.2028, PIT pkt 67b), rozporządzenie 2009/349, M.P. 2025/148 i 2026/232 (kwoty i rok podstawy zgodne z art. 5 ust. 2 i 7), ustawy okołobudżetowe 2024/1925, 2025/1840, 2026/1349 i tekst po III czytaniu druku 3154 (bez przepisu o ZFŚS), PIT art. 21 ust. 1 pkt 67, 67a, 78 (nowelizacje 2026: 1098, 1347, 1354, 1123 ich nie zmieniają przed 2028 r.), składki § 2 ust. 1 pkt 19, zdrowotna art. 81 ust. 1, zw. zaw. art. 27 i 30; ok. 60 zdań strony, FAQ i wariantów wyniku; rachunek: 62 porównania Python (Decimal) z logiką, 0 różnic (odpisy 8 rodzajów × 2 lata, świadczenie urlopowe w dół, 22 liczby etatów od 0,001 do 1 000 000 × 2 lata, 75% w górę); Playwright: SSR = wynik skryptu (różni się tylko tekstem noscript), 11 kombinacji pól i 9 błędnych wpisów (komunikaty, aria-invalid, role=alert), 320 i 412 px bez przewijania w bok, tabela w przewijanym kontenerze, opcje select nieucięte; 41 zapytań do wyszukiwarki w obie strony; vitest 67/67"
+  }],
+  "znaleziska": [
+    {
+      "id": "A-1", "slug": "fundusz-socjalny", "wymiar": "prawo", "waga": "srednia",
+      "plik": "src/pages/narzedzia/fundusz-socjalny.astro", "linia": 190,
+      "zdanie": "Ustawy okołobudżetowe na 2025 i 2026 r. podstawy odpisu nie zmieniają, projekt na 2027 r. (druk sejmowy nr 3154) też nie. Kwota na 2027 r. będzie znana po obwieszczeniu Prezesa GUS do 20 lutego 2027 r.",
+      "problem": "Rok w tekście jest wpisany na sztywno, a nie liczony z LATA_ODPISU. Po dopisaniu kwoty na 2027 r. do PODSTAWA_ODPISU tabela pokaże kolumnę 2027, a to samo zdanie dalej powie, że kwota „będzie znana”. Zdanie o „projekcie” zestarzeje się z chwilą ogłoszenia ustawy okołobudżetowej na 2027 r. Żaden test tego nie pilnuje. Do tego od 1.01.2027 r. strona zbudowana bez kwoty na 2027 r. ma tytuł i H1 „Fundusz socjalny 2026”, a wynik nie ostrzega, że to odpis na 2026 r. (świadczenie-urlopowe ma taki komunikat). Test w rejestr.test.ts (ZAPAS_DNI = 20) zatrzyma build dopiero po 12.03.2027 r.",
+      "dowod": "art. 5 ust. 7 ustawy o ZFŚS (.cache DU_2024_288.txt): „ogłasza Prezes GUS … nie później niż do dnia 20 lutego każdego roku”; proces 3154 w API Sejmu: „uchwalono” 6.11.2026 r., ELI = null (jeszcze nieogłoszona); src/lib/narzedzia/rejestr.test.ts:61 i 86–89; swiadczenie-urlopowe.astro:247: „Kwoty na ${u.rok} r. jeszcze nie ogłoszono … pokazujemy limit na ${rok} r.”",
+      "poprawka": "Zdanie liczyć z danych: `const nastepny = rokBiezacy + (LATA_ODPISU.includes(rokBiezacy) ? 1 : 0)` → „Kwota na {nastepny} r. będzie znana po obwieszczeniu Prezesa GUS do 20 lutego {nastepny} r.”. Zdanie o druku 3154 zamienić na wpis aktu (po ogłoszeniu: okolobudzetowa2027 w prawo.ts). Gdy rokBiezacy nie jest w LATA_ODPISU, dopisać do uwag wyniku (i w SSR): „Odpisu na {rokBiezacy} r. jeszcze nie ogłoszono (Prezes GUS do 20 lutego); pokazujemy odpis na {rok} r.; próg liczysz według etatów 1 stycznia {rokBiezacy} r.”. Dodać test jednostkowy z udawanym zegarem 2027-01-05 (vi.setSystemTime) na tekst strony albo na funkcję, która go buduje."
+    },
+    {
+      "id": "A-2", "slug": "fundusz-socjalny", "wymiar": "prawo", "waga": "srednia",
+      "plik": "src/lib/narzedzia/fundusz-socjalny.ts", "linia": 209,
+      "zdanie": "Czy układ zbiorowy może tu wyłączyć fundusz, ustawa wprost nie mówi: art. 4 ust. 1 odsyła tylko do art. 3 ust. 1 i 1c. (wynik dla jednostki budżetowej z 60 etatami)",
+      "problem": "obowiazek() sprawdza jednostkę budżetową przed progiem 50 etatów, więc jednostka z co najmniej 50 etatami dostaje zdanie, że art. 4 ust. 1 jej „wprost” nie dotyczy, i nie dostaje uwagi o art. 4 ust. 1–3. Tymczasem taka jednostka mieści się w hipotezie art. 3 ust. 1 („co najmniej 50 pracowników w przeliczeniu na pełne etaty”), do której art. 4 ust. 1 wprost odsyła. Niepewność dotyczy tylko jednostek poniżej 50 etatów (i 20–49 bez wniosku).",
+      "dowod": ".cache DU_2024_288.txt art. 3 ust. 1: „Fundusz tworzą pracodawcy zatrudniający według stanu na dzień 1 stycznia danego roku co najmniej 50 pracowników w przeliczeniu na pełne etaty.”; art. 4 ust. 1: „U pracodawców, o których mowa w art. 3 ust. 1 i 1c, układ zbiorowy pracy może dowolnie kształtować wysokość odpisu na Fundusz; może również postanawiać, że Fundusz nie będzie tworzony.” Playwright: 60 etatów + „Jednostka budżetowa” → uwaga „Czy układ zbiorowy może tu wyłączyć fundusz, ustawa wprost nie mówi…”, brak zdania o art. 4 ust. 1–2.",
+      "poprawka": "W opisFunduszu dla o === 'budzetowa' i etatyTys >= 50_000 dać zdanie: „Jednostka z co najmniej 50 etatami jest też pracodawcą z art. 3 ust. 1, więc układ zbiorowy albo regulamin wynagradzania może inaczej ustalić odpis albo wyłączyć fundusz (art. 4 ust. 1–3).” Zdanie „ustawa wprost nie mówi” zostawić dla jednostek poniżej 50 etatów. To samo zawęzić w „Jak liczymy” („czy w jednostce budżetowej poniżej 50 etatów…”) i w komentarzu (4) na górze pliku. Test: opisFunduszu(2026, 80_000, 'brak', 'budzetowa').uwagi zawiera 'art. 4 ust. 1'."
+    },
+    {
+      "id": "A-3", "slug": "fundusz-socjalny", "wymiar": "tresc-ux", "waga": "niska",
+      "plik": "src/pages/narzedzia/fundusz-socjalny.astro", "linia": 114,
+      "zdanie": "Odpis na fundusz na jeden etat w roku (nagłówek tabeli z wierszami: osoba z niepełnosprawnością, emeryt i rencista pod opieką socjalną, żłobek)",
+      "problem": "Zwiększenia z art. 5 ust. 4, 5 i 5a liczy się na osobę („na każdą zatrudnioną osobę”, „na każdego emeryta i rencistę”), nie na etat. Emeryt nie ma etatu. Nagłówek sugeruje, że zwiększenie na emeryta albo osobę z niepełnosprawnością na pół etatu liczy się od etatu.",
+      "dowod": ".cache DU_2024_288.txt art. 5 ust. 4: „na każdą zatrudnioną osobę, w stosunku do której orzeczono…”; ust. 5: „na każdego emeryta i rencistę uprawnionego do tej opieki”; ust. 5a: „na każdą zatrudnioną osobę”.",
+      "poprawka": "Nagłówek: „Odpis na fundusz w roku: na etat i zwiększenia na osobę”; w podpisie tabeli (caption) to samo."
+    },
+    {
+      "id": "A-4", "slug": "fundusz-socjalny", "wymiar": "prawo", "waga": "niska",
+      "plik": "src/pages/narzedzia/fundusz-socjalny.astro", "linia": 162,
+      "zdanie": "Bez limitu: dopłaty z funduszu do wypoczynku dzieci i młodzieży do 18 lat zorganizowanego przez podmioty, które się tym zajmują (wczasy, kolonie, obozy, zimowiska), do leczenia sanatoryjnego i do przejazdów z tym związanych (art. 21 ust. 1 pkt 78 lit. a)",
+      "problem": "Po wyliczeniu „do leczenia sanatoryjnego” zdanie da się czytać tak, że bez limitu jest każda dopłata do sanatorium, także dla dorosłego. Pkt 78 dotyczy tylko dzieci i młodzieży do 18 lat. FAQ ujmuje to dobrze („i do ich leczenia sanatoryjnego”).",
+      "dowod": ".cache DU_2026_592.txt art. 21 ust. 1 pkt 78: „dopłaty do: wypoczynku …, pobytu na leczeniu sanatoryjnym … oraz przejazdów … – dzieci i młodzieży do lat 18: a) z … zakładowego funduszu świadczeń socjalnych … – niezależnie od ich wysokości”.",
+      "poprawka": "„… zimowiska), do ich leczenia sanatoryjnego i do przejazdów z tym związanych (art. 21 ust. 1 pkt 78 lit. a). Dopłata do sanatorium dla dorosłego mieści się w limicie 1000 zł (pkt 67).”"
+    },
+    {
+      "id": "A-5", "slug": "fundusz-socjalny", "wymiar": "prawo", "waga": "niska",
+      "plik": "src/pages/narzedzia/fundusz-socjalny.astro", "linia": 154,
+      "zdanie": "Gdy działa kilka związków, z których każdy zrzesza co najmniej 5% pracowników (albo jest reprezentatywny), i w ciągu 30 dni od otrzymania projektu nie przedstawią wspólnego stanowiska, o regulaminie decyduje pracodawca … (art. 30 ust. 6–7 ustawy o związkach zawodowych)",
+      "problem": "Nawias przedstawia reprezentatywność jako warunek zastępujący próg 5%. W przepisie zdanie „z których każda zrzesza co najmniej 5%” dotyczy obu grup, a ust. 7 wymaga 5% także od jednej organizacji reprezentatywnej. Strona powołuje ust. 7, ale go nie opisuje. Termin biegnie od przekazania dokumentu przez pracodawcę, a nie od otrzymania projektu.",
+      "dowod": ".cache DU_2026_549.txt art. 30 ust. 6: „– organizacje związkowe albo reprezentatywne organizacje związkowe w rozumieniu art. 25³ ust. 1 lub 2, z których każda zrzesza co najmniej 5 % pracowników …, nie przedstawią wspólnie uzgodnionego stanowiska w terminie 30 dni od dnia przekazania im przez pracodawcę tego dokumentu”; ust. 7: „… jeżeli u pracodawcy działa jedna reprezentatywna zakładowa organizacja związkowa zrzeszająca co najmniej 5 % pracowników”.",
+      "poprawka": "„Gdy związki (także reprezentatywne), z których każdy zrzesza co najmniej 5% pracowników, nie przedstawią wspólnego stanowiska w 30 dni od przekazania im projektu, o regulaminie decyduje pracodawca po rozpatrzeniu ich odrębnych stanowisk; tak samo przy jednej reprezentatywnej organizacji z co najmniej 5% pracowników (art. 30 ust. 6–7 …).”"
+    },
+    {
+      "id": "A-6", "slug": "fundusz-socjalny", "wymiar": "wyszukiwarka", "waga": "niska",
+      "plik": "src/data/sprawy.ts", "linia": 137,
+      "zdanie": "„pozyczka mieszkaniowa z zakladu pracy”, „pozyczka mieszkaniowa z pracy”, „oswiadczenie o dochodach socjal”, „socjal a zarobki dochód na osobe”",
+      "problem": "Pomoc na cele mieszkaniowe (art. 2 pkt 1) i oświadczenie o dochodach (art. 8 ust. 1a) to sprawy strony, ale wyszukiwarka nie wskazuje narzędzia: odpowiednio dyzur-w-pracy, okres-wypowiedzenia, brak, brak. „kolonie dla dzieci dofinansowanie z pracy” i „dofinansowanie do wakacji dzieci z pracy” dają fundusz dopiero na 3. miejscu za praca-w-niedziele i praca-w-sobote.",
+      "dowod": "szukaj.mjs: „pozyczka mieszkaniowa z zakladu pracy”: 1. dyzur-w-pracy (214), fundusz-socjalny poza piątką; „oswiadczenie o dochodach socjal”: brak; „kolonie dla dzieci dofinansowanie z pracy”: 1. praca-w-niedziele (224), 2. praca-w-sobote (224), 3. fundusz-socjalny (222). Z DODAJ='{\"fundusz-socjalny\":[\"pożyczka mieszkaniowa z funduszu socjalnego\",\"oświadczenie o dochodach do socjalu\",\"dopłata do kolonii dla dzieci\"]}': wszystkie cztery zapytania i oba o kolonie/wakacje → 1. fundusz-socjalny; „praca w niedziele” bez zmian (1. praca-w-niedziele).",
+      "poprawka": "Dopisać do hasła 'fundusz-socjalny': 'pożyczka mieszkaniowa z funduszu socjalnego', 'oświadczenie o dochodach do socjalu', 'dopłata do kolonii dla dzieci' i te zapytania do fundusz-socjalny-szukaj.test.ts."
+    },
+    {
+      "id": "A-7", "slug": "fundusz-socjalny", "wymiar": "spojnosc", "waga": "niska",
+      "plik": "src/data/narzedzia.ts", "linia": 936,
+      "zdanie": "przepisy: ['zfss', 'zfssZmiana2026', 'zfssLiczbaZatrudnionych', 'przecietneZfss2026', 'okolobudzetowa2025', 'okolobudzetowa2026', 'zwiazkiZawodowe', 'pit', 'podstawaSkladek', 'swiadczeniaZdrowotne', 'pip']",
+      "problem": "Strona powołuje Dz.U. 2026 poz. 1123 (zmiana art. 2 pkt 1 od 2028 r.) i M.P. 2025 poz. 148 (kwota na 2025 r. w tabeli i w wyniku), ale żaden z tych aktów nie jest w przepisy, więc nie ma ich w „Podstawie prawnej”. Wpisy 'pit' (sprawdzono 2026-11-11) i 'podstawaSkladek' (2026-11-12) w uwadze nie wymieniają przepisów, na które strona się powołuje (art. 21 ust. 1 pkt 67, 67a, 78; § 2 ust. 1 pkt 19). Strona nie powołuje ustawy o PIP (tylko art. 12a ustawy o ZFŚS), a wpis 'pip' jest w przepisy.",
+      "dowod": "fundusz-socjalny.astro:152 „(Dz.U. 2026 poz. 1123)”; tabela i wynik dla 2025 r. z publikatorem 'M.P. 2025 poz. 148'; prawo.ts: brak klucza dla 2026/1123 w ZFŚS i dla M.P. 2025/148 (tylko w uwadze przecietneZfss2026); prawo.ts:89 uwaga pit: „art. 21 ust. 1 pkt 11, 11b, 16 i 148 …”. Sprawdziłem, że nowelizacje PIT z 2026 r. (779, 846, 1079, 1098, 1287, 1347, 1354, 1371) pkt 67, 67a i 78 nie zmieniają, a 1123 zmienia od 2028 r. tylko pkt 67b.",
+      "poprawka": "Dopisać do prawo.ts (tylko dopisując) akt 'zfssZmiana2028' (Dz.U. 2026 poz. 1123, art. 8, od 1.01.2028 r.) i 'przecietneZfss2025' (M.P. 2025 poz. 148) i dodać je do przepisy. Do uwag 'pit' i 'podstawaSkladek' dopisać pkt 67, 67a, 78 i § 2 ust. 1 pkt 19 (to pliki wspólne, więc tylko dopisanie). Usunąć 'pip' z przepisy albo powołać ustawę o PIP na stronie."
+    },
+    {
+      "id": "A-8", "slug": "fundusz-socjalny", "wymiar": "testy", "waga": "niska",
+      "plik": "src/lib/narzedzia/fundusz-socjalny.test.ts", "linia": 162,
+      "zdanie": "it('jednostka budżetowa: musi, bez zdania o wyłączeniu w układzie …')",
+      "problem": "Testy utrwalają błąd A-2: dla jednostki budżetowej z 80 etatami sprawdzają tylko terminy, a nie uwagi o art. 4. Brakuje testu tekstu strony na przełomie roku (A-1) i testu tabeli na 320 px po dopisaniu trzeciego roku (dziś tabela ma 470 px w kontenerze 288 px z overflow-x: auto, to działa, ale nikt tego nie pilnuje). Brak przypadku wyniku dla ułamka etatu poniżej 1 w tekście (etatyTekst(500) → „0,5 etatu”).",
+      "dowod": "fundusz-socjalny.test.ts:162–173; Playwright 320 px: .tabela scrollWidth 470, clientWidth 288, overflowX auto.",
+      "poprawka": "Dodać: expect(opisFunduszu(2026, 80_000, 'brak', 'budzetowa').uwagi.join(' ')).toContain('art. 4 ust. 1'); expect(etatyTekst(500)).toBe('0,5 etatu'); test z vi.setSystemTime('2027-01-05') na zdanie o kwocie na następny rok."
+    }
+  ],
+  "orzeczenia": [],
+  "do_stanu": [
+    {"sprawa": "Obwieszczenie Prezesa GUS o przeciętnym wynagrodzeniu w 2026 r. i w drugim półroczu 2026 r. (podstawa odpisu na ZFŚS i limitu świadczenia urlopowego na 2027 r., art. 5 ust. 2 i 7)", "kiedy_sprawdzic": "2027-02-20", "gdzie_w_kodzie": "src/lib/narzedzia/swiadczenie-urlopowe.ts PODSTAWA_ODPISU; src/data/prawo.ts nowy wpis przecietneZfss2027 i przepisy fundusz-socjalny; zdanie „Kwota na 2027 r.” w fundusz-socjalny.astro:190"},
+    {"sprawa": "Ustawa okołobudżetowa na 2027 r. (druk 3154, uchwalona przez Sejm 6.11.2026 r., tekst po III czytaniu bez przepisu o ZFŚS; Senat i ogłoszenie przed nami): sprawdzić, czy poprawki Senatu nie zamrażają podstawy odpisu", "kiedy_sprawdzic": "2026-12-31", "gdzie_w_kodzie": "src/data/prawo.ts okolobudzetowa2025 (uwaga o druku 3154); fundusz-socjalny.astro:190; komentarz w fundusz-socjalny.ts"},
+    {"sprawa": "Dz.U. 2026 poz. 1123 art. 8: nowe brzmienie art. 2 pkt 1 ustawy o ZFŚS (punkty opieki dziennej, oddziały przedszkolne, bez dziennego opiekuna) i PIT art. 21 ust. 1 pkt 67b", "kiedy_sprawdzic": "2028-01-01", "gdzie_w_kodzie": "fundusz-socjalny.astro:152 (zdanie „Od 1 stycznia 2028 r. …” do zamiany na czas teraźniejszy)"}
+  ],
+  "poza_zakresem": [
+    "src/pages/narzedzia/swiadczenie-urlopowe.astro:35 (FAQ): „a gdy ma układ zbiorowy albo regulamin wynagradzania, zapisuje to w nim (art. 3 ust. 3a–3b)”: pomija warunek art. 3 ust. 3b „zatrudniających co najmniej 50 pracowników”, który fundusz-socjalny opisuje poprawnie (spójność opisu tej samej sprawy).",
+    "src/pages/narzedzia/swiadczenie-urlopowe.astro:35 i 161 oraz komentarz w swiadczenie-urlopowe.ts: „przy 20–49 etatach” / „od 20 do 49 etatów”: przepis mówi „co najmniej 20 i mniej niż 50” (49,5 etatu nie mieści się w „20–49”); fundusz-socjalny pisze to poprawnie.",
+    "swiadczenie-urlopowe.astro nie linkuje do /narzedzia/fundusz-socjalny, choć mówi o funduszu i jego progach (link w jedną stronę).",
+    "src/lib/narzedzia/rejestr.test.ts:61, 86–89: test kwoty GUS zatrzymuje build dopiero 20 dni po 20 lutego (ZAPAS_DNI = 20), a datę bierze z toISOString() (UTC, nie czas polski)."
+  ],
+  "nie_sprawdzono": [
+    "Czytnik ekranu tylko przez ariaSnapshot w Chromium (kolejność, nazwy pól, alert, region aria-live), bez prawdziwego NVDA/VoiceOver. Region aria-live zawiera ukryty akapit „glos” z kwotą odpisu, którą czytnik przy czytaniu po kolei usłyszy drugi raz w liście wyniku. To wybór projektowy, nie błąd.",
+    "Tekst ustawy okołobudżetowej na 2027 r. po pracach Senatu (stan w API Sejmu na 15.11.2026: uchwalona 6.11.2026 r., bez ELI).",
+    "Interpretacje ministerstwa i KIS (zaokrąglanie odpisu do grosza, zwiększenia na osobę czy na etat, zwolnienie z pkt 67 dla emerytów byłych pracowników): gov.pl i podatki.gov.pl blokują automaty.",
+    "Orzeczeń strona nie powołuje, więc SAOS nie był potrzebny.",
+    "iPhone/WebKit: tylko Chromium."
+  ]
+}
