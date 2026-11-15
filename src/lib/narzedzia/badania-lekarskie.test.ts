@@ -6,6 +6,7 @@ import {
   przypomnienie,
   tekstKontrolnego,
   tekstOdwolania,
+  ODWOLANIE_ART_115,
   tekstWstepnych,
   type DaneWstepnych,
 } from './badania-lekarskie';
@@ -162,7 +163,7 @@ describe('badania wstępne (art. 229 § 1–1³ i art. 201 § 1 Kp)', () => {
 
 describe('odwołanie od orzeczenia (§ 5 ust. 3 rozporządzenia) i następne badanie', () => {
   it('7 dni od dnia po otrzymaniu, bez przesunięcia', () => {
-    expect(odwolanie('2026-11-12', '2026-11-12')).toEqual({ ostatniDzien: '2026-11-19', wolny: null, dniDo: 7 });
+    expect(odwolanie('2026-11-12', '2026-11-12')).toMatchObject({ ostatniDzien: '2026-11-19', wolny: null, dniDo: 7, termin: { zdazDo: '2026-11-19', rozne: false } });
     expect(odwolanie('2026-12-24', '2026-12-24').ostatniDzien).toBe('2026-12-31');
     expect(odwolanie('2028-02-25', '2028-02-25').ostatniDzien).toBe('2028-03-03');
   });
@@ -182,6 +183,21 @@ describe('odwołanie od orzeczenia (§ 5 ust. 3 rozporządzenia) i następne bad
     expect(tekstOdwolania(odwolanie('2026-11-12', '2026-11-12')).opis).toContain('art. 111 § 2 Kodeksu cywilnego');
     expect(tekstOdwolania(odwolanie('2026-11-12', '2026-11-19')).status?.tekst).toBe('Ostatni dzień: dziś');
     expect(tekstOdwolania(odwolanie('2026-11-12', '2026-11-22')).status).toEqual({ tekst: 'Termin minął 3 dni temu', rodzaj: 'po-terminie' });
+  });
+  it('terminy 2: koniec w dzień wolny — zdąż do i ostatni dzień według art. 115 KC (daty z raporty/terminy2/swieta.py)', () => {
+    expect(odwolanie('2026-11-07', '2026-11-07').termin).toMatchObject({ zdazDo: '2026-11-14', wedlugArt115: '2026-11-16', rozne: true });
+    expect(odwolanie('2026-11-04', '2026-11-04').termin).toMatchObject({ zdazDo: '2026-11-11', wedlugArt115: '2026-11-12' });
+    expect(odwolanie('2026-12-19', '2026-12-19').termin).toMatchObject({ zdazDo: '2026-12-26', wedlugArt115: '2026-12-28' });
+    expect(odwolanie('2026-12-17', '2026-12-17').termin).toMatchObject({ zdazDo: '2026-12-24', wedlugArt115: '2026-12-28' });
+    const t = tekstOdwolania(odwolanie('2026-11-07', '2026-11-10'));
+    expect(t).toMatchObject({ etykieta: 'Odwołanie: zdąż do', wynik: '14 listopada 2026 r.', art115: '16 listopada 2026 r.', status: { tekst: 'Zostało: 4 dni', rodzaj: 'w-terminie' } });
+    expect(t.opis).toMatch(/^14 listopada 2026 r\. to sobota: gdy koniec terminu wypada w sobotę/);
+    expect(t.opis.endsWith(ODWOLANIE_ART_115)).toBe(true);
+    expect(tekstOdwolania(odwolanie('2026-11-07', '2026-11-15')).status).toEqual({ tekst: 'Pierwsza data minęła; ostatni dzień według art. 115 KC: 16 listopada 2026 r.', rodzaj: 'pilne' });
+    expect(tekstOdwolania(odwolanie('2026-11-07', '2026-11-16')).status?.tekst).toBe('Pierwsza data minęła; ostatni dzień według art. 115 KC: dziś');
+    expect(tekstOdwolania(odwolanie('2026-11-07', '2026-11-17')).status).toEqual({ tekst: 'Termin minął wczoraj', rodzaj: 'po-terminie' });
+    const zwykly = tekstOdwolania(odwolanie('2026-11-12', '2026-11-12'));
+    expect(zwykly).toMatchObject({ etykieta: 'Odwołanie najpóźniej', art115: null });
   });
   it('przypomnienie: 181 dni do badania, wydarzenia 12.04 i 12.05.2027; termin minął bez wydarzeń', () => {
     const p = przypomnienie('2027-05-12', '2026-11-12');

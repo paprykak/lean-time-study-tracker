@@ -18,7 +18,7 @@ import {
   tekstOdwolania,
   tekstWstepnych,
 } from '../../lib/narzedzia/badania-lekarskie';
-import { dataPoPolsku, dodajDni, dzisWPolsce } from '../../lib/narzedzia/terminy';
+import { BEZ_PRZESUNIECIA, ETYKIETA_ART_115, dataPoPolsku, dodajDni, dzisWPolsce } from '../../lib/narzedzia/terminy';
 
 const dzis = dzisWPolsce();
 const WIERSZE = 3;
@@ -225,11 +225,14 @@ const faq = [
 
       <div data-wynik="orzeczenie" hidden>
         <div aria-live="polite" aria-atomic="true">
-          <p class="meta">Odwołanie najpóźniej</p>
+          <p class="meta" data-w="c-etykieta">{to.etykieta}</p>
           <p class="wynik-data" data-w="c-wynik">{to.wynik}</p>
           <p class="status-terminu" data-w="c-status" data-status={to.status?.rodzaj}>{to.status?.tekst}</p>
-          <p class="meta mt-2" data-w="c-opis">{to.opis}</p>
+          <dl class="wynik-lista" data-wiersz="c-art115" hidden={!to.art115}>
+            <div><dt>{ETYKIETA_ART_115}</dt><dd data-w="c-art115">{to.art115}</dd></div>
+          </dl>
         </div>
+        <p class="meta mt-2" data-w="c-opis">{to.opis}</p>
         <dl class="wynik-lista">
           <div><dt>Jak</dt><dd>na piśmie, z uzasadnieniem, przez jednostkę medycyny pracy, w której wydano orzeczenie (§ 5 ust. 1 i 3 rozporządzenia)</dd></div>
           <div><dt>Co dalej</dt><dd>jednostka przekazuje odwołanie w {DNI_PRZEKAZANIE} dni, badanie w {DNI_BADANIE_ODWOLAWCZE} dni od otrzymania odwołania; orzeczenie z odwołania jest ostateczne (§ 5 ust. 4–6)</dd></div>
@@ -293,10 +296,10 @@ const faq = [
       <li>Liczymy dni kalendarzowe zwolnienia razem z pierwszym i ostatnim. Zwolnienia dzień po dniu albo nachodzące na siebie traktujemy jak jedną niezdolność. Gdy między zwolnieniami są tylko dni wolne, przepis nie mówi, czy to jedna niezdolność; wtedy wskazujemy, że bezpieczniej zrobić badanie. Gdy jednak już wcześniejsze zwolnienie trwało ponad {PROG_KONTROLNE} dni, a do następnego nie było dnia pracy, badanie jest potrzebne. Urlop w przerwie traktujemy jak brak dnia pracy, bo badanie robi się przed dopuszczeniem do pracy, a nie przed urlopem: zaplanowany urlop zaraz po zwolnieniu jest możliwy bez badania (wyrok Sądu Najwyższego z 20 marca 2008 r., II PK 214/07). Orzeczeń Sądu Najwyższego o sumowaniu zwolnień rozdzielonych przerwą w przejrzanych orzeczeniach z bazy SAOS nie znaleźliśmy.</li>
       <li>Gdy zwolnienie się kończy, stawiasz się w pracy i zgłaszasz gotowość do pracy, a pracodawca kieruje Cię na badanie kontrolne (wyroki Sądu Najwyższego I PKN 639/00 i II PK 319/04); według II PK 319/04 nie musisz wcześniej sam przynosić orzeczenia. Odmowa badania, gdy jej jedyną przyczyną są okoliczności po Twojej stronie, uzasadnia niedopuszczenie do pracy bez wynagrodzenia (I PK 541/03).</li>
       <li>Przepis mówi o niezdolności spowodowanej chorobą. Zwolnienie w ciąży i po wypadku liczymy tak samo. Terminu badania kontrolnego przepis nie podaje; wynika z zakazu dopuszczenia do pracy bez aktualnego orzeczenia.</li>
-      <li>{DNI_NA_PRZYJECIE} dni na zwolnienie z badań wstępnych liczymy od dnia po końcu poprzedniej umowy (art. 111 Kodeksu cywilnego) do pierwszego dnia nowej pracy z umowy (art. 26 Kodeksu pracy).</li>
+      <li>{DNI_NA_PRZYJECIE} dni na zwolnienie z badań wstępnych liczymy od dnia po końcu poprzedniej umowy (art. 111 Kodeksu cywilnego) do pierwszego dnia nowej pracy z umowy (art. 26 Kodeksu pracy). {BEZ_PRZESUNIECIA.okres}</li>
       <li>Przepis nie definiuje „aktualnego orzeczenia”. Przyjmujemy, że jest aktualne, gdy zaczynasz pracę przed datą następnego badania z orzeczenia; tak samo w pliku kalendarza radzimy zrobić badanie przed tą datą. Przepis nie mówi też, czy przy pracy u tego samego pracodawcy po terminie badania trzeba badań wstępnych, czy innych: piszemy tylko, że potrzebne jest badanie.</li>
       <li>Gdy nie wiesz, czy prace są szczególnie niebezpieczne albo czy na nowym stanowisku są czynniki szkodliwe, przyjmujemy, że badania są potrzebne. Osobie młodocianej zawsze wskazujemy badania wstępne.</li>
-      <li>Termin odwołania liczymy od dnia po otrzymaniu orzeczenia (art. 111 § 2 Kodeksu cywilnego). Rozporządzenie nie przesuwa terminu z soboty ani święta, a czy stosuje się art. 115 Kodeksu cywilnego, przepisy nie rozstrzygają: pokazujemy datę bez przesunięcia. Przy e-orzeczeniu przepis nie mówi, co jest dniem otrzymania; bezpieczniej liczyć od najwcześniejszej daty.</li>
+      <li>Termin odwołania liczymy od dnia po otrzymaniu orzeczenia (art. 111 § 2 Kodeksu cywilnego). Rozporządzenie nie przesuwa terminu z soboty ani święta, a czy stosuje się art. 115 Kodeksu cywilnego, przepisy nie rozstrzygają: gdy ostatni dzień wypada w sobotę albo dzień ustawowo wolny od pracy, podajemy datę „zdąż do” i ostatni dzień według art. 115 Kodeksu cywilnego, ale bezpieczniej zdążyć do pierwszej daty. Przy e-orzeczeniu przepis nie mówi, co jest dniem otrzymania; bezpieczniej liczyć od najwcześniejszej daty.</li>
       <li>Datę następnego badania wyznacza lekarz w orzeczeniu. Nie wyliczamy jej z tabel, bo zależą od oceny ryzyka.</li>
     </ul>
     <p>
@@ -448,9 +451,17 @@ const faq = [
       // Termin odwołania i przypomnienie liczymy niezależnie: błąd jednego pola nie kasuje drugiego wyniku.
       let komunikat: string | null = null;
       const zOtrzymaniem = poprawnaData(otrzymane);
-      if (zOtrzymaniem) pokazWynik('c', tekstOdwolania(odwolanie(otrzymane, dzis)));
-      else {
+      const art115 = form.querySelector<HTMLElement>('[data-wiersz="c-art115"]')!;
+      if (zOtrzymaniem) {
+        const t = tekstOdwolania(odwolanie(otrzymane, dzis));
+        pokazWynik('c', t);
+        pisz('c-etykieta', t.etykieta);
+        art115.hidden = !t.art115;
+        pisz('c-art115', t.art115 ?? '');
+      } else {
         wyczysc('c');
+        pisz('c-etykieta', 'Odwołanie najpóźniej');
+        art115.hidden = true;
         komunikat = zly('Wpisz dzień otrzymania orzeczenia.', input('otrzymane'));
       }
       if (!nastepne) pisz('c-nastepne', 'wpisz datę z orzeczenia');

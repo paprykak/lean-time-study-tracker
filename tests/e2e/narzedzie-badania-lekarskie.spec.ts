@@ -71,8 +71,10 @@ test('nowa praca bez poprzedniej umowy o pracę: badania wstępne potrzebne, bez
 test('orzeczenie: odwołanie do 11 listopada (święto) i przypomnienie w kalendarzu', async ({ page }) => {
   await page.getByLabel('Mam orzeczenie').check();
   await page.locator('[name="otrzymane"]').fill('2026-11-04');
+  await expect(page.locator('[data-w="c-etykieta"]')).toHaveText(/^Odwołanie: zdąż do$/);
   await expect(page.locator('[data-w="c-wynik"]')).toHaveText(/11\slistopada\s2026/);
-  await expect(page.locator('[data-w="c-opis"]')).toContainText(/święto/);
+  await expect(page.locator('[data-w="c-art115"]')).toHaveText(/^12\slistopada\s2026\sr\.$/);
+  await expect(page.locator('[data-w="c-opis"]')).toContainText(/Narodowe Święto Niepodległości.*art\.\s115 Kodeksu cywilnego.*do\spierwszej daty/);
   await expect(page.locator('[data-ics]')).toBeDisabled();
   await page.locator('[name="nastepneOkresowe"]').fill('2099-05-12');
   await expect(page.locator('[data-w="c-nastepne"]')).toContainText(/12\smaja\s2099/);
@@ -81,6 +83,8 @@ test('orzeczenie: odwołanie do 11 listopada (święto) i przypomnienie w kalend
   await page.locator('[name="otrzymane"]').fill('');
   await expect(page.locator('[data-blad="dane"]')).toBeVisible();
   await expect(page.locator('[data-w="c-wynik"]')).toHaveText('—');
+  await expect(page.locator('[data-wiersz="c-art115"]')).toBeHidden();
+  await expect(page.locator('[data-w="c-etykieta"]')).toHaveText(/^Odwołanie najpóźniej$/);
   await expect(page.locator('[data-w="c-nastepne"]')).toContainText(/12\smaja\s2099/);
   await expect(page.locator('[data-ics]')).toBeEnabled();
 });

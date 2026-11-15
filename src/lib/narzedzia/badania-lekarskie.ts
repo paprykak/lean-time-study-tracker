@@ -51,8 +51,10 @@
 // 9. Młodociany: art. 201 § 1 bez wyjątków, więc zawsze badania wstępne (także przy zmianie stanowiska, art. 229 § 1 pkt 2).
 // 10. Zmiana stanowiska u dorosłego: wstępne tylko przy czynnikach szkodliwych lub uciążliwych; „nie wiem” → potrzebne.
 // 11. Odwołanie: dzień otrzymania orzeczenia się nie liczy, ostatni dzień = otrzymanie + 7. Rozporządzenie nie przesuwa
-//     terminu z soboty ani święta, a stosowanie art. 115 Kc jest niepewne: datę pokazujemy bez przesunięcia
-//     i z ostrzeżeniem.
+//     terminu z soboty ani święta, a stosowanie art. 115 Kc jest niepewne. To czynność osoby badanej, więc według
+//     konwencji z terminy.ts (pakiet „terminy 2”): „Zdąż do” (bez przesunięcia) i „Ostatni dzień według art. 115 KC”
+//     (`terminPracownika`), z własnym zdaniem o niepewności (`ODWOLANIE_ART_115`). 30 dni z § 1¹ (pkt 5) to okres, a nie
+//     termin czynności: bez przesunięcia (`BEZ_PRZESUNIECIA.okres` na stronie).
 // 12. Następnego badania okresowego nie wyliczamy z tabel załącznika nr 1 (zakresy i ocena lekarza): bierzemy datę
 //     z orzeczenia i robimy przypomnienie w tym dniu i 30 dni wcześniej (czas na skierowanie).
 import { czyRoboczy } from './dni-robocze';
@@ -60,7 +62,7 @@ import { swieta } from './czas-pracy';
 import { dzienTygodnia } from './dni-wolne';
 import type { Wydarzenie } from './kalendarz-ics';
 import { scal, type Zwolnienie } from './okres-zasilkowy';
-import { dataPoPolsku, dniMiedzy, dodajDni, ileDni, poprawnaData } from './terminy';
+import { ETYKIETA_ZDAZ_DO, ZDANIE_ART_115, dataPoPolsku, dniMiedzy, dodajDni, fazaTerminu, ileDni, poprawnaData, terminPracownika, zdanieArt115, type TerminPracownika } from './terminy';
 import { odmiana } from '../redakcja';
 
 export type { Zwolnienie };
@@ -401,6 +403,9 @@ export interface Odwolanie {
   wolny: { rodzaj: 'sobota' | 'niedziela' | 'swieto'; nazwa: string } | null;
   /** Dni od dziś do końca terminu (ujemne: termin minął). */
   dniDo: number;
+  /** Termin osoby badanej: bez przesunięcia i według art. 115 KC (terminy.ts). */
+  termin: TerminPracownika;
+  dzis: string;
 }
 
 export function odwolanie(otrzymane: string, dzis: string): Odwolanie {
@@ -416,18 +421,37 @@ export function odwolanie(otrzymane: string, dzis: string): Odwolanie {
       : dt === 0
         ? { rodzaj: 'niedziela' as const, nazwa: 'niedziela' }
         : null;
-  return { ostatniDzien, wolny, dniDo: dniMiedzy(dzis, ostatniDzien) };
+  return { ostatniDzien, wolny, dniDo: dniMiedzy(dzis, ostatniDzien), termin: terminPracownika(ostatniDzien), dzis };
 }
 
-export function tekstOdwolania(o: Odwolanie): TekstWyniku {
+/** Drugie zdanie pod datą z art. 115 KC przy odwołaniu od orzeczenia (raporty/terminy2/PRZEPISY.md, pytanie 5). */
+export const ODWOLANIE_ART_115 =
+  'Rozporządzenie o badaniach tego nie mówi, a czy art. 115 Kodeksu cywilnego stosuje się do odwołania od orzeczenia lekarskiego, przepisy nie rozstrzygają i orzeczeń o tym nie znaleźliśmy. Bezpieczniej, żeby odwołanie dotarło do jednostki medycyny pracy do pierwszej daty.';
+
+export interface TekstOdwolania extends TekstWyniku {
+  /** „Odwołanie najpóźniej” albo „Odwołanie: zdąż do”, gdy art. 115 KC daje późniejszą datę. */
+  etykieta: string;
+  /** Data według art. 115 KC, gdy inna niż `wynik`. */
+  art115: string | null;
+}
+
+export function tekstOdwolania(o: Odwolanie): TekstOdwolania {
+  const f = fazaTerminu(o.termin, o.dzis);
   const status: TekstWyniku['status'] =
-    o.dniDo < 0
-      ? { tekst: `Termin minął ${ileDni(o.dniDo)}`, rodzaj: 'po-terminie' }
-      : { tekst: o.dniDo === 0 ? 'Ostatni dzień: dziś' : `Zostało: ${dniTekst(o.dniDo)}`, rodzaj: o.dniDo <= 2 ? 'pilne' : 'w-terminie' };
-  const opis = o.wolny
-    ? `To ${o.wolny.rodzaj === 'swieto' ? `święto (${o.wolny.nazwa})` : o.wolny.nazwa}. Rozporządzenie nie przesuwa terminu, a czy przesuwa go art. 115 Kodeksu cywilnego, przepisy nie rozstrzygają: bezpieczniej złożyć odwołanie wcześniej.`
-    : `${DNI_NA_ODWOLANIE} dni liczymy od dnia po otrzymaniu orzeczenia (§ 5 ust. 3 rozporządzenia o badaniach lekarskich pracowników, art. 111 § 2 Kodeksu cywilnego).`;
-  return { wynik: dataPoPolsku(o.ostatniDzien), status, opis };
+    f.faza === 'po-terminie'
+      ? { tekst: `Termin minął ${ileDni(f.dni)}`, rodzaj: 'po-terminie' }
+      : f.faza === 'tylko-art-115'
+        ? { tekst: `Pierwsza data minęła; ostatni dzień według art. 115 KC: ${f.dni === 0 ? 'dziś' : dataPoPolsku(o.termin.wedlugArt115)}`, rodzaj: 'pilne' }
+        : { tekst: f.dni === 0 ? 'Ostatni dzień: dziś' : `Zostało: ${dniTekst(f.dni)}`, rodzaj: f.dni <= 2 ? 'pilne' : 'w-terminie' };
+  const liczenie = `${DNI_NA_ODWOLANIE} dni liczymy od dnia po otrzymaniu orzeczenia (§ 5 ust. 3 rozporządzenia o badaniach lekarskich pracowników, art. 111 § 2 Kodeksu cywilnego).`;
+  const zdanie = zdanieArt115(o.termin, 'pracodawca');
+  return {
+    etykieta: o.termin.rozne ? `Odwołanie: ${ETYKIETA_ZDAZ_DO.toLowerCase()}` : 'Odwołanie najpóźniej',
+    wynik: dataPoPolsku(o.ostatniDzien),
+    art115: o.termin.rozne ? dataPoPolsku(o.termin.wedlugArt115) : null,
+    status,
+    opis: zdanie ? zdanie.replace(ZDANIE_ART_115.pracodawca, ODWOLANIE_ART_115) : liczenie,
+  };
 }
 
 export interface Przypomnienie {
