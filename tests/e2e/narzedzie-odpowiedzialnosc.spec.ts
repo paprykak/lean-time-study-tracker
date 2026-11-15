@@ -117,6 +117,6 @@ test('koniec przedawnienia w sobotę: druga data z art. 115 KC i spór (III CZP 
   await expect(page.locator('[data-w="status"]')).toHaveText(/^Pracodawcy\szostało:\s7\sdni, a\smoże do\s23\slistopada\s2026\sr\.$/);
   const opis = page.locator('[data-w="przedawnienie-opis"]');
   await expect(opis).toContainText(/21\slistopada\s2026\sr\. to\ssobota\. Czy koniec przedawnienia przesuwa się/);
-  await expect(opis).toContainText(/III\sCZP\s21\/23, znanej nam tylko z\sprzytoczeń/);
+  await expect(opis).toContainText(/III\sCZP\s21\/23, znana nam tylko z\sprzytoczeń/);
   await expect(opis).toContainText(/trwa do\s23\slistopada\s2026\sr\. Dla Ciebie bezpieczniejsza jest ta późniejsza data/);
 });

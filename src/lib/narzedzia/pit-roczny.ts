@@ -19,8 +19,9 @@
 //   miesiącach od papierowego (art. 77 § 1 pkt 5 i 5a Ordynacji).
 // Termin dopłaty: 30 kwietnia (art. 45 ust. 1 i 4), a gdy to sobota albo dzień ustawowo wolny od pracy, następny dzień
 // po dniu lub dniach wolnych (art. 12 § 5 Ordynacji): przepis szczególny sam przesuwa termin, więc podajemy jedną datę,
-// po przesunięciu (pakiet „terminy 2”). Liczy ją `terminPracownika` z terminy.ts (te same dni wolne i sobota; reguła soboty
-// sprzed 2017 r. dotyczy tylko art. 115 KC, a lata w kalkulatorze zaczynają się od 2025 r.).
+// po przesunięciu (pakiet „terminy 2”, raporty/terminy2/PRZEPISY.md, pytanie 4). Sobota jest w art. 12 § 5 od pierwotnego
+// brzmienia (w mocy od 1.01.1998 r.), więc nie bierzemy reguły soboty z art. 115 KC (od 2017 r.); dni ustawowo wolne
+// według `dzienWolnyArt115` z terminy.ts.
 // Przyjęte: przy rozliczeniu osobno małżonków-rodziców Twoja część ulgi to wybrany procent, reszta jest małżonka; zwrot
 // niewykorzystanej ulgi u obojga ograniczamy łączną sumą ich składek (art. 27f ust. 10), najpierw u Ciebie. Wspólne
 // rozliczenie zakłada wspólne dzieci (cała ulga od wspólnego podatku). Nie liczymy dochodów spoza PIT-11 (działalność,
@@ -28,7 +29,7 @@
 import { doGrosza } from './dodatek-nocny';
 import { liczba, zl } from './format';
 import { UWAGA_PELNOLETNIE, ulgaNaDzieci, type Sytuacja, type WynikUlgi } from './ulga-na-dzieci';
-import { dataPoPolsku, terminPracownika } from './terminy';
+import { dataPoPolsku, dodajDni, dzienWolnyArt115 } from './terminy';
 
 export const PROG_SKALI = 120_000;
 export const KWOTA_ZMNIEJSZAJACA = 3600;
@@ -219,7 +220,11 @@ export interface OpisPit {
 }
 
 /** Ostatni dzień zapłaty podatku za `rok` (art. 45 ust. 1 i 4 ustawy o PIT, art. 12 § 5 Ordynacji podatkowej). */
-export const terminZaplaty = (rok: number) => terminPracownika(`${rok + 1}-04-30`).wedlugArt115;
+export function terminZaplaty(rok: number): string {
+  let d = `${rok + 1}-04-30`;
+  while (new Date(`${d}T00:00:00Z`).getUTCDay() === 6 || dzienWolnyArt115(d)) d = dodajDni(d, 1);
+  return d;
+}
 
 const opisSalda = (s: number) => (s > 0 ? `Zwrot ${zl(s)}` : s < 0 ? `Dopłata ${zl(-s)}` : 'Bez zwrotu i dopłaty');
 

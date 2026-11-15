@@ -1,7 +1,7 @@
 // Oczekiwane wartości policzone niezależnie skryptami w Pythonie (zmieniajace.py, zmien2.py z wydłużeniem przy progu stażu) (datetime, własny kalendarz świąt), nie kodem z TS.
 // Daty według art. 115 KC: raporty/terminy2/swieta.py (własny kalendarz świąt i reguła soboty od 2017 r.).
 import { describe, expect, it } from 'vitest';
-import { ODMOWA_ART_115, opisZmieniajacego, ostatniDzienPrzedPolowa, wypowiedzenieZmieniajace } from './wypowiedzenie-zmieniajace';
+import { ODMOWA_ART_115, opisZmieniajacego, tekstProgu, ostatniDzienPrzedPolowa, wypowiedzenieZmieniajace } from './wypowiedzenie-zmieniajace';
 import { ZDANIE_ART_115 } from './terminy';
 
 describe('wypowiedzenie zmieniające (art. 42 § 1–3, art. 36 § 1, art. 30 § 2¹, art. 264 § 1 Kp)', () => {
@@ -97,12 +97,16 @@ describe('wypowiedzenie zmieniające (art. 42 § 1–3, art. 36 § 1, art. 30 §
     expect(opisZmieniajacego(r, '2026-11-23')).toMatchObject({ status: 'Pierwsza data minęła; ostatni dzień według art. 115 KC: dziś', statusKlasa: 'pilne' });
     expect(opisZmieniajacego(r, '2026-11-24')).toMatchObject({ status: 'Termin na odmowę minął', statusKlasa: 'po-terminie' });
   });
+  it('wiersz o progu stażu: zgoda liczby (audyt A-1)', () => {
+    expect(tekstProgu({ miesiace: 6, dzien: '2026-11-12', krotszy: '2 tygodnie', krotszyKoniec: '2026-11-28' })).toBe('6 miesięcy stażu mija 12 listopada 2026 r.; odmowę liczymy od krótszego okresu (2 tygodnie)');
+    expect(tekstProgu({ miesiace: 36, dzien: '2026-11-19', krotszy: '1 miesiąc', krotszyKoniec: '2026-12-31' })).toBe('3 lata stażu mijają 19 listopada 2026 r.; odmowę liczymy od krótszego okresu (1 miesiąc)');
+  });
   it('teksty wyniku bez przesunięcia: jedna data, bez zdań o art. 115 KC', () => {
     const o = opisZmieniajacego(wypowiedzenieZmieniajace('2020-01-15', '2026-11-12'), '2026-11-12');
     expect(o).toMatchObject({ odmowaEtykieta: 'Odmowę złóż najpóźniej', odmowa: '5 stycznia 2027 r.', odmowaArt115: null, odmowaZdanie: '', odwolanieEtykieta: 'Odwołanie do sądu pracy do', odwolanie: '3 grudnia 2026 r.', odwolanieArt115: null, odwolanieZdanie: '', status: 'Zostały 54 dni', wariantB: '14 stycznia 2027 r.' });
     expect(o.uwaga).toContain('Liczy się dzień, w którym odmowa dotrze do pracodawcy.');
     const bez = opisZmieniajacego(wypowiedzenieZmieniajace('2026-05-13', '2026-11-12', false), '2026-11-12');
-    expect(bez).toMatchObject({ wariantB: 'nie dotyczy (bez pouczenia)', prog: '6 miesięcy mija 12 listopada 2026 r.; odmowę liczymy od krótszego okresu (2 tygodnie)' });
+    expect(bez).toMatchObject({ wariantB: 'nie dotyczy (bez pouczenia)', prog: '6 miesięcy stażu mija 12 listopada 2026 r.; odmowę liczymy od krótszego okresu (2 tygodnie)' });
     expect(bez.uwaga).toContain('I PKN 34/99');
   });
   it('rok przestępny: miesiąc do 29 lutego, połowa lutego (29 dni) do 14 lutego', () => {

@@ -110,6 +110,11 @@ export interface Kontrolne {
   przerwa: boolean;
   /** Wcześniejsza niezdolność w łańcuchu dłuższa niż 30 dni (ostatnia taka), gdy jest. */
   wczesniejsza: { od: string; do: string; dni: number } | null;
+  /**
+   * Przy „Nie wiem” (audyt terminy 2, B-1): wcześniejsza niezdolność ponad 30 dni, która byłaby w łańcuchu, gdyby
+   * w przerwie nie było dnia pracy (np. był tylko urlop). Wtedy wynik „nierozstrzygnięte” zamiast „nie jest wymagane”.
+   */
+  wczesniejszaGdyBezPracy: { od: string; do: string; dni: number } | null;
 }
 
 function przerwaBezPracy(poKoncu: string, przedPoczatkiem: string): boolean {
@@ -147,6 +152,16 @@ export function badanieKontrolne(lista: Zwolnienie[], powod: PowodNiezdolnosci, 
   else if (dniOstatniej > PROG_KONTROLNE || wczesniejsza) wynik = 'potrzebne';
   else if (lancuch.length > 1 && dniLacznie > PROG_KONTROLNE) wynik = 'nierozstrzygniete';
   else wynik = 'niewymagane';
+  // „Nie wiem”: dni pon.–pt. w przerwie liczymy jako dni pracy, ale gdy przy braku dnia pracy (np. sam urlop) wyszłaby
+  // wcześniejsza niezdolność ponad 30 dni, wynik nie może brzmieć „nie jest wymagane” (zasada 2: wariant bezpieczny).
+  let wczesniejszaGdyBezPracy: Kontrolne['wczesniejsza'] = null;
+  if (dzienPracy === 'auto' && powod !== 'opieka' && wynik !== 'potrzebne') {
+    const bezPracy = badanieKontrolne(lista, powod, 'nie');
+    if (bezPracy.wczesniejsza) {
+      wczesniejszaGdyBezPracy = bezPracy.wczesniejsza;
+      wynik = 'nierozstrzygniete';
+    }
+  }
   return {
     wynik,
     od: ost.od,
@@ -159,6 +174,7 @@ export function badanieKontrolne(lista: Zwolnienie[], powod: PowodNiezdolnosci, 
     dniLacznie,
     przerwa: bloki.length > 1,
     wczesniejsza,
+    wczesniejszaGdyBezPracy,
   };
 }
 
@@ -193,6 +209,12 @@ export function tekstKontrolnego(k: Kontrolne, powod: PowodNiezdolnosci): TekstW
           : `Niezdolność do pracy trwała ${dniTekst(k.dniOstatniej)} (${okres}), czyli dłużej niż ${PROG_KONTROLNE} dni (art. 229 § 2 Kodeksu pracy).${adnotacja}`,
       };
     case 'nierozstrzygniete':
+      if (k.wczesniejszaGdyBezPracy)
+        return {
+          wynik: 'przepis tego nie rozstrzyga',
+          status: { tekst: 'Bezpieczniej zrobić badanie', rodzaj: 'wkrotce' },
+          opis: `Wcześniejsza niezdolność do pracy trwała ${dniTekst(k.wczesniejszaGdyBezPracy.dni)} (od ${dataPoPolsku(k.wczesniejszaGdyBezPracy.od)} do ${dataPoPolsku(k.wczesniejszaGdyBezPracy.do)}), czyli dłużej niż ${PROG_KONTROLNE} dni. Jeśli od jej końca do ostatniego zwolnienia nie było dnia pracy, na przykład był tylko urlop, badanie kontrolne jest potrzebne przed powrotem (art. 229 § 2 i 4 Kodeksu pracy). Jeśli w tym czasie był choćby jeden dzień pracy, badanie nie jest wymagane. Odpowiedz na pytanie o dzień pracy między zwolnieniami, a wynik będzie pewny.${adnotacja}`,
+        };
       return {
         wynik: 'przepis tego nie rozstrzyga',
         status: { tekst: 'Bezpieczniej zrobić badanie', rodzaj: 'wkrotce' },

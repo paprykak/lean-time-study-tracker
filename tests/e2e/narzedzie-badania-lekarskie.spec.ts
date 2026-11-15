@@ -112,3 +112,16 @@ test('urlop po L4 i zgłoszenie gotowości: orzecznictwo SN w „Jak liczymy”,
   expect(jak).toMatch(/I\sPK\s541\/03/);
   await expect(page.locator('#bl-przerwa-opis')).toHaveText(/urlop się nie liczy/);
 });
+
+test('„Nie wiem” o dniu pracy po zwolnieniu ponad 30 dni i urlopie: bezpieczniej zrobić badanie (audyt terminy 2, B-1)', async ({ page }) => {
+  await page.locator('[name="od1"]').fill('2026-01-01');
+  await page.locator('[name="do1"]').fill('2026-02-15');
+  await page.locator('[name="od2"]').fill('2026-03-02');
+  await page.locator('[name="do2"]').fill('2026-03-06');
+  await expect(page.locator('[data-w="a-wynik"]')).toHaveText(/przepis\stego\snie\srozstrzyga/);
+  await expect(page.locator('[data-w="a-opis"]')).toContainText(/trwała 46\sdni.*na\sprzykład był tylko urlop/);
+  await page.getByLabel('Między zwolnieniami był dzień pracy?').selectOption('nie');
+  await expect(page.locator('[data-w="a-wynik"]')).toHaveText(/^potrzebne$/);
+  await page.getByLabel('Między zwolnieniami był dzień pracy?').selectOption('tak');
+  await expect(page.locator('[data-w="a-wynik"]')).toHaveText(/nie\sjest\swymagane/);
+});

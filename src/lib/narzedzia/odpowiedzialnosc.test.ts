@@ -111,7 +111,7 @@ describe('teksty wyniku', () => {
     expect(ostatni.status).toBe('Termin kończy się dziś albo 16 listopada 2026 r.');
     expect(ostatni.statusKlasa).toBe('pilne');
     expect(ostatni.przedawnienieOpis).toContain('14 listopada 2026 r. to sobota. Czy koniec przedawnienia przesuwa się');
-    expect(ostatni.przedawnienieOpis).toContain('III CZP 21/23, znanej nam tylko z przytoczeń');
+    expect(ostatni.przedawnienieOpis).toContain('III CZP 21/23, znana nam tylko z przytoczeń, mówi, że „art. 115 k.c. nie ma zastosowania do upływu terminu przedawnienia”');
     expect(ostatni.przedawnienieOpis).toContain('trwa do 16 listopada 2026 r. Dla Ciebie bezpieczniejsza jest ta późniejsza data');
     const roboczy = opisOdpowiedzialnosci(dane({ dataSzkody: '2025-11-13', dataWiedzy: '2025-11-13' }), '2026-11-13');
     expect(roboczy.status).toBe('Dziś jest ostatni dzień terminu pracodawcy');

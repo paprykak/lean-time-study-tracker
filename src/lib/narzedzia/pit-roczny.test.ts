@@ -130,6 +130,8 @@ describe('audyt jakości 2: próg, termin dopłaty, ostrzeżenie o limicie', () 
     // 2022: sobota 30.04, niedziela i święto 1.05 → poniedziałek 2.05; 2023: niedziela, 1.05 poniedziałek święto → 2.05;
     // 2033: sobota, 1.05 niedziela, 2.05 poniedziałek; 2027: piątek bez przesunięcia.
     expect([2021, 2022, 2026, 2032].map(terminZaplaty)).toEqual(['2022-05-02', '2023-05-02', '2027-04-30', '2033-05-02']);
+    // Sobota 30.04.2016 r.: Ordynacja przesuwa ją od 1998 r. (inaczej niż art. 115 KC przed 2017 r.) → poniedziałek 2.05.2016.
+    expect(terminZaplaty(2015)).toBe('2016-05-02');
   });
   it('samotny rodzic, jedno dziecko, dochód ponad 56 000 zł: ostrzeżenie o limicie dla pełnoletniego dziecka', () => {
     const ty: Pit11 = { przychodPraca: 90_000, kosztyPraca: 3000, skladki: 7000, zdrowotna: 7000, zaliczki: 8000 };

@@ -156,7 +156,7 @@ export function sporArt115(koniec: string): string {
 
 /** Ostatnie słowa przed datą po przesunięciu (raporty/terminy2/PRZEPISY.md, pytanie 2). */
 export const SPOR_ART_115 =
-  'Czy koniec przedawnienia przesuwa się wtedy na następny dzień, który nie jest dniem wolnym ani sobotą (art. 115 Kodeksu cywilnego), jest sporne: według uchwały 7 sędziów Sądu Najwyższego z 22 maja 2024 r., III CZP 21/23, znanej nam tylko z przytoczeń w wyrokach sądów, art. 115 nie dotyczy upływu przedawnienia; inni przyjmują przesunięcie, a wtedy roszczenie trwa do';
+  'Czy koniec przedawnienia przesuwa się wtedy na następny dzień, który nie jest dniem wolnym ani sobotą (art. 115 Kodeksu cywilnego), jest sporne: uchwała 7 sędziów Sądu Najwyższego z 22 maja 2024 r., III CZP 21/23, znana nam tylko z przytoczeń, mówi, że „art. 115 k.c. nie ma zastosowania do upływu terminu przedawnienia”, ale część sądów i autorów glos krytycznych przyjmuje przesunięcie, a wtedy roszczenie trwa do';
 
 export interface OpisOdpowiedzialnosci {
   granica: string;

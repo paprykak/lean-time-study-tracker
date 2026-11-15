@@ -173,7 +173,7 @@ export function opisZmieniajacego(r: WypowiedzenieZmieniajace, dzis: string): Op
 
 /** Wiersz wyniku o progu stażu (jeden tekst dla HTML i skryptu strony). */
 export function tekstProgu(prog: NonNullable<WypowiedzenieZmieniajace['prog']>): string {
-  return `${prog.miesiace === 6 ? '6 miesięcy' : '3 lata'} mija ${dataPoPolsku(prog.dzien)}; odmowę liczymy od krótszego okresu (${prog.krotszy})`;
+  return `${prog.miesiace === 6 ? '6 miesięcy stażu mija' : '3 lata stażu mijają'} ${dataPoPolsku(prog.dzien)}; odmowę liczymy od krótszego okresu (${prog.krotszy})`;
 }
 
 function pierwszyDzienMiesiacaPo(data: string): string {

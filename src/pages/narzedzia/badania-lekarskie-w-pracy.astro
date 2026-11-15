@@ -115,7 +115,7 @@ const faq = [
             <option value="tak">Tak</option>
             <option value="nie">Nie</option>
           </select>
-          <p id="bl-przerwa-opis" class="meta mt-1">Dzień, w którym pracujesz według grafiku; urlop się nie liczy. „Nie wiem”: przyjmujemy poniedziałek–piątek bez świąt.</p>
+          <p id="bl-przerwa-opis" class="meta mt-1">Dzień, w którym pracujesz według grafiku; urlop się nie liczy. „Nie wiem”: przyjmujemy poniedziałek–piątek bez świąt, a gdy wcześniejsze zwolnienie trwało ponad {PROG_KONTROLNE} dni, wskazujemy, że bezpieczniej zrobić badanie.</p>
         </div>
       </div>
 
@@ -293,7 +293,7 @@ const faq = [
 
     <h2 id="jak-liczymy">Jak liczymy</h2>
     <ul>
-      <li>Liczymy dni kalendarzowe zwolnienia razem z pierwszym i ostatnim. Zwolnienia dzień po dniu albo nachodzące na siebie traktujemy jak jedną niezdolność. Gdy między zwolnieniami są tylko dni wolne, przepis nie mówi, czy to jedna niezdolność; wtedy wskazujemy, że bezpieczniej zrobić badanie. Gdy jednak już wcześniejsze zwolnienie trwało ponad {PROG_KONTROLNE} dni, a do następnego nie było dnia pracy, badanie jest potrzebne. Urlop w przerwie traktujemy jak brak dnia pracy, bo badanie robi się przed dopuszczeniem do pracy, a nie przed urlopem: zaplanowany urlop zaraz po zwolnieniu jest możliwy bez badania (wyrok Sądu Najwyższego z 20 marca 2008 r., II PK 214/07). Orzeczeń Sądu Najwyższego o sumowaniu zwolnień rozdzielonych przerwą w przejrzanych orzeczeniach z bazy SAOS nie znaleźliśmy.</li>
+      <li>Liczymy dni kalendarzowe zwolnienia razem z pierwszym i ostatnim. Zwolnienia dzień po dniu albo nachodzące na siebie traktujemy jak jedną niezdolność. Gdy między zwolnieniami są tylko dni wolne, a łącznie z przerwą wychodzi ponad {PROG_KONTROLNE} dni, przepis nie mówi, czy to jedna niezdolność; wtedy wskazujemy, że bezpieczniej zrobić badanie. Gdy jednak już wcześniejsze zwolnienie trwało ponad {PROG_KONTROLNE} dni, a do następnego nie było dnia pracy, badanie jest potrzebne. Urlop w przerwie traktujemy jak brak dnia pracy, bo badanie robi się przed dopuszczeniem do pracy, a nie przed urlopem: zaplanowany urlop zaraz po zwolnieniu jest możliwy bez badania (wyrok Sądu Najwyższego z 20 marca 2008 r., II PK 214/07). Orzeczeń Sądu Najwyższego o sumowaniu zwolnień rozdzielonych przerwą w przejrzanych orzeczeniach z bazy SAOS nie znaleźliśmy.</li>
       <li>Gdy zwolnienie się kończy, stawiasz się w pracy i zgłaszasz gotowość do pracy, a pracodawca kieruje Cię na badanie kontrolne (wyroki Sądu Najwyższego I PKN 639/00 i II PK 319/04); według II PK 319/04 nie musisz wcześniej sam przynosić orzeczenia. Odmowa badania, gdy jej jedyną przyczyną są okoliczności po Twojej stronie, uzasadnia niedopuszczenie do pracy bez wynagrodzenia (I PK 541/03).</li>
       <li>Przepis mówi o niezdolności spowodowanej chorobą. Zwolnienie w ciąży i po wypadku liczymy tak samo. Terminu badania kontrolnego przepis nie podaje; wynika z zakazu dopuszczenia do pracy bez aktualnego orzeczenia.</li>
       <li>{DNI_NA_PRZYJECIE} dni na zwolnienie z badań wstępnych liczymy od dnia po końcu poprzedniej umowy (art. 111 Kodeksu cywilnego) do pierwszego dnia nowej pracy z umowy (art. 26 Kodeksu pracy). {BEZ_PRZESUNIECIA.okres}</li>

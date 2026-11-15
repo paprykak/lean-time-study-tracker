@@ -58,8 +58,10 @@ describe('badanie kontrolne po zwolnieniu (art. 229 § 2 Kp)', () => {
     expect(tekstKontrolnego(r, 'choroba').opis).toContain('Wcześniejsza niezdolność do pracy trwała 44 dni');
     expect(k(z, 'choroba', 'nie')).toMatchObject({ wynik: 'potrzebne', wczesniejsza: { dni: 44 } });
     expect(k(z, 'choroba', 'tak')).toMatchObject({ wynik: 'niewymagane', wczesniejsza: null });
-    // Poniedziałek 16.02 roboczy: osobna niezdolność 4 dni.
-    expect(k([['2026-01-01', '2026-02-13'], ['2026-02-17', '2026-02-20']])).toMatchObject({ wynik: 'niewymagane', dniOstatniej: 4 });
+    // Poniedziałek 16.02 roboczy w kalendarzu: przy „Nie wiem” mógł to być urlop, więc wynik nierozstrzygnięty (audyt
+    // terminy 2, B-1); „Tak, był dzień pracy”: osobna niezdolność 4 dni, badanie nie jest wymagane.
+    expect(k([['2026-01-01', '2026-02-13'], ['2026-02-17', '2026-02-20']])).toMatchObject({ wynik: 'nierozstrzygniete', dniOstatniej: 4, wczesniejszaGdyBezPracy: { dni: 44 } });
+    expect(k([['2026-01-01', '2026-02-13'], ['2026-02-17', '2026-02-20']], 'choroba', 'tak')).toMatchObject({ wynik: 'niewymagane', dniOstatniej: 4 });
     expect(k(z, 'opieka').wynik).toBe('nie-dotyczy');
   });
   it('granica wcześniejszej niezdolności: 31 dni i niedziela przerwy potrzebne, 30 dni nie rozstrzyga', () => {
@@ -229,5 +231,29 @@ describe('urlop między zwolnieniami nie jest dniem pracy (SN, II PK 214/07: bad
   });
   it('odpowiedź „był dzień pracy”: liczy się tylko ostatnie zwolnienie (5 dni)', () => {
     expect(badanieKontrolne(lista, 'choroba', 'tak')).toMatchObject({ wynik: 'niewymagane', dniOstatniej: 5 });
+  });
+});
+
+describe('audyt terminy 2 (B-1): „Nie wiem” przy wcześniejszej niezdolności ponad 30 dni', () => {
+  // L4 1.01–15.02.2026 (46 dni), potem urlop, potem L4 2–6.03.2026 (5 dni).
+  const lista = [
+    { od: '2026-01-01', do: '2026-02-15' },
+    { od: '2026-03-02', do: '2026-03-06' },
+  ];
+  it('„Nie wiem” → nierozstrzygnięte, „Nie” → potrzebne, „Tak” → nie jest wymagane', () => {
+    const auto = badanieKontrolne(lista, 'choroba', 'auto');
+    expect(auto).toMatchObject({ wynik: 'nierozstrzygniete', wczesniejszaGdyBezPracy: { od: '2026-01-01', do: '2026-02-15', dni: 46 } });
+    const t = tekstKontrolnego(auto, 'choroba');
+    expect(t).toMatchObject({ wynik: 'przepis tego nie rozstrzyga', status: { tekst: 'Bezpieczniej zrobić badanie', rodzaj: 'wkrotce' } });
+    expect(t.opis).toContain('trwała 46 dni (od 1 stycznia 2026 r. do 15 lutego 2026 r.)');
+    expect(t.opis).toContain('na przykład był tylko urlop');
+    expect(badanieKontrolne(lista, 'choroba', 'nie').wynik).toBe('potrzebne');
+    expect(badanieKontrolne(lista, 'choroba', 'tak')).toMatchObject({ wynik: 'niewymagane', wczesniejszaGdyBezPracy: null });
+    expect(badanieKontrolne(lista, 'opieka', 'auto').wynik).toBe('nie-dotyczy');
+  });
+  it('krótkie zwolnienia przez weekend i jedno krótkie: dalej „nie jest wymagane”', () => {
+    expect(badanieKontrolne([{ od: '2026-11-02', do: '2026-11-06' }, { od: '2026-11-09', do: '2026-11-13' }], 'choroba', 'auto')).toMatchObject({ wynik: 'niewymagane', wczesniejszaGdyBezPracy: null });
+    expect(badanieKontrolne([{ od: '2026-11-02', do: '2026-11-06' }], 'choroba', 'auto').wynik).toBe('niewymagane');
+    expect(badanieKontrolne([{ od: '2026-01-01', do: '2026-02-15' }], 'choroba', 'auto').wynik).toBe('potrzebne');
   });
 });
