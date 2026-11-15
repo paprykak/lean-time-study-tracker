@@ -846,7 +846,7 @@ export const AKTY = {
   wzoryKontroliZwolnien: {
     nazwa: 'Rozporządzenie w sprawie wzoru upoważnienia do przeprowadzenia kontroli prawidłowości wykorzystywania zwolnień od pracy i wzoru protokołu tej kontroli',
     publikator: 'Dz.U. 2026 poz. 503',
-    uwaga: 'od 13 kwietnia 2026 r.; zastąpiło rozporządzenie z 27 lipca 1999 r. o kontroli zwolnień lekarskich (Dz.U. 1999 nr 65 poz. 743), które straciło wtedy moc',
+    uwaga: 'od 13 kwietnia 2026 r., tylko wzory (§ 1); rozporządzenie z 27 lipca 1999 r. o zasadach i trybie kontroli zwolnień lekarskich (Dz.U. 1999 nr 65 poz. 743) straciło moc tego dnia wraz z uchyleniem art. 68 ust. 2 ustawy zasiłkowej (art. 13 pkt 8 lit. c Dz.U. 2026 poz. 26)',
     adres: eli(2026, 503),
     sprawdzono: '2026-11-15',
   },

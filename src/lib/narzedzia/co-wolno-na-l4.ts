@@ -198,8 +198,8 @@ const NAZWA_WOLNEGO = (powod: string | null) => (powod === 'sobota' || powod ===
 const KLASA: Record<Werdykt, KlasaStatusu> = { wolno: 'w-terminie', warunek: 'wkrotce', zalezy: 'pilne', nie: 'po-terminie' };
 
 const BEZ_DEFINICJI = 'Do 12 kwietnia 2026 r. ustawa nie definiowała pracy zarobkowej ani wykorzystywania zwolnienia niezgodnie z celem.';
-const LEZEC =
-  'Masz wskazanie „chory powinien leżeć” (art. 55 ust. 3 pkt 7 ustawy zasiłkowej). Żaden przepis nie wylicza, czego przy nim nie wolno; w razie wątpliwości ZUS może zapytać lekarza, który wystawił zwolnienie (art. 68 ust. 1e).';
+const LEZEC = (dawne: boolean) =>
+  `Masz wskazanie „chory powinien leżeć” (art. 55 ust. 3 pkt 7 ustawy zasiłkowej). Żaden przepis nie wylicza, czego przy nim nie wolno; w razie wątpliwości ${dawne ? 'ZUS mógł uzyskać opinię lekarza leczącego (§ 10 rozporządzenia z 27 lipca 1999 r.)' : 'ZUS może zapytać lekarza, który wystawił zwolnienie (art. 68 ust. 1e)'}.`;
 const ADRES =
   'Zmianę adresu pobytu w czasie zwolnienia zgłaszasz pracodawcy (płatnikowi składek) i ZUS najpóźniej w 3 dni; inaczej zawiadomienie o badaniu wysłane na stary adres uznaje się za doręczone (art. 59 ust. 5e–5f ustawy zasiłkowej).';
 const BADANIE =
@@ -216,7 +216,7 @@ interface Ocena {
 /** Werdykt dla czynności i brzmienia przepisu (bez dat i kontroli). */
 export function ocena(czynnosc: Czynnosc, b: Brzmienie, wskazanie: Wskazanie): Ocena {
   const dawne = b === 'dawne';
-  const lezec = wskazanie === 'lezec' && ['zakupy', 'dom', 'wyjazd', 'wysilek'].includes(czynnosc) ? [LEZEC] : [];
+  const lezec = wskazanie === 'lezec' && ['zakupy', 'dom', 'wyjazd', 'wysilek'].includes(czynnosc) ? [LEZEC(dawne)] : [];
   const P_DAWNY = 'art. 17 ust. 1 ustawy zasiłkowej (do 12.04.2026 r.)';
   switch (czynnosc) {
     case 'inna-praca':
@@ -246,7 +246,7 @@ export function ocena(czynnosc: Czynnosc, b: Brzmienie, wskazanie: Wskazanie): O
         opis: 'Praca zarobkowa w czasie zwolnienia odbiera zasiłek. Od 1 stycznia 2027 r. lekarz może na Twoje żądanie nie wystawić zwolnienia z tytułu, w którym pracę da się wykonywać ze względu na jej rodzaj, np. lekką pracę obok tej, której nie możesz wykonywać.',
         warunki: [
           'Niezdolność do pracy dotyczy każdego tytułu ubezpieczenia, a zwolnienie wystawia się odrębnie dla każdego (art. 17 ust. 1c). Jeśli masz zwolnienie także z tej drugiej pracy, praca w niej odbiera zasiłek.',
-          'Wyjątek dotyczy tylko pracy, która jest osobnym tytułem ubezpieczeń społecznych, np. druga umowa o pracę, zlecenie albo własna firma. Praca bez takiego tytułu, np. na umowie o dzieło, nadal jest pracą zarobkową (art. 17 ust. 1a).',
+          'Wyjątek dotyczy tylko pracy, która jest osobnym tytułem ubezpieczeń społecznych, np. druga umowa o pracę albo zlecenie z innym podmiotem czy własna firma; zlecenie u własnego pracodawcy to ten sam tytuł co umowa o pracę. Praca bez osobnego tytułu, np. na umowie o dzieło, nadal jest pracą zarobkową (art. 17 ust. 1a). Ustawa mówi o „tytule”, ale nie wylicza przykładów: to nasze odczytanie.',
           'Bez zwolnienia z jednego tytułu informujesz płatnika składek, który sam wypłaca zasiłki (zgłasza ponad 20 osób), o okresie zwolnienia z innego tytułu (art. 17 ust. 1e, art. 61 ust. 1 pkt 1).',
           'Ustawa nie mówi wprost, że praca w tytule bez zwolnienia nie jest wtedy pracą zarobkową z art. 17 ust. 1a; taki jest sens ust. 1c i 1d.',
         ],
@@ -295,7 +295,7 @@ export function ocena(czynnosc: Czynnosc, b: Brzmienie, wskazanie: Wskazanie): O
         opis: dawne
           ? 'Wizyta u lekarza, badania i rehabilitacja służą leczeniu, czyli celowi zwolnienia.'
           : 'Wizyta u lekarza, badania i rehabilitacja służą leczeniu, więc nie są działaniem, które utrudnia albo wydłuża leczenie.',
-        warunki: ['Gdy ZUS wezwie Cię na badanie do lekarza orzecznika, stawiasz się w wyznaczonym terminie albo dostarczasz wyniki badań (art. 59 ust. 5–6).'],
+        warunki: ['Gdy ZUS wezwie Cię na badanie do lekarza orzecznika, stawiasz się na badanie albo dostarczasz wyniki badań, zależnie od zawiadomienia (art. 59 ust. 5–6).'],
       };
     case 'zakupy':
     case 'dom':
@@ -307,7 +307,7 @@ export function ocena(czynnosc: Czynnosc, b: Brzmienie, wskazanie: Wskazanie): O
           ? 'Dawny przepis zakazywał wykorzystywania zwolnienia w sposób niezgodny z jego celem, bez listy czynności. Zwykłe codzienne sprawy, które nie szkodzą leczeniu, nie przeczą celowi zwolnienia.'
           : 'Zwykłe czynności dnia codziennego nie są aktywnością niezgodną z celem zwolnienia. Ustawa ich nie wylicza; zakupy, apteka i zwykłe sprawy domowe należą do nich w zwykłym znaczeniu słów.',
         warunki: [
-          dawne ? 'Granica: zachowanie nie może przeczyć celowi zwolnienia, czyli leczeniu.' : 'Granica: działanie nie może utrudniać ani wydłużać leczenia albo rekonwalescencji (art. 17 ust. 1b).',
+          dawne ? 'Granica: zachowanie nie może przeczyć celowi zwolnienia, czyli leczeniu (art. 17 ust. 1 w dawnym brzmieniu).' : 'Granica: działanie nie może utrudniać ani wydłużać leczenia albo rekonwalescencji (art. 17 ust. 1b).',
           ...(dawne ? [BEZ_DEFINICJI] : []),
           ...lezec,
         ],
@@ -317,7 +317,9 @@ export function ocena(czynnosc: Czynnosc, b: Brzmienie, wskazanie: Wskazanie): O
         werdykt: 'warunek',
         etykieta: 'Wolno, z warunkami',
         przepis: dawne ? P_DAWNY : 'art. 17 ust. 1b i art. 59 ustawy zasiłkowej',
-        opis: 'Ustawa nie zakazuje wyjazdu w czasie zwolnienia. Wyjazd nie może jednak utrudniać ani wydłużać leczenia, a Ty masz obowiązek umożliwić kontrolę (art. 68d pkt 1) i podać aktualny adres pobytu (art. 59 ust. 5d–5e).',
+        opis: dawne
+          ? 'Ustawa nie zakazywała wyjazdu w czasie zwolnienia. Wyjazd nie mógł jednak przeczyć celowi zwolnienia, czyli leczeniu, a adres pobytu podawało się zgodnie z art. 59 ust. 5d–5e.'
+          : 'Ustawa nie zakazuje wyjazdu w czasie zwolnienia. Wyjazd nie może jednak utrudniać ani wydłużać leczenia, a Ty masz obowiązek umożliwić kontrolę (art. 68d pkt 1) i podać aktualny adres pobytu (art. 59 ust. 5d–5e).',
         warunki: [
           ADRES,
           BADANIE,
@@ -402,10 +404,10 @@ export function opisL4(d: DaneL4, dzis: string): OpisL4 {
   const utrata = `prawo do zasiłku chorobowego za cały okres zwolnienia, ${okres}, a za dni, za które pracodawca płaci wynagrodzenie chorobowe, także do tego wynagrodzenia (art. 17 ust. 1 ustawy zasiłkowej, art. 92 § 3 pkt 2 Kodeksu pracy). Wypłacony już zasiłek podlega potrąceniu z bieżących świadczeń albo ściągnięciu (art. 66 ust. 2 ustawy zasiłkowej).`;
   const czym = b === 'dawne' ? (praca ? 'pracę zarobkową' : 'wykorzystywanie zwolnienia niezgodnie z celem') : praca ? 'pracę zarobkową' : 'aktywność niezgodną z celem zwolnienia';
   let skutek: string;
-  if (o.werdykt === 'nie') skutek = `Gdy ZUS to ustali, tracisz ${utrata}`;
-  else if (o.werdykt === 'wolno') skutek = `Ta czynność nie odbiera zasiłku. Utratę za cały okres zwolnienia, ${okres}, powoduje tylko praca zarobkowa albo aktywność niezgodna z celem zwolnienia (art. 17 ust. 1 ustawy zasiłkowej).`;
-  else if (d.czynnosc === 'incydentalna' && b !== 'dawne') skutek = `Jeśli ZUS uzna, że to nie był wyjątek, tracisz ${utrata}`;
-  else skutek = `Jeśli ZUS uzna to za ${czym}, tracisz ${utrata}`;
+  if (o.werdykt === 'nie') skutek = `Gdy ZUS albo pracodawca, który sam wypłaca zasiłek, to ustali, tracisz ${utrata}`;
+  else if (o.werdykt === 'wolno') skutek = `Ta czynność nie odbiera zasiłku. Utratę za cały okres zwolnienia, ${okres}, powoduje tylko ${b === 'dawne' ? 'praca zarobkowa albo wykorzystywanie zwolnienia niezgodnie z celem' : 'praca zarobkowa albo aktywność niezgodna z celem zwolnienia'} (art. 17 ust. 1 ustawy zasiłkowej).`;
+  else if (d.czynnosc === 'incydentalna' && b !== 'dawne') skutek = `Jeśli ZUS albo pracodawca, który sam wypłaca zasiłek, uzna, że to nie był wyjątek, tracisz ${utrata}`;
+  else skutek = `Jeśli ZUS albo pracodawca, który sam wypłaca zasiłek, uzna to za ${czym}, tracisz ${utrata}`;
 
   let zastrzezenia: string;
   let zastrzezeniaStatus: string | null = null;
@@ -421,7 +423,7 @@ export function opisL4(d: DaneL4, dzis: string): OpisL4 {
     zastrzezeniaKlasa = s.klasa;
     const wolny = przesunZDniaWolnego(t).przesuniecie[0]?.powod ?? null;
     const sobota = wolny ? ` ${wielka(dataPoPolsku(t))} to ${NAZWA_WOLNEGO(wolny)}; ustawa nie mówi, czy termin przesuwa się wtedy na następny dzień roboczy, więc podajemy datę bez przesunięcia.` : '';
-    zastrzezenia = `Najpóźniej ${dataPoPolsku(t)}: ${DNI_ZASTRZEZEN} dni od otrzymania protokołu (albo aneksu do niego), wskazując dowody; rozpatruje je ZUS i odpowiada na piśmie (art. 68e ust. 4–5 ustawy zasiłkowej). Do aneksu sporządzonego po rozpatrzeniu zastrzeżeń nie składa się kolejnych (ust. 6).${sobota}`;
+    zastrzezenia = `Zastrzeżenia składasz najpóźniej ${dataPoPolsku(t)} (${DNI_ZASTRZEZEN} dni od otrzymania protokołu albo aneksu do niego), wskazując dowody; rozpatruje je ZUS i odpowiada na piśmie (art. 68e ust. 4–5 ustawy zasiłkowej). Do aneksu sporządzonego po rozpatrzeniu zastrzeżeń nie składa się kolejnych (ust. 6).${sobota}`;
   }
 
   const gdzie =
@@ -431,17 +433,19 @@ export function opisL4(d: DaneL4, dzis: string): OpisL4 {
   let odwolanieStatus: string | null = null;
   let odwolanieKlasa: KlasaStatusu | null = null;
   if (puste(d.decyzja)) {
-    odwolanie = `Gdy ZUS ustali utratę zasiłku, wydaje decyzję (art. 83 ust. 1 pkt 4 ustawy o systemie ubezpieczeń społecznych); protokół kontroli jest podstawą tego postępowania (art. 68e ust. 7 ustawy zasiłkowej). Na odwołanie do sądu masz miesiąc od doręczenia decyzji. ${gdzie} Wpisz dzień doręczenia decyzji, a policzymy datę.`;
+    odwolanie = `Gdy ZUS ustali utratę zasiłku, wydaje decyzję (art. 83 ust. 1 pkt 4 ustawy o systemie ubezpieczeń społecznych); protokół kontroli jest podstawą tego postępowania (art. 68e ust. 7 ustawy zasiłkowej). Gdy zasiłek wypłaca pracodawca, decyzję ZUS dostaniesz po wniosku o ustalenie uprawnień (art. 63 ust. 1). Na odwołanie do sądu masz miesiąc od doręczenia decyzji. ${gdzie} Wpisz dzień doręczenia decyzji, a policzymy datę.`;
   } else {
     const t = terminOdwolania(d.decyzja!);
-    // Gdy data bez przesunięcia już minęła, a przesunięta jeszcze nie, liczy się tylko ta druga (art. 115 KC).
-    const tylkoPrzesuniety = t.poPrzesunieciu !== null && t.koniec < dzis && t.poPrzesunieciu >= dzis;
+    // Od dnia daty bez przesunięcia (sobota albo dzień wolny) liczy się już tylko data z art. 115 KC, także po terminie.
+    const tylkoPrzesuniety = t.poPrzesunieciu !== null && t.koniec <= dzis;
     const s = stanTerminu(tylkoPrzesuniety ? t.poPrzesunieciu! : t.koniec, dzis);
     odwolanieStatus = s.tekst;
     odwolanieKlasa = s.klasa;
     const art115 = 'według art. 115 Kodeksu cywilnego (przez art. 165 § 1 KPC)';
-    if (tylkoPrzesuniety)
-      odwolanie = `Miesiąc od doręczenia decyzji minął ${dataPoPolsku(t.koniec)}, ale ten dzień to ${NAZWA_WOLNEGO(t.powod)}, więc ${art115} termin upływa ${dataPoPolsku(t.poPrzesunieciu!)} Nie zwlekaj: to ostatni dzień. ${gdzie} ${spoznione}`;
+    if (tylkoPrzesuniety && t.poPrzesunieciu! < dzis)
+      odwolanie = `Termin minął: miesiąc od doręczenia decyzji przypadł na ${dataPoPolsku(t.koniec)}, a że ten dzień to ${NAZWA_WOLNEGO(t.powod)}, ${art115} termin upłynął ${dataPoPolsku(t.poPrzesunieciu!)} ${gdzie} ${spoznione}`;
+    else if (tylkoPrzesuniety)
+      odwolanie = `Miesiąc od doręczenia decyzji przypada na ${dataPoPolsku(t.koniec)}, ale ten dzień to ${NAZWA_WOLNEGO(t.powod)}, więc ${art115} termin upływa ${dataPoPolsku(t.poPrzesunieciu!)} Nie zwlekaj: to ostatni dzień. ${gdzie} ${spoznione}`;
     else {
       const przesuniecie = t.poPrzesunieciu
         ? ` ${wielka(dataPoPolsku(t.koniec))} to ${NAZWA_WOLNEGO(t.powod)}: ${art115} ostatni dzień to ${dataPoPolsku(t.poPrzesunieciu)}, ale bezpieczniej zdążyć do ${dataPoPolsku(t.koniec)}`

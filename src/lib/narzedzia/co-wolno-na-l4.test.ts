@@ -134,7 +134,7 @@ describe('opis wyniku', () => {
     expect(o.werdykt).toBe('Nie wolno, także na polecenie');
     expect(o.werdyktKlasa).toBe('po-terminie');
     expect(o.skutek).toContain('od 3 listopada 2026 r. do 16 listopada 2026 r. (14 dni)');
-    expect(o.skutek).toMatch(/^Gdy ZUS to ustali, tracisz prawo do zasiłku/);
+    expect(o.skutek).toMatch(/^Gdy ZUS albo pracodawca, który sam wypłaca zasiłek, to ustali, tracisz prawo do zasiłku/);
     expect(o.skutek).toContain('art. 92 § 3 pkt 2 Kodeksu pracy');
   });
   it('jednodniowe zwolnienie i zwolnienie przez 29 lutego', () => {
@@ -142,14 +142,14 @@ describe('opis wyniku', () => {
     expect(opisL4({ ...baza, od: '2024-02-28', do: '2024-03-01', dzien: '2024-02-29' }, DZIS).skutek).toContain('(3 dni)');
   });
   it('skutek warunkowy i „nie odbiera” dla lekarza', () => {
-    expect(opisL4({ ...baza, czynnosc: 'zakupy' }, DZIS).skutek).toMatch(/^Jeśli ZUS uzna to za aktywność niezgodną z celem zwolnienia, tracisz/);
-    expect(opisL4({ ...baza, czynnosc: 'zakupy', od: '2026-03-01', do: '2026-03-20', dzien: '2026-03-05' }, DZIS).skutek).toMatch(/^Jeśli ZUS uzna to za wykorzystywanie zwolnienia niezgodnie z celem/);
-    expect(opisL4({ ...baza, czynnosc: 'incydentalna' }, DZIS).skutek).toMatch(/^Jeśli ZUS uzna, że to nie był wyjątek/);
+    expect(opisL4({ ...baza, czynnosc: 'zakupy' }, DZIS).skutek).toMatch(/^Jeśli ZUS albo pracodawca, który sam wypłaca zasiłek, uzna to za aktywność niezgodną z celem zwolnienia, tracisz/);
+    expect(opisL4({ ...baza, czynnosc: 'zakupy', od: '2026-03-01', do: '2026-03-20', dzien: '2026-03-05' }, DZIS).skutek).toMatch(/^Jeśli ZUS albo pracodawca, który sam wypłaca zasiłek, uzna to za wykorzystywanie zwolnienia niezgodnie z celem/);
+    expect(opisL4({ ...baza, czynnosc: 'incydentalna' }, DZIS).skutek).toMatch(/^Jeśli ZUS albo pracodawca, który sam wypłaca zasiłek, uzna, że to nie był wyjątek/);
     expect(opisL4({ ...baza, czynnosc: 'lekarz' }, DZIS).skutek).toMatch(/^Ta czynność nie odbiera zasiłku/);
   });
   it('zastrzeżenia i odwołanie z datami i statusem', () => {
     const o = opisL4({ ...baza, protokol: '2026-11-10', decyzja: '2026-11-13' }, DZIS);
-    expect(o.zastrzezenia).toMatch(/^Najpóźniej 17 listopada 2026 r\./);
+    expect(o.zastrzezenia).toMatch(/^Zastrzeżenia składasz najpóźniej 17 listopada 2026 r\./);
     expect(o.zastrzezeniaStatus).toBe('Zostały 2 dni');
     expect(o.odwolanie).toMatch(/^Zdąż do 13 grudnia 2026 r\.: miesiąc od doręczenia decyzji\. 13 grudnia 2026 r\. to niedziela: według art\. 115 Kodeksu cywilnego \(przez art\. 165 § 1 KPC\) ostatni dzień to 14 grudnia 2026 r\./);
     expect(o.odwolanieStatus).toBe('Zostało 28 dni');
@@ -174,8 +174,15 @@ describe('opis wyniku', () => {
     const o = opisL4(pazdz, '2026-11-12');
     expect(o.odwolanieStatus).toBe('Dziś ostatni dzień');
     expect(o.odwolanieKlasa).toBe('pilne');
-    expect(o.odwolanie).toMatch(/^Miesiąc od doręczenia decyzji minął 11 listopada 2026 r\., ale ten dzień to Narodowe Święto Niepodległości, dzień wolny od pracy, więc według art\. 115 Kodeksu cywilnego \(przez art\. 165 § 1 KPC\) termin upływa 12 listopada 2026 r\. Nie zwlekaj/);
-    expect(opisL4(pazdz, '2026-11-13').odwolanieStatus).toBe('Termin minął 2 dni temu');
+    expect(o.odwolanie).toMatch(/^Miesiąc od doręczenia decyzji przypada na 11 listopada 2026 r\., ale ten dzień to Narodowe Święto Niepodległości, dzień wolny od pracy, więc według art\. 115 Kodeksu cywilnego \(przez art\. 165 § 1 KPC\) termin upływa 12 listopada 2026 r\. Nie zwlekaj/);
+    // Po obu datach: liczy się data z art. 115 KC (12.11), a nie data bez przesunięcia (11.11).
+    const po = opisL4(pazdz, '2026-11-13');
+    expect(po.odwolanieStatus).toBe('Termin minął 1 dzień temu');
+    expect(po.odwolanie).toMatch(/^Termin minął: miesiąc od doręczenia decyzji przypadł na 11 listopada 2026 r\., a że ten dzień to Narodowe Święto Niepodległości, dzień wolny od pracy, według art\. 115 Kodeksu cywilnego \(przez art\. 165 § 1 KPC\) termin upłynął 12 listopada 2026 r\. Odwołanie/);
+    // W sam dzień wolny: status do daty z art. 115 KC.
+    const wDzienWolny = opisL4(pazdz, '2026-11-11');
+    expect(wDzienWolny.odwolanieStatus).toBe('Został 1 dzień');
+    expect(wDzienWolny.odwolanie).toMatch(/^Miesiąc od doręczenia decyzji przypada na 11 listopada/);
   });
   it('zastrzeżenia: uwaga o sobocie tylko wtedy, gdy termin wypada w dzień wolny', () => {
     expect(opisL4({ ...baza, protokol: '2026-11-14' }, DZIS).zastrzezenia).toContain('21 listopada 2026 r. to sobota; ustawa nie mówi, czy termin przesuwa się');
@@ -188,7 +195,7 @@ describe('opis wyniku', () => {
     expect(o.kontrola).toHaveLength(1);
     expect(o.kontrola[0]).toContain('lekarza leczącego');
     const nowa = opisL4({ ...baza, od: '2026-03-01', do: '2026-03-20', dzien: '2026-03-05', protokol: '2026-04-13' }, DZIS);
-    expect(nowa.zastrzezenia).toMatch(/^Najpóźniej 20 kwietnia 2026 r\./);
+    expect(nowa.zastrzezenia).toMatch(/^Zastrzeżenia składasz najpóźniej 20 kwietnia 2026 r\./);
     expect(nowa.kontrola.length).toBeGreaterThan(3);
   });
   it('kontrola pracodawcy: wynagrodzenie (ust. 1d) osobno od zasiłku (ust. 1a), wyjazd z decyzją z art. 59 ust. 10', () => {

@@ -37,7 +37,7 @@ test('czynności: opis pod polem, zakupy z warunkiem, uwaga przy wskazaniu „le
   await expect(page.locator('[data-w="warunki"]')).not.toContainText('chory powinien leżeć');
   await page.getByLabel('Wskazanie lekarza').selectOption('lezec');
   await expect(page.locator('[data-w="warunki"]')).toContainText(/chory\spowinien\sleżeć/);
-  await expect(page.locator('[data-w="skutek"]')).toContainText(/^Jeśli\sZUS\suzna/);
+  await expect(page.locator('[data-w="skutek"]')).toContainText(/^Jeśli\sZUS\salbo\spracodawca/);
   await page.getByLabel('Co robisz').selectOption('lekarz');
   await expect(page.locator('[data-w="werdykt"]')).toHaveText('Wolno');
   await expect(page.locator('[data-w="przepis"]')).toHaveAttribute('data-status', 'w-terminie');
@@ -55,7 +55,7 @@ test('kontrola pracodawcy, zastrzeżenia i odwołanie z dwiema datami', async ({
   await expect(page.locator('[data-w="zastrzezenia-status"]')).toBeHidden();
   await page.getByLabel('Dzień czynności').fill('2026-11-12');
   await page.getByLabel('Otrzymanie protokołu').fill('2026-11-14');
-  await expect(page.locator('[data-w="zastrzezenia"]')).toContainText(/^Najpóźniej\s21\slistopada\s2026\sr\./);
+  await expect(page.locator('[data-w="zastrzezenia"]')).toContainText(/^Zastrzeżenia\sskładasz\snajpóźniej\s21\slistopada\s2026\sr\./);
   await expect(page.locator('[data-w="zastrzezenia-status"]')).toHaveText(/^Zostało\s6\sdni$/);
   await expect(page.locator('[data-w="zastrzezenia-status"]')).toHaveAttribute('data-status', 'wkrotce');
   await page.getByLabel('Doręczenie decyzji ZUS').fill('2026-11-13');

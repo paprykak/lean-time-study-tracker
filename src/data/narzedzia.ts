@@ -922,7 +922,7 @@ export const NARZEDZIA: Narzedzie[] = [
   },
   {
     slug: 'co-wolno-na-l4',
-    nazwa: 'Co wolno na L4: praca, zakupy, wyjazd',
+    nazwa: 'Co wolno na L4: praca, wyjazd, kontrola ZUS',
     krotko: 'Czy praca, zakupy albo wyjazd na zwolnieniu odbiorą zasiłek i za jaki okres, kontrola ZUS i odwołanie.',
     kategoria: 'wynagrodzenie',
     przepisy: ['zasilkowa', 'zmianaKontroliZwolnien2026', 'wzoryKontroliZwolnien', 'systemUbezpieczen', 'kodeksPracy', 'kpc', 'kodeksCywilny'],
