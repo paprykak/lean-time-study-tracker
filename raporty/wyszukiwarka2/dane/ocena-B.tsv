@@ -1,0 +1,786 @@
+1	dodatek-za-prace-w-nocy	pewne	
+2	dodatek-za-prace-w-nocy	pewne	
+3	dodatek-za-prace-w-nocy	pewne	
+4	rodzic-w-pracy	niepewne	dodatek-za-prace-w-nocy
+5	dodatek-za-prace-w-nocy	pewne	
+6	dodatek-za-prace-w-nocy	pewne	
+7	drgania-w-pracy	pewne	
+8	drgania-w-pracy	pewne	
+9	halas-w-pracy	pewne	
+10	halas-w-pracy	niepewne	
+11	odszkodowanie-za-wypadek-przy-pracy	niepewne	
+12	odszkodowanie-za-wypadek-przy-pracy	niepewne	
+13	odszkodowanie-za-wypadek-przy-pracy	pewne	
+14	odszkodowanie-za-wypadek-przy-pracy	pewne	
+15	szkolenie-okresowe-bhp	pewne	
+16	szkolenie-okresowe-bhp	pewne	
+17	szkolenie-okresowe-bhp	pewne	
+18	waznosc-uprawnien-udt	niepewne	czy-potrzebne-uprawnienia-udt
+19	czy-potrzebne-uprawnienia-udt	niepewne	waznosc-uprawnien-udt
+20	waznosc-uprawnien-udt	niepewne	czy-potrzebne-uprawnienia-udt
+21	waznosc-uprawnien-udt	niepewne	czy-potrzebne-uprawnienia-udt
+22	badania-udt	niepewne	
+23	badania-udt	pewne	
+24	powierzchnia-na-pracownika	pewne	
+25	powierzchnia-na-pracownika	pewne	
+26	normy-sanitarne	pewne	
+27	normy-sanitarne	pewne	
+28	normy-sanitarne	niepewne	
+29	normy-sanitarne	niepewne	
+30	ile-kg-wolno-dzwigac	pewne	
+31	ile-kg-wolno-dzwigac	pewne	
+32	ile-kg-wolno-dzwigac	pewne	
+33	ile-kg-wolno-dzwigac	pewne	
+34	temperatura-w-pracy	pewne	
+35	temperatura-w-pracy	pewne	
+36	temperatura-w-pracy	pewne	
+37	temperatura-w-pracy	pewne	
+38	temperatura-w-pracy	pewne	
+39	temperatura-w-pracy	pewne	
+40	wymiar-czasu-pracy	pewne	
+41	wymiar-czasu-pracy	pewne	
+42	wymiar-czasu-pracy	pewne	
+43	wymiar-czasu-pracy	pewne	
+44	kalkulator-nadgodzin	pewne	
+45	kalkulator-nadgodzin	pewne	
+46	kalkulator-nadgodzin	pewne	
+47	kalkulator-nadgodzin	pewne	
+48	kalkulator-nadgodzin	pewne	
+49	kalkulator-nadgodzin	pewne	
+50	urlop-w-agencji-pracy	pewne	
+51	urlop-w-agencji-pracy	pewne	
+52	dni-wolne-od-pracy	pewne	
+53	dni-wolne-od-pracy	pewne	
+54	dni-wolne-od-pracy	pewne	
+55	dni-wolne-od-pracy	pewne	
+56	kalkulator-urlopu	pewne	
+57	kalkulator-urlopu	pewne	
+58	kalkulator-urlopu	pewne	
+59	kalkulator-urlopu	pewne	
+60	ekwiwalent-za-urlop	pewne	
+61	ekwiwalent-za-urlop	pewne	
+62	zalegly-urlop	pewne	
+63	ekwiwalent-za-urlop	niepewne	kalkulator-urlopu
+64	kalkulator-l4	pewne	
+65	brak	pewne	wystawienie L4 wstecz
+66	kalkulator-l4	pewne	
+67	kalkulator-l4	pewne	
+68	l4-po-zwolnieniu	pewne	
+69	kalkulator-odprawy	pewne	
+70	kalkulator-odprawy	pewne	
+71	kalkulator-odprawy	pewne	
+72	wolne-na-dziecko	pewne	
+73	wolne-na-dziecko	pewne	
+74	wolne-na-dziecko	pewne	
+75	wolne-na-dziecko	pewne	
+76	placa-minimalna	pewne	
+77	brutto-netto	niepewne	placa-minimalna
+78	placa-minimalna	niepewne	
+79	placa-minimalna	pewne	
+80	brutto-netto	pewne	
+81	brutto-netto	pewne	
+82	brutto-netto	pewne	
+83	brutto-netto	niepewne	placa-minimalna
+84	umowa-na-czas-okreslony	niepewne	umowa-na-zastepstwo
+85	okres-wypowiedzenia	pewne	
+86	zlecenie-netto	pewne	
+87	zlecenie-netto	pewne	
+88	praca-w-niedziele	pewne	
+89	praca-w-niedziele	pewne	
+90	praca-w-niedziele	pewne	
+91	dni-wolne-od-pracy	niepewne	praca-w-niedziele
+92	wynagrodzenie-za-przestoj	pewne	
+93	wynagrodzenie-za-przestoj	niepewne	wynagrodzenie-za-urlop
+94	wynagrodzenie-za-urlop	pewne	
+95	wynagrodzenie-za-urlop	pewne	
+96	wyplata-z-nadgodzinami	pewne	
+97	kalkulator-ppk	niepewne	
+98	koszt-pracodawcy	pewne	
+99	koszt-pracodawcy	pewne	
+100	delegacja-krajowa	pewne	
+101	delegacja-zagraniczna	pewne	
+102	delegacja-krajowa	niepewne	delegacja-zagraniczna
+103	delegacja-krajowa	pewne	
+104	l4-po-zwolnieniu	pewne	
+105	l4-po-zwolnieniu	pewne	
+106	swiadczenie-rehabilitacyjne	pewne	
+107	swiadczenie-rehabilitacyjne	pewne	
+108	zasilek-opiekunczy	pewne	
+109	zasilek-opiekunczy	pewne	
+110	zasilek-macierzynski	pewne	
+111	zasilek-macierzynski	pewne	
+112	urlop-okolicznosciowy	pewne	
+113	urlop-okolicznosciowy	pewne	
+114	rodzic-w-pracy	niepewne	urlop-ojcowski
+115	urlop-ojcowski	pewne	
+116	urlop-wychowawczy	pewne	
+117	brak	pewne	wychowawczy a emerytura
+118	termin-wyplaty-wynagrodzenia	pewne	
+119	termin-wyplaty-wynagrodzenia	pewne	
+120	stawka-godzinowa	niepewne	brutto-netto
+121	stawka-godzinowa	niepewne	placa-minimalna
+122	kontrola-grafiku	niepewne	
+123	kontrola-grafiku	pewne	
+124	staz-pracy	pewne	
+125	staz-pracy	pewne	
+126	zasilek-dla-bezrobotnych	pewne	
+127	zasilek-dla-bezrobotnych	pewne	
+128	ochrona-przedemerytalna	pewne	
+129	ochrona-przedemerytalna	pewne	
+130	zakaz-konkurencji	pewne	
+131	zakaz-konkurencji	niepewne	
+132	odszkodowanie-za-zwolnienie	niepewne	kalkulator-odprawy
+133	odszkodowanie-za-zwolnienie	pewne	
+134	odprawa-posmiertna	pewne	
+135	odprawa-posmiertna	pewne	
+136	zasilek-chorobowy-na-zleceniu	niepewne	zwolnienie-na-l4
+137	kalkulator-l4	niepewne	zwolnienie-na-l4
+138	kara-porzadkowa	pewne	
+139	kara-porzadkowa	pewne	
+140	kara-porzadkowa	pewne	
+141	kara-porzadkowa	pewne	
+142	kara-porzadkowa	pewne	
+143	kara-porzadkowa	niepewne	
+144	odwolanie-do-sadu-pracy	niepewne	
+145	odwolanie-do-sadu-pracy	pewne	
+146	okres-wypowiedzenia	pewne	
+147	okres-wypowiedzenia	pewne	
+148	brak	pewne	porozumienie stron
+149	okres-wypowiedzenia	pewne	
+150	dni-robocze	pewne	
+151	dni-robocze	pewne	
+152	dyzur-w-pracy	pewne	
+153	dyzur-w-pracy	pewne	
+154	pracownik-mlodociany	pewne	
+155	pracownik-mlodociany	pewne	
+156	przedawnienie-wynagrodzenia	pewne	
+157	przedawnienie-wynagrodzenia	niepewne	
+158	zwolnienia-grupowe	pewne	
+159	zwolnienia-grupowe	pewne	
+160	pracownik-niepelnosprawny	niepewne	
+161	pracownik-niepelnosprawny	pewne	
+162	zwrot-kosztow-szkolenia	pewne	
+163	zwrot-kosztow-szkolenia	pewne	
+164	zwrot-kosztow-szkolenia	pewne	
+165	zwrot-kosztow-szkolenia	pewne	
+166	okres-zasilkowy	pewne	
+167	okres-zasilkowy	pewne	
+168	kontrola-trzezwosci	pewne	
+169	kontrola-trzezwosci	pewne	
+170	kontrola-trzezwosci	pewne	
+171	praca-w-ciazy	niepewne	
+172	praca-w-ciazy	pewne	
+173	waznosc-uprawnien-sep	pewne	
+174	waznosc-uprawnien-sep	pewne	
+175	czy-potrzebne-uprawnienia-udt	niepewne	
+176	kod-95	pewne	
+177	kod-95	pewne	
+178	badania-kierowcy	niepewne	
+179	badania-kierowcy	pewne	
+180	badania-lekarskie-w-pracy	pewne	
+181	badania-lekarskie-w-pracy	pewne	
+182	posilki-profilaktyczne	pewne	
+183	posilki-profilaktyczne	pewne	
+184	odziez-robocza	pewne	
+185	odziez-robocza	pewne	
+186	wypowiedzenie-zmieniajace	pewne	
+187	wypowiedzenie-zmieniajace	pewne	
+188	wypowiedzenie-zmieniajace	niepewne	
+189	umowa-na-zastepstwo	pewne	
+190	umowa-na-zastepstwo	pewne	
+191	wynagrodzenie-za-niepelny-miesiac	pewne	
+192	wynagrodzenie-za-niepelny-miesiac	pewne	
+193	dodatek-wyrownawczy	pewne	
+194	brak	pewne	dodatek wyrównawczy emerytalny
+195	okres-wyczekiwania	pewne	
+196	okres-wyczekiwania	pewne	
+197	okres-wyczekiwania	niepewne	zasilek-chorobowy-na-zleceniu
+198	zasilek-chorobowy-na-zleceniu	pewne	
+199	swiadczenie-urlopowe	pewne	
+200	swiadczenie-urlopowe	niepewne	fundusz-socjalny
+201	swiadczenie-urlopowe	niepewne	fundusz-socjalny
+202	urlop-w-godzinach	pewne	
+203	swiadectwo-pracy	niepewne	urlop-w-godzinach
+204	urlop-w-okresie-wypowiedzenia	niepewne	
+205	urlop-w-okresie-wypowiedzenia	pewne	
+206	urlop-szkoleniowy	pewne	
+207	urlop-szkoleniowy	pewne	
+208	urlop-bezplatny	pewne	
+209	urlop-bezplatny	pewne	
+210	zalegly-urlop	pewne	
+211	zalegly-urlop	pewne	
+212	praca-cudzoziemca	pewne	
+213	praca-cudzoziemca	pewne	
+214	praca-cudzoziemca	pewne	
+215	praca-cudzoziemca	pewne	
+216	zgloszenie-pracy-cudzoziemca	pewne	
+217	zgloszenie-pracy-cudzoziemca	pewne	
+218	odpracowanie-wyjscia-prywatnego	pewne	
+219	odpracowanie-wyjscia-prywatnego	pewne	
+220	praca-w-sobote	pewne	
+221	praca-w-sobote	pewne	
+222	dni-wolne-od-pracy	niepewne	praca-w-sobote
+223	dni-wolne-od-pracy	niepewne	praca-w-sobote
+224	nadgodziny-sredniotygodniowe	pewne	
+225	nadgodziny-sredniotygodniowe	pewne	
+226	doba-pracownicza	pewne	
+227	doba-pracownicza	pewne	
+228	rownowazny-czas-pracy	pewne	
+229	rownowazny-czas-pracy	pewne	
+230	przerwy-w-pracy	pewne	
+231	rownowazny-czas-pracy	niepewne	kontrola-grafiku
+232	dorabianie-do-renty	pewne	
+233	dorabianie-do-renty	niepewne	
+234	dorabianie-do-renty	pewne	
+235	brak	pewne	zwrot akcyzy
+236	brak	pewne	zwrot akcyzy
+237	zwrot-podatku-pit-37	pewne	
+238	ulga-na-dzieci	pewne	
+239	ulga-na-dzieci	pewne	
+240	zerowy-pit	pewne	
+241	zerowy-pit	pewne	
+242	choroba-zawodowa	pewne	
+243	praca-na-wysokosci	pewne	
+244	praca-na-wysokosci	pewne	
+245	emerytura-pomostowa	pewne	
+246	emerytura-pomostowa	niepewne	
+247	brak	pewne	renta socjalna
+248	swiadczenie-przedemerytalne	pewne	
+249	swiadczenie-przedemerytalne	pewne	
+250	czas-jazdy-kierowcy	pewne	
+251	czas-jazdy-kierowcy	pewne	
+252	dyzur-kierowcy	pewne	
+253	dyzur-kierowcy	pewne	
+254	mobbing-i-dyskryminacja	pewne	
+255	mobbing-i-dyskryminacja	pewne	
+256	mobbing-i-dyskryminacja	pewne	
+257	mobbing-i-dyskryminacja	pewne	
+258	sad-pracy-czy-pip	niepewne	
+259	sad-pracy-czy-pip	niepewne	
+260	odpowiedzialnosc-materialna	pewne	
+261	odpowiedzialnosc-materialna	pewne	
+262	odpowiedzialnosc-materialna	pewne	
+263	odpowiedzialnosc-materialna	pewne	
+264	swiadectwo-pracy	niepewne	
+265	swiadectwo-pracy	niepewne	
+266	monitoring-w-pracy	pewne	
+267	monitoring-w-pracy	pewne	
+268	monitoring-w-pracy	pewne	
+269	monitoring-w-pracy	pewne	
+270	skladowanie-w-magazynie	pewne	
+271	skladowanie-w-magazynie	niepewne	
+272	drogi-i-przejscia	pewne	
+273	co-wolno-na-l4	niepewne	praca-w-ciazy
+274	co-wolno-na-l4	niepewne	
+275	co-wolno-na-l4	pewne	
+276	co-wolno-na-l4	pewne	
+277	fundusz-socjalny	pewne	
+278	fundusz-socjalny	pewne	
+279	przerwy-w-pracy	pewne	
+280	przerwy-w-pracy	pewne	
+281	przerwy-w-pracy	pewne	
+282	przerwy-w-pracy	pewne	
+283	kalkulator-urlopu	niepewne	urlop-w-godzinach
+284	kalkulator-urlopu	niepewne	
+285	temperatura-w-pracy	niepewne	posilki-profilaktyczne
+286	brak	pewne	podpis wypowiedzenia
+287	brak	pewne	niepłacone składki ZUS
+288	brak	pewne	niepłacone składki ZUS
+289	brak	pewne	podpis wypowiedzenia
+290	swiadectwo-pracy	pewne	
+291	kalkulator-urlopu	pewne	
+292	przerwy-w-pracy	pewne	
+293	zasilek-dla-bezrobotnych	pewne	
+294	praca-w-sobote	niepewne	praca-w-niedziele
+295	praca-w-sobote	niepewne	praca-w-niedziele
+296	brak	pewne	odmowa delegacji
+297	temperatura-w-pracy	pewne	
+298	kontrola-grafiku	niepewne	
+299	kontrola-grafiku	niepewne	
+300	kontrola-grafiku	niepewne	dodatek-za-prace-w-nocy
+301	kalkulator-urlopu	pewne	
+302	kalkulator-urlopu	pewne	
+303	brak	pewne	premia uznaniowa
+304	brak	pewne	trzynastka
+305	brak	pewne	dodatek stażowy
+306	brak	pewne	porozumienie stron
+307	brak	pewne	porozumienie stron
+308	zwolnienie-na-l4	niepewne	
+309	brak	pewne	dyscyplinarka przyczyny
+310	zwolnienie-na-l4	niepewne	
+311	brak	pewne	dyscyplinarka przyczyny
+312	umowa-na-czas-okreslony	pewne	
+313	brak	pewne	umowa na czas nieokreślony
+314	zlecenie-netto	niepewne	
+315	zlecenie-netto	pewne	
+316	brak	pewne	umowa o dzieło
+317	brak	pewne	umowa o dzieło
+318	brak	pewne	pasek wypłaty
+319	brak	pewne	pasek wypłaty
+320	brutto-netto	pewne	
+321	placa-minimalna	pewne	
+322	brutto-netto	pewne	
+323	kalkulator-nadgodzin	pewne	
+324	kalkulator-nadgodzin	pewne	
+325	kalkulator-nadgodzin	niepewne	praca-w-sobote
+326	kalkulator-nadgodzin	pewne	
+327	urlop-okolicznosciowy	pewne	
+328	urlop-okolicznosciowy	pewne	
+329	urlop-okolicznosciowy	pewne	
+330	urlop-okolicznosciowy	pewne	
+331	urlop-okolicznosciowy	pewne	
+332	urlop-okolicznosciowy	pewne	
+333	wolne-na-dziecko	pewne	
+334	wolne-na-dziecko	pewne	
+335	praca-w-ciazy	niepewne	
+336	brak	pewne	zgłoszenie ciąży
+337	zasilek-macierzynski	pewne	
+338	zasilek-macierzynski	pewne	
+339	rodzic-w-pracy	niepewne	zasilek-macierzynski
+340	emerytura-pomostowa	pewne	
+341	brak	pewne	wiek emerytalny
+342	brak	pewne	wiek emerytalny
+343	brak	pewne	wiek emerytalny
+344	brak	pewne	wcześniejsza emerytura
+345	dorabianie-do-renty	pewne	
+346	dorabianie-do-renty	pewne	
+347	odszkodowanie-za-wypadek-przy-pracy	niepewne	
+348	odszkodowanie-za-wypadek-przy-pracy	niepewne	
+349	odszkodowanie-za-wypadek-przy-pracy	pewne	
+350	odszkodowanie-za-wypadek-przy-pracy	niepewne	
+351	temperatura-w-pracy	niepewne	posilki-profilaktyczne
+352	temperatura-w-pracy	pewne	
+353	temperatura-w-pracy	niepewne	posilki-profilaktyczne
+354	temperatura-w-pracy	niepewne	posilki-profilaktyczne
+355	temperatura-w-pracy	pewne	
+356	temperatura-w-pracy	pewne	
+357	przerwy-w-pracy	pewne	
+358	brak	pewne	praca przy monitorze
+359	waznosc-uprawnien-sep	pewne	
+360	brak	pewne	uprawnienia budowlane
+361	czas-jazdy-kierowcy	niepewne	
+362	czas-jazdy-kierowcy	niepewne	
+363	badania-kierowcy	pewne	
+364	kod-95	niepewne	
+365	kod-95	pewne	
+366	praca-cudzoziemca	pewne	
+367	praca-cudzoziemca	pewne	
+368	praca-cudzoziemca	niepewne	zgloszenie-pracy-cudzoziemca
+369	praca-cudzoziemca	niepewne	zgloszenie-pracy-cudzoziemca
+370	informacja-o-warunkach-zatrudnienia	niepewne	
+371	informacja-o-warunkach-zatrudnienia	niepewne	
+372	brak	pewne	praca na czarno
+373	brak	pewne	praca na czarno
+374	brak	pewne	praca na czarno
+375	brak	pewne	praca na czarno
+376	dni-wolne-od-pracy	niepewne	praca-w-sobote
+377	dni-wolne-od-pracy	niepewne	praca-w-sobote
+378	dni-wolne-od-pracy	pewne	
+379	dni-wolne-od-pracy	pewne	
+380	dni-wolne-od-pracy	pewne	
+381	dni-wolne-od-pracy	pewne	
+382	dni-wolne-od-pracy	pewne	
+383	dni-wolne-od-pracy	pewne	
+384	dni-wolne-od-pracy	pewne	
+385	dni-wolne-od-pracy	pewne	
+386	dni-robocze	pewne	
+387	dni-robocze	pewne	
+388	dni-wolne-od-pracy	pewne	
+389	kontrola-grafiku	niepewne	
+390	kontrola-grafiku	niepewne	
+391	czas-jazdy-kierowcy	pewne	
+392	kontrola-grafiku	niepewne	czas-jazdy-kierowcy
+393	kontrola-grafiku	niepewne	
+394	kontrola-grafiku	pewne	
+395	kontrola-grafiku	pewne	
+396	kontrola-grafiku	pewne	
+397	praca-w-niedziele	niepewne	praca-w-sobote
+398	praca-w-niedziele	niepewne	praca-w-sobote
+399	zlecenie-netto	niepewne	placa-minimalna
+400	stawka-godzinowa	niepewne	placa-minimalna
+401	brak	pewne	wynagrodzenie zasadnicze
+402	brak	pewne	wynagrodzenie zasadnicze
+403	odpowiedzialnosc-materialna	pewne	
+404	brak	pewne	potrącenie komornicze
+405	brak	pewne	potrącenie komornicze
+406	brutto-netto	niepewne	
+407	zwrot-podatku-pit-37	pewne	
+408	zwrot-podatku-pit-37	niepewne	
+409	zerowy-pit	pewne	
+410	zerowy-pit	pewne	
+411	zerowy-pit	pewne	
+412	zerowy-pit	pewne	
+413	brak	pewne	student praca zdalna
+414	pracownik-mlodociany	niepewne	
+415	brak	pewne	praktyki studenckie
+416	brak	pewne	staż z urzędu pracy
+417	brak	pewne	staż z urzędu pracy
+418	okres-probny	pewne	
+419	okres-probny	pewne	
+420	umowa-na-czas-okreslony	niepewne	umowa-na-zastepstwo
+421	umowa-na-czas-okreslony	pewne	
+422	okres-wypowiedzenia	pewne	
+423	okres-wypowiedzenia	pewne	
+424	brak	pewne	ochrona ciąży wypowiedzenie
+425	wypowiedzenie-zmieniajace	niepewne	
+426	okres-wypowiedzenia	niepewne	
+427	zwolnienie-na-l4	pewne	
+428	brak	pewne	porozumienie stron
+429	wolne-na-dziecko	niepewne	
+430	okres-wypowiedzenia	pewne	
+431	brak	pewne	ubezpieczenie zdrowotne po zwolnieniu
+432	okres-wypowiedzenia	niepewne	zasilek-dla-bezrobotnych
+433	brak	pewne	porozumienie stron
+434	brak	pewne	porzucenie pracy
+435	brak	pewne	porzucenie pracy
+436	brak	pewne	nieobecność nieusprawiedliwiona
+437	wolne-na-dziecko	pewne	
+438	brak	pewne	spóźnienie do pracy
+439	brak	pewne	spóźnienie do pracy
+440	brak	pewne	nieobecność nieusprawiedliwiona
+441	brak	pewne	nieobecność nieusprawiedliwiona
+442	brak	pewne	regulamin pracy
+443	brak	pewne	układ zbiorowy
+444	brak	pewne	układ zbiorowy
+445	sad-pracy-czy-pip	niepewne	
+446	mobbing-i-dyskryminacja	pewne	
+447	mobbing-i-dyskryminacja	pewne	
+448	mobbing-i-dyskryminacja	niepewne	
+449	mobbing-i-dyskryminacja	niepewne	
+450	mobbing-i-dyskryminacja	niepewne	
+451	mobbing-i-dyskryminacja	niepewne	
+452	mobbing-i-dyskryminacja	niepewne	
+453	kalkulator-urlopu	niepewne	ekwiwalent-za-urlop
+454	kalkulator-urlopu	pewne	
+455	kalkulator-nadgodzin	pewne	
+456	kalkulator-l4	pewne	
+457	kalkulator-l4	pewne	
+458	brutto-netto	pewne	
+459	dodatek-za-prace-w-nocy	pewne	
+460	waznosc-uprawnien-udt	niepewne	czy-potrzebne-uprawnienia-udt
+461	kontrola-trzezwosci	pewne	
+462	ile-kg-wolno-dzwigac	pewne	
+463	temperatura-w-pracy	pewne	
+464	placa-minimalna	pewne	
+465	praca-w-sobote	pewne	
+466	praca-w-sobote	pewne	
+467	praca-w-sobote	pewne	
+468	praca-w-sobote	pewne	
+469	zwrot-podatku-pit-37	pewne	
+470	zwrot-podatku-pit-37	pewne	
+471	zwrot-podatku-pit-37	pewne	
+472	praca-na-wysokosci	pewne	
+473	praca-na-wysokosci	pewne	
+474	emerytura-pomostowa	pewne	
+475	emerytura-pomostowa	pewne	
+476	kod-95	pewne	
+477	kod-95	pewne	
+478	choroba-zawodowa	pewne	
+479	choroba-zawodowa	pewne	
+480	badania-kierowcy	pewne	
+481	badania-kierowcy	pewne	
+482	badania-lekarskie-w-pracy	pewne	
+483	badania-lekarskie-w-pracy	pewne	
+484	posilki-profilaktyczne	pewne	
+485	posilki-profilaktyczne	pewne	
+486	odziez-robocza	pewne	
+487	wypowiedzenie-zmieniajace	niepewne	
+488	umowa-na-zastepstwo	pewne	
+489	umowa-na-zastepstwo	pewne	
+490	wynagrodzenie-za-niepelny-miesiac	pewne	
+491	wynagrodzenie-za-niepelny-miesiac	pewne	
+492	okres-wyczekiwania	pewne	
+493	zasilek-chorobowy-na-zleceniu	pewne	
+494	zasilek-chorobowy-na-zleceniu	pewne	
+495	swiadczenie-urlopowe	niepewne	fundusz-socjalny
+496	swiadczenie-urlopowe	pewne	
+497	urlop-bezplatny	pewne	
+498	urlop-bezplatny	pewne	
+499	zalegly-urlop	pewne	
+500	zalegly-urlop	pewne	
+501	urlop-w-okresie-wypowiedzenia	pewne	
+502	urlop-w-godzinach	pewne	
+503	urlop-szkoleniowy	pewne	
+504	urlop-szkoleniowy	pewne	
+505	zgloszenie-pracy-cudzoziemca	pewne	
+506	zgloszenie-pracy-cudzoziemca	pewne	
+507	odpracowanie-wyjscia-prywatnego	pewne	
+508	doba-pracownicza	pewne	
+509	doba-pracownicza	pewne	
+510	rownowazny-czas-pracy	niepewne	kontrola-grafiku
+511	kontrola-grafiku	niepewne	rownowazny-czas-pracy
+512	nadgodziny-sredniotygodniowe	pewne	
+513	dorabianie-do-renty	pewne	
+514	dorabianie-do-renty	pewne	
+515	ulga-na-dzieci	pewne	
+516	ulga-na-dzieci	pewne	
+517	zerowy-pit	pewne	
+518	renta-z-tytulu-niezdolnosci-do-pracy	pewne	
+519	renta-z-tytulu-niezdolnosci-do-pracy	pewne	
+520	swiadczenie-przedemerytalne	pewne	
+521	swiadczenie-przedemerytalne	pewne	
+522	ochrona-przedemerytalna	pewne	
+523	czas-jazdy-kierowcy	pewne	
+524	czas-jazdy-kierowcy	pewne	
+525	czas-jazdy-kierowcy	pewne	
+526	czas-jazdy-kierowcy	pewne	
+527	dyzur-kierowcy	pewne	
+528	zaswiadczenie-adr	pewne	
+529	zaswiadczenie-adr	pewne	
+530	waznosc-uprawnien-sep	pewne	
+531	waznosc-uprawnien-sep	pewne	
+532	czy-potrzebne-uprawnienia-udt	pewne	
+533	czy-potrzebne-uprawnienia-udt	pewne	
+534	dodatek-wyrownawczy	niepewne	
+535	informacja-o-warunkach-zatrudnienia	pewne	
+536	przerwy-w-pracy	pewne	
+537	czy-potrzebne-uprawnienia-udt	niepewne	waznosc-uprawnien-udt
+538	kalkulator-l4	pewne	
+539	ekwiwalent-za-urlop	niepewne	zalegly-urlop
+540	czas-jazdy-kierowcy	pewne	
+541	kalkulator-nadgodzin	pewne	
+542	przerwy-w-pracy	pewne	
+543	kalkulator-nadgodzin	niepewne	przedawnienie-wynagrodzenia
+544	placa-minimalna	niepewne	dodatek-wyrownawczy
+545	fundusz-socjalny	pewne	
+546	monitoring-w-pracy	pewne	
+547	monitoring-w-pracy	pewne	
+548	monitoring-w-pracy	pewne	
+549	monitoring-w-pracy	pewne	
+550	monitoring-w-pracy	pewne	
+551	monitoring-w-pracy	pewne	
+552	monitoring-w-pracy	pewne	
+553	odpowiedzialnosc-materialna	pewne	
+554	odpowiedzialnosc-materialna	pewne	
+555	odpowiedzialnosc-materialna	pewne	
+556	odpowiedzialnosc-materialna	pewne	
+557	odpowiedzialnosc-materialna	pewne	
+558	odpowiedzialnosc-materialna	pewne	
+559	skladowanie-w-magazynie	pewne	
+560	skladowanie-w-magazynie	pewne	
+561	skladowanie-w-magazynie	pewne	
+562	skladowanie-w-magazynie	pewne	
+563	drogi-i-przejscia	niepewne	
+564	drogi-i-przejscia	niepewne	
+565	drogi-i-przejscia	niepewne	
+566	monitoring-w-pracy	pewne	
+567	odpowiedzialnosc-materialna	pewne	
+568	odpowiedzialnosc-materialna	niepewne	
+569	drogi-i-przejscia	niepewne	
+570	drogi-i-przejscia	pewne	
+571	normy-sanitarne	niepewne	
+572	normy-sanitarne	pewne	
+573	normy-sanitarne	niepewne	
+574	brak	pewne	okulary do komputera
+575	ile-kg-wolno-dzwigac	pewne	
+576	ile-kg-wolno-dzwigac	pewne	
+577	praca-na-wysokosci	pewne	
+578	kara-porzadkowa	pewne	
+579	brak	pewne	praca przy maszynie
+580	brak	pewne	auto służbowe
+581	odszkodowanie-za-wypadek-przy-pracy	niepewne	choroba-zawodowa
+582	choroba-zawodowa	niepewne	odszkodowanie-za-wypadek-przy-pracy
+583	waznosc-uprawnien-udt	niepewne	czy-potrzebne-uprawnienia-udt
+584	brak	pewne	podatek ogólnie
+585	brak	pewne	progi podatkowe
+586	brak	pewne	pasy bezpieczeństwa
+587	kalkulator-odprawy	pewne	
+588	brak	pewne	wysokość wynagrodzenia
+589	badania-lekarskie-w-pracy	niepewne	
+590	zalegly-urlop	pewne	
+591	zalegly-urlop	pewne	
+592	zalegly-urlop	pewne	
+593	brak	pewne	praca na czarno
+594	brak	pewne	praca na czarno
+595	informacja-o-warunkach-zatrudnienia	pewne	
+596	informacja-o-warunkach-zatrudnienia	niepewne	
+597	informacja-o-warunkach-zatrudnienia	pewne	
+598	okres-wypowiedzenia	niepewne	
+599	okres-wypowiedzenia	pewne	
+600	okres-wypowiedzenia	pewne	
+601	okres-wypowiedzenia	niepewne	
+602	kalkulator-odprawy	pewne	
+603	kalkulator-odprawy	niepewne	
+604	kalkulator-odprawy	pewne	
+605	kalkulator-odprawy	pewne	
+606	kara-porzadkowa	pewne	
+607	kara-porzadkowa	pewne	
+608	kara-porzadkowa	pewne	
+609	kalkulator-urlopu	pewne	
+610	ekwiwalent-za-urlop	pewne	
+611	przedawnienie-wynagrodzenia	niepewne	zalegly-urlop
+612	kara-porzadkowa	pewne	
+613	kara-porzadkowa	pewne	
+614	informacja-o-warunkach-zatrudnienia	pewne	
+615	brak	pewne	praca na czarno
+616	umowa-na-czas-okreslony	pewne	
+617	umowa-na-czas-okreslony	pewne	
+618	ochrona-przedemerytalna	pewne	
+619	zwolnienia-grupowe	pewne	
+620	brak	pewne	porozumienie stron
+621	staz-pracy	niepewne	
+622	odprawa-posmiertna	pewne	
+623	kalkulator-l4	niepewne	
+624	normy-sanitarne	pewne	
+625	normy-sanitarne	pewne	
+626	normy-sanitarne	niepewne	
+627	odszkodowanie-za-wypadek-przy-pracy	niepewne	
+628	kara-porzadkowa	pewne	
+629	sad-pracy-czy-pip	niepewne	przedawnienie-wynagrodzenia
+630	przedawnienie-wynagrodzenia	niepewne	sad-pracy-czy-pip
+631	wynagrodzenie-za-niepelny-miesiac	niepewne	
+632	swiadectwo-pracy	pewne	
+633	zwolnienie-na-l4	pewne	
+634	badania-lekarskie-w-pracy	pewne	
+635	co-wolno-na-l4	pewne	
+636	fundusz-socjalny	pewne	
+637	swiadczenie-urlopowe	pewne	
+638	fundusz-socjalny	pewne	
+639	fundusz-socjalny	niepewne	
+640	fundusz-socjalny	pewne	
+641	fundusz-socjalny	pewne	
+642	fundusz-socjalny	pewne	
+643	fundusz-socjalny	pewne	
+644	fundusz-socjalny	pewne	
+645	fundusz-socjalny	pewne	
+646	fundusz-socjalny	pewne	
+647	fundusz-socjalny	niepewne	swiadczenie-urlopowe
+648	fundusz-socjalny	niepewne	swiadczenie-urlopowe
+649	fundusz-socjalny	niepewne	
+650	fundusz-socjalny	pewne	
+651	fundusz-socjalny	pewne	
+652	swiadczenie-urlopowe	pewne	
+653	odszkodowanie-za-wypadek-przy-pracy	niepewne	
+654	brak	pewne	wypadek poza pracą
+655	zasilek-chorobowy-na-zleceniu	pewne	
+656	badania-lekarskie-w-pracy	pewne	
+657	co-wolno-na-l4	niepewne	przerwy-w-pracy
+658	co-wolno-na-l4	pewne	
+659	co-wolno-na-l4	pewne	
+660	co-wolno-na-l4	pewne	
+661	co-wolno-na-l4	pewne	
+662	co-wolno-na-l4	niepewne	
+663	co-wolno-na-l4	niepewne	
+664	co-wolno-na-l4	niepewne	
+665	co-wolno-na-l4	pewne	
+666	co-wolno-na-l4	pewne	
+667	co-wolno-na-l4	pewne	
+668	co-wolno-na-l4	pewne	
+669	co-wolno-na-l4	pewne	
+670	co-wolno-na-l4	pewne	
+671	kalkulator-odprawy	pewne	
+672	kara-porzadkowa	pewne	
+673	dodatek-za-prace-w-nocy	pewne	
+674	drgania-w-pracy	pewne	
+675	halas-w-pracy	pewne	
+676	odszkodowanie-za-wypadek-przy-pracy	pewne	
+677	szkolenie-okresowe-bhp	pewne	
+678	czy-potrzebne-uprawnienia-udt	niepewne	waznosc-uprawnien-udt
+679	badania-udt	pewne	
+680	powierzchnia-na-pracownika	pewne	
+681	normy-sanitarne	pewne	
+682	ile-kg-wolno-dzwigac	pewne	
+683	temperatura-w-pracy	pewne	
+684	wymiar-czasu-pracy	pewne	
+685	kalkulator-nadgodzin	pewne	
+686	urlop-w-agencji-pracy	pewne	
+687	dni-wolne-od-pracy	pewne	
+688	kalkulator-urlopu	pewne	
+689	ekwiwalent-za-urlop	pewne	
+690	kalkulator-l4	pewne	
+691	kalkulator-odprawy	pewne	
+692	wolne-na-dziecko	pewne	
+693	placa-minimalna	pewne	
+694	brutto-netto	pewne	
+695	okres-probny	pewne	
+696	umowa-na-czas-okreslony	pewne	
+697	limit-pracy-tymczasowej	niepewne	umowa-na-zastepstwo
+698	zlecenie-netto	pewne	
+699	praca-w-niedziele	pewne	
+700	wynagrodzenie-za-przestoj	pewne	
+701	wynagrodzenie-za-urlop	pewne	
+702	wyplata-z-nadgodzinami	pewne	
+703	kalkulator-ppk	pewne	
+704	koszt-pracodawcy	pewne	
+705	delegacja-krajowa	pewne	
+706	delegacja-zagraniczna	pewne	
+707	l4-po-zwolnieniu	pewne	
+708	swiadczenie-rehabilitacyjne	pewne	
+709	zasilek-opiekunczy	pewne	
+710	zasilek-macierzynski	pewne	
+711	urlop-okolicznosciowy	pewne	
+712	urlop-ojcowski	pewne	
+713	urlop-wychowawczy	pewne	
+714	termin-wyplaty-wynagrodzenia	pewne	
+715	stawka-godzinowa	pewne	
+716	kontrola-grafiku	pewne	
+717	staz-pracy	pewne	
+718	zasilek-dla-bezrobotnych	pewne	
+719	ochrona-przedemerytalna	pewne	
+720	zakaz-konkurencji	pewne	
+721	odszkodowanie-za-zwolnienie	pewne	
+722	odprawa-posmiertna	pewne	
+723	zwolnienie-na-l4	pewne	
+724	kara-porzadkowa	pewne	
+725	odwolanie-do-sadu-pracy	pewne	
+726	okres-wypowiedzenia	pewne	
+727	dni-robocze	pewne	
+728	dyzur-w-pracy	pewne	
+729	pracownik-mlodociany	pewne	
+730	przedawnienie-wynagrodzenia	pewne	
+731	zwolnienia-grupowe	pewne	
+732	pracownik-niepelnosprawny	pewne	
+733	zwrot-kosztow-szkolenia	pewne	
+734	okres-zasilkowy	pewne	
+735	kontrola-trzezwosci	pewne	
+736	ile-kg-wolno-dzwigac	pewne	
+737	rodzic-w-pracy	pewne	
+738	waznosc-uprawnien-sep	pewne	
+739	czy-potrzebne-uprawnienia-udt	pewne	
+740	kod-95	pewne	
+741	badania-kierowcy	pewne	
+742	badania-lekarskie-w-pracy	pewne	
+743	posilki-profilaktyczne	pewne	
+744	odziez-robocza	pewne	
+745	wypowiedzenie-zmieniajace	pewne	
+746	informacja-o-warunkach-zatrudnienia	pewne	
+747	umowa-na-zastepstwo	pewne	
+748	wynagrodzenie-za-niepelny-miesiac	pewne	
+749	dodatek-wyrownawczy	pewne	
+750	okres-wyczekiwania	pewne	
+751	zasilek-chorobowy-na-zleceniu	pewne	
+752	swiadczenie-urlopowe	pewne	
+753	urlop-w-godzinach	pewne	
+754	urlop-w-okresie-wypowiedzenia	pewne	
+755	urlop-szkoleniowy	pewne	
+756	urlop-bezplatny	pewne	
+757	zalegly-urlop	pewne	
+758	praca-cudzoziemca	pewne	
+759	zgloszenie-pracy-cudzoziemca	pewne	
+760	odpracowanie-wyjscia-prywatnego	pewne	
+761	praca-w-sobote	niepewne	praca-w-niedziele
+762	kalkulator-nadgodzin	niepewne	nadgodziny-sredniotygodniowe
+763	doba-pracownicza	pewne	
+764	rownowazny-czas-pracy	pewne	
+765	dorabianie-do-renty	pewne	
+766	zwrot-podatku-pit-37	pewne	
+767	ulga-na-dzieci	pewne	
+768	zerowy-pit	pewne	
+769	choroba-zawodowa	pewne	
+770	praca-na-wysokosci	pewne	
+771	emerytura-pomostowa	pewne	
+772	renta-z-tytulu-niezdolnosci-do-pracy	pewne	
+773	swiadczenie-przedemerytalne	pewne	
+774	czas-jazdy-kierowcy	pewne	
+775	dyzur-kierowcy	pewne	
+776	zaswiadczenie-adr	pewne	
+777	mobbing-i-dyskryminacja	pewne	
+778	sad-pracy-czy-pip	pewne	
+779	odpowiedzialnosc-materialna	pewne	
+780	swiadectwo-pracy	pewne	
+781	monitoring-w-pracy	pewne	
+782	drogi-i-przejscia	pewne	
+783	skladowanie-w-magazynie	pewne	
+784	co-wolno-na-l4	pewne	
+785	fundusz-socjalny	pewne	
+786	przerwy-w-pracy	pewne	

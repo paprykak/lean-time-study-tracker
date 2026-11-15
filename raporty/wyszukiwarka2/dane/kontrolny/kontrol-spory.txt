@@ -1,0 +1,18 @@
+8	czy pracodawca ma prawo odmówić urlopu	A: brak	B: kalkulator-urlopu
+9	czy pracownik może odmówić nadgodzin	A: brak	B: kalkulator-nadgodzin
+33	ciąża a umowa na czas określony	A: brak	B: umowa-na-czas-okreslony
+39	praca w zimnie skutki	A: brak	B: temperatura-w-pracy
+52	umowa na okres próbny a ciąża	A: brak	B: okres-probny
+53	umowa na okres próbny a l4	A: brak	B: okres-probny
+54	umowa na okres próbny a urlop	A: brak	B: okres-probny
+68	zasiłek macierzyński a umowa zlecenie	A: brak	B: zasilek-macierzynski
+74	urlop dla ojca 9 tygodni	A: urlop-ojcowski	B: zasilek-macierzynski
+75	urlop dla ojca do 6 roku życia	A: rodzic-w-pracy	B: urlop-ojcowski
+99	praca po godzinach w domu	A: brak	B: kalkulator-nadgodzin
+121	świadectwo pracy a umowa zlecenie	A: brak	B: swiadectwo-pracy
+122	świadectwo pracy aktualny wzór	A: brak	B: swiadectwo-pracy
+123	świadectwo pracy a ekwiwalent za urlop	A: brak	B: ekwiwalent-za-urlop
+132	skarga na pracodawcę wzór	A: brak	B: sad-pracy-czy-pip
+135	sąd pracy a umowa zlecenie	A: brak	B: sad-pracy-czy-pip
+143	potrącenie z pensji za l4	A: brak	B: wynagrodzenie-za-niepelny-miesiac
+153	przerwa na papierosa w pracy	A: brak	B: przerwy-w-pracy

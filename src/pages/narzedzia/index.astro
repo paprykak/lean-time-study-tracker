@@ -160,7 +160,7 @@ const jsonLd = [
       }
       if (moj !== numer) return;
       const szukane = slowa(q);
-      const lista = szukaj(indeks, q).filter((w) => !kategoria || w.wpis.kk === kategoria);
+      const lista = szukaj(indeks, q, Infinity, kategoria);
       wyniki.replaceChildren(...lista.map((w) => wierszWyniku(w, szukane, 'wiersz')));
       pelny.href = `/szukaj?q=${encodeURIComponent(q)}`;
       wynikiSekcja.hidden = false;

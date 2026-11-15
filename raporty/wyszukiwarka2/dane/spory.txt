@@ -1,0 +1,19 @@
+114	urlop ojcowski 9 tygodni	A: urlop-ojcowski	B: rodzic-w-pracy
+200	wczasy pod gruszą ile	A: fundusz-socjalny	B: swiadczenie-urlopowe
+201	wczasy pod gruszą 2026	A: fundusz-socjalny	B: swiadczenie-urlopowe
+203	urlop w godzinach na świadectwie pracy	A: urlop-w-godzinach	B: swiadectwo-pracy
+313	umowa o pracę na czas nieokreślony	A: okres-wypowiedzenia	B: brak
+336	ciąża w pracy kiedy powiedzieć	A: praca-w-ciazy	B: brak
+358	praca przy komputerze powyżej 4 godzin jaki to czynnik	A: przerwy-w-pracy	B: brak
+371	zgłoszenie do zus umowa zlecenie	A: brak	B: informacja-o-warunkach-zatrudnienia
+374	praca bez umowy gdzie zgłosić	A: sad-pracy-czy-pip	B: brak
+375	praca bez umowy o pracę	A: informacja-o-warunkach-zatrudnienia	B: brak
+408	pit 11a	A: brak	B: zwrot-podatku-pit-37
+511	system 12 godzinny grafik	A: rownowazny-czas-pracy	B: kontrola-grafiku
+537	uprawnienia na wózek	A: waznosc-uprawnien-udt	B: czy-potrzebne-uprawnienia-udt
+544	wyrównanie wynagrodzenia	A: dodatek-wyrownawczy	B: placa-minimalna
+573	szafka w szatni	A: brak	B: normy-sanitarne
+581	zepsulem sobie zdrowie w pracy	A: choroba-zawodowa	B: odszkodowanie-za-wypadek-przy-pracy
+615	praca bez umowy	A: informacja-o-warunkach-zatrudnienia	B: brak
+657	spacer w przerwie	A: przerwy-w-pracy	B: co-wolno-na-l4
+697	A gdy zastępuję nieobecnego pracownika?	A: umowa-na-zastepstwo	B: limit-pracy-tymczasowej

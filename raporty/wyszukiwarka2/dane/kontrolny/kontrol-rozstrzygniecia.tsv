@@ -1,0 +1,18 @@
+1	brak	Kalkulator urlopu liczy wymiar dni, a nie odpowiada, czy pracodawca może odmówić urlopu.
+2	brak	Kalkulator nadgodzin liczy dodatki i nie podaje reguły o odmowie pracy w nadgodzinach.
+3	brak	Narzędzie o limicie 33 miesięcy nie opisuje skutków ciąży dla umowy terminowej.
+4	temperatura-w-pracy	Podaje minimum 14 i 18°C oraz obowiązki pracodawcy przy zimnie.
+5	brak	Okres próbny nie omawia ciąży.
+6	brak	Okres próbny nie omawia L4.
+7	okres-probny	Narzędzie wprost wydłuża okres próbny o czas urlopu (art. 25 § 2¹).
+8	brak	Zasiłek macierzyński nie obejmuje umowy zlecenia.
+9	zasilek-macierzynski	Dziewięć tygodni dla ojca to część rodzicielskiego, którą opisuje to narzędzie.
+10	rodzic-w-pracy	Podaje termin urlopu rodzicielskiego do końca roku, w którym dziecko kończy 6 lat.
+11	brak	Żadne narzędzie nie opisuje pracy po godzinach w domu.
+12	brak	Świadectwo pracy nie omawia umowy zlecenia.
+13	brak	Narzędzie liczy terminy i sprostowanie, nie podaje wzoru świadectwa.
+14	brak	Ekwiwalent za urlop nie dotyczy treści świadectwa pracy.
+15	brak	Narzędzie nie zawiera wzoru skargi.
+16	brak	Sąd pracy czy PIP nie rozstrzyga sprawy dla umowy zlecenia.
+17	wynagrodzenie-za-niepelny-miesiac	Liczy potrącenie pensji za dni L4 (1/30).
+18	brak	Przerwy w pracy nie opisują przerwy na papierosa.

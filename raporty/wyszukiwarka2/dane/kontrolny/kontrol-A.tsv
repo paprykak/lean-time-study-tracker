@@ -1,0 +1,178 @@
+1	praca-w-niedziele	pewne	
+2	wynagrodzenie-za-urlop	pewne	
+3	badania-lekarskie-w-pracy	pewne	
+4	urlop-okolicznosciowy	pewne	
+5	dni-wolne-od-pracy	niepewne	praca-w-niedziele
+6	kontrola-trzezwosci	pewne	
+7	kalkulator-urlopu	niepewne	urlop-w-godzinach
+8	brak	niepewne	odmowa udzielenia urlopu; kalkulator-urlopu
+9	brak	niepewne	odmowa nadgodzin; kalkulator-nadgodzin
+10	brak	niepewne	odmowa delegacji; delegacja-krajowa
+11	brak	pewne	wycofanie wypowiedzenia
+12	kalkulator-urlopu	pewne	
+13	ekwiwalent-za-urlop	pewne	
+14	termin-wyplaty-wynagrodzenia	pewne	
+15	brak	pewne	termin składek ZUS
+16	urlop-okolicznosciowy	pewne	
+17	urlop-okolicznosciowy	pewne	
+18	kalkulator-odprawy	pewne	
+19	zwolnienie-na-l4	pewne	
+20	brak	pewne	ubezpieczenie zdrowotne po zwolnieniu
+21	brak	niepewne	urlop a zwolnienie lekarskie; kalkulator-urlopu
+22	wolne-na-dziecko	niepewne	odpracowanie-wyjscia-prywatnego
+23	staz-pracy	niepewne	kalkulator-urlopu
+24	zasilek-chorobowy-na-zleceniu	pewne	
+25	l4-po-zwolnieniu	niepewne	zwolnienie-na-l4
+26	l4-po-zwolnieniu	niepewne	zwolnienie-na-l4
+27	rodzic-w-pracy	niepewne	kalkulator-nadgodzin
+28	rodzic-w-pracy	niepewne	kalkulator-nadgodzin
+29	kalkulator-nadgodzin	pewne	
+30	dorabianie-do-renty	pewne	
+31	zasilek-chorobowy-na-zleceniu	pewne	
+32	zlecenie-netto	niepewne	brak
+33	brak	niepewne	ciąża a umowa terminowa; umowa-na-zastepstwo
+34	brak	pewne	ciąża a zlecenie
+35	temperatura-w-pracy	pewne	
+36	temperatura-w-pracy	pewne	
+37	temperatura-w-pracy	pewne	
+38	temperatura-w-pracy	pewne	
+39	brak	niepewne	skutki zdrowotne zimna; temperatura-w-pracy
+40	temperatura-w-pracy	niepewne	brak
+41	brak	pewne	skutki pracy w nocy
+42	czy-potrzebne-uprawnienia-udt	niepewne	badania-udt
+43	waznosc-uprawnien-udt	pewne	
+44	czy-potrzebne-uprawnienia-udt	niepewne	waznosc-uprawnien-udt
+45	czy-potrzebne-uprawnienia-udt	niepewne	waznosc-uprawnien-udt
+46	brak	pewne	zakres obowiązków
+47	brak	pewne	kod zawodu
+48	urlop-w-agencji-pracy	pewne	
+49	urlop-w-agencji-pracy	pewne	
+50	urlop-w-agencji-pracy	niepewne	okres-wypowiedzenia
+51	urlop-w-agencji-pracy	niepewne	okres-wypowiedzenia
+52	brak	niepewne	okres próbny a ciąża; okres-probny
+53	brak	niepewne	okres próbny a L4; okres-probny
+54	brak	niepewne	okres próbny a urlop; okres-probny
+55	brak	pewne	podstawa prawna wypowiedzenia
+56	brak	pewne	podstawa prawna wypowiedzenia
+57	okres-wypowiedzenia	pewne	
+58	l4-po-zwolnieniu	niepewne	zwolnienie-na-l4
+59	zasilek-chorobowy-na-zleceniu	pewne	
+60	brak	pewne	zasiłek chorobowy a emerytura
+61	zasilek-chorobowy-na-zleceniu	pewne	
+62	brak	pewne	chorobowe a emerytura
+63	l4-po-zwolnieniu	pewne	
+64	l4-po-zwolnieniu	pewne	
+65	kalkulator-l4	niepewne	l4-po-zwolnieniu
+66	kalkulator-l4	pewne	
+67	zasilek-macierzynski	pewne	
+68	brak	niepewne	macierzyński na zleceniu; zasilek-macierzynski
+69	zasilek-macierzynski	pewne	
+70	zasilek-macierzynski	niepewne	rodzic-w-pracy
+71	zasilek-macierzynski	pewne	
+72	zasilek-macierzynski	pewne	
+73	urlop-ojcowski	pewne	
+74	urlop-ojcowski	niepewne	zasilek-macierzynski
+75	rodzic-w-pracy	niepewne	urlop-ojcowski
+76	wolne-na-dziecko	pewne	
+77	wolne-na-dziecko	pewne	
+78	wolne-na-dziecko	pewne	
+79	zasilek-opiekunczy	pewne	
+80	zasilek-opiekunczy	pewne	
+81	zasilek-opiekunczy	pewne	
+82	dni-wolne-od-pracy	pewne	
+83	dni-wolne-od-pracy	pewne	
+84	dni-wolne-od-pracy	niepewne	praca-w-niedziele
+85	dni-wolne-od-pracy	pewne	
+86	dni-wolne-od-pracy	pewne	
+87	dni-wolne-od-pracy	pewne	
+88	dni-wolne-od-pracy	pewne	
+89	dni-wolne-od-pracy	pewne	
+90	dni-wolne-od-pracy	pewne	
+91	dni-wolne-od-pracy	pewne	
+92	dni-wolne-od-pracy	pewne	
+93	wymiar-czasu-pracy	pewne	
+94	wymiar-czasu-pracy	pewne	
+95	wymiar-czasu-pracy	pewne	
+96	przerwy-w-pracy	pewne	
+97	przerwy-w-pracy	pewne	
+98	przerwy-w-pracy	pewne	
+99	brak	niepewne	praca po godzinach w domu; kalkulator-nadgodzin
+100	kalkulator-nadgodzin	niepewne	brak
+101	dodatek-za-prace-w-nocy	pewne	
+102	dodatek-za-prace-w-nocy	pewne	
+103	dodatek-za-prace-w-nocy	pewne	
+104	placa-minimalna	pewne	
+105	placa-minimalna	pewne	
+106	brutto-netto	pewne	
+107	kalkulator-ppk	niepewne	brutto-netto
+108	brutto-netto	pewne	
+109	brutto-netto	pewne	
+110	brutto-netto	pewne	
+111	zwrot-podatku-pit-37	pewne	
+112	zwrot-podatku-pit-37	pewne	
+113	zwrot-podatku-pit-37	pewne	
+114	ulga-na-dzieci	niepewne	zwrot-podatku-pit-37
+115	kalkulator-odprawy	pewne	
+116	kalkulator-odprawy	pewne	
+117	kalkulator-odprawy	pewne	
+118	kalkulator-odprawy	pewne	
+119	kalkulator-odprawy	pewne	
+120	kalkulator-odprawy	pewne	
+121	brak	niepewne	świadectwo pracy a zlecenie; swiadectwo-pracy
+122	brak	niepewne	wzór świadectwa pracy; swiadectwo-pracy
+123	brak	niepewne	świadectwo a ekwiwalent; swiadectwo-pracy
+124	szkolenie-okresowe-bhp	niepewne	informacja-o-warunkach-zatrudnienia
+125	szkolenie-okresowe-bhp	pewne	
+126	badania-lekarskie-w-pracy	pewne	
+127	badania-lekarskie-w-pracy	pewne	
+128	badania-lekarskie-w-pracy	pewne	
+129	brak	pewne	kontrola PIP
+130	brak	pewne	kontrola PIP
+131	brak	pewne	kontrola PIP
+132	brak	niepewne	wzór skargi na pracodawcę; sad-pracy-czy-pip
+133	sad-pracy-czy-pip	niepewne	brak
+134	brak	pewne	skarga do ZUS
+135	brak	niepewne	sąd pracy a zlecenie; sad-pracy-czy-pip
+136	mobbing-i-dyskryminacja	pewne	
+137	mobbing-i-dyskryminacja	pewne	
+138	kara-porzadkowa	niepewne	odpowiedzialnosc-materialna
+139	kara-porzadkowa	pewne	
+140	brak	pewne	praca na czarno
+141	odpowiedzialnosc-materialna	niepewne	brak
+142	odpowiedzialnosc-materialna	pewne	
+143	brak	niepewne	potrącenie za L4; wynagrodzenie-za-niepelny-miesiac
+144	odpowiedzialnosc-materialna	niepewne	brak
+145	odpowiedzialnosc-materialna	pewne	
+146	odpowiedzialnosc-materialna	niepewne	brak
+147	monitoring-w-pracy	pewne	
+148	monitoring-w-pracy	pewne	
+149	monitoring-w-pracy	pewne	
+150	monitoring-w-pracy	pewne	
+151	monitoring-w-pracy	pewne	
+152	monitoring-w-pracy	pewne	
+153	brak	niepewne	przerwa na papierosa; przerwy-w-pracy
+154	przerwy-w-pracy	pewne	
+155	przerwy-w-pracy	pewne	
+156	przerwy-w-pracy	pewne	
+157	ile-kg-wolno-dzwigac	pewne	
+158	ile-kg-wolno-dzwigac	pewne	
+159	ile-kg-wolno-dzwigac	pewne	
+160	temperatura-w-pracy	pewne	
+161	temperatura-w-pracy	pewne	
+162	czy-potrzebne-uprawnienia-udt	niepewne	waznosc-uprawnien-udt
+163	dorabianie-do-renty	pewne	
+164	dorabianie-do-renty	pewne	
+165	dorabianie-do-renty	pewne	
+166	dorabianie-do-renty	pewne	
+167	dorabianie-do-renty	pewne	
+168	dorabianie-do-renty	pewne	
+169	pracownik-niepelnosprawny	pewne	
+170	pracownik-niepelnosprawny	pewne	
+171	pracownik-niepelnosprawny	pewne	
+172	pracownik-mlodociany	pewne	
+173	pracownik-mlodociany	pewne	
+174	pracownik-mlodociany	pewne	
+175	praca-cudzoziemca	niepewne	zlecenie-netto
+176	fundusz-socjalny	niepewne	brak
+177	fundusz-socjalny	niepewne	brak
+178	fundusz-socjalny	niepewne	brak
