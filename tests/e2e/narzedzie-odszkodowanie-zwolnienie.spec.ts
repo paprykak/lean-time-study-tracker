@@ -46,3 +46,13 @@ test('bez pensji: błąd', async ({ page }) => {
   await expect(page.locator('#o-blad')).toHaveText('Wpisz pensję brutto, na przykład 6000.');
   await expect(page.locator('[data-w="kwota"]')).toHaveText('—');
 });
+
+test('termin na pozew zależy od sytuacji: 21 dni z art. 264 albo przedawnienie z art. 291', async ({ page }) => {
+  const pozew = page.locator('[data-w="pozew"]');
+  await page.getByLabel('Co się stało').selectOption('dyscyplinarka');
+  await expect(pozew).toContainText(/21\sdni.*art\.\s264\s§\s2/);
+  await page.getByLabel('Co się stało').selectOption('z-winy-pracodawcy');
+  await expect(pozew).toContainText(/tu nie\sobowiązuje.*3\slat.*art\.\s291\s§\s1/);
+  await page.getByLabel('Co się stało').selectOption('od-pracownika');
+  await expect(pozew).toContainText(/art\.\s291\s§\s2 i\s§\s2¹/);
+});

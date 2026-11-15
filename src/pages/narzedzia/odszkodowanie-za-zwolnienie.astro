@@ -28,7 +28,7 @@ const faq = [
   },
   {
     pytanie: 'Ile mam czasu na pozew o odszkodowanie za zwolnienie?',
-    odpowiedz: '21 dni od doręczenia wypowiedzenia albo zawiadomienia o rozwiązaniu umowy bez wypowiedzenia (art. 264 § 1–2 Kodeksu pracy). Gdy nie zdążysz bez swojej winy, możesz w ciągu 7 dni od ustania przyczyny wnieść o przywrócenie terminu (art. 265).',
+    odpowiedz: '21 dni od doręczenia wypowiedzenia albo zawiadomienia o rozwiązaniu umowy bez wypowiedzenia (art. 264 § 1–2 Kodeksu pracy). Gdy nie zdążysz bez swojej winy, możesz w ciągu 7 dni od ustania przyczyny wnieść o przywrócenie terminu (art. 265). Gdy to Ty rozwiązujesz umowę z winy pracodawcy, 21 dni nie obowiązuje: roszczenie o odszkodowanie przedawnia się po 3 latach (art. 291 § 1).',
   },
   {
     pytanie: 'Czy pracodawca może żądać odszkodowania od pracownika?',
@@ -94,7 +94,7 @@ const faq = [
         <div><dt>Za dzień pracy</dt><dd data-w="dzien">{zl(r.zaDzien)}</dd></div>
       </dl>
       <p class="wynik-uwaga" data-w="polowa" hidden>Przy 2 tygodniach liczymy połowę miesięcznej kwoty. Rozporządzenie mówi to wprost przy odejściu z winy pracodawcy i roszczeniu pracodawcy (§ 2 ust. 2), a przy wypowiedzeniu i dyscyplinarce tego nie rozstrzyga.</p>
-      <p class="wynik-uwaga">Kwotę w tych granicach ustala sąd pracy. Pozew: 21 dni od doręczenia pisma (art. 264).</p>
+      <p class="wynik-uwaga">Kwotę w tych granicach ustala sąd pracy. <span data-w="pozew">{SYTUACJE[D.sytuacja].pozew}</span></p>
       <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są w tabeli poniżej.</p></noscript>
     </div>
   </form>
@@ -137,7 +137,11 @@ const faq = [
       {dniPracyWRoku(ROK)} dni przez 12 = {wsp} (§ 19 rozporządzenia urlopowego).
     </p>
     <p>
-      Pozew składa się w ciągu 21 dni od doręczenia pisma (art. 264 Kodeksu pracy); dzień, w którym termin mija, policzy <a href="/narzedzia/odwolanie-do-sadu-pracy">kalkulator odwołania do sądu pracy</a>.
+      Od wypowiedzenia i zwolnienia przez pracodawcę pozew składa się w ciągu 21 dni od doręczenia pisma (art. 264 § 1–2
+      Kodeksu pracy), bez dnia doręczenia. Gdy 21. dzień wypada w sobotę albo dzień ustawowo wolny od pracy, obie daty, „zdąż do” i ostatni dzień według art. 115 Kodeksu cywilnego, policzy <a href="/narzedzia/odwolanie-do-sadu-pracy">kalkulator odwołania do sądu pracy</a>.
+      Ten termin nie dotyczy odszkodowania po rozwiązaniu umowy przez pracownika z winy pracodawcy: to roszczenie
+      przedawnia się po 3 latach (art. 291 § 1). Roszczenie pracodawcy z art. 61¹ przedawnia się po roku od dnia, w którym
+      dowiedział się o szkodzie, najpóźniej po 3 latach od jej wyrządzenia (art. 291 § 2 i § 2¹).
     </p>
   </Fragment>
 </StronaNarzedzia>
@@ -184,6 +188,7 @@ const faq = [
       w('kwota').textContent = typografia(r.od === r.do ? zl(r.od) : `od ${zl(r.od)} do ${zl(r.do)}`);
       w('miara').textContent = typografia(r.miara);
       w('podstawa').textContent = typografia(s.podstawa);
+      w('pozew').textContent = typografia(s.pozew);
       w('dzien').textContent = typografia(zl(r.zaDzien));
       wiersz('koniec').hidden = r.doKoncaUmowy === undefined;
       w('koniec').textContent = typografia(r.doKoncaUmowy === undefined ? '' : `${zl(r.doKoncaUmowy)} (za czas do końca umowy, najwyżej 3 miesiące)`);

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { odszkodowanieZaZwolnienie, zaCzasBezPracy, type DaneOdszkodowania } from './odszkodowanie-zwolnienie';
+import { SYTUACJE, odszkodowanieZaZwolnienie, zaCzasBezPracy, type DaneOdszkodowania } from './odszkodowanie-zwolnienie';
 
 // 2026 r.: 251 dni pracy, współczynnik 251/12; 6000 zł → 6000 · 12 / 251 = 286,85 zł za dzień pracy.
 const licz = (d: Partial<DaneOdszkodowania>) => odszkodowanieZaZwolnienie({ sytuacja: 'wypowiedzenie', pensja: 6000, rok: 2026, ...d });
@@ -43,5 +43,17 @@ describe('za dni pracy (§ 2a rozporządzenia z 1996 r.)', () => {
     expect(() => licz({ pensja: 0 })).toThrow(RangeError);
     expect(() => licz({ sytuacja: 'probny' })).toThrow(RangeError);
     expect(() => licz({ okreslona: true })).toThrow(RangeError);
+  });
+});
+
+describe('terminy 2: termin na pozew według sytuacji (art. 264 § 1–2, art. 291 § 1–2¹ Kp)', () => {
+  it('21 dni tylko przy wypowiedzeniu i zwolnieniu przez pracodawcę; przy art. 55 § 1¹ i 61¹ przedawnienie', () => {
+    expect(SYTUACJE.wypowiedzenie.pozew).toContain('art. 264 § 1');
+    expect(SYTUACJE.probny.pozew).toContain('art. 264 § 1');
+    expect(SYTUACJE.dyscyplinarka.pozew).toContain('art. 264 § 2');
+    expect(SYTUACJE['w-wypowiedzeniu'].pozew).toContain('art. 264 § 2');
+    expect(SYTUACJE['z-winy-pracodawcy'].pozew).toMatch(/^21 dni z art\. 264 Kodeksu pracy tu nie obowiązuje: .*3 lat.*art\. 291 § 1/);
+    expect(SYTUACJE['od-pracownika'].pozew).toContain('art. 291 § 2 i § 2¹');
+    expect(SYTUACJE['od-pracownika'].pozew).toContain('21 dni z art. 264 tu nie obowiązuje');
   });
 });

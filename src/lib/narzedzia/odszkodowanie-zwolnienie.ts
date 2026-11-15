@@ -30,6 +30,8 @@ export interface OpisSytuacji {
   dni: 'zawsze' | 'okreslona' | 'nigdy';
   /** Etykieta pola z dniami pracy. */
   etykietaDni: string;
+  /** Termin na pozew (pakiet „terminy 2”, raporty/terminy2/PRZEPISY.md, pytanie 8): art. 264 albo przedawnienie z art. 291. */
+  pozew: string;
 }
 
 export const SYTUACJE: Record<Sytuacja, OpisSytuacji> = {
@@ -41,6 +43,7 @@ export const SYTUACJE: Record<Sytuacja, OpisSytuacji> = {
     umowa: true,
     dni: 'okreslona',
     etykietaDni: 'Dni pracy do końca umowy',
+    pozew: 'Pozew do sądu pracy: 21 dni od doręczenia wypowiedzenia (art. 264 § 1 Kodeksu pracy).',
   },
   dyscyplinarka: {
     nazwa: 'Bezprawna dyscyplinarka',
@@ -50,6 +53,7 @@ export const SYTUACJE: Record<Sytuacja, OpisSytuacji> = {
     umowa: true,
     dni: 'okreslona',
     etykietaDni: 'Dni pracy do końca umowy',
+    pozew: 'Pozew do sądu pracy: 21 dni od doręczenia zawiadomienia o rozwiązaniu umowy bez wypowiedzenia (art. 264 § 2 Kodeksu pracy).',
   },
   'w-wypowiedzeniu': {
     nazwa: 'Dyscyplinarka w wypowiedzeniu',
@@ -59,6 +63,7 @@ export const SYTUACJE: Record<Sytuacja, OpisSytuacji> = {
     umowa: false,
     dni: 'zawsze',
     etykietaDni: 'Dni pracy do końca okresu wypowiedzenia',
+    pozew: 'Pozew do sądu pracy: 21 dni od doręczenia zawiadomienia o rozwiązaniu umowy bez wypowiedzenia (art. 264 § 2 Kodeksu pracy).',
   },
   probny: {
     nazwa: 'Wypowiedzenie okresu próbnego',
@@ -68,6 +73,7 @@ export const SYTUACJE: Record<Sytuacja, OpisSytuacji> = {
     umowa: false,
     dni: 'zawsze',
     etykietaDni: 'Dni pracy do końca okresu próbnego',
+    pozew: 'Pozew do sądu pracy: 21 dni od doręczenia wypowiedzenia (art. 264 § 1 Kodeksu pracy).',
   },
   'z-winy-pracodawcy': {
     nazwa: 'Odchodzę z winy pracodawcy',
@@ -77,6 +83,7 @@ export const SYTUACJE: Record<Sytuacja, OpisSytuacji> = {
     umowa: true,
     dni: 'okreslona',
     etykietaDni: 'Dni pracy do końca umowy',
+    pozew: '21 dni z art. 264 Kodeksu pracy tu nie obowiązuje: roszczenie o odszkodowanie po rozwiązaniu umowy przez pracownika przedawnia się z upływem 3 lat od dnia, w którym stało się wymagalne (art. 291 § 1; tak m.in. Sąd Okręgowy w Olsztynie, IV Pa 79/15).',
   },
   'od-pracownika': {
     nazwa: 'Pracodawca żąda odszkodowania',
@@ -86,6 +93,7 @@ export const SYTUACJE: Record<Sytuacja, OpisSytuacji> = {
     umowa: true,
     dni: 'okreslona',
     etykietaDni: 'Dni pracy do końca umowy',
+    pozew: 'Pracodawca ma na pozew rok od dnia, w którym dowiedział się o szkodzie, najpóźniej 3 lata od jej wyrządzenia (art. 291 § 2 i § 2¹ Kodeksu pracy); 21 dni z art. 264 tu nie obowiązuje.',
   },
 };
 
