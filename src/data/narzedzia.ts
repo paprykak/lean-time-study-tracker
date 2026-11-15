@@ -921,6 +921,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-14',
   },
   {
+    slug: 'co-wolno-na-l4',
+    nazwa: 'Co wolno na L4: praca, wyjazd, kontrola ZUS',
+    krotko: 'Czy praca, zakupy albo wyjazd na zwolnieniu odbiorą zasiłek i za jaki okres, kontrola ZUS i odwołanie.',
+    kategoria: 'wynagrodzenie',
+    przepisy: ['zasilkowa', 'zmianaKontroliZwolnien2026', 'wzoryKontroliZwolnien', 'systemUbezpieczen', 'kodeksPracy', 'kpc', 'kodeksCywilny'],
+    sprawdzono: '2026-11-15',
+  },
+  {
     slug: 'przerwy-w-pracy',
     nazwa: 'Przerwy w pracy',
     krotko: 'Ile przerw przy zmianie 8 i 12 godzin, które są płatne, przy monitorze, na karmienie, dla młodocianych.',

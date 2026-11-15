@@ -123,6 +123,9 @@ export const HASLA: Record<string, string[]> = {
   // „odległość między regałami”, „obciążenie regału”, „wysokość składowania”, „pochylnia nachylenie”.
   'drogi-i-przejscia': ['droga transportowa', 'ciąg komunikacyjny na hali', 'przejście między regałami', 'odległość między regałami w magazynie', 'szerokość przejścia bhp', 'pochylnia maksymalne nachylenie', 'wózek widłowy', 'piesi i wózki'],
   'skladowanie-w-magazynie': ['dopuszczalne obciążenie regału', 'tabliczka obciążenie regału', 'obciążenie półki regału', 'wysokość składowania palet', 'składowanie materiałów bhp', 'regał magazynowy', 'palety', 'odległość od lamp', 'odległość towaru od tryskaczy', 'gaśnica w magazynie'],
+  // Pakiet „l4” (2026-11-15): frazy z podpowiedzi wyszukiwarki Google (pl) do zapytań „co wolno na l4”, „czy na l4 można”,
+  // „kontrola zus l4”, „praca na l4”, „wyjazd na l4”, „l4 chory może chodzić”.
+  'co-wolno-na-l4': ['czy na L4 można wychodzić z domu', 'praca na L4', 'praca na L4 u innego pracodawcy', 'praca na L4 nowe przepisy', 'kontrola ZUS L4', 'kontrola ZUS jak wygląda', 'wyjazd na L4', 'chory może chodzić', 'chory powinien leżeć', 'utrata zasiłku chorobowego', 'odwołanie od decyzji ZUS'],
 };
 
 /**

@@ -1,0 +1,309 @@
+---
+// Co wolno na zwolnieniu lekarskim: art. 17 ustawy zasiłkowej (brzmienie do 12.04.2026, od 13.04.2026 i od 1.01.2027),
+// kontrola zwolnień (art. 59 i 68–68e), wynagrodzenie chorobowe (art. 92 § 3 pkt 2 Kp), odwołanie (art. 477⁹ KPC).
+// Logika i teksty wyniku: src/lib/narzedzia/co-wolno-na-l4.ts (testy obok).
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { CZYNNOSCI, KONTROLE, WSKAZANIA, opisL4, type Czynnosc, type Kontrola, type Wskazanie } from '../../lib/narzedzia/co-wolno-na-l4';
+import { dodajDni, dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+const dzis = dzisWPolsce();
+// Przykład startowy: praca na polecenie pracodawcy wczoraj, zwolnienie od 5 dni temu na 14 dni, bez kontroli
+// (skrypt przestawia daty na prawdziwe dziś: data-dzis).
+const CZYNNOSC = 'polecenie' as Czynnosc;
+const WSKAZANIE = 'chodzic' as Wskazanie;
+const KONTROLA = 'nikt' as Kontrola;
+const DNI_OD = -5;
+const DNI_DO = 8;
+const DNI_CZYNNOSCI = -1;
+const start = opisL4(
+  { czynnosc: CZYNNOSC, wskazanie: WSKAZANIE, kontrola: KONTROLA, od: dodajDni(dzis, DNI_OD), do: dodajDni(dzis, DNI_DO), dzien: dodajDni(dzis, DNI_CZYNNOSCI) },
+  dzis,
+);
+
+const faq = [
+  {
+    pytanie: 'Czy na L4 można wychodzić z domu?',
+    odpowiedz: 'Ustawa nie zakazuje wychodzenia z domu. Zasiłek chorobowy przepada za pracę zarobkową albo za aktywność niezgodną z celem zwolnienia, czyli działania, które utrudniają lub wydłużają leczenie albo rekonwalescencję; zwykłe czynności dnia codziennego są z tego wyłączone (art. 17 ust. 1 i 1b ustawy zasiłkowej, od 13 kwietnia 2026 r.). Wskazanie „chory powinien leżeć” albo „chory może chodzić” jest w zaświadczeniu lekarskim (art. 55 ust. 3 pkt 7), ale żaden przepis nie wylicza, czego przy którym nie wolno.',
+  },
+  {
+    pytanie: 'Czy na L4 można pracować u innego pracodawcy albo na zleceniu?',
+    odpowiedz: 'Co do zasady nie. Praca zarobkowa to każda czynność o charakterze zarobkowym, niezależnie od stosunku prawnego, z wyjątkiem czynności incydentalnych, których wymagają istotne okoliczności (art. 17 ust. 1a ustawy zasiłkowej). Przy kilku tytułach ubezpieczenia niezdolność do pracy dotyczy każdego z nich, a zwolnienie wystawia się odrębnie dla każdego tytułu (ust. 1c). Od 1 stycznia 2027 r. lekarz może na Twoje żądanie nie wystawić zwolnienia z tytułu, w którym pracę da się wykonywać ze względu na jej rodzaj; wtedy informujesz płatnika składek, który sam wypłaca zasiłki, o okresie zwolnienia z innego tytułu (ust. 1d i 1e).',
+  },
+  {
+    pytanie: 'Co grozi za pracę na L4 na polecenie pracodawcy?',
+    odpowiedz: 'Utrata zasiłku chorobowego za cały okres zwolnienia, a za dni, za które płaci pracodawca, także wynagrodzenia chorobowego (art. 17 ust. 1 ustawy zasiłkowej, art. 92 § 3 pkt 2 Kodeksu pracy). Od 13 kwietnia 2026 r. ustawa mówi wprost, że polecenie pracodawcy nie jest istotną okolicznością, która pozwala na czynność incydentalną (art. 17 ust. 1a zdanie drugie). Wypłacony już zasiłek podlega potrąceniu z bieżących świadczeń albo ściągnięciu (art. 66 ust. 2).',
+  },
+  {
+    pytanie: 'Jak wygląda kontrola ZUS na L4?',
+    odpowiedz: 'Kontrolujący okazuje upoważnienie i legitymację (art. 68b i 68c ust. 3 ustawy zasiłkowej). Kontrola odbywa się w miejscu zamieszkania, pobytu, pracy albo prowadzenia działalności, a w innym miejscu, gdy wymaga tego jej cel (art. 68c ust. 1). Masz obowiązek umożliwić kontrolę oraz udzielać informacji i wyjaśnień w jej zakresie (art. 68d). Ustalenia trafiają do protokołu w dwóch egzemplarzach, a zastrzeżenia, ze wskazaniem dowodów, możesz złożyć w 7 dni od otrzymania protokołu albo aneksu (art. 68e ust. 2 i 4). Pracodawca może kontrolować, gdy płaci wynagrodzenie chorobowe (art. 68 ust. 1d), a także wtedy, gdy sam wypłaca zasiłek (art. 68 ust. 1a).',
+  },
+  {
+    pytanie: 'Czy na L4 można wyjechać?',
+    odpowiedz: 'Ustawa nie zakazuje wyjazdu, ale nie może on utrudniać ani wydłużać leczenia (art. 17 ust. 1b ustawy zasiłkowej). Zmianę adresu pobytu zgłaszasz pracodawcy i ZUS najpóźniej w 3 dni; inaczej zawiadomienie o badaniu wysłane na stary adres uznaje się za doręczone (art. 59 ust. 5e–5f). Jeśli uniemożliwisz badanie u lekarza orzecznika ZUS, zwolnienie traci ważność od dnia po wyznaczonym terminie (art. 59 ust. 6).',
+  },
+  {
+    pytanie: 'Jak odwołać się od decyzji ZUS o utracie zasiłku?',
+    odpowiedz: 'Na piśmie albo ustnie do protokołu w oddziale ZUS, który wydał decyzję, w terminie miesiąca od jej doręczenia; ZUS przekazuje odwołanie do sądu (art. 83 ust. 2 i 5 ustawy o systemie ubezpieczeń społecznych, art. 477⁹ § 1 i 2 Kodeksu postępowania cywilnego). Odwołanie możesz też złożyć do protokołu w sądzie (art. 477⁹ § 5). Spóźnione sąd odrzuci, chyba że spóźnienie nie jest nadmierne i nastąpiło z przyczyn od Ciebie niezależnych (art. 477⁹ § 3).',
+  },
+];
+---
+
+<StronaNarzedzia
+  slug="co-wolno-na-l4"
+  tytul="Co wolno na L4: praca, wyjazd, kontrola ZUS"
+  opis="Czy na zwolnieniu lekarskim wolno pracować, robić zakupy albo wyjechać, za jaki okres przepada zasiłek, jak wygląda kontrola ZUS i do kiedy odwołanie."
+  h1="Co wolno na zwolnieniu lekarskim (L4)"
+  lead="Wybierz, co robisz w czasie zwolnienia, i wpisz jego daty, a pokażemy, czy to odbiera zasiłek chorobowy, za jaki okres, jak przebiega kontrola i do kiedy odwołać się od decyzji ZUS."
+  faq={faq}
+>
+  <form class="kalkulator" data-l4 novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twoje zwolnienie</h2>
+      <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div class="sm:col-span-2">
+          <label for="l4-czynnosc" class="etykieta-pola">Co robisz</label>
+          <select id="l4-czynnosc" name="czynnosc" class="pole mt-1" aria-describedby="l4-czynnosc-opis">
+            {Object.entries(CZYNNOSCI).map(([k, c]) => <option value={k} selected={k === CZYNNOSC}>{c.krotko}</option>)}
+          </select>
+          <p id="l4-czynnosc-opis" class="meta mt-1" data-w="czynnosc-opis">{CZYNNOSCI[CZYNNOSC].opis}</p>
+        </div>
+        <div>
+          <label for="l4-wskazanie" class="etykieta-pola">Wskazanie lekarza</label>
+          <select id="l4-wskazanie" name="wskazanie" class="pole mt-1" aria-describedby="l4-wskazanie-opis">
+            {Object.entries(WSKAZANIA).map(([k, t]) => <option value={k} selected={k === WSKAZANIE}>{t}</option>)}
+          </select>
+          <p id="l4-wskazanie-opis" class="meta mt-1">Jest w zwolnieniu, obok okresu niezdolności.</p>
+        </div>
+        <div>
+          <label for="l4-kontrola" class="etykieta-pola">Kto kontroluje</label>
+          <select id="l4-kontrola" name="kontrola" class="pole mt-1">
+            {Object.entries(KONTROLE).map(([k, t]) => <option value={k} selected={k === KONTROLA}>{t}</option>)}
+          </select>
+        </div>
+        <div>
+          <label for="l4-od" class="etykieta-pola">Zwolnienie od</label>
+          <input id="l4-od" name="od" type="date" data-dzis={String(DNI_OD)} class="pole mt-1" min="2000-01-01" max="2100-12-31" value={dodajDni(dzis, DNI_OD)} aria-describedby="l4-blad" />
+        </div>
+        <div>
+          <label for="l4-do" class="etykieta-pola">Zwolnienie do</label>
+          <input id="l4-do" name="do" type="date" data-dzis={String(DNI_DO)} class="pole mt-1" min="2000-01-01" max="2100-12-31" value={dodajDni(dzis, DNI_DO)} aria-describedby="l4-blad" />
+        </div>
+        <div>
+          <label for="l4-dzien" class="etykieta-pola">Dzień czynności</label>
+          <input id="l4-dzien" name="dzien" type="date" data-dzis={String(DNI_CZYNNOSCI)} class="pole mt-1" min="2000-01-01" max="2100-12-31" value={dodajDni(dzis, DNI_CZYNNOSCI)} aria-describedby="l4-dzien-opis l4-blad" />
+          <p id="l4-dzien-opis" class="meta mt-1">Od niego zależy brzmienie przepisu.</p>
+        </div>
+        <div>
+          <label for="l4-protokol" class="etykieta-pola">Otrzymanie protokołu</label>
+          <input id="l4-protokol" name="protokol" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" aria-describedby="l4-protokol-opis l4-blad" />
+          <p id="l4-protokol-opis" class="meta mt-1">Puste, gdy nie było kontroli.</p>
+        </div>
+        <div>
+          <label for="l4-decyzja" class="etykieta-pola">Doręczenie decyzji ZUS</label>
+          <input id="l4-decyzja" name="decyzja" type="date" class="pole mt-1" min="2000-01-01" max="2100-12-31" aria-describedby="l4-decyzja-opis l4-blad" />
+          <p id="l4-decyzja-opis" class="meta mt-1">Puste, gdy nie ma decyzji.</p>
+        </div>
+      </div>
+      <p id="l4-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Czy wolno</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-data" data-w="werdykt">{start.werdykt}</p>
+        <p class="status-terminu" data-w="przepis" data-status={start.werdyktKlasa}>{start.przepis}</p>
+      </div>
+      <p class="meta mt-2" data-w="werdykt-opis">{start.werdyktOpis}</p>
+      <h3 class="etykieta mt-4">Warunki</h3>
+      <ul class="mt-1 list-disc space-y-1 pl-5 text-[0.9375rem]" data-w="warunki">{start.warunki.map((t) => <li>{t}</li>)}</ul>
+      <h3 class="etykieta mt-4">Skutek i terminy</h3>
+      <dl class="wynik-lista">
+        <div>
+          <dt>Skutek</dt>
+          <dd><span class="block font-normal" data-w="skutek">{start.skutek}</span></dd>
+        </div>
+        <div>
+          <dt>Zastrzeżenia</dt>
+          <dd>
+            <span class="status-terminu" data-w="zastrzezenia-status" data-status={start.zastrzezeniaKlasa ?? undefined} hidden={!start.zastrzezeniaStatus} aria-live="polite">{start.zastrzezeniaStatus}</span>
+            <span class="block font-normal" data-w="zastrzezenia">{start.zastrzezenia}</span>
+          </dd>
+        </div>
+        <div>
+          <dt>Odwołanie</dt>
+          <dd>
+            <span class="status-terminu" data-w="odwolanie-status" data-status={start.odwolanieKlasa ?? undefined} hidden={!start.odwolanieStatus} aria-live="polite">{start.odwolanieStatus}</span>
+            <span class="block font-normal" data-w="odwolanie">{start.odwolanie}</span>
+          </dd>
+        </div>
+      </dl>
+      <h3 class="etykieta mt-4">Uwagi</h3>
+      <ul class="mt-1 space-y-2" data-w="uwagi">{start.uwagi.map((t) => <li class="wynik-uwaga">{t}</li>)}</ul>
+      <h3 class="etykieta mt-4">Jak przebiega kontrola</h3>
+      <ul class="mt-1 list-disc space-y-1 pl-5 text-[0.9375rem]" data-w="kontrola">{start.kontrola.map((t) => <li>{t}</li>)}</ul>
+      <h3 class="etykieta mt-4" data-w="brzmienie">{start.brzmienieTytul}</h3>
+      <ul class="mt-1 list-disc space-y-1 pl-5 text-[0.9375rem]" data-w="cytaty">{start.cytaty.map((t) => <li>{t}</li>)}</ul>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="zasady">Co mówi przepis</h2>
+    <ul>
+      <li>Kto w czasie orzeczonej niezdolności do pracy wykonuje pracę zarobkową albo podejmuje aktywność niezgodną z celem zwolnienia, traci zasiłek chorobowy za cały okres zwolnienia (art. 17 ust. 1 ustawy zasiłkowej). Za dni, za które płaci pracodawca, przepada też wynagrodzenie chorobowe, bo nie przysługuje ono, gdy nie ma prawa do zasiłku (art. 92 § 3 pkt 2 Kodeksu pracy).</li>
+      <li>Od 13 kwietnia 2026 r. ustawa definiuje oba pojęcia. Praca zarobkowa to każda czynność o charakterze zarobkowym, niezależnie od stosunku prawnego, bez czynności incydentalnych, których wymagają istotne okoliczności; polecenie pracodawcy taką okolicznością nie jest (ust. 1a). Aktywność niezgodna z celem zwolnienia to działania utrudniające lub wydłużające leczenie albo rekonwalescencję, bez zwykłych czynności dnia codziennego i bez czynności incydentalnych wymaganych istotnymi okolicznościami (ust. 1b).</li>
+      <li>Przy kilku tytułach ubezpieczenia niezdolność do pracy dotyczy każdego z nich, a zwolnienie wystawia się odrębnie dla każdego tytułu (ust. 1c). Od 1 stycznia 2027 r. lekarz może na żądanie nie wystawić zwolnienia z tytułu, w którym pracę da się wykonywać ze względu na jej rodzaj, a Ty informujesz płatnika składek, który sam wypłaca zasiłki, o okresie zwolnienia z innego tytułu (ust. 1d–1e).</li>
+      <li>Te same zasady dotyczą zasiłku chorobowego za okres po ustaniu ubezpieczenia (art. 17 ust. 4, od 13 kwietnia 2026 r.) i świadczenia rehabilitacyjnego (art. 22).</li>
+      <li>Do 12 kwietnia 2026 r. art. 17 ust. 1 odbierał zasiłek za wykonywanie pracy zarobkowej i za wykorzystywanie zwolnienia „w sposób niezgodny z celem tego zwolnienia”, bez definicji. Okoliczności te ustalał ZUS albo pracodawca, który sam wypłacał zasiłki (ust. 3 i art. 68 w dawnym brzmieniu). Postępowania i kontrole wszczęte przed 13 kwietnia 2026 r. kończy się według dawnych przepisów (art. 39 i 42 ustawy z 18 grudnia 2025 r., Dz.U. 2026 poz. 26).</li>
+    </ul>
+
+    <h2 id="kontrola">Kontrola i odwołanie</h2>
+    <p>
+      Wykorzystywanie zwolnień kontroluje ZUS (art. 68 ust. 1 i 1b ustawy zasiłkowej). Każdy pracodawca może kontrolować,
+      gdy płaci wynagrodzenie chorobowe (ust. 1d). Zasiłek kontroluje też pracodawca, który sam go wypłaca, bo zgłasza do
+      ubezpieczenia chorobowego ponad 20 osób (ust. 1a, art. 61 ust. 1 pkt 1). Przebieg kontroli,
+      protokół i zastrzeżenia opisują art. 68a–68e, a wzory upoważnienia i protokołu rozporządzenie z 8 kwietnia 2026 r.
+      (Dz.U. 2026 poz. 503). Wątpliwości rozstrzyga ZUS (art. 68 ust. 1e), a od jego decyzji przysługuje odwołanie do sądu
+      w terminie miesiąca od doręczenia (art. 83 ust. 2 ustawy o systemie ubezpieczeń społecznych, art. 477⁹ § 1 Kodeksu
+      postępowania cywilnego). Lekarze orzecznicy ZUS kontrolują też, czy zwolnienie wystawiono prawidłowo (art. 59 ust. 2),
+      a ZUS może skierować Cię do nich na badanie (art. 59 ust. 3 pkt 1).
+    </p>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Brzmienie przepisu wybieramy według dnia czynności: przed 13 kwietnia 2026 r. dawne art. 17 ust. 1, od tego dnia
+      ust. 1–1c, a od 1 stycznia 2027 r. także ust. 1d–1e. Ustawa zmieniająca każe stosować dawne przepisy tylko do postępowań
+      wszczętych przed 13 kwietnia 2026 r. (art. 39); o późniejszych postępowaniach w sprawie wcześniejszych zdarzeń nie mówi,
+      więc przy takiej czynności pokazujemy dawne brzmienie i to zastrzeżenie.
+    </p>
+    <p>
+      „Cały okres zwolnienia” to okres zwolnienia, w czasie którego była czynność, czyli daty, które wpisujesz. Ustawa nie mówi,
+      czy kolejne zwolnienia bez przerwy liczą się razem, więc liczymy tylko wpisane. Kwot zasiłku i wynagrodzenia chorobowego
+      nie liczymy.
+    </p>
+    <p>
+      Ustawa nie wylicza zwykłych czynności dnia codziennego ani czynności incydentalnych. Zakupy, aptekę i zwykłe sprawy domowe
+      zaliczamy do zwykłych czynności w zwykłym znaczeniu słów, ale zawsze z warunkiem, że nie utrudniają ani nie wydłużają
+      leczenia. Wizyta u lekarza i badania służą leczeniu. Przy sporcie, remoncie i imprezie nie piszemy „wolno”, bo o tym,
+      czy wysiłek szkodzi leczeniu, rozstrzyga ZUS, w razie potrzeby z opinią lekarza. Wskazanie „chory powinien leżeć” jest
+      w zaświadczeniu (art. 55 ust. 3 pkt 7), ale żaden przepis nie mówi, czego przy nim nie wolno, więc tego nie zgadujemy.
+    </p>
+    <p>
+      Od 1 stycznia 2027 r. praca w tytule, z którego na Twoje żądanie nie wystawiono zwolnienia, nie powinna odbierać zasiłku
+      z innego tytułu: taki jest sens art. 17 ust. 1c i 1d, ale ustawa nie mówi tego wprost w definicji pracy zarobkowej, więc
+      piszemy to jako warunek.
+    </p>
+    <p>
+      Przepisy o kontroli wybieramy według dnia otrzymania protokołu: dawne przepisy dotyczą kontroli wszczętych przed
+      13 kwietnia 2026 r. (art. 42 ustawy z 18 grudnia 2025 r.), a kontrolę wszczyna okazanie upoważnienia (art. 68b ust. 2),
+      którego dnia formularz nie pyta. Gdy protokół jest sprzed 13 kwietnia 2026 r., pokazujemy dawną kontrolę i nie liczymy
+      7 dni na zastrzeżenia.
+    </p>
+    <p>
+      Odwołanie: miesiąc od doręczenia decyzji kończy się w dniu, który datą odpowiada dniowi doręczenia, a gdy takiego dnia
+      w miesiącu nie ma, w ostatnim dniu miesiąca (art. 112 Kodeksu cywilnego przez art. 165 § 1 KPC). Gdy ten dzień wypada
+      w sobotę albo dzień wolny od pracy, pokazujemy obie daty: „zdąż do” bez przesunięcia i ostatni dzień według art. 115
+      Kodeksu cywilnego; od dnia wolnego status liczymy już od tej drugiej daty. Zastrzeżenia do protokołu: 7 dni od dnia otrzymania, bez tego dnia; ustawa zasiłkowa nie mówi
+      o sobocie ani o dniu wolnym, więc podajemy datę bez przesunięcia.
+    </p>
+    <p>
+      Kalkulator nie ocenia Twojej sprawy: rozstrzyga ZUS, a w sporze sąd. Ile wynosi zasiłek, pokaże <a href="/narzedzia/kalkulator-l4">kalkulator L4</a>, ile dni zostało do końca zasiłku, <a href="/narzedzia/okres-zasilkowy">okres zasiłkowy</a>, a co po jego końcu, <a href="/narzedzia/swiadczenie-rehabilitacyjne">świadczenie rehabilitacyjne</a>. Zasiłek po końcu umowy opisuje <a href="/narzedzia/l4-po-zwolnieniu">L4 po zwolnieniu z pracy</a>, na umowie zlecenia <a href="/narzedzia/zasilek-chorobowy-na-zleceniu">zasiłek chorobowy na zleceniu</a>, a ochronę przed zwolnieniem z pracy w czasie choroby <a href="/narzedzia/zwolnienie-na-l4">zwolnienie z pracy na długim L4</a>.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { CZYNNOSCI, bladL4, opisL4, werdyktBezDat, type Czynnosc, type DaneL4, type Kontrola, type Wskazanie } from '../../lib/narzedzia/co-wolno-na-l4';
+  import { dzisWPolsce } from '../../lib/narzedzia/terminy';
+  import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
+  import { typografia } from '../../lib/typografia.mjs';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
+
+  const form = document.querySelector<HTMLFormElement>('[data-l4]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const pisz = (k: string, tekst: string) => {
+      const t = typografia(tekst);
+      if (w(k).textContent !== t) w(k).textContent = t;
+    };
+    const lista = (k: string, teksty: string[], klasa?: string) => {
+      const ul = w(k);
+      const t = teksty.map((x) => typografia(x));
+      if ([...ul.children].map((li) => li.textContent).join('\n') === t.join('\n')) return;
+      ul.replaceChildren(
+        ...t.map((x) => {
+          const li = document.createElement('li');
+          if (klasa) li.className = klasa;
+          li.textContent = x;
+          return li;
+        }),
+      );
+    };
+    const ustaw = (e: HTMLElement, status: string | null) => {
+      const ukryj = !status;
+      if (e.hidden !== ukryj) e.hidden = ukryj;
+      if (status && e.dataset.status !== status) e.dataset.status = status;
+    };
+    const blad = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
+    const NAZWY: Record<string, string> = { od: 'pierwszego dnia zwolnienia', do: 'ostatniego dnia zwolnienia', dzien: 'dnia czynności', protokol: 'otrzymania protokołu', decyzja: 'doręczenia decyzji' };
+    const przelicz = () => {
+      const czynnosc = el('czynnosc').value as Czynnosc;
+      const wskazanie = el('wskazanie').value as Wskazanie;
+      const kontrola = el('kontrola').value as Kontrola;
+      pisz('czynnosc-opis', CZYNNOSCI[czynnosc].opis);
+      const dane: DaneL4 = { czynnosc, wskazanie, kontrola, od: el('od').value, do: el('do').value, dzien: el('dzien').value, protokol: el('protokol').value, decyzja: el('decyzja').value };
+      const dzis = dzisWPolsce();
+      // Ta sama kolejność co w bladL4: najpierw pola wymagane (niepełne albo błędne), potem protokół i decyzja.
+      const niepelne = (pola: (keyof DaneL4)[]) => pola.find((n) => el(n).validity.badInput);
+      const wymagane = niepelne(['od', 'do', 'dzien']);
+      const opcjonalne = niepelne(['protokol', 'decyzja']);
+      const bladDanych = bladL4({ ...dane, protokol: '', decyzja: '' }, dzis);
+      const b = wymagane
+        ? { pole: wymagane, tekst: `Wpisz pełną datę ${NAZWY[wymagane]}.` }
+        : bladDanych ?? (opcjonalne ? { pole: opcjonalne, tekst: `Wpisz pełną datę ${NAZWY[opcjonalne]} albo wyczyść pole.` } : bladL4(dane, dzis));
+      pokazBlad(blad, b?.tekst, b ? el(b.pole) : []);
+      if (b) {
+        // Werdykt nie zależy od dat: przy błędzie liczymy go bez nich, a skutek i terminy chowamy.
+        const o = werdyktBezDat(czynnosc, wskazanie, kontrola, dane.dzien, dzis);
+        pisz('werdykt', o.werdykt);
+        pisz('przepis', o.przepis);
+        ustaw(w('przepis'), o.werdyktKlasa);
+        pisz('werdykt-opis', o.werdyktOpis);
+        lista('warunki', o.warunki);
+        lista('kontrola', o.kontrola);
+        pisz('brzmienie', o.brzmienieTytul);
+        lista('cytaty', o.cytaty);
+        for (const k of ['skutek', 'zastrzezenia', 'odwolanie']) pisz(k, '—');
+        for (const k of ['zastrzezenia', 'odwolanie']) ustaw(w(`${k}-status`), null);
+        lista('uwagi', [], 'wynik-uwaga');
+        return;
+      }
+      const o = opisL4(dane, dzis);
+      pisz('werdykt', o.werdykt);
+      pisz('przepis', o.przepis);
+      ustaw(w('przepis'), o.werdyktKlasa);
+      pisz('werdykt-opis', o.werdyktOpis);
+      lista('warunki', o.warunki);
+      pisz('skutek', o.skutek);
+      lista('kontrola', o.kontrola);
+      pisz('brzmienie', o.brzmienieTytul);
+      lista('cytaty', o.cytaty);
+      lista('uwagi', o.uwagi, 'wynik-uwaga');
+      for (const k of ['zastrzezenia', 'odwolanie'] as const) {
+        const tekst = o[`${k}Status`];
+        ustaw(w(`${k}-status`), tekst ? (o[`${k}Klasa`] ?? '') : null);
+        if (tekst) pisz(`${k}-status`, tekst);
+        pisz(k, o[k]);
+      }
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    // Niepełna data w pustym polu nie wywołuje input ani change (Chromium): sprawdzamy przy opuszczeniu pola.
+    form.addEventListener('focusout', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    ustawDzisiejszeWartosci(form);
+    liczPoPowrocie(przelicz);
+    przelicz();
+  }
+</script>
