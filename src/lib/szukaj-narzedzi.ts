@@ -5,24 +5,27 @@
 // Polski bez słownika odmiany. Słowo z zapytania pasuje do słowa z indeksu, gdy:
 // - jest takie samo (najmocniej);
 // - różni się tylko końcówką: wspólny początek co najmniej 4 znaków, a po nim najwyżej 3 znaki w każdym słowie
-//   i razem najwyżej 4 („urlopu” ~ „urlop”, „ciąży” ~ „ciąża”, „pracowników” ~ „pracownik”, ale „kierownik” ≁ „kierowcy”);
+//   („urlopu” ~ „urlop”, „ciąży” ~ „ciąża”, „pracowników” ~ „pracownik”), przy czasie przeszłym w 1. osobie do 4
+//   („zniszczyłem” ~ „zniszczony”); słowo do 3 znaków może mieć jedną literę więcej („lat” ~ „lata”, „dni” ~ „dnia”);
 // - jest początkiem słowa z indeksu, ale tylko ostatnie słowo zapytania, bo to ono jest pisane na żywo („nadgo” →
 //   „nadgodziny”); wcześniejsze słowa są już skończone, więc „dał” nie pasuje do „dalej”;
 // - ma literówkę (jedna litera zamieniona, dodana, pominięta albo dwie przestawione, słowa od 5 znaków), ale tylko gdy
-//   żadne narzędzie nie zna go w poprawnej postaci („nadgodzni” → „nadgodziny”).
-// Słowa do 3 znaków („L4”, „BHP”, „UDT”) muszą się zgadzać w całości (ostatnie: na początku). Polskie znaki są
-// pomijane („ciaza” = „ciąża”). Słowo, którego nie zna żadne narzędzie („szef”, „kierownik”), jest pomijane.
+//   żadne słowo indeksu nie pasuje do niego w inny sposób („nadgodzni” → „nadgodziny”).
+// Polskie znaki są pomijane („ciaza” = „ciąża”), tak samo słowa bez treści („ile”, „czy”, „kodeks”, „przepisy”) i lata
+// („2026”). Słowo, którego nie zna żadne narzędzie („szef”, „dał”), jest pomijane i nie zeruje wyniku.
 //
-// Ranking (punkty od 0 do ok. 1,5):
-// 1. Pokrycie zapytania: każde znane słowo waży tym więcej, im mniej narzędzi je zna (rzadkie „odprawa” mówi więcej niż
-//    częste „pracy”), a trafienie waży według pola: nazwa i hasła z hali 1, tytuł 0,8, pytanie z FAQ 0,6, opis 0,55,
-//    kategoria 0,35, razy jakość dopasowania (to samo słowo 1, odmiana 0,85, początek słowa 0,7, literówka 0,6).
-//    Narzędzie trafia na listę, gdy pokrywa co najmniej połowę wagi zapytania.
-// 2. Fraza: nazwa, hasło z hali, tytuł albo pytanie z FAQ, które zapytanie wyczerpuje (iloczyn: jaka część frazy jest
-//    w zapytaniu i jaka część zapytania jest we frazie). Dlatego hasło „odprawa” wygrywa z nazwą „Odprawa pośmiertna”:
-//    zapytanie „odprawa” wyczerpuje hasło, a nazwy tylko w połowie.
-// 3. Remis: najczęstsze sprawy z hali (src/data/sprawy.ts), potem krótsza nazwa (narzędzie ogólniejsze), na końcu
-//    kolejność rejestru (bez alfabetu, który nic nie mówi o trafności).
+// Ranking (punkty od 0 do ok. 2):
+// 1. Pokrycie zapytania (0–1): każde znane słowo waży tym więcej, im mniej narzędzi je zna (rzadkie „odprawa” mówi
+//    więcej niż częste „pracy”), a trafienie waży według pola: nazwa i hasła z hali 1, tytuł 0,8, pytanie z FAQ 0,6,
+//    opis 0,55, kategoria 0,35, razy jakość dopasowania (to samo słowo 1, odmiana 0,85, początek słowa 0,7, literówka
+//    0,6). Na liście zostają narzędzia, które pokrywają co najmniej połowę tego, co najlepsze.
+// 2. Fraza (do 0,8): nazwa, hasło z hali, tytuł albo pytanie z FAQ, które zapytanie wyczerpuje (iloczyn: jaka część
+//    frazy jest w zapytaniu i jaka część wagi zapytania jest we frazie). Hasło „ile dostanę na L4” wyczerpane w całości
+//    waży więcej niż słowo „L4” w nazwie innego narzędzia, a hasło „po L4” to nie samo „L4” (słowa pomijane liczą się
+//    w hasłach z małą wagą).
+// 3. Nazwa zaczyna się od słowa z zapytania (+0,2): „przedawnienie” to najpierw „Przedawnienie wynagrodzenia…”.
+// 4. Remis: najczęstsze sprawy z hali (+0,02, src/data/sprawy.ts), potem krótsza nazwa (narzędzie ogólniejsze), na
+//    końcu kolejność rejestru (bez alfabetu, który nic nie mówi o trafności).
 
 export interface WpisIndeksu {
   /** slug narzędzia */
@@ -138,7 +141,7 @@ const LITEROWKA = 0.6;
 const FRAZA = 0.8;
 /** Narzędzie trafia na listę, gdy pokrywa co najmniej połowę tego, co pokrywa najlepsze. */
 const PROG = 0.5;
-/** Nazwa zaczyna się od pierwszego słowa zapytania („przedawnienie” → „Przedawnienie wynagrodzenia…”). */
+/** Nazwa zaczyna się od słowa z zapytania („przedawnienie” → „Przedawnienie wynagrodzenia…”). */
 const POCZATEK = 0.2;
 /** Waga słowa pomijanego („po”, „na”) w dopasowaniu frazy. */
 const POMIJANE_WAGA = 0.2;
@@ -155,8 +158,8 @@ interface Przygotowany {
   wagi: Map<number, number>;
   frazy: Fraza[];
   pytania: { tekst: string; slowa: number[] }[];
-  /** czy słowo jest w nazwie */
-  nazwa: Set<number>;
+  /** istotne słowa nazwy */
+  nazwa: number[];
   /** pierwsze istotne słowo nazwy */
   poczatek: number;
   dlugoscNazwy: number;
@@ -200,7 +203,7 @@ export function przygotuj(indeks: WpisIndeksu[]): Indeks & Przygotowany[] {
     const pytania = wpis.p.map((tekst) => ({ tekst, slowa: fraza('p', tekst) }));
     dodaj('k', wpis.k);
     dodaj('c', wpis.c);
-    return { wpis, wagi, frazy, pytania, nazwa: new Set(nazwa), poczatek: nazwa[0], dlugoscNazwy: nazwa.length, kolejnosc };
+    return { wpis, wagi, frazy, pytania, nazwa, poczatek: nazwa[0], dlugoscNazwy: nazwa.length, kolejnosc };
   });
   // Tablica narzędzi z dołączonym słownikiem: dawni użytkownicy indeksu widzą dalej listę narzędzi.
   return Object.assign(narzedzia, { slownik, numery, narzedzia });
@@ -230,7 +233,8 @@ export function szukaj(indeks: Indeks, zapytanie: string, limit = Infinity): Wyn
   // Waga słowa: im mniej narzędzi je zna, tym więcej mówi o sprawie: √ln(N / liczba narzędzi), co najmniej √0,1.
   // Pierwiastek, bo słowo rzadkie w indeksie bywa w zapytaniu ogólne („procent”, „max”): ma ważyć więcej, ale nie rządzić.
   const wagaSlowa = dopasowania.map(({ slowa: m }) => {
-    const ile = narzedzia.filter((x) => [...m.keys()].some((n) => x.wagi.has(n))).length;
+    const pasujace = [...m.keys()];
+    const ile = narzedzia.filter((x) => pasujace.some((n) => x.wagi.has(n))).length;
     return Math.sqrt(Math.max(0.1, Math.log(narzedzia.length / ile)));
   });
   const suma = wagaSlowa.reduce((a, b) => a + b, 0);
@@ -279,7 +283,7 @@ export function szukaj(indeks: Indeks, zapytanie: string, limit = Infinity): Wyn
       const ile = dopasowania.filter(({ slowa: m }) => q.slowa.some((n) => m.has(n))).length;
       if (ile > ilePytanie) [pytanie, ilePytanie] = [q.tekst, ile];
     }
-    const wNazwie = dopasowania.every(({ slowa: m }) => [...x.nazwa].some((n) => m.has(n)));
+    const wNazwie = dopasowania.every(({ slowa: m }) => x.nazwa.some((n) => m.has(n)));
     const odPoczatku = dopasowania.some(({ slowa: m }) => (m.get(x.poczatek) ?? 0) >= 0.85) ? POCZATEK : 0;
     const punkty = pokrycie + FRAZA * fraza + odPoczatku + (x.wpis.o ? 0.02 : 0);
     wyniki.push({ wpis: x.wpis, punkty, fraza, pokrycie, x, pytanie: wNazwie || ilePytanie < Math.min(2, dopasowania.length) ? undefined : pytanie });

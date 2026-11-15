@@ -110,7 +110,7 @@ export const HASLA: Record<string, string[]> = {
   'emerytura-pomostowa': ['pomostówka', 'wcześniejsza emerytura', 'w szczególnym charakterze'],
   'renta-z-tytulu-niezdolnosci-do-pracy': ['renta', 'renta inwalidzka', 'renta po wypadku', 'orzeczenie ZUS'],
   'swiadczenie-przedemerytalne': ['zasiłek przedemerytalny', 'przedemerytalne', 'likwidacja firmy a pracownik przed emeryturą'],
-  'czas-jazdy-kierowcy': ['ile może jechać kierowca', 'tachograf', 'pauza kierowcy', 'przerwa kierowcy', 'odpoczynek tygodniowy', 'czas pracy kierowcy'],
+  'czas-jazdy-kierowcy': ['ile może jechać kierowca', 'tachograf', 'pauza kierowcy', 'przerwa kierowcy', 'odpoczynek tygodniowy', 'czas pracy kierowcy', 'odpoczynek dobowy kierowcy'],
   'dyzur-kierowcy': ['dyżur kierowcy', 'podwójna obsada', 'drugi kierowca'],
   'zaswiadczenie-adr': ['ADR', 'kurs ADR', 'uprawnienia ADR', 'przedłużenie ADR', 'towary niebezpieczne'],
   // Pakiet „odpowiedzialność” (2026-11-14): frazy z podpowiedzi wyszukiwarki Google (pl), a „niedobór”, „inwentaryzacja”,
