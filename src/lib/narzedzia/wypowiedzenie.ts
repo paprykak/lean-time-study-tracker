@@ -9,10 +9,11 @@
 // w trakcie biegu wypowiedzenia, przepis nie mówi tego wprost, ale Sąd Najwyższy liczy staż do dnia rozwiązania umowy:
 // „o długości przewidzianych w art. 36 § 1 KP okresów wypowiedzenia decyduje okres zatrudnienia u danego pracodawcy,
 // który obejmuje cały staż zatrudnienia u tego pracodawcy, liczony od dnia zawarcia umowy o pracę do daty jej
-// rozwiązania z upływem okresu wypowiedzenia” (wyrok z 11.05.1999 r., I PKN 34/99: praca od 20.03.1995 r., doręczenie
-// 26.02.1998 r., miesięczny okres do 31.03.1998 r., sąd: 3 miesiące, umowa do 31.05.1998 r.); tak samo II PK 12/11
-// (6.07.2011 r.) i I PK 2/13 (12.06.2013 r.: „w judykaturze Sądu Najwyższego przyjmuje się”). Pełne teksty sprawdzone
-// w API SAOS; orzeczeń przeciwnych SAOS (SN 1994–2016) nie zawiera. Dłuższy okres liczymy od tego samego doręczenia.
+// rozwiązania z upływem okresu wypowiedzenia” (wyrok z 11.05.1999 r., I PKN 34/99: praca od 20.03.1995 r., pismo
+// z 26.02.1998 r. z okresem miesięcznym do 31.03.1998 r.; sądy obu instancji: 3 miesiące, świadectwo do 31.05.1998 r.,
+// kasacja oddalona); tak samo II PK 12/11 (6.07.2011 r.) i I PK 2/13 (12.06.2013 r.: „w judykaturze Sądu Najwyższego
+// przyjmuje się”). Pełne teksty sprawdzone w API SAOS; w przeszukanych orzeczeniach SN przeciwnych nie znaleźliśmy.
+// Dłuższy okres liczymy od tego samego doręczenia.
 import { dodajDni, koniecOkresu, pelneMiesiace } from './terminy';
 
 export type RodzajUmowy = 'stala' | 'probna-2tyg' | 'probna-ponad-2tyg' | 'probna-3mies';
