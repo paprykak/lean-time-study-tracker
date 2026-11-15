@@ -15,7 +15,9 @@
 //
 // Interpretacje (przepisy tego nie przesądzają; wybieramy datę najwcześniejszą):
 // - „w terminie N dni od dnia …”: dnia zdarzenia nie liczymy (art. 111 § 2 KC). Czy koniec przesuwa się z soboty i święta,
-//   ustawa nie mówi (reguluje tylko awarię systemu), więc podajemy datę bez przesunięcia i osobno po przesunięciu;
+//   ustawa nie mówi (reguluje tylko awarię systemu). To obowiązki pracodawcy, więc według konwencji z terminy.ts (pakiet
+//   „terminy 2”, raporty/terminy2/PRZEPISY.md, pytanie 3) podajemy datę z przepisu bez przesunięcia, a gdy wypada w sobotę
+//   albo dzień ustawowo wolny, nazwę dnia (`wolny`) i jedno zdanie dlaczego (`BEZ_PRZESUNIECIA.pracodawca` na stronie);
 // - okres pracy z oświadczenia i zezwolenia liczymy z dniem rozpoczęcia włącznie: 24 miesiące od 1 marca kończą się
 //   ostatniego lutego dwa lata później; 6 miesięcy od złożenia oświadczenia jak art. 112 KC (dzień odpowiadający datą);
 // - niepodjęcie pracy przy zezwoleniu: okoliczność zachodzi z ostatnim dniem 2 miesięcy od początku ważności (liczonych
@@ -23,8 +25,7 @@
 //   w dniu, który datą odpowiada dniowi końca ważności 2 miesiące wcześniej, albo przed nim (wariant bezpieczny: powiadomić
 //   także w dniu granicy, bo przepis go nie rozstrzyga);
 // - 3 lata z art. 41 kończą się 4 marca 2029 r. (dzień przed rocznicą wejścia w życie); możliwe też liczenie do 5 marca.
-import { przesunZDniaWolnego } from './termin-odwolania';
-import { dataPoPolsku, dodajDni, dodajMiesiace, dzisWPolsce, koniecOkresu, poprawnaData } from './terminy';
+import { dataPoPolsku, dodajDni, dodajMiesiace, dzienWolnyArt115, dzisWPolsce, koniecOkresu, poprawnaData } from './terminy';
 
 export type Tryb = 'oswiadczenie' | 'zezwolenie' | 'ochrona';
 
@@ -33,7 +34,8 @@ export interface Termin {
   nazwa: string;
   /** Ostatni dzień (RRRR-MM-DD) albo null, gdy przepis nie podaje terminu w dniach. */
   data: string | null;
-  przesunieta?: string;
+  /** Nazwa dnia, gdy termin w dniach kończy się w sobotę albo dzień ustawowo wolny („sobota”, nazwa święta); bez przesunięcia. */
+  wolny?: string;
   podstawa: string;
   /** Dodatkowe zdanie, np. o przekroczeniu limitu. */
   uwaga?: string;
@@ -47,9 +49,13 @@ const U = 'ustawy o powierzaniu pracy cudzoziemcom';
 
 function wDniach(od: string, dni: number) {
   const data = dodajDni(od, dni);
-  const { koniec } = przesunZDniaWolnego(data);
-  return { data, ...(koniec !== data ? { przesunieta: koniec } : {}) };
+  const wolny = dzienWolnyArt115(data);
+  return { data, ...(wolny ? { wolny } : {}) };
 }
+
+/** Tekst daty na liście (ten sam w HTML i w skrypcie). */
+export const opisTerminu = (t: Termin) =>
+  t.data ? `do ${dataPoPolsku(t.data)}${t.wolny ? ` (${t.wolny}; bez przesunięcia na dzień roboczy)` : ''}` : 'bez terminu w dniach';
 
 /**
  * Ostatni dzień okresu N miesięcy liczonego z dniem początku włącznie, w wariancie najwcześniejszym (okno na podjęcie

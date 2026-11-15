@@ -29,3 +29,11 @@ test('oświadczenie: koniec przed startem daje błąd', async ({ page }) => {
   await expect(page.locator('[data-blad="dane"]')).toBeVisible();
   await expect(page.locator('[data-w="lista"] li')).toHaveCount(0);
 });
+
+test('termin pracodawcy w sobotę: data z przepisu bez przesunięcia i zdanie dlaczego', async ({ page }) => {
+  await page.getByLabel('Pierwszy dzień pracy').fill('2026-11-14');
+  const lista = page.locator('[data-w="lista"]');
+  await expect(lista).toContainText(/do\s21\slistopada\s2026\sr\. \(sobota; bez\sprzesunięcia na\sdzień roboczy\)/);
+  await expect(lista).not.toContainText(/po\sprzesunięciu/);
+  await expect(page.locator('#jak-liczymy + p')).toContainText(/Terminy pracodawcy podajemy według przepisu, bez\sprzesunięcia/);
+});

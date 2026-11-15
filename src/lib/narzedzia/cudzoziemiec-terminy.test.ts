@@ -1,6 +1,6 @@
 // Oczekiwane daty policzone niezależnie skryptem w Pythonie (datetime, własne dodawanie miesięcy i kalendarz świąt).
 import { describe, expect, it } from 'vitest';
-import { ART_41_DO, KARTA_UKR_WNIOSEK_DO, koniecLimitu, ostatniDzienMiesiecy, przechowywanieDo, terminyOchrony, terminyOswiadczenia, terminyZezwolenia } from './cudzoziemiec-terminy';
+import { ART_41_DO, KARTA_UKR_WNIOSEK_DO, koniecLimitu, opisTerminu, ostatniDzienMiesiecy, przechowywanieDo, terminyOchrony, terminyOswiadczenia, terminyZezwolenia } from './cudzoziemiec-terminy';
 
 const mapa = <T extends { klucz: string }>(l: T[]) => Object.fromEntries(l.map((t) => [t.klucz, t]));
 
@@ -19,9 +19,9 @@ describe('oświadczenie o powierzeniu pracy (art. 61, 70, 71)', () => {
     expect(mapa(terminyOswiadczenia({ zlozone: '2026-11-12', startEwidencja: '2027-05-13', koniec: '2027-12-31' }))['start-6m'].stan).toBe('blad');
     expect(mapa(terminyOswiadczenia({ zlozone: '2026-08-31', startEwidencja: '2027-02-28', koniec: '2027-12-31' }))['start-6m']).toMatchObject({ data: '2027-02-28', stan: 'ok' });
   });
-  it('praca nie zaczęła się: niepodjęcie 14 dni od dnia z ewidencji; start 17 grudnia: 7. dzień w Wigilię, po przesunięciu 28 grudnia', () => {
+  it('praca nie zaczęła się: niepodjęcie 14 dni od dnia z ewidencji; start 17 grudnia: 7. dzień w Wigilię, bez przesunięcia', () => {
     expect(mapa(terminyOswiadczenia({ startEwidencja: '2026-12-01', startFaktyczny: null, koniec: '2027-11-30' })).niepodjecie.data).toBe('2026-12-15');
-    expect(mapa(terminyOswiadczenia({ startEwidencja: '2026-12-17', startFaktyczny: '2026-12-17', koniec: '2027-11-30' })).podjecie).toMatchObject({ data: '2026-12-24', przesunieta: '2026-12-28' });
+    expect(mapa(terminyOswiadczenia({ startEwidencja: '2026-12-17', startFaktyczny: '2026-12-17', koniec: '2027-11-30' })).podjecie).toMatchObject({ data: '2026-12-24', wolny: 'Wigilia Bożego Narodzenia' });
   });
   it('błędne dane', () => {
     expect(() => terminyOswiadczenia({ startEwidencja: '2027-01-01', koniec: '2026-12-31' })).toThrow(/przed jej rozpoczęciem/);
@@ -44,9 +44,9 @@ describe('zezwolenie na pracę (art. 15, 19–21)', () => {
     expect(mapa(terminyZezwolenia({ od: '2026-03-01', do: '2027-02-28', startFaktyczny: '2026-04-30' })).niepodjecie).toBeUndefined();
     expect(mapa(terminyZezwolenia({ od: '2026-03-01', do: '2027-02-28', startFaktyczny: '2026-05-01' })).niepodjecie).toBeDefined();
   });
-  it('od 31 grudnia: okno do 27 lutego, 7. dzień w sobotę 6 marca, po przesunięciu 8 marca', () => {
+  it('od 31 grudnia: okno do 27 lutego, 7. dzień w sobotę 6 marca, bez przesunięcia', () => {
     expect(ostatniDzienMiesiecy('2026-12-31', 2)).toBe('2027-02-27');
-    expect(mapa(terminyZezwolenia({ od: '2026-12-31', do: '2027-12-30' })).niepodjecie).toMatchObject({ data: '2027-03-06', przesunieta: '2027-03-08' });
+    expect(mapa(terminyZezwolenia({ od: '2026-12-31', do: '2027-12-30' })).niepodjecie).toMatchObject({ data: '2027-03-06', wolny: 'sobota' });
   });
   it('zakończenie: w dniu granicy 2 miesięcy i wcześniej powiadomienie w 7 dni, dzień po granicy nie', () => {
     expect(mapa(terminyZezwolenia({ od: '2026-03-01', do: '2029-02-28', startFaktyczny: '2026-03-02', zakonczenie: '2028-12-27' })).zakonczenie).toMatchObject({ data: '2029-01-03' });
@@ -99,3 +99,15 @@ describe('przechowywanie kopii dokumentów (art. 4 ust. 4 i 6)', () => {
     expect(przechowywanieDo('2027-01-01')).toBe('2029-12-31');
   });
 });
+
+describe('terminy 2: obowiązki pracodawcy bez przesunięcia z art. 115 KC', () => {
+  it('opis daty: nazwa dnia wolnego bez drugiej daty; dzień roboczy bez dopisku; brak terminu w dniach', () => {
+    const lista = terminyZezwolenia({ od: '2026-12-31', do: '2027-12-30' });
+    const t = lista.find((x) => x.klucz === 'niepodjecie')!;
+    expect(opisTerminu(t)).toBe('do 6 marca 2027 r. (sobota; bez przesunięcia na dzień roboczy)');
+    expect(opisTerminu({ klucz: 'x', nazwa: 'x', data: '2027-03-05', podstawa: '' })).toBe('do 5 marca 2027 r.');
+    expect(opisTerminu(lista.find((x) => x.klucz === 'przerwa')!)).toBe('bez terminu w dniach');
+    expect(lista.some((x) => 'przesunieta' in x)).toBe(false);
+  });
+});
+
