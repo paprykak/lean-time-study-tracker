@@ -10,8 +10,10 @@ drugi, niezależny podagent. Poprawione są tylko znaleziska potwierdzone albo c
 każde z testem, który bez poprawki nie przechodzi (w L4 i hasłach wyszukiwarki sprawdzone cofnięciem poprawki); wyjątkiem są luki w testach, które
 zabezpieczają poprawny dziś kod. Zasady: `WSPOLNE.md`, `WERYFIKATOR.md`; surowe raporty: `<partia>.json` i `<partia>-wer.json`.
 
-Wynik: `npm run -s check:szybki` EXIT 0 i `BEZ_WEBKIT=1 npm run check` EXIT 0 (wyniki liczbowe na końcu raportu).
-Zrzuty z telefonu (320 i 412 px, cała strona, wszystkie 7 zmienionych stron) są w `zrzuty/`.
+Wynik: `npm run -s check:szybki` EXIT 0 i `BEZ_WEBKIT=1 npm run check` EXIT 0 (E2E: 2388 zaliczone, 346 pominięte; testy
+jednostkowe: 2311 w 140 plikach). Zrzuty z telefonu (320 i 412 px, cała strona, wszystkie 7 zmienionych stron, zegar
+15.11.2026) są w `zrzuty/` (`co-wolno-na-l4-320` jako PNG, bo strona jest wyższa niż limit WebP). Na żadnej stronie nic
+nie jest ucięte, `scrollWidth` = szerokość okna, a żadna opcja list wyboru nie jest szersza od pola.
 
 ## Zadanie dodatkowe: `przesunZDniaWolnego` → `terminPracownika` w co-wolno-na-l4
 
