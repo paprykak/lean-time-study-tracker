@@ -2,7 +2,7 @@
 // Wypowiedzenie zmieniające: do kiedy odmówić nowych warunków (art. 42 § 3 Kp), kiedy kończy się okres wypowiedzenia
 // (art. 36 § 1, art. 30 § 2^1) i do kiedy odwołanie do sądu pracy (art. 264 § 1). Logika: src/lib/narzedzia/wypowiedzenie-zmieniajace.ts.
 import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
-import { wypowiedzenieZmieniajace } from '../../lib/narzedzia/wypowiedzenie-zmieniajace';
+import { tekstProgu, wypowiedzenieZmieniajace } from '../../lib/narzedzia/wypowiedzenie-zmieniajace';
 import { dataPoPolsku, dodajDni, dzisWPolsce } from '../../lib/narzedzia/terminy';
 
 const DZIS = dzisWPolsce();
@@ -24,7 +24,7 @@ const faq = [
   },
   {
     pytanie: 'Czy po odmowie należy się odprawa?',
-    odpowiedz: 'Odprawa należy się, gdy pracodawca zatrudnia co najmniej 20 pracowników, a umowa rozwiązuje się z przyczyn niedotyczących pracownika: przy zwolnieniu grupowym (art. 1 i 8 ustawy o zwolnieniach z przyczyn niedotyczących pracowników), a poza nim, gdy te przyczyny są wyłącznym powodem wypowiedzenia (art. 10 ust. 1). Przepis wprost nie mówi, czy odmowa nowych warunków jest współprzyczyną rozwiązania umowy. W sporze rozstrzyga to sąd pracy.',
+    odpowiedz: 'Może się należeć. Odprawa przysługuje, gdy pracodawca zatrudnia co najmniej 20 pracowników, a umowa rozwiązuje się z przyczyn niedotyczących pracownika (art. 1, 8 i 10 ustawy o zwolnieniach z przyczyn niedotyczących pracowników); według Sądu Najwyższego chodzi o przyczyny, bez których do zwolnienia by nie doszło. Sama odmowa nie odbiera odprawy. Gdy przyjęcie nowych warunków prowadziłoby do poważnych zmian na Twoją niekorzyść, na przykład radykalnej obniżki pensji za tę samą pracę, odprawa może się należeć (wyroki I PKN 79/00 i II PK 340/12). Gdy nowe warunki obiektywnie dało się przyjąć, odmowa może być uznana za współprzyczynę rozwiązania umowy i wtedy odprawy nie ma (wyroki I PK 144/11 i III PK 55/14). Ocenia to sąd pracy w konkretnej sprawie.',
   },
   {
     pytanie: 'Czy mogę odwołać się do sądu pracy od wypowiedzenia zmieniającego?',
@@ -72,7 +72,7 @@ const faq = [
       </div>
       <dl class="wynik-lista">
         <div><dt>Okres wypowiedzenia</dt><dd data-w="okres">{r.okres.opis}</dd></div>
-        <div data-w="prog-wiersz" hidden={!r.prog}><dt>Próg stażu w trakcie wypowiedzenia</dt><dd data-w="prog">{r.prog ? `${r.prog.miesiace === 6 ? '6 miesięcy' : '3 lata'} mija ${dataPoPolsku(r.prog.dzien)}; odmowa liczona od okresu ${r.prog.krotszy}` : ''}</dd></div>
+        <div data-w="prog-wiersz" hidden={!r.prog}><dt>Próg stażu w trakcie wypowiedzenia</dt><dd data-w="prog">{r.prog ? tekstProgu(r.prog) : ''}</dd></div>
         <div><dt>Okres kończy się</dt><dd data-w="koniec">{dataPoPolsku(r.koniec)}</dd></div>
         <div><dt>Gdy przyjmiesz: nowe warunki od</dt><dd data-w="nowe">{dataPoPolsku(r.noweWarunkiOd)}</dd></div>
         <div><dt>Gdy odmówisz: ostatni dzień umowy</dt><dd data-w="ostatni">{dataPoPolsku(r.koniec)}</dd></div>
@@ -89,7 +89,7 @@ const faq = [
     <p>
       Wypowiedzenie warunków pracy albo płacy jest dokonane, gdy pracodawca zaproponował Ci nowe warunki na piśmie
       (art. 42 § 2 Kodeksu pracy). Do takiego wypowiedzenia stosuje się odpowiednio przepisy o wypowiedzeniu umowy
-      (art. 42 § 1), więc okres zależy od stażu u tego pracodawcy w dniu doręczenia:
+      (art. 42 § 1), więc okres zależy od stażu u tego pracodawcy:
     </p>
     <div class="tabela">
       <table>
@@ -103,12 +103,15 @@ const faq = [
       </table>
     </div>
     <p>
-      Okresy i ich koniec wynikają z art. 36 § 1 i art. 30 § 2<sup>1</sup>; liczymy je tak samo jak <a href="/narzedzia/okres-wypowiedzenia">kalkulator okresu wypowiedzenia</a>. Staż liczymy w pełnych miesiącach do dnia doręczenia; dnia doręczenia nie wliczamy. Wpisz początek
+      Okresy i ich koniec wynikają z art. 36 § 1 i art. 30 § 2<sup>1</sup>; liczymy je tak samo jak <a href="/narzedzia/okres-wypowiedzenia">kalkulator okresu wypowiedzenia</a>. Najpierw liczymy staż w dniu doręczenia, w pełnych miesiącach i bez tego dnia, a potem sprawdzamy, czy do końca okresu osiągnie próg. Wpisz początek
       pracy razem z wcześniejszym zleceniem albo działalnością wykonywaną dla tego pracodawcy (art. 302<sup>1</sup> § 8)
       i pracą przed przejściem zakładu na nowego pracodawcę (art. 36 § 1<sup>1</sup>); pomoże <a href="/narzedzia/staz-pracy">kalkulator
-      stażu pracy</a>. Gdy próg 6 miesięcy albo 3 lat mija w trakcie okresu wypowiedzenia, przepis nie mówi wprost, co wtedy.
-      Jak kalkulator okresu wypowiedzenia podajemy wtedy dłuższy okres i późniejszy koniec umowy, ale termin na odmowę
-      liczymy od krótszego okresu, także bez pouczenia, więc odmowa złożona do tej daty jest w terminie przy obu wariantach. Przy umowie na czas określony, która
+      stażu pracy</a>. Gdy próg 6 miesięcy albo 3 lat mija w trakcie okresu wypowiedzenia, przepis nie mówi tego wprost, ale
+      Sąd Najwyższy liczy staż do dnia rozwiązania umowy, a nie do dnia doręczenia (wyrok z 11 maja 1999 r., I PKN 34/99;
+      tak samo II PK 12/11), a przepisy o wypowiedzeniu stosuje się tu odpowiednio (art. 42 § 1). Jak kalkulator okresu
+      wypowiedzenia podajemy wtedy dłuższy okres i późniejszy koniec umowy, ale termin na odmowę liczymy od krótszego
+      okresu, także bez pouczenia, bo o połowie wydłużonego okresu orzeczeń nie znaleźliśmy; odmowa złożona do tej daty
+      jest w terminie niezależnie od tego, czy okres się wydłużył. Przy umowie na czas określony, która
       kończy się przed końcem okresu wypowiedzenia, umowa rozwiązuje się z upływem czasu, na który ją zawarto (art. 30 § 1 pkt 4). Przy stanowisku z odpowiedzialnością
       materialną umowa może przewidywać dłuższe okresy (art. 36 § 5); wtedy kalkulator ich nie zna. Okresu próbnego
       kalkulator nie obejmuje.
@@ -117,7 +120,8 @@ const faq = [
       <strong>Połowa okresu.</strong> Przepis mówi tylko „przed upływem połowy okresu wypowiedzenia” (art. 42 § 3) i nie
       wskazuje, od którego dnia liczyć okres. Liczymy więc dwa warianty: od dnia po doręczeniu pisma oraz od pierwszego dnia
       pełnego tygodnia (niedzieli) albo miesiąca, w którym zaczyna się okres. Jako termin podajemy wcześniejszą datę, bo
-      odmowa złożona do tego dnia mieści się w terminie przy obu sposobach liczenia. Gdy połowa wypada w środku dnia
+      odmowa złożona do tego dnia mieści się w terminie przy obu sposobach liczenia. Gdy próg stażu mija w trakcie
+      wypowiedzenia, oba warianty liczymy od krótszego okresu. Gdy połowa wypada w środku dnia
       (na przykład przy 31 dniach), ten dzień już nie wchodzi do terminu. Dnia doręczenia nie liczymy (art. 111 § 2
       Kodeksu cywilnego). Terminu na odmowę nie przesuwamy z soboty ani święta: gdy wypada w dzień wolny, złóż odmowę
       wcześniej. Przepis nie wymaga pisma, ale pismo z potwierdzeniem odbioru jest dowodem, a liczy się dzień, w którym
@@ -140,18 +144,37 @@ const faq = [
     <h2 id="po-odmowie">Po odmowie</h2>
     <p>
       Umowa rozwiązuje się z końcem okresu wypowiedzenia (art. 42 § 3). Gdy pracodawca zatrudnia co najmniej 20 osób,
-      a umowa kończy się z przyczyn niedotyczących pracownika (przy zwolnieniu indywidualnym: gdy są one wyłącznym
-      powodem), odprawa wynosi 1, 2 albo 3 miesięczne wynagrodzenia zależnie od stażu, najwyżej 15-krotność płacy
+      a umowa kończy się z przyczyn niedotyczących pracownika (według Sądu Najwyższego: bez nich do zwolnienia by nie doszło), odprawa
+      wynosi 1, 2 albo 3 miesięczne wynagrodzenia zależnie od stażu, najwyżej 15-krotność płacy
       minimalnej (art. 1, 8 i 10 ustawy o zwolnieniach). Kwotę policzy <a href="/narzedzia/kalkulator-odprawy">kalkulator odprawy</a>.
-      Przepis wprost nie mówi, czy Twoja odmowa jest współprzyczyną rozwiązania umowy; w sporze ocenia to sąd pracy.
     </p>
+    <p>
+      Sama odmowa nowych warunków nie odbiera odprawy: Sąd Najwyższy stosuje ustawę także wtedy, gdy umowa kończy się po
+      wypowiedzeniu zmieniającym (wyrok z 12 kwietnia 2012 r., I PK 144/11). „Wyłączny powód” rozumie tak, że bez przyczyn
+      niedotyczących pracownika do zwolnienia by nie doszło; w wyroku I PK 139/04 (na tle ustawy z 1989 r.) uznał, że to
+      samo dotyczy zwolnień grupowych. Rozstrzyga, czy nowe warunki dało się obiektywnie przyjąć. Ocenia to sąd pracy
+      w Twojej sprawie, a w nowszych wyrokach Sąd Najwyższy pisze, że po odmowie odprawa należy się tylko wyjątkowo
+      (III PK 55/14, I PK 211/14).
+    </p>
+    <p>Odprawa może się należeć, gdy:</p>
+    <ul>
+      <li>przyjęcie warunków prowadziłoby do poważnych zmian na Twoją niekorzyść (II PK 340/12), na przykład do radykalnej obniżki pensji za tę samą pracę (I PKN 79/00);</li>
+      <li>nowe warunki zmierzały w istocie do rozwiązania umowy albo były obiektywnie nie do przyjęcia (III PK 55/14);</li>
+      <li>warunki noszą znamiona szykany albo są wyraźnie niedogodne (I PK 144/11).</li>
+    </ul>
+    <p>Odmowa może być uznana za współprzyczynę i odprawy wtedy nie ma, gdy:</p>
+    <ul>
+      <li>z uwagi na interes Twój i pracodawcy oraz rodzaj pracy w zasadzie można było oczekiwać, że warunki przyjmiesz (I PK 144/11, III PK 55/14);</li>
+      <li>obniżka była istotna, ale nowa płaca odpowiadała stawkom innych na porównywalnych stanowiskach (I PK 211/14) albo wynikała z ujednolicenia płac w firmie (II PK 340/12).</li>
+    </ul>
+    <p>Warunki sąd ocenia obiektywnie; same okoliczności osobiste, na przykład kredyt, nie przesądzają (II PK 340/12).</p>
   </Fragment>
 </StronaNarzedzia>
 
 <script>
   import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
-  import { wypowiedzenieZmieniajace } from '../../lib/narzedzia/wypowiedzenie-zmieniajace';
+  import { tekstProgu, wypowiedzenieZmieniajace } from '../../lib/narzedzia/wypowiedzenie-zmieniajace';
   import { dataPoPolsku, dniMiedzy, dzisWPolsce, poprawnaData } from '../../lib/narzedzia/terminy';
   import { odmiana } from '../../lib/redakcja';
   import { typografia } from '../../lib/typografia.mjs';
@@ -184,7 +207,7 @@ const faq = [
       w('odmowa').textContent = typografia(dataPoPolsku(r.odmowaDo));
       w('okres').textContent = typografia(r.okres.opis);
       w('prog-wiersz').hidden = !r.prog;
-      w('prog').textContent = r.prog ? typografia(`${r.prog.miesiace === 6 ? '6 miesięcy' : '3 lata'} mija ${dataPoPolsku(r.prog.dzien)}; odmowa liczona od okresu ${r.prog.krotszy}`) : '';
+      w('prog').textContent = r.prog ? typografia(tekstProgu(r.prog)) : '';
       w('koniec').textContent = typografia(dataPoPolsku(r.koniec));
       w('nowe').textContent = typografia(dataPoPolsku(r.noweWarunkiOd));
       w('ostatni').textContent = typografia(dataPoPolsku(r.koniec));
@@ -194,7 +217,7 @@ const faq = [
       w('uwaga').textContent = typografia(
         r.pouczenie
           ? 'Odmowa złożona później może zostać uznana za spóźnioną, a wtedy przyjmujesz nowe warunki (art. 42 § 3 Kodeksu pracy). Liczy się dzień, w którym odmowa dotrze do pracodawcy.'
-          : `Bez pouczenia możesz odmówić do końca okresu wypowiedzenia (art. 42 § 3 zdanie trzecie Kodeksu pracy).${r.prog ? ' Staż osiąga próg w trakcie wypowiedzenia, a przepis nie mówi, czy okres się wydłuża, więc podajemy koniec krótszego okresu.' : ''} Liczy się dzień, w którym odmowa dotrze do pracodawcy.`,
+          : `Bez pouczenia możesz odmówić do końca okresu wypowiedzenia (art. 42 § 3 zdanie trzecie Kodeksu pracy).${r.prog ? ' Staż osiąga próg w trakcie wypowiedzenia, więc okres się wydłuża (art. 42 § 1 Kodeksu pracy, wyrok Sądu Najwyższego I PKN 34/99), ale termin na odmowę liczymy od krótszego okresu.' : ''} Liczy się dzień, w którym odmowa dotrze do pracodawcy.`,
       );
       const zostalo = dniMiedzy(dzisWPolsce(), r.odmowaDo);
       status.hidden = false;

@@ -68,6 +68,23 @@ describe('próg stażu w trakcie wypowiedzenia (wartości z niezależnego rachun
     expect(wypowiedzenieStalej('2023-09-15', '2026-08-10')).toMatchObject({ staz: 34, koniec: '2026-11-30', okres: { opis: '3 miesiące' } });
     expect(wypowiedzenieStalej('2026-05-15', '2026-11-14')).toMatchObject({ staz: 5, koniec: '2026-12-31', okres: { opis: '1 miesiąc' } });
   });
+  it('stan faktyczny I PKN 34/99 (SN, 11.05.1999): praca od 20.03.1995, doręczenie 26.02.1998, sąd: 3 miesiące, umowa do 31.05.1998', () => {
+    const w = wypowiedzenieStalej('1995-03-20', '1998-02-26');
+    expect(w).toMatchObject({ staz: 35, koniec: '1998-05-31', okres: { opis: '3 miesiące' } });
+    expect(w.prog).toMatchObject({ miesiace: 36, krotszy: { opis: '1 miesiąc' }, krotszyKoniec: '1998-03-31' });
+  });
+  it('stan faktyczny II PK 12/11 (SN, 6.07.2011): praca od 1.08.2006, doręczenie w lipcu 2009, sąd: 3 miesiące, nie 1 miesiąc', () => {
+    for (const dor of ['2009-07-01', '2009-07-15', '2009-07-31']) {
+      expect(wypowiedzenieStalej('2006-08-01', dor)).toMatchObject({ staz: 35, koniec: '2009-10-31', okres: { opis: '3 miesiące' } });
+    }
+  });
+  it('próg w ostatnim dniu krótszego okresu: w dniu rozwiązania staż wynosi już 6 miesięcy, więc 1 miesiąc', () => {
+    // 6 miesięcy od 1.03.2024 mija z końcem 31.08.2024 (sobota); 2 tygodnie od doręczenia w piątek 16.08 kończą się 31.08.
+    const w = wypowiedzenieStalej('2024-03-01', '2024-08-16');
+    expect(w).toMatchObject({ staz: 5, koniec: '2024-09-30', okres: { opis: '1 miesiąc' } });
+    expect(w.prog).toMatchObject({ miesiace: 6, dzien: '2024-08-31', krotszyKoniec: '2024-08-31' });
+    expect(wypowiedzenieStalej('2024-03-02', '2024-08-16')).toMatchObject({ koniec: '2024-08-31', prog: null });
+  });
   it('próg po końcu okresu: bez zmian', () => {
     expect(wypowiedzenieStalej('2026-03-01', '2026-08-01')).toEqual({ staz: 5, okres: okresWypowiedzenia('stala', 5), koniec: '2026-08-15', prog: null });
     expect(wypowiedzenieStalej('2022-03-01', '2026-07-22')).toMatchObject({ koniec: '2026-10-31', prog: null });

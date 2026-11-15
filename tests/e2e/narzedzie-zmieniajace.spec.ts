@@ -28,7 +28,8 @@ test('bez pouczenia, próg 6 miesięcy w trakcie wypowiedzenia: odmowa do końca
   await page.getByLabel(/pouczenie/).uncheck();
   await expect(page.locator('[data-w="odmowa"]')).toHaveText(/^28\slistopada\s2026\sr\.$/);
   await expect(page.locator('[data-w="koniec"]')).toHaveText(/^31\sgrudnia\s2026\sr\.$/);
-  await expect(page.locator('[data-w="uwaga"]')).toContainText('koniec krótszego okresu');
+  await expect(page.locator('[data-w="uwaga"]')).toContainText(/okres się wydłuża \(art\.\s42\s§\s1 Kodeksu pracy, wyrok Sądu Najwyższego I\sPKN\s34\/99\), ale termin na\sodmowę liczymy od\skrótszego okresu\./);
+  await expect(page.locator('[data-w="prog"]')).toHaveText(/^6\smiesięcy mija 12\slistopada\s2026\sr\.; odmowę liczymy od\skrótszego okresu \(2\stygodnie\)$/);
 });
 
 test('doręczenie przed początkiem pracy: komunikat błędu', async ({ page }) => {
@@ -36,4 +37,21 @@ test('doręczenie przed początkiem pracy: komunikat błędu', async ({ page }) 
   await page.getByLabel('Dzień doręczenia pisma').fill('2026-11-12');
   await expect(page.locator('[data-blad="dane"]')).toBeVisible();
   await expect(page.locator('[data-w="odmowa"]')).toHaveText('—');
+});
+
+test('odprawa po odmowie: kryterium z orzecznictwa SN z sygnaturami na stronie po nagłówku „Po odmowie”', async ({ page }) => {
+  const sekcja = (await page.locator('#po-odmowie ~ *').allInnerTexts()).join(' ');
+  expect(sekcja).toMatch(/Sama odmowa nowych warunków nie odbiera odprawy/);
+  expect(sekcja).toMatch(/I\sPK\s144\/11,\sIII\sPK\s55\/14/);
+  expect(sekcja).toMatch(/radykalnej obniżki pensji za\stę samą pracę \(I\sPKN\s79\/00\)/);
+  expect(sekcja).toMatch(/to samo dotyczy zwolnień grupowych/);
+  expect(sekcja).toMatch(/Odmowa może być uznana za\swspółprzyczynę/);
+});
+
+test('z pouczeniem, próg 6 miesięcy w trakcie wypowiedzenia: oba warianty połowy z krótszego okresu', async ({ page }) => {
+  await page.getByLabel('Pracujesz u tego pracodawcy od').fill('2026-05-13');
+  await page.getByLabel('Dzień doręczenia pisma').fill('2026-11-12');
+  await expect(page.locator('[data-w="odmowa"]')).toHaveText(/^20\slistopada\s2026\sr\.$/);
+  await expect(page.locator('[data-w="wariant-b"]')).toHaveText(/^21\slistopada\s2026\sr\.$/);
+  await expect(page.locator('[data-w="koniec"]')).toHaveText(/^31\sgrudnia\s2026\sr\.$/);
 });
