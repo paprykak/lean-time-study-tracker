@@ -72,7 +72,7 @@ test('pozew do sądu w Wigilię: linijka o placówce pocztowej pod datą', async
   await page.goto(NARZEDZIE_ODWOLANIE);
   await page.getByLabel('Sprawa', { exact: true }).selectOption('bez-wypowiedzenia');
   await page.locator('#o-data').fill('2026-12-03');
-  await expect(page.locator('[data-w="praktycznie"]')).toHaveText(/^To\sdzień\swolny\sod\spracy\s\(Wigilia\sBożego\sNarodzenia\)\.\sTego\sdnia\smożesz\sjeszcze\snadać\spismo\sw\splacówce\spocztowej\soperatora\swyznaczonego/);
+  await expect(page.locator('[data-w="praktycznie"]')).toHaveText(/^To\sdzień\swolny\sod\spracy\s\(Wigilia\sBożego\sNarodzenia\)\.\sTego\sdnia\smożesz\sjeszcze\snadać\spismo\sw\splacówce\sPoczty\sPolskiej\s\(operatora\swyznaczonego\)/);
   await page.locator('#o-data').fill('2026-12-08');
   await expect(page.locator('[data-w="praktycznie"]')).toBeHidden();
   await page.locator('#o-data').fill('');
@@ -85,5 +85,5 @@ test('sprostowanie do pracodawcy w sobotę 2 stycznia 2027 r.: złóż w czwarte
   await page.getByLabel('Sprawa', { exact: true }).selectOption('sprostowanie-wniosek');
   await page.locator('#o-data').fill('2026-12-19');
   await expect(page.locator('[data-w="koniec"]')).toHaveText(/^2\sstycznia\s2027\sr\.$/);
-  await expect(page.locator('[data-w="praktycznie"]')).toHaveText(/^To\ssobota\.\sPismo\sdo\spracodawcy\szłóż\snajpóźniej\sw\sostatnim\sdniu\sroboczym\sprzed\stą\sdatą,\sczyli\sw\sczwartek\s31\sgrudnia\s2026\sr\.:\sliczy\ssię\sdzień,\sw\sktórym\sdo\sniego\sdotrze\s\(art\.\s61\s§\s1\sKodeksu\scywilnego\)\.$/);
+  await expect(page.locator('[data-w="praktycznie"]')).toHaveText(/^To\ssobota\.\sPismo\sdo\spracodawcy\szłóż\snajpóźniej\sw\sostatnim\sdniu\sroboczym\sprzed\stą\sdatą,\sczyli\sw\sczwartek\s31\sgrudnia\s2026\sr\.,\sliczy\ssię\sdzień,\sw\sktórym\sdo\sniego\sdotrze\s\(art\.\s61\s§\s1\sKodeksu\scywilnego\)\.$/);
 });

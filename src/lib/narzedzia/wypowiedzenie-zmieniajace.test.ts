@@ -143,18 +143,18 @@ describe('terminy3: odmowa i odwołanie w dzień wolny', () => {
   it('odmowa do niedzieli 6 grudnia 2026 r.: złóż w piątek 4 grudnia; odwołanie 3 grudnia bez linijki', () => {
     const o = opisZmieniajacego(wypowiedzenieZmieniajace('2026-05-12', '2026-11-12'), '2026-11-15');
     expect(sp(o.odmowa)).toBe('6 grudnia 2026 r.');
-    expect(sp(o.odmowaPraktycznie)).toContain('Pismo do pracodawcy złóż najpóźniej w ostatnim dniu roboczym przed tą datą, czyli w piątek 4 grudnia 2026 r.:');
+    expect(sp(o.odmowaPraktycznie)).toContain('Pismo do pracodawcy złóż najpóźniej w ostatnim dniu roboczym przed tą datą, czyli w piątek 4 grudnia 2026 r.,');
     expect(o.odwolaniePraktycznie).toBe('');
     expect(opisZmieniajacego(wypowiedzenieZmieniajace('2026-05-12', '2026-11-12'), '2026-12-07').odmowaPraktycznie).toBe('');
   });
   it('odwołanie do niedzieli 13 grudnia 2026 r.: można nadać w placówce pocztowej', () => {
     const o = opisZmieniajacego(wypowiedzenieZmieniajace('2020-01-15', '2026-11-22'), '2026-11-22');
     expect(sp(o.odwolanie)).toBe('13 grudnia 2026 r.');
-    expect(sp(o.odwolaniePraktycznie)).toMatch(/^To niedziela\. Tego dnia możesz jeszcze nadać pismo w placówce pocztowej operatora wyznaczonego/);
+    expect(sp(o.odwolaniePraktycznie)).toMatch(/^To niedziela\. Tego dnia możesz jeszcze nadać pismo w placówce Poczty Polskiej \(operatora wyznaczonego\)/);
   });
   it('bez pouczenia odmowa do końca 2 tygodni w sobotę 17 października 2026 r. (art. 30 § 2¹): piątek 16 października', () => {
     const r = wypowiedzenieZmieniajace('2026-06-01', '2026-10-01', false);
     expect(r.koniec).toBe('2026-10-17');
-    expect(sp(opisZmieniajacego(r, '2026-10-01').odmowaPraktycznie)).toContain('czyli w piątek 16 października 2026 r.:');
+    expect(sp(opisZmieniajacego(r, '2026-10-01').odmowaPraktycznie)).toContain('czyli w piątek 16 października 2026 r.,');
   });
 });

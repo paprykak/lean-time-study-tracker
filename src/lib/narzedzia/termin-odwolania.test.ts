@@ -86,7 +86,7 @@ describe('opis wyniku: zdąż do i art. 115 KC', () => {
   });
   it('pozew do sądu w Wigilię: można nadać pismo w placówce operatora wyznaczonego', () => {
     const o = opisOdwolania('2026-12-03', 'bez-wypowiedzenia', '2026-12-20');
-    expect(sp(o.praktycznie)).toMatch(/^To dzień wolny od pracy \(Wigilia Bożego Narodzenia\)\. Tego dnia możesz jeszcze nadać pismo w placówce pocztowej operatora wyznaczonego/);
+    expect(sp(o.praktycznie)).toMatch(/^To dzień wolny od pracy \(Wigilia Bożego Narodzenia\)\. Tego dnia możesz jeszcze nadać pismo w placówce Poczty Polskiej \(operatora wyznaczonego\)/);
     expect(o.praktycznie).toContain('art. 165 § 2 Kodeksu postępowania cywilnego');
     expect(o.praktycznie).not.toMatch(/dniu roboczym/);
   });
@@ -94,10 +94,10 @@ describe('opis wyniku: zdąż do i art. 115 KC', () => {
     const o = opisOdwolania('2026-10-18', 'sprostowanie-wniosek', '2026-10-20');
     expect(sp(o.glowny)).toBe('1 listopada 2026 r.');
     expect(sp(o.praktycznie)).toBe(
-      'To dzień wolny od pracy (Wszystkich Świętych). Pismo do pracodawcy złóż najpóźniej w ostatnim dniu roboczym przed tą datą, czyli w piątek 30 października 2026 r.: liczy się dzień, w którym do niego dotrze (art. 61 § 1 Kodeksu cywilnego).',
+      'To dzień wolny od pracy (Wszystkich Świętych). Pismo do pracodawcy złóż najpóźniej w ostatnim dniu roboczym przed tą datą, czyli w piątek 30 października 2026 r., chyba że zakład przyjmuje pisma także tego dnia: liczy się dzień, w którym pismo do niego dotrze, a nie dzień nadania (art. 61 § 1 Kodeksu cywilnego).',
     );
   });
   it('sprzeciw od kary w sobotę 2 stycznia 2027 r.: przełom roku, czwartek 31 grudnia 2026 r.', () => {
-    expect(sp(opisOdwolania('2026-12-26', 'kara-sprzeciw', '2026-12-28').praktycznie)).toContain('czyli w czwartek 31 grudnia 2026 r.:');
+    expect(sp(opisOdwolania('2026-12-26', 'kara-sprzeciw', '2026-12-28').praktycznie)).toContain('czyli w czwartek 31 grudnia 2026 r.,');
   });
 });

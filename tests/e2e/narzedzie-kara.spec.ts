@@ -52,7 +52,7 @@ test('sprzeciw do niedzieli 13 grudnia 2026 r.: złóż w piątek 11 grudnia', a
   await page.getByLabel('Kiedy pracodawca się o nim dowiedział').fill('2026-12-02');
   await page.getByLabel('Dzień zawiadomienia o karze').fill('2026-12-06');
   await expect(page.locator('[data-w="sprzeciw"]')).toHaveText(/^13\sgrudnia\s2026\sr\.$/);
-  await expect(page.locator('[data-w="praktycznie"]')).toHaveText(/^To\sniedziela\.\sPismo\sdo\spracodawcy\szłóż\snajpóźniej\sw\sostatnim\sdniu\sroboczym\sprzed\stą\sdatą,\sczyli\sw\spiątek\s11\sgrudnia\s2026\sr\.:/);
+  await expect(page.locator('[data-w="praktycznie"]')).toHaveText(/^To\sniedziela\.\sPismo\sdo\spracodawcy\szłóż\snajpóźniej\sw\sostatnim\sdniu\sroboczym\sprzed\stą\sdatą,\sczyli\sw\spiątek\s11\sgrudnia\s2026\sr\.,/);
   await page.getByLabel('Dzień naruszenia').fill('2027-04-20');
   await page.getByLabel('Kiedy pracodawca się o nim dowiedział').fill('2027-04-21');
   await page.getByLabel('Dzień zawiadomienia o karze').fill('2027-04-26');
