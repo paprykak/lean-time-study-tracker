@@ -81,6 +81,8 @@ test('dziś sobota, wniosek do dziś: przypomnienie, że ostatni dzień roboczy 
 });
 
 test('wniosek o sprostowanie do niedzieli 13 grudnia 2026 r.: złóż w piątek 11 grudnia', async ({ page }) => {
+  await page.clock.setFixedTime(new Date('2026-11-30T10:00:00+01:00'));
+  await page.reload();
   await page.getByLabel('Ostatni dzień umowy').fill('2026-11-27');
   await page.getByLabel('Świadectwo otrzymane').fill('2026-11-29');
   await expect(page.locator('[data-w="glowny"]')).toHaveText(/^13\sgrudnia\s2026\sr\.$/);
