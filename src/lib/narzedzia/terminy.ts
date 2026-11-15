@@ -205,7 +205,7 @@ export const UWAGA_ART_115_LISTA =
 
 /** Jedno zdanie, dlaczego terminy pracodawcy i granice okresów podajemy bez przesunięcia. */
 export const BEZ_PRZESUNIECIA = {
-  pracodawca: 'Terminy pracodawcy podajemy według przepisu, bez przesunięcia z soboty i dnia wolnego. Czy art. 115 Kodeksu cywilnego przesuwa je na następny dzień roboczy, przepisy wprost nie mówią, a orzeczeń nie znaleźliśmy; pracodawca może się na to powoływać, więc jeden dzień po dacie z przepisu nie musi oznaczać spóźnienia.',
+  pracodawca: 'Terminy pracodawcy podajemy według przepisu, bez przesunięcia z soboty i dnia wolnego. Czy art. 115 Kodeksu cywilnego przesuwa je na następny dzień roboczy, przepisy wprost nie mówią, a orzeczeń nie znaleźliśmy; pracodawca może się na to powoływać, więc czynność w najbliższym dniu roboczym po dacie z przepisu nie musi oznaczać spóźnienia.',
   okres: 'Koniec okresu podajemy bez przesunięcia z soboty i dnia wolnego: art. 115 Kodeksu cywilnego dotyczy terminów do wykonania czynności, a nie okresów, które po prostu mijają.',
 };
 

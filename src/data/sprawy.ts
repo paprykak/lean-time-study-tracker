@@ -7,7 +7,7 @@
 export const HASLA: Record<string, string[]> = {
   'kalkulator-l4': ['chorobowe', 'zwolnienie lekarskie', 'choroba', 'zasiłek chorobowy', 'e-ZLA', 'ile dostanę na L4'],
   'okres-zasilkowy': ['L4', 'chorobowe', '182 dni', 'długie zwolnienie'],
-  'zwolnienie-na-l4': ['zwolnienie lekarskie', 'choroba', 'wypowiedzenie na L4', 'art. 53'],
+  'zwolnienie-na-l4': ['zwolnienie lekarskie', 'choroba', 'wypowiedzenie na L4', 'art. 53', 'zwalniają mnie na L4'],
   'l4-po-zwolnieniu': ['zwolnienie lekarskie', 'choroba po pracy', 'po umowie'],
   'swiadczenie-rehabilitacyjne': ['po L4', 'po 182 dniach', 'rehabilitacyjne'],
   'brutto-netto': ['pensja', 'wypłata', 'na rękę', 'pasek', 'netto', 'ile dostanę'],
@@ -19,7 +19,7 @@ export const HASLA: Record<string, string[]> = {
   'placa-minimalna': ['najniższa krajowa', 'minimalne wynagrodzenie', 'pasek'],
   'stawka-godzinowa': ['na godzinę', 'stawka', 'pensja'],
   'termin-wyplaty-wynagrodzenia': ['kiedy wypłata', 'spóźniona wypłata', 'dziesiąty'],
-  'przedawnienie-wynagrodzenia': ['zaległa wypłata', 'niezapłacone nadgodziny', 'pozew'],
+  'przedawnienie-wynagrodzenia': ['zaległa wypłata', 'niezapłacone nadgodziny', 'pozew', 'pozwać o wypłatę'],
   'wynagrodzenie-za-przestoj': ['postój', 'brak pracy', 'awaria', 'stoi linia', 'przestój'],
   'koszt-pracodawcy': ['brutto brutto', 'ZUS pracodawcy', 'całkowity koszt'],
   'kalkulator-ppk': ['emerytura', 'oszczędzanie', 'wpłaty PPK'],
@@ -72,19 +72,19 @@ export const HASLA: Record<string, string[]> = {
   'waznosc-uprawnien-udt': ['UDT', 'wózek widłowy', 'uprawnienia na wózek', 'suwnica', 'przedłużenie uprawnień'],
   'badania-udt': ['przegląd wózka', 'UDT', 'konserwacja', 'wózek widłowy'],
   'mobbing-i-dyskryminacja': ['nękanie', 'molestowanie', 'równe traktowanie', 'odszkodowanie za mobbing', 'gorsze traktowanie'],
-  'sad-pracy-czy-pip': ['inspekcja pracy', 'skarga na pracodawcę', 'zgłoszenie do PIP', 'anonimowa skarga', 'pozew', 'koszty sądowe'],
+  'sad-pracy-czy-pip': ['inspekcja pracy', 'skarga na pracodawcę', 'zgłoszenie do PIP', 'anonimowa skarga', 'pozew', 'koszty sądowe', 'pozwać pracodawcę'],
   // Runda 2 (2026-11-13): hasła z podpowiedzi wyszukiwarki Google (pl), nie z głowy; źródła w raporcie pakietu.
   'waznosc-uprawnien-sep': ['uprawnienia elektryczne', 'uprawnienia sepowskie', 'SEP do 1 kV', 'elektryk'],
   'czy-potrzebne-uprawnienia-udt': ['paleciak', 'wózek paletowy', 'zwyżka', 'podest ruchomy', 'podnośnik koszowy'],
   'kod-95': ['kod 95 odnowienie', 'świadectwo kwalifikacji zawodowej', 'kod 95 kiedy potrzebny'],
   'badania-kierowcy': ['psychotesty dla kierowców', 'psychotesty co ile lat', 'badania kierowcy co ile', 'badania kierowcy kat C'],
-  'badania-lekarskie-w-pracy': ['medycyna pracy', 'badania okresowe', 'badania wstępne', 'badania kontrolne po L4'],
+  'badania-lekarskie-w-pracy': ['medycyna pracy', 'badania okresowe', 'badania wstępne', 'badania kontrolne po L4', 'powrót do pracy po zwolnieniu lekarskim'],
   'posilki-profilaktyczne': ['posiłek regeneracyjny', 'ciepły posiłek', 'darmowy posiłek w pracy', 'zupa regeneracyjna'],
   'odziez-robocza': ['ekwiwalent za pranie', 'buty robocze', 'ciuchy robocze', 'odzież robocza BHP', 'pranie odzieży roboczej'],
   'wypowiedzenie-zmieniajace': ['zmiana warunków pracy i płacy', 'obniżenie wynagrodzenia', 'obniżka pensji', 'zmiana stanowiska bez zgody'],
   'informacja-o-warunkach-zatrudnienia': ['praca bez umowy', 'umowa na piśmie', 'zgłoszenie do ZUS nowego pracownika', 'pierwszy dzień pracy', 'praca na czarno', 'start w nowej pracy', 'zapoznanie z regulaminem', 'kiedy dostanę umowę'],
   'umowa-na-zastepstwo': ['zastępstwo', 'zastępstwo a ciąża', 'zastępstwo za osobę na urlopie macierzyńskim', 'umowa na czas nieobecności'],
-  'wynagrodzenie-za-niepelny-miesiac': ['pensja po L4', 'wypłata po L4', 'wypłata za część miesiąca', 'pierwsza wypłata w nowej pracy'],
+  'wynagrodzenie-za-niepelny-miesiac': ['pensja po L4', 'wypłata po L4', 'wypłata za część miesiąca', 'pierwsza wypłata w nowej pracy', 'wypłata za pierwszy dzień pracy'],
   'dodatek-wyrownawczy': ['przeniesienie na inne stanowisko', 'przeniesienie do innej pracy', 'przeniesienie pracownicy w ciąży'],
   'okres-wyczekiwania': ['L4 nowa praca', 'L4 w pierwszym miesiącu', 'chorobowe od kiedy', 'L4 od pierwszego dnia'],
   'zasilek-chorobowy-na-zleceniu': ['L4 na zleceniu', 'chorobowe na zleceniu', 'umowa zlecenie L4', 'dobrowolne chorobowe'],
@@ -120,7 +120,7 @@ export const HASLA: Record<string, string[]> = {
   // pieniężną narzędziu o karach porządkowych); imiesłowy zamiast czasowników („zniszczony”, nie „zniszczyłem”), bo
   // „zniszczyłem sobie kręgosłup” to choroba zawodowa, a „zepsułem sobie zdrowie” to wypadek przy pracy.
   'odpowiedzialnosc-materialna': ['manko w kasie', 'niedobór', 'inwentaryzacja', 'braki w towarze', 'potrącenie z wypłaty za szkodę', 'zgoda na potrącenie z wynagrodzenia', 'zniszczenie mienia pracodawcy', 'uszkodzenie wózka', 'zniszczony wózek', 'zepsuty sprzęt', 'zgubiony sprzęt firmowy', 'rozbity samochód służbowy', 'koszty naprawy', 'pozew od pracodawcy', 'uszkodzenie samochodu służbowego', 'przedawnienie roszczeń pracodawcy', 'umowa o współodpowiedzialności materialnej'],
-  'swiadectwo-pracy': ['brak świadectwa pracy', 'świadectwo pracy ile dni', 'sprostowanie świadectwa', 'błąd w świadectwie pracy', 'pracodawca nie wydał świadectwa', 'świadectwo pracy po zwolnieniu', 'co musi być w świadectwie pracy', 'świadectwo pracy pozew', 'odszkodowanie za świadectwo pracy'],
+  'swiadectwo-pracy': ['brak świadectwa pracy', 'świadectwo pracy ile dni', 'sprostowanie świadectwa', 'błąd w świadectwie pracy', 'pracodawca nie wydał świadectwa', 'świadectwo pracy po zwolnieniu', 'co musi być w świadectwie pracy', 'świadectwo pracy pozew', 'odszkodowanie za świadectwo pracy', 'świadectwo pracy po odejściu z pracy'],
   // Audyt „jakosc3” (2026-11-15): bez „kamera w szatni” i „kamera w toalecie”, bo zabierały zapytania o szatnię i toaletę
   // narzędziu o normach sanitarnych (kamerę w szatni znajduje pytanie z FAQ); dopisane potoczne zapytania z hali.
   'monitoring-w-pracy': ['kamery w pracy', 'nagrywanie pracowników', 'nagrania z kamer', 'GPS w aucie służbowym', 'lokalizator w wózku', 'kontrola maila służbowego', 'RODO w pracy', 'monitoring wizyjny', 'monitoring komputerów', 'kamera nad stanowiskiem', 'śledzenie pracownika', 'pracodawca podgląda', 'monitoring bez uprzedzenia', 'nielegalny monitoring'],

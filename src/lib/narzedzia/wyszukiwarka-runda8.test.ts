@@ -22,3 +22,20 @@ describe('runda 8: hasła z audytu jakosc3', () => {
     expect(pierwszy(q)).toBe(slug);
   });
 });
+
+// Runda 9 (2026-11-15): hasła zaproponowane przez audyt „jakosc4” (raporty/jakosc4/RAPORT.md, „Dla orkiestratora”).
+describe('runda 9: hasła z audytu jakosc4', () => {
+  it.each([
+    ['pozwać pracodawcę', 'sad-pracy-czy-pip'],
+    ['pozwać o wypłatę', 'przedawnienie-wynagrodzenia'],
+    ['wypłata za pierwszy dzień pracy', 'wynagrodzenie-za-niepelny-miesiac'],
+    ['świadectwo pracy po odejściu z pracy', 'swiadectwo-pracy'],
+    ['zwalniają mnie na L4', 'zwolnienie-na-l4'],
+    ['powrót do pracy po zwolnieniu lekarskim', 'badania-lekarskie-w-pracy'],
+    ['praca na zwolnieniu lekarskim', 'co-wolno-na-l4'],
+    ['fundusz socjalny', 'fundusz-socjalny'],
+    ['świadczenie urlopowe', 'swiadczenie-urlopowe'],
+  ])('„%s” → %s na pierwszym miejscu', (q, slug) => {
+    expect(pierwszy(q)).toBe(slug);
+  });
+});

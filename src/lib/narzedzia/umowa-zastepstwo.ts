@@ -27,8 +27,8 @@
 //    okresu wypowiedzenia). Do stażu wlicza się pracę u poprzedniego pracodawcy przy przejściu zakładu (art. 36 § 1^1)
 //    oraz zlecenie i działalność na rzecz tego pracodawcy (art. 302^1 § 8): użytkownik wpisuje najwcześniejszą datę.
 //    Gdy próg 6 miesięcy albo 3 lat mija w trakcie wypowiedzenia, przepis nie mówi tego wprost, ale Sąd Najwyższy liczy
-//    staż do dnia rozwiązania umowy z upływem okresu wypowiedzenia, a nie do doręczenia (I PKN 34/99, II PK 12/11, I PK 2/13;
-//    pełne teksty w API SAOS, raporty/orzecznictwo/RAPORT.md). Art. 36 § 1 dotyczy wprost także umowy na czas określony,
+//    staż do dnia rozwiązania umowy z upływem okresu wypowiedzenia, a nie do doręczenia (I PKN 34/99; II PK 12/11 i I PK 2/13
+//    do ponownego sprawdzenia w SAOS, bo przytoczenia podają dla nich inne tezy: DECYZJE.md, 2026-11-15, runda 9). Art. 36 § 1 dotyczy wprost także umowy na czas określony,
 //    więc linia obejmuje zastępstwo: jak w kalkulatorze okresu wypowiedzenia (wypowiedzenieStalej) podajemy dłuższy okres.
 //    Gdy umowa kończy się z upływem czasu (data z umowy) przed dniem progu, staż w dniu rozwiązania progu nie osiąga:
 //    zostaje krótszy okres, a ostatnim dniem i tak jest data z umowy.
