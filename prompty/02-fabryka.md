@@ -77,7 +77,8 @@ Twarde zasady treści (każda wzięła się z błędu, który już raz wyszedł)
 10. Zrzut z telefonu (Playwright, 412 px) przed oddaniem: nic nie ucięte, brak przewijania w bok.
 11. Link (`<a>`) piszesz w tym samym wierszu szablonu co tekst przed nim: kompresja HTML w Astro usuwa łamanie wiersza
     i słowo skleja się z linkiem. Datę domyślną formularza ustawiasz w przeglądarce (`src/lib/narzedzia/dzis-w-formularzu.ts`),
-    a teksty wyniku generuje jedna funkcja dla HTML i skryptu (wzór: `dorabianie-do-renty`).
+    a teksty wyniku generuje jedna funkcja dla HTML i skryptu (wzór: `dorabianie-do-renty`). Test, który liczy linki
+    na stronie, zawęża je do treści (`main a[href=…]:not(.podobne-link)`), bo „Podobne narzędzia” zmieniają inne pakiety.
 12. Formularz według wspólnego wzorca (`src/lib/narzedzia/formularz.ts`, wzór: `okres-zasilkowy`): komunikat błędu
     `<p id="…" class="blad-pola" role="alert" hidden>`, pola wskazują go w `aria-describedby`, a skrypt pokazuje go tylko
     przez `pokazBlad(komunikat, tekst, pola)` (aria-invalid na polach, ogłoszenie raz); `liczPoPowrocie(przelicz)` przed
