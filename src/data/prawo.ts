@@ -836,6 +836,20 @@ export const AKTY = {
     adres: eli(2023, 822),
     sprawdzono: '2026-11-14',
   },
+  zmianaKontroliZwolnien2026: {
+    nazwa: 'Ustawa z 18 grudnia 2025 r. o zmianie ustawy o systemie ubezpieczeń społecznych oraz niektórych innych ustaw',
+    publikator: 'Dz.U. 2026 poz. 26',
+    uwaga: 'ogłoszona 12 stycznia 2026 r.; art. 13 pkt 2: nowe brzmienie art. 17 ust. 1 ustawy zasiłkowej i definicje pracy zarobkowej i aktywności niezgodnej z celem zwolnienia (ust. 1a–1c) od 13 kwietnia 2026 r., ust. 1d–1e od 1 stycznia 2027 r. (art. 43); art. 13 pkt 8–9: kontrola zwolnień (art. 68–68g) od 13 kwietnia 2026 r.; art. 39 i 42: do postępowań i kontroli wszczętych wcześniej przepisy dotychczasowe',
+    adres: eli(2026, 26),
+    sprawdzono: '2026-11-15',
+  },
+  wzoryKontroliZwolnien: {
+    nazwa: 'Rozporządzenie w sprawie wzoru upoważnienia do przeprowadzenia kontroli prawidłowości wykorzystywania zwolnień od pracy i wzoru protokołu tej kontroli',
+    publikator: 'Dz.U. 2026 poz. 503',
+    uwaga: 'od 13 kwietnia 2026 r.; zastąpiło rozporządzenie z 27 lipca 1999 r. o kontroli zwolnień lekarskich (Dz.U. 1999 nr 65 poz. 743), które straciło wtedy moc',
+    adres: eli(2026, 503),
+    sprawdzono: '2026-11-15',
+  },
 } as const satisfies Record<string, Akt>;
 
 export type KluczAktu = keyof typeof AKTY;
