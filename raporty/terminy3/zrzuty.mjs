@@ -52,6 +52,22 @@ const SCENARIUSZE = {
     },
     '[data-w="odmowa-praktycznie"]',
   ],
+  'badania-lekarskie-w-pracy': [
+    async (p) => {
+      await p.check('input[name="sytuacja"][value="orzeczenie"]');
+      await p.fill('[name="otrzymane"]', '2026-11-14');
+    },
+    '[data-w="c-praktycznie"]',
+  ],
+  'co-wolno-na-l4': [
+    async (p) => {
+      await p.getByLabel('Kto kontroluje').selectOption('pracodawca');
+      await p.getByLabel('Dzień czynności').fill('2026-11-12');
+      await p.getByLabel('Otrzymanie protokołu').fill('2026-11-14');
+      await p.getByLabel('Doręczenie decyzji ZUS').fill('2026-11-13');
+    },
+    '[data-w="odwolanie-praktycznie"]',
+  ],
 };
 
 const przegladarka = await chromium.launch();
