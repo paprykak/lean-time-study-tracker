@@ -153,11 +153,11 @@ describe('koniec przedawnienia w dzień wolny (art. 115 KC)', () => {
   it('między datami: status pilny, bez komunikatu o upływie', () => {
     const w = zaleglyUrlop({ urlopy: [{ rok: 2025, dni: 3 }], naDzien: '2029-01-01' });
     expect(w.lata[0].przedawnienie).toMatchObject({ zostalo: -1, zostalo115: 1, status: 'pilne' });
-    expect(sp(opis(w).statusTekst)).toBe('Pierwsza data minęła; tylko gdy sąd przesunie koniec, ostatni dzień według art. 115 KC: 2 stycznia 2029 r.');
-    expect(opis(zaleglyUrlop({ urlopy: [{ rok: 2025, dni: 3 }], naDzien: '2029-01-02' })).statusTekst).toBe('Pierwsza data minęła; tylko gdy sąd przesunie koniec, ostatni dzień według art. 115 KC: dziś');
+    expect(sp(opis(w).statusTekst)).toBe('Pierwsza data minęła, więc roszczenie może być przedawnione; tylko gdy sąd przesunie koniec, ostatni dzień według art. 115 KC: 2 stycznia 2029 r.');
+    expect(opis(zaleglyUrlop({ urlopy: [{ rok: 2025, dni: 3 }], naDzien: '2029-01-02' })).statusTekst).toBe('Pierwsza data minęła, więc roszczenie może być przedawnione; tylko gdy sąd przesunie koniec, ostatni dzień według art. 115 KC: dziś');
     const po = opis(zaleglyUrlop({ urlopy: [{ rok: 2025, dni: 3 }], naDzien: '2029-01-03' }));
     expect(po.status).toBe('po-terminie');
-    expect(po.statusTekst).toContain('minął wczoraj');
+    expect(po.statusTekst).toContain('minął 3 dni temu');
   });
   it('dzień roboczy: bez zdania', () => {
     // Urlop za 2026 r.: 31.12.2029 to poniedziałek.
@@ -167,6 +167,6 @@ describe('koniec przedawnienia w dzień wolny (art. 115 KC)', () => {
     const [r] = zaleglyUrlop({ urlopy: [{ rok: 2027, dni: 2 }], naDzien: '2028-02-29' }).lata;
     expect(r.udzielenie.data).toBe('2028-09-30');
     expect(r.udzielenie.art115).toBeUndefined();
-    expect(UDZIELENIE_BEZ_PRZESUNIECIA).toContain('art. 115 Kodeksu cywilnego');
+    expect(UDZIELENIE_BEZ_PRZESUNIECIA).toContain('bez przesunięcia');
   });
 });

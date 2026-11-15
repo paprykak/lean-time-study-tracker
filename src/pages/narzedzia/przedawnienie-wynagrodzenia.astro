@@ -81,9 +81,9 @@ const faq = [
       <div aria-live="polite" aria-atomic="true">
         <p class="wynik-data" data-w="najstarsza">za {miesiac(pierwsza.za)}</p>
         <p class="meta" data-w="opis">{o.opis}</p>
-        <p class="meta mt-1" data-w="zdanie" hidden={!o.zdanie}>{o.zdanie}</p>
         <p class="status-terminu" data-w="status" data-status={pierwsza.status}>{o.status}</p>
       </div>
+      <p class="meta mt-2" data-w="zdanie" hidden={!o.zdanie}>{o.zdanie}</p>
       <dl class="wynik-lista">
         <div data-wiersz="inna" hidden><dt>Inna należność przedawnia się</dt><dd data-w="inna"></dd></div>
       </dl>
@@ -99,7 +99,7 @@ const faq = [
   <Fragment slot="wyjasnienie">
     <h2 id="zasady">Zasady przedawnienia w prawie pracy</h2>
     <ul>
-      <li>Roszczenia ze stosunku pracy przedawniają się po 3 latach od dnia, w którym stały się wymagalne (art. 291 § 1 Kodeksu pracy). Wynagrodzenie jest wymagalne w dniu wypłaty, więc za każdy miesiąc termin biegnie osobno.</li>
+      <li>Roszczenia ze stosunku pracy przedawniają się po 3 latach od dnia, w którym stały się wymagalne (art. 291 § 1 Kodeksu pracy). Liczymy od dnia wypłaty, a za każdy miesiąc termin biegnie osobno. Część sądów przyjmuje wymagalność dzień po terminie wypłaty (np. Sąd Rejonowy dla Wrocławia-Śródmieścia, IV P 553/24), więc nasza data jest najwcześniejsza.</li>
       <li>Wypłata przychodzi co najmniej raz w miesiącu, w stałym terminie, najpóźniej 10. dnia następnego miesiąca; gdy ten dzień jest wolny od pracy, w dniu poprzedzającym (art. 85 § 1–3). Termin wypłaty w każdym miesiącu pokaże <a href="/narzedzia/termin-wyplaty-wynagrodzenia">kalkulator terminu wypłaty</a>.</li>
       <li>Bieg przedawnienia przerywa każda czynność przed organem powołanym do rozstrzygania sporów lub egzekwowania roszczeń, podjęta bezpośrednio w celu dochodzenia roszczenia, na przykład pozew w sądzie pracy, oraz uznanie roszczenia przez pracodawcę (art. 295 § 1). Po przerwie termin biegnie od nowa, a po pozwie dopiero po zakończeniu sprawy (§ 2).</li>
       <li>Przedawnienie nie biegnie, gdy z powodu siły wyższej nie można dochodzić roszczeń przed sądem (art. 293), a roszczenie o urlop wypoczynkowy w czasie urlopu wychowawczego (art. 293<sup>1</sup>).</li>
@@ -114,8 +114,8 @@ const faq = [
       przesuwamy końca terminu na koniec roku, jak w art. 118 Kodeksu cywilnego: Kodeks pracy ma własne przepisy
       o przedawnieniu, a gdyby sąd przyjął dłuższy termin, nasza data i tak będzie bezpieczna. Gdy koniec wypada w sobotę
       albo dzień ustawowo wolny od pracy, pokazujemy też dzień według art. 115 Kodeksu cywilnego, ale przy przedawnieniu
-      sądy nie są zgodne, czy to przesunięcie działa: art. 115 mówi o terminie do wykonania czynności, a przedawnienie
-      biegnie samo. Pozew złóż więc najpóźniej w pierwszej dacie. Gdy nadgodziny rozlicza się dopiero po końcu okresu rozliczeniowego, zapłata jest wymagalna później,
+      to przesunięcie jest wątpliwe: art. 115 mówi o terminie do wykonania czynności, a przedawnienie biegnie samo. Pozew
+      złóż więc najpóźniej w pierwszej dacie. Gdy nadgodziny rozlicza się dopiero po końcu okresu rozliczeniowego, zapłata jest wymagalna później,
       więc liczenie od wypłaty za miesiąc pracy daje termin najwcześniejszy. Ile należy
       się za nadgodziny, policzy <a href="/narzedzia/kalkulator-nadgodzin">kalkulator nadgodzin</a>.
     </p>
@@ -158,6 +158,8 @@ const faq = [
         w('opis').textContent = '';
         w('zdanie').hidden = true;
         status.hidden = true;
+        w('lista').replaceChildren();
+        form.querySelector<HTMLElement>('[data-wiersz="inna"]')!.hidden = true;
         return;
       }
       const lista = wyplatyDoDochodzenia(naDzien, rodzaj, rodzaj === 'ostatni' ? 0 : dzien, !el('soboty').checked);

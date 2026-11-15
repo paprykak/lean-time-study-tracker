@@ -60,11 +60,13 @@ describe('opis wyniku: zdąż do i art. 115 KC', () => {
     expect(sp(o.glowny)).toBe('24 grudnia 2026 r.');
     expect(sp(o.art115!)).toBe('28 grudnia 2026 r.');
     expect(sp(o.zdanie)).toMatch(/^24 grudnia 2026 r\. to dzień wolny od pracy \(Wigilia Bożego Narodzenia\): .*\(art\. 115 Kodeksu cywilnego\)\. /);
-    expect(o.status).toBe('Zostało 4 dni');
+    expect(o.status).toBe('Zostały 4 dni');
+    expect(o.statusKlasa).toBe('wkrotce');
+    expect(opisOdwolania('2026-11-12', 'wypowiedzenie', '2026-12-02').status).toBe('Został 1 dzień');
   });
   it('dni graniczne: ostatni dzień, okno art. 115 KC, po terminie', () => {
-    expect(opisOdwolania('2026-12-03', 'bez-wypowiedzenia', '2026-12-24')).toMatchObject({ status: 'To dziś: złóż albo nadaj pismo dzisiaj', statusKlasa: 'pilne' });
-    expect(opisOdwolania('2026-12-03', 'bez-wypowiedzenia', '2026-12-21').statusKlasa).toBe('wkrotce');
+    expect(opisOdwolania('2026-12-03', 'bez-wypowiedzenia', '2026-12-24')).toMatchObject({ status: 'To dziś: złóż pismo w sądzie albo nadaj je dziś w placówce Poczty Polskiej', statusKlasa: 'pilne' });
+    expect(opisOdwolania('2026-12-03', 'bez-wypowiedzenia', '2026-12-21').statusKlasa).toBe('pilne');
     const okno = opisOdwolania('2026-12-03', 'bez-wypowiedzenia', '2026-12-25');
     expect(sp(okno.status)).toBe('Pierwsza data minęła; ostatni dzień według art. 115 KC: 28 grudnia 2026 r.');
     expect(okno.statusKlasa).toBe('pilne');

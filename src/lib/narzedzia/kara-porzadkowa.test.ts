@@ -35,7 +35,7 @@ describe('kara porządkowa (art. 108–113 Kp)', () => {
     const r = karaPorzadkowa({ naruszenie: '2026-11-30', wiadomosc: '2027-02-20', ukaranie: '2027-03-01' });
     expect(r).toMatchObject({ do3miesiecy: '2027-02-28', wTerminie: false, wOknieArt115: true });
     expect(r.sprzeciw.zdazDo).toBe('2027-03-08');
-    expect(opisKary({ naruszenie: '2026-11-30', wiadomosc: '2027-02-20', ukaranie: '2027-03-01' })).toMatchObject({ statusKlasa: 'wkrotce', status: 'Kara po terminie z art. 109 § 1, chyba że pracodawca powoła się na art. 115 KC' });
+    expect(opisKary({ naruszenie: '2026-11-30', wiadomosc: '2027-02-20', ukaranie: '2027-03-01' })).toMatchObject({ statusKlasa: 'pilne', status: 'Kara po terminie z art. 109 § 1, chyba że sąd uzna przesunięcie z art. 115 KC' });
     // 2.03.2027 jest już po dniu z art. 115 KC (1.03.2027): po terminie bez zastrzeżeń.
     expect(karaPorzadkowa({ naruszenie: '2026-11-30', wiadomosc: '2027-02-20', ukaranie: '2027-03-02' }).wOknieArt115).toBe(false);
     // 2 tygodnie od wiadomości z soboty 14.11.2026 kończą się w sobotę 28.11.2026.

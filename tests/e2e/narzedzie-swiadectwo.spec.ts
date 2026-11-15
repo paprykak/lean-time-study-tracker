@@ -16,7 +16,7 @@ test('sprostowanie: zdąż do soboty 14 listopada, ostatni dzień według art. 1
   await expect(page.locator('[data-w="glowny-opis"]')).toHaveText(/zdąż\sdo\stego\sdnia;\sostatni\sdzień\swedług\sart\.\s115\sKC:\s16\slistopada\s2026\sr\./);
   await expect(page.locator('[data-w="status"]')).toHaveText(/^Dziś\sostatni\sdzień$/);
   await expect(page.locator('[data-w="sprostowanie"]')).toHaveText(/^zdąż\sdo\s14\slistopada\s2026\sr\./);
-  await expect(page.locator('[data-w="sprostowanie-opis"]')).toContainText(/Ostatni\sdzień\swedług\sart\.\s115\sKC:\s16\slistopada\s2026\sr\.\s14\slistopada\s2026\sr\.\sto\ssobota/);
+  await expect(page.locator('[data-w="sprostowanie-opis"]')).toContainText(/Ostatni\sdzień\swedług\sart\.\s115\sKC:\s16\slistopada\s2026\sr\.;\s14\slistopada\s2026\sr\.\sto\ssobota/);
   await expect(page.locator('[data-w="wydanie-opis"]')).toContainText(/najpóźniej\s6\slistopada\s2026\sr\.$/);
   await expect(page.locator('[data-w="odszkodowanie"]')).toContainText(/najwyżej\s7\s?800,00\szł/);
 });

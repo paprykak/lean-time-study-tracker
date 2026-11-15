@@ -35,7 +35,7 @@
 //    (pakiet „terminy”, 2026-11-15), czyli „zdąż do” (`data`) i ostatni dzień według art. 115 KC (`art115`). Termin
 //    udzielenia urlopu (30 września, art. 168) to obowiązek pracodawcy: bez przesunięcia.
 import { odmiana } from '../redakcja';
-import { BEZ_PRZESUNIECIA, ETYKIETA_ART_115, dataPoPolsku, dniMiedzy, dodajDni, dodajLata, dodajMiesiace, ileDni, poprawnaData, terminPracownika, zdanieArt115 } from './terminy';
+import { ETYKIETA_ART_115, dataPoPolsku, dniMiedzy, dodajDni, dodajLata, dodajMiesiace, ileDni, poprawnaData, terminPracownika, zdanieArt115 } from './terminy';
 
 export const LATA_PRZEDAWNIENIA = 3;
 export const MIN_ROK = 2000;
@@ -222,18 +222,18 @@ const kiedy = (t: Termin) => `${dataPoPolsku(t.data)} (${ileDni(t.zostalo)})${ar
 export const NIE_STRACONE = 'roszczenie nie musi być stracone (art. 292, wyrok TSUE C-120/21)';
 const stan = (t: Termin) =>
   t.zostalo < 0 && t.zostalo115 !== undefined && t.zostalo115 >= 0
-    ? `Pierwsza data minęła; tylko gdy sąd przesunie koniec, ${ETYKIETA_ART_115.charAt(0).toLowerCase()}${ETYKIETA_ART_115.slice(1)}: ${t.zostalo115 === 0 ? 'dziś' : dataPoPolsku(t.art115!)}`
+    ? `Pierwsza data minęła, więc roszczenie może być przedawnione; tylko gdy sąd przesunie koniec, ${ETYKIETA_ART_115.charAt(0).toLowerCase()}${ETYKIETA_ART_115.slice(1)}: ${t.zostalo115 === 0 ? 'dziś' : dataPoPolsku(t.art115!)}`
     : t.zostalo < 0
-      ? `Najwcześniejszy termin przedawnienia minął ${ileDni(t.zostalo115 !== undefined ? t.zostalo115 : t.zostalo)}; ${NIE_STRACONE}`
+      ? `Najwcześniejszy termin przedawnienia minął ${ileDni(t.zostalo)}; ${NIE_STRACONE}`
       : t.zostalo === 0
         ? 'Ostatni dzień: dziś'
         : `Zostało: ${odmiana(t.zostalo, DNI)}`;
 /** Jedno zdanie o art. 115 KC pod głównym terminem przedawnienia (puste, gdy koniec to dzień roboczy). */
 const zdanie = (t: Termin) => zdanieArt115(terminPracownika(t.data), 'przedawnienie');
 /** Termin udzielenia (art. 168) to obowiązek pracodawcy: jedno zdanie, dlaczego bez przesunięcia. */
-export const UDZIELENIE_BEZ_PRZESUNIECIA = `Termin 30 września to termin pracodawcy. ${BEZ_PRZESUNIECIA.pracodawca}`;
+export const UDZIELENIE_BEZ_PRZESUNIECIA = '30 września to data z przepisu dla pracodawcy, a nie termin liczony od zdarzenia, więc podajemy ją bez przesunięcia z soboty i dnia wolnego.';
 const przedawnienieRoku = (t: Termin) =>
-  t.zostalo < 0 ? `${kiedy(t)}; po tej dacie pracodawca może powołać się na przedawnienie (art. 292)` : kiedy(t);
+  t.zostalo < 0 ? `${kiedy(t)}; po ${dataPoPolsku(t.data)} pracodawca może powołać się na przedawnienie (art. 292)` : kiedy(t);
 
 export interface OpisRoku {
   rok: number;

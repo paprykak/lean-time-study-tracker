@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { BEZ_PRZESUNIECIA, ETYKIETA_ART_115, ETYKIETA_ZDAZ_DO, ZDANIE_ART_115, dzienWolnyArt115, fazaTerminu, terminPracownika, zdanieArt115 } from './terminy';
+import { BEZ_PRZESUNIECIA, ETYKIETA_ART_115, ETYKIETA_ZDAZ_DO, ZDANIE_ART_115, dzienWolnyArt115, fazaTerminu, zostaloDni, terminPracownika, zdanieArt115 } from './terminy';
 import { dataPoPolsku, dniMiedzy, dodajDni, dodajLata, dodajMiesiace, dzisWPolsce, ileDni, koniecOkresu, pelneMiesiace, poprawnaData } from './terminy';
 import { plikIcs, wyzwalacz } from './kalendarz-ics';
 
@@ -334,6 +334,11 @@ describe('terminPracownika (art. 115 KC)', () => {
     ['2020-02-29', '2020-03-02'], // 29 lutego w sobotę
     ['2021-01-06', '2021-01-07'], // Trzech Króli (od 2011 r.)
     ['2010-01-06', '2010-01-06'], // przed 2011 r. 6 stycznia to dzień roboczy
+    ['2016-12-31', '2016-12-31'], // sobota przed 1.01.2017 r.: art. 115 KC jeszcze bez soboty
+    ['2016-01-02', '2016-01-02'],
+    ['2017-01-07', '2017-01-09'], // pierwsza sobota po zmianie: przesuwa
+    ['2018-11-12', '2018-11-13'], // jednorazowy dzień wolny 2018 r.
+    ['2018-11-10', '2018-11-13'], // sobota, niedziela, 12 listopada 2018 r.
     ['2027-05-01', '2027-05-04'], // 1 maja w sobotę, niedziela, 3 maja w poniedziałek
     ['2027-05-03', '2027-05-04'],
     ['2026-08-15', '2026-08-17'], // Wniebowzięcie w sobotę
@@ -375,6 +380,18 @@ describe('terminPracownika (art. 115 KC)', () => {
     expect(ETYKIETA_ART_115).toBe('Ostatni dzień według art. 115 KC');
     expect(BEZ_PRZESUNIECIA.pracodawca).toContain('art. 115');
   });
+});
+
+describe('zostaloDni', () => {
+  it.each([
+    [1, 'Został 1 dzień'],
+    [2, 'Zostały 2 dni'],
+    [5, 'Zostało 5 dni'],
+    [12, 'Zostało 12 dni'],
+    [21, 'Zostało 21 dni'],
+    [22, 'Zostały 22 dni'],
+    [114, 'Zostało 114 dni'],
+  ])('%i', (n, t) => expect(zostaloDni(n)).toBe(t));
 });
 
 describe('fazaTerminu', () => {

@@ -83,7 +83,7 @@ test('31 grudnia 2028 r. to niedziela: obie daty i jedno zdanie o art. 115 KC; 3
   await page.locator('[name="dni1"]').fill('');
   await expect(page.locator('[data-w="opis"]')).toHaveText(/31\sgrudnia\s2028\sr\.;\swedług\sart\.\s115\sKC:\s2\sstycznia\s2029\sr\.$/);
   await expect(page.locator('[data-w="zdanie"]')).toContainText(/to\sniedziela/);
-  await expect(page.locator('[data-uwaga="urlop"]')).toContainText(/Termin\s30\swrześnia\sto\stermin\spracodawcy/);
+  await expect(page.locator('[data-uwaga="urlop"]')).toContainText(/30\swrześnia\sto\sdata\sz\sprzepisu\sdla\spracodawcy/);
   await page.locator('[name="rok1"]').fill('2024');
   await page.locator('[name="dni1"]').fill('2');
   await expect(page.locator('[data-w="zdanie"]')).toBeHidden();

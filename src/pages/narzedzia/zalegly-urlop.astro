@@ -100,9 +100,9 @@ const faq = [
       <div aria-live="polite" aria-atomic="true">
         <p class="wynik-kwota" data-w="glowny">{o.glowny}</p>
         <p class="meta" data-w="opis">{o.opis}</p>
-        <p class="meta mt-1" data-w="zdanie" hidden={!o.zdanie}>{o.zdanie}</p>
         <p class="status-terminu" data-w="status" data-status={o.status}>{o.statusTekst}</p>
       </div>
+      <p class="meta mt-2" data-w="zdanie" hidden={!o.zdanie}>{o.zdanie}</p>
       <div data-w="lata">
         {o.lata.map((r) => (
           <section data-rok={r.rok}>
@@ -153,8 +153,8 @@ const faq = [
       w ostatnim dniu tego miesiąca, więc od 29 lutego liczy się do 28 lutego (art. 112 Kodeksu cywilnego w związku
       z art. 300 Kodeksu pracy). Nie przesuwamy końca terminu na koniec roku. Gdy koniec wypada w sobotę albo dzień
       ustawowo wolny od pracy (31 grudnia bywa niedzielą), pokazujemy też dzień według art. 115 Kodeksu cywilnego, ale
-      przy przedawnieniu sądy nie są zgodne, czy to przesunięcie działa, więc bezpieczna jest pierwsza data. Termin
-      udzielenia urlopu (30 września) to obowiązek pracodawcy i podajemy go bez przesunięcia.
+      przy przedawnieniu to przesunięcie jest wątpliwe (przedawnienie biegnie samo), więc bezpieczna jest pierwsza data.
+      Termin udzielenia urlopu (30 września) to data z przepisu dla pracodawcy i podajemy ją bez przesunięcia.
     </p>
     <p>
       Data przedawnienia to dzień, po którym pracodawca może uchylić się od zaspokojenia roszczenia, jeśli powoła się

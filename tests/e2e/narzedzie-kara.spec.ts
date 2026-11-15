@@ -35,7 +35,7 @@ test('3 miesiące kończą się w niedzielę 28 lutego 2027 r.: kara 1 marca jes
   await page.getByLabel('Kiedy pracodawca się o nim dowiedział').fill('2027-02-20');
   await page.getByLabel('Dzień zawiadomienia o karze').fill('2027-03-01');
   await expect(page.locator('[data-w="3mies"]')).toHaveText(/^28\slutego\s2027\sr\.$/);
-  await expect(page.locator('[data-w="status"]')).toHaveText(/po\sterminie.*chyba\sże\spracodawca\spowoła\ssię\sna\sart\.\s115\sKC/);
+  await expect(page.locator('[data-w="status"]')).toHaveText(/po\sterminie.*chyba\sże\ssąd\suzna\sprzesunięcie\sz\sart\.\s115\sKC/);
   await page.getByLabel('Dzień zawiadomienia o karze').fill('2027-03-02');
   await expect(page.locator('[data-w="status"]')).toHaveText(/^Kara\snałożona\spo\sterminie\sz\sart\.\s109\s§\s1$/);
 });

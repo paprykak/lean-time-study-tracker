@@ -1,6 +1,6 @@
 ---
 // Kary porządkowe: terminy nałożenia, sprzeciwu i zatarcia, limit kar pieniężnych (art. 108–113 Kp).
-// Logika: src/lib/narzedzia/kara-porzadkowa.ts (testy obok), przesunięcia terminów: termin-odwolania.ts.
+// Logika: src/lib/narzedzia/kara-porzadkowa.ts (testy obok), art. 115 KC: terminy.ts.
 import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
 import { opisKary } from '../../lib/narzedzia/kara-porzadkowa';
 import { ETYKIETA_ART_115, dodajDni, dzisWPolsce } from '../../lib/narzedzia/terminy';
@@ -59,10 +59,11 @@ const faq = [
       <div aria-live="polite" aria-atomic="true">
         <p class="wynik-data" data-w="sprzeciw">{o.sprzeciw}</p>
         <dl class="wynik-lista" data-wiersz="art115" hidden={!o.art115}>
-          <div><dt>{ETYKIETA_ART_115}</dt><dd><span data-w="art115">{o.art115}</span><span class="block font-normal" data-w="zdanie">{o.zdanie}</span></dd></div>
+          <div><dt>{ETYKIETA_ART_115}</dt><dd data-w="art115">{o.art115}</dd></div>
         </dl>
-        <p class="status-terminu" data-w="status" data-status={o.statusKlasa}>{o.status}</p>
       </div>
+      <p class="meta mt-2" data-w="zdanie" hidden={!o.zdanie}>{o.zdanie}</p>
+      <p class="status-terminu" data-w="status" data-status={o.statusKlasa} aria-live="polite">{o.status}</p>
       <dl class="wynik-lista">
         <div><dt>Ostatni dzień na ukaranie</dt><dd data-w="ostatni">{o.ostatni}</dd></div>
         <div><dt>2 tygodnie od dowiedzenia się</dt><dd data-w="2tyg">{o.do2tygodni}</dd></div>
@@ -90,10 +91,11 @@ const faq = [
       Terminy liczymy według Kodeksu cywilnego (art. 300 Kodeksu pracy): 2 tygodnie i 3 miesiące kalendarzowo (art. 112),
       7 dni na sprzeciw bez dnia zawiadomienia (art. 111 § 2). Gdy koniec terminu na sprzeciw wypada w sobotę albo dzień
       ustawowo wolny od pracy, upływa on następnego dnia, który nie jest dniem wolnym ani sobotą (art. 115). Pokazujemy
-      wtedy dwie daty: „zdąż do” i ostatni dzień według art. 115. Sądy pracy stosują to przesunięcie do sprzeciwu, ale
-      sprzeciw musi w terminie dotrzeć do pracodawcy, a samo nadanie na poczcie nie wystarcza. Terminy pracodawcy na
-      ukaranie (art. 109 § 1) podajemy bez przesunięcia, bo to nie Twoja czynność; gdy kara przypada między tą datą
-      a dniem po przesunięciu, wynik o tym mówi. Zatarcie po roku to koniec okresu, a nie termin do wykonania czynności,
+      wtedy dwie daty: „zdąż do” i ostatni dzień według art. 115. Sąd Rejonowy Szczecin-Centrum zastosował to przesunięcie
+      do sprzeciwu (IX P 280/20), a Sąd Okręgowy w Łodzi uznał, że sprzeciw musi w terminie dotrzeć do pracodawcy i samo
+      nadanie na poczcie nie wystarcza (VII Pa 90/16). Terminy pracodawcy na ukaranie (art. 109 § 1) podajemy według
+      przepisu, bez przesunięcia: czy art. 115 dotyczy tego zakazu, przepisy nie mówią, więc gdy kara przypada między tą
+      datą a dniem po przesunięciu, wynik o tym mówi. Zatarcie po roku to koniec okresu, a nie termin do wykonania czynności,
       więc też go nie przesuwamy. Termin na pozew do sądu pracy po odrzuceniu sprzeciwu policzy <a href="/narzedzia/odwolanie-do-sadu-pracy">kalkulator terminów do sądu pracy</a> (sprawa „Uchylenie kary porządkowej w sądzie”).
     </p>
     <p>
@@ -130,9 +132,12 @@ const faq = [
       pokazBlad(form.querySelector<HTMLElement>('[data-blad="dane"]')!, blad, zlePola);
       const status = w('status');
       if (blad) {
+        w('etykieta').textContent = 'Sprzeciw do pracodawcy najpóźniej';
         w('sprzeciw').textContent = '—';
         status.hidden = true;
         form.querySelector<HTMLElement>('[data-wiersz="art115"]')!.hidden = true;
+        w('zdanie').hidden = true;
+        for (const k of ['ostatni', '2tyg', '3mies', 'zatarcie']) w(k).textContent = '—';
         return;
       }
       const o = opisKary(d);
@@ -141,6 +146,7 @@ const faq = [
       form.querySelector<HTMLElement>('[data-wiersz="art115"]')!.hidden = !o.art115;
       w('art115').textContent = typografia(o.art115 ?? '');
       w('zdanie').textContent = typografia(o.zdanie);
+      w('zdanie').hidden = !o.zdanie;
       w('ostatni').textContent = typografia(o.ostatni);
       w('2tyg').textContent = typografia(o.do2tygodni);
       w('3mies').textContent = typografia(o.do3miesiecy);

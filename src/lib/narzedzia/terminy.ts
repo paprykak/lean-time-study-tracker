@@ -93,6 +93,14 @@ const DATA_PL = new Intl.DateTimeFormat('pl-PL', { day: 'numeric', month: 'long'
 /** „2027-03-15” → „15 marca 2027 r.” */
 export const dataPoPolsku = (data: string) => `${DATA_PL.format(new Date(`${data}T00:00:00Z`))} r.`;
 
+/** „Został 1 dzień”, „Zostały 2 dni”, „Zostało 5 dni”, „Zostały 22 dni” (zgoda czasownika z liczebnikiem). */
+export function zostaloDni(n: number): string {
+  const j = n % 10;
+  const d = n % 100;
+  if (n === 1) return 'Został 1 dzień';
+  return `${j >= 2 && j <= 4 && (d < 12 || d > 14) ? 'Zostały' : 'Zostało'} ${n} dni`;
+}
+
 /** „za 45 dni”, „jutro”, „dziś”, „3 dni temu”. */
 export function ileDni(dni: number): string {
   const n = Math.abs(dni);
@@ -116,12 +124,22 @@ export function ileDni(dni: number): string {
 export const ETYKIETA_ZDAZ_DO = 'Zdąż do';
 export const ETYKIETA_ART_115 = 'Ostatni dzień według art. 115 KC';
 
+/**
+ * Pierwszy dzień, od którego sobota przesuwa koniec terminu: słowa „lub na sobotę” dodała do art. 115 KC ustawa
+ * z 16.12.2016 r. (Dz.U. 2016 poz. 2255, art. 1 pkt 3), w mocy od 1.01.2017 r., dla terminów, które wtedy nie upłynęły
+ * (art. 21). Wcześniej sobota nie była dniem ustawowo wolnym od pracy (uchwała 7 sędziów SN III CZP 8/03 w przytoczeniach).
+ */
+export const SOBOTA_ART_115_OD = '2017-01-01';
+/** Jednorazowe dni ustawowo wolne spoza stałej listy świąt (ustawa z 2018 r. o ustanowieniu 12 listopada 2018 r. dniem wolnym). */
+const JEDNORAZOWE_WOLNE: Record<string, string> = { '2018-11-12': 'dzień wolny 12 listopada 2018 r.' };
+
 /** Nazwa dnia, z którego art. 115 KC przesuwa koniec terminu („sobota”, „niedziela”, nazwa święta), albo null. */
 export function dzienWolnyArt115(data: string): string | null {
   const swieto = swieta(Number(data.slice(0, 4))).find((s) => s.data === data);
   if (swieto) return swieto.nazwa;
+  if (JEDNORAZOWE_WOLNE[data]) return JEDNORAZOWE_WOLNE[data];
   const dt = new Date(`${data}T00:00:00Z`).getUTCDay();
-  return dt === 0 ? 'niedziela' : dt === 6 ? 'sobota' : null;
+  return dt === 0 ? 'niedziela' : dt === 6 && data >= SOBOTA_ART_115_OD ? 'sobota' : null;
 }
 
 export interface TerminPracownika {
@@ -169,17 +187,18 @@ export function zdanieArt115(t: TerminPracownika, rodzaj: RodzajTerminu): string
  * (pozew z art. 264 Kp, koniec w sobotę i niedzielę), SR Szczecin-Centrum, IX P 280/20 (sprzeciw od kary, Poniedziałek
  * Wielkanocny), SO w Łodzi, VII Pa 90/16 (do sprzeciwu nie stosuje się art. 165 § 2 KPC), SR dla Wrocławia-Śródmieścia,
  * IV P 553/24 (dni wolne bez znaczenia dla upływu przedawnienia z art. 291 Kp) i SO Warszawa-Praga, VII P 41/22
- * (przedawnienie z końcem w niedzielę przesunięte).
+ * (przy roszczeniu z art. 442¹ KC, nie z art. 291 Kp; tylko w raporcie). Uchwała 7 sędziów SN z 22.05.2024 r., III CZP 21/23,
+ * przytoczona w IV P 553/24 (art. 115 KC nie dotyczy upływu przedawnienia), jest do sprawdzenia ręcznie.
  */
 export const ZDANIE_ART_115: Record<RodzajTerminu, string> = {
-  sad: 'Sądy pracy stosują to przesunięcie do pozwów z Kodeksu pracy (np. Sąd Rejonowy w Jeleniej Górze, IV P 24/19), ale bezpieczniej zdążyć do pierwszej daty.',
-  pracodawca: 'Sądy pracy stosują je też do pism do pracodawcy (np. Sąd Rejonowy Szczecin-Centrum, IX P 280/20, przy sprzeciwie od kary), ale pismo musi w tym dniu do niego dotrzeć, a samo nadanie na poczcie nie wystarcza (Sąd Okręgowy w Łodzi, VII Pa 90/16); bezpieczniej zdążyć do pierwszej daty.',
-  przedawnienie: 'Przy przedawnieniu sądy nie są zgodne (przesunięcie przyjął Sąd Okręgowy Warszawa-Praga, VII P 41/22, a odrzucił Sąd Rejonowy dla Wrocławia-Śródmieścia, IV P 553/24), bo przedawnienie biegnie samo, a nie jest terminem do wykonania czynności; pozew złóż najpóźniej w pierwszej dacie.',
+  sad: 'Sądy pracy stosują to przesunięcie przy odwołaniach z art. 264 Kodeksu pracy (np. Sąd Rejonowy w Jeleniej Górze, IV P 24/19), a inne pozwy z Kodeksu pracy mają tę samą konstrukcję; bezpieczniej jednak zdążyć do pierwszej daty.',
+  pracodawca: 'Sąd Rejonowy Szczecin-Centrum zastosował je do sprzeciwu od kary (IX P 280/20) i do wniosku o sprostowanie świadectwa (IX P 666/18), ale bezpieczniej przyjąć, że pismo musi w tym dniu dotrzeć do pracodawcy (przy sprzeciwie tak Sąd Okręgowy w Łodzi, VII Pa 90/16), i zdążyć do pierwszej daty.',
+  przedawnienie: 'Przy przedawnieniu to przesunięcie jest wątpliwe: przedawnienie biegnie samo, a nie jest terminem do wykonania czynności, i Sąd Rejonowy dla Wrocławia-Śródmieścia uznał, że dni wolne nie mają znaczenia dla upływu przedawnienia z art. 291 Kodeksu pracy (IV P 553/24); pozew złóż najpóźniej w pierwszej dacie.',
 };
 
 /** Jedno zdanie, dlaczego terminy pracodawcy i granice okresów podajemy bez przesunięcia. */
 export const BEZ_PRZESUNIECIA = {
-  pracodawca: 'Terminy pracodawcy podajemy bez przesunięcia z soboty i dnia wolnego (art. 115 Kodeksu cywilnego), bo to nie Twoja czynność; gdy taki termin kończy się w dzień wolny, pracodawca może się powołać na przesunięcie na następny dzień roboczy.',
+  pracodawca: 'Terminy pracodawcy podajemy według przepisu, bez przesunięcia z soboty i dnia wolnego. Czy art. 115 Kodeksu cywilnego przesuwa je na następny dzień roboczy, przepisy wprost nie mówią, a orzeczeń nie znaleźliśmy; pracodawca może się na to powoływać, więc jeden dzień po dacie z przepisu nie musi oznaczać spóźnienia.',
   okres: 'Koniec okresu podajemy bez przesunięcia z soboty i dnia wolnego: art. 115 Kodeksu cywilnego dotyczy terminów do wykonania czynności, a nie okresów, które po prostu mijają.',
 };
 

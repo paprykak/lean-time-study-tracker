@@ -41,6 +41,14 @@ describe('wypłaty, o które można jeszcze wystąpić', () => {
   });
 });
 
+describe('wypłata za grudzień cofnięta na grudzień (art. 85 § 3)', () => {
+  it('31 grudnia 2017 r., wypłata 1. dnia następnego miesiąca: grudzień 2017 r. na końcu listy', () => {
+    // 1.01.2018 to Nowy Rok, 31.12 i 30.12.2017 to weekend: wypłata 29.12.2017 (piątek), soboty wolne.
+    const w = wyplatyDoDochodzenia('2017-12-31', 'nastepny', 1);
+    expect(w.at(-1)).toMatchObject({ za: '2017-12', wymagalna: '2017-12-29' });
+  });
+});
+
 describe('koniec przedawnienia w sobotę albo dzień wolny (art. 115 KC)', () => {
   // 14 listopada 2026 r. to sobota, według art. 115 KC poniedziałek 16 listopada.
   it('między datami roszczenie zostaje na liście jako pilne', () => {
@@ -58,8 +66,8 @@ describe('koniec przedawnienia w sobotę albo dzień wolny (art. 115 KC)', () =>
     expect(o.status).toBe('Zostało: 4 dni');
     expect(sp(o.krotko)).toBe('14 listopada 2026 r. (według art. 115 KC: 16 listopada 2026 r.)');
     expect(sp(o.zDniami)).toBe('14 listopada 2026 r. (za 4 dni); według art. 115 KC: 16 listopada 2026 r.');
-    expect(opisPrzedawnienia(p, '2026-11-15').status).toBe('Pierwsza data minęła; tylko gdy sąd przesunie koniec według art. 115 KC, zostało: 1 dzień');
-    expect(opisPrzedawnienia(p, '2026-11-16').status).toBe('Pierwsza data minęła; tylko gdy sąd przesunie koniec według art. 115 KC, ostatni dzień to dziś');
+    expect(opisPrzedawnienia(p, '2026-11-15').status).toBe('Pierwsza data minęła, więc roszczenie jest prawdopodobnie przedawnione; tylko gdy sąd przesunie koniec według art. 115 KC, zostało: 1 dzień');
+    expect(opisPrzedawnienia(p, '2026-11-16').status).toBe('Pierwsza data minęła, więc roszczenie jest prawdopodobnie przedawnione; tylko gdy sąd przesunie koniec według art. 115 KC, ostatni dzień to dziś');
     expect(opisPrzedawnienia(p, '2026-11-18').status).toBe('Termin minął 2 dni temu');
     expect(opisPrzedawnienia(p, '2026-11-13').status).toBe('Zostało: 1 dzień');
     const bez = opisPrzedawnienia(przedawnienie('2023-11-10', '2026-11-10'), '2026-11-10');

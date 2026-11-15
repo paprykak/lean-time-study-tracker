@@ -153,7 +153,7 @@ export function stanTerminuPracownika(t: TerminPracownika, dzis: string): { teks
 }
 
 /** Dopisek pod terminem pracownika: data według art. 115 KC i jedno zdanie, kiedy przesunięcie działa. */
-const dopiskArt115 = (t: TerminPracownika, rodzaj: RodzajTerminu) => (t.rozne ? ` ${ETYKIETA_ART_115}: ${dataPoPolsku(t.wedlugArt115)} ${zdanieArt115(t, rodzaj)}` : '');
+const dopiskArt115 = (t: TerminPracownika, rodzaj: RodzajTerminu) => (t.rozne ? ` ${ETYKIETA_ART_115}: ${dataPoPolsku(t.wedlugArt115)}; ${zdanieArt115(t, rodzaj)}` : '');
 const zdaz = (t: TerminPracownika) => `${t.rozne ? 'zdąż do' : 'do'} ${dataPoPolsku(t.zdazDo)}`;
 
 const PRZYWROCENIE = 'Gdy termin minął bez Twojej winy, sąd pracy może go przywrócić na wniosek złożony w 7 dni od ustania przyczyny spóźnienia (art. 265 Kodeksu pracy).';

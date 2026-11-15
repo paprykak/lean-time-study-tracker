@@ -5,9 +5,8 @@
 // Wynik strony (pakiet „terminy”, 2026-11-15): wspólna konwencja z terminy.ts, czyli „Zdąż do” (bez przesunięcia)
 // i „Ostatni dzień według art. 115 KC”, gdy się różnią (`terminSprawy`, `opisOdwolania`). `terminCzynnosci` zostaje
 // bez zmian, bo używa go wypowiedzenie-zmieniajace.ts.
-import { odmiana } from '../redakcja';
 import { swieta } from './czas-pracy';
-import { ETYKIETA_ZDAZ_DO, dataPoPolsku, dodajDni, fazaTerminu, terminPracownika, zdanieArt115, type TerminPracownika } from './terminy';
+import { ETYKIETA_ZDAZ_DO, dataPoPolsku, dodajDni, fazaTerminu, terminPracownika, zdanieArt115, zostaloDni, type TerminPracownika } from './terminy';
 
 export type Sprawa = 'wypowiedzenie' | 'bez-wypowiedzenia' | 'odmowa-przyjecia' | 'sprostowanie-wniosek' | 'sprostowanie-sad' | 'kara-sprzeciw' | 'kara-sad';
 
@@ -75,8 +74,6 @@ export interface OpisOdwolania {
   statusKlasa: 'w-terminie' | 'wkrotce' | 'pilne' | 'po-terminie';
 }
 
-const DNI: [string, string, string] = ['dzień', 'dni', 'dni'];
-
 /** Teksty wyniku kalkulatora: te same w HTML ze strony i w skrypcie przeglądarki. */
 export function opisOdwolania(zdarzenie: string, sprawa: Sprawa, dzis: string): OpisOdwolania {
   const s = SPRAWY[sprawa];
@@ -86,14 +83,15 @@ export function opisOdwolania(zdarzenie: string, sprawa: Sprawa, dzis: string): 
   let status: string;
   let statusKlasa: OpisOdwolania['statusKlasa'];
   if (f.faza === 'w-terminie') {
-    status = f.dni === 0 ? (doSadu ? 'To dziś: złóż albo nadaj pismo dzisiaj' : 'To dziś: pismo powinno dziś dotrzeć do pracodawcy') : `Zostało ${odmiana(f.dni, DNI)}`;
-    statusKlasa = f.dni === 0 ? 'pilne' : f.dni <= 3 ? 'wkrotce' : 'w-terminie';
+    status = f.dni === 0 ? (doSadu ? 'To dziś: złóż pismo w sądzie albo nadaj je dziś w placówce Poczty Polskiej' : 'To dziś: pismo powinno dziś dotrzeć do pracodawcy') : zostaloDni(f.dni);
+    // Progi jak w świadectwie pracy: do 3 dni pilne, do 7 dni wkrótce.
+    statusKlasa = f.dni <= 3 ? 'pilne' : f.dni <= 7 ? 'wkrotce' : 'w-terminie';
   } else if (f.faza === 'tylko-art-115') {
     status = `Pierwsza data minęła; ostatni dzień według art. 115 KC: ${f.dni === 0 ? 'dziś' : dataPoPolsku(t.wedlugArt115)}`;
     statusKlasa = 'pilne';
   } else {
     status = s.przywrocenie
-      ? 'Termin minął: możliwy tylko wniosek do sądu pracy o przywrócenie terminu, 7 dni od ustania przyczyny (art. 265 Kodeksu pracy)'
+      ? 'Termin minął: jeśli spóźnienie nastąpiło bez Twojej winy, możesz w 7 dni od ustania przyczyny złożyć do sądu pracy wniosek o przywrócenie terminu (art. 265 Kodeksu pracy)'
       : 'Termin minął: Kodeks pracy nie przewiduje przywrócenia tego terminu';
     statusKlasa = 'po-terminie';
   }

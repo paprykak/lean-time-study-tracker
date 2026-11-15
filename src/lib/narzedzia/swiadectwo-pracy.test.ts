@@ -36,7 +36,7 @@ describe('terminy świadectwa pracy', () => {
     const o = opisSwiadectwa(dane({ otrzymanie: '2026-10-31' }), '2026-11-10');
     const p = o.pozycje.find((x) => x.klucz === 'sprostowanie')!;
     expect(sp(p.wartosc)).toBe('zdąż do 14 listopada 2026 r.: zostały 4 dni');
-    expect(sp(p.opis)).toContain('Ostatni dzień według art. 115 KC: 16 listopada 2026 r. 14 listopada 2026 r. to sobota:');
+    expect(sp(p.opis)).toContain('Ostatni dzień według art. 115 KC: 16 listopada 2026 r.; 14 listopada 2026 r. to sobota:');
   });
   it('odpowiedź pracodawcy 7 dni (§ 7 ust. 1 rozporządzenia) i ostrożny pozew bez zawiadomienia', () => {
     const t = terminySwiadectwa(dane({ otrzymanie: '2026-10-31', wniosek: '2026-11-10' }));
@@ -51,7 +51,7 @@ describe('terminy świadectwa pracy', () => {
     expect(t.pozewBezOdpowiedzi).toBeNull();
     const o = opisSwiadectwa(dane({ otrzymanie: '2026-10-31', wniosek: '2026-11-10', odmowa: '2026-12-10' }), '2026-12-14');
     expect(sp(o.glowny)).toBe('24 grudnia 2026 r.');
-    expect(sp(o.pozycje.find((p) => p.klucz === 'pozew')!.opis)).toContain('Ostatni dzień według art. 115 KC: 28 grudnia 2026 r. 24 grudnia 2026 r. to dzień wolny od pracy (Wigilia Bożego Narodzenia):');
+    expect(sp(o.pozycje.find((p) => p.klucz === 'pozew')!.opis)).toContain('Ostatni dzień według art. 115 KC: 28 grudnia 2026 r.; 24 grudnia 2026 r. to dzień wolny od pracy (Wigilia Bożego Narodzenia):');
     expect(sp(o.glownyOpis)).toBe('Pozew o sprostowanie: zdąż do tego dnia; ostatni dzień według art. 115 KC: 28 grudnia 2026 r.');
     // Między datami: pierwsza data minęła, ale według art. 115 KC termin jeszcze trwa.
     const okno = opisSwiadectwa(dane({ otrzymanie: '2026-10-31', wniosek: '2026-11-10', odmowa: '2026-12-10' }), '2026-12-27');

@@ -16,7 +16,7 @@ const faq = [
   },
   {
     pytanie: 'Jak liczyć 21 dni na odwołanie?',
-    odpowiedz: 'Dnia doręczenia nie wlicza się (art. 111 § 2 Kodeksu cywilnego), więc przy doręczeniu w czwartek termin kończy się w czwartek za trzy tygodnie. Gdy ostatni dzień wypada w sobotę albo dzień ustawowo wolny od pracy, termin upływa następnego dnia, który nie jest dniem wolnym ani sobotą (art. 115 Kodeksu cywilnego). Sądy pracy stosują to przesunięcie do odwołań, ale kalkulator pokazuje wtedy dwie daty i bezpieczniej zdążyć do pierwszej.',
+    odpowiedz: 'Dnia doręczenia nie wlicza się (art. 111 § 2 Kodeksu cywilnego), więc przy doręczeniu w czwartek termin kończy się w czwartek za trzy tygodnie. Gdy ostatni dzień wypada w sobotę albo dzień ustawowo wolny od pracy, termin upływa następnego dnia, który nie jest dniem wolnym ani sobotą (art. 115 Kodeksu cywilnego). Sądy pracy stosują to przesunięcie przy odwołaniach, ale kalkulator pokazuje wtedy dwie daty i bezpieczniej zdążyć do pierwszej.',
   },
   {
     pytanie: 'Czy wystarczy nadać odwołanie na poczcie w ostatnim dniu?',
@@ -59,9 +59,10 @@ const faq = [
         <p class="wynik-data" data-w="koniec">{o.glowny}</p>
         <p class="status-terminu" data-w="status" data-status={o.statusKlasa}>{o.status}</p>
         <dl class="wynik-lista" data-wiersz="art115" hidden={!o.art115}>
-          <div><dt>{ETYKIETA_ART_115}</dt><dd><span data-w="art115">{o.art115}</span><span class="block font-normal" data-w="zdanie">{o.zdanie}</span></dd></div>
+          <div><dt>{ETYKIETA_ART_115}</dt><dd data-w="art115">{o.art115}</dd></div>
         </dl>
       </div>
+      <p class="meta mt-2" data-w="zdanie" hidden={!o.zdanie}>{o.zdanie}</p>
       <dl class="wynik-lista">
         <div><dt>Gdzie złożyć</dt><dd data-w="gdzie">{SPRAWY[SPRAWA].gdzie}</dd></div>
         <div><dt>Termin</dt><dd data-w="termin">{SPRAWY[SPRAWA].dni} dni ({SPRAWY[SPRAWA].przepis})</dd></div>
@@ -93,12 +94,14 @@ const faq = [
       albo dzień ustawowo wolny od pracy (niedziela albo święto z ustawy o dniach wolnych od pracy), termin upływa
       następnego dnia, który nie jest dniem wolnym ani sobotą (art. 115 Kodeksu cywilnego). Wtedy pokazujemy dwie daty:
       „Zdąż do”, czyli dzień bez przesunięcia, którego dotrzymanie jest zawsze bezpieczne, i ostatni dzień według art. 115.
-      Sądy pracy stosują to przesunięcie zarówno do pozwów, jak i do pism do pracodawcy, na przykład sprzeciwu od kary;
-      orzeczeń Sądu Najwyższego w tej sprawie nie mogliśmy sprawdzić, więc zalecamy pierwszą datę. Przepisy Kodeksu
+      Sądy pracy stosują to przesunięcie przy odwołaniach z art. 264 Kodeksu pracy, a w pojedynczych wyrokach także do
+      sprzeciwu od kary i wniosku o sprostowanie świadectwa; orzeczeń Sądu Najwyższego w tej sprawie nie mogliśmy
+      sprawdzić, więc zalecamy pierwszą datę. Przepisy Kodeksu
       cywilnego stosuje się w sprawach pracowniczych przez art. 300 Kodeksu pracy, a w postępowaniu sądowym przez art. 165
       § 1 Kodeksu postępowania cywilnego. Pismo do sądu można nadać w placówce operatora pocztowego świadczącego usługi
       powszechne: liczy się dzień nadania (art. 165 § 2 Kodeksu postępowania cywilnego). Ten przepis dotyczy tylko pism do
-      sądu: wniosek o sprostowanie i sprzeciw od kary muszą w terminie dotrzeć do pracodawcy. Gdy pracodawca nie zawiadomi o odmowie sprostowania świadectwa pracy, żądanie sprostowania wnosi się do
+      sądu, więc wniosek o sprostowanie i sprzeciw od kary bezpieczniej doręczyć pracodawcy w terminie (przy sprzeciwie tak
+      Sąd Okręgowy w Łodzi, VII Pa 90/16). Gdy pracodawca nie zawiadomi o odmowie sprostowania świadectwa pracy, żądanie sprostowania wnosi się do
       sądu pracy (art. 97 § 2¹ zdanie trzecie Kodeksu pracy). Ile trwa okres wypowiedzenia, policzy <a href="/narzedzia/okres-wypowiedzenia">kalkulator okresu wypowiedzenia</a>,
       a czy zasiłek przysługuje po zwolnieniu, <a href="/narzedzia/zasilek-dla-bezrobotnych">kalkulator zasiłku dla bezrobotnych</a>.
     </p>
@@ -125,21 +128,23 @@ const faq = [
       const blad = poprawnaData(data) ? null : 'Wpisz datę.';
       pokazBlad(form.querySelector<HTMLElement>('[data-blad="data"]')!, blad, el('data'));
       const status = w('status');
+      w('gdzie').textContent = s.gdzie;
+      w('termin').textContent = typografia(`${s.dni} dni (${s.przepis})`);
       if (blad) {
         w('etykieta').textContent = 'Ostatni dzień';
         w('koniec').textContent = '—';
         status.hidden = true;
         form.querySelector<HTMLElement>('[data-wiersz="art115"]')!.hidden = true;
+        w('zdanie').hidden = true;
         return;
       }
       const o = opisOdwolania(data, sprawa, dzisWPolsce());
       w('etykieta').textContent = o.etykieta;
       w('koniec').textContent = typografia(o.glowny);
-      w('gdzie').textContent = s.gdzie;
-      w('termin').textContent = typografia(`${s.dni} dni (${s.przepis})`);
       form.querySelector<HTMLElement>('[data-wiersz="art115"]')!.hidden = !o.art115;
       w('art115').textContent = typografia(o.art115 ?? '');
       w('zdanie').textContent = typografia(o.zdanie);
+      w('zdanie').hidden = !o.zdanie;
       status.hidden = false;
       status.dataset.status = o.statusKlasa;
       status.textContent = typografia(o.status);

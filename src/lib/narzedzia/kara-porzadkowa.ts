@@ -48,14 +48,14 @@ export function opisKary(d: DaneKary) {
     status: r.wTerminie
       ? 'Kara nałożona w terminie'
       : r.wOknieArt115
-        ? 'Kara po terminie z art. 109 § 1, chyba że pracodawca powoła się na art. 115 KC'
+        ? 'Kara po terminie z art. 109 § 1, chyba że sąd uzna przesunięcie z art. 115 KC'
         : 'Kara nałożona po terminie z art. 109 § 1',
-    statusKlasa: r.wTerminie ? 'w-terminie' : r.wOknieArt115 ? 'wkrotce' : 'po-terminie',
+    statusKlasa: r.wTerminie ? 'w-terminie' : r.wOknieArt115 ? 'pilne' : 'po-terminie',
     ostatni: dataPoPolsku(r.ostatniDzienKary),
     do2tygodni: dataPoPolsku(r.do2tygodni),
     do3miesiecy: dataPoPolsku(r.do3miesiecy),
     zatarcie: dataPoPolsku(r.zatarcie),
-    bezPrzesuniecia: `${BEZ_PRZESUNIECIA.pracodawca} Zatarcie też podajemy bez przesunięcia: to koniec okresu, a nie termin do wykonania czynności.`,
+    bezPrzesuniecia: `${BEZ_PRZESUNIECIA.pracodawca} Zatarcie też: to koniec okresu, a nie termin do wykonania czynności.`,
   };
 }
 
