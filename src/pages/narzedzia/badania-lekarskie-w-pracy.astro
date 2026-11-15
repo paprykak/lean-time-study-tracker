@@ -42,7 +42,7 @@ const faq = [
   },
   {
     pytanie: 'Czy kilka zwolnień pod rząd się sumuje?',
-    odpowiedz: `Przepis mówi o niezdolności do pracy trwającej dłużej niż ${PROG_KONTROLNE} dni. Zwolnienia, które następują dzień po dniu, to jedna nieprzerwana niezdolność. Przepis nie mówi o sumowaniu zwolnień rozdzielonych przerwą, a gdy w przerwie są tylko dni wolne, nie rozstrzyga sprawy. Wyjątek: gdy już wcześniejsze zwolnienie trwało dłużej niż ${PROG_KONTROLNE} dni, a do następnego nie było dnia pracy, badanie kontrolne jest potrzebne. W pozostałych przypadkach bezpieczniej zrobić badanie: jest na koszt pracodawcy i w miarę możliwości w godzinach pracy (art. 229 § 2, 3 i 6 Kodeksu pracy).`,
+    odpowiedz: `Przepis mówi o niezdolności do pracy trwającej dłużej niż ${PROG_KONTROLNE} dni. Zwolnienia, które następują dzień po dniu, to jedna nieprzerwana niezdolność. O sumowaniu zwolnień rozdzielonych przerwą przepis nie mówi, a w bazie orzeczeń SAOS (Sąd Najwyższy, lata 1994–2016) nie znaleźliśmy orzeczeń na ten temat. Gdy wcześniejsze zwolnienie trwało dłużej niż ${PROG_KONTROLNE} dni, a do następnego nie było dnia pracy, badanie kontrolne jest potrzebne: robi się je przed dopuszczeniem do pracy, a urlop nie jest dniem pracy (wyrok Sądu Najwyższego II PK 214/07). Gdy w przerwie są tylko dni wolne, a łącznie wychodzi ponad ${PROG_KONTROLNE} dni, bezpieczniej zrobić badanie: jest na koszt pracodawcy i w miarę możliwości w godzinach pracy (art. 229 § 2, 3 i 6 Kodeksu pracy).`,
   },
   {
     pytanie: 'Czy na badania lekarskie trzeba brać dzień wolny?',
@@ -115,7 +115,7 @@ const faq = [
             <option value="tak">Tak</option>
             <option value="nie">Nie</option>
           </select>
-          <p id="bl-przerwa-opis" class="meta mt-1">Dzień pracy według grafiku. „Nie wiem”: przyjmujemy poniedziałek–piątek bez świąt.</p>
+          <p id="bl-przerwa-opis" class="meta mt-1">Dzień, w którym pracujesz według grafiku; urlop się nie liczy. „Nie wiem”: przyjmujemy poniedziałek–piątek bez świąt.</p>
         </div>
       </div>
 
@@ -290,7 +290,8 @@ const faq = [
 
     <h2 id="jak-liczymy">Jak liczymy</h2>
     <ul>
-      <li>Liczymy dni kalendarzowe zwolnienia razem z pierwszym i ostatnim. Zwolnienia dzień po dniu albo nachodzące na siebie traktujemy jak jedną niezdolność. Gdy między zwolnieniami są tylko dni wolne, przepis nie mówi, czy to jedna niezdolność; wtedy wskazujemy, że bezpieczniej zrobić badanie. Gdy jednak już wcześniejsze zwolnienie trwało ponad {PROG_KONTROLNE} dni, a do następnego nie było dnia pracy, badanie jest potrzebne.</li>
+      <li>Liczymy dni kalendarzowe zwolnienia razem z pierwszym i ostatnim. Zwolnienia dzień po dniu albo nachodzące na siebie traktujemy jak jedną niezdolność. Gdy między zwolnieniami są tylko dni wolne, przepis nie mówi, czy to jedna niezdolność; wtedy wskazujemy, że bezpieczniej zrobić badanie. Gdy jednak już wcześniejsze zwolnienie trwało ponad {PROG_KONTROLNE} dni, a do następnego nie było dnia pracy, badanie jest potrzebne. Urlop nie jest dniem pracy: badanie robi się przed dopuszczeniem do pracy, a nie przed urlopem, więc urlop zaraz po zwolnieniu jest możliwy bez badania (wyrok Sądu Najwyższego z 20 marca 2008 r., II PK 214/07). Orzeczeń Sądu Najwyższego o sumowaniu zwolnień rozdzielonych przerwą w bazie SAOS nie znaleźliśmy.</li>
+      <li>Gdy zwolnienie się kończy, stawiasz się w pracy i zgłaszasz gotowość do pracy, a pracodawca kieruje Cię na badanie kontrolne; nie musisz sam przynosić orzeczenia (wyroki Sądu Najwyższego I PKN 639/00 i II PK 319/04). Odmowa badania, gdy jej jedyną przyczyną są okoliczności po Twojej stronie, uzasadnia niedopuszczenie do pracy bez wynagrodzenia (I PK 541/03).</li>
       <li>Przepis mówi o niezdolności spowodowanej chorobą. Zwolnienie w ciąży i po wypadku liczymy tak samo. Terminu badania kontrolnego przepis nie podaje; wynika z zakazu dopuszczenia do pracy bez aktualnego orzeczenia.</li>
       <li>{DNI_NA_PRZYJECIE} dni na zwolnienie z badań wstępnych liczymy od dnia po końcu poprzedniej umowy (art. 111 Kodeksu cywilnego) do pierwszego dnia nowej pracy z umowy (art. 26 Kodeksu pracy).</li>
       <li>Przepis nie definiuje „aktualnego orzeczenia”. Przyjmujemy, że jest aktualne, gdy zaczynasz pracę przed datą następnego badania z orzeczenia; tak samo w pliku kalendarza radzimy zrobić badanie przed tą datą. Przepis nie mówi też, czy przy pracy u tego samego pracodawcy po terminie badania trzeba badań wstępnych, czy innych: piszemy tylko, że potrzebne jest badanie.</li>

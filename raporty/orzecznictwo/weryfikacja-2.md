@@ -10,7 +10,9 @@ Weryfikator niezależny (adwersarz), 2026-11-15. Źródło: otwarte API SAOS (`.
 
 ## Przebieg i zapytania
 
-ZAPYTANIA_TU
+- **API SAOS niedostępne** przez cały czas pracy (2026-11-15, ok. 04:30–06:20 UTC): wyszukiwanie i `/api/judgments/<id>` zwracały stronę „Przerwa techniczna” (HTML) albo przekroczenie czasu; sprawdzane co ok. 2 minuty przez prawie godzinę (`curl` na `/api/search/judgments?all=badanie&pageSize=1`). Ten sam stan odnotowano w `raporty/orzecznictwo/RAPORT.md` (03:15 UTC).
+- Dlatego analiza opiera się na **pełnych tekstach pobranych wcześniej z SAOS** do `.cache/narzedzia/orzeczenia/` (86 plików). Przeszukałem wszystkie (`grep -il "kontroln[a-z]* badani\|badani[a-z]* kontroln\|229 § 2"`): trafnych jest 9 orzeczeń SN, wszystkie przeczytane w odpowiednich fragmentach (`saos.py fragment <id> 'kontroln|229'`). Żadne nie pochodzi z sądu powszechnego.
+- **Zapytania zaplanowane, niezadane z powodu przerwy** (do powtórzenia, gdy API wróci; skrypt `q.sh` w scratchpadzie sesji): SN: `"kontrolnym badaniom lekarskim"`, `"kontrolne badania lekarskie" "30 dni"`, `"badania kontrolne" "kolejne zwolnienia"`, `"badaniom kontrolnym" ciąży`, `"badania kontrolne" "wypadku przy pracy" "229"`, `"trwającej dłużej niż 30 dni" "nieprzerwanie"`, `"badań kontrolnych" "30 dni" sumuje`, `"kontrolnego badania" "dni kalendarzowych"`, a także `"badania kontrolnego"`, `"badanie kontrolne" "229 § 2"`, `"badań kontrolnych"`; sądy powszechne (courtType=COMMON): `"kontrolnym badaniom lekarskim" "dłużej niż 30 dni" zwolnień`, `"badania kontrolne" "przerwą" "30 dni"`.
 
 ## Orzeczenia SN (pełne teksty)
 
@@ -30,11 +32,13 @@ ZAPYTANIA_TU
 
 ### 1. Sumowanie zwolnień, dni kalendarzowe
 
-ODP1_TU
+**Brak orzeczeń SN w przeczytanych tekstach.** Żadne z 9 orzeczeń nie rozstrzyga, czy kolejne zwolnienia (bez przerwy, z przerwą z dni wolnych, z dniem pracy) sumują się do progu ani czy liczy się dni kalendarzowe. We wszystkich sprawach niezdolność była jednym, wyraźnie dłuższym okresem (II PK 214/07: 9.05–23.06.2006; II PK 240/10: 10.11.2008–4.01.2009; I PK 541/03: „ponad sześć miesięcy”; I PKN 639/00, I PK 287/14: wyczerpany okres zasiłkowy). SN posługuje się zwrotami „niezdolność do pracy wskutek choroby trwającej dłużej niż 30 dni” (I PKN 639/00), „długotrwała niezdolność do pracy” (II PK 214/07), bez definicji sposobu liczenia. Nie mogłem tego potwierdzić wyszukiwaniem (API niedostępne), więc wniosek „brak orzeczeń” jest **niepełny**.
+
+Pośrednio istotne: SN wiąże obowiązek badania z **powrotem do faktycznej pracy** („Badania te są niezbędne przed dopuszczeniem do wykonywania pracy”, II PK 214/07; „powinność poddania się badaniu kontrolnemu nie była jeszcze zaktualizowana”, II PK 240/10). Z tej logiki wynika, że niezdolność ponad 30 dni, po której pracownik nie wrócił jeszcze do pracy (bo był na urlopie, a potem na kolejnym zwolnieniu), nadal wymaga badania przed dopuszczeniem. To wspiera regułę narzędzia o „wcześniejszej niezdolności ponad 30 dni” (interpretacja 2), ale pokazuje lukę w tym, jak narzędzie rozpoznaje „dzień pracy” (niżej).
 
 ### 2. Wypadek, ciąża
 
-ODP2_TU
+**Brak orzeczeń SN o wypadku i ciąży** w przeczytanych tekstach. Jedyny styk: II PK 240/10 (zwolnienie chorobowe 10.11.2008–4.01.2009, potem urlop macierzyński). Pracodawca kierował na badanie kontrolne „w związku z niezdolnością do pracy trwającą znacznie powyżej 30 dni” (zarzut skargi kasacyjnej), sąd okręgowy pisał o pracowniku, „który wcześniej był niezdolny do pracy z powodu choroby trwającej ponad 30 dni”. SN nie zakwestionował tego założenia, ale też go nie badał (sprawa dotyczyła urlopu po macierzyńskim). Z tego nie można wyprowadzić stanowiska SN o ciąży. Wariant narzędzia („liczymy tak samo, z adnotacją”) nie jest sprzeczny z orzecznictwem; jest po prostu nieweryfikowalny w SAOS na dziś.
 
 ### 3. Moment obowiązku, urlop po chorobie
 
@@ -53,12 +57,21 @@ ODP2_TU
 
 ### Sprzeczne albo nieprecyzyjne
 
-SPRZECZNE_TU
+Sprzeczności wprost z orzecznictwem SN nie stwierdzam. Nieprecyzyjne:
+
+1. **Pytanie „Między zwolnieniami był dzień pracy?” z opisem „Dzień pracy według grafiku” i domyślnym „Nie wiem” = pon.–pt. bez świąt** (`badanieKontrolne`, `przerwaBezPracy`, strona l. 112–118). Gdy po zwolnieniu ponad 30 dni pracownik wziął urlop wypoczynkowy (sytuacja z II PK 214/07), a potem przyszło krótkie zwolnienie, tryb „auto” (i odpowiedź „tak”, jeśli ktoś uzna dzień urlopu za dzień z grafiku) przerywa łańcuch, `wczesniejsza` = null i wynik dla krótkiego ostatniego zwolnienia to „nie jest wymagane”. Według II PK 214/07 i II PK 240/10 obowiązek badania z pierwszej niezdolności aktualizuje się dopiero przy powrocie do faktycznej pracy, więc tu badanie nadal jest potrzebne. Propozycja: pytać, czy pracownik **faktycznie pracował** między zwolnieniami („urlop się nie liczy”), a regułę „wcześniejsza niezdolność ponad 30 dni” stosować do każdego bloku po ostatnim dniu faktycznej pracy, bez względu na kalendarz.
+2. **„Powrót do pracy: dzień po końcu zwolnienia”** (strona l. 210, 393). Przy urlopie bezpośrednio po zwolnieniu (II PK 214/07, II PK 240/10) powrót do pracy, a z nim termin badania, przypada później. Warto dopisać „albo pierwszy dzień pracy po urlopie”.
+3. **FAQ „Czy kilka zwolnień pod rząd się sumuje?”**: „W pozostałych przypadkach bezpieczniej zrobić badanie” brzmi, jakby dotyczyło też zwolnień rozdzielonych dniem pracy, a narzędzie w takim wypadku zwraca „nie jest wymagane”. Do ujednolicenia (to niespójność wewnętrzna, nie z orzecznictwem).
 
 ### Brakuje (istotne dla pracownika z hali)
 
-BRAKI_TU
+1. **Urlop bezpośrednio po chorobie bez badania** (II PK 214/07, II PK 240/10): urlop uzgodniony z pracodawcą albo obowiązkowy (art. 163 § 3 Kp) może się zacząć bez badania kontrolnego; pracodawca nie może żądać badania w czasie urlopu, bo badania robi się „w dniach pracy” (art. 229 § 3). Najczęstsza sytuacja w hali po długim L4; dziś na stronie nic o tym nie ma. Z zastrzeżeniem: nie chodzi o urlop wzięty bez zgody pracodawcy.
+2. **Co zrobić w dniu powrotu** (I PKN 639/00, II PK 319/04, I PK 287/14): stawić się w zakładzie pracy i zgłosić gotowość do pracy; wtedy pracodawca wydaje skierowanie. Pracownik nie musi sam przynosić orzeczenia ani prywatnego zaświadczenia (II PK 319/04). Strona mówi tylko „Skierowanie: od pracodawcy (art. 229 § 4a)”.
+3. **Skutek odmowy badania** (I PK 541/03): niedopuszczenie do pracy bez wynagrodzenia, gdy przyczyna odmowy leży wyłącznie po stronie pracownika. Krótka uwaga w wyniku „potrzebne” albo w FAQ.
+4. (Mniej istotne) Badanie kontrolne a rozwiązanie umowy z art. 53 Kp: dopiero stawienie się z orzeczeniem o braku przeciwwskazań uruchamia zakaz z art. 53 § 3 (I PK 287/14). Raczej poza zakresem narzędzia.
 
 ## Czego nie sprawdzono
 
-NIESPRAWDZONE_TU
+- Wyszukiwanie w SAOS (SN i sądy powszechne) dla sumowania zwolnień, dni kalendarzowych, ciąży i wypadku: API w przerwie technicznej; zapytania wypisane wyżej, do powtórzenia. Wniosek „brak orzeczeń” w pkt 1 i 2 opiera się tylko na 86 tekstach już w pamięci podręcznej.
+- Orzeczenia powołane w przeczytanych wyrokach, ale niepobrane: I PK 168/04 (11.02.2005), III BP 1/14 (18.03.2015), II PK 46/09 (9.07.2009; art. 52, poza tematem).
+- Nie sprawdzałem testów jednostkowych narzędzia ani działania strony w przeglądarce; ocena luki z pkt 1 „Sprzeczne” wynika z czytania kodu `badanieKontrolne` (pętla przerywa się przy `dzienPracy === 'tak'` albo przy dniu roboczym w przerwie w trybie `auto`, a `wczesniejsza` jest liczona tylko w obrębie łańcucha).

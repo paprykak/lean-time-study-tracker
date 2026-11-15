@@ -197,3 +197,16 @@ describe('odwołanie od orzeczenia (§ 5 ust. 3 rozporządzenia) i następne bad
     expect(() => przypomnienie('', '2026-11-12')).toThrow(RangeError);
   });
 });
+
+describe('urlop między zwolnieniami nie jest dniem pracy (SN, II PK 214/07: badanie przed dopuszczeniem do pracy)', () => {
+  // L4 1.01–15.02.2026 (46 dni), urlop 16–27.02, L4 2–6.03: pracownik nie wrócił do pracy po długiej niezdolności.
+  const lista = [{ od: '2026-01-01', do: '2026-02-15' }, { od: '2026-03-02', do: '2026-03-06' }];
+  it('odpowiedź „nie było dnia pracy”: badanie potrzebne, z wcześniejszą niezdolnością 46 dni', () => {
+    const k = badanieKontrolne(lista, 'choroba', 'nie');
+    expect(k.wynik).toBe('potrzebne');
+    expect(k.wczesniejsza).toEqual({ od: '2026-01-01', do: '2026-02-15', dni: 46 });
+  });
+  it('odpowiedź „był dzień pracy”: liczy się tylko ostatnie zwolnienie (5 dni)', () => {
+    expect(badanieKontrolne(lista, 'choroba', 'tak')).toMatchObject({ wynik: 'niewymagane', dniOstatniej: 5 });
+  });
+});
