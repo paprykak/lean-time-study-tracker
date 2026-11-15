@@ -2,7 +2,8 @@
 // 20 000 losowych dat bez rozbieżności. Uruchomienie 15.12.2026 → informacja do 30.11.2026 (sporny 1.12.2026), oznaczenie
 // do 13.12.2026 (dzień poprzedni 14.12.2026); nagranie 14.11.2026 → do 13.02.2027; 30.11.2026 → do 28.02.2027; 30.11.2027 → do 29.02.2028; 14.08.2026 → 13.11.2026.
 import { describe, expect, it } from 'vitest';
-import { bladMonitoringu, koniecPrzechowywania, opisMonitoringu, terminyInformacji, type DaneMonitoringu } from './monitoring';
+import { WSTECZ_BEZ_PRZESUNIECIA, bladMonitoringu, koniecPrzechowywania, opisMonitoringu, terminyInformacji, type DaneMonitoringu } from './monitoring';
+import { BEZ_PRZESUNIECIA } from './terminy';
 
 const DZIS = '2026-11-14';
 const sp = (t: string) => t.replace(/\s/g, ' ');
@@ -149,5 +150,19 @@ describe('błędne dane', () => {
     expect(bladMonitoringu(dane({ uruchomienie: '2026-13-01' }), DZIS)?.pole).toBe('uruchomienie');
     expect(bladMonitoringu({ rodzaj: 'poczta', nagranie: 'zła' }, DZIS)).toBeNull();
     expect(() => opisMonitoringu(dane({ nagranie: '2030-01-01' }), DZIS)).toThrow(RangeError);
+  });
+});
+
+describe('terminy 2: bez przesunięcia z art. 115 KC (BEZ_PRZESUNIECIA)', () => {
+  it('koniec przechowywania w sobotę 13.02.2027 i w Boże Narodzenie: zdanie o okresie; w czwartek bez zdania', () => {
+    const sobota = opisMonitoringu(dane({ nagranie: '2026-11-14' }), '2026-11-15');
+    expect(sobota.przechowywanie).toContain('Najpóźniej do 13 lutego 2027 r.');
+    expect(sobota.przechowywanie.endsWith(BEZ_PRZESUNIECIA.okres)).toBe(true);
+    expect(opisMonitoringu(dane({ nagranie: '2026-09-26' }), '2026-11-15').przechowywanie).toContain(BEZ_PRZESUNIECIA.okres);
+    expect(koniecPrzechowywania('2026-09-26')).toBe('2026-12-25');
+    expect(opisMonitoringu(dane({ nagranie: '2026-11-12' }), '2026-11-15').przechowywanie).not.toContain(BEZ_PRZESUNIECIA.okres);
+  });
+  it('terminy liczone wstecz: zdanie dlaczego bez przesunięcia', () => {
+    expect(WSTECZ_BEZ_PRZESUNIECIA).toContain('wstecz od dnia uruchomienia');
   });
 });

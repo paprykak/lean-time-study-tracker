@@ -21,7 +21,10 @@
 // - 3 miesiące „od dnia nagrania” liczymy z dniem nagrania włącznie (`koniecOkresu`, art. 112 KC przez art. 300 Kp):
 //   nagranie z 14 listopada najpóźniej do 13 lutego, z 30 listopada do 28 (29) lutego; to wariant wcześniejszy (drugie
 //   odczytanie bez dnia nagrania: 14 lutego, opisane na stronie); to granica najwyższa, pracodawca może usunąć nagranie
-//   wcześniej; art. 115 KC nie przesuwa granicy (to nie termin do wykonania czynności przez pracownika);
+//   wcześniej; art. 115 KC nie przesuwa granicy (to nie termin do wykonania czynności przez pracownika): gdy koniec
+//   wypada w sobotę albo dzień wolny, wynik dopisuje `BEZ_PRZESUNIECIA.okres` (pakiet „terminy 2”);
+// - terminy uprzedzenia i oznaczenia liczymy wstecz od uruchomienia, bez przesunięcia (`WSTECZ_BEZ_PRZESUNIECIA`): art. 115
+//   KC przesuwa koniec terminu na dzień późniejszy, a tu skróciłoby to czas, który przepis daje pracownikom;
 // - „nie później niż 2 tygodnie przed uruchomieniem”: pełne 2 tygodnie między dniem informacji a dniem uruchomienia
 //   (art. 112 KC: 2 tygodnie od 30 listopada mijają z końcem 14 grudnia), więc uruchomienie 15 grudnia → informacja do
 //   30 listopada; informacja 1 grudnia (ten sam dzień tygodnia) jest sporna i tak ją opisujemy; „jeden dzień przed”
@@ -35,7 +38,7 @@
 //   więc go nie liczymy; RODO cytujemy tylko tam, gdzie odsyła Kodeks pracy (art. 22² § 10).
 import { odmiana } from '../redakcja';
 import { zaIle } from './choroba-zawodowa';
-import { dataPoPolsku, dniMiedzy, dodajDni, dodajMiesiace, koniecOkresu, poprawnaData } from './terminy';
+import { BEZ_PRZESUNIECIA, dataPoPolsku, dniMiedzy, dodajDni, dodajMiesiace, dzienWolnyArt115, koniecOkresu, poprawnaData } from './terminy';
 
 export type Rodzaj = 'kamery' | 'poczta' | 'inne';
 export type Miejsce = 'hala' | 'teren' | 'sanitariat' | 'szatnia' | 'stolowka' | 'palarnia' | 'zwiazek';
@@ -115,6 +118,10 @@ export const terminyInformacji = (uruchomienie: string) => ({
   /** Drugie odczytanie: dzień poprzedni (15 grudnia → 14 grudnia). */
   oznaczenieLagodniej: dodajDni(uruchomienie, -1),
 });
+
+/** Dlaczego terminów liczonych wstecz od uruchomienia (§ 7 i § 9) nie przesuwamy z soboty ani dnia wolnego. */
+export const WSTECZ_BEZ_PRZESUNIECIA =
+  'Terminów uprzedzenia i oznaczenia nie przesuwamy z soboty ani dnia wolnego: liczy się je wstecz od dnia uruchomienia, a przesunięcie na następny dzień roboczy (art. 115 Kodeksu cywilnego) skróciłoby czas, który przepis daje pracownikom.';
 
 /** Ostatni dzień, w którym pracodawca może przechowywać nagranie obrazu (art. 22² § 3, art. 112 KC). */
 export const koniecPrzechowywania = (nagranie: string) => koniecOkresu(nagranie, OKRES_NAGRAN_MIESIACE);
@@ -275,7 +282,7 @@ export function opisMonitoringu(d: DaneMonitoringu, dzis: string): OpisMonitorin
     const r = dniMiedzy(dzis, koniec);
     przechowywanie =
       r >= 0
-        ? `Najpóźniej do ${dataPoPolsku(koniec)}, 3 miesiące od dnia nagrania z tym dniem włącznie (art. 22² § 3); pracodawca może je usunąć wcześniej. Dłużej tylko, gdy nagranie jest dowodem w postępowaniu albo pracodawca dowiedział się, że może nim być (§ 4).`
+        ? `Najpóźniej do ${dataPoPolsku(koniec)}, 3 miesiące od dnia nagrania z tym dniem włącznie (art. 22² § 3); pracodawca może je usunąć wcześniej. Dłużej tylko, gdy nagranie jest dowodem w postępowaniu albo pracodawca dowiedział się, że może nim być (§ 4).${dzienWolnyArt115(koniec) ? ` ${BEZ_PRZESUNIECIA.okres}` : ''}`
         : `Okres minął ${dataPoPolsku(koniec)} Nagranie z danymi osobowymi powinno być zniszczone (art. 22² § 5), chyba że jest dowodem w postępowaniu albo pracodawca dowiedział się, że może nim być (§ 4), lub przepisy odrębne stanowią inaczej (§ 5).`;
     przechowywanieStatus = r < 0 ? `Okres minął ${dni(-r)} temu` : r === 0 ? 'Dziś ostatni dzień' : `${zaIle(r).charAt(0).toUpperCase()}${zaIle(r).slice(1)}`;
     przechowywanieKlasa = r < 0 ? 'po-terminie' : r <= 3 ? 'pilne' : r <= 7 ? 'wkrotce' : 'w-terminie';

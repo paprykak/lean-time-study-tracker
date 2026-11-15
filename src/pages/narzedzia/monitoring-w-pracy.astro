@@ -3,8 +3,8 @@
 // przechowywanie nagrań, obowiązki informacyjne, gdzie zgłosić naruszenie (ustawa o PIP, ustawa o ochronie danych
 // osobowych). Logika i teksty wyniku: src/lib/narzedzia/monitoring.ts (testy obok).
 import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
-import { INFORMACJE, MIEJSCA, RODZAJE, ZGLOSZENIE, opisMonitoringu, type Informacja, type Miejsce, type Rodzaj } from '../../lib/narzedzia/monitoring';
-import { dodajDni, dzisWPolsce } from '../../lib/narzedzia/terminy';
+import { INFORMACJE, MIEJSCA, RODZAJE, WSTECZ_BEZ_PRZESUNIECIA, ZGLOSZENIE, opisMonitoringu, type Informacja, type Miejsce, type Rodzaj } from '../../lib/narzedzia/monitoring';
+import { BEZ_PRZESUNIECIA, dodajDni, dzisWPolsce } from '../../lib/narzedzia/terminy';
 
 const dzis = dzisWPolsce();
 // Przykład startowy: kamery w hali, uruchomione 60 dni temu, informacja 80 dni temu, nagranie sprzed 10 dni
@@ -154,7 +154,7 @@ const faq = [
       później dostaje informację przed dopuszczeniem do pracy (art. 22² § 8). Art. 22² obowiązuje od 25 maja 2018 r.
       (dodała go ustawa o ochronie danych osobowych), więc wcześniejszego terminu uprzedzenia nie oceniamy. Gdy regulamin
       pracy dopiero wprowadza monitoring, sam regulamin wchodzi w życie po upływie 2 tygodni od podania go do wiadomości
-      pracowników (art. 104³ § 1).
+      pracowników (art. 104³ § 1). {WSTECZ_BEZ_PRZESUNIECIA}
     </p>
     <p>
       Okres przechowywania liczymy „od dnia nagrania” z tym dniem włącznie, jak okres, który zaczyna się z początkiem dnia:
@@ -162,7 +162,7 @@ const faq = [
       (art. 112 Kodeksu cywilnego przez art. 300 Kodeksu pracy, stosowany tu przez analogię do okresu, który zaczyna się
       z początkiem dnia). Kodeks pracy nie mówi, jak liczyć ten okres; gdyby dnia nagrania nie wliczać, koniec wypadłby
       zwykle dzień później (14 lutego), więc podajemy datę wcześniejszą. 3 miesiące to
-      granica najwyższa: pracodawca może skasować nagranie wcześniej. Przy
+      granica najwyższa: pracodawca może skasować nagranie wcześniej. {BEZ_PRZESUNIECIA.okres} Przy
       poczcie i innych formach Kodeks pracy nie podaje okresu przechowywania, bo art. 22³ § 3 odsyła tylko do art. 22²
       § 6–10, więc go nie liczymy.
     </p>
