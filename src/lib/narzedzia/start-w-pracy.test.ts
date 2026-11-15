@@ -1,6 +1,6 @@
 // Oczekiwane wartości policzone niezależnie skryptem w Pythonie (datetime, własny kalendarz świąt z Wigilią od 2025 r.).
 import { describe, expect, it } from 'vitest';
-import { koniecTrzechMiesiecy, obowiazkiNaStart, terminPpk } from './start-w-pracy';
+import { TERMINY_PRACODAWCY, koniecTrzechMiesiecy, obowiazkiNaStart, opisTerminu, terminPpk } from './start-w-pracy';
 
 const pelne = { regulamin: true, monitoring: true, ppk: true };
 const mapa = (start: string, opcje = pelne) => Object.fromEntries(obowiazkiNaStart({ start, ...opcje }).map((o) => [o.klucz, o]));
@@ -10,21 +10,26 @@ describe('terminy pracodawcy na start (art. 29 § 2–3, 229, 237³, 104³, 22²
     const m = mapa('2026-11-16');
     expect(m.umowa).toMatchObject({ kiedy: 'przed', data: '2026-11-16' });
     expect(m.informacja).toMatchObject({ kiedy: 'data', data: '2026-11-23' });
-    expect(m.informacja.przesunieta).toBeUndefined();
     expect(m.zus.data).toBe('2026-11-23');
     expect(m.zabezpieczenie.data).toBe('2026-12-16');
     expect(m.ppk.data).toBe('2027-03-10');
   });
-  it('start w sobotę: 7. dzień wypada w sobotę, po art. 115 KC w poniedziałek', () => {
+  // Obowiązki pracodawcy: bez przesunięcia z art. 115 KC (pakiet „terminy”, 2026-11-15).
+  it('start w sobotę: 7. dzień wypada w sobotę i zostaje w sobotę (termin pracodawcy)', () => {
     const m = mapa('2026-11-14');
-    expect(m.informacja).toMatchObject({ data: '2026-11-21', przesunieta: '2026-11-23' });
+    expect(m.informacja).toEqual(expect.objectContaining({ data: '2026-11-21' }));
+    expect('przesunieta' in m.informacja).toBe(false);
+    expect(opisTerminu(m.informacja).replace(/\s/g, ' ')).toBe('do 21 listopada 2026 r.');
+    expect(opisTerminu(m.umowa)).toBe('przed rozpoczęciem pracy');
+    expect(TERMINY_PRACODAWCY).toContain('art. 115 Kodeksu cywilnego');
     expect(m.zabezpieczenie.data).toBe('2026-12-14');
   });
-  it('Wigilia i Boże Narodzenie: z 24 grudnia na 28 grudnia; 30. dzień w sobotę 16 stycznia na 18 stycznia', () => {
+  it('Wigilia: 7. dzień 24 grudnia, 30. dzień w sobotę 16 stycznia, PPK w sobotę 10 kwietnia, wszystko bez przesunięcia', () => {
     const m = mapa('2026-12-17');
-    expect(m.zus).toMatchObject({ data: '2026-12-24', przesunieta: '2026-12-28' });
-    expect(m.zabezpieczenie).toMatchObject({ data: '2027-01-16', przesunieta: '2027-01-18' });
-    expect(m.ppk).toMatchObject({ data: '2027-04-10', przesunieta: '2027-04-12' });
+    expect(m.zus.data).toBe('2026-12-24');
+    expect(m.zabezpieczenie.data).toBe('2027-01-16');
+    expect(m.ppk.data).toBe('2027-04-10');
+    for (const o of Object.values(m)) expect('przesunieta' in o).toBe(false);
   });
   it('PPK: 3 miesiące od 1. dnia miesiąca kończą się z końcem miesiąca (1 listopada → 31 stycznia → 10 lutego)', () => {
     expect(koniecTrzechMiesiecy('2026-11-01')).toBe('2027-01-31');
@@ -33,7 +38,7 @@ describe('terminy pracodawcy na start (art. 29 § 2–3, 229, 237³, 104³, 22²
     expect(terminPpk('2026-11-30')).toBe('2027-03-10');
     expect(terminPpk('2026-12-01')).toBe('2027-03-10');
     expect(koniecTrzechMiesiecy('2028-02-29')).toBe('2028-05-28');
-    expect(mapa('2028-02-29').ppk).toMatchObject({ data: '2028-06-10', przesunieta: '2028-06-12' });
+    expect(mapa('2028-02-29').ppk.data).toBe('2028-06-10');
   });
   it('bez regulaminu, monitoringu i PPK: tych pozycji nie ma, a informacja obejmuje wypłatę i porę nocną', () => {
     const m = mapa('2026-11-16', { regulamin: false, monitoring: false, ppk: false });

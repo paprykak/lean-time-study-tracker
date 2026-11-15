@@ -5,9 +5,13 @@
 //   miesiąca, a gdy ustalony dzień jest wolny od pracy, w dniu poprzedzającym (art. 85 § 1–3; src/lib/narzedzia/termin-wyplaty.ts);
 // - nie doliczamy końca roku z art. 118 zd. 2 KC: Kodeks pracy ma własne przepisy o przedawnieniu (art. 291–295), a do
 //   Kodeksu cywilnego odsyła tylko w sprawach nieuregulowanych (art. 300). Gdyby sąd przyjął koniec roku, termin byłby
-//   dłuższy, więc nasza data jest najwcześniejsza z możliwych. Nie liczymy też przesunięć z art. 115 KC.
+//   dłuższy, więc nasza data jest najwcześniejsza z możliwych;
+// - koniec przedawnienia w sobotę albo dzień ustawowo wolny: wspólna konwencja z terminy.ts (pakiet „terminy”,
+//   2026-11-15), czyli „zdąż do” (bez przesunięcia, `koniec`) i ostatni dzień według art. 115 KC (`art115`). Wypłata,
+//   której pierwsza data minęła, ale dzień z art. 115 KC jeszcze nie, zostaje na liście ze statusem „pilne”.
+import { odmiana } from '../redakcja';
 import { terminyWyplaty, type DzienWyplaty } from './termin-wyplaty';
-import { dniMiedzy, dodajLata } from './terminy';
+import { ETYKIETA_ART_115, dataPoPolsku, dniMiedzy, dodajLata, fazaTerminu, terminPracownika, zdanieArt115 } from './terminy';
 
 export const LATA_PRZEDAWNIENIA = 3;
 
@@ -18,9 +22,36 @@ export const koniecPrzedawnienia = (wymagalne: string) => dodajLata(wymagalne, L
 
 export function przedawnienie(wymagalne: string, naDzien: string) {
   const koniec = koniecPrzedawnienia(wymagalne);
+  const t = terminPracownika(koniec);
   const zostalo = dniMiedzy(naDzien, koniec);
-  const status: StatusPrzedawnienia = zostalo < 0 ? 'po-terminie' : zostalo <= 30 ? 'pilne' : zostalo <= 90 ? 'wkrotce' : 'w-terminie';
-  return { wymagalne, koniec, zostalo, status };
+  const faza = fazaTerminu(t, naDzien).faza;
+  const status: StatusPrzedawnienia =
+    faza === 'po-terminie' ? 'po-terminie' : faza === 'tylko-art-115' || zostalo <= 30 ? 'pilne' : zostalo <= 90 ? 'wkrotce' : 'w-terminie';
+  return { wymagalne, koniec, art115: t.wedlugArt115, zostalo, status };
+}
+
+const DNI: [string, string, string] = ['dzień', 'dni', 'dni'];
+
+/** Teksty o jednym terminie przedawnienia: te same w HTML ze strony i w skrypcie (skrypt dodaje typografia()). */
+export function opisPrzedawnienia(p: { wymagalne: string; koniec: string; art115: string }, naDzien: string, co = 'Wypłata') {
+  const t = terminPracownika(p.koniec);
+  const f = fazaTerminu(t, naDzien);
+  return {
+    opis: t.rozne
+      ? `${co} z ${dataPoPolsku(p.wymagalne)}: zdąż do ${dataPoPolsku(p.koniec)}; ${ETYKIETA_ART_115.charAt(0).toLowerCase()}${ETYKIETA_ART_115.slice(1)}: ${dataPoPolsku(p.art115)}`
+      : `${co} z ${dataPoPolsku(p.wymagalne)} przedawnia się z końcem dnia ${dataPoPolsku(p.koniec)}`,
+    zdanie: zdanieArt115(t, 'przedawnienie'),
+    status:
+      f.faza === 'po-terminie'
+        ? `Termin minął ${odmiana(-f.dni, DNI)} temu`
+        : f.faza === 'tylko-art-115'
+          ? `Pierwsza data minęła; według art. 115 KC ${f.dni === 0 ? 'ostatni dzień to dziś' : `zostało: ${odmiana(f.dni, DNI)}`}`
+          : f.dni === 0
+            ? 'Ostatni dzień: dziś'
+            : `Zostało: ${odmiana(f.dni, DNI)}`,
+    /** Krótko do listy i pola „inna należność”: „8 grudnia 2026 r.” albo „… (według art. 115 KC: …)”. */
+    krotko: t.rozne ? `${dataPoPolsku(p.koniec)} (według art. 115 KC: ${dataPoPolsku(p.art115)})` : dataPoPolsku(p.koniec),
+  };
 }
 
 /** Kiedy przychodzi wypłata za miesiąc: w następnym miesiącu (dzień 1–10), w tym samym (1–28) albo ostatniego dnia. */
@@ -31,7 +62,10 @@ export interface WyplataZaMiesiac {
   za: string;
   /** Dzień wypłaty po przesunięciu z art. 85 § 3. */
   wymagalna: string;
+  /** Zdąż do: koniec bez przesunięcia. */
   koniec: string;
+  /** Ostatni dzień według art. 115 KC (równy `koniec`, gdy to dzień roboczy). */
+  art115: string;
   zostalo: number;
   status: StatusPrzedawnienia;
 }
@@ -58,7 +92,7 @@ export function wyplatyDoDochodzenia(naDzien: string, rodzaj: RodzajWyplaty, dzi
       if (!wymagalna || wymagalna > naDzien) continue;
       const p = przedawnienie(wymagalna, naDzien);
       if (p.status === 'po-terminie') continue;
-      wynik.push({ za, wymagalna, koniec: p.koniec, zostalo: p.zostalo, status: p.status });
+      wynik.push({ za, wymagalna, koniec: p.koniec, art115: p.art115, zostalo: p.zostalo, status: p.status });
     }
   }
   return wynik;

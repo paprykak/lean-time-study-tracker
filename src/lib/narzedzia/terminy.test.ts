@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { BEZ_PRZESUNIECIA, ETYKIETA_ART_115, ETYKIETA_ZDAZ_DO, ZDANIE_ART_115, dzienWolnyArt115, terminPracownika, zdanieArt115 } from './terminy';
+import { BEZ_PRZESUNIECIA, ETYKIETA_ART_115, ETYKIETA_ZDAZ_DO, ZDANIE_ART_115, dzienWolnyArt115, fazaTerminu, terminPracownika, zdanieArt115 } from './terminy';
 import { dataPoPolsku, dniMiedzy, dodajDni, dodajLata, dodajMiesiace, dzisWPolsce, ileDni, koniecOkresu, pelneMiesiace, poprawnaData } from './terminy';
 import { plikIcs, wyzwalacz } from './kalendarz-ics';
 
@@ -375,4 +375,16 @@ describe('terminPracownika (art. 115 KC)', () => {
     expect(ETYKIETA_ART_115).toBe('Ostatni dzień według art. 115 KC');
     expect(BEZ_PRZESUNIECIA.pracodawca).toContain('art. 115');
   });
+});
+
+describe('fazaTerminu', () => {
+  const t = terminPracownika('2026-11-14'); // sobota → poniedziałek 16.11
+  it.each([
+    ['2026-11-10', 'w-terminie', 4],
+    ['2026-11-14', 'w-terminie', 0],
+    ['2026-11-15', 'tylko-art-115', 1],
+    ['2026-11-16', 'tylko-art-115', 0],
+    ['2026-11-17', 'po-terminie', -1],
+  ])('%s: %s (%i)', (dzis, faza, dni) => expect(fazaTerminu(t, dzis)).toEqual({ faza, dni }));
+  it('bez przesunięcia: od razu po terminie', () => expect(fazaTerminu(terminPracownika('2026-11-16'), '2026-11-17')).toEqual({ faza: 'po-terminie', dni: -1 }));
 });

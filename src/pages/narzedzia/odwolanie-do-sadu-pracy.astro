@@ -1,13 +1,13 @@
 ---
-// Terminy odwołania do sądu pracy (art. 264 Kp) i sprostowania świadectwa pracy (art. 97 § 2^1), z przesunięciem
-// z sobót i dni wolnych (art. 115 KC). Logika: src/lib/narzedzia/termin-odwolania.ts (testy obok).
+// Terminy odwołania do sądu pracy (art. 264 Kp), sprostowania świadectwa pracy (art. 97 § 2^1) i kary porządkowej
+// (art. 112): „Zdąż do” i, gdy inny, ostatni dzień według art. 115 KC (wspólna konwencja z terminy.ts). Logika: src/lib/narzedzia/termin-odwolania.ts (testy obok).
 import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
-import { SPRAWY, terminCzynnosci, type Sprawa } from '../../lib/narzedzia/termin-odwolania';
-import { dataPoPolsku, dniMiedzy, dzisWPolsce } from '../../lib/narzedzia/terminy';
+import { SPRAWY, opisOdwolania, type Sprawa } from '../../lib/narzedzia/termin-odwolania';
+import { ETYKIETA_ART_115, dzisWPolsce } from '../../lib/narzedzia/terminy';
 
 const dzis = dzisWPolsce();
 const SPRAWA: Sprawa = 'wypowiedzenie';
-const t = terminCzynnosci(dzis, SPRAWA);
+const o = opisOdwolania(dzis, SPRAWA, dzis);
 
 const faq = [
   {
@@ -54,15 +54,17 @@ const faq = [
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
-      <h2 id="wynik-tytul" class="etykieta">Ostatni dzień</h2>
+      <h2 id="wynik-tytul" class="etykieta" data-w="etykieta">{o.etykieta}</h2>
       <div aria-live="polite" aria-atomic="true">
-        <p class="wynik-data" data-w="koniec">{dataPoPolsku(t.koniec)}</p>
-        <p class="status-terminu" data-w="status" data-status="w-terminie">Zostało {dniMiedzy(dzis, t.koniec)} dni</p>
+        <p class="wynik-data" data-w="koniec">{o.glowny}</p>
+        <p class="status-terminu" data-w="status" data-status={o.statusKlasa}>{o.status}</p>
+        <dl class="wynik-lista" data-wiersz="art115" hidden={!o.art115}>
+          <div><dt>{ETYKIETA_ART_115}</dt><dd><span data-w="art115">{o.art115}</span><span class="block font-normal" data-w="zdanie">{o.zdanie}</span></dd></div>
+        </dl>
       </div>
       <dl class="wynik-lista">
         <div><dt>Gdzie złożyć</dt><dd data-w="gdzie">{SPRAWY[SPRAWA].gdzie}</dd></div>
         <div><dt>Termin</dt><dd data-w="termin">{SPRAWY[SPRAWA].dni} dni ({SPRAWY[SPRAWA].przepis})</dd></div>
-        <div><dt>Przesunięcie</dt><dd data-w="przesuniecie">{t.przesuniecie.length ? t.przesuniecie.map((p) => p.powod).join(', ') : 'brak'}</dd></div>
       </dl>
       <p class="wynik-uwaga">Gdy pismo nie zostało odebrane do rąk własnych, na przykład zostało awizowane, dzień doręczenia może być inny. W razie wątpliwości złóż odwołanie wcześniej albo zapytaj prawnika lub Państwową Inspekcję Pracy.</p>
       <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
@@ -101,8 +103,8 @@ const faq = [
 
 <script>
   import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
-  import { SPRAWY, terminCzynnosci, type Sprawa } from '../../lib/narzedzia/termin-odwolania';
-  import { dataPoPolsku, dniMiedzy, dzisWPolsce, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { SPRAWY, opisOdwolania, type Sprawa } from '../../lib/narzedzia/termin-odwolania';
+  import { dzisWPolsce, poprawnaData } from '../../lib/narzedzia/terminy';
   import { typografia } from '../../lib/typografia.mjs';
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
 
@@ -120,27 +122,23 @@ const faq = [
       pokazBlad(form.querySelector<HTMLElement>('[data-blad="data"]')!, blad, el('data'));
       const status = w('status');
       if (blad) {
+        w('etykieta').textContent = 'Ostatni dzień';
         w('koniec').textContent = '—';
         status.hidden = true;
+        form.querySelector<HTMLElement>('[data-wiersz="art115"]')!.hidden = true;
         return;
       }
-      const t = terminCzynnosci(data, sprawa);
-      const zostalo = dniMiedzy(dzisWPolsce(), t.koniec);
-      w('koniec').textContent = typografia(dataPoPolsku(t.koniec));
+      const o = opisOdwolania(data, sprawa, dzisWPolsce());
+      w('etykieta').textContent = o.etykieta;
+      w('koniec').textContent = typografia(o.glowny);
       w('gdzie').textContent = s.gdzie;
       w('termin').textContent = typografia(`${s.dni} dni (${s.przepis})`);
-      w('przesuniecie').textContent = typografia(t.przesuniecie.length ? `z ${dataPoPolsku(t.pierwotny)}: ${t.przesuniecie.map((p) => p.powod).join(', ')}` : 'brak');
+      form.querySelector<HTMLElement>('[data-wiersz="art115"]')!.hidden = !o.art115;
+      w('art115').textContent = typografia(o.art115 ?? '');
+      w('zdanie').textContent = typografia(o.zdanie);
       status.hidden = false;
-      status.dataset.status = zostalo < 0 ? 'po-terminie' : zostalo <= 3 ? 'wkrotce' : 'w-terminie';
-      status.textContent = typografia(
-        zostalo < 0
-          ? s.przywrocenie
-            ? 'Termin minął: możliwy tylko wniosek do sądu pracy o przywrócenie terminu, 7 dni od ustania przyczyny (art. 265 Kodeksu pracy)'
-            : 'Termin minął: Kodeks pracy nie przewiduje przywrócenia tego terminu'
-          : zostalo === 0
-            ? 'To dziś: złóż albo nadaj pismo dzisiaj'
-            : `Zostało ${zostalo} ${zostalo === 1 ? 'dzień' : 'dni'}`,
-      );
+      status.dataset.status = o.statusKlasa;
+      status.textContent = typografia(o.status);
     };
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);

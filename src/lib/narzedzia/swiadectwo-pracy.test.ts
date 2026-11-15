@@ -27,30 +27,43 @@ describe('terminy świadectwa pracy', () => {
     expect(sad.wartosc).toBe('Pozew o wydanie');
     expect(sp(sad.opis)).toContain('od końca 7 dni na wydanie po złożeniu wniosku');
   });
-  it('wniosek o sprostowanie 14 dni, bez przesunięcia jako termin główny', () => {
-    expect(terminySwiadectwa(dane({ otrzymanie: '2026-10-30' })).sprostowanie).toEqual({ koniec: '2026-11-13', poPrzesunieciu: null, powod: null });
-    expect(terminySwiadectwa(dane({ otrzymanie: '2026-10-31' })).sprostowanie).toEqual({ koniec: '2026-11-14', poPrzesunieciu: '2026-11-16', powod: 'sobota' });
+  it('wniosek o sprostowanie 14 dni: zdąż do i ostatni dzień według art. 115 KC', () => {
+    expect(terminySwiadectwa(dane({ otrzymanie: '2026-10-30' })).sprostowanie).toMatchObject({ zdazDo: '2026-11-13', wedlugArt115: '2026-11-13', rozne: false });
+    expect(terminySwiadectwa(dane({ otrzymanie: '2026-10-31' })).sprostowanie).toMatchObject({ zdazDo: '2026-11-14', wedlugArt115: '2026-11-16', rozne: true });
     const s = terminySwiadectwa(dane({ ustanie: '2026-10-28', otrzymanie: '2026-10-28' })).sprostowanie!;
-    expect(s.koniec).toBe('2026-11-11');
-    expect(s.poPrzesunieciu).toBe('2026-11-12');
+    expect(s.zdazDo).toBe('2026-11-11');
+    expect(s.wedlugArt115).toBe('2026-11-12');
+    const o = opisSwiadectwa(dane({ otrzymanie: '2026-10-31' }), '2026-11-10');
+    const p = o.pozycje.find((x) => x.klucz === 'sprostowanie')!;
+    expect(sp(p.wartosc)).toBe('zdąż do 14 listopada 2026 r.: zostały 4 dni');
+    expect(sp(p.opis)).toContain('Ostatni dzień według art. 115 KC: 16 listopada 2026 r. 14 listopada 2026 r. to sobota:');
   });
   it('odpowiedź pracodawcy 7 dni (§ 7 ust. 1 rozporządzenia) i ostrożny pozew bez zawiadomienia', () => {
     const t = terminySwiadectwa(dane({ otrzymanie: '2026-10-31', wniosek: '2026-11-10' }));
-    expect(t.odpowiedz!.koniec).toBe('2026-11-17');
-    expect(t.pozewBezOdpowiedzi!.koniec).toBe('2026-12-01');
+    expect(t.odpowiedz).toBe('2026-11-17');
+    expect(t.pozewBezOdpowiedzi!.zdazDo).toBe('2026-12-01');
     expect(t.pozew).toBeNull();
   });
-  it('pozew po odmowie 14 dni; Wigilia i święta tylko w dopisku', () => {
+  it('pozew po odmowie 14 dni; zdąż do Wigilii, według art. 115 KC 28 grudnia', () => {
     const t = terminySwiadectwa(dane({ otrzymanie: '2026-10-31', wniosek: '2026-11-10', odmowa: '2026-12-10' }));
-    expect(t.pozew).toEqual({ koniec: '2026-12-24', poPrzesunieciu: '2026-12-28', powod: 'Wigilia Bożego Narodzenia' });
+    expect(t.pozew).toMatchObject({ zdazDo: '2026-12-24', wedlugArt115: '2026-12-28', rozne: true });
+    expect(t.pozew!.wolne[0].powod).toBe('Wigilia Bożego Narodzenia');
     expect(t.pozewBezOdpowiedzi).toBeNull();
     const o = opisSwiadectwa(dane({ otrzymanie: '2026-10-31', wniosek: '2026-11-10', odmowa: '2026-12-10' }), '2026-12-14');
     expect(sp(o.glowny)).toBe('24 grudnia 2026 r.');
-    expect(sp(o.pozycje.find((p) => p.klucz === 'pozew')!.opis)).toContain('dzień wolny od pracy; czy termin przesuwa się na 28 grudnia 2026 r.');
-    expect(o.glownyOpis).toBe('Pozew o sprostowanie: ostatni dzień, bez przesunięcia z dnia wolnego');
+    expect(sp(o.pozycje.find((p) => p.klucz === 'pozew')!.opis)).toContain('Ostatni dzień według art. 115 KC: 28 grudnia 2026 r. 24 grudnia 2026 r. to dzień wolny od pracy (Wigilia Bożego Narodzenia):');
+    expect(sp(o.glownyOpis)).toBe('Pozew o sprostowanie: zdąż do tego dnia; ostatni dzień według art. 115 KC: 28 grudnia 2026 r.');
+    // Między datami: pierwsza data minęła, ale według art. 115 KC termin jeszcze trwa.
+    const okno = opisSwiadectwa(dane({ otrzymanie: '2026-10-31', wniosek: '2026-11-10', odmowa: '2026-12-10' }), '2026-12-27');
+    expect(sp(okno.glowny)).toBe('24 grudnia 2026 r.');
+    expect(sp(okno.status)).toBe('Pierwsza data minęła; ostatni dzień według art. 115 KC: 28 grudnia 2026 r.');
+    expect(okno.statusKlasa).toBe('pilne');
+    expect(opisSwiadectwa(dane({ otrzymanie: '2026-10-31', wniosek: '2026-11-10', odmowa: '2026-12-10' }), '2026-12-28').status).toContain('dziś');
+    expect(opisSwiadectwa(dane({ otrzymanie: '2026-10-31', wniosek: '2026-11-10', odmowa: '2026-12-10' }), '2026-12-29').statusKlasa).toBe('po-terminie');
   });
   it('przedawnienie pozwu o wydanie: 3 lata, 29 lutego → 28 lutego (art. 112 KC)', () => {
-    expect(terminySwiadectwa(dane({ ustanie: '2024-02-29' })).przedawnienie).toBe('2027-02-28');
+    expect(terminySwiadectwa(dane({ ustanie: '2024-02-29' })).przedawnienie).toMatchObject({ zdazDo: '2027-02-28', wedlugArt115: '2027-03-01', rozne: true });
+    expect(terminySwiadectwa(dane({ ustanie: '2026-10-30' })).przedawnienie).toMatchObject({ zdazDo: '2029-10-30', rozne: false });
   });
 });
 

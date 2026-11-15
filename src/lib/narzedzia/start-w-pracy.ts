@@ -11,14 +11,17 @@
 //   (art. 16 ust. 1 ustawy o PPK, t.j. Dz.U. 2026 poz. 192); zatrudnienie z 12 poprzednich miesięcy wlicza się (ust. 2);
 //   od 55 do 69 lat tylko na wniosek, od 70 lat wcale (art. 15).
 //
-// Interpretacje: terminy w dniach liczymy od dnia po dopuszczeniu (art. 111 § 2 KC przez art. 300 Kp). Przepisy nie
-// przesądzają, czy art. 115 KC przesuwa koniec z soboty i święta na obowiązki pracodawcy; podajemy datę bez przesunięcia
-// (najwcześniejszą) i osobno datę po przesunięciu. 3 miesiące zatrudnienia przy PPK upływają z końcem dnia poprzedzającego
+// Interpretacje: terminy w dniach liczymy od dnia po dopuszczeniu (art. 111 § 2 KC przez art. 300 Kp). Wszystkie terminy
+// to obowiązki pracodawcy, a nie czynności pracownika, więc według wspólnej konwencji z terminy.ts (pakiet „terminy”,
+// 2026-11-15) podajemy je bez przesunięcia z soboty i dnia wolnego (art. 115 KC), z jednym zdaniem dlaczego
+// (`BEZ_PRZESUNIECIA.pracodawca`). 3 miesiące zatrudnienia przy PPK upływają z końcem dnia poprzedzającego
 // dzień, który datą odpowiada pierwszemu dniowi pracy (pierwszy dzień pracy wlicza się do zatrudnienia), a gdy takiego
 // dnia nie ma, z końcem ostatniego dnia miesiąca (`koniecOkresu`, konwencja z terminy.ts): to wariant wcześniejszy niż
 // liczenie z art. 112 KC od dnia po zdarzeniu.
-import { przesunZDniaWolnego } from './termin-odwolania';
-import { dodajDni, koniecOkresu, poprawnaData } from './terminy';
+import { BEZ_PRZESUNIECIA, dataPoPolsku, dodajDni, koniecOkresu, poprawnaData } from './terminy';
+
+/** Jedno zdanie pod listą: dlaczego terminy podajemy bez przesunięcia z art. 115 KC. */
+export const TERMINY_PRACODAWCY = BEZ_PRZESUNIECIA.pracodawca;
 
 export type Termin = 'przed' | 'data';
 
@@ -29,8 +32,6 @@ export interface Obowiazek {
   kiedy: Termin;
   /** Ostatni dzień terminu (dla „przed”: pierwszy dzień pracy, przed jego rozpoczęciem). */
   data: string;
-  /** Data po przesunięciu z soboty albo dnia wolnego (art. 115 KC), gdy inna niż `data`. */
-  przesunieta?: string;
   podstawa: string;
 }
 
@@ -56,11 +57,7 @@ export function terminPpk(start: string): string {
   return new Date(Date.UTC(r, m, 10)).toISOString().slice(0, 10);
 }
 
-function wDniach(start: string, dni: number) {
-  const data = dodajDni(start, dni);
-  const { koniec } = przesunZDniaWolnego(data);
-  return { data, ...(koniec !== data ? { przesunieta: koniec } : {}) };
-}
+const wDniach = (start: string, dni: number) => ({ data: dodajDni(start, dni) });
 
 export function obowiazkiNaStart(d: DaneStartu): Obowiazek[] {
   if (!poprawnaData(d.start)) throw new Error('Wpisz pierwszy dzień pracy.');
@@ -87,16 +84,16 @@ export function obowiazkiNaStart(d: DaneStartu): Obowiazek[] {
     { klucz: 'zabezpieczenie', nazwa: 'Informacja, do których instytucji idą składki (ZUS) i o ochronie z ubezpieczeń', kiedy: 'data', ...wDniach(s, 30), podstawa: 'art. 29 § 3 pkt 2 Kodeksu pracy' },
   );
   if (d.ppk) {
-    const data = terminPpk(s);
-    const { koniec } = przesunZDniaWolnego(data);
     lista.push({
       klucz: 'ppk',
       nazwa: 'Zapis do PPK, chyba że złożysz pisemną deklarację rezygnacji (od 55 lat tylko na wniosek)',
       kiedy: 'data',
-      data,
-      ...(koniec !== data ? { przesunieta: koniec } : {}),
+      data: terminPpk(s),
       podstawa: 'art. 15 i 16 ust. 1 ustawy o PPK',
     });
   }
   return lista;
 }
+
+/** Opis terminu na liście: ten sam w HTML ze strony i w skrypcie. */
+export const opisTerminu = (o: Obowiazek) => (o.kiedy === 'przed' ? 'przed rozpoczęciem pracy' : `do ${dataPoPolsku(o.data)}`);

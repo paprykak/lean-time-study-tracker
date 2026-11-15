@@ -3,7 +3,7 @@
 // (art. 291 § 1, zawieszenie w czasie urlopu wychowawczego: art. 293¹), ekwiwalent po końcu umowy (art. 171).
 // Logika i przyjęte interpretacje: src/lib/narzedzia/zalegly-urlop.ts (testy obok).
 import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
-import { WIERSZE, opis, zaleglyUrlop } from '../../lib/narzedzia/zalegly-urlop';
+import { UDZIELENIE_BEZ_PRZESUNIECIA, WIERSZE, opis, zaleglyUrlop } from '../../lib/narzedzia/zalegly-urlop';
 import { dzisWPolsce } from '../../lib/narzedzia/terminy';
 
 const dzis = dzisWPolsce();
@@ -100,6 +100,7 @@ const faq = [
       <div aria-live="polite" aria-atomic="true">
         <p class="wynik-kwota" data-w="glowny">{o.glowny}</p>
         <p class="meta" data-w="opis">{o.opis}</p>
+        <p class="meta mt-1" data-w="zdanie" hidden={!o.zdanie}>{o.zdanie}</p>
         <p class="status-terminu" data-w="status" data-status={o.status}>{o.statusTekst}</p>
       </div>
       <div data-w="lata">
@@ -116,7 +117,7 @@ const faq = [
         Termin 30 września nie dotyczy części urlopu udzielanego na żądanie (art. 168 i 167<sup>2</sup> Kodeksu pracy).
         Przepis nie mówi, kiedy roszczenie o urlop staje się wymagalne: główna data to wcześniejszy z dwóch wariantów,
         które rozważamy, a przepis nie wyklucza innej daty. Po niej pracodawca może powołać się na przedawnienie
-        (art. 292), co nie oznacza, że urlop na pewno przepadł.
+        (art. 292), co nie oznacza, że urlop na pewno przepadł. {UDZIELENIE_BEZ_PRZESUNIECIA}
       </p>
       <p class="wynik-uwaga" data-uwaga="ekwiwalent" data-w="ekwiwalent" hidden></p>
       <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Wynik pokazuje przykładowy urlop z dwóch ostatnich lat.</p></noscript>
@@ -265,6 +266,7 @@ const faq = [
         pisz('etykieta', 'Niewykorzystany urlop');
         w('glowny').textContent = '—';
         w('opis').textContent = '';
+        w('zdanie').hidden = true;
         status.hidden = true;
         w('lata').replaceChildren();
         uwaga('urlop').hidden = false;
@@ -275,6 +277,8 @@ const faq = [
       pisz('etykieta', o.etykieta);
       pisz('glowny', o.glowny);
       pisz('opis', o.opis);
+      pisz('zdanie', o.zdanie);
+      w('zdanie').hidden = !o.zdanie;
       status.hidden = false;
       status.dataset.status = o.status;
       pisz('status', o.statusTekst);

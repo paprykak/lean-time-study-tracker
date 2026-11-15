@@ -16,9 +16,10 @@
 //
 // Interpretacje (opisane w „Jak liczymy”):
 // - terminy w dniach liczymy od dnia po zdarzeniu (art. 111 § 2 KC przez art. 300 Kp);
-// - przesunięcie końca terminu z soboty i dnia wolnego (art. 115 KC) przy terminach z Kodeksu pracy jest sporne, więc
-//   terminy, które musi zachować pracownik, podajemy bez przesunięcia (wariant najwcześniejszy), a datę po przesunięciu
-//   tylko jako dopisek; terminy pracodawcy też bez przesunięcia (pracownik liczy od nich swój ostrożny termin);
+// - terminy, które musi zachować pracownik (wniosek o sprostowanie, pozew, przedawnienie pozwu o wydanie), mają dwie
+//   daty według wspólnej konwencji z terminy.ts (pakiet „terminy”, 2026-11-15): „zdąż do” (bez przesunięcia) i, gdy
+//   koniec wypada w sobotę albo dzień wolny, ostatni dzień według art. 115 KC; terminy pracodawcy (wydanie, wysyłka,
+//   odpowiedź na wniosek) bez przesunięcia, bo to nie czynność pracownika, a pracownik liczy od nich swój ostrożny termin;
 // - pozew o sprostowanie, gdy pracodawca nie zawiadomił o odmowie: przepis nie podaje terminu (art. 97 § 2¹ zd. 3,
 //   art. 97¹ § 3–4); wariant ostrożny: 14 dni od upływu 7 dni pracodawcy na odpowiedź (jak po odmowie);
 // - pozew o wydanie: „w każdym czasie przed upływem terminu przedawnienia”; przedawnienie 3 lata od wymagalności
@@ -28,9 +29,21 @@
 //   To górna granica: należy się wynagrodzenie za faktyczny czas bez pracy z powodu świadectwa.
 import { zl } from './format';
 import { odmiana } from '../redakcja';
-import { przesunZDniaWolnego } from './termin-odwolania';
 import { zaIle } from './choroba-zawodowa';
-import { dataPoPolsku, dniMiedzy, dodajDni, dodajLata, poprawnaData } from './terminy';
+import {
+  BEZ_PRZESUNIECIA,
+  ETYKIETA_ART_115,
+  dataPoPolsku,
+  dniMiedzy,
+  dodajDni,
+  dodajLata,
+  fazaTerminu,
+  poprawnaData,
+  terminPracownika,
+  zdanieArt115,
+  type RodzajTerminu,
+  type TerminPracownika,
+} from './terminy';
 
 export const DNI_SPROSTOWANIE = 14;
 export const DNI_POZEW = 14;
@@ -78,12 +91,8 @@ export function bladSwiadectwa(d: DaneSwiadectwa, dzis: string): { pole: keyof D
   return null;
 }
 
-/** Termin w dniach od zdarzenia (art. 111 § 2 KC) bez przesunięcia i, gdy wypada w sobotę albo dzień wolny, po przesunięciu (art. 115 KC). */
-export function terminDni(zdarzenie: string, dni: number) {
-  const koniec = dodajDni(zdarzenie, dni);
-  const p = przesunZDniaWolnego(koniec);
-  return { koniec, poPrzesunieciu: p.koniec === koniec ? null : p.koniec, powod: p.przesuniecie[0]?.powod ?? null };
-}
+/** Termin pracownika w dniach od zdarzenia (art. 111 § 2 KC): „zdąż do” i ostatni dzień według art. 115 KC. */
+export const terminDni = (zdarzenie: string, dni: number): TerminPracownika => terminPracownika(dodajDni(zdarzenie, dni));
 
 /** Górna granica odszkodowania z art. 99 § 2 (zł, w groszach zaokrąglona połówką w górę). */
 export const granicaOdszkodowania = (wynagrodzenie: number) => Math.round(Math.round(wynagrodzenie * 100) * MNOZNIK_6_TYGODNI) / 100;
@@ -95,11 +104,12 @@ export function terminySwiadectwa(d: DaneSwiadectwa, dzis = '2100-12-31') {
     wydanie: d.kolejnaUmowa ? null : d.ustanie,
     wysylka: d.kolejnaUmowa ? null : dodajDni(d.ustanie, DNI_WYSYLKA),
     sprostowanie: puste(d.otrzymanie) ? null : terminDni(d.otrzymanie!, DNI_SPROSTOWANIE),
-    odpowiedz: puste(d.wniosek) ? null : terminDni(d.wniosek!, DNI_ODPOWIEDZ),
+    /** Termin pracodawcy: bez przesunięcia. */
+    odpowiedz: puste(d.wniosek) ? null : dodajDni(d.wniosek!, DNI_ODPOWIEDZ),
     pozew: puste(d.odmowa) ? null : terminDni(d.odmowa!, DNI_POZEW),
     /** Wariant ostrożny przy braku zawiadomienia: 14 dni od końca 7 dni pracodawcy. */
     pozewBezOdpowiedzi: puste(d.wniosek) || !puste(d.odmowa) ? null : terminDni(dodajDni(d.wniosek!, DNI_ODPOWIEDZ), DNI_POZEW),
-    przedawnienie: dodajLata(d.ustanie, 3),
+    przedawnienie: terminPracownika(dodajLata(d.ustanie, 3)),
     odszkodowanie: d.wynagrodzenie === undefined ? null : granicaOdszkodowania(d.wynagrodzenie),
   };
 }
@@ -135,12 +145,16 @@ export function stanTerminu(koniec: string, dzis: string): { tekst: string; klas
   return { tekst: zaIle(r), klasa: r <= 3 ? 'pilne' : r <= 7 ? 'wkrotce' : 'w-terminie' };
 }
 
-const NAZWA_WOLNEGO = (powod: string | null) => (powod === 'sobota' ? 'sobota' : powod === 'niedziela' ? 'niedziela' : 'dzień wolny od pracy');
+/** Stan terminu pracownika: jak `stanTerminu` do daty „zdąż do”, potem okno do dnia według art. 115 KC. */
+export function stanTerminuPracownika(t: TerminPracownika, dzis: string): { tekst: string; klasa: KlasaStatusu } {
+  const f = fazaTerminu(t, dzis);
+  if (f.faza === 'tylko-art-115') return { tekst: `pierwsza data minęła; ostatni dzień według art. 115 KC: ${f.dni === 0 ? 'dziś' : dataPoPolsku(t.wedlugArt115)}`, klasa: 'pilne' };
+  return stanTerminu(f.faza === 'w-terminie' ? t.zdazDo : t.wedlugArt115, dzis);
+}
 
-const dopiskPrzesuniecia = (t: { koniec: string; poPrzesunieciu: string | null; powod: string | null }) =>
-  t.poPrzesunieciu
-    ? ` Ten dzień to ${NAZWA_WOLNEGO(t.powod)}; czy termin przesuwa się na ${dataPoPolsku(t.poPrzesunieciu)} (art. 115 Kodeksu cywilnego), przepisy nie przesądzają, więc bezpieczniej zdążyć do ${dataPoPolsku(t.koniec)}`
-    : '';
+/** Dopisek pod terminem pracownika: data według art. 115 KC i jedno zdanie, kiedy przesunięcie działa. */
+const dopiskArt115 = (t: TerminPracownika, rodzaj: RodzajTerminu) => (t.rozne ? ` ${ETYKIETA_ART_115}: ${dataPoPolsku(t.wedlugArt115)} ${zdanieArt115(t, rodzaj)}` : '');
+const zdaz = (t: TerminPracownika) => `${t.rozne ? 'zdąż do' : 'do'} ${dataPoPolsku(t.zdazDo)}`;
 
 const PRZYWROCENIE = 'Gdy termin minął bez Twojej winy, sąd pracy może go przywrócić na wniosek złożony w 7 dni od ustania przyczyny spóźnienia (art. 265 Kodeksu pracy).';
 
@@ -169,21 +183,21 @@ export function opisSwiadectwa(d: DaneSwiadectwa, dzis: string): OpisSwiadectwa 
   }
 
   // Terminy pracownika: wniosek o sprostowanie, pozew po odmowie albo wariant ostrożny bez odpowiedzi.
-  const terminyPracownika: { koniec: string; nazwa: string; przesuniety: boolean }[] = [];
+  const terminyPracownika: { termin: TerminPracownika; nazwa: string }[] = [];
   if (t.sprostowanie) {
-    const s = stanTerminu(t.sprostowanie.koniec, dzis);
+    const s = stanTerminuPracownika(t.sprostowanie, dzis);
     pozycje.push({
       klucz: 'sprostowanie',
       etykieta: 'Wniosek o sprostowanie',
-      wartosc: puste(d.wniosek) ? `do ${dataPoPolsku(t.sprostowanie.koniec)}: ${s.tekst}` : `do ${dataPoPolsku(t.sprostowanie.koniec)}`,
-      opis: `14 dni od otrzymania świadectwa (art. 97 § 2¹); do tego dnia wniosek powinien dotrzeć do pracodawcy.${dopiskPrzesuniecia(t.sprostowanie)}`,
+      wartosc: puste(d.wniosek) ? `${zdaz(t.sprostowanie)}: ${s.tekst}` : zdaz(t.sprostowanie),
+      opis: `14 dni od otrzymania świadectwa (art. 97 § 2¹); do tego dnia wniosek powinien dotrzeć do pracodawcy.${dopiskArt115(t.sprostowanie, 'pracodawca')}`,
     });
-    if (puste(d.wniosek) && puste(d.odmowa)) terminyPracownika.push({ koniec: t.sprostowanie.koniec, nazwa: 'Wniosek o sprostowanie', przesuniety: !!t.sprostowanie.poPrzesunieciu });
-    if (!puste(d.wniosek) && d.wniosek! > t.sprostowanie.koniec) {
-      const wPrzesunietym = !!t.sprostowanie.poPrzesunieciu && d.wniosek! <= t.sprostowanie.poPrzesunieciu;
+    if (puste(d.wniosek) && puste(d.odmowa)) terminyPracownika.push({ termin: t.sprostowanie, nazwa: 'Wniosek o sprostowanie' });
+    if (!puste(d.wniosek) && d.wniosek! > t.sprostowanie.zdazDo) {
+      const wPrzesunietym = d.wniosek! <= t.sprostowanie.wedlugArt115;
       uwagi.push(
         wPrzesunietym
-          ? `Wniosek dotarł po ${dataPoPolsku(t.sprostowanie.koniec)} Jest w terminie tylko wtedy, gdy termin przesuwa się z dnia wolnego na następny dzień roboczy (art. 115 Kodeksu cywilnego). ${PRZYWROCENIE}`
+          ? `Wniosek dotarł po ${dataPoPolsku(t.sprostowanie.zdazDo)} Jest w terminie, jeśli liczyć ostatni dzień według art. 115 Kodeksu cywilnego (${dataPoPolsku(t.sprostowanie.wedlugArt115)}). ${PRZYWROCENIE}`
           : `Wniosek dotarł po terminie 14 dni z art. 97 § 2¹. ${PRZYWROCENIE}`,
       );
     }
@@ -195,7 +209,7 @@ export function opisSwiadectwa(d: DaneSwiadectwa, dzis: string): OpisSwiadectwa 
     pozycje.push({
       klucz: 'odpowiedz',
       etykieta: 'Odpowiedź pracodawcy',
-      wartosc: `do ${dataPoPolsku(t.odpowiedz.koniec)}`,
+      wartosc: `do ${dataPoPolsku(t.odpowiedz)}`,
       opis: 'W 7 dni od otrzymania wniosku pracodawca zawiadamia o odmowie albo wydaje nowe świadectwo (§ 7 ust. 1 rozporządzenia w sprawie świadectwa pracy).',
     });
   } else {
@@ -203,23 +217,23 @@ export function opisSwiadectwa(d: DaneSwiadectwa, dzis: string): OpisSwiadectwa 
   }
 
   if (t.pozew) {
-    const s = stanTerminu(t.pozew.koniec, dzis);
+    const s = stanTerminuPracownika(t.pozew, dzis);
     pozycje.push({
       klucz: 'pozew',
       etykieta: 'Pozew o sprostowanie',
-      wartosc: `do ${dataPoPolsku(t.pozew.koniec)}: ${s.tekst}`,
-      opis: `14 dni od zawiadomienia o odmowie, do sądu pracy (art. 97 § 2¹).${dopiskPrzesuniecia(t.pozew)}`,
+      wartosc: `${zdaz(t.pozew)}: ${s.tekst}`,
+      opis: `14 dni od zawiadomienia o odmowie, do sądu pracy (art. 97 § 2¹).${dopiskArt115(t.pozew, 'sad')}`,
     });
-    terminyPracownika.push({ koniec: t.pozew.koniec, nazwa: 'Pozew o sprostowanie', przesuniety: !!t.pozew.poPrzesunieciu });
+    terminyPracownika.push({ termin: t.pozew, nazwa: 'Pozew o sprostowanie' });
   } else if (t.pozewBezOdpowiedzi) {
-    const s = stanTerminu(t.pozewBezOdpowiedzi.koniec, dzis);
+    const s = stanTerminuPracownika(t.pozewBezOdpowiedzi, dzis);
     pozycje.push({
       klucz: 'pozew',
       etykieta: 'Pozew o sprostowanie',
-      wartosc: `ostrożnie do ${dataPoPolsku(t.pozewBezOdpowiedzi.koniec)}: ${s.tekst}`,
-      opis: 'Gdy pracodawca nie zawiadomi o odmowie, przepis nie podaje terminu: pozew wnosi się do sądu pracy (art. 97 § 2¹), w każdym czasie przed przedawnieniem (art. 97¹ § 3–4). Ostrożnie liczymy 14 dni od końca terminu pracodawcy, jak po odmowie.',
+      wartosc: `ostrożnie ${zdaz(t.pozewBezOdpowiedzi)}: ${s.tekst}`,
+      opis: `Gdy pracodawca nie zawiadomi o odmowie, przepis nie podaje terminu: pozew wnosi się do sądu pracy (art. 97 § 2¹), w każdym czasie przed przedawnieniem (art. 97¹ § 3–4). Ostrożnie liczymy 14 dni od końca terminu pracodawcy, jak po odmowie.${dopiskArt115(t.pozewBezOdpowiedzi, 'sad')}`,
     });
-    terminyPracownika.push({ koniec: t.pozewBezOdpowiedzi.koniec, nazwa: 'Pozew o sprostowanie (ostrożnie)', przesuniety: !!t.pozewBezOdpowiedzi.poPrzesunieciu });
+    terminyPracownika.push({ termin: t.pozewBezOdpowiedzi, nazwa: 'Pozew o sprostowanie (ostrożnie)' });
   } else {
     pozycje.push({ klucz: 'pozew', etykieta: 'Pozew o sprostowanie', wartosc: '14 dni od odmowy', opis: 'Termin od zawiadomienia o odmowie sprostowania; gdy pracodawca nie zawiadomi, pozew wnosi się do sądu pracy bez terminu w przepisie (art. 97 § 2¹).' });
   }
@@ -235,8 +249,8 @@ export function opisSwiadectwa(d: DaneSwiadectwa, dzis: string): OpisSwiadectwa 
       : {
           klucz: 'wydanie-sad',
           etykieta: 'Gdy nie wyda świadectwa',
-          wartosc: `pozew do ${dataPoPolsku(t.przedawnienie)}`,
-          opis: 'Pozew o zobowiązanie pracodawcy do wydania świadectwa, w każdym czasie przed przedawnieniem (art. 97¹ § 1 i 3): 3 lata (art. 291 § 1), liczone od ostatniego dnia umowy. Gdy pracodawca nie istnieje albo z innych przyczyn pozew przeciw niemu jest niemożliwy, pozew o ustalenie prawa do świadectwa (art. 97¹ § 2).',
+          wartosc: `pozew ${zdaz(t.przedawnienie)}`,
+          opis: `Pozew o zobowiązanie pracodawcy do wydania świadectwa, w każdym czasie przed przedawnieniem (art. 97¹ § 1 i 3): 3 lata (art. 291 § 1), liczone od ostatniego dnia umowy. Gdy pracodawca nie istnieje albo z innych przyczyn pozew przeciw niemu jest niemożliwy, pozew o ustalenie prawa do świadectwa (art. 97¹ § 2).${dopiskArt115(t.przedawnienie, 'przedawnienie')}`,
         },
   );
 
@@ -254,6 +268,7 @@ export function opisSwiadectwa(d: DaneSwiadectwa, dzis: string): OpisSwiadectwa 
   uwagi.push('Pracodawca nie może uzależniać wydania świadectwa od wcześniejszego rozliczenia się z nim, np. ze zwrotu odzieży roboczej (art. 97 § 1³). Za niewydanie świadectwa w terminie grozi grzywna od 2000 do 60 000 zł (art. 282 § 1 pkt 3).');
   uwagi.push('Odszkodowanie wymaga wykazania związku między pozostawaniem bez pracy a niewydaniem w terminie albo wydaniem niewłaściwego świadectwa. Inną szkodę niż utracone zarobki można dochodzić na zasadach ogólnych, z art. 471 Kodeksu cywilnego przez art. 300 Kodeksu pracy (wyrok Sądu Najwyższego z 13 października 2004 r., II PK 36/04).');
   if (!uwagi.some((u) => u.includes('art. 265'))) uwagi.push(PRZYWROCENIE);
+  uwagi.push(`Terminy wydania świadectwa i odpowiedzi na wniosek to terminy pracodawcy. ${BEZ_PRZESUNIECIA.pracodawca}`);
 
   // Najbliższy termin pracownika, który jeszcze nie minął; gdy wszystkie minęły, ostatni.
   let glowny: string;
@@ -261,11 +276,13 @@ export function opisSwiadectwa(d: DaneSwiadectwa, dzis: string): OpisSwiadectwa 
   let status: string;
   let statusKlasa: KlasaStatusu;
   if (terminyPracownika.length) {
-    const przyszle = terminyPracownika.filter((x) => x.koniec >= dzis).sort((a, b) => (a.koniec < b.koniec ? -1 : 1));
+    const przyszle = terminyPracownika.filter((x) => x.termin.wedlugArt115 >= dzis).sort((a, b) => (a.termin.zdazDo < b.termin.zdazDo ? -1 : 1));
     const wybrany = przyszle[0] ?? terminyPracownika[terminyPracownika.length - 1];
-    const s = stanTerminu(wybrany.koniec, dzis);
-    glowny = dataPoPolsku(wybrany.koniec);
-    glownyOpis = `${wybrany.nazwa}: ostatni dzień${wybrany.przesuniety ? ', bez przesunięcia z dnia wolnego' : ''}`;
+    const s = stanTerminuPracownika(wybrany.termin, dzis);
+    glowny = dataPoPolsku(wybrany.termin.zdazDo);
+    glownyOpis = wybrany.termin.rozne
+      ? `${wybrany.nazwa}: zdąż do tego dnia; ${ETYKIETA_ART_115.charAt(0).toLowerCase()}${ETYKIETA_ART_115.slice(1)}: ${dataPoPolsku(wybrany.termin.wedlugArt115)}`
+      : `${wybrany.nazwa}: ostatni dzień`;
     status = wielka(s.tekst);
     statusKlasa = s.klasa;
   } else if (t.wydanie) {

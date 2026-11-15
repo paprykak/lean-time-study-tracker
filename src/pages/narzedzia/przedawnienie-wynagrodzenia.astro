@@ -2,15 +2,16 @@
 // Przedawnienie wynagrodzenia i nadgodzin: 3 lata od dnia wymagalności (art. 291 § 1 Kp), wypłata w dniu z art. 85
 // § 1–3, przerwanie biegu (art. 295). Logika: src/lib/narzedzia/przedawnienie.ts (testy obok).
 import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
-import { wyplatyDoDochodzenia } from '../../lib/narzedzia/przedawnienie';
+import { opisPrzedawnienia, wyplatyDoDochodzenia } from '../../lib/narzedzia/przedawnienie';
 import { nazwaMiesiaca } from '../../lib/narzedzia/czas-pracy';
-import { dataPoPolsku, dzisWPolsce, ileDni } from '../../lib/narzedzia/terminy';
+import { dzisWPolsce } from '../../lib/narzedzia/terminy';
 
 const dzis = dzisWPolsce();
 const lista = wyplatyDoDochodzenia(dzis, 'nastepny', 10);
 const [pierwsza] = lista;
 if (!pierwsza) throw new Error('Brak wypłat do pokazania');
 const miesiac = (za: string) => `${nazwaMiesiaca(Number(za.slice(5, 7)))} ${za.slice(0, 4)} r.`;
+const o = opisPrzedawnienia({ wymagalne: pierwsza.wymagalna, koniec: pierwsza.koniec, art115: pierwsza.art115 }, dzis);
 
 const faq = [
   {
@@ -79,15 +80,16 @@ const faq = [
       <h2 id="wynik-tytul" class="etykieta">Najstarsza wypłata, o którą możesz wystąpić</h2>
       <div aria-live="polite" aria-atomic="true">
         <p class="wynik-data" data-w="najstarsza">za {miesiac(pierwsza.za)}</p>
-        <p class="meta" data-w="opis">Wypłata z {dataPoPolsku(pierwsza.wymagalna)} przedawnia się z końcem dnia {dataPoPolsku(pierwsza.koniec)}</p>
-        <p class="status-terminu" data-w="status" data-status={pierwsza.status}>Zostało: {ileDni(pierwsza.zostalo).replace('za ', '')}</p>
+        <p class="meta" data-w="opis">{o.opis}</p>
+        <p class="meta mt-1" data-w="zdanie" hidden={!o.zdanie}>{o.zdanie}</p>
+        <p class="status-terminu" data-w="status" data-status={pierwsza.status}>{o.status}</p>
       </div>
       <dl class="wynik-lista">
         <div data-wiersz="inna" hidden><dt>Inna należność przedawnia się</dt><dd data-w="inna"></dd></div>
       </dl>
       <h3 class="etykieta mt-5">Kolejne terminy</h3>
       <ul class="mt-2 grid gap-1 text-[0.9375rem]" data-w="lista">
-        {lista.slice(1, 6).map((w) => <li>za {miesiac(w.za)}: do {dataPoPolsku(w.koniec)}</li>)}
+        {lista.slice(1, 6).map((w) => <li>za {miesiac(w.za)}: do {opisPrzedawnienia({ wymagalne: w.wymagalna, koniec: w.koniec, art115: w.art115 }, dzis).krotko}</li>)}
       </ul>
       <p class="wynik-uwaga">To najwcześniejszy możliwy termin: pozew złożony najpóźniej tego dnia jest w terminie, a bieg przedawnienia przerywa też uznanie długu przez pracodawcę (art. 295 Kodeksu pracy).</p>
       <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Wynik pokazuje wypłatę 10. dnia następnego miesiąca.</p></noscript>
@@ -121,9 +123,9 @@ const faq = [
 <script>
   import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
-  import { przedawnienie, wyplatyDoDochodzenia, type RodzajWyplaty } from '../../lib/narzedzia/przedawnienie';
+  import { opisPrzedawnienia, przedawnienie, wyplatyDoDochodzenia, type RodzajWyplaty } from '../../lib/narzedzia/przedawnienie';
   import { nazwaMiesiaca } from '../../lib/narzedzia/czas-pracy';
-  import { dataPoPolsku, ileDni, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { ileDni, poprawnaData } from '../../lib/narzedzia/terminy';
   import { typografia } from '../../lib/typografia.mjs';
 
   const form = document.querySelector<HTMLFormElement>('[data-przedawnienie]');
@@ -134,6 +136,7 @@ const faq = [
       w(k).textContent = typografia(tekst);
     };
     const miesiac = (za: string) => `${nazwaMiesiaca(Number(za.slice(5, 7)))} ${za.slice(0, 4)} r.`;
+const o = opisPrzedawnienia({ wymagalne: pierwsza.wymagalna, koniec: pierwsza.koniec, art115: pierwsza.art115 }, dzis);
     const przelicz = () => {
       const rodzaj = el('rodzaj').value as RodzajWyplaty;
       form.querySelector<HTMLElement>('[data-pole="dzien"]')!.hidden = rodzaj === 'ostatni';
@@ -152,6 +155,7 @@ const faq = [
       if (blad) {
         w('najstarsza').textContent = '—';
         w('opis').textContent = '';
+        w('zdanie').hidden = true;
         status.hidden = true;
         return;
       }
@@ -159,18 +163,22 @@ const faq = [
       const [p] = lista;
       status.hidden = !p;
       if (p) {
+        const o = opisPrzedawnienia({ wymagalne: p.wymagalna, koniec: p.koniec, art115: p.art115 }, naDzien);
         pisz('najstarsza', `za ${miesiac(p.za)}`);
-        pisz('opis', `Wypłata z ${dataPoPolsku(p.wymagalna)} przedawnia się z końcem dnia ${dataPoPolsku(p.koniec)}`);
+        pisz('opis', o.opis);
+        pisz('zdanie', o.zdanie);
+        w('zdanie').hidden = !o.zdanie;
         status.dataset.status = p.status;
-        pisz('status', `Zostało: ${ileDni(p.zostalo).replace('za ', '')}`);
+        pisz('status', o.status);
       } else {
         w('najstarsza').textContent = '—';
         pisz('opis', 'W tym dniu nie ma jeszcze wymagalnej wypłaty.');
+        w('zdanie').hidden = true;
       }
       w('lista').replaceChildren(
         ...lista.slice(1, 6).map((x) => {
           const li = document.createElement('li');
-          li.textContent = typografia(`za ${miesiac(x.za)}: do ${dataPoPolsku(x.koniec)}`);
+          li.textContent = typografia(`za ${miesiac(x.za)}: do ${opisPrzedawnienia({ wymagalne: x.wymagalna, koniec: x.koniec, art115: x.art115 }, naDzien).krotko}`);
           return li;
         }),
       );
@@ -178,7 +186,7 @@ const faq = [
       wiersz.hidden = !inna;
       if (inna) {
         const r = przedawnienie(inna, naDzien);
-        pisz('inna', `${dataPoPolsku(r.koniec)} (${ileDni(r.zostalo)})`);
+        pisz('inna', `${opisPrzedawnienia(r, naDzien).krotko} (${ileDni(r.zostalo)})`);
       }
     };
     form.addEventListener('input', przelicz);

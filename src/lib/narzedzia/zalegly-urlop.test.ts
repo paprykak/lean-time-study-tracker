@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { koniecPrzedawnienia, opis, zaleglyUrlop } from './zalegly-urlop';
+import { UDZIELENIE_BEZ_PRZESUNIECIA, koniecPrzedawnienia, opis, zaleglyUrlop } from './zalegly-urlop';
 
 // Daty i liczby dni sprawdzone niezależnie w Pythonie (datetime, calendar): skrypt zalegly-urlop.py.
 const NA = '2026-11-12';
@@ -8,7 +8,9 @@ describe('zaległy urlop (art. 168, 291 § 1, 293¹ Kp; art. 112 KC)', () => {
   it('urlop za 2025: termin 30.09.2026 minął 43 dni temu; przedawnienie najwcześniej 31.12.2028, później 30.09.2029', () => {
     const [r] = zaleglyUrlop({ urlopy: [{ rok: 2025, dni: 6 }], naDzien: NA }).lata;
     expect(r.udzielenie).toEqual({ data: '2026-09-30', zostalo: -43, status: 'po-terminie' });
-    expect(r.przedawnienie).toEqual({ data: '2028-12-31', zostalo: 780, status: 'w-terminie' });
+    // 31.12.2028 to niedziela: według art. 115 KC 2.01.2029 (1 stycznia to Nowy Rok; raporty/terminy/art115.py).
+    expect(r.przedawnienie).toEqual({ data: '2028-12-31', zostalo: 780, status: 'w-terminie', art115: '2029-01-02', zostalo115: 782 });
+    expect(r.przedawnieniePozniej).toMatchObject({ data: '2029-09-30', art115: '2029-10-01' });
     expect(r.przedawnieniePozniej.data).toBe('2029-09-30');
     expect(r.biezacy).toBe(false);
     expect(r.zawieszenie).toBe(0);
@@ -136,5 +138,35 @@ describe('zaległy urlop (art. 168, 291 § 1, 293¹ Kp; art. 112 KC)', () => {
     const e = opis(zaleglyUrlop({ urlopy: [{ rok: 2025, dni: 1 }], naDzien: NA, koniecUmowy: '2026-03-15' }));
     expect(e.glowny).toBe('1 dzień');
     expect(e.statusTekst).toBe('Zostało: 854 dni');
+  });
+});
+
+describe('koniec przedawnienia w dzień wolny (art. 115 KC)', () => {
+  const sp = (t: string) => t.replace(/\s/g, ' ');
+  // Urlop za 2025 r.: wariant wcześniejszy 31.12.2028 (niedziela), według art. 115 KC 2.01.2029.
+  it('przed pierwszą datą: zdanie o art. 115 KC i obie daty', () => {
+    const o = opis(zaleglyUrlop({ urlopy: [{ rok: 2025, dni: 3 }], naDzien: '2026-11-12' }));
+    expect(sp(o.opis)).toBe('Pierwszy termin przedawnienia (wariant wcześniejszy): urlop za 2025 r., 31 grudnia 2028 r.; według art. 115 KC: 2 stycznia 2029 r.');
+    expect(sp(o.zdanie)).toMatch(/^31 grudnia 2028 r\. to niedziela: .*\(art\. 115 Kodeksu cywilnego\)\. /);
+    expect(sp(o.lata[0].wiersze[2].dd)).toBe('30 września 2029 r.; według art. 115 KC: 1 października 2029 r.');
+  });
+  it('między datami: status pilny, bez komunikatu o upływie', () => {
+    const w = zaleglyUrlop({ urlopy: [{ rok: 2025, dni: 3 }], naDzien: '2029-01-01' });
+    expect(w.lata[0].przedawnienie).toMatchObject({ zostalo: -1, zostalo115: 1, status: 'pilne' });
+    expect(sp(opis(w).statusTekst)).toBe('Pierwsza data minęła; ostatni dzień według art. 115 KC: 2 stycznia 2029 r.');
+    expect(opis(zaleglyUrlop({ urlopy: [{ rok: 2025, dni: 3 }], naDzien: '2029-01-02' })).statusTekst).toBe('Pierwsza data minęła; ostatni dzień według art. 115 KC: dziś');
+    const po = opis(zaleglyUrlop({ urlopy: [{ rok: 2025, dni: 3 }], naDzien: '2029-01-03' }));
+    expect(po.status).toBe('po-terminie');
+    expect(po.statusTekst).toContain('minął wczoraj');
+  });
+  it('dzień roboczy: bez zdania', () => {
+    // Urlop za 2026 r.: 31.12.2029 to poniedziałek.
+    expect(opis(zaleglyUrlop({ urlopy: [{ rok: 2026, dni: 3 }], naDzien: '2026-11-12' })).zdanie).toBe('');
+  });
+  it('termin udzielenia (pracodawca) bez przesunięcia: 30.09.2028 w sobotę zostaje', () => {
+    const [r] = zaleglyUrlop({ urlopy: [{ rok: 2027, dni: 2 }], naDzien: '2028-02-29' }).lata;
+    expect(r.udzielenie.data).toBe('2028-09-30');
+    expect(r.udzielenie.art115).toBeUndefined();
+    expect(UDZIELENIE_BEZ_PRZESUNIECIA).toContain('art. 115 Kodeksu cywilnego');
   });
 });

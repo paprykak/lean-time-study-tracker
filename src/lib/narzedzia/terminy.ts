@@ -174,3 +174,13 @@ export const BEZ_PRZESUNIECIA = {
   pracodawca: 'Terminy pracodawcy podajemy bez przesunięcia z soboty i dnia wolnego (art. 115 Kodeksu cywilnego), bo to nie Twoja czynność; gdy taki termin kończy się w dzień wolny, pracodawca może się powołać na przesunięcie na następny dzień roboczy.',
   okres: 'Koniec okresu podajemy bez przesunięcia z soboty i dnia wolnego: art. 115 Kodeksu cywilnego dotyczy terminów do wykonania czynności, a nie okresów, które po prostu mijają.',
 };
+
+/**
+ * Gdzie jest dzień `dzis` względem terminu pracownika: przed końcem „zdąż do” (`dni` do niego), już po nim, ale nie po
+ * dniu z art. 115 KC (`dni` do tego dnia), albo po obu (`dni` ujemne, od dnia z art. 115 KC).
+ */
+export function fazaTerminu(t: TerminPracownika, dzis: string): { faza: 'w-terminie' | 'tylko-art-115' | 'po-terminie'; dni: number } {
+  if (dzis <= t.zdazDo) return { faza: 'w-terminie', dni: dniMiedzy(dzis, t.zdazDo) };
+  if (dzis <= t.wedlugArt115) return { faza: 'tylko-art-115', dni: dniMiedzy(dzis, t.wedlugArt115) };
+  return { faza: 'po-terminie', dni: dniMiedzy(dzis, t.wedlugArt115) };
+}

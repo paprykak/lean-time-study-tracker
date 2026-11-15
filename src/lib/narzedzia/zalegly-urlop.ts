@@ -29,10 +29,13 @@
 // 3. Ekwiwalent: przepis nie wskazuje dnia wymagalności. Wariant wcześniejszy: dzień rozwiązania umowy; od niego
 //    3 lata (art. 291 § 1, art. 112 KC). Art. 293¹ dotyczy roszczenia o urlop, więc urlopu
 //    wychowawczego przy ekwiwalencie nie uwzględniamy.
-// 4. Nie przesuwamy końca terminu na koniec roku (art. 118 KC) ani na dzień roboczy (art. 115 KC): Kodeks pracy ma
-//    własne przepisy o przedawnieniu, a gdyby sąd przyjął dłuższy termin, nasza data i tak jest bezpieczna.
+// 4. Nie przesuwamy końca terminu na koniec roku (art. 118 KC): Kodeks pracy ma własne przepisy o przedawnieniu, a gdyby
+//    sąd przyjął dłuższy termin, nasza data i tak jest bezpieczna.
+// 5. Koniec przedawnienia w sobotę albo dzień ustawowo wolny (np. 31 grudnia w niedzielę): wspólna konwencja z terminy.ts
+//    (pakiet „terminy”, 2026-11-15), czyli „zdąż do” (`data`) i ostatni dzień według art. 115 KC (`art115`). Termin
+//    udzielenia urlopu (30 września, art. 168) to obowiązek pracodawcy: bez przesunięcia.
 import { odmiana } from '../redakcja';
-import { dataPoPolsku, dniMiedzy, dodajDni, dodajLata, dodajMiesiace, ileDni, poprawnaData } from './terminy';
+import { BEZ_PRZESUNIECIA, ETYKIETA_ART_115, dataPoPolsku, dniMiedzy, dodajDni, dodajLata, dodajMiesiace, ileDni, poprawnaData, terminPracownika, zdanieArt115 } from './terminy';
 
 export const LATA_PRZEDAWNIENIA = 3;
 export const MIN_ROK = 2000;
@@ -56,6 +59,10 @@ export interface Termin {
   data: string;
   zostalo: number;
   status: Status;
+  /** Tylko przedawnienie (termin pracownika): ostatni dzień według art. 115 KC, gdy inny niż `data`. */
+  art115?: string;
+  /** Dni do `art115` (ujemne po nim). */
+  zostalo115?: number;
 }
 
 export interface WynikRoku {
@@ -93,6 +100,15 @@ const status = (zostalo: number): Status => (zostalo < 0 ? 'po-terminie' : zosta
 export const termin = (data: string, naDzien: string): Termin => {
   const zostalo = dniMiedzy(naDzien, data);
   return { data, zostalo, status: status(zostalo) };
+};
+
+/** Termin przedawnienia (termin pracownika): jak `termin`, a gdy koniec wypada w dzień wolny, także dzień z art. 115 KC. */
+export const terminPrzedawnienia = (data: string, naDzien: string): Termin => {
+  const t = terminPracownika(data);
+  if (!t.rozne) return termin(data, naDzien);
+  const zostalo = dniMiedzy(naDzien, data);
+  const zostalo115 = dniMiedzy(naDzien, t.wedlugArt115);
+  return { data, zostalo, status: zostalo < 0 && zostalo115 >= 0 ? 'pilne' : status(zostalo), art115: t.wedlugArt115, zostalo115 };
 };
 
 /** Liczba dni okresu `o` w przedziale (po, doDnia]. */
@@ -179,8 +195,8 @@ export function zaleglyUrlop({ urlopy, naDzien, koniecUmowy = null, wychowawczy 
         dni: u.dni,
         biezacy: u.rok === rokDzis,
         udzielenie: termin(terminUdzielenia(u.rok), naDzien),
-        przedawnienie: termin(p1.koniec, naDzien),
-        przedawnieniePozniej: termin(p2.koniec, naDzien),
+        przedawnienie: terminPrzedawnienia(p1.koniec, naDzien),
+        przedawnieniePozniej: terminPrzedawnienia(p2.koniec, naDzien),
         zawieszenie: p1.zawieszenie,
         przedawnionyPrzedKoncemUmowy: !!koniecUmowy && p1.koniec <= koniecUmowy,
       };
@@ -191,7 +207,7 @@ export function zaleglyUrlop({ urlopy, naDzien, koniecUmowy = null, wychowawczy 
         koniecUmowy,
         dni: razem,
         wyplataNajpozniej10: dodajDni(koniecUmowy, 10),
-        przedawnienie: termin(dodajLata(koniecUmowy, LATA_PRZEDAWNIENIA), naDzien),
+        przedawnienie: terminPrzedawnienia(dodajLata(koniecUmowy, LATA_PRZEDAWNIENIA), naDzien),
       }
     : null;
   return { lata, razem, ekwiwalent };
@@ -201,14 +217,21 @@ export function zaleglyUrlop({ urlopy, naDzien, koniecUmowy = null, wychowawczy 
 // Data przedawnienia to dzień, po którym pracodawca może uchylić się od zaspokojenia roszczenia (art. 292);
 // komunikaty nie sugerują pewnej utraty urlopu (zob. wyrok TSUE C-120/21 w komentarzu na górze).
 const DNI: [string, string, string] = ['dzień', 'dni', 'dni'];
-const kiedy = (t: Termin) => `${dataPoPolsku(t.data)} (${ileDni(t.zostalo)})`;
+const art115 = (t: Termin) => (t.art115 ? `; według art. 115 KC: ${dataPoPolsku(t.art115)}` : '');
+const kiedy = (t: Termin) => `${dataPoPolsku(t.data)} (${ileDni(t.zostalo)})${art115(t)}`;
 export const NIE_STRACONE = 'roszczenie nie musi być stracone (art. 292, wyrok TSUE C-120/21)';
 const stan = (t: Termin) =>
-  t.zostalo < 0
-    ? `Najwcześniejszy termin przedawnienia minął ${ileDni(t.zostalo)}; ${NIE_STRACONE}`
-    : t.zostalo === 0
-      ? 'Ostatni dzień: dziś'
-      : `Zostało: ${odmiana(t.zostalo, DNI)}`;
+  t.zostalo < 0 && t.zostalo115 !== undefined && t.zostalo115 >= 0
+    ? `Pierwsza data minęła; ${ETYKIETA_ART_115.charAt(0).toLowerCase()}${ETYKIETA_ART_115.slice(1)}: ${t.zostalo115 === 0 ? 'dziś' : dataPoPolsku(t.art115!)}`
+    : t.zostalo < 0
+      ? `Najwcześniejszy termin przedawnienia minął ${ileDni(t.zostalo115 !== undefined ? t.zostalo115 : t.zostalo)}; ${NIE_STRACONE}`
+      : t.zostalo === 0
+        ? 'Ostatni dzień: dziś'
+        : `Zostało: ${odmiana(t.zostalo, DNI)}`;
+/** Jedno zdanie o art. 115 KC pod głównym terminem przedawnienia (puste, gdy koniec to dzień roboczy). */
+const zdanie = (t: Termin) => zdanieArt115(terminPracownika(t.data), 'przedawnienie');
+/** Termin udzielenia (art. 168) to obowiązek pracodawcy: jedno zdanie, dlaczego bez przesunięcia. */
+export const UDZIELENIE_BEZ_PRZESUNIECIA = `Termin 30 września to termin pracodawcy. ${BEZ_PRZESUNIECIA.pracodawca}`;
 const przedawnienieRoku = (t: Termin) =>
   t.zostalo < 0 ? `${kiedy(t)}; po tej dacie pracodawca może powołać się na przedawnienie (art. 292)` : kiedy(t);
 
@@ -224,6 +247,8 @@ export interface Opis {
   opis: string;
   status: Status;
   statusTekst: string;
+  /** Jedno zdanie o art. 115 KC, gdy główna data wypada w sobotę albo dzień wolny. */
+  zdanie: string;
   lata: OpisRoku[];
 }
 
@@ -248,7 +273,7 @@ export function opis(w: Wynik): Opis {
         dt: 'Przedawnienie, wariant wcześniejszy',
         dd: `${przedawnienieRoku(r.przedawnienie)}${r.zawieszenie ? '; z uwzględnieniem urlopu wychowawczego (art. 293¹)' : ''}`,
       });
-      wiersze.push({ dt: 'Wariant późniejszy', dd: dataPoPolsku(r.przedawnieniePozniej.data) });
+      wiersze.push({ dt: 'Wariant późniejszy', dd: `${dataPoPolsku(r.przedawnieniePozniej.data)}${art115(r.przedawnieniePozniej)}` });
     }
     return { rok: r.rok, tytul: `Urlop za ${r.rok} r.: ${odmiana(r.dni, DNI)}`, wiersze };
   });
@@ -258,9 +283,10 @@ export function opis(w: Wynik): Opis {
     return {
       etykieta: 'Ekwiwalent za niewykorzystany urlop',
       glowny: odmiana(e.dni, DNI),
-      opis: `Koniec umowy ${dataPoPolsku(e.koniecUmowy)}: za urlop niewykorzystany z powodu rozwiązania umowy przysługuje ekwiwalent (art. 171 § 1)${zagrozone ? `; w tym ${odmiana(zagrozone, DNI)} z lat, w których roszczenie o urlop mogło się przedawnić` : ''}. Przedawnienie ekwiwalentu najwcześniej ${dataPoPolsku(e.przedawnienie.data)}`,
+      opis: `Koniec umowy ${dataPoPolsku(e.koniecUmowy)}: za urlop niewykorzystany z powodu rozwiązania umowy przysługuje ekwiwalent (art. 171 § 1)${zagrozone ? `; w tym ${odmiana(zagrozone, DNI)} z lat, w których roszczenie o urlop mogło się przedawnić` : ''}. Przedawnienie ekwiwalentu najwcześniej ${dataPoPolsku(e.przedawnienie.data)}${art115(e.przedawnienie)}`,
       status: e.przedawnienie.status,
       statusTekst: stan(e.przedawnienie),
+      zdanie: zdanie(e.przedawnienie),
       lata,
     };
   }
@@ -269,9 +295,10 @@ export function opis(w: Wynik): Opis {
   return {
     etykieta: 'Niewykorzystany urlop',
     glowny: odmiana(w.razem, DNI),
-    opis: `Pierwszy termin przedawnienia (wariant wcześniejszy): urlop za ${najblizszy.rok} r., ${dataPoPolsku(p.data)}`,
+    opis: `Pierwszy termin przedawnienia (wariant wcześniejszy): urlop za ${najblizszy.rok} r., ${dataPoPolsku(p.data)}${art115(p)}`,
     status: p.status,
     statusTekst: stan(p),
+    zdanie: zdanie(p),
     lata,
   };
 }

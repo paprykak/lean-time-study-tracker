@@ -2,12 +2,12 @@
 // Kary porządkowe: terminy nałożenia, sprzeciwu i zatarcia, limit kar pieniężnych (art. 108–113 Kp).
 // Logika: src/lib/narzedzia/kara-porzadkowa.ts (testy obok), przesunięcia terminów: termin-odwolania.ts.
 import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
-import { karaPorzadkowa } from '../../lib/narzedzia/kara-porzadkowa';
-import { dataPoPolsku, dodajDni, dzisWPolsce } from '../../lib/narzedzia/terminy';
+import { opisKary } from '../../lib/narzedzia/kara-porzadkowa';
+import { ETYKIETA_ART_115, dodajDni, dzisWPolsce } from '../../lib/narzedzia/terminy';
 
 const dzis = dzisWPolsce();
 const D = { naruszenie: dodajDni(dzis, -10), wiadomosc: dodajDni(dzis, -8), ukaranie: dzis };
-const r = karaPorzadkowa(D);
+const o = opisKary(D);
 
 const faq = [
   {
@@ -55,17 +55,21 @@ const faq = [
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
-      <h2 id="wynik-tytul" class="etykieta">Sprzeciw do pracodawcy najpóźniej</h2>
+      <h2 id="wynik-tytul" class="etykieta" data-w="etykieta">{o.etykieta}</h2>
       <div aria-live="polite" aria-atomic="true">
-        <p class="wynik-data" data-w="sprzeciw">{dataPoPolsku(r.sprzeciw.koniec)}</p>
-        <p class="status-terminu" data-w="status" data-status={r.wTerminie ? 'w-terminie' : 'po-terminie'}>{r.wTerminie ? 'Kara nałożona w terminie' : 'Kara nałożona po terminie z art. 109 § 1'}</p>
+        <p class="wynik-data" data-w="sprzeciw">{o.sprzeciw}</p>
+        <dl class="wynik-lista" data-wiersz="art115" hidden={!o.art115}>
+          <div><dt>{ETYKIETA_ART_115}</dt><dd><span data-w="art115">{o.art115}</span><span class="block font-normal" data-w="zdanie">{o.zdanie}</span></dd></div>
+        </dl>
+        <p class="status-terminu" data-w="status" data-status={o.statusKlasa}>{o.status}</p>
       </div>
       <dl class="wynik-lista">
-        <div><dt>Ostatni dzień na ukaranie</dt><dd data-w="ostatni">{dataPoPolsku(r.ostatniDzienKary)}</dd></div>
-        <div><dt>2 tygodnie od dowiedzenia się</dt><dd data-w="2tyg">{dataPoPolsku(r.do2tygodni)}</dd></div>
-        <div><dt>3 miesiące od naruszenia</dt><dd data-w="3mies">{dataPoPolsku(r.do3miesiecy)}</dd></div>
-        <div><dt>Zatarcie po roku nienagannej pracy</dt><dd data-w="zatarcie">{dataPoPolsku(r.zatarcie)}</dd></div>
+        <div><dt>Ostatni dzień na ukaranie</dt><dd data-w="ostatni">{o.ostatni}</dd></div>
+        <div><dt>2 tygodnie od dowiedzenia się</dt><dd data-w="2tyg">{o.do2tygodni}</dd></div>
+        <div><dt>3 miesiące od naruszenia</dt><dd data-w="3mies">{o.do3miesiecy}</dd></div>
+        <div><dt>Zatarcie po roku nienagannej pracy</dt><dd data-w="zatarcie">{o.zatarcie}</dd></div>
       </dl>
+      <p class="wynik-uwaga" data-w="bez-przesuniecia">{o.bezPrzesuniecia}</p>
       <p class="wynik-uwaga">Gdy pracownika nie było w pracy i nie można go było wysłuchać, termin 2 tygodni nie biegnie do dnia jego powrotu (art. 109 § 3); kalkulator tego nie liczy.</p>
       <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
     </div>
@@ -96,8 +100,8 @@ const faq = [
 
 <script>
   import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
-  import { karaPorzadkowa } from '../../lib/narzedzia/kara-porzadkowa';
-  import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
+  import { opisKary } from '../../lib/narzedzia/kara-porzadkowa';
+  import { poprawnaData } from '../../lib/narzedzia/terminy';
   import { typografia } from '../../lib/typografia.mjs';
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
 
@@ -124,17 +128,22 @@ const faq = [
       if (blad) {
         w('sprzeciw').textContent = '—';
         status.hidden = true;
+        form.querySelector<HTMLElement>('[data-wiersz="art115"]')!.hidden = true;
         return;
       }
-      const r = karaPorzadkowa(d);
-      w('sprzeciw').textContent = typografia(dataPoPolsku(r.sprzeciw.koniec));
-      w('ostatni').textContent = typografia(dataPoPolsku(r.ostatniDzienKary));
-      w('2tyg').textContent = typografia(dataPoPolsku(r.do2tygodni));
-      w('3mies').textContent = typografia(dataPoPolsku(r.do3miesiecy));
-      w('zatarcie').textContent = typografia(dataPoPolsku(r.zatarcie));
+      const o = opisKary(d);
+      w('etykieta').textContent = typografia(o.etykieta);
+      w('sprzeciw').textContent = typografia(o.sprzeciw);
+      form.querySelector<HTMLElement>('[data-wiersz="art115"]')!.hidden = !o.art115;
+      w('art115').textContent = typografia(o.art115 ?? '');
+      w('zdanie').textContent = typografia(o.zdanie);
+      w('ostatni').textContent = typografia(o.ostatni);
+      w('2tyg').textContent = typografia(o.do2tygodni);
+      w('3mies').textContent = typografia(o.do3miesiecy);
+      w('zatarcie').textContent = typografia(o.zatarcie);
       status.hidden = false;
-      status.dataset.status = r.wTerminie ? 'w-terminie' : 'po-terminie';
-      status.textContent = typografia(r.wTerminie ? 'Kara nałożona w terminie' : 'Kara nałożona po terminie z art. 109 § 1');
+      status.dataset.status = o.statusKlasa;
+      status.textContent = typografia(o.status);
     };
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);

@@ -2,14 +2,12 @@
 // Nowa praca: co i do kiedy pracodawca musi dać albo zrobić (art. 29 § 2–3, 229, 237^3, 104^3, 22^2 Kp; art. 36 ustawy
 // o systemie ubezpieczeń społecznych; art. 16 ustawy o PPK). Logika: src/lib/narzedzia/start-w-pracy.ts (testy obok).
 import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
-import { obowiazkiNaStart } from '../../lib/narzedzia/start-w-pracy';
+import { TERMINY_PRACODAWCY, obowiazkiNaStart, opisTerminu } from '../../lib/narzedzia/start-w-pracy';
 import { dataPoPolsku, dzisWPolsce } from '../../lib/narzedzia/terminy';
 
 const START = dzisWPolsce();
 const lista = obowiazkiNaStart({ start: START, regulamin: true, monitoring: true, ppk: true });
 const informacja = lista.find((o) => o.klucz === 'informacja')!;
-const opisTerminu = (o: (typeof lista)[number]) =>
-  o.kiedy === 'przed' ? 'przed rozpoczęciem pracy' : `do ${dataPoPolsku(o.data)}${o.przesunieta ? ` (weekend albo święto; po przesunięciu ${dataPoPolsku(o.przesunieta)})` : ''}`;
 
 const faq = [
   {
@@ -69,13 +67,13 @@ const faq = [
       <h2 id="wynik-tytul" class="etykieta">Informacja o warunkach zatrudnienia najpóźniej</h2>
       <div aria-live="polite">
         <p class="wynik-data" data-w="informacja">{dataPoPolsku(informacja.data)}</p>
-        <p class="meta mt-1" data-w="informacja-przesuniecie" hidden={!informacja.przesunieta}>{informacja.przesunieta ? `Weekend albo święto; po przesunięciu ${dataPoPolsku(informacja.przesunieta)}` : ''}</p>
       <ul class="lista-obowiazkow mt-4" data-w="lista">
         {lista.map((o) => (
           <li data-kiedy={o.kiedy}><strong>{o.nazwa}</strong>: {opisTerminu(o)}; {o.podstawa}</li>
         ))}
       </ul>
       </div>
+      <p class="wynik-uwaga" data-w="bez-przesuniecia">{TERMINY_PRACODAWCY}</p>
       <p class="wynik-uwaga">Badania, szkolenie BHP i umowa (albo jej potwierdzenie na piśmie) muszą być przed pierwszą zmianą, z wyjątkami opisanymi niżej.</p>
       <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Zasady są opisane poniżej.</p></noscript>
     </div>
@@ -90,9 +88,10 @@ const faq = [
       z Kodeksu pracy liczy się od dopuszczenia, a zgłoszenie do ZUS od dnia rozpoczęcia pracy z umowy (art. 26).
     </p>
     <p>
-      Gdy ostatni dzień wypada w sobotę albo święto, podajemy obie daty: bez przesunięcia i po przesunięciu na najbliższy
-      dzień roboczy (art. 115 Kodeksu cywilnego). Przepisy nie rozstrzygają wprost, czy to przesunięcie dotyczy obowiązków
-      pracodawcy wobec pracownika, więc wcześniejsza data jest bezpieczna dla obu stron.
+      Wszystkie terminy na tej stronie to obowiązki pracodawcy, a nie Twoje czynności, więc podajemy je bez przesunięcia
+      z soboty i dnia wolnego. Gdy taki termin kończy się w sobotę albo dzień ustawowo wolny od pracy, pracodawca może się
+      powołać na art. 115 Kodeksu cywilnego i zdążyć w następny dzień roboczy, dlatego zanim uznasz, że się spóźnił,
+      sprawdź, czy nie zrobił tego w ten dzień.
     </p>
     <p>
       <strong>PPK.</strong> Gdy masz od 18 do 54 lat, pracodawca zapisuje Cię do PPK najwcześniej po 14 dniach zatrudnienia i najpóźniej do 10. dnia
@@ -137,7 +136,7 @@ const faq = [
 <script>
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
   import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
-  import { obowiazkiNaStart, type Obowiazek } from '../../lib/narzedzia/start-w-pracy';
+  import { obowiazkiNaStart, opisTerminu } from '../../lib/narzedzia/start-w-pracy';
   import { dataPoPolsku, poprawnaData } from '../../lib/narzedzia/terminy';
   import { typografia } from '../../lib/typografia.mjs';
 
@@ -145,8 +144,6 @@ const faq = [
   if (form) {
     const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
     const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
-    const opis = (o: Obowiazek) =>
-      o.kiedy === 'przed' ? 'przed rozpoczęciem pracy' : `do ${dataPoPolsku(o.data)}${o.przesunieta ? ` (weekend albo święto; po przesunięciu ${dataPoPolsku(o.przesunieta)})` : ''}`;
     const przelicz = () => {
       const start = el('start').value;
       const b = form.querySelector<HTMLElement>('[data-blad="dane"]')!;
@@ -155,22 +152,19 @@ const faq = [
       pokazBlad(b, blad, form.elements.namedItem('start') as HTMLInputElement);
       if (blad) {
         w('informacja').textContent = '—';
-        w('informacja-przesuniecie').hidden = true;
         lista.replaceChildren();
         return;
       }
       const obowiazki = obowiazkiNaStart({ start, regulamin: el('regulamin').checked, monitoring: el('monitoring').checked, trzezwosc: el('trzezwosc').checked, ppk: el('ppk').checked });
       const inf = obowiazki.find((o) => o.klucz === 'informacja')!;
       w('informacja').textContent = typografia(dataPoPolsku(inf.data));
-      w('informacja-przesuniecie').hidden = !inf.przesunieta;
-      w('informacja-przesuniecie').textContent = inf.przesunieta ? typografia(`Weekend albo święto; po przesunięciu ${dataPoPolsku(inf.przesunieta)}`) : '';
       lista.replaceChildren(
         ...obowiazki.map((o) => {
           const li = document.createElement('li');
           li.dataset.kiedy = o.kiedy;
           const s = document.createElement('strong');
           s.textContent = typografia(o.nazwa);
-          li.append(s, document.createTextNode(typografia(`: ${opis(o)}; ${o.podstawa}`)));
+          li.append(s, document.createTextNode(typografia(`: ${opisTerminu(o)}; ${o.podstawa}`)));
           return li;
         }),
       );
