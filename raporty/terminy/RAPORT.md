@@ -24,7 +24,7 @@ i weryfikator kodu/UX (niezależnie, pliki i teksty przepisów, bez wniosków bu
     30 września (art. 168) bez przesunięcia jako data z przepisu dla pracodawcy.
   - `informacja-o-warunkach-zatrudnienia`: same obowiązki pracodawcy, więc bez przesunięcia (usunięta data przesunięta),
     jedno zdanie dlaczego.
-- „Jak liczymy”, FAQ, testy jednostkowe (1801 w całym repozytorium) i E2E zaktualizowane; zrzuty 412/320 px:
+- „Jak liczymy”, FAQ, testy jednostkowe i E2E zaktualizowane; zrzuty 412/320 px:
   `raporty/terminy/zrzuty/` (skrypt `zrzuty.mjs`, stan z dwiema datami, 0 px przewijania w bok, nic nieucięte).
 
 ## Przepisy i orzeczenia (szczegóły i cytaty: `PRZEPISY.md`)
@@ -65,7 +65,9 @@ i weryfikator kodu/UX (niezależnie, pliki i teksty przepisów, bez wniosków bu
   bez drugiego podagenta.
 
 ## Wynik checku
-`npm run -s check:szybki` EXIT 0, `BEZ_WEBKIT=1 npm run check` EXIT 0 (szczegóły w ostatniej wiadomości do orkiestratora).
+`npm run -s check:szybki` EXIT 0 (unit 2088 w 136 plikach), `BEZ_WEBKIT=1 npm run check` EXIT 0 (E2E 2333 zaliczonych,
+343 pominiętych z założenia, 8,6 min; Lighthouse i kontrola SEO produkcji przed startem bez błędów). Zrzuty 412 i 320 px
+odświeżone po poprawkach: 0 px przewijania w bok na wszystkich sześciu stronach.
 
 ## Czego nie sprawdzono / poza zakresem
 - SN: III CZP 21/23 (pełna teza, zakres), III CZP 8/03, III CSK 409/06, orzeczenie SN o art. 115 przy art. 264
