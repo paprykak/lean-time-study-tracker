@@ -98,8 +98,8 @@ test('FAQ i wyjaśnienie: art. 36¹, 1 maja 2026 r., linki, tylko sprawdzona syg
   await expect(page.locator('main')).toContainText(/art\.\s361\s§\s1\si\sart\.\s37\s§\s2/);
   await expect(page.locator('main')).toContainText(/najwyżej\sdo\s1\smiesiąca/);
   await expect(page.locator('main')).toContainText(/Od\s1\smaja\s2026\sr\./);
-  await expect(page.locator('main a[href="/narzedzia/odwolanie-do-sadu-pracy"]')).toHaveCount(1);
-  await expect(page.locator('main a[href="/narzedzia/urlop-w-okresie-wypowiedzenia"]')).toHaveCount(1);
+  await expect(page.locator('main a[href="/narzedzia/odwolanie-do-sadu-pracy"]:not(.podobne-link)')).toHaveCount(1);
+  await expect(page.locator('main a[href="/narzedzia/urlop-w-okresie-wypowiedzenia"]:not(.podobne-link)')).toHaveCount(1);
   await expect(page.locator('main a[href="/narzedzia/kalkulator-odprawy"]').first()).toBeAttached();
   await expect(page.locator('main')).not.toContainText(/II\sPK\s12\/11/);
 });

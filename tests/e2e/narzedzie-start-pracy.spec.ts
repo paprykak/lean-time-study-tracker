@@ -36,6 +36,6 @@ test('pusta data: komunikat błędu', async ({ page }) => {
 test('FAQ o badaniach według art. 229 § 1¹ i linki do badań i monitoringu', async ({ page }) => {
   await expect(page.locator('main')).toContainText(/ten\sdrugi\swyjątek\snie\sdotyczy\sprac\sszczególnie\sniebezpiecznych/);
   await expect(page.locator('a[href="/narzedzia/badania-lekarskie-w-pracy"]').first()).toBeVisible();
-  await expect(page.locator('a[href="/narzedzia/monitoring-w-pracy"]')).toHaveCount(1);
+  await expect(page.locator('main a[href="/narzedzia/monitoring-w-pracy"]:not(.podobne-link)')).toHaveCount(1);
   await expect(page.locator('main')).toContainText(/pokaże\skalkulator\sbadań\slekarskich\sw\spracy/);
 });

@@ -55,7 +55,7 @@ test('błędna pensja albo rok bez płacy minimalnej: żadne pole wyniku nie zos
 
 test('linki do okresu wypowiedzenia i ekwiwalentu za urlop (B-8), 20 pracowników (B-wer-3)', async ({ page }) => {
   await expect(page.locator('a[href="/narzedzia/okres-wypowiedzenia"]').first()).toBeAttached();
-  await expect(page.locator('main a[href="/narzedzia/ekwiwalent-za-urlop"]')).toHaveCount(1);
+  await expect(page.locator('main a[href="/narzedzia/ekwiwalent-za-urlop"]:not(.podobne-link)')).toHaveCount(1);
   await expect(page.locator('main')).not.toContainText('20 osób');
   await expect(page.locator('main')).not.toContainText('z jego inicjatywy');
 });
