@@ -133,14 +133,38 @@ export const SOBOTA_ART_115_OD = '2017-01-01';
 /** Jednorazowe dni ustawowo wolne spoza stałej listy świąt (ustawa z 2018 r. o ustanowieniu 12 listopada 2018 r. dniem wolnym). */
 const JEDNORAZOWE_WOLNE: Record<string, string> = { '2018-11-12': 'dzień wolny 12 listopada 2018 r.' };
 
-/** Nazwa dnia, z którego art. 115 KC przesuwa koniec terminu („sobota”, „niedziela”, nazwa święta), albo null. */
-export function dzienWolnyArt115(data: string): string | null {
+/**
+ * Jedyne źródło reguły dni wolnych w terminach: nazwa święta z ustawy o dniach wolnych od pracy (`swieta`), dnia
+ * jednorazowo wolnego, „niedziela” albo „sobota” (każda, bez względu na rok), a dla dnia roboczego null.
+ */
+function dzienWolny(data: string): string | null {
   const swieto = swieta(Number(data.slice(0, 4))).find((s) => s.data === data);
   if (swieto) return swieto.nazwa;
   if (JEDNORAZOWE_WOLNE[data]) return JEDNORAZOWE_WOLNE[data];
   const dt = new Date(`${data}T00:00:00Z`).getUTCDay();
-  return dt === 0 ? 'niedziela' : dt === 6 && data >= SOBOTA_ART_115_OD ? 'sobota' : null;
+  return dt === 0 ? 'niedziela' : dt === 6 ? 'sobota' : null;
 }
+
+/** Nazwa dnia, z którego art. 115 KC przesuwa koniec terminu („sobota”, „niedziela”, nazwa święta), albo null. */
+export function dzienWolnyArt115(data: string): string | null {
+  const p = dzienWolny(data);
+  return p === 'sobota' && data < SOBOTA_ART_115_OD ? null : p;
+}
+
+/** Dzień roboczy w linijce praktycznej: od poniedziałku do piątku, bez dni ustawowo wolnych od pracy. */
+export const dzienRoboczy = (data: string) => dzienWolny(data) === null;
+
+/** Ostatni dzień roboczy (pon.–pt. bez świąt) przed `data`. */
+export function ostatniDzienRoboczyPrzed(data: string): string {
+  if (!poprawnaData(data)) throw new RangeError(`Błędna data: ${data}`);
+  let d = dodajDni(data, -1);
+  while (!dzienRoboczy(d)) d = dodajDni(d, -1);
+  return d;
+}
+
+const W_DNIU = ['w niedzielę', 'w poniedziałek', 'we wtorek', 'w środę', 'w czwartek', 'w piątek', 'w sobotę'];
+/** „2026-12-11” → „w piątek 11 grudnia 2026 r.” */
+export const wDniu = (data: string) => `${W_DNIU[new Date(`${data}T00:00:00Z`).getUTCDay()]} ${dataPoPolsku(data)}`;
 
 export interface TerminPracownika {
   /** Ostatni dzień z liczby dni, tygodni, miesięcy albo lat, bez przesunięcia: „zdąż do”. */
@@ -195,6 +219,31 @@ export const ZDANIE_ART_115: Record<RodzajTerminu, string> = {
   pracodawca: 'Sąd Rejonowy Szczecin-Centrum zastosował je do sprzeciwu od kary (IX P 280/20) i do wniosku o sprostowanie świadectwa (IX P 666/18), ale bezpieczniej przyjąć, że pismo musi w tym dniu dotrzeć do pracodawcy (przy sprzeciwie tak Sąd Okręgowy w Łodzi, VII Pa 90/16), i zdążyć do pierwszej daty.',
   przedawnienie: 'Przy przedawnieniu to przesunięcie jest wątpliwe: przedawnienie biegnie samo, a nie jest terminem do wykonania czynności, i Sąd Rejonowy dla Wrocławia-Śródmieścia uznał, że dni wolne nie mają znaczenia dla upływu przedawnienia z art. 291 Kodeksu pracy (IV P 553/24); pozew złóż najpóźniej w pierwszej dacie.',
 };
+
+/**
+ * Linijka praktyczna pod datą „Zdąż do”, gdy ta data wypada w sobotę, niedzielę albo dzień ustawowo wolny od pracy
+ * (DECYZJE.md, 2026-11-15, runda 9; raporty/terminy3/PRZEPISY.md). Bez trzeciej daty prawnej: termin nadal upływa
+ * w dniu „Zdąż do” (albo według art. 115 KC później), a linijka mówi tylko, jak go realnie dotrzymać.
+ * - `pracodawca`: pismo musi dojść do pracodawcy (art. 61 § 1 KC przez art. 300 Kp), a w dzień wolny biuro zwykle jest
+ *   nieczynne, więc ostatni dzień roboczy przed tą datą (pon.–pt. bez świąt; grafiku pracodawcy nie znamy), nazwany wprost.
+ * - `sad`: oddanie pisma w placówce pocztowej operatora wyznaczonego jest równoznaczne z wniesieniem do sądu (art. 165 § 2
+ *   KPC), także w dzień wolny, jeśli placówka jest czynna.
+ * - `przedawnienie`: jak `sad` (pozew przerywa bieg przedawnienia), z ostrzeżeniem z konwencji: przesunięcie z art. 115 KC
+ *   jest przy przedawnieniu wątpliwe.
+ * Sobota przed 1.01.2017 r. też dostaje linijkę: art. 115 KC jej wtedy nie przesuwał, ale biuro i tak bywa nieczynne.
+ * Ten sam tekst w HTML ze strony i w skrypcie przeglądarki (skrypt przepuszcza go jeszcze przez typografia()).
+ */
+export function linijkaDniaWolnego(t: Pick<TerminPracownika, 'zdazDo'>, rodzaj: RodzajTerminu): string {
+  const powod = dzienWolny(t.zdazDo);
+  if (!powod) return '';
+  const dzien = `To ${powod === 'sobota' || powod === 'niedziela' ? powod : JEDNORAZOWE_WOLNE[t.zdazDo] ? 'dzień wolny od pracy' : `dzień wolny od pracy (${powod})`}.`;
+  const poczta = (pismo: string) =>
+    `Tego dnia możesz jeszcze nadać ${pismo} w placówce pocztowej operatora wyznaczonego (Poczty Polskiej), jeśli jest czynna: to tak, jakby wnieść ${pismo === 'pozew' ? 'go' : 'je'} do sądu (art. 165 § 2 Kodeksu postępowania cywilnego).`;
+  if (rodzaj === 'pracodawca')
+    return `${dzien} Pismo do pracodawcy złóż najpóźniej w ostatnim dniu roboczym przed tą datą, czyli ${wDniu(ostatniDzienRoboczyPrzed(t.zdazDo))}: liczy się dzień, w którym do niego dotrze (art. 61 § 1 Kodeksu cywilnego).`;
+  if (rodzaj === 'sad') return `${dzien} ${poczta('pismo')}`;
+  return `${dzien} ${poczta('pozew')} Nie odkładaj go na następny dzień roboczy: przy przedawnieniu przesunięcie z art. 115 Kodeksu cywilnego jest wątpliwe.`;
+}
 
 /**
  * Jedno zdanie pod listą terminów przedawnienia, gdy którakolwiek pozycja ma drugą datę według art. 115 KC, a zdanie

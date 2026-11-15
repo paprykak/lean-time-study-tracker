@@ -3,10 +3,11 @@
 // dzień ustawowo wolny od pracy, termin upływa następnego dnia, który nie jest dniem wolnym ani sobotą (art. 115 KC);
 // przepisy KC stosuje się przez art. 300 Kp, a w postępowaniu sądowym przez art. 165 § 1 KPC.
 // Wynik strony (pakiet „terminy”, 2026-11-15): wspólna konwencja z terminy.ts, czyli „Zdąż do” (bez przesunięcia)
-// i „Ostatni dzień według art. 115 KC”, gdy się różnią (`terminSprawy`, `opisOdwolania`). `terminCzynnosci` zostaje
-// bez zmian, bo używa go wypowiedzenie-zmieniajace.ts.
-import { swieta } from './czas-pracy';
-import { ETYKIETA_ZDAZ_DO, dataPoPolsku, dodajDni, fazaTerminu, terminPracownika, zdanieArt115, zostaloDni, type TerminPracownika } from './terminy';
+// i „Ostatni dzień według art. 115 KC”, gdy się różnią (`terminSprawy`, `opisOdwolania`), a gdy „Zdąż do” wypada w dzień
+// wolny, linijka praktyczna pod datą (`linijkaDniaWolnego`, pakiet „terminy3”). Dawne `przesunZDniaWolnego`,
+// `terminWDniach` i `terminCzynnosci` (druga implementacja art. 115 KC) usunięte w pakiecie „terminy3”: reguła dni wolnych
+// jest tylko w terminy.ts.
+import { ETYKIETA_ZDAZ_DO, dataPoPolsku, dodajDni, fazaTerminu, linijkaDniaWolnego, terminPracownika, zdanieArt115, zostaloDni, type TerminPracownika } from './terminy';
 
 export type Sprawa = 'wypowiedzenie' | 'bez-wypowiedzenia' | 'odmowa-przyjecia' | 'sprostowanie-wniosek' | 'sprostowanie-sad' | 'kara-sprzeciw' | 'kara-sad';
 
@@ -23,42 +24,6 @@ export const SPRAWY: Record<Sprawa, { nazwa: string; krotko: string; dni: number
   'kara-sad': { nazwa: 'Uchylenie kary porządkowej w sądzie', krotko: 'Kara: pozew do sądu', dni: 14, zdarzenie: 'Dzień zawiadomienia o odrzuceniu sprzeciwu', gdzie: 'sąd pracy', przepis: 'art. 112 § 2 Kodeksu pracy', przywrocenie: false },
 };
 
-export interface TerminCzynnosci {
-  /** Ostatni dzień według liczby dni, przed przesunięciem. */
-  pierwotny: string;
-  koniec: string;
-  /** Dni, z których termin przesunięto: nazwa święta, „sobota” albo „niedziela”. */
-  przesuniecie: { data: string; powod: string }[];
-}
-
-/** Koniec terminu przesunięty z soboty i dnia ustawowo wolnego na najbliższy dzień roboczy (art. 115 KC). */
-export function przesunZDniaWolnego(data: string): { koniec: string; przesuniecie: { data: string; powod: string }[] } {
-  const rok = Number(data.slice(0, 4));
-  const swieto = new Map([...swieta(rok), ...swieta(rok + 1)].map((s) => [s.data, s.nazwa]));
-  const wolny = (d: string) => {
-    if (swieto.has(d)) return swieto.get(d)!;
-    const dt = new Date(`${d}T00:00:00Z`).getUTCDay();
-    return dt === 0 ? 'niedziela' : dt === 6 ? 'sobota' : null;
-  };
-  const przesuniecie: { data: string; powod: string }[] = [];
-  let koniec = data;
-  for (let p = wolny(koniec); p; p = wolny(koniec)) {
-    przesuniecie.push({ data: koniec, powod: p });
-    koniec = dodajDni(koniec, 1);
-  }
-  return { koniec, przesuniecie };
-}
-
-/** Termin w dniach od zdarzenia: dnia zdarzenia nie wlicza się (art. 111 § 2 KC), koniec przesuwa art. 115 KC. */
-export function terminWDniach(zdarzenie: string, dni: number): TerminCzynnosci {
-  const pierwotny = dodajDni(zdarzenie, dni);
-  return { pierwotny, ...przesunZDniaWolnego(pierwotny) };
-}
-
-export function terminCzynnosci(zdarzenie: string, sprawa: Sprawa): TerminCzynnosci {
-  return terminWDniach(zdarzenie, SPRAWY[sprawa].dni);
-}
-
 /** Termin pracownika w sprawie: ostatni dzień bez przesunięcia i według art. 115 KC (terminy.ts). */
 export const terminSprawy = (zdarzenie: string, sprawa: Sprawa): TerminPracownika => terminPracownika(dodajDni(zdarzenie, SPRAWY[sprawa].dni));
 
@@ -68,6 +33,8 @@ export interface OpisOdwolania {
   glowny: string;
   /** Data według art. 115 KC, gdy inna niż `glowny`. */
   art115: string | null;
+  /** Linijka praktyczna pod datą, gdy `glowny` wypada w sobotę albo dzień wolny (puste w dzień roboczy). */
+  praktycznie: string;
   /** Jedno zdanie, kiedy przesunięcie działa (puste bez przesunięcia). */
   zdanie: string;
   status: string;
@@ -99,6 +66,7 @@ export function opisOdwolania(zdarzenie: string, sprawa: Sprawa, dzis: string): 
     etykieta: t.rozne ? ETYKIETA_ZDAZ_DO : 'Ostatni dzień',
     glowny: dataPoPolsku(t.zdazDo),
     art115: t.rozne ? dataPoPolsku(t.wedlugArt115) : null,
+    praktycznie: linijkaDniaWolnego(t, doSadu ? 'sad' : 'pracodawca'),
     zdanie: zdanieArt115(t, doSadu ? 'sad' : 'pracodawca'),
     status,
     statusKlasa,
