@@ -57,6 +57,8 @@ test('z pouczeniem, próg 6 miesięcy w trakcie wypowiedzenia: oba warianty poł
 });
 
 test('koniec w sobotę: odmowa i odwołanie z datą „zdąż do” i datą według art. 115 KC', async ({ page }) => {
+  await page.clock.setFixedTime(new Date('2026-11-22T10:00:00+01:00'));
+  await page.goto('/narzedzia/wypowiedzenie-zmieniajace');
   await page.getByLabel('Pracujesz u tego pracodawcy od').fill('2026-06-01');
   await page.getByLabel('Dzień doręczenia pisma').fill('2026-11-14');
   await expect(page.locator('#wynik-tytul')).toHaveText(/^Odmowa: zdąż do$/);
@@ -66,6 +68,17 @@ test('koniec w sobotę: odmowa i odwołanie z datą „zdąż do” i datą wed�
   await expect(page.locator('[data-w="odwolanie"]')).toHaveText(/^5\sgrudnia\s2026\sr\.$/);
   await expect(page.locator('[data-w="odwolanie-art115"]')).toHaveText(/^7\sgrudnia\s2026\sr\.$/);
   await expect(page.locator('[data-w="odwolanie-zdanie"]')).toContainText(/IV\sP\s24\/19/);
+  await expect(page.locator('[data-w="odwolanie-etykieta"]')).toHaveText(/^Odwołanie do\ssądu pracy: zdąż do$/);
+  await expect(page.locator('[data-wiersz="odwolanie-art115"] dt')).toHaveText(/^Odwołanie: ostatni dzień według art\.\s115\sKC$/);
+  // Dziś 22.11.2026: pierwsza data (21.11) minęła, druga (23.11) jeszcze nie.
+  await expect(page.locator('[data-w="status"]')).toHaveText(/^Pierwsza data minęła; ostatni dzień według art\.\s115\sKC: 23\slistopada\s2026\sr\.$/);
+  await expect(page.locator('[data-w="status"]')).toHaveAttribute('data-status', 'pilne');
+  // Błąd danych: nowe wiersze i zdania znikają.
+  await page.getByLabel('Pracujesz u tego pracodawcy od').fill('2026-11-20');
+  await expect(page.locator('[data-blad="dane"]')).toBeVisible();
+  for (const s of ['[data-wiersz="odmowa-art115"]', '[data-wiersz="odwolanie-art115"]', '[data-w="odmowa-zdanie"]', '[data-w="odwolanie-zdanie"]', '[data-w="status"]']) await expect(page.locator(s)).toBeHidden();
+  await expect(page.locator('#wynik-tytul')).toHaveText(/^Odmowę złóż najpóźniej$/);
+  await page.getByLabel('Pracujesz u tego pracodawcy od').fill('2026-06-01');
   // Dzień roboczy: jedna data, wiersze i zdania o art. 115 KC ukryte.
   await page.getByLabel('Dzień doręczenia pisma').fill('2026-11-12');
   await expect(page.locator('#wynik-tytul')).toHaveText(/^Odmowę złóż najpóźniej$/);
@@ -73,4 +86,5 @@ test('koniec w sobotę: odmowa i odwołanie z datą „zdąż do” i datą wed�
   await expect(page.locator('[data-wiersz="odwolanie-art115"]')).toBeHidden();
   await expect(page.locator('[data-w="odmowa-zdanie"]')).toBeHidden();
   await expect(page.locator('[data-w="odwolanie-zdanie"]')).toBeHidden();
+  await expect(page.locator('[data-w="odwolanie-etykieta"]')).toHaveText(/^Odwołanie do\ssądu pracy do$/);
 });

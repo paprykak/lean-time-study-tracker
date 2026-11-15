@@ -143,6 +143,8 @@ export interface OpisMonitoringu {
   informacjaStatus: string | null;
   informacjaKlasa: KlasaStatusu | null;
   przechowywanie: string;
+  /** Zdanie o braku przesunięcia, gdy koniec wypada w dzień wolny (poza regionem aria-live na stronie); inaczej ''. */
+  przechowywanieUwaga: string;
   przechowywanieStatus: string | null;
   przechowywanieKlasa: KlasaStatusu | null;
   zakazy: string[];
@@ -268,6 +270,7 @@ export function opisMonitoringu(d: DaneMonitoringu, dzis: string): OpisMonitorin
 
   // Przechowywanie nagrań (art. 22² § 3–5).
   let przechowywanie: string;
+  let przechowywanieUwaga = '';
   let przechowywanieStatus: string | null = null;
   let przechowywanieKlasa: KlasaStatusu | null = null;
   if (!kamery) {
@@ -280,9 +283,10 @@ export function opisMonitoringu(d: DaneMonitoringu, dzis: string): OpisMonitorin
   } else if (!puste(d.nagranie)) {
     const koniec = koniecPrzechowywania(d.nagranie!);
     const r = dniMiedzy(dzis, koniec);
+    if (r >= 0 && dzienWolnyArt115(koniec)) przechowywanieUwaga = BEZ_PRZESUNIECIA.okres;
     przechowywanie =
       r >= 0
-        ? `Najpóźniej do ${dataPoPolsku(koniec)}, 3 miesiące od dnia nagrania z tym dniem włącznie (art. 22² § 3); pracodawca może je usunąć wcześniej. Dłużej tylko, gdy nagranie jest dowodem w postępowaniu albo pracodawca dowiedział się, że może nim być (§ 4).${dzienWolnyArt115(koniec) ? ` ${BEZ_PRZESUNIECIA.okres}` : ''}`
+        ? `Najpóźniej do ${dataPoPolsku(koniec)}, 3 miesiące od dnia nagrania z tym dniem włącznie (art. 22² § 3); pracodawca może je usunąć wcześniej. Dłużej tylko, gdy nagranie jest dowodem w postępowaniu albo pracodawca dowiedział się, że może nim być (§ 4).`
         : `Okres minął ${dataPoPolsku(koniec)} Nagranie z danymi osobowymi powinno być zniszczone (art. 22² § 5), chyba że jest dowodem w postępowaniu albo pracodawca dowiedział się, że może nim być (§ 4), lub przepisy odrębne stanowią inaczej (§ 5).`;
     przechowywanieStatus = r < 0 ? `Okres minął ${dni(-r)} temu` : r === 0 ? 'Dziś ostatni dzień' : `${zaIle(r).charAt(0).toUpperCase()}${zaIle(r).slice(1)}`;
     przechowywanieKlasa = r < 0 ? 'po-terminie' : r <= 3 ? 'pilne' : r <= 7 ? 'wkrotce' : 'w-terminie';
@@ -302,5 +306,5 @@ export function opisMonitoringu(d: DaneMonitoringu, dzis: string): OpisMonitorin
   if (!(kamery && miejsce === 'zwiazek'))
     zakazy.push(`Nie wolno uruchomić monitoringu bez zapisania go w układzie, regulaminie albo obwieszczeniu, bez informacji 2 tygodnie wcześniej i bez oznaczenia dzień wcześniej (art. 22² § 6, 7 i 9${kamery ? '' : ' przez art. 22³ § 3'}).`);
 
-  return { werdykt, werdyktOpis, werdyktKlasa, przepis, warunki, informacja, informacjaStatus, informacjaKlasa, przechowywanie, przechowywanieStatus, przechowywanieKlasa, zakazy, zgloszenie: ZGLOSZENIE_KROTKO };
+  return { werdykt, werdyktOpis, werdyktKlasa, przepis, warunki, informacja, informacjaStatus, informacjaKlasa, przechowywanie, przechowywanieUwaga, przechowywanieStatus, przechowywanieKlasa, zakazy, zgloszenie: ZGLOSZENIE_KROTKO };
 }

@@ -1,0 +1,89 @@
+{
+  "weryfikator": "kod i UX (adwersarz), gałąź fabryka/terminy2, diff f58eeb3 -- src tests",
+  "data": "2026-11-15",
+  "metoda": {
+    "model": "Własny model w Pythonie (wielkanoc Gaussa/Meeusa, święta z ustawy o dniach wolnych: Trzech Króli od 2011, Wigilia od 2025, 12.11.2018 jednorazowo; sobota przesuwa koniec z art. 115 KC od 1.01.2017). Skrypty: scratchpad/model.py, gen.py, cmp.py; wywołanie funkcji TS przez node_modules/.bin/jiti (harness.ts).",
+    "proby": {
+      "terminPracownika/dzienWolnyArt115 i przesunietyKoniec/sporArt115 (losowe daty 2000–2040)": 40000,
+      "wypowiedzenieZmieniajace(...).odmowa/odwolanie + opisZmieniajacego (statusy: przed pierwszą datą 3067, między datami 126, po 11807; 3794 przypadków z dwiema datami)": 15000,
+      "badania odwolanie/tekstOdwolania (3761 z dwiema datami, dziś 0–14 dni po otrzymaniu)": 15000,
+      "opisOdpowiedzialnosci: koniec, zdanie o sporze, status i klasa (4 sytuacje; 3691 ze sporem)": 15000,
+      "terminZaplaty PIT (lata 2000–2040)": 41,
+      "cudzoziemiec terminyOchrony + opisTerminu (pup, pup-zmiana)": 14976,
+      "monitoring koniecPrzechowywania + zdanie BEZ_PRZESUNIECIA.okres": 15000
+    },
+    "wynik": "Wszystkie daty, nazwy rodzaju dnia wolnego, teksty dat, etykiety, statusy w trzech fazach, klasy statusu i obecność zdań zgodne z modelem; wyjątki tylko K-2 (martwe pole) i K-3 (PIT przed 2016 r., poza zakresem formularza). Odwołanie w wypowiedzeniu zmieniającym zgodne z terminSprawy(...,'wypowiedzenie') z kalkulatora odwołania (20 000 prób, 0 różnic).",
+    "strony": "RH_TESTOWE=1 astro build, astro preview :4330 (zamknięty), Playwright chromium 320 i 412 px, deviceScaleFactor 1. Stany: dwie daty, między datami (zegar 22.11.2026), dzień roboczy, błąd danych. scrollWidth == clientWidth na wszystkich 6 stronach i obu szerokościach; nic nie ucięte (jedyne elementy poza ekranem: pułapka newslettera i tabela w przewijanym kontenerze, sprzed zmian). SSR (bez JS) == po przeliczeniu w skrypcie (zegar 15.11.2026) na stronach: wypowiedzenie-zmieniajace (stan SSR ma dwie daty odwołania: 6.12 niedziela → 7.12), badania (22.11 niedziela → 23.11), odpowiedzialnosc, cudzoziemiec, monitoring: 0 różnic w tekście i atrybucie hidden. Twarde spacje po typografia() obecne w SSR i w skrypcie; brak „r..”; odmiana liczebników („Zostały 23 dni”, „Zostało 6 dni”, „Został 1 dzień”) poprawna; forma neutralna. Zrzuty: scratchpad/zm-320.png, zm-412.png, zm-miedzy-*.png, bad-*.png."
+  },
+  "znaleziska": [
+    {
+      "id": "K-1",
+      "plik": "src/pages/narzedzia/wypowiedzenie-zmieniajace.astro",
+      "linia": 85,
+      "rodzaj": "blad",
+      "opis": "Etykieta wiersza drugiej daty odwołania robi toLowerCase() na całej stałej ETYKIETA_ART_115, więc skrót „KC” zamienia się na „kc”. Na stronie widać „Odwołanie: ostatni dzień według art. 115 kc”, a w wierszu odmowy i w innych narzędziach (kara-porzadkowa, odwolanie-do-sadu-pracy, badania) jest „KC”. Testy tego nie łapią: E2E sprawdza tylko [data-w=\"odwolanie-art115\"] (dd), a nie dt.",
+      "dowod": "dist/narzedzia/wypowiedzenie-zmieniajace.html: 'Odwołanie: ostatni dzień według art.\\u00a0115 kc'; Playwright 320 i 412 px (start 2026-06-01, doręczenie 2026-11-14): dt = „Odwołanie: ostatni dzień według art. 115 kc”; zrzut scratchpad/zm-320.png. Oczekiwane: „… art. 115 KC”.",
+      "poprawka": "Zmienić na tylko pierwszą literę, jak w swiadectwo-pracy.ts:291 i przedawnienie.ts:42: `Odwołanie: {ETYKIETA_ART_115.charAt(0).toLowerCase()}{ETYKIETA_ART_115.slice(1)}` (albo eksport pomocniczej stałej z terminy.ts). W tests/e2e/narzedzie-zmieniajace.spec.ts (test „koniec w sobotę…”) dopisać sprawdzenie dt wiersza [data-wiersz=\"odwolanie-art115\"] z /art\\.\\s115 KC$/."
+    },
+    {
+      "id": "K-2",
+      "plik": "src/lib/narzedzia/badania-lekarskie.ts",
+      "linia": 417,
+      "rodzaj": "blad",
+      "opis": "Pole Odwolanie.wolny nadal liczy dzień wolny po staremu (sobota zawsze, bez 12.11.2018) i przeczy nowemu polu termin: dla soboty sprzed 2017 r. wolny = {sobota}, a termin.rozne = false. Strona i tekstOdwolania już go nie używają (jedyny odbiorca to test z `wolny: null`), więc to martwe, sprzeczne API, które łatwo przez pomyłkę znowu podpiąć.",
+      "dowod": "806 z 15 000 losowych prób: odwolanie('2014-10-11', …) → ostatniDzien 2014-10-18 (sobota), wolny {rodzaj:'sobota'}, termin {zdazDo:'2014-10-18', wedlugArt115:'2014-10-18', rozne:false}; podobnie 2009-01-17, 2006-03-25, 2009-12-05. grep '\\.wolny' w src/pages: brak użyć.",
+      "poprawka": "Usunąć pole wolny (i importy swieta/dzienTygodnia, jeśli zbędne) albo wyliczać je z termin.wolne[0]; w badania-lekarskie.test.ts:~185 zostawić sprawdzenie samego termin."
+    },
+    {
+      "id": "K-3",
+      "plik": "src/lib/narzedzia/pit-roczny.ts",
+      "linia": 222,
+      "rodzaj": "blad",
+      "opis": "terminZaplaty używa reguły soboty z art. 115 KC (od 1.01.2017), a art. 12 § 5 Ordynacji to inny przepis z własną datą dodania soboty (według mojej wiedzy ustawa z 10.09.2015 r., Dz.U. 2015 poz. 1649, w mocy od 1.01.2016 r.; datę do potwierdzenia w API Sejmu). Dla roku 2015 funkcja zwraca sobotę 30.04.2016, choć termin PIT za 2015 r. upłynął 2.05.2016 r. Na stronie niewidoczne, bo lista lat zaczyna się od 2025 (komentarz to przyznaje), ale funkcja jest eksportowana bez ograniczenia roku.",
+      "dowod": "terminZaplaty(2015) → '2016-04-30' (sobota); model OP z sobotą → '2016-05-02'. Dla 2004 i 2010 rozbieżność tylko przy założeniu soboty w OP także przed 2016 r. (tego nie twierdzę). Lata 2016–2040: 0 różnic.",
+      "poprawka": "Liczyć termin z art. 12 § 5 OP własną pętlą (sobota albo dzień ustawowo wolny, bez progu 2017) albo rzucać RangeError dla rok < 2024; w komentarzu nie odsyłać do reguły z art. 115 KC."
+    },
+    {
+      "id": "K-4",
+      "plik": "src/pages/narzedzia/wypowiedzenie-zmieniajace.astro",
+      "linia": 84,
+      "rodzaj": "ux",
+      "opis": "Etykieta „Odwołanie do sądu pracy: zdąż do” jest stała, także gdy 21. dzień jest dniem roboczym i drugiej daty nie ma. Konwencja z terminy.ts i inne narzędzia tego wzoru (odwolanie-do-sadu-pracy: „Ostatni dzień” / „Zdąż do”; kara-porzadkowa: „… najpóźniej” / „…: zdąż do”; ta sama strona przy odmowie: „Odmowę złóż najpóźniej” / „Odmowa: zdąż do”) zmieniają etykietę tylko przy dwóch datach.",
+      "dowod": "Playwright 412 px, start 2020-01-15, doręczenie 2026-11-12: dt „Odwołanie do sądu pracy: zdąż do”, dd „3 grudnia 2026 r.”, wiersz art. 115 ukryty.",
+      "poprawka": "Dodać w opisZmieniajacego pole odwolanieEtykieta (rozne ? 'Odwołanie do sądu pracy: zdąż do' : 'Odwołanie do sądu pracy najpóźniej'), wypisywać je w SSR i w skrypcie (data-w) i sprawdzić w teście jednostkowym oraz E2E."
+    },
+    {
+      "id": "K-5",
+      "plik": "src/lib/narzedzia/monitoring.ts",
+      "linia": 285,
+      "rodzaj": "ux",
+      "opis": "Zdanie BEZ_PRZESUNIECIA.okres (ok. 160 znaków) jest doklejane do tekstu przechowywania, który stoi w regionie aria-live=polite. Przy każdej zmianie daty nagrania w sobotę albo w święto czytnik czyta ponad 430 znaków. W wypowiedzeniu zmieniającym i badaniach ten sam rodzaj zdania przeniesiono celowo poza region aria-live.",
+      "dowod": "Playwright, monitoring-w-pracy, nagranie 2026-11-14: czwarty region [aria-live] ma innerText 431 znaków i kończy się „…a nie okresów, które po prostu mijają.”; w zmieniających region ma 33 znaki (zdania poza regionem).",
+      "poprawka": "Zwracać zdanie osobno (np. przechowywanieUwaga) i wstawić je w osobnym <p> poza regionem aria-live, jak odmowa-zdanie w wypowiedzenie-zmieniajace.astro."
+    },
+    {
+      "id": "K-6",
+      "plik": "tests/e2e/narzedzie-zmieniajace.spec.ts",
+      "linia": 35,
+      "rodzaj": "test",
+      "opis": "Test błędu danych sprawdza tylko „—” w odmowie. Nie sprawdza, czy po stanie z dwiema datami błąd ukrywa nowe wiersze (odmowa-art115, odwolanie-art115), zdania i przywraca etykietę „Odmowę złóż najpóźniej”. Ta ścieżka ma osobny kod w skrypcie (ZDANIA, wiersz(...).hidden). Sprawdziłem ją ręcznie (działa), ale żaden test jej nie pilnuje. Strona nie ma też stałego zegara, więc status w E2E pozostaje niesprawdzony.",
+      "dowod": "Playwright: start 2026-06-01, doręczenie 2026-11-14, potem 2026-01-01 → etykieta „Odmowę złóż najpóźniej”, wiersze art115 i oba zdania hidden=true (dziś poprawne, ale bez testu).",
+      "poprawka": "W teście „koniec w sobotę…” po stanie z dwiema datami wpisać doręczenie przed startem i sprawdzić: #wynik-tytul = „Odmowę złóż najpóźniej”, [data-wiersz=odmowa-art115], [data-wiersz=odwolanie-art115], [data-w=odmowa-zdanie], [data-w=odwolanie-zdanie] ukryte. Dodać page.clock.setFixedTime i jedno sprawdzenie statusu między datami („Pierwsza data minęła; …”)."
+    },
+    {
+      "id": "K-7",
+      "plik": "src/lib/narzedzia/wypowiedzenie-zmieniajace.test.ts",
+      "linia": 64,
+      "rodzaj": "test",
+      "opis": "Brakuje przypadków brzegowych z standardu (sekcja 4): sobota przed 2017 r. (jedna data), 12.11.2018 r. i przełom roku przy odmowie. Te reguły w ogóle nie mają testów w wypowiedzeniu zmieniającym ani w badaniach; testuje je tylko odpowiedzialnosc.test.ts. Badania nie mają przełomu roku ani soboty przed 2017 r.; monitoring nie ma przypadku r < 0 (po upływie okresu zdania ma nie być). Model tych przypadków jest zgodny, ale testy repozytorium ich nie pilnują.",
+      "dowod": "Wartości z niezależnego modelu (Python): wypowiedzenieZmieniajace('1999-01-01','2016-01-02').odwolanie → zdazDo 2016-01-23 (sobota, przed 2017), wedlugArt115 2016-01-23, rozne false; doręczenie 2018-10-22 → zdazDo 2018-11-12, wedlugArt115 2018-11-13; odwolanie('2026-12-25', …) w badaniach → zdazDo 2027-01-01, wedlugArt115 2027-01-04 (1.01 święto, 2.01 sobota, 3.01 niedziela); badania otrzymane 2014-10-11 → 2014-10-18 bez przesunięcia; monitoring nagranie 2026-11-14, dziś 2027-02-14 → bez BEZ_PRZESUNIECIA.okres.",
+      "poprawka": "Dopisać te asercje (daty powyżej) w wypowiedzenie-zmieniajace.test.ts, badania-lekarskie.test.ts i monitoring.test.ts."
+    }
+  ],
+  "bez_uwag": [
+    "Daty zdąż do / według art. 115 KC, nazwy dni (sobota, niedziela, święto, Wigilia od 2025, 12.11.2018) i statusy w trzech fazach: zgodne z modelem we wszystkich narzędziach.",
+    "Zdanie o sporze przy przedawnieniu (sporArt115) pojawia się dokładnie wtedy, gdy data się przesuwa, i podaje właściwą drugą datę; status i klasa w odpowiedzialności zgodne w 15 000 próbach.",
+    "Cudzoziemiec: nazwa dnia wolnego bez drugiej daty, brak „po przesunięciu”; monitoring: zdanie tylko przy końcu w dzień wolny i przed upływem okresu.",
+    "Etykiety „Zdąż do” / „Ostatni dzień według art. 115 KC” i status „Pierwsza data minęła; ostatni dzień według art. 115 KC: …” zgodne z odwolanie-do-sadu-pracy i kara-porzadkowa (poza K-1 i K-4)."
+  ]
+}

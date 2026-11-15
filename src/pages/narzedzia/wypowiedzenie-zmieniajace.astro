@@ -81,8 +81,8 @@ const faq = [
         <div><dt>Gdy przyjmiesz: nowe warunki od</dt><dd data-w="nowe">{o.nowe}</dd></div>
         <div><dt>Gdy odmówisz: ostatni dzień umowy</dt><dd data-w="ostatni">{o.koniec}</dd></div>
         <div><dt>Połowa od początku pełnego tygodnia albo miesiąca</dt><dd data-w="wariant-b">{o.wariantB}</dd></div>
-        <div><dt>Odwołanie do sądu pracy: zdąż do</dt><dd data-w="odwolanie">{o.odwolanie}</dd></div>
-        <div data-wiersz="odwolanie-art115" hidden={!o.odwolanieArt115}><dt>Odwołanie: {ETYKIETA_ART_115.toLowerCase()}</dt><dd data-w="odwolanie-art115">{o.odwolanieArt115}</dd></div>
+        <div><dt data-w="odwolanie-etykieta">{o.odwolanieEtykieta}</dt><dd data-w="odwolanie">{o.odwolanie}</dd></div>
+        <div data-wiersz="odwolanie-art115" hidden={!o.odwolanieArt115}><dt>{o.odwolanieArt115Etykieta}</dt><dd data-w="odwolanie-art115">{o.odwolanieArt115}</dd></div>
       </dl>
       <p class="meta mt-2" data-w="odwolanie-zdanie" hidden={!o.odwolanieZdanie}>{o.odwolanieZdanie}</p>
       <p class="wynik-uwaga" data-w="uwaga">{o.uwaga}</p>
@@ -208,6 +208,7 @@ const faq = [
       pokazBlad(b, blad, pole);
       if (blad) {
         w('odmowa-etykieta').textContent = 'Odmowę złóż najpóźniej';
+        w('odwolanie-etykieta').textContent = 'Odwołanie do sądu pracy do';
         for (const k of POLA) w(k).textContent = '—';
         for (const k of ZDANIA) w(k).hidden = true;
         w('prog-wiersz').hidden = true;
@@ -232,6 +233,7 @@ const faq = [
       pisz('nowe', o.nowe);
       pisz('ostatni', o.koniec);
       pisz('wariant-b', o.wariantB);
+      pisz('odwolanie-etykieta', o.odwolanieEtykieta);
       pisz('odwolanie', o.odwolanie);
       wiersz('odwolanie-art115').hidden = !o.odwolanieArt115;
       pisz('odwolanie-art115', o.odwolanieArt115 ?? '');

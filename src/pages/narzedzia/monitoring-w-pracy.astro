@@ -118,6 +118,7 @@ const faq = [
             <span class="status-terminu" data-w="przechowywanie-status" data-status={start.przechowywanieKlasa ?? undefined} hidden={!start.przechowywanieStatus}>{start.przechowywanieStatus}</span>
             <span class="block font-normal" data-w="przechowywanie">{start.przechowywanie}</span>
           </dd>
+          <dd class="meta font-normal mt-1" data-w="przechowywanie-uwaga" hidden={!start.przechowywanieUwaga}>{start.przechowywanieUwaga}</dd>
         </div>
       </dl>
       <h3 class="etykieta mt-4">Warunki</h3>
@@ -241,6 +242,9 @@ const faq = [
         }
         pisz(k, b ? '—' : o[k]);
       }
+      const uwaga = b ? '' : o.przechowywanieUwaga;
+      w('przechowywanie-uwaga').hidden = !uwaga;
+      pisz('przechowywanie-uwaga', uwaga);
     };
     form.addEventListener('input', przelicz);
     form.addEventListener('change', przelicz);

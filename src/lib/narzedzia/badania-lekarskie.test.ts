@@ -163,16 +163,21 @@ describe('badania wstępne (art. 229 § 1–1³ i art. 201 § 1 Kp)', () => {
 
 describe('odwołanie od orzeczenia (§ 5 ust. 3 rozporządzenia) i następne badanie', () => {
   it('7 dni od dnia po otrzymaniu, bez przesunięcia', () => {
-    expect(odwolanie('2026-11-12', '2026-11-12')).toMatchObject({ ostatniDzien: '2026-11-19', wolny: null, dniDo: 7, termin: { zdazDo: '2026-11-19', rozne: false } });
+    expect(odwolanie('2026-11-12', '2026-11-12')).toMatchObject({ ostatniDzien: '2026-11-19', dniDo: 7, termin: { zdazDo: '2026-11-19', rozne: false } });
     expect(odwolanie('2026-12-24', '2026-12-24').ostatniDzien).toBe('2026-12-31');
     expect(odwolanie('2028-02-25', '2028-02-25').ostatniDzien).toBe('2028-03-03');
   });
   it('termin w święto, sobotę i święto w sobotę: ostrzeżenie, data ta sama', () => {
     const swieto = odwolanie('2026-11-04', '2026-11-04');
-    expect(swieto).toMatchObject({ ostatniDzien: '2026-11-11', wolny: { rodzaj: 'swieto', nazwa: 'Narodowe Święto Niepodległości' } });
+    expect(swieto).toMatchObject({ ostatniDzien: '2026-11-11', termin: { wolne: [{ data: '2026-11-11', powod: 'Narodowe Święto Niepodległości' }] } });
     expect(tekstOdwolania(swieto).opis).toContain('art. 115 Kodeksu cywilnego');
-    expect(odwolanie('2026-11-07', '2026-11-07')).toMatchObject({ ostatniDzien: '2026-11-14', wolny: { rodzaj: 'sobota' } });
-    expect(odwolanie('2026-12-19', '2026-12-19')).toMatchObject({ ostatniDzien: '2026-12-26', wolny: { rodzaj: 'swieto' } });
+    expect(odwolanie('2026-11-07', '2026-11-07')).toMatchObject({ ostatniDzien: '2026-11-14', termin: { wolne: [{ powod: 'sobota' }, { powod: 'niedziela' }] } });
+    expect(odwolanie('2026-12-19', '2026-12-19').termin.wolne[0]).toMatchObject({ data: '2026-12-26' });
+    // Sobota przed 2017 r. nie przesuwa; 12.11.2018 r. jednorazowo wolny; przełom roku (swieta.py).
+    expect(odwolanie('2015-12-26', '2015-12-26').termin).toMatchObject({ zdazDo: '2016-01-02', rozne: false });
+    expect(tekstOdwolania(odwolanie('2015-12-26', '2015-12-26'))).toMatchObject({ etykieta: 'Odwołanie najpóźniej', art115: null });
+    expect(odwolanie('2018-11-03', '2018-11-03').termin).toMatchObject({ zdazDo: '2018-11-10', wedlugArt115: '2018-11-13' });
+    expect(odwolanie('2026-12-25', '2026-12-25').termin).toMatchObject({ zdazDo: '2027-01-01', wedlugArt115: '2027-01-04' });
   });
   it('status terminu: zostało, ostatni dzień, minął', () => {
     expect(tekstOdwolania(odwolanie('2026-11-12', '2026-11-12')).status).toEqual({ tekst: 'Zostało: 7 dni', rodzaj: 'w-terminie' });

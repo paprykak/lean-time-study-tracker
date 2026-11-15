@@ -21,6 +21,7 @@
 // w środku dnia, więc ten dzień już się nie liczy. Wariant B pokazujemy jako drugą wykładnię.
 import { koniecWypowiedzenia, wypowiedzenieStalej, type Okres } from './wypowiedzenie';
 import {
+  ETYKIETA_ART_115,
   ETYKIETA_ZDAZ_DO,
   ZDANIE_ART_115,
   dataPoPolsku,
@@ -119,7 +120,9 @@ export interface OpisZmieniajacego {
   koniec: string;
   nowe: string;
   wariantB: string;
-  /** Odwołanie do sądu pracy: „zdąż do” i data według art. 115 KC, gdy inna. */
+  /** Odwołanie do sądu pracy: etykieta („… do” albo „…: zdąż do” przy dwóch datach), data i data według art. 115 KC, gdy inna. */
+  odwolanieEtykieta: string;
+  odwolanieArt115Etykieta: string;
   odwolanie: string;
   odwolanieArt115: string | null;
   odwolanieZdanie: string;
@@ -157,6 +160,8 @@ export function opisZmieniajacego(r: WypowiedzenieZmieniajace, dzis: string): Op
     koniec: dataPoPolsku(r.koniec),
     nowe: dataPoPolsku(r.noweWarunkiOd),
     wariantB: r.pouczenie ? dataPoPolsku(r.odmowaDoWariantB) : 'nie dotyczy (bez pouczenia)',
+    odwolanieEtykieta: r.odwolanie.rozne ? `Odwołanie do sądu pracy: ${ETYKIETA_ZDAZ_DO.toLowerCase()}` : 'Odwołanie do sądu pracy do',
+    odwolanieArt115Etykieta: `Odwołanie: ${ETYKIETA_ART_115.charAt(0).toLowerCase()}${ETYKIETA_ART_115.slice(1)}`,
     odwolanie: dataPoPolsku(r.odwolanie.zdazDo),
     odwolanieArt115: r.odwolanie.rozne ? dataPoPolsku(r.odwolanie.wedlugArt115) : null,
     odwolanieZdanie: zdanieArt115(r.odwolanie, 'sad'),

@@ -157,10 +157,15 @@ describe('terminy 2: bez przesunięcia z art. 115 KC (BEZ_PRZESUNIECIA)', () => 
   it('koniec przechowywania w sobotę 13.02.2027 i w Boże Narodzenie: zdanie o okresie; w czwartek bez zdania', () => {
     const sobota = opisMonitoringu(dane({ nagranie: '2026-11-14' }), '2026-11-15');
     expect(sobota.przechowywanie).toContain('Najpóźniej do 13 lutego 2027 r.');
-    expect(sobota.przechowywanie.endsWith(BEZ_PRZESUNIECIA.okres)).toBe(true);
-    expect(opisMonitoringu(dane({ nagranie: '2026-09-26' }), '2026-11-15').przechowywanie).toContain(BEZ_PRZESUNIECIA.okres);
+    expect(sobota.przechowywanieUwaga).toBe(BEZ_PRZESUNIECIA.okres);
+    expect(sobota.przechowywanie).not.toContain(BEZ_PRZESUNIECIA.okres);
+    expect(opisMonitoringu(dane({ nagranie: '2026-09-26' }), '2026-11-15').przechowywanieUwaga).toBe(BEZ_PRZESUNIECIA.okres);
     expect(koniecPrzechowywania('2026-09-26')).toBe('2026-12-25');
-    expect(opisMonitoringu(dane({ nagranie: '2026-11-12' }), '2026-11-15').przechowywanie).not.toContain(BEZ_PRZESUNIECIA.okres);
+    expect(opisMonitoringu(dane({ nagranie: '2026-11-12' }), '2026-11-15').przechowywanieUwaga).toBe('');
+    // Okres już minął (koniec 13.02.2027 w sobotę, dziś 1.03.2027): bez zdania o przesunięciu.
+    expect(opisMonitoringu(dane({ nagranie: '2026-11-14' }), '2027-03-01').przechowywanieUwaga).toBe('');
+    // Poczta: bez okresu przechowywania, bez zdania.
+    expect(opisMonitoringu({ rodzaj: 'poczta', uruchomienie: '2026-06-01', informacja: 'pozniej', nagranie: '2026-11-14' }, '2026-11-15').przechowywanieUwaga).toBe('');
   });
   it('terminy liczone wstecz: zdanie dlaczego bez przesunięcia', () => {
     expect(WSTECZ_BEZ_PRZESUNIECIA).toContain('wstecz od dnia uruchomienia');

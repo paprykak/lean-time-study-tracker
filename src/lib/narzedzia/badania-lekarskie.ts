@@ -59,7 +59,6 @@
 //     z orzeczenia i robimy przypomnienie w tym dniu i 30 dni wcześniej (czas na skierowanie).
 import { czyRoboczy } from './dni-robocze';
 import { swieta } from './czas-pracy';
-import { dzienTygodnia } from './dni-wolne';
 import type { Wydarzenie } from './kalendarz-ics';
 import { scal, type Zwolnienie } from './okres-zasilkowy';
 import { ETYKIETA_ZDAZ_DO, ZDANIE_ART_115, dataPoPolsku, dniMiedzy, dodajDni, fazaTerminu, ileDni, poprawnaData, terminPracownika, zdanieArt115, type TerminPracownika } from './terminy';
@@ -399,11 +398,9 @@ export function tekstWstepnych(w: Wstepne, rodzaj: RodzajPrzyjecia): TekstWyniku
 
 export interface Odwolanie {
   ostatniDzien: string;
-  /** Dzień wolny, na który wypada termin (bez przesunięcia). */
-  wolny: { rodzaj: 'sobota' | 'niedziela' | 'swieto'; nazwa: string } | null;
-  /** Dni od dziś do końca terminu (ujemne: termin minął). */
+  /** Dni od dziś do końca terminu bez przesunięcia (ujemne: ta data minęła). */
   dniDo: number;
-  /** Termin osoby badanej: bez przesunięcia i według art. 115 KC (terminy.ts). */
+  /** Termin osoby badanej: bez przesunięcia i według art. 115 KC (terminy.ts; dni wolne i sobota od 2017 r.). */
   termin: TerminPracownika;
   dzis: string;
 }
@@ -412,16 +409,7 @@ export function odwolanie(otrzymane: string, dzis: string): Odwolanie {
   sprawdzDate(otrzymane, 'otrzymanie orzeczenia');
   sprawdzDate(dzis, 'dziś');
   const ostatniDzien = dodajDni(otrzymane, DNI_NA_ODWOLANIE);
-  const swieto = swieta(Number(ostatniDzien.slice(0, 4))).find((s) => s.data === ostatniDzien);
-  const dt = dzienTygodnia(ostatniDzien);
-  const wolny = swieto
-    ? { rodzaj: 'swieto' as const, nazwa: swieto.nazwa }
-    : dt === 6
-      ? { rodzaj: 'sobota' as const, nazwa: 'sobota' }
-      : dt === 0
-        ? { rodzaj: 'niedziela' as const, nazwa: 'niedziela' }
-        : null;
-  return { ostatniDzien, wolny, dniDo: dniMiedzy(dzis, ostatniDzien), termin: terminPracownika(ostatniDzien), dzis };
+  return { ostatniDzien, dniDo: dniMiedzy(dzis, ostatniDzien), termin: terminPracownika(ostatniDzien), dzis };
 }
 
 /** Drugie zdanie pod datą z art. 115 KC przy odwołaniu od orzeczenia (raporty/terminy2/PRZEPISY.md, pytanie 5). */

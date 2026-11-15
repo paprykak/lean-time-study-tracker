@@ -67,6 +67,11 @@ describe('wypowiedzenie zmieniające (art. 42 § 1–3, art. 36 § 1, art. 30 §
     expect(wypowiedzenieZmieniajace('2023-11-13', '2026-11-12').odmowa).toMatchObject({ zdazDo: '2026-12-06', wedlugArt115: '2026-12-07' });
     expect(wypowiedzenieZmieniajace('2024-02-29', '2027-02-28').odmowa).toMatchObject({ zdazDo: '2027-03-15', rozne: false });
   });
+  it('odwołanie: sobota przed 2017 r. bez przesunięcia, 12.11.2018 r. jednorazowo wolny, przełom roku (swieta.py)', () => {
+    expect(wypowiedzenieZmieniajace('2010-01-01', '2015-12-12').odwolanie).toMatchObject({ zdazDo: '2016-01-02', rozne: false });
+    expect(wypowiedzenieZmieniajace('2010-01-01', '2018-10-20').odwolanie).toMatchObject({ zdazDo: '2018-11-10', wedlugArt115: '2018-11-13' });
+    expect(wypowiedzenieZmieniajace('2010-01-01', '2026-12-11').odwolanie).toMatchObject({ zdazDo: '2027-01-01', wedlugArt115: '2027-01-04' });
+  });
   it('teksty wyniku: dwie daty odmowy i odwołania, własne zdanie przy odmowie, status w oknie między datami', () => {
     // Doręczenie w sobotę 14.11.2026: odmowa do soboty 21.11 (art. 115 KC: 23.11), odwołanie do soboty 5.12 (7.12).
     const r = wypowiedzenieZmieniajace('2026-06-01', '2026-11-14');
@@ -77,6 +82,8 @@ describe('wypowiedzenie zmieniające (art. 42 § 1–3, art. 36 § 1, art. 30 §
       odmowaArt115: '23 listopada 2026 r.',
       status: 'Zostało 6 dni',
       statusKlasa: 'w-terminie',
+      odwolanieEtykieta: 'Odwołanie do sądu pracy: zdąż do',
+      odwolanieArt115Etykieta: 'Odwołanie: ostatni dzień według art. 115 KC',
       odwolanie: '5 grudnia 2026 r.',
       odwolanieArt115: '7 grudnia 2026 r.',
     });
@@ -92,7 +99,7 @@ describe('wypowiedzenie zmieniające (art. 42 § 1–3, art. 36 § 1, art. 30 §
   });
   it('teksty wyniku bez przesunięcia: jedna data, bez zdań o art. 115 KC', () => {
     const o = opisZmieniajacego(wypowiedzenieZmieniajace('2020-01-15', '2026-11-12'), '2026-11-12');
-    expect(o).toMatchObject({ odmowaEtykieta: 'Odmowę złóż najpóźniej', odmowa: '5 stycznia 2027 r.', odmowaArt115: null, odmowaZdanie: '', odwolanie: '3 grudnia 2026 r.', odwolanieArt115: null, odwolanieZdanie: '', status: 'Zostały 54 dni', wariantB: '14 stycznia 2027 r.' });
+    expect(o).toMatchObject({ odmowaEtykieta: 'Odmowę złóż najpóźniej', odmowa: '5 stycznia 2027 r.', odmowaArt115: null, odmowaZdanie: '', odwolanieEtykieta: 'Odwołanie do sądu pracy do', odwolanie: '3 grudnia 2026 r.', odwolanieArt115: null, odwolanieZdanie: '', status: 'Zostały 54 dni', wariantB: '14 stycznia 2027 r.' });
     expect(o.uwaga).toContain('Liczy się dzień, w którym odmowa dotrze do pracodawcy.');
     const bez = opisZmieniajacego(wypowiedzenieZmieniajace('2026-05-13', '2026-11-12', false), '2026-11-12');
     expect(bez).toMatchObject({ wariantB: 'nie dotyczy (bez pouczenia)', prog: '6 miesięcy mija 12 listopada 2026 r.; odmowę liczymy od krótszego okresu (2 tygodnie)' });

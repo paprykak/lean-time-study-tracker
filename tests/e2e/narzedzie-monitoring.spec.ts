@@ -86,3 +86,15 @@ test('osoba przyjęta po uruchomieniu: § 8 zamiast terminu 2 tygodni; czytnik o
   await expect(page.locator('dd[aria-live] [data-w="informacja"]')).toHaveCount(1);
   await expect(page.locator('[data-w="informacja-status"][aria-live]')).toHaveCount(0);
 });
+
+test('koniec przechowywania w sobotę: zdanie o braku przesunięcia poza regionem aria-live', async ({ page }) => {
+  await page.clock.setFixedTime(new Date('2026-11-15T10:00:00+01:00'));
+  await page.goto('/narzedzia/monitoring-w-pracy');
+  await page.locator('#m-nagranie').fill('2026-11-14');
+  const uwaga = page.locator('[data-w="przechowywanie-uwaga"]');
+  await expect(uwaga).toBeVisible();
+  await expect(uwaga).toHaveText(/^Koniec okresu podajemy bez\sprzesunięcia/);
+  await expect(page.locator('[aria-live] [data-w="przechowywanie-uwaga"]')).toHaveCount(0);
+  await page.locator('#m-nagranie').fill('2026-11-12');
+  await expect(uwaga).toBeHidden();
+});
