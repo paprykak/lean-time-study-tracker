@@ -198,6 +198,8 @@ export function przygotuj(indeks: WpisIndeksu[]): Indeks & Przygotowany[] {
       return s;
     };
     const nazwa = fraza('n', wpis.n);
+    // Nazwy mają wzór „Temat: dopowiedzenie”; sam temat to osobna fraza, żeby dopowiedzenie jej nie rozcieńczało.
+    if (wpis.n.includes(':')) fraza('n', wpis.n.slice(0, wpis.n.indexOf(':')));
     for (const h of wpis.h) fraza('h', h);
     fraza('t', wpis.t);
     const pytania = wpis.p.map((tekst) => ({ tekst, slowa: fraza('p', tekst) }));

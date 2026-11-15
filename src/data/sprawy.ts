@@ -5,6 +5,12 @@
 
 /** Potoczne słowa, pod którymi ludzie szukają narzędzia (slug → hasła). */
 export const HASLA: Record<string, string[]> = {
+  // Pakiet „wyszukiwarka2” (2026-11-15): hasła z podpowiedzi Google (pl) dopisane przy 21 narzędziach (źródło każdego
+  // w raporty/wyszukiwarka2/RAPORT.md) i usunięte hasła, które zabierały ogólne zapytania narzędziu głównemu: „L4” przy
+  // okresie zasiłkowym, „odprawa” przy odprawie pośmiertnej i zwolnieniach grupowych (słowo jest w nazwie albo w FAQ),
+  // „sobota pracująca” przy pracy w sobotę (w podpowiedziach to kalendarz: „sobota pracująca w sierpniu”), „świadectwo
+  // pracy” przy stażu pracy (od rundy 7 jest narzędzie o świadectwie). Każda zmiana z testem w obie strony
+  // w src/lib/szukaj-narzedzi.test.ts.
   'kalkulator-l4': ['chorobowe', 'zwolnienie lekarskie', 'choroba', 'zasiłek chorobowy', 'e-ZLA', 'ile dostanę na L4'],
   'okres-zasilkowy': ['chorobowe', '182 dni', 'długie zwolnienie'],
   'zwolnienie-na-l4': ['zwolnienie lekarskie', 'choroba', 'wypowiedzenie na L4', 'art. 53', 'zwalniają mnie na L4'],

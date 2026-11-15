@@ -211,3 +211,113 @@ describe('dane strony głównej', async () => {
     for (const s of NAJCZESTSZE) expect(wsrod(s.pytanie, 5), s.pytanie).toContain(s.slug);
   });
 });
+
+describe('wyszukiwarka narzędzi: algorytm (pakiet „wyszukiwarka2”)', () => {
+  it('identyczne hasło wygrywa ze słowem z nazwy innego narzędzia („odprawa” to najpierw kalkulator odprawy)', () => {
+    expect(pierwszy('odprawa')).toBe('kalkulator-odprawy');
+    expect(pierwszy('odprawa pośmiertna')).toBe('odprawa-posmiertna');
+    expect(pierwszy('zwolnienia grupowe odprawa')).toBe('zwolnienia-grupowe');
+  });
+
+  it('nieznane słowo nie zeruje wyniku („kierownik dał mi upomnienie”)', () => {
+    expect(pierwszy('kierownik dał mi upomnienie')).toBe('kara-porzadkowa');
+    expect(pierwszy('szef kazał mi zostać po godzinach nadgodziny')).toBe('kalkulator-nadgodzin');
+  });
+
+  it('remis nie zależy od alfabetu: przy równych punktach wygrywa krótsza nazwa, potem kolejność rejestru', () => {
+    const wpis = (s: string, n: string) => ({ s, n, k: '', c: '', kk: '', t: '', p: [], h: ['wspólne hasło'] });
+    const maly = przygotuj([wpis('b', 'Zeta'), wpis('a', 'Alfa')]);
+    expect(szukaj(maly, 'wspólne hasło').map((w) => w.wpis.s)).toEqual(['b', 'a']);
+    const dluzsza = przygotuj([wpis('b', 'Zeta długa nazwa'), wpis('a', 'Alfa')]);
+    expect(szukaj(dluzsza, 'wspólne hasło').map((w) => w.wpis.s)).toEqual(['a', 'b']);
+    expect(pierwszy('szkoda na zdrowiu w pracy')).toBe('odszkodowanie-za-wypadek-przy-pracy');
+  });
+
+  it('początek słowa pasuje tylko w ostatnim słowie zapytania (pisanie na żywo)', () => {
+    expect(pierwszy('nadgo')).toBe('kalkulator-nadgodzin');
+    // „dał” przed innym słowem jest skończone, więc nie pasuje do „dalsze”; na końcu zapytania może być początkiem słowa.
+    const wpis = (s: string, n: string) => ({ s, n, k: '', c: '', kk: '', t: '', p: [], h: [] });
+    const maly = przygotuj([wpis('dalsze', 'Dalsze kroki'), wpis('kara', 'Upomnienie')]);
+    expect(szukaj(maly, 'dał upomnienie').map((w) => w.wpis.s)).toEqual(['kara']);
+    expect(szukaj(maly, 'upomnienie dal').map((w) => w.wpis.s)).toEqual(['kara', 'dalsze']);
+  });
+
+  it('literówki w słowach od 5 znaków, gdy słowo nie pasuje inaczej', () => {
+    expect(pierwszy('nadgodzni')).toBe('kalkulator-nadgodzin');
+    expect(pierwszy('urlpo wypoczynkowy')).toBe('kalkulator-urlopu');
+    expect(pierwszy('wypowiedzenei')).toBe('okres-wypowiedzenia');
+    expect(szukaj(p, 'kangru')).toEqual([]);
+  });
+
+  it('odmiana: krótkie słowo z jedną literą więcej, czas przeszły w 1. osobie, bez słowotwórstwa', () => {
+    expect(pierwszy('ile lat pracy')).toBe('staz-pracy');
+    expect(pierwszy('zniszczyłem sobie kręgosłup w pracy')).toBe('choroba-zawodowa');
+    expect(wsrod('zniszczyłem wózek widłowy kto płaci')).toContain('odpowiedzialnosc-materialna');
+    expect(pasuje('wyrownanie', 'wyrownawczy')).toBe(false);
+    expect(pasuje('zniszczylem', 'zniszczony')).toBe(true);
+  });
+
+  it('„kodeks pracy”, „przepisy” i rok nie odciągają od sprawy', () => {
+    expect(slowa('nadgodziny kodeks pracy 2026')).toEqual(['nadgodziny', 'pracy']);
+    expect(pierwszy('nadgodziny kodeks pracy')).toBe('kalkulator-nadgodzin');
+    expect(pierwszy('płaca minimalna 2027')).toBe('placa-minimalna');
+    expect(pierwszy('woda w pracy przepisy')).toBe('temperatura-w-pracy');
+  });
+
+  it('temat nazwy przed dwukropkiem jest osobną frazą („okres zasiłkowy L4”)', () => {
+    expect(pierwszy('okres zasiłkowy L4')).toBe('okres-zasilkowy');
+    expect(pierwszy('okres wyczekiwania L4')).toBe('okres-wyczekiwania');
+  });
+});
+
+describe('wyszukiwarka narzędzi: hasła zmienione w pakiecie „wyszukiwarka2” (w obie strony)', () => {
+  // [zapytanie, narzędzie na pierwszym miejscu]: najpierw zapytanie, które hasło przyciąga, potem sprawa, która zostaje
+  // przy innym narzędziu. Hasła z podpowiedzi Google (pl, 2026-11-15, raporty/wyszukiwarka2/RAPORT.md).
+  it.each([
+    ['L4', 'kalkulator-l4'],
+    ['L4 182 dni', 'okres-zasilkowy'],
+    ['odbiór nadgodzin', 'kalkulator-nadgodzin'],
+    ['wolne za nadgodziny', 'kalkulator-nadgodzin'],
+    ['praca w sobotę a odbiór dnia wolnego', 'praca-w-sobote'],
+    ['najniższa krajowa na rękę', 'brutto-netto'],
+    ['najniższa krajowa', 'placa-minimalna'],
+    ['pensja minimalna 2026', 'placa-minimalna'],
+    ['pensja brutto netto', 'brutto-netto'],
+    ['wypłata do 10 dnia miesiąca', 'termin-wyplaty-wynagrodzenia'],
+    ['wypłata za niepełny miesiąc', 'wynagrodzenie-za-niepelny-miesiac'],
+    ['chorobowe po jakim czasie', 'okres-wyczekiwania'],
+    ['chorobowe ile procent', 'kalkulator-l4'],
+    ['co wolno na l4 w ciąży', 'co-wolno-na-l4'],
+    ['praca w ciąży', 'praca-w-ciazy'],
+    ['urlop na żądanie ile dni', 'kalkulator-urlopu'],
+    ['urlop na wypowiedzeniu', 'urlop-w-okresie-wypowiedzenia'],
+    ['ile stopni w pracy max', 'temperatura-w-pracy'],
+    ['toaleta w pracy', 'normy-sanitarne'],
+    ['praca zmianowa kodeks pracy', 'kontrola-grafiku'],
+    ['odpoczynek dobowy kierowcy', 'czas-jazdy-kierowcy'],
+    ['karta pobytu praca sezonowa', 'praca-cudzoziemca'],
+    ['zgłoszenie cudzoziemca do urzędu pracy', 'zgloszenie-pracy-cudzoziemca'],
+    ['gdzie zgłosić pracodawcę który nie płaci', 'sad-pracy-czy-pip'],
+    ['praca bez umowy', 'informacja-o-warunkach-zatrudnienia'],
+    ['sobota pracująca 2026', 'dni-wolne-od-pracy'],
+    ['boże ciało 2026', 'dni-wolne-od-pracy'],
+    ['11 listopada 2026', 'dni-wolne-od-pracy'],
+    ['praca w sobotę ile płatna', 'praca-w-sobote'],
+    ['okulary do komputera', 'przerwy-w-pracy'],
+    ['praca przy komputerze przerwy', 'przerwy-w-pracy'],
+    ['monitoring komputera', 'monitoring-w-pracy'],
+    ['wypowiedzenie umowy na czas określony', 'okres-wypowiedzenia'],
+    ['umowa na czas określony', 'umowa-na-czas-okreslony'],
+    ['choroba zawodowa kręgosłupa', 'choroba-zawodowa'],
+    ['praca w nocy a dziecko', 'rodzic-w-pracy'],
+    ['dodatek nocny', 'dodatek-za-prace-w-nocy'],
+    ['wynagrodzenie za urlop wypoczynkowy', 'wynagrodzenie-za-urlop'],
+    ['urlop wypoczynkowy ile dni', 'kalkulator-urlopu'],
+    ['stawka godzinowa netto 2026', 'stawka-godzinowa'],
+    ['umowa zlecenie netto', 'zlecenie-netto'],
+    ['świadectwo pracy wzór', 'swiadectwo-pracy'],
+    ['staż pracy kalkulator', 'staz-pracy'],
+  ])('„%s” → %s na pierwszym miejscu', (q, slug) => {
+    expect(pierwszy(q)).toBe(slug);
+  });
+});
