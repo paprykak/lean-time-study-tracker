@@ -36,3 +36,26 @@ test('wyłączny powód i odmowa nowych warunków: orzecznictwo SN z sygnaturami
   expect(tekst).toMatch(/odmowa może być uznana za\swspółprzyczynę/);
   await expect(sekcja.getByRole('link', { name: 'kalkulator wypowiedzenia zmieniającego' })).toHaveAttribute('href', '/narzedzia/wypowiedzenie-zmieniajace');
 });
+
+// Audyt jakości 4 (B-1, B-14): po błędzie danych znika cały wynik, a nie tylko kwota.
+test('błędna pensja albo rok bez płacy minimalnej: żadne pole wyniku nie zostaje z poprzedniego liczenia', async ({ page }) => {
+  await page.getByLabel('Początek pracy u tego pracodawcy').fill('2010-01-01');
+  await page.getByLabel('Dzień rozwiązania umowy').fill('2026-12-31');
+  const pensja = page.getByLabel('Pensja i stałe dodatki miesięcznie (zł brutto)');
+  await pensja.fill('24030,01');
+  await expect(page.locator('[data-w="kwota"]')).toHaveText(/^72\s090,00\szł$/);
+  await expect(page.locator('[data-w="uwaga"]')).toBeVisible();
+  await pensja.fill('0');
+  for (const k of ['kwota', 'miesieczne', 'miesiecy', 'limit']) await expect(page.locator(`[data-w="${k}"]`)).toHaveText('—');
+  await expect(page.locator('[data-w="uwaga"]')).toBeHidden();
+  await pensja.fill('6000');
+  await page.getByLabel('Dzień rozwiązania umowy').fill('2028-01-15');
+  await expect(page.locator('[data-w="limit"]')).toHaveText('—');
+});
+
+test('linki do okresu wypowiedzenia i ekwiwalentu za urlop (B-8), 20 pracowników (B-wer-3)', async ({ page }) => {
+  await expect(page.locator('a[href="/narzedzia/okres-wypowiedzenia"]').first()).toBeAttached();
+  await expect(page.locator('main a[href="/narzedzia/ekwiwalent-za-urlop"]')).toHaveCount(1);
+  await expect(page.locator('main')).not.toContainText('20 osób');
+  await expect(page.locator('main')).not.toContainText('z jego inicjatywy');
+});

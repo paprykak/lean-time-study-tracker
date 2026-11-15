@@ -16,12 +16,15 @@ import {
   ocena,
   opisL4,
   stanTerminu,
+  stanTerminuPracownika,
   terminOdwolania,
   terminZastrzezen,
   werdyktBezDat,
   type Czynnosc,
   type DaneL4,
 } from './co-wolno-na-l4';
+import { NARZEDZIA } from '../../data/narzedzia';
+import { terminPracownika } from './terminy';
 
 const DZIS = '2026-11-15';
 const baza: DaneL4 = { czynnosc: 'polecenie', wskazanie: 'chodzic', kontrola: 'nikt', od: '2026-11-03', do: '2026-11-16', dzien: '2026-11-10' };
@@ -49,6 +52,16 @@ describe('terminy', () => {
     ['2026-11-30', '2026-12-30', null],
     ['2026-05-03', '2026-06-03', null], // 4 czerwca 2026 to Boże Ciało, ale termin kończy się dzień wcześniej
     ['2026-12-25', '2027-01-25', null],
+    // Audyt jakosc4 (A-1, A-9): konwencja terminPracownika, sobota przesuwa dopiero od 1.01.2017 r. (Dz.U. 2016 poz. 2255,
+    // art. 21), 12.11.2018 r. dniem wolnym; Wigilia wolna od 2025 r. (model w Pythonie, raporty/jakosc4/A-wer.json).
+    ['2016-07-13', '2016-08-13', null],
+    ['2018-10-12', '2018-11-12', '2018-11-13'],
+    ['2018-10-10', '2018-11-10', '2018-11-13'],
+    ['2018-10-11', '2018-11-11', '2018-11-13'],
+    ['2025-11-24', '2025-12-24', '2025-12-29'],
+    ['2024-11-24', '2024-12-24', null],
+    ['2026-12-01', '2027-01-01', '2027-01-04'],
+    ['2027-01-29', '2027-02-28', '2027-03-01'],
   ])('odwołanie od decyzji doręczonej %s: zdąż do %s, po art. 115 KC %s', (decyzja, koniec, przesuniety) => {
     const t = terminOdwolania(decyzja);
     expect(t.koniec).toBe(koniec);
@@ -60,6 +73,25 @@ describe('terminy', () => {
     ['2026-02-25', '2026-03-04'],
     ['2024-02-25', '2024-03-03'],
   ])('zastrzeżenia do protokołu otrzymanego %s: do %s', (p, k) => expect(terminZastrzezen(p)).toBe(k));
+  it.each([
+    ['2026-11-07', '2026-11-14', '2026-11-16'],
+    ['2026-12-17', '2026-12-24', '2026-12-28'],
+    ['2026-12-25', '2027-01-01', '2027-01-04'],
+    ['2027-03-20', '2027-03-27', '2027-03-30'],
+    ['2027-05-20', '2027-05-27', '2027-05-28'],
+  ])('zastrzeżenia (audyt jakosc4, A-2): protokół %s → zdąż do %s, według art. 115 KC %s', (p, z, k) => {
+    const t = terminPracownika(terminZastrzezen(p));
+    expect([t.zdazDo, t.wedlugArt115]).toEqual([z, k]);
+  });
+  it('status terminu z dwiema datami (A-2, A-3): „Termin minął” dopiero po drugiej dacie', () => {
+    const t = terminPracownika('2026-11-14');
+    expect(stanTerminuPracownika(t, '2026-11-13')).toEqual({ tekst: 'Został 1 dzień', klasa: 'pilne' });
+    expect(stanTerminuPracownika(t, '2026-11-14')).toEqual({ tekst: 'Zdąż do: dziś', klasa: 'pilne' });
+    expect(stanTerminuPracownika(t, '2026-11-15')).toEqual({ tekst: 'Pierwsza data minęła; ostatni dzień według art. 115 KC: 16 listopada 2026 r.', klasa: 'pilne' });
+    expect(stanTerminuPracownika(t, '2026-11-16')).toEqual({ tekst: 'Pierwsza data minęła; ostatni dzień według art. 115 KC: dziś', klasa: 'pilne' });
+    expect(stanTerminuPracownika(t, '2026-11-17')).toEqual({ tekst: 'Termin minął 1 dzień temu', klasa: 'po-terminie' });
+    expect(stanTerminuPracownika(terminPracownika('2026-11-17'), '2026-11-17')).toEqual({ tekst: 'Dziś ostatni dzień', klasa: 'pilne' });
+  });
   it('stan terminu', () => {
     expect(stanTerminu('2026-11-15', DZIS)).toEqual({ tekst: 'Dziś ostatni dzień', klasa: 'pilne' });
     expect(stanTerminu('2026-11-16', DZIS)).toEqual({ tekst: 'Został 1 dzień', klasa: 'pilne' });
@@ -172,21 +204,53 @@ describe('opis wyniku', () => {
   it('dzień po dacie bez przesunięcia, a przed przesuniętą: liczy się art. 115 KC, a nie „termin minął”', () => {
     const pazdz = { ...baza, od: '2026-10-01', do: '2026-10-14', dzien: '2026-10-05', decyzja: '2026-10-11' };
     const o = opisL4(pazdz, '2026-11-12');
-    expect(o.odwolanieStatus).toBe('Dziś ostatni dzień');
+    expect(o.odwolanieStatus).toBe('Pierwsza data minęła; ostatni dzień według art. 115 KC: dziś');
     expect(o.odwolanieKlasa).toBe('pilne');
-    expect(o.odwolanie).toMatch(/^Miesiąc od doręczenia decyzji przypada na 11 listopada 2026 r\., ale ten dzień to Narodowe Święto Niepodległości, dzień wolny od pracy, więc według art\. 115 Kodeksu cywilnego \(przez art\. 165 § 1 KPC\) termin upływa 12 listopada 2026 r\. Nie zwlekaj/);
+    expect(o.odwolanie).toMatch(/^Miesiąc od doręczenia decyzji przypadł na 11 listopada 2026 r\., ale ten dzień to Narodowe Święto Niepodległości, dzień wolny od pracy, więc według art\. 115 Kodeksu cywilnego \(przez art\. 165 § 1 KPC\) termin upływa 12 listopada 2026 r\. Odwołanie wnosisz/);
+    expect(o.odwolanie).not.toContain('Nie zwlekaj');
     // Po obu datach: liczy się data z art. 115 KC (12.11), a nie data bez przesunięcia (11.11).
     const po = opisL4(pazdz, '2026-11-13');
     expect(po.odwolanieStatus).toBe('Termin minął 1 dzień temu');
     expect(po.odwolanie).toMatch(/^Termin minął: miesiąc od doręczenia decyzji przypadł na 11 listopada 2026 r\., a że ten dzień to Narodowe Święto Niepodległości, dzień wolny od pracy, według art\. 115 Kodeksu cywilnego \(przez art\. 165 § 1 KPC\) termin upłynął 12 listopada 2026 r\. Odwołanie/);
-    // W sam dzień wolny: status do daty z art. 115 KC.
+    // W sam dzień „zdąż do” (audyt jakosc4, A-3): ta data nadal się liczy, jak we wspólnej fazaTerminu.
     const wDzienWolny = opisL4(pazdz, '2026-11-11');
-    expect(wDzienWolny.odwolanieStatus).toBe('Został 1 dzień');
-    expect(wDzienWolny.odwolanie).toMatch(/^Miesiąc od doręczenia decyzji przypada na 11 listopada/);
+    expect(wDzienWolny.odwolanieStatus).toBe('Zdąż do: dziś');
+    expect(wDzienWolny.odwolanie).toMatch(/^Zdąż do 11 listopada 2026 r\./);
+    const sobota = opisL4({ ...pazdz, decyzja: '2026-10-14' }, '2026-11-14');
+    expect(sobota.odwolanieStatus).toBe('Zdąż do: dziś');
+    expect(sobota.odwolanie.startsWith('Zdąż do 14 listopada 2026 r.: miesiąc od doręczenia decyzji. 14 listopada 2026 r. to sobota: według art. 115')).toBe(true);
+    const niedziela = opisL4({ ...pazdz, decyzja: '2026-10-14' }, '2026-11-15');
+    expect(niedziela.odwolanieStatus).toBe('Pierwsza data minęła; ostatni dzień według art. 115 KC: 16 listopada 2026 r.');
+    expect(niedziela.odwolanie).not.toContain('Nie zwlekaj');
   });
-  it('zastrzeżenia: uwaga o sobocie tylko wtedy, gdy termin wypada w dzień wolny', () => {
-    expect(opisL4({ ...baza, protokol: '2026-11-14' }, DZIS).zastrzezenia).toContain('21 listopada 2026 r. to sobota; ustawa nie mówi, czy termin przesuwa się');
-    expect(opisL4({ ...baza, protokol: '2026-11-10' }, DZIS).zastrzezenia).not.toContain('przesuwa');
+  it('zastrzeżenia (A-2): dzień po sobocie nie „Termin minął”, dwie daty i art. 110 KC', () => {
+    const o = opisL4({ ...baza, dzien: '2026-11-05', protokol: '2026-11-07' }, DZIS);
+    expect(o.zastrzezeniaStatus).toBe('Pierwsza data minęła; ostatni dzień według art. 115 KC: 16 listopada 2026 r.');
+    expect(o.zastrzezenia).toMatch(/^Zdąż do 14 listopada 2026 r\.: 7 dni od otrzymania protokołu albo aneksu do niego\. 14 listopada 2026 r\. to sobota: według art\. 115 Kodeksu cywilnego ostatni dzień to 16 listopada 2026 r\. Ustawa zasiłkowa nie mówi, jak liczyć ten termin.*\(art\. 110 Kodeksu cywilnego\)/);
+    expect(o.zastrzezenia).not.toContain('r..');
+    const wigilia = opisL4({ ...baza, od: '2026-12-01', do: '2026-12-20', dzien: '2026-12-10', protokol: '2026-12-17' }, '2026-12-20');
+    expect(wigilia.zastrzezenia).toMatch(/^Zdąż do 24 grudnia 2026 r\.: 7 dni.*ostatni dzień to 28 grudnia 2026 r\. Ustawa/);
+    expect(wigilia.zastrzezeniaStatus).toBe('Zostały 4 dni');
+  });
+  it('odwołanie (A-5): przy zasiłku od pracodawcy po kontroli rozstrzyga ZUS, wniosek z art. 63 tylko przy odmowie', () => {
+    const o = opisL4(baza, DZIS);
+    expect(o.odwolanie).not.toContain('decyzję ZUS dostaniesz po wniosku');
+    expect(o.odwolanie).toContain('art. 68 ust. 1e');
+  });
+  it('praca w drugiej firmie przy zwolnieniu sprzed 1.01.2027 r. (A-4): warunek o dacie wystawienia', () => {
+    const przelom = opisL4({ ...baza, czynnosc: 'inna-praca', od: '2026-12-20', do: '2027-01-10', dzien: '2027-01-05' }, '2027-01-06');
+    expect(przelom.warunki[0]).toContain('zaczęło się przed 1 stycznia 2027 r.');
+    const nowe = opisL4({ ...baza, czynnosc: 'inna-praca', od: '2027-01-02', do: '2027-01-10', dzien: '2027-01-05' }, '2027-01-06');
+    expect(nowe.warunki.some((w) => w.includes('zaczęło się przed 1 stycznia 2027 r.'))).toBe(false);
+    // ocena() nie może zmieniać wspólnych danych: drugie wywołanie bez zdublowanego warunku.
+    expect(opisL4({ ...baza, czynnosc: 'inna-praca', od: '2026-12-20', do: '2027-01-10', dzien: '2027-01-05' }, '2027-01-06').warunki.filter((w) => w.includes('zaczęło się')).length).toBe(1);
+  });
+  it('rejestr (A-8): nazwy dni wolnych mają podstawę w ustawie o dniach wolnych', () => {
+    expect(NARZEDZIA.find((n) => n.slug === 'co-wolno-na-l4')!.przepisy).toContain('dniWolne');
+  });
+  it('zastrzeżenia: druga data tylko wtedy, gdy termin wypada w dzień wolny', () => {
+    expect(opisL4({ ...baza, protokol: '2026-11-14' }, DZIS).zastrzezenia).toContain('21 listopada 2026 r. to sobota: według art. 115 Kodeksu cywilnego ostatni dzień to 23 listopada 2026 r.');
+    expect(opisL4({ ...baza, protokol: '2026-11-10' }, DZIS).zastrzezenia).not.toContain('art. 115');
   });
   it('protokół sprzed 13.04.2026: dawna kontrola, bez terminu 7 dni', () => {
     const o = opisL4({ ...baza, od: '2026-03-01', do: '2026-03-20', dzien: '2026-03-05', protokol: '2026-03-10' }, DZIS);
@@ -248,10 +312,24 @@ describe('błędne dane', () => {
 });
 
 describe('wyszukiwarka serwisu: frazy z podpowiedzi Google prowadzą do narzędzia', () => {
-  it.each(['czy na l4 można wychodzić z domu', 'czy na L4 można pracować', 'praca na L4 u innego pracodawcy', 'kontrola ZUS L4', 'wyjazd na L4', 'chory może chodzić', 'chory powinien leżeć', 'odwołanie od decyzji ZUS'])('„%s” → pierwsze miejsce', async (q) => {
+  it.each(['czy na l4 można wychodzić z domu', 'czy na L4 można pracować', 'praca na L4 u innego pracodawcy', 'kontrola ZUS L4', 'wyjazd na L4', 'chory może chodzić', 'chory powinien leżeć', 'odwołanie od decyzji ZUS', 'siłownia na L4', 'sport na L4', 'remont na L4', 'spacer na L4', 'maile na L4', 'maile na zwolnieniu lekarskim', 'praca na zwolnieniu lekarskim'])('„%s” → pierwsze miejsce', async (q) => {
     const { przygotuj, szukaj } = await import('../szukaj-narzedzi');
     const { indeksNarzedzi } = await import('../indeks-narzedzi');
     expect(szukaj(przygotuj(indeksNarzedzi()), q, 1)[0]?.wpis.s).toBe('co-wolno-na-l4');
+  });
+});
+
+describe('wyszukiwarka: hasła nie zabierają innych spraw (audyt jakosc4, A-6)', () => {
+  it.each([
+    ['wypadek na imprezie firmowej', 'odszkodowanie-za-wypadek-przy-pracy'],
+    ['wypadek na siłowni', 'odszkodowanie-za-wypadek-przy-pracy'],
+    ['zlecenie na L4', 'zasilek-chorobowy-na-zleceniu'],
+    ['badania kontrolne po L4', 'badania-lekarskie-w-pracy'],
+    ['spacer w przerwie', 'przerwy-w-pracy'],
+  ])('„%s” → %s', async (q, slug) => {
+    const { przygotuj, szukaj } = await import('../szukaj-narzedzi');
+    const { indeksNarzedzi } = await import('../indeks-narzedzi');
+    expect(szukaj(przygotuj(indeksNarzedzi()), q, 1)[0]?.wpis.s).toBe(slug);
   });
 });
 

@@ -181,7 +181,7 @@ export const NARZEDZIA: Narzedzie[] = [
     nazwa: 'Kalkulator odprawy',
     krotko: 'Odprawa przy zwolnieniu z przyczyn pracodawcy (1, 2 albo 3 pensje, z limitem) i odprawa emerytalna.',
     kategoria: 'umowa',
-    przepisy: ['zwolnieniaGrupowe', 'kodeksPracy', 'wynagrodzenieRozp', 'urlopowe', 'minimalneWynagrodzenie', 'placa2025', 'placa2026', 'placa2027'],
+    przepisy: ['zwolnieniaGrupowe', 'kodeksPracy', 'wynagrodzenieRozp', 'urlopowe', 'minimalneWynagrodzenie', 'placa2025', 'placa2026', 'placa2027', 'rynekPracy', 'zmianaStazu2025'],
     sprawdzono: '2026-11-11',
   },
   {
@@ -461,7 +461,7 @@ export const NARZEDZIA: Narzedzie[] = [
     nazwa: 'Okres wypowiedzenia',
     krotko: 'Ile trwa wypowiedzenie i który dzień jest ostatnim dniem umowy: 2 tygodnie, miesiąc albo 3 miesiące.',
     kategoria: 'umowa',
-    przepisy: ['kodeksPracy', 'zmianaStazu2025'],
+    przepisy: ['kodeksPracy', 'zmianaStazu2025', 'kodeksCywilny'],
     sprawdzono: '2026-11-11',
   },
   {
@@ -709,7 +709,7 @@ export const NARZEDZIA: Narzedzie[] = [
     nazwa: 'Zaległy urlop',
     krotko: 'Do kiedy pracodawca musi dać zaległy urlop i kiedy roszczenie o urlop może się przedawnić.',
     kategoria: 'urlopy',
-    przepisy: ['kodeksPracy', 'kodeksCywilny'],
+    przepisy: ['kodeksPracy', 'kodeksCywilny', 'dniWolne'],
     sprawdzono: '2026-11-13',
   },
   {
@@ -925,7 +925,7 @@ export const NARZEDZIA: Narzedzie[] = [
     nazwa: 'Co wolno na L4: praca, wyjazd, kontrola ZUS',
     krotko: 'Czy praca, zakupy albo wyjazd na zwolnieniu odbiorą zasiłek i za jaki okres, kontrola ZUS i odwołanie.',
     kategoria: 'wynagrodzenie',
-    przepisy: ['zasilkowa', 'zmianaKontroliZwolnien2026', 'wzoryKontroliZwolnien', 'systemUbezpieczen', 'kodeksPracy', 'kpc', 'kodeksCywilny'],
+    przepisy: ['zasilkowa', 'zmianaKontroliZwolnien2026', 'wzoryKontroliZwolnien', 'systemUbezpieczen', 'kodeksPracy', 'kpc', 'kodeksCywilny', 'dniWolne'],
     sprawdzono: '2026-11-15',
   },
   {

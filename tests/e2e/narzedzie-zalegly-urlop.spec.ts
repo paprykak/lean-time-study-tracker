@@ -46,7 +46,7 @@ test('koniec umowy 15.03.2026: ekwiwalent za 8 dni, przedawnienie 15 marca 2029 
   await expect(page.locator('[data-rok="2025"]')).toContainText(/wchodzi\sdo\sekwiwalentu/);
 });
 
-test('błędne dane: rok przyszły, dni ujemne, rok przed 2000, pusty formularz, jedna data wychowawczego', async ({ page }) => {
+test('błędne dane: rok przyszły, dni ujemne, rok przed 2011, pusty formularz, jedna data wychowawczego', async ({ page }) => {
   const blad = page.getByRole('alert');
   const rok2 = page.locator('[name="rok2"]');
   const dni2 = page.locator('[name="dni2"]');
@@ -64,8 +64,8 @@ test('błędne dane: rok przyszły, dni ujemne, rok przed 2000, pusty formularz,
   await expect(dni2).toHaveAttribute('aria-invalid', 'true');
   await dni2.fill('6');
 
-  await page.locator('[name="rok1"]').fill('1999');
-  await expect(blad).toContainText(/2000/);
+  await page.locator('[name="rok1"]').fill('2010');
+  await expect(blad).toContainText(/2011/);
 
   for (const n of ['rok1', 'dni1', 'rok2', 'dni2']) await page.locator(`[name="${n}"]`).fill('');
   await expect(blad).toContainText(/Wpisz\sco\snajmniej\sjeden\srok/);
@@ -86,5 +86,25 @@ test('31 grudnia 2028 r. to niedziela: obie daty i jedno zdanie o art. 115 KC; 3
   await expect(page.locator('[data-uwaga="urlop"]')).toContainText(/30\swrześnia\sto\sdata\sz\sprzepisu\sdla\spracodawcy/);
   await page.locator('[name="rok1"]').fill('2024');
   await page.locator('[name="dni1"]').fill('2');
-  await expect(page.locator('[data-w="zdanie"]')).toBeHidden();
+  // Główna data 31.12.2027 to piątek, ale wiersze mają daty według art. 115 KC: ogólne ostrzeżenie (audyt jakości 4, C-3).
+  await expect(page.locator('[data-w="zdanie"]')).not.toContainText(/to\sniedziela/);
+  await expect(page.locator('[data-w="zdanie"]')).toContainText(/wątpliwe/);
+});
+
+// Audyt jakości 4 (C-16): strona zbudowana w 2026 r. po Nowym Roku sama przesuwa domyślne lata (2025 i 2026).
+// 4.01.2027: przedawnienie za 2025 r. 31.12.2028 (niedziela; według art. 115 KC 2.01.2029), za 727 dni (Python).
+test('po Nowym Roku: domyślne lata 2025 i 2026, dzień sprawdzenia 4 stycznia 2027 r.', async ({ page }) => {
+  await page.clock.setFixedTime(new Date('2027-01-04T10:00:00+01:00'));
+  await page.goto('/narzedzia/zalegly-urlop');
+  await expect(page.locator('[name="naDzien"]')).toHaveValue('2027-01-04');
+  await expect(page.locator('[name="rok1"]')).toHaveValue('2025');
+  await expect(page.locator('[name="rok2"]')).toHaveValue('2026');
+  await expect(page.locator('[data-w="status"]')).toHaveText(/Zostało:\s727\sdni/);
+  await expect(page.locator('[data-w="opis"]')).toContainText(/31\sgrudnia\s2028/);
+});
+
+// C-3: główna data 31.12.2027 r. to piątek, ale wiersze mają daty według art. 115 KC, więc ostrzeżenie jest widoczne.
+test('ostrzeżenie o art. 115 KC, gdy datę przesuniętą ma tylko wiersz', async ({ page }) => {
+  await expect(page.locator('[data-w="zdanie"]')).toBeVisible();
+  await expect(page.locator('[data-w="zdanie"]')).toContainText(/wątpliwe/);
 });

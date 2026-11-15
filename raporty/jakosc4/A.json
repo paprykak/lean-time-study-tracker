@@ -1,0 +1,147 @@
+{
+  "partia": "A",
+  "sprawdzone": [
+    {
+      "slug": "co-wolno-na-l4",
+      "pliki": [
+        "src/lib/narzedzia/co-wolno-na-l4.ts",
+        "src/lib/narzedzia/co-wolno-na-l4.test.ts",
+        "src/pages/narzedzia/co-wolno-na-l4.astro",
+        "tests/e2e/narzedzie-co-wolno-na-l4.spec.ts",
+        "src/data/narzedzia.ts",
+        "src/data/prawo.ts",
+        "src/data/sprawy.ts",
+        "src/lib/narzedzia/termin-odwolania.ts",
+        "src/lib/narzedzia/terminy.ts"
+      ],
+      "wynik": "problemy: art. 17 w trzech brzmieniach (DU_2025_501, DU_2026_854, DU_2026_26 art. 13 pkt 2 i art. 43) i przepisy przejściowe art. 39–43 zgodne z tekstem; daty wejścia w życie (13.04.2026, 27.01.2026 dla art. 59 ust. 1–4, 1.01.2027 dla ust. 1d–1e i art. 59 ust. 4a) poprawne; cytaty dosłowne; art. 8, 22, 55 ust. 3 pkt 7, 59, 61, 63, 66 ust. 2, 68–68e, rozporządzenie z 1999 r. (pobrane DU_1999_743, § 1, 8–10 zgodne), art. 92 § 3 pkt 2 i 291 § 1 Kp, art. 83 ust. 1 pkt 4, 2 i 5 ustawy systemowej, art. 165 § 1, 476, 477⁹ § 1, 3, 5 KPC (nowelizacje po t.j. 473, 830, 1003, 1046, 1296 nie dotyczą tych przepisów), DU_2026_441 i 1123 nie dotyczą narzędzia; ok. 70 zdań strony, FAQ, „Jak liczymy” i wszystkie warianty wyniku (8 czynności × 3 brzmienia × 2 wskazania × 3 kontrole, protokół/decyzja puste, dawne i nowe). Rachunek: 36 859 dat doręczenia decyzji i otrzymania protokołu (2000–2100) przeciw niezależnemu modelowi w Pythonie: zastrzeżenia 0 rozbieżności, odwołanie 888 rozbieżności (sobota przed 2017 r., 12.11.2018 r.); vitest 62/62. Playwright: SSR = skrypt, 320 i 412 px bez przewijania w bok, opcje mieszczą się, ariaSnapshot, błędy (puste, niepełne, >270 dni, kolejność dat) z aria-invalid i role=alert. Wyszukiwarka: 40 zapytań; 6 nie daje narzędzia w pierwszej piątce, 3 hasła zabierają pierwsze miejsce innym narzędziom."
+    }
+  ],
+  "znaleziska": [
+    {
+      "id": "A-1",
+      "slug": "co-wolno-na-l4",
+      "wymiar": "rachunek",
+      "waga": "srednia",
+      "plik": "src/lib/narzedzia/co-wolno-na-l4.ts",
+      "linia": 156,
+      "zdanie": "terminOdwolania(): const p = przesunZDniaWolnego(koniec); oraz wynik „Termin minął: miesiąc od doręczenia decyzji przypadł na 13 sierpnia 2016 r., a że ten dzień to sobota, według art. 115 Kodeksu cywilnego (przez art. 165 § 1 KPC) termin upłynął 16 sierpnia 2016 r.”",
+      "problem": "Odwołanie liczy druga implementacja art. 115 KC (przesunZDniaWolnego), która przesuwa z soboty także przed 1.01.2017 r. i nie zna dnia wolnego 12.11.2018 r.; daje inne daty niż terminPracownika i niż przepis. Formularz przyjmuje daty od 2000 r., więc strona podaje błędne zdanie prawne o terminie (np. przesunięcie z soboty w 2016 r.) i pomija przesunięcie z 12.11.2018 r.",
+      "dowod": "DU_2016_2255 art. 1 pkt 3 (słowa „lub na sobotę”) i art. 21: „Przepis art. 115 … w brzmieniu nadanym niniejszą ustawą, stosuje się do terminów, które nie upłynęły przed dniem wejścia w życie niniejszej ustawy” (1.01.2017 r.). Porównanie 36 859 dat (model Python: art. 112 KC, święta z ustawy o dniach wolnych, Wigilia od 2025 r., 12.11.2018 r., sobota od 2017 r.): 888 rozbieżności, 885 to soboty przed 2017 r. (np. decyzja 2016-07-13: narzędzie 2016-08-16, przepis i terminPracownika: brak przesunięcia, 13.08.2016 r.), 3 wokół 12.11.2018 r. (decyzja 2018-10-12: narzędzie brak przesunięcia, terminPracownika 2018-11-13; 2018-10-10 i 2018-10-11: narzędzie 12.11.2018, poprawnie 13.11.2018). Ta sama rozbieżność terminPracownika vs przesunZDniaWolnego w 888 przypadkach.",
+      "poprawka": "W terminOdwolania użyć terminPracownika(koniec) z terminy.ts (wedlugArt115, rozne, wolne[0].powod) zamiast przesunZDniaWolnego; w zastrzeżeniach (linia 424) dzienWolnyArt115(t) zamiast przesunZDniaWolnego. Testy: decyzja 2016-07-13 → poPrzesunieciu null; 2018-10-12 → 2018-11-13; 2018-10-10 → 2018-11-13."
+    },
+    {
+      "id": "A-2",
+      "slug": "co-wolno-na-l4",
+      "wymiar": "prawo",
+      "waga": "srednia",
+      "plik": "src/lib/narzedzia/co-wolno-na-l4.ts",
+      "linia": 420,
+      "zdanie": "Zastrzeżenia: „Termin minął 1 dzień temu” i „Zastrzeżenia składasz najpóźniej 14 listopada 2026 r. … 14 listopada 2026 r. to sobota; ustawa nie mówi, czy termin przesuwa się wtedy na następny dzień roboczy, więc podajemy datę bez przesunięcia.” (protokół 7.11.2026, dziś 15.11.2026)",
+      "problem": "Przy końcu 7 dni w sobotę albo święto narzędzie dzień później ogłasza, że termin minął, choć samo pisze, że przepis nie rozstrzyga przesunięcia; właśnie tego konwencja dwóch dat miała unikać (jedna wcześniejsza data przekonuje, że termin już minął). Zastrzeżenia to termin pracownika, a kara-porzadkowa przy 7-dniowym sprzeciwie pokazuje dwie daty.",
+      "dowod": "Playwright na podglądzie (zegar 15.11.2026): protokół 2026-11-07 → status „Termin minął 1 dzień temu”, bez drugiej daty 16.11.2026 r. Art. 68e ust. 4 (DU_2026_854): „w terminie 7 dni od dnia otrzymania protokołu kontroli lub aneksu”, bez reguły o sobocie; art. 115 KC (DU_2026_795) i analogiczna reguła KPA dają poniedziałek. DECYZJE.md 2026-11-15 Runda 7: „każdy termin, który musi zachować pracownik, pokazuje dwie daty … Jedna data wcześniejsza mogłaby kogoś przekonać, że termin już minął”.",
+      "poprawka": "Liczyć terminPracownika(dodajDni(protokol, 7)) i fazaTerminu: „Zdąż do” 14.11 oraz „ostatni dzień według art. 115 KC (jeśli ma zastosowanie)” 16.11 ze zdaniem, że ustawa zasiłkowa tego nie rozstrzyga; w fazie 'tylko-art-115' status jak w termin-odwolania („Pierwsza data minęła; …”) zamiast „Termin minął”. Test: protokół 2026-11-07, dziś 2026-11-15 → nie „Termin minął”."
+    },
+    {
+      "id": "A-3",
+      "slug": "co-wolno-na-l4",
+      "wymiar": "spojnosc",
+      "waga": "niska",
+      "plik": "src/lib/narzedzia/co-wolno-na-l4.ts",
+      "linia": 440,
+      "zdanie": "const tylkoPrzesuniety = t.poPrzesunieciu !== null && t.koniec <= dzis; → w dniu „zdąż do”: „Miesiąc od doręczenia decyzji przypada na 15 listopada 2026 r., ale ten dzień to niedziela, więc … termin upływa 16 listopada 2026 r. Nie zwlekaj: to ostatni dzień.” ze statusem „Został 1 dzień”",
+      "problem": "W sam dzień daty „zdąż do” narzędzie przestaje ją pokazywać i liczy status od daty z art. 115 KC, a wspólna fazaTerminu (dzis <= zdazDo → 'w-terminie', „To dziś”) i inne narzędzia terminowe w tym dniu nadal pokazują „zdąż do: dziś”. „Nie zwlekaj: to ostatni dzień” odnosi się do dnia, który jest jutro albo pojutrze.",
+      "dowod": "terminy.ts fazaTerminu: „if (dzis <= t.zdazDo) return { faza: 'w-terminie', … }”; termin-odwolania.ts opisOdwolania przy f.dni === 0: „To dziś: złóż pismo …”. Playwright (15.11.2026): decyzja 2026-10-15 i 2026-10-14 → tekst bez „Zdąż do”, status „Został 1 dzień”. Test jednostkowy „W sam dzień wolny: status do daty z art. 115 KC” utrwala to odstępstwo.",
+      "poprawka": "Zastąpić warunek przez fazaTerminu(terminPracownika(koniec), dzis): 'w-terminie' (także dni 0) → obecna gałąź „Zdąż do …”, 'tylko-art-115' → gałąź „Miesiąc … przypadł na …, termin upływa …” (bez „to ostatni dzień”, albo „to ostatni dzień według art. 115 KC”), 'po-terminie' → „Termin minął”. Zmienić test na dzień 11.11.2026 („Dziś”)."
+    },
+    {
+      "id": "A-4",
+      "slug": "co-wolno-na-l4",
+      "wymiar": "prawo",
+      "waga": "niska",
+      "plik": "src/lib/narzedzia/co-wolno-na-l4.ts",
+      "linia": 242,
+      "zdanie": "Werdykt „Tylko bez zwolnienia z tej pracy” dla zwolnienia 20.12.2026–10.01.2027 i pracy w innej firmie 5.01.2027 r.",
+      "problem": "Brzmienie od 2027 r. wybierane jest po dniu czynności, a ust. 1d dotyczy wystawienia zwolnienia („na żądanie ubezpieczonego można nie wystawić”). Zwolnienie wystawione przed 1.01.2027 r. nie mogło skorzystać z ust. 1d, więc dla zwolnień zaczętych w 2026 r. werdykt sugeruje wybór, którego nie było; warunek o zwolnieniu z obu tytułów to łagodzi, ale nie mówi o dacie wystawienia.",
+      "dowod": "DU_2026_26 art. 13 pkt 2 lit. b (ust. 1d: „na żądanie ubezpieczonego można nie wystawić zwolnienia od pracy z tego tytułu”) i art. 43 pkt 3 (ust. 1d i 1e od 1.01.2027 r.). jiti: opisL4({czynnosc:'inna-praca', od:'2026-12-20', do:'2027-01-10', dzien:'2027-01-05'}, '2027-01-06').werdykt = „Tylko bez zwolnienia z tej pracy”.",
+      "poprawka": "Gdy od < OD_2027, a czynność od 1.01.2027 r. (inna-praca), dopisać warunek: „Twoje zwolnienie zaczęło się przed 1 stycznia 2027 r.; lekarz mógł nie wystawić zwolnienia z jednego tytułu (ust. 1d) dopiero przy zwolnieniach wystawianych od tego dnia” albo brać werdykt 'nowe'. Test na zwolnienie przez przełom 2026/2027."
+    },
+    {
+      "id": "A-5",
+      "slug": "co-wolno-na-l4",
+      "wymiar": "prawo",
+      "waga": "niska",
+      "plik": "src/lib/narzedzia/co-wolno-na-l4.ts",
+      "linia": 436,
+      "zdanie": "„Gdy zasiłek wypłaca pracodawca, decyzję ZUS dostaniesz po wniosku o ustalenie uprawnień (art. 63 ust. 1).”",
+      "problem": "Zdanie sugeruje, że przy zasiłku od pracodawcy decyzja ZUS jest tylko po wniosku, a ZUS kontroluje także takich ubezpieczonych (art. 68 ust. 1b) i protokół kontroli jest podstawą wszczęcia przez ZUS postępowania w sprawie ustania prawa do zasiłku (art. 68e ust. 7), co kończy się decyzją bez wniosku.",
+      "dowod": "DU_2026_854 art. 68 ust. 1b: „ZUS przeprowadza kontrolę … ubezpieczonych, którym zasiłki wypłacają płatnicy składek, o których mowa w art. 61 ust. 1 pkt 1, na wniosek tych płatników składek lub z urzędu”; art. 68e ust. 7: „Protokół kontroli stanowi podstawę do wszczęcia przez Zakład Ubezpieczeń Społecznych postępowania w sprawie ustania prawa do zasiłku chorobowego …”; art. 63 ust. 1: „Ubezpieczony może wystąpić …”.",
+      "poprawka": "„Gdy zasiłek wypłaca pracodawca i sam uzna, że prawo do zasiłku ustało, decyzję ZUS uzyskasz wnioskiem o ustalenie uprawnień (art. 63 ust. 1); po kontroli ZUS decyzję wydaje ZUS.”"
+    },
+    {
+      "id": "A-6",
+      "slug": "co-wolno-na-l4",
+      "wymiar": "wyszukiwarka",
+      "waga": "srednia",
+      "plik": "src/data/sprawy.ts",
+      "linia": 134,
+      "zdanie": "Zapytania: „silownia na l4”, „remont na l4”, „impreza na l4”, „spacer na l4”, „maile na zwolnieniu lekarskim”, „praca na zwolnieniu lekarskim”",
+      "problem": "Narzędzie, które ma osobną odpowiedź dla sportu, remontu, imprezy i pracy na polecenie (maile), nie pojawia się w pierwszej piątce dla czterech pierwszych i dla maili; „praca na zwolnieniu lekarskim” daje je dopiero na 5. miejscu (pierwsze zwolnienie-na-l4, czyli zwolnienie z pracy).",
+      "dowod": "szukaj.mjs: „silownia na l4”, „remont na l4”, „impreza na l4”, „spacer na l4” → kalkulator-l4, badania-lekarskie-w-pracy, okres-zasilkowy, wynagrodzenie-za-niepelny-miesiac, zasilek-chorobowy-na-zleceniu (bez co-wolno-na-l4); „maile na zwolnieniu lekarskim” → kalkulator-l4, l4-po-zwolnieniu, zwolnienie-na-l4, badania-lekarskie-w-pracy, okres-zasilkowy; „praca na zwolnieniu lekarskim” → zwolnienie-na-l4 332, l4-po-zwolnieniu 331, kalkulator-l4 329, badania-lekarskie-w-pracy 325, co-wolno-na-l4 325. Pozostałe 19 zapytań (m.in. „czy na l4 mozna wychodzic z domu”, „kontrola z zus w domu”, „szef kaze pracowac na l4”, „zus zabral zasilek”, „druga praca na l4”, „nie bylo mnie w domu kontrola zus”, „zastrzezenia do protokolu kontroli zus”) → pierwsze miejsce; „zlecenie na l4” → 2. (po zasilek-chorobowy-na-zleceniu, poprawnie).",
+      "poprawka": "Dopisać do HASLA['co-wolno-na-l4']: 'siłownia na L4', 'sport na L4', 'remont na L4', 'impreza na L4', 'spacer na L4', 'praca na zwolnieniu lekarskim', 'maile na L4'; dopisać je do testu wyszukiwarki w co-wolno-na-l4.test.ts."
+    },
+    {
+      "id": "A-7",
+      "slug": "co-wolno-na-l4",
+      "wymiar": "wyszukiwarka",
+      "waga": "niska",
+      "plik": "src/data/sprawy.ts",
+      "linia": 134,
+      "zdanie": "Hasła 'odwołanie od decyzji ZUS' i 'utrata zasiłku chorobowego'",
+      "problem": "Ogólne hasła zabierają pierwsze miejsce narzędziom, które lepiej odpowiadają: renta, wypadek przy pracy, zasiłek po rozwiązaniu umowy; strona co-wolno-na-l4 opisuje tylko odwołanie w sprawie utraty zasiłku za L4.",
+      "dowod": "szukaj.mjs: „odwolanie od decyzji zus renta” → co-wolno-na-l4 333, renta-z-tytulu-niezdolnosci-do-pracy 222; „odwolanie od decyzji zus wypadek przy pracy” → co-wolno-na-l4 443, odszkodowanie-za-wypadek-przy-pracy 333; „odwolanie od decyzji zus emerytura” / „o odmowie renty” / „swiadczenie rehabilitacyjne” / „zasilek opiekunczy” / „zus odmowil zasilku macierzynskiego odwolanie” → co-wolno-na-l4 na 1. miejscu; „utrata zasilku chorobowego po zwolnieniu z pracy” → co-wolno-na-l4 550, kalkulator-l4 439, l4-po-zwolnieniu 434.",
+      "poprawka": "Zawęzić hasła: 'odwołanie od decyzji ZUS o utracie zasiłku', 'ZUS odebrał zasiłek chorobowy', 'utrata zasiłku za pracę na L4' zamiast 'odwołanie od decyzji ZUS' i 'utrata zasiłku chorobowego'; w teście wyszukiwarki zamienić „odwołanie od decyzji ZUS” na „odwołanie od decyzji ZUS o utracie zasiłku” i dodać test odwrotny (renta → renta-z-tytulu-niezdolnosci-do-pracy, wypadek → odszkodowanie-za-wypadek-przy-pracy, „po zwolnieniu z pracy” → l4-po-zwolnieniu)."
+    },
+    {
+      "id": "A-8",
+      "slug": "co-wolno-na-l4",
+      "wymiar": "spojnosc",
+      "waga": "niska",
+      "plik": "src/data/narzedzia.ts",
+      "linia": 928,
+      "zdanie": "przepisy: ['zasilkowa', 'zmianaKontroliZwolnien2026', 'wzoryKontroliZwolnien', 'systemUbezpieczen', 'kodeksPracy', 'kpc', 'kodeksCywilny']",
+      "problem": "Wynik nazywa dni ustawowo wolne (np. „Narodowe Święto Niepodległości, dzień wolny od pracy”, Wigilia) według ustawy o dniach wolnych, a rejestr jej nie wymienia, choć odwolanie-do-sadu-pracy i kara-porzadkowa mają 'dniWolne'. Wyniki dla czynności sprzed 13.04.2026 r. cytują dawny art. 17 (t.j. Dz.U. 2025 poz. 501) i § 1, 8–10 rozporządzenia z 27.07.1999 r. (Dz.U. 1999 nr 65 poz. 743), których nie ma w „Podstawie prawnej”.",
+      "dowod": "src/data/narzedzia.ts linie 448 i 456 ('dniWolne' przy kara-porzadkowa i odwolanie-do-sadu-pracy); Playwright: linki w „Podstawie prawnej” to tylko DU 2026/854, 26, 503, 1474, 1245, 468, 795.",
+      "poprawka": "Dodać 'dniWolne' do przepisy; rozważyć wpis aktu dla rozporządzenia z 1999 r. (adres eli(1999, 743)) i t.j. Dz.U. 2025 poz. 501 jako brzmienia do 12.04.2026 r. albo wzmiankę w uwadze 'zasilkowa'."
+    },
+    {
+      "id": "A-9",
+      "slug": "co-wolno-na-l4",
+      "wymiar": "testy",
+      "waga": "niska",
+      "plik": "src/lib/narzedzia/co-wolno-na-l4.test.ts",
+      "linia": 40,
+      "zdanie": "Tabela terminów odwołania i zastrzeżeń",
+      "problem": "Brak przypadków brzegowych, które ujawniłyby A-1 do A-3: sobota przed 1.01.2017 r., 12.11.2018 r., Wigilia 2024 (nie wolna) i 2025 (wolna), koniec 1.01.2027 r. (3 dni wolne pod rząd), status zastrzeżeń dzień po sobocie, status odwołania w dniu „zdąż do”.",
+      "dowod": "Wartości z niezależnego modelu (zgodne z narzędziem po 2017 r.): decyzja 2025-11-24 → 24.12.2025 r., po art. 115 KC 29.12.2025 r.; 2024-11-24 → 24.12.2024 r. bez przesunięcia; 2026-12-01 → 1.01.2027 r., po art. 115 KC 4.01.2027 r.; 2027-01-29 → 28.02.2027 r., po art. 115 KC 1.03.2027 r.; 2016-07-13 → 13.08.2016 r. bez przesunięcia (narzędzie: 16.08.2016); 2018-10-12 → 12.11.2018 r., po art. 115 KC 13.11.2018 r. (narzędzie: bez przesunięcia).",
+      "poprawka": "Dopisać te przypadki do it.each w describe('terminy') oraz testy statusu: protokół 2026-11-07 przy dziś 2026-11-15 i decyzja 2026-10-14 przy dziś 2026-11-14."
+    }
+  ],
+  "orzeczenia": [],
+  "do_stanu": [
+    {
+      "sprawa": "Art. 17 ust. 1d–1e, art. 9 ust. 4 i art. 59 ust. 4a ustawy zasiłkowej wchodzą w życie 1.01.2027 r.; sprawdzić, czy nie zmieniono ich przed tą datą i czy powstał nowy tekst jednolity",
+      "kiedy_sprawdzic": "2026-12-31",
+      "gdzie_w_kodzie": "src/lib/narzedzia/co-wolno-na-l4.ts (OD_2027, CYTAT_1D, CYTAT_1E), src/data/prawo.ts (zasilkowa)"
+    }
+  ],
+  "poza_zakresem": [
+    "src/lib/narzedzia/termin-odwolania.ts przesunZDniaWolnego: sobota przesuwa koniec terminu także przed 1.01.2017 r. i brak 12.11.2018 r. (por. terminy.ts dzienWolnyArt115); dotyczy też terminWDniach/terminCzynnosci używanych przez wypowiedzenie-zmieniajace.ts. Już wpisane w DECYZJE.md jako do zastąpienia."
+  ],
+  "nie_sprawdzono": [
+    "zus.pl i sn.pl (blokada automatów): praktyka ZUS co do przesunięcia 7-dniowego terminu zastrzeżeń z soboty i co do stosowania art. 17 w nowym brzmieniu do postępowań wszczętych po 13.04.2026 r. w sprawie wcześniejszych zdarzeń.",
+    "Czytnik ekranu na żywo (NVDA/VoiceOver): sprawdzono tylko ariaSnapshot i atrybuty.",
+    "Treść załączników rozporządzenia Dz.U. 2026 poz. 503 (wzór protokołu, pouczenie o zastrzeżeniach) poza § 1–4.",
+    "Strona nie powołuje się na orzeczenia, więc SAOS nie był potrzebny."
+  ]
+}

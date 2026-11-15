@@ -12,7 +12,7 @@
 //   że roszczenie jest prawdopodobnie przedawnione: przesunięcie przy przedawnieniu jest wątpliwe (`ZDANIE_ART_115.przedawnienie`).
 import { odmiana } from '../redakcja';
 import { terminyWyplaty, type DzienWyplaty } from './termin-wyplaty';
-import { ETYKIETA_ART_115, dataPoPolsku, dniMiedzy, dodajLata, fazaTerminu, ileDni, terminPracownika, zdanieArt115 } from './terminy';
+import { ETYKIETA_ART_115, UWAGA_ART_115_LISTA, dataPoPolsku, dniMiedzy, dodajLata, fazaTerminu, ileDni, terminPracownika, zdanieArt115 } from './terminy';
 
 export const LATA_PRZEDAWNIENIA = 3;
 
@@ -52,10 +52,21 @@ export function opisPrzedawnienia(p: { wymagalne: string; koniec: string; art115
             : `Zostało: ${odmiana(f.dni, DNI)}`,
     /** Krótko do listy i pola „inna należność”: „8 grudnia 2026 r.” albo „… (według art. 115 KC: …)”. */
     krotko: t.rozne ? `${dataPoPolsku(p.koniec)} (według art. 115 KC: ${dataPoPolsku(p.art115)})` : dataPoPolsku(p.koniec),
-    /** Pole „inna należność”: „15 listopada 2026 r. (za 3 dni)”, a przy dniu wolnym jeszcze „; według art. 115 KC: …”. */
-    zDniami: `${dataPoPolsku(p.koniec)} (${ileDni(dniMiedzy(naDzien, p.koniec))})${t.rozne ? `; według art. 115 KC: ${dataPoPolsku(p.art115)}` : ''}`,
+    /**
+     * Pole „inna należność” ze stanem terminu (audyt jakości 4, C-2): „15 listopada 2026 r. (za 3 dni)”, przy dniu wolnym
+     * druga data z ostrzeżeniem, po pierwszej dacie „prawdopodobnie przedawnione”, po obu art. 292.
+     */
+    inna:
+      f.faza === 'w-terminie'
+        ? `${dataPoPolsku(p.koniec)} (${ileDni(dniMiedzy(naDzien, p.koniec))})${t.rozne ? `; według art. 115 KC: ${dataPoPolsku(p.art115)} (to przesunięcie jest wątpliwe, zdąż do pierwszej daty)` : ''}`
+        : f.faza === 'tylko-art-115'
+          ? `${dataPoPolsku(p.koniec)} (${ileDni(dniMiedzy(naDzien, p.koniec))}). Pierwsza data minęła, więc roszczenie jest prawdopodobnie przedawnione; tylko gdy sąd przesunie koniec według art. 115 KC: ${dataPoPolsku(p.art115)}`
+          : `${dataPoPolsku(p.koniec)} (${ileDni(dniMiedzy(naDzien, p.koniec))}); po tym dniu pracodawca może powołać się na przedawnienie (art. 292)`,
   };
 }
+
+/** Ostrzeżenie pod listą „Kolejne terminy”, gdy któraś pozycja ma drugą datę według art. 115 KC (C-1); inaczej pusty tekst. */
+export const uwagaListy = (lista: { koniec: string; art115: string }[]) => (lista.some((x) => x.art115 !== x.koniec) ? UWAGA_ART_115_LISTA : '');
 
 /** Kiedy przychodzi wypłata za miesiąc: w następnym miesiącu (dzień 1–10), w tym samym (1–28) albo ostatniego dnia. */
 export type RodzajWyplaty = 'nastepny' | 'ten' | 'ostatni';
@@ -88,7 +99,8 @@ export function wyplatyDoDochodzenia(naDzien: string, rodzaj: RodzajWyplaty, dzi
     for (const t of terminyWyplaty(r, d, sobotaWolna)) terminy.set(`${r}-${String(t.miesiac).padStart(2, '0')}`, t.wyplata);
   }
   const wynik: WyplataZaMiesiac[] = [];
-  for (let r = rok - LATA_PRZEDAWNIENIA - 1; r <= rok; r++) {
+  // Też rok + 1: wypłata za styczeń w tym samym miesiącu, cofnięta z 1 stycznia na grudzień (audyt jakości 4, C-4).
+  for (let r = rok - LATA_PRZEDAWNIENIA - 1; r <= rok + 1; r++) {
     for (let m = 1; m <= 12; m++) {
       const za = `${r}-${String(m).padStart(2, '0')}`;
       const placone = rodzaj === 'nastepny' ? (m === 12 ? `${r + 1}-01` : `${r}-${String(m + 1).padStart(2, '0')}`) : za;

@@ -1,0 +1,309 @@
+{
+  "partia": "B",
+  "sprawdzone": [
+    {
+      "slug": "okres-wypowiedzenia",
+      "pliki": [
+        "src/lib/narzedzia/wypowiedzenie.ts",
+        "src/lib/narzedzia/wypowiedzenie.test.ts",
+        "src/pages/narzedzia/okres-wypowiedzenia.astro",
+        "tests/e2e/narzedzie-wypowiedzenie.spec.ts",
+        "src/data/narzedzia.ts",
+        "src/data/sprawy.ts",
+        "src/lib/narzedzia/terminy.ts"
+      ],
+      "wynik": "problemy: art. 30 § 2¹–5, 34, 36 (z § 1¹, 5, 6), 36¹, 37 Kp z DU_2026_1245, art. 302¹ i art. 5–10 DU_2025_1423, art. 112 KC; ok. 30 zdań i wszystkie warianty wyniku; Python vs logika 3688 przypadków (progi 6 i 36 miesięcy ±40 dni, 29.02, 31.08, 31.03, przełom roku, doręczenie w sobotę i niedzielę) + 400 okresów próbnych: 0 rozbieżności; 320/412 px bez przewijania w bok, błędy z aria-invalid; 27 zapytań; 3 sygnatury SN niesprawdzone (SAOS w przerwie)"
+    },
+    {
+      "slug": "kalkulator-odprawy",
+      "pliki": [
+        "src/lib/narzedzia/odprawy.ts",
+        "src/lib/narzedzia/odprawy.test.ts",
+        "src/pages/narzedzia/kalkulator-odprawy.astro",
+        "tests/e2e/narzedzie-odprawy.spec.ts",
+        "src/data/narzedzia.ts",
+        "src/data/sprawy.ts",
+        "src/data/prawo.ts"
+      ],
+      "wynik": "problemy: art. 1, 8, 10 DU_2026_1195, art. 92¹ i 36 § 1¹ Kp, § 2 ust. 1 pkt 7 DU_2017_927, § 15–17 DU_1997_14, art. 220 DU_2025_620, płaca 2025–2027; ok. 25 zdań; Python 2030 przypadków progów stażu, limit 15 płac (72 090 / 74 250, ±0,01 zł, 31.12.2026/1.01.2027): 0 rozbieżności; SSR = wynik skryptu; błąd zostawia stary wynik (B-1); 20 + 7 zapytań; 4 sygnatury SN niesprawdzone"
+    },
+    {
+      "slug": "kara-porzadkowa",
+      "pliki": [
+        "src/lib/narzedzia/kara-porzadkowa.ts",
+        "src/lib/narzedzia/kara-porzadkowa.test.ts",
+        "src/pages/narzedzia/kara-porzadkowa.astro",
+        "tests/e2e/narzedzie-kara.spec.ts",
+        "src/lib/narzedzia/terminy.ts",
+        "src/data/narzedzia.ts",
+        "src/data/sprawy.ts"
+      ],
+      "wynik": "problemy (drobne): art. 87¹, 108–113 Kp, art. 111–115 KC, DU_2016_2255 art. 21; konwencja dwóch dat stosowana zgodnie z decyzją (sprzeciw = termin pracownika z terminPracownika/zdanieArt115 'pracodawca'; zastosowanie kary = termin pracodawcy bez przesunięcia z oknem wOknieArt115 i BEZ_PRZESUNIECIA.pracodawca; zatarcie = okres); Python 3226 przypadków (soboty przed i po 1.01.2017, Wigilia 2024/2025/2026, przełom roku, 28/29.02, Wielkanoc, Boże Ciało, 12.11.2018): 0 rozbieżności; SSR = skrypt; 320/412 px ok; 22 zapytania + odwrotne; 3 sygnatury sądów powszechnych niesprawdzone"
+    }
+  ],
+  "znaleziska": [
+    {
+      "id": "B-1",
+      "slug": "kalkulator-odprawy",
+      "wymiar": "tresc-ux",
+      "waga": "srednia",
+      "plik": "src/pages/narzedzia/kalkulator-odprawy.astro",
+      "linia": 205,
+      "zdanie": "if (blad || !r) { w('kwota').textContent = '—'; return; }",
+      "problem": "Po błędzie danych czyści się tylko kwota; „Miesięczne wynagrodzenie do odprawy”, „Liczba pensji”, „Najwyższa odprawa” i uwaga o obcięciu do limitu zostają z poprzedniego wyniku, więc obok komunikatu błędu widać nieaktualny wynik.",
+      "dowod": "Playwright 412 px na podglądzie: stała 24030,01 zł, rozwiązanie 2026-12-31, potem pensja „0” → BLAD „Wpisz pensję miesięczną…”, a wynik dalej: miesieczne „24 030,01 zł”, miesiecy „3 (staż ponad 8 lat)”, uwaga „Odprawa obliczona z pensji przekracza limit, więc wynosi 72 090,00 zł”. Rozwiązanie 2028-01-15 → błąd o płacy minimalnej, a „Najwyższa odprawa 72 090,00 zł” zostaje. Narzędzia okres-wypowiedzenia i kara-porzadkowa czyszczą wszystkie pola.",
+      "poprawka": "W gałęzi błędu ustawić '—' także dla miesieczne, miesiecy, limit, podstawa i ukryć uwagę (w('uwaga').hidden = true); dopisać test E2E: po błędnej pensji żadne pole wyniku nie pokazuje kwoty."
+    },
+    {
+      "id": "B-2",
+      "slug": "okres-wypowiedzenia",
+      "wymiar": "prawo",
+      "waga": "srednia",
+      "plik": "src/pages/narzedzia/okres-wypowiedzenia.astro",
+      "linia": 24,
+      "zdanie": "Czy można skrócić okres wypowiedzenia? Po wypowiedzeniu strony mogą się porozumieć co do wcześniejszego rozwiązania umowy, a tryb rozwiązania się nie zmienia (art. 36 § 6). Przy stanowisku z odpowiedzialnością materialną strony mogą w umowie ustalić 1 miesiąc zamiast 2 tygodni i 3 miesiące zamiast 1 miesiąca (art. 36 § 5).",
+      "problem": "Odpowiedź pomija jedyny przypadek jednostronnego skrócenia: art. 36¹ § 1 (pracodawca skraca 3 miesiące najwyżej do 1 miesiąca przy upadłości, likwidacji albo innych przyczynach niedotyczących pracowników, z odszkodowaniem za resztę okresu). To częsta sytuacja przy zwolnieniach na hali; art. 37 § 2 pkt 2 na stronie też go dotyczy (3 dni na szukanie pracy mimo skrócenia), a kalkulator wtedy podaje 3 miesiące bez wzmianki. Art. 36 § 5 wydłuża okres, a nie skraca, więc w tej odpowiedzi jest nie na temat.",
+      "dowod": ".cache/narzedzia/prawo/DU_2026_1245.txt, art. 36[1] § 1: „pracodawca może, w celu wcześniejszego rozwiązania umowy o pracę, skrócić okres trzymiesięcznego wypowiedzenia, najwyżej jednak do 1 miesiąca. W takim przypadku pracownikowi przysługuje odszkodowanie w wysokości wynagrodzenia za pozostałą część okresu wypowiedzenia.”; § 2: okres odszkodowania wlicza się do zatrudnienia; art. 37 § 2 pkt 2: „także w przypadku jego skrócenia na podstawie art. 36[1] § 1”.",
+      "poprawka": "Dopisać do FAQ zdanie: „Przy upadłości, likwidacji albo innych przyczynach niedotyczących pracowników pracodawca może skrócić 3 miesiące najwyżej do 1 miesiąca, ale płaci odszkodowanie za resztę okresu (art. 36¹ § 1); dni na szukanie pracy zostają 3 (art. 37 § 2).” Zdanie o art. 36 § 5 przenieść do odpowiedzi „Ile wynosi okres wypowiedzenia” albo opisać jako wydłużenie."
+    },
+    {
+      "id": "B-3",
+      "slug": "okres-wypowiedzenia",
+      "wymiar": "prawo",
+      "waga": "niska",
+      "plik": "src/pages/narzedzia/okres-wypowiedzenia.astro",
+      "linia": 16,
+      "zdanie": "Od 2026 r. wlicza się też okresy umów zlecenia i działalności na rzecz tego samego pracodawcy (art. 302^1 § 8), ale nie do wypowiedzeń, które trwały w dniu wejścia zmian w życie (art. 8 ustawy z 26 września 2025 r.).",
+      "problem": "U pracodawców spoza sektora finansów publicznych (praktycznie każda hala) art. 302¹ stosuje się dopiero od 1 maja 2026 r., a okresy trzeba udokumentować zaświadczeniem ZUS; „od 2026 r.” i „w dniu wejścia zmian w życie” sugerują 1 stycznia. To samo w „Jak liczymy” (linia 121–122) i na stronie kalkulator-odprawy (linia 135–136). Rejestr prawo.ts (zmianaStazu2025) ma poprawną datę.",
+      "dowod": ".cache/narzedzia/prawo/DU_2025_1423.txt (ogłoszona 21.10.2025): art. 9 „Do pracodawcy niebędącego jednostką sektora finansów publicznych … przepisy niniejszej ustawy stosuje się od pierwszego dnia miesiąca następującego po upływie 6 miesięcy od dnia jej ogłoszenia” (= 1.05.2026); art. 10: 1.01.2026; art. 8: nie wlicza się do okresu wypowiedzenia trwającego „w dniu wejścia w życie … albo w dniu określonym w art. 9”; art. 302¹ § 11–12: okresy potwierdza zaświadczenie ZUS.",
+      "poprawka": "„Od 1 maja 2026 r. w firmach prywatnych (od 1 stycznia 2026 r. w sektorze publicznym) wlicza się też udokumentowane zaświadczeniem ZUS okresy zleceń i działalności na rzecz tego pracodawcy (art. 302¹ § 8), ale nie do wypowiedzeń, które już wtedy trwały (art. 8 i 9 ustawy z 26 września 2025 r.).” Tak samo w Jak liczymy i na kalkulator-odprawy."
+    },
+    {
+      "id": "B-4",
+      "slug": "okres-wypowiedzenia",
+      "wymiar": "tresc-ux",
+      "waga": "niska",
+      "plik": "src/pages/narzedzia/okres-wypowiedzenia.astro",
+      "linia": 183,
+      "zdanie": "pisz('podstawa', `${okres.podstawa}; koniec: art. 30 § 2¹`);",
+      "problem": "Dla okresu próbnego do 2 tygodni (3 dni robocze) wynik podaje „koniec: art. 30 § 2¹”, a ten przepis dotyczy tylko okresów w tygodniach i miesiącach; kalkulator sam pisze, że koniec zależy od rozkładu pracy.",
+      "dowod": "Playwright: rodzaj „Próbna do 2 tygodni”, doręczenie 2026-11-13 → podstawa „art. 34 pkt 1 Kodeksu pracy; koniec: art. 30 § 2¹”. DU_2026_1245.txt art. 30 § 2[1]: „Okres wypowiedzenia umowy o pracę obejmujący tydzień lub miesiąc albo ich wielokrotność kończy się odpowiednio w sobotę lub w ostatnim dniu miesiąca.”",
+      "poprawka": "Dopisywać „; koniec: art. 30 § 2¹” tylko gdy okres.jednostka !== 'dni-robocze'."
+    },
+    {
+      "id": "B-5",
+      "slug": "kalkulator-odprawy",
+      "wymiar": "prawo",
+      "waga": "niska",
+      "plik": "src/pages/narzedzia/kalkulator-odprawy.astro",
+      "linia": 119,
+      "zdanie": "umowę rozwiązuje wypowiedzenie pracodawcy albo porozumienie stron z jego inicjatywy, z przyczyn niedotyczących pracownika, na przykład likwidacji stanowiska;",
+      "problem": "Warunek „z jego inicjatywy” nie wynika z art. 10 ust. 1 (zwolnienie indywidualne: „lub jego rozwiązanie na mocy porozumienia stron”); w art. 1 ust. 2 inicjatywa pracodawcy dotyczy tylko liczenia progu zwolnienia grupowego. FAQ tej samej strony (linia 24) pisze poprawnie bez tego warunku, więc strona jest niespójna i lista może zniechęcić osobę, która sama zaproponowała porozumienie z powodu likwidacji stanowiska.",
+      "dowod": ".cache/narzedzia/prawo/DU_2026_1195.txt, art. 10 ust. 1: „jeżeli przyczyny te stanowią wyłączny powód uzasadniający wypowiedzenie stosunku pracy lub jego rozwiązanie na mocy porozumienia stron”; art. 1 ust. 2: „…rozwiązanie stosunków pracy z inicjatywy pracodawcy na mocy porozumienia stron, jeżeli dotyczy to co najmniej 5 pracowników” (liczenie progu).",
+      "poprawka": "„umowę rozwiązuje wypowiedzenie pracodawcy albo porozumienie stron, z przyczyn niedotyczących pracownika, na przykład likwidacji stanowiska;”"
+    },
+    {
+      "id": "B-6",
+      "slug": "kalkulator-odprawy",
+      "wymiar": "spojnosc",
+      "waga": "niska",
+      "plik": "src/data/narzedzia.ts",
+      "linia": 184,
+      "zdanie": "przepisy: ['zwolnieniaGrupowe', 'kodeksPracy', 'wynagrodzenieRozp', 'urlopowe', 'minimalneWynagrodzenie', 'placa2025', 'placa2026', 'placa2027'],",
+      "problem": "Strona powołuje się na art. 220 ust. 1 pkt 2 ustawy o rynku pracy i art. 302¹ § 8 Kp (ustawa o stażu), a w przepisach rejestru brak rynekPracy i zmianaStazu2025. Podobnie okres-wypowiedzenia (linia 464) liczy staż według art. 112 KC, a nie ma kodeksCywilny.",
+      "dowod": "kalkulator-odprawy.astro, akapit „Odprawa z ustawy o zwolnieniach … nie należy do świadczeń z art. 220 ust. 1 pkt 2 ustawy o rynku pracy”; zdanie sprawdzone w DU_2025_620 art. 220 ust. 1 pkt 2 i ust. 2 pkt 1 (lista odpraw nie obejmuje odprawy z ustawy z 2003 r.), więc treść jest poprawna, brakuje tylko źródła. okres-wypowiedzenia.astro, Jak liczymy: „według art. 112 Kodeksu cywilnego”.",
+      "poprawka": "Dopisać 'rynekPracy' i 'zmianaStazu2025' do kalkulator-odprawy oraz 'kodeksCywilny' do okres-wypowiedzenia."
+    },
+    {
+      "id": "B-7",
+      "slug": "okres-wypowiedzenia",
+      "wymiar": "tresc-ux",
+      "waga": "niska",
+      "plik": "src/pages/narzedzia/okres-wypowiedzenia.astro",
+      "linia": 120,
+      "zdanie": "Sekcja wyjaśnienia linkuje tylko do staz-pracy i zwrot-kosztow-szkolenia.",
+      "problem": "Brakuje oczywistych linków do istniejących narzędzi: urlop-w-okresie-wypowiedzenia (urlop na wypowiedzeniu), odwolanie-do-sadu-pracy (21 dni na odwołanie od wypowiedzenia; strona pisze o pouczeniu o odwołaniu, art. 30 § 5), kalkulator-odprawy (wypowiedzenie z przyczyn pracodawcy), ochrona-przedemerytalna.",
+      "dowod": "grep href w okres-wypowiedzenia.astro: /narzedzia/staz-pracy, /narzedzia/zwrot-kosztow-szkolenia; slugi istnieją w src/data/narzedzia.ts. Akapit o art. 30 § 4 i 5 (linia 126–127) bez linku.",
+      "poprawka": "W akapicie o art. 30 § 4–5 dopisać w tym samym wierszu: „Termin na odwołanie policzy <a href=\"/narzedzia/odwolanie-do-sadu-pracy\">kalkulator terminów do sądu pracy</a>.”; osobne zdanie z linkiem do /narzedzia/urlop-w-okresie-wypowiedzenia i /narzedzia/kalkulator-odprawy."
+    },
+    {
+      "id": "B-8",
+      "slug": "kalkulator-odprawy",
+      "wymiar": "tresc-ux",
+      "waga": "niska",
+      "plik": "src/pages/narzedzia/kalkulator-odprawy.astro",
+      "linia": 24,
+      "zdanie": "Od wynagrodzenia liczonego jak ekwiwalent za urlop … (§ 15–17 rozporządzenia urlopowego).",
+      "problem": "Brak linku do ekwiwalent-za-urlop (podstawa liczona tymi samymi zasadami, art. 8 ust. 3) i do okres-wypowiedzenia (zwolnienie z przyczyn pracodawcy = wypowiedzenie) w sekcji wyjaśnienia.",
+      "dowod": "Linki w wyjaśnieniu: wypowiedzenie-zmieniajace, zasilek-dla-bezrobotnych, odprawa-posmiertna, zwolnienia-grupowe; slugi ekwiwalent-za-urlop i okres-wypowiedzenia istnieją w rejestrze.",
+      "poprawka": "W akapicie „Odprawa emerytalna i rentowa” po zdaniu o § 2 ust. 1 pkt 7 dopisać: „Te same zasady stosuje <a href=\"/narzedzia/ekwiwalent-za-urlop\">kalkulator ekwiwalentu za urlop</a>.”; w sekcji „Kiedy przysługuje” link do /narzedzia/okres-wypowiedzenia."
+    },
+    {
+      "id": "B-9",
+      "slug": "kara-porzadkowa",
+      "wymiar": "tresc-ux",
+      "waga": "niska",
+      "plik": "src/pages/narzedzia/kara-porzadkowa.astro",
+      "linia": 102,
+      "zdanie": "Co oznacza wynik alkomatu w pracy i kiedy pracodawca nie dopuszcza do pracy, pokaże <a href=\"/narzedzia/kontrola-trzezwosci\">kalkulator kontroli trzeźwości</a>.",
+      "problem": "Brak linku do odpowiedzialnosc-materialna: ludzie mylą karę pieniężną z potrąceniem za szkodę (wyszukiwarka: „potracenie kary z wyplaty” daje remis kara-porzadkowa / odpowiedzialnosc-materialna, 222:222).",
+      "dowod": "Wyjaśnienie linkuje tylko odwolanie-do-sadu-pracy i kontrola-trzezwosci; slug odpowiedzialnosc-materialna istnieje w rejestrze.",
+      "poprawka": "Dopisać akapit: „Kara pieniężna to nie odszkodowanie za zniszczony sprzęt: ile pracodawca może żądać za szkodę, policzy <a href=\"/narzedzia/odpowiedzialnosc-materialna\">kalkulator odpowiedzialności materialnej</a>.”"
+    },
+    {
+      "id": "B-10",
+      "slug": "okres-wypowiedzenia",
+      "wymiar": "wyszukiwarka",
+      "waga": "srednia",
+      "plik": "src/data/sprawy.ts",
+      "linia": 40,
+      "zdanie": "'okres-wypowiedzenia': ['wypowiedzenie', 'zwolnienie', 'odejście z pracy', 'zwalniają mnie', 'rzucam pracę'],",
+      "problem": "Zapytania o sprawy narzędzia poza pierwszą trójką: „wypowiedzenie umowy na czas okreslony” (brak w pierwszej piątce; 1. umowa-na-czas-okreslony, która o wypowiedzeniu nie mówi ani razu), „wymowienie” (zero wyników), „wolne na poszukiwanie pracy” (5. miejsce). W drugą stronę hasło „odejście z pracy” zabiera 1. miejsce świadectwu pracy: „swiadectwo pracy po odejsciu z pracy” → okres-wypowiedzenia 225, swiadectwo-pracy 222; „zwalniają mnie” spycha zwolnienie-na-l4 z pierwszej piątki w „zwalniaja mnie na l4”.",
+      "dowod": "szukaj.mjs na indeksie podglądu (18 + 9 zapytań; w trójce m.in. „okres wypowiedzenia”, „ile mam wypowiedzenia”, „kiedy konczy sie wypowiedzenie”, „dni na szukanie pracy”, „staz pracy a okres wypowiedzenia”, „wypowiedzenie przez pracownika” – 3. miejsce). Próba na kopii indeksu z hasłami [wypowiedzenie, wymówienie, zwolnienie z pracy, rzucam pracę, zwalniają mnie, wypowiedzenie umowy na czas określony, wypowiedzenie przez pracownika, wolne na szukanie pracy]: „wymowienie” 1., „wypowiedzenie umowy na czas okreslony” 1. (448), „wolne na poszukiwanie pracy” 1., „swiadectwo pracy po odejsciu z pracy” → swiadectwo-pracy w czołówce; ale „umowa na czas okreslony” daje wtedy remis 336:336 z umowa-na-czas-okreslony.",
+      "poprawka": "Hasła: ['wypowiedzenie', 'wymówienie', 'zwolnienie z pracy', 'rzucam pracę', 'zwalniają mnie', 'wypowiedzenie przez pracownika', 'wolne na szukanie pracy'] (bez 'odejście z pracy'); dla umowy na czas określony dopisać pytanie FAQ albo hasło i sprawdzić, że „umowa na czas określony” zostaje przy umowa-na-czas-okreslony; do zwolnienie-na-l4 dopisać 'zwalniają mnie na L4'."
+    },
+    {
+      "id": "B-11",
+      "slug": "kalkulator-odprawy",
+      "wymiar": "wyszukiwarka",
+      "waga": "srednia",
+      "plik": "src/data/sprawy.ts",
+      "linia": 41,
+      "zdanie": "'kalkulator-odprawy': ['odprawa', 'zwolnienie', 'likwidacja stanowiska'],",
+      "problem": "Najprostsze zapytanie „odprawa” daje kalkulator dopiero 3. (po odprawa-posmiertna i zwolnienia-grupowe); „odprawa po 8 latach” i „odprawa przy porozumieniu stron” nie znajdują kalkulatora wcale; „czy nalezy mi sie odprawa” 4., „redukcja etatow” brak w piątce.",
+      "dowod": "szukaj.mjs, 20 zapytań: w trójce m.in. „odprawa przy zwolnieniu”, „odprawa emerytalna”, „likwidacja stanowiska”, „odprawa limit”, „odprawa 3 pensje”, „odprawa z przyczyn pracodawcy”, „odprawa przy przejsciu na emeryture”, „upadlosc firmy odprawa”. Na kopii indeksu z hasłami [odprawa, odprawa przy zwolnieniu, ile pensji odprawy, odprawa po latach pracy, odprawa przy porozumieniu stron, czy należy mi się odprawa, redukcja etatów, likwidacja stanowiska, zwolnienie]: „odprawa po 8 latach” 1., „odprawa przy porozumieniu stron” 1., „czy nalezy mi sie odprawa” 1., „redukcja etatow” 1. (remis z zwolnienia-grupowe), „odprawa posmiertna” dalej 1. odprawa-posmiertna; „odprawa” nadal 3. (to waga nazwy w silniku, poza_zakresem).",
+      "poprawka": "Dopisać hasła jak w próbie."
+    },
+    {
+      "id": "B-12",
+      "slug": "kara-porzadkowa",
+      "wymiar": "wyszukiwarka",
+      "waga": "niska",
+      "plik": "src/data/sprawy.ts",
+      "linia": 48,
+      "zdanie": "'kara-porzadkowa': ['nagana', 'upomnienie', 'kara pieniężna', 'sprzeciw', 'potrącenie kary pieniężnej'],",
+      "problem": "„dostalem nagane” daje kara-porzadkowa dopiero 3. (110 pkt) za brutto-netto i kalkulator-l4 (114); biernik „naganę” nie jest dopasowany. 20 innych zapytań (np. „nagana w pracy”, „odwolanie od nagany”, „kiedy nagana sie zaciera”, „zatarcie kary”, „termin na nalozenie kary”, „kara za spoznienie”) daje 1. miejsce.",
+      "dowod": "szukaj.mjs; na kopii indeksu z dodanym hasłem „naganę” (i formami „dostałem/dostałam naganę”): 1. miejsce, 222 pkt.",
+      "poprawka": "Dopisać hasło 'naganę' (i ewentualnie 'dostałem naganę', 'dostałam naganę' – hasła nie są wyświetlane)."
+    },
+    {
+      "id": "B-13",
+      "slug": "kara-porzadkowa",
+      "wymiar": "testy",
+      "waga": "niska",
+      "plik": "src/lib/narzedzia/kara-porzadkowa.test.ts",
+      "linia": 107,
+      "zdanie": "Brak testów sprzeciwu kończącego się w sobotę przed 1.01.2017 r. i w Wigilię 2024/2025 r.",
+      "problem": "Logika jest poprawna (niezależny rachunek), ale testy nie pilnują progów SOBOTA_ART_115_OD i WIGILIA_OD na przykładzie kary.",
+      "dowod": "Python (własny kalendarz z art. 1 ustawy o dniach wolnych, Wielkanoc z algorytmu, sobota od 2017, Wigilia od 2025, 12.11.2018) vs karaPorzadkowa: 3226 przypadków, 0 rozbieżności. Wartości do testu: ukaranie 2016-12-17 → sprzeciw 2016-12-24 (sobota, bez przesunięcia); 2016-10-29 → 2016-11-05 bez przesunięcia; 2024-12-17 → 24.12.2024 bez przesunięcia; 2025-12-17 → zdąż do 24.12.2025, według art. 115 KC 29.12.2025.",
+      "poprawka": "Dopisać te 4 przypadki do kara-porzadkowa.test.ts."
+    },
+    {
+      "id": "B-14",
+      "slug": "kalkulator-odprawy",
+      "wymiar": "testy",
+      "waga": "niska",
+      "plik": "src/lib/narzedzia/odprawy.test.ts",
+      "linia": 5,
+      "zdanie": "Progi 2 i 8 lat testowane tylko od 1 stycznia; limit tylko z płacą wpisaną ręcznie.",
+      "problem": "Brak przypadków z końcem miesiąca (początek 29.02, 31.08) i progu limitu ±0,01 zł; brak testu E2E błędu (pensja 0, rok bez płacy minimalnej), który wykryłby B-1.",
+      "dowod": "Python vs miesiecyOdprawy: 2030 przypadków (w tym 29.02.2024, 31.03.2018, 31.08.2019 ±1 dzień na progach 24 i 96 miesięcy), 0 rozbieżności; Playwright: 24 030,00 zł × 3 = 72 090,00 (bez uwagi), 24 030,01 zł → 72 090,00 z uwagą; 1.01.2027 → 72 090,03 (limit 74 250).",
+      "poprawka": "Dopisać: miesiecyOdprawy('2024-02-29','2026-02-27')=1, ('2024-02-29','2026-02-28')=2; odprawa stale 24030 vs 24030.01 w 2026; E2E błędu jak w B-1."
+    }
+  ],
+  "orzeczenia": [
+    {
+      "sygnatura": "I PKN 34/99",
+      "saos_id": 0,
+      "wynik": "niesprawdzone (SAOS: Przerwa techniczna)",
+      "fragment": "Nie przeczytano uzasadnienia. Teza przypisana na stronie: okres-wypowiedzenia: strona (Jak liczymy, wynik skryptu), komentarz i test w wypowiedzenie.ts: wyrok z 11.05.1999 r., staż do dnia rozwiązania umowy; cytat „o długości przewidzianych w art. 36 § 1 KP okresów wypowiedzenia decyduje okres zatrudnienia … liczony od dnia zawarcia umowy o pracę do daty jej rozwiązania z upływem okresu wypowiedzenia” i stan faktyczny (praca od 20.03.1995, pismo z 26.02.1998)"
+    },
+    {
+      "sygnatura": "II PK 12/11",
+      "saos_id": 0,
+      "wynik": "niesprawdzone (SAOS: Przerwa techniczna)",
+      "fragment": "Nie przeczytano uzasadnienia. Teza przypisana na stronie: okres-wypowiedzenia: wyrok z 6.07.2011 r., „tak samo”; test: praca od 1.08.2006, doręczenie w lipcu 2009, 3 miesiące"
+    },
+    {
+      "sygnatura": "I PK 2/13",
+      "saos_id": 0,
+      "wynik": "niesprawdzone (SAOS: Przerwa techniczna)",
+      "fragment": "Nie przeczytano uzasadnienia. Teza przypisana na stronie: okres-wypowiedzenia: wyrok z 12.06.2013 r., „w judykaturze Sądu Najwyższego przyjmuje się”"
+    },
+    {
+      "sygnatura": "I PK 144/11",
+      "saos_id": 0,
+      "wynik": "niesprawdzone (SAOS: Przerwa techniczna)",
+      "fragment": "Nie przeczytano uzasadnienia. Teza przypisana na stronie: kalkulator-odprawy: wyrok z 12.04.2012 r.; „wyłączny powód” = bez przyczyn niedotyczących pracownika do zwolnienia by nie doszło, inne okoliczności mogą istnieć obok; odmowa obiektywnie możliwych do przyjęcia warunków jako współprzyczyna"
+    },
+    {
+      "sygnatura": "I PK 139/04",
+      "saos_id": 0,
+      "wynik": "niesprawdzone (SAOS: Przerwa techniczna)",
+      "fragment": "Nie przeczytano uzasadnienia. Teza przypisana na stronie: kalkulator-odprawy: na tle ustawy z 1989 r. to samo dotyczy zwolnień grupowych"
+    },
+    {
+      "sygnatura": "II PK 340/12",
+      "saos_id": 0,
+      "wynik": "niesprawdzone (SAOS: Przerwa techniczna)",
+      "fragment": "Nie przeczytano uzasadnienia. Teza przypisana na stronie: kalkulator-odprawy: odprawa po odmowie nowych warunków, gdy ich przyjęcie prowadziłoby do poważnych zmian na niekorzyść pracownika"
+    },
+    {
+      "sygnatura": "III PK 55/14",
+      "saos_id": 0,
+      "wynik": "niesprawdzone (SAOS: Przerwa techniczna)",
+      "fragment": "Nie przeczytano uzasadnienia. Teza przypisana na stronie: kalkulator-odprawy: odmowa obiektywnie możliwych warunków jako współprzyczyna, odprawy brak"
+    },
+    {
+      "sygnatura": "I PK 211/14",
+      "saos_id": 0,
+      "wynik": "niesprawdzone (SAOS: Przerwa techniczna)",
+      "fragment": "Nie przeczytano uzasadnienia. Teza przypisana na stronie: wskazana w zadaniu; na stronie kalkulator-odprawy ani w rejestrze/hasłach jej nie ma (grep src, tests)"
+    },
+    {
+      "sygnatura": "IX P 280/20",
+      "saos_id": 0,
+      "wynik": "niesprawdzone (SAOS: Przerwa techniczna)",
+      "fragment": "Nie przeczytano uzasadnienia. Teza przypisana na stronie: kara-porzadkowa (Jak liczymy i zdanie wyniku z ZDANIE_ART_115.pracodawca): SR Szczecin-Centrum, przesunięcie z art. 115 KC przy sprzeciwie od kary"
+    },
+    {
+      "sygnatura": "IX P 666/18",
+      "saos_id": 0,
+      "wynik": "niesprawdzone (SAOS: Przerwa techniczna)",
+      "fragment": "Nie przeczytano uzasadnienia. Teza przypisana na stronie: kara-porzadkowa (zdanie wyniku z ZDANIE_ART_115.pracodawca): SR Szczecin-Centrum, wniosek o sprostowanie świadectwa"
+    },
+    {
+      "sygnatura": "VII Pa 90/16",
+      "saos_id": 0,
+      "wynik": "niesprawdzone (SAOS: Przerwa techniczna)",
+      "fragment": "Nie przeczytano uzasadnienia. Teza przypisana na stronie: kara-porzadkowa (Jak liczymy i zdanie wyniku): SO w Łodzi, sprzeciw musi dotrzeć do pracodawcy, nadanie na poczcie nie wystarcza"
+    }
+  ],
+  "do_stanu": [
+    {
+      "sprawa": "Teksty z płacą minimalną (lead, opis, FAQ kalkulator-odprawy: „najwyżej 72 090,00 zł w 2026 r.”) liczone z daty buildu; bez przebudowy po 1.01.2027 strona dalej podaje rok 2026 (skrypt liczy już 74 250 zł). Brak zaplanowanego buildu (.github/workflows: tylko kontrola.yml, bez cron); ten sam wzorzec dzisWPolsce() w 124 miejscach stron narzędzi.",
+      "kiedy_sprawdzic": "2027-01-01",
+      "gdzie_w_kodzie": "src/pages/narzedzia/kalkulator-odprawy.astro (rok, limit), wdrożenie Cloudflare"
+    },
+    {
+      "sprawa": "Płaca minimalna 2028 nieogłoszona: kalkulator-odprawy dla rozwiązania w 2028 r. pokazuje błąd „zna płacę minimalną tylko na lata…”; dopisać po rozporządzeniu (zwykle wrzesień)",
+      "kiedy_sprawdzic": "2027-09-15",
+      "gdzie_w_kodzie": "src/data/prawo.ts PLACA_MINIMALNA"
+    },
+    {
+      "sprawa": "Ustawa o rynku pracy: zmiana DU_2026_1123 wchodzi w życie 1.01.2028 (metadane API Sejmu); sprawdzić, czy nie zmienia art. 220 ust. 1 pkt 2 cytowanego na kalkulator-odprawy",
+      "kiedy_sprawdzic": "2027-12-01",
+      "gdzie_w_kodzie": "src/pages/narzedzia/kalkulator-odprawy.astro, akapit o art. 220"
+    }
+  ],
+  "poza_zakresem": [
+    "src/lib/szukaj-narzedzi.ts: zapytanie „odprawa” daje kalkulator-odprawy dopiero 3. mimo hasła „odprawa” (odprawa-posmiertna 114, zwolnienia-grupowe 113, kalkulator 111) – słowo w nazwie innego narzędzia waży więcej niż identyczne hasło.",
+    "src/lib/szukaj-narzedzi.ts: zapytanie z nieznanym słowem zeruje wynik („kierownik dal mi upomnienie” → 0 wyników, choć „upomnienie” samo daje kara-porzadkowa 1.).",
+    "src/lib/narzedzia/terminy.ts ZDANIE_ART_115.pracodawca: na stronie kary zdanie wyniku powołuje się też na IX P 666/18 (sprostowanie świadectwa) – nie na temat kary, ale tekst wspólny dla narzędzi."
+  ],
+  "nie_sprawdzono": [
+    "Wszystkie 11 sygnatur (I PKN 34/99, II PK 12/11, I PK 2/13, I PK 144/11, I PK 139/04, II PK 340/12, III PK 55/14, I PK 211/14, IX P 280/20, IX P 666/18, VII Pa 90/16): API SAOS zwracało „Przerwa techniczna” (HTML) w 4 próbach (ok. 07:55, 08:02, 08:11 i 08:19); do powtórzenia: curl -s 'https://www.saos.org.pl/api/search/judgments?caseNumber=I%20PKN%2034/99', potem /api/judgments/<id> (data.textContent) – i analogicznie dla każdej sygnatury (spacje jako %20). Sprawdzić zwłaszcza: czy I PK 144/11 dotyczy odmowy nowych warunków (strona przypisuje mu i definicję „wyłącznego powodu”, i współprzyczynę) oraz czy I PK 139/04 mówi o ustawie z 1989 r.",
+    "Ręcznie (blokują automaty): sn.pl dla tych samych sygnatur SN; gov.pl „Ustanie stosunku pracy” (przykład 22 lipca), na który powołuje się okres-wypowiedzenia.",
+    "Czytnik ekranu tylko przez ariaSnapshot (bez NVDA/VoiceOver); iPhone/WebKit nie uruchamiany."
+  ]
+}

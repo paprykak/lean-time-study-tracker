@@ -4,8 +4,8 @@ import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
 
 const faq = [
   {
-    pytanie: 'Ile wynosi okres wypowiedzenia umowy o pracę?',
-    odpowiedz: 'Przy umowie na czas nieokreślony i określony: 2 tygodnie, gdy zatrudnienie u danego pracodawcy trwało krócej niż 6 miesięcy, 1 miesiąc od 6 miesięcy i 3 miesiące od 3 lat (art. 36 § 1 Kodeksu pracy). Przy umowie na okres próbny: 3 dni robocze, 1 tydzień albo 2 tygodnie, zależnie od długości okresu próbnego (art. 34).',
+    pytanie: 'Ile wynosi okres wypowiedzenia umowy o pracę na czas określony i nieokreślony?',
+    odpowiedz: 'Przy umowie na czas nieokreślony i określony: 2 tygodnie, gdy zatrudnienie u danego pracodawcy trwało krócej niż 6 miesięcy, 1 miesiąc od 6 miesięcy i 3 miesiące od 3 lat (art. 36 § 1 Kodeksu pracy). Przy umowie na okres próbny: 3 dni robocze, 1 tydzień albo 2 tygodnie, zależnie od długości okresu próbnego (art. 34). Przy stanowisku z odpowiedzialnością materialną umowa może wydłużyć 2 tygodnie do 1 miesiąca, a 1 miesiąc do 3 miesięcy (art. 36 § 5).',
   },
   {
     pytanie: 'Kiedy kończy się okres wypowiedzenia?',
@@ -13,7 +13,7 @@ const faq = [
   },
   {
     pytanie: 'Czy do okresu wypowiedzenia liczą się wcześniejsze umowy?',
-    odpowiedz: 'Liczy się okres zatrudnienia u danego pracodawcy na podstawie wszystkich umów, bez względu na ich liczbę i przerwy (gov.pl), a także zatrudnienie u poprzedniego pracodawcy przy przejściu zakładu pracy (art. 36 § 1^1). Od 2026 r. wlicza się też okresy umów zlecenia i działalności na rzecz tego samego pracodawcy (art. 302^1 § 8), ale nie do wypowiedzeń, które trwały w dniu wejścia zmian w życie (art. 8 ustawy z 26 września 2025 r.).',
+    odpowiedz: 'Liczy się okres zatrudnienia u danego pracodawcy na podstawie wszystkich umów, bez względu na ich liczbę i przerwy (gov.pl), a także zatrudnienie u poprzedniego pracodawcy przy przejściu zakładu pracy (art. 36 § 1^1). Od 1 maja 2026 r. w firmach prywatnych (w sektorze finansów publicznych od 1 stycznia 2026 r.) wlicza się też okresy umów zlecenia i działalności na rzecz tego samego pracodawcy, potwierdzone zaświadczeniem ZUS (art. 302^1 § 8 i 11 Kodeksu pracy), ale nie do wypowiedzeń, które w tym dniu już trwały (art. 8 i 9 ustawy z 26 września 2025 r.).',
   },
   {
     pytanie: 'Ile dni wolnych na szukanie pracy?',
@@ -21,7 +21,7 @@ const faq = [
   },
   {
     pytanie: 'Czy można skrócić okres wypowiedzenia?',
-    odpowiedz: 'Po wypowiedzeniu strony mogą się porozumieć co do wcześniejszego rozwiązania umowy, a tryb rozwiązania się nie zmienia (art. 36 § 6). Przy stanowisku z odpowiedzialnością materialną strony mogą w umowie ustalić 1 miesiąc zamiast 2 tygodni i 3 miesiące zamiast 1 miesiąca (art. 36 § 5).',
+    odpowiedz: 'Po wypowiedzeniu strony mogą się porozumieć co do wcześniejszego rozwiązania umowy, a tryb rozwiązania się nie zmienia (art. 36 § 6). Przy upadłości, likwidacji pracodawcy albo innych przyczynach niedotyczących pracowników pracodawca może skrócić wypowiedzenie 3-miesięczne najwyżej do 1 miesiąca, ale płaci odszkodowanie za resztę okresu, a dni na szukanie pracy zostają 3 (art. 36^1 § 1 i art. 37 § 2 Kodeksu pracy).',
   },
 ];
 ---
@@ -110,26 +110,27 @@ const faq = [
     </p>
     <p>
       Gdy w trakcie wypowiedzenia staż osiągnie 6 miesięcy albo 3 lata, Kodeks pracy nie mówi tego wprost, ale Sąd Najwyższy
-      liczy staż do dnia, w którym umowa się rozwiązuje, a nie do dnia doręczenia (wyrok z 11 maja 1999 r., I PKN 34/99;
-      tak samo wyroki II PK 12/11 i I PK 2/13). W sprawie I PKN 34/99 pracodawca pismem z 26 lutego 1998 r. wypowiedział
+      liczy staż do dnia, w którym umowa się rozwiązuje, a nie do dnia doręczenia (wyrok z 11 maja 1999 r., I PKN 34/99). W sprawie I PKN 34/99 pracodawca pismem z 26 lutego 1998 r. wypowiedział
       z okresem miesięcznym umowę pracownicy zatrudnionej od 20 marca 1995 r., a 3 lata pracy mijały w marcu 1998 r., przed końcem
       okresu miesięcznego (31 marca). Sądy przyjęły okres 3 miesięcy, a Sąd Najwyższy oddalił kasację pracodawcy.
       Kalkulator podaje wtedy dłuższy okres liczony od tego samego doręczenia i pokazuje też krótszy, który pracodawca
       mógł wpisać w piśmie.
     </p>
     <p>
-      Staż liczy się z okresów zatrudnienia u tego pracodawcy, a przerw między umowami się nie wlicza (art. 36 § 1). Od 2026 r.
-      dochodzą zlecenia i działalność na jego rzecz (art. 302<sup>1</sup> § 8). Gdy były przerwy, staż z kilku okresów
+      Staż liczy się z okresów zatrudnienia u tego pracodawcy, a przerw między umowami się nie wlicza (art. 36 § 1). Od 1 maja 2026 r.
+      (w sektorze finansów publicznych od 1 stycznia 2026 r.) dochodzą zlecenia i działalność na jego rzecz, potwierdzone
+      zaświadczeniem ZUS (art. 302<sup>1</sup> § 8 i 11). Gdy były przerwy, staż z kilku okresów
       policzy <a href="/narzedzia/staz-pracy">kalkulator stażu pracy</a>.
     </p>
     <p>
       Oświadczenie o wypowiedzeniu składa się na piśmie (art. 30 § 3). Wypowiedzenie przez pracodawcę umowy na czas
-      określony albo nieokreślony wymaga podania przyczyny i pouczenia o odwołaniu do sądu pracy (art. 30 § 4 i 5).
+      określony albo nieokreślony wymaga podania przyczyny i pouczenia o odwołaniu do sądu pracy (art. 30 § 4 i 5). Termin na odwołanie policzy <a href="/narzedzia/odwolanie-do-sadu-pracy">kalkulator terminów do sądu pracy</a>.
     </p>
     <p>
       Gdy pracodawca zapłacił za Twój kurs albo studia, przy własnym wypowiedzeniu możesz musieć oddać część kosztów
       (art. 103<sup>5</sup>): ile, policzy <a href="/narzedzia/zwrot-kosztow-szkolenia">kalkulator lojalki</a>.
     </p>
+    <p>Czy w czasie wypowiedzenia trzeba wykorzystać urlop, sprawdzi <a href="/narzedzia/urlop-w-okresie-wypowiedzenia">kalkulator urlopu na wypowiedzeniu</a>, a odprawę przy zwolnieniu z przyczyn pracodawcy policzy <a href="/narzedzia/kalkulator-odprawy">kalkulator odprawy</a>.</p>
   </Fragment>
 </StronaNarzedzia>
 
@@ -180,7 +181,7 @@ const faq = [
       const pracodawca = (form.querySelector<HTMLInputElement>('input[name="kto"]:checked')?.value ?? 'pracodawca') === 'pracodawca';
       const dni = pracodawca ? dniNaPoszukiwanie(okres) : 0;
       pisz('poszukiwanie', dni ? `${dni} dni robocze, płatne` : pracodawca ? 'nie przysługują przy tym okresie' : 'nie przysługują (wypowiada pracownik)');
-      pisz('podstawa', `${okres.podstawa}; koniec: art. 30 § 2¹`);
+      pisz('podstawa', okres.jednostka === 'dni-robocze' ? okres.podstawa : `${okres.podstawa}; koniec: art. 30 § 2¹`);
       const uwaga = !koniec
         ? 'Przy okresie próbnym do 2 tygodni wypowiedzenie trwa 3 dni robocze; które to dni, zależy od rozkładu pracy.'
         : s?.prog

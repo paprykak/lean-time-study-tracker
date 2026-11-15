@@ -41,12 +41,14 @@
 //   do protokołu bez terminu), bez terminu 7 dni z art. 68e ust. 4.
 // - Odwołanie: miesiąc od doręczenia (art. 112 KC przez art. 165 § 1 KPC); gdy koniec wypada w sobotę albo dzień wolny,
 //   pokazujemy dwie daty: „zdąż do” bez przesunięcia i ostatni dzień według art. 115 KC (DECYZJE.md, 2026-11-15).
-// - Zastrzeżenia do protokołu: 7 dni od otrzymania, dnia otrzymania nie wliczamy (jak art. 111 § 2 KC); ustawa zasiłkowa
-//   nie odsyła do KC i nie mówi o sobocie, więc podajemy tylko datę bez przesunięcia.
+//   Obie daty liczy wspólna `terminPracownika` (terminy.ts: sobota dopiero od 1.01.2017 r., 12.11.2018 r.); po dniu
+//   „zdąż do” status liczymy od drugiej daty (`stanTerminuPracownika`, jak `fazaTerminu`).
+// - Zastrzeżenia do protokołu: 7 dni od otrzymania, dnia otrzymania nie wliczamy (art. 111 § 2 KC); ustawa zasiłkowa nie
+//   mówi, jak liczyć ten termin, więc przepisy KC stosuje się przez art. 110 KC: jak przy odwołaniu dwie daty, „zdąż do”
+//   bez przesunięcia i ostatni dzień według art. 115 KC (orzeczeń o tym terminie nie znaleźliśmy).
 import { odmiana } from '../redakcja';
 import { zaIle } from './choroba-zawodowa';
-import { przesunZDniaWolnego } from './termin-odwolania';
-import { dataPoPolsku, dniMiedzy, dodajDni, dodajMiesiace, poprawnaData } from './terminy';
+import { dataPoPolsku, dniMiedzy, dodajDni, dodajMiesiace, fazaTerminu, poprawnaData, terminPracownika, type TerminPracownika } from './terminy';
 
 export type Czynnosc = 'inna-praca' | 'polecenie' | 'incydentalna' | 'zakupy' | 'lekarz' | 'dom' | 'wyjazd' | 'wysilek';
 export type Wskazanie = 'chodzic' | 'lezec';
@@ -154,9 +156,8 @@ export const terminZastrzezen = (protokol: string) => dodajDni(protokol, DNI_ZAS
 
 /** Odwołanie od decyzji ZUS: miesiąc od doręczenia (art. 477⁹ § 1 KPC, art. 112 KC) i dzień po przesunięciu z art. 115 KC. */
 export function terminOdwolania(decyzja: string) {
-  const koniec = dodajMiesiace(decyzja, MIESIACE_ODWOLANIA);
-  const p = przesunZDniaWolnego(koniec);
-  return { koniec, poPrzesunieciu: p.koniec === koniec ? null : p.koniec, powod: p.przesuniecie[0]?.powod ?? null };
+  const termin = terminPracownika(dodajMiesiace(decyzja, MIESIACE_ODWOLANIA));
+  return { koniec: termin.zdazDo, poPrzesunieciu: termin.rozne ? termin.wedlugArt115 : null, powod: termin.wolne[0]?.powod ?? null, termin };
 }
 
 export interface OpisL4 {
@@ -190,6 +191,18 @@ export function stanTerminu(koniec: string, dzis: string): { tekst: string; klas
   if (r < 0) return { tekst: `Termin minął ${dni(-r)} temu`, klasa: 'po-terminie' };
   if (r === 0) return { tekst: 'Dziś ostatni dzień', klasa: 'pilne' };
   return { tekst: wielka(zaIle(r)), klasa: r <= 3 ? 'pilne' : r <= 7 ? 'wkrotce' : 'w-terminie' };
+}
+
+/**
+ * Status terminu pracownika z dwiema datami (konwencja z terminy.ts): do dnia „zdąż do” włącznie liczymy do niego, po nim
+ * do dnia z art. 115 KC („Pierwsza data minęła…”), a „Termin minął” dopiero po obu.
+ */
+export function stanTerminuPracownika(t: TerminPracownika, dzis: string): { tekst: string; klasa: KlasaStatusu } {
+  const f = fazaTerminu(t, dzis);
+  if (f.faza === 'w-terminie') return f.dni === 0 && t.rozne ? { tekst: 'Zdąż do: dziś', klasa: 'pilne' } : stanTerminu(t.zdazDo, dzis);
+  if (f.faza === 'tylko-art-115')
+    return { tekst: `Pierwsza data minęła; ostatni dzień według art. 115 KC: ${f.dni === 0 ? 'dziś' : dataPoPolsku(t.wedlugArt115)}`, klasa: 'pilne' };
+  return stanTerminu(t.wedlugArt115, dzis);
 }
 
 /** „sobota”, „niedziela” albo „Boże Narodzenie, dzień wolny od pracy”. */
@@ -398,6 +411,11 @@ export function opisL4(d: DaneL4, dzis: string): OpisL4 {
   if (blad) throw new RangeError(blad.tekst);
   const b = brzmienie(d.dzien);
   const o = ocena(d.czynnosc, b, d.wskazanie);
+  if (d.czynnosc === 'inna-praca' && b === 'od2027' && d.od < OD_2027)
+    o.warunki = [
+      'Twoje zwolnienie zaczęło się przed 1 stycznia 2027 r. Jeśli lekarz wystawił je przed tym dniem, musiało objąć każdy tytuł ubezpieczenia (art. 17 ust. 1c), bo ust. 1d obowiązuje dopiero od 1 stycznia 2027 r.; wtedy praca w drugiej firmie w czasie tego zwolnienia odbiera zasiłek.',
+      ...o.warunki,
+    ];
   const dawnaKontrola = !puste(d.protokol) && d.protokol! < OD_NOWEGO;
   const praca = CZYNNOSCI[d.czynnosc].praca;
   const okres = okresZwolnienia(d.od, d.do);
@@ -417,13 +435,14 @@ export function opisL4(d: DaneL4, dzis: string): OpisL4 {
   } else if (dawnaKontrola) {
     zastrzezenia = `Protokół jest sprzed 13 kwietnia 2026 r.: termin ${DNI_ZASTRZEZEN} dni z art. 68e ust. 4 nie dotyczy kontroli wszczętej przed tym dniem (art. 42 ustawy z 18 grudnia 2025 r.). Dawne rozporządzenie dawało prawo do uwag do protokołu, bez terminu (§ 9 rozporządzenia z 27 lipca 1999 r.).`;
   } else {
-    const t = terminZastrzezen(d.protokol!);
-    const s = stanTerminu(t, dzis);
+    const t = terminPracownika(terminZastrzezen(d.protokol!));
+    const s = stanTerminuPracownika(t, dzis);
     zastrzezeniaStatus = s.tekst;
     zastrzezeniaKlasa = s.klasa;
-    const wolny = przesunZDniaWolnego(t).przesuniecie[0]?.powod ?? null;
-    const sobota = wolny ? ` ${wielka(dataPoPolsku(t))} to ${NAZWA_WOLNEGO(wolny)}; ustawa nie mówi, czy termin przesuwa się wtedy na następny dzień roboczy, więc podajemy datę bez przesunięcia.` : '';
-    zastrzezenia = `Zastrzeżenia składasz najpóźniej ${dataPoPolsku(t)} (${DNI_ZASTRZEZEN} dni od otrzymania protokołu albo aneksu do niego), wskazując dowody; rozpatruje je ZUS i odpowiada na piśmie (art. 68e ust. 4–5 ustawy zasiłkowej). Do aneksu sporządzonego po rozpatrzeniu zastrzeżeń nie składa się kolejnych (ust. 6).${sobota}`;
+    const reszta = 'rozpatruje je ZUS i odpowiada na piśmie (art. 68e ust. 4–5 ustawy zasiłkowej). Do aneksu sporządzonego po rozpatrzeniu zastrzeżeń nie składa się kolejnych (ust. 6).';
+    zastrzezenia = t.rozne
+      ? `Zdąż do ${dataPoPolsku(t.zdazDo)}: ${DNI_ZASTRZEZEN} dni od otrzymania protokołu albo aneksu do niego. ${wielka(dataPoPolsku(t.zdazDo))} to ${NAZWA_WOLNEGO(t.wolne[0].powod)}: według art. 115 Kodeksu cywilnego ostatni dzień to ${dataPoPolsku(t.wedlugArt115)} Ustawa zasiłkowa nie mówi, jak liczyć ten termin, a przepisy Kodeksu cywilnego o terminach stosuje się, gdy ustawa nie określa sposobu ich obliczania (art. 110 Kodeksu cywilnego); orzeczeń o tym terminie nie znaleźliśmy, więc bezpieczniej zdążyć do pierwszej daty. Zastrzeżenia składasz, wskazując dowody; ${reszta}`
+      : `Zastrzeżenia składasz najpóźniej ${dataPoPolsku(t.zdazDo)} (${DNI_ZASTRZEZEN} dni od otrzymania protokołu albo aneksu do niego), wskazując dowody; ${reszta}`;
   }
 
   const gdzie =
@@ -433,19 +452,20 @@ export function opisL4(d: DaneL4, dzis: string): OpisL4 {
   let odwolanieStatus: string | null = null;
   let odwolanieKlasa: KlasaStatusu | null = null;
   if (puste(d.decyzja)) {
-    odwolanie = `Gdy ZUS ustali utratę zasiłku, wydaje decyzję (art. 83 ust. 1 pkt 4 ustawy o systemie ubezpieczeń społecznych); protokół kontroli jest podstawą tego postępowania (art. 68e ust. 7 ustawy zasiłkowej). Gdy zasiłek wypłaca pracodawca, decyzję ZUS dostaniesz po wniosku o ustalenie uprawnień (art. 63 ust. 1). Na odwołanie do sądu masz miesiąc od doręczenia decyzji. ${gdzie} Wpisz dzień doręczenia decyzji, a policzymy datę.`;
+    odwolanie = `Gdy ZUS ustali utratę zasiłku, wydaje decyzję (art. 83 ust. 1 pkt 4 ustawy o systemie ubezpieczeń społecznych); protokół kontroli jest podstawą tego postępowania (art. 68e ust. 7 ustawy zasiłkowej). Gdy zasiłek wypłaca pracodawca, wątpliwości po kontroli także rozstrzyga ZUS (art. 68 ust. 1e ustawy zasiłkowej); jeśli pracodawca sam odmówi wypłaty, decyzję ZUS uzyskasz wnioskiem o ustalenie uprawnień (art. 63 ust. 1). Na odwołanie do sądu masz miesiąc od doręczenia decyzji. ${gdzie} Wpisz dzień doręczenia decyzji, a policzymy datę.`;
   } else {
     const t = terminOdwolania(d.decyzja!);
     // Od dnia daty bez przesunięcia (sobota albo dzień wolny) liczy się już tylko data z art. 115 KC, także po terminie.
-    const tylkoPrzesuniety = t.poPrzesunieciu !== null && t.koniec <= dzis;
-    const s = stanTerminu(tylkoPrzesuniety ? t.poPrzesunieciu! : t.koniec, dzis);
+    // Po dniu „zdąż do” (sobota albo dzień wolny) liczy się już tylko data z art. 115 KC, także po terminie.
+    const tylkoPrzesuniety = t.poPrzesunieciu !== null && fazaTerminu(t.termin, dzis).faza !== 'w-terminie';
+    const s = stanTerminuPracownika(t.termin, dzis);
     odwolanieStatus = s.tekst;
     odwolanieKlasa = s.klasa;
     const art115 = 'według art. 115 Kodeksu cywilnego (przez art. 165 § 1 KPC)';
     if (tylkoPrzesuniety && t.poPrzesunieciu! < dzis)
       odwolanie = `Termin minął: miesiąc od doręczenia decyzji przypadł na ${dataPoPolsku(t.koniec)}, a że ten dzień to ${NAZWA_WOLNEGO(t.powod)}, ${art115} termin upłynął ${dataPoPolsku(t.poPrzesunieciu!)} ${gdzie} ${spoznione}`;
     else if (tylkoPrzesuniety)
-      odwolanie = `Miesiąc od doręczenia decyzji przypada na ${dataPoPolsku(t.koniec)}, ale ten dzień to ${NAZWA_WOLNEGO(t.powod)}, więc ${art115} termin upływa ${dataPoPolsku(t.poPrzesunieciu!)} Nie zwlekaj: to ostatni dzień. ${gdzie} ${spoznione}`;
+      odwolanie = `Miesiąc od doręczenia decyzji przypadł na ${dataPoPolsku(t.koniec)}, ale ten dzień to ${NAZWA_WOLNEGO(t.powod)}, więc ${art115} termin upływa ${dataPoPolsku(t.poPrzesunieciu!)} ${gdzie} ${spoznione}`;
     else {
       const przesuniecie = t.poPrzesunieciu
         ? ` ${wielka(dataPoPolsku(t.koniec))} to ${NAZWA_WOLNEGO(t.powod)}: ${art115} ostatni dzień to ${dataPoPolsku(t.poPrzesunieciu)}, ale bezpieczniej zdążyć do ${dataPoPolsku(t.koniec)}`

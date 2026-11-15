@@ -2,7 +2,7 @@
 // Przedawnienie wynagrodzenia i nadgodzin: 3 lata od dnia wymagalności (art. 291 § 1 Kp), wypłata w dniu z art. 85
 // § 1–3, przerwanie biegu (art. 295). Logika: src/lib/narzedzia/przedawnienie.ts (testy obok).
 import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
-import { opisPrzedawnienia, wyplatyDoDochodzenia } from '../../lib/narzedzia/przedawnienie';
+import { opisPrzedawnienia, uwagaListy, wyplatyDoDochodzenia } from '../../lib/narzedzia/przedawnienie';
 import { nazwaMiesiaca } from '../../lib/narzedzia/czas-pracy';
 import { dzisWPolsce } from '../../lib/narzedzia/terminy';
 
@@ -16,7 +16,7 @@ const o = opisPrzedawnienia({ wymagalne: pierwsza.wymagalna, koniec: pierwsza.ko
 const faq = [
   {
     pytanie: 'Ile lat wstecz można żądać zapłaty za nadgodziny?',
-    odpowiedz: '3 lata od dnia, w którym zapłata stała się wymagalna, czyli zwykle od dnia wypłaty (art. 291 § 1 Kodeksu pracy). Za każdy miesiąc termin biegnie osobno, więc co miesiąc przedawnia się kolejna wypłata. Bieg przedawnienia przerywa pozew w sądzie pracy albo uznanie długu przez pracodawcę, a potem termin biegnie od nowa (art. 295).',
+    odpowiedz: '3 lata od dnia, w którym zapłata stała się wymagalna, czyli zwykle od dnia wypłaty (art. 291 § 1 Kodeksu pracy). Za każdy miesiąc termin biegnie osobno, więc co miesiąc przedawnia się kolejna wypłata. Bieg przedawnienia przerywa pozew w sądzie pracy albo uznanie długu przez pracodawcę. Po uznaniu termin biegnie od nowa od razu, a po pozwie dopiero po zakończeniu sprawy (art. 295).',
   },
   {
     pytanie: 'Co, jeśli pracodawca uzna, że jest mi winien pieniądze?',
@@ -32,7 +32,7 @@ const faq = [
   },
   {
     pytanie: 'Jak długo można ściągać zasądzone wynagrodzenie?',
-    odpowiedz: 'Roszczenie stwierdzone prawomocnym wyrokiem sądu pracy albo ugodą zawartą przed sądem przedawnia się po 10 latach od uprawomocnienia się wyroku lub zawarcia ugody (art. 291 § 5 Kodeksu pracy).',
+    odpowiedz: 'Roszczenie stwierdzone prawomocnym orzeczeniem sądu pracy (wyrokiem albo nakazem zapłaty) albo ugodą zawartą przed sądem pracy lub komisją pojednawczą przedawnia się po 10 latach od uprawomocnienia się orzeczenia lub zawarcia ugody (art. 291 § 5 Kodeksu pracy).',
   },
 ];
 ---
@@ -41,7 +41,7 @@ const faq = [
   tytul="Przedawnienie wynagrodzenia i nadgodzin"
   opis="Do kiedy możesz upomnieć się o niezapłaconą pensję i nadgodziny: 3 lata od dnia wypłaty za każdy miesiąc osobno. Najstarszy miesiąc i daty przedawnienia."
   h1="Przedawnienie wynagrodzenia i nadgodzin"
-  lead="Niezapłacone wynagrodzenie i nadgodziny przedawniają się po 3 latach, za każdy miesiąc osobno. Wpisz, kiedy dostajesz wypłatę, a pokażemy najstarszy miesiąc, o który możesz jeszcze wystąpić, i kolejne terminy."
+  lead="Niezapłacone wynagrodzenie i nadgodziny przedawniają się po 3 latach, za każdy miesiąc osobno. Wpisz, kiedy dostajesz wypłatę, a pokażemy najstarszy miesiąc, który jeszcze się nie przedawnił, i kolejne terminy."
   faq={faq}
 >
   <form class="kalkulator" data-przedawnienie novalidate aria-labelledby="kalkulator-tytul">
@@ -77,7 +77,7 @@ const faq = [
     </div>
 
     <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
-      <h2 id="wynik-tytul" class="etykieta">Najstarsza wypłata, o którą możesz wystąpić</h2>
+      <h2 id="wynik-tytul" class="etykieta">Najstarsza wypłata przed przedawnieniem</h2>
       <div aria-live="polite" aria-atomic="true">
         <p class="wynik-data" data-w="najstarsza">za {miesiac(pierwsza.za)}</p>
         <p class="meta" data-w="opis">{o.opis}</p>
@@ -85,12 +85,13 @@ const faq = [
       </div>
       <p class="meta mt-2" data-w="zdanie" hidden={!o.zdanie}>{o.zdanie}</p>
       <dl class="wynik-lista">
-        <div data-wiersz="inna" hidden><dt>Inna należność przedawnia się</dt><dd data-w="inna"></dd></div>
+        <div data-wiersz="inna" hidden><dt>Inna należność: koniec przedawnienia</dt><dd data-w="inna"></dd></div>
       </dl>
       <h3 class="etykieta mt-5">Kolejne terminy</h3>
       <ul class="mt-2 grid gap-1 text-[0.9375rem]" data-w="lista">
         {lista.slice(1, 6).map((w) => <li>za {miesiac(w.za)}: do {opisPrzedawnienia({ wymagalne: w.wymagalna, koniec: w.koniec, art115: w.art115 }, dzis).krotko}</li>)}
       </ul>
+      <p class="meta mt-2" data-w="uwaga-listy" hidden={!uwagaListy(lista.slice(1, 6))}>{uwagaListy(lista.slice(1, 6))}</p>
       <p class="wynik-uwaga">To najwcześniejszy możliwy termin: pozew złożony najpóźniej tego dnia jest w terminie, a bieg przedawnienia przerywa też uznanie długu przez pracodawcę (art. 295 Kodeksu pracy).</p>
       <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Wynik pokazuje wypłatę 10. dnia następnego miesiąca.</p></noscript>
     </div>
@@ -101,15 +102,16 @@ const faq = [
     <ul>
       <li>Roszczenia ze stosunku pracy przedawniają się po 3 latach od dnia, w którym stały się wymagalne (art. 291 § 1 Kodeksu pracy). Liczymy od dnia wypłaty, a za każdy miesiąc termin biegnie osobno. Część sądów przyjmuje wymagalność dzień po terminie wypłaty (np. Sąd Rejonowy dla Wrocławia-Śródmieścia, IV P 553/24), więc nasza data jest najwcześniejsza.</li>
       <li>Wypłata przychodzi co najmniej raz w miesiącu, w stałym terminie, najpóźniej 10. dnia następnego miesiąca; gdy ten dzień jest wolny od pracy, w dniu poprzedzającym (art. 85 § 1–3). Termin wypłaty w każdym miesiącu pokaże <a href="/narzedzia/termin-wyplaty-wynagrodzenia">kalkulator terminu wypłaty</a>.</li>
-      <li>Bieg przedawnienia przerywa każda czynność przed organem powołanym do rozstrzygania sporów lub egzekwowania roszczeń, podjęta bezpośrednio w celu dochodzenia roszczenia, na przykład pozew w sądzie pracy, oraz uznanie roszczenia przez pracodawcę (art. 295 § 1). Po przerwie termin biegnie od nowa, a po pozwie dopiero po zakończeniu sprawy (§ 2).</li>
-      <li>Przedawnienie nie biegnie, gdy z powodu siły wyższej nie można dochodzić roszczeń przed sądem (art. 293), a roszczenie o urlop wypoczynkowy w czasie urlopu wychowawczego (art. 293<sup>1</sup>).</li>
+      <li>Bieg przedawnienia przerywa każda czynność przed organem powołanym do rozstrzygania sporów lub egzekwowania roszczeń, podjęta bezpośrednio w celu dochodzenia roszczenia, na przykład pozew w sądzie pracy, oraz uznanie roszczenia przez pracodawcę (art. 295 § 1). Po przerwie termin biegnie od nowa, a po pozwie dopiero po zakończeniu sprawy (§ 2). Gdzie i jak złożyć pozew bez opłat, opisuje <a href="/narzedzia/sad-pracy-czy-pip">strona o sądzie pracy i PIP</a>.</li>
+      <li>Przedawnienie nie biegnie, gdy z powodu siły wyższej nie można dochodzić roszczeń przed sądem (art. 293), a roszczenie o urlop wypoczynkowy w czasie urlopu wychowawczego (art. 293<sup>1</sup>). Kiedy przedawnia się zaległy urlop, policzy <a href="/narzedzia/zalegly-urlop">kalkulator zaległego urlopu</a>.</li>
       <li>Po upływie terminu pracodawca może odmówić zapłaty, ale musi powołać się na przedawnienie (art. 292).</li>
     </ul>
 
     <h2 id="jak-liczymy">Jak liczymy</h2>
     <p>
       Dzień wypłaty przesuwamy na wcześniejszy dzień pracy, gdy wypada w niedzielę, w święto albo, jeśli tak jest
-      w Twoim zakładzie, w sobotę. Od niego liczymy 3 lata: termin kończy się z upływem dnia o tej samej dacie (art. 112
+      w Twoim zakładzie, w sobotę. Przepis mówi o dniu poprzedzającym i nie rozstrzyga, co gdy i ten dzień jest wolny; bierzemy
+      najbliższy wcześniejszy dzień pracy, co daje najwcześniejszą datę przedawnienia. Od niego liczymy 3 lata: termin kończy się z upływem dnia o tej samej dacie (art. 112
       Kodeksu cywilnego w związku z art. 300 Kodeksu pracy), a wypłata z 29 lutego przedawnia się 28 lutego. Nie
       przesuwamy końca terminu na koniec roku, jak w art. 118 Kodeksu cywilnego: Kodeks pracy ma własne przepisy
       o przedawnieniu, a gdyby sąd przyjął dłuższy termin, nasza data i tak będzie bezpieczna. Gdy koniec wypada w sobotę
@@ -125,7 +127,7 @@ const faq = [
 <script>
   import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
   import { ustawDzisiejszeWartosci } from '../../lib/narzedzia/dzis-w-formularzu';
-  import { opisPrzedawnienia, przedawnienie, wyplatyDoDochodzenia, type RodzajWyplaty } from '../../lib/narzedzia/przedawnienie';
+  import { opisPrzedawnienia, przedawnienie, uwagaListy, wyplatyDoDochodzenia, type RodzajWyplaty } from '../../lib/narzedzia/przedawnienie';
   import { nazwaMiesiaca } from '../../lib/narzedzia/czas-pracy';
   import { poprawnaData } from '../../lib/narzedzia/terminy';
   import { typografia } from '../../lib/typografia.mjs';
@@ -159,6 +161,7 @@ const faq = [
         w('zdanie').hidden = true;
         status.hidden = true;
         w('lista').replaceChildren();
+        w('uwaga-listy').hidden = true;
         form.querySelector<HTMLElement>('[data-wiersz="inna"]')!.hidden = true;
         return;
       }
@@ -185,11 +188,14 @@ const faq = [
           return li;
         }),
       );
+      const uwaga = uwagaListy(lista.slice(1, 6));
+      pisz('uwaga-listy', uwaga);
+      w('uwaga-listy').hidden = !uwaga;
       const wiersz = form.querySelector<HTMLElement>('[data-wiersz="inna"]')!;
       wiersz.hidden = !inna;
       if (inna) {
         const r = przedawnienie(inna, naDzien);
-        pisz('inna', opisPrzedawnienia(r, naDzien).zDniami);
+        pisz('inna', opisPrzedawnienia(r, naDzien).inna);
       }
     };
     form.addEventListener('input', przelicz);

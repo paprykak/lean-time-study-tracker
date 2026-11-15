@@ -31,3 +31,11 @@ test('pusta data: komunikat błędu', async ({ page }) => {
   await expect(page.locator('[data-blad="dane"]')).toBeVisible();
   await expect(page.locator('[data-w="informacja"]')).toHaveText('—');
 });
+
+// Audyt jakości 4 (C-10, C-11): wyłączenie prac szczególnie niebezpiecznych tylko przy zmianie pracodawcy; linki.
+test('FAQ o badaniach według art. 229 § 1¹ i linki do badań i monitoringu', async ({ page }) => {
+  await expect(page.locator('main')).toContainText(/ten\sdrugi\swyjątek\snie\sdotyczy\sprac\sszczególnie\sniebezpiecznych/);
+  await expect(page.locator('a[href="/narzedzia/badania-lekarskie-w-pracy"]').first()).toBeVisible();
+  await expect(page.locator('a[href="/narzedzia/monitoring-w-pracy"]')).toHaveCount(1);
+  await expect(page.locator('main')).toContainText(/pokaże\skalkulator\sbadań\slekarskich\sw\spracy/);
+});

@@ -21,7 +21,7 @@ const faq = [
   },
   {
     pytanie: 'Komu przysługuje odprawa przy zwolnieniu?',
-    odpowiedz: 'Pracownikowi pracodawcy zatrudniającego co najmniej 20 osób, gdy umowa jest rozwiązywana wypowiedzeniem pracodawcy albo porozumieniem stron z przyczyn niedotyczących pracownika. Przy zwolnieniu indywidualnym ustawa wymaga, by te przyczyny były wyłącznym powodem rozwiązania umowy (art. 1 ust. 1 i art. 10 ust. 1 ustawy); według Sądu Najwyższego znaczy to, że bez nich do zwolnienia by nie doszło (wyrok I PK 144/11).',
+    odpowiedz: 'Pracownikowi pracodawcy zatrudniającego co najmniej 20 pracowników, gdy umowa jest rozwiązywana wypowiedzeniem pracodawcy albo porozumieniem stron z przyczyn niedotyczących pracownika. Przy zwolnieniu indywidualnym ustawa wymaga, by te przyczyny były wyłącznym powodem rozwiązania umowy (art. 1 ust. 1 i art. 10 ust. 1 ustawy); według Sądu Najwyższego znaczy to, że bez nich do zwolnienia by nie doszło (wyrok I PK 144/11).',
   },
   {
     pytanie: 'Ile wynosi odprawa emerytalna?',
@@ -90,7 +90,7 @@ const faq = [
         <div><dt>Podstawa</dt><dd data-w="podstawa">art. 8 ustawy o zwolnieniach grupowych</dd></div>
       </dl>
       <p class="wynik-uwaga" data-w="uwaga" hidden></p>
-      <p class="meta mt-4">Odprawa z ustawy przysługuje u pracodawcy zatrudniającego co najmniej 20 osób (art. 1 ust. 1 i art. 10 ust. 1).</p>
+      <p class="meta mt-4">Odprawa z ustawy przysługuje u pracodawcy zatrudniającego co najmniej 20 pracowników (art. 1 ust. 1 i art. 10 ust. 1).</p>
     </div>
   </form>
 
@@ -116,13 +116,14 @@ const faq = [
     <h2 id="kiedy">Kiedy przysługuje odprawa przy zwolnieniu</h2>
     <ul>
       <li>pracodawca zatrudnia co najmniej 20 pracowników (art. 1 ust. 1 ustawy);</li>
-      <li>umowę rozwiązuje wypowiedzenie pracodawcy albo porozumienie stron z jego inicjatywy, z przyczyn niedotyczących pracownika, na przykład likwidacji stanowiska;</li>
+      <li>umowę rozwiązuje wypowiedzenie pracodawcy albo porozumienie stron, z przyczyn niedotyczących pracownika, na przykład likwidacji stanowiska;</li>
       <li>przy zwolnieniu jednej albo kilku osób te przyczyny są wyłącznym powodem rozwiązania umowy (art. 10 ust. 1).</li>
     </ul>
+    <p>Ostatni dzień umowy i dni na szukanie pracy policzy <a href="/narzedzia/okres-wypowiedzenia">kalkulator okresu wypowiedzenia</a>.</p>
     <p>
       Wyłączny powód to według Sądu Najwyższego sytuacja, w której bez przyczyn niedotyczących pracownika do zwolnienia by
-      nie doszło. Inne okoliczności mogą istnieć obok (wyrok z 12 kwietnia 2012 r., I PK 144/11). W wyroku I PK 139/04,
-      na tle ustawy z 1989 r., Sąd Najwyższy uznał, że to samo dotyczy zwolnień grupowych.
+      nie doszło. Inne okoliczności mogą istnieć obok (wyrok z 12 kwietnia 2012 r., I PK 144/11). W wyroku z 25 stycznia 2005 r.
+      (I PK 139/04) Sąd Najwyższy uznał, że to samo dotyczy zwolnień grupowych.
     </p>
     <p>
       Odprawa może się należeć także wtedy, gdy umowa kończy się, bo nie przyjmujesz nowych warunków z wypowiedzenia
@@ -132,8 +133,8 @@ const faq = [
     </p>
     <p>
       Do stażu wlicza się okres pracy u poprzedniego pracodawcy, gdy zakład pracy przeszedł na nowego albo nowy
-      pracodawca jest następcą prawnym (art. 8 ust. 2 ustawy, art. 36 § 1<sup>1</sup> Kodeksu pracy). Od 2026 r. do okresu
-      zatrudnienia u danego pracodawcy wlicza się też m.in. zlecenia wykonywane na jego rzecz (art. 302<sup>1</sup> § 8 Kodeksu
+      pracodawca jest następcą prawnym (art. 8 ust. 2 ustawy, art. 36 § 1<sup>1</sup> Kodeksu pracy). Od 1 maja 2026 r. (w sektorze finansów
+      publicznych od 1 stycznia 2026 r.) do okresu zatrudnienia u danego pracodawcy wlicza się też m.in. zlecenia wykonywane na jego rzecz (art. 302<sup>1</sup> § 8 Kodeksu
       pracy); czy obejmuje to odprawę z ustawy o zwolnieniach grupowych, warto potwierdzić w dziale kadr albo w PIP,
       bo ustawa odsyła wprost tylko do art. 36 § 1<sup>1</sup>.
     </p>
@@ -143,7 +144,7 @@ const faq = [
       Pracownik spełniający warunki do emerytury albo renty z tytułu niezdolności do pracy, którego stosunek pracy
       ustał w związku z przejściem na emeryturę albo rentę, dostaje jednomiesięczne wynagrodzenie (art. 92<sup>1</sup> § 1
       Kodeksu pracy). Przysługuje tylko raz (art. 92<sup>1</sup> § 2) i nie ma limitu kwotowego. Liczy się ją jak
-      ekwiwalent za urlop (§ 2 ust. 1 pkt 7 rozporządzenia z 29 maja 1996 r.).
+      ekwiwalent za urlop (§ 2 ust. 1 pkt 7 rozporządzenia z 29 maja 1996 r.). Za niewykorzystany urlop przy końcu pracy należy się też ekwiwalent: policzy go <a href="/narzedzia/ekwiwalent-za-urlop">kalkulator ekwiwalentu za urlop</a>.
     </p>
     <p>
       Odprawa z ustawy o zwolnieniach z przyczyn niedotyczących pracowników nie należy do świadczeń z art. 220 ust. 1
@@ -203,7 +204,10 @@ const faq = [
       }
       pokazBlad(b, blad, zlePola);
       if (blad || !r) {
-        w('kwota').textContent = '—';
+        // Cały wynik znika przy błędzie, a nie tylko kwota (audyt jakości 4, B-1).
+        for (const k of ['kwota', 'miesieczne', 'miesiecy', 'limit', 'podstawa']) w(k).textContent = '—';
+        w('uwaga').hidden = true;
+        w('uwaga').textContent = '';
         return;
       }
       w('kwota').textContent = typografia(zl(r.kwota));

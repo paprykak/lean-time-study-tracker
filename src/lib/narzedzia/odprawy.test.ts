@@ -37,3 +37,21 @@ describe('odprawy (art. 8 ustawy o zwolnieniach grupowych, art. 92^1 Kp)', () =>
     expect(odprawa({ rodzaj: 'zwolnienie', stale: 30000, zatrudnienieOd: '2010-01-01', rozwiazanie: '2027-01-04' })).toMatchObject({ kwota: 74250, ograniczona: true });
   });
 });
+
+// Audyt jakości 4 (B-14): koniec miesiąca i 29 lutego na progach stażu, limit ±0,01 zł (wartości z niezależnego rachunku).
+describe('audyt jakosc4: progi stażu na końcu miesiąca i próg limitu', () => {
+  it.each([
+    ['2024-02-29', '2026-02-27', 1],
+    ['2024-02-29', '2026-02-28', 2],
+    ['2018-08-31', '2026-08-30', 2],
+    ['2018-08-31', '2026-08-31', 3],
+    ['2018-03-01', '2026-02-28', 2],
+    ['2018-03-01', '2026-03-01', 3],
+  ] as const)('od %s do %s: %i pensje', (od, do_, m) => expect(miesiecyOdprawy(od, do_)).toBe(m));
+  it('limit 15 płac: 24 030,00 zł × 3 bez obcięcia, 24 030,01 zł obcięte, od 1.01.2027 r. nowy limit', () => {
+    const d = { rodzaj: 'zwolnienie' as const, zmienne: 0, dluzsze12: 0, zatrudnienieOd: '2010-01-01' };
+    expect(odprawa({ ...d, stale: 24030, rozwiazanie: '2026-12-31' })).toMatchObject({ kwota: 72090, ograniczona: false });
+    expect(odprawa({ ...d, stale: 24030.01, rozwiazanie: '2026-12-31' })).toMatchObject({ kwota: 72090, ograniczona: true });
+    expect(odprawa({ ...d, stale: 24030.01, rozwiazanie: '2027-01-01' })).toMatchObject({ kwota: 72090.03, limit: 74250, ograniczona: false });
+  });
+});

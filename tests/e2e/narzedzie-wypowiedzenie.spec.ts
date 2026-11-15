@@ -47,7 +47,7 @@ test('6 miesięcy stażu mija w trakcie wypowiedzenia: 1 miesiąc zamiast 2 tygo
   await expect(page.locator('[data-w="uwaga"]')).toHaveText(/z\skońcem dnia 31\ssierpnia\s2026\sr\., staż osiągnie 6\smiesięcy.*do\s1\smiesiąca\. Bez wydłużenia: 2\stygodnie, do\s5\swrześnia\s2026\sr\.\s\(sobota\)\. Sąd Najwyższy liczy staż do dnia rozwiązania umowy \(I\sPKN\s34\/99\)\.$/);
 });
 
-test('stan faktyczny wyroku SN II PK 12/11: praca od 1 sierpnia 2006 r., doręczenie w lipcu 2009 r., 3 miesiące', async ({ page }) => {
+test('próg 3 lat w trakcie wypowiedzenia: praca od 1 sierpnia 2006 r., doręczenie w lipcu 2009 r., 3 miesiące', async ({ page }) => {
   await page.getByLabel('Początek pracy u tego pracodawcy').fill('2006-08-01');
   await page.getByLabel('Doręczenie wypowiedzenia').fill('2009-07-15');
   await expect(page.locator('[data-w="okres"]')).toHaveText(/^3\smiesiące$/);
@@ -85,4 +85,21 @@ test.describe('telefon 320 px', () => {
     });
     expect(uciete).toEqual([]);
   });
+});
+
+// Audyt jakości 4 (B-2, B-3, B-4, B-7, B-wer-1).
+test('okres próbny do 2 tygodni: podstawa bez art. 30 § 2¹', async ({ page }) => {
+  await page.getByLabel('Rodzaj umowy').selectOption('probna-2tyg');
+  await page.getByLabel('Doręczenie wypowiedzenia').fill('2026-11-13');
+  await expect(page.locator('[data-w="podstawa"]')).toHaveText('art. 34 pkt 1 Kodeksu pracy');
+});
+
+test('FAQ i wyjaśnienie: art. 36¹, 1 maja 2026 r., linki, tylko sprawdzona sygnatura', async ({ page }) => {
+  await expect(page.locator('main')).toContainText(/art\.\s361\s§\s1\si\sart\.\s37\s§\s2/);
+  await expect(page.locator('main')).toContainText(/najwyżej\sdo\s1\smiesiąca/);
+  await expect(page.locator('main')).toContainText(/Od\s1\smaja\s2026\sr\./);
+  await expect(page.locator('main a[href="/narzedzia/odwolanie-do-sadu-pracy"]')).toHaveCount(1);
+  await expect(page.locator('main a[href="/narzedzia/urlop-w-okresie-wypowiedzenia"]')).toHaveCount(1);
+  await expect(page.locator('main a[href="/narzedzia/kalkulator-odprawy"]').first()).toBeAttached();
+  await expect(page.locator('main')).not.toContainText(/II\sPK\s12\/11/);
 });

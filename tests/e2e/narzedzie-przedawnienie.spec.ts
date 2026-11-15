@@ -25,7 +25,7 @@ test('wypłata ostatniego dnia miesiąca: bez pola dnia, termin 30 listopada 202
 test('inna należność: 3 lata od dnia, w którym miała być zapłacona', async ({ page }) => {
   await page.getByLabel(/Inna należność/).fill('2023-11-15');
   // 15 listopada 2026 r. to niedziela: według art. 115 KC poniedziałek 16 listopada.
-  await expect(page.locator('[data-w="inna"]')).toHaveText(/^15\slistopada\s2026\sr\.\s\(za\s3\sdni\);\swedług\sart\.\s115\sKC:\s16\slistopada\s2026\sr\.$/);
+  await expect(page.locator('[data-w="inna"]')).toHaveText(/^15\slistopada\s2026\sr\.\s\(za\s3\sdni\);\swedług\sart\.\s115\sKC:\s16\slistopada\s2026\sr\.\s\(to\sprzesunięcie\sjest\swątpliwe,\szdąż\sdo\spierwszej\sdaty\)$/);
   await page.getByLabel(/Inna należność/).fill('2023-11-13');
   await expect(page.locator('[data-w="inna"]')).toHaveText(/^13\slistopada\s2026\sr\.\s\(jutro\)$/);
 });
@@ -52,4 +52,26 @@ test('koniec w sobotę 14 listopada 2026 r.: zdąż do i ostatni dzień według 
   await expect(page.locator('[data-w="status"]')).toHaveText(/^Pierwsza\sdata\sminęła,\swięc\sroszczenie\sjest\sprawdopodobnie\sprzedawnione;\stylko\sgdy\ssąd\sprzesunie\skoniec\swedług\sart\.\s115\sKC,\szostało:\s1\sdzień$/);
   await page.getByLabel('Sprawdź na dzień').fill('2026-11-17');
   await expect(page.locator('[data-w="najstarsza"]')).toHaveText(/^za\sgrudzień\s2023\sr\.$/);
+});
+
+// Audyt jakości 4 (raporty/jakosc4/C-wer.json).
+test('C-1 i C-2: ostrzeżenie pod listą, stan „innej należności” po pierwszej dacie', async ({ page }) => {
+  await page.getByLabel('Sprawdź na dzień').fill('2026-11-15');
+  // Na liście: za grudzień 2023 r. do 10.01.2027 (niedziela), według art. 115 KC 11.01.2027.
+  await expect(page.locator('[data-w="uwaga-listy"]')).toBeVisible();
+  await expect(page.locator('[data-w="uwaga-listy"]')).toContainText(/wątpliwe/);
+  await page.getByLabel(/Inna należność/).fill('2023-11-14');
+  await expect(page.locator('[data-w="inna"]')).toContainText(/Pierwsza\sdata\sminęła/);
+  await page.getByLabel('Dzień wypłaty').fill('15');
+  await expect(page.locator('[data-w="uwaga-listy"]')).toBeHidden();
+});
+
+test('C-6–C-9: art. 295 § 2, art. 291 § 5, art. 85 § 3 i nagłówek wyniku według przepisów', async ({ page }) => {
+  await expect(page.locator('#wynik-tytul')).toHaveText('Najstarsza wypłata przed przedawnieniem');
+  await expect(page.locator('main')).toContainText(/po\spozwie\sdopiero\spo\szakończeniu\ssprawy\s\(art\.\s295\)/);
+  await expect(page.locator('main')).toContainText(/komisją\spojednawczą/);
+  await expect(page.locator('main')).toContainText(/nie\srozstrzyga,\sco\sgdy\si\sten\sdzień\sjest\swolny/);
+  await expect(page.locator('#zasady + ul a[href="/narzedzia/sad-pracy-czy-pip"]')).toHaveCount(1);
+  await expect(page.locator('#zasady + ul a[href="/narzedzia/zalegly-urlop"]')).toHaveCount(1);
+  await expect(page.locator('main')).toContainText(/opisuje\sstrona\so\ssądzie\spracy\si\sPIP/);
 });

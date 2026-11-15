@@ -196,6 +196,13 @@ export const ZDANIE_ART_115: Record<RodzajTerminu, string> = {
   przedawnienie: 'Przy przedawnieniu to przesunięcie jest wątpliwe: przedawnienie biegnie samo, a nie jest terminem do wykonania czynności, i Sąd Rejonowy dla Wrocławia-Śródmieścia uznał, że dni wolne nie mają znaczenia dla upływu przedawnienia z art. 291 Kodeksu pracy (IV P 553/24); pozew złóż najpóźniej w pierwszej dacie.',
 };
 
+/**
+ * Jedno zdanie pod listą terminów przedawnienia, gdy którakolwiek pozycja ma drugą datę według art. 115 KC, a zdanie
+ * `zdanieArt115` dotyczy tylko głównej daty (albo jej nie ma, bo główna data to dzień roboczy). Audyt jakości 4 (C-1, C-3).
+ */
+export const UWAGA_ART_115_LISTA =
+  'Daty „według art. 115 KC” to dzień po przesunięciu końca z soboty albo dnia ustawowo wolnego od pracy; przy przedawnieniu to przesunięcie jest wątpliwe (przedawnienie biegnie samo), więc pozew złóż najpóźniej w pierwszej dacie.';
+
 /** Jedno zdanie, dlaczego terminy pracodawcy i granice okresów podajemy bez przesunięcia. */
 export const BEZ_PRZESUNIECIA = {
   pracodawca: 'Terminy pracodawcy podajemy według przepisu, bez przesunięcia z soboty i dnia wolnego. Czy art. 115 Kodeksu cywilnego przesuwa je na następny dzień roboczy, przepisy wprost nie mówią, a orzeczeń nie znaleźliśmy; pracodawca może się na to powoływać, więc jeden dzień po dacie z przepisu nie musi oznaczać spóźnienia.',
