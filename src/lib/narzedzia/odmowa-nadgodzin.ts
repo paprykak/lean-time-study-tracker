@@ -84,7 +84,7 @@ export const czasMin = (min: number) => {
   const m = min % 60;
   return m ? (h ? `${h} h ${m} min` : `${m} min`) : `${h} h`;
 };
-const liczba = (x: number) => String(Math.round(x * 100) / 100).replace('.', ',');
+const liczba = (x: number) => (Math.round(x * 100) / 100).toLocaleString('pl-PL', { maximumFractionDigits: 2 });
 
 export interface CzasDnia {
   start: number;
@@ -175,7 +175,11 @@ export function opisNadgodzin(d: DaneNadgodzin, c: CzasDnia): OpisNadgodzin {
   if (!awaria && d.nds) {
     powody.push('Na stanowisku z przekroczonymi najwyższymi dopuszczalnymi stężeniami albo natężeniami czynników szkodliwych nadgodziny z powodu szczególnych potrzeb pracodawcy są niedopuszczalne (art. 151 § 2 Kodeksu pracy).');
   }
-  if (powody.length) werdykt = 'zakaz';
+  if (powody.length && c.nadgodzinyMin === 0) {
+    // Bez nadgodzin dziś nie ma czego odmawiać; zakaz zostaje jako uwaga na przyszłość.
+    uwagi.push(...powody.map((p) => `Gdyby praca trwała dłużej: ${p.charAt(0).toLowerCase()}${p.slice(1)}`));
+    powody.length = 0;
+  } else if (powody.length) werdykt = 'zakaz';
 
   const zostalo = Math.max(0, d.limit - d.wRoku);
   if (!awaria && werdykt !== 'zakaz' && c.nadgodzinyMin > 0) {
@@ -224,7 +228,9 @@ export function opisNadgodzin(d: DaneNadgodzin, c: CzasDnia): OpisNadgodzin {
     powody,
     dzis: c.nadgodzinyMin ? `${czasMin(c.nadgodzinyMin)}, do ${godzina(c.koniecPracy)}` : 'brak',
     najpozniej: awaria
-      ? `${godzina(c.najpozniej)} przy zwykłej pracy; przy awarii bez tej granicy`
+      ? c.najpozniej >= c.koniecZmiany
+        ? `${godzina(c.najpozniej)} przy zwykłej pracy; przy awarii bez tej granicy`
+        : 'przy zwykłej pracy nadgodzin dziś być nie może; przy awarii bez tej granicy'
       : c.najpozniej >= c.koniecZmiany
         ? `${godzina(c.najpozniej)} (11 h odpoczynku${c.nastepna === null ? ' w dobie' : ' przed następną zmianą'})`
         : 'nadgodziny dziś naruszyłyby 11 h odpoczynku',

@@ -128,4 +128,17 @@ describe('werdykt', () => {
   it('następna zmiana wcześniej niż dzisiejsza: uwaga o tej samej dobie', () => {
     expect(opis({ start: '7:00', koniecZmiany: '15:00', koniecPracy: '17:30', nastepna: '5:00' }).uwagi.join(' ')).toContain('tej samej dobie');
   });
+  it('ciąża bez nadgodzin: brak, zakaz w uwadze', () => {
+    const o = opis({ ciaza: true, koniecPracy: '14:00' });
+    expect(o.werdykt).toBe('brak');
+    expect(o.uwagi.join(' ')).toContain('Gdyby praca trwała dłużej: w ciąży nie wolno');
+  });
+  it('awaria przy zmianie 14–22 i następnej o 6:00: bez godziny sprzed końca zmiany', () => {
+    expect(opis({ powod: 'awaria', start: '14:00', koniecZmiany: '22:00', koniecPracy: '23:00', nastepna: '6:00' }).najpozniej).toBe('przy zwykłej pracy nadgodzin dziś być nie może; przy awarii bez tej granicy');
+  });
+  it('zmiana nocna 22–6 z pracą do 8:00: najpóźniej 11:00 następnego dnia', () => {
+    const o = opis({ start: '22:00', koniecZmiany: '6:00', koniecPracy: '8:00', nastepna: '22:00' });
+    expect(o.werdykt).toBe('obowiazek');
+    expect(o.najpozniej).toBe('11:00 następnego dnia (11 h odpoczynku przed następną zmianą)');
+  });
 });

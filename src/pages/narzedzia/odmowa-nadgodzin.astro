@@ -26,11 +26,11 @@ const start = opisNadgodzin(PRZYKLAD, czasDnia(PRZYKLAD) as CzasDnia);
 const POLA_WYBORU = [
   { name: 'ciaza', tekst: 'Jesteś w ciąży' },
   { name: 'dziecko8', tekst: 'Wychowujesz dziecko, które nie ma jeszcze 8 lat' },
-  { name: 'zgodaDziecko', tekst: 'Zgadzasz się na nadgodziny (przy dziecku do 8 lat)' },
+  { name: 'zgodaDziecko', tekst: 'Zgadzasz się na nadgodziny (przy dziecku do 8 lat)', zalezne: true },
   { name: 'mlodociany', tekst: 'Masz mniej niż 18 lat' },
   { name: 'niepelnosprawny', tekst: 'Masz orzeczenie o niepełnosprawności' },
-  { name: 'zgodaLekarza', tekst: 'Lekarz medycyny pracy zgodził się na nadgodziny na Twój wniosek' },
-  { name: 'pilnowanie', tekst: 'Pracujesz przy pilnowaniu (ochrona, dozór)' },
+  { name: 'zgodaLekarza', tekst: 'Lekarz zgodził się na nadgodziny na Twój wniosek', zalezne: true },
+  { name: 'pilnowanie', tekst: 'Pracujesz przy pilnowaniu (ochrona, dozór)', zalezne: true },
   { name: 'nds', tekst: 'Na stanowisku są przekroczone normy czynników szkodliwych (NDS, NDN), np. hałasu' },
 ];
 
@@ -75,7 +75,7 @@ const faq = [
       <div class="mt-4">
         <label for="n-powod" class="etykieta-pola">Powód nadgodzin</label>
         <select id="n-powod" name="powod" class="pole mt-1" aria-describedby="n-powod-opis">
-          <option value="potrzeby" selected>Pilne potrzeby</option>
+          <option value="potrzeby" selected>Szczególne potrzeby</option>
           <option value="awaria">Awaria, ratunek</option>
         </select>
         <p id="n-powod-opis" class="meta mt-1">Szczególne potrzeby pracodawcy, na przykład pilne zamówienie, albo akcja ratownicza (życie, zdrowie, mienie, środowisko) i usuwanie awarii.</p>
@@ -83,7 +83,7 @@ const faq = [
       <fieldset class="mt-4">
         <legend class="etykieta-pola">Co Cię dotyczy</legend>
         {POLA_WYBORU.map((p, i) => (
-          <label class={`${i ? 'mt-3' : 'mt-2'} flex items-start gap-3 text-[0.9375rem]`}>
+          <label class={`${i ? 'mt-3' : 'mt-2'} ${'zalezne' in p ? 'ml-7 ' : ''}flex items-start gap-3 text-[0.9375rem]`}>
             <input type="checkbox" name={p.name} class="mt-1 size-[1.125rem] flex-none accent-[var(--color-akcent-tekst)]" />
             <span>{p.tekst}</span>
           </label>
@@ -180,7 +180,7 @@ const faq = [
 </StronaNarzedzia>
 
 <script>
-  import { KOMUNIKATY, czasDnia, minuty, opisNadgodzin, wczytajGodziny, type DaneNadgodzin, type Powod } from '../../lib/narzedzia/odmowa-nadgodzin';
+  import { KOMUNIKATY, LIMIT_ROCZNY, czasDnia, minuty, opisNadgodzin, wczytajGodziny, type DaneNadgodzin, type Powod } from '../../lib/narzedzia/odmowa-nadgodzin';
   import { typografia } from '../../lib/typografia.mjs';
   import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
 
@@ -197,7 +197,8 @@ const faq = [
     const GODZINY = ['start', 'koniecZmiany', 'koniecPracy', 'nastepna'];
     const przelicz = () => {
       const wRoku = wczytajGodziny(el('wRoku').value);
-      const limit = wczytajGodziny(el('limit').value);
+      // Puste pole limitu to limit z Kodeksu (art. 151 § 3), a nie 0 h.
+      const limit = el('limit').value.trim() ? wczytajGodziny(el('limit').value) : LIMIT_ROCZNY;
       const d: DaneNadgodzin = {
         powod: el('powod').value as Powod,
         ciaza: zaznaczone('ciaza'),
@@ -223,7 +224,7 @@ const faq = [
         pola = c.blad === 'godziny' ? GODZINY.map(el).filter((p) => (p.name === 'nastepna' ? p.value !== '' && minuty(p.value) === null : minuty(p.value) === null)) : c.blad === 'kolejnosc' ? [el('koniecPracy')] : [el('nastepna')];
       } else if (wRoku === null || limit === null) {
         blad = KOMUNIKATY.liczby;
-        pola = [wRoku === null ? el('wRoku') : el('limit')];
+        pola = [wRoku === null ? el('wRoku') : null, limit === null ? el('limit') : null].filter((x): x is HTMLInputElement => !!x);
       }
       pokazBlad(form.querySelector<HTMLElement>('[data-blad="dane"]')!, blad, pola);
       if (blad || 'blad' in c) {

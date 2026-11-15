@@ -61,7 +61,8 @@ describe('teksty wyniku', () => {
   it('4 dni wstecz: dzień poza zwolnieniem, u psychiatry wyjątek bez granicy', () => {
     const o = opisL4('2026-11-13', '2026-11-09', 'inny', DZIS);
     expect(o.werdykt).toBe('Nie, tak daleko L4 nie sięga');
-    expect(o.opis).toContain('Od 9 listopada 2026 r. do 9 listopada 2026 r. (1 dzień)');
+    expect(o.opis).toContain('Dzień 9 listopada 2026 r. zostanie bez zwolnienia lekarskiego');
+    expect(opisL4('2026-11-13', '2026-11-07', 'inny', DZIS).opis).toContain('Od 7 listopada 2026 r. do 9 listopada 2026 r. (3 dni) zostanie');
     const psych = opisL4('2026-11-13', '2026-11-01', 'psychiatra', DZIS);
     expect(psych.werdykt).toBe('Tylko w jednej sytuacji');
     expect(psych.opis).toContain('12 dni przed wizytą');
@@ -74,12 +75,12 @@ describe('teksty wyniku', () => {
     expect(opisL4('2026-11-13', '2026-11-16', 'inny', DZIS).werdykt).toBe('Tylko w dwóch sytuacjach');
     const za = opisL4('2026-11-13', '2026-11-18', 'inny', DZIS);
     expect(za.werdykt).toBe('Nie, to za daleko od wizyty');
-    expect(za.opis).toContain('najwcześniej 14 listopada 2026 r.');
+    expect(za.opis).toBe('To 5 dni po dniu wizyty, a zwolnienie może zacząć się najpóźniej 4. dnia po dniu badania (§ 7 ust. 2). Na zwolnienie od tej daty wizyta musiałaby się odbyć najwcześniej 14 listopada 2026 r. (4 dni przed początkiem).');
   });
-  it('nieobecność dopiero będzie: uprzedź (§ 2 ust. 1)', () => {
+  it('nieobecność dopiero będzie: termin i uprzedzenie z § 2 ust. 1', () => {
     const o = opisL4('2026-11-13', '2026-11-16', 'inny', '2026-11-13');
-    expect(o.zawiadomEtykieta).toBe('Uprzedź pracodawcę');
-    expect(o.zawiadom).toBe('przed 16 listopada 2026 r., bo znasz przyczynę z góry (§ 2 ust. 1); najpóźniej 17 listopada 2026 r.');
+    expect(o.zawiadomEtykieta).toBe('Zawiadom pracodawcę najpóźniej');
+    expect(o.zawiadom).toBe('wtorek, 17 listopada 2026 r.; gdy przyczynę znasz z góry, uprzedź przed 16 listopada 2026 r. (§ 2 ust. 1)');
   });
   it('termin minął: zawiadom od razu, § 2 ust. 3; bez uwagi o dniu wolnym', () => {
     const o = opisL4('2026-11-13', '2026-11-10', 'inny', '2026-11-13');
@@ -94,5 +95,14 @@ describe('teksty wyniku', () => {
     expect(opisL4('2026-11-13', '2026-11-13', 'inny', '2026-11-13').uwagi.join(' ')).toContain('14 listopada 2026 r. to sobota');
     expect(opisL4('2026-12-23', '2026-12-24', 'inny', '2026-12-23').uwagi.join(' ')).toContain('25 grudnia 2026 r. to');
     expect(opisL4('2026-11-13', '2026-11-17', 'inny', '2026-11-13').uwagi).toEqual([]);
+  });
+  it('nigdzie podwójnej kropki po dacie', () => {
+    for (const [b, pocz, lek, dz] of [
+      ['2026-11-13', '2026-11-20', 'inny', DZIS], ['2026-11-13', '2026-11-01', 'psychiatra', DZIS], ['2026-11-13', '2026-11-09', 'inny', DZIS],
+      ['2026-11-13', '2026-11-10', 'inny', '2026-11-13'], ['2026-11-13', '2026-11-16', 'inny', '2026-11-13'], ['2026-11-13', '2026-11-13', 'inny', '2026-11-13'],
+    ] as const) {
+      const o = opisL4(b, pocz, lek, dz);
+      expect([o.opis, o.odKiedy, o.doKiedy, o.zawiadom, ...o.uwagi].join(' | ')).not.toMatch(/r\.\./);
+    }
   });
 });

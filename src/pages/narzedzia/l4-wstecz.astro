@@ -154,6 +154,7 @@ const faq = [
         pisz('werdykt', '—');
         for (const k of ['opis', 'glos', 'uwaga']) pisz(k, '');
         for (const k of ['od', 'do', 'zawiadom']) pisz(k, '—');
+        pisz('zawiadom-etykieta', 'Zawiadom pracodawcę najpóźniej');
         return;
       }
       const o = opisL4(badanie, poczatek, el('lekarz').value as Lekarz, dzisWPolsce());

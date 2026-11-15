@@ -51,3 +51,24 @@ test('błędne dane: koniec pracy przed końcem zmiany, zła liczba godzin', asy
   await page.getByLabel('Nadgodziny w tym roku').fill('abc');
   await expect(page.locator('[data-blad="dane"]')).toHaveText('Wpisz liczbę godzin, na przykład 40 albo 12,5.');
 });
+
+test('puste pole limitu to 150 h; nocna zmiana; błąd następnej zmiany', async ({ page }) => {
+  await page.getByLabel('Limit w roku (h)').fill('');
+  await expect(page.locator('[data-w="limit"]')).toHaveText(/^zostało\s110\sz\s150\sh/);
+  await page.getByLabel('Zmiana od').fill('22:00');
+  await page.getByLabel('Zmiana do (grafik)').fill('06:00');
+  await page.getByLabel('Praca miałaby trwać do').fill('08:00');
+  await page.getByLabel('Następna zmiana od').fill('22:00');
+  await expect(page.locator('[data-w="najpozniej"]')).toHaveText(/^11:00\snastępnego\sdnia/);
+  await page.getByLabel('Następna zmiana od').fill('07:00');
+  await expect(page.locator('[data-blad="dane"]')).toHaveText('Następna zmiana zaczyna się, zanim skończysz pracę.');
+  await expect(page.getByLabel('Następna zmiana od')).toHaveAttribute('aria-invalid', 'true');
+});
+
+test('awaria przy zmianie 14–22 i następnej o 6:00', async ({ page }) => {
+  await page.getByLabel('Powód nadgodzin').selectOption('awaria');
+  await page.getByLabel('Zmiana od').fill('14:00');
+  await page.getByLabel('Zmiana do (grafik)').fill('22:00');
+  await page.getByLabel('Praca miałaby trwać do').fill('23:00');
+  await expect(page.locator('[data-w="najpozniej"]')).toHaveText(/^przy\szwykłej\spracy\snadgodzin\sdziś\sbyć\snie\smoże/);
+});

@@ -35,13 +35,14 @@ test('4 dni wstecz: dzień bez zwolnienia; psychiatra: wyjątek z § 7 ust. 4', 
   await expect(page.locator('[data-w="opis"]')).toContainText(/§\s7\sust\.\s4/);
 });
 
-test('L4 od poniedziałku po piątkowej wizycie: z warunkiem; uprzedź pracodawcę; 5. dzień za późno', async ({ page }) => {
+test('L4 od poniedziałku po piątkowej wizycie: z warunkiem; termin i uprzedzenie; 5. dzień za późno', async ({ page }) => {
   await page.getByLabel('Nie pracujesz od').fill('2026-11-16');
   await expect(page.locator('[data-w="werdykt"]')).toHaveText('Tylko w dwóch sytuacjach');
-  await expect(page.locator('[data-w="zawiadom-etykieta"]')).toHaveText('Uprzedź pracodawcę');
-  await expect(page.locator('[data-w="zawiadom"]')).toHaveText(/^przed\s16\slistopada\s2026\sr\.,\sbo\sznasz\sprzyczynę\sz\sgóry\s\(§\s2\sust\.\s1\);\snajpóźniej\s17\slistopada\s2026\sr\.$/);
+  await expect(page.locator('[data-w="zawiadom-etykieta"]')).toHaveText('Zawiadom pracodawcę najpóźniej');
+  await expect(page.locator('[data-w="zawiadom"]')).toHaveText(/^wtorek,\s17\slistopada\s2026\sr\.;\sgdy\sprzyczynę\sznasz\sz\sgóry,\suprzedź\sprzed\s16\slistopada\s2026\sr\.\s\(§\s2\sust\.\s1\)$/);
   await page.getByLabel('Nie pracujesz od').fill('2026-11-18');
   await expect(page.locator('[data-w="werdykt"]')).toHaveText('Nie, to za daleko od wizyty');
+  await expect(page.locator('[data-w="opis"]')).toHaveText(/najwcześniej\s14\slistopada\s2026\sr\.\s\(4\sdni\sprzed\spoczątkiem\)\.$/);
 });
 
 test('nieobecność od dziś: zawiadom do soboty, uwaga o dniu wolnym', async ({ page }) => {
@@ -57,4 +58,5 @@ test('brak daty to błąd przy polu', async ({ page }) => {
   await expect(page.locator('[data-blad="dane"]')).toHaveText('Wpisz pierwszy dzień nieobecności w pracy.');
   await expect(page.getByLabel('Nie pracujesz od')).toHaveAttribute('aria-invalid', 'true');
   await expect(page.locator('[data-w="werdykt"]')).toHaveText('—');
+  await expect(page.locator('[data-w="zawiadom-etykieta"]')).toHaveText('Zawiadom pracodawcę najpóźniej');
 });
