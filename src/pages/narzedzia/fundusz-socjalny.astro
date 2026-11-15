@@ -1,0 +1,231 @@
+---
+// Zakładowy fundusz świadczeń socjalnych: kto musi go tworzyć, odpis na etat i na rok, kto korzysta (ustawa o ZFŚS,
+// t.j. Dz.U. 2024 poz. 288 ze zmianą 2026 poz. 25). Logika i teksty wyniku: src/lib/narzedzia/fundusz-socjalny.ts.
+import StronaNarzedzia from '../../components/narzedzia/StronaNarzedzia.astro';
+import { LATA_ODPISU, ODPISY, PODSTAWA_ODPISU, odpisNaEtat, okresPodstawy, opisFunduszu, podstawaOdpisu, zlDokladnie, type RodzajOdpisu } from '../../lib/narzedzia/fundusz-socjalny';
+import { maksimum } from '../../lib/narzedzia/swiadczenie-urlopowe';
+import { zl } from '../../lib/narzedzia/format';
+import { dzisWPolsce } from '../../lib/narzedzia/terminy';
+
+const rokBiezacy = Number(dzisWPolsce().slice(0, 4));
+const rok = LATA_ODPISU.includes(rokBiezacy) ? rokBiezacy : LATA_ODPISU[LATA_ODPISU.length - 1];
+const ETATY_START = '60';
+const start = opisFunduszu(rok, 60_000, 'brak', 'firma');
+const odpis = odpisNaEtat(rok);
+const p = PODSTAWA_ODPISU[rok];
+const RODZAJE = Object.keys(ODPISY) as RodzajOdpisu[];
+const tabela = (r: number, k: RodzajOdpisu) => {
+  const o = odpisNaEtat(r, k);
+  return o.wGroszach ? zl(o.kwota) : `${zl(o.kwota)} (${zlDokladnie(o.dokladnie)})`;
+};
+
+const faq = [
+  {
+    pytanie: 'Od ilu pracowników pracodawca musi mieć fundusz socjalny?',
+    odpowiedz: 'Od 50 pracowników w przeliczeniu na pełne etaty, według stanu na 1 stycznia danego roku (art. 3 ust. 1 ustawy o ZFŚS). Przy 20–49 etatach fundusz jest obowiązkowy, gdy wniosek złoży zakładowa organizacja związkowa (art. 3 ust. 1c). Jednostki budżetowe i samorządowe zakłady budżetowe tworzą fundusz bez względu na liczbę pracowników (art. 3 ust. 2). Układ zbiorowy pracy albo regulamin wynagradzania może postanowić inaczej, także że funduszu nie będzie (art. 4 ust. 1–2).',
+  },
+  {
+    pytanie: `Ile wynosi odpis na fundusz socjalny w ${rok} r.?`,
+    odpowiedz: `${zl(odpis.kwota)} na jeden etat w roku, czyli 37,5% przeciętnego wynagrodzenia z ${okresPodstawy(rok)} (${zl(podstawaOdpisu(rok))}, ${p.publikator}); dokładnie ${zlDokladnie(odpis.dokladnie)}. Przy pracach w szczególnych warunkach lub o szczególnym charakterze odpis wynosi 50%, na młodocianego 5, 6 albo 7% (art. 5 ust. 2–3 ustawy o ZFŚS). Pracodawca może zwiększyć fundusz o 6,25% na każdą osobę ze znacznym lub umiarkowanym stopniem niepełnosprawności oraz na każdego emeryta i rencistę pod swoją opieką socjalną (art. 5 ust. 4–5).`,
+  },
+  {
+    pytanie: 'Czy pieniądze z funduszu socjalnego należą się każdemu po równo?',
+    odpowiedz: 'Nie. Ulgowe usługi i świadczenia oraz wysokość dopłat z funduszu zależą od sytuacji życiowej, rodzinnej i materialnej osoby uprawnionej (art. 8 ust. 1 ustawy o ZFŚS). Dane o sobie podajesz w oświadczeniu, a pracodawca może żądać dokumentów w zakresie potrzebnym do ich potwierdzenia (art. 8 ust. 1a). Jakie są świadczenia i progi, mówi regulamin funduszu (art. 8 ust. 2).',
+  },
+  {
+    pytanie: 'Co to są wczasy pod gruszą?',
+    odpowiedz: 'To potoczna nazwa dopłaty z funduszu socjalnego do wypoczynku, który organizujesz sam. Ustawa tej nazwy nie używa: wymienia wypoczynek wśród celów działalności socjalnej (art. 2 pkt 1 ustawy o ZFŚS), a czy dopłata jest i ile wynosi, zależy od regulaminu funduszu i Twojej sytuacji (art. 8 ust. 1–2). W firmie poniżej 50 etatów bez funduszu pracodawca może zamiast tego wypłacać świadczenie urlopowe (art. 3 ust. 3).',
+  },
+  {
+    pytanie: 'Czy od świadczeń z funduszu socjalnego płaci się podatek i ZUS?',
+    odpowiedz: 'Składek ZUS ani zdrowotnej nie ma (§ 2 ust. 1 pkt 19 rozporządzenia o podstawie składek, art. 81 ust. 1 ustawy o świadczeniach opieki zdrowotnej). Podatku nie ma do 1000 zł w roku łącznie, gdy świadczenie jest w całości z funduszu; bony, talony i inne znaki wymienne na towary lub usługi nie są przy tym świadczeniem rzeczowym (art. 21 ust. 1 pkt 67 ustawy o PIT). Dopłaty z funduszu do zorganizowanego wypoczynku dzieci do 18 lat, na przykład kolonii, obozów i zimowisk, są wolne od podatku bez limitu (art. 21 ust. 1 pkt 78 lit. a).',
+  },
+  {
+    pytanie: 'Co zrobić, gdy pracodawca nie tworzy funduszu socjalnego?',
+    odpowiedz: 'Najpierw sprawdź, czy musi: liczbę etatów 1 stycznia, wniosek związku zawodowego i to, czy układ zbiorowy albo regulamin wynagradzania nie wyłącza funduszu (art. 3 i 4 ustawy o ZFŚS). Związek zawodowy może pozwać pracodawcę do sądu pracy o przekazanie należnych środków na fundusz albo o zwrot pieniędzy wydanych niezgodnie z ustawą (art. 8 ust. 3). Za niewykonywanie ustawy grozi grzywna, o którą do sądu wnosi Państwowa Inspekcja Pracy (art. 12a), więc sprawę możesz zgłosić inspektorowi pracy.',
+  },
+];
+---
+<StronaNarzedzia
+  slug="fundusz-socjalny"
+  tytul={`Fundusz socjalny ${rok}: kto musi i ile odpisu`}
+  opis={`Czy pracodawca musi mieć zakładowy fundusz socjalny (ZFŚS): próg 50 etatów, związki zawodowe, odpis ${zl(odpis.kwota)} na etat w ${rok} r., kto korzysta.`}
+  h1={`Fundusz socjalny ${rok}: kalkulator ZFŚS`}
+  lead="Zakładowy fundusz świadczeń socjalnych to pieniądze na wypoczynek, pomoc materialną, sport, kulturę i opiekę nad dziećmi. Wpisz liczbę etatów w firmie i zaznacz, czy jest związek zawodowy, a sprawdzimy, czy pracodawca musi tworzyć fundusz, ile wynosi odpis i kto może z niego korzystać."
+  faq={faq}
+>
+  <form class="kalkulator" data-fundusz novalidate aria-labelledby="kalkulator-tytul">
+    <div class="kalkulator-pola">
+      <h2 id="kalkulator-tytul" class="tytul-m">Twój pracodawca</h2>
+      <div class="mt-4 grid gap-4 sm:grid-cols-2">
+        <div>
+          <label for="f-rok" class="etykieta-pola">Rok</label>
+          <select id="f-rok" name="rok" class="pole mt-1">
+            {LATA_ODPISU.map((r) => <option value={r} selected={r === rok}>{r}</option>)}
+          </select>
+        </div>
+        <div>
+          <label for="f-etaty" class="etykieta-pola">Etaty 1 stycznia</label>
+          <input id="f-etaty" name="etaty" class="pole mt-1" type="text" inputmode="decimal" autocomplete="off" value={ETATY_START} aria-describedby="f-etaty-opis f-blad" />
+        </div>
+      </div>
+      <p id="f-etaty-opis" class="meta mt-1">Pracownicy w przeliczeniu na pełne etaty, na przykład 2 osoby na pół etatu to 1 etat.</p>
+      <div class="mt-4">
+        <label for="f-zwiazek" class="etykieta-pola">Związek zawodowy w firmie</label>
+        <select id="f-zwiazek" name="zwiazek" class="pole mt-1" aria-describedby="f-zwiazek-opis">
+          <option value="brak" selected>Nie ma</option>
+          <option value="jest">Jest, bez wniosku</option>
+          <option value="wniosek">Złożył wniosek o fundusz</option>
+        </select>
+        <p id="f-zwiazek-opis" class="meta mt-1">Zakładowa organizacja związkowa, która działa u Twojego pracodawcy.</p>
+      </div>
+      <div class="mt-4">
+        <label for="f-pracodawca" class="etykieta-pola">Rodzaj pracodawcy</label>
+        <select id="f-pracodawca" name="pracodawca" class="pole mt-1" aria-describedby="f-pracodawca-opis">
+          <option value="firma" selected>Firma</option>
+          <option value="budzetowa">Jednostka budżetowa</option>
+        </select>
+        <p id="f-pracodawca-opis" class="meta mt-1">Jednostka budżetowa albo samorządowy zakład budżetowy, na przykład urząd czy szkoła.</p>
+      </div>
+      <p id="f-blad" class="blad-pola mt-3" data-blad="dane" role="alert" hidden></p>
+    </div>
+
+    <div class="kalkulator-wynik" aria-labelledby="wynik-tytul">
+      <h2 id="wynik-tytul" class="etykieta">Fundusz socjalny</h2>
+      <div aria-live="polite" aria-atomic="true">
+        <p class="wynik-data" data-w="werdykt">{start.werdykt}</p>
+        <p class="meta" data-w="opis">{start.opis}</p>
+      </div>
+      <dl class="wynik-lista">
+        <div><dt>Odpis na 1 etat rocznie</dt><dd><span data-w="odpis">{start.odpis}</span><span class="meta block" data-w="odpis-opis">{start.odpisOpis}</span></dd></div>
+        <div><dt data-w="fundusz-etykieta">{start.funduszEtykieta}</dt><dd data-w="fundusz">{start.fundusz}</dd></div>
+        <div><dt>Wpłaty na fundusz</dt><dd data-w="terminy">{start.terminy}</dd></div>
+        <div><dt>Świadczenie urlopowe</dt><dd data-w="urlopowe">{start.urlopowe}</dd></div>
+        <div><dt>Kto korzysta</dt><dd data-w="kto">{start.kto}</dd></div>
+        <div><dt>Od czego zależy świadczenie</dt><dd data-w="od-czego">{start.odCzego}</dd></div>
+      </dl>
+      <p class="wynik-uwaga" data-w="uwaga">{start.uwagi.join(' ')}</p>
+      <noscript><p class="wynik-uwaga">Kalkulator liczy w przeglądarce i potrzebuje JavaScriptu. Wynik dla 60 etatów jest powyżej, a kwoty odpisów w tabeli poniżej.</p></noscript>
+    </div>
+  </form>
+
+  <Fragment slot="wyjasnienie">
+    <h2 id="odpisy">Odpis na fundusz na jeden etat w roku</h2>
+    <div class="tabela">
+      <table>
+        <caption class="sr-only">Odpis podstawowy i zwiększenia na zakładowy fundusz świadczeń socjalnych według roku</caption>
+        <thead><tr><th scope="col">Na kogo</th><th scope="col">Procent</th>{LATA_ODPISU.map((r) => <th scope="col">{r}</th>)}</tr></thead>
+        <tbody>
+          {RODZAJE.map((k) => (
+            <tr><th scope="row">{ODPISY[k].nazwa}</th><td>{`${ODPISY[k].bp / 100}`.replace('.', ',')}%</td>{LATA_ODPISU.map((r) => <td>{tabela(r, k)}</td>)}</tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Podstawa to przeciętne wynagrodzenie miesięczne z roku poprzedniego albo z jego drugiego półrocza, jeśli było
+      wyższe (art. 5 ust. 2 ustawy o ZFŚS), ogłaszane przez Prezesa GUS do 20 lutego (art. 5 ust. 7){LATA_ODPISU.map((r, i) => <>{i ? '; ' : ' ('}{r}: {zl(podstawaOdpisu(r))} z {okresPodstawy(r)}, {PODSTAWA_ODPISU[r].publikator}</>)}).
+      W nawiasie wartość dokładna, gdy nie wychodzi równo w groszach. Odpis liczy się od przeciętnej liczby zatrudnionych
+      w roku, a osoby na niepełnym etacie przelicza się na pełne etaty (§ 1 i 3 rozporządzenia z 9 marca 2009 r.).
+      Zwiększenia na osoby z niepełnosprawnością, emerytów i rencistów oraz na żłobek pracodawca „może” zrobić, nie musi.
+    </p>
+
+    <h2 id="kto-musi">Kto musi tworzyć fundusz</h2>
+    <ul>
+      <li>Pracodawca, który 1 stycznia zatrudnia co najmniej 50 pracowników w przeliczeniu na pełne etaty (art. 3 ust. 1 ustawy o ZFŚS).</li>
+      <li>Pracodawca z 20–49 etatami, gdy wniosek złoży zakładowa organizacja związkowa (art. 3 ust. 1c).</li>
+      <li>Jednostki budżetowe i samorządowe zakłady budżetowe, bez względu na liczbę pracowników (art. 3 ust. 2).</li>
+      <li>U pracodawców z pierwszych dwóch punktów układ zbiorowy pracy, a gdy go nie ma, regulamin wynagradzania może inaczej ustalić odpis albo postanowić, że funduszu nie będzie (art. 4 ust. 1–2). Bez zakładowej organizacji związkowej takie postanowienie regulaminu wynagradzania pracodawca uzgadnia z pracownikami wybranymi przez załogę (art. 4 ust. 3).</li>
+      <li>Poniżej 50 etatów pracodawca może utworzyć fundusz, wypłacać świadczenie urlopowe albo nie robić żadnej z tych rzeczy. Gdy nie robi żadnej, informuje o tym pracowników w pierwszym miesiącu roku, a przy co najmniej 50 pracownikach w osobach zapisuje to w układzie zbiorowym albo regulaminie wynagradzania (art. 3 ust. 3–3b).</li>
+      <li>Pracodawca, który musi tworzyć fundusz, przekazuje na jego osobny rachunek co najmniej 75% odpisów do 31 maja, a całość do 30 września (art. 6 ust. 2, art. 12 ust. 1). Nowy pracodawca zaczyna odpisy od następnego roku, chyba że przejął zakład lub jego część razem z pracownikami (art. 6a).</li>
+    </ul>
+
+    <h2 id="kto-korzysta">Kto korzysta i od czego zależy świadczenie</h2>
+    <ul>
+      <li>Z funduszu korzystają pracownicy i ich rodziny, emeryci i renciści, którzy u tego pracodawcy pracowali, i ich rodziny, a także inne osoby, którym prawo do świadczeń przyzna regulamin funduszu (art. 2 pkt 5).</li>
+      <li>Pieniądze idą na wypoczynek, kulturę, sport i rekreację, opiekę nad dziećmi w żłobkach, klubach dziecięcych i przedszkolach, pomoc rzeczową lub finansową i pomoc na cele mieszkaniowe (art. 2 pkt 1). Od 1 stycznia 2028 r. przepis wymieni też punkty opieki dziennej i oddziały przedszkolne w szkołach podstawowych (Dz.U. 2026 poz. 1123).</li>
+      <li>Ulgowe usługi, świadczenia i wysokość dopłat zależą od sytuacji życiowej, rodzinnej i materialnej (art. 8 ust. 1). Dane o sobie podajesz w oświadczeniu, a pracodawca może żądać dokumentów w zakresie potrzebnym do ich potwierdzenia (art. 8 ust. 1a).</li>
+      <li>Zasady podaje regulamin funduszu. Pracodawca ustala go w uzgodnieniu z zakładową organizacją związkową, a świadczenia przyznaje w uzgodnieniu z nią (art. 8 ust. 2 ustawy o ZFŚS, art. 27 ust. 1–2 ustawy o związkach zawodowych). Bez związku zawodowego regulamin uzgadnia z pracownikami wybranymi przez załogę (art. 8 ust. 2 zd. 2, w tym brzmieniu od 27 stycznia 2026 r.).</li>
+      <li>Niewykorzystane pieniądze przechodzą na następny rok (art. 11), a środki funduszu nie podlegają egzekucji, chyba że chodzi o zobowiązania samego funduszu (art. 12 ust. 2).</li>
+    </ul>
+
+    <h2 id="podatek">Podatek i składki</h2>
+    <ul>
+      <li>Świadczenia z funduszu nie wchodzą do podstawy składek ZUS (§ 2 ust. 1 pkt 19 rozporządzenia o podstawie składek), a więc i składki zdrowotnej (art. 81 ust. 1 ustawy o świadczeniach opieki zdrowotnej).</li>
+      <li>Bez podatku do 1000 zł w roku łącznie, gdy świadczenie rzeczowe albo pieniężne jest w całości z funduszu albo z funduszy związków zawodowych. Bony, talony i inne znaki wymienne na towary lub usługi nie są świadczeniem rzeczowym (art. 21 ust. 1 pkt 67 ustawy o PIT).</li>
+      <li>Bez limitu: dopłaty z funduszu do zorganizowanego wypoczynku dzieci i młodzieży do 18 lat, na przykład kolonii, obozów i zimowisk, oraz do przejazdów na niego (art. 21 ust. 1 pkt 78 lit. a), a także świadczenia z funduszu związane z pobytem dziecka w żłobku, klubie dziecięcym lub przedszkolu (art. 21 ust. 1 pkt 67a).</li>
+    </ul>
+
+    <h2 id="gdy-nie-tworzy">Gdy pracodawca nie tworzy funduszu</h2>
+    <p>
+      Zakładowa organizacja związkowa może wystąpić do sądu pracy o przekazanie należnych środków na fundusz albo o zwrot
+      pieniędzy wydanych niezgodnie z ustawą (art. 8 ust. 3). Kto jako pracodawca nie wykonuje ustawy, podlega karze
+      grzywny, a sąd orzeka na wniosek inspektora pracy (art. 12a). Ustawa nie wymienia osobnego roszczenia pojedynczego
+      pracownika o utworzenie funduszu. Kiedy pomoże inspekcja pracy, a kiedy sąd, opisuje strona <a href="/narzedzia/sad-pracy-czy-pip">sąd pracy czy PIP</a>.
+    </p>
+
+    <h2 id="jak-liczymy">Jak liczymy</h2>
+    <p>
+      Próg porównujemy z liczbą etatów, którą wpisujesz, według stanu na 1 stycznia; 50,00 etatu to już „co najmniej 50”.
+      Odpis na rok to odpis na jeden etat razy przeciętna liczba etatów w roku. Przyjmujemy, że przez cały rok jest ich
+      tyle, ile 1 stycznia; pracodawca liczy odpis od liczby planowanej i koryguje go na koniec roku (§ 1 rozporządzenia).
+      Przepisy nie mówią, jak zaokrąglać, więc kwoty zaokrąglamy do grosza (od pół grosza w górę), kwotę „co najmniej
+      75%” w górę i podajemy wartość dokładną. Świadczenie urlopowe nie może przekroczyć odpisu, więc jego maksimum jest
+      zaokrąglone w dół (w {rok} r. {zl(maksimum(rok, 'zwykle').kwota)} przy odpisie {zl(odpis.kwota)}); ile wyniesie przy Twoim etacie, policzy <a href="/narzedzia/swiadczenie-urlopowe">kalkulator świadczenia urlopowego</a>.
+    </p>
+    <p>
+      Czego przepisy nie rozstrzygają: do kiedy związek ma złożyć wniosek i od kiedy wtedy liczy się odpis; czy terminy
+      wpłat z art. 6 ust. 2 obowiązują pracodawcę z 20–49 etatami, który tworzy fundusz na wniosek związku (art. 6 ust. 2a
+      wyłącza pracodawców z art. 3 ust. 3, czyli poniżej 50 etatów; pokazujemy terminy, bo to wariant korzystniejszy dla
+      pracowników); czy w jednostce budżetowej układ zbiorowy może wyłączyć fundusz (art. 4 ust. 1 odsyła tylko do art. 3
+      ust. 1 i 1c), więc tego nie przesądzamy. Ustawy okołobudżetowe na 2025 i 2026 r. podstawy odpisu nie zmieniają,
+      projekt na 2027 r. (druk sejmowy nr 3154) też nie. Kwota na 2027 r. będzie znana po obwieszczeniu Prezesa GUS do
+      20 lutego 2027 r.
+    </p>
+  </Fragment>
+</StronaNarzedzia>
+
+<script>
+  import { etatyWTysiecznych, opisFunduszu, type Pracodawca, type Zwiazek } from '../../lib/narzedzia/fundusz-socjalny';
+  import { typografia } from '../../lib/typografia.mjs';
+  import { liczPoPowrocie, pokazBlad } from '../../lib/narzedzia/formularz';
+
+  const form = document.querySelector<HTMLFormElement>('[data-fundusz]');
+  if (form) {
+    const w = (k: string) => form.querySelector<HTMLElement>(`[data-w="${k}"]`)!;
+    const el = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const pisz = (k: string, tekst: string) => {
+      w(k).textContent = typografia(tekst);
+    };
+    const POLA = ['odpis', 'odpis-opis', 'fundusz', 'terminy', 'urlopowe'];
+    const przelicz = () => {
+      const tys = etatyWTysiecznych(el('etaty').value);
+      const blad = tys === null ? 'Wpisz liczbę etatów większą od zera, na przykład 35 albo 49,5 (najwyżej trzy miejsca po przecinku).' : null;
+      pokazBlad(form.querySelector<HTMLElement>('[data-blad="dane"]')!, blad, [el('etaty')]);
+      if (tys === null) {
+        w('werdykt').textContent = '—';
+        w('opis').textContent = '';
+        for (const k of POLA) w(k).textContent = '—';
+        w('uwaga').textContent = '';
+        return;
+      }
+      const o = opisFunduszu(Number(el('rok').value), tys, el('zwiazek').value as Zwiazek, el('pracodawca').value as Pracodawca);
+      pisz('werdykt', o.werdykt);
+      pisz('opis', o.opis);
+      pisz('odpis', o.odpis);
+      pisz('odpis-opis', o.odpisOpis);
+      pisz('fundusz-etykieta', o.funduszEtykieta);
+      pisz('fundusz', o.fundusz);
+      pisz('terminy', o.terminy);
+      pisz('urlopowe', o.urlopowe);
+      pisz('kto', o.kto);
+      pisz('od-czego', o.odCzego);
+      pisz('uwaga', o.uwagi.join(' '));
+    };
+    form.addEventListener('input', przelicz);
+    form.addEventListener('change', przelicz);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    liczPoPowrocie(przelicz);
+    przelicz();
+  }
+</script>

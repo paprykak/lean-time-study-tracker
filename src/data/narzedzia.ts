@@ -929,6 +929,14 @@ export const NARZEDZIA: Narzedzie[] = [
     sprawdzono: '2026-11-15',
   },
   {
+    slug: 'fundusz-socjalny',
+    nazwa: 'Fundusz socjalny (ZFŚS)',
+    krotko: 'Czy pracodawca musi mieć fundusz socjalny, ile wynosi odpis na etat, kto korzysta i od czego zależy dopłata.',
+    kategoria: 'wynagrodzenie',
+    przepisy: ['zfss', 'zfssZmiana2026', 'zfssLiczbaZatrudnionych', 'przecietneZfss2026', 'okolobudzetowa2025', 'okolobudzetowa2026', 'zwiazkiZawodowe', 'pit', 'podstawaSkladek', 'swiadczeniaZdrowotne', 'pip'],
+    sprawdzono: '2026-11-15',
+  },
+  {
     slug: 'przerwy-w-pracy',
     nazwa: 'Przerwy w pracy',
     krotko: 'Ile przerw przy zmianie 8 i 12 godzin, które są płatne, przy monitorze, na karmienie, dla młodocianych.',
