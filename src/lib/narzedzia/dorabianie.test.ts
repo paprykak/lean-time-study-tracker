@@ -4,7 +4,10 @@ import { MAKS_ZMNIEJSZENIA, PROGI_PRZYCHODU, dorabianie, okresNaDzien, okresyPro
 describe('dorabianie do emerytury i renty (art. 103–104 ustawy o emeryturach i rentach z FUS)', () => {
   it('listopad 2026 r.: progi 6463,20 i 12 003,10 zł (M.P. 2026 poz. 839)', () => {
     expect(progiNaDzien('2026-11-12')).toMatchObject({ p70: 6463.2, p130: 12003.1, mozeNieaktualne: false });
-    expect(progiNaDzien('2026-12-01')?.mozeNieaktualne).toBe(true);
+    expect(progiNaDzien('2026-11-30')).toMatchObject({ p70: 6463.2, mozeNieaktualne: false });
+    expect(progiNaDzien('2026-12-01')).toMatchObject({ p70: 6522, p130: 12112.2, mozeNieaktualne: false, publikator: 'M.P. 2026 poz. 1157' });
+    expect(progiNaDzien('2027-02-28')?.mozeNieaktualne).toBe(false);
+    expect(progiNaDzien('2027-03-01')?.mozeNieaktualne).toBe(true);
     expect(progiNaDzien('2025-11-30')).toBeNull();
   });
   it('do 70% bez zmian, z zapasem do progu; dokładnie 70% też bez zmian', () => {
@@ -25,9 +28,11 @@ describe('dorabianie do emerytury i renty (art. 103–104 ustawy o emeryturach i
     expect(dorabianie({ swiadczenie: 'emerytura', przychod: 20000, data: '2026-11-12', wiekEmerytalny: true }).stan).toBe('bez-limitu');
   });
   it('okresy do listy wyboru: od najnowszego, przełom roku, dzień przed pierwszym okresem', () => {
-    expect(okresyProgow().map((o) => o.nazwa)).toEqual(['wrzesień–listopad 2026', 'czerwiec–sierpień 2026', 'marzec–maj 2026', 'grudzień 2025–luty 2026']);
+    expect(okresyProgow().map((o) => o.nazwa)).toEqual(['grudzień 2026–luty 2027', 'wrzesień–listopad 2026', 'czerwiec–sierpień 2026', 'marzec–maj 2026', 'grudzień 2025–luty 2026']);
     expect(okresNaDzien('2026-08-31')).toBe('2026-06-01');
-    expect(okresNaDzien('2026-12-15')).toBe('2026-09-01');
+    expect(okresNaDzien('2026-11-30')).toBe('2026-09-01');
+    expect(okresNaDzien('2026-12-15')).toBe('2026-12-01');
+    expect(okresNaDzien('2027-04-01')).toBe('2026-12-01');
     expect(okresNaDzien('2025-01-01')).toBe('2025-12-01');
   });
   it('kwoty maksymalnych zmniejszeń z roku waloryzacji najnowszych kwot przychodu (pilnuje aktualizacji od 1 marca)', () => {
@@ -45,7 +50,17 @@ describe('dorabianie do emerytury i renty (art. 103–104 ustawy o emeryturach i
     expect(opisDorabiania('renta-czesciowa', 5000, '2026-09-01', dzis).uwagi.join(' ')).toMatch(/art\. 24a/);
     expect(opisDorabiania('emerytura-wiek', 50000, '2026-09-01', dzis)).toMatchObject({ stan: 'Bez limitu', zapas: 'nie dotyczy' });
     expect(opisDorabiania('renta-rodzinna', 12003.11, '2026-09-01', dzis)).toMatchObject({ stan: 'Zawieszenie', zapas: 'próg przekroczony' });
-    expect(opisDorabiania('renta-rodzinna', 1000, '2026-09-01', '2026-12-05').uwagi.join(' ')).toMatch(/nowszego komunikatu/);
+    expect(opisDorabiania('renta-rodzinna', 1000, '2026-12-01', '2027-03-05').uwagi.join(' ')).toMatch(/nowszego komunikatu/);
+    expect(opisDorabiania('renta-rodzinna', 1000, '2026-12-01', '2026-12-05').uwagi.join(' ')).not.toMatch(/nowszego komunikatu/);
+  });
+  it('od 1 grudnia 2026 r.: 70% i 130% z 9317,01 zł (M.P. 2026 poz. 1122) w górę do 10 groszy (art. 104 ust. 10 pkt 1; M.P. 2026 poz. 1157)', () => {
+    const wGore = (x: number) => Math.ceil(Math.round(x * 1000) / 100) / 10;
+    expect(wGore(9317.01 * 0.7)).toBe(6522);
+    expect(wGore(9317.01 * 1.3)).toBe(12112.2);
+    expect(dorabianie({ swiadczenie: 'renta-calkowita', przychod: 6800, data: '2026-12-01' })).toMatchObject({ stan: 'zmniejszenie', zmniejszenie: 278 });
+    expect(opisDorabiania('renta-calkowita', 6800, '2026-12-01', '2026-12-01')).toMatchObject({ stan: 'Zmniejszenie o 278,00 zł', zapas: '5312,20 zł' });
+    expect(dorabianie({ swiadczenie: 'renta-calkowita', przychod: 12112.2, data: '2026-12-01' }).stan).toBe('zmniejszenie');
+    expect(dorabianie({ swiadczenie: 'renta-calkowita', przychod: 12112.21, data: '2026-12-01' }).stan).toBe('zawieszenie');
   });
   it('błąd przy ujemnym przychodzie', () => {
     expect(() => dorabianie({ swiadczenie: 'emerytura', przychod: -1, data: '2026-11-12' })).toThrow(RangeError);

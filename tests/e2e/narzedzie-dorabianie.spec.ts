@@ -58,3 +58,12 @@ test('po powrocie przyciskiem Wstecz wynik odpowiada przywróconemu wyborowi', a
   await expect(page.getByLabel('Świadczenie', { exact: true })).toHaveValue('emerytura-wiek');
   await expect(page.locator('[data-w="stan"]')).toHaveText(/^Bez\slimitu/);
 });
+
+// Od 1 grudnia 2026 r. (M.P. 2026 poz. 1157: 6522,00 i 12 112,20 zł): renta całkowita i 6800 zł → zmniejszenie 278,00 zł,
+// do zawieszenia 5312,20 zł.
+test('grudzień 2026–luty 2027: nowe kwoty z komunikatu ZUS', async ({ page }) => {
+  await page.getByLabel('Okres').selectOption('2026-12-01');
+  await expect(page.locator('[data-w="stan"]')).toHaveText(/^Zmniejszenie\so\s278,00\szł$/);
+  await expect(page.locator('[data-w="p70"]')).toHaveText(/^6\s?522,00\szł$/);
+  await expect(page.locator('[data-w="zapas"]')).toHaveText(/^5\s?312,20\szł$/);
+});

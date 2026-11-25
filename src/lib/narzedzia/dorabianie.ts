@@ -1,5 +1,5 @@
-// Dorabianie do emerytury i renty (ustawa o emeryturach i rentach z FUS, tekst jednolity Dz.U. 2025 poz. 1749; zmiany
-// Dz.U. 2026 poz. 26 i 425 nie dotyczą art. 103–106):
+// Dorabianie do emerytury i renty (ustawa o emeryturach i rentach z FUS, tekst jednolity Dz.U. 2026 poz. 1533, ogłoszony
+// 20.11.2026 r., bez zmian po nim; obejmuje zmiany Dz.U. 2026 poz. 26 i 425, które nie dotyczyły art. 103–106):
 // - limity przychodu nie dotyczą emerytów w powszechnym wieku emerytalnym 60/65 lat (art. 103 ust. 2), ale każda emerytura
 //   jest zawieszona przy pracy kontynuowanej bez rozwiązania umowy z tym samym pracodawcą (art. 103a);
 // - przychód powyżej 70% przeciętnego wynagrodzenia za ostatni ogłoszony kwartał, ale nie wyższy niż 130%: świadczenie
@@ -24,6 +24,7 @@ export const PROGI_PRZYCHODU = [
   { od: '2026-03-01', p70: 6438.5, p130: 11957.2, publikator: 'M.P. 2026 poz. 209' },
   { od: '2026-06-01', p70: 6694.1, p130: 12431.8, publikator: 'M.P. 2026 poz. 499' },
   { od: '2026-09-01', p70: 6463.2, p130: 12003.1, publikator: 'M.P. 2026 poz. 839' },
+  { od: '2026-12-01', p70: 6522, p130: 12112.2, publikator: 'M.P. 2026 poz. 1157' },
 ] as const;
 
 /** Kwoty maksymalnych zmniejszeń (komunikaty Prezesa ZUS o kwotach od 1 marca). */
